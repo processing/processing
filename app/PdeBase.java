@@ -45,12 +45,7 @@ import com.apple.mrj.*;
  * general interaction with the system (launching URLs, loading 
  * files and images, etc) that comes from that.
  */
-#ifndef SWINGSUCKS
-public class PdeBase extends JFrame
-#else
-public class PdeBase extends Frame
-#endif
-  implements ActionListener
+public class PdeBase extends JFrame implements ActionListener
 #ifdef MACOS
              , MRJAboutHandler
              , MRJQuitHandler
