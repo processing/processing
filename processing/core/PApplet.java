@@ -1526,6 +1526,7 @@ public class PApplet extends Applet
           gimmeImage(getClass().getResource("data/" + filename), force);
       }
       if (awtimage == null) {
+        /*
         try {
           //FileInputStream fis = 
           //new FileInputStream(folder + "data/" + filename);
@@ -1534,6 +1535,7 @@ public class PApplet extends Applet
         } catch (IOException e) { 
           e.printStackTrace();
         }
+        */
       }
     }
     if (awtimage == null) {
@@ -2764,6 +2766,7 @@ public class PApplet extends Applet
 
     Thread thread = new Thread() {  //new Runnable() {
         public void run() {
+          
           while ((Thread.currentThread() == this) && !finished) {
             try {
               // is this what's causing all the trouble?
@@ -2845,6 +2848,7 @@ public class PApplet extends Applet
           name = args[argIndex];
           break;
         }
+        argIndex++;
       }
 
       Frame frame = new Frame();

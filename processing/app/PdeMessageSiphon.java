@@ -30,8 +30,8 @@ class PdeMessageSiphon implements Runnable {
   Thread thread;
   PdeMessageConsumer consumer;
 
-  public PdeMessageSiphon(InputStream stream, PdeMessageConsumer consumer) {
 
+  public PdeMessageSiphon(InputStream stream, PdeMessageConsumer consumer) {
     // we use a BufferedReader in order to be able to read a line
     // at a time
     //
@@ -39,40 +39,62 @@ class PdeMessageSiphon implements Runnable {
     this.consumer = consumer;
 
     thread = new Thread(this);
+    thread.setPriority(Thread.MIN_PRIORITY);
     thread.start();
   }
 
 
   public void run() {    
-    while (Thread.currentThread() == thread) {
-      //System.err.print("p");
-      //System.err.println(streamReader);
-      String currentLine;
+    //while (Thread.currentThread() == thread) {
+    //System.err.print("p");
+    //System.err.println(streamReader);
+    String currentLine;
 
-      try {
-        // process data until we hit EOF; this may block
-        //
-        while ((currentLine = streamReader.readLine()) != null) {
-          consumer.message(currentLine);
-          //System.err.println("PMS: " + currentLine);
+    try {
+      // process data until we hit EOF; this will happily block
+      // (effectively sleeping the thread) until new data comes in.
+      // when the program is finally done, 
+      //
+      while ((currentLine = streamReader.readLine()) != null) {
+        //currentLine = streamReader.readLine();
+        //if (currentLine != null) {
+        consumer.message(currentLine);
+        //System.out.println("siphon wait");
+      }
+      /*
+        if (currentLine == null) {
+        System.out.println("PdeMessageSiphon: out");
+        thread = null; 
         }
-      } catch (NullPointerException npe) {
-        // ignore this guy, since it's prolly just shutting down
-        //npe.printStackTrace();
+      */
+      thread = null;
+      //System.err.println("PMS: " + currentLine);
+      //}
+
+    } catch (NullPointerException npe) {
+      // ignore this guy, since it's prolly just shutting down
+      //npe.printStackTrace();
+      thread = null;
+
+    } catch (Exception e) { 
+      // on linux, a "bad file descriptor" message comes up when
+      // closing an applet that's being run externally.
+      // use this to cause that to fail silently since not important
+      if ((PdeBase.platform != PdeBase.LINUX) || 
+          (e.getMessage().indexOf("Bad file descriptor") == -1)) {
+        System.err.println("PdeMessageSiphon err " + e);
+        e.printStackTrace();
         thread = null;
-
-      } catch (Exception e) { 
-        // on linux, a "bad file descriptor" message comes up when
-        // closing an applet that's being run externally.
-        // use this to cause that to fail silently since not important
-        if ((PdeBase.platform != PdeBase.LINUX) || 
-            (e.getMessage().indexOf("Bad file descriptor") == -1)) {
-          System.err.println("PdeMessageSiphon err " + e);
-          e.printStackTrace();
-          thread = null;
-        }
       }
     }
-    //System.err.println("siphon thread exiting");
+
+    /*
+      //Thread.yield();
+      try {
+      Thread.sleep(100);
+      } catch (InterruptedException e) { }
+    */
+    //System.out.println("PdeMessageSiphon: out");
   }
+  //System.err.println("siphon thread exiting");
 }
