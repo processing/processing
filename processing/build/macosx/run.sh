@@ -16,5 +16,4 @@ export CLASSPATH
 
 #cd work && /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Commands/java -Dcom.apple.macos.useScreenMenuBar=true PdeBase
 
-cd work && java -Dapple.laf.useScreenMenuBar=true PdeBase
-#cd work && java -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.growbox.intrudes=false PdeBase
+cd work && java -Dapple.laf.useScreenMenuBar=true -Dapple.awt.showGrowBox=false PdeBase
