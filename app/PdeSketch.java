@@ -53,10 +53,10 @@ public class PdeSketch {
   PdeCode hidden[];
 
   // all these set each time build() is called
-  boolean externalRuntime;
   String mainClassName;
   String classPath;
   String libraryPath;
+  boolean externalRuntime;
 
 
   /**

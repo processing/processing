@@ -60,15 +60,12 @@ public class PdeEditor extends JFrame
     "                                                                     " +
     "                                                                     ";
 
-  static final int SK_NEW  = 1;
-  static final int SK_OPEN = 2;
-  static final int DO_OPEN = 3;
-  static final int DO_QUIT = 4;
+  static final int NEW  = 1;
+  static final int OPEN = 2;
+  static final int QUIT = 3;
   int checking;
   String openingPath; 
   String openingName;
-
-  PdeEditorListener listener;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -79,6 +76,7 @@ public class PdeEditor extends JFrame
   JPanel consolePanel;
 
   JEditTextArea textarea;
+  PdeEditorListener listener;
 
   // currently opened program
   PdeSketch sketch;
@@ -308,7 +306,9 @@ public class PdeEditor extends JFrame
   }
 
 
-  // hack for #@#)$(* macosx
+  /**
+   * Hack for #@#)$(* Mac OS X.
+   */
   public Dimension getMinimumSize() {
     return new Dimension(500, 500);
   }
@@ -1027,7 +1027,7 @@ public class PdeEditor extends JFrame
 
   public void setModified(boolean what) {
     //header.sketchModified = what;
-    sketch.setModified(what);
+    sketch.setCurrentModified(what);
     header.repaint();
     //sketchModified = what;
   }
@@ -1048,7 +1048,7 @@ public class PdeEditor extends JFrame
     if (sketch.isModified()) {
       String prompt = "Save changes to " + sketch.name + "?  ";
 
-      if (checking != DO_QUIT) {
+      if (checking != HANDLE_QUIT) {
         // if the user is not quitting, then use the nicer
         // dialog that's actually inside the p5 window.
         status.prompt(prompt);
@@ -1114,18 +1114,21 @@ public class PdeEditor extends JFrame
 
   public void checkModified2() {
     switch (checking) {
-    case SK_NEW: skNew2(false); break;
-    case SK_OPEN: skOpen2(openingPath, openingName); break;
-    case DO_QUIT: doQuit2(); break;
+    case NEW: handleNew2(false); break;
+    case OPEN: skOpen2(openingPath, openingName); break;
+    case QUIT: handleQuit2(); break;
     }
     checking = 0;
   }
 
 
-  // local vars prevent sketchName from being set
-  public void skNew() {
+  /**
+   * New was called (by buttons or by menu), first check modified
+   * and if things work out ok, handleNew2() will be called.
+   */
+  public void handleNew() {
     doStop();
-    checkModified(SK_NEW);
+    checkModified(NEW);
   }
 
 
@@ -1134,71 +1137,10 @@ public class PdeEditor extends JFrame
    * then calls handleOpen to load it up.
    * @param startup true if the app is starting (auto-create a sketch)
    */
-  protected void skNew2(boolean startup) {
+  protected void handleNew2(boolean startup) {
     try {
-      File newbieDir = null;
-      String newbieName = null;
-
-      if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
-        // prompt for the filename and location for the new sketch
-
-        FileDialog fd = new FileDialog(new Frame(), 
-                                       "Create new sketch named", 
-                                       FileDialog.SAVE);
-        fd.setDirectory(PdePreferences.get("sketchbook.path"));
-        fd.show();
-
-        String newbieParentDir = fd.getDirectory();
-        newbieName = fd.getFile();
-        if (newbieName == null) return;
-
-        newbieDir = new File(newbieParentDir, newbieName);
-
-      } else {
-        // use a generic name like sketch_031008a, the date plus a char
-        String newbieParentDir = PdePreferences.get("sketchbook.path");
-
-        int index = 0;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-        String purty = formatter.format(new Date());
-        do {
-          newbieName = "sketch_" + purty + ((char) ('a' + index));
-          newbieDir = new File(newbieParentDir, newbieName);
-          index++;
-        } while (newbieDir.exists());
-      }
-
-      // mkdir for new project name
-      newbieDir.mkdirs();
-
-      //new File(sketchDir, "data").mkdirs();
-
-      // make empty pde file
-      File newbieFile = new File(newbieDir, newbieName + ".pde");
-      new FileOutputStream(newbieFile);
-
-#ifdef MACOS
-      // thank you apple, for changing this @#$)(*
-      //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
-
-      // jdk13 on osx, or jdk11
-      // though apparently still available for 1.4
-      if ((PdeBase.platform == PdeBase.MACOS9) ||
-          (PdeBase.platform == PdeBase.MACOSX)) {
-        MRJFileUtils.setFileTypeAndCreator(newbieFile,
-                                           MRJOSType.kTypeTEXT,
-                                           new MRJOSType("Pde1"));
-      }
-#endif
-
-      // make 'data' 'applet' dirs inside that
-      // actually, don't, that way can avoid too much extra mess
-
-      // rebuild the menu here
-      sketchbook.rebuildMenu();
-
-      // now open it up
-      handleOpen(newbieName, newbieFile, newbieDir);
+      PdeSketch newSketch = sketchbook.handleNew();
+      if (newSketch != null) handleOpen2(newSketch);
 
     } catch (IOException e) {
       // NEED TO DO SOME ERROR REPORTING HERE ***

@@ -39,8 +39,8 @@ public class PdeSketchbook {
   PdeEditor editor;
 
   JMenu menu;
-  File sketchbookFolder;
-  String sketchbookPath;  // canonical path
+  //File sketchbookFolder;
+  //String sketchbookPath;  // canonical path
 
   File examplesFolder;
   String examplesPath;  // canonical path (for comparison)
@@ -49,7 +49,10 @@ public class PdeSketchbook {
   public PdeSketchbook(PdeEditor editor) {
     this.editor = editor;
 
-    sketchbookPath = PdePreferences.get("sketchbook.path");
+    examplesFolder = new File(System.getProperty("user.dir"), "examples");
+    examplesPath = examplesFolder.getCanonicalPath();
+
+    String sketchbookPath = PdePreferences.get("sketchbook.path");
 
     if (sketchbookPath == null) {
       // by default, set default sketchbook path to the user's 
@@ -68,7 +71,7 @@ public class PdeSketchbook {
       String folderName = PdePreferences.get("sketchbook.name.default");
       //System.out.println("home = " + home);
       //System.out.println("fname = " + folderName);
-      sketchbookFolder = new File(home, folderName);
+      File sketchbookFolder = new File(home, folderName);
       PdePreferences.set("sketchbook.path", 
                          sketchbookFolder.getAbsolutePath());
 
@@ -88,6 +91,86 @@ public class PdeSketchbook {
     }
 
     menu = new JMenu("Open");
+  }
+
+
+  /**
+   * Handle creating a sketch folder, return its base .pde file 
+   * or null if the operation was cancelled.
+   */
+  public String handleNew() throws IOException {
+    File newbieDir = null;
+    String newbieName = null;
+
+    // no sketch has been started, don't prompt for the name if it's 
+    // starting up, just make the farker. otherwise if the person hits 
+    // 'cancel' i'd have to add a thing to make p5 quit, which is silly. 
+    // instead give them an empty sketch, and they can look at examples. 
+    // i hate it when imovie makes you start with that goofy dialog box. 
+    // unless, ermm, they user tested it and people preferred that as 
+    // a way to get started. shite. now i hate myself. 
+    // 
+    if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
+      // prompt for the filename and location for the new sketch
+
+      FileDialog fd = new FileDialog(new Frame(), 
+                                     "Create new sketch named", 
+                                     FileDialog.SAVE);
+      fd.setDirectory(PdePreferences.get("sketchbook.path"));
+      fd.show();
+
+      String newbieParentDir = fd.getDirectory();
+      newbieName = fd.getFile();
+      if (newbieName == null) return null;
+
+      newbieDir = new File(newbieParentDir, newbieName);
+
+    } else {
+      // use a generic name like sketch_031008a, the date plus a char
+      String newbieParentDir = PdePreferences.get("sketchbook.path");
+
+      int index = 0;
+      SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+      String purty = formatter.format(new Date());
+      do {
+        newbieName = "sketch_" + purty + ((char) ('a' + index));
+        newbieDir = new File(newbieParentDir, newbieName);
+        index++;
+      } while (newbieDir.exists());
+    }
+
+    // make the directory for the new sketch
+    newbieDir.mkdirs();
+
+    // make an empty pde file
+    File newbieFile = new File(newbieDir, newbieName + ".pde");
+    new FileOutputStream(newbieFile);  // create the file
+
+#ifdef MACOS
+    // thank you apple, for changing this @#$)(*
+    //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
+
+    // TODO this wouldn't be needed if i could figure out how to 
+    // associate document icons via a dot-extension/mime-type scenario
+    // help me steve jobs. you're my only hope
+
+    // jdk13 on osx, or jdk11
+    // though apparently still available for 1.4
+    if ((PdeBase.platform == PdeBase.MACOS9) ||
+        (PdeBase.platform == PdeBase.MACOSX)) {
+      MRJFileUtils.setFileTypeAndCreator(newbieFile,
+                                         MRJOSType.kTypeTEXT,
+                                         new MRJOSType("Pde1"));
+    }
+#endif
+
+    // make a note of a newly added sketch in the sketchbook menu
+    rebuildMenu();
+
+    // now open it up
+    //handleOpen(newbieName, newbieFile, newbieDir);
+    //return newSketch;
+    return newbieFile.getCanonicalPath();
   }
 
 
@@ -128,6 +211,9 @@ public class PdeSketchbook {
       //menu.addSeparator();
 
       addSketches(menu, sketchbookFolder);
+
+      menu.addSeparator();
+      addSketches(menu, examplesFolder);
 
       // TODO add examples folder here too
 
