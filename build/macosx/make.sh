@@ -167,5 +167,16 @@ mkdir -p ../../build/macosx/work/libraries/particles/library/
 cp library/particles.jar ../../build/macosx/work/libraries/particles/library/
 
 
+# OPENGL LIBRARY
+echo Building OpenGL library...
+cd ../../lib/opengl
+../../build/macosx/work/jikes -target 1.1 +D -classpath "library/jogl.jar:$CLASSPATH" -d . *.java 
+rm -f library/opengl.jar
+zip -r0q library/opengl.jar processing
+rm -rf processing
+mkdir -p ../../build/macosx/work/libraries/opengl/library/
+cp library/opengl.jar ../../build/macosx/work/libraries/opengl/library/
+
+
 echo
 echo Done.
