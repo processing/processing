@@ -1022,52 +1022,16 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
-  //static public void print(Object what) {
-  //System.out.print(what.toString());
-  //System.out.flush();
-  //}
+  static public void print(Object what) {
+    System.out.print(what.toString());
+    System.out.flush();
+  }
 
   //
 
-  static public void print(byte what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
+  static public void println() {
+    System.out.println();
   }
-
-  static public void print(boolean what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
-  }
-
-  static public void print(char what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
-  }
-
-  static public void print(int what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
-  }
-
-  static public void print(float what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
-  }
-
-  static public void print(double what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
-  }
-
-  static public void print(String what[]) {
-    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-    System.out.flush();
-  }
-
-  //static public void print(Object what[]) {
-  //for (int i = 0; i < what.length; i++) System.out.print(what[i]);
-  //System.out.flush();
-  //}
 
   //
 
@@ -1099,47 +1063,43 @@ public class PApplet extends Applet
     print(what); System.out.println();
   }
 
-  //static public void println(Object what) {
-  //System.out.println(what.toString());
-  //}
-
-  static public void println() {
-    System.out.println();
+  static public void println(Object what) {
+    System.out.println(what.toString());
   }
 
   //
 
-  static public void println(byte what[]) {
+  static public void printarr(byte what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
 
-  static public void println(boolean what[]) {
+  static public void printarr(boolean what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
 
-  static public void println(char what[]) {
+  static public void printarr(char what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
 
-  static public void println(int what[]) {
+  static public void printarr(int what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
 
-  static public void println(float what[]) {
+  static public void printarr(float what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
 
-  static public void println(double what[]) {
+  static public void printarr(double what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
 
-  static public void println(String what[]) {
+  static public void printarr(String what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }

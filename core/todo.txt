@@ -155,6 +155,11 @@ X   basic test with old net server has things working fine
 X inputFile, outputFile, reader, writer commands
 X   also loadStrings(File file)
 
+040913
+X printarr instead of print/println for arrays
+X   println(Object o) conflicts with println(int a[])
+X   but println(Object o) is very needed
+
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
 _   move to new graphics engine
