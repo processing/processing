@@ -98,12 +98,20 @@ X can't use regular getPixels() on PGraphics, because its image isn't 'cache'
 X   also, the cache may be used to draw the whole surface as a gl texture (?)
 X   not a problem for the main PGraphics, but for any others created to draw on
 
+opengl
+X make light() functions actually do something in PGraphicsGL
+X box() and sphere() working again
+
 api todos
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
 _ look at curve functions more closely
 _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
+
+_ make opengl work in draw mode
+
+_ lighting totally sucks
 
 _ make sure applet is stopping in draw mode
 
@@ -116,9 +124,7 @@ _ move textMode and textSpace back out of PFont
 _   use die() to fail in font situations
 _   can't, just use a RuntimeException
 
-_ get regular graphics engine working again
-_   smooth is no longer working
-_   ellipses aren't handled
+_ get PGraphics.java engine working again
 
 _ default to single byte input from serial port
 _   and add serial.setBuffer() for message length as alternative
@@ -132,8 +138,7 @@ _   for postscript, can grab the real font
 _   -> altho problem here is that really the fonts just need a name
 _      since needs to render to screen as well
 
-_ make light() functions actually do something in PGraphicsGL
-_   make lights half do something in PGraphics3 too
+_ fix lighting in PGraphics3
 
 _ bring in materials for opengl as well?
 _   don't include a class, just make it similar to the light functions
