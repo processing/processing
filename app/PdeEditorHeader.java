@@ -315,7 +315,10 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     }
     JMenuItem item;
 
-    item = PdeEditor.newJMenuItem("New", 'T');
+    // maybe this shouldn't have a command key anyways..
+    // since we're not trying to make this a full ide..
+    //item = PdeEditor.newJMenuItem("New", 'T');
+    item = new JMenuItem("New");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
           //System.out.println("TODO write code for New");

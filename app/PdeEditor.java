@@ -567,7 +567,8 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    menu.add(newJMenuItem("Stop", 'T'));
+    //menu.add(newJMenuItem("Stop", 'T'));
+    menu.add(new JMenuItem("Stop"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStop();
@@ -1458,7 +1459,7 @@ public class PdeEditor extends JFrame
           gotBlankLine = true;
         }
       } else {
-        System.out.println(level);
+        //System.out.println(level);
         int idx = -1;
         String myline = line.substring(0);
         while (myline.lastIndexOf('}') != idx) {
@@ -1573,6 +1574,7 @@ public class PdeEditor extends JFrame
 
 
   public void error(PdeException e) {
+    if (e.file >= 0) sketch.setCurrent(e.file);
     if (e.line >= 0) highlightLine(e.line); 
 
     status.error(e.getMessage());
