@@ -502,7 +502,7 @@ public class PdeEditor extends JFrame
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleSave2();
+          handleSave();
         }
       });
     menu.add(saveMenuItem);
@@ -1144,7 +1144,7 @@ public class PdeEditor extends JFrame
                                                 options[0]);  
 
       if (result == JOptionPane.YES_OPTION) {
-        handleSave2(); 
+        handleSave(); 
         checkModified2();
 
       } else if (result == JOptionPane.NO_OPTION) {
@@ -1227,7 +1227,7 @@ public class PdeEditor extends JFrame
 
 
   // there is no handleSave1 since there's never a need to prompt
-  public void handleSave2() {
+  public void handleSave() {
     message("Saving...");
     try {
       sketch.save();
@@ -1240,6 +1240,7 @@ public class PdeEditor extends JFrame
       // zero out the current action, 
       // so that checkModified2 will just do nothing
       checkModifiedMode = 0;
+      // this is used when another operation calls a save
     }
     buttons.clear();      
   }
@@ -1248,118 +1249,21 @@ public class PdeEditor extends JFrame
   public void handleSaveAs() {
     doStop();
 
-    // probably need to do this stuff inside the sketch object itself
-
-    // do a directory copy of contents of 
-    // old sketch folder to new sketch folder
-    //copyDir(sketch.folder, new File(parentDir, sketchDir));
-    //PdeBase.copyDir(null, null);
-
-    // rename the main .pde file
-
-    // needs to take the current state of the open files
-    // and save them to the new folder.. but not save over
-    // the old versions for the old sketch.. hrm..
-
-    //if (!PdePreferences.getBoolean("sketchbook.prompt")) {
-    //status.edit("Save sketch as...", sketch.name);
-    //} else {
-    //handleSaveAs2(null);
-    //}
-    //}
-
-    //public void handleSaveAs2(String newSketchName) {
-    //if (newSketchName.equals(sketch.name)) {
-    //  return;  // do nothing
-
-    //} else if (newSketchName.equalsIgnoreCase(sketch.name)) {
-      // NEED TO GET THE ACTUAL SKETCH NAME FROM CODE[0] HERE
-      
-      // TODO UNFINISHED
-
-      /*
-      boolean problem = (sketchDir.renameTo(newSketchDir) || 
-                         sketchFile.renameTo(newSketchFile));
-      if (problem) {
-        status.error("Error while trying to re-save the sketch.");
-      }      
-      */
-
-    //} else {
-      // setup new sketch object with new name
-    //}
-  }
-
-  /*
-  public void skSaveAs2(String newSketchName) {
-    if (newSketchName.equals(sketchName)) {
-      // nothing changes
-      return;
-    }
-
-    File newSketchDir = new File(sketchDir.getParent() +
-                                 File.separator + newSketchName);
-    File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
-
-    //doSave(); // save changes before renaming.. risky but oh well
-    String textareaContents = textarea.getText();
-    int textareaPosition = textarea.getCaretPosition();
-
-    // if same name, but different case, just use renameTo
-    if (newSketchName.toLowerCase().
-        equals(sketchName.toLowerCase())) {
-      //System.out.println("using renameTo");
-
-      boolean problem = (sketchDir.renameTo(newSketchDir) || 
-                         sketchFile.renameTo(newSketchFile));
-      if (problem) {
-        status.error("Error while trying to re-save the sketch.");
+    message("Saving...");
+    try {
+      if (sketch.saveAs()) {
+        message("Done Saving.");
+        sketchbook.rebuildMenu();
+      } else {
+        message("Save Cancelled.");
       }
 
-    } else {
-      // make new dir
-      newSketchDir.mkdirs();
-      // copy the sketch file itself with new name
-      PdeBase.copyFile(sketchFile, newSketchFile);
-
-      // copy everything from the old dir to the new one
-      PdeBase.copyDir(sketchDir, newSketchDir);
-
-      // remove the old sketch file from the new dir
-      new File(newSketchDir, sketchName + ".pde").delete();
-
-      // remove the old dir (!)
-      //if (renaming) {
-      // in case java is holding on to any files we want to delete
-        //System.gc();
-      //PdeBase.removeDir(sketchDir);
-      //}
-
-      // (important!) has to be done before opening, 
-      // otherwise the new dir is set to sketchDir.. 
-      // remove .jar, .class, and .java files from the applet dir
-      File appletDir = new File(newSketchDir, "applet");
-      File oldjar = new File(appletDir, sketchName + ".jar");
-      if (oldjar.exists()) oldjar.delete();
-      File oldjava = new File(appletDir, sketchName + ".java");
-      if (oldjava.exists()) oldjava.delete();
-      File oldclass = new File(appletDir, sketchName + ".class");
-      if (oldclass.exists()) oldclass.delete();
+    } catch (Exception e) {
+      // show the error as a message in the window
+      error(e);
     }
-
-    // get the changes into the sketchbook menu
-    //base.rebuildSketchbookMenu();
-    sketchbook.rebuildMenu();
-
-    // open the new guy
-    handleOpen2(newSketchName, newSketchFile, newSketchDir);
-
-    // update with the new junk and save that as the new code
-    changeText(textareaContents, true);
-    textarea.setCaretPosition(textareaPosition);
-    doSave();
+    buttons.clear();
   }
-  */
 
 
   /**

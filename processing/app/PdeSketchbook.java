@@ -212,28 +212,6 @@ public class PdeSketchbook {
   }
 
 
-  public String handleSaveAs() throws IOException {
-    // get new name for folder
-    FileDialog fd = new FileDialog(new Frame(), 
-                                   "Save sketch folder as...", 
-                                   FileDialog.SAVE);
-    // always default to the sketchbook folder.. 
-    fd.setDirectory(PdePreferences.get("sketchbook.path"));
-    // TODO or maybe this should default to the 
-    //      parent dir of the old folder?
-
-    fd.show();
-    String parentDir = fd.getDirectory();
-    String sketchDir = fd.getFile();
-
-    // user cancelled selection
-    if (sketchDir == null) return null;
-
-    File dir = new File(parentDir, sketchDir);
-    return dir.getAbsolutePath();  // hmm.. is this ok if it doesn't exist?
-  }
-
-
   public JPopupMenu getPopupMenu() {
     return menu.getPopupMenu();
   }

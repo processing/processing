@@ -408,7 +408,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     } else if (e.getSource() == yesButton) {
       // answer was in response to "save changes?"
       unprompt();
-      editor.handleSave2();
+      editor.handleSave();
       editor.checkModified2();
 
     } else if (e.getSource() == cancelButton) { 
