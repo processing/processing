@@ -51,6 +51,8 @@ public class PdeSketch {
   // true if any of the files have been modified
   boolean modified;
 
+  boolean library;  // true if it's a library
+
   File folder; //sketchFolder;
   File dataFolder;
   File codeFolder;
@@ -113,6 +115,11 @@ public class PdeSketch {
 
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
+
+    File libraryFolder = new File(folder, "library");
+    if (libraryFolder.exists()) {
+      library = true;
+    }
 
     load();
   }
@@ -494,6 +501,14 @@ public class PdeSketch {
     sortCode();
     setCurrent(unhideCode.name);
     editor.header.repaint();
+  }
+
+
+  /**
+   * Return true if this sketch is a library.
+   */
+  public boolean isLibrary() {
+    return library;
   }
 
 
@@ -1242,12 +1257,13 @@ public class PdeSketch {
    * +                                                       +
    * +-------------------------------------------------------+
    */
-  public boolean export() throws Exception {
-    return exportApplet(true);
-  }
+  //public boolean export() throws Exception {
+  //return exportApplet(true);
+  //}
 
 
-  public boolean exportApplet(boolean replaceHtml) throws Exception {
+  public boolean exportApplet(/*boolean replaceHtml*/) throws Exception {
+    boolean replaceHtml = true;
     //File appletDir, String exportSketchName, File dataDir) {
     //String program = textarea.getText();
 
@@ -1501,6 +1517,16 @@ public class PdeSketch {
     //} catch (Exception e) {
     //e.printStackTrace();
     //}
+    return true;
+  }
+
+
+  public boolean exportApplication() {
+    return true;
+  }
+
+
+  public boolean exportLibrary() {
     return true;
   }
 
