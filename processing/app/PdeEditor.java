@@ -287,11 +287,12 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
       lastDirectory = directory;
       lastFile = filename;
-      message("Done saving file.");
+      message("Done saving " + filename + ".");
 
     } catch (IOException e) {
       e.printStackTrace();
-      message("Did not write file.");
+      //message("Did not write file.");
+      message("Could not write " + filename + ".");
     }
     buttons.clear();
   }

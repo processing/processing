@@ -34,9 +34,14 @@ while ($line = shift(@contents)) {
     }
     next if ($comments > 0);
 
-    if ($line =~ /^\s*(public \w+ [a-zA-z_]+\(.*$)/) {
+    if ($line =~ /^\s*public (\w+) [a-zA-z_]+\(.*$/) {
 	#print "$1\n";
 	#$decl .= $line;
+	if ($1 ne 'void') {
+	    $returns = 'return';
+	} else {
+	    $returns = '';
+	}
 	print "\n\n$line";
 	$decl .= $line;
 	while (!($line =~ /\)/)) {
@@ -49,7 +54,7 @@ while ($line = shift(@contents)) {
 	$decl =~ /\s(\S+)\(/;
 	$decl_name = $1;
 	#print "dec $decl_name\n";
-	print "    g.${decl_name}(";
+	print "   $returns g.${decl_name}(";
 
 	$decl =~ s/\s+/ /g; # smush onto a single line
 	$decl =~ s/^.*\(//;

@@ -66,6 +66,7 @@ _   using them in your app will break things (i.e. init())
 
 
 PROCESSING - MEDIUM
+_ comprehensive list of reserved keywords
 _ better handling on portinuse exception
 _   or general exception handling--could go through some interface
 _ compile from the sketchbook if there are changes
@@ -108,13 +109,16 @@ _ how to use ssh identity file to maintain auth for brancusi
 
 BAGEL
 X got rid of colorscale and using colormode for all instead
+_   make changes in documentation
+X 'ellipse' instead of 'oval'?
 _   make note in documentation
-_ catmullrom is broken 
+X catmullrom is broken 
+_   write documentation for new curve functions
+
+_ get web documentation back into cvs
 _ have to get rid of static i/o stuff before porting to c
-
+_   may also need to get rid of floating point constants
 _ current acu fonts are broken
-
-_ 'ellipse' instead of 'oval'?
 _ area copying function: copy(x1, y1, w, h,  xto, yto);
 
 _ should math functions be moved in?
@@ -132,9 +136,11 @@ _   or x, y, diameter
 _ make note in docs about removal of LINE from LINES
 _ build in second matrix type: 2d affine
 _ add convex polygon type
-_   make note in documentation about convex polygons
+_ make note in documentation about convex polygons
+
 _ sketch in antialiasing functions
 _ how does color depth work on ipaq? 4-4-4? 5-6-5?
+
 _ font usage/substition solution
 _   java freetype? jni freetype to build texmap fonts?
 _   look at flash file format? (does it have kerning?)
@@ -143,22 +149,25 @@ _ screen grabbing code
 _ simpler bitmap fonts w/o smoothing, just 2D
 _ alpha blending (easier)
 _ antialiasing
-_ bresenham (flat) oval function
 _ setting origins
 _   should shapes draw from center or from upper left?
 _   should ovals use radius or diameter?
 _   should shapes use x1, y1 - x2, y2 or x, y, w, h?
 
-BAGEL - SHOULD DO
+
+BAGEL - SHOULD
+_ bresenham (flat) oval function
+_ setting accuracy of circles/sphere
+_ setting accuracy of curve segments
 _ write shearing function
 _ optimize rotation functions
 _ test winding polygons in different directions
 _ test lighting to see how it compares with gl
-
-BAGEL - FEATURES
 _ non-homogenous colors for beginShape()
 _   currently disabled b/c homogenousColors not set false for vertices
 _   and code not written for curve vertices
+_ better lockout inside beginShape() to keep other things from happening
+_ when stroke in use, stroke letters (currently stroke doesn't affect
 
 
 BUG WATCH 

@@ -664,24 +664,18 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public void ellipse(float x, float y, float hradius, float vradius) {
+    g.ellipse(x, y, hradius, vradius);
+  }
+
+
   public void cube(float size) {
     g.cube(size);
   }
 
 
-  public void box(float x1, float y1, float z1,
-		  float x2, float y2, float z2) {
-    g.box(x1, y1, z1, x2, y2, z2);
-  }
-
-
-  public void circle(float x, float y, float radius) {
-    g.circle(x, y, radius);
-  }
-
-
-  public void oval(float x, float y, float hradius, float vradius) {
-    g.oval(x, y, hradius, vradius);
+  public void box(float w, float h, float d) {
+    g.box(w, h, d);
   }
 
 
@@ -692,6 +686,11 @@ public class ProcessingApplet extends Applet
 
   public void potato() {
     g.potato();
+  }
+
+
+  public Image loadImage(String filename) {
+   return g.loadImage(filename);
   }
 
 
@@ -713,23 +712,23 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void loadFont(String s) {
-    g.loadFont(s);
+  public int loadFont(String name) {
+   return g.loadFont(name);
   }
 
 
-  public void setFont(String s) {
-    g.setFont(s);
+  public void setFont(int which) {
+    g.setFont(which);
   }
 
 
-  public void text(char c) {
-    g.text(c);
+  public void text(char c, float x, float y) {
+    g.text(c, x, y);
   }
 
 
-  public void text(String s) {
-    g.text(s);
+  public void text(String s, float x, float y) {
+    g.text(s, x, y);
   }
 
 
@@ -937,5 +936,10 @@ public class ProcessingApplet extends Applet
 
   public void message(int level, String message, Exception e) {
     g.message(level, message, e);
+  }
+
+
+  public InputStream getStream(String filename) throws IOException {
+   return g.getStream(filename);
   }
 }
