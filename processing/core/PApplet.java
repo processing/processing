@@ -38,7 +38,7 @@ import java.util.*;
 
 public class PApplet extends Applet
   implements PConstants, Runnable,
-       MouseListener, MouseMotionListener, KeyListener
+             MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
   static final double jdkVersion = 
     toDouble(System.getProperty("java.version").substring(0,3));
@@ -60,6 +60,17 @@ public class PApplet extends Applet
   //public int keyCode;
   public boolean keyPressed;
   public KeyEvent keyEvent;
+
+  /** 
+   * Gets set to true/false as the applet gains/loses focus.
+   */
+  public boolean focused = false;
+
+  /**
+   * Is the applet online or not? This can be used to test how the 
+   * applet should behave since online situations are different.
+   */
+  public boolean online = false;
 
   long millisOffset;
 
@@ -136,6 +147,7 @@ public class PApplet extends Applet
     addMouseListener(this);
     addMouseMotionListener(this);
     addKeyListener(this);
+    addFocusListener(this);
     //timing = true;
     millisOffset = System.currentTimeMillis();
 
@@ -175,6 +187,13 @@ public class PApplet extends Applet
     this.width = g.width;
     this.height = g.height;
     g.applet = this;
+
+    try {
+      getAppletContext();
+      online = true;
+    } catch (NullPointerException e) { 
+      online = false;
+    }
   }
 
 
@@ -553,6 +572,22 @@ public class PApplet extends Applet
 
   // ------------------------------------------------------------
 
+  // i am focused man, and i'm not afraid of death. 
+  // and i'm going all out. i circle the vultures in a van 
+  // and i run the block.
+
+
+  public void focusGained(FocusEvent e) {
+    focused = true;
+  }
+
+  public void focusLost(FocusEvent e) {
+    focused = false;
+  }
+
+
+  // ------------------------------------------------------------
+
   // getting the time
 
 
@@ -642,6 +677,7 @@ public class PApplet extends Applet
    * Is the applet online or not? This can be used to test how the 
    * applet should behave since online situations are different.
    */
+  /*
   public boolean online() {
     try {
       getAppletContext();
@@ -650,6 +686,7 @@ public class PApplet extends Applet
     }
     return true;
   }
+  */
 
 
   /**
@@ -3175,6 +3212,26 @@ public class PApplet extends Applet
 
   public void sort(double what[], int count, Object objects[]) {
     g.sort(what, count, objects);
+  }
+
+
+  public final int color(int gray) {
+   return g.color(gray);
+  }
+
+
+  public final int color(float gray) {
+   return g.color(gray);
+  }
+
+
+  public final int color(int gray, int alpha) {
+   return g.color(gray, alpha);
+  }
+
+
+  public final int color(float gray, float alpha) {
+   return g.color(gray, alpha);
   }
 
 
