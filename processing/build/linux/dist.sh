@@ -68,7 +68,8 @@ mkdir processing/lib/i386
 cp ../../bagel/serial/librxtxSerial.so processing/lib/i386/libSerial.so
 
 # get jikes and depedencies
-gunzip < dist/jikes.gz > processing/jikes
+#gunzip < dist/jikes.gz > processing/jikes
+cp dist/jikes processing/
 chmod +x processing/jikes
 
 # zip it all up for release
