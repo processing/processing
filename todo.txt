@@ -54,7 +54,8 @@ X several menu changes as discussed with casey
 X   (capitalization, export/export app, tools)
 X add preference for showing library stuff
 _ figure out why user libraries not being added
-_ show internal libraries as part of the 'open' menu (in lib mode)
+_ in lib mode, show internal libraries as part of the 'open' menu 
+_ make a note that p5 has to be restarted for libs
 _ after export of library, rebuild "import library" menu
 _ import all libraries into classpath
 _   all libs found during sketchbook build + all libs in libraries

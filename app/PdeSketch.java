@@ -980,7 +980,7 @@ public class PdeSketch {
   protected String build(String buildPath, String suggestedClassName)
     throws PdeException {
 
-    String importPackageList[] = null;
+    //String importPackageList[] = null;
 
     String javaClassPath = System.getProperty("java.class.path");
     // remove quotes if any.. this is an annoying thing on windows
@@ -988,7 +988,9 @@ public class PdeSketch {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
 
-    classPath = buildPath + File.pathSeparator + javaClassPath;
+    classPath = buildPath + 
+      File.pathSeparator + PdeSketchbook.librariesClassPath + 
+      File.pathSeparator + javaClassPath;
     //System.out.println("cp = " + classPath);
 
     // figure out the contents of the code folder to see if there
@@ -998,12 +1000,11 @@ public class PdeSketch {
       externalRuntime = true;
       classPath += File.pathSeparator + 
         PdeCompiler.contentsToClassPath(codeFolder);
-      importPackageList = PdeCompiler.packageListFromClassPath(classPath);
-      //libraryPath = codeFolder.getCanonicalPath();
+      //importPackageList = PdeCompiler.packageListFromClassPath(classPath);
       libraryPath = codeFolder.getAbsolutePath();
     } else {
       externalRuntime = (codeCount > 1);  // may still be set true later
-      importPackageList = null;
+      //importPackageList = null;
       libraryPath = "";
     }
 
