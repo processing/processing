@@ -130,7 +130,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         // until it's finished rendering, otherwise the width/height
         // may not have been properly set.
         if (drawMode) {
-          while (applet.frame != 1) {
+          while ((applet.frame != 1) && (!applet.finished)) {
             try {
               //System.out.println("waiting to complete drawing");
               Thread.sleep(5);
@@ -395,6 +395,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     if (s.length() > 2) System.err.println(s);
 
     if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
+      //System.err.println("got wakeup");
       newMessage = true;
       return;  // this line ignored
     }
