@@ -112,6 +112,7 @@ CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/r
 echo Build serial library...
 cd ../../lib/serial
 ../../build/linux/work/jikes +D -classpath "code/RXTXcomm.jar:$CLASSPATH" -d . *.java 
+rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
 mkdir -p ../../build/linux/work/libraries/serial/library/
@@ -122,6 +123,7 @@ cp library/serial.jar ../../build/linux/work/libraries/serial/library/
 echo Build net library...
 cd ../../lib/net
 ../../build/linux/work/jikes +D -d . *.java 
+rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
 mkdir -p ../../build/linux/work/libraries/net/library/
