@@ -41,13 +41,6 @@ import com.apple.mrj.*;
 
 
 public class PdeEditor extends JPanel {
-
-  static final String DEFAULT_PROGRAM = "// type program here\n";
-
-  //static final String NEW_SKETCH_ITEM = "( new sketch )";
-  //static final String SKETCH_PREFIX_NAME = "sketch-";
-  //static final String CODE_FILENAME = "sketch.pde";
-
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
