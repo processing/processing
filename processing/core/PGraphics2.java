@@ -140,7 +140,7 @@ public class PGraphics2 extends PGraphics {
     // not everyone needs this, but just easier to store rather
     // than adding another moving part to the code...
     vertices[vertexCount][MX] = x;
-    vertices[vertexCount][MY] = x;
+    vertices[vertexCount][MY] = y;
     vertexCount++;
 
     switch (shape) {
@@ -177,6 +177,14 @@ public class PGraphics2 extends PGraphics {
       break;
 
     case TRIANGLE_STRIP:
+      if (vertexCount >= 3) {
+        triangle(vertices[vertexCount - 2][MX],
+                 vertices[vertexCount - 2][MY],
+                 vertices[vertexCount - 1][MX],
+                 vertices[vertexCount - 1][MY],
+                 vertices[vertexCount - 3][MX],
+                 vertices[vertexCount - 3][MY]);
+        /*
       if (vertexCount == 3) {
         triangle(vertices[0][MX], vertices[0][MY],
                  vertices[1][MX], vertices[1][MY],
@@ -192,6 +200,8 @@ public class PGraphics2 extends PGraphics {
         gpath.lineTo(vertices[vertexCount - 3][MX],
                      vertices[vertexCount - 3][MY]);
         draw_shape(gpath);
+      }
+        */
       }
       break;
 
@@ -229,25 +239,35 @@ public class PGraphics2 extends PGraphics {
       // 0---2---4
       // |   |   |
       // 1---3---5
-      if (vertexCount == 4) {
+      if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
+        //if (vertexCount == 4) {//
         // note difference in winding order:
-        quad(vertices[0][MX], vertices[0][MY],
-             vertices[2][MX], vertices[2][MY],
+        //quad(vertices[0][MX], vertices[0][MY],
+        //   vertices[2][MX], vertices[2][MY],
+        //   x, y,
+        //   vertices[1][MX], vertices[1][MY]);
+        quad(vertices[vertexCount - 4][MX],
+             vertices[vertexCount - 4][MY],
+             vertices[vertexCount - 2][MX],
+             vertices[vertexCount - 2][MY],
              x, y,
-             vertices[1][MX], vertices[1][MY]);
+             vertices[vertexCount - 3][MX],
+             vertices[vertexCount - 3][MY]);
 
-      } else if (vertexCount > 4) {
+        /*
+      } else if ((vertexCount > 4) && ((vertexCount % 2) == 0)) {
         gpath = new GeneralPath();
-        // when vertexCount == 5, draw an un-closed triangle
+        // when vertexCount == 6, draw an un-closed triangle
         // for indices 2, 4, 5, 3
-        gpath.moveTo(vertices[vertexCount - 3][MX],
-                     vertices[vertexCount - 3][MY]);
-        gpath.lineTo(vertices[vertexCount - 1][MX],
-                     vertices[vertexCount - 1][MY]);
-        gpath.lineTo(x, y);
+        gpath.moveTo(vertices[vertexCount - 4][MX],
+                     vertices[vertexCount - 4][MY]);
         gpath.lineTo(vertices[vertexCount - 2][MX],
                      vertices[vertexCount - 2][MY]);
+        gpath.lineTo(x, y);
+        gpath.lineTo(vertices[vertexCount - 3][MX],
+                     vertices[vertexCount - 3][MY]);
         draw_shape(gpath);
+        */
       }
       break;
 
@@ -644,17 +664,17 @@ public class PGraphics2 extends PGraphics {
   protected void calc_tint() {
     super.calc_tint();
     // TODO actually implement tinted images
-    tintColorObject = new Color(tintColor);
+    tintColorObject = new Color(tintColor, true);
   }
 
   protected void calc_fill() {
     super.calc_fill();
-    fillColorObject = new Color(fillColor);
+    fillColorObject = new Color(fillColor, true);
   }
 
   protected void calc_stroke() {
     super.calc_stroke();
-    strokeColorObject = new Color(strokeColor);
+    strokeColorObject = new Color(strokeColor, true);
   }
 
 
