@@ -28,8 +28,8 @@ public class PdeEditorConsole extends JScrollPane {
 
   boolean cerror;
 
-  static final int HINSET = 6;
-  static final int VINSET = 6;
+  //static final int HINSET = 6;
+  //static final int VINSET = 6;
 
   static PrintStream systemOut;
   static PrintStream systemErr;
@@ -47,7 +47,7 @@ public class PdeEditorConsole extends JScrollPane {
     JTextPane consoleTextPane = new JTextPane();
     consoleTextPane.setEditable(false);
     consoleDoc = consoleTextPane.getStyledDocument();
-        
+
     // necessary?
     MutableAttributeSet standard = new SimpleAttributeSet();
     StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
@@ -62,7 +62,7 @@ public class PdeEditorConsole extends JScrollPane {
                          new Color(204, 51, 0));
     Font font = PdeBase.getFont("editor.console.font", 
                   new Font("Monospaced", Font.PLAIN, 11));
-                         
+
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);
     StyleConstants.setBackground(stdStyle, bgColor);

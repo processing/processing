@@ -2,10 +2,11 @@
 //
 public class PdePreprocessor {
 
-    public PdePreprocessor() {
-    }
+  public PdePreprocessor() {
+  }
 
-    public String writeJava(String name, boolean kjc) {
-	return "This class is currently purely abstract";
-    }
+  public String writeJava(String name, boolean extendsNormal,
+                          boolean exporting) {
+    return "This class is currently purely abstract";
+  }
 }
