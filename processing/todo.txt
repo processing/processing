@@ -27,8 +27,9 @@ _ arrow keys broken (but with shift they work..)
 _ escape key not quitting presentation mode
 _ apple-a for select all tries to quit
 _ sketch window resizing strangely
-_   can't resize width for some reason
-_   check apple site for technote/bug listing
+_   can make width/height larger, but only height smaller
+X   check apple site for technote/bug listing
+X     jes grabbed examples for me
 
 
 ////////////////////////////////////////////////////////////////////
