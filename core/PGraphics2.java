@@ -306,10 +306,13 @@ public class PGraphics2 extends PGraphics {
 
   public void curveVertex(float x, float y) {
     // TODO handle inverse matrix action
+    throw new RuntimeException("curveVertex() not yet implemented");
   }
 
 
   public void endShape() {
+    //System.out.println("endShape");
+
     shape = 0;
 
     switch (shape) {
@@ -347,6 +350,7 @@ public class PGraphics2 extends PGraphics {
 
   protected void stroke_shape(Shape s) {
     if (stroke) {
+      //System.out.println("stroking shape");
       graphics.setColor(strokeColorObject);
       graphics.draw(s);
     }
