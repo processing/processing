@@ -4,6 +4,94 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+
+ABOUT REV 0059 - 31 august 2003
+
+this is mostly a bug fix release. expect multiple releases in the next
+few days as we head towards beta.
+
+
+[ bug fixes ]
+
+- no more "Class not found" errors when trying to use an exported
+  applet. fixed a supernasty bug that made applets incompatible with
+  older versions of java, like the one that everyone uses with
+  internet explorer (microsoft's java vm). 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376081
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376340
+
+- this rev does a better job of finding quicktime for java than the
+  last release. quicktime for java search path is not as fragile as it
+  was, instead is uses the environment variable QTJAVA, which is set 
+  by the quicktime for java installer, should point to a valid
+  QTJava.zip. if not, you'll get an error message asking you to
+  install/reinstall quicktime.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376278
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376309
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376378
+
+- fixed a hair-pulling bugger where spaces and underscores became a
+  mess when trying to save or rename a sketch.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376240
+
+- fonts no longer get goofy if imageMode() has been used
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376464
+
+
+[ additions ] 
+
+- beginSerial(String port) and beginSerial(String port, int rate)
+  since these are used far more commonly than setting the parity and
+  stop bits. from the suggetsions board:
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1061595591
+
+
+[ known issues / bugs / if only i had time... ] 
+
+- "find in reference" and the reference menu items don't seem to be
+  working on some machines. if we can figure out why it works on some
+  machines and not on others, we'd like to repair this before beta.
+
+- quicktime for java is still required on windows. it's required on
+  macosx too, but it's installed there by default. the requirement
+  will be removed in a later release for people who don't want to use
+  video, but the fix is more difficult than anticipated, so it will
+  probably happen after the initial beta release.
+
+- run.bat hasn't been given love for a while and may not work. at the
+  very least, you'll need to modify it to find your copy of quicktime
+  for java. 
+
+- expect lots of 'cannot delete somefilename...' messages in red that
+  appear when you hit play or stop. these are mostly cosmetic, and
+  will be cleaned up in a future release.
+
+- 'export to application' remains unimplemented, though it's closer,
+  and should be ready before beta.
+
+- sound doesn't always stop when the 'stop' button is hit (i.e. the
+  mixer example seems broken). for now, you have to first quit
+  processing to stop it. 
+
+- 'preferences' will get better in a future release
+
+- the noise() functions were added, but don't yet work, they'll be
+  fixed soon.
+
+- presentation mode is flickery and unusable, this will be fixed soon.
+
+- the horizontal scroller for the text area has some weirdness, this
+  may not be fixed until after beta, depending on how bad it is.
+
+- using screenGrab() or saveBytes() or some of those things will cause
+  trouble inside applets. we'll try to do better error trapping soon
+  so that your applet doesn't crash when this happens. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0058 - *also* 5 august 2003
 
 a handful of fixes because of late-breaking problems with 57. argh!
