@@ -1,3 +1,63 @@
+0052
+X identityMatrix and multiplyMatrix
+X   or resetMatrix and applyMatrix
+X projectX(x, y, z) instead of project()
+o   stores last xyz point as cached for projectY
+X   projectSize() should work the same way
+X   screenX instead of projectX
+X   modelX or objectX could do the amit style thing
+X     creas says object
+X better access to projX et al
+X   what's a better name? calcX? or write to an array?
+X   projectX, projectY, .. or projectedX ? 
+X   also projectSize should just be project()
+X smooth() and noSmooth()
+X possible dist() and constrain() functions
+X   reas: I like people making these themselves and then later 
+X         they can be added to their code libraries
+X join() like split
+X   also add additional item for NaN data
+X   add doubles and longs for genome stuff
+X numberFormat (formerly zeroPad)
+X   numberFormat(float num, int left, int right) 
+X     zero means any number of digits, don't pad
+X   numberFormat(int num, int left) for 27 -> 0027
+X camera work
+X   beginCamera, endCamera -> does glMatrixMode style swapping
+X   cameraMode(CUSTOM, PERSPECTIVE, ISOMETRIC)
+X   lookAt->lookat, frustum, perspective should be public too
+X splitints, et al.. have another version to specify what to use
+X   when the value gets a NumberFormatException.. ie.
+X   splitInts("blah blah blah", ' ', 0);
+X   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
+X remove groupings of NumberFormat
+X change NumberFormat to nf
+X use System.arraycopy for clear().. could be way fast
+X   test to see how much faster the new arraycopy version is
+X   err, it's slower. that sucks.
+X fixed bug with typography reported by creas
+X   alpha images were 0xAAAAAAAA b/c of javagl
+X images were broken with noSmooth
+X color is ugly for 'use external editor' with new color scheme
+X   now uses color for current line
+X re-enable SMOOTH_IMAGES
+X 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
+X several examples broken (note from creas) in bugs.txt
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
+X   drawing02, input09, input08, transform05, others?
+X if image doesn't exist, spews null pointer exception and freaks
+X   locks up environment/machine, have to restart
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
+X disable image cache (setUseCaches?)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
+X add a note to revisions.txt that says "not for use as a reference"
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
+X switched to jre 1.4.1_02
+
+
 TODO CLEANUP
 o online signup cgi for people to add themselves to the list
 o probably should doClose() on new/open instead of doStop()
