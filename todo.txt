@@ -1,23 +1,8 @@
-0033a
-X implement 'duplicate'
-X implement renaming of projects
-X renaming projects
-X   make sure people don't use - or other illegal chars
-X     on export or naming sketches--no spaces(!)
-o   changed by clicking on the name and typing
-X new/duplicate/rename should rebuild skopen menu
-X item to launch proce55ing.net
-X item to launch reference in browser
-
-0033b
-X check all menus to make sure they all work/make sense
-X   disable the ones that aren't implemented
-X in progress working on presentation mode
-
-0033c
+0034
 
 a _ write message to people who signed up for p5 alpha
 a _ collapse pdeengine/pderunner/kjcengine to some extent
+a _ shouldn't substitute f's for: "Univers76.vlw.gz";
 
 play
 a _ implement presentation mode

@@ -1,3 +1,11 @@
+ABOUT REV 0033
+
+- duplicate and rename now implemented, more (should be all) of 
+  the menus are actually functional. some are hacks (item to
+  launch proce55ing.net and the reference) but things should be
+  generally more consistent.
+
+
 ABOUT REV 0032
 
 - another major release that irons out issues of export and 
