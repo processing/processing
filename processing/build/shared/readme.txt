@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0048 - 6 JANUARY 2003
+RELEASE 0048 - 7 JANUARY 2003
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -97,7 +97,7 @@ a response. if you want to go straight to the bugs page, it's:
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 when reporting this "bug" please include information about
-1. the revision number (i.e. 0047)
+1. the revision number (i.e. 0048)
 2. what operating system you're using, on what kind of hardware
 3. a copy of your code
 4. details of the error, which may be the last few lines from 
@@ -138,7 +138,9 @@ keep, but some of the larger ones that we know about:
   kill the java runtime and restart your app. this will slowly be
   ironed out. 
 
-- wheel mouse is disabled again in 47
+- there is a report of the blinking text caret disappearing on
+  windows xp.. hasn't been verified just yet.. 
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
