@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorHeader - panel that containing the sketch title
+  PdeEditorHeader - sketch tabs at the top of the screen
   Part of the Processing project - http://Proce55ing.net
 
   Except where noted, code is written by Ben Fry and
@@ -29,24 +29,42 @@ import java.io.*;
 import javax.swing.*;
 
 
-//public class PdeEditorHeader extends JPanel {
 public class PdeEditorHeader extends JComponent {
-  static final String SKETCH_TITLER = "sketch";
+  //static final String SKETCH_TITLER = "sketch";
 
-  static Color primaryColor;
-  static Color secondaryColor;
-  static Color backgroundColor;
+  //static Color primaryColor;
+  static Color textColor[] = new Color[2];
+  //static Color unselectedColor;
 
   PdeEditor editor;
+  //PdeSketch sketch;
 
-  int sketchLeft;
-  int sketchRight;
-  int sketchTitleLeft;
-  boolean sketchModified;
+  //int sketchLeft;
+  //int sketchRight;
+  //int sketchTitleLeft;
+  //boolean sketchModified;
 
   Font font;
   FontMetrics metrics;
   int fontAscent;
+
+  //
+
+  static final String STATUS[] = { "unsel", "sel" };
+  static final int UNSELECTED = 0;
+  static final int SELECTED = 1;
+
+  static final String WHERE[] = { "left", "mid", "right", "menu" };
+  static final int LEFT = 0;
+  static final int MIDDLE = 1;
+  static final int RIGHT = 2;
+  static final int MENU = 3;
+
+  static final int PIECE_WIDTH = 4;
+
+  Image[][] pieces;
+
+  //
 
   Image offscreen;
   int sizeW, sizeH;
@@ -56,10 +74,24 @@ public class PdeEditorHeader extends JComponent {
   public PdeEditorHeader(PdeEditor eddie) { 
     this.editor = eddie; // weird name for listener
 
-    if (primaryColor == null) {
-      backgroundColor = PdePreferences.getColor("header.bgcolor");
-      primaryColor    = PdePreferences.getColor("header.fgcolor.primary");
-      secondaryColor  = PdePreferences.getColor("header.fgcolor.secondary");
+    pieces = new Image[2][3];
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 4; j++) {
+        pieces[i][j] = PdeBase.getImage("tab-" + STATUS[i] + "-" + 
+                                        WHERE[j] + ".gif", this);
+      }
+    }
+
+    if (backgroundColor == null) {
+      backgroundColor = 
+        PdePreferences.getColor("header.bgcolor");
+      textColor[SELECTED] = 
+        PdePreferences.getColor("header.text.selected.color");
+      textColor[UNSELECTED] = 
+        PdePreferences.getColor("header.text.unselected.color");
+
+      //primaryColor    = PdePreferences.getColor("header.fgcolor.primary");
+      //secondaryColor  = PdePreferences.getColor("header.fgcolor.secondary");
     }
 
     addMouseListener(new MouseAdapter() {
@@ -76,26 +108,15 @@ public class PdeEditorHeader extends JComponent {
 
   public void reset() {
     sketchLeft = 0;
-    //userLeft = 0;
-    //update();
     repaint();
   }
 
 
-  /*
-  public void update() {
-    paint(this.getGraphics());
-  }
-
-  public void update(Graphics g) {
-    paint(g);
-  }
-  */
-
-
   public void paintComponent(Graphics screen) {
     if (screen == null) return;
-    if (editor.sketchName == null) return;
+    //if (editor.sketchName == null) return;
+
+    PdeSketch sketch = editor.sketch;
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -116,7 +137,6 @@ public class PdeEditorHeader extends JComponent {
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-      //userLeft = 0; // reset
       imageW = sizeW;
       imageH = sizeH;
       offscreen = createImage(imageW, imageH);
@@ -124,58 +144,60 @@ public class PdeEditorHeader extends JComponent {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdePreferences.getFont("header.font");
+      font = PdePreferences.getFont("header.text.font");
       g.setFont(font);
       metrics = g.getFontMetrics();
       fontAscent = metrics.getAscent();
     }
 
-    //if (sketchLeft == 0) {
+    int x = PdePreferences.GUI_SMALL;
+    for (int i = 0; i < sketch.fileCount; i++) {
+      String text = sketch.modified[i] ? 
+        ("  " + sketch.names[i] + "  ") :
+        ("  " + sketch.names[i] + " \u00A7");
+
+      int textWidth = metrics.stringWidth(text);
+      int pieceCount = 2 + (textWidth / PIECE_WIDTH);
+      int pieceWidth = pieceCount * PIECE_WIDTH;
+
+      state = (i == sketch.current) ? SELECTED : UNSELECTED;
+      g.drawImage(pieces[state][LEFT], x, 0, null);
+      x += PIECE_WIDTH;
+
+      int contentLeft = x;
+      for (int j = 0; j < pieceCount; j++) {
+        g.drawImage(pieces[state][MIDDLE], x, 0, null);
+        x += PIECE_WIDTH;
+      }
+      int textLeft = contentLeft + (pieceWidth - textWidth) / 2;
+
+      g.setColor(textColor[STATUS]);
+      int baseline = (sizeH + fontAscent) / 2;
+      g.drawString(names[i], textLeft, baseline);
+
+      g.drawImage(pieces[state][RIGHT], x, 0, null);
+      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
+    }
+
+    /*
     sketchTitleLeft = PdePreferences.GUI_SMALL;
     sketchLeft = sketchTitleLeft + 
       metrics.stringWidth(SKETCH_TITLER) + PdePreferences.GUI_SMALL;
     sketchRight = sketchLeft + metrics.stringWidth(editor.sketchName);
     int modifiedLeft = sketchRight + PdePreferences.GUI_SMALL;
-    //int modifiedLeft = sketchLeft + 
-    //metrics.stringWidth(editor.sketchName) + PdePreferences.GUI_SMALL;
-
-    //sketch = editor.sketchName;
-    //if (sketch == null) sketch = "";
-    //}
-
-    //if (userLeft == 0) {
-    //userLeft = sizeW - 20 - metrics.stringWidth(editor.userName);
-    //userTitleLeft = userLeft - PdePreferences.GUI_SMALL - 
-    //metrics.stringWidth(USER_TITLER);
-
-    //user = editor.userName;
-    //if (user == null) user = "";
-    //}
 
     int baseline = (sizeH + fontAscent) / 2;
 
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
-    //boolean boringUser = editor.userName.equals("default");
-
     g.setFont(font); // needs to be set each time
     g.setColor(secondaryColor);
     g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);
-    if (sketchModified) g.drawString("\u00A7", modifiedLeft, baseline);
-    //if (!boringUser) g.drawString(USER_TITLER, userTitleLeft, baseline);
+    if (sketch.getModified()) g.drawString("\u00A7", modifiedLeft, baseline);
 
-    g.setColor(primaryColor);
-    //g.drawString(sketch, sketchLeft, baseline);
-    //String additional = sketchModified ? " \u2020" : "";
-    //String additional = sketchModified ? " \u00A4" : "";
-    //String additional = sketchModified ? " \u2022" : "";
     g.drawString(editor.sketchName, sketchLeft, baseline);
-
-    //if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
-
-    //g.setColor(fgColor[mode]);
-    //g.drawString(message, PdePreferences.GUI_SMALL, (sizeH + fontAscent) / 2);
+    */
 
     screen.drawImage(offscreen, 0, 0, null);
   }
