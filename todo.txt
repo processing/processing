@@ -1,4 +1,5 @@
 0053
+X add smooth() noSmooth() to the keywords
 
 _ smooth() is half-broken
 
