@@ -310,7 +310,8 @@ public class PdeBase {
       return phome;
     */
 
-    return sketchbookFolder;
+    // create the folder if it doesn't exist already
+    if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
   }
 
 
