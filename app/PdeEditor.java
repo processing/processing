@@ -50,19 +50,6 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
   public PdeEditor(PdeApplet app, String program) {
     this.app = app;
 
-    /*
-    Color bgColor = 
-      PdeApplet.getColor("editor.bgcolor", new Color(51, 102, 153));
-    Color tickColor = 
-      PdeApplet.getColor("editor.tick_color", new Color(204, 204, 204));
-    Color gutterBgColor =
-      PdeApplet.getColor("editor.gutter_bgcolor", new Color(0, 51, 102));
-    Color buttonBgColor = 
-      PdeApplet.getColor("editor.button_bgcolor", new Color(153, 153, 153));
-    Color statusBgColor = 
-      PdeApplet.getColor("editor.status_bgcolor", new Color(204, 204, 204));
-    */
-
     setLayout(new BorderLayout());
 
     Panel leftPanel = new Panel();
