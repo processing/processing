@@ -63,12 +63,12 @@ public class PApplet extends Applet
   public int pixels[];
 
   public int mouseX, mouseY;
-  public int pmouseX, pmouseY;
 
+  //public int pmouseX, pmouseY;
   // used to set pmouseX/Y to mouseX/Y the first time
   // mouseX/Y are used, otherwise pmouseX/Y would always
   // be zero making a big jump. yech.
-  boolean firstMouseEvent;
+  //boolean firstMouseEvent;
 
   public boolean mousePressed;
   public MouseEvent mouseEvent;
@@ -715,8 +715,8 @@ public class PApplet extends Applet
    * overloaded to do something more useful.
    */
   protected void handleMouseEvent(MouseEvent event) {
-    pmouseX = mouseX;
-    pmouseY = mouseY;
+    //pmouseX = mouseX;
+    //pmouseY = mouseY;
 
     mouseX = event.getX();
     mouseY = event.getY();
@@ -730,11 +730,11 @@ public class PApplet extends Applet
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
-    if (firstMouseEvent) {
-      pmouseX = mouseX;
-      pmouseY = mouseY;
-      firstMouseEvent = false;
-    }
+    //if (firstMouseEvent) {
+      //pmouseX = mouseX;
+      //pmouseY = mouseY;
+      //firstMouseEvent = false;
+    //}
 
     switch (event.getID()) {
     case MouseEvent.MOUSE_PRESSED:
