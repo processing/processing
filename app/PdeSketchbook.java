@@ -35,9 +35,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-#ifdef MACOS
 import com.apple.mrj.*;
-#endif
 
 
 public class PdeSketchbook {
@@ -162,7 +160,6 @@ public class PdeSketchbook {
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
 
-#ifdef MACOS
     // TODO this wouldn't be needed if i could figure out how to 
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs. you're my only hope
@@ -177,7 +174,6 @@ public class PdeSketchbook {
       // thank you apple, for changing this @#$)(*
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
     }
-#endif
 
     // make a note of a newly added sketch in the sketchbook menu
     rebuildMenu();
