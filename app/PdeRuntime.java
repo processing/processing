@@ -88,7 +88,6 @@ public class PdeRuntime implements PdeMessageConsumer {
            windowLocation.x + "," + windowLocation.y) :
           (PApplet.EXT_LOCATION + x1 + "," + y1);
 
-        //java "-Djava.library.path=C:\Documents and Settings\fry\My Documents\sketchbook\image_loading_problems\code" -cp "lib\build;java\lib\rt.jar;lib;lib\build;lib\pde.jar;lib\core.jar;lib\mrj.jar;lib\antlr.jar;lib\oro.jar;C:\WINDOWS\system32\QTJava.zip;;C:\Documents and Settings\fry\My Documents\sketchbook\image_loading_problems\code" processing.core.PApplet --location=710,61 "--sketch-folder=C:\Documents and Settings\fry\My Documents\sketchbook\image_loading_problems" Temporary_6879_7583
         String command[] = new String[] { 
           "java",
           "-Djava.library.path=" + sketch.libraryPath,  // might be ""
@@ -130,6 +129,10 @@ public class PdeRuntime implements PdeMessageConsumer {
         }
         applet.start();
 
+        /*
+          // appears to be no longer necessary now that draw()
+          // is gonna be run inside of setup()
+
         // check to see if it's a draw mode applet
         boolean drawMode = false;
         try {
@@ -152,6 +155,7 @@ public class PdeRuntime implements PdeMessageConsumer {
             } catch (InterruptedException e) { }
           }
         }
+        */
 
         if (editor.presenting) {
           //window = new Window(new Frame());

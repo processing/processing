@@ -147,6 +147,7 @@ public class PApplet extends Applet
   static public final String EXTERNAL_MOVE = "__MOVE__";
   //boolean externalRuntime;
 
+  //static boolean setupComplete = false;
 
   public void init() {
     //checkParams();
@@ -198,6 +199,8 @@ public class PApplet extends Applet
     this.width = g.width;
     this.height = g.height;
     //g.applet = this;
+
+    //setupComplete = true;
 
     try {
       getAppletContext();
@@ -297,6 +300,8 @@ public class PApplet extends Applet
 
 
   public void size(int iwidth, int iheight) {
+    //width = iwidth;
+    //height = iheight;
     //if (g != null) return; // would this ever happen? is this a good idea?
     g.resize(iwidth, iheight);
 
@@ -1545,16 +1550,15 @@ public class PApplet extends Applet
           gimmeImage(getClass().getResource("data/" + filename), force);
       }
       if (awtimage == null) {
-        /*
         try {
           //FileInputStream fis = 
           //new FileInputStream(folder + "data/" + filename);
-          URL url = new URL("file:/" + folder + "data/" + filename);
-          awtimage = gimmeImage(url, force);
+          String url = "file:/" + folder + "/data/" + filename;
+            //URL url = new URL("file:/" + folder + "data/" + filename);
+          awtimage = gimmeImage(new URL(url), force);
         } catch (IOException e) { 
           e.printStackTrace();
         }
-        */
       }
     }
     if (awtimage == null) {
@@ -2856,7 +2860,7 @@ public class PApplet extends Applet
         } else if (args[argIndex].indexOf(EXT_EXACT_LOCATION) == 0) {
           external = true;
           String locationStr = 
-            args[argIndex].substring(EXT_LOCATION.length());
+            args[argIndex].substring(EXT_EXACT_LOCATION.length());
           location = toInt(split(locationStr, ','));
           exactLocation = true;
 
@@ -2871,13 +2875,13 @@ public class PApplet extends Applet
       }
 
       Frame frame = new Frame();
-      frame.pack();  // maybe get insets
+      frame.pack();  // get insets. get more.
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
 
       // these are needed before init/start
       applet.folder = folder;
-      int argc = args.length - argIndex;
+      int argc = args.length - (argIndex+1);
       applet.args = new String[argc];
       System.arraycopy(args, argc, applet.args, 0, argc);
 
@@ -2887,21 +2891,14 @@ public class PApplet extends Applet
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       if (external) {
-        /*
-        String argh = args[0].substring(EXTERNAL_FLAG.length());
-        boolean exact = argh.charAt(0) == EXTERNAL_EXACT_LOCATION;
-        if (exact) argh = argh.substring(1);
-        int location[] = toInt(split(argh, ','));
-        int locationX = location[0] - 20;
-        int locationY = location[1];
-        */
-
-        Insets insets = frame.getInsets();  // pack() first?
+        Insets insets = frame.getInsets();  // does pack() first above
         //System.out.println(insets);
 
         int locationX = location[0] - 20;
         int locationY = location[1];          
+        //System.out.println("x,y " + locationX + " " + locationY);
 
+        //frame.setTitle(str(setupComplete));
         int minW = 120;
         int minH = 120;
         int windowW = 
@@ -2909,10 +2906,11 @@ public class PApplet extends Applet
         int windowH = 
           Math.max(applet.height, minH) + insets.top + insets.bottom;
         frame.setSize(windowW, windowH);
+        //frame.setTitle(windowW + " " + windowH);
 
         if (exactLocation) {
           frame.setLocation(location[0], location[1]);
-          
+
         } else {
           if (locationX - windowW > 10) {  
             // if it fits to the left of the window
