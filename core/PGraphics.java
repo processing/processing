@@ -405,7 +405,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
-    System.out.println("resize " + iwidth + " " + iheight);
+    //System.out.println("resize " + iwidth + " " + iheight);
 
     width = iwidth;
     height = iheight;
