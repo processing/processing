@@ -16,6 +16,9 @@ implements ActionListener
   static Frame frame;
   WindowAdapter windowListener;
 
+  //static final String WINDOW_TITLE = "         P         r     o          c      e       5         5     i       n       g    ");
+  static final String WINDOW_TITLE = "Proce55ing";
+
   static public void main(String args[]) {
     PdeApplication app = new PdeApplication();
     //if (args.length != 0) {
@@ -28,7 +31,7 @@ implements ActionListener
   }
 
   public PdeApplication() {
-    frame = new Frame(" p r o c e s s i n g ");
+    frame = new Frame(WINDOW_TITLE); 
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -77,7 +80,8 @@ implements ActionListener
 
     // i don't like this being here, but..
     //((PdeEditor)environment).graphics.frame = frame;
-    ((PdeEditor)environment).frame = frame;
+    //((PdeEditor)environment).frame = frame;
+    editor.frame = frame;
 
     frame.pack();
     frame.show();  // added back in for pde
