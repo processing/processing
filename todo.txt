@@ -6,14 +6,17 @@ X much reworking for run/present modes
 X   run/present modes are getting confused
 X   [esc] to exit presentation mode
 X remove 'edit' menu because it's worthless
+X build 'release' version of app that doesn't need MFC42D.dll
+X check on linefeeds and other errors with bbs on web site
+X serial
+X   some method for getting list of serial ports
+X     pde menu item for listing serial ports available
+o     could just println them to the console
+X   import javax.comm stuff as standard in kjc (but not export)
+X can't get fonts to load - tested working ok 
+X   bagel complaint: could not load font Univerx76.vlw.gz
+X   why the x? what's going on?
 
-
-bagel
-a _ serial
-a _   some method for getting list of serial ports
-a _     pde menu item for listing serial ports available
-a _     could just println them to the console
-a _   import javax.comm stuff as standard in kjc (not in applet)
 
 pde
 a _ move background() out of draw() for draw mode apps
@@ -29,8 +32,10 @@ macos9
 a _ apple control keys register as edit events in buffer
 a _   use Toolkit.getShortcutKeymask() to figure out what's up
 a _ set file type/creator for .pde files.. TEXTPde1
+a _ try using serial
 
 macosx
+a _ try using serial
 a _ test presentation mode for window sizing status
 
 macos
@@ -44,44 +49,15 @@ a _   URLConnection.setUseCaches(false)
 a _   parent.obj.close() on the url
 a _ check to see if lines for error messages are off
 
-windwows
-a _ build 'release' version of app, wants MFC42D.dll
+windows
 a _ splash screen.. check win95 book for simple code
 
-release
-a _ add 'readme.txt' to dist.sh.. change notes to revisions
-a _ add examples to dist.sh scripts
-a _   separate shared script to cleanup?
-a _   or small script to remove CVS directories from a tree
-a _ check osname under win98 and linux
-a _   information on how to submit bugs to p5-bugs@proce55ing.net
-a _     include release number, platform, and a copy of the code
-
 web / docs
+a _ finish writing 'readme.txt'
 a _ change download/index.html to not describe dates but process
 a _   "this is alpha, we're heading to beta with series of sm releases"
-a _ check on linefeeds and other errors with bbs on web site
-a _ online discussion/talk system (gets people using the site too)
-a _ online signup cgi for people to add themselves to the list
-a _ see about setting up simple bug tracker/feature system
-a _   queue for people reporting things externally
-a _   bugzilla but simpler
-a _   would also be nice for people to be able to vote on features
 a _ document serial a bit more in release notes
 
-
-a _ can't get fonts to load
-a _   bagel complaint: could not load font Univerx76.vlw.gz
-a _   why the x? what's going on?
-BFont font;
-font = loadFont("Univers76.vlw.gz");
-//font = loadFont("Bodoni.vlw.gz");
-//BFont font = loadFont("Univerx76.vlw.gz");
-setFont(font);
-String happy = "FontTest";
-//float happyWidth = font.stringWidth(happy);
-//text(happy, (width - happyWidth)/2, 10);
-text(happy, 20, 50);
 
 a _ this code is not performing correctly
 BImage b;  // declare variable "b" of type BImage
@@ -119,10 +95,6 @@ rect(20, 20, 50, 50);
 fill(rr);
 rect(50, 50, 50, 50);
 
-a _ proce55ing thinks the following numbers are a double:
-float a = .5;
-float b = 0.5;
-
 
 ////////////////////////////////////////////////////////////////////
 
@@ -134,6 +106,7 @@ b _   projectX, projectY, .. or projectedX ?
 
 
 BAGEL / high & time consuming
+b _ color won't set for fonts
 b _ alpha
 b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
@@ -283,6 +256,11 @@ b _ lockup when something missing from classpath on dynamic load
 b _   but makes no error.. peditorconsole probably swallowing it
 b _ change writeJava/start functions to be combined in kjc
 b _   but the rest inside PdeEditor that takes care of launching/placing
+b _ online signup cgi for people to add themselves to the list
+b _ see about setting up simple bug tracker/feature system
+b _   queue for people reporting things externally
+b _   bugzilla but simpler
+b _   would also be nice for people to be able to vote on features
 
 
 PDE / medium

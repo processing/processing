@@ -190,7 +190,7 @@ public class KjcEngine extends PdeEngine {
 	index = s.indexOf(' ');
 	name = s.substring(0, index);
 	tempClass = name;
-	
+
 	// and we're running inside 
 	if (kjc) {  // if running inside processing...
 	  index = program.indexOf(EXTENDS); // ...and extends BApplet
@@ -213,12 +213,15 @@ public class KjcEngine extends PdeEngine {
 	// spew out a bunch of java imports 
 	for (int i = 0; i < imports.length; i++) {
 	  writer.print("import " + imports[i] + ".*; ");
+	  // add serial if running inside pde
+	  if (kjc) writer.print("import javax.comm.*;");
 	  if (!kjc) writer.println();
 	}
 	if (!kjc) writer.println();
 
 	writer.print("public class " + name + " extends " +
-		     ((kjc && !usingExternal) ? "KjcApplet" : "BApplet") + " {");
+		     ((kjc && !usingExternal) ? 
+		      "KjcApplet" : "BApplet") + " {");
       }
       if (programType == BEGINNER) {
 	if (!kjc) writer.println();

@@ -1,4 +1,17 @@
 0039 BUGS WITH CODE
+
+// font problems
+BFont font;
+font = loadFont("Univers76.vlw.gz");
+//font = loadFont("Bodoni.vlw.gz");
+//BFont font = loadFont("Univerx76.vlw.gz");
+setFont(font);
+String happy = "FontTest";
+//float happyWidth = font.stringWidth(happy);
+//text(happy, (width - happyWidth)/2, 10);
+text(happy, 20, 50);
+
+// float issues
 //BFont font1;
 //BFont font2;
 //font1 = loadFont("Univers76.vlw.gz");
@@ -62,6 +75,15 @@ X   float f = 0.3; and fill(0.3, 0.2, 0.1);
 X windows needs to work from the .exe
 X   also included run.bat just in case
 X test the gcc executable, and tweak dist script accordingly
+X add 'readme.txt' to dist.sh.. change notes to revisions
+X add examples to dist.sh scripts
+X   separate shared script to cleanup?
+X   or small script to remove CVS directories from a tree
+X check osname under win98 and linux
+X information on how to submit bugs to p5-bugs@proce55ing.net
+X   include release number, platform, and a copy of the code
+X proce55ing thinks the following numbers are a double:
+X   float a = .5; float b = 0.5;
 
 
 0037
