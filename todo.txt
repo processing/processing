@@ -131,20 +131,6 @@ _   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63
 
 _ macosx - check to see if new linemetrics stuff is working better
 
-_ implement new version of history
-_   make history folder, and a zip (not gz) file for each entry
-_   history causing trouble - super slow with a huge sketch
-_     could instead be gzipped and appended to history.dat
-_     along with another file that is actually a table of offsets
-_     no need to make the thing a gzip stream
-_     checkbox on menu for 'record history' ?
-_     history converter option?
-_   only first 20 entries visible?
-_   zlib file becoming corrupt (not flushed after close?)
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
-_   shortcut to walk through history, ala photoshop (ctrl-alt-z)
-
 
 README
 _ make the whole thing an html file?
@@ -165,10 +151,25 @@ _ update readme with notes from bboard about "built with processing"
 _ add to "common problems"
 _   junk in the classpath can often cause trouble
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094871304
+_ history is not implemented in this version
 
 
 ......................................................................
 
+
+_ implement new version of history
+_   make history folder, and a zip (not gz) file for each entry
+_   history causing trouble - super slow with a huge sketch
+_     could instead be gzipped and appended to history.dat
+_     along with another file that is actually a table of offsets
+_     no need to make the thing a gzip stream
+_     checkbox on menu for 'record history' ?
+_     history converter option?
+_   only first 20 entries visible?
+_   zlib file becoming corrupt (not flushed after close?)
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
+_   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 _ keypressed hanging on applets with a code folder
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102

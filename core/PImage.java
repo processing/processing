@@ -118,7 +118,7 @@ public class PImage implements PConstants, Cloneable {
    * alpha is zero, it will be transparent.
    */
   public PImage(int width, int height) {
-    setup(width, height, RGB);
+    init(width, height, RGB);
     //this(new int[width * height], width, height, RGBA);
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
@@ -143,7 +143,7 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Function to be used by subclasses to setup their own bidness.
    */
-  public void setup(int width, int height, int format) {  // ignore
+  public void init(int width, int height, int format) {  // ignore
     this.width = width;
     this.height = height;
     this.pixels = new int[width*height];
