@@ -55,6 +55,7 @@ rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
 cp dist/Proce55ing.exe processing/
+cp dist/run.bat processing/
 cp dist/lib/pde_windows.properties processing/lib/
 
 # convert notes.txt to windows LFs

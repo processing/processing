@@ -339,6 +339,8 @@ public class PdeEditor extends Panel {
 
 
   public void doRun(boolean presentation) {
+    //System.out.println(System.getProperty("java.class.path"));
+
     //doStop();
     doClose();
     running = true;

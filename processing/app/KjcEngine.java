@@ -133,22 +133,24 @@ public class KjcEngine extends PdeEngine {
 	  (3.)
 	  (.3 * 6)
 	  (.30*7)
+          float f = 0.3; 
+          fill(0.3, 0.2, 0.1);
 
-	  next to white space \s or math ops +-/*()
+	  next to white space \s or math ops +-/*() 
+          or , on either side, 
+          followed by ; (might as well on either side)
    
-	 */
-	program = substipoot(program, "([\\s\\+\\-\\/\\*\\(\\)])(\\d+\\.\\d*)([\\s\\+\\-\\/\\*\\(\\)])", "$1$2f$3");
-	program = substipoot(program, "([\\s\\+\\-\\/\\*\\(\\)])(\\d*\\.\\d+)([\\s\\+\\-\\/\\*\\(\\)])", "$1$2f$3");
+	  // allow 3. to work (also allows x.x too)
+	  program = substipoot(program, "(\\d+\\.\\d*)(\\D)", "$1f$2");
+	  program = substipoot(program, "(\\d+\\.\\d*)ff", "$1f");
 
-	/*
-	// allow 3. to work (also allows x.x too)
-	program = substipoot(program, "(\\d+\\.\\d*)(\\D)", "$1f$2");
-	program = substipoot(program, "(\\d+\\.\\d*)ff", "$1f");
-
-	// allow .3 to work (also allows x.x)
-	program = substipoot(program, "(\\d*\\.\\d+)(\\D)", "$1f$2");
-	program = substipoot(program, "(\\d*\\.\\d+)ff", "$1f");
+	  // allow .3 to work (also allows x.x)
+	  program = substipoot(program, "(\\d*\\.\\d+)(\\D)", "$1f$2");
+	  program = substipoot(program, "(\\d*\\.\\d+)ff", "$1f");
 	*/
+
+	program = substipoot(program, "([\\s\\,\\;\\+\\-\\/\\*\\(\\)])(\\d+\\.\\d*)([\\s\\,\\;\\+\\-\\/\\*\\(\\)])", "$1$2f$3");
+	program = substipoot(program, "([\\s\\,\\;\\+\\-\\/\\*\\(\\)])(\\d*\\.\\d+)([\\s\\,\\;\\+\\-\\/\\*\\(\\)])", "$1$2f$3");
       }
 
       // allow int(3.75) instead of just (int)3.75

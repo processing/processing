@@ -101,7 +101,7 @@ BOOL CLauncherApp::InitInstance()
     char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
 	// put quotes around contents of cp, 
 	// because %s might have spaces in it.
-	
+
     sprintf(cp, 
 		"-cp \""
         "%s\\lib;"
@@ -109,7 +109,7 @@ BOOL CLauncherApp::InitInstance()
         "%s\\lib\\pde.jar;"
 	    "%s\\lib\\kjc.jar;"
 	    "%s\\lib\\oro.jar;"
-	    "%s\\lib\\java\\ext\\comm.jar"
+	    "%s\\java\\lib\\ext\\comm.jar"
 		"\" ",
 	    loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
 		
@@ -136,8 +136,8 @@ BOOL CLauncherApp::InitInstance()
 	strcpy(executable, loaddir);
 	// copy in the path for jrew, relative to launcher.exe
 	//strcat(executable, "\\bin\\jrew");
-	strcat(executable, "\\java\\bin\\java");
-	
+	strcat(executable, "\\java\\bin\\javaw");
+
 	//AfxMessageBox(executable);
 
 	// code to add the lib directory to the path, in case that's needed
