@@ -1219,6 +1219,80 @@ public class PdeEditor extends JFrame
    */
   protected void handleOpen2(String path) {
     try {
+      // check to make sure that this .pde file is 
+      // in a folder of the same name
+      File file = new File(path);
+      File parentFile = new File(file.getParent());
+      String parentName = parentFile.getName();
+      String pdeName = parentName + ".pde";
+      File altFile = new File(file.getParent(), pdeName);
+
+      //System.out.println("path = " + file.getParent());
+      //System.out.println("name = " + file.getName());
+      //System.out.println("pname = " + parentName);
+
+      if (pdeName.equals(file.getName())) {
+        // no beef with this guy
+
+      } else if (altFile.exists()) {
+        // user selected a .java from the same sketch, 
+        // but open the .pde instead
+        path = altFile.getAbsolutePath();
+        //System.out.println("found alt file in same folder");
+
+      } else if (!path.endsWith(".pde")) {
+        PdeBase.showWarning("Bad file selected",
+                            "Processing can only open its own sketches\n" +
+                            "and other files ending in .pde", null);
+        return;
+
+      } else {
+        String properParent = 
+          file.getName().substring(0, file.getName().length() - 4);
+
+        Object[] options = { "OK", "Cancel" };
+        String prompt = 
+          "The file \"" + file.getName() + "\" needs to be inside\n" +
+          "a sketch folder named \"" + properParent + "\".\n" +
+          "Create this folder, move the file, and continue?";
+
+        int result = JOptionPane.showOptionDialog(this,
+                                                  prompt,
+                                                  "Moving",
+                                                  JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE,
+                                                  null,
+                                                  options, 
+                                                  options[0]);  
+
+        if (result == JOptionPane.YES_OPTION) {
+          // create properly named folder
+          File properFolder = new File(file.getParent(), properParent);
+          if (properFolder.exists()) {
+            PdeBase.showWarning("Error",
+                                "A folder named \"" + properParent + "\" " +
+                                "already exists. Can't open sketch.", null);
+            return;
+          }
+          if (!properFolder.mkdirs()) {
+            throw new IOException("Couldn't create sketch folder");
+          }
+          // copy the sketch inside
+          File properPdeFile = new File(properFolder, file.getName());
+          File origPdeFile = new File(path);
+          PdeBase.copyFile(origPdeFile, properPdeFile);
+
+          // remove the original file, so user doesn't get confused
+          origPdeFile.delete();
+
+          // update with the new path
+          path = properPdeFile.getAbsolutePath();
+
+        } else if (result == JOptionPane.NO_OPTION) {
+          return;
+        }
+      }
+
       sketch = new PdeSketch(this, path);
       header.rebuild();
       if (PdePreferences.getBoolean("console.auto_clear")) {
