@@ -10,13 +10,50 @@ andres <moscoca@bigpond.com>
 d.amarel <d.amarel@dotsperinch.com>
 Daniel Evan Schwartz <design@roomn8.com>
 
+
 changes to graphics
 _ rect now uses x, y, width, height instead of x1, y1, x2, y2
-_ circle has been replaced with ellipse
-_ box takes width, height, depth instead of six coordinates
+_ circle has been replaced with ellipse (uses xywh)
+_ box takes diameter, or width, height, depth [NOT IN CPP]
+_ sphere is the same as box [NOT IN CPP]
+
+
+where is?
+_ audio output (play wav, au, aiff(?), mp3)
+
+
+advanced
+_ adding lights
+_   control of position/color of default lights
+_ controlling camera movements
+_ multmatrix/identity
+_ constants besides PI, TWO_PI
+_ min/max with 3 parameters
+_ if (a) ? 3 : 4
+_ formatting printf-style things
+_ audio input
+_ audio synthesis
+_ just saying 'millis' in processingapplet, instead of getMillis()
+_ keyPressed, keyReleased, mousePressed, mouseReleased
+
+
+for the book
+_ alpha, anti-aliasing
+
+
+open
+_ is day, month, year overkill inside processingapplet?
+_ PImage, PFont (?)
+_ loadImage or getImage?
+_ bezierVertex/catmullRomVertex poorly named (based on algo used)
+_   instead curveVertex/fitCurveVertex/etc.
+_ circle/square functions
+
+_ add java.* to top of processingapplet default base class used by kjc
 
 
 for 0010
+_ are line and point working in 3D?
 _ keys don't work, even when overriding keyTyped etc.
 _ z=0 shit, 2D stuff needs to draw over z=0 plane
 _ no stroke should show up on image()
