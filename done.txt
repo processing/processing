@@ -1,3 +1,25 @@
+0058
+X update the readme.. had missed some spots
+
+windows
+X check to see if qtjava is installed
+X   put up warning msg and quit if it's not
+X move back to 1.4.1 vm (what's the latest?)
+
+macosx
+X switch version of jikes to use non-fink
+X switch to java 1.3.1
+
+linux
+X make mention that linux is i386
+X bring linux up to 1.4
+X   though still compiling for 1.3, until detection fixed
+X   grab rxtx for linux and include with distribution
+X make sure a copy of jikes is included
+X test rxtx on linux with sun vm
+X   make notes about rxtx in readme.txt
+
+
 0057
 X is it possible to get rid of KjcApplet
 X   better 'newMessage' trigger with the printstream
