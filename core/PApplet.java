@@ -502,6 +502,7 @@ public class PApplet extends Applet
                 insets.top + ((winH - insets.top - insets.bottom) - height)/2,
                 winW, winH);
     } else {
+      //System.out.println("frame was null");
       setBounds(0, 0, width, height);
     }
   }
@@ -4579,13 +4580,13 @@ v              PApplet.this.stop();
   }
 
 
-  public void vertex(float x, float y, float u, float v) {
-     g.vertex(x, y, u, v);
+  public void vertex(float x, float y, float z) {
+     g.vertex(x, y, z);
   }
 
 
-  public void vertex(float x, float y, float z) {
-     g.vertex(x, y, z);
+  public void vertex(float x, float y, float u, float v) {
+     g.vertex(x, y, u, v);
   }
 
 
