@@ -829,7 +829,7 @@ public class PApplet extends Applet
       createImage(new MemoryImageSource(image.width, image.height,
                                         image.pixels, 0, image.width));
 
-    Toolkit tk = Toolkit.getDefaultToolkit();
+    //Toolkit tk = Toolkit.getDefaultToolkit();
     Point hotspot = new Point(hotspotX, hotspotY);
     try {
       Method mCustomCursor = 
