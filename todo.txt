@@ -31,6 +31,7 @@ X   when the value gets a NumberFormatException.. ie.
 X   splitInts("blah blah blah", ' ', 0);
 X   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
 X use System.arraycopy for clear().. could be way fast
+_   test to see how much faster the new arraycopy version is
 
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
@@ -53,9 +54,14 @@ _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
 
 data things for my own work, but also generally useful
+_ numberFormat too much, use nf
+_   how to include space for - or +
+_   how to do without zeroes
 _ need some model for i/o that makes more sense
 _   getting whole words from serial, network, and files
 _   or buffers of specific length with a sync byte
+_ break out BSerial as separate object like BVideo
+_   BSerial.flush and BSerial.available
 _ file output, save strings or pile of bytes
 _ quicksort should probably just be made into 'sort' class
 _   it's the only one ever used
@@ -124,6 +130,17 @@ BAGEL / Rendering
 
    b _ alpha. fill(r, g, b, a), stroke(r, g, b, a),
 
+   b _ picking
+   b _   what is the API for picking?
+   b _   ability to write data other than image into the buffer
+   b _   user can introduce new kinds of buffers at will (!)
+   b _   lists of names of objects, or the 'line number' buffer
+   b _   but how to determine *where* on object the hit occurs?
+
+   b _ concave/complex polygon
+   b _   eventually POLYGON auto-detects convex/concave polygon
+   b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
+
    b _ clipping objects (clipping planes?)
    b _   things are flying into the camera and halting apps
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
@@ -142,10 +159,6 @@ BAGEL / Rendering
    b _ shape.. non-homogenous colors for beginShape()
    b _   currently disabled b/c homogenousColors not set false for vertices
    b _   and code not written for curve vertices
-
-   b _ concave/complex polygon
-   b _   eventually POLYGON auto-detects convex/concave polygon
-   b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 
    b _ lines
    b _   rewrite line and stroke code, it's a buggy mess
@@ -168,13 +181,6 @@ BAGEL / Rendering
    b _   finish fill mode of flat circle function
    b _   stroked version of sphere is just a circle (?)
    b _   setting accuracy of circles/sphere
-
-   b _ picking
-   b _   what is the API for picking?
-   b _   ability to write data other than image into the buffer
-   b _   user can introduce new kinds of buffers at will (!)
-   b _   lists of names of objects, or the 'line number' buffer
-   b _   but how to determine *where* on object the hit occurs?
 
    b _ opengl export / rendering mode
 
