@@ -43,11 +43,14 @@ public class PdeFontBuilder extends JFrame {
   JList fontSelector;
   JComboBox styleSelector;
   JTextField sizeSelector;
+  JCheckBox allBox;
   JCheckBox smoothBox;
   JTextArea sample;
   JButton okButton;
   JTextField filenameField;
+
   boolean smooth = true;
+  boolean all = false;
 
   Font font;
 
@@ -59,9 +62,7 @@ public class PdeFontBuilder extends JFrame {
   };
 
 
-  // font.deriveFont(float size)
-
-  public PdeFontBuilder(File targetFolder) {
+  public PdeFontBuilder() {
     super("Create Font");
 
     Container paine = getContentPane();
@@ -250,19 +251,21 @@ public class PdeFontBuilder extends JFrame {
 
     JPanel panel = new JPanel();
     panel.add(new JLabel("Size:"));
-    sizeSelector = new JTextField("48 ");
+    sizeSelector = new JTextField(" 48 ");
     sizeSelector.getDocument().addDocumentListener(new DocumentListener() {
 	public void insertUpdate(DocumentEvent e) { update(); }
 	public void removeUpdate(DocumentEvent e) { update(); }
         public void changedUpdate(DocumentEvent e) { }
       });
-
     panel.add(sizeSelector);
+
+    /*
     JLabel rec = new JLabel("(Recommended size for 3D use is 48 points)");
     if (PdeBase.platform == PdeBase.MACOSX) {
       rec.setFont(new Font("Dialog", Font.PLAIN, 10));
     }
     panel.add(rec);
+    */
 
     smoothBox = new JCheckBox("Smooth");
     smoothBox.addActionListener(new ActionListener() {
@@ -272,6 +275,15 @@ public class PdeFontBuilder extends JFrame {
       });
     smoothBox.setSelected(smooth);
     panel.add(smoothBox);
+
+    allBox = new JCheckBox("All Characters");
+    allBox.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          all = allBox.isSelected();
+        }
+      });
+    allBox.setSelected(all);
+    panel.add(allBox);
 
     pain.add(panel);
 
@@ -369,7 +381,7 @@ public class PdeFontBuilder extends JFrame {
 
     try {
       font = new Font(list[selection], Font.PLAIN, fontsize);
-      PFont2 f = new PFont2(font, smooth);
+      PFont2 f = new PFont2(font, all, smooth);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();
