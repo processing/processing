@@ -108,6 +108,7 @@ foreach $arg (@ARGV) {
 
 # support: define, ifdef, ifndef, else, endif
 # no support: defined(x), elif, #define blah 12, nesting
+#exit; # testing why bagel dir is getting created
 
 print "processing...\n";
 foreach $file (@file_list) {
