@@ -18,6 +18,7 @@ _   since it may take a long time (i.e. 1000s of screen grabs)
 _ preproc: making all functions public that have no specifier
 _   this will make draw() etc all much easier
 _   as well as the library events
+_   focusGained/focusLost was added.. 
 
 _ basic sample audio playback needed for p5
 
