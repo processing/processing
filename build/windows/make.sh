@@ -54,6 +54,8 @@ else
   cp dist/jikes.exe work/
   #chmod +x work/jikes.exe
 
+  cp dist/ICE_JNIRegistry.dll work/
+
   # chmod +x the crew
   find work -name "*.dll" -exec chmod +x {} ';'
   find work -name "*.exe" -exec chmod +x {} ';'
@@ -118,7 +120,7 @@ fi
 
 cd app
 
-CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar"
+CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\lib\\registry.jar;..\\build\\windows\\work\\java\\lib\\rt.jar"
 
 ../build/windows/work/jikes +D -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 #/cygdrive/c/jdk-1.4.2_05/bin/javac.exe -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java
