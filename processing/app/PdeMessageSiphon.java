@@ -56,9 +56,14 @@ class PdeMessageSiphon implements Runnable {
         //System.err.println(currentLine);
       }
     } catch (Exception e) { 
-      System.err.println("PdeMessageSiphon err " + e);
-      e.printStackTrace();
-      //thread.stop();  // implicit (and no longer supported)
+      // on linux, a "bad file descriptor" message comes up when
+      // closing an applet that's being run externally.
+      // use this to cause that to fail silently since not important
+      if ((PdeBase.platform != PdeBase.LINUX) || 
+          (e.getMessage().indexOf("Bad file descriptor") == -1)) {
+        System.err.println("PdeMessageSiphon err " + e);
+        e.printStackTrace();
+      }
     }
     //System.err.println("siphon thread exiting");
   }
