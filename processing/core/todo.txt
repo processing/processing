@@ -132,6 +132,56 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 040727
 X incorporated NO_FLYING_POO line/poly hack developed for axel
 
+040902
+X sort should return an array, rather than sort in place
+
+_ standalone 'alpha' function for PImage
+
+
+The biggest problem was the key and mouse functions not working. For example:
+Input: Mouse_Functions
+Input: Keyboard_Functions
+
+Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
+
+Typography: Helix won't compile 
+
+....
+
+i wan't able to get binary() to work at all:
+here are three examples:
+
+/ / / /
+
+int i = 8;
+println(binary(i));
+
+java.lang.StringIndexOutOfBoundsException:
+String index out of range: -20
+      at java.lang.String.substring(Unknown Source)
+
+/ / / /
+
+char c = 8;
+println(binary(c));
+
+java.lang.StringIndexOutOfBoundsException:
+String index out of range: -4
+      at java.lang.String.substring(Unknown Source)
+
+/ / / /
+
+char c = 8;
+String s = binary(c);
+println(s);
+
+
+java.lang.StringIndexOutOfBoundsException:
+String index out of range: -4
+      at java.lang.String.substring(Unknown Source)
+
+/ / / / 
+
 _ processing.net -> PClient, PServer
 
 _ api for file-based renderers
@@ -177,6 +227,9 @@ _   z-clipping
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 
+_ image(myg, x, y) doesn't work but image(myg, x, y, w, h) does
+_   (image kind prolly not set right and so image() gets pissy)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -190,6 +243,8 @@ The graphics library was formerly called Bagel, which is an internal name.
 
 CORE / PApplet
 
+   b _ tab key not working? 
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091853942;start=0
    b _ keypressed hanging on applets with a code folder
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
    b _ mousePressed, keyPressed, others.. queue them all
@@ -341,6 +396,7 @@ CORE / PGraphics
 
 CORE / Details
 
+   1 _ framerate(30) is still flickery and jumpy..
    1 _ fix param() to use a sketch.properties file when run as an app
    1 _   make this also be used in generating the html file
    1 _ fix link() to handle relative URLs

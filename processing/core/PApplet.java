@@ -1954,97 +1954,87 @@ public class PApplet extends Applet
 
   int sort_mode;
 
-  static final int STRINGS = 0;
-  static final int INTS = 1;
-  static final int FLOATS = 2;
-  static final int DOUBLES = 3;
+  static final int BYTES   = 1;
+  static final int CHARS   = 2;
+  static final int INTS    = 3;
+  static final int FLOATS  = 4;
+  static final int STRINGS = 5;
 
-  String sort_strings[];
+  byte sort_bytes[];
+  char sort_chars[];
   int sort_ints[];
   float sort_floats[];
-  double sort_doubles[];
-  Object sort_objects[];
+  String sort_strings[];
 
 
-  /**
-   * Sort an array of String objects.
-   */
-  public void sort(String what[]) {
-    sort(what, what.length, null);
+  public byte[] sort(byte what[]) {
+    return sort(what, what.length);
   }
 
-  /**
-   * Sort an array of String objects, along with a generic
-   * array of type Object. 
-   *
-   * String names[] = { "orange", "black", "red" };
-   * Object colors[] = { Color.orange, Color.black, Color.red };
-   * sort(names, colors);
-   * 
-   * result is 'names' alphabetically sorted
-   * and the colors[] array sorted along with it.
-   */
-  public void sort(String what[], Object objects[]) {
-    sort(what, what.length, objects);
+  public char[] sort(char what[]) {
+    return sort(what, what.length);
   }
 
-  public void sort(int what[]) {
-    sort(what, what.length, null);
+  public int[] sort(int what[]) {
+    return sort(what, what.length);
   }
 
-  public void sort(int what[], Object objects[]) {
-    sort(what, what.length, objects);
+  public float[] sort(float what[]) {
+    return sort(what, what.length);
   }
 
-  public void sort(float what[]) {
-    sort(what, what.length, null);
+  public String[] sort(String what[]) {
+    return sort(what, what.length);
   }
 
-  public void sort(float what[], Object objects[]) {
-    sort(what, what.length, objects);
-  }
+  //
 
-  public void sort(double what[]) {
-    sort(what, what.length, null);
-  }
-
-  public void sort(double what[], Object objects[]) {
-    sort(what, what.length, objects);
-  }
-
-
-  public void sort(String what[], int count, Object objects[]) {
-    if (count == 0) return;
-    sort_mode = STRINGS;
-    sort_strings = what;
-    sort_objects = objects;
+  public byte[] sort(byte what[], int count) {
+    if (count == 0) return null;
+    sort_mode = BYTES;
+    sort_bytes = new byte[count];
+    System.arraycopy(what, 0, sort_bytes, 0, count);
     sort_internal(0, count-1);
+    return sort_bytes;
   }
 
-  public void sort(int what[], int count, Object objects[]) {
-    if (count == 0) return;
+  public char[] sort(char what[], int count) {
+    if (count == 0) return null;
+    sort_mode = CHARS;
+    sort_chars = new char[count];
+    System.arraycopy(what, 0, sort_chars, 0, count);
+    sort_internal(0, count-1);
+    return sort_chars;
+  }
+
+  public int[] sort(int what[], int count) {
+    if (count == 0) return null;
     sort_mode = INTS;
-    sort_ints = what;
-    sort_objects = objects;
+    sort_ints = new int[count];
+    System.arraycopy(what, 0, sort_ints, 0, count);
     sort_internal(0, count-1);
+    return sort_ints;
   }
 
-  public void sort(float what[], int count, Object objects[]) {
-    if (count == 0) return;
+  public float[] sort(float what[], int count) {
+    if (count == 0) return null;
     sort_mode = FLOATS;
-    sort_floats = what;
-    sort_objects = objects;
+    sort_floats = new float[count];
+    System.arraycopy(what, 0, sort_floats, 0, count);
     sort_internal(0, count-1);
+    return sort_floats;
   }
 
-  public void sort(double what[], int count, Object objects[]) {
-    if (count == 0) return;
-    sort_mode = DOUBLES;
-    sort_doubles = what;
-    sort_objects = objects;
+  public String[] sort(String what[], int count) {
+    if (count == 0) return null;
+    sort_mode = STRINGS;
+    sort_strings = new String[count];
+    System.arraycopy(what, 0, sort_strings, 0, count);
     sort_internal(0, count-1);
+    return sort_strings;
   }
 
+  //
 
   protected void sort_internal(int i, int j) {
     int pivotIndex = (i+j)/2;
@@ -2070,10 +2060,15 @@ public class PApplet extends Applet
 
   protected void sort_swap(int a, int b) {
     switch (sort_mode) {
-    case STRINGS:
-      String stemp = sort_strings[a];
-      sort_strings[a] = sort_strings[b];
-      sort_strings[b] = stemp;
+    case BYTES:
+      byte btemp = sort_bytes[a];
+      sort_bytes[a] = sort_bytes[b];
+      sort_bytes[b] = btemp;
+      break;
+    case CHARS:
+      char ctemp = sort_chars[a];
+      sort_chars[a] = sort_chars[b];
+      sort_chars[b] = ctemp;
       break;
     case INTS:
       int itemp = sort_ints[a];
@@ -2085,32 +2080,33 @@ public class PApplet extends Applet
       sort_floats[a] = sort_floats[b];
       sort_floats[b] = ftemp;
       break;
-    case DOUBLES:
-      double dtemp = sort_doubles[a];
-      sort_doubles[a] = sort_doubles[b];
-      sort_doubles[b] = dtemp;
+    case STRINGS:
+      String stemp = sort_strings[a];
+      sort_strings[a] = sort_strings[b];
+      sort_strings[b] = stemp;
       break;
-    }
-    if (sort_objects != null) {
-      Object otemp = sort_objects[a];
-      sort_objects[a] = sort_objects[b];
-      sort_objects[b] = otemp;
     }
   }
 
   protected int sort_compare(int a, int b) {
     switch (sort_mode) {
-    case STRINGS:    
-      return sort_strings[a].compareTo(sort_strings[b]);
+    case BYTES:
+      return sort_bytes[a] - sort_bytes[b];
+      //if (sort_bytes[a] < sort_bytes[b]) return -1;
+      //return (sort_bytes[a] == sort_bytes[b]) ? 0 : 1;
+    case CHARS:
+      return sort_chars[a] - sort_chars[b];
+      //if (sort_chars[a] < sort_chars[b]) return -1;
+      //return (sort_chars[a] == sort_chars[b]) ? 0 : 1;
     case INTS:
-      if (sort_ints[a] < sort_ints[b]) return -1;
-      return (sort_ints[a] == sort_ints[b]) ? 0 : 1;
+      return sort_ints[a] - sort_ints[b];
+      //if (sort_ints[a] < sort_ints[b]) return -1;
+      //return (sort_ints[a] == sort_ints[b]) ? 0 : 1;
     case FLOATS:
       if (sort_floats[a] < sort_floats[b]) return -1;
       return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
-    case DOUBLES:
-      if (sort_doubles[a] < sort_doubles[b]) return -1;
-      return (sort_doubles[a] == sort_doubles[b]) ? 0 : 1;
+    case STRINGS:    
+      return sort_strings[a].compareTo(sort_strings[b]);
     }
     return 0;
   }
