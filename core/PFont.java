@@ -416,14 +416,12 @@ public class PFont implements PConstants {
       float lextent = (float) leftExtent[glyph] / fwidth;
       float textent = (float) topExtent[glyph]  / fheight;
 
-      int savedTextureMode = parent.texture_mode;
-      //boolean savedSmooth = parent.smooth;
-      boolean savedStroke = parent._stroke;
+      int savedTextureMode = parent.textureMode;
+      boolean savedStroke = parent.stroke;
 
-      parent.texture_mode = IMAGE_SPACE;
-      //parent.smooth = true;
+      parent.textureMode = IMAGE_SPACE;
       parent.drawing_text = true;
-      parent._stroke = false;
+      parent.stroke = false;
 
       float x1 = x + lextent * size;
       float y1 = y - textent * size;
@@ -447,9 +445,9 @@ public class PFont implements PConstants {
       parent.vertex(x2, y1, z, width[glyph], 0);
       parent.endShape();
 
-      parent.texture_mode = savedTextureMode;
+      parent.textureMode = savedTextureMode;
       parent.drawing_text = false;
-      parent._stroke = savedStroke;
+      parent.stroke = savedStroke;
 
     } else {  // SCREEN_SPACE
       int xx = (int) x + leftExtent[glyph];;
