@@ -926,10 +926,49 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
-  static public void print(Object what) {
-    System.out.print(what.toString());
+  //static public void print(Object what) {
+  //System.out.print(what.toString());
+  //System.out.flush();
+  //}
+
+  //
+
+  static public void print(boolean what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
     System.out.flush();
   }
+
+  static public void print(char what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+    System.out.flush();
+  }
+
+  static public void print(int what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+    System.out.flush();
+  }
+
+  static public void print(float what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+    System.out.flush();
+  }
+
+  static public void print(double what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+    System.out.flush();
+  }
+
+  static public void print(String what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+    System.out.flush();
+  }
+
+  //static public void print(Object what[]) {
+  //for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+  //System.out.flush();
+  //}
+
+  //
 
   static public void println(boolean what) {
     print(what); System.out.println();
@@ -955,13 +994,50 @@ public class PApplet extends Applet
     print(what); System.out.println();
   }
 
-  static public void println(Object what) {
-    System.out.println(what.toString());
-  }
+  //static public void println(Object what) {
+  //System.out.println(what.toString());
+  //}
 
   static public void println() {
     System.out.println();
   }
+
+  //
+
+  static public void println(boolean what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
+
+  static public void println(char what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
+
+  static public void println(int what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
+
+  static public void println(float what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
+
+  static public void println(double what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
+
+  static public void println(String what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
+
+  //static public void println(Object what[]) {
+  //for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+  //System.out.flush();
+  //}
 
 
   // ------------------------------------------------------------
@@ -1814,6 +1890,64 @@ public class PApplet extends Applet
   // ------------------------------------------------------------
 
   // number formatting - integers
+
+
+  static public String str(boolean x) { return String.valueOf(x); }
+  static public String str(byte x)    { return String.valueOf(x); }
+  static public String str(char x)    { return String.valueOf(x); }
+  static public String str(short x)   { return String.valueOf(x); }
+  static public String str(int x)     { return String.valueOf(x); }
+  static public String str(float x)   { return String.valueOf(x); }
+  static public String str(long x)    { return String.valueOf(x); }
+  static public String str(double x)  { return String.valueOf(x); }
+
+  static public String[] str(boolean x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(byte x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(char x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(short x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(int x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(float x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(long x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static public String[] str(double x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
 
 
   /**
