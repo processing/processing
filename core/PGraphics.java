@@ -2093,7 +2093,8 @@ public class PGraphics extends PImage implements PConstants {
         vertexCount++; // since it had already been read above
 
         v1[X] = v0[X]; v1[Y] = v0[Y]; v1[Z] = v0[Z];
-        v1[SR] = v0[SR]; v1[SG] = v0[SG]; v1[SB] = v0[SB];
+        v1[SR] = v0[SR]; v1[SG] = v0[SG]; 
+        v1[SB] = v0[SB]; v1[SA] = v0[SA];
       }
 
       // increment by two for individual lines
