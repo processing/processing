@@ -287,8 +287,18 @@ public class PdeEditorButtons extends Panel {
     case PRINT: editor.doPrint(); break;
     case BEAUTIFY: editor.doBeautify(); break;
 
-    case FULL_SCREEN: editor.enableFullScreen(); break;
-    case DISABLE_FULL_SCREEN: editor.disableFullScreen(); break;
+    case FULL_SCREEN: 
+      editor.enableFullScreen(); 
+      //editor.messageClear(title[which[buttonCount-1]]);
+      which[buttonCount-1] = DISABLE_FULL_SCREEN;
+      editor.message(title[which[buttonCount-1]]);
+      break;
+    case DISABLE_FULL_SCREEN: 
+      editor.disableFullScreen(); 
+      //editor.messageClear(title[which[buttonCount-1]]);
+      which[buttonCount-1] = FULL_SCREEN;
+      editor.message(title[which[buttonCount-1]]);
+      break;
     }
     //update();
     return true;
