@@ -7,7 +7,7 @@ and since only a handful of things change between releases
 ..................................................................
 
 
-PROCESSING WON'T START! NOTHING HAPPENS WHEN I HIT "RUN"! 
+PROCESSING WON'T START! NOTHING HAPPENS WHEN I CLICK "RUN"!
 
 - on windows, processing probably won't work if you install it inside
   a folder with non-ascii characters in its name. for instance, if the
@@ -55,6 +55,11 @@ PROCESSING WON'T START! NOTHING HAPPENS WHEN I HIT "RUN"!
   only happen with applets that have a "coffee cup" icon in the
   window (that's how you know it's running externally).
 
+- on macosx, something like the following error might occur:
+  dyld: /Applications/processing-0079/jikes version mismatch for library: /sw/lib/libiconv.2.dylib (compatibility version of user: 5.0.0 greater than library's version: 3.0.0) 
+  it seems that this happens when an older version of fink is 
+  installed. in this case, you should either disable fink or update to
+  the latest version. (thanks to ryan govostes for tracking this down)
 
 ..................................................................
 
@@ -168,6 +173,11 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
 
 
 OPENGL PROBLEMS
+
+- we don't recommend running other opengl programs while running processing 
+  in opengl mode. gl tends takes charge of things so results will be 
+  unexpected (windows from the other app showing through to the processing
+  window, etc.)
 
 - if you're getting this error: 
   "net.java.games.jogl.GLException: Unable to enumerate pixel formats 

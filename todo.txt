@@ -10,6 +10,30 @@ o   this would need to track whether coming just from an ext runtime
 o make "get quicktime libs" function
 o   can java get the root directory for system/win32 etc?
 
+BETA
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+_ .psk file support for bundling sketches
+
+_ add something to PApplet to have constants for the platform
+
+_ move everything to packages, and start auto-javadoc
+_   also move the lib folders to a new location
+
+camera
+_ list() should return full list with all sub-components
+_   find the example code from the board
+_ add prompt() method to Camera ("" means default, null is prompt)
+_ couldn't get req'd component also happens when the camera isn't ready
+_   may also mean that no camera is plugged in
+_   also, don't mention winvdig on the mac
+_ if user cancels prompt, throws a '-128,userCanceledErr'
+_   in which case, need to return null (or ""?) for the prompt
+_   which will also just give you the last camera
+_   should it be new Camera(PROMPT);
+_ error messages from quicktime not coming through very well
+_ setting the camera should be an index from list()
 
 _ put processing.exe into cvs so that make et al aren't required
 _   add 'make' to list of things that should be installed
@@ -33,6 +57,10 @@ _   make sure this is known and tested for properly
 _ some type of sketch archive format for posting examples
 _   would be nice to open a sketch directly from a zip file
 
+
+Minor issue, but caused me a couple seconds of confusion.  If you rename your sketch then try to close the application without saving first, it asks you if you want to save but mentions the pre-rename name.  But I hit yes, quit, came back in, and all seemed right in the world.
+
+Is it possible that saving with the 'save' button doesn't pay attention to where you point at the project folder from prefs?  Jeez, i phrased that horribly.  I opened preferences for Processing and made the default sketchbook location processing-0079/projects.  I then put all my older projects in that project folder.  When i opened up an old file and made changes, i then hit 'save' and quit.  I relaunched v79 and opened the aforementioned file, and none of the changes were there.  but they were in v77 project folder. 
 
 create a new sketch
 create a new tab named "a"
@@ -73,10 +101,11 @@ libraries
 _ libraries need to remove the PLibrary interface
 _ particles lib requires depth() (but shouldn't)
 _   fix for 78 since not sure when simon's new version is happening
-_ should we queue lib events until the end of loop?
+X should we queue lib events until the end of loop?
+_   nope, libraries can handle that themselves, 
+_     and queue events by registering for draw or whatever they'd like
 _   lib could call queueEvent with the args
 _   then call them inside post()
-_ add prompt() method to Camera ("" means default, null is prompt)
 _ add prompt() method to Serial (simple dialog box that pops up)
 _ get an xml library in there
 _   nanoxml problems with manifest
