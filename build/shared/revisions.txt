@@ -196,6 +196,10 @@ glance through them should help clear things up.
 
 [ known problems, pardon our dust ]
 
+- macosx doesn't provide an option to 'cancel' when it so politely asks
+  if you want to "save changes before quitting?". this is because of
+  weirdness in apple's java that we're trying to straighten out.
+
 - lines with stroke weights that aren't 1 are probably broken.
 
 - single pixel lines still have some problems with drawing over things.
