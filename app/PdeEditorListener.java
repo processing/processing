@@ -112,7 +112,10 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
 	String insertion = newline + spaces.substring(0, spaceCount);
 	int oldCarrot = tc.getSelectionStart();
 	tc.replaceRange(insertion, oldCarrot, tc.getSelectionEnd());
-	tc.setCaretPosition(oldCarrot + insertion.length() - 1);
+	// microsoft vm version:
+	//tc.setCaretPosition(oldCarrot + insertion.length() - 1);
+	// sun vm version:
+	tc.setCaretPosition(oldCarrot + insertion.length());
 	event.consume();
       }
       break;

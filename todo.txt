@@ -2,9 +2,10 @@ iprocessing todo list // last updated 17 september 2001
 (most up-to-date version of this file is in processing cvs)
 
 
-for 0008
-_ getMillis() doesn't seem to work
+for 0009
+_ ability to include other code from sketchbook directory
 _ stop required before kill for applets that use serial
+_   this is behaving strangely
 _ option to enable/disable frame
 _ new objects draw behind old objects with noBackground()
 _ enable/disable full screen leaves windows in back
@@ -13,10 +14,15 @@ _ breaks on every 2nd run when using serial apps (or others?)
 _   try calling gc on stop as well
 _ post new macintosh version
 _   with serial port support
+_ when applet window is too large to fit, center and put in back
+_ add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
+_   also add note about paren balancing doing strange things
+_   leave the others turned on, but parens off by default
 
 
 PROCESSING - HIGH
-_ when applet window is too large to fit, center and put in back
+_ bug in paren balancing
+_ getMillis() doesn't seem to work
 _ shift-click on play for 'presentation mode'
 _   does full screen and hides editor window
 _ export doesn't work properly for stuff included from scrapbook
@@ -84,6 +90,10 @@ PROCESSING - FEATURES
 _ anti-aliasing
 _ alpha
 _ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
+_ a better editor: 
+_   syntax coloring
+_   emacs indents and key commands
+_   http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/je/index.html
 
 
 PROCESSING - LOWER
@@ -139,6 +149,12 @@ String binary(int value) {
 ---------------------------------------------
 
 
+0008
+X ctrl-s does 'save', button on toolbar does 'save as'
+X fixed auto-indent bug for editor
+X SimpleSerialDemo.pde had a bug (was old version)
+
+
 0007
 X serial bugs
 X   ability to control sleep time from simple
@@ -170,3 +186,4 @@ X put debugging stuff back into Kjc (i disabled some stuff)
 0001
 X convert documentation to html
 o setup imrf linux machine?
+

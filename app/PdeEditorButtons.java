@@ -286,7 +286,7 @@ public class PdeEditorButtons extends Panel {
     case CLOSE: editor.doClose(); break;
 
     case OPEN: editor.doOpen(); break;
-    case SAVE: editor.doSave(); break;
+    case SAVE: editor.doSaveAs(); break;
     case EXPORT: editor.doExport(); break;
     case PRINT: editor.doPrint(); break;
     case BEAUTIFY: editor.doBeautify(); break;
