@@ -1,4 +1,35 @@
 0052
+X identityMatrix and multiplyMatrix
+X   or resetMatrix and applyMatrix
+X projectX(x, y, z) instead of project()
+o   stores last xyz point as cached for projectY
+X   projectSize() should work the same way
+X   screenX instead of projectX
+X   modelX or objectX could do the amit style thing
+X     creas says object
+
+_ camera work
+_   beginCamera, endCamera -> does glMatrixMode style swapping
+_   cameraMode(CUSTOM, PERSPECTIVE, ISOMETRIC)
+_   lookAt->lookat, frustum, perspective should be public too
+
+_ light(x, y, z, c1, c2, c3, TYPE)
+_   also BLight with same constructor, and on() and off() fxn
+
+_ join() like split
+_   also add additional item for NaN data
+_   add doubles and longs for genome stuff
+_   more advanced splitting of files into rows/cols uses another class
+_     other class also has concept for random access of lines
+_     by storing the line positions, can access without loading all
+_     into memory because some files will be too large
+
+_ numberFormat (formerly zeroPad)
+_   numberFormat(float num, int left, int right) 
+_     zero means any number of digits, don't pad
+_   numberFormat(int num, int left) for 27 -> 0027
+
+_ smooth() and noSmooth()
 
 _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
@@ -66,6 +97,7 @@ BAGEL / high & time consuming
 b _ implement clipping planes and clipping of objects
 b _   things are flying into the camera and halting apps
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+b _ anti-aliasing
 b _ alpha
 b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
@@ -74,11 +106,11 @@ b _ box is not opaque
 b X   problem is that lines are drawn second
 b X   one pixel lines have no z value.. argh
 b _   bug re: 3d depth sorting on lines
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
-b   translate(58, 48, 0); 
-b   rotateY(0.5);
-b   box(40);
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+b _   translate(58, 48, 0); 
+b _   rotateY(0.5);
+b _   box(40);
 
 
 BAGEL / medium
@@ -102,6 +134,8 @@ b _ noClear -- implement with noBackground
 b _   need to set bg color even if updated
 b _ update/noUpdate() could also be done to force explicit updates only
 b _   for ui-type applications that don't need to continually redraw
+b _   instead use void update() as a function like loop and draw
+b _   third kind of applet for interactive apps that have to be queried
 b _ keypressed is not persistent
 b _   key repeat in os vs. how java handles it
 b _   search java faq for info about getting around it
@@ -114,7 +148,6 @@ b _     automatically doubles on endShape() or next call to vertex()
 
 
 BAGEL / medium & time consuming
-b _ anti-aliasing
 b _ rewrite line and stroke code, it's a buggy mess
 b _   lines become 2 pixels thick after a 3D transform 
 b _   better handling of single-pixel special case
@@ -139,9 +172,6 @@ b _   rather than app being enclosed in beginFrame/endFrame loop
 
 
 BAGEL / lower
-_ update/noUpdate
-_   instead use void update() as a function like loop and draw
-_   third kind of applet for interactive apps that have to be queried
 _ perlin  // Not necessary for 1.0
 _ strokeWidth - too buggy to document currently
 _ clear/noClear
@@ -255,7 +285,6 @@ _ may need to start putting properties somewhere besides lib
 _   home directory  (or preferences folder under macos9)
 _ will need doubles for genomics work. ugh.
 _   this is just enable/disable float stuff
-_ zeroPad(num, left, right); or zeroPad(num, left). 
 
 b _ for 'java' mode, try run using external vm
 b _   would need to get error output stream from app.. argh
