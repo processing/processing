@@ -83,6 +83,8 @@ cp work/lib/core.jar processing/lib/
 #gunzip < dist/jikes.gz > processing/jikes
 cp dist/jikes processing/
 chmod a+x processing/jikes
+
+chmod a+x processing/Processing.app/Contents/MacOS/JavaApplicationStub
  
 #cp dist/lib/pde_macosx.properties processing/lib/
 
