@@ -27,6 +27,9 @@ import java.io.*;
 
 
 public class PdeCompiler implements PdeMessageConsumer{
+  static final String SUPER_BADNESS = 
+    "Strange error while compiling, " + 
+    "please send this code to processing@media.mit.edu";
 
   String buildPath;
   String className;
@@ -82,8 +85,7 @@ public class PdeCompiler implements PdeMessageConsumer{
     // fairly wrong, one possibility is that jikes has crashed.
     //
     if (result != 0 && result != 1 ) {
-      exception = new PdeException("Error while compiling, " + 
-                                   "please send code to bugs@proce55ing.net");
+      exception = new PdeException(SUPER_BADNESS);
       editor.error(exception);
     }
 
