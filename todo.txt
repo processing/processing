@@ -1,16 +1,36 @@
 0057
+X is it possible to get rid of KjcApplet
+X   better 'newMessage' trigger with the printstream
+X   notify dmose about changes
+
+
+dh X save last-used serial to sketch.properties on quit
+dh X rename sketch 'can't rename' error (file being kept open)
+dh X   open sketch, make a change, save, run, rename -> error
 
 
 ..................................................................
 
 
-_ remove lexer dir from cvs
+bf _ make mac version require head/tail from fink ? 
+bf _   test to see if /sw/bin/head exists, if so use it
+bf _ set nice background for disk image on macosx
+bf _ lots of small bugs in graphics engine to be fixed
+bf _   ArrayIndexOutOfBoundsException is prolly the worst
+bf _ make bagel more usable as standalone
+bf _   breakout BGraphics (have its own BImage)
+bf _   breakout BApplet into BComponent ? (fix out-of-bounds mouse)
+bf _   possible use of BUtils ?
+bf _   write documentation on general use
+bf _     along with how to download from sourceforge (anonpass is blank)
+bf _ write p5 language spec
+bf _ remove lexer dir from cvs
+bf _ horizontal scroller on the mac has enormous range
+bf _ pde_keywords.properties isn't getting copied into work/lib
 
-1 _ horizontal scroller on the mac is enormous
+_ need note about setting classpath on platforms when using expert
 
-_ is it possible to get rid of KjcApplet
-_   better 'newMessage' trigger with the printstream
-_   notify dmose about changes
+_ jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 
 _ history
 _   do people even use it
@@ -177,8 +197,8 @@ ca b _     box(40);
 ca b X concave/complex polygon
 ca b _   eventually POLYGON auto-detects convex/concave polygon
 ca b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
-
 ca b X clipping objects (clipping planes?)
+ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
 ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
 ca b X   things are flying into the camera and halting apps
 ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
@@ -524,9 +544,6 @@ dh b _   even without sketches open, perhaps not gc'ing properly
 dh b _   objects probably not getting finalized
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
 
-dh 1 _ rename doesn't set focus to renamer area
-dh 1 _ rename sketch 'can't rename' error (file being kept open)
-dh 1 _   open sketch, make a change, save, run, rename -> error
 dh 1 _ beautify() ignores colons for case statements
 dh 1 _   need to tie this to the parser instead
 dh 1 _ background of menus on winxp is white
@@ -540,7 +557,6 @@ dh 1 _   need to pay attention to when running from read-only drive
 dh 1 _     reported by brandenberg
 dh 1 _    "p5 will launch from the disk image, but will 
 dh 1 _     not draw the sketch name bar doesn't appear"
-dh 1 _ save last-used serial to sketch.properties on quit
 dh 1 _ size() has memory limitations (pitaru)
 dh 1 _   catch OutOfMemoryError inside size() and let the user know
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
@@ -573,6 +589,10 @@ dh 1 _   and back over the menu, the text-area cursor type remains.
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
 dh 1 _ scroll bar has some painting weirdness with jedit textarea
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
+
+
+danh couldn't replicate on win2k, but test under osx and others
+dh 1 _ rename doesn't set focus to renamer area
 
 
 PDE / Features
@@ -763,46 +783,6 @@ b _ test serial with ibm vm and all
 b _ look for jdk 1.4 to use instead of 1.3
 b _   make sure javacomm gets in there
 b _ test it a little more to make sure it works (cygwin x sucks)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

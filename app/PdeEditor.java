@@ -200,13 +200,9 @@ public class PdeEditor extends JPanel {
 				   screen.width + insets.left + insets.right, 
 				   screen.height + insets.top + insets.bottom);
     } else {
-      presentationWindow = new Window(new Frame());
+      presentationWindow = new Frame();
+      ((Frame)presentationWindow).setUndecorated(true);
       presentationWindow.setBounds(0, 0, screen.width, screen.height);
-      //presentationWindow.addKeyListener(new KeyAdapter() {
-      //  public void keyPressed(KeyEvent e) {
-      //    System.out.println("pwindow got " + e);
-      //  }
-      //});
     }
 
     Label label = new Label("stop");
@@ -239,14 +235,11 @@ public class PdeEditor extends JPanel {
     presentationWindow.addFocusListener(new FocusAdapter() {
 	public void focusGained(FocusEvent e) {
 	  //System.out.println("presentationWindow focusGained: " + e);
-	  //if (frame != null) frame.toFront();  // editor to front
-	  if (! pdeRuntime.window.isVisible()) {
             try {
-              //System.out.println("moving to front");
+              //System.out.println("moving applet window to front");
               pdeRuntime.window.toFront();
             } catch (Exception ex) { }
 	  }
-	}
       });
 
     textarea.addFocusListener(new FocusAdapter() {
@@ -255,7 +248,18 @@ public class PdeEditor extends JPanel {
 	  if (presenting == true) {
 	    try {
               presentationWindow.toFront();
-	      pdeRuntime.window.toFront();
+	    } catch (Exception ex) { }
+	  }
+	}
+      });
+
+    this.addFocusListener(new FocusAdapter() {
+      public void focusGained(FocusEvent e) {
+        //System.out.println("PdeEditor focusGained: " + e);
+	  if (presenting == true) {
+	    try {
+            //System.out.println("moving presentation window to front");
+              presentationWindow.toFront();
 	    } catch (Exception ex) { }
 	  }
 	}
@@ -272,8 +276,7 @@ public class PdeEditor extends JPanel {
 	} catch (Exception ex) { }
       }
       public void mousePressed(MouseEvent e)  {
-//        System.out.println("mousePressed: " + e.toString());
-        //presentationWindow.toFront();
+        //System.out.println("mousePressed: " + e.toString());
         try {
 	  //System.out.println("moving to front");
 	  pdeRuntime.window.toFront();
@@ -599,8 +602,6 @@ public class PdeEditor extends JPanel {
 
     try {
       if (presenting) {
-        //this.toBack();
-        this.setVisible(false);
         presentationWindow.show();
         presentationWindow.toFront();
         //doRun(true);
@@ -1215,7 +1216,11 @@ afterwards, some of these steps need a cleanup function
     new File(newSketchDir, sketchName + ".pde").delete();
 
     // remove the old dir (!)
-    if (renaming) removeDir(sketchDir);
+    if (renaming) {
+      // in case java is holding on to any files we want to delete
+      System.gc();
+      removeDir(sketchDir);
+    }
     // (important!) has to be done before opening, 
     // otherwise the new dir is set to sketchDir.. 
 
