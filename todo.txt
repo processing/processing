@@ -83,6 +83,26 @@ X hide renderer menu item
 X test to make sure cursor code works in vm
 X   modify bagel building to include JDK13 flag
 o   and behaves properly in a browser
+o need note about setting classpath on platforms when using expert
+X   figured out a way around it using sun.boot.class.path! wahoo!
+X     is there a way to check the registry for java installations?
+X   put jikes executables into the dist folders
+o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+
+
+serial
+X modify windows build scripts for javacomm in p5 folders
+X   remove additional javacomm from othe p5 folders
+X checkin serial stuff for bagel
+X rxtx is a problem in general.. how to improve installation
+X   try installing serial adapter with p5
+X   report of a problem with the rxtx installer being bad
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
+X   tom igoe is using rxtx 2.1.6, patch that into p5
+o     will need to be done for gl4java as well
+o if dimming serial menu, put up another message
+X remove serial folder for windows
+X   modify readme for the expert version
 
 
 [dh] X export to .pde file rather than java
@@ -166,14 +186,10 @@ dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
-_ is there a way to check the registry for java installations?
-
+macosx
 _ do objects need to be swing components to draw properly?
 _   macosx has update weirdness for non JComponent items
 _   probably why end of text messages under osx getting chopped?
-
-
-macosx
 _ test to see if runtime exceptions are coming through
 _ get jikes118 in there.. also in cvs
 _   add note to instructions for how to use
@@ -199,21 +215,6 @@ _   write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 
 
-serial port work
-X modify windows build scripts for javacomm in p5 folders
-X   remove additional javacomm from othe p5 folders
-X checkin serial stuff for bagel
-X rxtx is a problem in general.. how to improve installation
-X   try installing serial adapter with p5
-X   report of a problem with the rxtx installer being bad
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
-X   tom igoe is using rxtx 2.1.6, patch that into p5
-o     will need to be done for gl4java as well
-o if dimming serial menu, put up another message
-X remove serial folder for windows
-X   modify readme for the expert version
-
-
 linux
 _ make mention that linux is i386
 _ bring linux up to 1.4
@@ -222,11 +223,9 @@ _ make sure a copy of jikes is included
 _ test rxtx on linux with sun vm
 
 
-dist
-b _ need note about setting classpath on platforms when using expert
-b _   put jikes executables into the dist folders
-b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
-
+windows
+_ modify build instructions for the many changes
+_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 
 
 ..................................................................
@@ -235,6 +234,9 @@ b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 POST-57
 
 _ perlin noise is broken
+
+_ java vm could be removed from cvs
+_   in favor of requiring a specific jvm, and using registry to find
 
 
 thought this was complete, but it's totally broken
@@ -267,6 +269,7 @@ _   may not be the case under swing?
 _   it's probably because of keyTyped() being the important one
 _     so instead trap for keyTyped events
 _ set nice background for disk image on macosx
+_ Contents/Resources/Java can take jnilib files
 
 
 thesis / acg

@@ -61,7 +61,7 @@ else
   chmod +x work/win32com.dll
 
   # get jikes and depedencies
-  gunzip < jikes.exe.gz > work/jikes.exe
+  gunzip < dist/jikes.gz > work/jikes.exe
   chmod +x work/jikes.exe
 fi
 

@@ -23,8 +23,8 @@ else
   cd ..
 
   # copy gl4java libs and jar file
-  cp ../../bagel/opengl/gl4java.jar work/lib/
-  cp ../../bagel/opengl/macosx/libGL4JavaJauGljJNI13.jnilib work/
+  #cp ../../bagel/opengl/gl4java.jar work/lib/
+  #cp ../../bagel/opengl/macosx/libGL4JavaJauGljJNI13.jnilib work/
 
   mkdir work/lib/export
   mkdir work/lib/build
@@ -33,17 +33,17 @@ else
 
   cp dist/lib/pde_macosx.properties work/lib/
 
+  # grab serial goodies
+  echo Copying serial support from bagel dir
+  cp ../../bagel/serial/RXTXcomm.jar work/lib/
+  cp ../../bagel/serial/libSerial.jnilib work/
+
+  # get jikes and depedencies
+  gunzip < dist/jikes.gz > work/jikes
+  chmod +x work/jikes
+
   echo
 fi
-
-# removing for rxtx 2.1.6
-#if test -f /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
-#then
-#  echo
-#else
-##  echo Copying comm.jar into the machine's classpath
-#  sudo cp comm.jar /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/
-#fi
 
 
 ### -- START BUILDING -------------------------------------------
@@ -79,7 +79,7 @@ export CLASSPATH
 
 ### --- make version with all the goodies for the application
 echo Building bagel with serial, video, audio, and jdk13 support
-perl make.pl SERIAL VIDEO SONIC JDK13
+perl make.pl SERIAL RXTX VIDEO SONIC JDK13
 cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
