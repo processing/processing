@@ -28,12 +28,12 @@ import java.io.*;
 
 public class PdeCompilerKjc extends PdeCompiler {
 
-  public PdeCompilerKjc(String buildPath, String className, PdeEditor editor) {
-    super(buildPath, className, editor);
+  public PdeCompilerKjc(String buildPath, String className, 
+                        File includeFolder, PdeEditor editor) {
+    super(buildPath, className, includeFolder, editor);
   }
 
   public boolean compileJava(PrintStream leechErr) {
-
     System.setErr(leechErr); // redirect stderr to our leech filter
 
     String args[] = new String[2];
