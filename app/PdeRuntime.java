@@ -191,8 +191,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         } else {
           window = new Frame(editor.sketchName); // use ugly windows
           ((Frame)window).setResizable(false);
-          if (PdeBase.icon != null) {
-            ((Frame)window).setIconImage(PdeBase.icon);
+          if (editor.icon != null) {
+            ((Frame)window).setIconImage(editor.icon);
           }
           window.pack(); // to get a peer, size set later, need for insets
 
@@ -268,11 +268,11 @@ public class PdeRuntime implements PdeMessageConsumer {
             //windowY = y1;
 
           } else { // if it fits inside the editor window
-            x1 = parentLoc.x + PdeEditor.GRID_SIZE * 2;  // 66
-            y1 = parentLoc.y + PdeEditor.GRID_SIZE * 2;  // 66
+            x1 = parentLoc.x + PdePreferences.GRID_SIZE * 2;  // 66
+            y1 = parentLoc.y + PdePreferences.GRID_SIZE * 2;  // 66
 
-            if ((x1 + windowW > screen.width - PdeEditor.GRID_SIZE) ||
-                (y1 + windowH > screen.height - PdeEditor.GRID_SIZE)) {
+            if ((x1 + windowW > screen.width - PdePreferences.GRID_SIZE) ||
+                (y1 + windowH > screen.height - PdePreferences.GRID_SIZE)) {
               // otherwise center on screen
               x1 = (screen.width - windowW) / 2;
               y1 = (screen.height - windowH) / 2;
@@ -281,7 +281,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           }
 
           Color windowBgColor = 
-            PdePreferences.getColor("run.window.bgcolor", SystemColor.control); 
+            PdePreferences.getColor("run.window.bgcolor");
           //new Color(102, 102, 102));
           window.setBackground(windowBgColor);
           //window.setBackground(SystemColor.windowBorder);

@@ -122,10 +122,10 @@ cd app
 # but for now, the parser is only built when the work dir 
 # is created, to speed the build process.
 
-#if test -f preprocessor/expandedpde.g
-#then
-#echo
-#else
+if test -f preprocessor/expandedpde.g
+then
+  echo
+else
   cd preprocessor
   # build classes/grammar for preprocessor
   echo Building antlr grammar code...
@@ -134,7 +134,7 @@ cd app
   # now build the pde stuff that extends the java classes
   java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
   cd ..
-#fi
+fi
 
 
 ### -- BUILD PDE ------------------------------------------------

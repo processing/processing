@@ -36,10 +36,17 @@ import javax.swing.undo.*;
 
 
 public class PdeSketchbook {
-  JMenu sketchbookMenu;
+  PdeEditor editor;
+
+  //JMenu sketchbookMenu;
+  JMenu menu;
   File sketchbookFolder;
   String sketchbookPath;
 
+
+  public PdeSketchbook(PdeEditor editor) {
+    this.editor = editor;
+  }
 
 
   // listener for sketchbk items uses getParent() to figure out
@@ -58,12 +65,13 @@ public class PdeSketchbook {
     }
   }
 
-  public void rebuildSketchbookMenu() {
-    rebuildSketchbookMenu(sketchbookMenu);
-  }
 
-  public void rebuildSketchbookMenu(Menu menu) {
-    menu.removeAll();
+  public JMenu rebuildMenu() {
+    if (menu == null) {
+      menu = new JMenu("Open");
+    } else {
+      menu.removeAll();
+    }
 
     try {
       //MenuItem newSketchItem = new MenuItem("New Sketch");
@@ -141,6 +149,7 @@ public class PdeSketchbook {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return menu;
   }
 
 
