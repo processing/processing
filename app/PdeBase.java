@@ -765,6 +765,20 @@ public class PdeBase extends Frame implements ActionListener {
       e.printStackTrace();
     }
 
+    // macosx fails on its own when trying to load the library
+    // so need to explicitly try here.. not sure if this is the 
+    // correct lib, but it's at least one that's loaded inside
+    // the javacomm solaris stuff, which is the .jar that's included
+    // with the osx release (and rxtx takes over)
+    if (platform == MACOSX) {
+	try {
+	    System.loadLibrary("SolarisSerialParallel");
+	} catch (UnsatisfiedLinkError e) {
+	    //e.printStackTrace();
+	    problem = true;
+	}
+    }
+
     // only warn them if this is the first time
     if (problem && firstTime) {
       JOptionPane.showMessageDialog(frame,

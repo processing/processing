@@ -304,6 +304,13 @@ public class PdeEditorConsole extends Component {
   }
 
   public void message(String what, boolean err, boolean advance) {
+      // under osx, suppress the spew about the serial port
+      // to avoid an error every time someone loads their app
+      if (PdeBase.platform == PdeBase.MACOSX) {
+	  if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
+	  if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
+      }
+
     int currentLine = (firstLine + lineCount) % maxLineCount;
     lines[currentLine] = what;
     isError[currentLine] = err;
