@@ -390,12 +390,35 @@ public class PdeBase implements ActionListener {
     String value = get(attribute, null);
     return (value == null) ? defaultValue : 
       (new Boolean(value)).booleanValue();
+
+    /*
+      supposedly not needed, because anything besides 'true'
+      (ignoring case) will just be false.. so if malformed -> false
+    if (value == null) return defaultValue;
+
+    try {
+      return (new Boolean(value)).booleanValue();
+    } catch (NumberFormatException e) {
+      System.err.println("expecting an integer: " + attribute + " = " + value);
+    }
+    return defaultValue;
+    */
   }
 
   static public int getInteger(String attribute, int defaultValue) {
     String value = get(attribute, null);
-    return (value == null) ? defaultValue : 
-      Integer.parseInt(value);
+    if (value == null) return defaultValue;
+
+    try {
+      return Integer.parseInt(value);
+    } catch (NumberFormatException e) { 
+      // ignored will just fall through to returning the default
+      System.err.println("expecting an integer: " + attribute + " = " + value);
+    }
+    return defaultValue;
+    //if (value == null) return defaultValue;
+    //return (value == null) ? defaultValue : 
+    //Integer.parseInt(value);
   }
 
   static public Color getColor(String name, Color otherwise) {
