@@ -151,6 +151,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           // toxi_030903: moved keyListener to PdeEditor's presentationWindow
 
         } else {
+          //window = new Frame(sketch.name); // use ugly windows
           window = new Frame(sketch.name); // use ugly windows
           ((Frame)window).setResizable(false);
           if (editor.icon != null) {
@@ -176,6 +177,9 @@ public class PdeRuntime implements PdeMessageConsumer {
                   //new DelayedClose(editor);
                   //editor.doClose();
                 }
+                //System.out.println("consuming1");
+                //e.consume();
+                //System.out.println("consuming2");
               }
             });
           y1 += parentInsets.top;
