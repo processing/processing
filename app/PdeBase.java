@@ -45,7 +45,7 @@ import com.ice.jni.registry.*;
  * files and images, etc) that comes from that.
  */
 public class PdeBase {
-  static final String VERSION = "0075 Alpha";
+  static final String VERSION = "0076 Alpha";
 
   static String openedAtStartup;
 
