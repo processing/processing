@@ -55,15 +55,12 @@ public class PdeBase extends JFrame implements ActionListener
   static final String VERSION = "0068 Alpha";
 
   //static Properties properties;
+  PdePreferences preferences;
   static Properties keywords; // keyword -> reference html lookup
 
   //static Frame frame;  // now 'this'
   static String encoding;
   static Image icon;
-
-  protected UndoAction undoAction;
-  protected RedoAction redoAction;
-  static public UndoManager undo = new UndoManager(); // editor needs this guy
 
   // indicator that this is the first time this feller has used p5
   static boolean firstTime;
@@ -274,100 +271,7 @@ public class PdeBase extends JFrame implements ActionListener
 
 
     // edit menu
-
-    menu = new Menu("Edit");
-    
-    undoItem = new MenuItem("Undo", new MenuShortcut('Z'));
-    undoItem.addActionListener(undoAction = new UndoAction());
-    menu.add(undoItem);
-
-    redoItem = new MenuItem("Redo", new MenuShortcut('Y'));
-    redoItem.addActionListener(redoAction = new RedoAction());
-    menu.add(redoItem);
-
-    menu.addSeparator();
-
-    // "cut" and "copy" should really only be enabled if some text 
-    // is currently selected
-    item = new MenuItem("Cut", new MenuShortcut('X'));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.textarea.cut();
-        }
-      });
-    menu.add(item);
-
-    item = new MenuItem("Copy", new MenuShortcut('C'));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.textarea.copy();
-        }
-      });
-    menu.add(item);
-
-    item = new MenuItem("Paste", new MenuShortcut('V'));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.textarea.paste();
-        }
-      });
-    menu.add(item);
-
-    item = new MenuItem("Select All", new MenuShortcut('A'));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.textarea.selectAll();
-        }
-      });
-    menu.add(item);
-
-    beautifyMenuItem = new MenuItem("Beautify", new MenuShortcut('B'));
-    beautifyMenuItem.addActionListener(this);
-    menu.add(beautifyMenuItem);
-
-    menu.addSeparator();
-
-    item = new MenuItem("Find...", new MenuShortcut('F'));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.find();
-        }
-      });
-    menu.add(item);
-
-    item = new MenuItem("Find Next", new MenuShortcut('G'));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.findNext();
-        }
-      });
-    menu.add(item);
-
-    item = new MenuItem("Find in Reference", new MenuShortcut('F', true));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
-          if (editor.textarea.isSelectionActive()) {
-            String text = editor.textarea.getSelectedText();
-            if (text.length() == 0) {
-              editor.message("First select a word to find in the reference.");
-
-            } else {
-              String referenceFile = (String) keywords.get(text);
-              if (referenceFile == null) {
-                editor.message("No reference available for \"" + text + "\"");
-              } else {
-                showReference(referenceFile);
-              }
-            }
-          }
-        }
-      });
-    menu.add(item);
-
-    menubar.add(menu);
-
-    Document document = editor.textarea.getDocument();
-    document.addUndoableEditListener(new MyUndoableEditListener());
+    menubar.add(editor.buildEditMenu());
 
 
     // sketch menu
@@ -466,15 +370,34 @@ public class PdeBase extends JFrame implements ActionListener
     this.setMenuBar(menubar);
 
 
+    // load preferences and finish up
+
     // handle layout
-
-    //Insets insets = frame.getInsets();
-    //Toolkit tk = Toolkit.getDefaultToolkit();
-    //Dimension screen = tk.getScreenSize();
-
     this.pack();  // maybe this should be before the setBounds call
+    // do window placement before loading sketch stuff
+    restorePreferences();
+
+    // now that everything is set up, open last-used sketch, etc.
+    editor.restorePreferences();
+
+    show();
+  }
 
 
+  // antidote for overthought swing api mess for setting accelerators
+
+  static public JMenuItem newMenuItem(String title, char what) {
+    return newMenuItem(title, what, false);
+  }
+
+  static public JMenuItem newMenuItem(String title, char what, boolean shift) {
+    JMenuItem menuItem = new JMenuItem(title);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | (shift ? ActionEvent.SHIFT_MASK : 0)));
+    return menuItem;
+  }
+
+
+  public void restorePreferences() {
     // figure out window placement
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -509,88 +432,22 @@ public class PdeBase extends JFrame implements ActionListener
                 PdePreferences.getInteger("last.window.height"));
     }
 
-    // now that everything is set up, open last-used sketch, etc.
-    editor.init();
+    applyPreferences();
+  }
 
+
+  public void applyPreferences() {
     rebuildSketchbookMenu(sketchbookMenu);
-    //buildSerialMenu();
-    this.show();  // added back in for pde
   }
 
 
-  //This one listens for edits that can be undone.
-  protected class MyUndoableEditListener implements UndoableEditListener {
-    public void undoableEditHappened(UndoableEditEvent e) {
-      //Remember the edit and update the menus.
-      undo.addEdit(e.getEdit());
-      undoAction.updateUndoState();
-      redoAction.updateRedoState();
-      //System.out.println("setting sketch to modified");
-      //if (!editor.sketchModified) editor.setSketchModified(true);
-    }
+  public void storePreferences() {
+    Rectangle bounds = getBounds();
+    PdePreferences.setInteger("last.window.x", bounds.x);
+    PdePreferences.setInteger("last.window.y", bounds.y);
+    PdePreferences.setInteger("last.window.width", bounds.width);
+    PdePreferences.setInteger("last.window.height", bounds.height);
   }
-
-
-  class UndoAction extends AbstractAction {
-    public UndoAction() {
-      super("Undo");
-      this.setEnabled(false);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      try {
-        undo.undo();
-      } catch (CannotUndoException ex) {
-        //System.out.println("Unable to undo: " + ex);
-        //ex.printStackTrace();
-      }
-      updateUndoState();
-      redoAction.updateRedoState();
-    }
-
-    protected void updateUndoState() {
-      if (undo.canUndo()) {
-        this.setEnabled(true);
-        undoItem.setEnabled(true);
-        putValue(Action.NAME, undo.getUndoPresentationName());
-      } else {
-        this.setEnabled(false);
-        undoItem.setEnabled(false);
-        putValue(Action.NAME, "Undo");
-      }
-    }      
-  }    
-
-
-  class RedoAction extends AbstractAction {
-    public RedoAction() {
-      super("Redo");
-      this.setEnabled(false);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      try {
-        undo.redo();
-      } catch (CannotRedoException ex) {
-        //System.out.println("Unable to redo: " + ex);
-        //ex.printStackTrace();
-      }
-      updateRedoState();
-      undoAction.updateUndoState();
-    }
-
-    protected void updateRedoState() {
-      if (undo.canRedo()) {
-        this.setEnabled(true);
-        redoItem.setEnabled(true);
-        putValue(Action.NAME, undo.getRedoPresentationName());
-      } else {
-        this.setEnabled(false);
-        redoItem.setEnabled(false);
-        putValue(Action.NAME, "Redo");
-      }
-    }
-  }    
 
 
   // listener for sketchbk items uses getParent() to figure out
@@ -624,7 +481,7 @@ public class PdeBase extends JFrame implements ActionListener
 
       sketchbookFolder = 
         new File(PdePreferences.get("sketchbook.path", "sketchbook"));
-      sketchbookPath = sketchbookFolder.getCanonicalPath();
+      sketchbookPath = sketchbookFolder.getAbsolutePath();
       if (!sketchbookFolder.exists()) {
         System.err.println("sketchbook folder doesn't exist, " + 
                            "making a new one");
@@ -703,7 +560,7 @@ public class PdeBase extends JFrame implements ActionListener
 
     String list[] = folder.list();
     SketchbookMenuListener listener = 
-      new SketchbookMenuListener(folder.getCanonicalPath());
+      new SketchbookMenuListener(folder.getAbsolutePath());
 
     boolean ifound = false;
 
@@ -865,25 +722,42 @@ public class PdeBase extends JFrame implements ActionListener
     window.show();
   }
 
+
+  /**
+   * Show the (already created on app init) preferences window.
+   */
   public void handlePrefs() {
-    new PdePreferences();
-    /*
-    JOptionPane.showMessageDialog(this, //frame,
-                                  "Preferences are in the 'lib' folder\n" +
-                                  "inside text files named pde.properties\n" +
-                                  "and pde_" + platforms[platform] + 
-                                  ".properties",
-                                  "Preferences",
-                                  JOptionPane.INFORMATION_MESSAGE);
-    */
-    //System.out.println("now showing preferences");
+    // make sure this blocks until finished
+    preferences.showFrame();
+
+    // may need to rebuild sketch and other menus
+    applyPreferences();
+
+    // next have editor do its thing
+    editor.appyPreferences();
   }
 
+
+  /** 
+   * Quit, but first ask user if it's ok. Also store preferences
+   * to disk just in case they want to quit. Final exit() happens 
+   * in PdeEditor since it has the callback from PdeEditorStatus.
+   */
   public void handleQuit() {
+    storePreferences();
+    editor.storePreferences();
+
+    // this will save the prefs even if quit is cancelled, but who cares
+    PdePreferences.save();
+
+    // check to see if the person actually wants to quit
     editor.doQuit();
   }
 
 
+  /**
+   * Handle menu selections.
+   */
   public void actionPerformed(ActionEvent event) {
     String command = event.getActionCommand();
     //System.out.println(command);
@@ -953,6 +827,10 @@ public class PdeBase extends JFrame implements ActionListener
   }
 
 
+  /**
+   * Given the reference filename from the keywords list, 
+   * builds a URL and passes it to openURL.
+   */
   static public void showReference(String referenceFile) {
     String currentDir = System.getProperty("user.dir");
     openURL(currentDir + File.separator + 
@@ -1029,13 +907,8 @@ public class PdeBase extends JFrame implements ActionListener
 #endif
 
       } else if (platform == LINUX) {
-        //String currentDir = System.getProperty("user.dir");
-        //Runtime.getRuntime().exec("mozilla "+ currentDir + 
-        //                          "/reference/index.html");
-        // another wild ass guess
-
-        // probably need to replace spaces or use quotes here
-        Runtime.getRuntime().exec("mozilla " + url);
+        // how's mozilla sound to ya, laddie?
+        Runtime.getRuntime().exec(new String[] { "mozilla", url });
 
       } else {
         System.err.println("unspecified platform");
@@ -1053,7 +926,7 @@ public class PdeBase extends JFrame implements ActionListener
    */
   static public void openFolder(File file) {
     try {
-      String folder = file.getCanonicalPath();
+      String folder = file.getAbsolutePath();
 
       if (platform == WINDOWS) {
         // doesn't work
