@@ -205,7 +205,7 @@ public class PFont implements PConstants {
     cached = false;
 
     resetSize();
-    resetLeading(); // ??
+    //resetLeading(); // ??
     space = OBJECT_SPACE;
     align = ALIGN_LEFT;
   }
@@ -295,7 +295,7 @@ public class PFont implements PConstants {
     this.space = which;
     if (space == SCREEN_SPACE) {
       resetSize();
-      resetLeading();
+      //resetLeading();
     }
   }
 
@@ -313,6 +313,7 @@ public class PFont implements PConstants {
   public void resetSize() {
     //size = 12;
     size = mbox;  // default size for the font
+    resetLeading();  // has to happen with the resize
   }
 
 
