@@ -14,21 +14,30 @@
 $blank_line = "\n";
 
 
+$separator = '/';
+$path_separator = ':';
+
 # tell me about this here system
-if ($ENV{'WINDIR'} ne '') {
-    $separator = "\\";
-    $path_separator = ';';
+#if ($ENV{'WINDIR'} ne '') {
+#    if ($ENV{'TERM'} eq 'cygwin') {
+#	$separator = "/";
+#	$path_separator = ':';
+#	$platform = 'windows'; #'cygwin';
+#    } else {
+#	$separator = "\\";
+#	$path_separator = ';';
 # need path to mkdir for win32, because 'mkdir' defaults to the
 # crappy dos version.. need to use cygwin instead
-    #$mkdir_path = 'd:\\cygwin\\bin\\mkdir';
-    $mkdir_path = 'mkdir';
-    $platform = 'windows';
-} else {
-    $separator = '/';
-    $path_separator = ':';
-    $mkdir_path = '/bin/mkdir';
-    $platform = 'unix';
-}
+#	#$mkdir_path = 'd:\\cygwin\\bin\\mkdir';
+#	$mkdir_path = 'mkdir';
+#	$platform = 'windows';
+#    }
+#} else {
+#    $separator = '/';
+#    $path_separator = ':';
+#    $mkdir_path = '/bin/mkdir';
+#    $platform = 'unix';
+#}
 # something else needed here for macosx
 # maybe something with OSTYPE or HOSTTYPE (esp OSTYPE)
 # e.g. OSTYPE=linux-gnu HOSTTYPE=i386
@@ -41,41 +50,52 @@ if (-d $temp_dir) {
 }
 mkdirs($temp_dir, 0777) || die $!;
 
+#die "buzz.pl received @ARGV\n";
 
 #print "args = @ARGV\n";
 $command = shift(@ARGV);
+
 if ($command eq '') {
-    print "buzz.pl: perl is misconfigured.. no args passed in.. can't run\n";
-    print "         cygwin perl seems to have problems, use activestate\n";
-    exit;
+    die "buzz.pl: received no arguments";
+#    print "buzz.pl: perl is misconfigured.. no args passed in.. can't run\n";
+#    print "         cygwin perl seems to have problems, use activestate\n";
+#    exit;
 }
 
-if ($command =~ /-classpath/) {
-    die "cannot set classpath using this version of buzz";
-}
+#if ($command =~ /-classpath/) {
+#    die "cannot set classpath using this version of buzz";
+#}
+
 $classpath = $ENV{"CLASSPATH"};
-if ($classpath eq "") {
-    # find java in the path
-    if ($platform eq 'windows') {
-	@elements = split(';', $ENV{"PATH"});
-	foreach $element (@elements) {
-	    #print "trying $element\\java.exe\n";
-	    if (-f "$element\\java.exe") {
-		$classpath = "$element\\..\\lib\\classes.zip";
-		print "found java: $element\\java.exe\n";
-		last;
-	    }
-	}
-	if ($classpath eq "") {
-	    die "java.exe is not in your path, and classpath not set";
-	}
-
-    } elsif ($platform eq 'unix') {
-	die "code for searching path not written for unix\nset environment varilable for CLASSPATH before using.\n";
-
-    } elsif ($platform eq 'macosx') {
-    }
+if ($classpath eq '') {
+    die "must set classpath before using buzz.pl";
 }
+#$classpath =~ s/\\/\//g;
+#$classpath =~ s/\;/\:/g;
+
+#    # find java in the path
+#    if ($platform eq 'windows') {
+#	print "path is $ENV{'PATH'}\n";
+#	exit;
+#	@elements = split(';', $ENV{"PATH"});
+#	foreach $element (@elements) {
+#	    #print "trying $element\\java.exe\n";
+#	    if (-f "$element\\java.exe") {
+#		$classpath = "$element\\..\\lib\\classes.zip";
+#		print "found java: $element\\java.exe\n";
+#		last;
+#	    }
+#	}
+#	if ($classpath eq "") {
+#	    die "java.exe is not in your path, and classpath not set";
+#	}
+#
+#    } elsif ($platform eq 'unix') {
+#	die "code for searching path not written for unix\nset environment varilable for CLASSPATH before using.\n";
+#
+#    } elsif ($platform eq 'macosx') {
+#    }
+#}
 
 
 # if target directory, -d, option is used, add it to CLASSPATH
@@ -124,9 +144,10 @@ foreach $arg (@ARGV) {
 	    # buried more than one level deep. this is especially 
 	    # important under unix, because the above mkdir stuff won't
 	    # get hit due to *.java being expanded on the cmd line
-	    $arg =~ /(.*)$separator([\w\d]+\.java)/;
+	    #$arg =~ /(.*)$separator([\w\d]+\.java)/;
+	    $arg =~ /(.*)${separator}.*\.java/;
 	    $file_path = $1;
-	    $file_name = $2;
+	    #$file_name = $2;  # ignored
 	    if ($file_path ne '') {
 		#print "_${file_path}_ and _${file_name}_\n";
 		#if (!(-d $file_path)) {
@@ -161,7 +182,8 @@ foreach $file (@file_list) {
 
 print "compiling...\n";
 $files = join(' ', @new_file_list);
-$compile_command = "$command -classpath $classpath $files";
+#$compile_command = "$command -classpath $classpath $files";
+$compile_command = "$command $files";
 #print "$compile_command\n";
 print `$compile_command`;
 
@@ -214,6 +236,7 @@ sub read_positive {
 # excludes everything until an else or an endif
 sub read_negative {
     my ($inside_negative) = @_[0];
+    #print "checking @_[0] $_[0]\n";
     my $line;
     while ($line = shift(@contents)) {
 	if ($line =~ /$\#if(\w*)def\s+(\S+)/) {
@@ -255,13 +278,16 @@ sub read_negative {
 # this turned into a hack because i was lazy
 sub mkdirs {
     my $d = @_[0];
-    #print "making dir $d\n";
+#    print "making dir $d\n";
+    `mkdir -p $d`;
 
-    if ($platform ne 'windows') {
-	$d =~ s/\\/\//g; # make backslashes into fwd slashes
-	my $result = `$mkdir_path -p $d`;
-    } else {
-	print $result = `$mkdir_path $d`;
-    }
+#    if ($platform ne 'windows') {
+#	$d =~ s/\\/\//g; # make backslashes into fwd slashes
+	#my $result = `$mkdir_path -p $d`;
+#	print `$mkdir_path -p $d`;
+#    } else {
+	#print $result = `$mkdir_path $d`;
+#        print `$mkdir_path $d`;
+#    }
     return 1;
 }
