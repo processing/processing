@@ -4645,6 +4645,8 @@ v              PApplet.this.stop();
   static public void main(String args[]) {
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
+      System.err.println("For additional options, " +
+                         "see the javadoc for PApplet");
       System.exit(1);
     }
 
@@ -4652,7 +4654,6 @@ v              PApplet.this.stop();
       boolean external = false;
       int location[] = null;
       int editorLocation[] = null;
-      //boolean exactLocation = false;
       String folder = System.getProperty("user.dir");
       String name = null;
       boolean present = false;

@@ -92,9 +92,10 @@ public class PdeKeywords extends CTokenMarker {
               keywordColoring.add(keyword, id);
             }
             if (pieces.length >= 3) {
-              //if (htmlFilename.length() > 0) {
-              keywordToReference.put(keyword, pieces[2]); //htmlFilename);
-              //}
+              String htmlFilename = pieces[2].trim();
+              if (htmlFilename.length() > 0) {
+                keywordToReference.put(keyword, htmlFilename);
+              }
             }
           }
         }
