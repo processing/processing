@@ -1,3 +1,7 @@
+0040
+X fix problem with pde.properties
+
+
 0039
 X left PdeBase out of the run.bat in windows.. piss me.
 X need comprehensive set of tests for 'f' substitution scenarios

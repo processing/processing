@@ -1076,7 +1076,8 @@ public class PdeEditor extends Panel {
       }
 
       // files to include
-      if (dataDir != null) {
+      //if (dataDir != null) {
+      if ((dataDir != null) && (dataDir.exists())) {
 	String datafiles[] = dataDir.list();
 	for (int i = 0; i < datafiles.length; i++) {
 	  if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
