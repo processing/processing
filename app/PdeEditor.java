@@ -128,6 +128,8 @@ public class PdeEditor extends JFrame
   PdeHistory history;
   PdeSketchbook sketchbook;
   PdePreferences preferences;
+  PdeEditorFind find;
+
   //static Properties keywords; // keyword -> reference html lookup
 
 
@@ -196,7 +198,7 @@ public class PdeEditor extends JFrame
     rightPanel.add(header, BorderLayout.NORTH);
 
     textarea = new JEditTextArea();
-    textarea.setRightClickPopup(new TextAreaPopup(this));
+    textarea.setRightClickPopup(new TextAreaPopup(textarea));
     textarea.setTokenMarker(new PdeKeywords());
 
     // assemble console panel, consisting of status area and the console itself
@@ -770,7 +772,12 @@ public class PdeEditor extends JFrame
     item = newMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          find();
+          //find();
+          if (find == null) { 
+            find = new PdeEditorFind(PdeEditor.this);
+          } else {
+            find.show();
+          }
         }
       });
     menu.add(item);
@@ -778,7 +785,8 @@ public class PdeEditor extends JFrame
     item = newMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          findNext();
+          //findNext();
+          if (find != null) find.find();
         }
       });
     menu.add(item);
@@ -955,13 +963,6 @@ public class PdeEditor extends JFrame
    * in PdeEditor since it has the callback from PdeEditorStatus.
    */
   public void handleQuit() {
-    storePreferences();
-    //editor.storePreferences();
-
-    // this will save the prefs even if quit is cancelled, but who cares
-    //PdePreferences.save();
-    preferences.save();
-
     // check to see if the person actually wants to quit
     //editor.doQuit();
     doQuit();
@@ -1138,7 +1139,7 @@ public class PdeEditor extends JFrame
 
     for (int i = 0; i < 10; i++) System.out.println();
 
-    if (PdeBase.getBoolean("editor.external")) {
+    if (PdePreferences.getBoolean("editor.external")) {
       // history gets screwed by the open..
       String historySaved = history.lastRecorded;
       handleOpen(sketchName, sketchFile, sketchDir);
@@ -1480,7 +1481,7 @@ public class PdeEditor extends JFrame
         FileDialog fd = new FileDialog(new Frame(), 
                                        "Save new sketch as:", 
                                        FileDialog.SAVE);
-        fd.setDirectory(PdePreferences.get("sketchbook.location"));
+        fd.setDirectory(PdePreferences.get("sketchbook.path"));
         fd.show();
 
         String sketchParentDir = fd.getDirectory();
@@ -1490,7 +1491,7 @@ public class PdeEditor extends JFrame
         sketchDir = new File(sketchParentDir, sketchName);
 
       } else {
-        String sketchParentDir = PdePreferences.get("sketchbook.location");
+        String sketchParentDir = PdePreferences.get("sketchbook.path");
 
         int index = 0;
         SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
@@ -1529,7 +1530,8 @@ public class PdeEditor extends JFrame
       // actually, don't, that way can avoid too much extra mess
 
       // rebuild the menu here
-      base.rebuildSketchbookMenu();
+      //base.rebuildSketchbookMenu();
+      sketchbook.rebuildMenu();
 
       // now open it up
       //skOpen(sketchFile, sketchDir);
@@ -1611,9 +1613,12 @@ public class PdeEditor extends JFrame
       sketchDir = isketchDir;
       setSketchModified(false);
 
-      historyFile = new File(sketchFile.getParent(), "history.gz");
-      base.rebuildHistoryMenu(historyFile.getPath());
-      historyLast = program;
+      //historyFile = new File(sketchFile.getParent(), "history.gz");
+      history.setPath(sketchFile.getParent());
+      //base.rebuildHistoryMenu(historyFile.getPath());
+      history.rebuildMenu();
+      //historyLast = program;
+      history.lastRecorded = program;
 
       header.reset();
 
@@ -1622,7 +1627,7 @@ public class PdeEditor extends JFrame
 
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
-        
+
     } catch (IOException e2) {
       e2.printStackTrace();
     }
@@ -1738,7 +1743,7 @@ public class PdeEditor extends JFrame
       // make new dir
       newSketchDir.mkdirs();
       // copy the sketch file itself with new name
-      copyFile(sketchFile, newSketchFile);
+      PdeBase.copyFile(sketchFile, newSketchFile);
 
       // copy everything from the old dir to the new one
       PdeBase.copyDir(sketchDir, newSketchDir);
@@ -1750,7 +1755,7 @@ public class PdeEditor extends JFrame
       if (renaming) {
         // in case java is holding on to any files we want to delete
         System.gc();
-        removeDir(sketchDir);
+        PdeBase.removeDir(sketchDir);
       }
 
       // (important!) has to be done before opening, 
@@ -1886,25 +1891,46 @@ public class PdeEditor extends JFrame
         //System.err.println(e.getMessage());
       }
 
-        /*
-      int index = program.indexOf("size(");  // space in size ( problem!
-      if (index != -1) {
-        try {
-          String str = program.substring(index + 5);
-          int comma = str.indexOf(',');
-          int paren = str.indexOf(')');
-          wide = Integer.parseInt(str.substring(0, comma).trim());
-          high = Integer.parseInt(str.substring(comma+1, paren).trim());
-        } catch (Exception e) { 
-          e.printStackTrace();
-        }
-      }
-        */
-
       File htmlOutputFile = new File(appletDir, "index.html");
       FileOutputStream fos = new FileOutputStream(htmlOutputFile);
       PrintStream ps = new PrintStream(fos);
 
+      // wide, high, and exportSketchName
+
+      // @@sketch@@, @@width@@, @@height@@, @@archive@@
+
+      InputStream is = PdeBase.getStream("applet.html");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (line.indexOf("@@") != -1) {
+          StringBuffer sb = new StringBuffer(line);
+          int index = 0;
+          while ((index = sb.indexOf("@@sketch@@")) != -1) {
+            sb.replace(index, index + "@@sketch@@".length(), 
+                       exportSketchName);
+          }
+          while ((index = sb.indexOf("@@archive@@")) != -1) {
+            sb.replace(index, index + "@@archive@@".length(), 
+                       exportSketchName + ".jar");
+          }
+          while ((index = sb.indexOf("@@width@@")) != -1) {
+            sb.replace(index, index + "@@width@@".length(), 
+                       String.valueOf(wide));
+          }
+          while ((index = sb.indexOf("@@height@@")) != -1) {
+            sb.replace(index, index + "@@height@@".length(), 
+                       String.valueOf(wide));
+          }
+          line = sb.toString();
+        }
+        ps.println(line);
+      }
+
+      reader.close();
+
+      /*
       ps.println("<html>");
       ps.println("<head>");
       ps.println("<title>" + exportSketchName + " : Built with Processing</title>");
@@ -1932,6 +1958,7 @@ public class PdeEditor extends JFrame
       ps.println("</center>");
       ps.println("</body>");
       ps.println("</html>");
+      */
 
       ps.flush();
       ps.close();
@@ -2117,66 +2144,19 @@ public class PdeEditor extends JFrame
     return size;
   }
 
+
   protected void doQuit2() {
-    //System.out.println("doquit2");
-    //doStop();
+    storePreferences();
+    preferences.save();
 
-    // clear out projects that are empty
-    if (PdePreferences.getBoolean("sketchbook.auto_clean", true)) {
-      String userPath = base.sketchbookPath + File.separator + userName;
-      File userFolder = new File(userPath);
-
-      //System.out.println("auto cleaning");
-      if (userFolder.exists()) {  // huh?
-        String entries[] = new File(userPath).list();
-        if (entries != null) {
-          for (int j = 0; j < entries.length; j++) {
-            //System.out.println(entries[j] + " " + entries.length);
-
-            if ((entries[j].equals(".")) || 
-                (entries[j].equals(".."))) continue;
-
-            File prey = new File(userPath, entries[j]);
-            File pde = new File(prey, entries[j] + ".pde");
-
-            // make sure this is actually a sketch folder with a .pde,
-            // not a .DS_Store file or another random user folder
-
-            if (pde.exists()) {
-              if (calcFolderSize(prey) == 0) {
-                //System.out.println("i want to remove " + prey);
-                removeDir(prey);
-                //} else {
-                //System.out.println("not removign because size is " + 
-                //                 calcFolderSize(prey));
-              }
-            }
-
-            //File prey = new File(preyDir, entries[j] + ".pde");
-            //if (prey.exists()) {
-            //if (prey.length() == 0) {
-                // this is a candidate for deletion, but make sure
-                // that the user hasn't added anything else to the folder
-
-                //System.out.println("remove: " + prey);
-            //  removeDir(preyDir);
-            //}
-            //} else {
-              //System.out.println(prey + " doesn't exist.. weird");
-            //}
-          }
-        }
-      }
-    }
-    //PdePreferences.save();
+    sketchbook.clean();
 
     //System.out.println("exiting here");
-    //System.exit(0);
+    System.exit(0);
   }
 
 
-  PdeEditorFind find;
-
+  /*
   public void find() {
     if (find == null) { 
       find = new PdeEditorFind(this);
@@ -2188,6 +2168,7 @@ public class PdeEditor extends JFrame
   public void findNext() {
     if (find != null) find.find();
   }
+  */
 
 
   public void doBeautify() {
@@ -2315,7 +2296,7 @@ public class PdeEditor extends JFrame
     }
     //System.out.println("copying from " + sourceFile);
     //System.out.println("copying to " + destFile);
-    copyFile(sourceFile, destFile);
+    PdeBase.copyFile(sourceFile, destFile);
   }
 
 
@@ -2370,6 +2351,9 @@ public class PdeEditor extends JFrame
   }
 
 
+  // ...................................................................
+
+
   public void error(PdeException e) {   // part of PdeEnvironment
     if (e.line >= 0) highlightLine(e.line); 
 
@@ -2395,10 +2379,12 @@ public class PdeEditor extends JFrame
   }
 
 
-  // cleanup temp files
-  //
-  //static protected void cleanTempFiles(String buildPath) {
-  //static protected void cleanTempFiles() {
+  // ...................................................................
+
+
+  /**
+   * Cleanup temp files
+   */
   protected void cleanTempFiles() {
     if (tempBuildPath == null) return;
 
@@ -2416,7 +2402,7 @@ public class PdeEditor extends JFrame
     // will ignore the fact that that dir is in the CLASSPATH in run.sh
     //
     if (dirObject.exists()) {
-      removeDescendants(dirObject);
+      PdeBase.removeDescendants(dirObject);
     }
   }
 
@@ -2515,7 +2501,7 @@ public class PdeEditor extends JFrame
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
 
-        referenceFile = PdeKeywords.get(getSelectedText());
+        referenceFile = PdeKeywords.get(parent.getSelectedText());
         if (referenceFile != null) {
           referenceItem.setEnabled(true);
         }

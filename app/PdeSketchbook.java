@@ -79,8 +79,7 @@ public class PdeSketchbook {
       //menu.add(newSkechItem);
       //menu.addSeparator();
 
-      sketchbookFolder = 
-        new File(PdePreferences.get("sketchbook.path", "sketchbook"));
+      sketchbookFolder = new File(PdePreferences.get("sketchbook.path"));
       sketchbookPath = sketchbookFolder.getAbsolutePath();
       if (!sketchbookFolder.exists()) {
         System.err.println("sketchbook folder doesn't exist, " + 
@@ -88,6 +87,7 @@ public class PdeSketchbook {
         sketchbookFolder.mkdirs();
       }
 
+      /*
       // files for the current user (for now, most likely 'default')
 
       // header knows what the current user is
@@ -100,6 +100,7 @@ public class PdeSketchbook {
                            "' doesn't exist, creating a new one");
         userFolder.mkdirs();
       }
+      */
 
       /*
       SketchbookMenuListener userMenuListener = 
@@ -132,7 +133,7 @@ public class PdeSketchbook {
         menu.addSeparator();
       }
       if (!addSketches(menu, sketchbookFolder, true)) {
-        MenuItem item = new MenuItem("No sketches");
+        JMenuItem item = new JMenuItem("No sketches");
         item.setEnabled(false);
         menu.add(item);
       }
@@ -192,4 +193,60 @@ public class PdeSketchbook {
     }
     return ifound;
   } 
+
+
+  /**
+   * clear out projects that are empty
+   */
+  public void clean() {
+    if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
+
+    //String userPath = base.sketchbookPath + File.separator + userName;
+    //File userFolder = new File(userPath);
+    File sketchbookFolder = new File(PdePreferences.get("sketchbook.path"));
+
+    //System.out.println("auto cleaning");
+    if (sketchbookFolder.exists()) {
+      //String entries[] = new File(userPath).list();
+      String entries[] = sketchbookFolder.list();
+      if (entries != null) {
+        for (int j = 0; j < entries.length; j++) {
+          //System.out.println(entries[j] + " " + entries.length);
+
+          if ((entries[j].equals(".")) || 
+              (entries[j].equals(".."))) continue;
+
+          //File prey = new File(userPath, entries[j]);
+          File prey = new File(sketchbookFolder, entries[j]);
+          File pde = new File(prey, entries[j] + ".pde");
+
+          // make sure this is actually a sketch folder with a .pde,
+          // not a .DS_Store file or another random user folder
+
+          if (pde.exists()) {
+            if (calcFolderSize(prey) == 0) {
+              //System.out.println("i want to remove " + prey);
+              PdeBase.removeDir(prey);
+              //} else {
+              //System.out.println("not removign because size is " + 
+              //                 calcFolderSize(prey));
+            }
+          }
+
+          //File prey = new File(preyDir, entries[j] + ".pde");
+          //if (prey.exists()) {
+          //if (prey.length() == 0) {
+          // this is a candidate for deletion, but make sure
+          // that the user hasn't added anything else to the folder
+          
+          //System.out.println("remove: " + prey);
+          //  removeDir(preyDir);
+          //}
+          //} else {
+          //System.out.println(prey + " doesn't exist.. weird");
+          //}
+        }
+      }
+    }
+  }
 }
