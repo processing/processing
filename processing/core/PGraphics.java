@@ -4142,6 +4142,8 @@ public class PGraphics extends PImage implements PConstants {
       }
 
     } else {
+      //System.out.println(getClass().getName());
+      //System.out.println(getClass().getResource(filename));
       awtimage = gimmeImage(getClass().getResource(filename), force);
       if (awtimage == null) {
         awtimage = 
