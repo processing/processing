@@ -1,47 +1,36 @@
-0067
-X it's possible to write non-1.1 code, even syntax
-X   would -source 1.1 help this? -> nope
-X fixed IllegalArgumentException for people using run.bat and run-expert.bat
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132725
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132753
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135344;start=0
-X save/saveFrame was super-slow.. wasn't buffering the outputstream
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135103;start=0
-X don't forget to change the revision number on release
-X   wrote script to force me to fix them
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
-X apple has update qtjava for quicktime 6.4, thank god
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
-X size not properly detected when "size()" was the first thing
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067217366;start=0
-X nasty but where System.out was being piped to System.err
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067218548;start=0
-X   println() and System.out.println() from external classes has trouble
-X     println() / print() not always flushing until after app quits
-X change "send to bugs@proce55ing.net" to a longer popup dialog
-X   open the discourse board in another window, ask to post the code
-X set PATH to include java (!)
-X   external classes currently require expert release
-X   code written for linux, test it
-X   code written for windows, rebuild the exe and test it
-X update the release of jikes that's used
-X   updated for macosx
-X   compile new version for linux
-X   compile new version for windows
-X netscape/javascript had to be included for linux and for expert
-X   add it to the cvs and the build scripts
-X   also needs to be included for 1.4 on the mac
-X   probably a good idea to include on all
-X multiple jar export is broken
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067307030;start=0
-
-
 0068
+X ifdef JDK14 around a piece of 1.4 specific window code
+
+_ find/replace hangs when recapitalizing things
+
+_ problems running external vm/vm is hanging
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+
+_ create font doesn't support umlauts
+_   fix up font code to generate unicode chars, at least for iso8859-1 charset
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
+
+_ if last line of code is a comment with no CR after it,
+_   an OutOfMemoryError ensues
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
+
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
 
 _ jikes errors have no newlines because it's a buffered reader
 _   and the newlines are removed when read
+
+_ new sphere code from toxi
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
+
+_ some way to properly quit sketch when stopped
+_   if people have other threads they've spawned, impossible to stop
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
+
+_ punt on the expert release? at least until beta? 
+_   remove the fonts from the distribution?
+_   do this once unicode support has been added to the regular fonts
 
 
 console
@@ -298,7 +287,9 @@ _ screenGrab() at the end of a draw mode program is problematic
 _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
 _ non-ascii filenames seem to be causing trouble
+_   maybe provide a message stating this when p5 is run?
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 _ need to change all the copyrights over to mit "except where noted"
 X when exporting applet, line numbers will be off.. 
 _   when not exporting with new preproc code, imports all on same line
