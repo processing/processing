@@ -27,24 +27,50 @@ _ should the default be 100x100
 _ maybe stop/kill button should only be a stop btn
 
 
-for 0013
+MAJOR
+_ code is not always replaced when a tweak is made
+_   when doing an extends ProcessingApplet
+_   need to add randomizer to even non-self gen'd classes
+_   or figure out how to unload old classes.. grr
+
+
+ANNOYANCES
+_ apparent NullPointerException when things way offscreen
+_   i.e. glyphrot with scale set to 4
+_ Compiler.disable() message is weird and doesn't always work
+_ exceptions cause play to never un-highlight
+_ weird exception crap/messages.. erroneous shite
+_ erroneous errors from kjc regarding 'var not inited'
+_   is there any way to disable this message?
+_ z coordinates are backwards from gl (at least from mazo)
+
+
+for 0013 
+_ actually fix the bug with extends
+_   wasn't included in previous release
+_ option to set full screen background color
 _ remove 'colorScale' from the default program in pde
+_ screenGrab() code (single frame to tif)
+_ externally loaded files are off by 1 line for errors
+
+
+for 0014
 _ examples - setting background using a full screen image
 _   uses System.arraycopy for speed
 _ write code to bind/convert java fonts
 _ finish color function inside applet
 _   do by simplifying stroke/fill/background inside bagel
 _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
-_ screenGrab() code (single frame to tif) 
 _ include stdout/stderr in the processing window
 _   option to toggle window on/off (not just in properties, but realtime)
 _   set # of lines in properties
 _ fix color cube applet 
 _   make it run in current version of processing
 _   fix background from showing up black
+_ remove .java and .class files for compiled classes
 
 
-for 0014
+for 0015
 _ make size() work for draw() mode
 _   inside KjcEngine, reach in and grab calls to 'size'
 _   if call is not using a constant number, then punt
@@ -53,7 +79,7 @@ _   document fixed width font format
 _   write code for reading uncompressed b/w tiff images
 
 
-for 0015 (first semi-public release)
+for 0016 (first semi-public release)
 _ docs
 _   explain using inner classes and using non-public classes
 _   start 'errors' section
@@ -76,7 +102,7 @@ _ setting a fill color when drawing an image should affect the image
 _   or maybe image.setColor or setTone to mix a specific color in
 
 
-for 0016
+for 0017
 _ option to enable/disable frame on running applets
 _   more like photoshop - presentation mode w/ nothing or frames on all
 _ compiling .java files leaves the .class files next to the .java
@@ -98,7 +124,7 @@ _   breaks on every 2nd run when using serial apps (or others?)
 _     try calling gc on stop as well
 
 
-for 0017
+for 0018
 _ fix bugs from the 'bugs' file 
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
