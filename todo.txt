@@ -23,7 +23,6 @@ X   1.4 version: -Dapple.awt.showGrowBox=false
 X put 'play' on a SwingWorker thread
 _   test this on a pc to see how it goes, especially with opengl
 
-
 sketchbook/prefs location
 _ read from registry key to get the proper name for these folders
 _   also find some way to do this on the mac
