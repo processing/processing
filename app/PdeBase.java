@@ -50,12 +50,13 @@ public class PdeBase implements ActionListener {
     int width = getInteger("window.width", 600);
     int height = getInteger("window.height", 350);
 
+    /*
     encoding = get("encoding");
     boolean beautify = false; 
     boolean convertSemicolons = false;
     String program = get("program"); 
     if (program != null) { 
-      program = getFile(program);
+    //program = getFile(program);
     } else {
       program = get("inline_program");
       convertSemicolons = true;
@@ -74,7 +75,9 @@ public class PdeBase implements ActionListener {
 	}  
       }
     } 
-    editor = new PdeEditor(/*this,*/ program);
+    */
+
+    editor = new PdeEditor(/*this,*/ /*program*/);
     frame.setLayout(new BorderLayout());
     frame.add("Center", editor);
 
@@ -201,11 +204,11 @@ public class PdeBase implements ActionListener {
 
       // header knows what the current user is
       String userPath = sketchbookPath + 
-	File.separator + editor.header.user;
+	File.separator + editor.userName;
 
       File userFolder = new File(userPath);
       if (!userFolder.exists()) {
-	System.err.println("sketchbook folder for '" + editor.header.user + 
+	System.err.println("sketchbook folder for '" + editor.userName + 
 			   "' doesn't exist, creating a new one");
 	userFolder.mkdirs();
       }
@@ -229,7 +232,7 @@ public class PdeBase implements ActionListener {
 
       String toplevel[] = sketchbookFolder.list();
       for (int i = 0; i < toplevel.length; i++) {
-	if ((toplevel[i].equals(editor.header.user)) ||
+	if ((toplevel[i].equals(editor.userName)) ||
 	    (toplevel[i].equals(".")) ||
 	    (toplevel[i].equals(".."))) continue;
 
@@ -406,6 +409,8 @@ public class PdeBase implements ActionListener {
 
 
   // this could be pruned further
+  // also a similar version inside PdeEditor 
+  // (at least the binary portion)
   static public String getFile(String filename) {
     if (filename.length() == 0) {
       return null;

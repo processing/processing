@@ -13,7 +13,7 @@ import java.io.*;
     */
 
 public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
-  static final String PROJECT_TITLER = "sketch";
+  static final String SKETCH_TITLER = "sketch";
   static final String USER_TITLER = "user";
 
   //static final Color primaryColor = Color.white;
@@ -26,14 +26,13 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
   PdeEditor editor;
 
-  String project;
-  int projectLeft;
-  int projectRight;
-  int projectTitleLeft;
-  //boolean isProject;
-  File projectDir;
+  //private String sketch; // name of current file
+  int sketchLeft;
+  int sketchRight;
+  int sketchTitleLeft;
+  //File sketchDir;
 
-  String user;
+  //private String user;
   int userLeft;
   int userRight;
   int userTitleLeft;
@@ -47,10 +46,10 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   int imageW, imageH;
 
 
-  public PdeEditorHeader(PdeEditor editor, String project, String user) {
+  public PdeEditorHeader(PdeEditor editor /*, String sketch, String user*/) {
     this.editor = editor;
-    this.project = project;
-    this.user = user;
+    //this.sketch = sketch;
+    //this.user = user;
 
     if (primaryColor == null) {
       backgroundColor = PdeBase.getColor("editor.header.bgcolor", 
@@ -63,10 +62,17 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   }
 
 
-  public void setProject(String project, File projectDir) {
-    this.project = project;
-    this.projectDir = projectDir;
-    projectLeft = 0;
+  public void reset() {
+    sketchLeft = 0;
+    userLeft = 0;
+    update();
+  }
+
+  /*
+  public void setSketch(String sketch, File sketchDir) {
+    this.sketch = sketch;
+    this.sketchDir = sketchDir;
+    sketchLeft = 0;
     update();
   }
 
@@ -74,6 +80,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     this.user = user;
     userLeft = 0;
   }
+  */
 
 
   public void update() {
@@ -122,17 +129,23 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
       fontAscent = metrics.getAscent();
     }
 
-    if (projectLeft == 0) {
-      projectTitleLeft = PdeEditor.INSET_SIZE;
-      projectLeft = projectTitleLeft + 
-	metrics.stringWidth(PROJECT_TITLER) + PdeEditor.INSET_SIZE;
-    }
+    //if (sketchLeft == 0) {
+    sketchTitleLeft = PdeEditor.INSET_SIZE;
+    sketchLeft = sketchTitleLeft + 
+      metrics.stringWidth(SKETCH_TITLER) + PdeEditor.INSET_SIZE;
 
-    if (userLeft == 0) {
-      userLeft = sizeW - 20 - metrics.stringWidth(user);
-      userTitleLeft = userLeft - PdeEditor.INSET_SIZE - 
-	metrics.stringWidth(USER_TITLER);
-    }
+    //sketch = editor.sketchName;
+    //if (sketch == null) sketch = "";
+    //}
+
+    //if (userLeft == 0) {
+    userLeft = sizeW - 20 - metrics.stringWidth(editor.userName);
+    userTitleLeft = userLeft - PdeEditor.INSET_SIZE - 
+      metrics.stringWidth(USER_TITLER);
+
+    //user = editor.userName;
+    //if (user == null) user = "";
+    //}
 
     int baseline = (sizeH + fontAscent) / 2;
 
@@ -142,12 +155,14 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     boolean boringUser = user.equals("default");
 
     g.setColor(secondaryColor);
-    g.drawString(PROJECT_TITLER, projectTitleLeft, baseline);
+    g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);
     if (!boringUser) g.drawString(USER_TITLER, userTitleLeft, baseline);
 
     g.setColor(primaryColor);
-    g.drawString(project, projectLeft, baseline);
-    if (!boringUser) g.drawString(user, userLeft, baseline);
+    //g.drawString(sketch, sketchLeft, baseline);
+    g.drawString(editor.sketchName, sketchLeft, baseline);
+    //if (!boringUser) g.drawString(user, userLeft, baseline);
+    if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
 
     //g.setColor(fgColor[mode]);
     //g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + fontAscent) / 2);
