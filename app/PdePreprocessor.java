@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdePreprocessor - default cup-generated parser (not yet implemented)
+  PdePreprocessor - default ANTLR-generated parser
   Part of the Processing project - http://Proce55ing.net
 
   Copyright (c) 2001-03 
@@ -24,6 +24,9 @@
 */
 
 import java.io.*;
+import antlr.*;
+import antlr.collections.*;
+import antlr.collections.impl.*;
 
 public class PdePreprocessor {
 
@@ -66,6 +69,9 @@ public class PdePreprocessor {
   Reader programReader;
   String buildPath;
 
+  // used for calling the ASTFactory to get the root node
+  private static final int ROOT_ID = 0;
+
   boolean usingExternal; // use an external process to display the applet?
 
   public PdePreprocessor(String program, String buildPath) {
@@ -75,11 +81,95 @@ public class PdePreprocessor {
     usingExternal = PdeBase.getBoolean("play.external", false);
   }
 
+  /**
+   * Used by PdeEmitter.dumpHiddenTokens()
+   */
+  public static TokenStreamCopyingHiddenTokenFilter filter;
+
+  /**
+   * preprocesses a pde file and write out a java file
+   *
+   * @return the classname of the exported Java
+   */
   public String writeJava(String name, boolean extendsNormal,
                           boolean exporting) throws java.lang.Exception {
 
     String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
 
-    return "";
+    // create a lexer with the stream reader, and tell it to handle 
+    // hidden tokens (eg whitespace, comments) since we want to pass these
+    // through so that the line numbers when the compiler reports errors
+    // match those that will be highlighted in the PDE IDE
+    // 
+    PdeLexer lexer  = new PdeLexer(programReader);
+    lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
+
+    // create the filter for hidden tokens and specify which tokens to 
+    // hide and which to copy to the hidden text
+    filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
+    filter.hide(PdeRecognizer.SL_COMMENT);
+    filter.hide(PdeRecognizer.ML_COMMENT);
+    filter.hide(PdeRecognizer.WS);
+    filter.copy(PdeRecognizer.SEMI);
+    filter.copy(PdeRecognizer.LPAREN);
+    filter.copy(PdeRecognizer.RPAREN);
+    filter.copy(PdeRecognizer.LCURLY);
+    filter.copy(PdeRecognizer.RCURLY);
+    filter.copy(PdeRecognizer.COMMA);
+    filter.copy(PdeRecognizer.RBRACK);
+    filter.copy(PdeRecognizer.LBRACK);
+    filter.copy(PdeRecognizer.COLON);
+
+    // create a parser and set what sort of AST should be generated
+    //
+    PdeRecognizer parser = new PdeRecognizer(filter);
+
+    // XXXdmose comments and stuff
+    parser.setASTNodeClass("antlr.CommonASTWithHiddenTokens");
+
+    // start parsing at the compilationUnit non-terminal
+    //
+    parser.compilationUnit();
+
+    // get ready to traverse the AST
+    //
+    ASTFactory factory = new ASTFactory();
+    AST parserAST = parser.getAST();
+    AST rootNode = factory.create(ROOT_ID, "AST ROOT");
+    rootNode.setFirstChild(parserAST);
+
+    ((CommonAST)parserAST).setVerboseStringConversion(
+      true, parser.getTokenNames());
+
+    // output the code
+    //
+    PdeEmitter emitter = new PdeEmitter();
+    PrintStream stream = new PrintStream(
+      new FileOutputStream(buildPath + File.separator + "MyDemo.java"));
+    emitter.setOut(stream);
+    // XXXdmose should try block encompass more?
+    emitter.print(rootNode);
+
+    // XXXdmose more comment: force the newly printed 
+    stream.close();
+
+    final boolean debug = true;
+
+    // if we're debugging, serialize the parse tree to an XML file.  can
+    // be viewed usefully with Mozilla or IE
+
+    if (debug) {
+
+      stream = new PrintStream(new FileOutputStream("parseTree.xml"));
+      stream.println("<?xml version=\"1.0\"?>");
+      stream.println("<document>");
+      OutputStreamWriter writer = new OutputStreamWriter(stream);
+      ((CommonAST)parserAST).xmlSerialize(writer);
+      writer.flush();
+      stream.println("</document>");
+      writer.close();
+    }
+
+    return "MyDemo" ;
   }
 }
