@@ -11,19 +11,14 @@ else
   cp -r ../shared work
   unzip -q -d work jre.zip
 
-  #cp -r ../shared/lib work/
-  #rm -rf work/lib/CVS
-  #cp -r ../shared/sketchbook work/
-  #cp -r ../shared/reference work/
-
   mkdir work/lib/export
   mkdir work/lib/build
   # this will copy cvs files intact, meaning that changes
   # could be made and checked back in.. interesting
   mkdir work/classes
 
-  cp dist/run.bat work/
-  cp dist/lib/pde.properties_windows work/lib/
+  cp dist/lib/pde_windows.properties work/lib/
+  cp dist/Proce55ing.exe work/
 
   echo
 fi
