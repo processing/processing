@@ -16,6 +16,8 @@ _   warn people that they should make images be a pow of 2
 
 _ fonts probably need to be RGBA, not ALPHA style images
 _   there's nothing really ALPHA about them?
+_ also when drawing an image, sense whether drawn rotated
+_   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 _ don't allocate zbuffer & stencil until depth() is called
