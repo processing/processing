@@ -32,6 +32,29 @@ X   known issues
 X     macos sketch window resizing strangely
 X     win95/98/me version acts poorly or doesn't run
 X as approaches 1000 lines, editorconsole has arrayindexoutof bounds
+X console scroller obscured by window resizer intruding
+X arrow keys broken (but with shift they work..)
+X   hacked in basic arrow key support
+X include instructions for rxtx or the install itself
+X   just include the .pkg, since causing exceptions now
+X make sure space->underscore conversion working properly for 'save as'
+X   file names with a space get "_ " instead of a space ?
+X   under osx, consuming event doesn't work, so don't do it real time
+X sketch window resizing strangely
+X   can make width/height larger, but only height smaller
+X   check apple site for technote/bug listing
+X     jes grabbed examples for me
+X   getMinimumSize() on textarea is probably causing trouble
+X     better just to pre-empt it on the frame, b/c textarea didn't do much
+X apple-a for select all tries to quit
+X   can't reproduce
+X escape on presentation mode--no key events seem to be coming through
+X make default font size for editor the next size smaller
+X include names of all people who submitted bugs
+
+44 _ use self-extractor and make sure no 8.3 filenames
+44 _ use a .dmg to distribute 
+44 _   make sure no DS_Store files are included
 
 
 bagel
@@ -43,29 +66,15 @@ pde
 _ locking up on run (under win2k? others?) 
 _   rare but present, every 100th time or so
 
-
 windows
-44 _ use self-extractor and make sure no 8.3 filenames
 _ windows 95/98/ME seems to be broken
 _   ME seems to be very broken
 
-macos
-44 _ console scroller obscured by window resizer intruding
-44 _ make sure space->underscore conversion working properly for 'save as'
-44 _   file names with a space get "_ " instead of a space ?
-
 macosx 
-44 _ make default font size for editor the next size smaller
-44 _ include instructions for rxtx or the install itself
-44 _   just include the .pkg, since causing exceptions now
-44 _ use a .dmg to distribute 
-44 _ arrow keys broken (but with shift they work..)
-44 _ escape key not quitting presentation mode
-44 _ apple-a for select all tries to quit
-_ sketch window resizing strangely
-_   can make width/height larger, but only height smaller
-X   check apple site for technote/bug listing
-X     jes grabbed examples for me
+_ escape key not quitting presentation mode
+_   no events seem to be coming through at all
+_ Event.consume() doesn't work on entry fields 
+_   manifests itself in sketch naming, can't be constrained
 
 suggestions
 _ make versions available w/o fonts and jre
