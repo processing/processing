@@ -1006,42 +1006,32 @@ public class PdeBase extends Frame implements ActionListener {
     return parsed;
   }
 
+
   static public Font getFont(String which, Font otherwise) {
     //System.out.println("getting font '" + which + "'");
     String str = get(which);
     if (str == null) return otherwise;  // ENABLE LATER
     StringTokenizer st = new StringTokenizer(str, ",");
-    return new Font(st.nextToken(), 
-		    st.nextToken().equals("bold") ? Font.BOLD : Font.PLAIN,
+    return new Font(st.nextToken(), Font.PLAIN,
 		    Integer.parseInt(st.nextToken()));
   }
 
 
-  static public SimpleAttributeSet getStyle(String what, 
-					    SimpleAttributeSet otherwise) {
-    String str = get("editor.program." + what + ".style");
-    if (str == null) return otherwise;  // ENABLE LATER
+  static public SyntaxStyle getStyle(String what, String dflt) {
+    String str = get("editor.program." + what + ".style", dflt);
+
     StringTokenizer st = new StringTokenizer(str, ",");
 
-    SimpleAttributeSet style = new SimpleAttributeSet();
-
-    StyleConstants.setFontFamily(style, st.nextToken());
-
     String s = st.nextToken();
-    StyleConstants.setBold(style, s.indexOf("bold") != -1);
-    StyleConstants.setItalic(style, s.indexOf("italic") != -1);
-
-    StyleConstants.setFontSize(style, Integer.parseInt(st.nextToken()));
+    if (s.indexOf("#") == 0) s = s.substring(1);
+    Color color = new Color(Integer.parseInt(s, 16));
 
     s = st.nextToken();
-    if (s.indexOf("#") == 0) s = s.substring(1);
-    StyleConstants.setForeground(style, new Color(Integer.parseInt(s, 16)));
+    boolean bold = (s.indexOf("bold") != -1);
+    boolean italic = (s.indexOf("italic") != -1);
+    //System.out.println(str + " " + bold + " " + italic);
 
-    s = st.nextToken();
-    if (s.indexOf("#") == 0) s = s.substring(1);
-    StyleConstants.setBackground(style, new Color(Integer.parseInt(s, 16)));
-
-    return style;
+    return new SyntaxStyle(color, italic, bold);
   }
 
 
