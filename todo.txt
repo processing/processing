@@ -1,16 +1,26 @@
 0044
 
+pde
+_ don't popup offscreen if editor window is way left. 
+_   just make sure the x coord > 10 or so (if not presenting)
+_ don't throw exceptions for serial on startup if no serial available?
+
 sketchbook
 _ organizing directories, save to other directories blows up
 
 readme
 _ mention shift-run for present mode
+_ size() and background() need regular nums, no vars
 
 windows
 _ use self-extractor and make sure no 8.3 filenames
 
+macos
+_ console scroller obscured by window resizer intruding
+
 macosx 
 _ include instructions for rxtx or the install itself
+_   just include the .pkg, since causing exceptions now
 _ use a .dmg to distribute 
 _ viewer window shows up in odd places
 _ arrow keys broken (but with shift they work..)
