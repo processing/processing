@@ -385,6 +385,10 @@ public class PGraphics extends PImage implements PConstants {
 
     // no current font
     textFont = null;
+    textSize = 12;
+    textLeading = 14;
+    textMode = ALIGN_LEFT;
+    textSpace = OBJECT_SPACE;
     //text_mode    = ALIGN_LEFT;
     //text_space   = OBJECT_SPACE;
   }
@@ -1411,11 +1415,17 @@ public class PGraphics extends PImage implements PConstants {
   // TEXT/FONTS
 
 
+  public void textFont(PFont which, float size) {
+    textFont(which);
+    textSize(size);
+  }
+
+
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      textFont.resetSize();
-      textFont.resetLeading();
+      //textFont.resetSize();
+      //textFont.resetLeading();
 
     } else {
       throw new RuntimeException("a null PFont was passed to textFont()");
@@ -1423,16 +1433,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void textFont(PFont which, float size) {
-    textFont(which);
-    textSize(size);
-  }
-
-
   public void textSize(float size) {
     if (textFont != null) {
-      //textFont.size(size);
       textSize = size;
+      resetLeading();
 
     } else {
       throw new RuntimeException("use textFont() before textSize()");
@@ -1440,32 +1444,90 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  protected void resetLeading() {
+    textLeading = (textFont.ascent() + textFont.descent()) * 1.275f;
+  }
+
+
   public void textLeading(float leading) {
+    textLeading = leading;
+    /*
     if (textFont != null) {
       textFont.leading(leading);
 
     } else {
       throw new RuntimeException("use textFont() before textLeading()");
     }
+    */
   }
 
 
   public void textMode(int mode) {
+    textMode = mode;
+    /*
     if (textFont != null) {
       textFont.align(mode);
 
     } else {
       throw new RuntimeException("use textFont() before textMode()");
     }
+    */
   }
 
 
   public void textSpace(int space) {
+    textSpace = space;
+    /*
     if (textFont != null) {
       textFont.space(space);
 
     } else {
       throw new RuntimeException("use textFont() before textSpace()");
+    }
+    */
+  }
+
+
+  public float textAscent() {
+    if (textFont != null) {
+      return textFont.ascent() * textSize;
+
+    } else {
+      throw new RuntimeException("use textFont() before textAscent()");
+    }
+  }
+
+
+  public float textDescent() {
+    if (textFont != null) {
+      return textFont.descent() * textSize;
+
+    } else {
+      throw new RuntimeException("use textFont() before textDescent()");
+    }
+  }
+
+
+  public float textWidth(char c) {
+    if (textFont != null) {
+      return textFont.width(c) * textSize;
+
+    } else {
+      throw new RuntimeException("use textFont() before textWidth()");
+    }
+  }
+
+
+  /**
+   * Return the width of a line of text. If the text has multiple
+   * lines, this returns the length of the longest line.
+   */
+  public float textWidth(String s) {
+    if (textFont != null) {
+      return textFont.width(s) * textSize;
+
+    } else {
+      throw new RuntimeException("use textFont() before textWidth()");
     }
   }
 
@@ -1481,7 +1543,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(char c, float x, float y, float z) {
-    // not supported in 2D
+    if ((z != 0) && (textSpace == SCREEN_SPACE)) {
+      String msg = "textSpace(SCREEN_SPACE) cannot have a z coordinate";
+      throw new RuntimeException(msg);
+    }
+
+    // this just has to pass through.. if z is not zero when
+    // drawing to non-depth(), the PFont will have to throw an error.
+    if (textFont != null) {
+      textFont.text(c, x, y, z, this);
+
+    } else {
+      throw new RuntimeException("use textFont() before text()");
+    }
+    //throw new RuntimeException("text() with a z coordinate is " +
+    //                         "only supported when depth() is used");
   }
 
 
@@ -1496,7 +1572,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(String s, float x, float y, float z) {
-    // not supported in 2D
+    if ((z != 0) && (textSpace == SCREEN_SPACE)) {
+      String msg = "textSpace(SCREEN_SPACE) cannot have a z coordinate";
+      throw new RuntimeException(msg);
+    }
+
+    // this just has to pass through.. if z is not zero when
+    // drawing to non-depth(), the PFont will have to throw an error.
+    if (textFont != null) {
+      textFont.text(s, x, y, z, this);
+
+    } else {
+      throw new RuntimeException("use textFont() before text()");
+    }
+    //throw new RuntimeException("text() with a z coordinate is " +
+    //                         "only supported when depth() is used");
   }
 
 
@@ -1537,8 +1627,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void text(String s, float x1, float y1, float z, float x2, float y2) {
-    // not supported in 2D
+  public void text(String s, float x1, float y1, float x2, float y2, float z) {
+    throw new RuntimeException("text() with a z coordinate is " +
+                               "only supported when depth() is used");
   }
 
 
@@ -1548,7 +1639,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(int num, float x, float y, float z) {
-    // not supported in 2D
+    text(String.valueOf(num), x, y, z);
+    //throw new RuntimeException("text() with a z coordinate is " +
+    //                         "only supported when depth() is used");
   }
 
 
