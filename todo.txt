@@ -1,29 +1,60 @@
-0031
+0031a
 X lib/pde.properties should be read using getResource
 X   otherwise path issues cause trouble (likely under win98)
 X take state information out of Header
 X cleanup lastFile/lastDirectory
 X save (just) last program run in sketch.properties
+X coloring of error, message, etc changed in pde.properties
+X finish save changes stuff
 
-_ userName not getting set before sketchbook menu is built
-_ add 'refresh list' item to the sketchbook menu
-_ renaming projects
-_ sketch: sketch-000 is dumb
-_ make sure compiling into build directory
-_   remove everything from build when starting a new build
-_   and once compiled there, read all classes for export
+0031b
+X editorlistener shouldn't track menu commands as changes to file
+X   ctrl keys bksp/del/enter/return/tab then space on up
+X   indicator for changes?
+X   need to implement code for whether changes have been made
+X   check for key events in textarea or something
+X     if key events, compare contents against the existing file
+X userName not getting set before sketchbook menu is built
+X add 'refresh list' item to the sketchbook menu
+
+0031c
+X ability to set directory for compiling in kjcengine
+
+0031d
+X make sure compiling into build directory
+X   and once compiled there, read all classes for export
+
+_ do backup
+_ write class loader or figure out how to change classpath
+_   might be able to load classes using forInstance on each file
+_   using byte array version of constructor
+_ remove everything from build when starting a new build
+_   (don't do this until it's clear that it's working well!)
+
 _ implement popup menu
 _ move structure of app/application dirs around a bit
+_ renaming projects
+
+_ write message to people who signed up for p5 alpha
 
 _ saving to gzipped 'versions' file
 _   autosave every few minutes, also on each compile
-_ remove Editor's frame instance, replace refs with PdeBase.frame
+_ remove projects if created but nothing happens to them
 _ small script to remove CVS directories from a tree
 
-_ remove projects if created but nothing happens to them
-_   need to implement code for whether changes have been made
-_   check for key events in textarea or something
-_     if key events, compare contents against the existing file
+casey bugs
+a _ mousePressed() not working, also mouseReleased
+a _   also has to be public void mousePressed() for kjc
+a _ translate is disabling color
+a _   (probably because of lighting)
+a _ keypressed is not persistent
+a _   key repeat in os vs. how java handles it
+a _   search java faq for info about getting around it
+a X you should be able to create methods in drawing mode
+a X   this shouldn't work, make void draw() {} to allow
+
+b _ remove Editor's frame instance, replace refs with PdeBase.frame
+b _ sketch: sketch-000 is dumb
 
 pdebase simple
 _ remove 'encoding' crap from PdeBase

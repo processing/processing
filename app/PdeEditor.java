@@ -19,7 +19,14 @@ public class PdeEditor extends Panel {
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
-  //PdeBase app;
+
+  static final int SK_NEW  = 1;
+  static final int SK_OPEN = 2;
+  static final int DO_OPEN = 3;
+  static final int DO_QUIT = 4;
+  int checking;
+  String openingPath; 
+  String openingName;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -32,6 +39,7 @@ public class PdeEditor extends Panel {
   String sketchName; // name of the file (w/o pde if a sketch)
   File sketchFile;   // the .pde file itself
   File sketchDir;    // if a sketchbook project, the parent dir
+  boolean sketchModified;
 
   //String lastDirectory;
   //String lastFile;
@@ -44,7 +52,7 @@ public class PdeEditor extends Panel {
   static final int GRID_SIZE  = 33;
   static final int INSET_SIZE = 5;
 
-  boolean playing;
+  boolean running;
 
 
   public PdeEditor(/*PdeBase app,*/ /*String program*/) {
@@ -97,12 +105,12 @@ public class PdeEditor extends Panel {
 
     add("Center", rightPanel);
 
-    if (!PdeBase.isMacintosh()) {  // this still relevant?
-      PdeEditorListener listener = new PdeEditorListener();
-      textarea.addKeyListener(listener);
-      textarea.addFocusListener(listener);
-      //textarea.addKeyListener(new PdeKeyListener(this));
-    }
+    //if (!PdeBase.isMacintosh()) {  // this still relevant?
+    PdeEditorListener listener = new PdeEditorListener(this);
+    textarea.addKeyListener(listener);
+    textarea.addFocusListener(listener);
+    //textarea.addKeyListener(new PdeKeyListener(this));
+    //}
 
     runner = new PdeRunner(this);
   }
@@ -138,7 +146,7 @@ public class PdeEditor extends Panel {
       String user = skprops.getProperty("user.name");
 
       String what = path + File.separator + name + ".pde";
-      System.out.println(what);
+      //System.out.println(what);
 
       if (new File(what).exists()) {
 	userName = user;
@@ -159,14 +167,16 @@ public class PdeEditor extends Panel {
       // doesn't exist, not available, make my own
       skNew();
     }
+
+    //rebuildSketchbookMenu(PdeBase.sketchbookMenu);
   }
 
 
-  public void doPlay() {
+  public void doRun() {
     //doStop();
     doClose();
-    playing = true;
-    buttons.play();
+    running = true;
+    buttons.run();
 
     runner.setProgram(textarea.getText());
     runner.start();
@@ -181,24 +191,26 @@ public class PdeEditor extends Panel {
     //doStop();
     doClose();
     PdeRecorder.start(this, graphics.width, graphics.height);
-    doPlay();
+    doRun();
   }
 #endif
 
 
   public void doStop() {
 #ifdef RECORDER
-    if (!playing) return;
+    if (!running) return;
 #endif
     terminate();
     buttons.clear();
-    playing = false;
+    running = false;
   }
 
 
+  // this is the former 'kill' function
+  // may just roll this in with the other code
   public void doClose() {
-    if (playing) {
-      //System.out.println("was playing, will call doStop()");
+    if (running) {
+      //System.out.println("was running, will call doStop()");
       doStop();
     }
 
@@ -214,68 +226,61 @@ public class PdeEditor extends Panel {
   }
 
 
-  /*
-  public void doOpen(Component comp, int compX, int compY) {
-    // first get users/top-level entries in sketchbook
-    try {
-      File sketchbookDir = new File("sketchbook");
-      String toplevel[] = sketchbookDir.list();
-
-      PopupMenu menu = new PopupMenu();
-
-      menu.add(NEW_SKETCH_ITEM);
-      menu.addSeparator();
-
-      // header knows what the current user is
-      for (int i = 0; i < toplevel; i++) {
-	if ((toplevel[i].equals(header.user)) ||
-	    (toplevel[i].equals(".")) ||
-	    (toplevel[i].equals(".."))) continue;
-
-	Menu submenu = new Menu(toplevel[i]);
-	File subdir = new File(sketchbookDir, toplevel[i]);
-
-	String path = subdir.getCanonicalPath();
-	submenu.addActionListener(new OpenMenuListener(this, path));
-	//submenu.addActionListener(new ActionAdapter() {
-	//});
-
-	String entries[] = subdir.list();
-	for (int j = 0; j < entries.length; j++) {
-	  if ((entries[j].equals(".")) || 
-	      (entries[j].equals(".."))) continue;
-	  submenu.add(entries[j]);
-	}
-
-	menu.add(submenu);
-      }
-      menu.addSeparator();
-
-      // this might trigger even if a submenu isn't selected, 
-      // but hopefully not
-      String mypath = path + File.separator + header.user;
-      menu.addActionListener(new OpenMenuListener(this, mypath));
-
-      String entries[] = new File(mypath).list();
-      for (int j = 0; j < entries.length; j++) {
-	if ((entries[j].equals(".")) || 
-	    (entries[j].equals(".."))) continue;
-	submenu.add(entries[j]);
-      }      
-
-      // show the feller and get psyched for a selection
-      menu.show(comp, compX, compY);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    buttons.clear();
+  public void setSketchModified(boolean what) {
+    header.sketchModified = what;
+    header.update();
+    sketchModified = what;
   }
-  */
+
+
+  // check to see if there have been changes
+  // if so, prompt user whether or not to save first
+  // if the user cancels, return false to abort parent operation
+  protected void checkModified(int checking) {
+    checkModified(checking, null, null);
+  }
+
+  protected void checkModified(int checking, String path, String name) {
+    this.checking = checking;
+    openingPath = path;
+    openingName = name;
+
+    if (sketchModified) {
+      status.prompt("Save changes to " + sketchName + "?");
+
+    } else {
+      checkModified2();
+    }
+    /*
+    while (status.response == 0) {
+      System.out.println("waiting for a response " + 
+			 System.currentTimeMillis());
+      //try {
+      //Thread.sleep(100);
+      //} catch (InterruptedException e) { }
+    }
+    */
+    //return true;
+  }
+
+  public void checkModified2() {
+    //System.out.println("checkmodified2");
+    switch (checking) {
+    case SK_NEW: skNew2(); break;
+    case SK_OPEN: skOpen2(openingPath, openingName); break;
+    case DO_OPEN: doOpen2(); break;
+    case DO_QUIT: doQuit2(); break;
+    }
+    checking = 0;
+  }
 
 
   // local vars prevent sketchName from being set
   public void skNew() {
+    checkModified(SK_NEW);
+  }
+
+  protected void skNew2() {
     try {
       // does all the plumbing to create a new project
       // then calls handleOpen to load it up
@@ -328,6 +333,11 @@ public class PdeEditor extends Panel {
   */
 
   public void skOpen(String path, String name) {
+    checkModified(SK_OPEN, path, name);
+  }
+
+  protected void skOpen2(String path, String name) {
+    //System.out.println("skOpen2 " + path + " " + name);
     //header.isProject = true;
     //header.project = name;
     //System.out.println("skopen " + path + " " + name);
@@ -345,6 +355,10 @@ public class PdeEditor extends Panel {
 
 
   public void doOpen() {
+    checkModified(DO_OPEN);
+  }
+
+  protected void doOpen2() {
     FileDialog fd = new FileDialog(new Frame(), 
 				   "Open a PDE program...", 
 				   FileDialog.LOAD);
@@ -366,14 +380,19 @@ public class PdeEditor extends Panel {
 
   protected void handleOpen(String isketchName, 
 			    File isketchFile, File isketchDir) {
-    //System.out.println("handleOpen " + isketchName + " " + 
+    //System.err.println("i'm here!");
+    //System.err.println(isketchName);
+    //System.err.println(isketchFile);
+    //System.err.println(isketchDir);
+    //System.err.println("handleOpen " + isketchName + " " + 
     //	       isketchFile + " " + isketchDir);
+    //System.err.println("made it");
     try {
       //if (true) throw new IOException("blah");
 
       FileInputStream input = new FileInputStream(isketchFile);
       int length = (int) isketchFile.length();
-      if (length == 0) {
+      if (length != 0) {
 	byte data[] = new byte[length];
 
 	int count = 0;
@@ -391,12 +410,18 @@ public class PdeEditor extends Panel {
 	// what the hell was i thinking when i wrote this code
 	//if (app.encoding == null)
 	textarea.setText(new String(data));
+	//System.out.println(" loading program = " + new String(data));
 	//else 
 	//textarea.setText(new String(data, app.encoding));
+
+      } else {
+	textarea.setText("");
       }
+
       sketchName = isketchName;
       sketchFile = isketchFile;
       sketchDir = isketchDir;
+      setSketchModified(false);
 
       //header.setProject(file.getName(), projectDir);
       header.reset();
@@ -425,7 +450,7 @@ public class PdeEditor extends Panel {
     message("Saving file...");
     String s = textarea.getText();
 
-    String directory = sketchFile.getPath(); //lastDirectory;
+    String directory = sketchFile.getParent(); //lastDirectory;
     String filename = sketchFile.getName(); //lastFile;
 
     if (promptUser) {
@@ -445,7 +470,6 @@ public class PdeEditor extends Panel {
       }
     }
     File file = new File(directory, filename);
-
     try {
       FileWriter writer = new FileWriter(file);
       writer.write(s);
@@ -455,6 +479,7 @@ public class PdeEditor extends Panel {
       //lastDirectory = directory;
       //lastFile = filename;
       sketchFile = file;
+      setSketchModified(false);
       message("Done saving " + filename + ".");
 
     } catch (IOException e) {
@@ -511,7 +536,7 @@ public class PdeEditor extends Panel {
       String program = textarea.getText();
 
       // create the project directory
-      KjcEngine engine = new KjcEngine(program, this);
+      KjcEngine engine = new KjcEngine(program, appletDir.getPath(), this);
       //File projectDir = new File(appletDir, projectName);
       //projectDir.mkdirs();
       appletDir.mkdirs();
@@ -666,6 +691,11 @@ public class PdeEditor extends Panel {
 
 
   public void doQuit() {
+    //if (!checkModified()) return;
+    checkModified(DO_QUIT);
+  }
+
+  protected void doQuit2() {
     // write sketch.properties
     try {
       URL url = getClass().getResource("buttons.gif");
@@ -929,14 +959,14 @@ public class PdeEditor extends Panel {
 
   public void error(PdeException e) {   // part of PdeEnvironment
     if (e.line >= 0) highlightLine(e.line); 
-    //dbcp.repaint(); // button should go back to 'play'
+    //dbcp.repaint(); // button should go back to 'run'
     //System.err.println(e.getMessage());
     //message("Problem: " + e.getMessage());
 
     status.error(e.getMessage());
     //message(e.getMessage());
 
-    buttons.clearPlay();
+    buttons.clearRun();
 
     //showStatus(e.getMessage());
   }
@@ -946,8 +976,8 @@ public class PdeEditor extends Panel {
 #ifdef RECORDER
     PdeRecorder.stop();
 #endif
-    playing = false;
-    buttons.clearPlay();
+    running = false;
+    buttons.clearRun();
     message("Done.");
   }
 

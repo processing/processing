@@ -1,3 +1,7 @@
+import java.io.*;
+//import java.util.*;
+
+
 public class PdeRunner implements Runnable {
   //DbnGraphics graphics;
   //PdeEnvironment env;
@@ -86,27 +90,6 @@ public class PdeRunner implements Runnable {
 	//	throw new Exception("javac support not included");
 	//#endif
 
-      } else if (program.indexOf("// dbn") == 0) {
-#ifdef DBN
-	String pre = "set red 0; set green 1; set blue 2; " + 
-	  "set quicktime 0; set tiff 1; set illustrator 2; ";
-	DbnParser parser = 
-	  new DbnParser(DbnPreprocessor.process(pre + program));
-
-	DbnToken root = parser.getRoot();
-	//root.print();
-	if (!root.findToken(DbnToken.SIZE)) {
-	  graphics.size(101, 101, 1);
-	}
-	if (root.findToken(DbnToken.REFRESH)) {
-	  graphics.aiRefresh = false;
-	}
-	engine = new DbnEngine(root, graphics);
-	engine.start();
-#else
-	throw new Exception("dbn support not included");
-#endif
-
       } else {
 	/*
 	forceStop = true;
@@ -115,7 +98,22 @@ public class PdeRunner implements Runnable {
 	forceStop = false;
 	*/
 
-	engine = new KjcEngine(program, editor);
+	//engine = new KjcEngine(program, "lib", editor);
+	String buildPath = 
+	  editor.sketchFile.getParent() + File.separator + "build";
+
+	/*
+	Properties props = System.getProperties();
+	String cp = props.getProperty("java.class.path");
+	System.out.println("in: " + cp);
+	props.put("java.class.path", 
+		  cp + File.pathSeparator + buildPath);
+	String cp2 = props.getProperty("java.class.path");
+	System.out.println("out: " + cp2);
+	System.setProperties(props);
+	*/
+
+	engine = new KjcEngine(program, buildPath, editor);
 	engine.start();
 
 	/*
