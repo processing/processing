@@ -1,3 +1,24 @@
+0042
+X fixed ArrayIndexOutOfBoundsException in texture use
+X added icon to replace the coffee cup
+X see if play being highlighted can be implemented again
+X   especially important because of speed issues
+
+0042 BUGS
+X this code is not performing correctly (triangle strip)
+X   (see example in reference for expected output)
+X   -> turns out it's correct, but not great
+beginShape(TRIANGLE_STRIP);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+
+
 0041
 X fill(#ffcc00) wasn't working for rect, calci not being set
 X   also affected background and stroke

@@ -119,6 +119,11 @@ but we'll have to see if we can afford being gouged $129 for the
 upgrade in order to do some testing under this cat-themed operating
 system. 
 
+another issue under osx.. it appears that there's a bug in their java
+vm with text areas, so as a result, the arrow keys won't work in the
+editor. we think this really stinks and are searching for options for
+a (near?) future release.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
