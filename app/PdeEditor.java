@@ -1,6 +1,7 @@
 #ifdef EDITOR
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -745,18 +746,38 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 	fullScreenWindow.setBounds(0, 0, screen.width, screen.height);
       }
       fullScreenWindow.setBackground(new Color(102, 102, 102));
+
+      /*
+      fullScreenWindow.addWindowListener(new WindowAdapter() {
+	  public void windowActivated(WindowEvent e) {
+	    System.out.println("activated");
+	  }
+	}
+      );
+      */
+      fullScreenWindow.addFocusListener(new FocusAdapter() {
+	  public void focusGained(FocusEvent e) {
+	    //System.out.println("activated");
+	    /*PdeApplication.*/ 
+	    if (frame != null) frame.toFront();
+	  }
+	}
+      );
     }
     fullScreenWindow.show();
+    fullScreenWindow.toFront();
 
     // not sure what to do with applet..
     // (since i can't bring the browser window to the front)
     // unless there's a method in AppletContext
-    if (frame != null) frame.toFront();
+    //if (frame != null) frame.toFront();
 
+    /*
     try {
       //System.out.println("my parent is " + getParent());
       ((PdeApplication)getParent()).frame.toFront();
     } catch (Exception e) { }
+    */
 
     try {
       ((KjcEngine)(runner.engine)).window.toFront();

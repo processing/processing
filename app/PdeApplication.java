@@ -11,7 +11,9 @@ public class PdeApplication extends PdeApplet
 implements ActionListener
 #endif
 {
-  Frame frame;
+  // made static so that toFront() can be called by 
+  // full screen code in editor
+  static Frame frame;
   WindowAdapter windowListener;
 
   static public void main(String args[]) {
