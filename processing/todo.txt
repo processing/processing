@@ -1,39 +1,27 @@
-0062
-X modify build instructions for the many changes
-X   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
-X   usually need to remove the 'work' dir
-X   modify macosx to use jikes from p5
-X   in general, things are way simpler on the pc
-X move 'clear history' into the history menu itself
-X move beautify to the edit menu
-X menu item for copying data files to the sketch
-X "add files to sketch..." menu item
-X font builder (!)
-X need fast 2D text that's not affected by the transforms
-X   also needs to look good, not squished from texture weirdness
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
-o change .vlw.gz fonts to just .vlw but still gzip compress
-o   reader code should just catch the exception if they're not gzipped
-o   and try to re-download them
-X   instead, not compressed, since font builder being used
-X     will be compressed into the .jar anyways
-X open button stays stuck if no sketch is selected from popup
-X open applet folder after exporting sketch
-X switch back to red instead of yellow for errors. whups.
-
+0063
 
 assigned to dan haskovec, completed by fry
-X event to explorer to open 'data' directory of project
-X   better just to go directly to the sketch's folder
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
+X for 'java' mode, try run using external vm
+X   would need to get error output stream from app.. argh
+X   only allow under win/osx/linux
+X   not clear how to kill the process.. does that work w/ 1.3?
+X support 'classes' folder, through the use of a classloader
+X   could also be done by launching external java app
+X   all .jar files etc are added from this folder automatically
+X   'public class' thing to make things available to all sketches
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055355089
+X class unloading not happening in java mode
+X   need to add randomizer to even non-self gen'd classes
+X   or figure out how to unload old classes.. grr
+X lockup when something missing from classpath on dynamic load
+X   but makes no error.. peditorconsole probably swallowing it
 
+_ using run-expert.bat on 62 causes NullPointerException weirdness
 
-from carlos' contract, but implemented by fry
-X get font things sewn up 
-X  create a simple generator for grayscale bdf fonts
-X     document the change and make several of them
-X   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+_ ability to include other .java and .pde code from sketchbook folder
 
+_ network/shared_canvas, network/value has old code
 
 _ trying to track down sluggishness with applets.. 
 _   beginShape/endShape.. 3D scenes with boxes..
@@ -56,7 +44,7 @@ _   fix link, loadStrings, saveBytes code once that's fixed
 _   saveBytes not in proper dir is annoying
 _ multi-line errors a mess in jikes
 _   maybe a dropdown list thing, with the first just shown?
-_ processing.exe: if expert version is run, and no java installed
+_ processing.exe: problem if expert version is run, and no java installed
 _   call the person a genius and tell them to install java
 
 
@@ -543,23 +531,6 @@ Possible?
 
 PDE / Runtime (includes classloading)
 
-dh b _ for 'java' mode, try run using external vm
-dh b _   would need to get error output stream from app.. argh
-dh b _   only allow under win/osx/linux
-dh b _   not clear how to kill the process.. does that work w/ 1.3?
-dh b _ support 'classes' folder, through the use of a classloader
-dh b _   could also be done by launching external java app
-dh b _   all .jar files etc are added from this folder automatically
-dh b _   'public class' thing to make things available to all sketches
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055355089
-dh b _ class unloading not happening in java mode
-dh b _   need to add randomizer to even non-self gen'd classes
-dh b _   or figure out how to unload old classes.. grr
-dh b _ lockup when something missing from classpath on dynamic load
-dh b _   but makes no error.. peditorconsole probably swallowing it
-dh b _ ability to include other code from sketchbook directory
-dh b _   compile entire sketchbook on startup, check for new files on compile?
 
 
 PDE / Editor
