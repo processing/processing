@@ -624,12 +624,13 @@ public class PdeSketch {
 
 
   /**
-   * handles 'save as' for a sketch.. essentially duplicates
-   * the current sketch folder to a new location, and then calls
-   * 'save'. (needs to take the current state of the open files
-   * and save them to the new folder.. but not save over the old
-   * versions for the old sketch..)
-   *
+   * Handles 'save as' for a sketch.
+   * <P>
+   * This basically just duplicates the current sketch folder to
+   * a new location, and then calls 'Save'. (needs to take the current
+   * state of the open files and save them to the new folder..
+   * but not save over the old versions for the old sketch..)
+   * <P>
    * also removes the previously-generated .class and .jar files,
    * because they can cause trouble.
    */
@@ -853,9 +854,11 @@ public class PdeSketch {
 
   /**
    * Change what file is currently being edited.
-   * 1. store the String for the text of the current file.
-   * 2. retrieve the String for the text of the new file.
-   * 3. change the text that's visible in the text area
+   * <OL>
+   * <LI> store the String for the text of the current file.
+   * <LI> retrieve the String for the text of the new file.
+   * <LI> change the text that's visible in the text area
+   * </OL>
    */
   public void setCurrent(int which) {
     // get the text currently being edited

@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0081 - who knows
+ABOUT REV 0081 - 4 april 2005
 
 * major api changes in this release *
 
@@ -16,17 +16,18 @@ once again broken things. this time, we've moved around how renderers
 work. 
 
 - depth() is gone, and so is the renderer menu, in its place, we
-  have a new method for specifying how you want to render. e.g:
+  have a new method for specifying how you want to render. 
 
-  this allocates a 2D buffer to draw into, using the Java2D 
-  engine or the original 1.1-compliant engine depending on whether
-  or not you're using Java 1.3 or higher:
-  size(200, 200); 
+  so now, size(200, 200) this allocates a 2D buffer to draw into, 
+  using the Java2D engine or the original 1.1-compliant engine depending 
+  on whether or not you're using Java 1.3 or higher.
 
-  this gets the original processing 2D renderer:
+  or this gets the original processing 2D renderer:
+  (which is often better for pixel operations, though is currently quite
+  borked.. lines and whatnot don't work properly)
   size(200, 200, P2D);
 
-  this provides the oroginal processing 3D renderer:
+  this provides the original processing 3D renderer:
   size(200, 200, P3D);
 
   and this loads (drum roll) opengl:
@@ -43,6 +44,54 @@ work.
   back around 70 or whenever they were implemented)
   import net.java.games.jogl.GL;
 
+- the applet placement, sizing, and window issues should now be sorted
+  out completely. no more windows showing up in weird places or applets
+  being offset strangely within them.
+
+- present mode has been rewritten to use java's proper full screen api.
+  no more ghetto full screen with menubar on osx. should be more stable
+  than it was in the past. also note that things running in presentation
+  mode will run using an external java vm, rather than inside the 
+  environment itself.
+
+- processing itself requires java 1.4. it's sort of required it for a 
+  little while, but this is now made explicit in the code. if you're lucky
+  a new erorr dialog will pop up and tell you to install a newer version 
+  if you try running under 1.3 or whatever.
+
+- background(PImage) should now be working in opengl
+
+- saveFrame() path bug fixed
+
+- preferences madness
+  + preferences panel is now a modal dialog, and doesn't hide the 
+    editor window in the weird way it used to. 
+  + you can also click the link to the preferences .txt file and it'll 
+    open in whatever your default text editor is on your machine.
+  + editor font size is now a preference that can be set from the 
+    prefs window.
+  + fixed a bug where prefs were applied even if you hit cancel.
+
+- lots more internal fixes and tweaking that we'll be documenting 
+  soon (i.e. the new renderer setup means pluggable renderers, or 
+  PApplet has lots of fancy command line options like --present)
+
+
+* other bits to note *
+
+- it should also be noted again that java 1.1 stuff is almost 
+  completely unusable in this release. the PApplet class temporarily
+  contains some 1.4-specific code (which will be removed) and the
+  graphics engine still doesn't work. so this version isn't useful
+  for exporting things to the web.
+
+- there are a bunch of bugs with save & save as... quirky things 
+  about folders not winding up in the right place and whatnot. 
+  looking to fix these this week
+
+- release 82 (or 83?) will be all about getting proper 3D lighting,
+  camera, and geometry working. simon's done some amazing work.
+  
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
