@@ -5,16 +5,70 @@ X TWO_CORNERS -> CORNERS
 X major: fix error message stream mid-compile
 X   ClassCastException on startup (or not found?)
 
+_ bug report from the site
+resizing the editor window in Mac OS X leaves the status bar in
+place. The result is an editor window with a grey bar layered on top,
+obscuring the editable text. 
+
+_ long list from frederik (fdb)
+* Select All (Apple-A) closes the application (Ctrl-Q) on Azerty-keyboards 
+* Add an Edit menu containing Undo/Redo/Cut/Copy/Paste/Select
+  All. It's standard Mac behaviour. 
+* Rename the button options to verbs, e.g. instead of "Do you want to
+  save? yes/no", change it to "Document Has been modified -- Save
+  changes? Save/Cancel/Don't Save". Look at Aqua Human Interface
+  guidelines (http://developer.apple.com/ue/switch/windows.html, tip 9) 
+* When renaming a sketch, select the text in the field, so you can
+  type the new name immediately. 
+* Pressing the tab key moves to the bottom of the text area.  
+* If the cursor is at the last character of the last line of the text
+  area, moving the cursor up or down using the arrow keys throws the
+  following exception: 
+ java.lang.ArrayIndexOutOfBoundsException 
+   at PdeEditorListener.keyPressed(PdeEditorListener.java:86) 
+   at java.awt.Component.processKeyEvent(Component.java:3673) 
+* If the cursor is at the last character of the first line of the text
+  area, moving the cursor up using the arrow keys throws the same
+  exception. However, moving the cursor down doesn't throw one.  
+* Status bar appears at a fixed location, drawing over the text area
+  when the window is resized.  
+* Double-clicking a word doesn't select it, but the character after
+  it. (however, sometimes the behaviour is correct) 
+* Scrolling action when using cursor keys is not consistent with other
+  editors: The window should only scroll when it needs to; it now tries
+  to keep the cursor on the current line. (or one line below it) 
+* Using Apple-shift-arrowLeft to select from the cursor pos to the
+  beginning of the line, selects one character too little at the right
+  side. Apple-shift-arrowRight has the same issue (selects one char too
+  little at the left side). 
+* Using Apple-shift-arrowDown selects only from the beginning of this
+  line to the end of the following line. It doesn't extend the
+  selection when pressed twice. It also selects the line under the
+  current line. 
+
 _ split KjcEngine into three parts
 _ move build directory to root in cvs
 _   and update scripts accordingly
 
 bagel
+_ images don't load during setup()
 _ need to finish fill mode of flat circle function
 _ 'image' is too generic a variable to have inside BApplet
 _   check for others that shouldn't be used
+_ these boxes overlap but shouldn't:
+int thick = 36;
+size(200, 200);
+background(0);
+noStroke();
+
+fill(153, 163, 0.0);
+rect(80, 0, thick, height/2);
+fill(102, 112, 0.0);
+rect(100, height/2, thick, height/2);
 
 pde
+_ need examples to work for submenus (casey's got too many)
+_ "color.jpg" or "int.jpg" causes trouble
 _ locking up on run (under win2k? others?) 
 _   rare but present, every 100th time or so
 
@@ -36,6 +90,36 @@ _ moving sketchbook folder for lab environments
 _ lots of ui ideas from adrien in the bboard
 _ can't copy text from console directly
 o   make note in readme about stderr.txt and stdout.txt
+
+
+OTHER NOTES
+
+text editor - color coding is the big issue
+
+ceil/floor
+
+perlin
+
+strokeWidth - too buggy to document currently
+
+copyArea, copyImage
+
+update/noUpdate
+  instead use void update() as a function like loop and draw
+  third kind of applet for interactive apps that have to be queried
+
+clear/noClear
+  just use background, and make people fill a rect if they need a bg with
+noBackground()
+
+use syntax coloring to highlight BApplet's class variables and functions
+
+possible dist() and constrain() functions
+
+lights - not much happening
+camera - wait for someone to implement
+fonts - api should be improved as part of additions and rewrite
+does a[3] == Float.NaN work?
 
 
 ////////////////////////////////////////////////////////////////////
