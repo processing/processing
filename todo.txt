@@ -94,6 +94,10 @@ X some flag to know whether applet is online or not
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 X colorMode is defaulting to 255, 255, 255, 1.. oops
 X   though setting it differently hoses everything (clears everything)
+X setup (200, 200) causes the default size to be used 
+X be able to draw something inside setup (?)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+
 
 fixes because of dmose parser
 dm X move to antlr
@@ -191,12 +195,7 @@ X param(), online(), and status() functions
 ..................................................................
 
 
-API
-_ light(x, y, z, c1, c2, c3, TYPE)
-_   also BLight with same constructor, and on() and off() fxn
-
-
-HIGH
+HIGH (to be completed for 0060)
 _ no time to ask for "save changes" before quit
 _   PdeEditor, around line 910.. not blocking until input 
 _   read up on how to properly block for input in a java app
@@ -207,23 +206,18 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ QTJAVA path and CLASSPATH are weird if java not first installed
 _   or just get set improperly, reinstalling quicktime doesn't help
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
-_ windows fresh checkout still has problems
-_ if size() not found in export/compile, ask the user
-_   size(myWidth, myHeight) -> set static var in BGraphics
-_     for the last size that was used, use as default when 
-_ setup (200, 200) causes the default size to be used 
-_   need to use oro matcher when trying to grab the applet size (export?)
+_ windows fresh checkout from cvs still has problems (?)
 
 
 MEDIUM
+_ light(x, y, z, c1, c2, c3, TYPE)
+_   also BLight with same constructor, and on() and off() fxn
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
 _ net problems
 _   when you stop the client, it freezes 
 _     until you quit the processing running the server
 _   The server starts and stops fine.
-_ be able to draw something inside setup (?)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
 o modify antlr stuff to conditionally recompile in make.sh
 _   compile antlr inside the initial setup of the work dir
 X     done for macosx
@@ -234,6 +228,10 @@ _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 _   usually need to remove the 'work' dir
 _ better 1.3/1.4 support.. properly detect vm
 _   use when deciding which classes to import
+_ if size() not found in export/compile, ask the user
+_   need to use oro matcher when trying to grab the applet size (export?)
+_   size(myWidth, myHeight) -> set static var in BGraphics
+_     for the last size that was used, use as default for fill-in field
 
 dh b _ ability to export 'applications' (not just applets)
 dh b _   lock feature for present mode (part of export to application?)
