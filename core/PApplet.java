@@ -539,9 +539,6 @@ public class PApplet extends Applet
     //finished = true;
     //}
 
-    pmouseX = mouseX;
-    pmouseY = mouseY;
-
     // internal frame counter
     frame++;
   }
@@ -583,6 +580,9 @@ public class PApplet extends Applet
    * overloaded to do something more useful.
    */
   protected void handleMouseEvent(MouseEvent event) {
+    pmouseX = mouseX;
+    pmouseY = mouseY;
+
     mouseX = event.getX();
     mouseY = event.getY();
     mouseEvent = event;
