@@ -7,6 +7,119 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0075
+
+* DON'T USE THIS RELEASE IF YOU'RE ON ANY SORT OF MEDICATION *
+this is truly an alpha release, or more like a "nightly build."
+
+i'm posting this release early so that people can play with
+opengl. if you aren't one of those just *dying* to get started with
+gl, wait until a few days or so when i can get 0076 out that irons out
+some of the nastier bugs. you needn't post bug reports on things that
+are broken, since i know many many things are horked. a massive number
+of changes have happened in this release and i wanted to get it posted
+because i was starting to lose track of them all.
+
+
+things that i know or suspect are broken: 
+
+- the examples have not been updated
+
+- windows sometimes pop up at the wrong sizes.
+
+- opengl doesn't behave properly in static/draw mode (things aren't
+  sized properly).
+
+- the processing renderer has taken some steps backwards, and things
+  like ellipses might be broken.
+
+- lots of random tidbits in rendering not quite working. 
+
+- drawing images in opengl whose pixel buffer has been edited won't
+  work quite right.
+
+- text may pop up sized incorrectly.
+
+- noLoop(), framerate(n), redraw() are not yet supported for opengl
+
+- and much much more!
+
+
+general 
+
+- you now need to use the command depth() to enable 3D. noDepth()
+  shuts it off and moves back to 2D-only (with optimizations). support
+  for this is incomplete. 
+
+- hanging bug should now be completely eliminated.
+
+- under sketch, a "renderer" menu that lets you select OpenGL or the
+  processing renderer. 
+
+- preprocessor makes all methods "public" that aren't specified
+  private or protected. this makes things easier for library events
+  (see libraries section below) and things like setup/draw.
+
+
+core
+
+- added focusGained() and focusLost() events
+
+- added beginShape(TRIANGLE_FAN)
+
+- removed pmouseX and pmouseY because they can't be used 
+
+
+libraries
+
+- very simple sound api has returned. command is "loadSound". 1.3+ only
+  for rev 75, will work in 1.1 as well in 76+.
+
+- serial.last() and serial.lastChar() get last byte in buffer
+
+- library events have returned, if (public) void serialEvent(PSerial)
+  is defined in the host applet, it will receive events each time
+  something happens on serial. same for:
+  cameraEvent(Camera c), movieEvent(Movie m), clientEvent(Client c), 
+  serverEvent(Server s, Client c), soundEvent(PSound s)
+
+- PMovie.length() is now PMovie.duration()
+
+
+ide goodness
+
+- NOTE! your prefs will be lost in this release, unless you move them
+  by hand. preferences now live in a "proper" location: 
+  ~/Library/Processing on macosx and 
+  Documents and Settings/username/Application Data/Processing on winxp
+  this will get rid of the localization issues on non-US versions of
+  these operation systems. 
+  the info is read from the os (on mac) and registry keys (on
+  windows), and is also used to place the Processing sketchbook inside
+  ~/Documents on mac or ~/My Documents (or whatever it's called in the
+  current language) on the pc.
+
+- rename & delete have returned.. when renaming/deleting on the
+  first tab, it renames or deletes the entire sketch.
+
+- saving a read-only sketch now defaults to the sketchbook
+  (rather than the same read-only location it was coming from)
+
+- build fixes.. preproc gets built properly, and dmg for osx
+
+- cosmetic (single pixel layout issues) fixed on osx
+
+- no more resize box annoyance in the editor on osx
+
+- fixes to the horizontal scrollbar in the editor 
+  (became ever-present a release or two ago)
+
+- find/replace cleaned up/tweaked up a bit
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0074
 
 - fixed an issue with text and shapes fixing in a bad way (paul
