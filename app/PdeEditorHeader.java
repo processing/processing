@@ -30,7 +30,8 @@ import java.io.*;
 import javax.swing.*;
 
 
-public class PdeEditorHeader extends JPanel {
+//public class PdeEditorHeader extends JPanel {
+public class PdeEditorHeader extends JComponent {
   static final String SKETCH_TITLER = "sketch";
 
   static Color primaryColor;
