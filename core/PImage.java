@@ -84,8 +84,12 @@ public class PImage implements PConstants, Cloneable {
   public int imageMode = CORNER;
   public boolean smooth = false;
 
-  /** for gl subclass / hardware accel */
+  /** for subclasses that need to store info about the image */
   public Object cache;
+
+  /** modified portion of the image */
+  public boolean modified;
+  public int mx1, my1, mx2, my2;
 
   // private fields
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
@@ -172,6 +176,44 @@ public class PImage implements PConstants, Cloneable {
 
     format = RGB;
     cache = null;
+  }
+
+
+  public void modified() {
+    mx1 = 0;
+    my1 = 0;
+    mx2 = width;
+    my2 = height;
+    modified = true;
+  }
+
+  public void modified(int x, int y) {
+    if (x < mx1) mx1 = x;
+    if (x > mx2) mx2 = x;
+    if (y < my1) my1 = y;
+    if (y > my2) my2 = y;
+    modified = true;
+  }
+
+  public void modified(int x1, int y1, int x2, int y2) {
+    if (x1 < mx1) mx1 = x1;
+    if (x1 > mx2) mx2 = x1;
+    if (y1 < my1) my1 = y1;
+    if (y1 > my2) my2 = y1;
+
+    if (x2 < mx1) mx1 = x2;
+    if (x2 > mx2) mx2 = x2;
+    if (y2 < my1) my1 = y2;
+    if (y2 > my2) my2 = y2;
+
+    modified = true;
+  }
+
+  public void resetModified() {
+    mx1 = -Integer.MAX_VALUE;
+    my1 = -Integer.MAX_VALUE;
+    mx2 = Integer.MAX_VALUE;
+    my2 = Integer.MAX_VALUE;
   }
 
 

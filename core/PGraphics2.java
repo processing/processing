@@ -44,6 +44,10 @@ public class PGraphics2 extends PGraphics {
     new AffineTransform[MATRIX_STACK_DEPTH];
   double transform[] = new double[6];
 
+  Elipse2D.Float ellipse = new Ellipse2D.Float();
+  Rectangle2D.Float rect = new Rectangle2D.Float();
+  Arc2D.Float arc = new Arc2D.Float();
+
 
   //////////////////////////////////////////////////////////////
 
@@ -142,6 +146,10 @@ public class PGraphics2 extends PGraphics {
 
         case POINTS:
         {
+          for (int i = 0; i < vertexCount; i++) {
+
+            point(vertices[i][VX], vertices[i][VY]);
+          }
           stop = vertex_end;
           for (int i = vertex_start; i < stop; i++) {
             add_path();  // total overkill for points
@@ -372,9 +380,22 @@ public class PGraphics2 extends PGraphics {
   // SHAPES
 
 
+  protected void draw_shape(Shape s) {
+    if (fill) {
+      graphics.setColor(fillColorObject);
+      graphics.fill(s);
+    }
+    if (stroke) {
+      graphics.setColor(strokeColorObject);
+      graphics.draw(s);
+    }
+  }
+
+
   public void point(float x, float y) {
-    graphics.setColor(strokeColorObject);
-    graphics.drawLine(x1, y1, x2, y2);
+    //graphics.setColor(strokeColorObject);
+    //graphics.drawLine(x1, y1, x2, y2);
+    line(x, y, x, y);
   }
 
 
@@ -386,67 +407,99 @@ public class PGraphics2 extends PGraphics {
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-    // TODO
+    GeneralPath gp = new GeneralPath();
+    gp.moveTo(x1, y1);
+    gp.lineTo(x2, y2);
+    gp.lineTo(x3, y3);
+    gp.closePath();
+
+    draw_shape(gp);
   }
 
 
   public void rect(float x1, float y1, float x2, float y2) {
-    if (fill) {
-      graphics.setColor(fillColorObject);
-      graphics.fillRect(x1, y1, x2, y2);
+    switch (rectMode) {
+    case CORNERS:
+      rect.setFrameFromDiagonal(x1, y1, x2, y2);
+      break;
+    case CORNER:
+      rect.setFrame(x1, y1, x2, y2);
+      break;
+    case CENTER_RADIUS:
+      rect.setFrame(x1 - x2, y1 - y2, x1 + x2, y1 + y2);
+      break;
+    case CENTER:
+      rect.setFrame(x1 - x2/2.0f, y1 - y2/2.0f, x1 + x2/2.0f, y1 + y2/2.0f);
+      break;
     }
-    if (stroke) {
-      graphics.setColor(strokeColorObject);
-      graphics.drawRect(x1, y1, x2, y2);
-    }
+    draw_shape(rect);
   }
 
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
+    GeneralPath gp = new GeneralPath();
+    gp.moveTo(x1, y1);
+    gp.lineTo(x2, y2);
+    gp.lineTo(x3, y3);
+    gp.lineTo(x4, y4);
+    gp.closePath();
 
+    draw_shape(gp);
   }
 
-  public void image(PImage image, float x1, float y1) {
-  }
-
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2) {
-  }
-
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
-                    float u1, float v1, float u2, float v2) {
-  }
-
-  //public void cache(PImage image) {
-  //}
-
-  //public void cache(PImage images[]) {
-  //}
-
-  //public void arcMode(int mode) {
-  //}
 
   public void arc(float start, float stop,
                   float x, float y, float radius) {
+    arc(start, stop, x, y, radius, radius);
   }
+
 
   public void arc(float start, float stop,
-                  float x, float y, float hr, float vr) {
+                  float x, float y, float w, float h) {
+    if (arcMode == CORNERS) {
+      w -= x;
+      h -= y;
+
+    } else if (arcMode == CENTER_RADIUS) {
+      x -= w;
+      y -= h;
+      w *= 2;
+      h *= 2;
+
+    } else if (arcMode == CENTER) {
+      x -= w;
+      y -= h;
+    }
+
+    arc.setArc(x, y, w, h, start, stop-start, Arc2D.PIE);
+    draw_shape(arc);
   }
+
 
   public void ellipse(float x, float y, float hradius, float vradius) {
+    ellipse.setFrame(x, y, hradius, vradius);
+    draw_shape(ellipse);
   }
 
+
   public void circle(float x, float y, float radius) {
+    ellipse(x, y, radius, radius);
   }
+
 
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
+    GeneralPath gp = new GeneralPath();
+    gp.moveTo(x1, y1);
+    gp.quadTo(x2, y2, x3, y3, x4, y4);
+    gp.closePath();
+
+    draw_shape(gp);
   }
+
 
   public void bezierDetail(int detail) {
     // ignored in java2d
@@ -456,16 +509,89 @@ public class PGraphics2 extends PGraphics {
     // ignored in java2d
   }
 
+
   public void curveTightness(float tightness) {
     // TODO
   }
+
 
   public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
-    // TODO
+    // TODO need inverse catmull rom to bezier matrix
   }
+
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGES
+
+
+  public void image(PImage image, float x1, float y1) {
+    image(image, x1, y1, image.width, image.height);
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2) {
+    if (imageMode == CORNER) {
+      x2 += x1;  // x2 is width, need to add x1
+      y2 += y1;
+
+    } else if ((imageMode == CENTER) ||
+               (imageMode == CENTER_RADIUS)) {
+      x1 -= image.width /2f;
+      y1 -= image.height / 2f;
+    }
+    check_image_cache();
+    graphics.drawImage((Image) image.cache, x1, y1, x2, y2, null);
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    float u1, float v1, float u2, float v2) {
+    if (imageMode == CORNER) {
+      x2 += x1;  // x2 is width, need to add x1
+      y2 += y1;
+
+    } else if ((imageMode == CENTER) ||
+               (imageMode == CENTER_RADIUS)) {
+      x1 -= image.width /2f;
+      y1 -= image.height / 2f;
+    }
+    check_image_cache();
+    graphics.drawImage((Image) image.cache,
+                       (int)x1, (int)y1, (int)x2, (int)y2,
+                       (int)u1, (int)v1, (int)u2, (int)v2,
+                       null);
+  }
+
+
+  protected void check_image_cache(PImage what) {
+    if (image.cache == null) {
+      cache = new BufferedImage(image.width, image.height,
+                                BufferedImage.TYPE_INT_ARGB);
+      image.modified();  // mark the whole thing for update
+    }
+
+    if (image.modified) {
+      // update the sub-portion of the image as necessary
+      BufferedImage bi = (BufferedImage) image.cache;
+
+      bi.setRGB(image.mx1, image.my1,
+                image.mx2 - image.mx1 + 1,
+                image.my2 - image.my1 + 1,
+                image.pixels,
+                image.my1*image.width + image.mx1,  // offset for copy
+                image.width);  // scan size
+      image.resetModified();
+    }
+  }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   /*
@@ -501,7 +627,6 @@ public class PGraphics2 extends PGraphics {
 
   public void text(float num, float x, float y, float z);
   */
-
 
 
   //////////////////////////////////////////////////////////////
@@ -645,7 +770,7 @@ public class PGraphics2 extends PGraphics {
 
   protected void calc_tint() {
     super.calc_tint();
-    // ??? how to do this
+    // TODO actually implement tinted images
     tintColorObject = new Color(tintColor);
   }
 
@@ -662,18 +787,6 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  /*
-  public void noTint() {
-  }
-
-  public void noFill() {
-  }
-
-  public void noStroke() {
-  }
-  */
-
-
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
       die("background image must be the same size " +
@@ -683,8 +796,10 @@ public class PGraphics2 extends PGraphics {
       die("background images should be RGB or ARGB");
     }
 
+    // make sure it's been properly updated
+    check_image_cache(image);
+
     // blit image to the screen
-    //System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
     graphics.drawImage((BufferedImage) image.cache, 0, 0);
   }
 
@@ -709,11 +824,11 @@ public class PGraphics2 extends PGraphics {
 
 
   public void alpha(int alpha[]) {
-    // TODO
+    // does nothing in PGraphics
   }
 
   public void alpha(PImage alpha) {
-    // TODO
+    // does nothing in PGraphics
   }
 
   public void filter(int kind) {
@@ -784,13 +899,27 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  /**
+   * This is used to both set the pixels[] array so that it can be
+   * manipulated, and it also returns a PImage object that can be
+   * messed with directly.
+   */
   public PImage get() {
-    // TODO
+    //PImage outgoing = new PImage(width, height);
+    // int[] getRGB(int startX, int startY, int w, int h,
+    //              int[] rgbArray, int offset, int scansize)
+    if (pixels == null) {
+      pixels = new int[width * height];
+    }
+    image.getRGB(0, 0, width, height, pixels, 0, width);
+    return new PImage(pixels, width, height, RGB);
   }
 
 
   public void save(String filename) {
-    // TODO
+    //static boolean write(RenderedImage im, String formatName, File output)
+    // maybe use ImageIO.save(File file) here if it's available?
+    get().save(filename);
   }
 
 
