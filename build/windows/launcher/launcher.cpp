@@ -119,14 +119,16 @@ BOOL CLauncherApp::InitInstance()
 	*/
 
     sprintf(cp, 
-		"-cp \""
-        "%s\\lib;"
-        "%s\\lib\\build;"
-        "%s\\lib\\pde.jar;"
+	    "-cp \""
+	    "%s\\lib;"
+	    "%s\\lib\\build;"
+	    "%s\\lib\\pde.jar;"
 	    "%s\\lib\\kjc.jar;"
 	    "%s\\lib\\oro.jar;"
 	    "%s\\lib\\comm.jar;"
-		"\" ",
+	    "C:\\WINNT\\system32\\QTJava.zip;"
+	    "C:\\WINDOWS\\system32\\QTJava.zip;"
+	    "\" ",
 	    loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
 		
 	//sprintf(cp, "-cp ");
