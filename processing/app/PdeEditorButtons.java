@@ -62,12 +62,9 @@ public class PdeEditorButtons extends Panel {
   int y1[], y2[];
 
 
-  public PdeEditorButtons(PdeEditor editor /*, boolean useOpenSave,
-			  boolean useCourseware, boolean usePrint, 
-			  boolean useBeautify*/) {
+  public PdeEditorButtons(PdeEditor editor) {
     this.editor = editor;
-    // this could be causing trouble
-    buttons = PdeBase.readImage("buttons.gif");
+    buttons = PdeBase.getImage("buttons.gif", this);
 
     buttonCount = 0;
     which = new int[BUTTON_COUNT];
@@ -96,8 +93,6 @@ public class PdeEditorButtons extends Panel {
 
 
   public void update() {
-    //System.out.println(currentRollover);
-    //System.out.println("PdeEditorButtons.update()");
     paint(this.getGraphics());
   }
 
@@ -106,8 +101,6 @@ public class PdeEditorButtons extends Panel {
   }
 
   public void paint(Graphics screen) {
-    //System.out.println("PdeEditorButtons.paint() " + screen);
-
     if (inactive == null) {
       inactive = new Image[BUTTON_COUNT];
       rollover = new Image[BUTTON_COUNT];
@@ -402,7 +395,7 @@ public class PdeEditorButtons extends Panel {
   }
 
 
-  public Dimension preferredSize() {
+  public Dimension getPreferredSize() {
     return new Dimension(BUTTON_WIDTH, (BUTTON_COUNT + 1)*BUTTON_HEIGHT);
   }
 }
