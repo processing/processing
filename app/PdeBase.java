@@ -479,11 +479,43 @@ public class PdeBase extends Frame
 
     this.pack();  // maybe this should be before the setBounds call
 
-    //editor.frame = frame;  // no longer really used
-    //editor.init();
+
+    // figure out window placement
+
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    boolean windowPositionInvalid = false;
+
+    if (PdePreferences.get("last.screen.height") != null) {
+      // if screen size has changed, the window coordinates no longer
+      // make sense, so don't use them unless they're identical
+      int screenW = getInteger("last.screen.width");
+      int screenH = getInteger("last.screen.height");
+
+      if ((screen.width != screenW) || (screen.height != screenH)) {
+        windowPositionInvalid = true;
+      }
+    } else {
+      windowPositionInvalid = true;
+    }
+
+    if (windowPositionInvalid) {
+      int windowH = PdePreferences.getInteger("default.window.height");
+      int windowW = PdePreferences.getInteger("default.window.width");
+      setBounds((screen.width - windowW) / 2, 
+                (screen.height - windowH) / 2,
+                windowW, windowH);
+      // this will be invalid as well, so grab the new value
+      PdePreferences.setInteger("last.divider.location", 
+                                splitPane.getDividerLocation());
+    } else {
+      setBounds(PdePreferences.getInteger("last.window.x"), 
+                PdePreferences.getInteger("last.window.y"), 
+                PdePreferences.getInteger("last.window.width"), 
+                PdePreferences.getInteger("last.window.height"));
+    }
 
     // now that everything is set up, open last-used sketch, etc.
-    prefs.apply();
+    editor.init();
 
     rebuildSketchbookMenu(sketchbookMenu);
     //buildSerialMenu();
