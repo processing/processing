@@ -25,6 +25,8 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import processing.core.*;
+
 import java.io.*;
 import antlr.*;
 import antlr.collections.*;
@@ -57,11 +59,11 @@ public class PdePreprocessor {
    */
   public PdePreprocessor() { 
     defaultImports[JDK11] = 
-      BApplet.split(PdePreferences.get("compiler.imports.jdk11"), ',');
+      PApplet.split(PdePreferences.get("compiler.imports.jdk11"), ',');
     defaultImports[JDK13] = 
-      BApplet.split(PdePreferences.get("compiler.imports.jdk13"), ',');
+      PApplet.split(PdePreferences.get("compiler.imports.jdk13"), ',');
     defaultImports[JDK14] = 
-      BApplet.split(PdePreferences.get("compiler.imports.jdk14"), ',');
+      PApplet.split(PdePreferences.get("compiler.imports.jdk14"), ',');
   }
 
 
@@ -253,7 +255,7 @@ public class PdePreprocessor {
 
     if (programType < JAVA) {
       // open the class definition
-      out.print("public class " + className + " extends BApplet {");
+      out.print("public class " + className + " extends PApplet {");
 
       if (programType == STATIC) {
         // now that size() and background() can go inside of draw()

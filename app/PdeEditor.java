@@ -25,6 +25,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
@@ -242,8 +243,9 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
                                 new Class[] { Boolean.TYPE });
         undecoratedMethod.invoke(presentationWindow, 
                                  new Object[] { Boolean.TRUE });
-
-      } catch (NoSuchMethodError e) { }
+      } catch (Exception e) { } 
+      //} catch (NoSuchMethodException e) { }
+      //} catch (NoSuchMethodError e) { }
 
       presentationWindow.setBounds(0, 0, screen.width, screen.height);
     }
