@@ -3,8 +3,9 @@
 
 ### -- SETUP WORK DIR -------------------------------------------
 
-if test -d work
+if test -d work 
 then
+  echo 
 else
   echo Setting up directories to build under Mac OS X
   cp -r ../shared work
@@ -19,6 +20,13 @@ else
   echo
 fi
 
+if test -f /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
+then
+  echo
+else
+#  echo Copying comm.jar into the machine's classpath
+  sudo cp comm.jar /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/
+fi
 
 ### -- START BUILDING -------------------------------------------
 
@@ -27,10 +35,11 @@ cd ../..
 
 
 ### -- BUILD BAGEL ----------------------------------------------
-cd ..
+
 # make sure bagel exists, if not, check it out of cvs
 if test -d bagel
 then 
+  echo
 else
   echo Doing CVS checkout of bagel...
   cvs co bagel
@@ -47,12 +56,13 @@ CLASSPATH=$MACOSX_CLASSPATH
 ### --- make version with serial for the application
 echo Building bagel with serial support
 perl make.pl SERIAL
-cp classes/*.class ../app/build/macosx/work/classes/
+pwd
+cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
 echo Building bagel for export
 perl make.pl
-cp classes/*.class ../app/build/macosx/work/lib/export/
+cp classes/*.class ../build/macosx/work/lib/export/
 
 cd ..
 cd app
@@ -62,12 +72,11 @@ cd app
 
 echo Building PDE for JDK 1.3
 
-CLASSPATH=build/macosx/work/classes:build/macosx/work/lib/kjc.jar:build/macosx/work/lib/oro.jar:$MACOSX_CLASSPATH
+CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/oro.jar:$MACOSX_CLASSPATH
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d build/macosx/work/classes" -dJDK13 -dMACOS *.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS *.java lexer/*.java
 
-cd build/macosx/work/classes
+cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
 zip -0q ../lib/pde.jar *.class
 cd ../..
-
