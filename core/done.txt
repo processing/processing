@@ -1,3 +1,147 @@
+0077 core
+X bring back pmouseX/Y using a tricky method of storing separate
+X   values for inside draw() versus inside the event handler versions
+X   debug handling, and make firstMouse public
+X explicitly state depth()/nodepth()
+X   don't allocate zbuffer & stencil until depth() is called
+X arc with stroke only draws the arc shape itself
+X   may need a 'wedge' function to draw a stroke around the whole thing
+X only allocate stencil and zbuffer on first call to depth()
+X   this will require changes to PTriangle and PLine inside their loops
+X try running javadoc
+X die() may need to throw a RuntimeException
+o call filter() to convert RGB/RGBA/ALPHA/GRAY
+o   cuz the cache is gonna be bad going rgb to rgba
+X   don't bother, people can re-create the image or set cache null
+X fix font coloring in PGraphics2
+X fix tint() for PGraphics2
+X get text working again
+X   partially the problem is with ALPHA images
+X     how should they be stored internally
+X   also colored text, requires tint() to work properly
+X move textMode and textSpace back out of PFont
+X   use die() to fail in font situations
+X   can't, just use a RuntimeException
+
+covered in previous
+X before graphics engine change, attach jogl stuff
+X   need to try jogl to make sure no further changes
+X   and the illustrator stuff
+o massive graphics engine changes
+o   move to new graphics engine
+o     test with rgb cube, shut off smoothing
+o   make sure line artifacts are because of smoothing
+o   implement 2x oversampling for anti-aliasing
+o renderers can plug in:
+o   at direct api level
+o     taking over all color() functions and vertex collection
+o   at endShape() level
+o     where vertices are collected by core and blit on endShape()
+o     (takes polygons and lines)
+o   at post tesselation level
+o     takes only line segments and triangles to blit (dxf writer)
+o api for file-based renderers
+o   need to work this out since it will affect other api changes
+o   size(0, 0) and then ai.size(10000, 20000)
+o     size 0 is code for internal to not show any window
+o   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+o   saveFrame gets called at the beginning of loop()
+o     or is just a message to save the next frame (problem for anim)
+X vertices max out at 512.. make it grow
+X add gzipInput and gzipOutput
+X light(x, y, z, c1, c2, c3, TYPE)
+X   also BLight with same constructor, and on() and off() fxn
+X make sure applet is stopping in draw mode
+X loadImage() is broken on some machines
+X   hacked for a fix in 72, but need to better coordinate with openStream()
+
+postscript
+X pushing all intelligence down into class that implements PMethods
+o keep hints about type of geometry used to reconstruct
+o   no special class, just uses public vars from PGraphics
+o how to hook into curve rendering so that curve segments are drawn
+o   maybe lines are rendered and sorted, 
+o   but they point to an original version of the curve geometry 
+o   that can be re-rendered 
+o   also integrate catmull-rom -> bezier inverse matrices
+o   even with the general catmull-rom, to render via ai beziers
+
+api changes
+X removed circle.. it's dumb when ellipse() is in there
+X   (it's not like we have square() in the api)
+X arcMode is gone.. just uses ellipseMode()
+X save tga and tif methods are static and public
+X imageMode(CORNER) and CORNERS are the only usable versions
+X alpha(PImage) is now called mask() instead
+X   already have an alpha() function that gets alpha bits
+X on start, mouseX is 0.. how to avoid?
+X   use firstMouse variable.. figure out naming
+X get frame recording working
+X   not tested, but at least it's there
+
+image stuff
+o could also do PImage2, which would need a getPixels() before messing w/ it
+o   bad idea, distinction not clear
+o even in java 1.1, could use regular java.awt.Image and require getPixels()
+o   -> 1.1 wouldn't help anything, because needs pixels to render, oops
+X the updatePixels() in PGraphics has to be overridden (from PImage)
+X   to make itself actually update on-screen
+X   actually, should be no different than the check_image function
+X PGraphics2 and PGraphicsGL will need loadPixels() to be called
+X   in order to read pixels from the buffer
+X loadPixels() and updatePixels() prolly should be shut off in opengl
+X   make people use get() instead to grab sub-images
+X   PGraphicsGL.copy() needs to be overridden.. use glDrawBitmap
+o loadImage() needs to handle 1.1 vs 1.3 loading
+o   set image.format to be BUFFERED? no.. just use RGBA always
+o have a flag to always use the cache, i.e. with BufferedImage
+o   turn that off when someone modifies it (nope, no need to)
+X PImage.getPixels(), updatePixels(), updatePixels(x, y, w, h), 
+o   PImage.setPixels(int another[]);
+X imageMode(CENTER) is weird for copy() and updatePixels()
+X   perhaps copy() and get() ignore imageMode and use xywh or x1y1x2y2?
+X   or disallow imageMode(CENTER) altogether?
+o in java 1.3, getPixels() can call getRGB() via reflection
+o   cache.getClass().getName().equals("BufferedImage")
+X readPixels/writePixels?
+X   has to happen, since this is so fundamental to gl as well
+X loadImage in 1.3 leaves pixels[] null (not in 1.1)
+X   1.3 plus gl is a problem, since conflicting caches
+X   gl has no need for a bufferedimage tho
+X     so maybe checks to see if the cache is a BufferedImage
+X     if it is, calls getPixels to set the int array
+X     then replaces cache with glimageache
+X     pappletgl loadimage could take care of this instead
+X       calls super.loadImage(), if cache != null, proceed..
+X       this is prolly a mess
+X PImage.getPixels() and PImage.getPixels(x, y, w, h) ->
+X   (the xywh version still allocates the entire array, but only updates those)
+X   only needed for java2d
+X   not (necessarily) needed when loading images,
+X     but definitely needed when setting pixels on PGraphics
+X PImage.updatePixels() and PImage.updatePixels(x, y, w, h)
+X   (this is actually just setModified)
+X   in opengl, marks all or some as modified
+X     so next time it's drawn, the texture is updated PGraphicsGL.image()
+X   in java2d, updates the BufferedImage on next draw
+X can't use regular getPixels() on PGraphics, because its image isn't 'cache'
+X   also, the cache may be used to draw the whole surface as a gl texture (?)
+X   not a problem for the main PGraphics, but for any others created to draw on
+
+opengl
+X make light() functions actually do something in PGraphicsGL
+X box() and sphere() working again
+X make opengl work in draw mode
+X   set initial size using --size=
+X color channels seem to be swapped on windows in image example
+X   check on the mac to see what it looks like
+
+X default to single byte input from serial port
+X   and add serial.setBuffer() for message length as alternative
+X   or serial.setDelimiter() to fire message on delim
+X     named it bufferUntil();
+
+
 0076 core
 X no changes, only launcher issues
 
