@@ -104,7 +104,14 @@ cd app
 
 CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar"
 
+# version for javac/1.1 testing
+#CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar;..\\build\\macos9\\JDKClasses.zip;..\\build\\macos9\\JDKToolsClasses.zip"
+
 perl ../bagel/buzz.pl "jikes +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJDK13 -dJDK14 *.java jeditsyntax/*.java
+
+# version for javac/1.1 testing
+#perl ../bagel/buzz.pl "jikes -target 1.1 +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJAVAC *.java jeditsyntax/*.java
+#perl ../bagel/buzz.pl "javac -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJAVAC *.java jeditsyntax/*.java
 
 cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
@@ -112,4 +119,3 @@ zip -0q ../lib/pde.jar *.class
 
 # back to 'build' dir
 cd ../../..
-

@@ -694,9 +694,12 @@ afterwards, some of these steps need a cleanup function
       // compile the program
       //
       PdeCompiler compiler = 
-        ((PdeBase.platform == PdeBase.MACOS9) ? 
-         new PdeCompilerJavac(buildPath, className, this) :
-         new PdeCompiler(buildPath, className, this));
+        new PdeCompiler(buildPath, className, this);
+      // macos9 now officially broken.. see PdeCompilerJavac
+      //PdeCompiler compiler = 
+      //  ((PdeBase.platform == PdeBase.MACOS9) ? 
+      //   new PdeCompilerJavac(buildPath, className, this) :
+      //   new PdeCompiler(buildPath, className, this));
 
       // this will catch and parse errors during compilation
       messageStream = new PdeMessageStream(this, compiler);
