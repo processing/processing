@@ -12,6 +12,11 @@ X   patch keyTyped event instead of keyPressed
 X   remove reference in readme about macosx problem w/ it
 X   test on macosx
 X   test on linux
+X Event.consume() doesn't work on entry fields 
+X   manifests itself in sketch naming, can't be constrained
+X   may not be the case under swing?
+X   it's probably because of keyTyped() being the important one
+X     so instead trap for keyTyped events
 X qtjava search path is too fragile
 o   use %WINDIR%\System32\qtjava.zip and %QTJAVA%
 o   or even the system %CLASSPATH%
