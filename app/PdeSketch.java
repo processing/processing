@@ -704,7 +704,7 @@ public class PdeSketch {
     }
 
     // make sure they aren't the same file
-    if (sourceFile.equals(destFile)) {
+    if (!addingCode && sourceFile.equals(destFile)) {
       PdeBase.showWarning("You can't fool me",
                           "This file has already been copied to the\n" +
                           "location where you're trying to add it.\n" +
@@ -712,12 +712,16 @@ public class PdeSketch {
       return;
     }
 
-    try {
-      PdeBase.copyFile(sourceFile, destFile);
-    } catch (IOException e) {
-      PdeBase.showWarning("Error adding file",
-                          "Could not add '" + filename +
-                          "' to the sketch.", e);
+    // in case the user is "adding" the code in an attempt
+    // to update the sketch's tabs
+    if (!sourceFile.equals(destFile)) {
+      try {
+        PdeBase.copyFile(sourceFile, destFile);
+      } catch (IOException e) {
+        PdeBase.showWarning("Error adding file",
+                            "Could not add '" + filename +
+                            "' to the sketch.", e);
+      }
     }
 
     // make the tabs update after this guy is added

@@ -20,13 +20,15 @@ X don't enable externalRuntime with multiple code files that are pde
 X   no longer separate classes
 X remove "file" from "new file".. maybe just "new tab"?
 X   not really separate files, so that could be trouble.
+X add file of a .pde or .java file should update the tabs bar
+X   and prolly not really complain if it's in the same folder
+X dim "rename" when the main tab is selected (since user needs to "save as")
 
-_ add file of a .pde or .java file should update the tabs bar
-_   and prolly not really complain if it's in the same folder
-
+saving issues
 _ "save as" not properly updating the tab header
-
 _ also include the name of the previous sketch for "save as"
+_ prevent folks from saving a sketch inside its own folder
+_   will cause bizarro recursive folder action
 
 _ allow to use doubles on casting -- particularly for Math.cos() et al
 
@@ -47,9 +49,6 @@ _   see why coords are going negative
 
 _ remove grow box from applet frame on macosx
 
-_ prevent folks from saving a sketch inside its own folder
-_   will cause bizarro recursive folder action
-
 _ "save as" shouldn't show save as dialog for sketches 
 _   unless that's the current mode that's being used
 
@@ -62,8 +61,6 @@ _   use canonicalPath to flag possible problems
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
-
-_ dim "rename" when the main tab is selected (since user needs to "save as")
 
 _ make font builder vertically resizable
 _   200 pt font hoses things / hides buttons
