@@ -400,7 +400,8 @@ java.lang.NullPointerException
         //    "     at javatest.<init>(javatest.java:5)"
         // -> "javatest.<init>(javatest.java:5)"
         int afterAt = s.indexOf("at") + 3;
-        if (afterAt == -1) {
+        //if (afterAt == -1) {
+        if (afterAt == 2) {  // means indexOf was -1
           System.err.println(s);
           return;
         }
