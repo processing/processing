@@ -1433,6 +1433,18 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  //
+
+  /*
+  public void printvar(String name) {
+    try {
+      Field field = getClass().getDeclaredField(name);
+      println(name + " = " + field.get(this));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -2102,7 +2114,7 @@ public class PApplet extends Applet
   /**
    * I want to read lines from a file. And I'm still annoyed.
    */
-  public BufferedReader reader(File file) {
+  static public BufferedReader reader(File file) {
     try {
       return reader(new FileInputStream(file));
 
@@ -2117,7 +2129,7 @@ public class PApplet extends Applet
    * I want to read lines from a stream. If I have to type the
    * following lines any more I'm gonna send Sun my medical bills.
    */
-  public BufferedReader reader(InputStream input) throws IOException {
+  static public BufferedReader reader(InputStream input) throws IOException {
     InputStreamReader isr = new InputStreamReader(input);
     return new BufferedReader(isr);
   }
@@ -2140,7 +2152,7 @@ public class PApplet extends Applet
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
-  public PrintWriter writer(File file) {
+  static public PrintWriter writer(File file) {
     try {
       return writer(new FileOutputStream(file));
 
@@ -2154,7 +2166,7 @@ public class PApplet extends Applet
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
-  public PrintWriter writer(OutputStream output) throws IOException {
+  static public PrintWriter writer(OutputStream output) throws IOException {
     OutputStreamWriter osw = new OutputStreamWriter(output);
     return new PrintWriter(osw);
   }
