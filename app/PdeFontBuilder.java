@@ -385,7 +385,7 @@ public class PdeFontBuilder extends JFrame {
     try {
       Font instance = (Font) table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
-      PFont2 f = new PFont2(font, all, smooth);
+      PFont f = new PFont(font, all, smooth);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();
