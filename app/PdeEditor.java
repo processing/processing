@@ -73,7 +73,7 @@ public class PdeEditor extends JPanel {
 
   JEditTextArea textarea;
 
-  boolean externalEditor;
+  //boolean externalEditor;
 
   // currently opened program
   //String userName;   // user currently logged in
@@ -273,6 +273,66 @@ public class PdeEditor extends JPanel {
           }
         }
       });
+  }
+
+
+  /**
+   * Post-constructor setup for the editor area. Loads the last
+   * sketch that was used (if any), and restores other Editor settings.
+   */
+  public void initPreferences() {
+    // load the last program that was in use
+
+    String sketchName = PdePreferences.get("last.sketch.name");
+    String sketchDir = PdePreferences.get("last.sketch.directory");
+
+    if (sketchName != null) {
+      if (new File(sketchDir + File.separator + sketchName).exists()) {
+        editor.skOpen(sketchDir, sketchName);
+
+      } else {
+        editor.skNew();
+      }
+    }
+
+    // get the location for the console/editor area divider
+
+    int location = PdePreferences.getInteger("last.divider.location");
+    splitPane.setDividerLocation(location);
+
+    // read the preferences that are settable in the preferences window
+
+    applyPreferences()
+  }
+
+
+  public void applyPreferences() {
+
+    // apply the setting for 'use external editor' 
+
+    boolean external = getBoolean("editor.external");
+
+    textarea.setEditable(!external);
+    base.saveMenuItem.setEnabled(!external);
+    base.saveAsMenuItem.setEnabled(!external);
+    base.beautifyMenuItem.setEnabled(!external);
+
+    TextAreaPainter painter = textarea.getPainter();
+    if (external) {
+      // disable line highlight and turn off the caret when disabling
+      Color bg = PdePreferences.getColor("editor.program.bgcolor.external");
+      painter.setBackground(bg);
+      painter.lineHighlight = false;
+      textarea.setCaretVisible(false);
+
+    } else {
+      painter.setBackground(PdePreferences.getColor("editor.program.bgcolor")); //, Color.white));
+      painter.lineHighlight = PdePreferences.getBoolean("editor.program.linehighlight");
+      textarea.setCaretVisible(true);
+    }
+
+
+    // 
   }
 
 
@@ -597,7 +657,7 @@ public class PdeEditor extends JPanel {
 
     for (int i = 0; i < 10; i++) System.out.println();
 
-    if (externalEditor) {
+    if (PdeBase.getBoolen("editor.external")) {
       // history gets screwed by the open..
       String historySaved = historyLast;
       handleOpen(sketchName, sketchFile, sketchDir);
@@ -1713,31 +1773,6 @@ public class PdeEditor extends JPanel {
 
     setSketchModified(true);
     buttons.clear();
-  }
-
-
-  public void setExternalEditor(boolean external) {
-    this.externalEditor = external;
-    //System.out.println("setting ee to " + externalEditor);
-
-    textarea.setEditable(!external);
-    //base.externalEditorItem.setState(external);
-    base.saveMenuItem.setEnabled(!external);
-    base.saveAsMenuItem.setEnabled(!external);
-    base.beautifyMenuItem.setEnabled(!external);
-
-    // disable line highlight and turn off the caret when disabling
-    TextAreaPainter painter = textarea.getPainter();
-    if (external) {
-      painter.setBackground(PdePreferences.getColor("editor.program.bgcolor.external", new Color(204, 204, 204)));
-      painter.lineHighlight = false;
-      textarea.setCaretVisible(false);
-
-    } else {
-      painter.setBackground(PdePreferences.getColor("editor.program.bgcolor", Color.white));
-      painter.lineHighlight = PdePreferences.getBoolean("editor.program.linehighlight.enabled", true);
-      textarea.setCaretVisible(true);
-    }
   }
 
 

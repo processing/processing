@@ -68,7 +68,7 @@ else
   # could be made and checked back in.. interesting
   mkdir work/classes
 
-  cp dist/lib/pde_windows.properties work/lib/
+  #cp dist/lib/pde_windows.properties work/lib/
   echo Compiling processing.exe
   cd launcher
   make && cp processing.exe ../work/

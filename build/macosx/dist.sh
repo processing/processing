@@ -97,7 +97,7 @@ rm -rf processing/lib/export/CVS
 cp dist/jikes processing/
 chmod a+x processing/jikes
  
-cp dist/lib/pde_macosx.properties processing/lib/
+#cp dist/lib/pde_macosx.properties processing/lib/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
