@@ -106,6 +106,7 @@ zip -0rq ../lib/pde.jar .
 cd ../..
 
 # get the libs
+mkdir -p work/Processing.app/Contents/Resources/Java/
 cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 
 
