@@ -49,6 +49,7 @@ public class PApplet extends Applet
     //toFloat(System.getProperty("java.version").substring(0,3));
 
   public PGraphics g;
+  protected Object glock = new Object(); // for sync
   public Frame frame;
 
   protected PMethods recorder;
@@ -287,8 +288,10 @@ public class PApplet extends Applet
     } else {
       Dimension size = getSize();
       g = new PGraphics3(size.width, size.height);
-      //DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
+    // re-call the beginframe with the new graphics
+    g.beginFrame();
+
     // it's ok to call this, because depth() is only getting called
     // at least inside of setup, so things can be drawn just
     // fine since it's post-beginFrame.
@@ -613,14 +616,14 @@ public class PApplet extends Applet
                                           " formerly nextFrame()");
         //if (looping || redraw) nextFrame();
         if (looping || redraw) {
-          if (fpsTarget != 0) framerate_delay();
-
           if (frameCount == 0) {  // needed here for the sync
             createGraphics();
           }
 
           // g may be rebuilt inside here, so turning of the sync
           //synchronized (g) {
+          // use a different sync object
+          synchronized (glock) {
             if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 1a beginFrame");
             g.beginFrame();
@@ -640,6 +643,20 @@ public class PApplet extends Applet
               this.height = g.height;
 
             } else {
+              if (fpsTarget != 0) {
+                if (fpsLastDelayTime == 0) {
+                  fpsLastDelayTime = System.currentTimeMillis();
+
+                } else {
+                  long timeToLeave =
+                    fpsLastDelayTime + (long)(1000.0f / fpsTarget);
+                  int napTime =
+                    (int) (timeToLeave - System.currentTimeMillis());
+                  fpsLastDelayTime = timeToLeave;
+                  delay(napTime);
+                }
+              }
+
               preMethods.handle();
 
               pmouseX = dmouseX;
@@ -665,6 +682,9 @@ public class PApplet extends Applet
               //for (int i = 0; i < libraryCount; i++) {
               //if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
               //}
+
+              redraw = false;  // unset 'redraw' flag in case it was set
+              // (only do this once draw() has run, not just setup())
             }
 
             g.endFrame();
@@ -673,7 +693,7 @@ public class PApplet extends Applet
               recorder = null;
             }
 
-            //}  // end sync
+            //}  // older end sync
 
             //update();
             // formerly 'update'
@@ -687,7 +707,7 @@ public class PApplet extends Applet
                                       "   3b calling Toolkit.sync " + frameCount);
             getToolkit().sync();  // force repaint now (proper method)
             if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    "   3c done " + frameCount);
+                                      "   3c done " + frameCount);
             //if (THREAD_DEBUG) println("   3d waiting");
             //wait();
             //if (THREAD_DEBUG) println("   3d out of wait");
@@ -697,9 +717,8 @@ public class PApplet extends Applet
             //for (int i = 0; i < libraryCount; i++) {
             //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
             //}
-          //}  // temporarily disabling the synchronize
+          }  // end of synchronize
         }
-        redraw = false;  // unset 'redraw' flag in case it was set
 
         // moving this to update() (for 0069+) for linux sync problems
         //if (firstFrame) firstFrame = false;
@@ -717,9 +736,15 @@ public class PApplet extends Applet
           // for some small amount of time.
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " gonna sleep");
-          // can't remember when/why i changed that to '1'..
-          // i have a feeling that some applets aren't gonna like that
-          Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
+          // can't remember when/why i changed that to '1'
+          // (rather than 3 or 5, as has been traditional), but i
+          // have a feeling that some platforms aren't gonna like that
+          // if !looping, sleeps for a nice long time
+          int nap = looping ? 1 : 10000;
+          // don't nap after setup, because if noLoop() is called this
+          // will make the first draw wait 10 seconds before showing up
+          if (frameCount == 1) nap = 1;
+          Thread.sleep(nap);
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
@@ -1174,18 +1199,6 @@ public class PApplet extends Applet
    */
   public void framerate(float fpsTarget) {
     this.fpsTarget = fpsTarget;
-  }
-
-  protected void framerate_delay() {
-    if (fpsLastDelayTime == 0) {
-      fpsLastDelayTime = System.currentTimeMillis();
-      return;
-    }
-
-    long timeToLeave = fpsLastDelayTime + (long)(1000.0f / fpsTarget);
-    int napTime = (int) (timeToLeave - System.currentTimeMillis());
-    fpsLastDelayTime = timeToLeave;
-    delay(napTime);
   }
 
 
@@ -2293,18 +2306,22 @@ public class PApplet extends Applet
   }
 
 
-  public InputStream openStream(File file) {
+  static public InputStream openStream(File file) {
     try {
       return new FileInputStream(file);
 
     } catch (IOException e) {
+      e.printStackTrace();
+
       if (file == null) {
-        die("File passed to openStream() was null", e);
+        throw new RuntimeException("File passed to openStream() was null");
+
       } else {
-        die("Couldn't openStream() for " + file.getAbsolutePath());
+        throw new RuntimeException("Couldn't openStream() for " +
+                                   file.getAbsolutePath());
       }
     }
-    return null;
+    //return null;
   }
 
 
@@ -2391,11 +2408,11 @@ public class PApplet extends Applet
   }
 
 
-  public String[] loadStrings(File file) {
+  static public String[] loadStrings(File file) {
     InputStream is = openStream(file);
     if (is != null) return loadStrings(is);
 
-    die("Couldn't open " + file.getAbsolutePath());
+    //die("Couldn't open " + file.getAbsolutePath());
     return null;
   }
 
@@ -2407,7 +2424,7 @@ public class PApplet extends Applet
     return null;
   }
 
-  public String[] loadStrings(InputStream input) {
+  static public String[] loadStrings(InputStream input) {
     try {
       BufferedReader reader =
         new BufferedReader(new InputStreamReader(input));
@@ -2435,9 +2452,10 @@ public class PApplet extends Applet
       return output;
 
     } catch (IOException e) {
-      die("Error inside loadStrings()", e);
+      e.printStackTrace();
+      throw new RuntimeException("Error inside loadStrings()");
     }
-    return null;
+    //return null;
   }
 
 
