@@ -514,7 +514,7 @@ public class PGraphics extends PImage
    *  initializes engine before drawing a new frame
    */
   public void beginFrame() {
-    if (PApplet.THREAD_DEBUG) System.out.println(" 1 beginFrame");
+    //if (PApplet.THREAD_DEBUG) System.out.println(" 1 beginFrame");
     /*
     if (camera_mode == -1) {
       //System.out.println("setting up camera");
@@ -566,7 +566,7 @@ public class PGraphics extends PImage
    *  indicates a completed frame
    */
   public void endFrame() {
-    if (PApplet.THREAD_DEBUG) System.out.println("  2 endFrame");
+    //if (PApplet.THREAD_DEBUG) System.out.println("  2 endFrame");
 
     if (hints[NEW_GRAPHICS]) {
 
