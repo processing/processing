@@ -1,3 +1,32 @@
+0081 pde
+X need to make sure people add the OPENGL lib if using opengl mode
+X   throws an error message
+o put processing.exe into cvs so that make et al aren't required
+o particles lib requires depth() (but shouldn't)
+o   fix for 78 since not sure when simon's new version is happening
+X   requires because uses 3D.. oh well
+o "draw" is not highlighted as a keyword.. other keywords?
+o   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
+o   PClient(), PClient.available(), PClient.read(), 
+o   PServer(), PServer.dispose(), PServer.write(), attach(), length
+o   round() is not colored
+
+return flight from tokyo
+X make preferences a modal dialog
+X   it's annoying when it hides itself
+X add editor font size in the preferences window
+X move the lib folders to a new location
+o libraries need to remove the PLibrary interface
+X fix bug where prefs were being applied even if cancel hit
+X the runtime environment requires java 1.4
+X   make sure this is known and tested for properly
+X PdeRuntime/PApplet cleanup
+X   run as external whenever using present mode
+X   significantly limit range of cases.. if presenting ext is ok
+X   uses internal pretty much only when single class, etc
+X   remove initialWidth/Height stuff from PdeRuntime for when running internally
+
+
 0080 pde
 X include /** */ comments into the html page
 X examples have been updated
