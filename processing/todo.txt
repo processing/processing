@@ -92,6 +92,9 @@ X     image for 'about processing'
 X   MRJPrefsHandler (open pde.properties in a text editor)
 X   MRJQuitHandler (confirm quit, may need to be in another thread)
 X remove 'quit' from file menu (osx only)
+X why do command keys / menu shortcuts get passed through?
+X   cmd-s drops an s into the text area (grr)
+X   only happened on java 1.3 if the cmd-key was unused
 
 
 dh X save last-used serial to sketch.properties on quit
@@ -109,6 +112,17 @@ dh o   exception when trying to write to stdout
 dh X   may need horizontal scroller, or text wrap
 dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
 
+i think this is completed
+dh b _ present mode, click background window and front window hides
+dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
+dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
+
+this should get completed before 57.. it's annoying
+dh b _ export to .pde file rather than java
+dh b _   or at least link to that from the web page
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
+
 
 ..................................................................
 
@@ -117,20 +131,21 @@ BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
 macosx
-b _ why do command keys / menu shortcuts get passed through?
-b _   cmd-s drops an s into the text area (grr)
-b _   only happened on java 1.3 if the cmd-key was unused
-b _ change Proce55ing.app to Processing.app
-b _   should cvs be changed or just do this as a renaming step?
-b _ build gl4java for java 1.4
-b _ Event.consume() doesn't work on entry fields 
-b _   manifests itself in sketch naming, can't be constrained
-b _   may not be the case under swing?
-b _ escape key not quitting presentation mode
-b _   no events seem to be coming through at all
-b _ select all (apple-a) on azerty keyboard is quitting the app
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
-b _ why are the end of text messages under osx getting chopped?
+_ change Proce55ing.app to Processing.app
+_   should cvs be changed or just do this as a renaming step?
+_ jikes is not wired to Proce55ing.app
+_   puts a couple dots on random lines
+_ build gl4java for java 1.4
+_ Event.consume() doesn't work on entry fields 
+_   manifests itself in sketch naming, can't be constrained
+_   may not be the case under swing?
+_   it's probably because of keyTyped() being the important one
+_     so instead trap for keyTyped events
+_ escape key not quitting presentation mode
+_   no events seem to be coming through at all
+_ select all (apple-a) on azerty keyboard is quitting the app
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
+_ why are the end of text messages under osx getting chopped?
 _ set nice background for disk image on macosx
 _ mac 1.4 crashes when attempting to stop applets (pcho definitely)
 _   doesn't seem to do this with the .app, or at least in prev release
@@ -148,18 +163,17 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
 
-bf b _ tweak video to get it working
-bf b _   beginVideo(int, int, int) not found
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
-bf b _   how does the syntax work?
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
+_ tweak video to get it working
+o   beginVideo(int, int, int) not found
+_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
+_   how does the syntax work?
+_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
 
-
-bf b _ net not closing, dispose() not getting called
-bf b _   make sure dispose() gets called? that way people can override?
-bf b _   or add another function for people to override?
-bf b _   netEvent doesn't seem to be working in server mode
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
+_ net not closing, dispose() not getting called
+_   make sure dispose() gets called? that way people can override?
+_   or add another function for people to override?
+_   netEvent doesn't seem to be working in server mode
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
 
 
 additional console fixes
@@ -181,12 +195,8 @@ _   grab rxtx for linux and include with distribution
 
 dist
 b _ need note about setting classpath on platforms when using expert
+b _   put jikes executables into the dist folders
 b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
-1 _ examples should be read-only
-1 _   stored in a separate folder from the sketchbook
-1 _ error message dialog?
-1 _   maybe something that shows stack trace 
-1 _   with an 'email this' button? (include source code too?)
 
 
 thesis / acg
@@ -642,17 +652,10 @@ dh b _ lockup when something missing from classpath on dynamic load
 dh b _   but makes no error.. peditorconsole probably swallowing it
 dh b _ ability to include other code from sketchbook directory
 dh b _   compile entire sketchbook on startup, check for new files on compile?
-dh b _ present mode, click background window and front window hides
-dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
-dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
 
 
 PDE / Export
 
-dh b _ export to .pde file rather than java
-dh b _   or at least link to that from the web page
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
 dh b _ add manifest.mf to exported applets so that applications will work
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
 dh b _ ability to export 'applications' (not just applets)
@@ -727,6 +730,11 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 dh 1 _ scroll bar has some painting weirdness with jedit textarea
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
 
+   1 _ examples should be read-only
+   1 _   stored in a separate folder from the sketchbook
+   1 _ error message dialog?
+   1 _   maybe something that shows stack trace 
+   1 _   with an 'email this' button? (include source code too?)
    1 _ dim edit menus as appropriate during selection/no selection/etc
    1 _ do objects need to be swing components to draw properly?
    1 _   macosx has update weirdness for non JComponent items
