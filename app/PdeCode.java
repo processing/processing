@@ -27,13 +27,14 @@ import java.io.*;
 
 public class PdeCode {
   String name;  // pretty name (no extension), not the full file name
-  String preprocName;  // name of .java file after preproc
   File file;
   int flavor;
 
   String program;
   boolean modified;
-  //History history;  // later
+  //PdeHistory history;  // TODO add history information
+
+  String preprocName;  // name of .java file after preproc
 
 
   public PdeCode(String name, File file, int flavor) {
@@ -44,24 +45,9 @@ public class PdeCode {
 
 
   public void load() throws IOException {
-    program = null;
+    program = PdeBase.loadFile(file);
 
-    if (file.length() != 0) {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
-      StringBuffer buffer = new StringBuffer();
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        buffer.append(line);
-        buffer.append('\n');
-      }
-      reader.close();
-      program = buffer.toString();
-
-    } else {
-      // empty code file.. no worries, might be getting filled up
-      program = "";
-    }
-
+    //program = null;
     /*
     } catch (IOException e) {
       PdeBase.showWarning("Error loading file", 
@@ -80,30 +66,6 @@ public class PdeCode {
     // TODO re-enable history
     //history.record(s, PdeHistory.SAVE);
 
-    //File file = new File(directory, filename);
-    //try {
-    //System.out.println("handleSave: results of getText");
-    //System.out.print(s);
- 
-    ByteArrayInputStream bis = new ByteArrayInputStream(s.getBytes());
-    InputStreamReader isr = new InputStreamReader(bis);
-    BufferedReader reader = new BufferedReader(isr);
-
-    FileWriter fw = new FileWriter(file);
-    PrintWriter writer = new PrintWriter(new BufferedWriter(fw));
-
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      //System.out.println("w '" + line + "'");
-      writer.println(line);
-    }
-    writer.flush();
-    writer.close();
-
-    /*
-    sketchFile = file;
-    setSketchModified(false);
-    message("Done saving " + filename + ".");
-    */
+    PdeBase.saveFile(program, file);
   }
 }
