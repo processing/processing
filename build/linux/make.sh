@@ -10,10 +10,10 @@ else
   echo Setting up directories to build for linux...
   cp -r ../shared work
 
-  cd work/sketchbook
+  cd work
   unzip -q examples.zip
   rm examples.zip
-  cd ../..
+  cd ..
 
   cd work
   unzip -q reference.zip
@@ -22,17 +22,15 @@ else
 
   tar --extract --file=jre.tgz --ungzip --directory=work
 
-  mkdir work/lib/export
+  #mkdir work/lib/export
   mkdir work/lib/build
   mkdir work/classes
 
-  #cp dist/lib/pde_linux.properties work/lib/
-
   # get the serial stuff
-  echo Copying serial support from bagel dir
-  cp ../../bagel/serial/RXTXcomm.jar work/lib/
-  mkdir work/lib/i386
-  cp ../../bagel/serial/librxtxSerial.so work/lib/i386/libSerial.so
+  #echo Copying serial support from bagel dir
+  #cp ../../bagel/serial/RXTXcomm.jar work/lib/
+  #mkdir work/lib/i386
+  #cp ../../bagel/serial/librxtxSerial.so work/lib/i386/libSerial.so
   #chmod +x work/librxtxSerial.so
 
   # get jikes and depedencies
@@ -42,50 +40,36 @@ else
   echo
 fi
 
-
-### -- START BUILDING -------------------------------------------
-
-# move to 'app' directory
-cd ../../app
+cd ../..
 
 
-### -- BUILD BAGEL ----------------------------------------------
-cd ..
-# make sure bagel exists, if not, check it out of cvs
-if test -d bagel
-then 
-  echo
-else
-  echo Doing CVS checkout of bagel...
-  cvs co bagel
-  cd bagel
-  cvs update -P
-  cd ..
-fi
-cd bagel
+### -- BUILD CORE ----------------------------------------------
 
-CLASSPATH=../build/linux/work/java/lib/rt.jar
+
+echo Building processing.core
+
+# move to bagel inside base 'processing' directory
+cd core
+
+# new regular version
+CLASSPATH="../build/linux/work/java/lib/rt.jar"
 export CLASSPATH
 
-### --- make version with serial for the application
-echo Building bagel with serial and sonic support
-perl make.pl JIKES=../build/linux/work/jikes SERIAL NETWORK RXTX SONIC JDK13
-cp classes/*.class ../build/linux/work/classes/
+perl preproc.pl
+../build/linux/work/jikes -d . +D -target 1.1 *.java
+zip -rq ../build/linux/work/lib/core.jar processing
+rm -rf processing
 
-### --- make version without serial for applet exporting
-echo Building bagel for export with sonic
-perl make.pl JIKES=../build/linux/work/jikes SONIC NETWORK
-cp classes/*.class ../build/linux/work/lib/export/
 
+# back to base processing dir
 cd ..
-cd app
 
 
-### -- BUILD PDE ------------------------------------------------
+### -- BUILD PREPROC ------------------------------------------------
 
 echo Building PDE for JDK 1.3
 
-cd preprocessor
+cd app/preprocessor
 
 # first build the default java goop
 # long path is to avoid requiring java to be in your PATH
@@ -97,18 +81,56 @@ cd preprocessor
 ../../build/linux/work/java/bin/java \
   -cp ../../build/linux/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
 
-cd ..
+cd ../..
 
-CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/lib/RXTXcomm.jar
 
-perl ../bagel/buzz.pl "../build/linux/work/jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
+### -- BUILD PDE ------------------------------------------------
+
+cd app
+
+CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar"
+
+../build/linux/work/jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
 zip -0rq ../lib/pde.jar .
-cd ../..
+cd ../../../..
+
+
+
+### -- BUILD LIBRARIES ------------------------------------------------
+
+
+cd build/linux
+
+
+CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/rt.jar"
+
+
+# SERIAL LIBRARY
+echo Build serial library...
+cd ../../lib/serial
+../../build/linux/work/jikes +D -classpath "code/RXTXcomm.jar:$CLASSPATH" -d . *.java 
+zip -r0q library/serial.jar processing
+rm -rf processing
+mkdir -p ../../build/linux/work/libraries/serial/library/
+cp library/serial.jar ../../build/linux/work/libraries/serial/library/
+
+
+# NET LIBRARY
+echo Build net library...
+cd ../../lib/net
+../../build/linux/work/jikes +D -d . *.java 
+zip -r0q library/net.jar processing
+rm -rf processing
+mkdir -p ../../build/linux/work/libraries/net/library/
+cp library/net.jar ../../build/linux/work/libraries/net/library/
+
+
+cd ../../build/linux
 
 
 ### -- BUILD STUB -----------------------------------------------
 
-install -m 755 stub.sh work/processing
+install -m 755 dist/processing work/processing
