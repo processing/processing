@@ -18,6 +18,8 @@ else
   echo Setting up directories to build under Mac OS X
   cp -r ../shared work
 
+  cp -r ../../lib work/libraries
+
   echo Extracting examples...
   cd work
   unzip -q examples.zip
