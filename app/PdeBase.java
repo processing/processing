@@ -422,17 +422,22 @@ public class PdeBase {
    * Remove all files in a directory and the directory itself.
    */
   static public void removeDir(File dir) {
-    //System.out.println("removing " + dir);
-    removeDescendants(dir);
-    dir.delete();
+    if (dir.exists()) {
+      removeDescendants(dir);
+      dir.delete();
+    }
   }
 
 
   /**
    * Recursively remove all files within a directory, 
-   * used with removeDir().
+   * used with removeDir(), or when the contents of a dir
+   * should be removed, but not the directory itself. 
+   * (i.e. when cleaning temp files from lib/build)
    */
-  static protected void removeDescendants(File dir) {
+  static public void removeDescendants(File dir) {
+    if (!dir.exists()) return;
+
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
