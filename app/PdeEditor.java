@@ -36,16 +36,11 @@ import javax.swing.undo.*;
 
 import com.oroinc.text.regex.*;
 
-#ifdef MACOS
 import com.apple.mrj.*;
-#endif
 
 
 public class PdeEditor extends JFrame
-#ifdef MACOS
-  // TODO dynamically load these handlers via introspection
-  implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
-#endif 
+implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 {
   // yeah
   static final String WINDOW_TITLE = "Processing";
@@ -124,12 +119,10 @@ public class PdeEditor extends JFrame
     // this is needed by just about everything else
     preferences = new PdePreferences();
 
-#ifdef MACOS
-      // #@$*(@#$ apple.. always gotta think different
-      MRJApplicationUtils.registerAboutHandler(this);
-      MRJApplicationUtils.registerPrefsHandler(this);
-      MRJApplicationUtils.registerQuitHandler(this);
-#endif
+    // #@$*(@#$ apple.. always gotta think different
+    MRJApplicationUtils.registerAboutHandler(this);
+    MRJApplicationUtils.registerPrefsHandler(this);
+    MRJApplicationUtils.registerQuitHandler(this);
 
     // set the window icon
     try {
@@ -242,9 +235,16 @@ public class PdeEditor extends JFrame
                                    screen.height + insets.top + insets.bottom);
     } else {
       presentationWindow = new Frame();
-#ifdef JDK14
-      ((Frame)presentationWindow).setUndecorated(true);
-#endif
+      //((Frame)presentationWindow).setUndecorated(true);
+      try {
+        Method undecoratedMethod = 
+          Frame.class.getMethod("setUndecorated",
+                                new Class[] { Boolean.TYPE });
+        undecoratedMethod.invoke(presentationWindow, 
+                                 new Object[] { Boolean.TRUE });
+
+      } catch (NoSuchMethodError e) { }
+
       presentationWindow.setBounds(0, 0, screen.width, screen.height);
     }
 

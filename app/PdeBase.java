@@ -34,9 +34,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-#ifdef MACOS
 import com.apple.mrj.*;
-#endif
 
 
 /**
@@ -171,7 +169,6 @@ public class PdeBase {
           Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
         }
 
-#ifdef MACOS
       } else if (platform == MACOSX) {
         //com.apple.eio.FileManager.openURL(url);
 
@@ -201,7 +198,6 @@ public class PdeBase {
 
       } else if (platform == MACOS9) {
         com.apple.mrj.MRJFileUtils.openURL(url);
-#endif
 
       } else if (platform == LINUX) {
         // how's mozilla sound to ya, laddie?
@@ -240,11 +236,9 @@ public class PdeBase {
         // not tested
         //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
 
-#ifdef MACOS
       } else if (platform == MACOSX) {
         openURL(folder);  // handles char replacement, etc
 
-#endif
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -371,9 +365,7 @@ public class PdeBase {
     to.close(); // ??
     to = null;
 
-#ifdef JDK13
     bfile.setLastModified(afile.lastModified());  // jdk13+ required
-#endif
   //} catch (IOException e) {
   //  e.printStackTrace();
   //}
@@ -434,9 +426,7 @@ public class PdeBase {
       if (source.isDirectory()) {
         //target.mkdirs();
         copyDir(source, target);
-#ifdef JDK13
         target.setLastModified(source.lastModified());
-#endif
       } else {
         copyFile(source, target);
       }

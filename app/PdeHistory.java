@@ -23,7 +23,7 @@
 */
 
 
-#ifdef THINGS_WERENT_SO_BUSY
+/*
 
 import java.awt.*;
 import java.awt.event.*;
@@ -73,9 +73,9 @@ public class PdeHistory {
   }
 
 
-  /**
-   * Set the path for the current sketch
-   */
+
+   /// Set the path for the current sketch
+
   public void setPath(String path, boolean readOnlySketch) {
     this.readOnlySketch = true;
 
@@ -95,10 +95,8 @@ public class PdeHistory {
   }
 
 
-  /**
-   * Check to see if history should be recorded. 
-   * mode is RUN, SAVE, AUTOSAVE, or BEAUTIFY
-   */
+  /// Check to see if history should be recorded. 
+  /// mode is RUN, SAVE, AUTOSAVE, or BEAUTIFY
   public void record(String program, int mode) {
     if (readOnlySketch) return;
 
@@ -255,13 +253,11 @@ public class PdeHistory {
   }
 
 
-  /*
-  class HistoryMenuListener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      editor.selectHistory(e.getActionCommand);
-    }
-  }
-  */
+//  class HistoryMenuListener implements ActionListener {
+//    public void actionPerformed(ActionEvent e) {
+//      editor.selectHistory(e.getActionCommand);
+//    }
+//  }
 
 
   //public void rebuildHistoryMenu(String path) {
@@ -335,14 +331,13 @@ public class PdeHistory {
       }
 
       // add the items to the menu in reverse order
-      /*
-      ActionListener historyMenuListener = 
-        new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              editor.retrieveHistory(e.getActionCommand());
-            }
-          };
-      */
+
+      //ActionListener historyMenuListener = 
+      //  new ActionListener() {
+          //  public void actionPerformed(ActionEvent e) {
+            //  editor.retrieveHistory(e.getActionCommand());
+         //}
+      //};
 
       for (int i = historyCount-1; i >= 0; --i) {
         JMenuItem mi = new JMenuItem(historyList[i]);
@@ -359,4 +354,4 @@ public class PdeHistory {
 }
 
 
-#endif
+*/
