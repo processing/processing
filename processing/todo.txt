@@ -115,6 +115,8 @@ _   make note in documentation
 X catmullrom is broken 
 _   write documentation for new curve functions
 
+_ where do the 'error line is 9' messages come from?
+_   these are runtime errors inside bagel code, how to trap?
 _ get web documentation back into cvs
 _ have to get rid of static i/o stuff before porting to c
 _   may also need to get rid of floating point constants
