@@ -45,7 +45,7 @@ public class PdeEditor extends JFrame
 implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 {
   // yeah
-  static final String WINDOW_TITLE = "Processing";
+  static final String WINDOW_TITLE = "Processing Mobile";
 
   // p5 icon for the window
   Image icon;
