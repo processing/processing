@@ -15,35 +15,8 @@ again, after i moved my sketches over it broke permanently...
 / 46 dies when run from desktop on some machines [jes]
 /   spaces in the dir name?
 o is sketch.properties getting mangled on the mac?
-
-_ crashes while starting
-LaunchRunner Error] PdeBase.main(String[]) threw an exception:
-java.lang.NullPointerException
-  at PdeBase.addSketches(PdeBase.java:598)
-  at PdeBase.addSketches(PdeBase.java:615)
-  at PdeBase.rebuildSketchbookMenu(PdeBase.java:476)
-  at PdeEditor.skNew2(PdeEditor.java:872)
-  at PdeEditor.checkModified2(PdeEditor.java:814)
-  at PdeEditor.checkModified(PdeEditor.java:797)
-  at PdeEditor.checkModified(PdeEditor.java:785)
-  at PdeEditor.skNew(PdeEditor.java:826)
-  at PdeEditor.init(PdeEditor.java:428)
-  at PdeBase.<init>(PdeBase.java:361)
-  at PdeBase.main(PdeBase.java:102)
-  at java.lang.reflect.Method.invoke(Native Method)
-  at com.apple.buckyball.app.LaunchRunner.run(LaunchRunner.java:82)
-  at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
-  at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
-
-_ recursive sketch add that works properly and ignores crap
-
-_ jedit text area
-_   change bg color for 'use external editor'
-_   enable wheel mouse
-_ extra linefeeds is getting annoying for folks
-_   line endings joy
-_   how are line endings working during save?
-
+X jedit text area
+X   change bg color for 'use external editor'
 X   enable/disable undo/redo
 X   don't let undo after setting text
 X   get focus after setText
@@ -61,26 +34,51 @@ X       rect, line etc as another
 X       width, height, pixels as a third
 X   jump to top of document on load
 X   change style of ~ at end of document for unused area
+X extra linefeeds is getting annoying for folks
+X   line endings joy
+X   how are line endings working during save?
+X recursive sketch add that works properly and ignores crap
+X crashes while starting
+LaunchRunner Error] PdeBase.main(String[]) threw an exception:
+java.lang.NullPointerException
+  at PdeBase.addSketches(PdeBase.java:598)
+  at PdeBase.addSketches(PdeBase.java:615)
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:476)
+  at PdeEditor.skNew2(PdeEditor.java:872)
+  at PdeEditor.checkModified2(PdeEditor.java:814)
+  at PdeEditor.checkModified(PdeEditor.java:797)
+  at PdeEditor.checkModified(PdeEditor.java:785)
+  at PdeEditor.skNew(PdeEditor.java:826)
+  at PdeEditor.init(PdeEditor.java:428)
+  at PdeBase.<init>(PdeBase.java:361)
+  at PdeBase.main(PdeBase.java:102)
+  at java.lang.reflect.Method.invoke(Native Method)
+  at com.apple.buckyball.app.LaunchRunner.run(LaunchRunner.java:82)
+  at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
+  at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
+X undo/redo can go to far
+X docs
+X   make a note that size() has to come first [nluken]
+X   look at the code that's created in build/
+X known issues
+X   random freezes.. especially under windows
+X   wheel mouse is gone again, to return later
+X describe rundown of constants pulled from pde.properties
+X   coloring for syntax
+X   sketchbook.path, very preliminary, still creates 'default'
 
 
-MENTION IN DOCS
-_ describe rundown of constants pulled from pde.properties
+................................................................
+
+
+docs/faq
 _ notes on debugging
-_   look at the code that's created in build/
 _   run with java -Xint blahblah (turns off jit)
-_ known issues
-_   random freezes.. especially under windows
-_ make a note that size() has to come first [nluken]
-_ doesn't yet run under java 1.4 on mac
-_ undo/redo can go to far
-
+_ doesn't yet run under java 1.4 on mac (?)
 _ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
 _   also 'why p5' message from amit pitaru on 12/15/02
 _     and p5 versus flash stuff
 _   lists the main arguments, could be a useful document
-
-
-................................................................
 
 
 bagel
@@ -105,6 +103,7 @@ _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 
 pde / bugs
+_ re-enable wheel mouse
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
 _ images don't load during setup [reas]

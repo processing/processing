@@ -548,14 +548,14 @@ public class PdeBase extends Frame implements ActionListener {
       //menu.add(newSkechItem);
       //menu.addSeparator();
 
-      sketchbookFolder = new File("sketchbook");
+      //sketchbookFolder = new File("sketchbook");
+      sketchbookFolder = new File(get("sketchbook.path", "sketchbook"));
       sketchbookPath = sketchbookFolder.getCanonicalPath();
       if (!sketchbookFolder.exists()) {
 	System.err.println("sketchbook folder doesn't exist, " + 
 			   "making a new one");
 	sketchbookFolder.mkdirs();
       }
-
 
       // files for the current user (for now, most likely 'default')
 
@@ -570,6 +570,7 @@ public class PdeBase extends Frame implements ActionListener {
 	userFolder.mkdirs();
       }
 
+      /*
       SketchbookMenuListener userMenuListener = 
 	new SketchbookMenuListener(userPath);
 
@@ -578,8 +579,8 @@ public class PdeBase extends Frame implements ActionListener {
       for (int j = 0; j < entries.length; j++) {
 	if (entries[j].equals(".") || 
 	    entries[j].equals("..") ||
-	    entries[j].equals("CVS") ||
-	    entries[j].equals(".cvsignore")) continue;
+	    entries[j].equals("CVS")) continue;
+	//entries[j].equals(".cvsignore")) continue;
 	added = true;
 	if (new File(userPath, entries[j] + File.separator + 
 		     entries[j] + ".pde").exists()) {
@@ -595,51 +596,19 @@ public class PdeBase extends Frame implements ActionListener {
 	menu.add(item);
       }
       menu.addSeparator();
-
-      // other available subdirectories
-      /*
-      String toplevel[] = sketchbookFolder.list();
-      added = false;
-      for (int i = 0; i < toplevel.length; i++) {
-	if (toplevel[i].equals(editor.userName) ||
-	    toplevel[i].equals(".") ||
-	    toplevel[i].equals("..") ||
-	    toplevel[i].equals("CVS") ||
-	    toplevel[i].equals(".cvsignore")) continue;
-
-	added = true;
-	Menu subMenu = new Menu(toplevel[i]);
-	File subFolder = new File(sketchbookFolder, toplevel[i]);
-	String subPath = subFolder.getCanonicalPath();
-	SketchbookMenuListener subMenuListener = 
-	  new SketchbookMenuListener(subPath);
-
-	entries = subFolder.list();
-	if (entries != null) {
-	  for (int j = 0; j < entries.length; j++) {
-	    if (entries[j].equals(".") || 
-		entries[j].equals("..") ||
-		entries[j].equals("CVS") ||
-		entries[j].equals(".cvsignore")) continue;
-	    //subMenu.add(entries[j]);
-	    if (new File(subFolder, entries[j] + File.separator + 
-			 entries[j] + ".pde").exists()) {
-	      MenuItem item = new MenuItem(entries[j]);
-	      item.addActionListener(subMenuListener);
-	      subMenu.add(item);
-	    }
-	  }
-	}
-
-	menu.add(subMenu);
-      }
-      if (added) menu.addSeparator();
       */
-      addSketches(menu, sketchbookFolder, true);
+      if (addSketches(menu, userFolder, false)) {
+	menu.addSeparator();
+      }
+      if (!addSketches(menu, sketchbookFolder, true)) {
+	MenuItem item = new MenuItem("No sketches");
+	item.setEnabled(false);
+	menu.add(item);
+      }
 
       /*
-	// doesn't seem that refresh is worthy of its own menu item
-	// people can stop and restart p5 if they want to muck with it
+      // doesn't seem that refresh is worthy of its own menu item
+      // people can stop and restart p5 if they want to muck with it
       menu.addSeparator();
       MenuItem item = new MenuItem("Refresh");
       item.addActionListener(this);
@@ -652,14 +621,17 @@ public class PdeBase extends Frame implements ActionListener {
   }
 
 
-  protected void addSketches(Menu menu, File folder, boolean root) 
+  protected boolean addSketches(Menu menu, File folder, 
+				/*boolean allowUser,*/ boolean root) 
     throws IOException {
     // skip .DS_Store files, etc
-    if (!folder.isDirectory()) return;
+    if (!folder.isDirectory()) return false;
 
     String list[] = folder.list();
     SketchbookMenuListener listener = 
       new SketchbookMenuListener(folder.getCanonicalPath());
+
+    boolean ifound = false;
 
     for (int i = 0; i < list.length; i++) {
       if (list[i].equals(editor.userName) && root) continue;
@@ -673,13 +645,20 @@ public class PdeBase extends Frame implements ActionListener {
 	MenuItem item = new MenuItem(list[i]);
 	item.addActionListener(listener);
 	menu.add(item);
+	ifound = true;
 
       } else {  // might contain other dirs, get recursive
 	Menu submenu = new Menu(list[i]);
-	menu.add(submenu);
-	addSketches(submenu, subfolder, false);
+	// needs to be separate var 
+	// otherwise would set ifound to false
+	boolean found = addSketches(submenu, subfolder, false);
+	if (found) {
+	  menu.add(submenu);
+	  ifound = true;
+	}
       }
     }
+    return ifound;
   }
 
 
@@ -1073,7 +1052,11 @@ public class PdeBase extends Frame implements ActionListener {
     String str = get(which);
     if (str == null) return otherwise;  // ENABLE LATER
     StringTokenizer st = new StringTokenizer(str, ",");
-    return new Font(st.nextToken(), Font.PLAIN,
+    String fontname = st.nextToken();
+    String fontstyle = st.nextToken();
+    return new Font(fontname, 
+		    (fonstyle.indexOf("bold") ? Font.BOLD : 0) | 
+		    (fonstyle.indexOf("italic") ? Font.ITALIC : 0),
 		    Integer.parseInt(st.nextToken()));
   }
 
