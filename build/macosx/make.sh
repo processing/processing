@@ -10,6 +10,11 @@ else
   echo Setting up directories to build under Mac OS X
   cp -r ../shared work
 
+  cd work/sketchbook
+  unzip -q examples.zip
+  rm examples.zip
+  cd ../..
+
   mkdir work/lib/export
   mkdir work/lib/build
 
