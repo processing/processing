@@ -1,3 +1,25 @@
+0041
+X fill(#ffcc00) wasn't working for rect, calci not being set
+X   also affected background and stroke
+X export was failing if no data dir
+X move background() out of draw() for draw mode apps
+X click on project name to quickly go to rename mode
+X cursor goes away during edits (java bug, fix with hack)
+X handling of key/mouse events smoothed out
+X   removed 'briefly' versions of mouse/key
+X make scrollbar for console
+X make win/linux write stderr to stderr.txt like the mac
+X   this will be useful until i implement scrollbar
+X   -> this might be problematic, watch out for lockups
+X remove projects if created but nothing happens to them
+X   maybe do this on open or quit?
+X first a syntax error, when fixed, causes NullPointerException 
+X   quitting the app makes things all better. argh.
+X   this just started with version37, it happens extrememely 
+X     frequently and should be easy to reproduce the error
+X images with imageMode set for simage() weren't working
+
+
 0040
 X fix problem with pde.properties
 
