@@ -71,7 +71,7 @@ public class PdeEditor extends Panel {
 
   PdeBase base;
 
-  public PdeEditor(PdeBase base /*String program*/) {
+  public PdeEditor(PdeBase base) {
     this.base = base;
 
     setLayout(new BorderLayout());
@@ -94,15 +94,11 @@ public class PdeEditor extends Panel {
     Panel rightPanel = new Panel();
     rightPanel.setLayout(new BorderLayout());
 
-    //header = new PdeEditorHeader(this, "untitled", "default");
-    //userName = "default";
-    header = new PdeEditorHeader(this /*, "", userName*/);
-    // need to open a file or hit new right away
+    header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
 
-    //if (program == null) program = DEFAULT_PROGRAM;
     textarea = 
-      new TextArea("", //program, 
+      new TextArea("",
 		   PdeBase.getInteger("editor.program.rows", 20),
 		   PdeBase.getInteger("editor.program.columns", 60),
 		   TextArea.SCROLLBARS_VERTICAL_ONLY);
@@ -125,10 +121,61 @@ public class PdeEditor extends Panel {
     PdeEditorListener listener = new PdeEditorListener(this);
     textarea.addKeyListener(listener);
     textarea.addFocusListener(listener);
-    //textarea.addKeyListener(new PdeKeyListener(this));
-    //}
 
-    //runner = new PdeRunner(this);
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    if ((PdeBase.platform == PdeBase.MACOSX) ||
+	(PdeBase.platform == PdeBase.MACOS9)) {
+      presentationWindow = new Frame();
+
+      // mrj is still (with version 2.2.x) a piece of shit, 
+      // and doesn't return valid insets for frames
+      //presentationWindow.pack(); // make a peer so insets are valid
+      //Insets insets = presentationWindow.getInsets();
+      // the extra +20 is because the resize boxes intrude
+      Insets insets = new Insets(21, 5, 5 + 20, 5);
+
+      presentationWindow.setBounds(-insets.left, -insets.top, 
+				   screen.width + insets.left + insets.right, 
+				   screen.height + insets.top + insets.bottom);
+    } else {
+      presentationWindow = new Window(new Frame());
+      presentationWindow.setBounds(0, 0, screen.width, screen.height);
+    }
+
+    Label label = new Label("stop");
+    //label.setBackground(Color.red);
+    label.addMouseListener(new MouseAdapter() {
+	public void mousePressed(MouseEvent e) {
+	  //System.out.println("got stop");
+	  //doStop();
+	  doClose();
+
+#ifdef JDK13
+	  // move editor to front in case it was hidden
+	  frame.setState(Frame.NORMAL);
+#endif
+	}});
+
+    //Dimension labelSize = label.getPreferredSize();
+    Dimension labelSize = new Dimension(60, 20);
+    presentationWindow.setLayout(null);
+    presentationWindow.add(label);
+    label.setBounds(5, screen.height - 5 - labelSize.height, 
+		    labelSize.width, labelSize.height);
+
+    Color presentationBgColor = 
+      PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
+    presentationWindow.setBackground(presentationBgColor);
+
+    // windowActivated doesn't seem to do much, so focus listener better
+    presentationWindow.addFocusListener(new FocusAdapter() {
+	public void focusGained(FocusEvent e) {
+	  //if (frame != null) frame.toFront();  // editor to front
+	  try {
+	    engine.window.toFront();
+	  } catch (Exception ex) { }
+	}
+      });
   }
 
 
@@ -159,7 +206,6 @@ public class PdeEditor extends Panel {
       int screenW = Integer.parseInt(skprops.getProperty("screen.w", "-1"));
       int screenH = Integer.parseInt(skprops.getProperty("screen.h", "-1"));
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
 
       if ((windowX != -1) &&
 	  (screen.width == screenW) && (screen.height == screenH)) {
@@ -338,7 +384,7 @@ public class PdeEditor extends Panel {
   }
 
 
-  public void doRun(boolean presentation) {
+  public void doRun(boolean present) {
     //System.out.println(System.getProperty("java.class.path"));
 
     //doStop();
@@ -346,10 +392,15 @@ public class PdeEditor extends Panel {
     running = true;
     buttons.run();
 
-    //runner.setProgram(textarea.getText());
-    //runner.start();
+    presenting = present;
 
     try {
+      if (presenting) {
+	presentationWindow.show();
+	presentationWindow.toFront();
+	//doRun(true);
+      }
+
       String program = textarea.getText();
       makeHistory(program, RUN);
 
@@ -369,6 +420,7 @@ public class PdeEditor extends Panel {
 
       engine = new KjcEngine(this, program, buildPath, dataPath);
       //engine.start();
+      //engine.start(presenting ? presentLocation : appletLocation);
       engine.start(presenting ? presentLocation : appletLocation);
       //System.out.println("done iwth engine.start()");
       //}
@@ -394,158 +446,25 @@ public class PdeEditor extends Panel {
   }
 
 
-  public void doPresent() {
-    // full screen, but also no frame on the launched window
-
-    if (presentationWindow == null) {
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      if (PdeBase.isMacintosh()) {
-	presentationWindow = new Frame();
-
-	// mrj is still (with version 2.2.x) a piece of shit, 
-	// and doesn't return valid insets for frames
-	//presentationWindow.pack(); // make a peer so insets are valid
-	//Insets insets = presentationWindow.getInsets();
-	// the extra +20 is because the resize boxes intrude
-	Insets insets = new Insets(21, 5, 5 + 20, 5);
-	//System.out.println(insets);
-
-	presentationWindow.setBounds(-insets.left, -insets.top, 
-				   screen.width + insets.left + insets.right, 
-				   screen.height + insets.top + insets.bottom);
-      } else {
-	presentationWindow = new Window(new Frame());
-	presentationWindow.setBounds(0, 0, screen.width, screen.height);
-      }
-
-      // full screen window needs to have method to stop
-      // for now, click on small 'stop' text in lower-lefthand corner
-      // will a label catch mouse events?
-      //Label label = new Label("stop");
-      Label label = new Label("stop");
-      //label.setBackground(Color.red);
-      label.addMouseListener(new MouseAdapter() {
-	  public void mousePressed(MouseEvent e) {
-	    //System.out.println("got stop");
-	    doStop();
-
-#ifdef JDK13
-	    // move editor to front in case it was hidden
-	    frame.setState(Frame.NORMAL);
-#endif
-	    //frame.hide();
-	    //frame.show();
-	  }
-	});
-	  
-      //Dimension labelSize = label.getPreferredSize();
-      Dimension labelSize = new Dimension(60, 20);
-      presentationWindow.setLayout(null);
-      presentationWindow.add(label);
-      label.setBounds(5, screen.height - 5 - labelSize.height, 
-		      labelSize.width, labelSize.height);
-      //System.out.println(labelSize + "  " + label.getBounds());
-
-      Color presentationBgColor = 
-	PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
-      presentationWindow.setBackground(presentationBgColor);
-
-      /*
-      presentationWindow.addWindowListener(new WindowAdapter() {
-	  public void windowActivated(WindowEvent e) {
-	    System.out.println("activated");
-	  }
-	}
-      );
-      */
-
-      // windowActivated doesn't seem to do much, so focus listener better
-      presentationWindow.addFocusListener(new FocusAdapter() {
-	  public void focusGained(FocusEvent e) {
-	    //System.out.println("pwindow activated");
-	    // editor doesn't necessarily have to be on top
-	    //presentationWindow.toBack();
-
-	    // don't move the editor window to the front after all
-	    //if (frame != null) frame.toFront();
-	    try {
-	      //((KjcEngine)(runner.engine)).window.toFront();
-	      engine.window.toFront();
-	    } catch (Exception ex) { }
-	  }
-	}
-      );
-    }
-    presentationWindow.show();
-    presentationWindow.toFront();
-
-    // not sure what to do with applet..
-    // (since i can't bring the browser window to the front)
-    // unless there's a method in AppletContext
-    //if (frame != null) frame.toFront();
-
-    /*
-    try {
-      //System.out.println("my parent is " + getParent());
-      ((PdeApplication)getParent()).frame.toFront();
-    } catch (Exception e) { }
-    */
-
-    try {
-      //((KjcEngine)(runner.engine)).window.toFront();
-      engine.window.toFront();
-
-    } catch (Exception e) {
-      // rather than writing code to check all the posible
-      // errors with the above statement, just fail quietly
-      //System.out.println("couldn't bring kjc engine window forward");
-    }
-    //if (runner.engine != null) {
-    //if (runner.engine instanceof KjcEngine) {	
-    //}
-    //}
-
-    //buttons.clear();
-
-    presenting = true;
-    doRun(true);
-  }
-
-
-  //  #ifdef RECORDER
-  //  public void doRecord() {
-  //    //doStop();
-  //    doClose();
-  //    PdeRecorder.start(this, graphics.width, graphics.height);
-  //    doRun();
-  //  }
-  //#endif
-
   public void doStop() {
+    /*
     if (presenting) {
       presenting = false; // to avoid endless recursion
       doClose();
-      presentationWindow.hide();
+      //presentationWindow.hide();
+      return;
     }
+    */
 
-    //#ifdef RECORDER
-    //    if (!running) return;
-    //#endif
-
-    //terminate(); 
-    // following 3 replace terminate
-    //runner.stop();
-    //System.out.println("doStop, engine is " + engine);
+    //System.out.println("stop1");
     if (engine != null) engine.stop();
+    //System.out.println("stop2");
     message(EMPTY);
-
+    //System.out.println("stop3");
     buttons.clear();
+    //System.out.println("stop4");
     running = false;
-
-    //if (presenting) {
-    //presentationWindow.hide();
-    //presenting = false;
-    //}
+    //System.out.println("stop5");
   }
 
 
@@ -553,40 +472,32 @@ public class PdeEditor extends Panel {
   // may just roll this in with the other code
   // -> keep this around for closing the external window
   public void doClose() {
-    // grab window position
-    //if (engine != null) {
-    try {
-      if ((presentationWindow == null) || 
-	  (!presentationWindow.isVisible())) {
+    //System.out.println("doclose1");
+    if (presenting) {
+      presentationWindow.hide();
+      //if ((presentationWindow == null) || 
+      //(!presentationWindow.isVisible())) {
+
+    } else {
+      try {
 	appletLocation = engine.window.getLocation();
-      }
-      // prone to bugs and doesn't work yet
-      //      if ((presentationWindow != null) &&
-      //	  (presentationWindow.isVisible())) {
-      //	presentLocation = engine.window.getLocation();
-      //      }
-    } catch (NullPointerException e) { }
+      } catch (NullPointerException e) { }
+    }
+    //System.out.println("doclose2");
 
     if (running) {
       //System.out.println("was running, will call doStop()");
       doStop();
     }
 
-    // some code to close the window here
+    //System.out.println("doclose3");
     try {
-      // runner.engine is null (runner is not)
-      //((KjcEngine)(runner.engine)).close();
-      engine.close();
-
-      // runner shouldn't be set to null because it gets reused
-      //System.err.println("runner = " + runner);
-      //runner = null;
-      // engine not reused
+      engine.close();  // kills the window
       engine = null; // will this help?
 
     } catch (Exception e) { }
-
-    buttons.clear();
+    //System.out.println("doclose4");
+    //buttons.clear();  // done by doStop
   }
 
 
