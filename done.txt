@@ -1,3 +1,12 @@
+0045 (non-release)
+X no more CVS and .cvsignore entries in sketchbook menu
+X only put things in the menu if in proper structure
+X TWO_CORNERS -> CORNERS
+X major: fix error message stream mid-compile
+X   ClassCastException on startup (or not found?)
+X added naming question from faq to the readme.txt
+
+
 0044
 X added optimized flat circle (not ellipse) function
 X   then removed it again because it's not quite finished
