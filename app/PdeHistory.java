@@ -44,10 +44,17 @@ public class PdeHistory {
   static final String HISTORY_SEPARATOR = 
     "#################################################";
 
+  //boolean recordingHistory;
+  //JMenu historyMenu;
+  JMenu menu;
+
   File historyFile;
   //OutputStream historyStream;
   //PrintWriter historyWriter;
-  String historyLast;
+  //String historyLast;
+  String lastRecorded;
+
+  ActionListener menuListener;
 
   /*
   ActionListener historyMenuListener = 
@@ -61,25 +68,34 @@ public class PdeHistory {
 
   public PdeHistory(PdeEditor editor) {
     this.editor = editor;
+
+    menuListener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          retrieve(e.getActionCommand());
+        }
+      };
   }
 
 
-  public void attachMenu(JMenu menu) {
-    if (PdePreferences.getBoolean("history.recording")) {
-      historyMenu = new JMenu("History");
-      menu.add(historyMenu);
-    }
+  public void attachMenu(JMenu parent) {
+    //if (PdePreferences.getBoolean("history.recording")) {
+    menu = new JMenu("History");
+    parent.add(menu);
+
+    // should leave enabled, since can still get old history
+    // even if the new stuff isn't being recorded
+    //menu.setEnabled(PdePreferences.getBoolean("history.recording"));
+    //}
   }
 
 
-  //boolean recordingHistory;
-  JMenu historyMenu;
+  /**
+   * Check to see if history should be recorded. 
+   * mode is RUN, SAVE, AUTOSAVE, or BEAUTIFY
+   */
+  public void record(String program, int mode) {
+    if (!PdePreferences.getBoolean("history.recording")) return;
 
-
-  // mode is RUN, SAVE or AUTO
-  public void makeHistory(String program, int mode) {
-    if (!base.recordingHistory) return;
-    //if (historyLast.equals(program) && !externalEditor) return;
     if ((historyLast != null) &&
         (historyLast.equals(program))) return;
 
@@ -154,16 +170,16 @@ public class PdeHistory {
       historyLast = program;
 
       //JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
-      MenuItem menuItem = new MenuItem(modeStr + " - " + readableDate);
-      menuItem.addActionListener(base.historyMenuListener);
-      base.historyMenu.insert(menuItem, 2);
+      JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
+      menuItem.addActionListener(menuListener);
+      menu.insert(menuItem, 2);
 
       historyWriter.flush();
       historyWriter.close();
 
       if (noPreviousHistory) {  
         // to get add the actual menu, to get the 'clear' item in there
-        base.rebuildHistoryMenu(historyFile.getPath());
+        rebuildMenu(historyFile.getPath());
       }
 
     } catch (IOException e) {
@@ -172,13 +188,13 @@ public class PdeHistory {
   }
 
 
-  public void retrieveHistory(String selection) {
+  public void retrieve(String selection) {
     //System.out.println("sel '" + selection + "'");
     String readableDate = 
       selection.substring(selection.indexOf("-") + 2);
 
     // make history for the current guy
-    makeHistory(textarea.getText(), AUTOSAVE);
+    record(editor.textarea.getText(), AUTOSAVE);
     // mark editor text as having been edited
 
     try {
@@ -192,7 +208,7 @@ public class PdeHistory {
         boolean found = false;
         while ((line = reader.readLine()) != null) {
           //System.out.println("->" + line);
-          if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
+          if (line.equals(HISTORY_SEPARATOR)) {
             line = reader.readLine();
             if (line.indexOf(readableDate) != -1) {  // this is the one
               found = true;
@@ -206,16 +222,16 @@ public class PdeHistory {
           //String sep = System.getProperty("line.separator");
           StringBuffer buffer = new StringBuffer();
           while ((line = reader.readLine()) != null) {
-            if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
+            if (line.equals(HISTORY_SEPARATOR)) break;
             //textarea.append(line + sep);
             //buffer.append(line + sep);  // JTextPane wants only \n going in
             buffer.append(line + "\n");
             //System.out.println("'" + line + "'");
           }
           //textarea.editorSetText(buffer.toString());
-          changeText(buffer.toString(), true);
-          historyLast = textarea.getText();
-          setSketchModified(false);
+          editor.changeText(buffer.toString(), true);
+          historyLast = editor.textarea.getText();
+          editor.setSketchModified(false);
 
         } else {
           System.err.println("couldn't find history entry for " + 
@@ -239,25 +255,28 @@ public class PdeHistory {
   */
 
 
-  public void rebuildHistoryMenu(String path) {
-    rebuildHistoryMenu(historyMenu, path);
-  }
+  //public void rebuildHistoryMenu(String path) {
+  //rebuildHistoryMenu(historyMenu, path);
+  //}
 
-  public void rebuildHistoryMenu(Menu menu, String path) {
-    if (!recordingHistory) return;
+
+  //public void rebuildHistoryMenu(Menu menu, String path) {
+  public void rebuildMenu(String path) {
+    //if (!recordingHistory) return;
+    //if (!PdePreferences.getBoolean("history.recording")) return;
 
     menu.removeAll();
 
     File hfile = new File(path);
     if (!hfile.exists()) return;  // no history yet
 
-    MenuItem item = new MenuItem("Clear History");
+    JMenuItem item = new JMenuItem("Clear History");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (!editor.historyFile.delete()) {
+          if (!historyFile.delete()) {
             System.err.println("couldn't erase history");
           }
-          rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
+          rebuildMenu(historyFile.getPath());
         }
       });
     menu.add(item);
@@ -276,7 +295,7 @@ public class PdeHistory {
         //while (true) { line = reader.readLine();
           //if (line == null) continue;
           //System.out.println("line: " + line);
-          if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
+          if (line.equals(HISTORY_SEPARATOR)) {
             // next line is the good stuff
             line = reader.readLine();
             int version = 
@@ -313,8 +332,8 @@ public class PdeHistory {
       */
 
       for (int i = historyCount-1; i >= 0; --i) {
-        MenuItem mi = new MenuItem(historyList[i]);
-        mi.addActionListener(historyMenuListener);
+        JMenuItem mi = new JMenuItem(historyList[i]);
+        mi.addActionListener(menuListener);
         menu.add(mi);
       }
 
