@@ -147,9 +147,8 @@ public class PdeCompiler implements PdeMessageConsumer{
       e.printStackTrace();
       result = -1;
     }
-    //System.err.println("result = " + result);
 
-    // if we hit either of these conditions, it means that something is 
+    // if the result isn't a known, expected value it means that something is 
     // fairly wrong, one possibility is that jikes has crashed.
     //
     if (result != 0 && result != 1 ) {
