@@ -340,7 +340,7 @@ public class PGraphics extends PImage implements PConstants {
    * Initializes engine before drawing a new frame.
    * Called by PApplet, no need to call this.
    */
-  public void beginFrame() {
+  public void beginFrame() {  // ignore
     resetMatrix(); // reset model matrix
 
     // reset vertices
@@ -356,7 +356,7 @@ public class PGraphics extends PImage implements PConstants {
    * all be quicksorted here (to make alpha work more properly)
    * and then blit to the screen.
    */
-  public void endFrame() {
+  public void endFrame() {  // ignore
     // moving this back here (post-68) because of macosx thread problem
     mis.newPixels(pixels, cm, 0, width);
   }
@@ -365,7 +365,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    *  set engine's default values
    */
-  public void defaults() {
+  public void defaults() {  // ignore
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
@@ -2601,12 +2601,12 @@ public class PGraphics extends PImage implements PConstants {
    * and this implementation represents only a minimal speedup versus
    * the amount of confusion it creates.
    */
-  public void mask(int alpha[]) {
+  public void mask(int alpha[]) {  // ignore
     throw new RuntimeException("mask() cannot be used on PGraphics");
   }
 
 
-  public void mask(PImage alpha) {
+  public void mask(PImage alpha) {  // ignore
     throw new RuntimeException("mask() cannot be used on PGraphics");
   }
 }
