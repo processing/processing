@@ -5,9 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
-#ifdef JEDIT
-import org.gjt.sp.jedit.textarea;
-#endif
+import javax.swing.*;
 
 
 public class PdeEditor extends Panel {
@@ -42,11 +40,9 @@ public class PdeEditor extends Panel {
   PdeEditorHeader header;
   PdeEditorStatus status;
   PdeEditorConsole console;
-#ifndef JEDIT
-  TextArea textarea;
-#else
-  JEditTextArea textarea;
-#endif
+  //TextArea textarea;
+  JEditorPane textarea;
+
   boolean externalEditor;
 
   // currently opened program
@@ -109,29 +105,26 @@ public class PdeEditor extends Panel {
     header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
 
+    /*
     textarea = 
-#ifndef JEDIT
       new TextArea("",
 		   PdeBase.getInteger("editor.program.rows", 20),
 		   PdeBase.getInteger("editor.program.columns", 60),
 		   TextArea.SCROLLBARS_VERTICAL_ONLY);
+    */
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) { 
+      e.printStackTrace();
+    }
 
-    /* {
-	  public Dimension minimumSize() {
-	    System.out.println("old minimum");
-	    return new Dimension(100, 100);
-	  }
+    JScrollPane scroller = new JScrollPane();
+    JViewport viewport = scroller.getViewport();
 
-	  public Dimension getMinimumSize() {
-	    System.out.println("new minimum");
-	    return new Dimension(100, 100);
-	  }
+    textarea = new JEditorPane("text/java", "");
 
-	  public Dimension getMinimumSize(int r, int c) {
-	    System.out.println("new minimum 2");
-	    return new Dimension(100, 100);
-	  }
-	  };*/
+    viewport.add(textarea);
+    //viewport.setBackingStoreEnabled(true);
 
     textarea.setFont(PdeBase.getFont("editor.program.font",
 				       new Font("Monospaced", 
@@ -140,16 +133,16 @@ public class PdeEditor extends Panel {
 					    Color.black));
     textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
 					    Color.white));
+    /*
     textarea.addMouseMotionListener(new MouseMotionAdapter() {
 	public void mouseMoved(MouseEvent e) {
 	  frame.setCursor(Frame.CROSSHAIR_CURSOR);
 	}
       });
-#else
-    new JEditTextArea();
-#endif
+    */
 
-    rightPanel.add("Center", textarea);
+    //rightPanel.add("Center", textarea);
+    rightPanel.add("Center", scroller);
 
     Panel statusPanel = new Panel();
     statusPanel.setLayout(new BorderLayout());
@@ -162,9 +155,12 @@ public class PdeEditor extends Panel {
     add("Center", rightPanel);
 
     //if (!PdeBase.isMacintosh()) {  // this still relevant?
+    /*
+      // hopefully these are no longer needed w/ swing
     PdeEditorListener listener = new PdeEditorListener(this);
     textarea.addKeyListener(listener);
     textarea.addFocusListener(listener);
+    */
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
@@ -418,14 +414,17 @@ public class PdeEditor extends Panel {
 	}
 	if (found) {
 	  // read lines until the next separator
-	  textarea.setText("");
+	  //textarea.setText("");
 	  line = reader.readLine(); // ignored
 	  String sep = System.getProperty("line.separator");
+	  StringBuffer buffer = new StringBuffer();
 	  while ((line = reader.readLine()) != null) {
 	    if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
-	    textarea.append(line + sep);
+	    //textarea.append(line + sep);
+	    buffer.append(line + sep);
 	    //System.out.println("'" + line + "'");
 	  }
+	  textarea.setText(buffer.toString());
 	  historyLast = textarea.getText();
 	  setSketchModified(false);
 
