@@ -398,6 +398,8 @@ public class ProcessingApplet extends Applet
   // if folks are advanced enough to want something faster, 
   // they can write it themselves (not difficult)
 
+
+  /*
   public float getRed(int x, int y) {
     if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
       return (g.backR * g.colorMaxX);
@@ -421,8 +423,50 @@ public class ProcessingApplet extends Applet
     int b1 = (g.pixels[y*width + x]) & 0xff;
     return g.colorMaxX * ((float)b1 / 255.0f);
   }
+  */
 
+  public int getPixel(int x, int y) {
+    return pixels[y*width + x];
+  }
 
+  public void setPixel(int x, int y, int c) {
+    pixels[y*width + x] = c;
+  }
+
+  /*
+  public void setPixel(int x, int y, int r, int g, int b) {
+    pixels[y*width + x] = color(r, g, b);
+  }
+  */
+
+  //public final int color(int r, int g, int b) {
+  //return 0xff000000 | (r << 16) | (g << 8) | b;
+  //}
+
+  public final int color(float x) {
+    // this is for gray
+  }
+
+  public final int color(float x, float y, float z) {
+    // fix this when processingapplet has a more general mode of
+    // creating colors based on current settings
+  }
+
+  public final int red(int what) {
+    return (what >> 16) & 0xff;
+  }
+
+  public final int green(int what) {
+    return (what >> 8) & 0xff;
+  }
+
+  public final int blue(int what) {
+    return (what) & 0xff;
+  }
+
+  // hue, saturation, value someday?
+
+  /*
   public void setRed(int x, int y, float value) {
     if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
       return;
@@ -458,6 +502,7 @@ public class ProcessingApplet extends Applet
     g.pixels[y*width + x] = masked |
       ((int) (255.0f * value / g.colorMaxZ));
   }
+  */
 
 
   /*
