@@ -1888,6 +1888,9 @@ public class PApplet extends Applet
 
 
   public PSound loadSound(String filename) {
+    if (PApplet.jdkVersion >= 1.3) {
+      return new PSound2(this, openStream(filename));
+    }
     return new PSound(this, openStream(filename));
   }
 
