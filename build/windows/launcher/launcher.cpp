@@ -137,18 +137,19 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           //"\""   // begin quote
           //"'"
 
-          "%s"
-          "%s"
-          //"%s"
+          "%s"  // local jre or blank
+          "%s"  // qtjava path
 
-          //"%s\\lib\\comm.jar;"
           "%s\\lib;"
           "%s\\lib\\build;"
           "%s\\lib\\pde.jar;"
           "%s\\lib\\core.jar;"
           "%s\\lib\\mrj.jar;"
           "%s\\lib\\oro.jar;"
-          "%s\\lib\\antlr.jar;",
+          "%s\\lib\\antlr.jar;"
+          
+          "%s",  // original CLASSPATH
+          
 
           //"C:\\WINNT\\system32\\QTJava.zip;"  // worthless
           //"C:\\WINDOWS\\system32\\QTJava.zip;"
@@ -161,11 +162,9 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           //local_jre_installed ? "java\\lib\\rt.jar;java\\lib\\jaws.jar;" : "", 
           local_jre_installed ? "java\\lib\\rt.jar;" : "", 
           qtjava_path,
-          //env_classpath, 
-
-          // the next several %s args
           loaddir, loaddir, loaddir, loaddir, 
-          loaddir, loaddir, loaddir);
+          loaddir, loaddir, loaddir, 
+          env_classpath);
 
   //MessageBox(NULL, cp,
   //         "it's twoo! it's twoo!", MB_OK);
