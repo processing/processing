@@ -1399,11 +1399,25 @@ public class PGraphics extends PImage implements PConstants {
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
     if (imageMode == CORNER) {
+      if (c < 0) {  // reset a negative width
+        a += c; c = -c;
+      }
+      if (d < 0) {  // reset a negative height
+        b += d; d = -d;
+      }
+
       imageImpl(image,
                 a, b, a + c, b + d,
                 u1, v1, u2, v2);
 
     } else if (imageMode == CORNERS) {
+      if (c < a) {  // reverse because x2 < x1
+        float temp = a; a = c; c = temp;
+      }
+      if (d < b) {  // reverse because y2 < y1
+        float temp = b; b = d; d = temp;
+      }
+
       imageImpl(image,
                 a, b, c, d,
                 u1, v1, u2, v2);
@@ -1420,6 +1434,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Expects x1, y1, x2, y2 coordinates where (x2 >= x1) and (y2 >= y1).
+   * If tint() has been called, the image will be colored.
+   */
   protected void imageImpl(PImage image,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
@@ -1578,6 +1596,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Newlines that are \n (unix newline or linefeed char, ascii 10)
+   * are honored, and \r (carriage return, windows and mac) are
+   * ignored.
+   */
   public void text(char c, float x, float y, float z) {
     if ((z != 0) && (textSpace == SCREEN_SPACE)) {
       String msg = "textSpace(SCREEN_SPACE) cannot have a z coordinate";
@@ -1639,6 +1662,10 @@ public class PGraphics extends PImage implements PConstants {
    * Note that the x,y coords of the start of the box
    * will align with the *ascent* of the text, not the baseline,
    * as is the case for the other text() functions.
+   *
+   * Newlines that are \n (unix newline or linefeed char, ascii 10)
+   * are honored, and \r (carriage return, windows and mac) are
+   * ignored.
    */
   public void text(String s, float x1, float y1, float x2, float y2) {
     if (textFont != null) {

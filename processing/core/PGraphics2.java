@@ -33,7 +33,7 @@ import java.awt.image.*;
 
 public class PGraphics2 extends PGraphics {
 
-  Graphics2D graphics;
+  public Graphics2D g2;
   GeneralPath gpath;
 
   int transformCount;
@@ -104,7 +104,7 @@ public class PGraphics2 extends PGraphics {
   // broken out because of subclassing for opengl
   protected void allocate() {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    graphics = (Graphics2D) image.getGraphics();
+    g2 = (Graphics2D) image.getGraphics();
   }
 
 
@@ -389,21 +389,21 @@ public class PGraphics2 extends PGraphics {
   protected void stroke_shape(Shape s) {
     if (stroke) {
       //System.out.println("stroking shape");
-      graphics.setColor(strokeColorObject);
-      graphics.draw(s);
+      g2.setColor(strokeColorObject);
+      g2.draw(s);
     }
   }
 
   protected void draw_shape(Shape s) {
     if (fill) {
       //System.out.println("filling shape");
-      graphics.setColor(fillColorObject);
-      graphics.fill(s);
+      g2.setColor(fillColorObject);
+      g2.fill(s);
     }
     if (stroke) {
       //System.out.println("stroking shape");
-      graphics.setColor(strokeColorObject);
-      graphics.draw(s);
+      g2.setColor(strokeColorObject);
+      g2.draw(s);
     }
   }
 
@@ -605,7 +605,7 @@ public class PGraphics2 extends PGraphics {
     //int x2 = (int) (x + w);
     //int y2 = (int) (y + h);
 
-    graphics.drawImage(((ImageCache) who.cache).image,
+    g2.drawImage(((ImageCache) who.cache).image,
                        //(int) x, (int) y, x2, y2,
                        (int) x1, (int) y1, (int) x2, (int) y2,
                        u1, v1, u2, v2, null);
@@ -724,22 +724,22 @@ public class PGraphics2 extends PGraphics {
 
 
   public void translate(float tx, float ty) {
-    graphics.translate(tx, ty);
+    g2.translate(tx, ty);
   }
 
 
   public void rotate(float angle) {
-    graphics.rotate(angle);
+    g2.rotate(angle);
   }
 
 
   public void scale(float s) {
-    graphics.scale(s, s);
+    g2.scale(s, s);
   }
 
 
   public void scale(float sx, float sy) {
-    graphics.scale(sx, sy);
+    g2.scale(sx, sy);
   }
 
 
@@ -751,7 +751,7 @@ public class PGraphics2 extends PGraphics {
       throw new RuntimeException("push() cannot use push more than " +
                                  transformStack.length + " times");
     }
-    transformStack[transformCount] = graphics.getTransform();
+    transformStack[transformCount] = g2.getTransform();
     transformCount++;
   }
 
@@ -761,23 +761,23 @@ public class PGraphics2 extends PGraphics {
       throw new RuntimeException("missing a pop() to go with that push()");
     }
     transformCount--;
-    graphics.setTransform(transformStack[transformCount]);
+    g2.setTransform(transformStack[transformCount]);
   }
 
 
   public void resetMatrix() {
-    graphics.setTransform(new AffineTransform());
+    g2.setTransform(new AffineTransform());
   }
 
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    graphics.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
+    g2.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
   }
 
 
   public void printMatrix() {
-    graphics.getTransform().getMatrix(transform);
+    g2.getTransform().getMatrix(transform);
 
     m00 = (float) transform[0];
     m01 = (float) transform[2];
@@ -792,14 +792,14 @@ public class PGraphics2 extends PGraphics {
 
 
   public float screenX(float x, float y) {
-    graphics.getTransform().getMatrix(transform);
+    g2.getTransform().getMatrix(transform);
     //return m00*x + m01*y + m02;
     return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
   }
 
 
   public float screenY(float x, float y) {
-    graphics.getTransform().getMatrix(transform);
+    g2.getTransform().getMatrix(transform);
     return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
   }
 
@@ -860,7 +860,7 @@ public class PGraphics2 extends PGraphics {
       join = BasicStroke.JOIN_ROUND;
     }
 
-    graphics.setStroke(new BasicStroke(strokeWeight, cap, join));
+    g2.setStroke(new BasicStroke(strokeWeight, cap, join));
   }
 
 
@@ -879,6 +879,7 @@ public class PGraphics2 extends PGraphics {
     // make sure it's been properly updated
     //check_image_cache(image);
     // blit image to the screen
+    //g2.drawImage((BufferedImage) image.cache, 0, 0, null);
     //graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
     push();
     resetMatrix();
@@ -895,8 +896,8 @@ public class PGraphics2 extends PGraphics {
    * even if noDepth() was called before draw() exited.
    */
   public void clear() {
-    graphics.setColor(new Color(backgroundColor));
-    graphics.fillRect(0, 0, width, height);
+    g2.setColor(new Color(backgroundColor));
+    g2.fillRect(0, 0, width, height);
   }
 
 
@@ -907,14 +908,14 @@ public class PGraphics2 extends PGraphics {
 
 
   public void smooth() {
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
   }
 
 
   public void noSmooth() {
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_OFF);
   }
 
 

@@ -194,7 +194,7 @@ public class PImage implements PConstants, Cloneable {
    * just too weird for the other functions
    */
   public void imageMode(int mode) {
-    if ((imageMode == CORNER) || (imageMode == CORNERS)) {
+    if ((mode == CORNER) || (mode == CORNERS)) {
       imageMode = mode;
     } else {
       throw new RuntimeException("imageMode() only works with CORNER or CORNERS");
