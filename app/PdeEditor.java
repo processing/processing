@@ -56,7 +56,7 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     leftPanel.setLayout(new BorderLayout());
 
     Color buttonBgColor = 
-      PdeApplet.getColor("editor.button_bgcolor", new Color(153, 0, 0));
+      PdeApplet.getColor("editor.buttons.bgcolor", new Color(153, 0, 0));
     buttons = new PdeEditorButtons(this);
     buttons.setBackground(buttonBgColor);
     leftPanel.add("North", buttons);

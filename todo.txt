@@ -1,4 +1,9 @@
+0027
+X change editor.button_bgcolor -> editor.buttons.bgcolor
+
+
 UNSORTED
+_ pde.properties_osx, pde.properties_os9, pde.properties,win ?
 _ work towards alpha release
 _   alpha transparency
 _   line drawing problems
@@ -18,21 +23,7 @@ _   hook up lcd screen to power/serial port to test
 _   code to reprogram lcd screen
 _ look through rabbit api
 _   look into integration of cmd line compiler
-
-
-0025
-X change 'rect' to 'plane' (point/line/plane)
-X   also rectMode to planeMode
-X change QUADS to PLANES, QUAD_STRIP to PLANE_STRIP
-X delay wasn't working for casey
-X   works fine on pc.. maybe a mac problem
-X   turned out to be a misunderstanding for loop()
-X curve and bezier behave differently for indexing points
-X   change bezier to act the same (each addl point)
-_ allow ui to be colored/skinned so creas can tweak
-_ make macintosh release
-_   font file names are getting mangled on mac (too long)
-_   new set of fonts, make sure the names are ok
+_ check out flash for its text editor
 
 biggest problems from french workshop
 _ syntax more difficult than expected: semicolons and braces
