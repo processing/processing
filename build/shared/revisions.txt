@@ -1,3 +1,69 @@
+ABOUT REV 0049 - 26 january 2003
+
+a release of p5 to honor the national tv advertising holiday
+known as the super bowl in the united states.
+
+
+[ feature additions ] 
+
+- lots of new examples (some may have issues, see 'known bugs' below)
+
+- code with beauty and grace: new coloring for syntax and the editor,
+  fancied up to work more like the p5 site itself. 
+
+- loadImage and loadStream now support http:// URLs (thanks to glen
+  for pointing out the omission
+
+- framerate() is a function that always returns the current frame rate
+  as a float. 
+
+- framrate(float num) sets the framerate to a specific number. it can
+  be used inside setup() or even inside loop(). framerate(0) ressets
+  back to the maximum possible framerate.
+
+- new math functions: ceil, floor, and round all work on floats.
+
+
+[ bug fixes ] 
+
+- attempt has been made to fix the disappearing caret bug. i haven't
+  been able to reproduce this on my win2k machine, so i don't know if
+  it's fixed.. you'll have to let me know.
+
+- pmouseX and pmouseY are now colored like their siblings mouseX and
+  mouseY (thanks benelek)
+
+- pmouseX and pmouseY now get set the very first time mouseX and
+  mouseY are set, which might help remove some "if (firstTime)" code
+  in a couple of projects.
+
+- fixing the print() weirdness uncovered a bug with long lines in the
+  console. 
+
+
+[ between bug and feature ] 
+
+- nicer looking default html for exporting. that old stuff was
+  embarrassing. we had hoped it would be too embarrassing for anyone
+  to use, but we were wrong. so we've improved the default.
+
+- print() now shows things on the console, even without a println().
+  thanks to mike davis and others for pointing this out.
+
+- delay() should no longer slurp up cpu time and make your machine
+  flip out. also, it doesn't run on the first time through loop(),
+  making things a little smoother. (thanks to glen murphy for the
+  report)
+
+
+[ known bugs ]
+
+- some examples seem to be broken, this will be ironed out for 0050
+
+- a couple tweaks with the syntax of 'color' statements are needed,
+  this is related to the above
+
+
 ABOUT REV 0048 - 7 january 2003
 
 [ mac os ]
