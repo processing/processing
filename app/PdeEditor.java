@@ -18,6 +18,9 @@ public class PdeEditor extends Panel {
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
 
+  static final String HISTORY_SEPARATOR = 
+    "#################################################";
+
   static final int SK_NEW  = 1;
   static final int SK_OPEN = 2;
   static final int DO_OPEN = 3;
@@ -25,6 +28,10 @@ public class PdeEditor extends Panel {
   int checking;
   String openingPath; 
   String openingName;
+
+  static final int RUN  = 5; // for history
+  static final int SAVE = 6;
+  static final int AUTO = 7;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -38,6 +45,11 @@ public class PdeEditor extends Panel {
   File sketchFile;   // the .pde file itself
   File sketchDir;    // if a sketchbook project, the parent dir
   boolean sketchModified;
+
+  File historyFile;
+  //OutputStream historyStream;
+  //PrintWriter historyWriter;
+  String historyLast;
 
   //String lastDirectory;
   //String lastFile;
@@ -178,6 +190,144 @@ public class PdeEditor extends Panel {
   }
 
 
+  // mode is RUN, SAVE or AUTO
+  public void makeHistory(String program, int mode) {
+    if (!base.recordingHistory) return;
+
+    if (historyLast.equals(program)) return;
+
+    String modeStr = (mode == RUN) ? "run" : ((mode == SAVE) ? "save" : "autosave");
+
+    try {
+      //PrintWriter historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
+      ByteArrayOutputStream old = null;
+      if (historyFile.exists()) {
+	InputStream oldStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(historyFile)));
+	old = new ByteArrayOutputStream();
+
+	int c = oldStream.read();
+	while (c != -1) {
+	  old.write(c);
+	  c = oldStream.read();
+	}
+	//return out.toByteArray();
+	oldStream.close();
+      }
+
+      OutputStream historyStream = 
+	new GZIPOutputStream(new FileOutputStream(historyFile));
+      //byte[] buffer = new byte[16384];
+      //int bytesRead;
+      //while ((bytesRead = oldStream.read(buffer)) != -1) {
+      //historyStream.write(buffer, 0, bytesRead);
+      //}
+      if (old != null) {
+	historyStream.write(old.toByteArray());
+      }
+      PrintWriter historyWriter = 
+	new PrintWriter(new OutputStreamWriter(historyStream));
+      //PrintWriter historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
+
+      historyWriter.println();
+      historyWriter.println(HISTORY_SEPARATOR);
+
+      Calendar now = Calendar.getInstance();
+      // 2002 06 18  11 43 29
+      // when listing, study for descrepancies.. if all are
+      // 2002, then don't list the year and soforth.
+      // for the other end, if all minutes are unique, 
+      // then don't show seconds
+      int year = now.get(Calendar.YEAR);
+      int month = now.get(Calendar.MONTH) + 1;
+      int day = now.get(Calendar.DAY_OF_MONTH);
+      int hour = now.get(Calendar.HOUR_OF_DAY);
+      int minute = now.get(Calendar.MINUTE);
+      int second = now.get(Calendar.SECOND);
+      String parseDate = year + " " + month + " " + day + " " +
+	hour + " " + minute + " " + second;
+
+      String readableDate = now.getTime().toString();
+
+      // increment this so sketchbook won't be mangled 
+      // each time this format has to change
+      String historyVersion = "1";
+      //Date date = new Date();
+      //String datestamp = date.toString();
+
+      historyWriter.println(historyVersion + " " + modeStr + " - " + 
+			    parseDate + " - " + readableDate);
+      historyWriter.println();
+      historyWriter.println(program);
+      historyWriter.flush();  // ??
+      historyLast = program;
+
+      MenuItem menuItem = new MenuItem(modeStr + " - " + readableDate);
+      menuItem.addActionListener(base.historyMenuListener);
+      base.historyMenu.insert(menuItem, 0);
+
+      historyWriter.flush();
+      historyWriter.close();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void retrieveHistory(String selection) {
+    //System.out.println("sel '" + selection + "'");
+    String readableDate = 
+      selection.substring(selection.indexOf("-") + 2);
+
+    // make history for the current guy
+    makeHistory(textarea.getText(), AUTO);
+    // mark editor text as having been edited
+
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(historyFile))));
+      String line = null;
+
+      int historyCount = 0;
+      String historyList[] = new String[100];
+
+      try {
+	boolean found = false;
+	while ((line = reader.readLine()) != null) {
+	  //System.out.println("->" + line);
+	  if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
+	    line = reader.readLine();
+	    if (line.indexOf(readableDate) != -1) {  // this is the one
+	      found = true;
+	      break;
+	    }
+	  }
+	}
+	if (found) {
+	  // read lines until the next separator
+	  textarea.setText("");
+	  line = reader.readLine(); // ignored
+	  String sep = System.getProperty("line.separator");
+	  while ((line = reader.readLine()) != null) {
+	    if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
+	    textarea.append(line + sep);
+	    //System.out.println("'" + line + "'");
+	  }
+	  historyLast = textarea.getText();
+	  setSketchModified(false);
+
+	} else {
+	  System.err.println("couldn't find history entry for " + 
+			     "'" + readableDate + "'");
+	}
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
   public void doRun(boolean presentation) {
     //doStop();
     doClose();
@@ -189,6 +339,8 @@ public class PdeEditor extends Panel {
 
     try {
       String program = textarea.getText();
+      makeHistory(program, RUN);
+
       //if (program.length() != 0) {
       String buildPath = "lib" + File.separator + "build";  // TEMPORARY
       File buildDir = new File(buildPath);
@@ -594,6 +746,7 @@ public class PdeEditor extends Panel {
 
       FileInputStream input = new FileInputStream(isketchFile);
       int length = (int) isketchFile.length();
+      String program = "";
       if (length != 0) {
 	byte data[] = new byte[length];
 
@@ -611,7 +764,9 @@ public class PdeEditor extends Panel {
 	//textarea.setText(app.languageEncode(data));
 	// what the hell was i thinking when i wrote this code
 	//if (app.encoding == null)
-	textarea.setText(new String(data));
+	program = new String(data);
+	//textarea.setText(new String(data));
+	textarea.setText(program);
 	//System.out.println(" loading program = " + new String(data));
 	//else 
 	//textarea.setText(new String(data, app.encoding));
@@ -624,6 +779,17 @@ public class PdeEditor extends Panel {
       sketchFile = isketchFile;
       sketchDir = isketchDir;
       setSketchModified(false);
+
+      historyFile = new File(sketchFile.getParent(), "history.gz");
+      base.rebuildHistoryMenu(historyFile.getPath());
+
+      //if (historyFile.exists()) {
+      //int vlength = (int) historyFile.length();
+      //historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
+      //historyWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(historyFile.getPath(), true)));
+      historyLast = program;
+      //System.out.println("history is at " + historyFile.getPath());
+      //}
 
       //header.setProject(file.getName(), projectDir);
       header.reset();
@@ -644,6 +810,7 @@ public class PdeEditor extends Panel {
   public void doSave() {
     // true if lastfile not set, otherwise false, meaning no prompt
     //handleSave(lastFile == null);
+    // actually, this will always be false...
     handleSave(sketchName == null);
   }
 
@@ -674,6 +841,7 @@ public class PdeEditor extends Panel {
 	return; // user cancelled
       }
     }
+    makeHistory(s, SAVE);
     File file = new File(directory, filename);
     try {
       FileWriter writer = new FileWriter(file);
