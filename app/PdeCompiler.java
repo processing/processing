@@ -24,6 +24,7 @@
 */
 
 import java.io.*;
+import javax.swing.*;
 
 
 public class PdeCompiler implements PdeMessageConsumer{
@@ -74,8 +75,12 @@ public class PdeCompiler implements PdeMessageConsumer{
 #endif
     }
 
+    //System.out.println(userdir + "jikes");
+    //System.out.println(System.getProperty("sun.boot.class.path"));
+
     String command[] = new String[] { 
 #ifdef MACOS
+      // linux doesn't seem to like this
       userdir + "jikes",
 #else 
       "jikes",
@@ -96,6 +101,11 @@ public class PdeCompiler implements PdeMessageConsumer{
       "-d", buildPath, // output the classes in the buildPath
       buildPath + File.separator + className + ".java" // file to compile
     };
+
+    //for (int i = 0; i < command.length; i++) {
+    //System.out.println("C1: " + command[i]);
+    //System.out.println();
+    //}
 
     firstErrorFound = false;  // haven't found any errors yet
     secondErrorFound = false;
@@ -123,6 +133,17 @@ public class PdeCompiler implements PdeMessageConsumer{
       }
 
     } catch (Exception e) {
+      if (e.getMessage().indexOf("jikes: not found") != -1) {
+        //System.err.println("jikes is missing");
+        JOptionPane.showMessageDialog(editor.base, 
+                                      "Could not find the compiler.\n" +
+                                      "jikes is missing from your PATH,\n" +
+                                      "see readme.txt for help.",
+                                      "Compiler error",
+                                      JOptionPane.ERROR_MESSAGE);
+        return false;
+      }
+
       e.printStackTrace();
       result = -1;
     }
@@ -146,7 +167,8 @@ public class PdeCompiler implements PdeMessageConsumer{
   // part of the PdeMessageConsumer interface
   //
   public void message(String s) {
-    System.err.println("MSG: " + s);
+    //System.err.println("MSG: " + s);
+    System.err.print(s);
 
     // ignore cautions
     if (s.indexOf("Caution") != -1) return;
