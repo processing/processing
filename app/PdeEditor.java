@@ -510,6 +510,7 @@ public class PdeEditor extends JFrame
           handleExport();
         }
       });
+    menu.add(item);
 
     menu.addSeparator();
 
