@@ -1,3 +1,43 @@
+ABOUT REV 0017
+
+features and tweaks:
+
+- setFont() now takes a font size
+
+- exporting to applets is slightly less buggy
+
+- hopefully lines are only a single pixel thick when they should be,
+  in slightly more cases
+
+- added a 'hint' for smoothing of images and fonts. put
+  hint(SMOOTH_IMAGES) in your code to enable smoother text and images,
+  but at the risk of things running more slowly. use
+  unhint(SMOOTH_IMAGES) to disable.
+
+- millis is a variable that always contains the number of milliseconds
+  since your applet started as an int. before it was always zero. use
+  it wisely.
+
+- loadImage, loadFont, and getStream are behaving better
+
+- no longer the random exception in graphics that would cause your
+  programs to hang due to an ArrayIndexOutOfBoundsException. haven't
+  fixed the bug, but it's at least being caught and worked around.
+
+known issues:
+
+- if you're using 'extends ProcessingApplet' in your code, you'll have
+  to use that class name for anything that you export. otherwise incur
+  the wrath of a bunch of spew at the dos prompt.
+
+- consistently thin lines are still erratic and not under control
+
+- the line highlighted for any particular error is often a joke
+
+- lots of other things, too numerous to list that make me wonder if
+  this will ever be ready to go
+
+
 ABOUT REV 0016
 
 - disabled (by default) the sketchiness from the previous version. so
