@@ -46,6 +46,7 @@ public class PdeSketchbook {
 
   public PdeSketchbook(PdeEditor editor) {
     this.editor = editor;
+    menu = new JMenu("Open");
   }
 
 
@@ -66,12 +67,18 @@ public class PdeSketchbook {
   }
 
 
+  public JPopupMenu getPopup() {
+    return menu.getPopupMenu();
+  }
+
+  //public void rebuildPopup(JPopupMenu popup) {
+  //rebuildMenu();
+  //popup.
+  //}
+
+
   public JMenu rebuildMenu() {
-    if (menu == null) {
-      menu = new JMenu("Open");
-    } else {
-      menu.removeAll();
-    }
+    menu.removeAll();
 
     try {
       //MenuItem newSketchItem = new MenuItem("New Sketch");
@@ -87,7 +94,7 @@ public class PdeSketchbook {
         sketchbookFolder.mkdirs();
       }
 
-      addSketches(sketchbookFolder);
+      addSketches(menu, sketchbookFolder);
 
       // TODO add examples folder here too
 
@@ -161,7 +168,7 @@ public class PdeSketchbook {
   }
 
 
-  protected boolean addSketches(Menu menu, File folder) throws IOException {
+  protected boolean addSketches(JMenu menu, File folder) throws IOException {
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
 
@@ -180,13 +187,13 @@ public class PdeSketchbook {
 
       File subfolder = new File(folder, list[i]);
       if (new File(subfolder, list[i] + ".pde").exists()) {
-        MenuItem item = new MenuItem(list[i]);
+        JMenuItem item = new JMenuItem(list[i]);
         item.addActionListener(listener);
         menu.add(item);
         ifound = true;
 
       } else {  // might contain other dirs, get recursive
-        Menu submenu = new Menu(list[i]);
+        JMenu submenu = new JMenu(list[i]);
         // needs to be separate var 
         // otherwise would set ifound to false
         boolean found = addSketches(submenu, subfolder); //, false);
@@ -229,7 +236,7 @@ public class PdeSketchbook {
           // not a .DS_Store file or another random user folder
 
           if (pde.exists()) {
-            if (calcFolderSize(prey) == 0) {
+            if (PdeBase.calcFolderSize(prey) == 0) {
               //System.out.println("i want to remove " + prey);
               PdeBase.removeDir(prey);
               //} else {

@@ -69,14 +69,10 @@ public class PdeEditorConsole extends JScrollPane {
     consoleDoc.setParagraphAttributes(0, 0, standard, true);
 
     // build styles for different types of console output
-    Color bgColor = PdePreferences.getColor("editor.console.bgcolor", 
-                                            new Color(0x1A, 0x1A, 0x00));
-    Color fgColorOut = PdePreferences.getColor("editor.console.fgcolor.output", 
-                                               new Color(0xcc, 0xcc, 0xbb));
-    Color fgColorErr = PdePreferences.getColor("editor.console.fgcolor.error", 
-                                               new Color(0xff, 0x30, 0x00));
-    Font font = PdePreferences.getFont("editor.console.font", 
-                                       new Font("Monospaced", Font.PLAIN, 11));
+    Color bgColor    = PdePreferences.getColor("console.color");
+    Color fgColorOut = PdePreferences.getColor("console.output.color");
+    Color fgColorErr = PdePreferences.getColor("console.error.color");
+    Font font        = PdePreferences.getFont("console.font");
 
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);
@@ -103,7 +99,7 @@ public class PdeEditorConsole extends JScrollPane {
     // and size window accordingly
     FontMetrics metrics = this.getFontMetrics(font);
     int height = metrics.getAscent() + metrics.getDescent();
-    int lines = PdePreferences.getInteger("editor.console.lines", 4);
+    int lines = PdePreferences.getInteger("console.lines"); //, 4);
     int sizeFudge = 6; //10; // unclear why this is necessary, but it is
     setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
     setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
@@ -112,28 +108,20 @@ public class PdeEditorConsole extends JScrollPane {
       systemOut = System.out;
       systemErr = System.err;
 
-      // macos9/macosx do this by default, disable for those platforms
-      boolean tod = ((PdeBase.platform != PdeBase.MACOSX) &&
-                     (PdeBase.platform != PdeBase.MACOS9));
-
-      if (PdePreferences.getBoolean("editor.console.out.enabled", tod)) {
-        String outFileName = 
-          PdePreferences.get("editor.console.out.file", "lib/stdout.txt");
-        try {
+      try {
+        String outFileName = PdePreferences.get("console.output.file");
+        if (outFileName != null) {
           stdoutFile = new FileOutputStream(outFileName);
-        } catch (IOException e) {
-          e.printStackTrace();
         }
-      }
 
-      if (PdePreferences.getBoolean("editor.console.err.enabled", tod)) {
-        String errFileName = 
-          PdePreferences.get("editor.console.err.file", "lib/stderr.txt");
-        try {
-          stderrFile = new FileOutputStream(errFileName);
-        } catch (IOException e) {
-          e.printStackTrace();
+        String errFileName = PdePreferences.get("console.error.file");
+        if (errFileName != null) {
+          stderrFile = new FileOutputStream(outFileName);
         }
+      } catch (IOException e) {
+        PdeBase.showWarning("Console Error",
+                            "A problem occurred while trying to open the\n" + 
+                            "files used to store the console output.", e);
       }
 
       consoleOut = 
@@ -141,7 +129,7 @@ public class PdeEditorConsole extends JScrollPane {
       consoleErr = 
         new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
 
-      if (PdePreferences.getBoolean("editor.console.enabled", true)) {
+      if (PdePreferences.getBoolean("console")) {
         System.setOut(consoleOut);
         System.setErr(consoleErr);
       }
@@ -175,10 +163,13 @@ public class PdeEditorConsole extends JScrollPane {
     // under osx, suppress the spew about the serial port
     // to avoid an error every time someone loads their app
     // (the error is dealt with in PdeBase with a message dialog)
+    /*
+    // no longer an issue. using a newer rev of rxtx
     if (PdeBase.platform == PdeBase.MACOSX) {
       if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
       if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
     }
+    */
 
     // to console display
     appendText(what, err);
