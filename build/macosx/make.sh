@@ -98,7 +98,7 @@ fi
 
 echo Building the PDE...
 
-../build/macosx/work/jikes +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+../build/macosx/work/jikes +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
