@@ -34,14 +34,15 @@ public class PdeCompiler implements PdeMessageConsumer {
 
   String buildPath;
   String className;
+  File includeFolder;
   PdeException exception;
   PdeEditor editor;
 
-  String additional;
 
-
-  public PdeCompiler(String buildPath, String className, PdeEditor editor) {
+  public PdeCompiler(String buildPath, String className, 
+                     File includeFolder, PdeEditor editor) {
     this.buildPath = buildPath;
+    this.includeFolder = includeFolder;
     this.className = className;
     this.editor = editor;
   }
@@ -53,6 +54,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
     String userdir = System.getProperty("user.dir") + File.separator;
 
+    /*
     if (additional == null) {
 #ifndef MACOS
       additional = "";
@@ -65,8 +67,8 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       String list[] = new File("/System/Library/Java/Extensions").list();
       for (int i = 0; i < list.length; i++) {
-        if (list[i].endsWith(".class") || list[i].endsWith(".jar") ||
-            list[i].endsWith(".zip")) {
+        if (list[i].toLowerCase().endsWith(".jar") ||
+            list[i].toLowerCase().endsWith(".zip")) {
           //abuffer.append(System.getProperty("path.separator"));
           abuffer.append(":/System/Library/Java/Extensions/" + list[i]);
         }
@@ -74,6 +76,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       additional = abuffer.toString();
 #endif
     }
+    */
 
     //System.out.println(userdir + "jikes");
     //System.out.println(System.getProperty("sun.boot.class.path"));
@@ -94,13 +97,15 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       // used when run without a vm ("expert" mode)
       "-bootclasspath",
-      System.getProperty("sun.boot.class.path") + additional,
+      calcBootClassPath(),
+      //System.getProperty("sun.boot.class.path") + additional,
 
       // needed for macosx so that the classpath is set properly
       // also for windows because qtjava will most likely be here
       // and for linux, it just doesn't hurt
       "-classpath",
-      System.getProperty("java.class.path"),
+      //System.getProperty("java.class.path"),
+      calcClassPath(includeFolder),
 
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
@@ -237,5 +242,74 @@ public class PdeCompiler implements PdeMessageConsumer {
         System.err.println(s);
       }
     }
+  }
+
+
+  static String additional;
+
+  static public String calcBootClassPath() {
+    if (additional == null) {
+#ifdef MACOS
+      additional = 
+        includeFolder(new File("/System/Library/Java/Extensions/"));
+      /*
+      // for macosx only, doesn't work on macos9
+      StringBuffer abuffer = new StringBuffer();
+
+      // add the build folder.. why isn't it already there?
+      //abuffer.append(":" + userdir + "lib/build");
+
+      String list[] = new File("/System/Library/Java/Extensions").list();
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].endsWith(".class") || list[i].endsWith(".jar") ||
+            list[i].endsWith(".zip")) {
+          //abuffer.append(System.getProperty("path.separator"));
+          abuffer.append(":/System/Library/Java/Extensions/" + list[i]);
+        }
+      }
+      additional = abuffer.toString();
+      */
+#else
+      additional = "";
+#endif
+    }
+    return System.getProperty("sun.boot.class.path") + additional;
+  }
+
+
+  static public String calcClassPath(File include) {
+    return System.getProperty("java.class.path") + includeFolder(include);
+  }
+
+
+  /**
+   * Return the path for a folder, with appended paths to 
+   * any .jar or .zip files inside that folder.
+   */
+  static protected String includeFolder(File folder) {
+    if (folder == null) return "";
+
+    StringBuffer abuffer = new StringBuffer();
+    String sep = System.getProperty("path.separator");
+
+    try {
+      // add the folder itself in case any unzipped files
+      String path = folder.getCanonicalPath();
+      abuffer.append(sep);
+      abuffer.append(path);
+
+      String list[] = folder.list();
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].toLowerCase().endsWith(".jar") ||
+            list[i].toLowerCase().endsWith(".zip")) {
+          abuffer.append(sep);
+          abuffer.append(path);
+          abuffer.append(list[i]);
+        }
+      }
+    } catch (IOException e) { 
+      e.printStackTrace();  // this would be odd
+    }
+    return abuffer.toString();
   }
 }
