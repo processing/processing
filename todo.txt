@@ -149,13 +149,14 @@ _ textureMode() IMAGE_SPACE or NORMAL_SPACE
 _ vertexNormal() -> normal();
 _ vertexTexture -> vertex(... u, v);
 _ bezier(... t) -> bezierPoint() 
+X curveTangent and bezierTangent are in there
 _ curve(... t) -> curvePoint()
+_ bezierMode -> bezierSegments
+_ curveMode -> curveSegments, curveTightness
 _ setFont -> textFont(font) or textFont(font, size)
 _ textSize(size), textLeading(leading)
 _ BFont.charWidth, BFont.stringWidth -> BFont.width()
 _ BFont.drawChar, BFont.drawString -> BFont.text()
-_ bezierMode -> bezierSegments
-_ curveMode -> curveSegments, curveTightness
 _ removed fill(), stroke(), background() with no args
 _   (used to return current)
 _ getPixel/setPixel -> get/set
@@ -188,7 +189,6 @@ X   strokeWeight, strokeJoin, strokeMiter
 
 
 API
-_ need bezierTangent() code
 _ param() function 
 _   also include code to read from properties file
 _   for application mode or while inside the environment
@@ -311,6 +311,12 @@ _   reader code should just catch the exception if they're not gzipped
 _   and try to re-download them
 _ if (loop == false) and (draw == false) then provide an error
 _   so user knows that one or the other is needed
+_ building releases from scratch 
+_   this is a useful developer task before release
+_     build all releases from a clean cvs
+_   tries to make work/ without bagel serial existing and blows up
+_     b/c bagel checkout happens later
+_   all code needs to be buildable from scratch
 
 
 INTERNAL
@@ -348,12 +354,7 @@ b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 
 Volunteers / Possible tasks 
 
-_ building releases from scratch 
-_   this is a useful developer task before release
-_     build all releases from a clean cvs
-_   tries to make work/ without bagel serial existing and blows up
-_     b/c bagel checkout happens later
-_   all code needs to be buildable from scratch
+_ need bezierTangent() code
 
 _ developers who may be interested in p5 helping: 
 sdlpci@cis.rit.edu
