@@ -87,8 +87,8 @@ public interface PMethods {
   // REMOVED public void arc(float start, float stop,
   //               float x, float y, float radius);
 
-  public void arc(float start, float stop,
-                  float x, float y, float hr, float vr);
+  public void arc(float x, float y, float hr, float vr,
+                  float start, float stop);
 
   //protected void arcImpl(float start, float stop,
   //                      float x, float y, float hr, float vr);
@@ -155,9 +155,9 @@ public interface PMethods {
                     float x1, float y1, float x2, float y2,
                     int u1, int v1, int u2, int v2);
 
-  //public void cache(PImage image);
-
-  //public void cache(PImage images[]);
+  //protected void imageImpl(PImage image,
+  //               float x, float y, float w, float h,
+  //               int u1, int v1, int u2, int v2);
 
   //
 

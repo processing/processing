@@ -48,6 +48,8 @@ X imageMode(CORNER) and CORNERS are the only usable versions
 _ alpha(PImage) is now called mask() instead?
 _   already have an alpha() function that gets alpha bits
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
+_ should we switch to curveVertex(1,2,3) (ala curveto)
+_   because some confusion with mixing types of curves
 
 _ the updatePixels() in PGraphics has to be overridden (from PImage)
 _   to make itself actually update on-screen

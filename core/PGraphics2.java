@@ -463,8 +463,8 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void arcImpl(float start, float stop,
-                      float x, float y, float w, float h) {
+  public void arcImpl(float x, float y, float w, float h,
+                      float start, float stop) {
     arc.setArc(x, y, w, h, start, stop-start, Arc2D.PIE);
     draw_shape(arc);
   }
