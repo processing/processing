@@ -30,22 +30,21 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X semicolons bug in preproc
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499812;start=0
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066498153;start=0
-
-_ placement in the history menu of new items doesn't work
-_   the clear history thing gets in the way
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065493721
-
-_ macosx open sketch folder problems.. spaces in filename problem?
-_   also seems to be problem for reference?
+X placement in the history menu of new items doesn't work
+X   the clear history thing gets in the way
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066501376;start=0
+X stroke on smoothed polygons was drawing at 8x
+X macosx open sketch folder problems.. spaces in filename problem?
+X   also seems to be problem for reference?
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
 
-_ included code is not packaged in the outgoing jar file on export
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
-
 _ after hitting replace, dim the replace button
 _   otherwise it causes another replace to happen
+
+_ included code is not packaged in the outgoing jar file on export
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
 
 ................
 
@@ -66,22 +65,6 @@ line(width, height, width-mouseX, height-mouseX);
 rect(mouseX, mouseY, 200, 200);
 }
 
-................
-
-
-there's also a strange bug with smooth() and ellipse:
-// Funny bug with smooth and ellipse
-// put mouse in upper-left to see the issue
-
-void setup() {
-size(400, 400);
-smooth();
-}
-
-void loop() {
-background(102);
-ellipse(mouseX, mouseY, 20, 20);
-}
 
 ................
 
