@@ -2,10 +2,11 @@
 
 /*
   PdeCompiler - default compiler class that connects to jikes
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2001-03 
+  Ben Fry, Massachusetts Institute of Technology and 
+  Casey Reas, Interaction Design Institute Ivrea
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -328,7 +329,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     int importCount = 0;
 
     String pieces[] = 
-      BApplet.splitStrings(path, File.pathSeparatorChar);
+      BApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       //System.out.println("checking piece " + pieces[i]);
