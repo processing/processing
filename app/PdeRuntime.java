@@ -575,7 +575,7 @@ java.lang.NullPointerException
           thread = null;
 
         } catch (Exception e) {
-          System.out.println("SystemOutSiphon: i just died in your arms tonight");
+          //System.out.println("SystemOutSiphon: i just died in your arms tonight");
           e.printStackTrace();
           thread = null;
           //System.out.println("");

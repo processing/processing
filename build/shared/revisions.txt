@@ -69,6 +69,13 @@ major changes: (things that break your code)
   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304533;start=0
   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304779;start=0
 
+- the sizing/spacing of text() has changed! a combination of small
+  bugs inside text() and the "Create Font" tool meant that text was
+  not sized properly. it's now been tweaked to more closely resemble
+  the sizing used by the platform. for  instance, 48 point type of a
+  font in illustrator looks like 48 point type of the same font in
+  processing. 
+
 
 additions: 
 
@@ -78,6 +85,10 @@ additions:
   println(hex(c));
 
 - support for text in a box: text(String text, x, y, width, height);
+  this is like the text box in adobe illustrator or programs like 
+  that, note that the x, y where it starts will be the top of the
+  line of text, not the baseline of the text as is the case for
+  the other text() functions.
 
 - operators for int(), string(), char(), and other basic types.
   String s = "10.2";
