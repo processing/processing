@@ -1,3 +1,122 @@
+0069 pde
+X font builder 
+X   crashing on small sizes for many fonts
+X   make the text area not selectable or highlightable
+X   add a few more rows
+X   use postscript name as suggested name
+X   save last used font, size, and smooth settings
+X     maybe just hide it the window, just like find
+X   include a little space around the text area
+X     clean up the spacing of the ui in general
+X mouse wheel not working properly, need to dynamically load 1.4 code
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
+X add NETWORK to the build scripts, since a new ifdef was added for it
+X add CFBundleIdentifier to macosx dist
+X   exact text appears in this thread, also make a note in the readme
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078739015
+X not obliterating former LIBRARY_PATH when running externally
+X   this would solve a lot of problems with serial and video
+X   has trouble on windows, have to move quicktime out.. argh
+X including qtjava in path when in java mode (oops)
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077900024
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073523928;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076679293;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076649501;start=0
+X add ms/mx options for things running externally
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078699341;start=0
+
+fixed previously
+o set max frame rate at 60 fps? avoid the full-on spew to the console
+o console runs really really slow with a lot of println() calls
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+
+
+0068
+X option to disable smoothing on font creator
+X font builder should update when the size for the font is changed
+X   (so long as the size itself is valid)
+X font builder bug, was cutting off parts of letters
+X major applet freezing error fixed with external
+X   printStackTrace wasn't being called for runtime errors if no leechErr
+X create font doesn't support umlauts
+X   fix up font code to generate unicode chars, at least for iso8859-1 charset
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
+X international: convert unicode chars to \uXXXX in the preproc
+X   if this causes trouble, change the preference for lib/pde.properties
+X   compiler.substitute_unicode = false
+X implement concave/convex polygons
+X   code from carlos that was patched into old graphics
+X concave/complex polygon
+X   eventually POLYGON auto-detects convex/concave polygon
+X   also add POLYGON_CONVEX and POLYGON_CONCAVE
+X find/replace hangs when recapitalizing things
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1075416670
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1075416741
+X fixes for file loading from the lib/ folder (when using bagel separately)
+X subset/expand functions for arrays
+X preprocessor thing for converting unicode stuff
+X   can be turned off with: compiler.substitute_unicode = false
+X problem with find locking up
+X notify toxi when i know how soon before i'm going to release 68
+X remove proce55ing.net from code stuff
+X move issues over from the 'active' todo to here
+X   and change the active todo to rev 69
+_   check this stuff into the done.txt of 69
+_ post a candidate release to see how it runs for folks
+X see if there are any other things that people must have for next 2 months
+o   ie. removing quicktime for java ?
+X what to do about examples (weren't there fixes?)
+X make renderTriangle private
+X change to processing.org in the exported html
+X patch in toxi's image stuff
+
+0068c3
+X fix a bug in System.out that wasn't reporting errors
+X hack workaround for the tesselator halo bug
+X fix another bug with the init for noise()
+X make notes in bugs.txt
+
+0068c4
+X console runs really really slow with a lot of println() calls
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1075759355
+
+toxi
+X sphereDetail() function + reference
+X optimized the flat_rect() function for solid colours (20% faster)
+X noise() is (partially) broken in v67
+
+goodbye macos9
+X posted to message board about it going away
+o leftover todos
+o   set file type for jar and html files on export
+o     (not done on osx, safari doesn't set for html files)
+o     why is bbedit the type for the other files? make simpletext
+o untested/likely broken
+o   reference launching
+o   control/right-click for edit area context menu
+o   make sure editor window is front so that error line highlights
+o   is video working (qtjava in path) on macos9?
+
+already done in a prev release, but not checked off
+X subst Image -> BImage, Font -> BFont
+X   this should be optional until we get the naming down
+X   note that this was already done pre-67
+o allow import blahblah.blah.blah to get passed through
+o   and included with the imports list.
+X clear console each time 'run' gets hit
+X   don't actually clear, just advance by the number of lines visible
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
+X can't copy text from console directly (winxp and macosx)
+
+nixed
+o basic usb support?
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
+o try ariel's Thread.yield() suggestion
+o set default framerate of 24? 30? 2x that?
+
+
 0067
 X it's possible to write non-1.1 code, even syntax
 X   would -source 1.1 help this? -> nope

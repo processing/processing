@@ -2,7 +2,7 @@
 
 /*
   PdeFontBuilder - gui interface to font creation heaven/hell
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -63,9 +63,18 @@ public class PdeFontBuilder extends JFrame {
   public PdeFontBuilder(File targetFolder) {
     super("Create Font");
 
-    this.targetFolder = targetFolder;
+    Container paine = getContentPane();
+    paine.setLayout(new BorderLayout()); //10, 10));
 
-    Container pain = getContentPane();
+    //Dimension d = new Dimension(5, 5);
+    //paine.add(new Box.Filler(d, d, d), BorderLayout.WEST);
+
+    JPanel pain = new JPanel();
+    //pain.setBorder(BorderFactory.createLineBorder(Color.black));
+    //pain.setBorder(new EmptyBorder(10, 20, 20, 20));
+    pain.setBorder(new EmptyBorder(13, 13, 13, 13));
+    paine.add(pain, BorderLayout.CENTER);
+
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
     String labelText = 
@@ -75,7 +84,10 @@ public class PdeFontBuilder extends JFrame {
 
     //JLabel label = new JLabel(labelText);
     JTextArea textarea = new JTextArea(labelText);
-    textarea.setBorder(new EmptyBorder(10, 20, 10, 20));
+    textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
+    textarea.setBackground(null);
+    textarea.setEditable(false);
+    textarea.setHighlighter(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
     //pain.add(label);
@@ -104,26 +116,34 @@ public class PdeFontBuilder extends JFrame {
     // don't care about families starting with . or #
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
-#ifdef JDK13
     // getFontList is deprecated in 1.4, so this has to be used
     GraphicsEnvironment ge = 
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-    //Font fonts[] = ge.getAllFonts();
-    String flist[] = ge.getAvailableFontFamilyNames();
-#else
-    //fontSelector = new JComboBox();
-    String flist[] = Toolkit.getDefaultToolkit().getFontList();
-#endif
+    Font fonts[] = ge.getAllFonts();
+    String flist[] = new String[fonts.length];
 
-    int index = 0;
+    //String flist[] = ge.getAvailableFontFamilyNames();
+    //fontSelector = new JComboBox();
+    // old jdk11 version
+    //String flist[] = Toolkit.getDefaultToolkit().getFontList();
+
+    /*
     for (int i = 0; i < flist.length; i++) {
       if ((flist[i].indexOf('.') == 0) || (flist[i].indexOf('#') == 0) ||
           (flist[i].equals("Dialog")) || (flist[i].equals("DialogInput")) ||
           (flist[i].equals("Serif")) || (flist[i].equals("SansSerif")) ||
           (flist[i].equals("Monospaced"))) continue;
-      flist[index++] = flist[i];
+      //flist[index++] = flist[i];
+      Font f = new Font(flist[i], Font.PLAIN, 1);
+      flist[index++] = f.getPSName();
     }
+    */
+    int index = 0;
+    for (int i = 0; i < fonts.length; i++) {
+      flist[index++] = fonts[i].getPSName();
+    }
+
     list = new String[index];
     System.arraycopy(flist, 0, list, 0, index);
 
@@ -163,6 +183,7 @@ public class PdeFontBuilder extends JFrame {
       });
 
     fontSelector.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    fontSelector.setVisibleRowCount(12);
     JScrollPane fontScroller = new JScrollPane(fontSelector);
     pain.add(fontScroller);
     //fontSelector.setFont(new Font("SansSerif", Font.PLAIN, 10));
@@ -173,6 +194,10 @@ public class PdeFontBuilder extends JFrame {
         }
       });
     */
+
+    Dimension d1 = new Dimension(13, 13);
+    //paine.add(new Box.Filler(d, d, d), BorderLayout.WEST);
+    pain.add(new Box.Filler(d1, d1, d1));
 
     // see http://rinkworks.com/words/pangrams.shtml
     sample = new JTextArea("The quick brown fox blah blah.") {
@@ -219,6 +244,9 @@ public class PdeFontBuilder extends JFrame {
     panel.add(styleSelector);
     */
 
+    Dimension d2 = new Dimension(6, 6);
+    pain.add(new Box.Filler(d2, d2, d2));
+
     JPanel panel = new JPanel();
     panel.add(new JLabel("Size:"));
     sizeSelector = new JTextField("48 ");
@@ -238,9 +266,7 @@ public class PdeFontBuilder extends JFrame {
     smoothBox = new JCheckBox("Smooth");
     smoothBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
-          //System.out.println(e);
           smooth = smoothBox.isSelected();
-          //System.out.println(smooth);
         }
       });
     smoothBox.setSelected(smooth);
@@ -290,6 +316,11 @@ public class PdeFontBuilder extends JFrame {
 
     setLocation((screen.width - size.width) / 2,
                 (screen.height - size.height) / 2);
+  }
+
+
+  public void show(File targetFolder) {
+    this.targetFolder = targetFolder;
     show();
   }
 

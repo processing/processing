@@ -110,7 +110,7 @@ features we love, but probably won't be implemented 2048
 
 
 
-PDE / Pre-preprocessor 
+PDE / Pre-preprocessor & Compiler
 Currently using Oro for search and replace preprocessor,
 but Dan Mosedale is moving us to ANTLR
 
@@ -123,6 +123,14 @@ but Dan Mosedale is moving us to ANTLR
    2 _   int("1234") -> Integer.parseInt("1234")
    2 _   float("1234.35") -> (new Float("1234.35").floatValue())
    2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
+
+   2 _ (blah, blah, blah) = split(blah, "\t")
+   2 _   'like php's "explode" function'
+   2 _   http://www.php.net/manual/en/function.explode.php 
+   2 _   example 2 is the more interesting one... 
+   2 _     list($user, $pass, $uid, $gid, $gecos..) = explode(":", $data);
+   2 _   also see the inverse of that: 
+   2 _   http://www.php.net/manual/en/function.implode.php
 
    2 _ foreach implementation, ala java 1.5 spec
    2 _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html

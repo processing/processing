@@ -103,6 +103,9 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     }
     pain.add(buttons);
 
+    // 0069 TEMPORARILY DISABLED!
+    replaceAllButton.setEnabled(false);
+
     // to fix ugliness.. normally macosx java 1.3 puts an 
     // ugly white border around this object, so turn it off.
     if (PdeBase.platform == PdeBase.MACOSX) {
