@@ -10,6 +10,8 @@ X   update linux version of jikes
 
 _ examples need to be updated
 
+//
+
 _ get an xml library in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
@@ -86,6 +88,12 @@ _   throws out bizarre message
 
 
 TALK TO CASEY ABOUT...
+_ must call depth() for 3D applications
+_ lights cannot be enabled/disabled throughout 
+_   lighting will be based on what's left at endFrame()
+_ images should be a power of 2, or call modified()
+_ document the use of "die" 
+_   can override the method to do your own handling
 _ sketches no longer require a "data" folder
 _ "draw" is not highlighted as a keyword.. other keywords?
 _   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()

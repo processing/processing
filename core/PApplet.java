@@ -2495,6 +2495,31 @@ public class PApplet extends Applet
 
 
   /**
+   * decode a gzip input stream
+   */
+  public InputStream gzipInput(InputStream input) {
+    try {
+      return new GZIPInputStream(input);
+    } catch (IOException e) {
+      die("Problem with gzip input", e);
+    }
+    return null;
+  }
+
+  /**
+   * decode a gzip output stream
+   */
+  public OutputStream gzipOutput(OutputStream output) {
+    try {
+      return new GZIPOutputStream(output);
+    } catch (IOException e) {
+      die("Problem with gzip output", e);
+    }
+    return null;
+  }
+
+
+  /**
    * I want to print lines to a file. Why can't I?
    */
   public PrintWriter writer(String filename) {
