@@ -31,6 +31,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   int sketchRight;
   int sketchTitleLeft;
   //File sketchDir;
+  boolean sketchModified;
 
   //private String user;
   int userLeft;
@@ -160,7 +161,11 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     g.setColor(primaryColor);
     //g.drawString(sketch, sketchLeft, baseline);
-    g.drawString(editor.sketchName, sketchLeft, baseline);
+    //String additional = sketchModified ? " \u2020" : "";
+    //String additional = sketchModified ? " \u00A4" : "";
+    String additional = sketchModified ? "  \u00A7" : "";
+    //String additional = sketchModified ? " \u2022" : "";
+    g.drawString(editor.sketchName + additional, sketchLeft, baseline);
     //if (!boringUser) g.drawString(user, userLeft, baseline);
     if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
 

@@ -7,12 +7,12 @@ import java.awt.*;
 public class PdeEditorButtons extends Panel {
   static final String EMPTY_STATUS = "                                                                 ";
 
-  // play, stop, save, export, open
+  // run, stop, save, export, open
 
   static final String title[] = {
-    "", "play", "stop", "save", "open", "export"
-    //"", "Play", "Stop", "Save", "Open", "Export"
-    //"Play", "Stop", "Close",
+    "", "run", "stop", "save", "open", "export"
+    //"", "Run", "Stop", "Save", "Open", "Export"
+    //"Run", "Stop", "Close",
     //"Open", "Save", "Export Applet", "Print", "Beautify",
     //"Disable Full Screen", "Full Screen"
   };
@@ -22,7 +22,7 @@ public class PdeEditorButtons extends Panel {
   static final int BUTTON_HEIGHT = PdeEditor.GRID_SIZE; //33;
 
   static final int NOTHING    = 0;
-  static final int PLAY       = 1;
+  static final int RUN       = 1;
   static final int STOP       = 2;
 
   static final int SAVE     = 3;
@@ -70,7 +70,7 @@ public class PdeEditorButtons extends Panel {
     which = new int[BUTTON_COUNT];
 
     which[buttonCount++] = NOTHING;
-    which[buttonCount++] = PLAY;
+    which[buttonCount++] = RUN;
     which[buttonCount++] = STOP;
     which[buttonCount++] = SAVE;
     which[buttonCount++] = OPEN;
@@ -319,8 +319,8 @@ public class PdeEditorButtons extends Panel {
     //switch (which[sel]) {
     switch (currentSelection) {
 
-    case PLAY: editor.doPlay(); break;
-    case STOP: setState(PLAY, INACTIVE, true); editor.doStop(); break;
+    case RUN: editor.doRun(); break;
+    case STOP: setState(RUN, INACTIVE, true); editor.doStop(); break;
       //case CLOSE: editor.doClose(); break;
 
     case OPEN:  editor.doOpen(); break;
@@ -354,7 +354,7 @@ public class PdeEditorButtons extends Panel {
     if (inactive == null) return;
 
     //setState(button, INACTIVE);
-    // skip the play button, do the others
+    // skip the run button, do the others
     for (int i = 1; i < buttonCount; i++) {
       //state[i] = INACTIVE;
       //stateImage[i] = inactive[which[i]];
@@ -363,13 +363,13 @@ public class PdeEditorButtons extends Panel {
     update();
   }
 
-  public void play() {
+  public void run() {
     if (inactive == null) return;
     clear();
     setState(0, ACTIVE, true);
   }
 
-  public void clearPlay() {
+  public void clearRun() {
     if (inactive == null) return;
     setState(0, INACTIVE, true);
   }
@@ -377,7 +377,7 @@ public class PdeEditorButtons extends Panel {
   /*
   public boolean mouseUp(Event e, int x, int y) {
     if (wasDown == -1) return true;
-    if (which[wasDown] == PLAY) return true;
+    if (which[wasDown] == RUN) return true;
 
     setState(wasDown, INACTIVE);
     wasDown = -1;

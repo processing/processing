@@ -2,7 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class PdeEditorStatus extends Panel implements ActionListener {
+public class PdeEditorStatus extends Panel 
+  implements ActionListener /*, Runnable*/ {
   static Color bgColor[];
   static Color fgColor[];
 
@@ -11,9 +12,14 @@ public class PdeEditorStatus extends Panel implements ActionListener {
   static final int ERROR  = 1;
   static final int PROMPT = 2;
 
-  static final String PROMPT_YES = "yes";
-  static final String PROMPT_NO  = "no";
-  static final String NO_MESSAGE = "";
+  static final int YES    = 1;
+  static final int NO     = 2;
+  static final int CANCEL = 3;
+
+  static final String PROMPT_YES     = "yes";
+  static final String PROMPT_NO      = "no";
+  static final String PROMPT_CANCEL  = "cancel";
+  static final String NO_MESSAGE     = "";
 
   static final int BUTTON_WIDTH  = 66;
   static final int BUTTON_HEIGHT = 20;
@@ -33,6 +39,9 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
   Button yesButton;
   Button noButton;
+  Button cancelButton;
+  //Thread promptThread;
+  int response;
 
 
   public PdeEditorStatus(PdeEditor editor) {
@@ -82,20 +91,50 @@ public class PdeEditorStatus extends Panel implements ActionListener {
     update();
   }
 
+
+  /*
+  public void run() {
+    while (Thread.currentThread() == promptThread) {
+      if (response != 0) {
+	//System.out.println("stopping prompt thread");
+	//promptThread.stop();
+	//System.out.println("exiting prompt loop");
+	unprompt();
+	break;
+
+      } else {
+	try {
+	  //System.out.println("inside prompt thread " + 
+	  //System.currentTimeMillis());
+	  Thread.sleep(100);
+	} catch (InterruptedException e) { }
+      }
+    }
+  }
+  */
+
   public void prompt(String message) {
     mode = PROMPT;
     this.message = message;
 
+    response = 0;
     yesButton.setVisible(true);
     noButton.setVisible(true);
+    cancelButton.setVisible(true);
+    yesButton.requestFocus();
 
     update();
+
+    //promptThread = new Thread(this);
+    //promptThread.start();
   }
 
   // prompt has been handled, re-hide the buttons
   public void unprompt() {
     yesButton.setVisible(false);
-    noButton.setVisible(false);    
+    noButton.setVisible(false);
+    cancelButton.setVisible(false);
+    //promptThread = null;
     empty();
   }
 
@@ -114,16 +153,20 @@ public class PdeEditorStatus extends Panel implements ActionListener {
     if (yesButton == null) {
       yesButton = new Button(PROMPT_YES);
       noButton = new Button(PROMPT_NO);
+      cancelButton = new Button(PROMPT_CANCEL);
       setLayout(null);
 
       yesButton.addActionListener(this);
       noButton.addActionListener(this);
+      cancelButton.addActionListener(this);
 
       add(yesButton);
       add(noButton);
+      add(cancelButton);
 
       yesButton.setVisible(false);
       noButton.setVisible(false);
+      cancelButton.setVisible(false);
     }
 
     Dimension size = getSize();
@@ -173,11 +216,14 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
   protected void setButtonBounds() {
     int top = (sizeH - BUTTON_HEIGHT) / 2;
-    int noLeft = sizeW - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
+
+    int cancelLeft = sizeW - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
+    int noLeft = cancelLeft - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
     int yesLeft = noLeft - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
 
-    noButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
     yesButton.setBounds(yesLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    noButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    cancelButton.setBounds(cancelLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
   }
 
 
@@ -188,10 +234,23 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == noButton) {
-      System.out.println("clicked no");
+      //System.out.println("clicked no");
+      //response = 2;
+      // shut everything down, clear status, and return
+      unprompt();
+      editor.checkModified2();
 
     } else if (e.getSource() == yesButton) {
-      System.out.println("clicked yes");
+      //System.out.println("clicked yes");
+      //response = 1;
+      // shutdown/clear status, and call checkModified2
+      unprompt();
+      editor.doSave();  // assuming that something is set? hmm
+      //System.out.println("calling checkmodified2");
+      editor.checkModified2();
+
+    } else if (e.getSource() == cancelButton) { 
+      unprompt();
     }
   }
 }

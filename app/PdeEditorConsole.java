@@ -44,8 +44,8 @@ public class PdeEditorConsole extends Component {
   static PrintStream systemOut;
   static PrintStream systemErr;
 
-  PrintStream consoleOut;
-  PrintStream consoleErr;
+  static PrintStream consoleOut;
+  static PrintStream consoleErr;
 
 
   public PdeEditorConsole(PdeEditor editor) {
