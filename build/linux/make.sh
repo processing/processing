@@ -51,8 +51,6 @@ cd bagel
 CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
 #CLASSPATH=../app/build/linux/work/java/lib/rt.jar:../app/build/linux/work/java/lib/ext/comm.jar
 
-echo should be inside bagel dir
-echo $PWD
 ### --- make version with serial for the application
 echo Building bagel with serial support
 perl make.pl SERIAL
