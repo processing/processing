@@ -42,9 +42,9 @@ public class PApplet extends Applet
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
   // jdkVersionStr = "1.3" or "1.1" or whatever
-  static final String jdkVersionStr = 
+  public static final String jdkVersionStr =
     System.getProperty("java.version").substring(0,3);
-  static final double jdkVersion = 
+  public static final double jdkVersion =
     new Double(jdkVersionStr).doubleValue();
     //toFloat(System.getProperty("java.version").substring(0,3));
 
@@ -73,7 +73,7 @@ public class PApplet extends Applet
   public MouseEvent mouseEvent;
 
   /**
-   * Last key pressed. If it's a coded key 
+   * Last key pressed. If it's a coded key
    * (arrows or ctrl/shift/alt, this will be set to 0xffff or 65535).
    */
   public char key;
@@ -87,13 +87,13 @@ public class PApplet extends Applet
   public boolean keyPressed;
   public KeyEvent keyEvent;
 
-  /** 
+  /**
    * Gets set to true/false as the applet gains/loses focus.
    */
   public boolean focused = false;
 
   /**
-   * Is the applet online or not? This can be used to test how the 
+   * Is the applet online or not? This can be used to test how the
    * applet should behave since online situations are different.
    */
   public boolean online = false;
@@ -186,7 +186,7 @@ public class PApplet extends Applet
     try {
       if (jdkVersion >= 1.4) {
         //setFocusTraversalKeysEnabled(false);  // 1.4-only function
-        Method defocus = 
+        Method defocus =
           Component.class.getMethod("setFocusTraversalKeysEnabled",
                                     new Class[] { Boolean.TYPE });
         defocus.invoke(this, new Object[] { Boolean.FALSE });
@@ -242,7 +242,7 @@ public class PApplet extends Applet
     try {
       getAppletContext();
       online = true;
-    } catch (NullPointerException e) { 
+    } catch (NullPointerException e) {
       online = false;
     }
   }
@@ -264,7 +264,7 @@ public class PApplet extends Applet
   // maybe start should also be used as the method for kicking
   // the thread on, instead of doing it inside paint()
   public void stop() {
-    //finished = true; 
+    //finished = true;
 
     if (thread != null) {
       thread = null;
@@ -279,17 +279,17 @@ public class PApplet extends Applet
 
 
   /**
-   * This also calls stop(), in case there was an inadvertent 
+   * This also calls stop(), in case there was an inadvertent
    * override of the stop() function by a user.
    *
-   * destroy() supposedly gets called as the applet viewer 
+   * destroy() supposedly gets called as the applet viewer
    * is shutting down the applet. stop() is called
    * first, and then destroy() to really get rid of things.
    * no guarantees on when they're run (on browser quit, or
    * when moving between pages), though.
    */
   public void destroy() {
-    stop();  
+    stop();
   }
 
 
@@ -432,7 +432,7 @@ public class PApplet extends Applet
 
   /*
   public void update() {
-    if (firstFrame) firstFrame = false; 
+    if (firstFrame) firstFrame = false;
 
     if (THREAD_DEBUG) println("   3a update() internal " + firstFrame);
     repaint();
@@ -443,14 +443,14 @@ public class PApplet extends Applet
   */
 
   public void update(Graphics screen) {
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "    4 update() external");
     paint(screen);
   }
 
   //synchronized public void paint(Graphics screen) {
   public void paint(Graphics screen) {
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "     5a enter paint");
 
     // ignore the very first call to paint, since it's coming
@@ -459,7 +459,7 @@ public class PApplet extends Applet
     if (frameCount == 0) return;
 
     // without ignoring the first call, the first several frames
-    // are confused because paint() gets called in the midst of 
+    // are confused because paint() gets called in the midst of
     // the initial nextFrame() call, so there are multiple
     // updates fighting with one another.
 
@@ -467,11 +467,11 @@ public class PApplet extends Applet
     // try to fight over it. this was causing a randomized slowdown
     // that would cut the framerate into a third on macosx,
     // and is probably related to the windows sluggishness bug too
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "     5b enter paint sync");
 
     synchronized (g) {
-      if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+      if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                 "     5c inside paint sync");
       //System.out.println("5b paint has sync");
       //Exception e = new Exception();
@@ -489,7 +489,7 @@ public class PApplet extends Applet
       //thread.notify();
       //System.out.println("      6 exit paint");
     }
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "      6 exit paint");
     //updated = true;
   }
@@ -501,17 +501,17 @@ public class PApplet extends Applet
       //while (!finished) {
         //updated = false;
 
-        if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() + 
+        if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
                                           " formerly nextFrame()");
         //if (looping || redraw) nextFrame();
         if (looping || redraw) {
           if (fpsTarget != 0) framerate_delay();
 
           synchronized (g) {
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 1a beginFrame");
             g.beginFrame();
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 1b draw");
 
             for (int i = 0; i < libraryCount; i++) {
@@ -526,7 +526,7 @@ public class PApplet extends Applet
             // out anything that had been drawn so far.
             dequeueMouseEvents();
             dequeueKeyEvents();
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 2b endFrame");
 
             for (int i = 0; i < libraryCount; i++) {
@@ -538,16 +538,16 @@ public class PApplet extends Applet
 
             //update();
             // formerly 'update'
-            //if (firstFrame) firstFrame = false; 
+            //if (firstFrame) firstFrame = false;
             // internal frame counter
             frameCount++;
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       "   3a calling repaint() " + frameCount);
             repaint();
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       "   3b calling Toolkit.sync " + frameCount);
             getToolkit().sync();  // force repaint now (proper method)
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     "   3c done " + frameCount);
             //if (THREAD_DEBUG) println("   3d waiting");
             //wait();
@@ -556,31 +556,31 @@ public class PApplet extends Applet
 
             for (int i = 0; i < libraryCount; i++) {
               if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
-            }            
+            }
           }
         }
         redraw = false;  // unset 'redraw' flag in case it was set
 
         // moving this to update() (for 0069+) for linux sync problems
-        //if (firstFrame) firstFrame = false; 
+        //if (firstFrame) firstFrame = false;
 
         // wait for update & paint to happen before drawing next frame
-        // this is necessary since the drawing is sometimes in a 
-        // separate thread, meaning that the next frame will start 
+        // this is necessary since the drawing is sometimes in a
+        // separate thread, meaning that the next frame will start
         // before the update/paint is completed
-        //while (!updated) { 
+        //while (!updated) {
         try {
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " " + looping + " " + redraw);
           //Thread.yield();
           // windows doesn't like 'yield', so have to sleep at least
           // for some small amount of time.
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " gonna sleep");
           // can't remember when/why i changed that to '1'..
           // i have a feeling that some applets aren't gonna like that
           Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
         //}
@@ -606,7 +606,7 @@ public class PApplet extends Applet
         e.printStackTrace();
       }
     }
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               " thread finished");
     //stop();  // call to shutdown libs?
   }
@@ -636,14 +636,14 @@ public class PApplet extends Applet
         handleMouseEvent(mouseEvent);
       }
       mouseEventCount = 0;
-    }    
+    }
   }
 
 
   /**
    * Actually take action based on a mouse event.
    * Internally updates mouseX, mouseY, mousePressed, and mouseEvent.
-   * Then it calls the event type with no params, 
+   * Then it calls the event type with no params,
    * i.e. mousePressed() or mouseReleased() that the user may have
    * overloaded to do something more useful.
    */
@@ -661,7 +661,7 @@ public class PApplet extends Applet
       }
     }
 
-    // this used to only be called on mouseMoved and mouseDragged 
+    // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
     if (firstMouseEvent) {
       pmouseX = mouseX;
@@ -670,7 +670,7 @@ public class PApplet extends Applet
     }
 
     switch (event.getID()) {
-    case MouseEvent.MOUSE_PRESSED: 
+    case MouseEvent.MOUSE_PRESSED:
       mousePressed = true;
       mousePressed();
       break;
@@ -692,7 +692,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Figure out how to process a mouse event. When loop() has been 
+   * Figure out how to process a mouse event. When loop() has been
    * called, the events will be queued up until drawing is complete.
    * If noLoop() has been called, then events will happen immediately.
    */
@@ -705,9 +705,9 @@ public class PApplet extends Applet
   }
 
 
-  /** 
+  /**
    * If you override this or any function that takes a "MouseEvent e"
-   * without calling its super.mouseXxxx() then mouseX, mouseY, 
+   * without calling its super.mouseXxxx() then mouseX, mouseY,
    * mousePressed, and mouseEvent will no longer be set.
    */
   public void mousePressed(MouseEvent e) {
@@ -722,11 +722,11 @@ public class PApplet extends Applet
     checkMouseEvent(e);
   }
 
-  public void mouseEntered(MouseEvent e) { 
+  public void mouseEntered(MouseEvent e) {
     checkMouseEvent(e);
   }
 
-  public void mouseExited(MouseEvent e) { 
+  public void mouseExited(MouseEvent e) {
     checkMouseEvent(e);
   }
 
@@ -756,8 +756,8 @@ public class PApplet extends Applet
   public void mouseReleased() { }
 
   /**
-   * When the mouse is clicked, mousePressed() will be called, 
-   * then mouseReleased(), then mouseClicked(). Note that 
+   * When the mouse is clicked, mousePressed() will be called,
+   * then mouseReleased(), then mouseClicked(). Note that
    * mousePressed is already false inside of mouseClicked().
    */
   public void mouseClicked() { }
@@ -797,7 +797,7 @@ public class PApplet extends Applet
         handleKeyEvent(keyEvent);
       }
       keyEventCount = 0;
-    }    
+    }
   }
 
 
@@ -813,15 +813,15 @@ public class PApplet extends Applet
     }
 
     switch (event.getID()) {
-    case KeyEvent.KEY_PRESSED:  
+    case KeyEvent.KEY_PRESSED:
       keyPressed = true;
-      keyPressed(); 
+      keyPressed();
       break;
-    case KeyEvent.KEY_RELEASED: 
+    case KeyEvent.KEY_RELEASED:
       keyPressed = false;
       keyReleased();
       break;
-    case KeyEvent.KEY_TYPED:    
+    case KeyEvent.KEY_TYPED:
       keyTyped();
       break;
     }
@@ -837,9 +837,9 @@ public class PApplet extends Applet
   }
 
 
-  /** 
-   * Overriding keyXxxxx(KeyEvent e) functions will cause the 'key', 
-   * 'keyCode', and 'keyEvent' variables to no longer work; 
+  /**
+   * Overriding keyXxxxx(KeyEvent e) functions will cause the 'key',
+   * 'keyCode', and 'keyEvent' variables to no longer work;
    * key events will no longer be queued until the end of draw();
    * and the keyPressed(), keyReleased() and keyTyped() methods
    * will no longer be called.
@@ -850,17 +850,17 @@ public class PApplet extends Applet
 
 
   /**
-   * Called each time a single key on the keyboard is pressed. 
+   * Called each time a single key on the keyboard is pressed.
    *
-   * Examples for key handling: 
+   * Examples for key handling:
    * (Tested on Windows XP, please notify if different on other
    * platforms, I have a feeling Mac OS and Linux may do otherwise)
-   * 
+   *
    * 1. Pressing 'a' on the keyboard:
    *    keyPressed  with key == 'a' and keyCode == 'A'
    *    keyTyped    with key == 'a' and keyCode ==  0
    *    keyReleased with key == 'a' and keyCode == 'A'
-   *    
+   *
    * 2. Pressing 'A' on the keyboard:
    *    keyPressed  with key == 'A' and keyCode == 'A'
    *    keyTyped    with key == 'A' and keyCode ==  0
@@ -872,23 +872,23 @@ public class PApplet extends Applet
    *    keyTyped    with key == 'A'   and keyCode == 0
    *    keyReleased with key == 'A'   and keyCode == 'A'
    *    keyReleased with key == CODED and keyCode == SHIFT
-   * 
+   *
    * 4. Holding down the 'a' key.
-   *    The following will happen several times, 
+   *    The following will happen several times,
    *    depending on your machine's "key repeat rate" settings:
    *    keyPressed  with key == 'a' and keyCode == 'A'
    *    keyTyped    with key == 'a' and keyCode ==  0
-   *    When you finally let go, you'll get:  
+   *    When you finally let go, you'll get:
    *    keyReleased with key == 'a' and keyCode == 'A'
    *
    * 5. Pressing and releasing the 'shift' key
    *    keyPressed  with key == CODED and keyCode == SHIFT
    *    keyReleased with key == CODED and keyCode == SHIFT
    *    (note there is no keyTyped)
-   * 
-   * 6. Pressing the tab key in an applet with Java 1.4 will 
+   *
+   * 6. Pressing the tab key in an applet with Java 1.4 will
    *    normally do nothing, but PApplet dynamically shuts
-   *    this behavior off if Java 1.4 is in use (tested 1.4.2_05 Windows). 
+   *    this behavior off if Java 1.4 is in use (tested 1.4.2_05 Windows).
    *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
    *    Not tested on other platforms or for 1.3.
    */
@@ -901,17 +901,17 @@ public class PApplet extends Applet
   public void keyReleased() { }
 
 
-  /** 
-   * Only called for "regular" keys like letters, 
-   * see keyPressed() for full documentation. 
+  /**
+   * Only called for "regular" keys like letters,
+   * see keyPressed() for full documentation.
    */
   public void keyTyped() { }
 
 
   // ------------------------------------------------------------
 
-  // i am focused man, and i'm not afraid of death. 
-  // and i'm going all out. i circle the vultures in a van 
+  // i am focused man, and i'm not afraid of death.
+  // and i'm going all out. i circle the vultures in a van
   // and i run the block.
 
 
@@ -950,7 +950,7 @@ public class PApplet extends Applet
   }
 
   /**
-   * Get the current day of the month (1 through 31). 
+   * Get the current day of the month (1 through 31).
    * If you're looking for the day of the week (M-F or whatever)
    * or day of the year (1..365) then use java's Calendar.get()
    */
@@ -996,7 +996,7 @@ public class PApplet extends Applet
    * Get the current framerate. The initial value will be 10 fps,
    * and will be updated with each frame thereafter. The value is not
    * instantaneous (since that wouldn't be very useful since it would
-   * jump around so much), but is instead averaged (integrated) 
+   * jump around so much), but is instead averaged (integrated)
    * over roughly the last 10 frames.
    */
   public float framerate() {
@@ -1036,7 +1036,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Get a param from the web page, or (eventually) 
+   * Get a param from the web page, or (eventually)
    * from a properties file.
    */
   public String param(String what) {
@@ -1170,11 +1170,11 @@ public class PApplet extends Applet
    * Save the current frame as a .tif or .tga image.
    *
    * The String passed in can contain a series of # signs
-   * that will be replaced with the screengrab number. 
+   * that will be replaced with the screengrab number.
    *
    * i.e. saveFrame("blah-####.tif");
-   *      // saves a numbered tiff image, replacing the 
-   *      // # signs with zeros and the frame number 
+   *      // saves a numbered tiff image, replacing the
+   *      // # signs with zeros and the frame number
    */
   public void saveFrame(String what) {
     if (online) {
@@ -1232,9 +1232,9 @@ public class PApplet extends Applet
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
     if (jdkVersion < 1.2) {
-      System.err.println("cursor() error: Java 1.2 or higher is " + 
+      System.err.println("cursor() error: Java 1.2 or higher is " +
                          "required to set cursors");
-      System.err.println("                (You're using version " + 
+      System.err.println("                (You're using version " +
                          jdkVersionStr + ")");
       return;
     }
@@ -1249,24 +1249,24 @@ public class PApplet extends Applet
     //Toolkit tk = Toolkit.getDefaultToolkit();
     Point hotspot = new Point(hotspotX, hotspotY);
     try {
-      Method mCustomCursor = 
+      Method mCustomCursor =
         Toolkit.class.getMethod("createCustomCursor",
-                                new Class[] { Image.class, 
-                                              Point.class, 
+                                new Class[] { Image.class,
+                                              Point.class,
                                               String.class, });
-      Cursor cursor = 
+      Cursor cursor =
         (Cursor)mCustomCursor.invoke(Toolkit.getDefaultToolkit(),
-                                     new Object[] { jimage, 
-                                                    hotspot, 
+                                     new Object[] { jimage,
+                                                    hotspot,
                                                     "no cursor" });
       setCursor(cursor);
       cursor_visible = true;
 
     } catch (NoSuchMethodError e) {
-      System.out.println("cursor() is not available on " + 
+      System.out.println("cursor() is not available on " +
                          nf((float)jdkVersion, 1, 1));
     } catch (IndexOutOfBoundsException e) {
-      System.err.println("cursor() error: the hotspot " + hotspot + 
+      System.err.println("cursor() error: the hotspot " + hotspot +
                          " is out of bounds for the given image.");
     } catch (Exception e) {
       System.err.println(e);
@@ -1301,7 +1301,7 @@ public class PApplet extends Applet
       //invisible_cursor = new PImage(new int[32*32], 32, 32, RGBA);
       invisible_cursor = new PImage(new int[16*16], 16, 16, RGBA);
     }
-    // was formerly 16x16, but the 0x0 was added by jdf as a fix 
+    // was formerly 16x16, but the 0x0 was added by jdf as a fix
     // for macosx, which didn't wasn't honoring the invisible cursor
     cursor(invisible_cursor, 0, 0);
     cursor_visible = false;
@@ -1449,7 +1449,7 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-  // MATH 
+  // MATH
 
   // lots of convenience methods for math with floats.
   // doubles are overkill for processing applets, and casting
@@ -1516,7 +1516,7 @@ public class PApplet extends Applet
   }
 
   static public final int max(int a, int b, int c) {
-    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c); 
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
   static public final int min(int a, int b) {
@@ -1524,7 +1524,7 @@ public class PApplet extends Applet
   }
 
   static public final int min(int a, int b, int c) {
-    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c); 
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
   static public final int constrain(int amt, int low, int high) {
@@ -1687,7 +1687,7 @@ public class PApplet extends Applet
   int perlin_octaves = 4; // default to medium smooth
   float perlin_amp_falloff = 0.5f; // 50% reduction/octave
 
-  // [toxi 031112] 
+  // [toxi 031112]
   // new vars needed due to recent change of cos table in PGraphics
   int perlin_TWOPI, perlin_PI;
   float[] perlin_cosTable;
@@ -1722,7 +1722,7 @@ public class PApplet extends Applet
       for (int i = 0; i < PERLIN_SIZE + 1; i++) {
         perlin[i] = perlinRandom.nextFloat(); //(float)Math.random();
       }
-      // [toxi 031112] 
+      // [toxi 031112]
       // noise broke due to recent change of cos table in PGraphics
       // this will take care of it
       perlin_cosTable = g.cosLUT;
@@ -1747,7 +1747,7 @@ public class PApplet extends Applet
 
     for (int i=0; i<perlin_octaves; i++) {
       int of=xi+(yi<<PERLIN_YWRAPB)+(zi<<PERLIN_ZWRAPB);
-		
+
       rxf=noise_fsc(xf);
       ryf=noise_fsc(yf);
 
@@ -1779,8 +1779,8 @@ public class PApplet extends Applet
     return r;
   }
 
-  // [toxi 031112] 
-  // now adjusts to the size of the cosLUT used via 
+  // [toxi 031112]
+  // now adjusts to the size of the cosLUT used via
   // the new variables, defined above
   private float noise_fsc(float i) {
     // using bagel's cosine table instead
@@ -1788,8 +1788,8 @@ public class PApplet extends Applet
   }
 
   // [toxi 040903]
-  // make perlin noise quality user controlled to allow 
-  // for different levels of detail. lower values will produce 
+  // make perlin noise quality user controlled to allow
+  // for different levels of detail. lower values will produce
   // smoother results as higher octaves are surpressed
 
   public void noiseDetail(int lod) {
@@ -1820,7 +1820,7 @@ public class PApplet extends Applet
       //conn = new URLConnection(url);
       conn = url.openConnection();
 
-      // i don't think this does anything, 
+      // i don't think this does anything,
       // but just set the fella for good measure
       conn.setUseCaches(false);
       // also had a note from zach about parent.obj.close() on url
@@ -1881,7 +1881,7 @@ public class PApplet extends Applet
         URL url = new URL(filename);
         awtimage = gimmeImage(url, force);
 
-      } catch (MalformedURLException e) { 
+      } catch (MalformedURLException e) {
         System.err.println("error loading image from " + filename);
         e.printStackTrace();
         return null;
@@ -1892,17 +1892,17 @@ public class PApplet extends Applet
       //System.out.println(getClass().getResource(filename));
       awtimage = gimmeImage(getClass().getResource(filename), force);
       if (awtimage == null) {
-        awtimage = 
+        awtimage =
           gimmeImage(getClass().getResource("data/" + filename), force);
       }
       if (awtimage == null) {
         try {
-          //FileInputStream fis = 
+          //FileInputStream fis =
           //new FileInputStream(folder + "data/" + filename);
           String url = "file:/" + folder + "/data/" + filename;
             //URL url = new URL("file:/" + folder + "data/" + filename);
           awtimage = gimmeImage(new URL(url), force);
-        } catch (IOException e) { 
+        } catch (IOException e) {
           e.printStackTrace();
         }
       }
@@ -1923,7 +1923,7 @@ public class PApplet extends Applet
     tracker.addImage(awtimage, 0);
     try {
       tracker.waitForAll();
-    } catch (InterruptedException e) { 
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
 
@@ -1931,11 +1931,11 @@ public class PApplet extends Applet
     int jheight = awtimage.getHeight(null);
 
     int jpixels[] = new int[jwidth*jheight];
-    PixelGrabber pg = 
+    PixelGrabber pg =
       new PixelGrabber(awtimage, 0, 0, jwidth, jheight, jpixels, 0, jwidth);
     try {
       pg.grabPixels();
-    } catch (InterruptedException e) { 
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
 
@@ -1957,49 +1957,49 @@ public class PApplet extends Applet
 
 
   /**
-   * [toxi 040304] Targa bitmap loader for 24/32bit RGB(A) 
+   * [toxi 040304] Targa bitmap loader for 24/32bit RGB(A)
    *
    * [fry] this could be optimized to not use loadBytes
    * which would help out memory situations with large images
    */
   protected PImage loadTargaImage(String filename) {
-    // load image file as byte array 
-    byte[] buffer = loadBytes(filename); 
-  
-   // check if it's a TGA and has 8bits/colour channel 
-   if (buffer[2] == 2 && buffer[17] == 8) { 
-     // get image dimensions 
-     //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]); 
+    // load image file as byte array
+    byte[] buffer = loadBytes(filename);
+
+   // check if it's a TGA and has 8bits/colour channel
+   if (buffer[2] == 2 && buffer[17] == 8) {
+     // get image dimensions
+     //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]);
      int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
-     //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]); 
+     //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]);
      int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
-     // check if image has alpha 
-     boolean hasAlpha=(buffer[16] == 32); 
-  
-     // setup new image object 
-     PImage img = new PImage(w,h); 
-     img.format = (hasAlpha ? RGBA : RGB); 
-  
-     // targa's are written upside down, so we need to parse it in reverse 
-     int index = (h-1) * w; 
-     // actual bitmap data starts at byte 18 
-     int offset = 18; 
-  
-     // read out line by line 
-     for (int y = h-1; y >= 0; y--) { 
-       for (int x = 0; x < w; x++) { 
-         img.pixels[index + x] = 
-           (buffer[offset++] & 0xff) | 
-           ((buffer[offset++] & 0xff) << 8) | 
-           ((buffer[offset++] & 0xff) << 16) | 
+     // check if image has alpha
+     boolean hasAlpha=(buffer[16] == 32);
+
+     // setup new image object
+     PImage img = new PImage(w,h);
+     img.format = (hasAlpha ? RGBA : RGB);
+
+     // targa's are written upside down, so we need to parse it in reverse
+     int index = (h-1) * w;
+     // actual bitmap data starts at byte 18
+     int offset = 18;
+
+     // read out line by line
+     for (int y = h-1; y >= 0; y--) {
+       for (int x = 0; x < w; x++) {
+         img.pixels[index + x] =
+           (buffer[offset++] & 0xff) |
+           ((buffer[offset++] & 0xff) << 8) |
+           ((buffer[offset++] & 0xff) << 16) |
            (hasAlpha ? ((buffer[offset++] & 0xff) << 24) : 0xff000000);
        }
-       index -= w; 
+       index -= w;
      }
-     return img; 
-   } 
-   System.err.println("loadImage(): bad targa image format"); 
-   return null; 
+     return img;
+   }
+   System.err.println("loadImage(): bad targa image format");
+   return null;
   }
 
 
@@ -2018,7 +2018,7 @@ public class PApplet extends Applet
         input = new GZIPInputStream(input);
 
       } else if (!lower.endsWith(".vlw")) {
-        throw new IOException("I don't know how to load a font named " + 
+        throw new IOException("I don't know how to load a font named " +
                               filename);
       }
       return new PFont(input);
@@ -2181,7 +2181,7 @@ public class PApplet extends Applet
         stream = url.openStream();
         return stream;
 
-      } catch (MalformedURLException e) { 
+      } catch (MalformedURLException e) {
         e.printStackTrace();
         return null;
       }
@@ -2282,7 +2282,7 @@ public class PApplet extends Applet
 
   static public String[] loadStrings(InputStream input) {
     try {
-      BufferedReader reader = 
+      BufferedReader reader =
         new BufferedReader(new InputStreamReader(input));
 
       String lines[] = new String[100];
@@ -2323,7 +2323,7 @@ public class PApplet extends Applet
   /**
    * Saves bytes to a file to inside the sketch folder.
    * The filename can be a relative path, i.e. "poo/bytefun.txt"
-   * would save to a file named "bytefun.txt" to a subfolder 
+   * would save to a file named "bytefun.txt" to a subfolder
    * called 'poo' inside the sketch folder. If the in-between
    * subfolders don't exist, they'll be created.
    */
@@ -2403,7 +2403,7 @@ public class PApplet extends Applet
   }
 
   public void saveStrings(OutputStream output, String strings[]) {
-    PrintWriter writer = 
+    PrintWriter writer =
       new PrintWriter(new OutputStreamWriter(output));
     for (int i = 0; i < strings.length; i++) {
       writer.println(strings[i]);
@@ -2595,7 +2595,7 @@ public class PApplet extends Applet
     case FLOATS:
       if (sort_floats[a] < sort_floats[b]) return -1;
       return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
-    case STRINGS:    
+    case STRINGS:
       return sort_strings[a].compareTo(sort_strings[b]);
     }
     return 0;
@@ -2674,7 +2674,7 @@ public class PApplet extends Applet
     return temp;
   }
 
-  // 
+  //
 
   static public boolean[] contract(boolean list[], int newSize) {
     return expand(list, newSize);
@@ -2760,127 +2760,127 @@ public class PApplet extends Applet
 
   //
 
-  static final public boolean[] splice(boolean list[], 
+  static final public boolean[] splice(boolean list[],
                                        boolean v, int index) {
     boolean outgoing[] = new boolean[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = v;
-    System.arraycopy(list, index, outgoing, index + 1, 
+    System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
-  static final public boolean[] splice(boolean list[], 
+  static final public boolean[] splice(boolean list[],
                                        boolean v[], int index) {
     boolean outgoing[] = new boolean[list.length + v.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length, 
+    System.arraycopy(list, index, outgoing, index + v.length,
                      list.length - index);
     return outgoing;
   }
 
 
-  static final public byte[] splice(byte list[], 
+  static final public byte[] splice(byte list[],
                                     byte v, int index) {
     byte outgoing[] = new byte[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = v;
-    System.arraycopy(list, index, outgoing, index + 1, 
+    System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
-  static final public byte[] splice(byte list[], 
+  static final public byte[] splice(byte list[],
                                     byte v[], int index) {
     byte outgoing[] = new byte[list.length + v.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length, 
+    System.arraycopy(list, index, outgoing, index + v.length,
                      list.length - index);
     return outgoing;
   }
 
 
-  static final public char[] splice(char list[], 
+  static final public char[] splice(char list[],
                                     char v, int index) {
     char outgoing[] = new char[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = v;
-    System.arraycopy(list, index, outgoing, index + 1, 
+    System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
-  static final public char[] splice(char list[], 
+  static final public char[] splice(char list[],
                                     char v[], int index) {
     char outgoing[] = new char[list.length + v.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length, 
+    System.arraycopy(list, index, outgoing, index + v.length,
                      list.length - index);
     return outgoing;
   }
 
 
-  static final public int[] splice(int list[], 
+  static final public int[] splice(int list[],
                                    int v, int index) {
     int outgoing[] = new int[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = v;
-    System.arraycopy(list, index, outgoing, index + 1, 
+    System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
-  static final public int[] splice(int list[], 
+  static final public int[] splice(int list[],
                                    int v[], int index) {
     int outgoing[] = new int[list.length + v.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length, 
+    System.arraycopy(list, index, outgoing, index + v.length,
                      list.length - index);
     return outgoing;
   }
 
 
-  static final public float[] splice(float list[], 
+  static final public float[] splice(float list[],
                                      float v, int index) {
     float outgoing[] = new float[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = v;
-    System.arraycopy(list, index, outgoing, index + 1, 
+    System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
-  static final public float[] splice(float list[], 
+  static final public float[] splice(float list[],
                                      float v[], int index) {
     float outgoing[] = new float[list.length + v.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length, 
+    System.arraycopy(list, index, outgoing, index + v.length,
                      list.length - index);
     return outgoing;
   }
 
 
-  static final public String[] splice(String list[], 
+  static final public String[] splice(String list[],
                                       String v, int index) {
     String outgoing[] = new String[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = v;
-    System.arraycopy(list, index, outgoing, index + 1, 
+    System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
-  static final public String[] splice(String list[], 
+  static final public String[] splice(String list[],
                                       String v[], int index) {
     String outgoing[] = new String[list.length + v.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length, 
+    System.arraycopy(list, index, outgoing, index + v.length,
                      list.length - index);
     return outgoing;
   }
@@ -2963,7 +2963,7 @@ public class PApplet extends Applet
     return c;
   }
 
-  // 
+  //
 
   static public boolean[] reverse(boolean list[]) {
     boolean outgoing[] = new boolean[list.length];
@@ -3049,7 +3049,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Join an array of Strings together as a single String, 
+   * Join an array of Strings together as a single String,
    * separated by the whatever's passed in for the separator.
    *
    * To use this on numbers, first pass the array to nf() or nfs()
@@ -3067,11 +3067,11 @@ public class PApplet extends Applet
     }
     return buffer.toString();
   }
-  
+
 
   /**
-   * Split the provided String at wherever whitespace occurs. 
-   * Multiple whitespace (extra spaces or tabs or whatever) 
+   * Split the provided String at wherever whitespace occurs.
+   * Multiple whitespace (extra spaces or tabs or whatever)
    * between items will count as a single break.
    *
    * The whitespace characters are "\t\n\r\f", which are the defaults
@@ -3089,10 +3089,10 @@ public class PApplet extends Applet
   }
 
 
-  /** 
+  /**
    * Splits a string into pieces, using any of the chars in the
-   * String 'delim' as separator characters. For instance, 
-   * in addition to white space, you might want to treat commas 
+   * String 'delim' as separator characters. For instance,
+   * in addition to white space, you might want to treat commas
    * as a separator. The delimeter characters won't appear in
    * the returned String array.
    *
@@ -3111,12 +3111,12 @@ public class PApplet extends Applet
     while (toker.hasMoreTokens()) {
       pieces[index++] = toker.nextToken();
     }
-    return pieces;    
+    return pieces;
   }
 
 
   /**
-   * Split a string into pieces along a specific character. 
+   * Split a string into pieces along a specific character.
    * Most commonly used to break up a String along tab characters.
    *
    * This operates differently than the others, where the
@@ -3126,7 +3126,7 @@ public class PApplet extends Applet
    * alignments (of say an excel file) where there are empty columns.
    */
   static public String[] split(String what, char delim) {
-    // do this so that the exception occurs inside the user's 
+    // do this so that the exception occurs inside the user's
     // program, rather than appearing to be a bug inside split()
     if (what == null) return null;
     //return split(what, String.valueOf(delim));  // huh
@@ -3222,7 +3222,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  // 
+  //
 
   static final public byte toByte(boolean what) {
     return what ? (byte)1 : 0;
@@ -3379,7 +3379,7 @@ public class PApplet extends Applet
     try {
       return Integer.parseInt(what);
     } catch (NumberFormatException e) { }
-    
+
     return otherwise;
   }
 
@@ -3425,7 +3425,7 @@ public class PApplet extends Applet
    * int numbers[] = toInt(s);
    *
    * numbers will contain { 1, 300, 44 }
-   */ 
+   */
   static public int[] toInt(String what[]) {
     return toInt(what, 0);
   }
@@ -3439,7 +3439,7 @@ public class PApplet extends Applet
    * int numbers[] = toInt(s, 9999);
    *
    * numbers will contain { 1, 300, 9999, 44 }
-   */ 
+   */
   static public int[] toInt(String what[], int missing) {
     int output[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -3530,49 +3530,49 @@ public class PApplet extends Applet
 
   //
 
-  static final public String[] str(boolean x[]) { 
+  static final public String[] str(boolean x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(byte x[]) { 
+  static final public String[] str(byte x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(char x[]) { 
+  static final public String[] str(char x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(short x[]) { 
+  static final public String[] str(short x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(int x[]) { 
+  static final public String[] str(int x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(float x[]) { 
+  static final public String[] str(float x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(long x[]) { 
+  static final public String[] str(long x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
 
-  static final public String[] str(double x[]) { 
+  static final public String[] str(double x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
@@ -3596,7 +3596,7 @@ public class PApplet extends Applet
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nf(num[i], digits);
     }
-    return formatted;    
+    return formatted;
   }
 
   static public String nf(int num, int digits) {
@@ -3615,7 +3615,7 @@ public class PApplet extends Applet
   /**
    * number format signed (or space)
    * Formats a number but leaves a blank space in the front
-   * when it's positive so that it can be properly aligned with 
+   * when it's positive so that it can be properly aligned with
    * numbers that have a negative sign in front of them.
    */
   static public String nfs(int num, int digits) {
@@ -3627,15 +3627,15 @@ public class PApplet extends Applet
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfs(num[i], digits);
     }
-    return formatted;    
+    return formatted;
   }
 
-  // 
+  //
 
   /**
    * number format positive (or plus)
-   * Formats a number, always placing a - or + sign 
-   * in the front when it's negative or positive. 
+   * Formats a number, always placing a - or + sign
+   * in the front when it's negative or positive.
    */
   static public String nfp(int num, int digits) {
     return (num < 0) ? nf(num, digits) : ('+' + nf(num, digits));
@@ -3755,15 +3755,15 @@ public class PApplet extends Applet
   //
 
   /**
-   * Returns a String that contains the binary value of a byte. 
-   * The returned value will always have 8 digits. 
+   * Returns a String that contains the binary value of a byte.
+   * The returned value will always have 8 digits.
    */
   static final public String binary(byte what) {
     return binary(what, 8);
   }
 
   /**
-   * Returns a String that contains the binary value of a char. 
+   * Returns a String that contains the binary value of a char.
    * The returned value will always have 16 digits because chars
    * are two bytes long.
    */
@@ -3772,8 +3772,8 @@ public class PApplet extends Applet
   }
 
   /**
-   * Returns a String that contains the binary value of an int. 
-   * The length depends on the size of the number itself. 
+   * Returns a String that contains the binary value of an int.
+   * The length depends on the size of the number itself.
    * An int can be up to 32 binary digits, but that seems like
    * overkill for almost any situation, so this function just
    * auto-sizes. If you want a specific number of digits (like all 32)
@@ -3786,7 +3786,7 @@ public class PApplet extends Applet
 
   /**
    * Returns a String that contains the binary value of an int.
-   * The digits parameter determines how many digits will be used. 
+   * The digits parameter determines how many digits will be used.
    */
   static final public String binary(int what, int digits) {
     String stuff = Integer.toBinaryString(what);
@@ -3894,7 +3894,7 @@ public class PApplet extends Applet
       if (z > 255) z = 255; else if (z < 0) z = 0;
 
       return (a << 24) | (x << 16) | (y << 8) | z;
-    }    
+    }
     return g.color(x, y, z, a);
   }
 
@@ -3923,7 +3923,7 @@ public class PApplet extends Applet
 
     Thread ethread = new Thread() {  //new Runnable() {
         public void run() {
-          
+
           while ((Thread.currentThread() == this) && !finished) {
             try {
               // is this what's causing all the trouble?
@@ -3952,7 +3952,7 @@ public class PApplet extends Applet
           //System.out.println(e);
           Point where = ((Frame) e.getSource()).getLocation();
           //System.out.println(e);
-          System.err.println(PApplet.EXTERNAL_MOVE + " " + 
+          System.err.println(PApplet.EXTERNAL_MOVE + " " +
                              where.x + " " + where.y);
           System.err.flush();
         }
@@ -3987,15 +3987,15 @@ public class PApplet extends Applet
       while (argIndex < args.length) {
         if (args[argIndex].indexOf(EXT_LOCATION) == 0) {
           external = true;
-          String locationStr = 
+          String locationStr =
             args[argIndex].substring(EXT_LOCATION.length());
           location = toInt(split(locationStr, ','));
           //locationX = location[0] - 20;
-          //locationY = location[1];          
+          //locationY = location[1];
 
         } else if (args[argIndex].indexOf(EXT_EXACT_LOCATION) == 0) {
           external = true;
-          String locationStr = 
+          String locationStr =
             args[argIndex].substring(EXT_EXACT_LOCATION.length());
           location = toInt(split(locationStr, ','));
           exactLocation = true;
@@ -4031,15 +4031,15 @@ public class PApplet extends Applet
         //System.out.println(insets);
 
         int locationX = location[0] - 20;
-        int locationY = location[1];          
+        int locationY = location[1];
         //System.out.println("x,y " + locationX + " " + locationY);
 
         //frame.setTitle(str(setupComplete));
         int minW = 120;
         int minH = 120;
-        int windowW = 
+        int windowW =
           Math.max(applet.width, minW) + insets.left + insets.right;
-        int windowH = 
+        int windowH =
           Math.max(applet.height, minH) + insets.top + insets.bottom;
         frame.setSize(windowW, windowH);
         //frame.setTitle(windowW + " " + windowH);
@@ -4048,14 +4048,14 @@ public class PApplet extends Applet
           frame.setLocation(location[0], location[1]);
 
         } else {
-          if (locationX - windowW > 10) {  
+          if (locationX - windowW > 10) {
             // if it fits to the left of the window
             frame.setLocation(locationX - windowW, locationY);
-          } else { 
-            // if it fits inside the editor window, 
-            // offset slightly from upper lefthand corner 
+          } else {
+            // if it fits inside the editor window,
+            // offset slightly from upper lefthand corner
             // so that it's plunked inside the text area
-            locationX = location[0] + 66; 
+            locationX = location[0] + 66;
             locationY = location[1] + 66;
 
             if ((locationX + windowW > screen.width - 33) ||
@@ -4071,9 +4071,9 @@ public class PApplet extends Applet
         frame.setLayout(null);
         frame.add(applet);
         frame.setBackground(SystemColor.control);
-        applet.setBounds((windowW - applet.width)/2, 
+        applet.setBounds((windowW - applet.width)/2,
                          insets.top + ((windowH - insets.top - insets.bottom) -
-                                       applet.height)/2, 
+                                       applet.height)/2,
                          windowW, windowH);
 
         applet.setupExternal(frame);

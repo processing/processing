@@ -77,82 +77,135 @@ public class PFont2 extends PFont {
   }
 
   public PFont2(Font font, boolean all, boolean smooth) {
-    //int firstChar = 33;
-    //int lastChar = 126;
-
-    //this.charCount = lastChar - firstChar + 1;
-    this.charCount = all ? 65536 : charset.length;
-    this.mbox = font.getSize();
-
-    fwidth = fheight = mbox;
-
-    /*
-    // size for image/texture is next power of 2 over font size
-    iwidth = iheight = (int)
-      Math.pow(2, Math.ceil(Math.log(mbox) / Math.log(2)));
-
-    iwidthf = iheightf = (float) iwidth;
-    */
-
-    PImage bitmaps[] = new PImage[charCount];
-
-    // allocate enough space for the character info
-    value       = new int[charCount];
-    height      = new int[charCount];
-    width       = new int[charCount];
-    setWidth    = new int[charCount];
-    topExtent   = new int[charCount];
-    leftExtent  = new int[charCount];
-
-    ascii = new int[128];
-    for (int i = 0; i < 128; i++) ascii[i] = -1;
-
-    int mbox3 = mbox * 3;
-
-    /*
     try {
+      this.charCount = all ? 65536 : charset.length;
+      this.mbox = font.getSize();
+
+      fwidth = fheight = mbox;
+
+      PImage bitmaps[] = new PImage[charCount];
+
+      // allocate enough space for the character info
+      value       = new int[charCount];
+      height      = new int[charCount];
+      width       = new int[charCount];
+      setWidth    = new int[charCount];
+      topExtent   = new int[charCount];
+      leftExtent  = new int[charCount];
+
+      ascii = new int[128];
+      for (int i = 0; i < 128; i++) ascii[i] = -1;
+
+      int mbox3 = mbox * 3;
+
+      /*
+        BufferedImage playground =
+          new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D g = (Graphics2D) playground.getGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                           smooth ?
+                           RenderingHints.VALUE_ANTIALIAS_ON :
+                           RenderingHints.VALUE_ANTIALIAS_OFF);
+      */
+
       Class bufferedImageClass =
         Class.forName("java.awt.image.BufferedImage");
       Constructor bufferedImageConstructor =
-        bufferedImageClass.getConstructor(new Class[] { Integer.TYPE,
-                                                        Integer.TYPE,
-                                                        Integer.TYPE });
+        bufferedImageClass.getConstructor(new Class[] {
+          Integer.TYPE,
+          Integer.TYPE,
+          Integer.TYPE });
       Field typeIntRgbField = bufferedImageClass.getField("TYPE_INT_RGB");
       int typeIntRgb = typeIntRgbField.getInt(typeIntRgbField);
-      //Object playground = bic.invoke(new Object[] { new Integer(mbox3),
-      playground = (BufferedImage)
+      Object playground =
         bufferedImageConstructor.newInstance(new Object[] {
-        new Integer(mbox3),
-        new Integer(mbox3),
-        new Integer(typeIntRgb) });
+          new Integer(mbox3),
+          new Integer(mbox3),
+          new Integer(typeIntRgb) });
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    */
-    BufferedImage playground =
-      new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
+      Class graphicsClass =
+        Class.forName("java.awt.Graphics2D");
+      Method getGraphicsMethod =
+        bufferedImageClass.getMethod("getGraphics", new Class[] { });
+      //Object g = getGraphicsMethod.invoke(playground, new Object[] { });
+      Graphics g = (Graphics)
+        getGraphicsMethod.invoke(playground, new Object[] { });
 
-    Graphics2D g = (Graphics2D) playground.getGraphics();
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                       smooth ?
-                       RenderingHints.VALUE_ANTIALIAS_ON :
-                       RenderingHints.VALUE_ANTIALIAS_OFF);
+      Class renderingHintsClass =
+        Class.forName("java.awt.RenderingHints");
+      Class renderingHintsKeyClass =
+        Class.forName("java.awt.RenderingHints$Key");
+      //PApplet.printarr(renderingHintsClass.getFields());
 
-    g.setFont(font);
-    FontMetrics metrics = g.getFontMetrics();
+      Field antialiasingKeyField =
+        renderingHintsClass.getDeclaredField("KEY_ANTIALIASING");
+      Object antialiasingKey =
+        antialiasingKeyField.get(renderingHintsClass);
 
-    //ascent = metrics.getAscent();
-    //descent = metrics.getDescent();
-    //System.out.println("descent found was " + descent);
+      Field antialiasField = smooth ?
+        renderingHintsClass.getField("VALUE_ANTIALIAS_ON") :
+        renderingHintsClass.getField("VALUE_ANTIALIAS_OFF");
+      Object antialiasState =
+        antialiasField.get(renderingHintsClass);
 
-    int samples[] = new int[mbox3 * mbox3];
+      Method setRenderingHintMethod =
+        graphicsClass.getMethod("setRenderingHint",
+                                new Class[] { renderingHintsKeyClass,
+                                              Object.class });
+      setRenderingHintMethod.invoke(g, new Object[] {
+        antialiasingKey,
+        antialiasState
+      });
+
+      g.setFont(font);
+      FontMetrics metrics = g.getFontMetrics();
+
+      Method canDisplayMethod = null;
+      Method getDataMethod = null;
+      Method getSamplesMethod = null;
+
+      int samples[] = new int[mbox3 * mbox3];
+
+      canDisplayMethod =
+        Font.class.getMethod("canDisplay", new Class[] { Character.TYPE });
+      getDataMethod =
+        bufferedImageClass.getMethod("getData", new Class[] { });
+      Class rasterClass = Class.forName("java.awt.image.Raster");
+      getSamplesMethod = rasterClass.getMethod("getSamples", new Class[] {
+        Integer.TYPE,
+        Integer.TYPE,
+        Integer.TYPE,
+        Integer.TYPE,
+        Integer.TYPE,
+        // integer array type?
+        //Array.class
+        samples.getClass()
+      });
+
+      //} catch (Exception e) {
+      //e.printStackTrace();
+      //return;
+      //}
+
+    //Array samples = Array.newInstance(Integer.TYPE, mbox3*mbox3);
+
     int maxWidthHeight = 0;
     int index = 0;
     for (int i = 0; i < charCount; i++) {
       char c = all ? (char)i : charset[i];
-      if (!font.canDisplay(c)) {  // skip chars not in the font
-        continue;
+
+      //if (!font.canDisplay(c)) {  // skip chars not in the font
+      try {
+        Character ch = new Character(c);
+        Boolean canDisplay = (Boolean)
+          canDisplayMethod.invoke(font, new Object[] { ch });
+        if (canDisplay.booleanValue() == false) {
+          continue;
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        return;
       }
 
       g.setColor(Color.white);
@@ -161,8 +214,20 @@ public class PFont2 extends PFont {
       g.drawString(String.valueOf(c), mbox, mbox * 2);
 
       // grabs copy of the current data.. so no updates (do each time)
+      /*
       Raster raster = playground.getData();
       raster.getSamples(0, 0, mbox3, mbox3, 0, samples);
+      */
+
+      Object raster = getDataMethod.invoke(playground, new Object[] {});
+      getSamplesMethod.invoke(raster, new Object[] {
+        new Integer(0),
+        new Integer(0),
+        new Integer(mbox3),
+        new Integer(mbox3),
+        new Integer(0),
+        samples
+      });
 
       //int w = metrics.charWidth(c);
       int minX = 1000, maxX = 0;
@@ -230,7 +295,8 @@ public class PFont2 extends PFont {
 
       for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
-          int value = 255 - raster.getSample(x, y, 0);
+          int value = 255 - (samples[y * mbox3 + x] & 0xff);
+          //int value = 255 - raster.getSample(x, y, 0);
           int pindex = (y - minY) * width[index] + (x - minX);
           bitmaps[index].pixels[pindex] = value;
         }
@@ -272,6 +338,11 @@ public class PFont2 extends PFont {
                          width[i]);
       }
       bitmaps[i] = null;
+    }
+
+    } catch (Exception e) {  // catch-all for reflection stuff
+      e.printStackTrace();
+      return;
     }
   }
 }

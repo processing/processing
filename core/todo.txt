@@ -14,16 +14,18 @@ o image(myg, x, y) doesn't work but image(myg, x, y, w, h) does
 o   (image kind prolly not set right and so image() gets pissy)
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655
 
-_ depth testing of lines vs text is problematic
-_   use depth()/noDepth() to handle depth test
-
-_ y2 position of rectangles not same as y2 position of lines
-
 text fixes
 X make text rect use rectMode for placement
 X if a word (no spaces) is too long to fit, insert a 'space'
 X move left/center/right aligning into the font class
 X   otherwise text with alignment has problems with returns
+X could PFont2 be done entirely with reflection?
+X   that way other font types can properly extend PFont
+
+_ depth testing of lines vs text is problematic
+_   use depth()/noDepth() to handle depth test
+
+_ y2 position of rectangles not same as y2 position of lines
 
 text issues
 _ need to resolve SCREEN_SPACE vs OBJECT_SPACE
@@ -38,8 +40,6 @@ _     that way can clear up some of the general confusion in the code
 text wish list
 _ look into fixing the texture mapping to not squash fonts
 _   NEW_GRAPHICS totally smashes everything
-_ could PFont2 be done entirely with reflection?
-_   that way other font types can properly extend PFont
 _ not having kerning really blows
 _   could this be pulled from the OpenType font stuff? 
 _   it could be placed at the end of the file
