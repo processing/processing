@@ -17,6 +17,13 @@ public class PCanvas extends Canvas {
     private int         width;
     private int         height;
     
+    private int         colorMode;
+    private boolean     colorModeRGB255;
+    private int         colorMaxX;
+    private int         colorMaxY;
+    private int         colorMaxZ;
+    private int         colorMaxA;
+    
     private boolean     stroke;
     private int         strokeWidth;
     private int         strokeColor;
@@ -44,6 +51,10 @@ public class PCanvas extends Canvas {
         
         buffer = Image.createImage(width, height);
         bufferg = buffer.getGraphics();        
+        
+        colorMode = PMIDlet.RGB;
+        colorModeRGB255 = true;
+        colorMaxX = colorMaxY = colorMaxZ = colorMaxA = 255;
         
         stroke = true;
         strokeColor = 0;
@@ -578,13 +589,111 @@ public class PCanvas extends Canvas {
         bufferg.fillRect(0, 0, width, height);
     }
     
+    public void colorMode(int mode) {
+        if ((mode == PMIDlet.RGB) || (mode == PMIDlet.HSB)) {
+            colorMode = mode;
+        }
+        colorModeRGB255 = false;
+        if ((colorMode == PMIDlet.RGB) &&
+            (colorMaxX == 255) &&
+            (colorMaxY == 255) &&
+            (colorMaxZ == 255)) {
+            colorModeRGB255 = true;
+        }
+    }
+    
+    public void colorMode(int mode, int range1, int range2, int range3) {
+        colorMaxX = range1;
+        colorMaxY = range2;
+        colorMaxZ = range3;
+        colorMode(mode);
+    }
+    
+    public void colorMode(int mode, int range1, int range2, int range3, int range4) {
+        colorMode(mode, range1, range2, range3);
+        colorMaxA = range4;
+    }
+    
+    public int color(int gray) {
+        return color(gray, colorMaxA);
+    }
+    
+    public int color(int gray, int alpha) {
+        if (gray < 0) {
+            gray = 0;
+        }
+        if (gray > colorMaxX) {
+            gray = colorMaxX;
+        }
+        if (alpha < 0) {
+            alpha = 0;
+        }
+        if (alpha > colorMaxA) {
+            alpha = colorMaxA;
+        }
+        if (!colorModeRGB255) {
+            gray = gray * 255 / colorMaxX;
+        }
+        if (colorMaxA != 255) {
+            alpha = alpha * 255 / colorMaxA;
+        }
+        
+        return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
+    }
+    
+    public int color(int value1, int value2, int value3) {
+        return color(value1, value2, value3, colorMaxA);
+    }
+    
+    public int color(int value1, int value2, int value3, int alpha) {
+        if (value1 < 0) {
+            value1 = 0;
+        }
+        if (value1 > colorMaxX) {
+            value1 = colorMaxX;
+        }
+        if (value2 < 0) {
+            value2 = 0;
+        }
+        if (value2 > colorMaxY) {
+            value2 = colorMaxY;
+        }
+        if (value3 < 0) {
+            value3 = 0;
+        }
+        if (value3 > colorMaxZ) {
+            value3 = colorMaxZ;
+        }
+        if (alpha < 0) {
+            alpha = 0;
+        }
+        if (alpha > colorMaxA) {
+            alpha = colorMaxA;
+        }
+        
+        if (!colorModeRGB255) {
+            if (colorMode == PMIDlet.RGB) {
+                value1 = value1 * 255 / colorMaxX;
+                value2 = value2 * 255 / colorMaxY;
+                value3 = value3 * 255 / colorMaxZ;
+            } else {
+                //// convert from HSB to RGB
+            }
+        }
+        if (alpha != 255) {
+            alpha = alpha * 255 / colorMaxA;
+        }
+        
+        return (alpha << 24) | (value1 << 16) | (value2 << 8) | value3;
+    }
+    
     public void stroke(int gray) {
         stroke(gray, gray, gray);
     }
     
     public void stroke(int value1, int value2, int value3) {
         stroke = true;
-        strokeColor = ((value1 & 0xFF) << 16) | ((value2 & 0xFF) << 8) | (value3 & 0xFF);
+        strokeColor = color(value1, value2, value3);
     }
     
     public void noStroke() {
@@ -597,7 +706,7 @@ public class PCanvas extends Canvas {
     
     public void fill(int value1, int value2, int value3) {
         fill = true;
-        fillColor = ((value1 & 0xFF) << 16) | ((value2 & 0xFF) << 8) | (value3 & 0xFF);
+        fillColor = color(value1, value2, value3);
     }
     
     public void noFill() {
