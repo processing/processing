@@ -37,9 +37,13 @@ public interface PMethods {
   public void vertex(float x, float y, float z,
                      float u, float v);
 
-  public void bezierVertex(float x, float y);
+  public void bezierVertex(float x1, float y1,
+                           float x2, float y2,
+                           float x3, float y3);
 
-  public void bezierVertex(float x, float y, float z);
+  public void bezierVertex(float x1, float y1, float z1,
+                           float x2, float y2, float z2,
+                           float x3, float y3, float z3);
 
   public void curveVertex(float x, float y);
 
@@ -221,7 +225,7 @@ public interface PMethods {
 
   public void scale(float sx, float sy);
 
-  public void scale(float x, float y, float z);
+  public void scale(float sx, float sy, float sz);
 
   //
 
@@ -410,13 +414,10 @@ public interface PMethods {
 
   //
 
-  public void loadPixels();
-
-  public void updatePixels();
-
-  public void updatePixels(int x, int y, int c, int d);
-
-  public void pixelsUpdated();
+  // now handled by PApplet
+  //public void loadPixels();
+  //public void updatePixels();
+  //public void updatePixels(int x, int y, int c, int d);
 
   //
 
@@ -424,7 +425,7 @@ public interface PMethods {
 
   public PImage get(int x, int y, int c, int d);
 
-  //public PImage get();  // too abstract/confusing
+  public PImage get();
 
   public void set(int x, int y, int argb);
 

@@ -317,6 +317,8 @@ public class PApplet extends Applet
   public void stop() {
     //finished = true;  // why did i comment this out?
 
+    //System.out.println("stopping applet");
+
     // don't run stop and disposers twice
     if (thread == null) return;
     thread = null;
@@ -458,6 +460,7 @@ public class PApplet extends Applet
 
   public void draw() {
     // if no draw method, then shut things down
+    //System.out.println("no draw method, goodbye");
     finished = true;
   }
 
@@ -615,6 +618,7 @@ public class PApplet extends Applet
       */
 
       while ((Thread.currentThread() == thread) && !finished) {
+        //while ((thread != null) && !finished) {
       //while (!finished) {
         //updated = false;
 
@@ -764,7 +768,10 @@ public class PApplet extends Applet
       // note that this will not catch errors inside setup()
       // those are caught by the PdeRuntime
 
+      System.out.println("exception occurred (if you don't see a stack " +
+                         "trace below this message, we've got a bug)");
       finished = true;
+      //e.printStackTrace(System.out);
 
       if (leechErr != null) {
         // if draw() mode, make sure that ui stops waiting
@@ -779,6 +786,7 @@ public class PApplet extends Applet
     }
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               " thread finished");
+    //System.out.println("exiting run " + finished);
     stop();  // call to shutdown libs?
   }
 
@@ -3171,6 +3179,7 @@ public class PApplet extends Applet
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // STRINGS
@@ -4093,10 +4102,14 @@ public class PApplet extends Applet
         int anything = System.in.read();
         if (anything == EXTERNAL_STOP) {
 
+          //System.out.println("got external stop");
+
           // adding this for 0073.. need to stop libraries
           // when the stop button is hit.
           PApplet.this.stop();
           finished = true;
+          //} else {
+          //print((char) anything);
         }
       } catch (IOException e) {
         finished = true;
@@ -4446,6 +4459,26 @@ v              PApplet.this.stop();
 
   //////////////////////////////////////////////////////////////
 
+
+  public void loadPixels() {
+    g.loadPixels();
+    pixels = g.pixels;
+  }
+
+
+  public void updatePixels() {
+    // anything special here?
+    g.updatePixels();
+  }
+
+
+  public void updatePixels(int x1, int y1, int x2, int y2) {
+    g.updatePixels(x1, y1, x2, y2);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // everything below this line is automatically generated. no touch.
   // public functions for processing.core
 
@@ -4468,24 +4501,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void loadPixels() {
-    if (recorder != null) recorder.loadPixels();
-    g.loadPixels();
-  }
-
-
-  public void updatePixels() {
-    if (recorder != null) recorder.updatePixels();
-    g.updatePixels();
-  }
-
-
-  public void updatePixels(int x1, int y1, int x2, int y2) {
-    if (recorder != null) recorder.updatePixels(x1, y1, x2, y2);
-    g.updatePixels(x1, y1, x2, y2);
-  }
-
-
   public int get(int x, int y) {
     return g.get(x, y);
   }
@@ -4493,6 +4508,11 @@ v              PApplet.this.stop();
 
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
+  }
+
+
+  public PImage get() {
+    return g.get();
   }
 
 
@@ -4686,15 +4706,19 @@ v              PApplet.this.stop();
   }
 
 
-  public void bezierVertex(float x, float y) {
-    if (recorder != null) recorder.bezierVertex(x, y);
-    g.bezierVertex(x, y);
+  public void bezierVertex(float x1, float y1,
+                           float x2, float y2,
+                           float x3, float y3) {
+    if (recorder != null) recorder.bezierVertex(x1, y1, x2, y2, x3, y3);
+    g.bezierVertex(x1, y1, x2, y2, x3, y3);
   }
 
 
-  public void bezierVertex(float x, float y, float z) {
-    if (recorder != null) recorder.bezierVertex(x, y, z);
-    g.bezierVertex(x, y, z);
+  public void bezierVertex(float x1, float y1, float z1,
+                           float x2, float y2, float z2,
+                           float x3, float y3, float z3) {
+    if (recorder != null) recorder.bezierVertex(x1, y1, z1, x2, y2, z2, x3, y3, z3);
+    g.bezierVertex(x1, y1, z1, x2, y2, z2, x3, y3, z3);
   }
 
 
@@ -5455,12 +5479,6 @@ v              PApplet.this.stop();
   public void background(PImage image) {
     if (recorder != null) recorder.background(image);
     g.background(image);
-  }
-
-
-  public void clear() {
-    if (recorder != null) recorder.clear();
-    g.clear();
   }
 
 
