@@ -407,13 +407,6 @@ public class PdeRuntime implements PdeMessageConsumer {
     } else {
       messageLineCount++;
 
-      // TODO this is insufficient. need to cycle through the 
-      // different classes that are currently loaded and see if
-      // there is an error in one of them.
-      //String className = sketch.mainClassName;
-
-      //\s+at\s([\w\d\._]+)\.([\<\w\d_]+)\(([\w\d_].java\:(\d+)
-
       /*
 java.lang.NullPointerException
         at javatest.<init>(javatest.java:5)
@@ -548,19 +541,22 @@ java.lang.NullPointerException
       this.input = input;
 
       thread = new Thread(this);
+      // unless this is set to min, it seems to hork the app
+      // since it's in charge of stuffing the editor console with strings
+      // maybe it's time to get rid of/fix that friggin console
       thread.setPriority(Thread.MIN_PRIORITY);
       thread.start();
     }
 
     public void run() {
-      byte boofer[] = new byte[1024];
+      byte boofer[] = new byte[256];
 
-      // read, block until something good comes through
       while (Thread.currentThread() == thread) {
         try {
-          //System.out.println("readin");
+          // can't use a buffered reader here because incremental
+          // print statements are interesting too.. causes some
+          // disparity with how System.err gets spewed, oh well.
           int count = input.read(boofer, 0, boofer.length);
-          //System.out.println("readout " + count);
           if (count == -1) {
             thread = null;
 
@@ -574,6 +570,12 @@ java.lang.NullPointerException
           //e.printStackTrace(System.out);
           //e.printStackTrace();
           thread = null;
+
+        } catch (Exception e) {
+          System.out.println("SystemOutSiphon: i just died in your arms tonight");
+          e.printStackTrace();
+          thread = null;
+          //System.out.println("");
         }
         //System.out.println("SystemOutSiphon: out");
         //thread = null;
