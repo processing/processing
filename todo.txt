@@ -1,5 +1,6 @@
 0071
 o get linux version for 0071
+X suppress "bad file descriptor" error on mac os x
 
 _ make notes about preproc
 _   subclasses need to use "public void keyPressed" not "void keyPressed"
