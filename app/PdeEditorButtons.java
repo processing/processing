@@ -241,13 +241,20 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
     screen.drawImage(offscreen, 0, 0, null);
     //screen.fillRect(0, 0, 10, 10);
   }
-  
+
   public void mouseMoved(MouseEvent e) {
+    if (state[OPEN] != INACTIVE) {
+      // avoid flicker, since there will probably be an update event
+      setState(OPEN, INACTIVE, false);
+    }
     //System.out.println(e);
     mouseMove(e);
   }
 
   public void mouseDragged(MouseEvent e) {
+    //if (state[OPEN] != INACTIVE) {
+    //setState(OPEN, INACTIVE, true);
+    //}
     //System.out.println(e);
     //mouseMove(e);
   }
@@ -320,6 +327,7 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
     return -1;
   }
 
+
   private void setState(int slot, int newState, boolean updateAfter) {
     //if (inactive == null) return;
     state[slot] = newState;
@@ -339,10 +347,16 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
   }
 
   public void mouseEntered(MouseEvent e) {
+    //System.out.println("entered");
     mouseMove(e);
   }
 
   public void mouseExited(MouseEvent e) {
+    if (state[OPEN] != INACTIVE) {
+      setState(OPEN, INACTIVE, true);
+    }
+    //System.out.println("exited");
+
     // kludge
     for (int i = 0; i < BUTTON_COUNT; i++) {
       messageClear(title[i]);
@@ -366,7 +380,7 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
 
     if (currentSelection == OPEN) {
       if (popup == null) {
-       popup = new PopupMenu();
+        popup = new PopupMenu();
         add(popup);
       }
       //popup.addActionListener(this);
