@@ -1146,9 +1146,11 @@ public class PdeSketch {
       // remove things up to the last dot
       String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
       //System.out.println("found package " + entry);
-      Object libFolder = PdeSketchbook.importToLibraryTable.get(entry);
+      File libFolder = (File) PdeSketchbook.importToLibraryTable.get(entry);
       //System.out.println("  found lib folder " + libFolder);
       importedLibraries.add(libFolder);
+
+      libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
     }
 
 

@@ -14,7 +14,7 @@ X make grayscale image in p5
 X   could be used with alpha() to properly set alpha values
 X   made into filter(GRAYSCALE) and filter(BLACK_WHITE) functions
 X make g.depthTest settable as a hint
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1078428462;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303102;start=0
 X #ifdef to remove client and server code as well
 X need to resolve issues between rendering screen/file
 X   illustrator-based rendering needs to work for ars projects
@@ -24,7 +24,7 @@ X rewrite bagel code..
 X   for this release, because it will break things along with the lib stuff
 X   switch to PImage, PApplet, etc
 o bug in BImage.smooth() when resizing an image
-o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077669847
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303158;start=0
 X shut off the automatic gunzipping of streams, keep for fonts
 X fix for duplicated points in polygons that foiled the tesselator
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077819175
@@ -33,7 +33,7 @@ X   not quite so much duplicated in cases etc.
 X lines: vertex coloring bug with my swap hack
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
 X   last vertex on LINE_LOOP fades out
-X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303406;start=0
 X include values in PConstants for additional blend modes:
 X   DIFFERENCE, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT
 X include a lerp()? is there one in flash?
@@ -170,12 +170,12 @@ X   tab key not working?
 X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091853942;start=0
 X   mousePressed, keyPressed, others.. queue them all
 X     queue multiple times
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
 X   strangeness with key codes on keyPressed
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
 X   key codes not properly coming through for UP/DOWN/etc
 X     had to bring back keyCode
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
 X add redraw() function
 X   call redraw() on the first time through (to force initial draw)
 X   otherwise noLoop() in setup means no drawing happens at all
