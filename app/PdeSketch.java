@@ -188,7 +188,10 @@ public class PdeSketch {
     // remove any entries that didn't load properly
     int index = 0;
     while (index < codeCount) {
-      if (code[index].program == null) {
+      //System.out.println("code is " + code);
+      //System.out.println(index + " " + code[index]);
+      if ((code[index] == null) ||
+          (code[index].program == null)) {
         //hide(index);  // although will this file be hidable?
         for (int i = index+1; i < codeCount; i++) {
           code[i-1] = code[i];
