@@ -208,10 +208,11 @@ public class PdeEditor extends JPanel {
           setVisible(true);
           doClose();
 
-#ifdef JDK13
+          //#ifdef JDK13
           // move editor to front in case it was hidden
-          PdeBase.frame.setState(Frame.NORMAL);
-#endif
+          //PdeBase.frame.setState(Frame.NORMAL);
+          //base.setState(Frame.NORMAL);
+          //#endif
         }});
 
     //Dimension labelSize = label.getPreferredSize();
@@ -376,7 +377,8 @@ public class PdeEditor extends JPanel {
       windowX = (screen.width - windowW) / 2;
       windowY = (screen.height - windowH) / 2;
     }
-    PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
+    //PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
+    base.setBounds(windowX, windowY, windowW, windowH);
     //rebuildSketchbookMenu(PdeBase.sketchbookMenu);
   }
 
@@ -692,6 +694,7 @@ public class PdeEditor extends JPanel {
     // required so that key events go to the panel and <key> works
     //graphics.requestFocus();  // removed for pde    
   }
+
 
   class RunButtonWatcher implements Runnable {
     Thread thread;
@@ -1417,7 +1420,8 @@ public class PdeEditor extends JPanel {
 
       Properties skprops = new Properties();
 
-      Rectangle window = PdeBase.frame.getBounds();
+      //Rectangle window = PdeBase.frame.getBounds();
+      Rectangle window = base.getBounds();
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       skprops.put("window.x", String.valueOf(window.x));
