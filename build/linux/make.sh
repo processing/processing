@@ -52,8 +52,8 @@ CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
 #CLASSPATH=../app/build/linux/work/java/lib/rt.jar:../app/build/linux/work/java/lib/ext/comm.jar
 
 ### --- make version with serial for the application
-echo Building bagel with serial support
-perl make.pl SERIAL
+echo Building bagel with serial and sonic support
+perl make.pl SERIAL SONIC
 cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting
