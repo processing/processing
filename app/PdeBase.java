@@ -20,7 +20,7 @@ public class PdeBase extends Frame implements ActionListener {
 
   protected UndoAction undoAction;
   protected RedoAction redoAction;
-  protected UndoManager undo = new UndoManager();
+  static public UndoManager undo = new UndoManager(); // editor needs this guy
 
   // indicator that this is the first time this feller has used p5
   static boolean firstTime;
@@ -44,6 +44,7 @@ public class PdeBase extends Frame implements ActionListener {
       };
 
   Menu serialMenu;
+  MenuItem undoItem, redoItem;
   MenuItem saveMenuItem;
   MenuItem saveAsMenuItem;
   MenuItem beautifyMenuItem;
@@ -251,7 +252,75 @@ public class PdeBase extends Frame implements ActionListener {
     menu.addActionListener(this);
     menubar.add(menu);
 
+    menu = new Menu("Edit");
+    
+    undoItem = new MenuItem("Undo", new MenuShortcut('Z'));
+    undoItem.addActionListener(undoAction = new UndoAction());
+    menu.add(undoItem);
+
+    redoItem = new MenuItem("Redo", new MenuShortcut('Y'));
+    redoItem.addActionListener(redoAction = new RedoAction());
+    menu.add(redoItem);
+
+    menu.addSeparator();
+
+    item = new MenuItem("Cut", new MenuShortcut('X'));
+    item.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  editor.textarea.cut();
+	}
+      });
+    menu.add(item);
+
+    item = new MenuItem("Copy", new MenuShortcut('C'));
+    item.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  editor.textarea.copy();
+	}
+      });
+    menu.add(item);
+
+    item = new MenuItem("Paste", new MenuShortcut('V'));
+    item.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  editor.textarea.paste();
+	}
+      });
+    menu.add(item);
+
+    menu.addSeparator();
+
+    item = new MenuItem("Select All", new MenuShortcut('A'));
+    item.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  editor.textarea.selectAll();
+	}
+      });
+    menu.add(item);
+
     /*
+    item = new MenuItem("Cut", new MenuShortcut('X'));
+    //Action act = getActionByName(DefaultEditorKit.cutAction);
+    //System.out.println("act is " + act);
+    item.addActionListener(getActionByName(DefaultEditorKit.cutAction));
+    menu.add(item);
+    item = new MenuItem("Copy", new MenuShortcut('C'));
+    item.addActionListener(getActionByName(DefaultEditorKit.copyAction));
+    menu.add(item);
+    item = new MenuItem("Paste", new MenuShortcut('V'));
+    item.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
+    menu.add(item);
+    menu.addSeparator();
+    item = new MenuItem("Select All", new MenuShortcut('A'));
+    item.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
+    menu.add(item);
+    */
+
+    menubar.add(menu);
+
+    /*
+      PdeEditorTextPane version
+
     createActionTable(editor.textarea);
     menu = new Menu("Edit");
     //undoAction = new UndoAction();
@@ -282,9 +351,12 @@ public class PdeBase extends Frame implements ActionListener {
     menubar.add(menu);
 
     // i hear a cs prof or a first year student screaming somewhere
-    Document document = editor.textarea.document;
+    //Document document = editor.textarea.document;
+    Document document = editor.textarea.getDocument();
     document.addUndoableEditListener(new MyUndoableEditListener());
     */
+    Document document = editor.textarea.getDocument();
+    document.addUndoableEditListener(new MyUndoableEditListener());
 
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Run", new MenuShortcut('R')));
@@ -339,25 +411,7 @@ public class PdeBase extends Frame implements ActionListener {
     Toolkit tk = Toolkit.getDefaultToolkit();
     Dimension screen = tk.getScreenSize();
 
-    // THESE CAN BE REMOVED TO SOME EXTENT
-    /*
-    int frameX = getInteger("window.x", (screen.width - width) / 2);
-    int frameY = getInteger("window.y", (screen.height - height) / 2);
-
-    frame.setBounds(frameX, frameY, 
-		    width + insets.left + insets.right, 
-		    height + insets.top + insets.bottom);
-    */
-
-    //frame.reshape(50, 50, width + insets.left + insets.right, 
-    //	  height + insets.top + insets.bottom);
-
-    // i don't like this being here, but..
-    //((PdeEditor)environment).graphics.frame = frame;
-    //((PdeEditor)environment).frame = frame
     frame.pack();  // maybe this should be before the setBounds call
-
-    //System.out.println(frame.getMinimumSize() + " " + frame.getSize());
 
     editor.frame = frame;  // no longer really used
     editor.init();
@@ -366,6 +420,9 @@ public class PdeBase extends Frame implements ActionListener {
     frame.show();  // added back in for pde
   }
 
+
+  /*
+    PdeEditorTextPane
 
   Hashtable actions;
 
@@ -385,7 +442,7 @@ public class PdeBase extends Frame implements ActionListener {
     //System.out.println(name + " " + actions);
     return (Action)(actions.get(name));
   }
-
+  */
 
   //This one listens for edits that can be undone.
   protected class MyUndoableEditListener implements UndoableEditListener {
@@ -420,9 +477,11 @@ public class PdeBase extends Frame implements ActionListener {
     protected void updateUndoState() {
       if (undo.canUndo()) {
 	this.setEnabled(true);
+	undoItem.setEnabled(true);
 	putValue(Action.NAME, undo.getUndoPresentationName());
       } else {
 	this.setEnabled(false);
+	undoItem.setEnabled(false);
 	putValue(Action.NAME, "Undo");
       }
     }      
@@ -449,9 +508,11 @@ public class PdeBase extends Frame implements ActionListener {
     protected void updateRedoState() {
       if (undo.canRedo()) {
 	this.setEnabled(true);
+	redoItem.setEnabled(true);
 	putValue(Action.NAME, undo.getRedoPresentationName());
       } else {
 	this.setEnabled(false);
+	redoItem.setEnabled(false);
 	putValue(Action.NAME, "Redo");
       }
     }

@@ -35,33 +35,44 @@ java.lang.NullPointerException
   at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
   at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
 
+_ recursive sketch add that works properly and ignores crap
+
 _ jedit text area
-_   get settings from PdeBase
-_   need to take care of auto-indent etc
-_   better defaults for syntax highlighting
-_     comments should be gray and not italicized
-_     disable end of line marker by default
-_     highlight p5 keywords
-_       setup, draw, loop as one class
-_       rect, line etc as another
-_       width, height, pixels as a third
+_   change bg color for 'use external editor'
 _   enable wheel mouse
-_   jump to top of document on load
-_   change style of ~ at end of document for unused area
 _ extra linefeeds is getting annoying for folks
 _   line endings joy
-_   is setText goobering up on beautify?
 _   how are line endings working during save?
+
+X   enable/disable undo/redo
+X   don't let undo after setting text
+X   get focus after setText
+X   need to take care of auto-indent etc
+X   is setText goobering up on beautify?
+X   re-implement cut/copy/paste
+X   re-implement undo/redo
+X   get settings from PdeBase
+X   better defaults for syntax highlighting
+X     comments should be gray and not italicized
+X     disable end of line marker by default
+X     highlight p5 keywords
+X       setup, draw, loop as one class
+X       rect, line etc as another
+X       width, height, pixels as a third
+X   jump to top of document on load
+X   change style of ~ at end of document for unused area
 
 
 MENTION IN DOCS
+_ describe rundown of constants pulled from pde.properties
 _ notes on debugging
 _   look at the code that's created in build/
 _   run with java -Xint blahblah (turns off jit)
 _ known issues
 _   random freezes.. especially under windows
 _ make a note that size() has to come first [nluken]
-_ doesn't yet run under java 1.4
+_ doesn't yet run under java 1.4 on mac
+_ undo/redo can go to far
 
 _ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
 _   also 'why p5' message from amit pitaru on 12/15/02
