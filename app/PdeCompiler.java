@@ -86,15 +86,19 @@ public class PdeCompiler implements PdeMessageConsumer{
       "jikes",
 #endif
 
+      // necessary to make output classes compatible with 1.1
+      // i.e. so that exported applets can work with ms jvm on the web
+      "-target",
+      "1.1",
+
       // used when run without a vm ("expert" mode)
       "-bootclasspath",
       System.getProperty("sun.boot.class.path") + additional,
 
-#ifdef MACOS
-      // only because not tested elsewhere
+      // definitely needed on macos, but not tested elsewhere
+      // probably wouldn't hurt on the others
       "-classpath",
       System.getProperty("java.class.path"),
-#endif
 
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
@@ -103,7 +107,7 @@ public class PdeCompiler implements PdeMessageConsumer{
     };
 
     //for (int i = 0; i < command.length; i++) {
-    //System.out.println("C1: " + command[i]);
+    //System.out.println("C" + i + ": " + command[i]);
     //System.out.println();
     //}
 
