@@ -631,7 +631,7 @@ public class PFont implements PConstants {
 
     for (int index = start; index < stop; index++) {
       textImpl(textBuffer[index], x, y, z, parent);
-      x += width(textBuffer[index]);
+      x += parent.textSize * width(textBuffer[index]);
     }
   }
 
@@ -688,7 +688,8 @@ public class PFont implements PConstants {
       if ((textBuffer[index] == ' ') ||
           (index == length-1)) {
         // boundary of a word
-        float wordWidth = calcWidth(textBuffer, wordStart, index);
+        float wordWidth = parent.textSize *
+          calcWidth(textBuffer, wordStart, index);
         if (runningX + wordWidth > boxX2) {
           if (runningX == boxX1) {
             // if this is the first word, and its width is
@@ -701,7 +702,8 @@ public class PFont implements PConstants {
                 // not a single char will fit on this line. screw 'em.
                 return;
               }
-              wordWidth = calcWidth(textBuffer, wordStart, index);
+              wordWidth = parent.textSize *
+                calcWidth(textBuffer, wordStart, index);
             } while (wordWidth > boxWidth);
             textLine(lineStart, index, lineX, currentY, boxZ, parent);
 
