@@ -192,10 +192,13 @@ public class PdeEditorStatus extends Panel
       cancelButton = new Button(PROMPT_CANCEL);
       okButton = new Button(PROMPT_OK);
 
-      yesButton.setBackground(bgcolor[PROMPT]);
-      noButton.setBackground(bgcolor[PROMPT]);
-      cancelButton.setBackground(bgcolor[PROMPT]);
-      okButton.setBackground(bgcolor[PROMPT]);
+      // !@#(* aqua #($*(( turtle-neck wearing #(** (#$@)( 
+      if (PdeBase.platform == PdeBase.MACOSX) {
+	yesButton.setBackground(bgcolor[PROMPT]);
+	noButton.setBackground(bgcolor[PROMPT]);
+	cancelButton.setBackground(bgcolor[PROMPT]);
+	okButton.setBackground(bgcolor[PROMPT]);
+      }
 
       setLayout(null);
 

@@ -23,11 +23,11 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
   public PdeEditorListener(PdeEditor editor) {
     this.editor = editor;
 
-    expandTabs = PdeBase.getBoolean("editor.expandTabs", true);
-    tabSize = PdeBase.getInteger("editor.tabSize", 2);
+    expandTabs = PdeBase.getBoolean("editor.expand_tabs", true);
+    tabSize = PdeBase.getInteger("editor.tab_size", 2);
     tabString = spaces.substring(0, tabSize);
-    autoIndent = PdeBase.getBoolean("editor.autoIndent", true);
-    balanceParens = PdeBase.getBoolean("editor.balanceParens", true);
+    autoIndent = PdeBase.getBoolean("editor.auto_indent", true);
+    balanceParens = PdeBase.getBoolean("editor.balance_parens", false);
   }
 
 
