@@ -91,7 +91,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
   public PdeEditorHeader(PdeEditor eddie) { 
     this.editor = eddie; // weird name for listener
 
-    pieces = new Image[2][3];
+    pieces = new Image[STATUS.length][WHERE.length];
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 4; j++) {
         pieces[i][j] = PdeBase.getImage("tab-" + STATUS[i] + "-" + 
