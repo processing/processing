@@ -8,7 +8,8 @@ echo Creating linux distribution for revision $REVISION...
 
 # remove any old boogers
 rm -rf processing
-rm -f processing-*.tgz
+rm -rf processing-*
+#rm -f processing-*.tgz
 
 # use 'shared' files as starting point
 cp -r ../shared processing
