@@ -215,7 +215,8 @@ public class KjcEngine extends at.dms.kjc.Main implements PdeEngine {
 
       if (PdeBase.getBoolean("compiler.inline_web_colors", true)) {
 	// convert "= #cc9988" into "= 0xffcc9988"
-	program = substipoot(program, "(=\\s*)\\#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])", "$1 0xff$2$3$4");
+	//program = substipoot(program, "(=\\s*)\\#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])", "$1 0xff$2$3$4");
+	program = substipoot(program, "#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])", "0xff$1$2$3");
       }
 
       if ((program.indexOf("void setup()") != -1) ||
