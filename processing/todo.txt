@@ -17,7 +17,8 @@ X   fix scripts for dist / make
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054222236
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054886548
 
-bf b _ try installing with rxtx package on another machine
+_ inside draw() mode, delay() does nothing
+_   delay might be a good way to signal drawing to the screen/updating
 
 bf b _ if sketchbook.dir is set, makes new sketchbook folder
 bf b _   reads sketchbook properly from other folder
@@ -674,6 +675,7 @@ b _   why is bbedit the type for the other files? make simpletext
 
 
 DISTRIBUTION / Mac OS X
+b _ rxtx is a problem in general.. how to improve installation
 b _ report of a problem with the rxtx installer being bad
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
 b _ remove 'quit' from file menu
