@@ -12,6 +12,8 @@ Daniel Evan Schwartz <design@roomn8.com>
 Roger Langley <galahad@uslink.net>
 Roy Macarthur <roy@mcarthur.com>
 Fabrice Clérot <fabrice.clerot@francetelecom.com>
+"Daniel Mendelsohn @ Heads4Sale" <dan@heads4sale.com>
+Michael McGuffin <mjmcguff@dgp.toronto.edu>
 
 
 QUESTIONS
@@ -21,9 +23,15 @@ _ loadImage or getImage?
 _ bezierVertex/catmullRomVertex poorly named (based on algo used)
 _   instead curveVertex/fitCurveVertex/etc.
 _ circle/square functions
+_ should the default be 100x100
+_ maybe stop/kill button should only be a stop btn
 
 
 for 0010
+_ make size() work for draw() mode
+_ finish color function inside applet
+_   do by simplifying stroke/fill/background inside bagel
+_     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
 _ font support
 _   loadImage/loadFont or getImage/getFont?
 _   text(char c), text(string s)
@@ -34,6 +42,8 @@ _   image() and 2D/2D affine versions of it
 _ min() seems funny/unavailable
 _ screenGrab() code (single frame to tif) 
 _ add java.* to top of processingapplet default base class used by kjc
+_ KjcProcessingApplet is dumb, kjc should make subst itself
+o   give warning when compiling w/o kjcprocessingapplet
 _ z=0 shit, 2D stuff needs to draw over z=0 plane
 _   new objects draw behind old objects with noBackground()
 _ no stroke should show up on image()
@@ -60,6 +70,7 @@ _   fix background from showing up black
 _ fix crappy way of determining if inside a class--ignores comments
 _ post new macintosh version
 _   with serial port support
+_ include stdout/stderr in the processing window
 X make acu fonts work again
 X write code to use simple bitmap fonts
 X add a file with bugs for testing
@@ -88,6 +99,7 @@ X show creas how to get access to cvs
 
 for 0011
 _ option to enable/disable frame on running applets
+_   more like photoshop - presentation mode w/ nothing or frames on all
 _ compiling .java files leaves the .class files next to the .java
 _   make sure all the dirs in sketchbook added to classpath on startup
 _   if new dir added, must restart processing (this is acceptable)
@@ -98,8 +110,7 @@ _ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
 _   better solution for this (error while opening image)
 _   and document how image loading works
 _ keys don't work, even when overriding keyTyped etc.
-_ include stdout/stderr in the processing window
-_   stderr in red color
+_ stderr in red color
 _ modify kjc to take a PrintWriter, instead of current weird hacks
 _ are line and point working in 3D?
 _ stop required before kill for applets that use serial
@@ -112,7 +123,6 @@ for 0012
 _ fix bugs from the 'bugs' file 
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
-_ give warning when compiling w/o kjcprocessingapplet
 
 
 PROCESSING - NECESSITIES FOR BOOK
@@ -173,6 +183,7 @@ _   uploading pieces when finished - scrapbook/sketchbook model?
 _   download new versions of pde.jar from main machine
 _ quicktime exporter or image sequence export
 _ how to use ssh identity file to maintain auth for brancusi
+_ support for moving the camera around
 
 
 BAGEL
@@ -260,6 +271,11 @@ _ look at glut for other needed shapes
 _ make PdeEditorButtons wait until mouseup to change
 _   (currently doesn't feel as good as it could)
 _ licensing issues with kjc (before public release)
+
+
+FEEDBACK
+_ mcguffin - camera control
+_ mcguffin - commands/parameters for code, simple ui for manipulating
 
 
 ENV
