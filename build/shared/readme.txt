@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0044 - 2 SEPTEMBER 2002
+RELEASE 0046 - 19 NOVEMBER 2002
 
 (c) 2002, 2001 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -14,6 +14,13 @@ RELEASE NOTES & DEVELOPER SOAPBOX
 herein follows lots of random notes about this release. you'll have to
 pardon the chatty detail in some spots, as this will also serve as a
 response to many of the 'frequently asked questions' that we have. 
+
+if you've already read all this crap for a previous release, you might
+skip to the section on the various platforms to see what's been
+updated.
+
+see also 'revisions.txt' which contains for information about the
+specific updates and fixes in this release.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -33,8 +40,11 @@ lather, rinse, repeat as necessary.
 
 THANKS TO...
 
-all the people who reported bugs for this release: jes, adrien,
-eviltyler, fdb, ik0, chrism, jeremy, mKoser, michaONE.
+all the people on the bboard who reported bugs for this release. 
+it's been really helpful for us. 
+
+also thanks to everyone who's been posting examples on the site, 
+we're excited about what we're seeing.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -168,27 +178,32 @@ you tell us about them, so we can fix them.
 
 MAC OS X
 
-processing runs best with (and probably requires) Mac OS X 10.1 and 
-"Java 1.3.1 Update 1", the latter of which is available as a free
-update from the "Software Update" control panel. it can also be
-downloaded from http://www.apple.com/downloads/macosx/apple/ or
-from: http://www.apple.com/downloads/macosx/apple/java131.html
+the most current release has only been tested on Mac OS X 10.2.2. your
+mileage may vary if you're running something else. actually, your
+mileage will vary no matter what, because who knows what this software
+is gonna do. you're playing with free, alpha software. get psyched!
 
-with os x 10.2 on its way, you'll no longer need the java update, 
-but we'll have to see if we can afford being gouged $129 for the
-upgrade in order to do some testing under this cat-themed operating
-system. 
+minimum requirements.. processing requires at least Mac OS X 10.1. if
+you're running anything older than 10.2, you'll need "Java 1.3.1
+Update 1", the latter of which is available as a free update from the
+"Software Update" control panel. it can also be downloaded from
+http://www.apple.com/downloads/macosx/apple/ or from:
+http://www.apple.com/downloads/macosx/apple/java131.html
 
-another issue under osx.. it appears that there's a bug in their java
-vm with text areas, so as a result, the arrow keys won't work in the
-editor. we think this really stinks and are searching for options for
-a (near?) future release.
+text area & mouse wheel.. in order to get the text area working in a
+reasonable fashion, we had to switch to using swing text components
+because of bugs in apple's java implementation. phooey on apple. the
+editor in this release should behave much better, but mouse wheel
+support is disabled until apple finishes an implementation of java
+1.4. if this makes you sad, email steve jobs and tell him to make the
+java team quit patting themselves on the back and get to work on
+finishing 1.4.
 
-"Caught java.lang.UnsatisfiedLinkError" on startup...
-in order to use the serial port under macosx, you'll need to install
-RXTX, the serial port driver. this is for more advanced users, and the
-package is included with the p5 download, and includes its own
-instructions. 
+"Caught java.lang.UnsatisfiedLinkError" on startup.. in order to 
+use the serial port under macosx, you'll need to install RXTX, 
+the serial port driver. this is for more advanced users, and the 
+package is included with the p5 download. it includes its own
+instructions, check inside the 'serial' folder for details. 
 
 naming of sketches.. on other platforms, you aren't allowed to type
 characters besides letters, numbers, and underscores for the names of
@@ -197,15 +212,12 @@ is disabled, and the file is simply renamed (bad characters are
 replaced with underscores) after you hit 'ok'. boo apple.. i'm getting
 sick of all these workarounds.
 
-quitting presentation mode.. on other platforms, hitting the 'escape'
-key will quickly get you out of presentation mode. however, there
-seems to be some key event weirdness under osx. we hope to find a fix
-someday.
-
-arrow keys work (they didn't under 43) using a hokey algorithm to do
-placement of the cursor. this is a workaround for an apple bug. things
-might be a little funny, but maybe someone else will be able to repair
-this in the future.
+quitting presentation mode.. on other platforms, hitting the 
+'escape' key will quickly get you out of presentation mode. however, 
+there seems to be some key event weirdness under osx. we hope to find 
+a fix someday, but ben doesn't have a mac of his own for testing, 
+so he doesn't have much time to track down workarounds for all of 
+apple's bugs.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -215,7 +227,7 @@ MAC OS 9
 
 java applications on classic mac os are in a bad state, as apple has
 decided (rightfully so) to abandon further development of their java
-runtime.
+runtime under OS 9.
 
 speed: this version runs very slowly. the first time you hit the 'run'
 button, it might take a while to bring up the actual
@@ -230,8 +242,14 @@ versions: this version has only been tested under Mac OS 9.2.2.
 WINDOWS
 
 win2k works well, reports point to xp working well also. win95/98/me
-seems to have lots of trouble, but it's just with the .exe that we
-use, so that'll get fixed in the future.
+seems to have lots of trouble, but we think it's just with the .exe
+that we use, so that'll get fixed in the future.
+
+the windows release is now using java 1.4, a forty megabyte beast of a
+platform. this oughta double the size of the p5 download, but in the
+future we hope to just make people install the runtime separately, so
+if people already have it installed on their machine, no additional
+work will be required.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -283,7 +301,7 @@ follow their bizarre instructions. on my machine, i'm using a keyspan
 reads "/dev/cu.USA28X21P1.1". your mileage may vary.
 
 linux.. haven't tested but it's the ibm vm and their own
-implementation, so it may just work.
+implementation, but it may just work.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
