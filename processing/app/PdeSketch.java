@@ -22,23 +22,32 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import java.awt.FileDialog;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import com.oroinc.text.regex.*;
+
 
 public class PdeSketch {
   static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
-  static String tempBuildFolder;
+  static File tempBuildFolder;
+
+  PdeEditor editor;
 
   // name of sketch, which is the name of main file 
   // (without .pde or .java extension)
   String name;  
 
-  String mainFilename; // name of 'main' file, used by load()
+  // name of 'main' file, used by load(), such as sketch_04040.pde
+  String mainFilename; 
   //String path;  // path to 'main' file for this sketch
 
-  File sketchFolder;
+  // true if any of the files have been modified
+  boolean modified;
+
+  File folder; //sketchFolder;
   File dataFolder;
   File codeFolder;
 
@@ -63,7 +72,9 @@ public class PdeSketch {
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
    */
-  public PdeSketch(String path) throws IOException {
+  public PdeSketch(PdeEditor editor, String path) throws IOException {
+    this.editor = editor;
+
     File mainFile = new File(path);
     System.out.println("main file is " + mainFile);
 
@@ -93,7 +104,7 @@ public class PdeSketch {
                         "the application to complete the repair.", null);
     }
 
-    folder = new File(path.getParent());
+    folder = new File(new File(path).getParent());
     System.out.println("sketch dir is " + folder);
 
     codeFolder = new File(folder, "code");
@@ -119,8 +130,8 @@ public class PdeSketch {
     String list[] = folder.list();
 
     for (int i = 0; i < list.length; i++) {
-      if (list[i].endsWith(".pde")) fileCount++;
-      else if (list[i].endsWith(".java")) fileCount++;
+      if (list[i].endsWith(".pde")) codeCount++;
+      else if (list[i].endsWith(".java")) codeCount++;
       else if (list[i].endsWith(".pde.x")) hiddenCount++;
       else if (list[i].endsWith(".java.x")) hiddenCount++;
     }
@@ -128,18 +139,18 @@ public class PdeSketch {
     code = new PdeCode[codeCount];
     hidden = new PdeCode[hiddenCount];
 
-    int fileCounter = 0;
+    int codeCounter = 0;
     int hiddenCounter = 0;
 
     for (int i = 0; i < list.length; i++) {
       if (list[i].endsWith(".pde")) {
-        code[fileCounter++] = 
+        code[codeCounter++] = 
           new PdeCode(list[i].substring(0, list[i].length() - 4), 
                       new File(folder, list[i]), 
                       PDE);
 
       } else if (list[i].endsWith(".java")) {
-        code[fileCounter++] = 
+        code[codeCounter++] = 
           new PdeCode(list[i].substring(0, list[i].length() - 5),
                       new File(folder, list[i]),
                       JAVA);
@@ -190,7 +201,7 @@ public class PdeSketch {
     for (int i = 1; i < codeCount; i++) {
       int who = i;
       for (int j = i + 1; j < codeCount; j++) {
-        if (code[j].name.compare(code[who].name) < 0) {
+        if (code[j].name.compareTo(code[who].name) < 0) {
           who = j;  // this guy is earlier in the alphabet
         }
       }
@@ -204,17 +215,71 @@ public class PdeSketch {
 
 
   /**
+   * Sets the modified value for the code in the frontmost tab.
+   */
+  //public void setCurrentModified(boolean what) {
+  //public void setModified(boolean what) {
+  public void setModified() {
+    //modified = true;
+    current.modified = true;
+    //editor.header.repaint();
+    calcModified();
+  }
+
+
+  public void calcModified() {
+    modified = false;
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].modified) {
+        modified = true;
+        break;
+      }
+    }
+    editor.header.repaint();
+  }
+
+  /**
+   * Return true if any of the items are modified.
+   */
+  /*
+  public boolean isModified() {
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].modified) return true;
+    }
+    return false;
+  }
+  */
+
+
+  /**
    * Save all code in the current sketch.
    */
   public void save() {
+    // check if the files are read-only. 
+    // if so, need to first do a "save as".
+    if (modified && isReadOnly()) {
+      PdeBase.showMessage("Sketch is read-only",
+                          "You can't save changes to this sketch\n" +
+                          "in the place it's currently located.\n" +
+                          "You'll have to save it to another location.");
+      saveAs();
+    }
+
     for (int i = 0; i < codeCount; i++) {
       code[i].save();
     }
+    calcModified();
   }
 
 
   public void saveCurrent() {
     current.save();
+    calcModified();
+  }
+
+
+  public void saveAs() {
+    System.err.println("need to save ass here. code not yet finished.");
   }
 
 
@@ -228,7 +293,8 @@ public class PdeSketch {
     // get a dialog, select a file to add to the sketch
     String prompt = 
       "Select an image or other data file to copy to your sketch";
-    FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
+    //FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
+    FileDialog fd = new FileDialog(editor, prompt, FileDialog.LOAD);
     fd.show();
 
     String directory = fd.getDirectory();
@@ -262,25 +328,6 @@ public class PdeSketch {
       destFile = new File(dataFolder, filename);
     }
     PdeBase.copyFile(sourceFile, destFile);
-  }
-
-
-  /**
-   * Sets the modified value for the code in the frontmost tab.
-   */
-  public void setCurrentModified(boolean what) {
-    current.modified = what;
-  }
-
-
-  /**
-   * Return true if any of the items are modified.
-   */
-  public boolean isModified() {
-    for (int i = 0; i < codeCount; i++) {
-      if (code[i].modified) return true;
-    }
-    return false;
   }
 
 
@@ -390,7 +437,7 @@ public class PdeSketch {
       // just drop the files in the build folder (pre-68)
       //PdeBase.copyDir(dataDir, buildDir);
       // drop the files into a 'data' subfolder of the build dir
-      PdeBase.copyDir(dataDir, new File(buildDir, "data"));
+      PdeBase.copyDir(dataFolder, new File(tempBuildFolder, "data"));
     }
 
     // make up a temporary class name to suggest.
@@ -486,13 +533,14 @@ public class PdeSketch {
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
-    File codeFolder = new File(sketchDir, "code");
+    //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
       classPath += File.separator + 
         PdeCompiler.contentsToClassPath(codeFolder);
       importPackageList = PdeCompiler.magicImports(classPath);
-      libraryPath = codeFolder.getCanonicalPath();
+      //libraryPath = codeFolder.getCanonicalPath();
+      libraryPath = codeFolder.getAbsolutePath();
     } else {
       externalRuntime = (codeCount > 1);  // may still be set true later
       importPackageList = null;
@@ -820,8 +868,12 @@ public class PdeSketch {
     // copy the source files to the target, since we like
     // to encourage people to share their code
     for (int i = 0; i < codeCount; i++) {
-      PdeBase.copyFile(code[i].file, 
-                       new File(appletDir, code[i].file.getName()));
+      try {
+        PdeBase.copyFile(code[i].file, 
+                         new File(appletDir, code[i].file.getName()));
+      } catch (IOException e) {
+        
+      }
     }
 
     // create new .jar file
@@ -832,7 +884,7 @@ public class PdeSketch {
 
     // add the contents of the code folder to the jar
     // unpacks all jar files 
-    File codeFolder = new File(sketchDir, "code");
+    //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
       String includes = PdeCompiler.contentsToClassPath(codeFolder);
       packClassPathIntoZipFile(includes, zos);
@@ -1035,6 +1087,13 @@ public class PdeSketch {
    * volumes or folders without appropraite permissions.
    */
   public boolean isReadOnly() {
+    if (folder.getAbsolutePath().startsWith(PdeSketchbook.examplesPath)) {
+      return true;
+
+    } else if (!folder.canWrite()) {  // is this ok for directories?
+      System.err.println("read only directory...");
+      return true;
+    }
     return false;
   }
 
