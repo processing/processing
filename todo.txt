@@ -1,4 +1,4 @@
-0069
+0070
 X ifdef JDK14 around a piece of 1.4 specific window code
 X use mozilla for opening urls in linux, switched to more compatible exec()
 o note in the docs: can't use transforms inside beginShape()
@@ -30,33 +30,28 @@ X addition to pde.properties to list the imports for various jdk versions
 X set jdk version for export inside pde.properties
 X option to set what browser is in use
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074106123;start=0
-X text(x, y, z)
 _ make sure applet.html uses processing.org
 
-X min() and max() with three values were broken (now fixed)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076804172
-X CONTROL wasn't properly set in BConstants
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058788
+_ p5 classes into packages (bagel especially)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077330124;start=0
+
+_ preproc substitutions.. 
+_   perhaps also get rid of nf/nfs, replacing it with string() ?
+_   since the two-way conversion isn't always obvious
+_   could make String(), int(), etc work by substituting them for
+_   actual functions like toString() toInt() etc.. would work on arrays too
+_   this would make the conversion more general
+_   then maybe bring back ints() and doubles() ?
+
+_ weird problem with drawing/filling squares
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
 
 _ last vertex on LINE_LOOP fades out
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
 
-//_ framerate() has a bug that seems to
 _ rotated text has a bug for when it goes offscreen
 _   patch rotated text (from visualclusto) into bfont
-
-X macosx.. flickering several times on startup
-X   fixed this, along with other sluggishness related threading issues
-
-_ find() hangs on replacing "println" with "//println"
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076740626
-
-_ font builder bounds checking causing trouble
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
-
-_ adding files to data folder that are already in the data folder
-_   makes the file zero, because of internal error
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
 
 _ mgorbet stroke transparency problem
 _  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
@@ -64,13 +59,7 @@ _  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;
 _ present mode makes keyPressed() repeat like nutty
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076425568
 
-X cameraMode(PERSPECTIVE) and cameraMode(ORTHOGRAPHIC) setup basic cameras
-X   if the user wants a custom camera, call cameraMode(CUSTOM); before begin()
-X printMatrix() and printCamera() to output the matrices for each
-
 _ get jikes 1.19 in there
-_ angleMode(DEGREES) and angleMode(RADIANS)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 
 _ put SecurityException things around file i/o for applets
 _   rather than checking online(), since applets might be signed
@@ -86,25 +75,10 @@ eclipse when running in debug mode:
 ps -w -w -axo command | grep java
 /System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Home/bin/java -Djava.security.policy=java.policy.applet -classpath /Users/fry/Desktop/eclipse/workspace/javatest -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp transport=dt_socket,suspend=y,address=localhost:10506 sun.applet.AppletViewer
 
-whoa.. BGraphics.screenX() et al had the camera stuff shut off
-and that's what shipped in 67. shite.
-need to get things fixed up properly so camera is properly set
-ISOMETRIC was completely broken.. need to implement properly
-  also, the default camera is perspective
-
-_ split() function splits strings
-_   ints() converts an array of strings/doubles/floats to an int array
-_ split() should also use StringTokenizer
-_   to do countTokens() and then stuff into an array
-_ shave() or chomp() or trim() method to remove whitespace on either side
-_   including unicode nbsp
-_ check ordering of split() in java vs perl for regexp
-_   make a note in the docs about using split
 _ StrList.subset(3);  subsets starting at 3
 _   other matlab style commands
-_ die() command to exit an application or just stall out an applet
-_   die(String error) and die(String error, Exception e) 
-_   knows not to die when run as an application in p5 env because
+
+_ die should know not to die when run as an application in p5 env because
 _   the leecherror will be non-null (otherwise external, so die is ok)
 
 _ commands for askSerialPort() and askVideoInput?
@@ -549,8 +523,6 @@ _   move math functions into utility library associated
 _     with bagel, because those will be useful on other bagel platforms
 _     pApplet will call BagelMath.whatever, so still looks like cos()
 _   #ifdef to remove client and server code as well
-_   p5 classes into packages (bagel especially)
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
 _ break out BSerial as separate object like BVideo
 _   include rxtx and the rest of that setup in subfolder
 _   BSerial.flush and BSerial.available in object
@@ -774,8 +746,6 @@ PDE / Details
 PDE / Font Builder
 
    1 _ close/hide window on 'ESC'
-   1 _ save last used font, size, and smooth settings
-   1 _   maybe just hide it the window, just like find
 
 
 PDE / Features
