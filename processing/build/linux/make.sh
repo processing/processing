@@ -67,7 +67,7 @@ echo Building PDE for JDK 1.3
 
 CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/java/lib/ext/comm.jar
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 *.java lexer/*.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 *.java jeditsyntax/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
