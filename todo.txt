@@ -248,44 +248,20 @@ X update with other examples
 
 0070p8
 X height for applets wasn't working properly
-
 X debug font stuff in processing.core
 X   mbox wasn't set properly (not a power of 2) 
 X debug framerate() stuff with noLoop()
+X re-enabled printarr(Object[])
 
-_ strange hangs, errors that don't come up:
-_   watch out for loadFont() outside of setup
-_   or other things that can cause errors
+-> most stuff is over in core.. argh
 
 _ remove SystemOutSiphon: i just died message
 
-_ need to try jogl to make sure no further changes
+_ nanoxml problems with manifest
 
-X sizing bug fix to fonts, they now match platform standards
-X   however, *this will break people's code*
-_ text in a box not written
-_   make sure to note in the docs that it positions differently
-o     for this reason, should it be called textrect()?
-_   if a word (no spaces) is too long to fit, insert a 'space'
-_   text with alignment has problems with returns
-_ could PFont2 be done entirely with reflection?
-_   that way other font types can properly extend PFont
-_ font heights and leading are bad
-_   get good values for ascent and descent
-_   if ScreenFont subclasses PFont.. can that be used in textFont()?
-_ move left/center/right aligning into the font class
-_ not having kerning really blows
-_   could this be pulled from the OpenType font stuff? 
-_   it could be placed at the end of the file
-_ simple way to just use java text in p5 applets? 
-_   the current text support is just so hokey
-_ move SCREEN_SPACE into ScreenFont() class?
-_   that way can clear up some of the general confusion in the code
-_   also handle things like rotation
-
-_ image(String name) and textFont(String name)
-
-_ nanoxml crash
+_ readme.txt/bugs.txt: strange hangs, errors that don't come up:
+_   watch out for loadFont() outside of setup
+_   or other things that can cause errors
 
 
 

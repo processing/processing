@@ -1,11 +1,11 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BFont - font object for text rendering
+  PFont - font object for text rendering
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
-  (Except where noted that the author is not Ben Fry)
+  Copyright (c) 2004 Ben Fry & Casey Reas
+  Portions Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,15 +28,6 @@ package processing.core;
 import java.io.*;
 import java.util.*;
 
-
-// where is the font point size embedded in the font?
-//   not sizing properly relative to how the platforms work
-
-// ascent = height of lowercase d
-// descent = depth of lowercase p
-// get the leading calculation in there properly
-
-// how do we handle kerning
 
 /*
   awful ascii (non)art for how this works
@@ -65,9 +56,9 @@ public class PFont implements PConstants {
 
   // image width, a power of 2
   // note! these will always be the same
-  public int iwidth, iheight;
+  public int twidth, theight;
   // float versions of the above
-  //float iwidthf, iheightf;
+  //float twidthf, theightf;
 
   // formerly iwidthf, iheightf.. but that's wrong
   // actually should be mbox, the font size
@@ -113,44 +104,19 @@ public class PFont implements PConstants {
     // this will make new fonts downward compatible
     mbox2 = is.readInt();
 
-    //System.out.println("boxes " + mbox + " " + mbox2);
-
-    //int mboxX   = is.readInt();  // not used, just fontsize (48)
-    //int mboxY   = is.readInt();  // also just fontsize (48)
-
-    // only store this one for leading calc
-    //mbox = mboxY;
     fwidth = mbox;
     fheight = mbox;
 
     // size for image ("texture") is next power of 2
     // over the font size. for most vlw fonts, the size is 48
     // so the next power of 2 is 64.
-    // (actually that wasn't quite right, since mboxX/Y were both 64,
-    //  and the font builder was already setting it as the next pow of 2)
-    /*
-    iwidth = (int)
-      Math.pow(2, Math.ceil(Math.log(mboxX) / Math.log(2)));
-    iheight = (int)
-      Math.pow(2, Math.ceil(Math.log(mboxY) / Math.log(2)));
-    */
-
     // double-check to make sure that mbox2 is a power of 2
     // there was a bug in the old font generator that broke this
     mbox2 = (int) Math.pow(2, Math.ceil(Math.log(mbox2) / Math.log(2)));
     // size for the texture is stored in the font
-    iwidth = iheight = mbox2;
+    twidth = theight = mbox2;
 
-    //iwidthf = (float) iwidth;
-    //iheightf = (float) iheight;
-
-    // font size is 48, so default leading is 48 * 1.2
-    // this is same as what illustrator uses for the default
-    //defaultLeading = ((float)mboxY / iheightf) * 1.2f;
-
-    //int baseHt = is.readInt(); // zero, ignored
-    //is.readInt(); // ignore 4 for struct padding
-    ascent  = is.readInt();  // formerly zero/ignored
+    ascent  = is.readInt();  // formerly baseHt (zero/ignored)
     descent = is.readInt();  // formerly ignored struct padding
 
     //System.out.println("found mbox = " + mbox);
@@ -182,53 +148,30 @@ public class PFont implements PConstants {
       // cache locations of the ascii charset
       if (value[i] < 128) ascii[value[i]] = i;
 
-      //if (value[i] == 'd') 
-      //System.out.println("calc ascent is " + topExtent[i]);
-      //if (value[i] == 'p')
-      //System.out.println("calc descent is " + (-topExtent[i] + height[i]));
-
       // the values for getAscent() and getDescent() from FontMetrics
       // seem to be way too large.. perhaps they're the max? 
       // as such, use a more traditional marker for ascent/descent
       if (value[i] == 'd') {
-        ascent = topExtent[i];
+        if (ascent == 0) ascent = topExtent[i];
       }
       if (value[i] == 'p') {
-        descent = -topExtent[i] + height[i];
+        if (descent == 0) descent = -topExtent[i] + height[i];
       }
     }
 
-    // foreign font, so just make ascent the max topExtent
-    // or maybe just throw an exception and say to re-export?
+    // not a roman font, so throw an error and ask to re-build.
+    // that way can avoid a bunch of error checking hacks in here.
     if ((ascent == 0) && (descent == 0)) {
-      for (int i = 0; i < charCount; i++) {
-        char cc = (char) value[i];
-        if (Character.isWhitespace(cc) ||
-            (cc == '\u00A0') || (cc == '\u2007') || (cc == '\u202F')) {
-          continue;
-        }
-
-        if (topExtent[i] > ascent) {
-          ascent = topExtent[i];
-        }
-        int d = -topExtent[i] + height[i];
-        if (d > descent) {
-            descent = d;
-            //System.out.println("big d is on " + PApplet.hex(value[i])
-            //                 + " " + ((char) value[i]));
-        }
-        //System.out.println("max top now: " + ascent +
-        //                 " for " + PApplet.hex(value[i]) + "  ");
-      }
-    }
-    //System.out.println("a/d = " + ascent + " " + descent);
+      throw new RuntimeException("Please use \"Create Font\" to " +
+                                 "re-create this font.");
+    } 
 
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
       //int pixels[] = new int[64 * 64];
-      int pixels[] = new int[iwidth * iheight];
+      int pixels[] = new int[twidth * theight];
       //images[i] = new PImage(pixels, 64, 64, ALPHA);
-      images[i] = new PImage(pixels, iwidth, iheight, ALPHA);
+      images[i] = new PImage(pixels, twidth, theight, ALPHA);
       int bitmapSize = height[i] * width[i];
 
       byte temp[] = new byte[bitmapSize];
@@ -241,7 +184,7 @@ public class PFont implements PConstants {
         for (int x = 0; x < w; x++) {
           int valu = temp[y*w + x] & 0xff;
           //images[i].pixels[y*64 + x] = valu;
-          images[i].pixels[y * iwidth + x] = valu;
+          images[i].pixels[y * twidth + x] = valu;
           // the following makes javagl more happy..
           // not sure what's going on
           //(valu << 24) | (valu << 16) | (valu << 8) | valu; //0xffffff;
@@ -288,7 +231,8 @@ public class PFont implements PConstants {
 
       for (int y = 0; y < height[i]; y++) {
         for (int x = 0; x < width[i]; x++) {
-          os.write(images[i].pixels[y * width[i] + x] & 0xff);
+          //os.write(images[i].pixels[y * width[i] + x] & 0xff);
+          os.write(images[i].pixels[y * mbox2 + x] & 0xff);
         }
       }
     }
@@ -352,7 +296,10 @@ public class PFont implements PConstants {
 
 
   public void resetLeading() {
-    leading = size * ((float)mbox / fheight) * 1.2f;
+    //leading = size * ((float)mbox / fheight) * 1.2f;
+
+    // by trial & error, this seems close to illustrator
+    leading = (ascent() + descent()) * 1.275f;
   }
 
 
@@ -372,7 +319,7 @@ public class PFont implements PConstants {
 
 
   // supposedly this should be ok even in SCREEN_SPACE mode
-  // since the applet will set the 'size' of the font to iwidth
+  // since the applet will set the 'size' of the font to twidth
   // (though this prolly breaks any sort of 'height' measurements)
   public float width(char c) {
     if (c == 32) return width('i');
@@ -513,7 +460,7 @@ public class PFont implements PConstants {
 
       for (int row = y0; row < y0 + h0; row++) {
         for (int col = x0; col < x0 + w0; col++) {
-          int a1 = (fa * pixels1[row * iwidth + col]) >> 8;
+          int a1 = (fa * pixels1[row * twidth + col]) >> 8;
           int a2 = a1 ^ 0xff;
           int p1 = pixels1[row * width[glyph] + col];
           int p2 = pixels2[(yy + row-y0)*parent.width + (xx+col-x0)];
@@ -598,7 +545,8 @@ public class PFont implements PConstants {
         if (xx + size > right) {
           // this goes on the next line
           xx = x;
-          yy += ascent() + descent(); //leading;
+          yy += leading; 
+          //yy += ascent() * 1.2f;
           if (yy > h) return;  // too big for box
         }
         text(words[j], xx, yy, z, parent);
