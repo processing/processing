@@ -65,8 +65,8 @@ public class PFont implements PConstants {
   float fwidth, fheight;
 
   // mbox is just the font size (i.e. 48 for most vlw fonts)
-  public int mbox2; // next power of 2
-  public int mbox;  // font size
+  public int mbox2; // next power of 2 over the max image size
+  public int mbox;  // actual "font size" of source font
 
   public int value[];  // char code
   public int height[]; // height of the bitmap data
@@ -81,9 +81,15 @@ public class PFont implements PConstants {
   // scaling, for convenience
   public float size;
   public float leading;
+  public int align;
+  public int space;
 
   int ascii[];  // quick lookup for the ascii chars
   boolean cached;
+
+  // used by the text() functions to avoid over-allocation of memory
+  private char textBuffer[] = new char[8 * 1024];
+  private char widthBuffer[] = new char[8 * 1024];
 
 
   public PFont() { }  // for PFontAI subclass and font builder
@@ -195,8 +201,11 @@ public class PFont implements PConstants {
       //System.out.println();
     }
     cached = false;
+
     resetSize();
     resetLeading(); // ??
+    space = OBJECT_SPACE;
+    align = ALIGN_LEFT;
   }
 
     //static boolean isSpace(int c) {
@@ -280,13 +289,28 @@ public class PFont implements PConstants {
   }
 
 
+  public void space(int which) {
+    this.space = which;
+    if (space == SCREEN_SPACE) {
+      resetSize();
+      resetLeading();
+    }
+  }
+
+
+  public void align(int which) {
+    this.align = which;
+  }
+
+
   public float kern(char a, char b) {
     return 0;  // * size, but since zero..
   }
 
 
   public void resetSize() {
-    size = 12;
+    //size = 12;
+    size = mbox;  // default size for the font
   }
 
 
@@ -296,8 +320,6 @@ public class PFont implements PConstants {
 
 
   public void resetLeading() {
-    //leading = size * ((float)mbox / fheight) * 1.2f;
-
     // by trial & error, this seems close to illustrator
     leading = (ascent() + descent()) * 1.275f;
   }
@@ -318,9 +340,6 @@ public class PFont implements PConstants {
   }
 
 
-  // supposedly this should be ok even in SCREEN_SPACE mode
-  // since the applet will set the 'size' of the font to twidth
-  // (though this prolly breaks any sort of 'height' measurements)
   public float width(char c) {
     if (c == 32) return width('i');
 
@@ -331,28 +350,39 @@ public class PFont implements PConstants {
   }
 
 
-  public float width(String string) {
-    //if (!valid) return 0;
-    float wide = 0;
-    float pwide = 0;
-    char previous = 0;
-
-    char s[] = string.toCharArray();
-    for (int i = 0; i < s.length; i++) {
-      if (s[i] == '\n') {
-        if (wide > pwide) pwide = wide;
-        wide = 0;
-        previous = 0;
-
-      } else {
-        wide += width(s[i]);
-        if (previous != 0) {
-          wide += kern(previous, s[i]);
-        }
-        previous = s[i];
-      }
+  public float width(String str) {
+    int length = str.length();
+    if (length > widthBuffer.length) {
+      widthBuffer = new char[length + 10];
     }
-    return (pwide > wide) ? pwide : wide;
+    str.getChars(0, length, widthBuffer, 0);
+
+    float wide = 0;
+    //float pwide = 0;
+    int index = 0;
+    int start = 0;
+
+    while (index < length) {
+      if (widthBuffer[index] == '\n') {
+        wide = Math.max(wide, calcWidth(widthBuffer, start, index));
+        start = index+1;
+      }
+      index++;
+    }
+    //System.out.println(start + " " + length + " " + index);
+    if (start < length) {
+      wide = Math.max(wide, calcWidth(widthBuffer, start, index));
+    }
+    return wide;
+  }
+
+
+  private float calcWidth(char buffer[], int start, int stop) {
+    float wide = 0;
+    for (int i = start; i < stop; i++) {
+      wide += width(buffer[i]);
+    }
+    return wide;
   }
 
 
@@ -377,7 +407,7 @@ public class PFont implements PConstants {
       cached = true;
     }
 
-    if (parent.text_space == OBJECT_SPACE) {
+    if (space == OBJECT_SPACE) {
       float high    = (float) height[glyph]     / fheight;
       float bwidth  = (float) width[glyph]      / fwidth;
       float lextent = (float) leftExtent[glyph] / fwidth;
@@ -476,40 +506,51 @@ public class PFont implements PConstants {
   }
 
 
-  // used by the text() functions to avoid over-allocation of memory
-  private char c[] = new char[8192];
-
-
   public void text(String str, float x, float y, PGraphics parent) {
     text(str, x, y, 0, parent);
   }
 
 
   public void text(String str, float x, float y, float z, PGraphics parent) {
-    float startX = x;
-    int index = 0;
-    char previous = 0;
-
     int length = str.length();
-    if (length > c.length) {
-      c = new char[length + 10];
+    if (length > textBuffer.length) {
+      textBuffer = new char[length + 10];
     }
-    str.getChars(0, length, c, 0);
+    str.getChars(0, length, textBuffer, 0);
 
+    int start = 0;
+    int index = 0;
     while (index < length) {
-      if (c[index] == '\n') {
-        x = startX;
+      if (textBuffer[index] == '\n') {
+        textLine(start, index, x, y, z, parent);
+        start = index + 1;
         y += leading;
-        //y += ascent();
-        previous = 0;
-      } else {
-        text(c[index], x, y, z, parent);
-        x += width(c[index]);
-        if (previous != 0)
-          x += kern(previous, c[index]);
-        previous = c[index];
       }
       index++;
+    }
+    if (start < length) {
+      textLine(start, index, x, y, z, parent);
+    }
+  }
+
+
+  private void textLine(int start, int stop, 
+                        float x, float y, float z, 
+                        PGraphics parent) {
+    //float startX = x;
+    //int index = 0;
+    //char previous = 0;
+
+    if (align == ALIGN_CENTER) {
+      x -= calcWidth(textBuffer, start, stop) / 2f;
+
+    } else if (align == ALIGN_RIGHT) {
+      x -= calcWidth(textBuffer, start, stop);
+    }
+
+    for (int index = start; index < stop; index++) {
+      text(textBuffer[index], x, y, z, parent);
+      x += width(textBuffer[index]);
     }
   }
 
@@ -525,7 +566,8 @@ public class PFont implements PConstants {
 
   /**
    * Draw text in a box that is constrained to a
-   * particular width and height. 
+   * particular size. The current rectMode() determines
+   * what the coordinates mean (whether x1y1-x2y2 or x/y/w/h).
    *
    * Note that the x,y coords of the start of the box 
    * will align with the *ascent* of the text, 
@@ -552,7 +594,7 @@ public class PFont implements PConstants {
           xx = x;
           yy += leading; 
           //yy += ascent() * 1.2f;
-          if (yy > h) return;  // too big for box
+          if (yy > y + h) return;  // too big for box
         }
         text(words[j], xx, yy, z, parent);
         xx += size + space;
@@ -578,23 +620,23 @@ public class PFont implements PConstants {
     char previous = 0;
 
     int length = str.length();
-    if (length > c.length) {
-      c = new char[length + 10];
+    if (length > textBuffer.length) {
+      textBuffer = new char[length + 10];
     }
-    str.getChars(0, length, c, 0);
+    str.getChars(0, length, textBuffer, 0);
 
     while (index < length) {
-      if (c[index] == '\n') {
+      if (textBuffer[index] == '\n') {
 	y = startY;
 	x += leading;
         previous = 0;
 
       } else {
-        ltext(c[index], x, y, parent);
-	y -= width(c[index]);
+        ltext(textBuffer[index], x, y, parent);
+	y -= width(textBuffer[index]);
         if (previous != 0)
-	  y -= kern(previous, c[index]);
-        previous = c[index];
+	  y -= kern(previous, textBuffer[index]);
+        previous = textBuffer[index];
       }
       index++;
     }
@@ -696,23 +738,23 @@ public class PFont implements PConstants {
     char previous = 0;
 
     int length = str.length();
-    if (length > c.length) {
-      c = new char[length + 10];
+    if (length > textBuffer.length) {
+      textBuffer = new char[length + 10];
     }
-    str.getChars(0, length, c, 0);
+    str.getChars(0, length, textBuffer, 0);
 
     while (index < length) {
-      if (c[index] == '\n') {
+      if (textBuffer[index] == '\n') {
 	y = startY;
 	x += leading;
         previous = 0;
 
       } else {
-        rtext(c[index], x, y, parent);
-	y += width(c[index]);
+        rtext(textBuffer[index], x, y, parent);
+	y += width(textBuffer[index]);
         if (previous != 0)
-	  y += kern(previous, c[index]);
-        previous = c[index];
+	  y += kern(previous, textBuffer[index]);
+        previous = textBuffer[index];
       }
       index++;
     }

@@ -177,6 +177,7 @@ public class PFont2 extends PFont {
       height[index] = (maxY - minY) + 1;
       width[index] = (maxX - minX) + 1;
       setWidth[index] = metrics.charWidth(c);
+      //System.out.println((char)c + " " + setWidth[index]);
 
       // cache locations of the ascii charset
       //if (value[i] < 128) ascii[value[i]] = i;

@@ -169,9 +169,9 @@ public interface PMethods {
 
   public void textFont(PFont which);
 
-  public void textFont(PFont which, float size);
-
   public void textSize(float size);
+
+  public void textFont(PFont which, float size);
 
   public void textLeading(float leading);
 

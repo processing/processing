@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -79,27 +79,27 @@ public class PdeRuntime implements PdeMessageConsumer {
         // using something like --external=e30,20 where the e stands for
         // exact. otherwise --external=x,y for just the regular positioning.
         /*
-        String location = (windowLocation != null) ? 
-          (PApplet.EXTERNAL_EXACT_LOCATION + 
-           windowLocation.x + "," + windowLocation.y) : 
-          (x1 + "," + y1);      
+        String location = (windowLocation != null) ?
+          (PApplet.EXTERNAL_EXACT_LOCATION +
+           windowLocation.x + "," + windowLocation.y) :
+          (x1 + "," + y1);
         */
-        String location = 
-          (windowLocation != null) ? 
-          (PApplet.EXT_EXACT_LOCATION + 
+        String location =
+          (windowLocation != null) ?
+          (PApplet.EXT_EXACT_LOCATION +
            windowLocation.x + "," + windowLocation.y) :
           (PApplet.EXT_LOCATION + x1 + "," + y1);
 
         //System.out.println("library path is " + sketch.libraryPath);
         String command[] = new String[] {
-          //"cmd", "/c", "start", 
+          //"cmd", "/c", "start",
 
           "java",
-          "-Djava.library.path=" + 
+          "-Djava.library.path=" +
           // sketch.libraryPath might be ""
           // librariesClassPath will always have sep char prepended
-          sketch.libraryPath + 
-          //PdeSketchbook.librariesClassPath + 
+          sketch.libraryPath +
+          //PdeSketchbook.librariesClassPath +
           File.pathSeparator + System.getProperty("java.library.path"),
           "-cp",
           sketch.classPath + PdeSketchbook.librariesClassPath,
@@ -159,7 +159,7 @@ public class PdeRuntime implements PdeMessageConsumer {
             //System.out.println(meth[i].getName());
             if (meth[i].getName().equals("draw")) drawMode = true;
           }
-        } catch (SecurityException e) { 
+        } catch (SecurityException e) {
           e.printStackTrace();
         }
         // if it's a draw mode app, don't even show on-screen
@@ -229,7 +229,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           window.addKeyListener(applet);
         */
 
-        Dimension screen = 
+        Dimension screen =
           Toolkit.getDefaultToolkit().getScreenSize();
 
         //System.out.println(SystemColor.windowBorder.toString());
@@ -256,9 +256,9 @@ public class PdeRuntime implements PdeMessageConsumer {
 
           int minW = PdePreferences.getInteger("run.window.width.minimum");
           int minH = PdePreferences.getInteger("run.window.height.minimum");
-          int windowW = 
+          int windowW =
             Math.max(applet.width, minW) + insets.left + insets.right;
-          int windowH = 
+          int windowH =
             Math.max(applet.height, minH) + insets.top + insets.bottom;
 
           if (x1 - windowW > 10) {  // if it fits to the left of the window
@@ -282,10 +282,10 @@ public class PdeRuntime implements PdeMessageConsumer {
           Color windowBgColor = PdePreferences.getColor("run.window.bgcolor");
           window.setBackground(windowBgColor);
 
-          applet.setBounds((windowW - applet.width)/2, 
-                           insets.top + ((windowH - 
+          applet.setBounds((windowW - applet.width)/2,
+                           insets.top + ((windowH -
                                           insets.top - insets.bottom) -
-                                         applet.height)/2, 
+                                         applet.height)/2,
                            windowW, windowH);
         }
 
@@ -318,7 +318,7 @@ public class PdeRuntime implements PdeMessageConsumer {
       applet.stop();
       //if (window != null) window.hide();
 
-      // above avoids NullPointerExceptions 
+      // above avoids NullPointerExceptions
       // but still threading is too complex, and so
       // some boogers are being left behind
 
@@ -385,20 +385,23 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     // these are used for debugging, in case there are concerns
     // that som errors aren't coming through properly
-    //System.err.println("message " + s.length() + ":" + s);
-    //if (s.length() > 2) System.err.println(s);
+    /*
+    if (s.length() > 2) {
+      System.err.println("message " + s.length() + ":" + s);
+    }
+    */
 
-    // this is PApplet sending a message saying "i'm about to spew 
+    // this is PApplet sending a message saying "i'm about to spew
     // a stack trace because an error occurred during PApplet.run()"
     if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
-      // newMessage being set to 'true' means that the next time 
+      // newMessage being set to 'true' means that the next time
       // message() is called, expect the first line of the actual
       // error message & stack trace to be sent from the applet.
       newMessage = true;
       return;  // this line ignored
     }
 
-    // if s.length <=2, ignore it because that probably means 
+    // if s.length <=2, ignore it because that probably means
     // that it's just the platform line-terminators.
     if (newMessage && s.length() > 2) {
       exception = new PdeException(s);  // type of java ex
@@ -482,7 +485,7 @@ java.lang.NullPointerException
         lineNumberStr = lineNumberStr.substring(0, index);
         try {
           exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
-        } catch (NumberFormatException e) { }  
+        } catch (NumberFormatException e) { }
           //e.printStackTrace();  // a recursive error waiting to happen?
         // if nfe occurs, who cares, still send the error on up
         editor.error(exception);
@@ -496,14 +499,14 @@ java.lang.NullPointerException
         // would also probably get:
         // at Temporary_484_3845.loop
         // which (i believe) is used by the mac and/or jview
-        String functionStr = s.substring(index + 
+        String functionStr = s.substring(index +
                                          (className + ".class").length() + 1);
         index = functionStr.indexOf('(');
         if (index != -1) {
           functionStr = functionStr.substring(0, index);
         }
         exception = new PdeException(//"inside \"" + functionStr + "()\": " +
-                                     exception.getMessage() + 
+                                     exception.getMessage() +
                                      " inside " + functionStr + "() " +
                                      "[add Compiler.disable() to setup()]");
         editor.error(exception);
@@ -511,12 +514,12 @@ java.lang.NullPointerException
         // at Temporary_4636_9696.pootie(Compiled Code)
         // at Temporary_4636_9696.loop(Temporary_4636_9696.java:24)
         // because pootie() (re)sets the exception title
-        // and throws it, but then the line number gets set 
+        // and throws it, but then the line number gets set
         // because of the line that comes after
         */
-      
+
       } else if (messageLineCount > 5) {
-        // this means the class name may not be mentioned 
+        // this means the class name may not be mentioned
         // in the stack trace.. this is just a general purpose
         // error, but needs to make it through anyway.
         // so if five lines have gone past, might as well signal
@@ -526,7 +529,7 @@ java.lang.NullPointerException
 
       } else {
         //System.err.print(s);
-      } 
+      }
       //System.out.println("got it " + s);
     }
   }
