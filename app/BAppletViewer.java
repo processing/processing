@@ -3,8 +3,8 @@ import java.io.*;
 import java.net.*;
 
 
-public class ProcessingAppletViewer implements Runnable {
-  ProcessingApplet applet;
+public class BAppletViewer implements Runnable {
+  BApplet applet;
   Thread killer;
   //int portnum;
   //Socket umbilical;
@@ -17,18 +17,18 @@ public class ProcessingAppletViewer implements Runnable {
       //portnum = Integer.parseInt(args[1]);
       //umbilical = new Socket("localhost", portnum);
 
-      new ProcessingAppletViewer(args[0], 
-				 Integer.parseInt(args[1]),
-				 Integer.parseInt(args[2]));
+      new BAppletViewer(args[0], 
+			Integer.parseInt(args[1]),
+			Integer.parseInt(args[2]));
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
 
-  public ProcessingAppletViewer(String name, int x1, int y1) throws Exception {
+  public BAppletViewer(String name, int x1, int y1) throws Exception {
     Class c = Class.forName(name);
-    applet = (ProcessingApplet) c.newInstance();
+    applet = (BApplet) c.newInstance();
     applet.init();
     applet.start();
 

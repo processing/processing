@@ -381,11 +381,17 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       ps.flush();
       ps.close();
 
+      String exportDir = ("lib" + File.separator + 
+			  "export" + File.separator);
+      String bagelClasses[] = new File(exportDir).list();
+
+	/*
       final String classes[] = {
 	"Bagel.class", "BagelConstants.class", "BagelFont.class", 
 	"BagelImage.class", "BagelLight.class", "BagelPolygon.class",
 	"ProcessingApplet.class"
       };
+	*/
 
       // create new .jar file
       FileOutputStream zipOutputFile = 
@@ -394,13 +400,13 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       ZipEntry entry;
 
       // add standard .class files to the jar
-      for (int i = 0; i < classes.length; i++) {
+      for (int i = 0; i < bagelClasses.length; i++) {
+	if ((bagelClasses[i].equals(".")) || 
+	    (bagelClasses[i].equals(".."))) continue;
 	//System.out.println("adding class " + (i+1) + " of " + classes.length);
-	entry = new ZipEntry(classes[i]);
+	entry = new ZipEntry(bagelClasses[i]);
 	zos.putNextEntry(entry);
-	zos.write(grabFile(new File("lib" + File.separator + 
-				    "export" + File.separator +
-				    classes[i])));
+	zos.write(grabFile(new File(exportDir + bagelClasses[i])));
 	zos.closeEntry();
       }
 
