@@ -145,8 +145,8 @@ cd ../..
 PLATFORM=windows
 
 
-CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar:..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
-JIKES="..\\build\\$PLATFORM\\work\\jikes.exe"
+CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
+JIKES=../build/$PLATFORM/work/jikes
 CORE="..\\build\\$PLATFORM\\work\\lib\\core.jar"
 LIBRARIES="..\\build\\$PLATFORM\\work\\libraries"
 
@@ -157,13 +157,12 @@ cd ..
 # SERIAL LIBRARY
 echo Building serial library...
 cd ../serial
-$JIKES -target 1.1 +D -classpath "code\\RXTXcomm.jar:$CORE:$CLASSPATH" -d . *.java 
+$JIKES -target 1.1 +D -classpath "code\\RXTXcomm.jar;$CORE;$CLASSPATH" -d . *.java 
 rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
-
 
 # NET LIBRARY
 echo Building net library...
@@ -189,7 +188,7 @@ else
   exit 1;
 fi
 cd ../video
-$JIKES -target 1.1 +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
+$JIKES -target 1.1 +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
 rm -f library/video.jar
 zip -r0q library/video.jar processing
 rm -rf processing
@@ -200,7 +199,7 @@ cp library/video.jar $LIBRARIES/video/library/
 # OPENGL LIBRARY
 echo Building OpenGL library...
 cd ../opengl
-$JIKES -target 1.1 +D -classpath "library\\jogl.jar:$CLASSPATH" -d . *.java 
+$JIKES -target 1.1 +D -classpath "library\\jogl.jar;$CLASSPATH" -d . *.java 
 rm -f library/opengl.jar
 zip -r0q library/opengl.jar processing
 rm -rf processing
@@ -208,8 +207,8 @@ mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
 
 
-CLASSPATH=..\\$CLASSPATH
-JIKES=..\\..\\build\\$PLATFORM\\work\\jikes
+CLASSPATH="..\\..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
+JIKES=../../build/$PLATFORM/work/jikes
 CORE=..\\..\\build\\$PLATFORM\\work\\lib\\core.jar
 LIBRARIES=..\\..\\build\\$PLATFORM\\work\\libraries
 
@@ -224,7 +223,6 @@ rm -rf simong
 mkdir -p $LIBRARIES/particles/library/
 cp library/particles.jar $LIBRARIES/particles/library/
 
-pwd 
-
 echo
 echo Done.
+
