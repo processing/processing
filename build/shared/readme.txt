@@ -1,8 +1,6 @@
 PROCESSING DEVELOPMENT ENVIRONMENT
 
 (c) 2001-04 Ben Fry and Casey Reas
-Massachusetts Institute of Technology 
-and Interaction Design Institute Ivrea
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

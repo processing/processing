@@ -249,6 +249,21 @@ X move around notes about curve stuff
 040708 later
 X working on serial library
 
+040709 
+X fight with serial library on windows all afternoon
+
+_ error in System.err stream coming from running external
+_   dies after a while or goes weird
+
+_ save as needs to update the editorheader
+_ import -> javax.comm.properties -> data folder.. hm
+_ String in apache classes and java.lang
+_   need to be able to select between which to include
+_   auto-resolve by saying java.* wins, others ask
+
+COM1 19200
+
+
 _ get export working again
 _   make multiple jar files thing work.. blech
 
