@@ -36,9 +36,10 @@ cd processing
 unzip -q reference.zip
 # necessary for launching reference from shell/command prompt
 # which is done internally to view reference
-cd reference
-chmod -R +x *.html
-cd ..
+chmod +x reference/*.html
+# needed by 'help' menu
+chmod +x reference/environment/*.html
+# get rid of the zip file
 rm reference.zip
 cd ..
 
@@ -61,7 +62,6 @@ chmod +x processing/jikes.exe
 cp launcher/processing.exe processing/
 cp dist/run.bat processing/
 cp dist/lib/pde_windows.properties processing/lib/
-#cp dist/lib/comm.jar processing/lib/
 
 # get serial stuff from the bagel dir
 cp ../../bagel/serial/comm.jar processing/lib/
