@@ -56,6 +56,7 @@ and a copy of the code, preferably the folder from the sketchbook (see
 sketchbook/default/SKETCHNAME) if there are images or other data being
 used.
 
+check out stdout.txt and stderr.txt in 'lib'
 
 
 >>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
