@@ -34,6 +34,26 @@ X lines: vertex coloring bug with my swap hack
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
 X   last vertex on LINE_LOOP fades out
 X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
+X include values in PConstants for additional blend modes:
+X   DIFFERENCE, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT
+X include a lerp()? is there one in flash?
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
+X   should it be called lerp or mix?
+X acos, asin, atan, log, exp, ceil/floor, pow, mag(x,y,z)
+X color issues
+X   doesn't work when outside a function:
+X     color bg_color = color(255,0,0);
+X   colorMode broken for red() green() etc
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
+X   add color(gray) and color(gray, alpha)
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089898189;start=0
+o update() mode needs to be hacked in (?)
+X make 'online' a boolean
+X pass in args[] from main
+X angleMode(DEGREES) and angleMode(RADIANS)
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
+X fixes to line and curve code
+
 
 cleaning up
 X make bagel more usable as standalone
@@ -62,34 +82,18 @@ X   if people have other threads they've spawned, impossible to stop
 X api to properly sense when applet has focus
 X   add a 'focused' variable to the applet
 X   code now in zipdecode, maybe just list this as a standard thing?
-X include a lerp()? is there one in flash?
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
-X   should it be called lerp or mix?
-X acos, asin, atan, log, exp, ceil/floor, pow, mag(x,y,z)
-X color issues
-X   doesn't work when outside a function:
-X     color bg_color = color(255,0,0);
-X   colorMode broken for red() green() etc
-X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
-X   add color(gray) and color(gray, alpha)
-X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089898189;start=0
-o update() mode needs to be hacked in (?)
-X make 'online' a boolean
 
 
 MEGABUCKET (api)
-_ passing in args[] from main
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
-_ angleMode(DEGREES) and angleMode(RADIANS)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
 _ decide on whether to use PTools
 _   i.e. move math functions into utility library
 _   check what other functions require PGraphics to exist but shouldn't
-_ look at BGraphics to see if setting an 'applet' could be used
-_   then other than that, if no applet set, no connection to PApplet
+_   look at BGraphics to see if setting an 'applet' could be used
+_     then other than that, if no applet set, no connection to PApplet
 _ new/old graphics, explicitly stating 2d/3d, huh?
 _   what to do about anti-aliasing.. oversample 2x?
 _ expand/subset for array operations (floats, ints, Strings)
@@ -98,13 +102,6 @@ _     also, should it be named resize() instead?
 _   see if reflection will allow expand for all class types
 _   append/unappend (no push/pop), shift/unshift, 
 _   slice, splice, reverse, concat, split
-_ more blend() modes? (the five listed on the thread below?)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
-_   seems like semi-standard modes
-_ write a threading example
-_   or handle this some more intelligent way, super.stop() is needed.
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
@@ -176,6 +173,16 @@ CORE / PImage
    1 _ loadImage must be used inside or after setup
    1 _   either document this and/or provide a better error message
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+
+   1 _ more blend() modes (the five listed on the thread below?)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
+   1 _   (this list ok'd by casey for inclusion into the api)
+   1 _   DIFFERENCE: C = abs(A-B);
+   1 _   MULTIPLY: C = (A * B ) / 255
+   1 _   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
+   1 _   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+   1 _   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+   1 _   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
 
 
 CORE / PGraphics

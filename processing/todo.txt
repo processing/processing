@@ -4,9 +4,6 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X fixed one bug in PdeRuntime error message stuff 
 X   was this the big one? a big one?
 
-040713
-X fixes to line and curve code
-
 _ moving p5 prefs on mac into documents? or inside sketchbook?
 
 _ terrible loadImage bug.. does it affect loadStrings?
@@ -46,6 +43,8 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;ac
 
 _ support for editor plugins
 _   make beautify plugin ("autoformat"?)
+_   make dynamically loaded plugins and "tools" menu
+_     break out beautify as its own plugin
 
    1 _ beautify
    1 _   //for (int i = 0; i < 10; i++) {
@@ -59,10 +58,8 @@ _   make beautify plugin ("autoformat"?)
    1 _ only beautify a particular section of code
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
-_   make "get quicktime libs" function
-_     can java get the root directory for system/win32 etc?
-_   make dynamically loaded plugins and "tools" menu
-_     break out beautify as its own plugin
+_ make "get quicktime libs" function
+_   can java get the root directory for system/win32 etc?
 
 _ processing.app -> PdeBase, PdeEditor..
 
@@ -87,6 +84,11 @@ _   zlib file becoming corrupt (not flushed after close?)
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
 _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
+
+_ write a threading example
+_   or handle this some more intelligent way, super.stop() is needed.
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 
 
 README

@@ -45,6 +45,9 @@ public class PApplet extends Applet
 
   public PGraphics g;
 
+  /** Command line options passed in from main() */
+  public String args[];
+
   static final boolean THREAD_DEBUG = false; //true;
 
   public int pixels[];
@@ -1160,32 +1163,40 @@ public class PApplet extends Applet
   }
 
 
-  static public final float sin(float angle) {
+  public final float sin(float angle) {
+    if ((g != null) && (g.angle_mode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
-  static public final float cos(float angle) {
+  public final float cos(float angle) {
+    if ((g != null) && (g.angle_mode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
-  static public final float tan(float angle) {
+  public final float tan(float angle) {
+    if ((g != null) && (g.angle_mode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 
-  static public final float asin(float angle) {
-    return (float)Math.asin(angle);
+
+  public final float asin(float value) {
+    return ((g != null) && (g.angle_mode == DEGREES)) ?
+      ((float)Math.asin(value) * RAD_TO_DEG) : (float)Math.asin(value);
   }
 
-  static public final float acos(float angle) {
-    return (float)Math.acos(angle);
+  public final float acos(float value) {
+    return ((g != null) && (g.angle_mode == DEGREES)) ?
+      ((float)Math.acos(value) * RAD_TO_DEG) : (float)Math.acos(value);
   }
 
-  static public final float atan(float angle) {
-    return (float)Math.atan(angle);
+  public final float atan(float value) {
+    return ((g != null) && (g.angle_mode == DEGREES)) ?
+      ((float)Math.atan(value) * RAD_TO_DEG) : (float)Math.atan(value);
   }
 
-  static public final float atan2(float a, float b) {
-    return (float)Math.atan2(a, b);
+  public final float atan2(float a, float b) {
+    return ((g != null) && (g.angle_mode == DEGREES)) ?
+      ((float)Math.atan2(a, b) * RAD_TO_DEG) : (float)Math.atan2(a, b);
   }
 
 
@@ -2230,6 +2241,7 @@ public class PApplet extends Applet
           frame.setLocation(location[0], location[1]);
         }
 
+        /*
         frame.addComponentListener(new ComponentAdapter() {
             public void componentMoved(ComponentEvent e) {
               int newX = e.getComponent().getX();
@@ -2237,6 +2249,11 @@ public class PApplet extends Applet
               //System.out.println(newX + " " + newY);
             }
           });
+        */
+
+        // shorten args by two (remove --external and applet name)
+        applet.args = new String[args.length - 2];
+        System.arraycopy(args, 2, applet.args, 0, args.length - 2);
 
         frame.setLayout(null);
         frame.add(applet);
@@ -2249,6 +2266,10 @@ public class PApplet extends Applet
         applet.setupExternal(frame);
 
       } else {  // !external
+        // remove applet name from args passed in
+        applet.args = new String[args.length - 1];
+        System.arraycopy(args, 1, applet.args, 0, args.length - 1);
+
         frame.setLayout(new BorderLayout());
         frame.add(applet, BorderLayout.CENTER);
         frame.pack();
@@ -2569,18 +2590,8 @@ public class PApplet extends Applet
   }
 
 
-  public void endShape_newgraphics() {
-    g.endShape_newgraphics();
-  }
-
-
   public void endShape() {
     g.endShape();
-  }
-
-
-  public void flat_image(PImage image, int sx1, int sy1) {
-    g.flat_image(image, sx1, sy1);
   }
 
 
@@ -2946,6 +2957,11 @@ public class PApplet extends Applet
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
     g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+  }
+
+
+  public void angleMode(int mode) {
+    g.angleMode(mode);
   }
 
 
