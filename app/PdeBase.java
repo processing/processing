@@ -399,7 +399,8 @@ public class PdeBase {
   }
 
 
-  static public void copyDir(File sourceDir, File targetDir) {
+  static public void copyDir(File sourceDir, 
+                             File targetDir) throws IOException {
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;

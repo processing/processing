@@ -75,9 +75,8 @@ public class PdePreprocessor {
    * preprocesses a pde file and write out a java file
    * @return the classname of the exported Java
    */
-  public String write(String program, String buildPath,
-                      String name, String extraImports[]) 
-    throws java.lang.Exception {
+  public String write(String program, String buildPath, String name, 
+                      String extraImports[]) throws java.lang.Exception {
 
     if (PdePreferences.getBoolean("compiler.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
@@ -89,7 +88,7 @@ public class PdePreprocessor {
       // if non-ascii chars are in there, convert to unicode escapes
       if (unicodeCount != 0) {
         // add unicodeCount * 5.. replacing each unicode char 
-        // with six digit \u XXXX sequence (xxxx is in hex)
+        // with six digit uXXXX sequence (xxxx is in hex)
         // (except for nbsp chars which will be a replaced with a space)
         int index = 0;
         char p2[] = new char[p.length + unicodeCount*5];
