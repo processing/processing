@@ -496,51 +496,39 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // IMAGES
 
 
+  protected void draw_image(PImage image,
+                            float x1, float y1, float x2, float y2,
+                            int u1, int v1, int u2, int v2) {
+    graphics.drawImage((Image) image.cache,
+                       (int) x1, (int) y1, (int) x2, (int) y2,
+                       u1, v1, u2, v2, null);
+  }
+
+
   public void image(PImage image, float x1, float y1) {
-    image(image, x1, y1, image.width, image.height);
-  }
-
-
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2) {
-    if (imageMode == CORNER) {
-      x2 += x1;  // x2 is width, need to add x1
-      y2 += y1;
-
-    } else if ((imageMode == CENTER) ||
-               (imageMode == CENTER_RADIUS)) {
-      x1 -= image.width /2f;
-      y1 -= image.height / 2f;
-    }
     check_image_cache(image);
-    //graphics.drawImage((Image) image.cache, x1, y1, x2, y2, null);
-    graphics.drawImage((Image) image.cache,
-                       (int)x1, (int)y1, (int)x2, (int)y2, null);
+    super.image(image, x1, y1);
   }
 
 
   public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
+                    float a, float b, float c, float d) {
+    check_image_cache(image);
+    super.image(image, a, b, c, d);
+  }
+
+
+  public void image(PImage image,
+                    float a, float b, float c, float d,
                     float u1, float v1, float u2, float v2) {
-    if (imageMode == CORNER) {
-      x2 += x1;  // x2 is width, need to add x1
-      y2 += y1;
-
-    } else if ((imageMode == CENTER) ||
-               (imageMode == CENTER_RADIUS)) {
-      x1 -= image.width /2f;
-      y1 -= image.height / 2f;
-    }
     check_image_cache(image);
-    graphics.drawImage((Image) image.cache,
-                       (int)x1, (int)y1, (int)x2, (int)y2,
-                       (int)u1, (int)v1, (int)u2, (int)v2,
-                       null);
+    super.image(image, a, b, c, d, u1, v1, u2, v2);
   }
 
 
