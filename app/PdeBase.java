@@ -58,7 +58,7 @@ public class PdeBase extends Frame
              , MRJPrefsHandler
 #endif
 {
-  static final String VERSION = "0065 Alpha";
+  static final String VERSION = "0067 Alpha";
 
   static Properties properties;
   static Properties keywords; // keyword -> reference html lookup
