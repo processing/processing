@@ -240,7 +240,7 @@ public class PdeFontBuilder extends JFrame {
         public void actionPerformed(ActionEvent e) { 
           //System.out.println(e);
           smooth = smoothBox.isSelected();
-          System.out.println(smooth);
+          //System.out.println(smooth);
         }
       });
     smoothBox.setSelected(smooth);

@@ -933,8 +933,13 @@ public class PdeEditor extends JFrame
     running = true;
     buttons.run();
 
-    // spew some blank lines so it's clear what's new on the console
+    // do this for the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
+
+    // clear the console on each run, unless the user doesn't want to 
+    if (PdeBase.getBoolean("console.auto_clear", true)) {
+      console.clear();
+    }
 
     presenting = present;
     if (presenting) {
