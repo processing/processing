@@ -79,7 +79,7 @@ X   was adding all folders in the classpath
 X workaround for the // causing an OutOfMemoryError
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 
-040622 monday evening
+040622 monday evening/night
 X jikes errors have no newlines because it's a buffered reader
 X   and the newlines are removed when read
 X make the filedialog come up with the p5 window on handlenew
@@ -113,22 +113,30 @@ X rewrite sketchbook.clean()
 X   prompt user if they don't have it set to auto
 X   add a pref to the preferences window
 
-_ don't force everything into a single .jar on export
+040622 monday late night
+X set handleOpen to use editor as its parent frame
+X what happens when the .pde file isn't named 
+X   the same as the enclosing folder?
+X   maybe put up a window saying no way, and ask:
+X   ( ) rename enclosing or ( ) add a subfolder
+X   or maybe even ( ) rename the sketch file
+X   also double-check to see if there *is* a proper pde in the folder
+X     in which case, default to that (maybe show a message?)
+X   it's useful to have loose .pde files be runnable..
+X   i.e. when double-clicking on them.. downloaded off web.. 
+X     but need to deal with simply, not providing a new exception case
 
-_ what happens when the .pde file isn't named 
-_   the same as the enclosing folder?
-_   maybe put up a window saying no way, and ask:
-_   ( ) rename enclosing or ( ) add a subfolder
-_   it's useful to have loose .pde files be runnable..
-_   i.e. when double-clicking on them.. downloaded off web.. 
-_     but need to deal with simply, not providing a new exception case
-_ write 'new text file'
+_ write 'new text file' (ctrl-t)
 _ implement hide/unhide
 
-_ ctrl-5 (at least on xp) is marking the current sketch as modified
+_ write export-to-application
+_ write export-to-library
+_   need to be able to produce the serial, video, etc libs
+_ put bagel into its own package
+_ don't force everything into a single .jar on export
+
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
-_ re-implement history
 
 
 now implemented for [url=http://processing.org/discourse/yabb/YaBB.cgi?board=Collaboration;action=display;num=1084285917]megabucket[/url].
@@ -136,6 +144,7 @@ now implemented for [url=http://processing.org/discourse/yabb/YaBB.cgi?board=Col
 
 discuss with casey
 _ how should history be handled
+_   then re-implement history
 _ is the sketch folder something that is never seen by the user?
 _   i.e. flash programs 'import' all data, etc
 _   same with how imovie works
@@ -148,6 +157,7 @@ _ .pde files opened on their own
 _ what should the prefs file be named?
 _ horizontal buttons? need final decision
 _ remove underscores from the tab title?
+_ need nice yes/no dialog boxes, also showError/Message/Warning
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing
@@ -219,6 +229,7 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
 _     something in that one about mouse position halting or not
+_ ctrl-5 (at least on xp) is marking the current sketch as modified
 
 
 BUGS / Linux

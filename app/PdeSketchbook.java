@@ -239,7 +239,7 @@ public class PdeSketchbook {
   public String handleOpen() {
     // swing's file choosers are ass ugly, so we use the
     // native (awt peered) dialogs instead
-    FileDialog fd = new FileDialog(new Frame(), 
+    FileDialog fd = new FileDialog(editor, //new Frame(), 
                                    "Open a Processing sketch...", 
                                    FileDialog.LOAD);
     //if (handleOpenDirectory == null) {
@@ -249,8 +249,10 @@ public class PdeSketchbook {
     fd.setDirectory(PdePreferences.get("sketchbook.path"));
 
     // only show .pde files as eligible bachelors
+    // TODO this doesn't seem to ever be used. AWESOME.
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
+          System.out.println("check filter on " + dir + " " + name);
           return name.endsWith(".pde");
         }
       });
