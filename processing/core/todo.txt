@@ -162,6 +162,21 @@ X   but println(Object o) is very needed
 
 040919
 X loop/noLoop setup
+
+040920
+X make loop/noLoop work properly
+X fixes/changes to key and mousehandling
+X   tab key not working? 
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091853942;start=0
+X   mousePressed, keyPressed, others.. queue them all
+X     queue multiple times
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
+X   strangeness with key codes on keyPressed
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
+X   key codes not properly coming through for UP/DOWN/etc
+X     had to bring back keyCode
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+
 _ add redraw() function
 _   call redraw() on the first time through (to force initial draw)
 _   otherwise noLoop() in setup means no drawing happens at all
@@ -169,6 +184,9 @@ _ defaults for PApplet and PGraphics are different
 _   PGraphics has none.. PApplet has fill/stroke
 _ set PImage.format as RGB by default? 
 _   this was problem with rendering an image from PGraphics on board
+
+_ without setting the font, the values come out weird rotated text
+_   get rotated text into the screen space stuff
 
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
@@ -226,17 +244,9 @@ The graphics library was formerly called Bagel, which is an internal name.
 
 CORE / PApplet
 
-   b _ tab key not working? 
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091853942;start=0
    b _ keypressed hanging on applets with a code folder
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
-   b _ mousePressed, keyPressed, others.. queue them all
-   b _   queue multiple times
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
-   b _ strangeness with key codes on keyPressed
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
-   b _ key codes not properly coming through for UP/DOWN/etc
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+
 
 
 CORE / PImage

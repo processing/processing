@@ -101,6 +101,9 @@ public class PFont2 extends PFont {
     topExtent   = new int[charCount];
     leftExtent  = new int[charCount];
 
+    ascii = new int[128];
+    for (int i = 0; i < 128; i++) ascii[i] = -1;
+
     int mbox3 = mbox * 3;
 
     BufferedImage playground = 
@@ -168,6 +171,9 @@ public class PFont2 extends PFont {
       height[index] = (maxY - minY) + 1;
       width[index] = (maxX - minX) + 1;
       setWidth[index] = metrics.charWidth(c);
+
+      // cache locations of the ascii charset
+      if (value[i] < 128) ascii[value[i]] = i;
 
       // offset from vertical location of baseline
       // of where the char was drawn (mbox*2)
