@@ -4,16 +4,66 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
-ABOUT REV 0055 - 
+ABOUT REV 0055 - 27 may 2003
+
+WARNING! THIS RELEASE IS LESS TESTED THAN SOME OTHERS, AND INCLUDES
+LOTS OF NEW CODE, SO IT'S POSSIBLE THAT THINGS COULD BE VERY BROKEN. 
+if you run into trouble, as with any release, just let us know about
+the bug on the bboard, and use the previous one that worked for you
+(i.e. go back to 54) it's all about 'alpha'.
+
+
+[ big changes ]
+
+perhaps very exciting, this is the first release to include explicit
+support for audio, video, and network. perhaps more exciting is that
+this code was developed by developers other than me. 
+
+net and video code was contributed by hernando barragan of ivrea
+http://people.interaction-ivrea.it/h.barragan
+everyone say "thanks hernando!"
+
+the audio code is by carlos rocha, a hired gun whose 
+employment was made possible by the generous support of ivrea. 
+yay carlos! yay ivrea!
+
+more about these guys can be seen at: http://proce55ing.net/info.html
+
+
+[ status of audio, video, net ]
+
+- audio should be java 1.1 compliant, meaning that it works inside
+  applets and on each of the platforms. audio should be working
+  reasonably well, and has been tested by carlos a good bit.
+
+- similarly, the net code should be just ducky.
+
+- video input and reading movie files is done through quicktime for
+  java, which means that you have to 1) be using windows or macos, and
+  2) have the durn thing installed. video is a little bumpy (you may
+  find it broken or unusable), which we're ironing out. but the
+  problems have been showing up inconsistently, so we preferred to get
+  the release out so that y'all can start playing with the other new
+  features.
+
+
+[ new features! new bugs! ]
 
 - sort functions for arrays of ints, floats, doubles or Strings
 
-  here's how it works for floats:
+// here's how it works for floats:
 float a[] = { 3.4, 3.6, 2, 0, 7.1 };
 sort(a);
 for (int i = 0; i < a.length; i++) {
   println(a[i]);
 }
+
+- added wheel mouse support for osx, when running java 1.4. 
+  NOTE! we don't actually recommend using java 1.4 under macosx, as it
+  seems to be much less stable than 1.3, and appears to introduce some
+  weird inconsistencies when running p5. (this also fixes a bug where
+  using a 1.3 vm with the windows expert version would fukker the
+  environment).
 
 
 ABOUT REV 0054 - 11 april 2003
