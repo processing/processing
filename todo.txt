@@ -52,6 +52,8 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 
 
 0067
+_ don't forget to change the revision number on release
+_ netscape/javascript had to be included for linux and for expert
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
 _ BImage.smooth() ?
