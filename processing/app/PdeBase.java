@@ -49,7 +49,7 @@ public class PdeBase {
 
   static String openedAtStartup;
 
-  static ClassLoader loader;
+  //static ClassLoader loader;
 
   PdeEditor editor;
 
@@ -144,7 +144,7 @@ public class PdeBase {
 
 
     // maybe?
-    loader = new PdeClassLoader();
+    //loader = new PdeClassLoader();
   }
 
 
