@@ -1,3 +1,19 @@
+0080 pde
+X include /** */ comments into the html page
+X examples have been updated
+
+fixed in rev 79
+X can't scroll the PdeEditorConsole downwards at all on osx
+
+purged
+o refresh sketchbook menu upon returning to the app from elsewhere?
+o   this would need to track whether coming just from an ext runtime
+o make "get quicktime libs" function
+o   can java get the root directory for system/win32 etc?
+X add MRJOpenApplicationHandler and MRJOpenDocumentHandler
+X     especially the open document fella
+X     under osx, app won't get doc unless app already launched
+
 
 0079 pde
 X add ctrl-o to the open menu
