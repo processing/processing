@@ -381,7 +381,9 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 	//System.out.println("adding class " + (i+1) + " of " + classes.length);
 	entry = new ZipEntry(classes[i]);
 	zos.putNextEntry(entry);
-	zos.write(grabFile(new File("lib\\export\\" + classes[i])));
+	zos.write(grabFile(new File("lib" + File.separator + 
+				    "export" + File.separator +
+				    classes[i])));
 	zos.closeEntry();
       }
 
