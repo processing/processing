@@ -2,10 +2,11 @@
 
 package processing.core;
 
-import java.io.*;
-import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 
 public class PFont2 extends PFont {
@@ -108,6 +109,27 @@ public class PFont2 extends PFont {
 
     int mbox3 = mbox * 3;
 
+    /*
+    try {
+      Class bufferedImageClass =
+        Class.forName("java.awt.image.BufferedImage");
+      Constructor bufferedImageConstructor =
+        bufferedImageClass.getConstructor(new Class[] { Integer.TYPE,
+                                                        Integer.TYPE,
+                                                        Integer.TYPE });
+      Field typeIntRgbField = bufferedImageClass.getField("TYPE_INT_RGB");
+      int typeIntRgb = typeIntRgbField.getInt(typeIntRgbField);
+      //Object playground = bic.invoke(new Object[] { new Integer(mbox3),
+      playground = (BufferedImage)
+        bufferedImageConstructor.newInstance(new Object[] {
+        new Integer(mbox3),
+        new Integer(mbox3),
+        new Integer(typeIntRgb) });
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    */
     BufferedImage playground =
       new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
 
@@ -124,6 +146,7 @@ public class PFont2 extends PFont {
     //descent = metrics.getDescent();
     //System.out.println("descent found was " + descent);
 
+    int samples[] = new int[mbox3 * mbox3];
     int maxWidthHeight = 0;
     int index = 0;
     for (int i = 0; i < charCount; i++) {
@@ -139,6 +162,7 @@ public class PFont2 extends PFont {
 
       // grabs copy of the current data.. so no updates (do each time)
       Raster raster = playground.getData();
+      raster.getSamples(0, 0, mbox3, mbox3, 0, samples);
 
       //int w = metrics.charWidth(c);
       int minX = 1000, maxX = 0;
@@ -147,7 +171,8 @@ public class PFont2 extends PFont {
 
       for (int y = 0; y < mbox3; y++) {
         for (int x = 0; x < mbox3; x++) {
-          int sample = raster.getSample(x, y, 0);  // maybe?
+          //int sample = raster.getSample(x, y, 0);  // maybe?
+          int sample = samples[y * mbox3 + x] & 0xff;
           // or int samples[] = raster.getPixel(x, y, null);
 
           //if (sample == 0) {  // or just not white? hmm
