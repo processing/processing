@@ -57,6 +57,7 @@ class PdeMessageSiphon implements Runnable {
       }
     } catch (Exception e) { 
       System.err.println("PdeMessageSiphon err " + e);
+      e.printStackTrace();
       //thread.stop();  // implicit (and no longer supported)
     }
     //System.err.println("siphon thread exiting");

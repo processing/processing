@@ -848,7 +848,13 @@ public class PdeEditor extends JPanel {
 
     } else {
       try {
-        appletLocation = runtime.window.getLocation();
+        // the window will also be null the process was running 
+        // externally. so don't even try setting if window is null
+        // since PdeRuntime will set the appletLocation when an
+        // external process is in use.
+        if (runtime.window != null) {
+          appletLocation = runtime.window.getLocation();
+        }
       } catch (NullPointerException e) { }
     }
     //System.out.println("doclose2");
@@ -1813,7 +1819,7 @@ public class PdeEditor extends JPanel {
   }
 
 
-  public void addDataFile() {
+  public void addFile() {
     // get a dialog, select a file to add to the sketch
     String prompt = "Select an image or other data file to copy to your sketch";
     FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
@@ -1830,10 +1836,24 @@ public class PdeEditor extends JPanel {
     // if people don't want it to copy, they can do it by hand
     File sourceFile = new File(directory, filename);
 
-    File dataFolder = new File(sketchDir, "data");
-    if (!dataFolder.exists()) dataFolder.mkdirs();
+    File destFile = null;
 
-    File destFile = new File(dataFolder, filename);
+    // if the file appears to be code related, drop it 
+    // into the code folder, instead of the data folder
+    if (filename.toLowerCase().endsWith(".class") || 
+        filename.toLowerCase().endsWith(".jar") || 
+        filename.toLowerCase().endsWith(".dll") || 
+        filename.toLowerCase().endsWith(".jnilib") || 
+        filename.toLowerCase().endsWith(".so")) {
+      File codeFolder = new File(sketchDir, "code");
+      if (!codeFolder.exists()) codeFolder.mkdirs();
+      destFile = new File(codeFolder, filename);
+
+    } else {
+      File dataFolder = new File(sketchDir, "data");
+      if (!dataFolder.exists()) dataFolder.mkdirs();
+      destFile = new File(dataFolder, filename);
+    }
     //System.out.println("copying from " + sourceFile);
     //System.out.println("copying to " + destFile);
     copyFile(sourceFile, destFile);
