@@ -1,4 +1,4 @@
-0070
+007X
 X ifdef JDK14 around a piece of 1.4 specific window code
 X use mozilla for opening urls in linux, switched to more compatible exec()
 o note in the docs: can't use transforms inside beginShape()
@@ -30,7 +30,9 @@ X addition to pde.properties to list the imports for various jdk versions
 X set jdk version for export inside pde.properties
 X option to set what browser is in use
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074106123;start=0
-_ make sure applet.html uses processing.org
+
+X new applet html code for proper XHTML compliance
+X   make sure applet.html uses processing.org
 
 _ p5 classes into packages (bagel especially)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
@@ -44,32 +46,14 @@ _   actual functions like toString() toInt() etc.. would work on arrays too
 _   this would make the conversion more general
 _   then maybe bring back ints() and doubles() ?
 
-_ weird problem with drawing/filling squares
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
-
-_ last vertex on LINE_LOOP fades out
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
-
-_ rotated text has a bug for when it goes offscreen
-_   patch rotated text (from visualclusto) into bfont
-
-_ mgorbet stroke transparency problem
-_  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
-
 _ present mode makes keyPressed() repeat like nutty
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076425568
 
 _ get jikes 1.19 in there
-
-_ put SecurityException things around file i/o for applets
-_   rather than checking online(), since applets might be signed
-_ shut off the automatic gunzipping
+_   this may not be able to generate 1.1 code
 
 _ shift-backspace doesn't work in the editor
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074192817;start=0
-
-_ key codes not properly coming through for UP/DOWN/etc
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
 
 eclipse when running in debug mode:
 ps -w -w -axo command | grep java
