@@ -4,16 +4,23 @@ X   also affected background and stroke
 X export was failing if no data dir
 X move background() out of draw() for draw mode apps
 X click on project name to quickly go to rename mode
-
+X cursor goes away during edits (java bug, fix with hack)
+X handling of key/mouse events smoothed out
+X   removed 'briefly' versions of mouse/key
+X make scrollbar for console
+X make win/linux write stderr to stderr.txt like the mac
+X   this will be useful until i implement scrollbar
+X   -> this might be problematic, watch out for lockups
+X remove projects if created but nothing happens to them
+X   maybe do this on open or quit?
+X first a syntax error, when fixed, causes NullPointerException 
+X   quitting the app makes things all better. argh.
+X   this just started with version37, it happens extrememely 
+X     frequently and should be easy to reproduce the error
 
 pde
-a _ make win/linux write stderr to stderr.txt like the mac
-a _   this will be useful until i implement scrollbar
-a _ make scrollbar for console
-a _ remove projects if created but nothing happens to them
 a _ see if play being highlighted can be implemented again
 a _   especially important because of speed issues
-a _ text editor? jedit's textarea class? hmm? hmm? 
 
 macosx
 a _ arrow keys don't work in the textarea
@@ -46,22 +53,6 @@ vertex(80, 20);
 vertex(90, 75);
 endShape();
 
-a _ first a syntax error, when fixed, causes NullPointerException 
-a _   quitting the app makes things all better. argh.
-a _   this just started with version37, it happens extrememely 
-a _     frequently and should be easy to reproduce the error
-// problematic version
-color rr = #FFCC00;
-fill(255);
-rect(20, 20, 50, 50);
-fill(rr);
-rect(50, 50, 50, 50);
-// then fix the error and run again:
-color rr = #FFCC00;
-fill(255);
-rect(20, 20, 50, 50);
-fill(rr);
-rect(50, 50, 50, 50);
 
 
 ////////////////////////////////////////////////////////////////////
@@ -213,6 +204,7 @@ _ fill, background, stroke all with int version for packed rgb
 
 
 PDE / high
+a _ text editor? jedit's textarea class? hmm? hmm? 
 b _ for 'java' mode, try run using external vm
 b _   would need to get error output stream from app.. argh
 b _   only allow under win/osx/linux
@@ -229,9 +221,11 @@ b _ see about setting up simple bug tracker/feature system
 b _   queue for people reporting things externally
 b _   bugzilla but simpler
 b _   would also be nice for people to be able to vote on features
+b _ save serial port on close
 
 
 PDE / medium
+b _ 'save as' from examples puts into examples dir.. :(
 b _ option to delete current project (trickier)
 b _   also needs to have method for verify.. blech
 b _ beautify is broken

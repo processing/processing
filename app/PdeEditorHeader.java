@@ -142,7 +142,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     sketchLeft = sketchTitleLeft + 
       metrics.stringWidth(SKETCH_TITLER) + PdeEditor.INSET_SIZE;
     sketchRight = sketchLeft + metrics.stringWidth(editor.sketchName);
-    int modifiedLeft = sketchLeft + PdeEditor.INSET_SIZE;
+    int modifiedLeft = sketchRight + PdeEditor.INSET_SIZE;
     //int modifiedLeft = sketchLeft + 
     //metrics.stringWidth(editor.sketchName) + PdeEditor.INSET_SIZE;
 
