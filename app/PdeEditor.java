@@ -331,12 +331,23 @@ public class PdeEditor extends Panel {
     // windowActivated doesn't seem to do much, so focus listener better
     presentationWindow.addFocusListener(new FocusAdapter() {
 	public void focusGained(FocusEvent e) {
+	  //System.out.println("focusGained: " + e);
 	  //if (frame != null) frame.toFront();  // editor to front
 	  try {
+	    //System.out.println("moving to front");
 	    engine.window.toFront();
 	  } catch (Exception ex) { }
 	}
       });
+
+    /*
+    presentationWindow.addWindowListener(new WindowAdapter() {
+	public void windowActivated(WindowEvent e) {
+	  //System.out.println(e);
+	  //PdeEditorConsole.systemOut.println(e);
+	}
+      });
+      *
 
     /*
     Document doc = textarea.document;
