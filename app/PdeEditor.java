@@ -798,11 +798,15 @@ public class PdeEditor extends JPanel {
 
     public void run() {
       while (Thread.currentThread() == thread) {
-        if ((runtime != null) && (runtime.applet != null)) {
-          //System.out.println(runtime.applet.finished);
-          buttons.running(!runtime.applet.finished);
-          //} else {
-          //System.out.println("still pooping");
+        if (runtime != null) {
+          if (runtime.applet != null) {
+            //System.out.println(runtime.applet.finished);
+            buttons.running(!runtime.applet.finished);
+            //} else {
+            //System.out.println("still pooping");
+          } else if (runtime.process != null) {
+            buttons.running(true);  // ??
+          }
         }
         try {
           Thread.sleep(250);
@@ -811,7 +815,9 @@ public class PdeEditor extends JPanel {
     }
 
     public void stop() {
-      thread.stop();
+      buttons.running(false);
+      thread = null;
+      //thread.stop();
     }
   }
 
@@ -1551,7 +1557,11 @@ public class PdeEditor extends JPanel {
 
 
   public void doQuit() {
-    doStop();
+    // stop isn't sufficient with external vm & quit
+    // instead use doClose() which will kill the external vm
+    //doStop();
+    doClose();  
+
     //if (!checkModified()) return;
     checkModified(DO_QUIT);
     //System.out.println("exiting doquit");
