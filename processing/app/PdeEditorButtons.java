@@ -9,7 +9,7 @@ public class PdeEditorButtons extends Panel {
 
   static final String title[] = {
     "Play", "Stop", "Close",
-    "Open", "Save", "Save on Server", "Print", "Beautify",
+    "Open", "Save", "Export Applet", "Print", "Beautify",
     "Disable Full Screen", "Full Screen"
   };
 
@@ -23,7 +23,7 @@ public class PdeEditorButtons extends Panel {
 
   static final int OPEN     = 3;
   static final int SAVE     = 4;
-  static final int SNAPSHOT = 5; // only available is save_as defined
+  static final int EXPORT   = 5;
   static final int PRINT    = 6;
   static final int BEAUTIFY = 7;
 
@@ -55,9 +55,9 @@ public class PdeEditorButtons extends Panel {
   int y1, y2;
 
 
-  public PdeEditorButtons(PdeEditor editor, boolean useOpenSave,
+  public PdeEditorButtons(PdeEditor editor /*, boolean useOpenSave,
 			  boolean useCourseware, boolean usePrint, 
-			  boolean useBeautify) {
+			  boolean useBeautify*/) {
     this.editor = editor;
     buttons = PdeApplet.readImage("buttons.gif");
 
@@ -70,13 +70,14 @@ public class PdeEditorButtons extends Panel {
     which[buttonCount++] = CLOSE;
 
     // the rest are conditional
-    if (useOpenSave) {
+    //if (useOpenSave) {
       which[buttonCount++] = OPEN;
       which[buttonCount++] = SAVE;
-    }
-    if (useCourseware) which[buttonCount++] = SNAPSHOT;
-    if (usePrint) which[buttonCount++] = PRINT;
-    if (useBeautify) which[buttonCount++] = BEAUTIFY;
+      //}
+    which[buttonCount++] = EXPORT;
+    //if (useCourseware) which[buttonCount++] = SNAPSHOT;
+    //if (usePrint) which[buttonCount++] = PRINT;
+    //if (useBeautify) which[buttonCount++] = BEAUTIFY;
 
     which[buttonCount++] = FULL_SCREEN;
 
@@ -286,7 +287,7 @@ public class PdeEditorButtons extends Panel {
 
     case OPEN: editor.doOpen(); break;
     case SAVE: editor.doSave(); break;
-    case SNAPSHOT: editor.doSnapshot(); break;
+    case EXPORT: editor.doExport(); break;
     case PRINT: editor.doPrint(); break;
     case BEAUTIFY: editor.doBeautify(); break;
 

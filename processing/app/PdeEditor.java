@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.zip.*;
 
  
 // play, stop, open, save, courseware, print, beautify
@@ -62,10 +63,10 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     top.setBackground(buttonBgColor);
     top.setLayout(new BorderLayout());
 
-    boolean privileges = PdeApplet.hasFullPrivileges();
-    boolean courseware = PdeApplet.get("save_as") != null;
-    buttons = new PdeEditorButtons(this, privileges, courseware, 
-				   (privileges & !courseware), false);
+    //boolean privileges = PdeApplet.hasFullPrivileges();
+    //boolean courseware = PdeApplet.get("save_as") != null;
+    buttons = new PdeEditorButtons(this); //, privileges, courseware, 
+                                //(privileges & !courseware), false);
     buttons.setBackground(buttonBgColor);
     //add("North", buttons);
     //top.add("North", buttons);
@@ -272,6 +273,171 @@ public class PdeEditor extends Panel implements PdeEnvironment {
   }
 
 
+  public void doExport() {
+    message("Exporting to applet...");
+    String s = textarea.getText();
+    FileDialog fd = new FileDialog(new Frame(), 
+				   "Create applet project named...", 
+				   FileDialog.SAVE);
+    fd.setDirectory(lastDirectory);
+    fd.setFile(lastFile);
+    fd.show();
+
+    String directory = fd.getDirectory();
+    String projectName = fd.getFile();
+    if (projectName == null) {   // user cancelled
+      message(EMPTY);
+      buttons.clear();
+      return;
+    } else if (projectName.indexOf(' ') != -1) {  // space in filename
+      message("Project name cannot have spaces.");
+      buttons.clear();
+      return;
+    }
+    //File file = new File(directory, filename);
+
+    // write java code for applet
+    /*
+    File javaOutputFile = new File(outputDirectory, projectName + ".java");
+    FileOutputStream fos = new FileOutputStream(javaOutputFile);
+    PrintStream ps = new PrintStream(fos);
+    ps.println("public class " + 
+    ps.print(converted);
+    ps.flush();
+    ps.close();
+    */
+
+    try {
+      String program = textarea.getText();
+
+      // create the project directory
+      KjcEngine engine = new KjcEngine(program, this);
+      File projectDir = new File(directory, projectName);
+      projectDir.mkdirs();
+
+      engine.writeJava(projectName, false);
+      if (!engine.compileJava()) return;
+      // message() should already hava a message in this case
+
+      // copy .java to project dir
+      String javaName = projectName + ".java";
+      copyFile(new File(javaName), new File(projectDir, javaName));
+
+      // remove temporary .java and .class files
+      //engine.cleanup();
+
+      int wide = 320;
+      int high = 240;
+      int index = program.indexOf("size(");
+      if (index != -1) {
+	try {
+	  String str = program.substring(index + 5);
+	  int comma = str.indexOf(',');
+	  int paren = str.indexOf(')');
+	  wide = Integer.parseInt(str.substring(0, comma).trim());
+	  high = Integer.parseInt(str.substring(comma+1, paren).trim());
+	} catch (Exception e) { 
+	  e.printStackTrace();
+	}
+      }
+
+      File htmlOutputFile = new File(projectDir, "index.html");
+      FileOutputStream fos = new FileOutputStream(htmlOutputFile);
+      PrintStream ps = new PrintStream(fos);
+      ps.println("<HTML> <BODY BGCOLOR=\"white\">");
+      ps.println();
+      ps.println("<BR> <BR> <BR> <CENTER>");
+
+      ps.println();
+      ps.print("<APPLET CODE=\"" + projectName  + "\" ARCHIVE=\"");
+      ps.print(projectName + ".jar");
+      ps.println("\" WIDTH=" + wide + " HEIGHT=" + high + ">");
+      ps.println("</APPLET>");
+      ps.println();
+
+      ps.println("<A HREF=\"" + projectName + ".java\">source code</A>");
+      ps.println();
+
+      ps.println("</CENTER>");
+
+      ps.println("</BODY> </HTML>");
+      ps.flush();
+      ps.close();
+
+      final String classes[] = {
+	"Bagel.class", "BagelConstants.class", "BagelFont.class", 
+	"BagelImage.class", "BagelLight.class", "BagelPolygon.class",
+	"ProcessingApplet.class"
+      };
+
+      // create new .jar file
+      FileOutputStream zipOutputFile = 
+	new FileOutputStream(new File(projectDir, projectName + ".jar"));
+      ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+      ZipEntry entry;
+
+      // add standard .class files to the jar
+      for (int i = 0; i < classes.length; i++) {
+	//System.out.println("adding class " + (i+1) + " of " + classes.length);
+	entry = new ZipEntry(classes[i]);
+	zos.putNextEntry(entry);
+	zos.write(grabFile(new File("lib\\export\\" + classes[i])));
+	zos.closeEntry();
+      }
+
+      // add the project's .class to the jar
+      //System.out.println("adding " + projectName + ".class");
+      entry = new ZipEntry(projectName + ".class");
+      zos.putNextEntry(entry);
+      zos.write(grabFile(new File("lib", projectName + ".class")));
+      zos.closeEntry();
+
+      // close up the jar file
+      zos.flush();
+      zos.close();
+      //zipOutputFile.close();
+
+      engine.cleanup();
+
+      message("Done exporting.");
+
+    } catch (Exception e) {
+      message("Error during export.");
+      e.printStackTrace();
+    }
+    buttons.clear();
+  }
+
+  static protected byte[] grabFile(File file) throws IOException {
+    int size = (int) file.length();
+    FileInputStream input = new FileInputStream(file);
+    byte buffer[] = new byte[size];
+    int offset = 0;
+    int bytesRead;
+    while ((bytesRead = input.read(buffer, offset, size-offset)) != -1) {
+      offset += bytesRead;
+      //System.out.println(offset + " " + bytesRead);
+      if (bytesRead == 0) break;
+    }
+    //System.out.println("done grabbing file");
+    return buffer;
+  }
+
+  static protected void copyFile(File afile, File bfile) {
+    try {
+      FileInputStream from = new FileInputStream(afile);
+      FileOutputStream to = new FileOutputStream(bfile);
+      byte[] buffer = new byte[4096];
+      int bytesRead;
+      while ((bytesRead = from.read(buffer)) != -1) {
+	to.write(buffer, 0, bytesRead);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
   public void doSnapshot() {
   /*
     //dbcp.msg("Sending your file to the server...");
@@ -469,6 +635,7 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
 
   public void doBeautify() {
+    /*
     String prog = textarea.getText();
     if ((prog.charAt(0) == '#') || (prog.charAt(0) == ';')) {
       message("Only DBN code can be made beautiful.");
@@ -526,6 +693,7 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       }
     }
     textarea.setText(buffer.toString());
+    */
     buttons.clear();
   }
 
