@@ -708,8 +708,8 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void cube(float size) {
-    g.cube(size);
+  public void box(float size) {
+    g.box(size);
   }
 
 
@@ -874,6 +874,12 @@ public class ProcessingApplet extends Applet
 
   public void colorMode(int colorMode, int max) {
     g.colorMode(colorMode, max);
+  }
+
+
+  public void colorMode(int colorMode, 
+			int maxX, int maxY, int maxZ) {
+    g.colorMode(colorMode, maxX, maxY, maxZ);
   }
 
 
