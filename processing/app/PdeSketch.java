@@ -2,7 +2,7 @@
 
 /*
   PdeSketch - stores information about files in the current sketch
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -22,48 +22,62 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-public class PdeSketch {
+public class Sketch {
   String name; 
-  File directory; 
+  File directory;
 
   static final int PDE = 0;
-  static final int JAVA = 1;
+  static final int JAVA = 1; 
 
-  int current;
+  //int current;
+  Code current;
+  int codeCount;
+  Code code[];
 
-  int fileCount;
+  int hiddenCount;
+  Code hidden[];
+
+
+  /*
   String names[];
   File files[];
   int flavor[]; 
   String program[];
   boolean modified[];
   PdeHistory history[];
+  */
 
-  int hiddenCount;
-  String hiddenNames[];
-  File hiddenFiles[];
-
-  //String sketchName; // name of the file (w/o pde if a sketch)
-  //File sketchFile;   // the .pde file itself
-  //File sketchDir;    // if a sketchbook project, the parent dir
-  //boolean sketchModified;
+  //int hiddenCount;
+  //String hiddenNames[];
+  //File hiddenFiles[];
 
 
   /**
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
    */
-  public PdeSketch(String path) {
+  public Sketch(String path) {
     File mainFile = new File(path);
     System.out.println("main file is " + mainFile);
     directory = new File(path.getParent());
     System.out.println("sketch dir is " + directory);
-  
-    // Build the list of files. This is only done once, rather than
-    // each time a change is made, because otherwise it gets to be 
-    // a nightmare to keep track of what files went where, because 
-    // not all the data will be saved to disk.
 
+    load();
+  }
+
+
+  /**
+   * Build the list of files. 
+   *
+   * Generally his is only done once, rather than
+   * each time a change is made, because otherwise it gets to be 
+   * a nightmare to keep track of what files went where, because 
+   * not all the data will be saved to disk.
+   *
+   * The exception is when an external editor is in use,
+   * in which case the load happens each time "run" is hit.
+   */
+  public void load() {
     // get list of files in the sketch folder
     String list[] = directory.list();
 
@@ -74,45 +88,59 @@ public class PdeSketch {
       else if (list[i].endsWith(".java.x")) hiddenCount++;
     }
 
-    names = new String[fileCount];
-    files = new File[fileCount];
-    modified = new boolean[fileCount];
-    flavor = new int[fileCount];
-    program = new String[fileCount];
-    history = new PdeHistory[fileCount];
+    code = new Code[codeCount];
+    //names = new String[fileCount];
+    //files = new File[fileCount];
+    //flavor = new int[fileCount];
 
-    hiddenNames = new String[hiddenCount];
-    hiddenFiles = new File[hiddenCount];
+    hidden = new Code[hiddenCount];
+    //hiddenNames = new String[hiddenCount];
+    //hiddenFiles = new File[hiddenCount];
 
     int fileCounter = 0;
     int hiddenCounter = 0;
 
     for (int i = 0; i < list.length; i++) {
-      int sub = 0;
-
       if (list[i].endsWith(".pde")) {
-	names[fileCounter] = list[i].substring(0, list[i].length() - 4);
-	files[fileCounter] = new File(directory, list[i]);
-        flavor[fileCounter] = PDE;
-	fileCounter++;
+        code[fileCounter++] = 
+          new Code(list[i].substring(0, list[i].length() - 4), 
+                   new File(directory, list[i]), 
+                   PDE);
 
       } else if (list[i].endsWith(".java")) {
-	names[fileCounter] = list[i].substring(0, list[i].length() - 5);
-	files[fileCounter] = new File(directory, list[i]);
-        flavor[fileCounter] = JAVA;
-	fileCounter++;
+        code[fileCounter++] = 
+          new Code(list[i].substring(0, list[i].length() - 5),
+                   new File(directory, list[i]),
+                   JAVA);
 
       } else if (list[i].endsWith(".pde.x")) {
-	names[hiddenCounter] = list[i].substring(0, list[i].length() - 6);
-	files[hiddenCounter] = new File(directory, list[i]);
-	hiddenCounter++;
+        hidden[hiddenCounter++] = 
+          new Code(list[i].substring(0, list[i].length() - 6),
+                   new File(directory, list[i]),
+                   PDE);
 
       } else if (list[i].endsWith(".java.x")) {
-	names[hiddenCounter] = list[i].substring(0, list[i].length() - 7);
-	files[hiddenCounter] = new File(directory, list[i]);
-	hiddenCounter++;
+        hidden[hiddenCounter++] = 
+          new Code(list[i].substring(0, list[i].length() - 7),
+                   new File(directory, list[i]),
+                   JAVA);
       }      
-    }    
+    }
+
+    // remove any entries that didn't load properly
+    int index = 0;
+    while (index < codeCount) {
+      if (code[index].program == null) {
+        //hide(index);  // although will this file be hidable?
+        for (int i = index+1; i < codeCount; i++) {
+          code[i-1] = code[i];
+        }
+        codeCount--;
+
+      } else {
+        index++;
+      }
+    }
   }
 
 
@@ -124,32 +152,41 @@ public class PdeSketch {
    */
   public void setCurrent(int which) {
     // get the text currently being edited
-    program[current] = editor.getText();
+    //program[current] = editor.getText();
+    if (current != null) {
+      current.program = editor.getText();
+    }
+
+    current = code[which];
 
     // set to the text for this file
     // 'true' means to wipe out the undo buffer
     // (so they don't undo back to the other file.. whups!)
-    editor.changeText(program[which], true); 
+    editor.changeText(current.program, true); 
 
-    // i'll personally make a note of the change
-    current = which;
+    // and i'll personally make a note of the change
+    //current = which;
   }
 
 
+  /**
+   * This is not Runnable.run(), but a handler for the run() command.
+   */
   public void run() {
     try {
       String program = textarea.getText();
-      history.record(program, PdeHistory.RUN);
+      current.history.record(program, PdeHistory.RUN);
 
       // if an external editor is being used, need to grab the
       // latest version of the code from the file.
       if (PdePreferences.getBoolean("editor.external")) {
         // history gets screwed by the open..
-        String historySaved = history.lastRecorded;
-        //handleOpen(sketchName, sketchFile, sketchDir);
-        //handleOpen(sketch.name, sketch.file, sketch.directory);
-        handleOpen(sketch);
-        history.lastRecorded = historySaved;
+        //String historySaved = history.lastRecorded;
+        //handleOpen(sketch);
+        //history.lastRecorded = historySaved;
+
+        // nuke previous files and settings, just get things loaded
+        load();
       }
 
       // temporary build folder is inside 'lib'
@@ -160,16 +197,25 @@ public class PdeSketch {
         buildDir.mkdirs();
       }
       // copy (changed) files from data directory into build folder
-      sketch.updateDataDirectory(buildDir);
+      //sketch.updateDataDirectory(buildDir);
+
+      // copy contents of data dir.. eventually, if the files 
+      // already exist in the target, don't' bother.
+      //public void updateDataDirectory(File buildDir) {
+      File dataDir = new File(directory, "data");
+      if (dataDir.exists()) {
+        PdeBase.copyDir(dataDir, buildDir);
+      }
 
       // make up a temporary class name to suggest
-      int numero1 = (int) (Math.random() * 10000);
-      int numero2 = (int) (Math.random() * 10000);
-      //String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
-      String className = "Temporary_" + numero1 + "_" + numero2;
+      // only used if the code is not in ADVANCED mode
+      String suggestedClassName = 
+        ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
+         "_" + String.valueOf((int) (Math.random() * 10000)));
 
       // handle building the code
-      className = build(program, className, tempBuildPath, false);
+      className = build(program, suggestedClassName, tempBuildPath);
+      // externalPaths is magically set by build()
 
       // if the compilation worked, run the applet
       if (className != null) {
@@ -257,35 +303,26 @@ public class PdeSketch {
 
   // in an advanced program, the returned classname could be different,
   // which is why the className is set based on the return value.
-  // @param exporting if set, then code is cleaner, 
-  //                  but line numbers won't line up properly.
-  //                  also modifies which imports (1.1 only) are included.
   // @return null if compilation failed, className if not
   //
-  protected String build(String program, String className,
-                         String buildPath, boolean exporting) 
-    throws PdeException, Exception {
+  protected String build(String program, String suggestedClassName,
+                         String buildPath) throws PdeException, Exception {
 
     // true if this should extend BApplet instead of BAppletGL
     //boolean extendsNormal = base.normalItem.getState();
 
     externalRuntime = false;
     externalPaths = null;
+    String externalImports[] = null;
 
     externalCode = new File(sketchDir, "code");
     if (externalCode.exists()) {
       externalRuntime = true;
-      externalPaths = PdeCompiler.includeFolder(externalCode);
+      externalPaths = PdeCompiler.contentsToClassPath(externalCode);
+      externalImports = PdeCompiler.magicImports(externalPaths);
 
     } else {
       externalCode = null;
-    }
-
-    // add the includes from the external code dir
-    //
-    String imports[] = null;
-    if (externalCode != null) {
-      imports = PdeCompiler.magicImports(externalPaths);
     }
 
     PdePreprocessor preprocessor = null;
@@ -372,16 +409,6 @@ public class PdeSketch {
   }
   */
 
-  // copy contents of data dir
-  // eventually, if the files already exist in the target, don't' bother.
-  public void updateDataDirectory(File buildDir) {
-    File dataDir = new File(directory, "data");
-    if (dataDir.exists()) {
-      PdeBase.copyDir(dataDir, buildDir);
-    }
-  }
-
-
 
   /**
    * Returns path to the main .pde file for this sketch.
@@ -389,4 +416,54 @@ public class PdeSketch {
   public String getMainFilePath() {
     return files[0].getAbsolutePath();
   }
-}
+  }
+
+
+  class Code {
+    String name;
+    File file;
+    int flavor;
+
+    String program;
+    boolean modified;
+    History history;
+
+
+    public Code(String name, File file, int flavor) {
+      this.name = name;
+      this.file = file;
+      this.flavor = flavor;
+    }
+
+
+    public void load() {
+      program = null;
+      try {
+        if (files[i].length() != 0) {
+          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
+          StringBuffer buffer = new StringBuffer();
+          String line = null;
+          while ((line = reader.readLine()) != null) {
+            buffer.append(line);
+            buffer.append('\n');
+          }
+          reader.close();
+          program = buffer.toString();
+
+        } else {
+          // empty code file.. no worries, might be getting filled up
+          program = "";
+        }
+
+      } catch (IOException e) {
+        Pdebase.showWarning("Error loading file", 
+                            "Error while opening the file\n" + 
+                            files[i].getPath(), e);
+        program = null;  // just in case
+      }
+
+      if (program != null) {
+        history = new History(file);
+      }
+    }
+  }
