@@ -469,7 +469,7 @@ public class KjcEngine extends PdeEngine {
     // as in: lib\build\Temporary_5476_6442.java:88: caution:Assignment of an expression to itself [KOPI]
     if (s.indexOf("caution") != -1) return;
 
-    System.out.println(messageMode + " " + "msg: " + s);
+    //System.out.println(messageMode + " " + "msg: " + s);
 
     if (messageMode == COMPILING) {
       //System.out.println("leech2: " + new String(b, offset, length));
@@ -497,7 +497,10 @@ public class KjcEngine extends PdeEngine {
 	}
 
       } else {
-	System.err.println("don't understand: " + s);
+	//System.err.println("don't understand: " + s);
+	exception = new PdeException("Error while compiling, " + 
+				     "please send code to bugs@proce55ing.net");
+	editor.error(exception);
       }
     } else if (messageMode == RUNNING) {
       //if (s.indexOf("MAKE WAY") != -1) {
