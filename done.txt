@@ -1,3 +1,88 @@
+0047
+X reported by fdb and brendanberg
+After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
+Exception in thread "main" java.lang.NullPointerException 
+  at PdeBase.addSketches(PdeBase.java:598 ) 
+  at PdeBase.addSketches(PdeBase.java:615) 
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575) 
+  at PdeBase.<init>(PdeBase.java:362) 
+  at PdeBase.main(PdeBase.java:102) 
+Removing all sketches would solve the problem. 
+/ lots of problems in moving sketches over
+ i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
+ i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
+again, after i moved my sketches over it broke permanently... 
+/ 46 dies when run from desktop on some machines [jes]
+/   spaces in the dir name?
+o is sketch.properties getting mangled on the mac?
+X jedit text area
+X   change bg color for 'use external editor'
+X   enable/disable undo/redo
+X   don't let undo after setting text
+X   get focus after setText
+X   need to take care of auto-indent etc
+X   is setText goobering up on beautify?
+X   re-implement cut/copy/paste
+X   re-implement undo/redo
+X   get settings from PdeBase
+X   better defaults for syntax highlighting
+X     comments should be gray and not italicized
+X     disable end of line marker by default
+X     highlight p5 keywords
+X       setup, draw, loop as one class
+X       rect, line etc as another
+X       width, height, pixels as a third
+X   jump to top of document on load
+X   change style of ~ at end of document for unused area
+X extra linefeeds is getting annoying for folks
+X   line endings joy
+X   how are line endings working during save?
+X recursive sketch add that works properly and ignores crap
+X crashes while starting
+LaunchRunner Error] PdeBase.main(String[]) threw an exception:
+java.lang.NullPointerException
+  at PdeBase.addSketches(PdeBase.java:598)
+  at PdeBase.addSketches(PdeBase.java:615)
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:476)
+  at PdeEditor.skNew2(PdeEditor.java:872)
+  at PdeEditor.checkModified2(PdeEditor.java:814)
+  at PdeEditor.checkModified(PdeEditor.java:797)
+  at PdeEditor.checkModified(PdeEditor.java:785)
+  at PdeEditor.skNew(PdeEditor.java:826)
+  at PdeEditor.init(PdeEditor.java:428)
+  at PdeBase.<init>(PdeBase.java:361)
+  at PdeBase.main(PdeBase.java:102)
+  at java.lang.reflect.Method.invoke(Native Method)
+  at com.apple.buckyball.app.LaunchRunner.run(LaunchRunner.java:82)
+  at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
+  at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
+X undo/redo can go to far
+X docs
+X   make a note that size() has to come first [nluken]
+X   look at the code that's created in build/
+X known issues
+X   random freezes.. especially under windows
+X   wheel mouse is gone again, to return later
+X describe rundown of constants pulled from pde.properties
+X   coloring for syntax
+X   sketchbook.path, very preliminary, still creates 'default'
+X macos9 stuff
+X   check to see if swing is working properly
+X   get new release out, remove 1.3 specific stuff from textpane
+X get syntax coloring debugged?
+X   talk to casey about better default colors
+X scroll to beginning after setText()
+X color not set for default text area with empty text
+X   color not set on 'new', setForeground won't do it
+X   probably reasonably simple fix, but not in time
+X undo/redo
+X   should enable/disable as available
+X   undo-ing too much will empty the text area
+X     the setText is an undoable thing. grr.
+X method to set a folder for the sketchbook
+X when trying to use serial, provide error if things not installed
+
+
 0046 
 X install new swing-based textarea with syntax highlighting
 X   improve the flicker problems (re-enable backing store?)

@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0047 - 5 JANUARY 2003
+RELEASE 0048 - 6 JANUARY 2003
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -78,7 +78,8 @@ of bugs. hopefully this is not a *long* ways off, but...
 
 I FOUND A BUG!
 
-we prefer to call them "issues."
+a cultured software elite such as yourself should use the gentleman's
+term "issue."
 
 first, be sure to check under the notes for your specific platform to
 make sure it isn't a known issue or that there isn't a simple fix.
@@ -105,6 +106,23 @@ when reporting this "bug" please include information about
 for stranger errors during compile time, you can also look inside the
 "build" folder inside "lib", which is an intermediate (translated into
 java) version of your code.
+
+the more details you can post, the better, because it helps us figure
+out what's going on. useful things when reporting:
+
+- we want the minimum amount of code that will still replicate the
+  bug. the worst that can happen is we get a report that says
+  "problem!" along with a three page program. sure, everyone likes a
+  puzzle, but simpler code will be a faster response. 
+
+- occasionally we may need you to pack up a copy of your sketchbook or
+  something similar so that we can try and replicate the weirdness on
+  our own machine. rest assured, we have no interest in messing with
+  your fancy creations or stealing your ideas. the p5 team is a pair
+  of straight-laced boys who hail from the midwestern u.s. who were
+  brought up better than that. and as we often lack enough time to
+  build our own projects, we have even less time to spend figuring out
+  other peoples' projects to rip them off.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -218,8 +236,12 @@ you tell us about them, so we can fix them.
 
 MAC OS X
 
-the most current release has only been tested on Mac OS X 10.2.2. your
-mileage may vary if you're running something else. actually, your
+note that this release does *NOT* work under java 1.4. the most recent 
+version of 1.4 we tested is DP8, which was still too buggy and unstable 
+to run p5.
+
+the most current release has only been tested on Mac OS X 10.2.3. 
+your mileage may vary if you're running something else. actually, your
 mileage will vary no matter what, because who knows what this software
 is gonna do. you're playing with free, alpha software. get psyched!
 
@@ -288,15 +310,27 @@ versions: this version has only been tested under Mac OS 9.2.2.
 
 WINDOWS
 
-win2k works well, reports point to xp working well also. win95/98/me
-seems to have lots of trouble, but we think it's just with the .exe
-that we use, so that'll get fixed in the future.
+win2k works well, reports point to xp working well also. 
 
-the windows release is now using java 1.4, a forty megabyte beast of a
-platform. this oughta double the size of the p5 download, but in the
-future we hope to just make people install the runtime separately, so
-if people already have it installed on their machine, no additional
-work will be required.
+win95/98/me seem to have some trouble, but we think it's just with
+the .exe that we use, so that'll get fixed in the future. you can try
+using the 'run.bat' file instead, and see if that works better.
+
+the release is now split into 'basic' and 'advanced' versions. the 
+basic release includes a working java vm, and is all set up and ready 
+to go. the advanced version is for people who already have java 
+installed (and don't want to deal with the 20MB download), and know 
+what they're doing enough that they can also install the serial port 
+code by hand. instructions on installing the serial code are in the 
+'serial' folder inside the advanced release.
+
+in the most recent release, we've removed the java 1.4 runtime, so 
+the download is far smaller, however you need to install java before
+processing will work. visit http://java.sun.com/getjava to download.
+
+out of memory? try adjusting the parameters in the file 'run.bat' and
+use that to run instead of Proce55ing.exe. short instructions can be
+found inside that file.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
