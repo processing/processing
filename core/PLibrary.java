@@ -2,11 +2,9 @@
 
 /*
   PLibrary - interface for classes that plug into bagel
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03
-  Ben Fry, Massachusetts Institute of Technology and
-  Casey Reas, Interaction Design Institute Ivrea
+  Copyright (c) 2004 Ben Fry and the Processing project.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,13 +22,32 @@
   Boston, MA  02111-1307  USA
 */
 
-
 package processing.core;
 
 
 public interface PLibrary {
 
-  // called when the applet is stopped
+  /**
+   * This sets the parent PApplet in case that's needed for anything.
+   * It's called on attach().
+   */
+  public void setParent(PApplet parent);
+
+  /**
+   * Called before (outside of) draw() or loop().
+   * Note that this also gets called before beginFrame()
+   * so no drawing can occur.
+   */
+  public void pre();
+
+  /** 
+   * Called after (outside of) draw() or loop().
+   */
+  public void post(); 
+
+  /**
+   * Called when the applet or application is stopped.
+   */
   public void stop();
 }
 

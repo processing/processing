@@ -206,6 +206,7 @@ CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\w
 
 
 # SERIAL LIBRARY
+echo Build serial library...
 cd ../../lib/serial
 ../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
 zip -r0q serial.jar processing
@@ -215,6 +216,7 @@ cp serial.jar ../../build/windows/work/libraries/serial/library/
 
 
 # NET LIBRARY
+echo Build net library...
 cd ../../lib/net
 ../../build/windows/work/jikes +D -d . *.java 
 zip -r0q net.jar processing
@@ -224,6 +226,7 @@ cp net.jar ../../build/windows/work/libraries/net/library/
 
 
 # VIDEO LIBRARY
+echo Build video library...
 QTJAVA="$WINDIR\\system32\\QTJava.zip"
 if test -f "${QTJAVA}"
 then
