@@ -49,7 +49,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
-  public boolean compileJava(PrintStream leechErr) {
+  public boolean compile(PrintStream leechErr) {
     String userdir = System.getProperty("user.dir") + File.separator;
 
     //System.out.println(userdir + "jikes");
@@ -147,8 +147,12 @@ public class PdeCompiler implements PdeMessageConsumer {
   boolean firstErrorFound;
   boolean secondErrorFound;
 
-  // part of the PdeMessageConsumer interface
-  //
+  /**
+   * Part of the PdeMessageConsumer interface, this is called 
+   * whenever a piece (usually a line) of error message is spewed 
+   * out from the compiler. The errors are parsed for their contents
+   * and line number, which is then reported back to PdeEditor.
+   */
   public void message(String s) {
     //System.err.println("MSG: " + s);
     System.err.print(s);
@@ -156,8 +160,8 @@ public class PdeCompiler implements PdeMessageConsumer {
     // ignore cautions
     if (s.indexOf("Caution") != -1) return;
 
-    // jikes always uses a forward slash character as its separator, so 
-    // we need to replace any platform-specific separator characters before
+    // jikes always uses a forward slash character as its separator, 
+    // so replace any platform-specific separator characters before
     // attemping to compare
     //
     String partialTempPath = buildPath.replace(File.separatorChar, '/') 
@@ -218,48 +222,43 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
-  static String additional;
+  static String bootClassPath;
 
   static public String calcBootClassPath() {
-    if (additional == null) {
-#ifdef MACOS
-      additional = 
-        includeFolder(new File("/System/Library/Java/Extensions/"));
-      /*
-      // for macosx only, doesn't work on macos9
-      StringBuffer abuffer = new StringBuffer();
-
-      // add the build folder.. why isn't it already there?
-      //abuffer.append(":" + userdir + "lib/build");
-
-      String list[] = new File("/System/Library/Java/Extensions").list();
-      for (int i = 0; i < list.length; i++) {
-        if (list[i].endsWith(".class") || list[i].endsWith(".jar") ||
-            list[i].endsWith(".zip")) {
-          //abuffer.append(System.getProperty("path.separator"));
-          abuffer.append(":/System/Library/Java/Extensions/" + list[i]);
-        }
+    if (bootClassPath == null) {
+      if (PdeBase.platform == PdeBase.MACOSX) {
+        additional = 
+          contentsToClassPath(new File("/System/Library/Java/Extensions/"));
+      } else {
+        additional = "";
       }
-      additional = abuffer.toString();
-      */
-#else
-      additional = "";
-#endif
+      bootClassPath =  System.getProperty("sun.boot.class.path") + additional;
     }
-    return System.getProperty("sun.boot.class.path") + additional;
+    return bootClassPath;
   }
 
 
+  /**
+   * Return the java.class.path, along with additional items
+   * that were magically gleaned from the 'include' folder, 
+   * which may contain additional library classes.
+   */
   static public String calcClassPath(File include) {
-    return System.getProperty("java.class.path") + includeFolder(include);
+    return System.getProperty("java.class.path") + contentsToClassPath(include);
   }
+
+
+  /// 
 
 
   /**
    * Return the path for a folder, with appended paths to 
    * any .jar or .zip files inside that folder.
+   * This will prepend a colon so that it can be directly
+   * appended to another path string.
    */
-  static public String includeFolder(File folder) {
+  //static public String includeFolder(File folder) {
+  static public String contentsToClassPath(File folder) {
     if (folder == null) return "";
 
     StringBuffer abuffer = new StringBuffer();
@@ -341,7 +340,6 @@ public class PdeCompiler implements PdeMessageConsumer {
         }
       }
     }
-    //return null;
     String output[] = new String[importCount];
     System.arraycopy(imports, 0, output, 0, importCount);
     return output;
@@ -370,12 +368,13 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
-  /// 
+  ///
 
 
-  // goes through a colon (or semicolon on windows) separated list
-  // of all the paths inside the 'code' folder
-
+  /**
+   * Slurps up .class files from a colon (or semicolon on windows) 
+   * separated list of paths and adds them to a ZipOutputStream.
+   */
   static public void magicExports(String path, ZipOutputStream zos) 
   throws IOException {
     String pieces[] = 
@@ -394,23 +393,17 @@ public class PdeCompiler implements PdeMessageConsumer {
           while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             if (entry.isDirectory()) {
-              //String name = entry.getName();
-              //if (name.indexOf("META-INF/") == 0) continue;
               // actually 'continue's for all dir entries
 
             } else {
               String name = entry.getName();
+              // ignore contents of the META-INF folders
               if (name.indexOf("META-INF") == 0) continue;
               ZipEntry entree = new ZipEntry(name);
 
               zos.putNextEntry(entree);
               byte buffer[] = new byte[(int) entry.getSize()];
               InputStream is = file.getInputStream(entry);
-              //DataInputStream is = 
-              //new DataInputStream(file.getInputStream(entry));
-              //is.readFully(buffer);
-              //System.out.println(buffer.length);
-              //System.out.println(count + " " + buffer.length);
 
               int offset = 0;
               int remaining = buffer.length; 
@@ -441,6 +434,11 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
+  /**
+   * Continue the process of magical exporting. This function
+   * can be called recursively to walk through folders looking
+   * for more goodies that will be added to the ZipOutputStream.
+   */
   static public void magicExportsRecursive(File dir, String sofar, 
                                            ZipOutputStream zos) 
   throws IOException {

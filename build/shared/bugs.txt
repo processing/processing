@@ -41,6 +41,13 @@ changed in the future, but for now, they're not actually 'broken'.
   Support.qtx" out of /Library/QuickTime (at least until you need to
   do video cd work).
 
+- on windows, sometimes your programs will run in a window that has a 
+  java coffee cup icon, instead of the usual processing icon. this 
+  simply means that the application is being run outside of processing
+  (by java itself) rather than from within processing. this happens
+  when extra libraries, multiple source code files (more than one tab), 
+  or extra code files in the 'code' folder are employed.
+
 
 ..................................................................
 
