@@ -4,6 +4,52 @@ X write p5 language spec
 
 ..................................................................
 
+FRY PILE
+
+
+_ building windows from scratch 
+_   tries to make work/ without bagel serial existing and blows up
+_     b/c bagel checkout happens later
+_   all code needs to be buildable from scratch
+
+_ modify build instructions for the many changes
+_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+
+_ replacing spaces with underscores.. 
+_   patch keyTyped event instead of keyPressed
+_   remove reference in readme about macosx problem w/ it
+
+_ only allow one pmouseX update outside of loop
+_   to avoid jumping lines (drawing -> continuous_lines)
+
+_ implement text(int something) and text(float something)
+_   and perhaps others?
+
+_ go through examples to see if there's other annoying syntax
+
+_ history causing trouble
+_   super slow with a huge sketch
+
+_ winamp/audio getting starved or crackly while applets running
+_   thread priority too high? or something weird
+
+_ BApplet.main(new String[] { "flashcards3" });
+_   or even BApplet.main(new String[] { getClass().getName() });
+_   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+
+_ textrect(String text, x, y, width, height)  // based on rectMode
+_   textMode() for align left, center, right (no justify.. har!)
+
+_ font.stringWidth -> font.width(char c) or width(String s) 
+
+_ image(BImage, x, y, float scale)
+
+_ don't cache stuff from loadStrings
+_   mac java vm won't give up old version of file
+_   or use setUseCaches(false)
+
+_ multi-line errors a mess in jikes
+_   maybe a dropdown list thing, with the first just shown?
 
 lotsa video issues
 _ just locks up after running examples, then does the 'can't delete' thing
@@ -20,7 +66,9 @@ _   maybe just ask user to select the file directly
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
 
 _ p5 not working in msjvm (prolly non-1.1 code)
+_   might be java.awt.Cursor in BConstants
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
 
 _ jedittextarea caret blinks even w/o focus
 _   may have been my own hack breaking it
@@ -101,9 +149,6 @@ _     so instead trap for keyTyped events
 _ set nice background for disk image on macosx
 _ Contents/Resources/Java can take jnilib files
 
-windows
-_ modify build instructions for the many changes
-_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 _ can windows have multiple jre installed and use any of them?
 
 linux
@@ -442,8 +487,11 @@ dm b _ contextual syntax highlighting based on grammar
 dm b _   everything that's in java.lang plus more is too much for keywords
 dm b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
 
+   b _ for (int i = 0; i < 10; i++) -> for (int i .. 10) 
+   b _    what's a better method for this?
    b _ allow import blahblah.blah.blah to get passed through
    b _   and included with the imports list.
+   b _ check through all the examples to look for other themes
 
 Current Preprocessor Subsitutions:
 
