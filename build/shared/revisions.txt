@@ -9,12 +9,12 @@ releases will be super crusty.
 
 ABOUT REV 0082 - 6 april 2005
 
+- casey has updated the examples, reference, and keywords.
+
 - default lighting now works.. lights() and noLights() should properly
   make things look 3D and pretty... this is all thanks to simon. there 
   are a ton of features that come along with this, but we're testing
   them and finalizing the api first before announcing them.
-
-- the stop button should be working again
 
 - default window height is no longer insufficient (after prefs were
   deleted on windows, on the next run the window was smashed)
@@ -31,7 +31,13 @@ ABOUT REV 0082 - 6 april 2005
 
 known problems
 
-- P2D still badly broken
+- P2D still badly broken (no lines, etc)
+
+- flicker still likely in java2d.. the applet and graphics threads
+  aren't playing nicely with each other
+
+- stop button still broken.. had it fixed for a minute but a bunch 
+  of other problems reappeared. 
 
 - dragging the applet window around will usually halt it (especially
   with opengl)
