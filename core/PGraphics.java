@@ -2177,12 +2177,12 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  protected void calc_color(float gray) {
-    calc_color(gray, colorModeA);
+  protected void colorCalc(float gray) {
+    colorCalc(gray, colorModeA);
   }
 
 
-  protected void calc_color(float gray, float alpha) {
+  protected void colorCalc(float gray, float alpha) {
     if (gray > colorModeX) gray = colorModeX;
     if (alpha > colorModeA) alpha = colorModeA;
 
@@ -2201,12 +2201,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void calc_color(float x, float y, float z) {
-    calc_color(x, y, z, colorModeA);
+  protected void colorCalc(float x, float y, float z) {
+    colorCalc(x, y, z, colorModeA);
   }
 
 
-  protected void calc_color(float x, float y, float z, float a) {
+  protected void colorCalc(float x, float y, float z, float a) {
     if (x > colorModeX) x = colorModeX;
     if (y > colorModeY) y = colorModeY;
     if (z > colorModeZ) z = colorModeZ;
@@ -2265,7 +2265,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * unpacks AARRGGBB color for direct use with calc_color.
+   * unpacks AARRGGBB color for direct use with colorCalc.
    * handled here with its own function since this is indepenent
    * of the color mode.
    *
@@ -2274,7 +2274,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * (note: no need for bounds check since it's a 32 bit number)
    */
-  protected void calc_color_from(int argb) {
+  protected void colorFrom(int argb) {
     calcColor = argb;
     calcAi = (argb >> 24) & 0xff;
     calcRi = (argb >> 16) & 0xff;
@@ -2288,7 +2288,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void calc_tint() {
+  protected void colorTint() {
     tint = true;
     tintR = calcR;
     tintG = calcG;
@@ -2303,7 +2303,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void calc_fill() {
+  protected void colorFill() {
     fill = true;
     //fillChanged = true;
     fillR = calcR;
@@ -2319,7 +2319,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void calc_stroke() {
+  protected void colorStroke() {
     stroke = true;
     //strokeChanged = true;
     strokeR = calcR;
@@ -2335,7 +2335,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void calc_background() {
+  protected void colorBackground() {
     backgroundR = calcR;
     backgroundG = calcG;
     backgroundB = calcB;
@@ -2363,32 +2363,32 @@ public class PGraphics extends PImage implements PConstants {
       tint((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_tint();
+      colorFrom(rgb);
+      colorTint();
     }
   }
 
   public void tint(float gray) {
-    calc_color(gray);
-    calc_tint();
+    colorCalc(gray);
+    colorTint();
   }
 
 
   public void tint(float gray, float alpha) {
-    calc_color(gray, alpha);
-    calc_tint();
+    colorCalc(gray, alpha);
+    colorTint();
   }
 
 
   public void tint(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_tint();
+    colorCalc(x, y, z);
+    colorTint();
   }
 
 
   public void tint(float x, float y, float z, float a) {
-    calc_color(x, y, z, a);
-    calc_tint();
+    colorCalc(x, y, z, a);
+    colorTint();
   }
 
 
@@ -2425,32 +2425,32 @@ public class PGraphics extends PImage implements PConstants {
       fill((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_fill();
+      colorFrom(rgb);
+      colorFill();
     }
   }
 
   public void fill(float gray) {
-    calc_color(gray);
-    calc_fill();
+    colorCalc(gray);
+    colorFill();
   }
 
 
   public void fill(float gray, float alpha) {
-    calc_color(gray, alpha);
-    calc_fill();
+    colorCalc(gray, alpha);
+    colorFill();
   }
 
 
   public void fill(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_fill();
+    colorCalc(x, y, z);
+    colorFill();
   }
 
 
   public void fill(float x, float y, float z, float a) {
-    calc_color(x, y, z, a);
-    calc_fill();
+    colorCalc(x, y, z, a);
+    colorFill();
   }
 
 
@@ -2498,7 +2498,9 @@ public class PGraphics extends PImage implements PConstants {
     throw new RuntimeException("ambient() can only be used with depth()");
   }
 
+
   //////////////////////////////////////////////////////////////
+
 
   public void specular(int rgb) {
     throw new RuntimeException("specular() can only be used with depth()");
@@ -2524,7 +2526,9 @@ public class PGraphics extends PImage implements PConstants {
     throw new RuntimeException("shininess() can only be used with depth()");
   }
 
+
   //////////////////////////////////////////////////////////////
+
 
   public void emissive(int rgb) {
     throw new RuntimeException("emissive() can only be used with depth()");
@@ -2538,7 +2542,9 @@ public class PGraphics extends PImage implements PConstants {
     throw new RuntimeException("emissive() can only be used with depth()");
   }
 
+
   //////////////////////////////////////////////////////////////
+
 
   public int createAmbientLight(int rgb) {
     throw new RuntimeException("createAmbientLight() can only be used with depth()");
@@ -2621,33 +2627,33 @@ public class PGraphics extends PImage implements PConstants {
       stroke((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_stroke();
+      colorFrom(rgb);
+      colorStroke();
     }
   }
 
 
   public void stroke(float gray) {
-    calc_color(gray);
-    calc_stroke();
+    colorCalc(gray);
+    colorStroke();
   }
 
 
   public void stroke(float gray, float alpha) {
-    calc_color(gray, alpha);
-    calc_stroke();
+    colorCalc(gray, alpha);
+    colorStroke();
   }
 
 
   public void stroke(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_stroke();
+    colorCalc(x, y, z);
+    colorStroke();
   }
 
 
   public void stroke(float x, float y, float z, float a) {
-    calc_color(x, y, z, a);
-    calc_stroke();
+    colorCalc(x, y, z, a);
+    colorStroke();
   }
 
 
@@ -2665,23 +2671,23 @@ public class PGraphics extends PImage implements PConstants {
       background((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_background();
+      colorFrom(rgb);
+      colorBackground();
     }
     clear();
   }
 
 
   public void background(float gray) {
-    calc_color(gray);
-    calc_background();
+    colorCalc(gray);
+    colorBackground();
     clear();
   }
 
 
   public void background(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_background();
+    colorCalc(x, y, z);
+    colorBackground();
     clear();
   }
 
@@ -2771,12 +2777,12 @@ public class PGraphics extends PImage implements PConstants {
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
-    calc_color(gray);
+    colorCalc(gray);
     return calcColor;
   }
 
   public final int color(float gray) {  // ignore
-    calc_color(gray);
+    colorCalc(gray);
     return calcColor;
   }
 
@@ -2789,12 +2795,12 @@ public class PGraphics extends PImage implements PConstants {
 
       return ((alpha & 0xff) << 24) | (gray << 16) | (gray << 8) | gray;
     }
-    calc_color(gray, alpha);
+    colorCalc(gray, alpha);
     return calcColor;
   }
 
   public final int color(float gray, float alpha) {  // ignore
-    calc_color(gray, alpha);
+    colorCalc(gray, alpha);
     return calcColor;
   }
 
@@ -2808,12 +2814,12 @@ public class PGraphics extends PImage implements PConstants {
 
       return 0xff000000 | (x << 16) | (y << 8) | z;
     }
-    calc_color(x, y, z);
+    colorCalc(x, y, z);
     return calcColor;
   }
 
   public final int color(float x, float y, float z) {  // ignore
-    calc_color(x, y, z);
+    colorCalc(x, y, z);
     return calcColor;
   }
 
@@ -2828,12 +2834,12 @@ public class PGraphics extends PImage implements PConstants {
 
       return (a << 24) | (x << 16) | (y << 8) | z;
     }
-    calc_color(x, y, z, a);
+    colorCalc(x, y, z, a);
     return calcColor;
   }
 
   public final int color(float x, float y, float z, float a) {  // ignore
-    calc_color(x, y, z, a);
+    colorCalc(x, y, z, a);
     return calcColor;
   }
 

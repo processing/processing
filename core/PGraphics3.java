@@ -2720,21 +2720,21 @@ public class PGraphics3 extends PGraphics {
   }
 
   public void lightAmbient(int num, float x, float y, float z) {
-    calc_color(x, y, z);
+    colorCalc(x, y, z);
     lightDiffuseR[num] = calcR;
     lightDiffuseG[num] = calcG;
     lightDiffuseB[num] = calcB;
   }
 
   public void lightDiffuse(int num, float x, float y, float z) {
-    calc_color(x, y, z);
+    colorCalc(x, y, z);
     lightDiffuseR[num] = calcR;
     lightDiffuseG[num] = calcG;
     lightDiffuseB[num] = calcB;
   }
 
   public void lightSpecular(int num, float x, float y, float z) {
-    calc_color(x, y, z);
+    colorCalc(x, y, z);
     lightSpecularR[num] = calcR;
     lightSpecularG[num] = calcG;
     lightSpecularB[num] = calcB;
@@ -2793,39 +2793,30 @@ public class PGraphics3 extends PGraphics {
 
   public void fill(int rgb) {
     super.fill(rgb);
-    calc_ambient();
+    colorAmbient();
   }
 
   public void fill(float gray) {
     super.fill(gray);
-    calc_ambient();
+    colorAmbient();
   }
 
 
   public void fill(float gray, float alpha) {
     super.fill(gray, alpha);
-    calc_ambient();
+    colorAmbient();
   }
 
 
   public void fill(float x, float y, float z) {
     super.fill(x, y, z);
-    calc_ambient();
+    colorAmbient();
   }
 
 
   public void fill(float x, float y, float z, float a) {
     super.fill(x, y, z, a);
-    calc_ambient();
-  }
-
-  private void calc_ambient() {
-    ambientR = calcR;
-    ambientG = calcG;
-    ambientB = calcB;
-    ambientRi = calcRi;
-    ambientGi = calcGi;
-    ambientBi = calcBi;
+    colorAmbient();
   }
 
 
@@ -2866,19 +2857,29 @@ public class PGraphics3 extends PGraphics {
       ambient((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_ambient();
+      colorFrom(rgb);
+      colorAmbient();
     }
   }
 
   public void ambient(float gray) {
-    calc_color(gray);
-    calc_ambient();
+    colorCalc(gray);
+    colorAmbient();
   }
 
   public void ambient(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_ambient();
+    colorCalc(x, y, z);
+    colorAmbient();
+  }
+
+
+  private void colorAmbient() {
+    ambientR = calcR;
+    ambientG = calcG;
+    ambientB = calcB;
+    ambientRi = calcRi;
+    ambientGi = calcGi;
+    ambientBi = calcBi;
   }
 
 
@@ -2890,36 +2891,36 @@ public class PGraphics3 extends PGraphics {
       specular((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_specular();
+      colorFrom(rgb);
+      colorSpecular();
     }
   }
 
   public void specular(float gray) {
-    calc_color(gray);
-    calc_specular();
+    colorCalc(gray);
+    colorSpecular();
   }
 
 
   public void specular(float gray, float alpha) {
-    calc_color(gray, alpha);
-    calc_specular();
+    colorCalc(gray, alpha);
+    colorSpecular();
   }
 
 
   public void specular(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_specular();
+    colorCalc(x, y, z);
+    colorSpecular();
   }
 
 
   public void specular(float x, float y, float z, float a) {
-    calc_color(x, y, z, a);
-    calc_specular();
+    colorCalc(x, y, z, a);
+    colorSpecular();
   }
 
 
-  protected void calc_specular() {
+  protected void colorSpecular() {
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
@@ -2939,22 +2940,25 @@ public class PGraphics3 extends PGraphics {
       emissive((float) rgb);
 
     } else {
-      calc_color_from(rgb);
-      calc_emissive();
+      colorFrom(rgb);
+      colorEmissive();
     }
   }
 
+
   public void emissive(float gray) {
-    calc_color(gray);
-    calc_emissive();
+    colorCalc(gray);
+    colorEmissive();
   }
+
 
   public void emissive(float x, float y, float z) {
-    calc_color(x, y, z);
-    calc_emissive();
+    colorCalc(x, y, z);
+    colorEmissive();
   }
 
-  protected void calc_emissive() {
+
+  protected void colorEmissive() {
     emissiveR = calcR;
     emissiveG = calcG;
     emissiveB = calcB;
@@ -2982,7 +2986,7 @@ public class PGraphics3 extends PGraphics {
       if (lightCount >= MAX_LIGHTS) {
         throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
       }
-      calc_color_from(rgb);
+      colorFrom(rgb);
       return internalCreateAmbientLight(calcR, calcG, calcB);
     }
   }
@@ -2991,7 +2995,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(gray);
+    colorCalc(gray);
     return internalCreateAmbientLight(calcR, calcG, calcB);
   }
 
@@ -2999,7 +3003,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(lr, lg, lb);
+    colorCalc(lr, lg, lb);
     return internalCreateAmbientLight(calcR, calcG, calcB);
   }
 
@@ -3024,7 +3028,7 @@ public class PGraphics3 extends PGraphics {
       if (lightCount >= MAX_LIGHTS) {
         throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
       }
-      calc_color_from(rgb);
+      colorFrom(rgb);
       return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
     }
   }
@@ -3033,7 +3037,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(gray);
+    colorCalc(gray);
     return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
   }
 
@@ -3041,7 +3045,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(lr, lg, lb);
+    colorCalc(lr, lg, lb);
     return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
   }
 
@@ -3069,7 +3073,7 @@ public class PGraphics3 extends PGraphics {
       if (lightCount >= MAX_LIGHTS) {
         throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
       }
-      calc_color_from(rgb);
+      colorFrom(rgb);
       return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
     }
   }
@@ -3078,7 +3082,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(gray);
+    colorCalc(gray);
     return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
   }
 
@@ -3086,7 +3090,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(lr, lg, lb);
+    colorCalc(lr, lg, lb);
     return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
   }
 
@@ -3114,7 +3118,7 @@ public class PGraphics3 extends PGraphics {
       if (lightCount >= MAX_LIGHTS) {
         throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
       }
-      calc_color_from(rgb);
+      colorFrom(rgb);
       return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
     }
   }
@@ -3123,7 +3127,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(gray);
+    colorCalc(gray);
     return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
   }
 
@@ -3131,7 +3135,7 @@ public class PGraphics3 extends PGraphics {
     if (lightCount >= MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    calc_color(lr, lg, lb);
+    colorCalc(lr, lg, lb);
     return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
   }
 

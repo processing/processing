@@ -925,19 +925,19 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  protected void calc_tint() {
-    super.calc_tint();
+  protected void colorTint() {
+    super.colorTint();
     // TODO actually implement tinted images
     tintColorObject = new Color(tintColor, true);
   }
 
-  protected void calc_fill() {
-    super.calc_fill();
+  protected void colorFill() {
+    super.colorFill();
     fillColorObject = new Color(fillColor, true);
   }
 
-  protected void calc_stroke() {
-    super.calc_stroke();
+  protected void colorStroke() {
+    super.colorStroke();
     strokeColorObject = new Color(strokeColor, true);
   }
 

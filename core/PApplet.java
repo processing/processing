@@ -905,7 +905,8 @@ public class PApplet extends Applet
           // can't remember when/why i changed that to '1'
           // (rather than 3 or 5, as has been traditional), but i
           // have a feeling that some platforms aren't gonna like that
-          // if !looping, sleeps for a nice long time
+          // if !looping, sleeps for a nice long time,
+          // or until interrupted
           int nap = looping ? 1 : 10000;
           // don't nap after setup, because if noLoop() is called this
           // will make the first draw wait 10 seconds before showing up
@@ -914,7 +915,6 @@ public class PApplet extends Applet
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
-        //}
       }
 
     } catch (Exception e) {
@@ -949,147 +949,148 @@ public class PApplet extends Applet
 
 
   public void display() {
-        if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                          " formerly nextFrame()");
-        if (looping || redraw) {
-          /*
-          if (frameCount == 0) {  // needed here for the sync
-            //createGraphics();
-            // set up a dummy graphics in case size() is never
-            // called inside setup
-            size(INITIAL_WIDTH, INITIAL_HEIGHT);
-          }
-          */
+    if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                      " formerly nextFrame()");
+    if (looping || redraw) {
+      /*
+        if (frameCount == 0) {  // needed here for the sync
+        //createGraphics();
+        // set up a dummy graphics in case size() is never
+        // called inside setup
+        size(INITIAL_WIDTH, INITIAL_HEIGHT);
+        }
+      */
 
-          // g may be rebuilt inside here, so turning of the sync
-          //synchronized (g) {
-          // use a different sync object
-          synchronized (glock) {
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " 1a beginFrame");
-            g.beginFrame();
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " 1b draw");
+      // g may be rebuilt inside here, so turning of the sync
+      //synchronized (g) {
+      // use a different sync object
+      synchronized (glock) {
+        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                  " 1a beginFrame");
+        g.beginFrame();
+        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                  " 1b draw");
 
-            if (frameCount == 0) {
+        if (frameCount == 0) {
 
-              try {
-                //System.out.println("attempting setup");
-                //System.out.println("into try");
-                setup();
-                //g.defaults();
+          try {
+            //System.out.println("attempting setup");
+            //System.out.println("into try");
+            setup();
+            //g.defaults();
 
-                //System.out.println("done attempting setup");
-                //System.out.println("out of try");
-                g.postSetup();  // FIXME
+            //System.out.println("done attempting setup");
+            //System.out.println("out of try");
+            g.postSetup();  // FIXME
 
-              } catch (RuntimeException e) {
-                //System.out.println("catching a cold " + e.getMessage());
-                if (e.getMessage().indexOf(NEW_RENDERER) != -1) {
-                  //System.out.println("got new renderer");
-                  return;
-                  //continue;  // will this work?
-
-                } else {
-                  throw e;
-                }
-              }
-              // if depth() is called inside setup, pixels/width/height
-              // will be ok by the time it's back out again
-
-              //this.pixels = g.pixels;  // make em call loadPixels
-              // now for certain that we've got a valid size
-              this.width = g.width;
-              this.height = g.height;
+          } catch (RuntimeException e) {
+            //System.out.println("catching a cold " + e.getMessage());
+            if (e.getMessage().indexOf(NEW_RENDERER) != -1) {
+              //System.out.println("got new renderer");
+              return;
+              //continue;  // will this work?
 
             } else {
-              // update the current framerate
-              if (framerateLastMillis != 0) {
-                float elapsed = (float)
-                  (System.currentTimeMillis() - framerateLastMillis);
-                if (elapsed != 0) {
-                  framerate =
-                    (framerate * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
-                }
-              }
-              framerateLastMillis = System.currentTimeMillis();
-
-              if (framerateTarget != 0) {
-                if (framerateLastDelayTime == 0) {
-                  framerateLastDelayTime = System.currentTimeMillis();
-
-                } else {
-                  long timeToLeave =
-                    framerateLastDelayTime + (long)(1000.0f / framerateTarget);
-                  int napTime =
-                    (int) (timeToLeave - System.currentTimeMillis());
-                  framerateLastDelayTime = timeToLeave;
-                  delay(napTime);
-                }
-              }
-
-              preMethods.handle();
-
-              pmouseX = dmouseX;
-              pmouseY = dmouseY;
-
-              draw();
-
-              // dmouseX/Y is updated only once per frame
-              dmouseX = mouseX;
-              dmouseY = mouseY;
-
-              // these are called *after* loop so that valid
-              // drawing commands can be run inside them. it can't
-              // be before, since a call to background() would wipe
-              // out anything that had been drawn so far.
-              dequeueMouseEvents();
-
-              dequeueKeyEvents();
-              if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                        " 2b endFrame");
-
-              drawMethods.handle();
-              //for (int i = 0; i < libraryCount; i++) {
-              //if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
-              //}
-
-              redraw = false;  // unset 'redraw' flag in case it was set
-              // (only do this once draw() has run, not just setup())
+              throw e;
             }
+          }
+          // if depth() is called inside setup, pixels/width/height
+          // will be ok by the time it's back out again
 
-            g.endFrame();
-            if (recorder != null) {
-              recorder.endFrame();
-              recorder = null;
+          //this.pixels = g.pixels;  // make em call loadPixels
+          // now for certain that we've got a valid size
+          this.width = g.width;
+          this.height = g.height;
+
+        } else {
+          // update the current framerate
+          if (framerateLastMillis != 0) {
+            float elapsed = (float)
+              (System.currentTimeMillis() - framerateLastMillis);
+            if (elapsed != 0) {
+              framerate =
+                (framerate * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
             }
+          }
+          framerateLastMillis = System.currentTimeMillis();
 
-            //}  // older end sync
+          if (framerateTarget != 0) {
+            //System.out.println("delaying");
+            if (framerateLastDelayTime == 0) {
+              framerateLastDelayTime = System.currentTimeMillis();
 
-            //update();
-            // formerly 'update'
-            //if (firstFrame) firstFrame = false;
-            // internal frame counter
-            frameCount++;
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      "   3a calling repaint() " + frameCount);
-            repaint();
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      "   3b calling Toolkit.sync " + frameCount);
-            getToolkit().sync();  // force repaint now (proper method)
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      "   3c done " + frameCount);
-            //if (THREAD_DEBUG) println("   3d waiting");
-            //wait();
-            //if (THREAD_DEBUG) println("   3d out of wait");
-            //frameCount++;
+            } else {
+              long timeToLeave =
+                framerateLastDelayTime + (long)(1000.0f / framerateTarget);
+              int napTime =
+                (int) (timeToLeave - System.currentTimeMillis());
+              framerateLastDelayTime = timeToLeave;
+              delay(napTime);
+            }
+          }
 
-            postMethods.handle();
-            //for (int i = 0; i < libraryCount; i++) {
-            //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
-            //}
-          }  // end of synchronize
+          preMethods.handle();
+
+          pmouseX = dmouseX;
+          pmouseY = dmouseY;
+
+          draw();
+
+          // dmouseX/Y is updated only once per frame
+          dmouseX = mouseX;
+          dmouseY = mouseY;
+
+          // these are called *after* loop so that valid
+          // drawing commands can be run inside them. it can't
+          // be before, since a call to background() would wipe
+          // out anything that had been drawn so far.
+          dequeueMouseEvents();
+
+          dequeueKeyEvents();
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                    " 2b endFrame");
+
+          drawMethods.handle();
+          //for (int i = 0; i < libraryCount; i++) {
+          //if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
+          //}
+
+          redraw = false;  // unset 'redraw' flag in case it was set
+          // (only do this once draw() has run, not just setup())
         }
+
+        g.endFrame();
+        if (recorder != null) {
+          recorder.endFrame();
+          recorder = null;
+        }
+
+        //}  // older end sync
+
+        //update();
+        // formerly 'update'
+        //if (firstFrame) firstFrame = false;
+        // internal frame counter
+        frameCount++;
+        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                  "   3a calling repaint() " + frameCount);
+        repaint();
+        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                  "   3b calling Toolkit.sync " + frameCount);
+        getToolkit().sync();  // force repaint now (proper method)
+        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                  "   3c done " + frameCount);
+        //if (THREAD_DEBUG) println("   3d waiting");
+        //wait();
+        //if (THREAD_DEBUG) println("   3d out of wait");
+        //frameCount++;
+
+        postMethods.handle();
+        //for (int i = 0; i < libraryCount; i++) {
+        //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
+        //}
+      }  // end of synchronize
+    }
   }
 
 
@@ -4641,6 +4642,7 @@ v              PApplet.this.stop();
    *
    * --present-stop-color   color of the 'stop' text used to quit an
    *                        applet when it's in present mode.
+   * </PRE>
    */
   static public void main(String args[]) {
     if (args.length < 1) {
