@@ -726,7 +726,7 @@ public class PdeEditor extends JFrame
     beautifyMenuItem = newJMenuItem("Beautify", 'B');
     beautifyMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          doBeautify();
+          handleBeautify();
         }
       });
     menu.add(beautifyMenuItem);
@@ -913,7 +913,7 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Get the contents of the current buffer. Used by the Sketch class.
+   * Get the contents of the current buffer. Used by the PdeSketch class.
    */
   public String getText() {
     return textarea.getText();
@@ -1112,11 +1112,15 @@ public class PdeEditor extends JFrame
     //System.out.println("exiting checkmodified");
   }
 
+
+  /**
+   * Called by PdeEditorStatus to complete the job.
+   */
   public void checkModified2() {
     switch (checking) {
-    case NEW: handleNew2(false); break;
-    case OPEN: skOpen2(openingPath, openingName); break;
-    case QUIT: handleQuit2(); break;
+      case NEW:  handleNew2(false); break;
+      case OPEN: skOpen2(openingPath, openingName); break;
+      case QUIT: handleQuit2(); break;
     }
     checking = 0;
   }
@@ -1139,12 +1143,16 @@ public class PdeEditor extends JFrame
    */
   protected void handleNew2(boolean startup) {
     try {
-      PdeSketch newSketch = sketchbook.handleNew();
+      PdeSketch newSketch = sketchbook.handleNew(startup);
       if (newSketch != null) handleOpen2(newSketch);
 
     } catch (IOException e) {
-      // NEED TO DO SOME ERROR REPORTING HERE ***
-      e.printStackTrace();
+      // not sure why this would happen, but since there's no way to
+      // recover (outside of creating another new setkch, which might
+      // just cause more trouble), then they've gotta quit.
+      PdeBase.showError("Problem creating a new sketch",
+                        "An error occurred while creating\n" +
+                        "a new sketch. Processing must now quit.", e);
     }
   }
 
@@ -1157,7 +1165,7 @@ public class PdeEditor extends JFrame
   protected void skOpen2(String path, String name) {
     File osketchFile = new File(path, name + ".pde");
     File osketchDir = new File(path);
-    handleOpen(name, osketchFile, osketchDir);
+    handleOpen2(name, osketchFile, osketchDir);
   }
 
 
@@ -1180,13 +1188,13 @@ public class PdeEditor extends JFrame
       return; // user cancelled
     }
 
-    handleOpen(filename, new File(directory, filename), null);
+    handleOpen2(filename, new File(directory, filename), null);
   }
   */
 
 
-  protected void handleOpen(String isketchName, 
-                            File isketchFile, File isketchDir) {
+  protected void handleOpen2(String isketchName, 
+                             File isketchFile, File isketchDir) {
     if (!isketchFile.exists()) {
       status.error("no file named " + isketchName);
       return;
@@ -1307,7 +1315,7 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void skSaveAs(boolean rename) {
+  public void skSaveAs(/*boolean rename*/) {
     doStop();
 
     //this.renaming = rename;
@@ -1379,7 +1387,7 @@ public class PdeEditor extends JFrame
     sketchbook.rebuildMenu();
 
     // open the new guy
-    handleOpen(newSketchName, newSketchFile, newSketchDir);
+    handleOpen2(newSketchName, newSketchFile, newSketchDir);
 
     // update with the new junk and save that as the new code
     changeText(textareaContents, true);
@@ -1420,12 +1428,15 @@ public class PdeEditor extends JFrame
     doClose();  
 
     //if (!checkModified()) return;
-    checkModified(DO_QUIT);
+    checkModified(QUIT);
     //System.out.println("exiting doquit");
   }
 
 
-  protected void doQuit2() {
+  /**
+   * Actually do the quit action.
+   */
+  protected void handleQuit2() {
     storePreferences();
     preferences.save();
 
@@ -1436,7 +1447,20 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void doBeautify() {
+  // an improved algorithm that would still avoid a full state machine
+  // 1. build an array of strings for the lines
+  // 2. first remove everything between /* and */ (relentless)
+  // 3. next remove anything inside two sets of " "
+  //    but not if escaped with a \
+  //    these can't extend beyond a line, so that works well
+  //    (this will save from "http://blahblah" showing up as a comment)
+  // 4. remove from // to the end of a line everywhere
+  // 5. run through remaining text to do indents 
+  //    using hokey brace-counting algorithm
+  // 6. also add indents for switch statements
+  //    case blah: { }  (colons at end of line isn't a good way)
+  //    maybe /case \w+\:/
+  public void handleBeautify() {
     String prog = textarea.getText();
 
     // TODO re-enable history
