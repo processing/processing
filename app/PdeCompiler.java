@@ -334,6 +334,7 @@ public class PdeCompiler implements PdeMessageConsumer {
           }
         } catch (IOException e) {
           System.err.println("Error in file " + pieces[i]);
+          e.printStackTrace();
         }
       } else {
         File dir = new File(pieces[i]);
@@ -385,7 +386,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
-      System.out.println("checking piece " + pieces[i]);
+      //System.out.println("checking piece " + pieces[i]);
 
       // is it a jar file or directory?
       if (pieces[i].toLowerCase().endsWith(".jar") || 
@@ -396,13 +397,15 @@ public class PdeCompiler implements PdeMessageConsumer {
           while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             if (entry.isDirectory()) {
-              String name = entry.getName();
-              if (name.equals("META-INF/")) continue;
+              //String name = entry.getName();
+              //if (name.indexOf("META-INF/") == 0) continue;
               // actually 'continue's for all dir entries
 
             } else {
-              //zos.putNextEntry(entry);
-              ZipEntry entree = new ZipEntry(entry.getName());
+              String name = entry.getName();
+              if (name.indexOf("META-INF") == 0) continue;
+              ZipEntry entree = new ZipEntry(name);
+
               zos.putNextEntry(entree);
               byte buffer[] = new byte[(int) entry.getSize()];
               InputStream is = file.getInputStream(entry);
@@ -427,6 +430,7 @@ public class PdeCompiler implements PdeMessageConsumer {
           }
         } catch (IOException e) {
           System.err.println("Error in file " + pieces[i]);
+          e.printStackTrace();
         }
       } else {  // not a .jar or .zip, prolly a directory
         File dir = new File(pieces[i]);
