@@ -24,41 +24,84 @@
 
 package processing.core;
 
+import java.awt.event.*;
 
+
+/**
+ * A series of messages can be registered via PApplet.registerCall().
+ * For instance parent.registerCall(PRE) inside of the setup method 
+ * will make sure that this library is informed each time beginFrame
+ * has just been called yet no drawing has taken place (would you like 
+ * to take over the camera, eh?)
+ * 
+ * An assumption for library writers is that they're fairly
+ * technically savvy and familiar with Java. The primary target
+ * audience for Procesing is less technical, so libraries are
+ * designed to be simple to use but only slightly more complex
+ * to write.
+ */
 public interface PLibrary {
 
-  /**
-   * This sets the parent PApplet in case that's needed for anything.
-   * It's called on attach().
-   */
-  public void setParent(PApplet parent);
+  static final int SIZE       = 6;
+  static final int PRE        = 0;
+  static final int DRAW       = 1;
+  static final int POST       = 2;
+  static final int MOUSE      = 3;
+  static final int KEY        = 4;
+  static final int DISPOSE    = 5;
+
+  static final int CALL_COUNT = 7;
 
   /**
-   * Called before (outside of) draw() or loop().
-   * Note that this also gets called before beginFrame()
-   * so no drawing can occur.
+   * This is called after the constructor on "attach"
+   */
+  public void setup(PApplet parent);
+
+  /**
+   * Called when the applet is resized.
+   */
+  public void size(int w, int h);
+
+  /**
+   * Called just after beginFrame() but before anything is 
+   * drawn in the user's draw() method.
    */
   public void pre();
 
   /** 
-   * Called after (outside of) draw() or loop().
+   * Called before endFrame() but after all other drawing.
    */
-  public void post(); 
+  public void draw(); 
+
+  /**
+   * Called betwee endFrame() and the next beginFrame()
+   * so that things can be post-processed based on the final, 
+   * fully rendered, image.
+   */
+  public void post();
+
+  /**
+   * If registered, this will be called when a mouse event has occurred.
+   * Use event.getID() to see whether it's MouseEvent.MOUSE_CLICKED or 
+   * something else exciting. 
+   */
+  public void mouse(MouseEvent event);
+
+  /**
+   * A key event has occurred, use event.getID() to see whether it's
+   * KeyEvent.KEY_PRESSED or whatever.
+   */ 
+  public void key(KeyEvent e);
 
   /**
    * Called when the applet or application is stopped.
+   * Override this method to shut down your threads.
+   *
+   * Named dispose() instead of stop() since stop() is often
+   * a useful method name for library functions (i.e. PMovie.stop()
+   * which will stop a movie that is playing, but not kill off
+   * its thread and associated resources.
    */
-  public void stop();
+  public void dispose();
+  //public void stop();
 }
-
-
-
-/*
-public void libraryEvent(PLibrary who, Object data) {
-  //if (who instanceof BVideo) {
-  if (who.signature() == Sonia.SIGNATURE) {
-    BImage frame = (BImage)data;
-    // do something with the data 
-  }
-}
-*/
