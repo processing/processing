@@ -865,7 +865,23 @@ public class PdeBase extends Frame
   // so used internally for everything else
 
   public void handleAbout() {
-    System.out.println("the about box will now be shown");
+    //System.out.println("the about box will now be shown");
+    final Image image = getImage("about.jpg", this);
+    int w = image.getWidth(this);
+    int h = image.getHeight(this);
+    final Window window = new Window(this) {
+        public void paint(Graphics g) {
+          g.drawImage(image, 0, 0, null);
+        }
+      };
+    window.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+          window.dispose();
+        }
+      });
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
+    window.show();
   }
 
   public void handlePrefs() {
@@ -937,6 +953,9 @@ public class PdeBase extends Frame
     } else if (command.equals("Reference")) {
       openURL(System.getProperty("user.dir") + File.separator + 
               "reference" + File.separator + "index.html");
+
+    } else if (command.equals("About Processing")) {
+      handleAbout();
     }
   }
 
