@@ -817,7 +817,13 @@ public class PGraphics3 extends PGraphics {
           stop = vertex_end - 2;
           increment = (shape == TRIANGLES) ? 3 : 1;
           for (int i = vertex_start; i < stop; i += increment) {
-            add_triangle(i, i+1, i+2);
+            // have to switch between clockwise/counter-clockwise
+            // otherwise the feller is backwards and renderer won't draw
+            if ((i % 2) == 0) {
+              add_triangle(i, i+2, i+1);
+            } else {
+              add_triangle(i, i+1, i+2);
+            }
           }
         }
         break;
@@ -972,6 +978,7 @@ public class PGraphics3 extends PGraphics {
   protected void depth_sort_triangles() {
   }
 
+
   protected void render_triangles() {
   //public void render_triangles() {
     //System.out.println("PGraphics3 render triangles");
@@ -1007,6 +1014,7 @@ public class PGraphics3 extends PGraphics {
 
   protected void depth_sort_lines() {
   }
+
 
   protected void render_lines() {
     for (int i = 0; i < lineCount; i ++) {
