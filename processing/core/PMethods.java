@@ -60,7 +60,7 @@ public interface PMethods {
 
   public void texture(PImage image);
 
-  public void textureMode(int textureMode);
+  public void textureMode(int mode);
 
   public void normal(float nx, float ny, float nz);
 
@@ -82,6 +82,8 @@ public interface PMethods {
   public void curveVertex(float x, float y, float z);
 
   public void endShape();
+
+  public void render_lines();
 
   public void point(float x, float y);
 
@@ -214,7 +216,7 @@ public interface PMethods {
 
   public void beginCamera();
 
-  public void cameraMode(int icameraMode);
+  public void cameraMode(int mode);
 
   public void endCamera();
 

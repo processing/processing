@@ -192,11 +192,11 @@ public class PGraphics extends PImage
 
   // shapes
 
-  /** True if currently inside beginShape / endShape */
-  boolean shape;
-
-  /** Type of shape passed to beginShape() */
-  int shapeKind;
+  /**
+   * Type of shape passed to beginShape(),
+   * zero if no shape is currently being drawn.
+   */
+  int shape;
 
 
   // ........................................................
@@ -221,9 +221,9 @@ public class PGraphics extends PImage
   // vertices
   static final int DEFAULT_VERTICES = 512;
   public float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
-  int vertex_count;  // total number of vertices
-  int vertex_start;  // pos of first vertex of current shape in vertices array
-  int vertex_end;    // total number of vertex in current shape
+  int vertex_count; // total number of vertices
+  int vertex_start; // pos of first vertex of current shape in vertices array
+  int vertex_end;   // total number of vertex in current shape
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
   int vertex_order[] = new int[DEFAULT_VERTICES];
@@ -231,8 +231,8 @@ public class PGraphics extends PImage
   // lines
   static final int DEFAULT_LINES = 512;
   PLine line;  // used for drawing
-  int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
-  int lines_count;
+  public int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
+  public int lineCount;
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
@@ -240,28 +240,30 @@ public class PGraphics extends PImage
   public int triangles[][] = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
   public int triangleCount;   // total number of triangles
 
-  // other options
-  public boolean clip = true;
-  public boolean z_order = true;
-
-  // six planes
-  // (A,B,C in plane eq + D)
-  //float frustum[][] = new float[6][4];
-  //float   cp[] = new float[16]; // temporary
-
-
-  // ........................................................
-
-  // texture images
-
-  public int textureMode;
-  public float textureU, textureV;
+  /**
+   * Normals
+   */
   public float normalX, normalY, normalZ;
+
+  /**
+   * IMAGE_SPACE or NORMAL_SPACE, though this should probably
+   * be called textureSpace().. hrm
+   */
+  public int textureMode;
+
+  /**
+   * Current horizontal coordinate for texture,
+   * will always be between 0 and 1,
+   * even if using textureMode(IMAGE_SPACE)
+   */
+  public float textureU;
+
+  /** Current vertical coordinate for texture, see above. */
+  public float textureV;
 
   // used by NEW_GRAPHICS, or by OLD_GRAPHICS simply as a boolean
   public PImage textureImage;
 
-  // NEW_GRAPHICS
   static final int DEFAULT_TEXTURES = 3;
   PImage textures[] = new PImage[DEFAULT_TEXTURES];
   int texture_index;
@@ -271,7 +273,7 @@ public class PGraphics extends PImage
 
   // changes
 
-  boolean unchangedZ;
+  //boolean unchangedZ;
   boolean strokeChanged;
   boolean fillChanged;
   protected boolean normalChanged;
@@ -281,10 +283,10 @@ public class PGraphics extends PImage
 
   // curve vertices
 
-  static final int CVERTEX_ALLOC = 128;
-  float cvertex[][] = new float[CVERTEX_ALLOC][VERTEX_FIELD_COUNT];
-  int cvertexIndex;
-  boolean cverticesFlat;
+  static final int SPLINE_VERTEX_ALLOC = 128;
+  float spline_vertex[][];
+  int spline_vertex_index;
+  boolean spline_vertices_flat;
 
 
   // ........................................................
@@ -392,7 +394,9 @@ public class PGraphics extends PImage
     cameraFarDist = cameraEyeDist * 10.0f;
     cameraAspect = (float)width / (float)height;
 
-    cameraMode(PERSPECTIVE);
+    // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
+    // otherwise just hose the user if it's custom
+    if (depth) cameraMode(this.cameraMode);
   }
 
 
@@ -400,13 +404,6 @@ public class PGraphics extends PImage
   protected void allocate() {
     pixelCount = width * height;
     pixels = new int[pixelCount];
-
-    // create and clear the zbuffer
-    // needs to be cleared here once, because background()
-    // will only clear the zbuffer if dimensions is 3, meaning
-    // that no initial clear will happen without this one.
-    zbuffer = new float[pixelCount];
-    stencil = new int[pixelCount];
 
     // because of a java 1.1 bug.. unless pixels are registered as
     // opaque before their first run, the memimgsrc will flicker
@@ -420,10 +417,10 @@ public class PGraphics extends PImage
     mis.setAnimated(true);
     image = Toolkit.getDefaultToolkit().createImage(mis);
 
-    // use now in the old engine too
-    line = new PLine(this);
+    zbuffer = new float[pixelCount];
+    stencil = new int[pixelCount];
 
-    // moved from PGraphics constructor since not needed by opengl
+    line = new PLine(this);
     triangle = new PTriangle(this);
   }
 
@@ -432,8 +429,6 @@ public class PGraphics extends PImage
    *  set engine's default values
    */
   public void defaults() {
-    //frameCount = 0;
-    //depthTest = true;
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
@@ -441,20 +436,10 @@ public class PGraphics extends PImage
     background(204);
 
     // init shape stuff
-    shape = false;
-    shapeKind = 0;
+    shape = 0;
 
-    /*
-    if (!hints[NEW_GRAPHICS]) {
-      polygon  = new PPolygon(this);
-      fpolygon = new PPolygon(this);
-      spolygon = new PPolygon(this);
-      spolygon.vertexCount = 4;
-      svertices = new float[2][];
-    }
-    */
-
-    textFont = null;
+    // flat or affine stuff
+    noDepth();
 
     // better to leave this turned off by default
     noLights();
@@ -487,16 +472,19 @@ public class PGraphics extends PImage
     lightG[1] = ONE;
     lightB[1] = ONE;
 
+    for (int i = 2; i < MAX_LIGHTS; i++) {
+      lightType[i] = DISABLED;
+    }
+
     textureMode = IMAGE_SPACE;
     rectMode    = CORNER;
     ellipseMode = CENTER;
     angleMode   = RADIANS;
+
+    // no current font
+    textFont = null;
     //text_mode    = ALIGN_LEFT;
     //text_space   = OBJECT_SPACE;
-
-    for (int i = 2; i < MAX_LIGHTS; i++) {
-      lightType[i] = DISABLED;
-    }
   }
 
 
@@ -507,28 +495,10 @@ public class PGraphics extends PImage
 
 
   /**
-   *  initializes engine before drawing a new frame
+   * Initializes engine before drawing a new frame.
+   * Called by PApplet, no need to call this.
    */
   public void beginFrame() {
-    //if (PApplet.THREAD_DEBUG) System.out.println(" 1 beginFrame");
-    /*
-    if (cameraMode == -1) {
-      //System.out.println("setting up camera");
-      beginCamera();
-      //setupProjection(PERSPECTIVE);
-      perspective(fov, aspect, nearDist, farDist);
-      lookat(eyeX, eyeY, eyeDist,  eyeX, eyeY, 0,  0, 1, 0);
-      endCamera();
-      cameraMode = PERSPECTIVE;
-    }
-    */
-
-    /*
-    if ((_background) && hints[OLD_BACKGROUND]) {
-      clear();
-    }
-    */
-
     resetMatrix(); // reset model matrix
 
     normalX = 0;
@@ -544,7 +514,7 @@ public class PGraphics extends PImage
     vertex_end = 0;
 
     // reset lines
-    lines_count = 0;
+    lineCount = 0;
     line.reset();
 
     // reset triangles
@@ -557,66 +527,25 @@ public class PGraphics extends PImage
 
 
   /**
-   *  indicates a completed frame
+   * Indicates a completed frame.
+   * Finishes rendering and swaps the buffer to the screen.
+   *
+   * If z-sorting has been turned on, then the triangles will
+   * all be quicksorted here (to make alpha work more properly)
+   * and then blit to the screen.
    */
   public void endFrame() {
     // no need to z order and render
     // shapes were already rendered in endShape();
     // (but can't return, since needs to update memimgsrc
-    if (z_order) {
-
-      // SORT TRIANGLES
-      //quick_sort_triangles();
-
-      // SORT LINES
-      //quick_sort_triangles();
-
-      // RENDER TRIANGLES
-      for (int i = 0; i < triangleCount; i ++) {
-        //System.out.println("rendering triangle " + i);
-
-        float a[] = vertices[triangles[i][VA]];
-        float b[] = vertices[triangles[i][VB]];
-        float c[] = vertices[triangles[i][VC]];
-        int tex = triangles[i][TEX];
-        int index = triangles[i][TI];
-
-        triangle.reset();
-
-        if (tex > -1 && textures[tex] != null) {
-          triangle.setTexture(textures[tex]);
-          triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
-        }
-
-        triangle.setIntensities(a[R], a[G], a[B], a[A],
-                                b[R], b[G], b[B], b[A],
-                                c[R], c[G], c[B], c[A]);
-
-        triangle.setVertices(a[X], a[Y], a[Z],
-                             b[X], b[Y], b[Z],
-                             c[X], c[Y], c[Z]);
-
-        triangle.setIndex(index);
-        triangle.render();
+    if (hints[DEPTH_SORT]) {
+      if (triangleCount > 0) {
+        depth_sort_triangles();
+        render_triangles();
       }
-
-      // RENDER LINES
-      for (int i = 0; i < lines_count; i ++) {
-        float a[] = vertices[lines[i][PA]];
-        float b[] = vertices[lines[i][PB]];
-        int index = lines[i][LI];
-
-        line.reset();
-
-        line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                            b[SR], b[SG], b[SB], b[SA]);
-
-        line.setVertices(a[X], a[Y], a[Z],
-                         b[X], b[Y], b[Z]);
-
-        line.setIndex(index);
-
-        line.draw();
+      if (lineCount > 0) {
+        depth_sort_lines();
+        render_lines();
       }
     }
 
@@ -631,8 +560,6 @@ public class PGraphics extends PImage
 
 
   protected final float[] next_vertex() {
-    //if (!hints[NEW_GRAPHICS]) return polygon.nextVertex();
-
     if (vertex_count == vertices.length) {
       float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertex_count);
@@ -653,42 +580,31 @@ public class PGraphics extends PImage
       message(CHATTER, "allocating more textures " + textures.length);
     }
 
-    if (textures[0] != null) {
+    if (textures[0] != null) {  // wHY?
       texture_index++;
     }
 
     textures[texture_index] = image;
-
-    return;
   }
 
 
   protected final void add_line(int a, int b) {
 
-    if (lines_count == lines.length) {
-      int temp[][] = new int[lines_count<<1][LINE_FIELD_COUNT];
-      System.arraycopy(lines, 0, temp, 0, lines_count);
+    if (lineCount == lines.length) {
+      int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
+      System.arraycopy(lines, 0, temp, 0, lineCount);
       lines = temp;
       message(CHATTER, "allocating more lines " + lines.length);
     }
 
-    lines[lines_count][PA] = a;
-    lines[lines_count][PB] = b;
+    lines[lineCount][PA] = a;
+    lines[lineCount][PB] = b;
+    lines[lineCount][LI] = -1;
 
-    // index -1 means line is a normal stroke
-    // other values indicate special blender mode
-    if (smooth && !stroke) {
-      lines[lines_count][LI] = shape_index;
-    } else {
-      lines[lines_count][LI] = -1;
-    }
-
-    lines[lines_count][SM] = strokeMiter | strokeJoin;
-
-    lines_count ++;
-
-    return;
+    lines[lineCount][SM] = strokeMiter | strokeJoin;
+    lineCount++;
   }
+
 
   protected final void add_triangle(int a, int b, int c) {
 
@@ -710,10 +626,7 @@ public class PGraphics extends PImage
     }
 
     triangles[triangleCount][TI] = shape_index;
-
-    triangleCount ++;
-
-    return;
+    triangleCount++;
   }
 
 
@@ -919,8 +832,7 @@ public class PGraphics extends PImage
    * @param  kind  indicates shape type
    */
   public void beginShape(int kind) {
-    shape = true;
-    shapeKind = kind;
+    shape = kind;
 
     //if (hints[NEW_GRAPHICS]) {
     shape_index = shape_index + 1;
@@ -928,7 +840,7 @@ public class PGraphics extends PImage
       shape_index = 0;
     }
 
-    if (z_order == true) {
+    if (hints[DEPTH_SORT]) {
       // continue with previous vertex, line and triangle count
       // all shapes are rendered at endFrame();
       vertex_start = vertex_count;
@@ -939,7 +851,7 @@ public class PGraphics extends PImage
       // every shape is rendered at endShape();
       vertex_count = 0;
       line.reset();
-      lines_count = 0;
+      lineCount = 0;
       triangle.reset();
       triangleCount = 0;
     }
@@ -957,10 +869,10 @@ public class PGraphics extends PImage
     */
     textureImage = null;
 
-    cvertexIndex = 0;
-    cverticesFlat = true;
+    spline_vertex_index = 0;
+    spline_vertices_flat = true;
 
-    unchangedZ = true;
+    //unchangedZ = true;
     strokeChanged = false;
     fillChanged = false;
     normalChanged = false;
@@ -973,18 +885,13 @@ public class PGraphics extends PImage
    *
    * @param  image  reference to a PImage object
    */
-  //public void textureImage(PImage image) {
   public void texture(PImage image) {
     textureImage = image;
 
-    //if (hints[NEW_GRAPHICS]) {
-    if (z_order == true) {
-      add_texture(image);
-    } else {
-      triangle.setTexture(image);
-    }
-    //} else {  // OLD_GRAPHICS
-    //polygon.texture(image);
+    //if (z_order == true) {
+    add_texture(image);
+    //} else {
+    //triangle.setTexture(image);
     //}
   }
 
@@ -993,8 +900,8 @@ public class PGraphics extends PImage
    * set texture mode to either IMAGE_SPACE (more intuitive
    * for new users) or NORMAL_SPACE (better for advanced chaps)
    */
-  public void textureMode(int textureMode) {
-    this.textureMode = textureMode;
+  public void textureMode(int mode) {
+    this.textureMode = mode;
   }
 
 
@@ -1007,94 +914,42 @@ public class PGraphics extends PImage
    * @param  u  U coordinate (X coord in image 0<=X<=image width)
    * @param  v  V coordinate (Y coord in image 0<=Y<=image height)
    */
-  //public void vertexTexture(float u, float v) {
   protected void vertex_texture(float u, float v) {
-    //if (hints[NEW_GRAPHICS]) {
     if (textureImage == null) {
       message(PROBLEM, "gotta use texture() " +
               "after beginShape() and before vertexTexture()");
       return;
     }
     if (textureMode == IMAGE_SPACE) {
-      textureU = (u < textureImage.width) ? u : textureImage.width;
-      if (textureU < 0) textureU = 0;
-      textureV = (v < textureImage.height) ? v : textureImage.height;
-      if (textureV < 0) textureV = 0;
-      textureU = u / (float) textureImage.width;
-      textureV = v / (float) textureImage.height;
-
-    } else {  // NORMAL_SPACE
-      textureU = u;
-      textureV = v;
-      if (textureU < 0) textureU = 0;
-      if (textureV < 0) textureV = 0;
-      if (textureU > ONE) textureU = ONE;
-      if (textureV > ONE) textureV = ONE;
+      u /= (float) textureImage.width;
+      v /= (float) textureImage.height;
     }
 
-    /*
-    } else {  // OLD_GRAPHICS
-      if (textureImage == null) {
-        message(PROBLEM, "gotta use texture() " +
-                "after beginShape() and before vertex()");
-        return;
-      }
-      if (textureMode == IMAGE_SPACE) {
-        textureU = (u < polygon.twidth) ? u : polygon.twidth;
-        if (textureU < 0) textureU = 0;
+    textureU = u;
+    textureV = v;
 
-        textureV = (v < polygon.theight) ? v : polygon.theight;
-        if (textureV < 0) textureV = 0;
+    if (textureU < 0) textureU = 0;
+    else if (textureU > ONE) textureU = ONE;
 
-      } else {
-        if (textureU < 0) textureU = 0;
-        if (textureV < 0) textureV = 0;
-        if (textureU > ONE) textureU = ONE;
-        if (textureV > ONE) textureV = ONE;
-
-        textureU = u * polygon.twidth;
-        textureV = v * polygon.theight;
-      }
-    }
-    */
+    if (textureV < 0) textureV = 0;
+    else if (textureV > ONE) textureV = ONE;
   }
 
 
   /**
-   * sets the current normal.. may apply to vertices if inside
-   * a beginShape, or to whatever else if outside
+   * Sets the current normal. Mostly will apply to vertices
+   * inside a beginShape/endShape block.
    */
-  //public void vertexNormal(float nx, float ny, float nz) {
   public void normal(float nx, float ny, float nz) {
-    if (shape) {  // if inside shape
-      if (!normalChanged) {
-        //if (hints[NEW_GRAPHICS]) {
-        // set normals for vertices till now to the same thing
-        for (int i = vertex_start; i < vertex_end; i++) {
-          vertices[i][NX] = normalX;
-          vertices[i][NY] = normalY;
-          vertices[i][NZ] = normalZ;
-        }
-
-        // [vertex change]
-        for (int i = vertex_start; i < vertex_end; i++) {
-          vertices[i][NX] = normalX;
-          vertices[i][NY] = normalY;
-          vertices[i][NZ] = normalZ;
-        }
-
-        /*
-        } else {  // OLD_GRAPHICS
-          // set normals for vertices till now to the same thing
-          for (int i = 0; i < polygon.vertexCount; i++) {
-            polygon.vertices[i][NX] = normalX;
-            polygon.vertices[i][NY] = normalY;
-            polygon.vertices[i][NZ] = normalZ;
-          }
-        }
-        */
-        normalChanged = true;
+    // if drawing a shape and the normal hasn't changed yet,
+    // then need to set all the normal for each vertex so far
+    if ((shape != 0) && !normalChanged) {
+      for (int i = vertex_start; i < vertex_end; i++) {
+        vertices[i][NX] = normalX;
+        vertices[i][NY] = normalY;
+        vertices[i][NZ] = normalZ;
       }
+      normalChanged = true;
     }
     normalX = nx;
     normalY = ny;
@@ -1104,14 +959,14 @@ public class PGraphics extends PImage
 
   public void vertex(float x, float y) {
     //if (polygon.redundantVertex(x, y, 0)) return;
-    //cvertexIndex = 0;
+    //spline_vertex_index = 0;
     setup_vertex(next_vertex(), x, y, 0);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
     //if (polygon.redundantVertex(x, y, 0)) return;
-    //cvertexIndex = 0;
+    //spline_vertex_index = 0;
     vertex_texture(u, v);
     setup_vertex(next_vertex(), x, y, 0);
   }
@@ -1119,9 +974,9 @@ public class PGraphics extends PImage
 
   public void vertex(float x, float y, float z) {
     //if (polygon.redundantVertex(x, y, z)) return;
-    //cvertexIndex = 0;
-    unchangedZ = false;
-    dimensions = 3;
+    //spline_vertex_index = 0;
+    //unchangedZ = false;
+    //dimensions = 3;
     setup_vertex(next_vertex(), x, y, z);
   }
 
@@ -1129,21 +984,21 @@ public class PGraphics extends PImage
   public void vertex(float x, float y, float z,
                      float u, float v) {
     //if (polygon.redundantVertex(x, y, z)) return;
-    //cvertexIndex = 0;
+    //spline_vertex_index = 0;
     vertex_texture(u, v);
-    unchangedZ = false;
-    dimensions = 3;
+    //unchangedZ = false;
+    //dimensions = 3;
     setup_vertex(next_vertex(), x, y, z);
   }
 
 
   private void setup_vertex(float vertex[], float x, float y, float z) {
-    if (polygon.redundantVertex(x, y, z)) return;
+    //if (polygon.redundantVertex(x, y, z)) return;
 
     // user called vertex(), so that invalidates anything queued
     // up for curve vertices. if this is internally called by
-    // spline_segment, then cvertexIndex will be saved and restored.
-    cvertexIndex = 0;
+    // spline_segment, then spline_vertex_index will be saved and restored.
+    spline_vertex_index = 0;
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -1161,10 +1016,9 @@ public class PGraphics extends PImage
       vertex[SG] = strokeG;
       vertex[SB] = strokeB;
       vertex[SA] = strokeA;
-      vertex[WT] = strokeWeight;
+      vertex[SW] = strokeWeight;
     }
 
-    // this complicated if construct may defeat the purpose
     if (textureImage != null) {
       vertex[U] = textureU;
       vertex[V] = textureV;
@@ -1178,31 +1032,32 @@ public class PGraphics extends PImage
   }
 
 
-  private void curve_vertex(float x, float y, float z, boolean bezier) {
-    // if more than 128 points, shift everything back to the beginning
-    if (cvertexIndex == CVERTEX_ALLOC) {
-      System.arraycopy(cvertex[CVERTEX_ALLOC-3], 0,
-                       cvertex[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(cvertex[CVERTEX_ALLOC-2], 0,
-                       cvertex[1], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(cvertex[CVERTEX_ALLOC-1], 0,
-                       cvertex[2], 0, VERTEX_FIELD_COUNT);
-      cvertexIndex = 3;
+  private void spline_vertex(float x, float y, float z, boolean bezier) {
+    // allocate space for the spline vertices
+    // to improve processing applet load times, don't allocate until actual use
+    if (spline_vertex == null) {
+      spline_vertex = new float[SPLINE_VERTEX_ALLOC][VERTEX_FIELD_COUNT];
     }
-    // add the vertex here
-    // cvertexIndex and cvertexCount are reset to zero
-    // when regular vertex() is called, so store it
-//    int savedIndex = cvertexIndex + 1;
-    //System.out.println(cvertexIndex);
+
+    // if more than 128 points, shift everything back to the beginning
+    if (spline_vertex_index == SPLINE_VERTEX_ALLOC) {
+      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-3], 0,
+                       spline_vertex[0], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-2], 0,
+                       spline_vertex[1], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-1], 0,
+                       spline_vertex[2], 0, VERTEX_FIELD_COUNT);
+      spline_vertex_index = 3;
+    }
 
     // 'flat' may be a misnomer here because it's actually just
-    // calculating whether z is zero, so that it knows whether
-    // to calculate all three params, or just two for x and y.
-    if (cverticesFlat) {
-      if (z != 0) cverticesFlat = false;
+    // calculating whether z is zero for all the spline points,
+    // so that it knows whether to calculate all three params,
+    // or just two for x and y.
+    if (spline_vertices_flat) {
+      if (z != 0) spline_vertices_flat = false;
     }
-    //setup_vertex2(cvertex[cvertexIndex], x, y, z);
-    float vertex[] = cvertex[cvertexIndex];
+    float vertex[] = spline_vertex[spline_vertex_index];
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -1220,10 +1075,10 @@ public class PGraphics extends PImage
       vertex[SG] = strokeG;
       vertex[SB] = strokeB;
       vertex[SA] = strokeA;
-      vertex[WT] = strokeWeight;
+      vertex[SW] = strokeWeight;
     }
 
-    // this complicated if construct may defeat the purpose
+    // this complicated "if" construct may defeat the purpose
     if (textureImage != null) {
       vertex[U] = textureU;
       vertex[V] = textureV;
@@ -1235,84 +1090,42 @@ public class PGraphics extends PImage
       vertex[NZ] = normalZ;
     }
 
-    cvertexIndex++;
-//    cvertexIndex = savedIndex; // restore cvertexIndex
+    spline_vertex_index++;
 
     // draw a segment if there are enough points
-    if (cvertexIndex > 3) {
+    if (spline_vertex_index > 3) {
       if (bezier) {
-        if ((cvertexIndex % 4) == 0) {
+        if ((spline_vertex_index % 4) == 0) {
           if (!bezier_inited) bezier_init();
 
-          if (cverticesFlat) {
-            spline_segment(cvertex[cvertexIndex-4][MX],
-                           cvertex[cvertexIndex-4][MY],
-                           cvertex[cvertexIndex-3][MX],
-                           cvertex[cvertexIndex-3][MY],
-                           cvertex[cvertexIndex-2][MX],
-                           cvertex[cvertexIndex-2][MY],
-                           cvertex[cvertexIndex-1][MX],
-                           cvertex[cvertexIndex-1][MY],
-                           cvertex[cvertexIndex-4][MX],
-                           cvertex[cvertexIndex-4][MY],
-                           bezier_draw, bezier_detail);
+          if (spline_vertices_flat) {
+            spline2_segment(spline_vertex_index-4,
+                            spline_vertex_index-4,
+                            bezier_draw,
+                            bezier_detail);
           } else {
-            spline_segment(cvertex[cvertexIndex-4][MX],
-                           cvertex[cvertexIndex-4][MY],
-                           cvertex[cvertexIndex-4][MZ],
-                           cvertex[cvertexIndex-3][MX],
-                           cvertex[cvertexIndex-3][MY],
-                           cvertex[cvertexIndex-3][MZ],
-                           cvertex[cvertexIndex-2][MX],
-                           cvertex[cvertexIndex-2][MY],
-                           cvertex[cvertexIndex-2][MZ],
-                           cvertex[cvertexIndex-1][MX],
-                           cvertex[cvertexIndex-1][MY],
-                           cvertex[cvertexIndex-1][MZ],
-                           cvertex[cvertexIndex-4][MX],
-                           cvertex[cvertexIndex-4][MY],
-                           cvertex[cvertexIndex-4][MZ],
-                           bezier_draw, bezier_detail);
+            spline3_segment(spline_vertex_index-4,
+                            spline_vertex_index-4,
+                            bezier_draw,
+                            bezier_detail);
           }
         }
-      } else {  // !bezier
+      } else {  // catmull-rom curve (!bezier)
         if (!curve_inited) curve_init();
 
-        if (cverticesFlat) {
-          spline_segment(cvertex[cvertexIndex-4][MX],
-                         cvertex[cvertexIndex-4][MY],
-                         cvertex[cvertexIndex-3][MX],
-                         cvertex[cvertexIndex-3][MY],
-                         cvertex[cvertexIndex-2][MX],
-                         cvertex[cvertexIndex-2][MY],
-                         cvertex[cvertexIndex-1][MX],
-                         cvertex[cvertexIndex-1][MY],
-                         cvertex[cvertexIndex-3][MX],
-                         cvertex[cvertexIndex-3][MY],
-                         curve_draw, curve_detail);
+        if (spline_vertices_flat) {
+          spline2_segment(spline_vertex_index-4,
+                          spline_vertex_index-3,
+                          curve_draw,
+                          curve_detail);
         } else {
-          spline_segment(cvertex[cvertexIndex-4][MX],
-                         cvertex[cvertexIndex-4][MY],
-                         cvertex[cvertexIndex-4][MZ],
-                         cvertex[cvertexIndex-3][MX],
-                         cvertex[cvertexIndex-3][MY],
-                         cvertex[cvertexIndex-3][MZ],
-                         cvertex[cvertexIndex-2][MX],
-                         cvertex[cvertexIndex-2][MY],
-                         cvertex[cvertexIndex-2][MZ],
-                         cvertex[cvertexIndex-1][MX],
-                         cvertex[cvertexIndex-1][MY],
-                         cvertex[cvertexIndex-1][MZ],
-                         cvertex[cvertexIndex-3][MX],
-                         cvertex[cvertexIndex-3][MY],
-                         cvertex[cvertexIndex-3][MZ],
-                         curve_draw, curve_detail);
+          spline3_segment(spline_vertex_index-4,
+                          spline_vertex_index-3,
+                          curve_draw,
+                          curve_detail);
         }
       }
     }
-    // spline_segment() calls vertex(), which clears cvertexIndex
-//    cvertexIndex = savedIndex;
-    //cvertexIndex++;
   }
 
 
@@ -1320,34 +1133,36 @@ public class PGraphics extends PImage
    * See notes with the bezier() function.
    */
   public void bezierVertex(float x, float y) {
-    curve_vertex(x, y, 0, true);
+    spline_vertex(x, y, 0, true);
   }
 
   /**
    * See notes with the bezier() function.
    */
   public void bezierVertex(float x, float y, float z) {
-    curve_vertex(x, y, z, true);
+    spline_vertex(x, y, z, true);
   }
 
   /**
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y) {
-    curve_vertex(x, y, 0, false);
+    spline_vertex(x, y, 0, false);
   }
 
   /**
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y, float z) {
-    curve_vertex(x, y, z, false);
+    spline_vertex(x, y, z, false);
   }
 
 
   public void endShape() {
     // clear the 'shape drawing' flag in case of early exit
-    shape = false;
+    //shape = false;
+
+    //System.out.println("ending shape");
 
     vertex_end = vertex_count;
 
@@ -1360,16 +1175,16 @@ public class PGraphics extends PImage
 
     // make lines for both stroke triangles
     // and antialiased triangles
-    boolean check = stroke || smooth;
+    //boolean check = stroke; // || smooth;
 
     // quick fix [rocha]
     // antialiasing fonts with lines causes some artifacts
-    if (textureImage != null && textureImage.format == ALPHA) {
-      check = false;
-    }
+    //if (textureImage != null && textureImage.format == ALPHA) {
+    //check = false;
+    //}
 
-    if (check) {
-      switch (shapeKind) {
+    if (stroke) {
+      switch (shape) {
 
         case POINTS:
         {
@@ -1385,15 +1200,15 @@ public class PGraphics extends PImage
         case LINE_LOOP:
         {
           // store index of first vertex
-          int first = lines_count;
+          int first = lineCount;
           stop = vertex_end-1;
-          increment = (shapeKind == LINES) ? 2 : 1;
+          increment = (shape == LINES) ? 2 : 1;
 
           for (int i = vertex_start; i < stop; i+=increment) {
             add_line(i,i+1);
           }
 
-          if (shapeKind == LINE_LOOP) {
+          if (shape == LINE_LOOP) {
             add_line(stop,lines[first][PA]);
           }
         }
@@ -1408,14 +1223,14 @@ public class PGraphics extends PImage
           for (int i = vertex_start; i < stop; i++) {
             counter = i - vertex_start;
             add_line(i,i+1);
-            if ((shapeKind == TRIANGLES) && (counter%3 == 1)) {
+            if ((shape == TRIANGLES) && (counter%3 == 1)) {
               i++;
             }
           }
 
           // then draw from vertex (n) to (n+2)
           stop = vertex_end-2;
-          increment = (shapeKind == TRIANGLE_STRIP) ? 1 : 3;
+          increment = (shape == TRIANGLE_STRIP) ? 1 : 3;
 
           for (int i = vertex_start; i < stop; i+=increment) {
             add_line(i,i+2);
@@ -1432,14 +1247,14 @@ public class PGraphics extends PImage
           for (int i = vertex_start; i < stop; i++) {
             counter = i - vertex_start;
             add_line(i,i+1);
-            if ((shapeKind == QUADS) && (counter%4 == 2)) {
+            if ((shape == QUADS) && (counter%4 == 2)) {
               i++;
             }
           }
 
           // then draw from vertex (n) to (n+3)
           stop = vertex_end-2;
-          increment = (shapeKind == QUAD_STRIP) ? 2 : 4;
+          increment = (shape == QUAD_STRIP) ? 2 : 4;
 
           for (int i=vertex_start; i < stop; i+=increment) {
             add_line(i,i+3);
@@ -1452,7 +1267,7 @@ public class PGraphics extends PImage
         case CONVEX_POLYGON:
         {
           // store index of first vertex
-          int first = lines_count;
+          int first = lineCount;
           stop = vertex_end - 1;
 
           for (int i=vertex_start; i < stop; i++) {
@@ -1469,12 +1284,12 @@ public class PGraphics extends PImage
     // CREATE TRIANGLES
 
     if (fill) {
-      switch (shapeKind) {
+      switch (shape) {
         case TRIANGLES:
         case TRIANGLE_STRIP:
         {
           stop = vertex_end - 2;
-          increment = (shapeKind == TRIANGLES) ? 3 : 1;
+          increment = (shape == TRIANGLES) ? 3 : 1;
           for (int i = vertex_start; i < stop; i += increment) {
             add_triangle(i, i+1, i+2);
           }
@@ -1485,7 +1300,7 @@ public class PGraphics extends PImage
         case QUAD_STRIP:
         {
           stop = vertex_count-3;
-          increment = (shapeKind == QUADS) ? 4 : 2;
+          increment = (shape == QUADS) ? 4 : 2;
 
           for (int i = vertex_start; i < stop; i += increment) {
             // first triangle
@@ -1507,27 +1322,20 @@ public class PGraphics extends PImage
     }
 
     // ------------------------------------------------------------------
-    // POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (VX, VY, VZ)
+    // 2D POINTS FROM MODEL (MX, MY, MZ) DIRECTLY TO VIEW SPACE (X, Y, Z)
 
-    //if ((cameraMode == PERSPECTIVE) && (dimensions == 0)) {
-    if ((cameraMode != CUSTOM) && (dimensions == 0)) {
-      // flat 2D
-      for (int i = vertex_start; i < vertex_end; i++) {
-        vertices[i][X] = vertices[i][MX];
-        vertices[i][Y] = vertices[i][MY];
-      }
-
-    } else if ((cameraMode != CUSTOM) && (dimensions == 2)) {
-
-      // affine transform, ie rotated 2D
+    if (!depth) {
+      // if no depth in use, then the points can be transformed
       for (int i = vertex_start; i < vertex_end; i++) {
         vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
         vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
       }
+    }
 
-    } else {
-      // dimension = 3 or camera mode is custom
+    // ------------------------------------------------------------------
+    // 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (VX, VY, VZ)
 
+    if (depth) {
       for (int i = vertex_start; i < vertex_end; i++) {
         float vertex[] = vertices[i];
 
@@ -1597,37 +1405,37 @@ public class PGraphics extends PImage
 
 
     // ------------------------------------------------------------------
-    // COLORS
+    // LIGHTS
 
-    if (!lights) {
+    // if no lights enabled, then all the values for r, g, b
+    // have been set with calls to vertex() (no need to re-calculate here)
 
-      // all the values for r, g, b have been set with calls to vertex()
-      // (no need to re-calculate anything here)
-
-    } else {
-
+    if (lights) {
       float f[] = vertices[vertex_start];
 
       for (int i = vertex_start; i < vertex_end; i++) {
         float v[] = vertices[i];
         if (normalChanged) {
           if (fill) {
-            calc_lighting(v[R],  v[G], v[B], v[MX], v[MY], v[MZ],
-                       v[NX], v[NY], v[NZ], v, R);
+            calc_lighting(v[R],  v[G], v[B],
+                          v[MX], v[MY], v[MZ],
+                          v[NX], v[NY], v[NZ], v, R);
           }
-
           if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB], v[MX], v[MY], v[MZ],
-                       v[NX], v[NY], v[NZ], v, SR);
+            calc_lighting(v[SR], v[SG], v[SB],
+                          v[MX], v[MY], v[MZ],
+                          v[NX], v[NY], v[NZ], v, SR);
           }
         } else {
           if (fill) {
-            calc_lighting(v[R],  v[G], v[B], v[MX], v[MY], v[MZ],
-                       f[NX], f[NY], f[NZ], v, R);
+            calc_lighting(v[R],  v[G],  v[B],
+                          v[MX], v[MY], v[MZ],
+                          f[NX], f[NY], f[NZ], v, R);
           }
           if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB], v[MX], v[MY], v[MZ],
-                       f[NX], f[NY], f[NZ], v, SR);
+            calc_lighting(v[SR], v[SG], v[SB],
+                          v[MX], v[MY], v[MZ],
+                          f[NX], f[NY], f[NZ], v, SR);
           }
         }
       }
@@ -1639,7 +1447,7 @@ public class PGraphics extends PImage
     //if ((cameraMode == PERSPECTIVE) && (dimensions == 3) && clip) {
       //float z_plane = eyeDist + ONE;
 
-      //for (int i = 0; i < lines_count; i ++) {
+      //for (int i = 0; i < lineCount; i ++) {
           //line3dClip();
       //}
 
@@ -1648,10 +1456,10 @@ public class PGraphics extends PImage
     //}
 
     // ------------------------------------------------------------------
-    // POINTS FROM VIEW SPACE (MX, MY, MZ) TO SCREEN SPACE (X, Y, Z)
+    // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
 
-    if ((cameraMode == PERSPECTIVE) && (dimensions == 3)) {
-
+    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3)) {
+    if (depth) {
       for (int i = vertex_start; i < vertex_end; i++) {
         float vx[] = vertices[i];
 
@@ -1671,12 +1479,18 @@ public class PGraphics extends PImage
     }
 
     // ------------------------------------------------------------------
-    // RENDER SHAPES FILLS HERE WHEN NOT Z_ORDERING
+    // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
 
-    if (z_order == true) {
+    // if true, the shapes will be rendered on endFrame
+    if (hints[DEPTH_SORT]) {
+      shape = 0;
       return;
     }
 
+    if (fill) render_triangles();
+    if (stroke) render_lines();
+
+    /*
     // render all triangles in current shape
     if (fill) {
       for (int i = 0; i < triangleCount; i ++) {
@@ -1707,9 +1521,9 @@ public class PGraphics extends PImage
     // DRAW POINTS, LINES AND SHAPE STROKES
 
     // draw all lines in current shape
-    if (stroke || smooth) {
+    if (stroke) {
 
-      for (int i = 0; i < lines_count; i ++) {
+      for (int i = 0; i < lineCount; i ++) {
         float a[] = vertices[lines[i][PA]];
         float b[] = vertices[lines[i][PB]];
         int index = lines[i][LI];
@@ -1723,12 +1537,70 @@ public class PGraphics extends PImage
         line.setIndex(index);
 
         line.draw();
+        //System.out.println("shoudla drawn");
       }
     }
+    */
 
-    shapeKind = 0;
+    //System.out.println("leaving endShape");
+    //shapeKind = 0;
+    shape = 0;
   }
 
+
+  protected void depth_sort_triangles() {
+  }
+
+  protected void render_triangles() {
+    for (int i = 0; i < triangleCount; i ++) {
+      float a[] = vertices[triangles[i][VA]];
+      float b[] = vertices[triangles[i][VB]];
+      float c[] = vertices[triangles[i][VC]];
+      int tex = triangles[i][TEX];
+      int index = triangles[i][TI];
+
+      triangle.reset();
+
+      if (tex > -1 && textures[tex] != null) {
+        triangle.setTexture(textures[tex]);
+        triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
+      }
+
+      triangle.setIntensities(a[R], a[G], a[B], a[A],
+                              b[R], b[G], b[B], b[A],
+                              c[R], c[G], c[B], c[A]);
+
+      triangle.setVertices(a[X], a[Y], a[Z],
+                           b[X], b[Y], b[Z],
+                           c[X], c[Y], c[Z]);
+
+      triangle.setIndex(index);
+      triangle.render();
+    }
+  }
+
+
+  protected void depth_sort_lines() {
+  }
+
+  public void render_lines() {
+    for (int i = 0; i < lineCount; i ++) {
+      float a[] = vertices[lines[i][PA]];
+      float b[] = vertices[lines[i][PB]];
+      int index = lines[i][LI];
+
+      line.reset();
+
+      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                          b[SR], b[SG], b[SB], b[SA]);
+
+      line.setVertices(a[X], a[Y], a[Z],
+                       b[X], b[Y], b[Z]);
+
+      line.setIndex(index);
+      line.draw();
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1852,371 +1724,13 @@ public class PGraphics extends PImage
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-
-  /*
-  public void endShape() {
-    if (hints[NEW_GRAPHICS]) {
-      endShape_newgraphics();
-      return;
-    }
-    // could initialize unchangedZ if false,
-    //   model matrix is not identity
-    // same with homoegenousColors and !lighting
-
-    // clear the 'shape drawing' flag in case of early exit
-    shape = false;
-
-    int vertexCount = polygon.vertexCount;
-    float vertices[][] = polygon.vertices;
-
-    // ------------------------------------------------------------------
-    // POINTS FROM MODEL (MX, MY, MZ) TO SCREEN SPACE (X, Y, Z)
-
-    if ((cameraMode == PERSPECTIVE) && (dimensions == 0)) {
-      polygon.interpZ = false;
-      spolygon.interpZ = false;
-      for (int i = 0; i < vertexCount; i++) {
-        vertices[i][X] = vertices[i][MX];
-        vertices[i][Y] = vertices[i][MY];
-      }
-
-    } else if ((cameraMode == PERSPECTIVE) && (dimensions == 2)) {
-      polygon.interpZ = false;
-      spolygon.interpZ = false;
-      for (int i = 0; i < vertexCount; i++) {
-        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
-        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
-      }
-
-    } else {  // dimension = 3 or camera mode is custom
-      polygon.interpZ = true;
-      spolygon.interpZ = true;
-
-      for (int i = 0; i < vertexCount; i++) {
-        float vertex[] = vertices[i];
-
-        float ax = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
-        float ay = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
-        float az = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
-        float aw = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
-
-        float ox = p00*ax + p01*ay + p02*az + p03*aw;
-        float oy = p10*ax + p11*ay + p12*az + p13*aw;
-        float oz = p20*ax + p21*ay + p22*az + p23*aw;
-        float ow = p30*ax + p31*ay + p32*az + p33*aw;
-
-        if (ow != 0) {
-          ox /= ow; oy /= ow; oz /= ow;
-        }
-
-        vertex[X] = width  * (ONE + ox) / 2.0f;
-        vertex[Y] = height * (ONE + oy) / 2.0f;
-        vertex[Z] = (oz + ONE) / 2.0f;
-      }
-    }
-
-
-    // simple clipping.. if they share the same clipping code, then cull
-    boolean clipped = true;
-    int clipCode = thin_flat_lineClipCode(vertices[0][X], vertices[0][Y]);
-    for (int i = 1; i < vertexCount; i++) {
-      int code = thin_flat_lineClipCode(vertices[i][X], vertices[i][Y]);
-      if (code != clipCode) {
-        clipped = false;
-        break;
-      }
-    }
-    if ((clipCode != 0) && clipped) return;
-
-
-    // ------------------------------------------------------------------
-    // NORMALS
-
-    if (!normalChanged) {  // fill first vertext w/ the normal
-      vertices[0][NX] = normalX;
-      vertices[0][NY] = normalY;
-      vertices[0][NZ] = normalZ;
-      // homogenousNormals saves time from below, which is expensive
-    }
-
-    for (int i = 0; i < (normalChanged ? vertexCount : 1); i++) {
-      float v[] = vertices[i];
-      float nx = m00*v[NX] + m01*v[NY] + m02*v[NZ] + m03;
-      float ny = m10*v[NX] + m11*v[NY] + m12*v[NZ] + m13;
-      float nz = m20*v[NX] + m21*v[NY] + m22*v[NZ] + m23;
-      float nw = m30*v[NX] + m31*v[NY] + m32*v[NZ] + m33;
-
-      if (nw != 0) {  // divide by perspective coordinate
-        v[NX] = nx/nw; v[NY] = ny/nw; v[NZ] = nz/nw;
-      } else {  // can't do inline above
-        v[NX] = nx; v[NY] = ny; v[NZ] = nz;
-      }
-      float nlen = mag(v[NX], v[NY], v[NZ]);  // normalize
-      if (nlen != 0) {
-        v[NX] /= nlen; v[NY] /= nlen; v[NZ] /= nlen;
-      }
-    }
-
-    // ------------------------------------------------------------------
-    // TEXTURES
-
-    // inherit UV characteristics from polygon
-    // this is an uglyish sort of hack
-    if (polygon.interpUV) {
-      fpolygon.texture(polygon.timage);
-    }
-
-    // ------------------------------------------------------------------
-    // COLORS
-
-    // calculate RGB for each vertex
-
-    if (!lights) {
-      //polygon.interpRGB  = //false;
-      spolygon.interpRGBA = strokeChanged; //false;
-      fpolygon.interpRGBA = fillChanged; //false;
-
-      // all the values for r, g, b have been set with calls to vertex()
-      // (no need to re-calculate anything here)
-
-    } else {
-      //polygon.interpRGB = true;
-      spolygon.interpRGBA = true;
-      fpolygon.interpRGBA = true;
-
-      float f[] = polygon.vertices[0];
-
-      for (int i = 0; i < vertexCount; i++) {
-        float v[] = polygon.vertices[i];
-        if (normalChanged) {
-          if (fill) {
-            calc_lighting(v[R],  v[G],  v[B],
-                       v[MX], v[MY], v[MZ],
-                       v[NX], v[NY], v[NZ],  v, R);
-          }
-          if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB],
-                       v[MX], v[MY], v[MZ],
-                       v[NX], v[NY], v[NZ],  v, SR);
-          }
-        } else {
-          if (fill) {
-            calc_lighting(v[R],  v[G],  v[B],
-                       v[MX], v[MY], v[MZ],
-                       f[NX], f[NY], f[NZ],  v, R);
-          }
-          if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB],
-                       v[MX], v[MY], v[MZ],
-                       f[NX], f[NY], f[NZ],  v, SR);
-          }
-        }
-      }
-    }
-
-    // ------------------------------------------------------------------
-    // RENDER SHAPES
-
-    int increment;
-
-    // test for concave-convex
-    if (shapeKind == POLYGON)  {
-      shapeKind = is_convex() ? CONVEX_POLYGON : CONCAVE_POLYGON;
-    }
-
-    switch (shapeKind) {
-    case POINTS:
-      if ((dimensions == 0) && unchangedZ &&
-          (strokeWeight == ONE) && !lights) {
-        if (!strokeChanged) {
-          for (int i = 0; i < vertexCount; i++) {
-            thin_point((int) vertices[i][X], (int) vertices[i][Y],
-                       0, strokeColor);
-          }
-        } else {
-          for (int i = 0; i < vertexCount; i++) {
-            thin_point((int) vertices[i][X], (int) vertices[i][Y],
-                       0, float_color(vertices[i][SR],
-                                      vertices[i][SG],
-                                      vertices[i][SB]));
-          }
-          //strokei = strokeiSaved;
-        }
-      } else {
-        float f[] = vertices[0];
-
-        for (int i = 0; i < vertexCount; i++) {
-          float v[] = vertices[i];
-
-          // if this is the first time (i == 0)
-          // or if lighting is enabled
-          // or the stroke color has changed inside beginShape/endShape
-          // then re-calculate the color at this vertex
-          if ((i == 0) || lights || strokeChanged) {
-            // push calculated color into 'f' (this way, f is always valid)
-            calc_lighting(v[SR], v[SG], v[SB],
-                       v[X],  v[Y],  v[Z],
-                       v[NX], v[NY], v[NZ],  f, R);
-          }
-          // uses [SA], since stroke alpha isn't moved into [A] the
-          // way that [SR] goes to [R] etc on the calc_lighting call
-          // (there's no sense in copying it to [A], except consistency
-          // in the code.. but why the extra slowness?)
-          thick_point(v[X], v[Y], v[Z],  f[R], f[G], f[B], f[SA]);
-        }
-      }
-      break;
-
-    case LINES:
-    case LINE_STRIP:
-    case LINE_LOOP:
-      if (!stroke) return;
-
-      // if it's a line loop, copy the vertex data to the last element
-      if (shapeKind == LINE_LOOP) {
-        float v0[] = polygon.vertices[0];
-        float v1[] = polygon.nextVertex();
-        vertexCount++; // since it had already been read above
-
-        v1[X] = v0[X]; v1[Y] = v0[Y]; v1[Z] = v0[Z];
-        v1[SR] = v0[SR]; v1[SG] = v0[SG];
-        v1[SB] = v0[SB]; v1[SA] = v0[SA];
-      }
-
-      // increment by two for individual lines
-      increment = (shapeKind == LINES) ? 2 : 1;
-      draw_lines(vertices, vertexCount-1, 1, increment, 0);
-      break;
-
-    case TRIANGLES:
-    case TRIANGLE_STRIP:
-      increment = (shapeKind == TRIANGLES) ? 3 : 1;
-      // do fill and stroke separately because otherwise
-      // the lines will be stroked more than necessary
-      if (fill) {
-        fpolygon.vertexCount = 3;
-        for (int i = 0; i < vertexCount-2; i += increment) {
-          for (int j = 0; j < 3; j++) {
-            fpolygon.vertices[j][R] = vertices[i+j][R];
-            fpolygon.vertices[j][G] = vertices[i+j][G];
-            fpolygon.vertices[j][B] = vertices[i+j][B];
-            fpolygon.vertices[j][A] = vertices[i+j][A];
-
-            fpolygon.vertices[j][X] = vertices[i+j][X];
-            fpolygon.vertices[j][Y] = vertices[i+j][Y];
-            fpolygon.vertices[j][Z] = vertices[i+j][Z];
-
-            if (polygon.interpUV) {
-              fpolygon.vertices[j][U] = vertices[i+j][U];
-              fpolygon.vertices[j][V] = vertices[i+j][V];
-            }
-          }
-          fpolygon.render();
-        }
-      }
-      if (stroke) {
-        // first draw all vertices as a line strip
-        if (shapeKind == TRIANGLE_STRIP) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
-        } else {
-          draw_lines(vertices, vertexCount-1, 1, 1, 3);
-        }
-        // then draw from vertex (n) to (n+2)
-        // incrementing n using the same as above
-        draw_lines(vertices, vertexCount-2, 2, increment, 0);
-        // changed this to vertexCount-2, because it seemed
-        // to be adding an extra (nonexistant) line
-      }
-      break;
-
-    case QUADS:
-    case QUAD_STRIP:
-      //System.out.println("pooping out a quad");
-      increment = (shapeKind == QUADS) ? 4 : 2;
-      if (fill) {
-        fpolygon.vertexCount = 4;
-        for (int i = 0; i < vertexCount-3; i += increment) {
-          for (int j = 0; j < 4; j++) {
-            fpolygon.vertices[j][R] = vertices[i+j][R];
-            fpolygon.vertices[j][G] = vertices[i+j][G];
-            fpolygon.vertices[j][B] = vertices[i+j][B];
-            fpolygon.vertices[j][A] = vertices[i+j][A];
-
-            fpolygon.vertices[j][X] = vertices[i+j][X];
-            fpolygon.vertices[j][Y] = vertices[i+j][Y];
-            fpolygon.vertices[j][Z] = vertices[i+j][Z];
-
-            if (polygon.interpUV) {
-              fpolygon.vertices[j][U] = vertices[i+j][U];
-              fpolygon.vertices[j][V] = vertices[i+j][V];
-            }
-          }
-          fpolygon.render();
-        }
-      }
-      if (stroke) {
-        // first draw all vertices as a line strip
-        if (shapeKind == QUAD_STRIP) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
-        } else {  // skip every few for quads
-          draw_lines(vertices, vertexCount, 1, 1, 4);
-        }
-        // then draw from vertex (n) to (n+3)
-        // incrementing n by the same increment as above
-        draw_lines(vertices, vertexCount-2, 3, increment, 0);
-      }
-      break;
-
-    case POLYGON:
-    case CONCAVE_POLYGON:
-      if (fill) {
-        // the triangulator produces polygons that don't align
-        // when smoothing is enabled. but if there is a stroke around
-        // the polygon, then smoothing can be temporarily disabled.
-        boolean smoov = smooth;
-        if (stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = false;
-        concave_render();
-        if (stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = smoov;
-      }
-
-      if (stroke) {
-        draw_lines(vertices, vertexCount-1, 1, 1, 0);
-        // draw the last line connecting back
-        // to the first point in poly
-        svertices[0] = vertices[vertexCount-1];
-        svertices[1] = vertices[0];
-        draw_lines(svertices, 1, 1, 1, 0);
-      }
-      break;
-
-    case CONVEX_POLYGON:
-      if (fill) {
-        polygon.render();
-        if (stroke) polygon.unexpand();
-      }
-
-      if (stroke) {
-        draw_lines(vertices, vertexCount-1, 1, 1, 0);
-        // draw the last line connecting back to the first point in poly
-        svertices[0] = vertices[vertexCount-1];
-        svertices[1] = vertices[0];
-        draw_lines(svertices, 1, 1, 1, 0);
-      }
-      break;
-    }
-    // to signify no shape being drawn
-    //shapeKind = 0;
-  }
-  */
-
 
   //////////////////////////////////////////////////////////////
 
   // CONCAVE/CONVEX POLYGONS
 
 
+  /*
   private boolean is_convex() {
     float v[][] = polygon.vertices;
     int n = polygon.vertexCount;
@@ -2455,6 +1969,7 @@ public class PGraphics extends PImage
     }
     tpolygon.render();
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -2462,6 +1977,7 @@ public class PGraphics extends PImage
   // RENDERING
 
 
+  /*
   // expects properly clipped coords, hence does
   // NOT check if x/y are in bounds [toxi]
   private void thin_pointAt(int x, int y, float z, int color) {
@@ -2476,6 +1992,7 @@ public class PGraphics extends PImage
     pixels[offset] = color;
     zbuffer[offset] = z;
   }
+  */
 
   // points are inherently flat, but always tangent
   // to the screen surface. the z is only so that things
@@ -2516,6 +2033,7 @@ public class PGraphics extends PImage
   }
 
 
+  /*
   // new bresenham clipping code, as old one was buggy [toxi]
   private void thin_flat_line(int x1, int y1, int x2, int y2) {
     int nx1,ny1,nx2,ny2;
@@ -2661,6 +2179,7 @@ public class PGraphics extends PImage
     }
     return false;
   }
+  */
 
 
   private void thick_flat_line(float ox1, float oy1,
@@ -2670,10 +2189,12 @@ public class PGraphics extends PImage
     spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
     spolygon.interpZ = false;
 
+    /*
     if (!spolygon.interpRGBA &&
         flat_line_retribution(ox1, oy1, ox2, oy2, r1, g1, b1)) {
       return;
     }
+    */
 
     float dX = ox2-ox1 + EPSILON;
     float dY = oy2-oy1 + EPSILON;
@@ -2743,11 +2264,12 @@ public class PGraphics extends PImage
                             float x2, float y2, float z2,
                             float r2, float g2, float b2) {
     spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2);
+    /*
     if (!spolygon.interpRGBA &&
         flat_line_retribution(x1, y1, x2, y2, r1, g1, b1)) {
       return;
     }
-
+    */
     spolygon.interpZ = true;
 
     float ox1 = x1; float oy1 = y1; float oz1 = z1;
@@ -2804,6 +2326,7 @@ public class PGraphics extends PImage
   }
 
 
+  /*
   // max is what to count to
   // offset is offset to the 'next' vertex
   // increment is how much to increment in the loop
@@ -2843,6 +2366,7 @@ public class PGraphics extends PImage
                            (int) vertices[i+offset][X],
                            (int) vertices[i+offset][Y]);
           }
+
         } else {
           for (int i = 0; i < max; i += increment) {
             if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
@@ -2863,7 +2387,7 @@ public class PGraphics extends PImage
       }
     }
   }
-
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -2880,11 +2404,6 @@ public class PGraphics extends PImage
       pixels[index] = color;
 
     } else {  // transparent
-      // couldn't seem to get this working correctly
-
-      //pixels[index] = _blend(pixels[index],
-      //                     color & 0xffffff, (color >> 24) & 0xff);
-
       // a1 is how much of the orig pixel
       int a2 = (color >> 24) & 0xff;
       int a1 = a2 ^ 0xff;
@@ -2897,84 +2416,93 @@ public class PGraphics extends PImage
       int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
 
       pixels[index] =  0xff000000 | (r << 8) | g | b;
-
-      //pixels[index] = _blend(pixels[index],
-      //                     color & 0xffffff, (color >> 24) & 0xff);
-      /*
-      pixels[index] = 0xff000000 |
-        ((((a1 * ((pixels[index] >> 16) & 0xff) +
-            a2 * ((color         >> 16) & 0xff)) & 0xff00) << 24) << 8) |
-        (((a1 * ((pixels[index] >>  8) & 0xff) +
-           a2 * ((color         >>  8) & 0xff)) & 0xff00) << 16) |
-        (((a1 * ( pixels[index]        & 0xff) +
-           a2 * ( color                & 0xff)) >> 8));
-      */
     }
     zbuffer[index] = z;
   }
 
 
-  // optimized because it's used so much
-  private void flat_rect(int x1, int y1, int x2, int y2) {
+  protected void rect3_fill(float x1, float y1, float x2, float y2) {
+    beginShape(QUADS);
+    vertex(x1, y1);
+    vertex(x2, y1);
+    vertex(x2, y2);
+    vertex(x1, y2);
+    endShape();
+  }
+
+
+  protected void rect3_stroke(float x1, float y1, float x2, float y2) {
+    beginShape(QUADS);
+    vertex(x1, y1);
+    vertex(x2, y1);
+    vertex(x2, y2);
+    vertex(x1, y2);
+    endShape();
+  }
+
+
+  protected void rect2_fill(float x1, float y1, float x2, float y2) {
+    // needs to check if smooth
+    // or if there's an affine transform on the shape
+    // also the points are now floats instead of ints
+
     //System.out.println("flat quad");
     if (y2 < y1) {
-      int temp = y1; y1 = y2; y2 = temp;
+      float temp = y1; y1 = y2; y2 = temp;
     }
     if (x2 < x1) {
-      int temp = x1; x1 = x2; x2 = temp;
+      float temp = x1; x1 = x2; x2 = temp;
     }
     // checking to watch out for boogers
     if ((x1 > width1) || (x2 < 0) ||
         (y1 > height1) || (y2 < 0)) return;
 
-    if (fill) {
-      int fx1 = x1;
-      int fy1 = y1;
-      int fx2 = x2;
-      int fy2 = y2;
+    int fx1 = (int) x1;
+    int fy1 = (int) y1;
+    int fx2 = (int) x2;
+    int fy2 = (int) y2;
 
-      // these only affect the fill, not the stroke
-      // (otherwise strange boogers at edges b/c frame changes shape)
-      if (fx1 < 0) fx1 = 0;
-      if (fx2 > width) fx2 = width;
-      if (fy1 < 0) fy1 = 0;
-      if (fy2 > height) fy2 = height;
+    // these only affect the fill, not the stroke
+    // (otherwise strange boogers at edges b/c frame changes shape)
+    if (fx1 < 0) fx1 = 0;
+    if (fx2 > width) fx2 = width;
+    if (fy1 < 0) fy1 = 0;
+    if (fy2 > height) fy2 = height;
 
-      // [toxi 031223]
-      // on avg. 20-25% faster fill routine using System.arraycopy()
-      int ww = fx2 - fx1;
-      int hh = fy2 - fy1;
-      int[] row = new int[ww];
-      for (int i = 0; i < ww; i++) row[i] = fillColor;
-      int idx = fy1 * width + fx1;
-      for (int y = 0; y < hh; y++) {
-        System.arraycopy(row, 0, pixels, idx, ww);
-        idx += width;
-      }
-      row = null;
+    // [toxi 031223]
+    // on avg. 20-25% faster fill routine using System.arraycopy()
+    int ww = fx2 - fx1;
+    int hh = fy2 - fy1;
+    int[] row = new int[ww];
+    for (int i = 0; i < ww; i++) row[i] = fillColor;
+    int idx = fy1 * width + fx1;
+    for (int y = 0; y < hh; y++) {
+      System.arraycopy(row, 0, pixels, idx, ww);
+      idx += width;
     }
+    row = null;
+  }
 
-    // broken in the new graphics engine
-    //if (!hints[NEW_GRAPHICS]) {
-    // TODO this is the wrong place for the stroke to be drawn!
-    if (stroke) {
-      if (strokeWeight == 1) {
-        thin_flat_line(x1, y1, x2, y1);
-        thin_flat_line(x2, y1, x2, y2);
-        thin_flat_line(x2, y2, x1, y2);
-        thin_flat_line(x1, y2, x1, y1);
 
-      } else {
-        thick_flat_line(x1, y1, fillR, fillG, fillB, fillA,
-                        x2, y1, fillR, fillG, fillB, fillA);
-        thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
-                        x2, y2, fillR, fillG, fillB, fillA);
-        thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
-                        x1, y2, fillR, fillG, fillB, fillA);
-        thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
-                        x1, y1, fillR, fillG, fillB, fillA);
-      }
+  protected void rect2_stroke(float x1, float y1, float x2, float y2) {
+    /*
+    if (strokeWeight == 1) {
+      thin_flat_line(x1, y1, x2, y1);
+      thin_flat_line(x2, y1, x2, y2);
+      thin_flat_line(x2, y2, x1, y2);
+      thin_flat_line(x1, y2, x1, y1);
+
+    } else {
+      thick_flat_line(x1, y1, fillR, fillG, fillB, fillA,
+                      x2, y1, fillR, fillG, fillB, fillA);
+      thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
+                      x2, y2, fillR, fillG, fillB, fillA);
+      thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
+                      x1, y2, fillR, fillG, fillB, fillA);
+      thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
+                      x1, y1, fillR, fillG, fillB, fillA);
     }
+    */
   }
 
 
@@ -3342,18 +2870,13 @@ public class PGraphics extends PImage
       y1 -= vradius;
     }
 
-    if ((dimensions == 0) && !lights && !fillAlpha) {
-      // draw in 2D
-      flat_rect((int) x1, (int) y1, (int) x2, (int) y2);
+    if (depth) {
+      if (fill) rect3_fill(x1, y1, x2, y2);
+      if (stroke) rect3_stroke(x1, y1, x2, y2);
 
     } else {
-      // draw in 3D
-      beginShape(QUADS);
-      vertex(x1, y1);
-      vertex(x2, y1);
-      vertex(x2, y2);
-      vertex(x1, y2);
-      endShape();
+      if (fill) rect2_fill(x1, y1, x2, y2);
+      if (stroke) rect2_stroke(x1, y1, x2, y2);
     }
   }
 
@@ -3757,7 +3280,6 @@ public class PGraphics extends PImage
   }
 
 
-  //static final int BEZIER_DETAIL = 20;
   private boolean bezier_inited = false;
   private int bezier_detail = 20; //BEZIER_DETAIL;
   // msjvm complained when bezier_basis was final
@@ -3794,10 +3316,9 @@ public class PGraphics extends PImage
   }
 
 
-  // catmull-rom basis matrix, perhaps with optional s parameter
   private boolean curve_inited = false;
-  //static final int CURVE_DETAIL = 20;
-  private int curve_detail = 20; //CURVE_DETAIL;
+  private int curve_detail = 20;
+  // catmull-rom basis matrix, perhaps with optional s parameter
   private float curve_tightness = 0;
   private float curve_basis[][]; // = new float[4][4];
   private float curve_forward[][]; // = new float[4][4];
@@ -3806,19 +3327,16 @@ public class PGraphics extends PImage
 
   private void curve_init() {
     curve_mode(curve_detail, curve_tightness);
-    //curve_inited = true;
   }
 
 
   public void curveDetail(int detail) {
     curve_mode(detail, curve_tightness);
-    //curve_inited = true;
   }
 
 
   public void curveTightness(float tightness) {
     curve_mode(curve_detail, tightness);
-    //curve_inited = true;
   }
 
 
@@ -3914,12 +3432,10 @@ public class PGraphics extends PImage
                     float x3, float y3,
                     float x4, float y4) {
     beginShape(LINE_STRIP);
-    //curveVertex(x1, y1);
     curveVertex(x1, y1);
     curveVertex(x2, y2);
     curveVertex(x3, y3);
     curveVertex(x4, y4);
-    //curveVertex(x4, y4);
     endShape();
   }
 
@@ -3929,12 +3445,10 @@ public class PGraphics extends PImage
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
     beginShape(LINE_STRIP);
-    //curveVertex(x1, y1, z1);
     curveVertex(x1, y1, z1);
     curveVertex(x2, y2, z2);
     curveVertex(x3, y3, z3);
     curveVertex(x4, y4, z4);
-    //curveVertex(x4, y4, z4);
     endShape();
   }
 
@@ -3990,9 +3504,22 @@ public class PGraphics extends PImage
    * for catmull-rom curves, the first control point (x2, y2, z2)
    * is the first drawn point, and is accumulated to.
    */
-  private void spline_segment(float x1, float y1, float x2, float y2,
-                              float x3, float y3, float x4, float y4,
-                              float x0, float y0, float m[][], int segments) {
+  private void spline2_segment(int offset, int start,
+                               float m[][], int segments) {
+    float x1 = spline_vertex[offset][MX];
+    float y1 = spline_vertex[offset][MY];
+
+    float x2 = spline_vertex[offset+1][MX];
+    float y2 = spline_vertex[offset+1][MY];
+
+    float x3 = spline_vertex[offset+2][MX];
+    float y3 = spline_vertex[offset+2][MY];
+
+    float x4 = spline_vertex[offset+3][MX];
+    float y4 = spline_vertex[offset+3][MY];
+
+    float x0 = spline_vertex[start][MX];
+    float y0 = spline_vertex[start][MY];
 
     float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
     float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
@@ -4002,24 +3529,39 @@ public class PGraphics extends PImage
     float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
     float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
 
-    // vertex() will reset cvertexIndex, so save it
-    int cvertexSaved = cvertexIndex;
+    // vertex() will reset spline_vertex_index, so save it
+    int splineVertexSaved = spline_vertex_index;
     vertex(x0, y0);
     for (int j = 0; j < segments; j++) {
       x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
       y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
       vertex(x0, y0);
     }
-    cvertexIndex = cvertexSaved;
+    spline_vertex_index = splineVertexSaved;
   }
 
 
-  private void spline_segment(float x1, float y1, float z1,
-                              float x2, float y2, float z2,
-                              float x3, float y3, float z3,
-                              float x4, float y4, float z4,
-                              float x0, float y0, float z0,
-                              float m[][], int segments) {
+  private void spline3_segment(int offset, int start,
+                               float m[][], int segments) {
+    float x1 = spline_vertex[offset+0][MX];
+    float y1 = spline_vertex[offset+0][MY];
+    float z1 = spline_vertex[offset+0][MZ];
+
+    float x2 = spline_vertex[offset+1][MX];
+    float y2 = spline_vertex[offset+1][MY];
+    float z2 = spline_vertex[offset+1][MZ];
+
+    float x3 = spline_vertex[offset+2][MX];
+    float y3 = spline_vertex[offset+2][MY];
+    float z3 = spline_vertex[offset+2][MZ];
+
+    float x4 = spline_vertex[offset+3][MX];
+    float y4 = spline_vertex[offset+3][MY];
+    float z4 = spline_vertex[offset+3][MZ];
+
+    float x0 = spline_vertex[start][MX];
+    float y0 = spline_vertex[start][MY];
+    float z0 = spline_vertex[start][MZ];
 
     float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
     float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
@@ -4033,11 +3575,11 @@ public class PGraphics extends PImage
     float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
     float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
 
-    unchangedZ = false;
+    //unchangedZ = false;
     dimensions = 3;
 
-    // vertex() will reset cvertexIndex, so save it
-    int cvertexSaved = cvertexIndex;
+    // vertex() will reset spline_vertex_index, so save it
+    int cvertexSaved = spline_vertex_index;
     vertex(x0, y0, z0);
     for (int j = 0; j < segments; j++) {
       x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
@@ -4045,7 +3587,7 @@ public class PGraphics extends PImage
       z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
       vertex(x0, y0, z0);
     }
-    cvertexIndex = cvertexSaved;
+    spline_vertex_index = cvertexSaved;
   }
 
 
@@ -4423,7 +3965,7 @@ public class PGraphics extends PImage
    */
   // n20 is 0, n21 is 0, n22 is 1
   /*
-  public void applyMatrix(float n00, float n01, float n02, 
+  public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
 
     float r00 = m00*n00 + m01*n10;
@@ -4491,14 +4033,16 @@ public class PGraphics extends PImage
 
 
   /**
-   * Set matrix mode to the camera matrix
-   * (instead of the current transformation matrix).
-   * This means applyMatrix, resetMatrix etc
-   * will affect the camera. You'll need to call
-   * resetMatrix() if you want to completely change
-   * the camera's settings.
+   * Set matrix mode to the camera matrix (instead of
+   * the current transformation matrix). This means applyMatrix,
+   * resetMatrix, etc. will affect the camera.
+   *
+   * You'll need to call resetMatrix() if you want to
+   * completely change the camera's settings.
    */
   public void beginCamera() {
+    // this will be written over by cameraMode() if necessary
+    cameraMode = CUSTOM;
   }
 
 
@@ -4509,14 +4053,9 @@ public class PGraphics extends PImage
    * cameraMode(ORTHOGRAPHIC) will setup a straight orthographic
    * projection.
    *
-   * cameraMode(CUSTOM) will set the perspective (camera) matrix
-   * to identity, after which time the user can make a mess.
-   *
    * Note that this setting gets nuked if resize() is called.
    */
   public void cameraMode(int mode) {
-    cameraMode = mode;  // this doesn't do much
-
     if (cameraMode == PERSPECTIVE) {
       beginCamera();
       resetMatrix();
@@ -4531,19 +4070,19 @@ public class PGraphics extends PImage
       resetMatrix();
       ortho(0, width, 0, height, -10, 10);
       endCamera();
-
-    } else if (cameraMode == CUSTOM) {
-      beginCamera();
-      resetMatrix();
-      endCamera();
     }
+
+    cameraMode = mode;  // this doesn't do much
   }
 
 
   /**
    * Record the current settings into the camera matrix.
    * And set the matrix mode back to the current
-   * transformation matrix. After which, the CTM will reset.
+   * transformation matrix.
+   *
+   * Note that this will destroy any settings to scale(),
+   * translate() to your scene.
    */
   public void endCamera() {
     p00 = m00; p01 = m01; p02 = m02; p03 = m03;
@@ -4552,6 +4091,7 @@ public class PGraphics extends PImage
     p30 = m30; p31 = m31; p32 = m32; p33 = m33;
     resetMatrix();
   }
+
 
   /**
    * Print the current camera (or "perspective") matrix.
@@ -4958,7 +4498,7 @@ public class PGraphics extends PImage
 
     // if color max values are all 1, then no need to scale
     colorScale = ((maxA != ONE) || (maxX != maxY) ||
-                   (maxY != maxZ) || (maxZ != maxA));
+                  (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
     // red() green() etc functions
@@ -5068,7 +4608,7 @@ public class PGraphics extends PImage
    *
    * (note: no need for bounds check since it's a 32 bit number)
    */
-  protected void unpack_for_calc(int rgb) {
+  protected void calc_color_from(int rgb) {
     calcColor = rgb;
     calcAi = (rgb >> 24) & 0xff;
     calcRi = (rgb >> 16) & 0xff;
@@ -5163,7 +4703,7 @@ public class PGraphics extends PImage
       tint((float) rgb);
 
     } else {
-      unpack_for_calc(rgb);
+      calc_color_from(rgb);
       calc_tint();
     }
   }
@@ -5205,7 +4745,7 @@ public class PGraphics extends PImage
       fill((float) rgb);
 
     } else {
-      unpack_for_calc(rgb);
+      calc_color_from(rgb);
       calc_fill();
     }
   }
@@ -5262,7 +4802,7 @@ public class PGraphics extends PImage
       stroke((float) rgb);
 
     } else {
-      unpack_for_calc(rgb);
+      calc_color_from(rgb);
       calc_stroke();
     }
   }
@@ -5300,7 +4840,7 @@ public class PGraphics extends PImage
       background((float) rgb);
 
     } else {
-      unpack_for_calc(rgb);
+      calc_color_from(rgb);
       calc_background();
     }
     clear();
@@ -5384,13 +4924,14 @@ public class PGraphics extends PImage
   /** semi-placeholder */
   public void depth() {
     depth = true;
-    dimensions = 3;
+    //dimensions = 3;
+    cameraMode(PERSPECTIVE);
   }
 
   /** semi-placeholder */
   public void noDepth() {
     depth = false;
-    dimensions = 0;
+    //dimensions = 0;
   }
 
 
@@ -5591,12 +5132,14 @@ public class PGraphics extends PImage
   // should only be used by other parts of the bagel library
 
 
+  /*
   static private final int float_color(float r, float g, float b) {
     return (0xff000000 |
             ((int) (255.0f * r)) << 16 |
             ((int) (255.0f * g)) << 8 |
             ((int) (255.0f * b)));
   }
+  */
 
 
   public final static int _blend(int p1, int p2, int a2) {
