@@ -4,12 +4,8 @@ X beginSerial(String port) and beginSerial(String port, int rate)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1061595591;start=0
 X optimize color() when in colorMode(RGB, 255) to just pack the int
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1062072434;start=0
-
-
-_ reference key list isn't in dist (at least on osx)
-
-_ imageMode() shouldn't affect fonts
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
+X imageMode() shouldn't affect fonts
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
 
 _ replacing spaces with underscores.. 
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062103523;start=0
@@ -17,8 +13,9 @@ _   patch keyTyped event instead of keyPressed
 _   remove reference in readme about macosx problem w/ it
 
 _ qtjava search path is too fragile
+_   don't force install, set a flag
 _   use %WINDIR%\System32\qtjava.zip and %QTJAVA%
-_   or even the system %CLASSPATH%
+o   or even the system %CLASSPATH%
 _   maybe just ask user to select the file directly
 _   may have spaces, so should also fix those
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
@@ -33,6 +30,16 @@ o   might be java.awt.Cursor in BConstants
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
 
+_ only allow one pmouseX update outside of loop
+_   to avoid jumping lines (drawing -> continuous_lines)
+
+
+known bugs
+* lots of 'cannot delete ...' messages
+* present mode is almost completely broken and often flickers like mad
+* sound not always stopping when 'stop' his hit (i.e. the mixer example)
+* run.bat hasn't been given love for a while and may not work
+* reference loading doesn't seem to be working
 
 ..................................................................
 
@@ -54,13 +61,17 @@ dh b _   also make sure pack() is happening
 dh b _   add manifest.mf to exported applets so that applications will work
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
 
+_ internal naming of _fill, image_mode, textureOrientation
+_   these all need to jive better with one another
+_   ie. perhaps just 'fill', so that it can be used for a get
+
+_ reference key list isn't in dist (?)
+_   help->reference and find in reference don't work on osx
+
 _ font.stringWidth -> font.width(char c) or width(String s) 
 
 _ implement text(int something) and text(float something)
 _   and perhaps others?
-
-_ only allow one pmouseX update outside of loop
-_   to avoid jumping lines (drawing -> continuous_lines)
 
 _ NullPointerException when alt is pressed
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
