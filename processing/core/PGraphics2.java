@@ -865,7 +865,10 @@ public class PGraphics2 extends PGraphics {
     //check_image_cache(image);
     // blit image to the screen
     //graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
+    push();
+    resetMatrix();
     imageImpl(image, 0, 0, width, height, 0, 0, width, height);
+    pop();
   }
 
 
@@ -904,6 +907,9 @@ public class PGraphics2 extends PGraphics {
 
 
   public void loadPixels() {
+    if ((pixels == null) || (pixels.length != width * height)) {
+      pixels = new int[width * height];
+    }
     ((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
   }
 

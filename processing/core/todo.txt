@@ -7,6 +7,8 @@ X backwards rects and backwards ellipses weren't properly drawn
 X   code now compensates for negative widths or swapped x1/x2
 X fix noLoop() not properly running
 X also fix redraw() to include interrupt() again
+X loadPixels throwing NPEs
+X fixes to SCREEN_SPACE text not being sized properly
 
 X made loadStrings() and openStream(File) static again
 _   fix other stuff that's supposed to be static
@@ -21,10 +23,12 @@ _ get SCREEN_SPACE text working again
 
 _ rewrite library/howto.txt for to get rid of old interface
 
+_ how to shut off rendering to screen when illustrator in use? 
+_   need size(30000, 20000) for illustrator, problem in papplet
+
 _ problem with flicker may be the lack of synchronization on g
 
 _ updatePixels() not setting PApplet.pixels
-_   also throwing NPEs
 _   make loadPixels in PGraphics ignored, and put it in PApplet
 
 _ closing window w/o first hitting stop() causes freak out
