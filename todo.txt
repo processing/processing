@@ -4,6 +4,10 @@ X image of 256x256 doesn't draw the last line of pixels
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
 X weird line in showing in the center of an image
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
+X text caret goes missing
+o   removing extra jre's, uninstalling java apps fixed it
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
 
 _ color() should work for alpha.. 
 _   also #aarrggbb
@@ -56,11 +60,6 @@ _ simage() is screwy..
 _   its invocation is broken (image_mode can't be two things at once)
 _   doesn't actually use image_mode for placement
 _   also doesn't support RGBA
-
-_ text caret goes missing
-_   removing extra jre's, uninstalling java apps fixed it
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
 
 _ versions of loadStream/loadBytes etc that use streams and/or urls
 
