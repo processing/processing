@@ -2,7 +2,7 @@
 
 /*
   PdeSketchbook - handles sketchbook mechanics for the sketch menu
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry 
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -34,6 +35,10 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
+#ifdef MACOS
+import com.apple.mrj.*;
+#endif
+
 
 public class PdeSketchbook {
   PdeEditor editor;
@@ -41,6 +46,9 @@ public class PdeSketchbook {
   JMenu menu;
   //File sketchbookFolder;
   //String sketchbookPath;  // canonical path
+
+  // last file/directory used for file opening
+  String handleOpenDirectory;
 
   File examplesFolder;
   String examplesPath;  // canonical path (for comparison)
@@ -90,7 +98,7 @@ public class PdeSketchbook {
    * Handle creating a sketch folder, return its base .pde file 
    * or null if the operation was cancelled.
    */
-  public String handleNew() throws IOException {
+  public String handleNew(boolean startup) throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
@@ -162,6 +170,40 @@ public class PdeSketchbook {
     //handleOpen(newbieName, newbieFile, newbieDir);
     //return newSketch;
     return newbieFile.getAbsolutePath();
+  }
+
+
+  public String handleOpen() {
+    FileDialog fd = new FileDialog(new Frame(), 
+                                   "Open a Processing sketch...", 
+                                   FileDialog.LOAD);
+    if (handleOpenDirectory == null) {
+      handleOpenDirectory = PdePreferences.get("sketchbook.path");
+    }
+    fd.setDirectory(handleOpenDirectory);
+
+    // only show .pde files as eligible bachelors
+    fd.setFilenameFilter(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".pde");
+        }
+      });
+
+    // gimme some money
+    fd.show();
+
+    // what in the hell yu want, boy?
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+
+    // user cancelled selection
+    if (filename == null) return null;
+
+    // this may come in handy sometime
+    handleOpenDirectory = directory;
+
+    File selection = new File(directory, filename);
+    return selection.getAbsolutePath();
   }
 
 
@@ -261,6 +303,9 @@ public class PdeSketchbook {
    * Clear out projects that are empty.
    */
   public void clean() {
+    System.err.println("TODO sketchbook.clean() is disabled");
+    if (true) return;  // fool the compiler
+
     if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
 
     //String userPath = base.sketchbookPath + File.separator + userName;
