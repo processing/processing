@@ -41,8 +41,11 @@ public class PdeKeywords extends CTokenMarker {
 
 
   /**
-   * Handles loading of keywords file. uses getKeywords() method 
-   * because that's part of the TokenMarker classes.
+   * Handles loading of keywords file. uses getKeywords()  
+   * method because that's part of the TokenMarker classes.
+   *
+   * It is recommended that a # sign be used for comments 
+   * inside keywords.txt.
    */
   static public KeywordMap getKeywords() {
     if (keywordColoring == null) {
@@ -51,11 +54,14 @@ public class PdeKeywords extends CTokenMarker {
         keywordToReference = new Hashtable();
 
         InputStream input = PdeBase.getStream("keywords.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        InputStreamReader isr = new InputStreamReader(input);
+        BufferedReader reader = new BufferedReader(isr);
 
         String line = null;
         while ((line = reader.readLine()) != null) {
           int tab = line.indexOf('\t');
+          // any line with no tab is ignored
+          // meaning that a comment is any line without a tab
           if (tab == -1) continue;
 
           String keyword = line.substring(0, tab).trim();
