@@ -1,4 +1,6 @@
 0073
+X added focusGained() and focusLost()
+_   add to preprocessor
 
 _ image("blah.jpg"); 
 _ loadImage() is broken on some machines

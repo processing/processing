@@ -1507,7 +1507,7 @@ public class PGraphics extends PImage
         case CONCAVE_POLYGON:
         case CONVEX_POLYGON:
         {
-            triangulate_polygon();
+          triangulate_polygon();
         }
         break;
       }
