@@ -274,13 +274,26 @@ serial.. this release uses rxtx-2.1_6 (just like macosx). if you're
 having trouble getting things to run, i.e. the port menu stays grayed 
 out or you get error message spew to the console when starting the 
 application saying "Permission denied" and "No permission to create 
-lock file" and to read "INSTALL". this is because you need to add 
-yourself to either the uucp or lock group so that processing can write
-to /var/lock so it doesn't get in a fight with other applications 
-talking on the serial port. supposedly, adding yourself to one of 
-these groups will work (didn't for me, but i'm a little clueless) 
-or running processing as root will often get rid of the errors 
-(obviously not a great solution). 
+lock file" and to read "INSTALL". this is because you probably need 
+to add yourself to both the uucp or lock groups so that processing 
+can write to /var/lock so it doesn't get in a fight with other 
+applications talking on the serial port. 
+
+alan kilian contributes this description:
+
+1. I did an ls -l /dev/ttyS0 and saw that the group was set to uucp.
+2. Then I edited /etc/groups, I found the uucp group, and I added my 
+   login ID to the uucp line.
+3. I logged out, and logged back in again.
+4. The "groups" command now showed I was in group uucp, and when I 
+   started processing, the serial port menu item was not greyed-out.
+
+it's important that you're in both groups, and that you completely
+log out and log back in again.
+
+running processing as root will often get rid of the errors, but
+that's obviously not a good solution for a million reasons (among 
+them: alpha code that runs as root and handles files? yeah great...)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

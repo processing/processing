@@ -4,7 +4,7 @@
   PSound2 - java 1.3 audio loader and player
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry and Casey Reas
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,12 +29,18 @@ import java.lang.reflect.*;
 import javax.sound.sampled.*;
 
 
-// useful info about how to do all this stuff, munged together
-// for this class: http://javaalmanac.com/egs/javax.sound.sampled/pkg.html
-
+/**
+ * Java 1.3 audio loader and player.
+ * <P>
+ * This will eventually be merged back into PSound, so you shouldn't
+ * create new PSound2 objects from scratch, only open them directly
+ * from a PApplet using loadSound().
+ * <PRE>
+ * useful info about how to do all this stuff, munged together
+ * for this class: http://javaalmanac.com/egs/javax.sound.sampled/pkg.html
+ * </PRE>
+ */
 public class PSound2 extends PSound {
-  //PApplet parent;
-
   Clip clip;
   FloatControl gainControl;
 
@@ -195,27 +201,13 @@ public class PSound2 extends PSound {
   }
 
 
+  /**
+   * Set the volume with a value from 0 (off) to 1 (loudest).
+   */
   public void volume(float v) {  // ranges 0..1
     float dB = (float)(Math.log(v)/Math.log(10.0)*20.0);
     gainControl.setValue(dB);
   }
-
-
-  /** mute */
-  /*
-  public void noVolume() {
-    BooleanControl muteControl =
-      (BooleanControl)clip.getControl(BooleanControl.Type.MUTE);
-    muteControl.setValue(true);
-  }
-  */
-
-  /** disable mute */
-  /*
-  public void volume() {
-    muteControl.setValue(false);
-  }
-  */
 
 
   /**

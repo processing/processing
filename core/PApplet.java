@@ -44,15 +44,17 @@ public class PApplet extends Applet
   /**
    * "1.3" or "1.1" or whatever (just the first three chars)
    */
-  public static final String JDK_VERSION_STRING =
+  public static final String javaVersionName =
     System.getProperty("java.version").substring(0,3);
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
    * stored as a double.
    */
-  public static final double JDK_VERSION =
-    new Double(JDK_VERSION_STRING).doubleValue();
+  //public static final double javaVersion =
+  //new Double(jdkVersionName).doubleValue();
+  public static final float javaVersion =
+    new Float(javaVersionName).floatValue();
 
 
   /**
@@ -61,12 +63,20 @@ public class PApplet extends Applet
    */
   static public int platform;
 
+  /**
+   * Current platform in use.
+   * <P>
+   * Equivalent to System.getProperty("os.name"), just used internally.
+   */
+  static public String platformName =
+    System.getProperty("os.name");
+
   static {
     // figure out which operating system
     // this has to be first, since editor needs to know
 
     if (System.getProperty("mrj.version") != null) {  // running on a mac
-      platform = (System.getProperty("os.name").equals("Mac OS X")) ?
+      platform = (platformName.equals("Mac OS X")) ?
         MACOSX : MACOS9;
 
     } else {
@@ -78,22 +88,27 @@ public class PApplet extends Applet
       } else if (osname.equals("Linux")) {  // true for the ibm vm
         platform = LINUX;
 
-        //} else if (osname.equals("Irix")) {
-        //platform = IRIX;
-
       } else {
         platform = OTHER;
-        //System.out.println("unhandled osname: \"" + osname + "\"");
       }
     }
   }
 
 
+  /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
   protected Object glock = new Object(); // for sync
+
+  /** The frame containing this applet (if any) */
   public Frame frame;
 
+  /**
+   * Message of the Exception thrown when size() is called the first time.
+   * <P>
+   * This is used internally so that setup() is forced to run twice
+   * when the renderer is changed. Reason being that the
+   */
   static final String NEW_RENDERER = "new renderer";
 
   /**
@@ -102,13 +117,24 @@ public class PApplet extends Applet
    * Access this via screen.width and screen.height. To make an applet
    * run at full screen, use size(screen.width, screen.height).
    * <P>
-   * This won't update if you change the resolution of your screen
-   * once the the applet is running.
+   * If you have multiple displays, this will be the size of the main
+   * display. Running full screen across multiple displays isn't
+   * particularly supported, and requires more monkeying with the values.
+   * This probably can't/won't be fixed until/unless I get a dual head
+   * system.
+   * <P>
+   * Note that this won't update if you change the resolution
+   * of your screen once the the applet is running.
    */
-  static public Dimension screen =
+  public Dimension screen =
     Toolkit.getDefaultToolkit().getScreenSize();
 
-  //protected PMethods recorder;
+  //DisplayMode dm = device.getDisplayMode();
+  //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
+
+  /**
+   * A leech graphics object that is echoing all events.
+   */
   public PGraphics recorder;
 
   /**
@@ -126,9 +152,6 @@ public class PApplet extends Applet
 
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
-
-  //protected int INITIAL_WIDTH = DEFAULT_WIDTH;
-  //protected int INITIAL_HEIGHT = DEFAULT_HEIGHT;
 
   /**
    * Pixel buffer from this applet's PGraphics.
@@ -343,12 +366,9 @@ public class PApplet extends Applet
 
 
   public void init() {
-
-    //initGraphics();
-
     // send tab keys through to the PApplet
     try {
-      if (JDK_VERSION >= 1.4) {
+      if (javaVersion >= 1.4) {
         //setFocusTraversalKeysEnabled(false);  // 1.4-only function
         Method defocus =
           Component.class.getMethod("setFocusTraversalKeysEnabled",
@@ -390,58 +410,6 @@ public class PApplet extends Applet
 
     start();
   }
-
-
-  /*
-  // override for subclasses (i.e. opengl)
-  // so that init() doesn't have to be replicated
-  public void initGraphics() {
-    // 0073: moved here so that can be overridden for PAppletGL
-    addMouseListener(this);
-    addMouseMotionListener(this);
-    addKeyListener(this);
-    addFocusListener(this);
-  }
-
-
-  public void createGraphics() {
-    Dimension size = getSize();
-
-    if (PApplet.JDK_VERSION >= 1.3) {
-      g = new PGraphics2(INITIAL_WIDTH, INITIAL_HEIGHT);
-      //g = new PGraphics2(size.width, size.height);
-      //DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    } else {
-      g = new PGraphics(INITIAL_WIDTH, INITIAL_HEIGHT);
-      //g = new PGraphics(size.width, size.height);
-      //g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    }
-  }
-
-
-  public void depth() {
-    if (g.textFont != null) {
-      die("textFont() cannot be used before calling depth()");
-    }
-
-    // OPT if PGraphics already exists, pass in its pixels[]
-    //     buffer so as not to re-allocate all that memory again
-    if (g.width != 0) {
-      g = new PGraphics3(g.width, g.height);
-
-    } else {
-      Dimension size = getSize();
-      g = new PGraphics3(size.width, size.height);
-    }
-    // re-call the beginframe with the new graphics
-    g.beginFrame();
-
-    // it's ok to call this, because depth() is only getting called
-    // at least inside of setup, so things can be drawn just
-    // fine since it's post-beginFrame.
-    g.defaults();
-  }
-  */
 
 
   /**
@@ -655,6 +623,9 @@ public class PApplet extends Applet
   /**
    * Starts up and creates a two-dimensional drawing surface.
    * <P>
+   * To ensure no strangeness, this should be the first thing
+   * called inside of setup().
+   * <P>
    * If using Java 1.3 or later, this will default to using
    * PGraphics2, the Java2D-based renderer. If using Java 1.1,
    * or if PGraphics2 is not available, then PGraphics will be used.
@@ -670,7 +641,7 @@ public class PApplet extends Applet
       size(iwidth, iheight, g.getClass().getName());
 
     } else {
-      if (PApplet.JDK_VERSION >= 1.3) {
+      if (PApplet.javaVersion >= 1.3) {
         try {
           Class c = Class.forName(JAVA2D);
           size(iwidth, iheight, JAVA2D);
@@ -1731,9 +1702,9 @@ public class PApplet extends Applet
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
-    if (JDK_VERSION < 1.2) {
+    if (javaVersion < 1.2) {
       System.err.println("Java 1.2 or higher is required to use cursor()");
-      System.err.println("(You're using version " + JDK_VERSION_STRING + ")");
+      System.err.println("(You're using version " + javaVersionName + ")");
       return;
     }
 
@@ -1762,7 +1733,7 @@ public class PApplet extends Applet
 
     } catch (NoSuchMethodError e) {
       System.err.println("cursor() is not available on " +
-                         nf((float)JDK_VERSION, 1, 1));
+                         nf(javaVersion, 1, 1));
     } catch (IndexOutOfBoundsException e) {
       System.err.println("cursor() error: the hotspot " + hotspot +
                          " is out of bounds for the given image.");
@@ -2319,7 +2290,7 @@ public class PApplet extends Applet
 
 
   public PSound loadSound(String filename) {
-    if (PApplet.JDK_VERSION >= 1.3) {
+    if (PApplet.javaVersion >= 1.3) {
       return new PSound2(this, openStream(filename));
     }
     return new PSound(this, openStream(filename));
@@ -4728,6 +4699,9 @@ v              PApplet.this.stop();
         frame = new Frame();
       }
 
+      Dimension screen =
+        Toolkit.getDefaultToolkit().getScreenSize();
+
       frame.setResizable(false);  // remove the grow box
       //frame.pack();  // get insets. get more.
       Class c = Class.forName(name);
@@ -4751,19 +4725,11 @@ v              PApplet.this.stop();
 
       if (present) {
         frame.setUndecorated(true);
-        //frame.setResizable(false);
-
-        //DisplayMode dm = device.getDisplayMode();
-        //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
-
-        //if (presentColor != null) {
         frame.setBackground(presentColor);
-        //}
         displayDevice.setFullScreenWindow(frame);
 
         frame.add(applet);
         Dimension fullscreen = frame.getSize();
-        //System.out.println("screen size is " + screen);
         applet.setBounds((fullscreen.width - applet.width) / 2,
                          (fullscreen.height - applet.height) / 2,
                          applet.width, applet.height);
@@ -4778,8 +4744,9 @@ v              PApplet.this.stop();
             });
           frame.add(label);
           Dimension labelSize = label.getPreferredSize();
+          // sometimes shows up truncated on mac
+          labelSize = new Dimension(labelSize.width * 2, labelSize.height);
           label.setSize(labelSize);
-          //label.setLocation(20, 40);
           label.setLocation(20, fullscreen.height - labelSize.height - 20);
           applet.setupExternal(frame);
         }

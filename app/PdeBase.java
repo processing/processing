@@ -47,7 +47,7 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class PdeBase {
-  static final String VERSION = "0081 Alpha";
+  static final String VERSION = "0082 Alpha";
 
   /**
    * Path of filename opened on the command line,
@@ -62,7 +62,7 @@ public class PdeBase {
 
     // make sure that this is running on java 1.4
 
-    if (PApplet.JDK_VERSION < 1.4) {
+    if (PApplet.javaVersion < 1.4) {
       //System.err.println("no way man");
       PdeBase.showError("Need to install Java 1.4",
                         "This version of Processing requires    \n" +
