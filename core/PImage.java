@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BImage - storage class for pixel data
+  PImage - storage class for pixel data
   Part of the Processing project - http://Proce55ing.net
 
   Copyright (c) 2001-03 
@@ -23,6 +23,8 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
   Boston, MA  02111-1307  USA
 */
+
+package processing.core;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -56,9 +58,9 @@ import java.io.*;
  * image object as parameter. this is to provide an easy syntax for cases 
  * where the main pixel buffer is the destination. as those methods are 
  * overloaded in BApplet, users can call those functions directly without
- * explicitly giving a reference to BGraphics.
+ * explicitly giving a reference to PGraphics.
  */
-public class BImage implements BConstants, Cloneable {
+public class PImage implements PConstants, Cloneable {
 
   // note that RGB images still require 0xff in the high byte
   // because of how they'll be manipulated by other functions
@@ -66,20 +68,15 @@ public class BImage implements BConstants, Cloneable {
 
   int pixels[];
   int width, height;
-  // maybe also scan line, etc?
+  // would scan line be useful? maybe for pow of 2 gl textures
 
-  // note! inherited by BGraphics
+  // note! inherited by PGraphics
   boolean smooth = false; //true;  // for now.. how to fix?
 
   // for gl subclass / hardware accel
   int cacheIndex;
 
-  // blend mode used for copy et al.
-  //int blend_mode = REPLACE;
-
-
   // private fields
-
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
   private int ul, ll, ur, lr, cUL, cLL, cUR, cLR;
   private int srcXOffset, srcYOffset;
@@ -97,7 +94,7 @@ public class BImage implements BConstants, Cloneable {
   /** 
    * Constructor required by java compiler for subclasses.
    */
-  public BImage() { }
+  public PImage() { }
 
 
   /**
@@ -105,7 +102,7 @@ public class BImage implements BConstants, Cloneable {
    * All pixels are set to zero, meaning black, but since the
    * alpha is zero, it will be transparent.
    */
-  public BImage(int width, int height) {
+  public PImage(int width, int height) {
     this(new int[width * height], width, height, RGBA);
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
@@ -118,7 +115,7 @@ public class BImage implements BConstants, Cloneable {
   }
 
 
-  public BImage(int pixels[], int width, int height, int format) {
+  public PImage(int pixels[], int width, int height, int format) {
     this.pixels = pixels;
     this.width = width;
     this.height = height;
@@ -128,13 +125,13 @@ public class BImage implements BConstants, Cloneable {
 
 
   /** 
-   * Construct a new BImage from a java.awt.Image
+   * Construct a new PImage from a java.awt.Image
    *
    * this constructor assumes that you've done the work of
    * making sure a MediaTracker has been used to fully
    * download the data and that the img is valid.
    */
-  public BImage(java.awt.Image img) {
+  public PImage(java.awt.Image img) {
     width = img.getWidth(null);
     height = img.getHeight(null);
 
@@ -180,7 +177,7 @@ public class BImage implements BConstants, Cloneable {
   /**
    * Set alpha channel for an image using another image as the source.
    */
-  public void alpha(BImage alpha) {
+  public void alpha(PImage alpha) {
     alpha(alpha.pixels);
   }
 
@@ -197,20 +194,24 @@ public class BImage implements BConstants, Cloneable {
     return 0;
   }
 
-   // [toxi040115] converts RGB image data into grayscale using weighted RGB components
-   // keeps alpha channel intact
-   public void toGrayscale() {
-        int col,lum,i;
-        for(i=0; i<pixels.length; i++) {
-            col=pixels[i];
-            // luminance = 0.3*red + 0.59*green + 0.11*blue
-            // 0.3*256 = 77
-            // 0.59*256 = 151
-            // 0.11*256 = 28
-            lum = ( 77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff) )>>8;
-            pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
-        }
+  /**
+   * [toxi040115] 
+   * Converts RGB image data into grayscale using 
+   * weighted RGB components, and keeps alpha channel intact.
+   */
+  public void toGrayscale() {
+    for (int i = 0; i<pixels.length; i++) {
+      int col = pixels[i];
+      // luminance = 0.3*red + 0.59*green + 0.11*blue
+      // 0.3*256 = 77
+      // 0.59*256 = 151
+      // 0.11*256 = 28
+      int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
+      pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
     }
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -223,14 +224,14 @@ public class BImage implements BConstants, Cloneable {
   }
 
 
-  public BImage get(int x, int y, int w, int h) {
+  public PImage get(int x, int y, int w, int h) {
     if (x < 0) x = 0;
     if (y < 0) y = 0;
 
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
 
-    BImage newbie = new BImage(new int[w*h], w, h, format);
+    PImage newbie = new PImage(new int[w*h], w, h, format);
 
     int index = y*width + x;
     int index2 = 0;
@@ -258,7 +259,7 @@ public class BImage implements BConstants, Cloneable {
 
   // not all variables here are needed.. fix it up later
 
-  public void set(int x, int y, BImage image) {
+  public void set(int x, int y, PImage image) {
     // source
     int sx = 0; 
     int sy = 0;
@@ -325,7 +326,7 @@ public class BImage implements BConstants, Cloneable {
   // this function is excluded from using any blend modes
   // it always replaces/overwrites the target pixel value
 
-  public void copy(BImage src, int sx, int sy, int dx, int dy) {
+  public void copy(PImage src, int sx, int sy, int dx, int dy) {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
             pixels[dy * width + dx] = src.pixels[sy * src.width + sx];
@@ -350,9 +351,9 @@ public class BImage implements BConstants, Cloneable {
 
 
   /**
-   * Copies area of one image into another BImage object
+   * Copies area of one image into another PImage object
    */
-  public void copy(BImage src, int sx1, int sy1, int sx2, int sy2,
+  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
                         int dx1, int dy1, int dx2, int dy2) {
     blit_resize(src, sx1, sy1, sx2, sy2,
                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
@@ -362,7 +363,7 @@ public class BImage implements BConstants, Cloneable {
   /** 
    * Copies and blends 1 pixel with MODE to pixel in another image
    */
-  public void blend(BImage src, int sx, int sy, int dx, int dy, int mode) {
+  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
       pixels[dy * width + dx] = 
@@ -395,9 +396,9 @@ public class BImage implements BConstants, Cloneable {
 
 
   /**
-   * Copies area of one image into another BImage object
+   * Copies area of one image into another PImage object
    */
-  public void blend(BImage src, int sx1, int sy1, int sx2, int sy2, 
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     blit_resize(src, sx1, sy1, sx2, sy2,
                 pixels, width, height, dx1, dy1, dx2, dy2, mode);
@@ -410,7 +411,7 @@ public class BImage implements BConstants, Cloneable {
   // COPYING IMAGE DATA
 
   public Object clone() throws CloneNotSupportedException {
-    BImage c = (BImage) super.clone();
+    PImage c = (PImage) super.clone();
 
     // super.clone() will only copy the reference to the pixels
     // array, so this will do a proper duplication of it instead.
@@ -426,8 +427,8 @@ public class BImage implements BConstants, Cloneable {
    * Duplicate an image, returns new object
    */
   /*
-  public BImage duplicate() {
-    BImage c = new BImage(new int[pixels.length], width, height, format);
+  public PImage duplicate() {
+    PImage c = new PImage(new int[pixels.length], width, height, format);
     System.arraycopy(pixels, 0, c.pixels, 0, pixels.length);
     return c;
   }
@@ -437,8 +438,8 @@ public class BImage implements BConstants, Cloneable {
    * Duplicate and resize image
    */
   /*
-  public BImage duplicate(int newWidth, int newHeight) {
-    BImage dupe = new BImage(new int[newWidth * newHeight], 
+  public PImage duplicate(int newWidth, int newHeight) {
+    PImage dupe = new PImage(new int[newWidth * newHeight], 
                              newWidth, newHeight, format);
 
     dupe.copy(this, 0, 0, width - 1, height - 1,
@@ -491,7 +492,7 @@ public class BImage implements BConstants, Cloneable {
   // uses bilinear filtering if smooth() has been enabled
   // 'mode' determines the blending mode used in the process
 
-  private void blit_resize(BImage img, 
+  private void blit_resize(PImage img, 
                            int srcX1, int srcY1, int srcX2, int srcY2, 
                            int[] destPixels, int screenW, int screenH, 
                            int destX1, int destY1, int destX2, int destY2,

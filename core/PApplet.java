@@ -1,12 +1,11 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BApplet - applet base class for the bagel engine
+  PApplet - applet base class for the bagel engine
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03
-  Ben Fry, Massachusetts Institute of Technology and
-  Casey Reas, Interaction Design Institute Ivrea
+  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +23,8 @@
   Boston, MA  02111-1307  USA
 */
 
+package processing.core;
+
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -34,45 +35,19 @@ import java.net.URL;
 import java.text.*;
 import java.util.*;
 
-#ifdef SERIAL
-#ifndef RXTX
-import javax.comm.*;
-#else
-// rxtx uses package gnu.io, but all the class names
-// are the same as those used by javax.comm
-import gnu.io.*;
-#endif
-#endif
 
-
-public class BApplet extends Applet
-  implements BConstants, Runnable,
+public class PApplet extends Applet
+  implements PConstants, Runnable,
        MouseListener, MouseMotionListener, KeyListener
-#ifdef SERIAL
-       , SerialPortEventListener
-#endif
 {
-  //static final String JDK_VERSION = 
   static final double jdkVersion = 
     toDouble(System.getProperty("java.version").substring(0,3));
-  /*
-  static private boolean isOneTwoOrBetter()
-  {
-    return VERSION_MAJOR.equals("1.2") || VERSION_MAJOR.equals("1.3")
-      || VERSION_MAJOR.equals("1.4") || VERSION_MAJOR.equals("1.5");
-  }
-  */
 
-  public BGraphics g;
+  public PGraphics g;
 
   static final boolean THREAD_DEBUG = true;
 
-  // java/memimgsrc specific
   public int pixels[];
-  //DirectColorModel cm;
-  //MemoryImageSource mis;
-  //Image image;
-  // end java/memimgsrc specific
 
   public int mouseX, mouseY;
   public int pmouseX, pmouseY;
@@ -80,13 +55,11 @@ public class BApplet extends Applet
 
   public boolean mousePressed;
   public MouseEvent mouseEvent;
-  //boolean mousePressedBriefly;  // internal only
 
   public int key;
   //public int keyCode;
   public boolean keyPressed;
   public KeyEvent keyEvent;
-  //boolean keyPressedBriefly;  // internal only
 
   long millisOffset;
 
@@ -134,12 +107,10 @@ public class BApplet extends Applet
   static final int DEFAULT_HEIGHT = 100;
   int width, height;
 
-#ifdef LIBRARIES
   int libraryCount;
-  BLibrary libraries[]; 
-#endif
+  PLibrary libraries[]; 
 
-  // this text isn't seen unless BApplet is used on its
+  // this text isn't seen unless PApplet is used on its
   // own and someone takes advantage of leechErr.. not likely
   static final String LEECH_WAKEUP = "Error while running applet.";
   PrintStream leechErr;
@@ -157,7 +128,7 @@ public class BApplet extends Applet
     //checkParams();
 
     // can/may be resized later
-    //g = new BGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    //g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     initg();
 
     addMouseListener(this);
@@ -202,42 +173,21 @@ public class BApplet extends Applet
     this.width = g.width;
     this.height = g.height;
     g.applet = this;
-
-#ifdef SONIC
-    // init sound engine
-    // check if sonic() was called
-    if (!sonicInit) {
-      // sound not initiated
-      //print("no sound\n");
-      this.length = 0;
-
-    } else if (sonic == null) {
-      beginSound();
-    }
-#endif
   }
 
 
   // override for subclasses (i.e. opengl)
   // so that init() doesn't have to be replicated
   public void initg() {
-    g = new BGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
   }
 
 
   public void start() {
-    //System.out.println("BApplet.start");
+    //System.out.println("PApplet.start");
 
     thread = new Thread(this);
     thread.start();
-
-#ifdef SONIC
-    // start sound engine thread
-    // TODO: it starts too quickly, causes sound corruption at start
-    if (sonic != null) {
-      sonic.start(this);
-    }
-#endif
   }
 
 
@@ -265,33 +215,13 @@ public class BApplet extends Applet
     }
     */
 
-#ifdef LIBRARIES
     for (int i = 0; i < libraryCount; i++) {
-      libraries[i].stop();
+      libraries[i].stop();  // endNet/endSerial etc
     }
-#endif
-
-    // maybe these will have better luck here
-#ifdef SERIAL
-    endSerial();
-#endif
-
-#ifdef NETWORK
-    endNet();
-#endif
-
-#ifdef VIDEO
-    endVideo();
-#endif
-
-#ifdef SONIC
-    endSound();
-#endif
   }
 
 
   public Dimension getPreferredSize() {
-    //println("getting pref'd size " + width + " " + height);
     return new Dimension(width, height);
   }
 
@@ -324,39 +254,11 @@ public class BApplet extends Applet
     this.width = g.width;
     this.height = g.height;
 
-    //allocate();
-
     // set this here, and if not inside browser, getDocumentBase()
     // will fail with a NullPointerException, and cause applet to
     // be set to null. might be a better way to deal with that, but..
     g.applet = this;
-
-    // do all the defaults down here, because
-    // subclasses need to go through this function
-    // NOT TRUE, SO REMOVING
-    //g.lighting = false;
   }
-
-
-  /*
-  public void allocate() {
-    cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);
-
-    g = new BGraphics(width, height);
-    pixels = g.pixels;
-
-    // because of a java bug.. unless pixels are registered as
-    // opaque before their first run, the memimgsrc will flicker
-    // and run very slowly (as it tries to do broken awt 1.1 alpha)
-    for (int i = 0; i < pixels.length; i++) pixels[i] = 0xffffffff;
-
-    // setup MemoryImageSource
-    mis = new MemoryImageSource(width, height, pixels, 0, width);
-    mis.setFullBufferUpdates(true); // maybe this will help ipaq?
-    mis.setAnimated(true);
-    image = Toolkit.getDefaultToolkit().createImage(mis);
-  }
-  */
 
 
   boolean updated = false;
@@ -365,13 +267,6 @@ public class BApplet extends Applet
     if (firstFrame) firstFrame = false; 
 
     if (THREAD_DEBUG) println("   3a update() internal " + firstFrame);
-    /*
-    println("update() internal");
-    Graphics graphics = this.getGraphics();
-    //println("inside update " + graphics);
-    if (graphics != null) paint(graphics);
-    */
-    //println("new update()");
     repaint();
     if (THREAD_DEBUG) println("   3b update() internal " + firstFrame);
     getToolkit().sync();  // force repaint now (proper method)
@@ -406,7 +301,7 @@ public class BApplet extends Applet
       //Exception e = new Exception();
       //e.printStackTrace();
 
-      // moving this into BGraphics caused weird sluggishness on win2k
+      // moving this into PGraphics caused weird sluggishness on win2k
       //g.mis.newPixels(pixels, g.cm, 0, width); // must call this
 
       // make sure the screen is visible and usable
@@ -424,7 +319,7 @@ public class BApplet extends Applet
       while ((Thread.currentThread() == thread) && !finished) {
         updated = false;
 
-        if (BApplet.THREAD_DEBUG) println("nextFrame()");
+        if (PApplet.THREAD_DEBUG) println("nextFrame()");
         nextFrame();
 
         // moving this to update() (for 0069+) for linux sync problems
@@ -439,9 +334,9 @@ public class BApplet extends Applet
             //Thread.yield();
             // windows doesn't like 'yield', so have to sleep at least
             // for some small amount of time.
-            if (BApplet.THREAD_DEBUG) System.out.println("gonna sleep");
+            if (PApplet.THREAD_DEBUG) System.out.println("gonna sleep");
             Thread.sleep(1);  // sleep to make OS happy
-            if (BApplet.THREAD_DEBUG) System.out.println("outta sleep");
+            if (PApplet.THREAD_DEBUG) System.out.println("outta sleep");
           } catch (InterruptedException e) { }
         }
       }
@@ -836,518 +731,6 @@ public class BApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
-
-  // client/server net stuff
-
-#ifdef NETWORK
-
-  BServer server;
-  BClient client;
-  String net;
-  int net_mode = CLIENT;  //0 Sever 1 Client default CLIENT
-
-
-  public void beginNet(String host, int port) { //client
-    net_mode = CLIENT;
-    client = new BClient(this, host, port);
-    client.start();
-  }
-
-
-  public void beginNet(int port) {  //server
-    net_mode = SERVER;
-    server = new BServer(this, port);
-    server.start();
-  }
-
-
-  void netEvent() {   // client message
-  }
-
-  void netEvent(int event) {  // server message
-  }
-
-
-  public void netWrite(String message) {
-    if (net_mode == CLIENT) {
-      client.writeData(message);
-    } else if (net_mode == SERVER) {
-      server.broadcast(message);
-    }
-  }
-
-
-  public void endNet() {
-    if (net_mode == CLIENT) {
-      if (client != null) client.destroy();
-    } else if (net_mode == SERVER) {
-      if (server != null) server.destroy();
-    }
-  }
-
-#endif
-
-
-  // ------------------------------------------------------------
-
-  // SONIC
-
-#ifdef SONIC
-
-  BSonic sonic;
-
-  static final int DEFAULT_LENGTH = 512;
-
-  public int samples[];
-  public int length = -1;  // frame length
-  public int frequency = -1;  // playback frequency
-
-  public boolean sonicInit = false;
-
-  public void beginSound() {
-    // iniate sonic without sound post processing, soundEvent does not work
-    if (sonicInit) return;
-
-    sonicInit = true;
-
-    if (length == -1) {
-      this.length = 0; // size is zero, we are no going to use it
-    }
-
-    this.sonic = new BSonic(); // start sonic without a samples buffer
-  }
-
-  public void beginSound(int l) {
-    // iniate sonic with sound post processing
-    if (sonicInit) return;
-
-    sonicInit = true;
-
-    if (l <= 0) {
-      l = DEFAULT_LENGTH;
-    }
-
-    this.length = l; // set length of samples buffer (frame)
-
-    frequency = BSonic.SAMPLING_RATE;
-    this.samples = new int[length]; // create samples buffer
-    this.sonic = new BSonic(samples); // initiate sonic with this samples buffer
-  }
-
-  public void endSound() {
-    // kill sound thread if not killed already
-    if (sonic != null) {
-      sonic.stop();
-    }
-  }
-
-  public BSound loadSound(String filename) {
-	if (sonic == null || sonicInit == false) {
-		//start sonic in lite mode
-		beginSound();
-	}
-
-    BSound sound = sonic.loadSound(filename);
-
-    if (sound == null) {
-      // error loading, assign empty sound and continue
-      sound = new BSound(1);
-    }
-    return sound;
-  }
-
-  public BSound generate(int form, int freq) {
-	if (sonic == null) {
-		//start sonic in lite mode
-		beginSound();
-	}
-
-    return sonic.generate(form, freq);
-  }
-
-  public BSound microphone() {
-	if (sonic == null) {
-		//start sonic in lite mode
-		beginSound();
-	}
-
-    return sonic.microphone();
-  }
-
-  void soundEvent() { }
-
-  public void volume(float v) {
-    BSonic.volume(v);
-  }
-
-  public void length(int l) {
-    // do not change block size once BSonic is created!
-    if (sonic != null) {
-        return;
-    }
-
-    this.length = l;
-  }
-
-  void frequency(int f) {
-    // do not change block size once BSonic is created!
-    if (sonic != null) {
-        return;
-    }
-    // mixer frequency cannot be changed for now
-    //this.frequency = f;
-  }
-
-
-  // sound properties
-
-  public void volume(BSound sound, float v) {
-    sound.volume(v);
-  }
-
-  public void speed(BSound sound,float s) {
-    sound.speed(s);
-  }
-
-  public void jump(BSound sound, int s) {
-    sound.jump(s);
-  }
-
-  // sound playback
-
-  public void play(BSound sound) {
-    if (sonic == null) {
-      //start sonic in lite mode
-      beginSound();
-    }
-    sonic.play(sound);
-  }
-
-  public void repeat(BSound sound) {
-    if (sonic == null) {
-      //start sonic in lite mode
-      beginSound();
-    }
-    sonic.repeat(sound);
-  }
-
-  public void play(BSound sound, int in, int out) {
-    if (sonic == null) {
-      //start sonic in lite mode
-      beginSound();
-    }
-    sonic.play(sound, in, out);
-  }
-
-  public void repeat(BSound sound, int in, int out) {
-    if (sonic == null) {
-      //start sonic in lite mode
-      beginSound();
-    }
-    sonic.repeat(sound, in, out);
-  }
-
-
-  public void pause(BSound sound) {
-    if (sonic == null) {
-      //start sonic in lite mode
-      beginSound();
-    }
-    sonic.pause(sound);
-  }
-
-  public void stop(BSound sound) {
-    if (sonicInit == false) {
-      //start sonic in lite mode
-      beginSound();
-    }
-    sonic.stop(sound);
-  }
-
-#endif
-
-
-  // ------------------------------------------------------------
-
-  // VIDEO INPUT
-
-#ifdef VIDEO
-
-  BVideo videoInput;  //to be incorporated in BApplet
-  //int vpixels[];     //pixel array
-  //BImage vimage;  //image containing the actual frame
-  //int vwidth, vheight; //video resolution
-  BImage video;
-  // does this need to be available?
-  // naming is awkward, and is only requested by user
-  // could make users keep track of it themselves
-  //int vfps;
-
-
-  public void beginVideo(int vfps) {
-    beginVideo(0, 0, vfps);
-  }
-
-
-  public void beginVideo(int vwidth, int vheight, int vfps) {
-    //int[] vpixels = new int[vwidth * vheight];
-    //video = new BImage(vpixels, vwidth, vheight, RGB);
-
-    try {
-      if ((vwidth != 0) && (vheight != 0)) {
-        // if set, open to a specific size
-        videoInput = new BVideo(this, vwidth, vheight, vfps, false);
-      } else {
-        // if not, open to the default size
-        videoInput = new BVideo(this, 320, 240, vfps, false);
-      }
-      videoInput.start();
-      while (videoInput.image == null) {
-        try {
-          Thread.sleep(5);
-        } catch (InterruptedException e) { }
-        //println("waiting");
-      }
-      video = videoInput.image;
-
-      // hopefully this catches a ClassNotFoundException
-      // or whatever might come up on runtime if qtjava not available
-    } catch (Exception e) {
-      System.err.println("beginVideo() failed..");
-      e.printStackTrace();
-    }
-  }
-
-
-  public void beginVideo(String filename) {
-    videoInput = new BVideo(this, filename);
-    videoInput.play = true;
-    videoInput.loop = true;
-    videoInput.start();
-    while (videoInput.image == null) {
-      try {
-        Thread.sleep(5);
-      } catch (InterruptedException e) { }
-      //println("waiting");
-    }
-    video = videoInput.image;
-  }
-
-
-  public void endVideo() {
-    if (videoInput != null) {
-      //videoInput.stop();
-      videoInput.dispose();
-    }
-  }
-
-
-  void videoEvent() {
-    // weird.. not sure why this would be here..
-    //videoInput.getPixelArray(vimage.pixels);
-    //videoEvent();
-  }
-
-  BVideo loadVideo(String requestFile) {
-    BVideo t = new BVideo(this, requestFile);
-    return t;
-  }
-
-  void play(BVideo v) {
-    v.play();
-  }
-
-  void stop(BVideo v) {
-    v.stop();
-  }
-
-  void repeat(BVideo v) {
-    v.repeat();
-  }
-
-  void pause(BVideo v) {
-    v.pause();
-  }
-
-  void image(BVideo v, float x, float y) {
-    image(v.image, x, y);
-  }
-#endif
-
-
-  // ------------------------------------------------------------
-
-  // SERIAL PORT ACTION
-
-
-#ifdef SERIAL
-  // properties can be passed in for default values
-  // otherwise defaults to 9600 N81
-
-  // these could be made static, which might be a solution
-  // for the classloading problem.. because if code ran again,
-  // the static class would have an object that could be closed
-
-  static SerialPort serialPort;
-  static InputStream serialInput;
-  static OutputStream serialOutput;
-  int serial; // last byte of data received
-
-  private String serial_port = "COM1";
-  private int serial_rate = 9600;
-  private char serial_parity = 'N';
-  private int serial_databits = 8;
-  private float serial_stopbits = 1;
-
-
-  public void serialProperties(Properties props) {
-    //System.out.println("setting serial properties");
-    serial_port = props.getProperty("serial.port", serial_port);
-    serial_rate = Integer.parseInt(props.getProperty("serial.rate", "9600"));
-    serial_parity = props.getProperty("serial.parity", "N").charAt(0);
-    serial_databits = Integer.parseInt(props.getProperty("serial.databits", "8"));
-    serial_stopbits = new Float(props.getProperty("serial.stopbits", "1")).floatValue();
-  }
-
-
-  // opens using the defaults found in pde.properties
-  public void beginSerial() {
-    beginSerial(serial_port, serial_rate,
-                serial_parity, serial_databits, serial_stopbits);
-    //beginSerial(PdeApplet.getInteger("serial.rate"));
-  }
-
-  // opens using default port from pde.properties,
-  public void beginSerial(int rate) {
-    beginSerial(serial_port, rate,
-                serial_parity, serial_databits, serial_stopbits);
-  }
-
-  public void beginSerial(String port, int rate) {
-    beginSerial(port, rate,
-                serial_parity, serial_databits, serial_stopbits);
-  }
-
-  public void beginSerial(String port) {
-    beginSerial(port, serial_rate,
-                serial_parity, serial_databits, serial_stopbits);
-    //beginSerial(PdeApplet.getInteger("serial.rate"));
-  }
-
-  public void beginSerial(String port, int rate,
-        char iparity, int databits, float istopbits) {
-    if (serialPort != null) serialPort.close();
-
-    int parity = SerialPort.PARITY_NONE;
-    if (iparity == 'E') parity = SerialPort.PARITY_EVEN;
-    if (iparity == 'O') parity = SerialPort.PARITY_ODD;
-
-    int stopbits = SerialPort.STOPBITS_1;
-    if (istopbits == 1.5f) stopbits = SerialPort.STOPBITS_1_5;
-    if (istopbits == 2) stopbits = SerialPort.STOPBITS_2;
-
-    //ortname, rate, SerialPort.PARITY_NONE,
-    // SerialPort.DATABITS_8, SerialPort.STOPBITS_1);
-    try {
-      Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-      while (portList.hasMoreElements()) {
-        CommPortIdentifier portId =
-          (CommPortIdentifier) portList.nextElement();
-
-        if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-          if (portId.getName().equals(port)) {
-            serialPort = (SerialPort)portId.open("bagel applet serial", 2000);
-            serialInput = serialPort.getInputStream();
-            serialOutput = serialPort.getOutputStream();
-            serialPort.setSerialPortParams(rate, databits, stopbits, parity);
-            serialPort.addEventListener(this);
-            serialPort.notifyOnDataAvailable(true);
-          }
-        }
-      }
-      //if (serialPort == null) {
-      //System.err.println("could not find a serial port named " + port);
-      //}
-    } catch (Exception e) {
-      exception = e;
-      e.printStackTrace();
-      serialPort = null;
-      serialInput = null;
-      serialOutput = null;
-    }
-    //System.out.println("done with beginserial");
-  }
-
-
-  public void endSerial() {
-    try {
-      // do io streams need to be closed first?
-      if (serialInput != null) serialInput.close();
-      if (serialOutput != null) serialOutput.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    serialInput = null;
-    serialOutput = null;
-
-    try {
-      // close the port
-      if (serialPort != null) serialPort.close();
-      //serialPort = null;  // this doesn't seem to help, but maybe on win?
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    serialPort = null;
-  }
-
-
-  // needs 'public' otherwise kjc assumes private
-  void serialEvent() { }
-
-  public void serialEvent(SerialPortEvent serialEvent) {
-    //System.out.println(serialEvent);
-    if (serialEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-      try {
-        while (serialInput.available() > 0) {
-          serial = serialInput.read();
-          //serialEvent = true;
-          serialEvent();
-        }
-      } catch (IOException e) {
-        System.err.println("problem reading from the serial port");
-      }
-    }
-  }
-
-
-  public void serialWrite(int what) {
-    //if (serialPort != null) {
-    try {
-      serialOutput.write(what & 0xff);
-      serialOutput.flush();   // hmm, not sure if a good idea
-
-    } catch (Exception e) { // null pointer or serial port dead
-      //} else {
-      System.err.println("serial port not working");
-      e.printStackTrace();
-    }
-  }
-
-  public void serialWrite(byte bytes[]) {
-    //if (serialPort != null) {
-    try {
-      serialOutput.write(bytes);
-      serialOutput.flush();   // hmm, not sure if a good idea
-
-    } catch (Exception e) { // null pointer or serial port dead
-      //} else {
-      System.err.println("serial port not working");
-      e.printStackTrace();
-    }
-  }
-#endif
-
 
   // ------------------------------------------------------------
 
@@ -1409,7 +792,7 @@ public class BApplet extends Applet
 
   int cursor_type = ARROW; // cursor type
   boolean cursor_visible = true; // cursor visibility flag
-  BImage invisible_cursor;
+  PImage invisible_cursor;
 
 
   /**
@@ -1429,7 +812,7 @@ public class BApplet extends Applet
    * Only works with JDK 1.2 and later.
    * Currently seems to be broken on Java 1.4 for Mac OS X
    */
-  void cursor(BImage image, int hotspotX, int hotspotY) {
+  void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
     if (jdkVersion < 1.2) {
       System.err.println("cursor() error: Java 1.2 or higher is " + 
@@ -1498,8 +881,8 @@ public class BApplet extends Applet
     if (!cursor_visible) return;  // don't hide if already hidden.
 
     if (invisible_cursor == null) {
-      //invisible_cursor = new BImage(new int[32*32], 32, 32, RGBA);
-      invisible_cursor = new BImage(new int[16*16], 16, 16, RGBA);
+      //invisible_cursor = new PImage(new int[32*32], 32, 32, RGBA);
+      invisible_cursor = new PImage(new int[16*16], 16, 16, RGBA);
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix 
     // for macosx, which didn't wasn't honoring the invisible cursor
@@ -1780,7 +1163,7 @@ public class BApplet extends Applet
   float perlin_amp_falloff = 0.5f; // 50% reduction/octave
 
   // [toxi 031112] 
-  // new vars needed due to recent change of cos table in BGraphics
+  // new vars needed due to recent change of cos table in PGraphics
   int perlin_TWOPI, perlin_PI;
   float[] perlin_cosTable;
   float perlin[];
@@ -1814,7 +1197,7 @@ public class BApplet extends Applet
         perlin[i] = (float)Math.random();
       }
       // [toxi 031112] 
-      // noise broke due to recent change of cos table in BGraphics
+      // noise broke due to recent change of cos table in PGraphics
       // this will take care of it
       perlin_cosTable=g.cosLUT;
       perlin_TWOPI=perlin_PI=g.SINCOS_LENGTH;
@@ -2078,7 +1461,7 @@ public class BApplet extends Applet
    * i.e. split("a, b", " ,") -> { "a", "b" }
    *
    * To include all the whitespace possibilities, use the variable
-   * WHITESPACE, found in BConstants:
+   * WHITESPACE, found in PConstants:
    *
    * i.e. split("a   | b", WHITESPACE + "|");  ->  { "a", "b" }
    */
@@ -2457,7 +1840,7 @@ public class BApplet extends Applet
   public Stopper stopper;
 
   class Stopper implements Runnable {
-    //BApplet parent;
+    //PApplet parent;
     Thread thread;
 
     public Stopper() {
@@ -2503,7 +1886,7 @@ public class BApplet extends Applet
           //System.out.println(e);
           Point where = ((Frame) e.getSource()).getLocation();
           //System.out.println(e);
-          System.err.println(BApplet.EXTERNAL_MOVE + " " + 
+          System.err.println(PApplet.EXTERNAL_MOVE + " " + 
                              where.x + " " + where.y);
           System.err.flush();
         }
@@ -2512,7 +1895,7 @@ public class BApplet extends Applet
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           //if (externalRuntime) {
-          System.err.println(BApplet.EXTERNAL_QUIT);
+          System.err.println(PApplet.EXTERNAL_QUIT);
           System.err.flush();  // important
           //}
           System.exit(0);
@@ -2523,7 +1906,7 @@ public class BApplet extends Applet
 
   static public void main(String args[]) {
     if (args.length < 1) {
-      System.err.println("error: BApplet <appletname>");
+      System.err.println("error: PApplet <appletname>");
       System.exit(1);
     }
 
@@ -2537,7 +1920,7 @@ public class BApplet extends Applet
       Frame frame = new Frame();
       frame.pack();  // maybe get insets
       Class c = Class.forName(args[external ? 1 : 0]);
-      BApplet applet = (BApplet) c.newInstance();
+      PApplet applet = (PApplet) c.newInstance();
       applet.init();
       applet.start();
 
@@ -2644,7 +2027,7 @@ public class BApplet extends Applet
   }
 
 
-  public void alpha(BImage alpha) {
+  public void alpha(PImage alpha) {
     g.alpha(alpha);
   }
 
@@ -2664,7 +2047,7 @@ public class BApplet extends Applet
   }
 
 
-  public BImage get(int x, int y, int w, int h) {
+  public PImage get(int x, int y, int w, int h) {
    return g.get(x, y, w, h);
   }
 
@@ -2674,7 +2057,7 @@ public class BApplet extends Applet
   }
 
 
-  public void set(int x, int y, BImage image) {
+  public void set(int x, int y, PImage image) {
     g.set(x, y, image);
   }
 
@@ -2684,7 +2067,7 @@ public class BApplet extends Applet
   }
 
 
-  public void copy(BImage src, int sx, int sy, int dx, int dy) {
+  public void copy(PImage src, int sx, int sy, int dx, int dy) {
     g.copy(src, sx, sy, dx, dy);
   }
 
@@ -2695,13 +2078,13 @@ public class BApplet extends Applet
   }
 
 
-  public void copy(BImage src, int sx1, int sy1, int sx2, int sy2,
+  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
                         int dx1, int dy1, int dx2, int dy2) {
     g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
 
-  public void blend(BImage src, int sx, int sy, int dx, int dy, int mode) {
+  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
     g.blend(src, sx, sy, dx, dy, mode);
   }
 
@@ -2717,7 +2100,7 @@ public class BApplet extends Applet
   }
 
 
-  public void blend(BImage src, int sx1, int sy1, int sx2, int sy2, 
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
@@ -2753,7 +2136,7 @@ public class BApplet extends Applet
   }
 
 
-  public final void addTexture(BImage image) {
+  public final void addTexture(PImage image) {
     g.addTexture(image);
   }
 
@@ -2778,7 +2161,7 @@ public class BApplet extends Applet
   }
 
 
-  public void texture(BImage image) {
+  public void texture(PImage image) {
     g.texture(image);
   }
 
@@ -2844,7 +2227,7 @@ public class BApplet extends Applet
   }
 
 
-  public void flat_image(BImage image, int sx1, int sy1) {
+  public void flat_image(PImage image, int sx1, int sy1) {
     g.flat_image(image, sx1, sy1);
   }
 
@@ -2998,12 +2381,12 @@ public class BApplet extends Applet
   }
 
 
-  public BImage loadImage(String filename) {
+  public PImage loadImage(String filename) {
    return g.loadImage(filename);
   }
 
 
-  public BImage loadImage(String filename, boolean force) {
+  public PImage loadImage(String filename, boolean force) {
    return g.loadImage(filename, force);
   }
 
@@ -3013,45 +2396,45 @@ public class BApplet extends Applet
   }
 
 
-  public void image(BImage image, float x1, float y1) {
+  public void image(PImage image, float x1, float y1) {
     g.image(image, x1, y1);
   }
 
 
-  public void image(BImage image, 
+  public void image(PImage image, 
                     float x1, float y1, float x2, float y2) {
     g.image(image, x1, y1, x2, y2);
   }
 
 
-  public void image(BImage image, 
+  public void image(PImage image, 
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
     g.image(image, x1, y1, x2, y2, u1, v1, u2, v2);
   }
 
 
-  public void cache(BImage image) {
+  public void cache(PImage image) {
     g.cache(image);
   }
 
 
-  public void cache(BImage images[]) {    
+  public void cache(PImage images[]) {    
     g.cache(images);
   }
 
 
-  public BFont loadFont(String name) {
+  public PFont loadFont(String name) {
    return g.loadFont(name);
   }
 
 
-  public void textFont(BFont which) {
+  public void textFont(PFont which) {
     g.textFont(which);
   }
 
 
-  public void textFont(BFont which, float size) {
+  public void textFont(PFont which, float size) {
     g.textFont(which, size);
   }
 
@@ -3419,7 +2802,7 @@ public class BApplet extends Applet
   }
 
 
-  public void background(BImage image) {
+  public void background(PImage image) {
     g.background(image);
   }
 
@@ -3480,7 +2863,7 @@ public class BApplet extends Applet
 
 
   static public byte[] loadBytes(InputStream input) {
-   return BGraphics.loadBytes(input);
+   return PGraphics.loadBytes(input);
   }
 
 
@@ -3490,7 +2873,7 @@ public class BApplet extends Applet
 
 
   static public String[] loadStrings(InputStream input) {
-   return BGraphics.loadStrings(input);
+   return PGraphics.loadStrings(input);
   }
 
 
