@@ -1707,6 +1707,10 @@ public class PApplet extends Applet
 
 
   public File inputFile() {
+    return inputFile("Select a file...");
+  }
+
+  public File inputFile(String prompt) {
     Frame frame = null;
     Component comp = getParent();
     while (comp != null) {
@@ -1718,10 +1722,7 @@ public class PApplet extends Applet
     }
     //System.out.println("found frame " + frame);
     if (frame == null) frame = new Frame();
-
-    FileDialog fd = new FileDialog(frame,
-                                   "Select a file...", 
-                                   FileDialog.LOAD);
+    FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
     fd.show();
 
     String directory = fd.getDirectory();
@@ -1732,9 +1733,15 @@ public class PApplet extends Applet
 
 
   public File outputFile() {
+    return outputFile("Save as...");
+  }
+
+  public File outputFile(String prompt) {
     Frame frame = null;
     Component comp = getParent();
+    //System.out.println(comp + " " + comp.getClass());
     while (comp != null) {
+      System.out.println(comp + " " + comp.getClass());
       if (comp instanceof Frame) {
         frame = (Frame) comp;
         break;
@@ -1743,10 +1750,7 @@ public class PApplet extends Applet
     }
     //System.out.println("found frame " + frame);
     if (frame == null) frame = new Frame();
-
-    FileDialog fd = new FileDialog(frame,
-                                   "Save as...", 
-                                   FileDialog.SAVE);
+    FileDialog fd = new FileDialog(frame, prompt, FileDialog.SAVE);
     fd.show();
 
     String directory = fd.getDirectory();
@@ -1756,6 +1760,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * I want to read lines from a file. I have RSI from typing these
+   * eight lines of code so many times.
+   */
   public BufferedReader reader(File file) {
     try {
       FileInputStream fis = new FileInputStream(file);
@@ -1769,6 +1777,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * I want to print lines to a file. I have RSI from typing these
+   * eight lines of code so many times.
+   */
   public PrintWriter writer(File file) {
     try {
       FileOutputStream fos = new FileOutputStream(file);

@@ -66,12 +66,19 @@ X   append the user's classpath to the end of that
 040913 afternoon
 X "Processing" folder not properly created on new install
 
-_ when running externally, build into sketch folder
+_ add all imported libs to hash table of jars
+
+_ something calling 
+
 _ after export of library, rebuild "import library" menu
 
-_ libraries: static and non-static init for libs
-_   final stop() for static shutdown of lib
-_   but also potential stop() for individual items
+_ when running externally, build into sketch folder?
+
+_ libraries
+_   attachLibrary(new libsomething()) and attachLibrary("pitaru.Sonia");
+o   final stop() for static shutdown of lib
+X     no static init - make the library designers deal with it
+_   stop() for individual items
 _ register pre() and post() calls
 _   this would avoid having to patch BApplet
 _ register for setup() calls
@@ -84,6 +91,11 @@ _ exception in setup() on external app doesn't kill run button
 _   also doesn't kill external vm
 _ make preferences a modal dialog
 
+_ System.out isn't being heard from P* classes
+_   errors inside those classes also causing weirdness
+_   this might be a broader running as external app problem
+_   errorMessage in PSerial/PClient/PServer are all using System.out
+
 _ get export working again
 _   make multiple jar files thing work as an option
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
@@ -94,11 +106,6 @@ _   include a note that 'applet' folder will get emptied/rewritten
 _     or rename the old applet folder to something else? (nah, too messy)
 
 _ package processing.app for PdeBase, PdeEditor..
-
-_ System.out isn't being heard from P* classes
-_   errors inside those classes also causing weirdness
-_   this might be a broader running as external app problem
-_   errorMessage in PSerial/PClient/PServer are all using System.out
 
 _ support for editor plugins
 _   make dynamically loaded plugins and "tools" menu
@@ -116,6 +123,8 @@ _   only beautify a particular section of code
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 o   make "get quicktime libs" function
 o     can java get the root directory for system/win32 etc?
+
+_ macosx.. use better font metrics to get width for tab names
 
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
