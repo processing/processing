@@ -4,9 +4,7 @@ import java.io.*;
 
 import java.net.*; // the start of a bad joke
 
-import at.dms.kjc.*;
 import com.oroinc.text.regex.*;
-//import at.dms.compiler.PositionedError;
 
 
 // always compile to lib directory
@@ -18,7 +16,7 @@ import com.oroinc.text.regex.*;
 // doesn't really need to extend kjc.Main anymore, 
 // since reportTrouble doesn't actually do any good
 
-public class KjcEngine extends at.dms.kjc.Main implements PdeEngine {
+public class KjcEngine implements PdeEngine {
   static String TEMP_CLASS = "Temporary";
   static final String EXTENDS = "extends BApplet ";
   static final String EXTENDS_KJC = "extends KjcApplet ";
@@ -34,17 +32,13 @@ public class KjcEngine extends at.dms.kjc.Main implements PdeEngine {
 
   String tempClass;
   String tempFilename;
-  //File tempDir; // for .java file
   String tempClassFilename;
-  //File tempClassDir; // for .class file
   PdeException exception;
 
-  //PrintStream systemErr;
   PrintStream leechErr;
   KjcMessageStream messageStream;
 
   String program;
-  //PdeEnvironment env;
   PdeEditor editor;
   String buildPath;
 
@@ -554,7 +548,9 @@ public class KjcEngine extends at.dms.kjc.Main implements PdeEngine {
     System.setErr(leechErr); // NEED THIS
 
     messageMode = COMPILING;
-    boolean success = compile(args);
+
+    //boolean success = compile(args);
+    boolean success = at.dms.kjc.Main.compile(args);
 
     // end of compilation error checking
     //System.setErr(systemErr);
