@@ -112,7 +112,7 @@ public class PdeRunner implements Runnable {
 	forceStop = false;
 	*/
 
-	engine = new KjcEngine(program);
+	engine = new KjcEngine(program, env);
 	engine.start();
       }
       //System.out.println("finished");
