@@ -52,6 +52,9 @@ X remove notes from readme about size/background
 X change the naming of the two versions of calc_color
 X The web page for ellipse (reference/ellipse_.html) talks about
 X   rectangles in the parameter list instead of ellipses.
+X resize() name is bad because it overrides component..
+X   resize is maybe goofy, so just size() for all?
+X color() with alpha now works properly
 
 
 fixes because of dmose parser
@@ -92,9 +95,6 @@ ks X   no events seem to be coming through at all
 
 
 api changes in progress -> COLORING FOR ALL THESE
-_ color(x, y, z) has become swatch(x, y, z) 
-_   because of conflicts with the new parser
-_   though this may have been changed again
 _ textureImage() -> texture()
 _ textureMode() IMAGE_SPACE or NORMAL_SPACE
 _ vertexNormal() -> normal();
@@ -107,26 +107,15 @@ _ BFont.charWidth, BFont.stringWidth -> BFont.width()
 _ BFont.drawChar, BFont.drawString -> BFont.text()
 _ bezierMode -> bezierSegments
 _ curveMode -> curveSegments, curveTightness
+_ removed fill(), stroke(), background() with no args
+_   (used to return current)
+X tint() colors images, not fill()
 
 
 ..................................................................
 
 
-_ mousePressed, keyPressed, others.. queue them all
-_   queue multiple times
-_ update() mode should be finished before beta
-_ if (loop == false) and (draw == false) then provide an error
-_   so user knows that one or the other is needed
-_ textMode alignments -> or is it textAlign() ?
-_   so that textMode can be FLAT/SCREEN or SPATIAL
-_ need bezierTangent() code
-_ resize should call background again to set color
-_   if background was set before the resize
-_   and the background is not an image (or should it just stretch?)
-
-
 API
-_ tint() colors images, not fill()
 _ toxi image code (!) 
 _   need background(BImage) and scaling, copy area, etc.
 _ param() function 
@@ -141,6 +130,15 @@ _ BImage/BGraphics -> BLayer/Pixels ?
 _ some flag to know whether applet is online or not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 _   fix link, loadStrings, saveBytes code once that's fixed
+_ mousePressed, keyPressed, others.. queue them all
+_   queue multiple times
+_ update() mode should be finished before beta
+_ textMode alignments -> or is it textAlign() ?
+_   so that textMode can be FLAT/SCREEN or SPATIAL
+_ need bezierTangent() code
+_ resize should call background again to set color
+_   if background was set before the resize
+_   and the background is not an image (or should it just stretch?)
 
 
 INTERNAL
@@ -148,11 +146,10 @@ _ add constants for building NET, move stuff around in bagel dir
 _ internal naming of _fill, image_mode, textureOrientation
 _   these all need to jive better with one another
 _   ie. perhaps just 'fill', so that it can be used for a get
+_ look at ken perlin renderer code
 
 
 HIGH
-_ resize() name is bad because it overrides component..
-_   resize is maybe goofy, so just size() for all?
 _ no time to ask for "save changes" before quit
 _   PdeEditor, around line 910.. not blocking until input 
 _   read up on how to properly block for input in a java app
@@ -259,6 +256,8 @@ java.security.AccessControlException: access denied (java.io.FilePermission scre
 _ change .vlw.gz fonts to just .vlw but still gzip compress
 _   reader code should just catch the exception if they're not gzipped
 _   and try to re-download them
+_ if (loop == false) and (draw == false) then provide an error
+_   so user knows that one or the other is needed
 
 
 NEW GRAPHICS
