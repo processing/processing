@@ -1,3 +1,14 @@
+0074 core
+X removed zbuffer precision hack in PLine to improve z ordering
+X no longer set g.dimensions = 3 when using vertex(x, y, 0)
+
+
+0073 core
+X tweak to fonts to use TEXT_ANTIALIAS because of macosx @#$(*&
+X loadImage() is broken on some machines
+X   hacked for a fix in 72, but need to better coordinate with openStream()
+
+
 0072 core
 X make m00, m01 etc public
 X hack to make loadImage() work 

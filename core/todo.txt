@@ -1,4 +1,4 @@
-0073
+0075
 X textureMode(NORMAL_SPACE)  screws up the image() command
 X   image() appears to require IMAGE_SPACE to function properly. 
 X added focusGained() and focusLost()
@@ -11,13 +11,13 @@ X add TRIANGLE_FAN
 X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
 X modify targa and tiff writing routines to break into header writing
 X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
-X use TEXT_ANTIALIAS instead of ANTIALIAS on font editor
 
 opengl
-_ why is the thing hanging until 'stop' is hit?
-_   what happens when stop is hit that sets it free?
-_   (at what point does it start working properly?)
+X why is the thing hanging until 'stop' is hit?
+X   what happens when stop is hit that sets it free?
+X   (at what point does it start working properly?)
 _ debug why certain spots are having errors (see 'problem here' notes)
+_   INVALID_OPERATION after drawing lines for cube
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
