@@ -8,6 +8,14 @@ X beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 X screenX(x, y) and screenY(x, y) added for noDepth()
 X add TRIANGLE_FAN
+X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
+X modify targa and tiff writing routines to break into header writing
+X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
+
+_ implement size(0, 0) -> just doesn't bother doing a frame.show();
+_ implement fullscreen().. this takes over the screen as best it can
+_   really more like present mode.. 
+_   that if applet is 500x500, centers on a 800x600 window
 
 opengl
 _ cache needs to also make things a power of 2
@@ -26,8 +34,17 @@ _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 _ don't allocate zbuffer & stencil until depth() is called
 
-_ modify targa and tiff writing routines to break into header writing
+postscript
+_ how to hook into curve rendering so that curve segments are drawn
+_   maybe lines are rendered and sorted, 
+_   but they point to an original version of the curve geometry 
+_   that can be re-rendered 
+_   also integrate catmull-rom -> bezier inverse matrices
+_   even with the general catmull-rom, to render via ai beziers
 
+libraries could handle a series of events..
+  i.e. a 'completion' event, or 'new data' event
+  these could be registered on obejcts in a general way
 
 random tasks
 _ someone to figure out a good model for adaptive sizing of circles
