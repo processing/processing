@@ -51,11 +51,11 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     this.user = user;
 
     if (primaryColor == null) {
-      backgroundColor = PdeApplet.getColor("editor.header.bgcolor", 
+      backgroundColor = PdeBase.getColor("editor.header.bgcolor", 
 					   new Color(51, 51, 51));
-      primaryColor = PdeApplet.getColor("editor.header.fgcolor.primary", 
+      primaryColor = PdeBase.getColor("editor.header.fgcolor.primary", 
 					new Color(255, 255, 255));
-      secondaryColor = PdeApplet.getColor("editor.header.fgcolor.secondary", 
+      secondaryColor = PdeBase.getColor("editor.header.fgcolor.secondary", 
 					  new Color(153, 153, 153));
     }
   }
@@ -111,7 +111,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     Graphics g = offscreen.getGraphics();
     if (font == null) {
       //font = new Font("SansSerif", Font.PLAIN, 12);
-      font = PdeApplet.getFont("editor.header.font",
+      font = PdeBase.getFont("editor.header.font",
 			       new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
