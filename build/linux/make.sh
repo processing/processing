@@ -87,17 +87,30 @@ cd app
 
 echo Building PDE for JDK 1.3
 
-CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/lib/RXTXcomm.jar
+cd preprocessor
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 -dRXTX *.java jeditsyntax/*.java
+# first build the default java goop
+java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.g
+java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.tree.g
+
+# now build the pde stuff that extends the java classes
+java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
+    -glib java.g pde.g
+java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
+    -glib java.tree.g pde.tree.g
+
+cd ..
+
+CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/lib/RXTXcomm.jar
+
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
-zip -0q ../lib/pde.jar *.class
+zip -0rq ../lib/pde.jar .
 cd ../..
 
 
 ### -- BUILD STUB -----------------------------------------------
 
 install -m 755 stub.sh work/processing
-
