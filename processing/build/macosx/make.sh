@@ -104,15 +104,29 @@ cd app
 #echo Building PDE for JDK 1.4
 echo Building PDE for JDK 1.3
 
+cd preprocessor
+
+# first build the default java goop
+java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
+java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.tree.g
+
+# now build the pde stuff that extends the java classes
+java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool \
+    -glib java.g pde.g
+java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool \
+    -glib java.tree.g pde.tree.g
+
+cd ..
+
 # new rxtx
-CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$MACOSX_CLASSPATH
+CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$MACOSX_CLASSPATH
 
 #perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dJDK14 -dMACOS -dRXTX *.java jeditsyntax/*.java
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
-zip -0q ../lib/pde.jar *.class
+zip -0rq ../lib/pde.jar .
 cd ../..
 
 # get the libs
