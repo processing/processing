@@ -1,5 +1,9 @@
+import java.awt.*;
+
+
 public class PdeEngine {
   PdeEditor editor;
+  Window window;
 
   public PdeEngine(PdeEditor editor) {
     this.editor = editor;
@@ -7,11 +11,11 @@ public class PdeEngine {
 
   // implemented by subclasses
 
-  public void start() throws PdeException {
+  public void start(Point windowLocation) throws PdeException {
   }
 
-  public void front() {
-  }
+  //public void front() {
+  //}
 
   public void stop() {
   }
