@@ -3,6 +3,7 @@ OBJS = launcher.o launcher-rc.o
 
 processing.exe: $(OBJS)
 	$(LINK.cc) $(CXXFLAGS) -o $@ $(OBJS)
+	cp processing.exe ../work/
 
 $(OBJS): Makefile
 
