@@ -55,6 +55,7 @@ X   rectangles in the parameter list instead of ellipses.
 X resize() name is bad because it overrides component..
 X   resize is maybe goofy, so just size() for all?
 X color() with alpha now works properly
+X removed SMOOTH_IMAGES
 
 
 fixes because of dmose parser
