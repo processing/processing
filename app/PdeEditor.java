@@ -1233,8 +1233,11 @@ public class PdeEditor extends JFrame
   public void handleSave() {
     message("Saving...");
     try {
-      sketch.save();
-      message("Done Saving.");
+      if (sketch.save()) {
+        message("Done Saving.");
+      } else {
+        message(EMPTY);
+      }
       // rebuild sketch menu in case a save-as was forced
       sketchbook.rebuildMenu();
 

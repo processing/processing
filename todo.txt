@@ -93,10 +93,15 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X after using sketchbook menu as popup, disappears from file menu
 X   probably just need to build two
 X   the popup from the toolbar needs an "Open..." on it as well
+X make save() return true/false so it doesn't say "saved" when it hasn't
+X export is badly broken, fix it.. file names were backwards
+X if 'applet.html' is in sketch folder, use that as the template
 
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
 _   this also needs to be checked when building the sketch menu 
+
+_ make export save to multiple files
 
 _ what happens when the .pde file isn't named 
 _   the same as the enclosing folder?
@@ -108,13 +113,11 @@ _     but need to deal with simply, not providing a new exception case
 _ write sketchbook.clean()
 _ write 'new text file'
 _ implement hide/unhide
-_ export is badly broken
 _ get the console working again
 _   appendText is disabled due to NullPointerEx on startup
 _ ctrl-5 (at least on xp) is marking the current sketch as modified
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
-_ if 'applet.html' is in sketch folder, use that as the template
 _ re-implement history
 
 _ maybe bring back the prompt option for "new sketch"
