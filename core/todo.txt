@@ -6,8 +6,20 @@ X   make a note of the change to font.width()
 X backwards rects and backwards ellipses weren't properly drawn
 X   code now compensates for negative widths or swapped x1/x2
 
+X made loadStrings() and openStream(File) static again
+_   fix other stuff that's supposed to be static
+
+_ why is java2d so flickery?
+X   is it because the lock was taken off (g) in PApplet?
+_   test to see whether it's still happening
+
+_ draw method gl stuff fix? was missing a beginframe
+
 _ get SCREEN_SPACE text working again
 
+_ rewrite library/howto.txt for to get rid of old interface
+
+_ problem with flicker may be the lack of synchronization on g
 
 _ updatePixels() not setting PApplet.pixels
 _   also throwing NPEs
@@ -18,9 +30,6 @@ _   opengl gives an OutOfMemoryError
 _   java2d just goes into a lock
 _   could also be code that's in an infinite loop (i.e. text error) 
 _     which then causes a full lock
-
-_ why is java2d so flickery?
-_   is it because the lock was taken off (g) in PApplet?
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
