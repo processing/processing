@@ -365,6 +365,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     }
 
     //System.err.println("message " + s.length() + ":" + s);
+    // is this only for debugging, or?
     if (s.length() > 2) System.err.println(s);
 
     // this is PApplet sending a message saying "i'm about to spew 

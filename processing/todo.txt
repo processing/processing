@@ -24,10 +24,10 @@ o   i.e. either return null, or block until it's available? -> ret null
 X "paste" isn't setting the "modified" bit for PdeEditor
 X   i.e. cut -> new file -> paste doesn't mark any as changed
 
-_ processing.net -> PClient, PServer
+_ System.out isn't being heard from P* classes
+_   errors inside those classes also causing weirdness
 
-_ change font api to not use leading() as a way to reset the leading
-_ don't change the size of a font when in screen space mode
+_ processing.net -> PClient, PServer
 
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
@@ -514,3 +514,6 @@ _ walking through an entire directory, with a handler
 _   that throws out the . and .. items
 _   that knows about aliases (jdk13)
 _ overall contrast/color control (genomevalence for hulk)
+_ mac -> vlw (or sbit?) font converter
+_   need to also read the fond for metrics
+_ general font editor, see what chars are in font, etc

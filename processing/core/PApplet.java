@@ -1679,6 +1679,7 @@ public class PApplet extends Applet
 
       //} catch (IOException e) {
     } catch (Exception e) {
+      e.printStackTrace();
       System.err.println("Could not load font " + filename);
       System.err.println("Make sure that the font has been copied");
       System.err.println("to the data folder of your sketch.");
@@ -3439,6 +3440,16 @@ public class PApplet extends Applet
 
   public void text(String s, float x, float y, float z) {
      g.text(s, x, y, z);
+  }
+
+
+  public void text(String s, float x, float y, float w, float h) {
+     g.text(s, x, y, w, h);
+  }
+
+
+  public void text(String s, float x, float y, float z, float w, float h) {
+     g.text(s, x, y, z, w, h);
   }
 
 
