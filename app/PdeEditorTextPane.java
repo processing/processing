@@ -112,6 +112,7 @@ public class PdeEditorTextPane extends JTextPane {
     colorer = new Colorer();
     if (PdeBase.getBoolean("editor.syntax_coloring", false)) {
       colorer.start();
+      colorer.setPriority(Thread.MIN_PRIORITY);
     }
 
     // Set up the hash table that contains the styles.
@@ -353,7 +354,8 @@ public class PdeEditorTextPane extends JTextPane {
 	  SortedSet workingSet;
 	  Iterator workingIt;
 	  DocPosition startRequest = new DocPosition(position);
-	  DocPosition endRequest = new DocPosition(position + ((adjustment>=0)?adjustment:-adjustment));
+	  DocPosition endRequest = 
+	    new DocPosition(position + ((adjustment>=0)?adjustment:-adjustment));
 	  DocPosition  dp;
 	  DocPosition dpStart = null;
 	  DocPosition dpEnd = null;
@@ -399,7 +401,7 @@ public class PdeEditorTextPane extends JTextPane {
 	    Token t;
 	    boolean done = false;
 	    dpEnd = dpStart;
-	    synchronized (doclock){
+	    synchronized (doclock) {
 	      // we are playing some games with the lexer for efficiency.
 	      // we could just create a new lexer each time here, but instead,
 	      // we will just reset it so that it thinks it is starting at the
@@ -418,11 +420,22 @@ public class PdeEditorTextPane extends JTextPane {
 	      t = syntaxLexer.getNextToken();
 	    }
 	    newPositions.add(dpStart);
-	    while (!done && t != null){
+
+	    int sleepCounter = 0;
+	    while (!done && t != null) {
+	      // no effect
+	      //Thread.yield();
+	      // too slow
+	      if ((sleepCounter++ % 10) == 0) {
+		try {
+		  Thread.sleep(5);
+		} catch (InterruptedException e) { }
+	      }
+
 	      // this is the actual command that colors the stuff.
 	      // Color stuff with the description of the style matched
 	      // to the hash table that has been set up ahead of time.
-	      synchronized (doclock){
+	      synchronized (doclock) {
 		if (t.getCharEnd() <= document.getLength()){
 		  //		  System.out.println(t.getDescription() + " " + 
 		  //	     (t.getCharBegin() + change));
@@ -444,12 +457,13 @@ public class PdeEditorTextPane extends JTextPane {
 	      // place that returned to the initial state this time.
 	      // As long as that place is after the last changed text, everything
 	      // from there on is fine already.
-	      if (t.getState() == Token.INITIAL_STATE){
-                                //System.out.println(t);
-                                // look at all the positions from last time that are less than or
-                                // equal to the current position
+	      if (t.getState() == Token.INITIAL_STATE) {
+		//System.out.println(t);
+		// look at all the positions from last time that are less than or
+		// equal to the current position
 		while (dp != null && dp.getPosition() <= t.getCharEnd()){
-		  if (dp.getPosition() == t.getCharEnd() && dp.getPosition() >= endRequest.getPosition()){
+		  if (dp.getPosition() == t.getCharEnd() && 
+		      dp.getPosition() >= endRequest.getPosition()) {
 		    // we have found a state that is the same
 		    done = true;
 		    dp = null;
@@ -463,11 +477,11 @@ public class PdeEditorTextPane extends JTextPane {
 		    dp = null;
 		  }
 		}
-                                // so that we can do this check next time, record all the
-                                // initial states from this time.
+		// so that we can do this check next time, record all the
+		// initial states from this time.
 		newPositions.add(dpEnd);
 	      }
-	      synchronized (doclock){
+	      synchronized (doclock) {
 		t = syntaxLexer.getNextToken();
 	      }
 	    }
@@ -482,7 +496,8 @@ public class PdeEditorTextPane extends JTextPane {
 	    }
                         
 	    // Remove all the positions that are after the end of the file.:
-	    workingIt = iniPositions.tailSet(new DocPosition(document.getLength())).iterator();
+	    workingIt = 
+	      iniPositions.tailSet(new DocPosition(document.getLength())).iterator();
 	    while (workingIt.hasNext()){
 	      workingIt.next();
 	      workingIt.remove();
@@ -498,7 +513,8 @@ public class PdeEditorTextPane extends JTextPane {
 	      }
                         
 	      System.out.println("Started: " + dpStart.getPosition() + " Ended: " + dpEnd.getPosition());*/
-	  } catch (IOException x){
+	  } catch (IOException ex) {
+	    ex.printStackTrace(); // why wasn't' this doing anything before?
 	  }
 	  synchronized (doclock){
 	    lastPosition = -1;
@@ -509,12 +525,10 @@ public class PdeEditorTextPane extends JTextPane {
 	  tryAgain = true;
 	}                
 	asleep = true;
-	if (!tryAgain){
+	if (!tryAgain) {
 	  try {
 	    sleep (0xffffff);
-	  } catch (InterruptedException x){
-	  }
-                    
+	  } catch (InterruptedException x) { }
 	}
 	asleep = false;
       }
