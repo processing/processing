@@ -3,6 +3,7 @@ iprocessing todo list // last updated 17 september 2001
 
 
 for 0008
+_ getMillis() doesn't seem to work
 _ stop required before kill for applets that use serial
 _ option to enable/disable frame
 _ new objects draw behind old objects with noBackground()
@@ -10,9 +11,14 @@ _ enable/disable full screen leaves windows in back
 _   (may just require two toFront() calls)
 _ breaks on every 2nd run when using serial apps (or others?)
 _   try calling gc on stop as well
+_ post new macintosh version
+_   with serial port support
 
 
 PROCESSING - HIGH
+_ when applet window is too large to fit, center and put in back
+_ shift-click on play for 'presentation mode'
+_   does full screen and hides editor window
 _ export doesn't work properly for stuff included from scrapbook
 _ processing applet: fill white, stroke black
 _ write dist.bat for releases
@@ -20,14 +26,19 @@ _   don't forget to update 'export' dir with processing releases
 _ remove duplicates: LINE/LINES etc
 _ make tab key work
 _   include auto-indent?
+_    want emacs-style editor that's faster loading than emacs
 _ what happens if size() not called inside setup() ?
 _ when using draw() instead of loop()
 _   applet needs to notify runner that it has terminated
 _ multiple types of KjcEngine (so that simplest model is available)
-_ post new macintosh version
-_   write code for automatic macintosh releases
+_ write code for automatic macintosh releases
+_ make note of functions/variables used by ProcessingApplet
+_   using them in your app will break things (i.e. init())
+
 
 PROCESSING - MEDIUM
+_ better handling on portinuse exception
+_   or general exception handling--could go through some interface
 _ compile from the sketchbook if there are changes
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
@@ -72,6 +83,7 @@ _ how to use ssh identity file to maintain auth for brancusi
 PROCESSING - FEATURES
 _ anti-aliasing
 _ alpha
+_ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 
 
 PROCESSING - LOWER
@@ -105,6 +117,23 @@ _   or some other model of naming based on inserted text with "" or // or #
 _   could fit nicely with printf-style statements and comments
 _   comments would contain descriptions //!blah for printing and formatting
 _ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+
+
+---------------------------------------------
+
+code tidbit:
+
+
+String binary(int value) {
+  return "" + (((value & (1 << 7)) == 0) ? '0' : '1') +
+          (((value & (1 << 6)) == 0) ? '0' : '1') +
+          (((value & (1 << 5)) == 0) ? '0' : '1') +
+          (((value & (1 << 4)) == 0) ? '0' : '1') +
+          (((value & (1 << 3)) == 0) ? '0' : '1') +
+          (((value & (1 << 2)) == 0) ? '0' : '1') +
+          (((value & (1 << 1)) == 0) ? '0' : '1') +
+          (((value & (1 << 0)) == 0) ? '0' : '1');
+}
 
 
 ---------------------------------------------
