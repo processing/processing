@@ -1,11 +1,9 @@
 0031
 
+_ make all windows 120x120?
+_   default program should be large, 300x200 or so
+
 ui
-a _ sketch.properties contains the last program run
-a _   also the window positions, etc
-a _   if it doesn't exist, starts with a new project
-a _     for a new project, name it untitled-0001 or as appropriate
-a _       so that previous projects aren't written over
 a _ 'open' button is a switch-to button
 a _   pops up list of everything in the sketchbook
 a _   first item is 'new sketch', followed by delimeter
@@ -17,6 +15,17 @@ a _   export could be three circles in a row, overlapping
 a _ everything is a project.. what about short snippets of code?
 a _   this version won't be able to access everything from scrapbook
 a _   (that requires a more robust class loader)
+a _ sketch.properties contains the last program run
+a _   also the window positions, etc
+a _   if it doesn't exist, starts with a new project
+a _     for a new project, name it untitled-0001 or as appropriate
+a _       so that previous projects aren't written over
+
+users
+a _ if default user, don't show the 'user' string in pde window
+a _ item in pde.properties to set the name of the current user
+_ menu option to change username/login
+_   if new user, offer to rename 'default' if it contains things
 
 file structure for export
 a _ exporting to applet/.jar file
