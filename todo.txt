@@ -73,7 +73,6 @@ o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
 
-
 _ once compiling again, change PdeException
 _   rename the class for a minute to find all references
 _   then add references to the *file index* in question
@@ -84,6 +83,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 
 _ fix command keys for menus (broken since switching to swing)
 
+_ PdeRuntime isn't properly handling messages from all classes in project
+_   get things up and running, and see how it looks
 _ fix make.sh and dist.sh for all platforms to include new export setup
 _ re-implement history (disabled for 68)
 
@@ -133,8 +134,8 @@ _   remove the 'default' for sketchbook
 _   bring this up on bboard and get votes
 _   win2k: my documents, macosx: ~/Documents, linux: ~/sketchbook
 _ fix code for changing the sketch folder
-_ don't allow editing of multiple files in this release
-_   but support multiple java/pde files through the 'add file' option
+o don't allow editing of multiple files in this release
+o   but support multiple java/pde files through the 'add file' option
 _ open mode
 _   on application open, override 'open' mode
 _   and just open an empty sketch in the sketchbook folder
@@ -200,6 +201,7 @@ void toGrayscale() {
 BUGS / PDE
 _ find/replace hangs when recapitalizing things
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1072994196;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074602643
 _ if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError ensues
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095

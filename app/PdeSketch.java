@@ -54,7 +54,7 @@ public class PdeSketch {
 
   // all these set each time build() is called
   boolean externalRuntime;
-  //String mainClassName;
+  String mainClassName;
   String classPath;
   String libraryPath;
 
@@ -323,7 +323,7 @@ public class PdeSketch {
    *    X. afterwards, some of these steps need a cleanup function
    */
   public void run() throws PdeException {
-    current.program = textarea.getText();
+    current.program = editor.getText();
 
     // TODO record history here
     //current.history.record(program, PdeHistory.RUN);
@@ -359,12 +359,13 @@ public class PdeSketch {
        "_" + String.valueOf((int) (Math.random() * 10000)));
 
     // handle preprocessing the main file's code
-    String mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
+    mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
     // externalPaths is magically set by build()
 
     // if the compilation worked, run the applet
     if (mainClassName != null) {
 
+      /*
       if (externalPaths == null) {
         externalPaths = 
           PdeCompiler.calcClassPath(null) + File.pathSeparator + 
@@ -375,18 +376,19 @@ public class PdeSketch {
           PdeCompiler.calcClassPath(null) + File.pathSeparator +
           externalPaths;
       }
+      */
 
       // get a useful folder name for the 'code' folder
       // so that it can be included in the java.library.path
+      /*
       String libraryPath = "";
       if (externalCode != null) {
         libraryPath = externalCode.getCanonicalPath();
       }
+      */
 
       // create a runtime object
-      runtime = new PdeRuntime(this, className,
-                               externalRuntime, 
-                               libraryPath, classPath);
+      runtime = new PdeRuntime(this, editor); 
 
       // if programType is ADVANCED
       //   or the code/ folder is not empty -> or just exists (simpler)
@@ -409,32 +411,8 @@ public class PdeSketch {
     } else {
       // [dmose] throw an exception here?
       // [fry] iirc the exception will have already been thrown
-      cleanTempFiles(); //tempBuildPath);
+      cleanup();
     }
-
-    /*
-    } catch (PdeException e) { 
-      // if it made it as far as creating a Runtime object, 
-      // call its stop method to unwind its thread
-      if (runtime != null) runtime.stop();
-      cleanTempFiles(); //tempBuildPath);
-
-      // printing the stack trace may be overkill since it happens
-      // even on a simple parse error
-      //e.printStackTrace();
-
-      error(e);
-
-    } catch (Exception e) {  // something more general happened
-      e.printStackTrace();
-
-      // if it made it as far as creating a Runtime object, 
-      // call its stop method to unwind its thread
-      if (runtime != null) runtime.stop();
-
-      cleanTempFiles(); //tempBuildPath);
-    } 
-    */
   }
 
 
@@ -515,7 +493,7 @@ public class PdeSketch {
       importPackageList = PdeCompiler.magicImports(classPath);
       libraryPath = codeFolder.getCanonicalPath();
     } else {
-      externalRuntime = (codeCount > 1);  // at least for now
+      externalRuntime = (codeCount > 1);  // may still be set true later
       importPackageList = null;
       libraryPath = "";
     }
@@ -526,7 +504,7 @@ public class PdeSketch {
     //   if .pde, run preproc to buildpath
     //     if no class def'd for the pde file, then complain
 
-    String mainClassName = null;
+    String primaryClassName = null;
 
     for (int i = 0; i < codeCount; i++) {
       if (code[i].flavor == JAVA) {
@@ -559,7 +537,7 @@ public class PdeSketch {
 
           if (i == 0) {
             // store this for the compiler and the runtime
-            mainClassName = className;
+            primaryClassName = className;
 
             // check if the 'main' file is in java mode
             if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
@@ -615,7 +593,7 @@ public class PdeSketch {
     //
     PdeCompiler compiler = new PdeCompiler();
     boolean success = compiler.compile(this, buildPath);
-    return success ? mainClassName : null;
+    return success ? primaryClassName : null;
   }
 
 
