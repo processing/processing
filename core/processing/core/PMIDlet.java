@@ -359,7 +359,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
                 }
             }
         } catch (Exception e) {
-            
+            e.printStackTrace();
         } finally {
             if (is != null) {
                 try {
@@ -374,5 +374,13 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
         }
         
         return strings;
+    }
+    
+    public final void print(String data) {
+        System.out.print(data);
+    }
+    
+    public final void println(String data) {
+        System.out.println(data);
     }
 }
