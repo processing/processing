@@ -154,7 +154,7 @@ public class PImage implements PConstants, Cloneable {
   public void alpha(int alpha[]) {
     // don't execute if mask image is different size
     if (alpha.length != pixels.length) {
-      System.err.println("alpha(): the alpha mask image must be the same size");
+      System.err.println("alpha(): the mask image must be the same size");
       return;
     }
     for (int i = 0; i < pixels.length; i++) {
@@ -171,7 +171,7 @@ public class PImage implements PConstants, Cloneable {
       }
     }
     */
-    format=RGBA;
+    format = RGBA;
   }
 
 
@@ -195,23 +195,60 @@ public class PImage implements PConstants, Cloneable {
     return 0;
   }
 
+
   /**
-   * [toxi040115] 
-   * Converts RGB image data into grayscale using 
-   * weighted RGB components, and keeps alpha channel intact.
+
    */
-  public void toGrayscale() {
-    for (int i = 0; i<pixels.length; i++) {
-      int col = pixels[i];
-      // luminance = 0.3*red + 0.59*green + 0.11*blue
-      // 0.3*256 = 77
-      // 0.59*256 = 151
-      // 0.11*256 = 28
-      int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
-      pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
+  // FIND_EDGES (no params) .. high pass filter
+  // BLUR (no params)
+  // GAUSSIAN_BLUR (one param)
+  // BLACK_WHITE? (param for midpoint)
+  // GRAYSCALE
+  // POSTERIZE (int num of levels)
+  public void filter(int kind) {
+    switch (kind) {
+
+      case BLACK_WHITE: 
+        filter(BLACK_WHITE, 0.5f);
+        break;
+        
+      case GRAYSCALE:
+        // Converts RGB image data into grayscale using 
+        // weighted RGB components, and keeps alpha channel intact.
+        // [toxi 040115] 
+        for (int i = 0; i < pixels.length; i++) {
+          int col = pixels[i];
+          // luminance = 0.3*red + 0.59*green + 0.11*blue
+          // 0.30 * 256 =  77
+          // 0.59 * 256 = 151
+          // 0.11 * 256 =  28
+          int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
+          pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
+        }
+        break;
     }
   }
 
+
+  public void filter(int kind, float param) {
+    switch (kind) {
+
+      case BLACK_WHITE:  // greater than or equal to the threshold
+        int thresh = (int) (param * 255);
+        for (int i = 0; i < pixels.length; i++) {
+          int max = Math.max((pixels[i] & RED_MASK) >> 16,
+                             Math.max((pixels[i] & GREEN_MASK) >> 8,
+                                      (pixels[i] & BLUE_MASK)));
+          pixels[i] = (pixels[i] & ALPHA_MASK) | 
+            ((max < thresh) ? 0x000000 : 0xffffff);
+        }
+        break;
+
+      case GRAYSCALE:
+        filter(GRAYSCALE);
+        break;
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -338,34 +375,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public void copy(int sx1, int sy1, int sx2, int sy2, 
                    int dx1, int dy1, int dx2, int dy2) {
-    switch (image_mode) {
-      //case CORNERS: 
-      //break;
-    case CORNER: 
-      sx2 += sx1; sy2 += sy1; 
-      dx2 += dx1; dy2 += dy1; 
-      break;
-    case CENTER:
-      sx2 /= 2f; sy2 /= 2f;
-      dx2 /= 2f; dy2 /= 2f;
-      break;
-    case CENTER_RADIUS:
-      int hr, vr;
-      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
-      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
-      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
-      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
-      break;
-    }
-
-    if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-      blit_resize(this.get(sx1, sy1, sx2 - sx1, sy2 - sy1), 
-                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
-    } else {
-      blit_resize(this, sx1, sy1, sx2, sy2,
-                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
-    }
+    copy(this, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
 
@@ -374,28 +384,25 @@ public class PImage implements PConstants, Cloneable {
    */
   public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-    switch (image_mode) {
-      //case CORNERS: 
-      //break;
-    case CORNER: 
+    if (image_mode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1; sy2 += sy1; 
       dx2 += dx1; dy2 += dy1; 
-      break;
-    case CENTER:
+
+    } else if (image_mode == CENTER) {
       sx2 /= 2f; sy2 /= 2f;
       dx2 /= 2f; dy2 /= 2f;
-      break;
-    case CENTER_RADIUS:
-      int hr, vr;
-      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
-      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
-      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
-      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
-      break;
     }
 
-    blit_resize(src, sx1, sy1, sx2, sy2,
-                pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+    if ((src == this) &&
+        intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
+      // if src is me, and things intersect, make a copy of the data
+      blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1), 
+                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
+                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+    } else {
+      blit_resize(src, sx1, sy1, sx2, sy2,
+                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+    }
   }
 
 
@@ -419,39 +426,13 @@ public class PImage implements PConstants, Cloneable {
     }
   }
 
+
   /**
-   * Copy things from one area of this image to another area
+   * Blends one area of this image to another area
    */
   public void blend(int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    switch (image_mode) {
-      //case CORNERS: 
-      //break;
-    case CORNER: 
-      sx2 += sx1; sy2 += sy1; 
-      dx2 += dx1; dy2 += dy1; 
-      break;
-    case CENTER:
-      sx2 /= 2f; sy2 /= 2f;
-      dx2 /= 2f; dy2 /= 2f;
-      break;
-    case CENTER_RADIUS:
-      int hr, vr;
-      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
-      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
-      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
-      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
-      break;
-    }
-
-    if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-      blit_resize(this.get(sx1, sy1, sx2 - sx1, sy2 - sy1), 
-                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
-    } else {
-      blit_resize(this, sx1, sy1, sx2, sy2,
-                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
-    }
+    blend(this, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
@@ -460,28 +441,24 @@ public class PImage implements PConstants, Cloneable {
    */
   public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    switch (image_mode) {
-      //case CORNERS: 
-      //break;
-    case CORNER: 
+    if (image_mode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1; sy2 += sy1; 
       dx2 += dx1; dy2 += dy1; 
-      break;
-    case CENTER:
+
+    } else if (image_mode == CENTER) {
       sx2 /= 2f; sy2 /= 2f;
       dx2 /= 2f; dy2 /= 2f;
-      break;
-    case CENTER_RADIUS:
-      int hr, vr;
-      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
-      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
-      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
-      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
-      break;
     }
 
-    blit_resize(src, sx1, sy1, sx2, sy2,
-                pixels, width, height, dx1, dy1, dx2, dy2, mode);
+    if ((src == this) &&
+        intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
+      blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1), 
+                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
+                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
+    } else {
+      blit_resize(src, sx1, sy1, sx2, sy2,
+                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
+    }
   }
 
 
@@ -573,19 +550,20 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
   
-  // internal blitter/resizer/copier from toxi
-  // uses bilinear filtering if smooth() has been enabled
-  // 'mode' determines the blending mode used in the process
-
+  /**
+   * Internal blitter/resizer/copier from toxi.
+   * Uses bilinear filtering if smooth() has been enabled
+   * 'mode' determines the blending mode used in the process.
+   */
   private void blit_resize(PImage img, 
                            int srcX1, int srcY1, int srcX2, int srcY2, 
                            int[] destPixels, int screenW, int screenH, 
                            int destX1, int destY1, int destX2, int destY2,
                            int mode) {
-    if (srcX1<0) srcX1=0;
-    if (srcY1<0) srcY1=0;
-    if (srcX2>=img.width) srcX2=img.width-1;
-    if (srcY2>=img.width) srcY2=img.height-1;
+    if (srcX1 < 0) srcX1 = 0;
+    if (srcY1 < 0) srcY1 = 0;
+    if (srcX2 >= img.width) srcX2 = img.width - 1;
+    if (srcY2 >= img.width) srcY2 = img.height - 1;
 
     int srcW = srcX2 - srcX1;
     int srcH = srcY2 - srcY1;
@@ -834,10 +812,15 @@ public class PImage implements PConstants, Cloneable {
     r = ((ul*((cUL&RED_MASK)>>16) + ll*((cLL&RED_MASK)>>16) + 
           ur*((cUR&RED_MASK)>>16) + lr*((cLR&RED_MASK)>>16))
          << PREC_RED_SHIFT) & RED_MASK;
-    g = ( (ul*(cUL&GREEN_MASK) + ll*(cLL&GREEN_MASK) +
-           ur*(cUR&GREEN_MASK) + lr*(cLR&GREEN_MASK)) >>> PRECISIONB) & GREEN_MASK;
+
+    g = ((ul*(cUL&GREEN_MASK) + ll*(cLL&GREEN_MASK) +
+          ur*(cUR&GREEN_MASK) + lr*(cLR&GREEN_MASK)) 
+         >>> PRECISIONB) & GREEN_MASK;
+
     b = (ul*(cUL&BLUE_MASK) + ll*(cLL&BLUE_MASK) + 
-         ur*(cUR&BLUE_MASK) + lr*(cLR&BLUE_MASK)) >>> PRECISIONB;
+         ur*(cUR&BLUE_MASK) + lr*(cLR&BLUE_MASK))
+           >>> PRECISIONB;
+
     a = ((ul*((cUL&ALPHA_MASK)>>>24) + ll*((cLL&ALPHA_MASK)>>>24) + 
           ur*((cUR&ALPHA_MASK)>>>24) + lr*((cLR&ALPHA_MASK)>>>24)) 
          << PREC_ALPHA_SHIFT) & ALPHA_MASK;
@@ -1063,27 +1046,6 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  /*
-  // why is this code here? me confused [fry]
-  public void save(OutputStream output, int type) {
-    try {
-      if (type == TARGA) {
-        write_targa(output, pixels, width, height);
-
-      } else if (type == TIFF) {
-        write_tiff(output, pixels, width, height);
-
-      } else {
-        System.err.println("can't save image as that type");
-      }
-    } catch (IOException e) {
-      System.err.println("error while trying to save image");
-      e.printStackTrace();
-    }
-  }
-  */
-
-
   public void smooth() {
     smooth = true;
   }
@@ -1093,9 +1055,11 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  /**
+   * mode is one of CORNERS, CORNER, CENTER
+   */
   public void imageMode(int mode) {
     image_mode = mode;
   }
-
 }
 

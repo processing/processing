@@ -45,7 +45,7 @@ public class PApplet extends Applet
 
   public PGraphics g;
 
-  static final boolean THREAD_DEBUG = true;
+  static final boolean THREAD_DEBUG = false; //true;
 
   public int pixels[];
 
@@ -231,16 +231,16 @@ public class PApplet extends Applet
   // ------------------------------------------------------------
 
 
-  void setup() {
+  public void setup() {
   }
 
 
-  void draw() {
+  public void draw() {
     drawMethod = false;
   }
 
 
-  void loop() {
+  public void loop() {
     loopMethod = false;
   }
 
@@ -2039,8 +2039,13 @@ public class PApplet extends Applet
   }
 
 
-  public void toGrayscale() {
-    g.toGrayscale();
+  public void filter(int kind) {
+    g.filter(kind);
+  }
+
+
+  public void filter(int kind, float param) {
+    g.filter(kind, param);
   }
 
 

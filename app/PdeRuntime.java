@@ -92,7 +92,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-Djava.library.path=" + sketch.libraryPath,  // might be ""
           "-cp",
           sketch.classPath,
-          "PApplet",
+          "processing.core.PApplet",
           PApplet.EXTERNAL_FLAG + location,
           sketch.mainClassName
         };
@@ -143,7 +143,6 @@ public class PdeRuntime implements PdeMessageConsumer {
           //System.out.println("draw mode");
           while ((applet.frame != 1) && (!applet.finished)) {
             try {
-              //System.out.println("waiting to complete drawing");
               Thread.sleep(100);
             } catch (InterruptedException e) { }
           }
@@ -336,6 +335,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
 
   public void message(String s) {
+    //System.err.println("M" + s.length() + ":" + s);
     // this is PApplet sending a message (via System.out.println)
     // that signals that the applet has been quit.
     if (s.indexOf(PApplet.EXTERNAL_QUIT) == 0) {
