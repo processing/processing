@@ -7,6 +7,39 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0072
+
+bug fix release, most major being that the code folder should now be
+working again, and error messages from libraries may have an easier
+time of propogating upwards.
+
+BUGS
+
+- code folder works again.
+
+- the code folder hanging bug *may* have been fixed.. either by a fix
+  from francis li, or by the error message changes by me. keep your
+  fingers crossed.. 
+
+- loadImage() is broken on some machines.. a small hack has been
+  introduced to get around this, hopefully it doesn't break for
+  everyone else. as a result of the hack, the 'cache' setting on
+  images is temporarily ignored.
+
+- hint()/unhint() settings were static variables, meaning that they'd
+  stick around per processing session, which is too long. 
+
+
+API & STUFF
+
+- g.m00, g.m01 etc are now public
+
+- error message shows up when a library isn't available
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0071 
 
 bug fix release, clears up several things with text and other tidbits 
