@@ -643,6 +643,10 @@ public class PGraphics extends PImage implements PConstants {
                      x, y);
       }
       break;
+
+    default:
+      throw new RuntimeException("bezierVertex() can only be used with " +
+                                 "LINE_LOOP and POLYGON shapes");
     }
   }
 
@@ -804,11 +808,11 @@ public class PGraphics extends PImage implements PConstants {
       y1 -= vradius;
     }
 
-    draw_rect(x1, y1, x2, y2);
+    rectImpl(x1, y1, x2, y2);
   }
 
 
-  protected void draw_rect(float x1, float y1, float x2, float y2) {
+  protected void rectImpl(float x1, float y1, float x2, float y2) {
     // TODO write rect drawing function
   }
 
@@ -845,11 +849,11 @@ public class PGraphics extends PImage implements PConstants {
       y = b - d/2f;
     }
 
-    draw_ellipse(x, y, w, h);
+    ellipseImpl(x, y, w, h);
   }
 
 
-  protected void draw_ellipse(float x, float y, float w, float h) {
+  protected void ellipseImpl(float x, float y, float w, float h) {
     // TODO draw an ellipse
   }
 
@@ -893,12 +897,12 @@ public class PGraphics extends PImage implements PConstants {
       while (stop < start) stop += TWO_PI;
     }
 
-    draw_arc(start, stop, x, y, w, h);
+    arcImpl(start, stop, x, y, w, h);
   }
 
 
-  protected void draw_arc(float start, float stop,
-                          float x, float y, float w, float h) {
+  protected void arcImpl(float start, float stop,
+                         float x, float y, float w, float h) {
   }
 
 
@@ -1338,57 +1342,52 @@ public class PGraphics extends PImage implements PConstants {
   // IMAGE
 
 
-
-  protected void draw_image(PImage image,
-                            float x1, float y1, float x2, float y2,
-                            int u1, int v1, int u2, int v2) {
-    // TODO blit an image to the screen
-  }
-
-
   public void image(PImage image, float x, float y) {
-    if ((imageMode == CORNER) ||
-        (imageMode == CORNERS)) {
-      draw_image(image,
-                 x, y, x + image.width, y + image.height,
-                 0, 0, image.width, image.height);
-
-    } else if ((imageMode == CENTER) ||
-               (imageMode == CENTER_RADIUS)) {
-      draw_image(image,
-                 x - image.width/2.0f, y - image.height/2.0f,
-                 x + image.width/2.0f, y + image.height/2.0f,
-                 0, 0, image.width, image.height);
-    }
+      imageImpl(image,
+                x, y, image.width, image.height,
+                0, 0, image.width, image.height);
   }
 
 
   public void image(PImage image,
-                    float a, float b, float c, float d) {
-    image(image, a, b, c, d, 0, 0, image.width, image.height);
+                    float x, float y, float c, float d) {
+    image(image, x, y, c, d, 0, 0, image.width, image.height);
   }
 
 
+  /**
+   * u, v coordinates are always based on image space location,
+   * regardless of the current textureMode().
+   */
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
     if (imageMode == CORNER) {
-      draw_image(image,
-                 a, b, a+c, b+d,
-                 u1, v1, u2, v2);
+      imageImpl(image,
+                a, b, c, d,
+                u1, v1, u2, v2);
 
     } else if (imageMode == CORNERS) {
-      draw_image(image,
-                 a, b, c, d,
-                 u1, v1, u2, v2);
+      imageImpl(image,
+                a, b, c - a, d - b,
+                u1, v1, u2, v2);
 
+      /*
     } else if ((imageMode == CENTER) ||
                (imageMode == CENTER_RADIUS)) {
-      draw_image(image,
-                 a - c/2f, b - d/2f,
-                 a + c/2f, b + d/2f,
-                 u1, v1, u2, v2);
+      imageImpl(image,
+                a - c/2f, b - d/2f,
+                a + c/2f, b + d/2f,
+                u1, v1, u2, v2);
+      */
     }
+  }
+
+
+  protected void imageImpl(PImage image,
+                           float x, float y, float w, float h,
+                           int u1, int v1, int u2, int v2) {
+    // TODO blit an image to the screen
   }
 
 
@@ -1585,8 +1584,11 @@ public class PGraphics extends PImage implements PConstants {
    * And they might kick our a-- for the confusion.
    */
   public void rotate(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+
+    float c = (float) Math.cos(angle);
+    float s = (float) Math.sin(angle);
+
     applyMatrix(c, -s, 0,  s, c, 0);
   }
 
@@ -1673,7 +1675,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-
   /**
    * Apply a 3x2 affine transformation matrix.
    */
@@ -1705,11 +1706,21 @@ public class PGraphics extends PImage implements PConstants {
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    int big = (int) abs(max(max(abs(m00), abs(m01), abs(m02)),
-                            max(abs(m10), abs(m11), abs(m12))));
+    float big = Math.abs(m00);
+    if (Math.abs(m01) > big) big = Math.abs(m01);
+    if (Math.abs(m02) > big) big = Math.abs(m02);
+    if (Math.abs(m10) > big) big = Math.abs(m10);
+    if (Math.abs(m11) > big) big = Math.abs(m11);
+    if (Math.abs(m12) > big) big = Math.abs(m12);
+
+    // avoid infinite loop
+    if (Float.isNaN(big) || Float.isInfinite(big)) {
+      big = 8; // set to something arbitrary
+    }
 
     int d = 1;
-    while ((big /= 10) != 0) d++;  // cheap log()
+    int bigi = (int) big;
+    while ((bigi /= 10) != 0) d++;  // cheap log()
 
     System.out.println(PApplet.nfs(m00, d, 4) + " " +
                        PApplet.nfs(m01, d, 4) + " " +
@@ -1726,7 +1737,7 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // CAMERA
+  // CAMERA (none are supported in 2D)
 
 
   public void cameraMode(int mode) {
@@ -2309,7 +2320,7 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // PIXELS
+  // COLOR MANIPULATION
 
   // these functions are really slow, but easy to use
   // if folks are advanced enough to want something faster,
@@ -2469,48 +2480,48 @@ public class PGraphics extends PImage implements PConstants {
   // also might be faster that way. hmm.
 
 
-  private final float mag(float a, float b) {
-    return (float)Math.sqrt(a*a + b*b);
-  }
+  //private final float mag(float a, float b) {
+  //return (float)Math.sqrt(a*a + b*b);
+  //}
 
-  private final float mag(float a, float b, float c) {
-    return (float)Math.sqrt(a*a + b*b + c*c);
-  }
+  //private final float mag(float a, float b, float c) {
+  //return (float)Math.sqrt(a*a + b*b + c*c);
+  //}
 
-  private final float max(float a, float b) {
-    return (a > b) ? a : b;
-  }
+  //private final float max(float a, float b) {
+  //return (a > b) ? a : b;
+  //}
 
-  private final float max(float a, float b, float c) {
-    return Math.max(a, Math.max(b, c));
-  }
+  //private final float max(float a, float b, float c) {
+  //return Math.max(a, Math.max(b, c));
+  //}
 
-  private final float sq(float a) {
-    return a*a;
-  }
+  //private final float sq(float a) {
+  //return a*a;
+  //}
 
-  private final float sqrt(float a) {
-    return (float)Math.sqrt(a);
-  }
+  //private final float sqrt(float a) {
+  //return (float)Math.sqrt(a);
+  //}
 
-  private final float abs(float a) {
-    return (a < 0) ? -a : a;
-  }
+  //private final float abs(float a) {
+  //return (a < 0) ? -a : a;
+  //}
 
-  private final float sin(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-    return (float)Math.sin(angle);
-  }
+  //private final float sin(float angle) {
+  //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+  //return (float)Math.sin(angle);
+  //}
 
-  private final float cos(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-    return (float)Math.cos(angle);
-  }
+  //private final float cos(float angle) {
+  //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+  //return (float)Math.cos(angle);
+  //}
 
-  private final float tan(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-    return (float)Math.tan(angle);
-  }
+  //private final float tan(float angle) {
+  //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+  //return (float)Math.tan(angle);
+  //}
 
 
 
@@ -2537,5 +2548,24 @@ public class PGraphics extends PImage implements PConstants {
 
   //class Shape extends Path {
   //}
-}
 
+
+  //////////////////////////////////////////////////////////////
+
+
+  /**
+   * Cannot be used on PGraphics, use get(0, 0, width, height) first,
+   * and then mask() the image that's returned. The problem is that the
+   * results are too complicated across different implementations,
+   * and this implementation represents only a minimal speedup versus
+   * the amount of confusion it creates.
+   */
+  public void mask(int alpha[]) {
+    throw new RuntimeException("mask() cannot be used on PGraphics");
+  }
+
+
+  public void mask(PImage alpha) {
+    throw new RuntimeException("mask() cannot be used on PGraphics");
+  }
+}

@@ -6,83 +6,6 @@ package processing.core;
 
 public interface PMethods {
 
-  public void imageMode(int mode);
-
-  public void smooth();
-
-  public void noSmooth();
-
-  //
-
-  public void modified();
-
-  public void modified(int x, int y);
-
-  public void modified(int x1, int y1, int x2, int y2);
-
-  public void resetModified();  // <<<<< MORE CONSISTENT NAME NEEDED
-
-  //
-
-  public int get(int x, int y);
-
-  public PImage get(int x, int y, int w, int h);
-
-  public PImage get();
-
-  public void set(int x, int y, int c);
-
-  //
-
-  public void alpha(int alpha[]);
-
-  public void alpha(PImage alpha);
-
-  public void filter(int kind);
-
-  public void filter(int kind, float param);
-
-  public void copy(PImage src, int dx, int dy);
-
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2);
-
-  public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2);
-
-  public void blend(int sx, int sy, int dx, int dy, int mode);
-
-  public void blend(PImage src,
-                    int sx, int sy, int dx, int dy, int mode);
-
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode);
-
-  public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode);
-
-  //
-
-  /*
-  // WOULD LIKE A NICER NAME
-  static public boolean saveHeaderTIF(OutputStream output,
-                                      int width, int height);
-
-  static public boolean saveTIF(OutputStream output, int pixels[],
-                                int width, int height);
-
-  // WOULD LIKE A NICER NAME
-  static public boolean saveHeaderTGA(OutputStream output,
-                                      int width, int height);
-
-  static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height);
-  */
-
-  public void save(String filename);
-
   //
 
   public void beginFrame();
@@ -149,7 +72,7 @@ public interface PMethods {
 
   public void rect(float x1, float y1, float x2, float y2);
 
-  //protected void draw_rect(float x1, float y1, float x2, float y2);
+  //protected void rectImpl(float x1, float y1, float x2, float y2);
 
   // REMOVED public void circle(float x, float y, float radius);
 
@@ -157,7 +80,7 @@ public interface PMethods {
 
   public void ellipse(float x, float y, float hradius, float vradius);
 
-  //protected void draw_ellipse(float x, float y, float hradius, float vradius);
+  //protected void ellipseImpl(float x, float y, float hradius, float vradius);
 
   // REMOVED public void arcMode(int mode);
 
@@ -167,7 +90,7 @@ public interface PMethods {
   public void arc(float start, float stop,
                   float x, float y, float hr, float vr);
 
-  //protected void draw_arc(float start, float stop,
+  //protected void arcImpl(float start, float stop,
   //                      float x, float y, float hr, float vr);
 
   //
@@ -293,6 +216,8 @@ public interface PMethods {
   public void scale(float sx, float sy);
 
   public void scale(float x, float y, float z);
+
+  //
 
   public void push();
 
@@ -438,6 +363,116 @@ public interface PMethods {
 
   //
 
-  // color(), alpha(), red(), green(), blue(),
-  // hue(), saturation(), brightness()
+  //public final int color(int gray)
+
+  //public final int color(float gray)
+
+  //public final int color(int gray, int alpha)
+
+  //public final int color(float gray, float alpha)
+
+  //public final int color(int x, int y, int z)
+
+  //public final int color(float x, float y, float z)
+
+  //public final int color(int x, int y, int z, int a)
+
+  //public final int color(float x, float y, float z, float a)
+
+  //public final float alpha(int what)
+
+  //public final float red(int what)
+
+  //public final float green(int what)
+
+  //public final float blue(int what)
+
+  //public final float hue(int what)
+
+  //public final float saturation(int what)
+
+  //public final float brightness(int what)
+
+  //
+
+
+  public void imageMode(int mode);
+
+  public void smooth();
+
+  public void noSmooth();
+
+  //
+
+  public void loadPixels();
+
+  public void updatePixels();
+
+  public void updatePixels(int x, int y, int c, int d);
+
+  public void pixelsUpdated();
+
+  //
+
+  public int get(int x, int y);
+
+  public PImage get(int x, int y, int c, int d);
+
+  //public PImage get();  // too abstract/confusing
+
+  public void set(int x, int y, int argb);
+
+  //
+
+  public void mask(int alpha[]);
+
+  public void mask(PImage alpha);
+
+  public void filter(int kind);
+
+  public void filter(int kind, float param);
+
+  //
+
+  public void copy(PImage src, int dx, int dy);
+
+  public void copy(int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2);
+
+  public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2);
+
+  public void blend(int sx, int sy, int dx, int dy, int mode);
+
+  public void blend(PImage src,
+                    int sx, int sy, int dx, int dy, int mode);
+
+  public void blend(int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode);
+
+  public void blend(PImage src,
+                    int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode);
+
+  //
+
+  /*
+  // WOULD LIKE A NICER NAME
+  static public boolean saveHeaderTIF(OutputStream output,
+                                      int width, int height);
+
+  static public boolean saveTIF(OutputStream output, int pixels[],
+                                int width, int height);
+
+  // WOULD LIKE A NICER NAME
+  static public boolean saveHeaderTGA(OutputStream output,
+                                      int width, int height);
+
+  static public boolean saveTGA(OutputStream output, int pixels[],
+                                int width, int height);
+  */
+
+  public void save(String filename);
 }
+
