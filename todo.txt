@@ -1,7 +1,5 @@
-0054
-X disabled the debug flag (oops) in BPolygon
-X disabled code for alpha in web colors (use 0x instead if needed)
-X   make sure that fill(int a) / stroke(int a) work if an alpha is set
+0055
+X incorporated (but not yet tested) net code
 
 _ int() doesn't work inside other functions
 _   argh, need a real parser

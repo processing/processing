@@ -1,3 +1,9 @@
+0054
+X disabled the debug flag (oops) in BPolygon
+X disabled code for alpha in web colors (use 0x instead if needed)
+X   make sure that fill(int a) / stroke(int a) work if an alpha is set
+
+
 0053
 X add smooth() noSmooth() to the keywords
 X image of 256x256 doesn't draw the last line of pixels
