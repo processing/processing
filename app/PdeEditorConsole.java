@@ -31,7 +31,7 @@ public class PdeEditorConsole extends Component {
   int firstLine;
   int scrollOffset;
 
-  byte cline[] = new byte[1024];
+  byte cline[] = new byte[4096];
   byte clength;
   boolean cerror;
 
@@ -114,10 +114,10 @@ public class PdeEditorConsole extends Component {
       consoleErr = 
 	new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
 
-      /*
-      System.setOut(consoleOut);
-      System.setErr(consoleErr);
-      */
+      if (PdeBase.getBoolean("editor.console.enabled", true)) {
+	System.setOut(consoleOut);
+	System.setErr(consoleErr);
+      }
     }
 
     addMouseListener(new MouseAdapter() {
@@ -205,14 +205,14 @@ public class PdeEditorConsole extends Component {
     if (offscreen == null) return;
     Graphics g = offscreen.getGraphics();
     /*
-    if (font == null) {
+      if (font == null) {
       font = PdeBase.getFont("editor.console.font", 
-			       new Font("Monospaced", Font.PLAIN, 11));
+      new Font("Monospaced", Font.PLAIN, 11));
       //font = new Font("SansSerif", Font.PLAIN, 10);
       g.setFont(font);
       metrics = g.getFontMetrics();
       ascent = metrics.getAscent();
-    }
+      }
     */
     g.setFont(font);
 
@@ -256,48 +256,50 @@ public class PdeEditorConsole extends Component {
   }
 
   public void write(byte b[], int offset, int length, boolean err) {
-    if ((clength > 0) && (err != cerror)) {
-      // advance the line because switching between err/out streams
-      message(new String(cline, 0, clength), cerror, true);
-      clength = 0;
-    }
-    int last = offset+length - 1;
-    // starting a new line, so set its output type to out or err
-    if (clength == 0) cerror = err;
-    for (int i = offset; i <= last; i++) {
-      if (b[i] == CR) {  // mac CR or win CRLF
-	if ((i != last) && (b[i+1] == LF)) {
-	  // if windows CRLF, skip the LF too
-	  i++;
-	}
+    synchronized (cline) {
+      if ((clength > 0) && (err != cerror)) {
+	// advance the line because switching between err/out streams
 	message(new String(cline, 0, clength), cerror, true);
 	clength = 0;
-
-      } else if (b[i] == LF) {  // unix LF only
-	message(new String(cline, 0, clength), cerror, true);
-	clength = 0;
-
-      } else if (b[i] == TAB) {
-	if (clength + TAB_SIZE > cline.length) {
-	  byte temp[] = new byte[clength * 2];
-	  System.arraycopy(cline, 0, temp, 0, clength);
-	  cline = temp;
-	}
-	for (int m = 0; m < TAB_SIZE; m++) {
-	  cline[clength++] = ' ';
-	}
-
-      } else {
-	if (cline.length == clength) {
-	  byte temp[] = new byte[clength * 2];
-	  System.arraycopy(cline, 0, temp, 0, clength);
-	  cline = temp;
-	}
-	cline[clength++] = b[i];
       }
-    }
-    if (clength != 0) {
-      message(new String(cline, 0, clength), cerror, false);
+      int last = offset+length - 1;
+      // starting a new line, so set its output type to out or err
+      if (clength == 0) cerror = err;
+      for (int i = offset; i <= last; i++) {
+	if (b[i] == CR) {  // mac CR or win CRLF
+	  if ((i != last) && (b[i+1] == LF)) {
+	    // if windows CRLF, skip the LF too
+	    i++;
+	  }
+	  message(new String(cline, 0, clength), cerror, true);
+	  clength = 0;
+
+	} else if (b[i] == LF) {  // unix LF only
+	  message(new String(cline, 0, clength), cerror, true);
+	  clength = 0;
+
+	} else if (b[i] == TAB) {
+	  if (clength + TAB_SIZE > cline.length) {
+	    byte temp[] = new byte[clength * 2];
+	    System.arraycopy(cline, 0, temp, 0, clength);
+	    cline = temp;
+	  }
+	  for (int m = 0; m < TAB_SIZE; m++) {
+	    cline[clength++] = ' ';
+	  }
+
+	} else {
+	  if (cline.length == clength) {
+	    byte temp[] = new byte[clength * 2];
+	    System.arraycopy(cline, 0, temp, 0, clength);
+	    cline = temp;
+	  }
+	  cline[clength++] = b[i];
+	}
+      }
+      if (clength != 0) {
+	message(new String(cline, 0, clength), cerror, false);
+      }
     }
   }
 
