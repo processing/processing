@@ -200,10 +200,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   // OLD_GRAPHICS
 
-  protected PPolygon polygon;     // general polygon to use for shape
-  PPolygon fpolygon;    // used to fill polys for tri or quad strips
+  //protected PPolygon polygon;     // general polygon to use for shape
+  //PPolygon fpolygon;    // used to fill polys for tri or quad strips
   PPolygon spolygon;    // stroke/line polygon
-  float svertices[][];  // temp vertices used for stroking end of poly
+  //float svertices[][];  // temp vertices used for stroking end of poly
 
   //PPolygon tpolygon;    // for calculating concave/convex
   //int TPOLYGON_MAX_VERTICES = 512;
@@ -325,7 +325,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   public PFont textFont;
 
   // used by PFont/PGraphics.. forces higher quality texture rendering
-  boolean drawing_text = false;  // used by PFont
+  //boolean drawing_text = false;  // used by PFont
 
 
   //////////////////////////////////////////////////////////////
@@ -554,194 +554,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // LIGHTS AND COLOR
-
-  /**
-   * lighting calculation of final colour.
-   * for now, ip is being done in screen space (transformed),
-   * because the normals are also being transformed
-   *
-   * @param  r        red component of object's colour
-   * @param  g        green of object's colour
-   * @param  b        blue of object's colour
-   * @param  ix       x coord of intersection
-   * @param  iy       y coord of intersection
-   * @param  iz       z coord of intersection
-   * @param  nx       x coord of normal vector
-   * @param  ny       y coord of normal
-   * @param  nz       z coord of normal
-   * @param  target   float array to store result
-   * @param  toffset  starting index in target array
-   */
-  private void calc_lighting(float r, float g, float b,
-                             float ix, float iy, float iz,
-                             float nx, float ny, float nz,
-                             float target[], int toffset) {
-    //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
-
-    if (!lights) {
-      target[toffset + 0] = r;
-      target[toffset + 1] = g;
-      target[toffset + 2] = b;
-      return;
-    }
-
-    float nlen = mag(nx, ny, nz);
-    if (nlen != 0) {
-      nx /= nlen; ny /= nlen; nz /= nlen;
-    }
-
-    // get direction based on inverse of perspective(?) matrix
-    //screenToWorld.getDirection(x + 0.5, y + 0.5, d);
-
-    /*
-      // q in screen space
-      double qs[] = new double[4];
-      qs[0] = x;
-      qs[1] = y;
-      qs[2] = 0;
-      qs[3] = 1;
-
-      // q in world space
-      // transformed 4 vector (homogenous coords)
-      double qw[] = new double[4];
-      multiply(mat, qs, qw);
-      dw.x = qw[0] * mat[3][2] - qw[3] * mat[0][2];
-      dw.y = qw[1] * mat[3][2] - qw[3] * mat[1][2];
-      dw.z = qw[2] * mat[3][2] - qw[3] * mat[2][2];
-    */
-    // multiply (inverse matrix) x (x y 0 1) = qw
-
-    /*
-      // CALC OF DIRECTION OF EYE TO SCREEN/OBJECT
-      // !!! don't delete this code.. used for specular
-      float qwx = i00*sx + i01*sy + i03;
-      float qwy = i10*sx + i11*sy + i13;
-      float qwz = i20*sx + i21*sy + i23;
-      float qww = i30*sx + i31*sy + i33;
-
-      float dwx = qwx*i32 - qww*i02;
-      float dwy = qwy*i32 - qww*i12;
-      float dwz = qwz*i32 - qww*i22;
-    */
-
-    //double kdr = material.kDiffuseReflection;   == 1
-    //double ksr = material.kSpecularReflection;  == 0
-    //double e = material.shadingExponent;        == 0
-    //RgbColor Cmat = material.color;             == r, g, b
-
-    // Direction of light i from ip, Li = L[i].position - ip
-    //Vector3 Li = new Vector3();
-
-    // Radiance of a light source, a color
-    //RgbColor Ii = new RgbColor();
-
-    // The halfway vector
-    //Vector3 Hi = new Vector3();
-
-    //float N_dot_Li, N_dot_Hi, N_dot_Hi_e;
-
-    float diffuse_r = 0; // = lights[0].r;  // sum in ambient term
-    float diffuse_g = 0; // = lights[0].g;
-    float diffuse_b = 0; // = lights[0].b;
-
-    //float specular_r = 0;
-    //float specular_g = 0;
-    //float specular_b = 0;
-
-    for (int i = 1; i < MAX_LIGHTS; i++) {
-      if (lightType[i] == DISABLED) break;
-
-      //Light light = (Light) list.value;
-      //Ii = light.color;
-
-      //Vector3.subtract(light.position, ip, Li);
-      //Li.normalize();
-      // li is the vector of the light as it points towards the point
-      // at which it intersects the object
-      float lix = lightX[i] - ix;
-      float liy = lightY[i] - iy;
-      float liz = lightZ[i] - iz;
-      float m = mag(lix, liy, liz);
-      if (m != 0) {
-        lix /= m; liy /= m; liz /= m;
-      }
-      float n_dot_li = (nx*lix + ny*liy + nz*liz);
-      //N_dot_Li = Vector3.dotProduct(N, Li);
-
-      //if (N_dot_Li > 0.0) {
-      if (n_dot_li > 0) {
-        //System.out.println("n_dot_li = " + n_dot_li);
-        diffuse_r += lightR[i] * n_dot_li;
-        diffuse_g += lightG[i] * n_dot_li;
-        diffuse_b += lightB[i] * n_dot_li;
-
-        /*
-          // not doing any specular for now
-
-          //Vector3.subtract(light.position, direction, Hi);
-          float hix = lights[i].x - dwx;
-          float hiy = lights[i].y - dwy;
-          float hiz = lights[i].z - dwz;
-          float n_dot_hi = (nx*hix + ny*hiy + nz*hiz);
-          //N_dot_Hi = Vector3.dotProduct(N, Hi);
-          if (n_dot_hi > 0) {
-          //N_dot_Hi_e = pow(N_dot_Hi / Hi.getLength(), e);
-          // since e == 1 for now, this can be simplified
-          //float n_dot_hi_e = pow(n_dot_hi / sqrt(hix*hix + hiy*hiy + hiz*hiz), e);
-          float n_dot_hi_e = n_dot_hi /
-          sqrt(hix*hix + hiy*hiy + hiz*hiz);
-          specular_r += lights[i].r * n_dot_hi_e;
-          specular_g += lights[i].g * n_dot_hi_e;
-          specular_b += lights[i].b * n_dot_hi_e;
-          //specular_r += Ii.r * N_dot_Hi_e;
-          //specular_g += Ii.g * N_dot_Hi_e;
-          //specular_b += Ii.b * N_dot_Hi_e;
-          }
-        */
-      }
-    }
-    // specular reflection (ksr) is set to zero, so simplify
-    //I.r = (kdr * Cmat.r * diffuse_r) + (ksr * specular_r);
-    //I.g = (kdr * Cmat.g * diffuse_g) + (ksr * specular_g);
-    //I.b = (kdr * Cmat.b * diffuse_b) + (ksr * specular_b);
-
-    //System.out.println(r + " " + g + " " + b + "  " +
-    //               diffuse_r + " " + diffuse_g + " " + diffuse_b);
-
-    // TODO ** this sucks! **
-    //System.out.println(lights[0].r + " " + lights[0].g + " " +
-    //               lights[0].b);
-
-    target[toffset+0] = lightR[0] + (r * diffuse_r);
-    target[toffset+1] = lightG[0] + (g * diffuse_g);
-    target[toffset+2] = lightB[0] + (b * diffuse_b);
-
-    if (target[toffset+0] > ONE) target[toffset+0] = ONE;
-    if (target[toffset+1] > ONE) target[toffset+1] = ONE;
-    if (target[toffset+2] > ONE) target[toffset+2] = ONE;
-
-    //if (calc1) {
-    //calcR1 = lights[0].r + (r * diffuse_r); if (calcR1 > 1) calcR1 = 1;
-    //calcG1 = lights[0].g + (g * diffuse_g); if (calcG1 > 1) calcG1 = 1;
-    //calcB1 = lights[0].b + (b * diffuse_b); if (calcB1 > 1) calcB1 = 1;
-
-    //System.out.println(255*calcR1 + " " + 255*calcG1 + " " + 255*calcB1);
-    //} else {
-    //calcR2 = lights[0].r + (r * diffuse_r); if (calcR2 > 1) calcR2 = 1;
-    //calcG2 = lights[0].g + (g * diffuse_g); if (calcG2 > 1) calcG2 = 1;
-    //calcB2 = lights[0].b + (b * diffuse_b); if (calcB2 > 1) calcB2 = 1;
-    //System.out.println(255*calcR2 + " " + 255*calcG2 + " " + 255*calcB2);
-    //}
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
   // SHAPES
 
   /**
-   * start a new shape of type POLYGON
+   * Start a new shape of type POLYGON
    */
   public void beginShape() {
     beginShape(POLYGON);
@@ -749,14 +565,13 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   /**
-   * start a new shape
+   * Start a new shape.
    *
-   * @param  kind  indicates shape type
+   * @param kind indicates shape type
    */
   public void beginShape(int kind) {
     shape = kind;
 
-    //if (hints[NEW_GRAPHICS]) {
     shape_index = shape_index + 1;
     if (shape_index == -1) {
       shape_index = 0;
@@ -777,18 +592,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       triangle.reset();
       triangleCount = 0;
     }
-
-    /*
-    } else {  // OLD_GRAPHICS
-      polygon.reset(0);
-      fpolygon.reset(4);
-      spolygon.reset(4);
-
-      //texture = false;
-      //textureImage = null;
-      polygon.interpUV = false;
-    }
-    */
     textureImage = null;
 
     spline_vertex_index = 0;
@@ -798,6 +601,36 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     strokeChanged = false;
     fillChanged = false;
     normalChanged = false;
+  }
+
+
+  /**
+   * Sets the current normal. Mostly will apply to vertices
+   * inside a beginShape/endShape block.
+   */
+  public void normal(float nx, float ny, float nz) {
+    // if drawing a shape and the normal hasn't changed yet,
+    // then need to set all the normal for each vertex so far
+    if ((shape != 0) && !normalChanged) {
+      for (int i = vertex_start; i < vertex_end; i++) {
+        vertices[i][NX] = normalX;
+        vertices[i][NY] = normalY;
+        vertices[i][NZ] = normalZ;
+      }
+      normalChanged = true;
+    }
+    normalX = nx;
+    normalY = ny;
+    normalZ = nz;
+  }
+
+
+  /**
+   * set texture mode to either IMAGE_SPACE (more intuitive
+   * for new users) or NORMAL_SPACE (better for advanced chaps)
+   */
+  public void textureMode(int mode) {
+    this.textureMode = mode;
   }
 
 
@@ -829,114 +662,38 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  /**
-   * set texture mode to either IMAGE_SPACE (more intuitive
-   * for new users) or NORMAL_SPACE (better for advanced chaps)
-   */
-  public void textureMode(int mode) {
-    this.textureMode = mode;
-  }
-
-
-  /**
-   * set UV coords for the next vertex in the current shape.
-   * this is ugly as its own fxn, and will almost always be
-   * coincident with a call to vertex, so it's being moved
-   * to be an optional param of and overloaded vertex()
-   *
-   * @param  u  U coordinate (X coord in image 0<=X<=image width)
-   * @param  v  V coordinate (Y coord in image 0<=Y<=image height)
-   */
-  protected void vertex_texture(float u, float v) {
-    if (textureImage == null) {
-      message(PROBLEM, "gotta use texture() " +
-              "after beginShape() and before vertexTexture()");
-      return;
-    }
-    if (textureMode == IMAGE_SPACE) {
-      u /= (float) textureImage.width;
-      v /= (float) textureImage.height;
-    }
-
-    textureU = u;
-    textureV = v;
-
-    if (textureU < 0) textureU = 0;
-    else if (textureU > ONE) textureU = ONE;
-
-    if (textureV < 0) textureV = 0;
-    else if (textureV > ONE) textureV = ONE;
-  }
-
-
-  /**
-   * Sets the current normal. Mostly will apply to vertices
-   * inside a beginShape/endShape block.
-   */
-  public void normal(float nx, float ny, float nz) {
-    // if drawing a shape and the normal hasn't changed yet,
-    // then need to set all the normal for each vertex so far
-    if ((shape != 0) && !normalChanged) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        vertices[i][NX] = normalX;
-        vertices[i][NY] = normalY;
-        vertices[i][NZ] = normalZ;
-      }
-      normalChanged = true;
-    }
-    normalX = nx;
-    normalY = ny;
-    normalZ = nz;
-  }
-
-
   public void vertex(float x, float y) {
-    //if (polygon.redundantVertex(x, y, 0)) return;
-    //spline_vertex_index = 0;
-    setup_vertex(next_vertex(), x, y, 0);
+    setup_vertex(x, y, 0);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    //if (polygon.redundantVertex(x, y, 0)) return;
-    //spline_vertex_index = 0;
-    vertex_texture(u, v);
-    setup_vertex(next_vertex(), x, y, 0);
+    texture_vertex(u, v);
+    setup_vertex(x, y, 0);
   }
 
 
   public void vertex(float x, float y, float z) {
-    //if (polygon.redundantVertex(x, y, z)) return;
-    //spline_vertex_index = 0;
-    //unchangedZ = false;
-    //dimensions = 3;
-    setup_vertex(next_vertex(), x, y, z);
+    setup_vertex(x, y, z);
   }
 
 
   public void vertex(float x, float y, float z,
                      float u, float v) {
-    //if (polygon.redundantVertex(x, y, z)) return;
-    //spline_vertex_index = 0;
-    vertex_texture(u, v);
-    //unchangedZ = false;
-    //dimensions = 3;
-    setup_vertex(next_vertex(), x, y, z);
+    texture_vertex(u, v);
+    setup_vertex(x, y, z);
   }
 
 
-  private final float[] next_vertex() {
+  protected void setup_vertex(float x, float y, float z) {
     if (vertex_count == vertices.length) {
       float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertex_count);
       vertices = temp;
       message(CHATTER, "allocating more vertices " + vertices.length);
     }
-    return vertices[vertex_count++];
-  }
+    float vertex[] = vertices[vertex_count++];
 
-
-  private void setup_vertex(float vertex[], float x, float y, float z) {
     //if (polygon.redundantVertex(x, y, z)) return;
 
     // user called vertex(), so that invalidates anything queued
@@ -976,7 +733,38 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  private void spline_vertex(float x, float y, float z, boolean bezier) {
+  /**
+   * set UV coords for the next vertex in the current shape.
+   * this is ugly as its own fxn, and will almost always be
+   * coincident with a call to vertex, so it's being moved
+   * to be an optional param of and overloaded vertex()
+   *
+   * @param  u  U coordinate (X coord in image 0<=X<=image width)
+   * @param  v  V coordinate (Y coord in image 0<=Y<=image height)
+   */
+  protected void texture_vertex(float u, float v) {
+    if (textureImage == null) {
+      message(PROBLEM, "gotta use texture() " +
+              "after beginShape() and before vertex()");
+      return;
+    }
+    if (textureMode == IMAGE_SPACE) {
+      u /= (float) textureImage.width;
+      v /= (float) textureImage.height;
+    }
+
+    textureU = u;
+    textureV = v;
+
+    if (textureU < 0) textureU = 0;
+    else if (textureU > ONE) textureU = ONE;
+
+    if (textureV < 0) textureV = 0;
+    else if (textureV > ONE) textureV = ONE;
+  }
+
+
+  protected void spline_vertex(float x, float y, float z, boolean bezier) {
     // allocate space for the spline vertices
     // to improve processing applet load times, don't allocate until actual use
     if (spline_vertex == null) {
@@ -1493,14 +1281,12 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   protected final void add_line(int a, int b) {
-
     if (lineCount == lines.length) {
       int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
       System.arraycopy(lines, 0, temp, 0, lineCount);
       lines = temp;
       message(CHATTER, "allocating more lines " + lines.length);
     }
-
     lines[lineCount][PA] = a;
     lines[lineCount][PB] = b;
     lines[lineCount][LI] = -1;
@@ -1511,14 +1297,12 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   protected final void add_triangle(int a, int b, int c) {
-
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
       triangles = temp;
       message(CHATTER, "allocating more triangles " + triangles.length);
     }
-
     triangles[triangleCount][VA] = a;
     triangles[triangleCount][VB] = b;
     triangles[triangleCount][VC] = c;
@@ -1589,16 +1373,13 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  //////////////////////////////////////////////////////////////
 
-  // GEOMETRY STUFF
-
-
-  // triangulate the current polygon
+  /**
+   * triangulate the current polygon.
+   * simple ear clipping polygon triangulation adapted
+   * from code by john w. ratcliff (jratcliff at verant.com)
+   */
   private void triangulate_polygon() {
-
-    // simple ear clipping polygon triangulation
-    // addapted from code by john w. ratcliff (jratcliff@verant.com)
 
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0.0f;
@@ -1607,23 +1388,20 @@ public class PGraphics extends PImage implements PMethods, PConstants {
                vertices[p][X] * vertices[q][Y]);
     }
 
-    // then we sort the vertices so they are always in a counterclockwise order
+    // then sort the vertices so they are always in a counterclockwise order
     int j = 0;
-    if ( 0.0f < area ){
-      // def <
+    //if (0.0f < area) {  // def <
+    if (area > 0) {
       for (int i = vertex_start; i < vertex_end; i++) {
         j = i - vertex_start;
         vertex_order[j] = i;
       }
-
     } else {
-
       for (int i = vertex_start; i < vertex_end; i++) {
         j = i - vertex_start;
         vertex_order[j] = (vertex_end - 1) - j;
       }
     }
-
 
     // remove vc-2 Vertices, creating 1 triangle every time
     int vc = vertex_end - vertex_start;
@@ -1638,47 +1416,46 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       }
 
       // get 3 consecutive vertices <u,v,w>
-      int u = v ; if (vc <= u) u = 0; // previous
-      v = u+1; if (vc <= v) v = 0;    // current
-      int w = v+1; if (vc <= w) w = 0;  // next
+      int u = v ; if (vc <= u) u = 0;    // previous
+      v = u + 1; if (vc <= v) v = 0;     // current
+      int w = v + 1; if (vc <= w) w = 0; // next
 
       // triangle A B C
-      float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
+      //float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
 
-      Ax =  -vertices[vertex_order[u]][X];
-      Ay =   vertices[vertex_order[u]][Y];
-      Bx =  -vertices[vertex_order[v]][X];
-      By =   vertices[vertex_order[v]][Y];
-      Cx =  -vertices[vertex_order[w]][X];
-      Cy =   vertices[vertex_order[w]][Y];
+      float Ax = -vertices[vertex_order[u]][X];
+      float Ay =  vertices[vertex_order[u]][Y];
+      float Bx = -vertices[vertex_order[v]][X];
+      float By =  vertices[vertex_order[v]][Y];
+      float Cx = -vertices[vertex_order[w]][X];
+      float Cy =  vertices[vertex_order[w]][Y];
 
       // first we check if <u,v,w> continues going ccw
-      if ( EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
+      if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
         continue;
-    }
+      }
 
       for (int p = 0; p < vc; p++) {
-
-        float ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
-        float cCROSSap, bCROSScp, aCROSSbp;
+        //float ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
+        //float cCROSSap, bCROSScp, aCROSSbp;
 
         if( (p == u) || (p == v) || (p == w) ) {
           continue;
         }
 
-        Px = -vertices[vertex_order[p]][X];
-        Py =  vertices[vertex_order[p]][Y];
+        float Px = -vertices[vertex_order[p]][X];
+        float Py =  vertices[vertex_order[p]][Y];
 
-        ax = Cx - Bx; ay = Cy - By;
-        bx = Ax - Cx; by = Ay - Cy;
-        cx = Bx - Ax; cy = By - Ay;
-        apx= Px - Ax; apy= Py - Ay;
-        bpx= Px - Bx; bpy= Py - By;
-        cpx= Px - Cx; cpy= Py - Cy;
+        float ax  = Cx - Bx;  float ay  = Cy - By;
+        float bx  = Ax - Cx;  float by  = Ay - Cy;
+        float cx  = Bx - Ax;  float cy  = By - Ay;
+        float apx = Px - Ax;  float apy = Py - Ay;
+        float bpx = Px - Bx;  float bpy = Py - By;
+        float cpx = Px - Cx;  float cpy = Py - Cy;
 
-        aCROSSbp = ax * bpy - ay * bpx;
-        cCROSSap = cx * apy - cy * apx;
-        bCROSScp = bx * cpy - by * cpx;
+        float aCROSSbp = ax * bpy - ay * bpx;
+        float cCROSSap = cx * apy - cy * apx;
+        float bCROSScp = bx * cpy - by * cpx;
 
         if ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f)) {
           snip = false;
@@ -1686,24 +1463,17 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       }
 
       if (snip) {
-        int a,b,c,s,t;
-
-        // true names of the vertices
-        a = vertex_order[u]; b = vertex_order[v]; c = vertex_order[w];
-
-        // create triangle
-        add_triangle(a, b, c);
+        add_triangle(vertex_order[u], vertex_order[v], vertex_order[w]);
 
         m++;
 
         // remove v from remaining polygon
-        for( s = v, t = v + 1; t < vc; s++, t++) {
+        for (int s = v, t = v + 1; t < vc; s++, t++) {
           vertex_order[s] = vertex_order[t];
         }
-
         vc--;
 
-        // resest error detection counter
+        // reset error detection counter
         count = 2 * vc;
       }
     }
@@ -1713,272 +1483,233 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // CONCAVE/CONVEX POLYGONS
+  // LIGHTS AND COLOR
 
+  /**
+   * lighting calculation of final colour.
+   * for now, ip is being done in screen space (transformed),
+   * because the normals are also being transformed
+   *
+   * @param  r        red component of object's colour
+   * @param  g        green of object's colour
+   * @param  b        blue of object's colour
+   * @param  ix       x coord of intersection
+   * @param  iy       y coord of intersection
+   * @param  iz       z coord of intersection
+   * @param  nx       x coord of normal vector
+   * @param  ny       y coord of normal
+   * @param  nz       z coord of normal
+   * @param  target   float array to store result
+   * @param  toffset  starting index in target array
+   */
+  private void calc_lighting(float r, float g, float b,
+                             float ix, float iy, float iz,
+                             float nx, float ny, float nz,
+                             float target[], int toffset) {
+    //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
 
-  /*
-  private boolean is_convex() {
-    float v[][] = polygon.vertices;
-    int n = polygon.vertexCount;
-    int j,k;
-    int flag = 0;
-    float z;
-    //float tol = 0.001f;
-
-    if (n < 3)
-      // ERROR: this is a line or a point, render with CONVEX
-      return true;
-
-    // iterate along border doing dot product.
-    // if the sign of the result changes, then is concave
-    for (int i=0;i<n;i++) {
-      j = (i + 1) % n;
-      k = (i + 2) % n;
-      z  = (v[j][X] - v[i][X]) * (v[k][Y] - v[j][Y]);
-      z -= (v[j][Y] - v[i][Y]) * (v[k][X] - v[j][X]);
-      if (z < 0)
-         flag |= 1;
-      else if (z > 0)
-         flag |= 2;
-      if (flag == 3)
-         return false;  // CONCAVE
+    if (!lights) {
+      target[toffset + 0] = r;
+      target[toffset + 1] = g;
+      target[toffset + 2] = b;
+      return;
     }
-    if (flag != 0)
-      return true;    // CONVEX
-    else
-      // ERROR: colinear points, self intersection
-      // treat as CONVEX
-      return true;
+
+    float nlen = mag(nx, ny, nz);
+    if (nlen != 0) {
+      nx /= nlen; ny /= nlen; nz /= nlen;
+    }
+
+    // get direction based on inverse of perspective(?) matrix
+    //screenToWorld.getDirection(x + 0.5, y + 0.5, d);
+
+    /*
+      // q in screen space
+      double qs[] = new double[4];
+      qs[0] = x;
+      qs[1] = y;
+      qs[2] = 0;
+      qs[3] = 1;
+
+      // q in world space
+      // transformed 4 vector (homogenous coords)
+      double qw[] = new double[4];
+      multiply(mat, qs, qw);
+      dw.x = qw[0] * mat[3][2] - qw[3] * mat[0][2];
+      dw.y = qw[1] * mat[3][2] - qw[3] * mat[1][2];
+      dw.z = qw[2] * mat[3][2] - qw[3] * mat[2][2];
+    */
+    // multiply (inverse matrix) x (x y 0 1) = qw
+
+    /*
+      // CALC OF DIRECTION OF EYE TO SCREEN/OBJECT
+      // !!! don't delete this code.. used for specular
+      float qwx = i00*sx + i01*sy + i03;
+      float qwy = i10*sx + i11*sy + i13;
+      float qwz = i20*sx + i21*sy + i23;
+      float qww = i30*sx + i31*sy + i33;
+
+      float dwx = qwx*i32 - qww*i02;
+      float dwy = qwy*i32 - qww*i12;
+      float dwz = qwz*i32 - qww*i22;
+    */
+
+    //double kdr = material.kDiffuseReflection;   == 1
+    //double ksr = material.kSpecularReflection;  == 0
+    //double e = material.shadingExponent;        == 0
+    //RgbColor Cmat = material.color;             == r, g, b
+
+    // Direction of light i from ip, Li = L[i].position - ip
+    //Vector3 Li = new Vector3();
+
+    // Radiance of a light source, a color
+    //RgbColor Ii = new RgbColor();
+
+    // The halfway vector
+    //Vector3 Hi = new Vector3();
+
+    //float N_dot_Li, N_dot_Hi, N_dot_Hi_e;
+
+    float diffuse_r = 0; // = lights[0].r;  // sum in ambient term
+    float diffuse_g = 0; // = lights[0].g;
+    float diffuse_b = 0; // = lights[0].b;
+
+    //float specular_r = 0;
+    //float specular_g = 0;
+    //float specular_b = 0;
+
+    for (int i = 1; i < MAX_LIGHTS; i++) {
+      if (lightType[i] == DISABLED) break;
+
+      //Light light = (Light) list.value;
+      //Ii = light.color;
+
+      //Vector3.subtract(light.position, ip, Li);
+      //Li.normalize();
+      // li is the vector of the light as it points towards the point
+      // at which it intersects the object
+      float lix = lightX[i] - ix;
+      float liy = lightY[i] - iy;
+      float liz = lightZ[i] - iz;
+      float m = mag(lix, liy, liz);
+      if (m != 0) {
+        lix /= m; liy /= m; liz /= m;
+      }
+      float n_dot_li = (nx*lix + ny*liy + nz*liz);
+      //N_dot_Li = Vector3.dotProduct(N, Li);
+
+      //if (N_dot_Li > 0.0) {
+      if (n_dot_li > 0) {
+        //System.out.println("n_dot_li = " + n_dot_li);
+        diffuse_r += lightR[i] * n_dot_li;
+        diffuse_g += lightG[i] * n_dot_li;
+        diffuse_b += lightB[i] * n_dot_li;
+
+        /*
+          // not doing any specular for now
+
+          //Vector3.subtract(light.position, direction, Hi);
+          float hix = lights[i].x - dwx;
+          float hiy = lights[i].y - dwy;
+          float hiz = lights[i].z - dwz;
+          float n_dot_hi = (nx*hix + ny*hiy + nz*hiz);
+          //N_dot_Hi = Vector3.dotProduct(N, Hi);
+          if (n_dot_hi > 0) {
+          //N_dot_Hi_e = pow(N_dot_Hi / Hi.getLength(), e);
+          // since e == 1 for now, this can be simplified
+          //float n_dot_hi_e = pow(n_dot_hi / sqrt(hix*hix + hiy*hiy + hiz*hiz), e);
+          float n_dot_hi_e = n_dot_hi /
+          sqrt(hix*hix + hiy*hiy + hiz*hiz);
+          specular_r += lights[i].r * n_dot_hi_e;
+          specular_g += lights[i].g * n_dot_hi_e;
+          specular_b += lights[i].b * n_dot_hi_e;
+          //specular_r += Ii.r * N_dot_Hi_e;
+          //specular_g += Ii.g * N_dot_Hi_e;
+          //specular_b += Ii.b * N_dot_Hi_e;
+          }
+        */
+      }
+    }
+    // specular reflection (ksr) is set to zero, so simplify
+    //I.r = (kdr * Cmat.r * diffuse_r) + (ksr * specular_r);
+    //I.g = (kdr * Cmat.g * diffuse_g) + (ksr * specular_g);
+    //I.b = (kdr * Cmat.b * diffuse_b) + (ksr * specular_b);
+
+    //System.out.println(r + " " + g + " " + b + "  " +
+    //               diffuse_r + " " + diffuse_g + " " + diffuse_b);
+
+    // TODO ** this sucks! **
+    //System.out.println(lights[0].r + " " + lights[0].g + " " +
+    //               lights[0].b);
+
+    target[toffset+0] = lightR[0] + (r * diffuse_r);
+    target[toffset+1] = lightG[0] + (g * diffuse_g);
+    target[toffset+2] = lightB[0] + (b * diffuse_b);
+
+    if (target[toffset+0] > ONE) target[toffset+0] = ONE;
+    if (target[toffset+1] > ONE) target[toffset+1] = ONE;
+    if (target[toffset+2] > ONE) target[toffset+2] = ONE;
+
+    //if (calc1) {
+    //calcR1 = lights[0].r + (r * diffuse_r); if (calcR1 > 1) calcR1 = 1;
+    //calcG1 = lights[0].g + (g * diffuse_g); if (calcG1 > 1) calcG1 = 1;
+    //calcB1 = lights[0].b + (b * diffuse_b); if (calcB1 > 1) calcB1 = 1;
+
+    //System.out.println(255*calcR1 + " " + 255*calcG1 + " " + 255*calcB1);
+    //} else {
+    //calcR2 = lights[0].r + (r * diffuse_r); if (calcR2 > 1) calcR2 = 1;
+    //calcG2 = lights[0].g + (g * diffuse_g); if (calcG2 > 1) calcG2 = 1;
+    //calcB2 = lights[0].b + (b * diffuse_b); if (calcB2 > 1) calcB2 = 1;
+    //System.out.println(255*calcR2 + " " + 255*calcG2 + " " + 255*calcB2);
+    //}
   }
 
-
-  // triangulate the current polygon
-  private void concave_render() {
-    // WARNING: code is not in optimum form
-    // local initiations of some variables are made to
-    // keep the code modular and easy to integrate
-    // restet triangle
-    float vertices[][] = polygon.vertices;
-
-    if (tpolygon == null) {
-      // allocate on first use, rather than slowing
-      // the startup of the class.
-      tpolygon = new PPolygon(this);
-      tpolygon_vertex_order = new int[TPOLYGON_MAX_VERTICES];
-    }
-    tpolygon.reset(3);
-
-    // copy render parameters
-
-    if (textureImage != null) {
-      tpolygon.texture(polygon.timage);
-    }
-
-    tpolygon.interpX = polygon.interpX;
-    tpolygon.interpZ = polygon.interpZ;
-    tpolygon.interpUV = polygon.interpUV;
-    tpolygon.interpRGBA = polygon.interpRGBA;
-
-    // simple ear clipping polygon triangulation
-    // addapted from code by john w. ratcliff (jratcliff@verant.com)
-
-    // 1 - first we check if the polygon goes CW or CCW
-    // CW-CCW ordering adapted from code by
-    //        Joseph O'Rourke orourke@cs.smith.edu
-    // 1A - we start by finding the lowest-right most vertex
-
-    boolean ccw = false; // clockwise
-
-    int n = polygon.vertexCount;
-    int mm; // postion for LR vertex
-    float min[] = new float[2];
-
-    min[X] = vertices[0][X];
-    min[Y] = vertices[0][Y];
-    mm = 0;
-
-    for(int i = 0; i < n; i++ ) {
-      if( (vertices[i][Y] < min[Y]) ||
-          ( (vertices[i][Y] == min[Y]) && (vertices[i][X] > min[X]) )
-          ) {
-        mm = i;
-        min[X] = vertices[mm][X];
-        min[Y] = vertices[mm][Y];
-      }
-    }
-
-    // 1B - now we compute the cross product of the edges of this vertex
-    float cp;
-    int mm1;
-
-    // just for renaming
-    float a[] = new float[2];
-    float b[] = new float[2];
-    float c[] = new float[2];
-
-    mm1 = (mm + (n-1)) % n;
-
-    // assign a[0] to point to poly[m1][0] etc.
-    for(int i = 0; i < 2; i++ ) {
-      a[i] = vertices[mm1][i];
-      b[i] = vertices[mm][i];
-      c[i] = vertices[(mm+1)%n][i];
-    }
-
-    cp = a[0] * b[1] - a[1] * b[0] +
-        a[1] * c[0] - a[0] * c[1] +
-        b[0] * c[1] - c[0] * b[1];
-
-    if ( cp > 0 )
-      ccw = true;   // CCW
-    else
-      ccw = false;  // CW
-
-    // 1C - then we sort the vertices so they
-    // are always in a counterclockwise order
-    int j = 0;
-    if (!ccw) {
-      // keep the same order
-      for (int i = 0; i < n; i++) {
-        tpolygon_vertex_order[i] = i;
-      }
-
-    } else {
-      // invert the order
-      for (int i = 0; i < n; i++) {
-        tpolygon_vertex_order[i] = (n - 1) - i;
-      }
-    }
-
-    // 2 - begin triangulation
-    // resulting triangles are stored in the triangle array
-    // remove vc-2 Vertices, creating 1 triangle every time
-    int vc = n;
-    int count = 2*vc;  // complex polygon detection
-
-    for (int m = 0, v = vc - 1; vc > 2; ) {
-      boolean snip = true;
-
-      // if we start over again, is a complex polygon
-      if (0 >= (count--)) {
-        break; // triangulation failed
-      }
-
-      // get 3 consecutive vertices <u,v,w>
-      int u = v ; if (vc <= u) u = 0; // previous
-      v = u+1; if (vc <= v) v = 0;    // current
-      int w = v+1; if (vc <= w) w = 0;  // next
-
-      // triangle A B C
-      float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
-
-      Ax =  -vertices[tpolygon_vertex_order[u]][X];
-      Ay =   vertices[tpolygon_vertex_order[u]][Y];
-      Bx =  -vertices[tpolygon_vertex_order[v]][X];
-      By =   vertices[tpolygon_vertex_order[v]][Y];
-      Cx =  -vertices[tpolygon_vertex_order[w]][X];
-      Cy =   vertices[tpolygon_vertex_order[w]][Y];
-
-      if ( EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
-        continue;
-      }
-
-      for (int p = 0; p < vc; p++) {
-
-        // this part is a bit osbscure, basically what it does
-        // is test if this tree vertices are and ear or not, looking for
-        // intersections with the remaining vertices using a cross product
-        float ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
-        float cCROSSap, bCROSScp, aCROSSbp;
-
-        if( (p == u) || (p == v) || (p == w) ) {
-          continue;
-        }
-
-        Px = -vertices[tpolygon_vertex_order[p]][X];
-        Py =  vertices[tpolygon_vertex_order[p]][Y];
-
-        ax = Cx - Bx; ay = Cy - By;
-        bx = Ax - Cx; by = Ay - Cy;
-        cx = Bx - Ax; cy = By - Ay;
-        apx= Px - Ax; apy= Py - Ay;
-        bpx= Px - Bx; bpy= Py - By;
-        cpx= Px - Cx; cpy= Py - Cy;
-
-        aCROSSbp = ax * bpy - ay * bpx;
-        cCROSSap = cx * apy - cy * apx;
-        bCROSScp = bx * cpy - by * cpx;
-
-        if ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f)) {
-          snip = false;
-        }
-      }
-
-      if (snip) {
-        // yes, the trio is an ear, render it and cut it
-
-        int triangle_vertices[] = new int[3];
-        int s,t;
-
-        // true names of the vertices
-        triangle_vertices[0] = tpolygon_vertex_order[u];
-        triangle_vertices[1] = tpolygon_vertex_order[v];
-        triangle_vertices[2] = tpolygon_vertex_order[w];
-
-        // create triangle
-        render_triangle(triangle_vertices);
-
-        m++;
-
-        // remove v from remaining polygon
-        for( s = v, t = v + 1; t < vc; s++, t++) {
-          tpolygon_vertex_order[s] = tpolygon_vertex_order[t];
-        }
-
-        vc--;
-
-        // resest error detection counter
-        count = 2 * vc;
-      }
-    }
-  }
-
-
-  private final void render_triangle(int[] triangle_vertices) {
-    // copy all fields of the triangle vertices
-    for (int i = 0; i < 3; i++) {
-      float[] src = polygon.vertices[triangle_vertices[i]];
-      float[] dest = tpolygon.vertices[i];
-      for (int j = 0; j < VERTEX_FIELD_COUNT; j++) {
-        dest[j] = src[j];
-      }
-    }
-    tpolygon.render();
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
 
-  // RENDERING
+  // POINT
 
 
-  /*
-  // expects properly clipped coords, hence does
-  // NOT check if x/y are in bounds [toxi]
-  private void thin_pointAt(int x, int y, float z, int color) {
-    int index = y*width+x; // offset values are pre-calced in constructor
-    pixels[index] = color;
+  public void point(float x, float y) {
+    beginShape(POINTS);
+    vertex(x, y);
+    endShape();
+  }
+
+
+  public void point(float x, float y, float z) {
+    beginShape(POINTS);
+    vertex(x, y, z);
+    endShape();
+  }
+
+
+  private void thin_point(int x, int y, float z, int color) {
+    // necessary? [fry] yes! [toxi]
+    if (x<0 || x>width1 || y<0 || y>height1) return;
+
+    int index = y*width + x;
+    if ((color & 0xff000000) == 0xff000000) {  // opaque
+      pixels[index] = color;
+
+    } else {  // transparent
+      // a1 is how much of the orig pixel
+      int a2 = (color >> 24) & 0xff;
+      int a1 = a2 ^ 0xff;
+
+      int p2 = strokeColor;
+      int p1 = pixels[index];
+
+      int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
+      int g = (a1 * ((p1 >>  8) & 0xff) + a2 * ((p2 >>  8) & 0xff)) & 0xff00;
+      int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
+
+      pixels[index] =  0xff000000 | (r << 8) | g | b;
+    }
     zbuffer[index] = z;
   }
 
-  // expects offset/index in pixelbuffer array instead of x/y coords
-  // used by optimized parts of thin_flat_line() [toxi]
-  private void thin_pointAtIndex(int offset, float z, int color) {
-    pixels[offset] = color;
-    zbuffer[offset] = z;
-  }
-  */
 
   // points are inherently flat, but always tangent
   // to the screen surface. the z is only so that things
@@ -2019,153 +1750,27 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  /*
-  // new bresenham clipping code, as old one was buggy [toxi]
-  private void thin_flat_line(int x1, int y1, int x2, int y2) {
-    int nx1,ny1,nx2,ny2;
 
-    // get the "dips" for the points to clip
-    int code1 = thin_flat_lineClipCode(x1, y1);
-    int code2 = thin_flat_lineClipCode(x2, y2);
+  //////////////////////////////////////////////////////////////
 
-    if ((code1 & code2)!=0) {
-      return;
-    } else {
-      int dip = code1 | code2;
-      if (dip != 0) {
-        // now calculate the clipped points
-        float a1 = 0, a2 = 1, a = 0;
-        for (int i=0;i<4;i++) {
-          if (((dip>>i)%2)==1) {
-            a = thin_flat_lineSlope((float)x1, (float)y1,
-                                    (float)x2, (float)y2, i+1);
-            if (((code1>>i)%2)==1) {
-              a1 = (float)Math.max(a, a1);
-            } else {
-              a2 = (float)Math.min(a, a2);
-            }
-          }
-        }
-        if (a1>a2) return;
-        else {
-          nx1=(int) (x1+a1*(x2-x1));
-          ny1=(int) (y1+a1*(y2-y1));
-          nx2=(int) (x1+a2*(x2-x1));
-          ny2=(int) (y1+a2*(y2-y1));
-        }
-        // line is fully visible/unclipped
-      } else {
-        nx1=x1; nx2=x2;
-        ny1=y1; ny2=y2;
-      }
-    }
+  // LINE
 
-    // new "extremely fast" line code
-    // adapted from http://www.edepot.com/linee.html
 
-    boolean yLonger=false;
-    int shortLen=ny2-ny1;
-    int longLen=nx2-nx1;
-    if (Math.abs(shortLen)>Math.abs(longLen)) {
-      int swap=shortLen;
-      shortLen=longLen;
-      longLen=swap;
-      yLonger=true;
-    }
-    int decInc;
-    if (longLen==0) decInc=0;
-    else decInc = (shortLen << 16) / longLen;
-
-    if (nx1==nx2) {
-      // special case: vertical line
-      if (ny1>ny2) { int ty=ny1; ny1=ny2; ny2=ty; }
-      int offset=ny1*width+nx1;
-      for(int j=ny1; j<=ny2; j++) {
-        thin_pointAtIndex(offset, 0, strokeColor);
-        offset+=width;
-      }
-      return;
-    } else if (ny1==ny2) {
-      // special case: horizontal line
-      if (nx1>nx2) { int tx=nx1; nx1=nx2; nx2=tx; }
-      int offset=ny1*width+nx1;
-      for(int j=nx1; j<=nx2; j++) thin_pointAtIndex(offset++,0,strokeColor);
-      return;
-    } else if (yLonger) {
-      if (longLen>0) {
-        longLen+=ny1;
-        for (int j=0x8000+(nx1<<16);ny1<=longLen;++ny1) {
-          thin_pointAt(j>>16, ny1, 0, strokeColor);
-          j+=decInc;
-        }
-        return;
-      }
-      longLen+=ny1;
-      for (int j=0x8000+(nx1<<16);ny1>=longLen;--ny1) {
-        thin_pointAt(j>>16, ny1, 0, strokeColor);
-        j-=decInc;
-      }
-      return;
-    } else if (longLen>0) {
-      longLen+=nx1;
-      for (int j=0x8000+(ny1<<16);nx1<=longLen;++nx1) {
-        thin_pointAt(nx1, j>>16, 0, strokeColor);
-        j+=decInc;
-      }
-      return;
-    }
-    longLen+=nx1;
-    for (int j=0x8000+(ny1<<16);nx1>=longLen;--nx1) {
-      thin_pointAt(nx1, j>>16, 0, strokeColor);
-      j-=decInc;
-    }
-  }
-
-  private int thin_flat_lineClipCode(float x, float y) {
-    return ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
-            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
-  }
-
-  private float thin_flat_lineSlope(float x1, float y1,
-                                    float x2, float y2, int border) {
-    switch (border) {
-    case 4: {
-      return (-y1)/(y2-y1);
-    }
-    case 3: {
-      return (height1-y1)/(y2-y1);
-    }
-    case 2: {
-      return (-x1)/(x2-x1);
-    }
-    case 1: {
-      return (width1-x1)/(x2-x1);
-    }
-    }
-    return -1f;
+  public void line(float x1, float y1, float x2, float y2) {
+    beginShape(LINES);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    endShape();
   }
 
 
-  private boolean flat_line_retribution(float x1, float y1,
-                                        float x2, float y2,
-                                        float r1, float g1, float b1) {
-    // assume that if it is/isn't big in one dir, then the
-    // other doesn't matter, cuz that's a weird case
-    float lwidth  = m00*strokeWeight + m01*strokeWeight;
-    //float lheight = m10*strokeWeight + m11*strokeWeight;
-    // lines of stroke thickness 1 can be anywhere from -1.41 to 1.41
-    if ((strokeWeight < TWO) && (!hints[SCALE_STROKE_WIDTH])) {
-      //if (abs(lwidth) < 1.5f) {
-      //System.out.println("flat line retribution " + r1 + " " + g1 + " " + b1);
-      int strokeSaved = strokeColor;
-      strokeColor = float_color(r1, g1, b1);
-      thin_flat_line((int)x1, (int)y1, (int)x2, (int)y2);
-      strokeColor = strokeSaved;
-      return true;
-    }
-    return false;
+  public void line(float x1, float y1, float z1,
+                   float x2, float y2, float z2) {
+    beginShape(LINES);
+    vertex(x1, y1, z1);
+    vertex(x2, y2, z2);
+    endShape();
   }
-  */
 
 
   private void thick_flat_line(float ox1, float oy1,
@@ -2174,13 +1779,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
                                float r2, float g2, float b2, float a2) {
     spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
     spolygon.interpZ = false;
-
-    /*
-    if (!spolygon.interpRGBA &&
-        flat_line_retribution(ox1, oy1, ox2, oy2, r1, g1, b1)) {
-      return;
-    }
-    */
 
     float dX = ox2-ox1 + EPSILON;
     float dY = oy2-oy1 + EPSILON;
@@ -2232,30 +1830,13 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  // OPT version without z coords can save 8 multiplies and some other
-  private void spatial_line(float x1, float y1,
-                            float r1, float g1, float b1,
-                            float x2, float y2,
-                            float r2, float g2, float b2) {
-    spatial_line(x1, y1, 0, r1, g1, b1,
-                 x2, y2, 0, r2, g2, b2);
-  }
-
-
   // the incoming values are transformed,
   // and the colors have been calculated
-
-  private void spatial_line(float x1, float y1, float z1,
-                            float r1, float g1, float b1,
-                            float x2, float y2, float z2,
-                            float r2, float g2, float b2) {
+  private void thick_spatial_line(float x1, float y1, float z1,
+                                  float r1, float g1, float b1,
+                                  float x2, float y2, float z2,
+                                  float r2, float g2, float b2) {
     spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2);
-    /*
-    if (!spolygon.interpRGBA &&
-        flat_line_retribution(x1, y1, x2, y2, r1, g1, b1)) {
-      return;
-    }
-    */
     spolygon.interpZ = true;
 
     float ox1 = x1; float oy1 = y1; float oz1 = z1;
@@ -2264,8 +1845,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     float dX = ox2-ox1 + 0.0001f;
     float dY = oy2-oy1 + 0.0001f;
     float len = sqrt(dX*dX + dY*dY);
-
-    //float x0 = m00*0 + m01*0 + m03;
 
     float rh = strokeWeight / len;
 
@@ -2280,130 +1859,98 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     svertex[X] = ox1+dx0;
     svertex[Y] = oy1-dy0;
     svertex[Z] = oz1;
-    svertex[R] = r1; //calcR1;
-    svertex[G] = g1; //calcG1;
-    svertex[B] = b1; //calcB1;
+    svertex[R] = r1;
+    svertex[G] = g1;
+    svertex[B] = b1;
 
     svertex = spolygon.vertices[1];
     svertex[X] = ox1-dx0;
     svertex[Y] = oy1+dy0;
     svertex[Z] = oz1;
-    svertex[R] = r1; //calcR1;
-    svertex[G] = g1; //calcG1;
-    svertex[B] = b1; //calcB1;
+    svertex[R] = r1;
+    svertex[G] = g1;
+    svertex[B] = b1;
 
     svertex = spolygon.vertices[2];
     svertex[X] = ox2-dx1;
     svertex[Y] = oy2+dy1;
     svertex[Z] = oz2;
-    svertex[R] = r2; //calcR2;
-    svertex[G] = g2; //calcG2;
-    svertex[B] = b2; //calcB2;
+    svertex[R] = r2;
+    svertex[G] = g2;
+    svertex[B] = b2;
 
     svertex = spolygon.vertices[3];
     svertex[X] = ox2+dx1;
     svertex[Y] = oy2-dy1;
     svertex[Z] = oz2;
-    svertex[R] = r2; //calcR2;
-    svertex[G] = g2; //calcG2;
-    svertex[B] = b2; //calcB2;
+    svertex[R] = r2;
+    svertex[G] = g2;
+    svertex[B] = b2;
 
     spolygon.render();
   }
 
 
-  /*
-  // max is what to count to
-  // offset is offset to the 'next' vertex
-  // increment is how much to increment in the loop
-  private void draw_lines(float vertices[][], int max,
-                          int offset, int increment, int skip) {
 
-    if (strokeWeight < 2) {
-      for (int i = 0; i < max; i += increment) {
-        if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
+  //////////////////////////////////////////////////////////////
 
-        float a[] = vertices[i];
-        float b[] = vertices[i+offset];
+  // TRIANGLE
 
-        line.reset();
 
-        line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                            b[SR], b[SG], b[SB], b[SA]);
-
-        line.setVertices(a[X], a[Y], a[Z],
-                         b[X], b[Y], b[Z]);
-
-        line.draw();
-      }
-
-    } else {  // use old line code for thickness > 1
-
-      if ((dimensions != 3) && unchangedZ) {
-        if ((strokeWeight < TWO) && !lights && !strokeChanged) {
-          // need to set color at least once?
-
-          // THIS PARTICULAR CASE SHOULD NO LONGER BE REACHABLE
-
-          for (int i = 0; i < max; i += increment) {
-            if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-            thin_flat_line((int) vertices[i][X],
-                           (int) vertices[i][Y],
-                           (int) vertices[i+offset][X],
-                           (int) vertices[i+offset][Y]);
-          }
-
-        } else {
-          for (int i = 0; i < max; i += increment) {
-            if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-            float v1[] = vertices[i];
-            float v2[] = vertices[i+offset];
-            thick_flat_line(v1[X], v1[Y],  v1[SR], v1[SG], v1[SB], v1[SA],
-                            v2[X], v2[Y],  v2[SR], v2[SG], v2[SB], v2[SA]);
-          }
-        }
-      } else {
-        for (int i = 0; i < max; i += increment) {
-          if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-          float v1[] = vertices[i];
-          float v2[] = vertices[i+offset];
-          spatial_line(v1[X],  v1[Y],  v1[Z],  v1[SR], v1[SG], v1[SB],
-                       v2[X],  v2[Y],  v2[Z],  v2[SR], v2[SG], v2[SB]);
-        }
-      }
-    }
+  public void triangle(float x1, float y1, float x2, float y2,
+                       float x3, float y3) {
+    beginShape(TRIANGLES);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    vertex(x3, y3);
+    endShape();
   }
-  */
+
 
 
   //////////////////////////////////////////////////////////////
 
-  // UGLY RENDERING SHIT
+  // RECT
 
 
-  private void thin_point(int x, int y, float z, int color) {
-    // necessary? [fry] yes! [toxi]
-    if (x<0 || x>width1 || y<0 || y>height1) return;
+  public void rectMode(int mode) {
+    rectMode = mode;
+  }
 
-    int index = y*width + x;
-    if ((color & 0xff000000) == 0xff000000) {  // opaque
-      pixels[index] = color;
 
-    } else {  // transparent
-      // a1 is how much of the orig pixel
-      int a2 = (color >> 24) & 0xff;
-      int a1 = a2 ^ 0xff;
-
-      int p2 = strokeColor;
-      int p1 = pixels[index];
-
-      int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
-      int g = (a1 * ((p1 >>  8) & 0xff) + a2 * ((p2 >>  8) & 0xff)) & 0xff00;
-      int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
-
-      pixels[index] =  0xff000000 | (r << 8) | g | b;
+  public void rect(float x1, float y1, float x2, float y2) {
+    float hradius, vradius;
+    switch (rectMode) {
+    case CORNERS:
+      break;
+    case CORNER:
+      x2 += x1; y2 += y1;
+      break;
+    case CENTER_RADIUS:
+      hradius = x2;
+      vradius = y2;
+      x2 = x1 + hradius;
+      y2 = y1 + vradius;
+      x1 -= hradius;
+      y1 -= vradius;
+      break;
+    case CENTER:
+      hradius = x2 / 2.0f;
+      vradius = y2 / 2.0f;
+      x2 = x1 + hradius;
+      y2 = y1 + vradius;
+      x1 -= hradius;
+      y1 -= vradius;
     }
-    zbuffer[index] = z;
+
+    if (depth) {
+      if (fill) rect3_fill(x1, y1, x2, y2);
+      if (stroke) rect3_stroke(x1, y1, x2, y2);
+
+    } else {
+      if (fill) rect2_fill(x1, y1, x2, y2);
+      if (stroke) rect2_stroke(x1, y1, x2, y2);
+    }
   }
 
 
@@ -2428,6 +1975,28 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   protected void rect2_fill(float x1, float y1, float x2, float y2) {
+    if ((m01 != 0) || (m10 != 0)) {
+      // this is actually transformed, transform points and draw a quad
+      quad0(screenX(x1, y1), screenY(x1, y1),
+            screenX(x2, y1), screenY(x2, y1),
+            screenX(x2, y2), screenY(x2, y2),
+            screenX(x1, y2), screenY(x1, y2));
+
+    } else {
+      if ((m00 == 1) && (m11 == 1)) {
+        // no scale, but maybe a translate
+        rect0_fill(x1 + m02, y1 + m12, x2 + m02, y2 + m12);
+
+      } else {
+        // scaled, maybe translated
+        rect0_fill(screenX(x1, y1), screenY(x1, y1),
+                   screenX(x2, y2), screenY(x2, y2));
+      }
+    }
+  }
+
+
+  protected void rect0_fill(float x1, float y1, float x2, float y2) {
     // needs to check if smooth
     // or if there's an affine transform on the shape
     // also the points are now floats instead of ints
@@ -2492,11 +2061,259 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // QUAD
+
+
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+    beginShape(QUADS);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    vertex(x3, y3);
+    vertex(x4, y4);
+    endShape();
+  }
+
+
+  public void quad0(float x1, float y1, float x2, float y2,
+                    float x3, float y3, float x4, float y4) {
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGE
+
+
+  public void image(PImage image, float x1, float y1) {
+    if ((dimensions == 0) && !lights && !tint &&
+        (imageMode != CENTER_RADIUS)) {
+      // if drawing a flat image with no warping,
+      // use faster routine to draw direct to the screen
+      flat_image(image, (int)x1, (int)y1);
+
+    } else {
+      int savedTextureMode = textureMode;
+      textureMode(IMAGE_SPACE);
+
+      image(image, x1, y1, image.width, image.height,
+            0, 0, image.width, image.height);
+
+      textureMode(savedTextureMode);
+    }
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2) {
+    int savedTextureMode = textureMode;
+    textureMode(IMAGE_SPACE);
+
+    image(image, x1, y1, x2, y2, 0, 0, image.width, image.height);
+
+    textureMode(savedTextureMode);
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    float u1, float v1, float u2, float v2) {
+    switch (imageMode) {
+    case CORNERS:
+      break;
+    case CORNER:
+      x2 += x1; y2 += y1;
+      break;
+    case CENTER:
+      x2 /= 2f;
+      y2 /= 2f;
+    case CENTER_RADIUS:
+      float hr = x2;
+      float vr = y2;
+      x2 = x1 + hr;
+      y2 = y1 + vr;
+      x1 -= hr;
+      y1 -= vr;
+      break;
+    }
+
+    boolean savedStroke = stroke;
+    boolean savedFill = fill;
+
+    stroke = false;
+    fill = true;
+
+    float savedFillR = fillR;
+    float savedFillG = fillG;
+    float savedFillB = fillB;
+    float savedFillA = fillA;
+
+    if (tint) {
+      fillR = tintR;
+      fillG = tintG;
+      fillB = tintB;
+      fillA = tintA;
+
+    } else {
+      fillR = 1;
+      fillG = 1;
+      fillB = 1;
+      fillA = 1;
+    }
+
+    beginShape(QUADS);
+    texture(image); // move outside to make java gl happier?
+    vertex(x1, y1, u1, v1);
+    vertex(x1, y2, u1, v2);
+    vertex(x2, y2, u2, v2);
+    vertex(x2, y1, u2, v1);
+    endShape();
+
+    stroke = savedStroke;
+    fill = savedFill;
+
+    fillR = savedFillR;
+    fillG = savedFillG;
+    fillB = savedFillB;
+    fillA = savedFillA;
+  }
+
+
+  /**
+   * Used by OpenGL implementations of PGraphics, so that images,
+   * or textures, can be loaded into texture memory.
+   */
+  public void cache(PImage image) {
+    // keep the lower } on a separate line b/c of preproc
+  }
+
+  public void cache(PImage images[]) {
+    // keep the lower } on a separate line b/c of preproc
+  }
+
+  protected void cache(PImage image, int index) {
+    // keep the lower } on a separate line b/c of preproc
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // ELLIPSE
+
+
+  public void ellipseMode(int mode) {
+    ellipseMode = mode;
+  }
+
+
+  // adaptive ellipse accuracy contributed by toxi
+  public void ellipse(float x, float y, float hradius, float vradius) {
+    switch (ellipseMode) {
+    case CENTER_RADIUS:
+      break;
+    case CENTER:
+      hradius /= 2f; vradius /= 2f;
+      break;
+    case CORNER:
+      hradius /= 2f; vradius /= 2f;
+      x += hradius; y += vradius;
+      break;
+    case CORNERS:
+      //float w = (hradius - x);
+      //float h = (vradius - y);
+      //hradius = w / 2f;
+      //vradius = h / 2f;
+      hradius = (hradius - x) / 2f;
+      vradius = (vradius - y) / 2f;
+      x += hradius;
+      y += hradius;
+      break;
+    }
+
+    if (depth) {
+      if (fill) ellipse3_fill(x, y, hradius, vradius);
+      if (stroke) ellipse3_stroke(x, y, hradius, vradius);
+
+    } else {
+      if (fill) ellipse2_fill(x, y, hradius, vradius);
+      if (stroke) ellipse2_stroke(x, y, hradius, vradius);
+    }
+  }
+
+
+  protected void ellipse3_fill(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse3_stroke(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse2_fill(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse2_stroke(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse_mess(float x, float y,
+                              float hradius, float vradius) {
+    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
+    // now uses current scale factors to determine "real" transformed radius
+
+    //System.out.println(m00 + " " + m11);
+    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
+    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
+
+    // notched this up to *3 instead of *2 because things were
+    // looking a little rough, i.e. the calculate->arctangent example [fry]
+
+    // also removed the m00 and m11 because those were causing weirdness
+    // need an actual measure of magnitude in there [fry]
+
+    int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+
+    boolean plain =
+      !lights && !smooth && (strokeWeight == 1) &&
+      !fillAlpha && !strokeAlpha;
+
+    //boolean flat = (dimensions == 0) ||
+    //((dimensions == 2) && (m00 == m11) && (m00 == 1));
+    // FIXME
+    boolean flat = false;
+
+    if (plain && flat) {
+      if (hradius == vradius) {
+        flat_circle((int)x, (int)y, (int)hradius);
+
+      } else {
+        flat_ellipse((int)x, (int)y, (int)hradius, (int)vradius);
+      }
+
+    } else {
+      // [toxi031031] adapted to use new lookup tables
+      float inc = (float)SINCOS_LENGTH / cAccuracy;
+
+      float val = 0;
+      beginShape(POLYGON);
+      for (int i = 0; i < cAccuracy; i++) {
+        vertex(x + cosLUT[(int) val] * hradius,
+               y + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      endShape();
+    }
+  }
+
+
   private void flat_circle(int centerX, int centerY, int radius) {
-    if (dimensions == 2) {  // translate but no scale
+    // FIXME
+    //if (dimensions == 2) {  // translate but no scale
       centerX = (int) screenX(centerX, centerY, 0);
       centerY = (int) screenY(centerX, centerY, 0);
-    }
+      //}
     if (fill) flat_circle_fill(centerX, centerY, radius);
     if (stroke) flat_circle_stroke(centerX, centerY, radius);
   }
@@ -2663,13 +2480,20 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   private void flat_ellipse(int centerX, int centerY, int a, int b) {
-    if (dimensions == 2) {  // probably a translate but no scale
+    //FIXME
+    //if (dimensions == 2) {  // probably a translate but no scale
       centerX = (int) screenX(centerX, centerY, 0);
       centerY = (int) screenY(centerX, centerY, 0);
-    }
+      //}
     if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
     if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
   }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGE
 
 
   /**
@@ -2758,409 +2582,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         target += width;
       }
     }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // SIMPLE SHAPES WITH ANALOGUES IN beginShape()
-
-
-  public void point(float x, float y) {
-    //line(x, y, x, y);
-    beginShape(POINTS);
-    vertex(x, y);
-    endShape();
-  }
-
-
-  public void point(float x, float y, float z) {
-    //line(x, y, z, x, y, z);
-    beginShape(POINTS);
-    vertex(x, y, z);
-    endShape();
-  }
-
-
-  public void line(float x1, float y1, float x2, float y2) {
-    beginShape(LINES);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    endShape();
-  }
-
-
-  public void line(float x1, float y1, float z1,
-                   float x2, float y2, float z2) {
-    beginShape(LINES);
-    vertex(x1, y1, z1);
-    vertex(x2, y2, z2);
-    endShape();
-  }
-
-
-  public void triangle(float x1, float y1, float x2, float y2,
-                       float x3, float y3) {
-    beginShape(TRIANGLES);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    vertex(x3, y3);
-    endShape();
-  }
-
-
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4) {
-    beginShape(QUADS);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    vertex(x3, y3);
-    vertex(x4, y4);
-    endShape();
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-  // 2D SHAPES, DRAWN WITH x/y/w/h
-
-
-  public void rectMode(int mode) {
-    rectMode = mode;
-  }
-
-
-  public void rect(float x1, float y1, float x2, float y2) {
-    float hradius, vradius;
-    switch (rectMode) {
-    case CORNERS:
-      break;
-    case CORNER:
-      x2 += x1; y2 += y1;
-      break;
-    case CENTER_RADIUS:
-      hradius = x2;
-      vradius = y2;
-      x2 = x1 + hradius;
-      y2 = y1 + vradius;
-      x1 -= hradius;
-      y1 -= vradius;
-      break;
-    case CENTER:
-      hradius = x2 / 2.0f;
-      vradius = y2 / 2.0f;
-      x2 = x1 + hradius;
-      y2 = y1 + vradius;
-      x1 -= hradius;
-      y1 -= vradius;
-    }
-
-    if (depth) {
-      if (fill) rect3_fill(x1, y1, x2, y2);
-      if (stroke) rect3_stroke(x1, y1, x2, y2);
-
-    } else {
-      if (fill) rect2_fill(x1, y1, x2, y2);
-      if (stroke) rect2_stroke(x1, y1, x2, y2);
-    }
-  }
-
-
-  public void ellipseMode(int mode) {
-    ellipseMode = mode;
-  }
-
-
-  // adaptive ellipse accuracy contributed by toxi
-  public void ellipse(float x, float y, float hradius, float vradius) {
-    switch (ellipseMode) {
-    case CENTER_RADIUS:
-      break;
-    case CENTER:
-      hradius /= 2f; vradius /= 2f;
-      break;
-    case CORNER:
-      hradius /= 2f; vradius /= 2f;
-      x += hradius; y += vradius;
-      break;
-    case CORNERS:
-      //float w = (hradius - x);
-      //float h = (vradius - y);
-      //hradius = w / 2f;
-      //vradius = h / 2f;
-      hradius = (hradius - x) / 2f;
-      vradius = (vradius - y) / 2f;
-      x += hradius;
-      y += hradius;
-      break;
-    }
-
-    if (depth) {
-      if (fill) ellipse3_fill(x, y, hradius, vradius);
-      if (stroke) ellipse3_stroke(x, y, hradius, vradius);
-
-    } else {
-      if (fill) ellipse2_fill(x, y, hradius, vradius);
-      if (stroke) ellipse2_stroke(x, y, hradius, vradius);
-    }
-  }
-
-
-  protected void ellipse3_fill(float x, float y, float h, float v) {
-  }
-
-  protected void ellipse3_stroke(float x, float y, float h, float v) {
-  }
-
-  protected void ellipse2_fill(float x, float y, float h, float v) {
-  }
-
-  protected void ellipse2_stroke(float x, float y, float h, float v) {
-  }
-
-  protected void ellipse_mess(float x, float y,
-                              float hradius, float vradius) {
-    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
-    // now uses current scale factors to determine "real" transformed radius
-
-    //System.out.println(m00 + " " + m11);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
-
-    // notched this up to *3 instead of *2 because things were
-    // looking a little rough, i.e. the calculate->arctangent example [fry]
-
-    // also removed the m00 and m11 because those were causing weirdness
-    // need an actual measure of magnitude in there [fry]
-
-    int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
-
-    boolean plain =
-      !lights && !smooth && (strokeWeight == 1) &&
-      !fillAlpha && !strokeAlpha;
-
-    boolean flat = (dimensions == 0) ||
-      ((dimensions == 2) && (m00 == m11) && (m00 == 1));
-
-    if (plain && flat) {
-      if (hradius == vradius) {
-        flat_circle((int)x, (int)y, (int)hradius);
-
-      } else {
-        flat_ellipse((int)x, (int)y, (int)hradius, (int)vradius);
-      }
-
-    } else {
-      // [toxi031031] adapted to use new lookup tables
-      float inc = (float)SINCOS_LENGTH / cAccuracy;
-
-      float val = 0;
-      beginShape(POLYGON);
-      for (int i = 0; i < cAccuracy; i++) {
-        vertex(x+cosLUT[(int)val]*hradius, y+sinLUT[(int)val]*vradius);
-        val += inc;
-      }
-      // unnecessary extra point that spoiled triangulation [rocha]
-      /*
-      if (!hints[NEW_GRAPHICS]) {
-        vertex(x + cosLUT[0]*hradius, y + sinLUT[0]*vradius);
-      }
-      */
-      endShape();
-    }
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-  // 3D SHAPES, DRAWN FROM CENTER
-
-
-  // solid or wire depends on settings for stroke and fill
-  // slices/stacks can be set by an advanced option
-
-  //public void cube(float size) {
-  public void box(float size) {
-    //box(-size/2, -size/2, -size/2,  size/2, size/2, size/2);
-    box(size, size, size);
-  }
-
-
-  // OPT this isn't the least bit efficient
-  //     because it redraws lines along the vertices
-  //     ugly ugly ugly!
-  //public void box(float x1, float y1, float z1,
-  //          float x2, float y2, float z2) {
-  public void box(float w, float h, float d) {
-    float x1 = -w/2f; float x2 = w/2f;
-    float y1 = -h/2f; float y2 = h/2f;
-    float z1 = -d/2f; float z2 = d/2f;
-
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
-    triangle.setCulling(true);
-
-    beginShape(QUADS);
-
-    // front
-    vertex(x1, y1, z1);
-    vertex(x2, y1, z1);
-    vertex(x2, y2, z1);
-    vertex(x1, y2, z1);
-
-    // right
-    vertex(x2, y1, z1);
-    vertex(x2, y1, z2);
-    vertex(x2, y2, z2);
-    vertex(x2, y2, z1);
-
-    // back
-    vertex(x2, y1, z2);
-    vertex(x1, y1, z2);
-    vertex(x1, y2, z2);
-    vertex(x2, y2, z2);
-
-    // left
-    vertex(x1, y1, z2);
-    vertex(x1, y1, z1);
-    vertex(x1, y2, z1);
-    vertex(x1, y2, z2);
-
-    // top
-    vertex(x1, y1, z2);
-    vertex(x2, y1, z2);
-    vertex(x2, y1, z1);
-    vertex(x1, y1, z1);
-
-    // bottom
-    vertex(x1, y2, z1);
-    vertex(x2, y2, z1);
-    vertex(x2, y2, z2);
-    vertex(x1, y2, z2);
-
-    endShape();
-
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
-    triangle.setCulling(false);
-  }
-
-
-  // [toxi031031] used by the new sphere code below
-  // precompute vertices along unit sphere with new detail setting
-
-  public void sphereDetail(int res) {
-    if (res < 3) res = 3; // force a minimum res
-    if (res == sphereDetail) return;
-
-    float delta = (float)SINCOS_LENGTH/res;
-    float[] cx = new float[res];
-    float[] cz = new float[res];
-    // calc unit circle in XZ plane
-    for (int i = 0; i < res; i++) {
-      cx[i] = cosLUT[(int) (i*delta) % SINCOS_LENGTH];
-      cz[i] = sinLUT[(int) (i*delta) % SINCOS_LENGTH];
-    }
-    // computing vertexlist
-    // vertexlist starts at south pole
-    int vertCount = res * (res-1) + 2;
-    int currVert = 0;
-
-    // re-init arrays to store vertices
-    sphereX = new float[vertCount];
-    sphereY = new float[vertCount];
-    sphereZ = new float[vertCount];
-
-    float angle_step = (SINCOS_LENGTH*0.5f)/res;
-    float angle = angle_step;
-
-    // step along Y axis
-    for (int i = 1; i < res; i++) {
-      float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
-      float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
-      for (int j = 0; j < res; j++) {
-        sphereX[currVert] = cx[j] * curradius;
-        sphereY[currVert] = currY;
-        sphereZ[currVert++] = cz[j] * curradius;
-      }
-      angle += angle_step;
-    }
-    sphereDetail = res;
-  }
-
-
-  // cache all the points of the sphere in a static array
-  // top and bottom are just a bunch of triangles that land
-  // in the center point
-
-  // sphere is a series of concentric circles who radii vary
-  // along the shape, based on, er.. cos or something
-
-  // [toxi031031] new sphere code. removed all multiplies with
-  // radius, as scale() will take care of that anyway
-
-  // [toxi031223] updated sphere code (removed modulos)
-  // and introduced sphereAt(x,y,z,r)
-  // to avoid additional translate()'s on the user/sketch side
-  public void sphere(float r) {
-    sphere(0, 0, 0, r);
-  }
-
-  public void sphere(float x, float y, float z, float r) {
-    if (sphereDetail == 0) {
-      sphereDetail(30);
-    }
-
-    int v1,v11,v2;
-    push();
-    if (x!=0f && y!=0f && z!=0f) translate(x,y,z);
-    scale(r);
-
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
-    triangle.setCulling(true);
-
-    // 1st ring from south pole
-    beginShape(TRIANGLE_STRIP);
-    for (int i = 0; i < sphereDetail; i++) {
-      vertex(0, -1, 0);
-      vertex(sphereX[i], sphereY[i], sphereZ[i]);
-    }
-    vertex(0, -1, 0);
-    vertex(sphereX[0], sphereY[0], sphereZ[0]);
-    endShape();
-
-    // middle rings
-    int voff = 0;
-    for(int i = 2; i < sphereDetail; i++) {
-      v1=v11=voff;
-      voff += sphereDetail;
-      v2=voff;
-      beginShape(TRIANGLE_STRIP);
-      for (int j = 0; j < sphereDetail; j++) {
-        vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
-        vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
-      }
-      // close each ring
-      v1=v11;
-      v2=voff;
-      vertex(sphereX[v1], sphereY[v1], sphereZ[v1]);
-      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
-      endShape();
-    }
-
-    // add the northern cap
-    beginShape(TRIANGLE_STRIP);
-    for (int i = 0; i < sphereDetail; i++) {
-      v2 = voff + i;
-      vertex(0, 1, 0);
-      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
-    }
-    vertex(0, 1, 0);
-    vertex(sphereX[voff], sphereY[voff], sphereZ[voff]);
-    endShape();
-    pop();
-
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
-    triangle.setCulling(false);
   }
 
 
@@ -3605,117 +3026,193 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // IMAGE
+  // 3D SHAPES, DRAWN FROM CENTER
 
 
-  public void image(PImage image, float x1, float y1) {
-    if ((dimensions == 0) && !lights && !tint &&
-        (imageMode != CENTER_RADIUS)) {
-      // if drawing a flat image with no warping,
-      // use faster routine to draw direct to the screen
-      flat_image(image, (int)x1, (int)y1);
+  // solid or wire depends on settings for stroke and fill
+  // slices/stacks can be set by an advanced option
 
-    } else {
-      int savedTextureMode = textureMode;
-      textureMode(IMAGE_SPACE);
-
-      image(image, x1, y1, image.width, image.height,
-            0, 0, image.width, image.height);
-
-      textureMode(savedTextureMode);
-    }
+  //public void cube(float size) {
+  public void box(float size) {
+    //box(-size/2, -size/2, -size/2,  size/2, size/2, size/2);
+    box(size, size, size);
   }
 
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2) {
-    int savedTextureMode = textureMode;
-    textureMode(IMAGE_SPACE);
+  // OPT this isn't the least bit efficient
+  //     because it redraws lines along the vertices
+  //     ugly ugly ugly!
+  //public void box(float x1, float y1, float z1,
+  //          float x2, float y2, float z2) {
+  public void box(float w, float h, float d) {
+    float x1 = -w/2f; float x2 = w/2f;
+    float y1 = -h/2f; float y2 = h/2f;
+    float z1 = -d/2f; float z2 = d/2f;
 
-    image(image, x1, y1, x2, y2, 0, 0, image.width, image.height);
-
-    textureMode(savedTextureMode);
-  }
-
-
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
-                    float u1, float v1, float u2, float v2) {
-    switch (imageMode) {
-    case CORNERS:
-      break;
-    case CORNER:
-      x2 += x1; y2 += y1;
-      break;
-    case CENTER:
-      x2 /= 2f;
-      y2 /= 2f;
-    case CENTER_RADIUS:
-      float hr = x2;
-      float vr = y2;
-      x2 = x1 + hr;
-      y2 = y1 + vr;
-      x1 -= hr;
-      y1 -= vr;
-      break;
-    }
-
-    boolean savedStroke = stroke;
-    boolean savedFill = fill;
-
-    stroke = false;
-    fill = true;
-
-    float savedFillR = fillR;
-    float savedFillG = fillG;
-    float savedFillB = fillB;
-    float savedFillA = fillA;
-
-    if (tint) {
-      fillR = tintR;
-      fillG = tintG;
-      fillB = tintB;
-      fillA = tintA;
-
-    } else {
-      fillR = 1;
-      fillG = 1;
-      fillB = 1;
-      fillA = 1;
-    }
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
+    triangle.setCulling(true);
 
     beginShape(QUADS);
-    texture(image); // move outside to make java gl happier?
-    vertex(x1, y1, u1, v1);
-    vertex(x1, y2, u1, v2);
-    vertex(x2, y2, u2, v2);
-    vertex(x2, y1, u2, v1);
+
+    // front
+    vertex(x1, y1, z1);
+    vertex(x2, y1, z1);
+    vertex(x2, y2, z1);
+    vertex(x1, y2, z1);
+
+    // right
+    vertex(x2, y1, z1);
+    vertex(x2, y1, z2);
+    vertex(x2, y2, z2);
+    vertex(x2, y2, z1);
+
+    // back
+    vertex(x2, y1, z2);
+    vertex(x1, y1, z2);
+    vertex(x1, y2, z2);
+    vertex(x2, y2, z2);
+
+    // left
+    vertex(x1, y1, z2);
+    vertex(x1, y1, z1);
+    vertex(x1, y2, z1);
+    vertex(x1, y2, z2);
+
+    // top
+    vertex(x1, y1, z2);
+    vertex(x2, y1, z2);
+    vertex(x2, y1, z1);
+    vertex(x1, y1, z1);
+
+    // bottom
+    vertex(x1, y2, z1);
+    vertex(x2, y2, z1);
+    vertex(x2, y2, z2);
+    vertex(x1, y2, z2);
+
     endShape();
 
-    stroke = savedStroke;
-    fill = savedFill;
-
-    fillR = savedFillR;
-    fillG = savedFillG;
-    fillB = savedFillB;
-    fillA = savedFillA;
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
+    triangle.setCulling(false);
   }
 
 
-  /**
-   * Used by OpenGL implementations of PGraphics, so that images,
-   * or textures, can be loaded into texture memory.
-   */
-  public void cache(PImage image) {
-    // keep the lower } on a separate line b/c of preproc
+  // [toxi031031] used by the new sphere code below
+  // precompute vertices along unit sphere with new detail setting
+
+  public void sphereDetail(int res) {
+    if (res < 3) res = 3; // force a minimum res
+    if (res == sphereDetail) return;
+
+    float delta = (float)SINCOS_LENGTH/res;
+    float[] cx = new float[res];
+    float[] cz = new float[res];
+    // calc unit circle in XZ plane
+    for (int i = 0; i < res; i++) {
+      cx[i] = cosLUT[(int) (i*delta) % SINCOS_LENGTH];
+      cz[i] = sinLUT[(int) (i*delta) % SINCOS_LENGTH];
+    }
+    // computing vertexlist
+    // vertexlist starts at south pole
+    int vertCount = res * (res-1) + 2;
+    int currVert = 0;
+
+    // re-init arrays to store vertices
+    sphereX = new float[vertCount];
+    sphereY = new float[vertCount];
+    sphereZ = new float[vertCount];
+
+    float angle_step = (SINCOS_LENGTH*0.5f)/res;
+    float angle = angle_step;
+
+    // step along Y axis
+    for (int i = 1; i < res; i++) {
+      float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
+      float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
+      for (int j = 0; j < res; j++) {
+        sphereX[currVert] = cx[j] * curradius;
+        sphereY[currVert] = currY;
+        sphereZ[currVert++] = cz[j] * curradius;
+      }
+      angle += angle_step;
+    }
+    sphereDetail = res;
   }
 
-  public void cache(PImage images[]) {
-    // keep the lower } on a separate line b/c of preproc
+
+  // cache all the points of the sphere in a static array
+  // top and bottom are just a bunch of triangles that land
+  // in the center point
+
+  // sphere is a series of concentric circles who radii vary
+  // along the shape, based on, er.. cos or something
+
+  // [toxi031031] new sphere code. removed all multiplies with
+  // radius, as scale() will take care of that anyway
+
+  // [toxi031223] updated sphere code (removed modulos)
+  // and introduced sphereAt(x,y,z,r)
+  // to avoid additional translate()'s on the user/sketch side
+  public void sphere(float r) {
+    sphere(0, 0, 0, r);
   }
 
-  protected void cache(PImage image, int index) {
-    // keep the lower } on a separate line b/c of preproc
+  public void sphere(float x, float y, float z, float r) {
+    if (sphereDetail == 0) {
+      sphereDetail(30);
+    }
+
+    int v1,v11,v2;
+    push();
+    if (x!=0f && y!=0f && z!=0f) translate(x,y,z);
+    scale(r);
+
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
+    triangle.setCulling(true);
+
+    // 1st ring from south pole
+    beginShape(TRIANGLE_STRIP);
+    for (int i = 0; i < sphereDetail; i++) {
+      vertex(0, -1, 0);
+      vertex(sphereX[i], sphereY[i], sphereZ[i]);
+    }
+    vertex(0, -1, 0);
+    vertex(sphereX[0], sphereY[0], sphereZ[0]);
+    endShape();
+
+    // middle rings
+    int voff = 0;
+    for(int i = 2; i < sphereDetail; i++) {
+      v1=v11=voff;
+      voff += sphereDetail;
+      v2=voff;
+      beginShape(TRIANGLE_STRIP);
+      for (int j = 0; j < sphereDetail; j++) {
+        vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
+        vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
+      }
+      // close each ring
+      v1=v11;
+      v2=voff;
+      vertex(sphereX[v1], sphereY[v1], sphereZ[v1]);
+      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      endShape();
+    }
+
+    // add the northern cap
+    beginShape(TRIANGLE_STRIP);
+    for (int i = 0; i < sphereDetail; i++) {
+      v2 = voff + i;
+      vertex(0, 1, 0);
+      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
+    }
+    vertex(0, 1, 0);
+    vertex(sphereX[voff], sphereY[voff], sphereZ[voff]);
+    endShape();
+    pop();
+
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
+    triangle.setCulling(false);
   }
 
 
@@ -3883,478 +3380,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // TRANSFORMATION MATRIX
-
-
-  public void push() {
-    if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
-      message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
-      return;
-    }
-    float cm[] = matrixStack[matrixStackDepth];
-    cm[ 0] = m00; cm[ 1] = m01; cm[ 2] = m02; cm[ 3] = m03;
-    cm[ 4] = m10; cm[ 5] = m11; cm[ 6] = m12; cm[ 7] = m13;
-    cm[ 8] = m20; cm[ 9] = m21; cm[10] = m22; cm[11] = m23;
-    cm[12] = m30; cm[13] = m31; cm[14] = m32; cm[15] = m33;
-    matrixStackDepth++;
-  }
-
-
-  public void pop() {
-    if (matrixStackDepth == 0) {
-      message(COMPLAINT, "matrix stack underflow, to many popmatrix");
-      return;
-    }
-    matrixStackDepth--;
-    float cm[] = matrixStack[matrixStackDepth];
-    m00 = cm[ 0]; m01 = cm[ 1]; m02 = cm[ 2]; m03 = cm[ 3];
-    m10 = cm[ 4]; m11 = cm[ 5]; m12 = cm[ 6]; m13 = cm[ 7];
-    m20 = cm[ 8]; m21 = cm[ 9]; m22 = cm[10]; m23 = cm[11];
-    m30 = cm[12]; m31 = cm[13]; m32 = cm[14]; m33 = cm[15];
-
-    if ((matrixStackDepth == 0) &&
-        (m00 == 1) && (m01 == 0) && (m02 == 0) && (m03 == 0) &&
-        (m10 == 0) && (m11 == 1) && (m12 == 0) && (m13 == 0) &&
-        (m20 == 0) && (m21 == 0) && (m22 == 1) && (m23 == 0) &&
-        (m30 == 0) && (m31 == 0) && (m32 == 0) && (m33 == 1)) {
-      dimensions = 0;
-    }
-  }
-
-
-  /**
-   * Load identity as the transform/model matrix.
-   * Same as glLoadIdentity().
-   */
-  public void resetMatrix() {
-    dimensions = 0;
-    m00 = 1; m01 = 0; m02 = 0; m03 = 0;
-    m10 = 0; m11 = 1; m12 = 0; m13 = 0;
-    m20 = 0; m21 = 0; m22 = 1; m23 = 0;
-    m30 = 0; m31 = 0; m32 = 0; m33 = 1;
-  }
-
-
-  /**
-   * Apply a 4x4 transformation matrix. Same as glMultMatrix().
-   */
-  public void applyMatrix(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33) {
-
-    float r00 = m00*n00 + m01*n10 + m02*n20 + m03*n30;
-    float r01 = m00*n01 + m01*n11 + m02*n21 + m03*n31;
-    float r02 = m00*n02 + m01*n12 + m02*n22 + m03*n32;
-    float r03 = m00*n03 + m01*n13 + m02*n23 + m03*n33;
-
-    float r10 = m10*n00 + m11*n10 + m12*n20 + m13*n30;
-    float r11 = m10*n01 + m11*n11 + m12*n21 + m13*n31;
-    float r12 = m10*n02 + m11*n12 + m12*n22 + m13*n32;
-    float r13 = m10*n03 + m11*n13 + m12*n23 + m13*n33;
-
-    float r20 = m20*n00 + m21*n10 + m22*n20 + m23*n30;
-    float r21 = m20*n01 + m21*n11 + m22*n21 + m23*n31;
-    float r22 = m20*n02 + m21*n12 + m22*n22 + m23*n32;
-    float r23 = m20*n03 + m21*n13 + m22*n23 + m23*n33;
-
-    float r30 = m30*n00 + m31*n10 + m32*n20 + m33*n30;
-    float r31 = m30*n01 + m31*n11 + m32*n21 + m33*n31;
-    float r32 = m30*n02 + m31*n12 + m32*n22 + m33*n32;
-    float r33 = m30*n03 + m31*n13 + m32*n23 + m33*n33;
-
-    m00 = r00; m01 = r01; m02 = r02; m03 = r03;
-    m10 = r10; m11 = r11; m12 = r12; m13 = r13;
-    m20 = r20; m21 = r21; m22 = r22; m23 = r23;
-    m30 = r30; m31 = r31; m32 = r32; m33 = r33;
-  }
-
-
-
-  /**
-   * Apply a 4x4 transformation matrix. Same as glMultMatrix().
-   */
-  // n20 is 0, n21 is 0, n22 is 1
-  /*
-  public void applyMatrix(float n00, float n01, float n02,
-                          float n10, float n11, float n12) {
-
-    float r00 = m00*n00 + m01*n10;
-    float r01 = m00*n01 + m01*n11;
-    float r02 = m00*n02 + m01*n12 + m02;
-
-    float r10 = m10*n00 + m11*n10;
-    float r11 = m10*n01 + m11*n11;
-    float r12 = m10*n02 + m11*n12 + m12;
-
-    float r20 = m20*n00 + m21*n10;
-    float r21 = m20*n01 + m21*n11;
-    float r22 = m20*n02 + m21*n12 + m22;
-
-    m00 = r00; m01 = r01; m02 = r02; m03 = r03;
-    m10 = r10; m11 = r11; m12 = r12; m13 = r13;
-    m20 = r20; m21 = r21; m22 = r22; m23 = r23;
-  }
-  */
-
-
-  /**
-   * Print the current model (or "transformation") matrix.
-   */
-  public void printMatrix() {
-    int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)),
-                                         max(abs(m02), abs(m03))),
-                                     max(max(abs(m10), abs(m11)),
-                                         max(abs(m12), abs(m13)))),
-                                 max(max(max(abs(m20), abs(m21)),
-                                         max(abs(m22), abs(m23))),
-                                     max(max(abs(m30), abs(m31)),
-                                         max(abs(m32), abs(m33))))));
-    int d = 1;
-    while ((big /= 10) != 0) d++;  // cheap log()
-
-    if (depth) {
-      System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                         PApplet.nfs(m01, d, 4) + " " +
-                         PApplet.nfs(m02, d, 4) + " " +
-                         PApplet.nfs(m03, d, 4));
-
-      System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                         PApplet.nfs(m11, d, 4) + " " +
-                         PApplet.nfs(m12, d, 4) + " " +
-                         PApplet.nfs(m13, d, 4));
-
-      System.out.println(PApplet.nfs(m20, d, 4) + " " +
-                         PApplet.nfs(m21, d, 4) + " " +
-                         PApplet.nfs(m22, d, 4) + " " +
-                         PApplet.nfs(m23, d, 4));
-
-      System.out.println(PApplet.nfs(m30, d, 4) + " " +
-                         PApplet.nfs(m31, d, 4) + " " +
-                         PApplet.nfs(m32, d, 4) + " " +
-                         PApplet.nfs(m33, d, 4));
-
-    } else {  // 3x2 affine version
-      System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                         PApplet.nfs(m01, d, 4) + " " +
-                         PApplet.nfs(m02, d, 4));
-
-      System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                         PApplet.nfs(m11, d, 4) + " " +
-                         PApplet.nfs(m12, d, 4));
-    }
-    System.out.println();
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // CAMERA METHODS
-
-
-  /**
-   * Set matrix mode to the camera matrix (instead of
-   * the current transformation matrix). This means applyMatrix,
-   * resetMatrix, etc. will affect the camera.
-   *
-   * You'll need to call resetMatrix() if you want to
-   * completely change the camera's settings.
-   */
-  public void beginCamera() {
-    // this will be written over by cameraMode() if necessary
-    cameraMode = CUSTOM;
-  }
-
-
-  /**
-   * Calling cameraMode(PERSPECTIVE) will setup the standard
-   * Processing transformation.
-   *
-   * cameraMode(ORTHOGRAPHIC) will setup a straight orthographic
-   * projection.
-   *
-   * Note that this setting gets nuked if resize() is called.
-   */
-  public void cameraMode(int mode) {
-    if (cameraMode == PERSPECTIVE) {
-      beginCamera();
-      resetMatrix();
-      perspective(cameraFOV, cameraAspect, cameraNearDist, cameraFarDist);
-      lookat(cameraEyeX, cameraEyeY, cameraEyeDist,
-             cameraEyeX, cameraEyeY, 0,
-             0, 1, 0);
-      endCamera();
-
-    } else if (cameraMode == ORTHOGRAPHIC) {
-      beginCamera();
-      resetMatrix();
-      ortho(0, width, 0, height, -10, 10);
-      endCamera();
-    }
-
-    cameraMode = mode;  // this doesn't do much
-  }
-
-
-  /**
-   * Record the current settings into the camera matrix.
-   * And set the matrix mode back to the current
-   * transformation matrix.
-   *
-   * Note that this will destroy any settings to scale(),
-   * translate() to your scene.
-   */
-  public void endCamera() {
-    p00 = m00; p01 = m01; p02 = m02; p03 = m03;
-    p10 = m10; p11 = m11; p12 = m12; p13 = m13;
-    p20 = m20; p21 = m21; p22 = m22; p23 = m23;
-    p30 = m30; p31 = m31; p32 = m32; p33 = m33;
-    resetMatrix();
-  }
-
-
-  /**
-   * Print the current camera (or "perspective") matrix.
-   */
-  public void printCamera() {
-    if (!depth) {
-      System.out.println("No camera matrix when not in depth() mode.");
-      return;
-    }
-
-    int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)),
-                                         max(abs(p02), abs(p03))),
-                                     max(max(abs(p10), abs(p11)),
-                                         max(abs(p12), abs(p13)))),
-                                 max(max(max(abs(p20), abs(p21)),
-                                         max(abs(p22), abs(p23))),
-                                     max(max(abs(p30), abs(p31)),
-                                         max(abs(p32), abs(p33))))));
-    int d = 1;
-    while ((big /= 10) != 0) d++;  // cheap log()
-
-    System.out.println(PApplet.nfs(p00, d, 4) + " " +
-                       PApplet.nfs(p01, d, 4) + " " +
-                       PApplet.nfs(p02, d, 4) + " " +
-                       PApplet.nfs(p03, d, 4));
-
-    System.out.println(PApplet.nfs(p10, d, 4) + " " +
-                       PApplet.nfs(p11, d, 4) + " " +
-                       PApplet.nfs(p12, d, 4) + " " +
-                       PApplet.nfs(p13, d, 4));
-
-    System.out.println(PApplet.nfs(p20, d, 4) + " " +
-                       PApplet.nfs(p21, d, 4) + " " +
-                       PApplet.nfs(p22, d, 4) + " " +
-                       PApplet.nfs(p23, d, 4));
-
-    System.out.println(PApplet.nfs(p30, d, 4) + " " +
-                       PApplet.nfs(p31, d, 4) + " " +
-                       PApplet.nfs(p32, d, 4) + " " +
-                       PApplet.nfs(p33, d, 4));
-
-    System.out.println();
-  }
-
-
-  public float screenX(float x, float y) {
-    return m00*x + m01*y + m02;
-  }
-
-
-  public float screenY(float x, float y) {
-    return m10*x + m11*y + m12;
-  }
-
-
-  public float screenX(float x, float y, float z) {
-    if (!depth) return screenX(x, y);
-
-    float ax = m00*x + m01*y + m02*z + m03;
-    float ay = m10*x + m11*y + m12*z + m13;
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
-
-    float ox = p00*ax + p01*ay + p02*az + p03*aw;
-    float ow = p30*ax + p31*ay + p32*az + p33*aw;
-
-    if (ow != 0) ox /= ow;
-    return width * (1 + ox) / 2.0f;
-  }
-
-
-  public float screenY(float x, float y, float z) {
-    if (!depth) return screenY(x, y);
-
-    float ax = m00*x + m01*y + m02*z + m03;
-    float ay = m10*x + m11*y + m12*z + m13;
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
-
-    float oy = p10*ax + p11*ay + p12*az + p13*aw;
-    float ow = p30*ax + p31*ay + p32*az + p33*aw;
-
-    if (ow != 0) oy /= ow;
-    return height * (1 + oy) / 2.0f;
-  }
-
-
-  public float screenZ(float x, float y, float z) {
-    if (!depth) return 0;
-
-    float ax = m00*x + m01*y + m02*z + m03;
-    float ay = m10*x + m11*y + m12*z + m13;
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
-
-    float oz = p20*ax + p21*ay + p22*az + p23*aw;
-    float ow = p30*ax + p31*ay + p32*az + p33*aw;
-
-    if (ow != 0) oz /= ow;
-    return (oz + 1) / 2.0f;
-  }
-
-
-  public float objectX(float x, float y, float z) {
-    if (!depth) return screenX(x, y);
-
-    float ax = m00*x + m01*y + m02*z + m03;
-    float aw = m30*x + m31*y + m32*z + m33;
-    return (aw != 0) ? ax / aw : ax;
-  }
-
-
-  public float objectY(float x, float y, float z) {
-    if (!depth) return screenY(x, y);
-
-    float ay = m10*x + m11*y + m12*z + m13;
-    float aw = m30*x + m31*y + m32*z + m33;
-    return (aw != 0) ? ay / aw : ay;
-  }
-
-
-  public float objectZ(float x, float y, float z) {
-    if (!depth) return 0;
-
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
-    return (aw != 0) ? az / aw : az;
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // CAMERA TRANSFORMATIONS
-
-
-  /**
-   * Same as gluOrtho(). Implementation based on Mesa's matrix.c
-   */
-  public void ortho(float left, float right,
-                    float bottom, float top,
-                    float near, float far) {
-    float x =  2.0f / (right - left);
-    float y =  2.0f / (top - bottom);
-    float z = -2.0f / (far - near);
-
-    float tx = -(right + left) / (right - left);
-    float ty = -(top + bottom) / (top - bottom);
-    float tz = -(far + near) / (far - near);
-
-    applyMatrix(x, 0, 0, tx,
-                0, y, 0, ty,
-                0, 0, z, tz,
-                0, 0, 0, 1);
-  }
-
-
-  /**
-   * Same as gluPerspective(). Implementation based on Mesa's glu.c
-   */
-  public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    //System.out.println("perspective: " + fovy + " " + aspect + " " +
-    //               zNear + " " + zFar);
-    float ymax = zNear * tan(fovy * PI / 360.0f);
-    float ymin = -ymax;
-
-    float xmin = ymin * aspect;
-    float xmax = ymax * aspect;
-
-    frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-  }
-
-
-  /**
-   * Same as glFrustum(). Implementation based on the explanation
-   * in the OpenGL reference book.
-   */
-  public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar) {
-    //System.out.println("frustum: " + left + " " + right + "  " +
-    //               bottom + " " + top + "  " + znear + " " + zfar);
-    applyMatrix((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
-                0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
-                0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
-                0, 0, -1, 0);
-  }
-
-
-  /**
-   * Same as gluLookat(). Implementation based on Mesa's glu.c
-   */
-  public void lookat(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ) {
-    float z0 = eyeX - centerX;
-    float z1 = eyeY - centerY;
-    float z2 = eyeZ - centerZ;
-    float mag = sqrt(z0*z0 + z1*z1 + z2*z2);
-
-    if (mag != 0) {
-      z0 /= mag;
-      z1 /= mag;
-      z2 /= mag;
-    }
-
-    float y0 = upX;
-    float y1 = upY;
-    float y2 = upZ;
-
-    float x0 =  y1*z2 - y2*z1;
-    float x1 = -y0*z2 + y2*z0;
-    float x2 =  y0*z1 - y1*z0;
-
-    y0 =  z1*x2 - z2*x1;
-    y1 = -z0*x2 + z2*x0;
-    y2 =  z0*x1 - z1*x0;
-
-    mag = sqrt(x0*x0 + x1*x1 + x2*x2);
-    if (mag != 0) {
-      x0 /= mag;
-      x1 /= mag;
-      x2 /= mag;
-    }
-
-    mag = sqrt(y0*y0 + y1*y1 + y2*y2);
-    if (mag != 0) {
-      y0 /= mag;
-      y1 /= mag;
-      y2 /= mag;
-    }
-
-    applyMatrix(x0, x1, x2, 0,
-                y0, y1, y2, 0,
-                z0, z1, z2, 0,
-                0,  0,  0,  1);
-    translate(-eyeX, -eyeY, -eyeZ);
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
   // MATRIX TRANSFORMATIONS
 
 
@@ -4499,6 +3524,464 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     dimensions = 3;
     applyMatrix(n00, n01, n02, n03,  n10, n11, n12, n13,
                 n20, n21, n22, n23,  n30, n31, n32, n33);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // TRANSFORMATION MATRIX
+
+
+  public void push() {
+    if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
+      message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
+      return;
+    }
+    float cm[] = matrixStack[matrixStackDepth];
+    cm[ 0] = m00; cm[ 1] = m01; cm[ 2] = m02; cm[ 3] = m03;
+    cm[ 4] = m10; cm[ 5] = m11; cm[ 6] = m12; cm[ 7] = m13;
+    cm[ 8] = m20; cm[ 9] = m21; cm[10] = m22; cm[11] = m23;
+    cm[12] = m30; cm[13] = m31; cm[14] = m32; cm[15] = m33;
+    matrixStackDepth++;
+  }
+
+
+  public void pop() {
+    if (matrixStackDepth == 0) {
+      message(COMPLAINT, "matrix stack underflow, to many popmatrix");
+      return;
+    }
+    matrixStackDepth--;
+    float cm[] = matrixStack[matrixStackDepth];
+    m00 = cm[ 0]; m01 = cm[ 1]; m02 = cm[ 2]; m03 = cm[ 3];
+    m10 = cm[ 4]; m11 = cm[ 5]; m12 = cm[ 6]; m13 = cm[ 7];
+    m20 = cm[ 8]; m21 = cm[ 9]; m22 = cm[10]; m23 = cm[11];
+    m30 = cm[12]; m31 = cm[13]; m32 = cm[14]; m33 = cm[15];
+
+    if ((matrixStackDepth == 0) &&
+        (m00 == 1) && (m01 == 0) && (m02 == 0) && (m03 == 0) &&
+        (m10 == 0) && (m11 == 1) && (m12 == 0) && (m13 == 0) &&
+        (m20 == 0) && (m21 == 0) && (m22 == 1) && (m23 == 0) &&
+        (m30 == 0) && (m31 == 0) && (m32 == 0) && (m33 == 1)) {
+      dimensions = 0;
+    }
+  }
+
+
+  /**
+   * Load identity as the transform/model matrix.
+   * Same as glLoadIdentity().
+   */
+  public void resetMatrix() {
+    //dimensions = 0;
+    m00 = 1; m01 = 0; m02 = 0; m03 = 0;
+    m10 = 0; m11 = 1; m12 = 0; m13 = 0;
+    m20 = 0; m21 = 0; m22 = 1; m23 = 0;
+    m30 = 0; m31 = 0; m32 = 0; m33 = 1;
+  }
+
+
+  /**
+   * Apply a 4x4 transformation matrix. Same as glMultMatrix().
+   */
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+
+    float r00 = m00*n00 + m01*n10 + m02*n20 + m03*n30;
+    float r01 = m00*n01 + m01*n11 + m02*n21 + m03*n31;
+    float r02 = m00*n02 + m01*n12 + m02*n22 + m03*n32;
+    float r03 = m00*n03 + m01*n13 + m02*n23 + m03*n33;
+
+    float r10 = m10*n00 + m11*n10 + m12*n20 + m13*n30;
+    float r11 = m10*n01 + m11*n11 + m12*n21 + m13*n31;
+    float r12 = m10*n02 + m11*n12 + m12*n22 + m13*n32;
+    float r13 = m10*n03 + m11*n13 + m12*n23 + m13*n33;
+
+    float r20 = m20*n00 + m21*n10 + m22*n20 + m23*n30;
+    float r21 = m20*n01 + m21*n11 + m22*n21 + m23*n31;
+    float r22 = m20*n02 + m21*n12 + m22*n22 + m23*n32;
+    float r23 = m20*n03 + m21*n13 + m22*n23 + m23*n33;
+
+    float r30 = m30*n00 + m31*n10 + m32*n20 + m33*n30;
+    float r31 = m30*n01 + m31*n11 + m32*n21 + m33*n31;
+    float r32 = m30*n02 + m31*n12 + m32*n22 + m33*n32;
+    float r33 = m30*n03 + m31*n13 + m32*n23 + m33*n33;
+
+    m00 = r00; m01 = r01; m02 = r02; m03 = r03;
+    m10 = r10; m11 = r11; m12 = r12; m13 = r13;
+    m20 = r20; m21 = r21; m22 = r22; m23 = r23;
+    m30 = r30; m31 = r31; m32 = r32; m33 = r33;
+  }
+
+
+
+  /**
+   * Apply a 3x2 affine transformation matrix.
+   */
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+
+    float r00 = m00*n00 + m01*n10;
+    float r01 = m00*n01 + m01*n11;
+    float r02 = m00*n02 + m01*n12 + m02;
+
+    float r10 = m10*n00 + m11*n10;
+    float r11 = m10*n01 + m11*n11;
+    float r12 = m10*n02 + m11*n12 + m12;
+
+    m00 = r00; m01 = r01; m02 = r02;
+    m10 = r10; m11 = r11; m12 = r12;
+  }
+
+
+  /**
+   * Print the current model (or "transformation") matrix.
+   */
+  public void printMatrix() {
+    int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)),
+                                         max(abs(m02), abs(m03))),
+                                     max(max(abs(m10), abs(m11)),
+                                         max(abs(m12), abs(m13)))),
+                                 max(max(max(abs(m20), abs(m21)),
+                                         max(abs(m22), abs(m23))),
+                                     max(max(abs(m30), abs(m31)),
+                                         max(abs(m32), abs(m33))))));
+    int d = 1;
+    while ((big /= 10) != 0) d++;  // cheap log()
+
+    if (depth) {
+      System.out.println(PApplet.nfs(m00, d, 4) + " " +
+                         PApplet.nfs(m01, d, 4) + " " +
+                         PApplet.nfs(m02, d, 4) + " " +
+                         PApplet.nfs(m03, d, 4));
+
+      System.out.println(PApplet.nfs(m10, d, 4) + " " +
+                         PApplet.nfs(m11, d, 4) + " " +
+                         PApplet.nfs(m12, d, 4) + " " +
+                         PApplet.nfs(m13, d, 4));
+
+      System.out.println(PApplet.nfs(m20, d, 4) + " " +
+                         PApplet.nfs(m21, d, 4) + " " +
+                         PApplet.nfs(m22, d, 4) + " " +
+                         PApplet.nfs(m23, d, 4));
+
+      System.out.println(PApplet.nfs(m30, d, 4) + " " +
+                         PApplet.nfs(m31, d, 4) + " " +
+                         PApplet.nfs(m32, d, 4) + " " +
+                         PApplet.nfs(m33, d, 4));
+
+    } else {  // 3x2 affine version
+      System.out.println(PApplet.nfs(m00, d, 4) + " " +
+                         PApplet.nfs(m01, d, 4) + " " +
+                         PApplet.nfs(m02, d, 4));
+
+      System.out.println(PApplet.nfs(m10, d, 4) + " " +
+                         PApplet.nfs(m11, d, 4) + " " +
+                         PApplet.nfs(m12, d, 4));
+    }
+    System.out.println();
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // CAMERA
+
+
+  /**
+   * Calling cameraMode(PERSPECTIVE) will setup the standard
+   * Processing transformation.
+   *
+   * cameraMode(ORTHOGRAPHIC) will setup a straight orthographic
+   * projection.
+   *
+   * Note that this setting gets nuked if resize() is called.
+   */
+  public void cameraMode(int mode) {
+    if (cameraMode == PERSPECTIVE) {
+      beginCamera();
+      resetMatrix();
+      perspective(cameraFOV, cameraAspect, cameraNearDist, cameraFarDist);
+      lookat(cameraEyeX, cameraEyeY, cameraEyeDist,
+             cameraEyeX, cameraEyeY, 0,
+             0, 1, 0);
+      endCamera();
+
+    } else if (cameraMode == ORTHOGRAPHIC) {
+      beginCamera();
+      resetMatrix();
+      ortho(0, width, 0, height, -10, 10);
+      endCamera();
+    }
+
+    cameraMode = mode;  // this doesn't do much
+  }
+
+
+  /**
+   * Set matrix mode to the camera matrix (instead of
+   * the current transformation matrix). This means applyMatrix,
+   * resetMatrix, etc. will affect the camera.
+   *
+   * You'll need to call resetMatrix() if you want to
+   * completely change the camera's settings.
+   */
+  public void beginCamera() {
+    // this will be written over by cameraMode() if necessary
+    cameraMode = CUSTOM;
+  }
+
+
+  /**
+   * Record the current settings into the camera matrix.
+   * And set the matrix mode back to the current
+   * transformation matrix.
+   *
+   * Note that this will destroy any settings to scale(),
+   * translate() to your scene.
+   */
+  public void endCamera() {
+    p00 = m00; p01 = m01; p02 = m02; p03 = m03;
+    p10 = m10; p11 = m11; p12 = m12; p13 = m13;
+    p20 = m20; p21 = m21; p22 = m22; p23 = m23;
+    p30 = m30; p31 = m31; p32 = m32; p33 = m33;
+    resetMatrix();
+  }
+
+  /**
+   * Same as gluOrtho(). Implementation based on Mesa's matrix.c
+   */
+  public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far) {
+    float x =  2.0f / (right - left);
+    float y =  2.0f / (top - bottom);
+    float z = -2.0f / (far - near);
+
+    float tx = -(right + left) / (right - left);
+    float ty = -(top + bottom) / (top - bottom);
+    float tz = -(far + near) / (far - near);
+
+    applyMatrix(x, 0, 0, tx,
+                0, y, 0, ty,
+                0, 0, z, tz,
+                0, 0, 0, 1);
+  }
+
+
+  /**
+   * Same as gluPerspective(). Implementation based on Mesa's glu.c
+   */
+  public void perspective(float fovy, float aspect, float zNear, float zFar) {
+    //System.out.println("perspective: " + fovy + " " + aspect + " " +
+    //               zNear + " " + zFar);
+    float ymax = zNear * tan(fovy * PI / 360.0f);
+    float ymin = -ymax;
+
+    float xmin = ymin * aspect;
+    float xmax = ymax * aspect;
+
+    frustum(xmin, xmax, ymin, ymax, zNear, zFar);
+  }
+
+
+  /**
+   * Same as glFrustum(). Implementation based on the explanation
+   * in the OpenGL reference book.
+   */
+  public void frustum(float left, float right, float bottom,
+                      float top, float znear, float zfar) {
+    //System.out.println("frustum: " + left + " " + right + "  " +
+    //               bottom + " " + top + "  " + znear + " " + zfar);
+    applyMatrix((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
+                0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
+                0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
+                0, 0, -1, 0);
+  }
+
+
+  /**
+   * Same as gluLookat(). Implementation based on Mesa's glu.c
+   */
+  public void lookat(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+    float z0 = eyeX - centerX;
+    float z1 = eyeY - centerY;
+    float z2 = eyeZ - centerZ;
+    float mag = sqrt(z0*z0 + z1*z1 + z2*z2);
+
+    if (mag != 0) {
+      z0 /= mag;
+      z1 /= mag;
+      z2 /= mag;
+    }
+
+    float y0 = upX;
+    float y1 = upY;
+    float y2 = upZ;
+
+    float x0 =  y1*z2 - y2*z1;
+    float x1 = -y0*z2 + y2*z0;
+    float x2 =  y0*z1 - y1*z0;
+
+    y0 =  z1*x2 - z2*x1;
+    y1 = -z0*x2 + z2*x0;
+    y2 =  z0*x1 - z1*x0;
+
+    mag = sqrt(x0*x0 + x1*x1 + x2*x2);
+    if (mag != 0) {
+      x0 /= mag;
+      x1 /= mag;
+      x2 /= mag;
+    }
+
+    mag = sqrt(y0*y0 + y1*y1 + y2*y2);
+    if (mag != 0) {
+      y0 /= mag;
+      y1 /= mag;
+      y2 /= mag;
+    }
+
+    applyMatrix(x0, x1, x2, 0,
+                y0, y1, y2, 0,
+                z0, z1, z2, 0,
+                0,  0,  0,  1);
+    translate(-eyeX, -eyeY, -eyeZ);
+  }
+
+
+
+  /**
+   * Print the current camera (or "perspective") matrix.
+   */
+  public void printCamera() {
+    if (!depth) {
+      System.out.println("No camera matrix when not in depth() mode.");
+      return;
+    }
+
+    int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)),
+                                         max(abs(p02), abs(p03))),
+                                     max(max(abs(p10), abs(p11)),
+                                         max(abs(p12), abs(p13)))),
+                                 max(max(max(abs(p20), abs(p21)),
+                                         max(abs(p22), abs(p23))),
+                                     max(max(abs(p30), abs(p31)),
+                                         max(abs(p32), abs(p33))))));
+    int d = 1;
+    while ((big /= 10) != 0) d++;  // cheap log()
+
+    System.out.println(PApplet.nfs(p00, d, 4) + " " +
+                       PApplet.nfs(p01, d, 4) + " " +
+                       PApplet.nfs(p02, d, 4) + " " +
+                       PApplet.nfs(p03, d, 4));
+
+    System.out.println(PApplet.nfs(p10, d, 4) + " " +
+                       PApplet.nfs(p11, d, 4) + " " +
+                       PApplet.nfs(p12, d, 4) + " " +
+                       PApplet.nfs(p13, d, 4));
+
+    System.out.println(PApplet.nfs(p20, d, 4) + " " +
+                       PApplet.nfs(p21, d, 4) + " " +
+                       PApplet.nfs(p22, d, 4) + " " +
+                       PApplet.nfs(p23, d, 4));
+
+    System.out.println(PApplet.nfs(p30, d, 4) + " " +
+                       PApplet.nfs(p31, d, 4) + " " +
+                       PApplet.nfs(p32, d, 4) + " " +
+                       PApplet.nfs(p33, d, 4));
+
+    System.out.println();
+  }
+
+
+  public float screenX(float x, float y) {
+    return m00*x + m01*y + m02;
+  }
+
+
+  public float screenY(float x, float y) {
+    return m10*x + m11*y + m12;
+  }
+
+
+  public float screenX(float x, float y, float z) {
+    if (!depth) return screenX(x, y);
+
+    float ax = m00*x + m01*y + m02*z + m03;
+    float ay = m10*x + m11*y + m12*z + m13;
+    float az = m20*x + m21*y + m22*z + m23;
+    float aw = m30*x + m31*y + m32*z + m33;
+
+    float ox = p00*ax + p01*ay + p02*az + p03*aw;
+    float ow = p30*ax + p31*ay + p32*az + p33*aw;
+
+    if (ow != 0) ox /= ow;
+    return width * (1 + ox) / 2.0f;
+  }
+
+
+  public float screenY(float x, float y, float z) {
+    if (!depth) return screenY(x, y);
+
+    float ax = m00*x + m01*y + m02*z + m03;
+    float ay = m10*x + m11*y + m12*z + m13;
+    float az = m20*x + m21*y + m22*z + m23;
+    float aw = m30*x + m31*y + m32*z + m33;
+
+    float oy = p10*ax + p11*ay + p12*az + p13*aw;
+    float ow = p30*ax + p31*ay + p32*az + p33*aw;
+
+    if (ow != 0) oy /= ow;
+    return height * (1 + oy) / 2.0f;
+  }
+
+
+  public float screenZ(float x, float y, float z) {
+    if (!depth) return 0;
+
+    float ax = m00*x + m01*y + m02*z + m03;
+    float ay = m10*x + m11*y + m12*z + m13;
+    float az = m20*x + m21*y + m22*z + m23;
+    float aw = m30*x + m31*y + m32*z + m33;
+
+    float oz = p20*ax + p21*ay + p22*az + p23*aw;
+    float ow = p30*ax + p31*ay + p32*az + p33*aw;
+
+    if (ow != 0) oz /= ow;
+    return (oz + 1) / 2.0f;
+  }
+
+
+  public float objectX(float x, float y, float z) {
+    if (!depth) return screenX(x, y);
+
+    float ax = m00*x + m01*y + m02*z + m03;
+    float aw = m30*x + m31*y + m32*z + m33;
+    return (aw != 0) ? ax / aw : ax;
+  }
+
+
+  public float objectY(float x, float y, float z) {
+    if (!depth) return screenY(x, y);
+
+    float ay = m10*x + m11*y + m12*z + m13;
+    float aw = m30*x + m31*y + m32*z + m33;
+    return (aw != 0) ? ay / aw : ay;
+  }
+
+
+  public float objectZ(float x, float y, float z) {
+    if (!depth) return 0;
+
+    float az = m20*x + m21*y + m22*z + m23;
+    float aw = m30*x + m31*y + m32*z + m33;
+    return (aw != 0) ? az / aw : az;
   }
 
 
@@ -4902,6 +4385,15 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
+  /**
+   * Takes an RGB or RGBA image and sets it as the background.
+   *
+   * Note that even if the image is set as RGB, the high 8 bits of
+   * each pixel must be set (0xFF000000), because the image data will
+   * be copied directly to the screen.
+   *
+   * Also clears out the zbuffer and stencil buffer if they exist.
+   */
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
       System.err.println("background image must be the same size " +
@@ -4916,43 +4408,34 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     // blit image to the screen
     System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
 
-    // clear the zbuffer
-    //if (dimensions == 3) {
-    for (int i = 0; i < pixelCount; i++) {
-      zbuffer[i] = MAX_FLOAT;
+    if (zbuffer != null) {
+      for (int i = 0; i < pixelCount; i++) {
+        zbuffer[i] = MAX_FLOAT;
+        stencil[i] = 0;
+      }
     }
-    //}
   }
 
 
   /**
-   * Clears pixel and z-buffer. If dimensions not set to 3,
-   * then the zbuffer doesn't get cleared. Some values might be
-   * zero, but since it's <= when comparing zbuffer (because of
-   * 2D drawing) that's no problem. Saves a lotta time to not
-   * reset the zbuffer if it's not used.
-   *
-   * Actually had to punt on that optimization because it was
-   * producing weird results and it was close to a release deadline.
-   * A little sleep would probably show why it wasn't working.
+   * Clears pixel buffer. Also clears the stencil and zbuffer
+   * if they exist. Their existence is more accurate than using 'depth'
+   * to test whether to clear them, because if they're non-null,
+   * it means that depth() has been called somewhere in the program,
+   * even if noDepth() was called before draw() exited.
    */
   public void clear() {
-    //zbufferTainted = true;
-
-    //if (dimensions == 3) {
-    //if (zbufferTainted) {
-      //System.out.println("clearing zbuffer");
-    for (int i = 0; i < pixelCount; i++) {
-      pixels[i] = backgroundColor;
-      zbuffer[i] = MAX_FLOAT;
+    if (zbuffer != null) {
+      for (int i = 0; i < pixelCount; i++) {
+        pixels[i] = backgroundColor;
+        zbuffer[i] = MAX_FLOAT;
+        stencil[i] = 0;
+      }
+    } else {
+      for (int i = 0; i < pixelCount; i++) {
+        pixels[i] = backgroundColor;
+      }
     }
-    //zbufferTainted = false;
-    //} else {
-    //System.out.println("not clearing zbuffer");
-    //for (int i = 0; i < pixelCount; i++) {
-    //  pixels[i] = background;
-    //}
-    //}
   }
 
 
@@ -5227,7 +4710,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   private final float sqrt(float a) {
     return (float)Math.sqrt(a);
   }
-
 
   private final float abs(float a) {
     return (a < 0) ? -a : a;

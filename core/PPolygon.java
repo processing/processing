@@ -4,8 +4,8 @@
   PPolygon - zbuffer polygon rendering object for BGraphics
   Part of the Processing project - http://Proce55ing.net
 
-  Copyright (c) 2001-03 
-  Ben Fry, Massachusetts Institute of Technology and 
+  Copyright (c) 2001-03
+  Ben Fry, Massachusetts Institute of Technology and
   Casey Reas, Interaction Design Institute Ivrea
 
   This library is free software; you can redistribute it and/or
@@ -18,9 +18,9 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General 
-  Public License along with this library; if not, write to the 
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 */
 
@@ -32,7 +32,7 @@ public class PPolygon implements PConstants {
   float vertices[][] = new float[DEFAULT_SIZE][VERTEX_FIELD_COUNT];
   int vertexCount;
 
-  // really this is "debug" but.. 
+  // really this is "debug" but..
   static final boolean FRY = false;
 
   // after some fiddling, this seems to produce the best results
@@ -60,10 +60,10 @@ public class PPolygon implements PConstants {
   PGraphics parent;
   int pixels[];
 
-  // the parent's width/height, 
+  // the parent's width/height,
   // or if smoothing is enabled, parent's w/h scaled
   // up by the smoothing dimension
-  int width, height; 
+  int width, height;
   int width1, height1;
 
   PImage timage;
@@ -115,7 +115,7 @@ public class PPolygon implements PConstants {
 
   public float[] nextVertex() {
     if (vertexCount == vertices.length) {
-      //parent.message(CHATTER, "re-allocating for " + 
+      //parent.message(CHATTER, "re-allocating for " +
       //             (vertexCount*2) + " vertices");
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
@@ -180,8 +180,8 @@ public class PPolygon implements PConstants {
 
     // by default, text turns on smoothing for the textures
     // themselves. but this should be shut off if the hint
-    // for DISABLE_TEXT_SMOOTH is set. 
-    texture_smooth = (parent.drawing_text && 
+    // for DISABLE_TEXT_SMOOTH is set.
+    texture_smooth = (//parent.drawing_text &&
                       !parent.hints[DISABLE_TEXT_SMOOTH]);
 
     width = smoothing ? parent.width*SUBXRES : parent.width;
@@ -200,7 +200,7 @@ public class PPolygon implements PConstants {
     }
 
     for (int i = 0; i < vertexCount; i++) {
-      r[i] = 0; dr[i] = 0; l[i] = 0; dl[i] = 0; 
+      r[i] = 0; dr[i] = 0; l[i] = 0; dl[i] = 0;
     }
 
     // hack to not make polygons fly into the screen
@@ -243,12 +243,12 @@ public class PPolygon implements PConstants {
     // necessarily be 8 rows of subpixel lines that will force
     // the final line to render. so instead, the algo keeps track
     // of the lastY (in subpixel resolution) that will be rendered
-    // and that will force a scanline to happen the same as 
+    // and that will force a scanline to happen the same as
     // every eighth in the other situations
     //lastY = -1;  // fry 031001
     lastY = (int) (ymax - 0.5f);  // global to class bc used by other fxns
 
-    int lefti = topi;             // li, index of left vertex 
+    int lefti = topi;             // li, index of left vertex
     int righti = topi;            // ri, index of right vertex
     int y = (int) (ymin + 0.5f);  // current scan line
     int lefty = y - 1;            // lower end of left edge
@@ -273,7 +273,7 @@ public class PPolygon implements PConstants {
 
       // advance right edge?
       while ((righty <= y) && (remaining > 0)) {
-        remaining--;                            
+        remaining--;
         // step cw down right edge
         int i = (righti != vertexCount-1) ? (righti + 1) : 0;
         incrementalize_y(vertices[righti], vertices[i], r, dr, y);
@@ -395,8 +395,8 @@ public class PPolygon implements PConstants {
 
         // map texture based on U, V coords in sp[U] and sp[V]
         if (interpUV) {
-          int tu = (int)sp[U]; 
-          int tv = (int)sp[V]; 
+          int tu = (int)sp[U];
+          int tv = (int)sp[V];
 
           if (tu > twidth1) tu = twidth1;
           if (tv > theight1) tv = theight1;
@@ -459,7 +459,7 @@ public class PPolygon implements PConstants {
 
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
-              tr = (((px0*tvf + px1*tvf1) >> 8) * 
+              tr = (((px0*tvf + px1*tvf1) >> 8) *
                     (interpRGBA ? ((int) sp[R]*255) : r2)) >> 8;
 
 
@@ -470,7 +470,7 @@ public class PPolygon implements PConstants {
 
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
-              tg = (((px0*tvf + px1*tvf1) >> 8) * 
+              tg = (((px0*tvf + px1*tvf1) >> 8) *
                     (interpRGBA ? ((int) sp[G]*255) : g2)) >> 8;
 
 
@@ -481,7 +481,7 @@ public class PPolygon implements PConstants {
 
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
-              tb = (((px0*tvf + px1*tvf1) >> 8) * 
+              tb = (((px0*tvf + px1*tvf1) >> 8) *
                     (interpRGBA ? ((int) sp[B]*255) : b2)) >> 8;
 
             } else {  // alpha image, only use current fill color
@@ -498,7 +498,7 @@ public class PPolygon implements PConstants {
             }
 
             // get coverage for pixel if smoothing
-            // checks smoothing again here because of 
+            // checks smoothing again here because of
             // hints[SMOOTH_IMAGES] used up above
             int weight = smoothing ? coverage(x) : 255;
             if (weight != 255) ta = ta*weight >> 8;
@@ -556,7 +556,7 @@ public class PPolygon implements PConstants {
             int g1 = (pixels[offset+x] >> 8) & 0xff;
             int b1 = (pixels[offset+x]) & 0xff;
 
-            pixels[offset+x] = 0xff000000 | 
+            pixels[offset+x] = 0xff000000 |
               (((tr*ta + r1*a1) >> 8) << 16) |
               ((tg*ta + g1*a1) & 0xff00) |
               ((tb*ta + b1*a1) >> 8);
@@ -593,7 +593,7 @@ public class PPolygon implements PConstants {
             pixels[offset+x] = (0xff000000 |
                                 ((r1*a1 + r2*a2) >> 8) << 16 |
                                 // use & instead of >> and << below
-                                ((g1*a1 + g2*a2) >> 8) << 8 | 
+                                ((g1*a1 + g2*a2) >> 8) << 8 |
                                 ((b1*a1 + b2*a2) >> 8));
 
             if (a2 > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
@@ -601,7 +601,7 @@ public class PPolygon implements PConstants {
         }
       }
       // if smoothing enabled, don't increment values
-      // for the pixel in the stretch out version 
+      // for the pixel in the stretch out version
       // of the scanline used to get smooth edges.
       if (!smoothing || ((x >= truelx) && (x <= truerx))) {
         increment(sp, sdp);
@@ -629,7 +629,7 @@ public class PPolygon implements PConstants {
         continue;
       }
       // does this need a +1 ?
-      amt += ((aaright[i] < pixelRight ? aaright[i] : pixelRight) - 
+      amt += ((aaright[i] < pixelRight ? aaright[i] : pixelRight) -
               (aaleft[i] > pixelLeft ? aaleft[i] : pixelLeft));
     }
     amt <<= 2;
@@ -686,7 +686,7 @@ public class PPolygon implements PConstants {
     if (delta == 0) delta = ONE;
     float fraction = x + HALF - p1[X];
     if (smoothing) {
-      delta /= SUBXRES; 
+      delta /= SUBXRES;
       fraction /= SUBXRES;
     }
 
