@@ -68,6 +68,10 @@ the real deal, keeping us awake at night
 - beautify doesn't retain the *exact* position of the caret within the
   text. 
 
+- beautify has problems with indenting when lines with a brace are
+  commented out, or with switch statements.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+
 - .dll and .jnilib files only work if they're in the same folder as
   the processing app. in the future, they will run properly just from
   within your 'code' folder.
