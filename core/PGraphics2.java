@@ -24,16 +24,23 @@
 
 package processing.core;
 
-import java.applet.*;
+//import java.applet.*;
 import java.awt.*;
-import java.awt.event.*;
+//import java.awt.event.*;
+import java.awt.geom.*;
 import java.awt.image.*;
-import java.io.*;
+//import java.io.*;
 
 
 public class PGraphics2 extends PGraphics {
 
-  protected Graphics2D graphics;
+  Graphics2D graphics;
+  GeneralPath path;
+
+  int transformCount;
+  AffineTransform transformStack[] =
+    new AffineTransform[MATRIX_STACK_DEPTH];
+  double transform[] = new double[6];
 
 
   //////////////////////////////////////////////////////////////
@@ -90,21 +97,14 @@ public class PGraphics2 extends PGraphics {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
     Graphics2D graphics = (Graphics2D) image.getGraphics();
-
-    line = new PLine(this);
-    triangle = new PTriangle(this);
   }
 
-
-  //public void defaults() {
 
 
   //////////////////////////////////////////////////////////////
 
   // FRAME
 
-
-  //public void beginFrame()
 
   // turn off mis.newPixels
   public void endFrame() {
@@ -113,12 +113,16 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void endShape() {
-    vertex_end = vertex_count;
 
+  //////////////////////////////////////////////////////////////
+
+  // SHAPES
+
+
+  public void endShape() {
     // don't try to draw if there are no vertices
     // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-    if (vertex_count == 0) {
+    if (vertexCount == 0) {
       shape = 0;
       return;
     }
@@ -366,56 +370,214 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  protected void render_triangles() {
-    for (int i = 0; i < triangleCount; i ++) {
-      float a[] = vertices[triangles[i][VERTEX1]];
-      float b[] = vertices[triangles[i][VERTEX2]];
-      float c[] = vertices[triangles[i][VERTEX3]];
-      int tex = triangles[i][TEXTURE_INDEX];
-      int index = triangles[i][INDEX];
 
-      //System.out.println("A " + a[X] + " " + a[Y] + " " + a[Z]);
-      //System.out.println("B " + b[X] + " " + b[Y] + " " + b[Z]);
-      //System.out.println("C " + c[X] + " " + c[Y] + " " + c[Z]);
+  //////////////////////////////////////////////////////////////
 
-      triangle.reset();
+  // POINT
 
-      if (tex > -1 && textures[tex] != null) {
-        triangle.setTexture(textures[tex]);
-        triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
-      }
 
-      triangle.setIntensities(a[R], a[G], a[B], a[A],
-                              b[R], b[G], b[B], b[A],
-                              c[R], c[G], c[B], c[A]);
+  public void point(float x, float y) {
+  }
 
-      triangle.setVertices(a[X], a[Y], a[Z],
-                           b[X], b[Y], b[Z],
-                           c[X], c[Y], c[Z]);
+  public void line(float x1, float y1, float x2, float y2) {
+  }
 
-      triangle.setIndex(index);
-      triangle.render();
-    }
+  public void triangle(float x1, float y1, float x2, float y2,
+                       float x3, float y3) {
+  }
+
+  public void rect(float x1, float y1, float x2, float y2) {
+  }
+
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+  }
+
+  public void image(PImage image, float x1, float y1) {
+  }
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2) {
+  }
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    float u1, float v1, float u2, float v2) {
+  }
+
+  //public void cache(PImage image) {
+  //}
+
+  //public void cache(PImage images[]) {
+  //}
+
+  //public void arcMode(int mode) {
+  //}
+
+  public void arc(float start, float stop,
+                  float x, float y, float radius) {
+  }
+
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr) {
+  }
+
+  //public void ellipseMode(int mode) {
+  //}
+
+  public void ellipse(float x, float y, float hradius, float vradius) {
+  }
+
+  public void circle(float x, float y, float radius) {
+  }
+
+  //public float bezierPoint(float a, float b, float c, float d,
+  //                       float t);
+
+  //public float bezierTangent(float a, float b, float c, float d,
+  //                       float t);
+
+  public void bezier(float x1, float y1,
+                     float x2, float y2,
+                     float x3, float y3,
+                     float x4, float y4) {
+  }
+
+  public void bezierDetail(int detail) {
+    // ignored in java2d
+  }
+
+  public void curveDetail(int detail) {
+    // ignored in java2d
+  }
+
+  public void curveTightness(float tightness) {
+    // TODO
+  }
+
+  //public float curvePoint(float a, float b, float c, float d, float t);
+
+  //public float curveTangent(float a, float b, float c, float d, float t);
+
+  public void curve(float x1, float y1,
+                    float x2, float y2,
+                    float x3, float y3,
+                    float x4, float y4) {
+    // TODO
+  }
+
+  /*
+  public void textFont(PFont which);
+
+  public void textSize(float size);
+
+  public void textFont(PFont which, float size);
+
+  public void textLeading(float leading);
+
+  public void textMode(int mode);
+
+  public void textSpace(int space);
+
+  public void text(char c, float x, float y);
+
+  public void text(char c, float x, float y, float z);
+
+  public void text(String s, float x, float y);
+
+  public void text(String s, float x, float y, float z);
+
+  public void text(String s, float x, float y, float w, float h);
+
+  public void text(String s, float x1, float y1, float z, float x2, float y2);
+
+  public void text(int num, float x, float y);
+
+  public void text(int num, float x, float y, float z);
+
+  public void text(float num, float x, float y);
+
+  public void text(float num, float x, float y, float z);
+  */
+
+
+  public void translate(float tx, float ty) {
+    graphics.translate(tx, ty);
   }
 
 
-  public void render_lines() {
-    for (int i = 0; i < lineCount; i ++) {
-      float a[] = vertices[lines[i][VERTEX1]];
-      float b[] = vertices[lines[i][VERTEX2]];
-      int index = lines[i][INDEX];
+  public void rotate(float angle) {
+    graphics.rotate(angle);
+  }
 
-      line.reset();
 
-      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                          b[SR], b[SG], b[SB], b[SA]);
+  public void scale(float s) {
+    graphics.scale(s, s);
+  }
 
-      line.setVertices(a[X], a[Y], a[Z],
-                       b[X], b[Y], b[Z]);
 
-      line.setIndex(index);
-      line.draw();
+  public void scale(float sx, float sy) {
+    graphics.scale(sx, sy);
+  }
+
+
+  public void push() {
+    if (transformCount == transformStack.length) {
+      die("push() cannot use push more than " +
+          transformStack.length + " times");
     }
+    transformStack[transformCount] = graphics.getTransform();
+    transformCount++;
+  }
+
+
+  public void pop() {
+    if (transformCount == 0) {
+      die("missing a pop() to go with that push()");
+    }
+    transformCount--;
+    graphics.setTransform(transformStack[transformCount]);
+  }
+
+
+  public void resetMatrix() {
+    graphics.setTransform(new AffineTransform());
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+    graphics.transform(new AffineTransform(n00, n10, n01, n11, n02, n22));
+  }
+
+
+  public void printMatrix() {
+    // TODO maybe format this the same way as the superclass
+    //AffineTransform t = graphics.getTransform();
+    //System.out.println(t);  // not sure what this does
+    graphics.getTransform().getMatrix(transform);
+
+    m00 = (float) transform[0];
+    m01 = (float) transform[2];
+    m02 = (float) transform[4];
+
+    m10 = (float) transform[1];
+    m11 = (float) transform[3];
+    m12 = (float) transform[5];
+
+    super.printMatrix();
+  }
+
+
+  public float screenX(float x, float y) {
+    graphics.getTransform().getMatrix(transform);
+    //return m00*x + m01*y + m02;
+    return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
+  }
+
+
+  public float screenY(float x, float y) {
+    graphics.getTransform().getMatrix(transform);
+    return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
   }
 }
-

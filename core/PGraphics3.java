@@ -40,6 +40,21 @@ public class PGraphics3 extends PGraphics {
 
   // ........................................................
 
+  public int cameraMode;
+
+  // perspective setup
+  public float cameraFOV;
+  public float cameraX, cameraY, cameraZ;
+  public float cameraNear, cameraFar;
+  public float cameraAspect;
+
+  public float p00, p01, p02, p03; // projection matrix
+  public float p10, p11, p12, p13;
+  public float p20, p21, p22, p23;
+  public float p30, p31, p32, p33;
+
+  // ........................................................
+
   /// the stencil buffer (only for NEW_GRAPHICS)
   public int stencil[];
 
@@ -75,18 +90,23 @@ public class PGraphics3 extends PGraphics {
 
   // ........................................................
 
-  public int cameraMode;
+  // pos of first vertex of current shape in vertices array
+  protected int vertex_start;
 
-  // perspective setup
-  public float cameraFOV;
-  public float cameraX, cameraY, cameraZ;
-  public float cameraNear, cameraFar;
-  public float cameraAspect;
+  // i think vertex_end is actually the last vertex in the current shape
+  // and is separate from vertex_count for occasions where drawing happens
+  // on endFrame with all the triangles being depth sorted
+  protected int vertex_end;
 
-  public float p00, p01, p02, p03; // projection matrix
-  public float p10, p11, p12, p13;
-  public float p20, p21, p22, p23;
-  public float p30, p31, p32, p33;
+  // used for sorting points when triangulating a polygon
+  // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
+  int vertex_order[] = new int[DEFAULT_VERTICES];
+
+  // ........................................................
+
+  public int pathCount;
+  public int pathOffset[] = new int[64];
+  public int pathLength[] = new int[64];
 
   // ........................................................
 
@@ -96,9 +116,7 @@ public class PGraphics3 extends PGraphics {
   public int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
   public int lineCount;
 
-  public int pathCount;
-  public int pathOffset[] = new int[64];
-  public int pathLength[] = new int[64];
+  // ........................................................
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
@@ -136,7 +154,14 @@ public class PGraphics3 extends PGraphics {
    * Normals
    */
   public float normalX, normalY, normalZ;
-  protected boolean normalChanged;
+  //protected boolean normalChanged;
+
+  // ........................................................
+
+  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
+  // will be set by sphereDetail() or 1st call to sphere()
+  public int sphereDetail = 0;
+  float sphereX[], sphereY[], sphereZ[];
 
   // ........................................................
 
@@ -249,6 +274,9 @@ public class PGraphics3 extends PGraphics {
     triangleCount = 0;
     if (triangle != null) triangle.reset();  // necessary?
 
+    vertex_start = 0;
+    //vertex_end = 0;
+
     // reset textures
     texture_index = 0;
 
@@ -302,7 +330,7 @@ public class PGraphics3 extends PGraphics {
 
     //strokeChanged = false;
     //fillChanged = false;
-    normalChanged = false;
+    //normalChanged = false;
   }
 
 
@@ -369,11 +397,11 @@ public class PGraphics3 extends PGraphics {
       vertex[V] = textureV;
     }
 
-    if (normalChanged) {
-      vertex[NX] = normalX;
-      vertex[NY] = normalY;
-      vertex[NZ] = normalZ;
-    }
+    //if (normalChanged) {
+    vertex[NX] = normalX;
+    vertex[NY] = normalY;
+    vertex[NZ] = normalZ;
+    //}
   }
 
 
@@ -460,11 +488,11 @@ public class PGraphics3 extends PGraphics {
       vertex[V] = textureV;
     }
 
-    if (normalChanged) {
-      vertex[NX] = normalX;
-      vertex[NY] = normalY;
-      vertex[NZ] = normalZ;
-    }
+    //if (normalChanged) {
+    vertex[NX] = normalX;
+    vertex[NY] = normalY;
+    vertex[NZ] = normalZ;
+    //}
 
     spline_vertex_index++;
 
@@ -525,6 +553,7 @@ public class PGraphics3 extends PGraphics {
   public void normal(float nx, float ny, float nz) {
     // if drawing a shape and the normal hasn't changed yet,
     // then need to set all the normal for each vertex so far
+    /*
     if ((shape != 0) && !normalChanged) {
       for (int i = vertex_start; i < vertex_end; i++) {
         vertices[i][NX] = normalX;
@@ -533,6 +562,7 @@ public class PGraphics3 extends PGraphics {
       }
       normalChanged = true;
     }
+    */
     normalX = nx;
     normalY = ny;
     normalZ = nz;
@@ -1079,6 +1109,7 @@ public class PGraphics3 extends PGraphics {
     // ------------------------------------------------------------------
     // NORMALS
 
+    /*
     if (!normalChanged) {
       // fill first vertext w/ the normal
       vertices[vertex_start][NX] = normalX;
@@ -1086,8 +1117,9 @@ public class PGraphics3 extends PGraphics {
       vertices[vertex_start][NZ] = normalZ;
       // homogenousNormals saves time from below, which is expensive
     }
+    */
 
-    for (int i = vertex_start; i < (normalChanged ? vertex_end : 1); i++) {
+    for (int i = vertex_start; i < vertex_end; i++) {
       float v[] = vertices[i];
       float nx = m00*v[NX] + m01*v[NY] + m02*v[NZ] + m03;
       float ny = m10*v[NX] + m11*v[NY] + m12*v[NZ] + m13;
@@ -1120,28 +1152,15 @@ public class PGraphics3 extends PGraphics {
 
       for (int i = vertex_start; i < vertex_end; i++) {
         float v[] = vertices[i];
-        if (normalChanged) {
-          if (fill) {
-            calc_lighting(v[R],  v[G], v[B],
-                          v[MX], v[MY], v[MZ],
-                          v[NX], v[NY], v[NZ], v, R);
-          }
-          if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB],
-                          v[MX], v[MY], v[MZ],
-                          v[NX], v[NY], v[NZ], v, SR);
-          }
-        } else {
-          if (fill) {
-            calc_lighting(v[R],  v[G],  v[B],
-                          v[MX], v[MY], v[MZ],
-                          f[NX], f[NY], f[NZ], v, R);
-          }
-          if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB],
-                          v[MX], v[MY], v[MZ],
-                          f[NX], f[NY], f[NZ], v, SR);
-          }
+        if (fill) {
+          calc_lighting(v[R],  v[G], v[B],
+                        v[MX], v[MY], v[MZ],
+                        v[NX], v[NY], v[NZ], v, R);
+        }
+        if (stroke) {
+          calc_lighting(v[SR], v[SG], v[SB],
+                        v[MX], v[MY], v[MZ],
+                        v[NX], v[NY], v[NZ], v, SR);
         }
       }
     }
