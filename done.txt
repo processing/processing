@@ -1,0 +1,180 @@
+0018
+X fix fonts.. try megan's color selector applet
+
+
+0017 improve exporting and lines
+X g.applet = this at beginning of program
+X finish setFont with a font size
+X add 'hint' function for scaling line thickness
+X add hint for super smooth images
+X add preferredsize to processingapplet
+X bug in Bagel.loadImage that made images not work in applets
+X catch exception inside polygon scanner (slower?)
+X millis returns 0 (though getMillis() is fine)
+X explicity refresh screen on macosx at end of loop:
+X   java.awt.Toolkit.getDefaultToolkit().sync();
+
+
+0016
+X disable play.external by default
+
+
+0015
+X flickery jumpy thing with canvas.. sun jvm bug
+X   switched to ibm java vm
+
+
+0014
+X fix z coordinate, ndims not being set to 3 
+X put bezierCurve and catmullRomCurve back in
+X examples - setting background using a full screen image
+X   uses System.arraycopy for speed
+X update to newer version of kjc (1.5B)
+X move website to cvs
+X   make fake cvs user that creas and i can share passwd of
+X unwarped_image() is broken (making things slow for jseo)
+X   then fix in c++ version
+X special case lines of thickness 1
+X   doing way too much work to draw thin lines
+X   using full 3D polygon fella for semi-obviously 1 pixel lines
+X may have fixed OutOfMemoryError problems
+X   run.bat had included -ms256m -mx256m
+
+
+0013 
+X ellipse draws in the opposite direction of the origin
+X actually fix the bug with extends
+X   wasn't included in previous release
+X option to set full screen background color
+X   uses fullscreen.bgcolor in lib/pde.properties
+X remove 'colorScale' from the default program in pde
+X fix color cube applet 
+X   make it run in current version of processing
+X   fix background from showing up black
+X screenGrab() code (single frame to tif)
+X externally loaded files are off by 1 line for errors
+
+
+0012
+X 'extends' replacement is mangling things.. fix it
+
+
+0011
+X image(img, x, y) was broken for unwarped mode, disabled it
+
+
+0010
+X add java.* to top of processingapplet default base class used by kjc
+X KjcProcessingApplet is dumb, kjc should make subst itself
+o   give warning when compiling w/o kjcprocessingapplet
+X random bug with an extra line being added in beginner mode
+X   (threw off error markings)
+X z=0 shit, 2D stuff needs to draw over z=0 plane
+X   new objects draw behind old objects with noBackground()
+X fix crappy way of determining if inside a class--ignores comments
+X   hope this fis works.. not tested much
+X make acu fonts work again
+X write code to use simple bitmap fonts
+X add a file with bugs for testing
+X kjc not smart enough to just compile things that are in classpath
+X redo random functions in processing applet
+X strangeness with stroke when a rect goes off outside the window
+X rect now uses x, y, width, height instead of x1, y1, x2, y2
+X circle has been replaced with ellipse (uses xywh)
+X box takes diameter, or width, height, depth [NOT IN CPP]
+X sphere is the same as box [NOT IN CPP]
+X got rid of colorscale and using colormode for all instead
+X   make changes in documentation
+X 'ellipse' instead of 'oval'?
+X   make note in documentation
+X catmullrom is broken 
+X   write documentation for new curve functions
+o make note in docs about removal of LINE from LINES
+X setting origins
+X   should shapes draw from center or from upper left?
+X   should ovals use radius or diameter?
+X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
+X nice to have a random number generator between -1..1 
+X   as well as an integer random; instead of just 0..1
+X show creas how to get access to cvs
+X documentation says 'mouseDown' even though it's 'mousePressed'
+X font support
+X   use gzip to compress bitmaps (made 115k vlw font -> 16k)
+X   loadImage/loadFont or getImage/getFont?
+X   text(char c), text(string s)
+X   current acu fonts are broken
+X image support
+X   image() and 2D/2D affine versions of it
+X   no stroke should show up on image()
+X   fill being set on image() produces weird results
+X     has to be set, but doesn't actually affect color
+X min() seems funny/unavailable
+X   worked fine for me
+
+
+0009
+X bagel fixes
+X   beginShape(POINTS) is not working, no marks are appearing 
+X     this was a pain in the ass to fix
+X   beginShape(LINE_LOOP) is not looping around 
+X   stroked POLYGON should emulate a LINE_LOOP
+X   fill white, stroke black, background white default in bagel
+X   remove duplicates: LINE/LINES etc
+X 'draw mode' applet support
+X 'advanced' applet support
+X   write documentation about having to use 'extends KjcProcessingApplet'
+X add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
+X   also add note about paren balancing doing strange things
+X   leave the others turned on, but parens off by default
+X enable/disable full screen leaves windows in back
+X   (may just require two toFront() calls)
+X   whenever background is frontmost, have it call tofront on editor
+
+
+0008
+X ctrl-s does 'save', button on toolbar does 'save as'
+X fixed auto-indent bug for editor
+X SimpleSerialDemo.pde had a bug (was old version)
+X re-enabled key commands for editor (tab expansion, auto-indent)
+
+
+0007
+X serial bugs
+X   ability to control sleep time from simple
+X   message[] not buffer[]
+X   synchronize
+X   signed byte crap is confusing, make into chars
+X bk(n), fill(n), stroke(n) should be consistent with tuples
+X make notes in serial docs
+X   processing app needs to start first
+X   currently a bug requiring stop the close before starting
+
+
+0006
+X get serial i/o code working in processing
+X   how to kill serial when applet stopped
+X     finalizer prolly not getting called
+
+
+0005
+X running out of memory, presumably b/c applets not being cleared
+X   happens inside init() of applet (at new Bagel())
+X   figure out why threads aren't actually dying
+X   disassociate processing applet with a window on stop?
+X   possible to maintain bagel, but kill applet?
+X   or copy bagel's image, and kill that too?
+
+
+0004
+X put debugging stuff back into Kjc (i disabled some stuff) 
+
+
+0001
+X convert documentation to html
+o setup imrf linux machine?
+
+
+DISCARD
+o get proce55ing.net, make that the target launch site
+o write a dbn compatability mode (forever() instead of loop() ?)
+
