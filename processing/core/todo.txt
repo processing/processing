@@ -142,9 +142,11 @@ X standalone 'alpha' function for PImage (static methods for alpha fxns)
 X Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
 X   turns out bounds checking wasn't working properly on colors
 
-The biggest problem was the key and mouse functions not working. For example:
-Input: Mouse_Functions
-Input: Keyboard_Functions
+040903 
+X fix mouse/key events, make properly public for the package stuff
+X   The biggest problem was the key and mouse functions not working. 
+X   Input: Mouse_Functions
+X   Input: Keyboard_Functions
 
 ....
 
@@ -153,6 +155,7 @@ _ processing.net -> PClient, PServer
 _ api for file-based renderers
 _   need to work this out since it will affect other api changes
 _   size(0, 0) and then ai.size(10000, 20000)
+_     size 0 is code for internal to not show any window
 _   saveFrame(PRenderer) or saveFrame("name", PRenderer)
 _   saveFrame gets called at the beginning of loop()
 _     or is just a message to save the next frame (problem for anim)
@@ -165,9 +168,6 @@ _     maybe just ultra-high res bitmaps from gl
 _   version of BApplet that replaces g. with ai. or pdf.
 _   update illustrator code to use core api
 _     even if not actually working properly.. just in naming of things
-_   colorMode(CMYK)
-_     just does 1-r/1-g/1-b inside 
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
@@ -360,6 +360,10 @@ CORE / PGraphics
 
    1 _ add option to sort triangles back to front so alpha works
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
+
+   1 _ colorMode(CMYK)
+   1 _   just does 1-r/1-g/1-b inside 
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
 
 CORE / Details
