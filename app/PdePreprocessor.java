@@ -77,10 +77,7 @@ public class PdePreprocessor {
    */
   public String write(String program, String buildPath,
                       String name, String extraImports[]) throws java.lang.Exception {
-    this.programReader = new StringReader(program);
-    this.buildPath = buildPath;
-
-    if (PdePreferences.getBoolean("compiler.convert_unicode")) {
+    if (PdePreferences.getBoolean("compiler.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
       char p[] = program.toCharArray();
       int unicodeCount = 0;
@@ -109,10 +106,16 @@ public class PdePreprocessor {
             // add leading zeros, so that the length is 4
             for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
             System.arraycopy(str, 0, p2, index, str.length);
+            index += str.length;
           }
         }
       }
+      program = new String(p2, 0, index);
     }
+
+    // do this after the program gets re-combobulated
+    this.programReader = new StringReader(program);
+    this.buildPath = buildPath;
 
     // create a lexer with the stream reader, and tell it to handle 
     // hidden tokens (eg whitespace, comments) since we want to pass these

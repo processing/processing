@@ -72,13 +72,11 @@ public class PdeCompiler implements PdeMessageConsumer {
       // used when run without a vm ("expert" mode)
       "-bootclasspath",
       calcBootClassPath(),
-      //System.getProperty("sun.boot.class.path") + additional,
 
       // needed for macosx so that the classpath is set properly
       // also for windows because qtjava will most likely be here
       // and for linux, it just doesn't hurt
       "-classpath",
-      //System.getProperty("java.class.path"),
       calcClassPath(includeFolder),
 
       "-nowarn", // we're not currently interested in warnings

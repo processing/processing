@@ -43,6 +43,9 @@ public class PdeSketch {
   int hiddenCount;
   PdeCode hidden[];
 
+  String classPath;
+  String libraryPath;
+
 
   /**
    * path is location of the main .pde file, because this is also
@@ -273,13 +276,14 @@ public class PdeSketch {
         // so that it can be included in the java.library.path
         String codeFolderPath = "";
         if (externalCode != null) {
-          codeFolderPath = externalCode.getCanonicalPath();
+          libraryPath = externalCode.getCanonicalPath();
         }
 
         // create a runtime object
         runtime = new PdeRuntime(this, className,
                                  externalRuntime, 
-                                 codeFolderPath, externalPaths);
+                                 libraryPath, classPath);
+                                 //codeFolderPath, externalPaths);
 
         // if programType is ADVANCED
         //   or the code/ folder is not empty -> or just exists (simpler)
@@ -350,20 +354,22 @@ public class PdeSketch {
   protected String build(String buildPath, String suggestedClassName)
     throws PdeException, Exception {
 
+    String classPath;
+    String libraryPath;
+
     boolean externalRuntime = false;
     //externalPaths = null;
     String additionalImports[] = null;
-    String additionalClassPath = null;
+    //String additionalClassPath = null;
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
     File codeFolder = new File(sketchDir, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
-      additionalClassPath = PdeCompiler.contentsToClassPath(codeFolder);
+      classPath = PdeCompiler.contentsToClassPath(codeFolder);
       additionalImports = PdeCompiler.magicImports(additionalClassPath);
-    } else {
-      codeFolder = null;
+      libraryPath = codeFolder.
     }
 
     // first run preproc on the 'main' file, using the sugg class name
@@ -372,53 +378,67 @@ public class PdeSketch {
     //   if .pde, run preproc to buildpath
     //     if no class def'd for the pde file, then complain
 
-    PdePreprocessor preprocessor = new PdePreprocessor();
-    try {
-      mainClassName = 
-        preprocessor.write(program, buildPath,
-                           suggestedClassName, externalImports);
+    for (int i = 0; i < codeCount; i++) {
+      PdePreprocessor preprocessor = new PdePreprocessor();
+      try {
+        String className = 
+          preprocessor.write(code[i].program, buildPath,
+                             (i == 0) ? suggestedClassName : null, 
+                             additionalImports);
+        if (className == null) {
+          System.err.println("class could not be determined for " + 
+                             code[i].name + " hopefully the error has " + 
+                             "already been reported.");
+          return null;
+        } else {
+          code[i].preprocName = className + ".java";
+        }
 
-    } catch (antlr.RecognitionException re) {
-      // this even returns a column
-      throw new PdeException(re.getMessage(), 
-                             re.getLine() - 1, re.getColumn());
+        if (i == 0) {  // check if the 'main' file is in java mode
+          if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
+            externalRuntime = true; // we in advanced mode now, boy
+          }
+        }
 
-    } catch (antlr.TokenStreamRecognitionException tsre) {
-      // while this seems to store line and column internally,
-      // there doesn't seem to be a method to grab it.. 
-      // so instead it's done using a regexp
+      } catch (antlr.RecognitionException re) {
+        // this even returns a column
+        throw new PdeException(re.getMessage(), 
+                               re.getLine() - 1, re.getColumn());
 
-      PatternMatcher matcher = new Perl5Matcher();
-      PatternCompiler compiler = new Perl5Compiler();
-      // line 3:1: unexpected char: 0xA0
-      String mess = "^line (\\d+):(\\d+):\\s";
-      Pattern pattern = compiler.compile(mess);
+      } catch (antlr.TokenStreamRecognitionException tsre) {
+        // while this seems to store line and column internally,
+        // there doesn't seem to be a method to grab it.. 
+        // so instead it's done using a regexp
 
-      PatternMatcherInput input = 
-        new PatternMatcherInput(tsre.toString());
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
+        PatternMatcher matcher = new Perl5Matcher();
+        PatternCompiler compiler = new Perl5Compiler();
+        // line 3:1: unexpected char: 0xA0
+        String mess = "^line (\\d+):(\\d+):\\s";
+        Pattern pattern = compiler.compile(mess);
 
-        int line = Integer.parseInt(result.group(1).toString());
-        int column = Integer.parseInt(result.group(2).toString());
-        throw new PdeException(tsre.getMessage(), line-1, column);
+        PatternMatcherInput input = 
+          new PatternMatcherInput(tsre.toString());
+        if (matcher.contains(input, pattern)) {
+          MatchResult result = matcher.getMatch();
 
-      } else {
-        throw new PdeException(tsre.toString());
+          int line = Integer.parseInt(result.group(1).toString());
+          int column = Integer.parseInt(result.group(2).toString());
+          throw new PdeException(tsre.getMessage(), line-1, column);
+
+        } else {
+          throw new PdeException(tsre.toString());
+        }
+
+      } catch (PdeException pe) {
+        throw pe;
+
+      } catch (Exception ex) {
+        System.err.println("Uncaught exception type:" + ex.getClass());
+        ex.printStackTrace();
+        throw new PdeException(ex.toString());
       }
-
-    } catch (PdeException pe) {
-      throw pe;
-
-    } catch (Exception ex) {
-      System.err.println("Uncaught exception type:" + ex.getClass());
-      ex.printStackTrace();
-      throw new PdeException(ex.toString());
     }
 
-    if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
-      externalRuntime = true; // we in advanced mode now, boy
-    }
     if (codeCount > 1) {
       externalRuntime = true;
     }
@@ -912,6 +932,7 @@ public class PdeSketch {
 
 class PdeCode {
   String name;  // pretty name (no extension), not the full file name
+  String preprocName;  // name of .java file after preproc
   File file;
   int flavor;
 
