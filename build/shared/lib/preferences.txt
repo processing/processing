@@ -169,40 +169,40 @@ history.recording = true
 export.library = false
 
 # may be useful when attempting to debug the preprocessor
-compiler.save_build_files=false
+preproc.save_build_files=false
 
 # allows various preprocessor features to be toggled 
 # in case they are causing problems
 
 # preprocessor: pde.g
-compiler.color_datatype = true
-compiler.web_colors = true
-compiler.enhanced_casting = true
+preproc.color_datatype = true
+preproc.web_colors = true
+preproc.enhanced_casting = true
 
 # preprocessor: PdeEmitter.java
-compiler.substitute_floats = true
-compiler.substitute_image = false
-compiler.substitute_font = false
+preproc.substitute_floats = true
+#preproc.substitute_image = false
+#preproc.substitute_font = false
 
 # auto-convert non-ascii chars to unicode escape sequences
-compiler.substitute_unicode = true
+preproc.substitute_unicode = true
 
-# PdeCompiler.java
+# PdePreproc.java
 # writes out the parse tree as parseTree.xml, which can be usefully
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
-compiler.output_parse_tree = false
+preproc.output_parse_tree = false
 
 # jdk version to use.. 
-compiler.jdk_version = 1.1
+preproc.jdk_version = 1.1
 
 # base imports to include for java 1.1 (or higher)
-compiler.imports.jdk11 = java.applet,java.awt,java.awt.image,java.awt.event,java.io,java.net,java.text,java.util,java.util.zip,netscape.javascript
+preproc.imports.jdk11 = java.applet,java.awt,java.awt.image,java.awt.event,java.io,java.net,java.text,java.util,java.util.zip,netscape.javascript
 
 # additional imports when exporting to java 1.3 or higher
-compiler.imports.jdk13 = javax.sound.midi,javax.sound.midi.spi,javax.sound.sampled,javax.sound.sampled.spi
+preproc.imports.jdk13 = javax.sound.midi,javax.sound.midi.spi,javax.sound.sampled,javax.sound.sampled.spi
 
 # additional imports when exporting to java 1.4 or higher
-compiler.imports.jdk14 = javax.xml.parsers,javax.xml.transform,javax.xml.transform.dom,javax.xml.transform.sax,javax.xml.transform.stream,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers
+preproc.imports.jdk14 = javax.xml.parsers,javax.xml.transform,javax.xml.transform.dom,javax.xml.transform.sax,javax.xml.transform.stream,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers
 
 # set the browser to be used on linux
 browser.linux = mozilla

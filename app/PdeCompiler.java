@@ -88,7 +88,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       // necessary to make output classes compatible with 1.1
       // i.e. so that exported applets can work with ms jvm on the web
       "-target",
-      PdePreferences.get("compiler.jdk_version"),  //"1.1",
+      PdePreferences.get("preproc.jdk_version"),  //"1.1",
       // let the incompatability headache begin
 
       // used when run without a vm ("expert" mode)
