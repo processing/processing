@@ -508,10 +508,28 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
 
   public void enableFullScreen() {
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    fullScreenWindow = new Window(new Frame());
-    fullScreenWindow.setBounds(0, 0, screen.width, screen.height);
-    fullScreenWindow.setBackground(new Color(102, 102, 102));
+    if (fullScreenWindow == null) {
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      if (PdeApplet.isMacintosh()) {
+	fullScreenWindow = new Frame();
+
+	// mrj is still (with version 2.2.x) a piece of shit, 
+	// and doesn't return valid insets for frames
+	//fullScreenWindow.pack(); // make a peer so insets are valid
+	//Insets insets = fullScreenWindow.getInsets();
+	// the extra +20 is because the resize boxes intrude
+	Insets insets = new Insets(21, 5, 5 + 20, 5);
+	//System.out.println(insets);
+
+	fullScreenWindow.setBounds(-insets.left, -insets.top, 
+				   screen.width + insets.left + insets.right, 
+				   screen.height + insets.top + insets.bottom);
+      } else {
+	fullScreenWindow = new Window(new Frame());
+	fullScreenWindow.setBounds(0, 0, screen.width, screen.height);
+      }
+      fullScreenWindow.setBackground(new Color(102, 102, 102));
+    }
     fullScreenWindow.show();
 
     // not sure what to do with applet..
