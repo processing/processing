@@ -123,6 +123,7 @@ _ need to make sure that components can be resized properly via size()
 _   or that it properly responds to a setBounds() call
 
 _ also when drawing an image, sense whether drawn rotated
+_   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
