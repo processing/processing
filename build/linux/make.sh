@@ -5,6 +5,7 @@
 
 if test -d work
 then
+  echo
 else
   echo Setting up directories to build for linux...
   cp -r ../shared work
@@ -31,6 +32,7 @@ cd ..
 # make sure bagel exists, if not, check it out of cvs
 if test -d bagel
 then 
+  echo
 else
   echo Doing CVS checkout of bagel...
   cvs co bagel
