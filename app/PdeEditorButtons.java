@@ -25,6 +25,8 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.*;
+import java.awt.geom.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -57,6 +59,8 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   Image offscreen;
   int width, height;
+
+  Color bgcolor;
 
   Image buttons;
   Image inactive[];
@@ -98,6 +102,10 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
     currentRollover = -1;
 
+    bgcolor = PdePreferences.getColor("buttons.bgcolor");
+
+    status = "";
+
     //setLayout(null);
     //status = new JLabel();
     statusFont = PdePreferences.getFont("buttons.status.font");
@@ -123,6 +131,11 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     paint(g);
   }
   */
+
+  //public void paintComponent(Graphics g) {
+  //super.paintComponent(g);
+  //}
+
 
   public void paintComponent(Graphics screen) {
     if (inactive == null) {
@@ -173,7 +186,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
       }
     }
     Graphics g = offscreen.getGraphics();
-    g.setColor(getBackground());
+    g.setColor(bgcolor); //getBackground());
     g.fillRect(0, 0, width, height);
 
     for (int i = 0; i < buttonCount; i++) {
@@ -183,9 +196,18 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
     g.setColor(statusColor);
     g.setFont(statusFont);
-    int statusWidth = g.getFontMetrics().stringWidth(status);
-    int statusX = (getSize().width - statusWidth) / 2;
-    g.drawString(status, statusX, statusY);
+
+    // if i ever find the guy who wrote the java2d api, 
+    // i will hurt him. or just laugh in his face. or pity him.
+    Graphics2D g2 = (Graphics2D) g;
+    FontRenderContext frc = g2.getFontRenderContext();
+    float statusW = (float) statusFont.getStringBounds(status, frc).getWidth();
+    float statusX = (getSize().width - statusW) / 2;
+
+    //int statusWidth = g.getFontMetrics().stringWidth(status);
+    //int statusX = (getSize().width - statusWidth) / 2;
+
+    g2.drawString(status, statusX, statusY);
     screen.drawImage(offscreen, 0, 0, null);
   }
 

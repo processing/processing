@@ -135,8 +135,10 @@ public class PdeEditor extends JFrame
   //static Properties keywords; // keyword -> reference html lookup
 
 
-  public PdeEditor() {  //PdeBase base) {
-    //this.base = base;
+  public PdeEditor() {
+    // this is needed by just about everything else
+    preferences = new PdePreferences();
+
 
 #ifdef MACOS
       // #@$*(@#$ apple.. always gotta think different
@@ -168,17 +170,21 @@ public class PdeEditor extends JFrame
     PdeKeywords keywords = new PdeKeywords();
     history = new PdeHistory(this);
     sketchbook = new PdeSketchbook(this);
-    preferences = new PdePreferences();
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(buildFileMenu());
     menubar.add(buildEditMenu());
-    menubar.setHelpMenu(buildHelpMenu());
+    // what platform has their help menu way on the right?
+    //if ((PdeBase.platform == PdeBase.WINDOWS) || 
+    //menubar.add(Box.createHorizontalGlue());
+    menubar.add(buildHelpMenu());
+
     setJMenuBar(menubar);
 
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
 
+    /*
     Panel leftPanel = new Panel();
     leftPanel.setLayout(new BorderLayout());
 
@@ -192,6 +198,8 @@ public class PdeEditor extends JFrame
     leftPanel.add("Center", dummy);
 
     pain.add("West", leftPanel);
+    */
+    pain.add("West", new PdeEditorButtons(this));
 
     JPanel rightPanel = new JPanel();
     rightPanel.setLayout(new BorderLayout());
@@ -1376,7 +1384,8 @@ public class PdeEditor extends JFrame
 
   public void setSketchModified(boolean what) {
     header.sketchModified = what;
-    header.update();
+    //header.update();
+    header.repaint();
     sketchModified = what;
   }
 
