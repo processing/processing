@@ -38,7 +38,8 @@ REM set CLASSPATH=lib\kjc.jar;lib\oro.jar;java\lib\rt.jar;java\lib\ext\comm.jar;
 set CLASSPATH=classes;lib\kjc.jar;lib\oro.jar;java\lib\rt.jar;java\lib\ext\comm.jar
 
 REM cd ..
-perl buzz.pl "jikes +D -nowarn -d classes" -dJDK13 *.java kjc\*.java 
+REM perl buzz.pl "jikes +D -nowarn -d classes" -dJDK13 *.java kjc\*.java 
+perl buzz.pl "jikes +D -deprecation -d classes" -dJDK13 *.java kjc\*.java 
 REM cd application
 
 REM rm -f lib/version
