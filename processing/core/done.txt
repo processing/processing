@@ -1,3 +1,78 @@
+0078 core
+X text fixes
+X   lines were getting horizontally mashed together
+X   lines also getting vertically smashed together
+X   make a note of the change to font.width()
+X backwards rects and backwards ellipses weren't properly drawn
+X   code now compensates for negative widths or swapped x1/x2
+X what to do about backwards images
+X imageMode() wasn't being set properly
+X fix noLoop() not properly running
+X   If noLoop() is called in setup(), nothing is drawn to the screen.
+X also fix redraw() to include interrupt() again
+X loadPixels throwing NPEs
+X fixes to SCREEN_SPACE text not being sized properly
+X loadPixels()/updatePixels() on screen space text (ouch)
+X get SCREEN_SPACE text working again
+X patch in newer jogl.. too many BSODs
+X saveFrame seems to be broken
+X   fixed for PGraphics2
+X   fixed for PGraphicsGL
+X   also implemented loadPixels/updatePixels for gl
+X fix tint() with color and alpha for PGraphics2
+X alpha() colors are inverted (white is opaque.. doesn't make sense)
+X   should we swap this around? no - this is how photoshop works
+X fix arc
+X get() is back
+X set camera.modified so that it draws properly
+X it's annoying not having a copy() function inside PImage
+X   formerly get() with no params
+o   clone throws an exception
+o   PImage constructor that takes itself?
+o   PImage copy = new PImage(another);
+X got rid of CONCAVE_POLYGON and CONVEX_POLYGON
+X hack for points to work in opengl, but still not working broadly
+X work on filter() functions
+X   POSTERIZE - find simple code that does it?
+X     there must be a straightforward optimized version of it
+o   EDGES - find edges in casey's example is differen than photoshop
+o     which version do people want with their stuff
+X     edges filter removed
+X several fixes to Movie and Camera to work with the new gfx model
+X PImage.get(x, y, w, h) had a bug when things went off the edge
+X set defaults for strokeCap and strokeJoin
+X get() and gl images were broken for screen sizes less than full size
+X fix arcs, were badly broken between java2d and pgraphics
+X look at curve functions more closely
+X   should we switch to curveVertex(1,2,3) (ala curveto)
+X   because some confusion with mixing types of curves
+o   make sure we don't want curveVertices(1,2,3,u,v)
+o   also make test cases so that java2d and java11 behave the same
+X implement PGraphics2.curveVertex()
+X updatePixels() not setting PApplet.pixels
+X   make loadPixels in PGraphics ignored, and put it in PApplet
+X made loadStrings() and openStream(File) static again
+X test loadPixels()/updatePixels()/saveFrame() on the pc
+X   better, just assume that they need the endian swap
+X fixed draw mode apps for opengl
+X   (gl was missing a beginFrame)
+X pmouseX, pmouseY are not working in OpenGL mode
+X   (as they are working in Processing mode)
+
+o screenX/Y aren't properly working for 2D points against a 3D matrix
+o   (ryan alexander rounding bug)
+o   Just to clarify, it works completely correctly with rounding
+o   screenX/Y and also using the 3 arg version of translate - 
+o   ie translate(hw,hh,0) instead of just translate(hw,hh). 
+X   no longer an issue because moving to 2D and 3D modes
+o PImage: remove the static versions of manipulators?
+o   probably not, because they're inherited by PApplet
+o   i.e. mask(image, themask); 
+X   no PImage needed b/c PGraphics is a PImage
+o colorMode(GRAY) to avoid stroke(0) causing trouble? 
+o   or maybe get rid of stroke(0)? hrm
+
+
 0077 core
 X bring back pmouseX/Y using a tricky method of storing separate
 X   values for inside draw() versus inside the event handler versions
