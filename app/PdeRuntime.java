@@ -103,7 +103,6 @@ public class PdeRuntime implements PdeMessageConsumer {
         //PApplet.println(PApplet.join(command, " "));
         process = Runtime.getRuntime().exec(command);
         new SystemOutSiphon(process.getInputStream());
-        //new PdeMessageSiphon(process.getErrorStream(), this);
         new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
 
@@ -436,18 +435,22 @@ java.lang.NullPointerException
           if (colonIndex != -1) {
             String filename = fileAndLine.substring(0, colonIndex);
             // "javatest.java" and "5"
+            //System.out.println("filename = " + filename);
+            //System.out.println("pre0 = " + sketch.code[0].preprocName);
             for (int i = 0; i < sketch.codeCount; i++) {
               if (sketch.code[i].preprocName.equals(filename)) {
                 codeIndex = i;
                 break;
               }
             }
-            // lineIndex is 1-indexed, but editor wants zero-indexed
-            lineIndex = Integer.parseInt(fileAndLine.substring(colonIndex + 1));
-            //System.out.println("code/line is " + codeIndex + " " + lineIndex);
-            exception = new PdeException(exception.getMessage(),
-                                         codeIndex, lineIndex - 1, -1);
-            foundMessageSource = true;
+            if (codeIndex != -1) {
+              // lineIndex is 1-indexed, but editor wants zero-indexed
+              lineIndex = Integer.parseInt(fileAndLine.substring(colonIndex + 1));
+              //System.out.println("code/line is " + codeIndex + " " + lineIndex);
+              exception = new PdeException(exception.getMessage(),
+                                           codeIndex, lineIndex - 1, -1);
+              foundMessageSource = true;
+            }
           }
         }
         editor.error(exception);
@@ -527,14 +530,13 @@ java.lang.NullPointerException
     public void run() {
       byte boofer[] = new byte[1024];
 
+      // read, block until something good comes through
       while (Thread.currentThread() == thread) {
-        // read, block until something good comes through
-        //if (input.available() > 0) {
         try {
           int count = input.read(boofer, 0, boofer.length);
-          if (count == -1) break;
+          if (count == -1) thread = null;
           //System.out.print("bc" + count + " " + new String(boofer, 0, count));
-          
+          //PApplet.println(boofer);
 
         } catch (IOException e) {
           thread = null;
