@@ -253,7 +253,7 @@ public class PdeEditor extends JFrame
     // figure out window placement
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    boolean windowPositionInvalid = false;
+    boolean windowPositionValid = true;
 
     if (PdePreferences.get("last.screen.height") != null) {
       // if screen size has changed, the window coordinates no longer
@@ -262,13 +262,20 @@ public class PdeEditor extends JFrame
       int screenH = PdePreferences.getInteger("last.screen.height");
 
       if ((screen.width != screenW) || (screen.height != screenH)) {
-        windowPositionInvalid = true;
+        windowPositionValid = false;
       }
+      int windowX = PdePreferences.getInteger("last.window.x");
+      int windowY = PdePreferences.getInteger("last.window.y");
+      if ((windowX < 0) || (windowY < 0) ||
+          (windowX > screenW) || (windowY > screenH)) {
+        windowPositionValid = false;
+      }
+
     } else {
-      windowPositionInvalid = true;
+      windowPositionValid = false;
     }
 
-    if (windowPositionInvalid) {
+    if (!windowPositionValid) {
       //System.out.println("using default size");
       int windowH = PdePreferences.getInteger("default.window.height");
       int windowW = PdePreferences.getInteger("default.window.width");

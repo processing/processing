@@ -7,6 +7,46 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0082 - 6 april 2005
+
+- default lighting now works.. lights() and noLights() should properly
+  make things look 3D and pretty... this is all thanks to simon. there 
+  are a ton of features that come along with this, but we're testing
+  them and finalizing the api first before announcing them.
+
+- the stop button should be working again
+
+- default window height is no longer insufficient (after prefs were
+  deleted on windows, on the next run the window was smashed)
+
+- "sto" is now "stop" while in present mode
+
+- it looks as though the opengl libraries weren't properly added in
+  the last release. no more.
+
+- added an extra requestFocus() for opengl
+
+- added ryan's grow box design for osx
+
+
+known problems
+
+- P2D still badly broken
+
+- dragging the applet window around will usually halt it (especially
+  with opengl)
+
+- println() is super slow
+
+- moving the main p5 window to another screen just gets thrown out, 
+  to prevent a case where a second display is unplugged. this will 
+  change in a future release to properly record its previous position
+  and what monitor it was on.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0081 - 4 april 2005
 
 * major api changes in this release *
