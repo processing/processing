@@ -123,6 +123,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         processInput = new SystemOutSiphon(process.getInputStream());
         processError = new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
+
         //processOutput.write(' ');
         //processOutput.flush();
 
@@ -375,7 +376,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     // this is PApplet sending a message (via System.out.println)
     // that signals that the applet has been quit.
     if (s.indexOf(PApplet.EXTERNAL_QUIT) == 0) {
-      System.out.println("external: quit");
+      //System.out.println("external: quit");
       editor.doClose();
       return;
     }
@@ -388,7 +389,7 @@ public class PdeRuntime implements PdeMessageConsumer {
       int left = Integer.parseInt(nums.substring(0, space));
       int top = Integer.parseInt(nums.substring(space + 1));
       editor.appletLocation = new Point(left, top);
-      System.out.println("external: move to " + left + " " + top);
+      //System.out.println("external: move to " + left + " " + top);
       return;
     }
 
