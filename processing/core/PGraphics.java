@@ -631,13 +631,6 @@ public class PGraphics extends PImage
       }
     }
 
-    // note that the zbuffer was messed with for the next frame
-    //zbufferTainted = (dimensions != 0);
-
-    // BLIT TO IMAGE (SCREEN)
-    //mis.newPixels(pixels, cm, 0, width);
-    //frameCount++;
-
     // moving this back here (post-68) because of macosx thread problem
     mis.newPixels(pixels, cm, 0, width);
   }

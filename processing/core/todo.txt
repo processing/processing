@@ -192,6 +192,9 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 040921 morning
 X bug in get() that was removing the high bits (rather than adding)
 
+040921 evening
+X lots of work on libraries, figuring out PLibrary api
+
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
@@ -255,10 +258,6 @@ The graphics library was formerly called Bagel, which is an internal name.
 
 
 CORE / PApplet
-
-   b _ keypressed hanging on applets with a code folder
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
-
 
 
 CORE / PImage

@@ -70,30 +70,50 @@ X "Processing" folder not properly created on new install
 X add noLoop() to static mode apps
 X remove "loop" from special inserts on preproc
 
-040920 afternoon 
+040921 afternoon 
 o when running externally, build into sketch folder?
+X add all imported libs to hash table of jars
 
-_ add all imported libs to hash table of jars
-
-_ should library be called extension?
-
-_ libraries
-_   attachLibrary(new libsomething()) and attachLibrary("pitaru.Sonia");
+040921 evening
+X lots of work on libraries, figuring out PLibrary api
+X   attachLibrary(new libsomething()) and attachLibrary("pitaru.Sonia");
 o   final stop() for static shutdown of lib
 X     no static init - make the library designers deal with it
-_   stop() for individual items
-_ register pre() and post() calls
-_   this would avoid having to patch BApplet
-_ register for setup() calls
+X   stop() for individual items
+X register pre() and post() calls
+X   this would avoid having to patch BApplet
+X register for setup() calls
+X where do libraries for distribution go?
+X   libraries subfolder of p5
+
+_ PLibrary lib = attach(new PClient());
+_ compiling - main file is a .java not a .pde
+_   also where no root .pde file with the same name.. (i.e. video)
+_ crap.. libraries need to be in packages for this to work
+_   but annoying: attach("simong.particlesystem.ParticleSystem") 
+_ record imports from java files as well
+_ ignore imports from java.* or maybe just things pde's classpath
+
 _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
-_ where do libraries for distribution go?
-_   libraries subfolder of p5
 _ netscape.javascript not properly working in 1.4
 _   include 'netscape.javascript' as a library to be added
 _     but don't export it.. ugh..
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
 _ after export of library, rebuild "import library" menu
+_ should library be called extension?
+
+
+_ keypressed hanging on applets with a code folder
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
+_ problems running external vm/vm is hanging
+_   seems to be happening because of virus scanning software (norton)
+_   may need to launch the applet (using 'start') 
+_     and talk over a socket instead
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
+_     something in that one about mouse position halting or not
 
 _ get export working again
 _   make multiple jar files thing work as an option
@@ -444,14 +464,6 @@ BUGS / Windows
 1 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
 1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
 1 _   CLASSPATH figured out what to do with quotes, but not PATH
-1 _ problems running external vm/vm is hanging
-1 _   seems to be happening because of virus scanning software (norton)
-1 _   may need to launch the applet (using 'start') 
-1 _     and talk over a socket instead
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
-1 _     something in that one about mouse position halting or not
 
 
 DISTRIBUTION / Windows
