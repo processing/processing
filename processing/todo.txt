@@ -138,7 +138,8 @@ X fix dist.sh for macosx
 X include some of the simong libraries
 X move libraries around in distribution to resemble sketchbook
 
-_ add "archive" option since history is gone
+040926 later
+X add "archive" option since history is gone
 
 _ macosx - check to see if new linemetrics stuff is working better
 
