@@ -43,7 +43,10 @@ public class PdeEditor extends Panel {
   //String lastFile;
 
   //PdeRunner runner;
-  KjcEngine engine;
+  //KjcEngine engine;
+  PdeEngine engine;
+  Point appletLocation; //= new Point(0, 0);
+  Point presentLocation; // = new Point(0, 0);
 
   Frame frame;
   Window presentationWindow;
@@ -186,19 +189,20 @@ public class PdeEditor extends Panel {
 
     try {
       String program = textarea.getText();
-      if (program.length() != 0) {
-	String buildPath = "lib" + File.separator + "build";  // TEMPORARY
-	File buildDir = new File(buildPath);
-	if (!buildDir.exists()) buildDir.mkdirs();
+      //if (program.length() != 0) {
+      String buildPath = "lib" + File.separator + "build";  // TEMPORARY
+      File buildDir = new File(buildPath);
+      if (!buildDir.exists()) buildDir.mkdirs();
 
-	String dataPath = 
-	  sketchFile.getParent() + File.separator + "data";
-	  //editor.sketchFile.getParent() + File.separator + "data";
+      String dataPath = 
+	sketchFile.getParent() + File.separator + "data";
+      //editor.sketchFile.getParent() + File.separator + "data";
 
-	engine = new KjcEngine(this, program, buildPath, dataPath);
-	engine.start();
-	//System.out.println("done iwth engine.start()");
-      }
+      engine = new KjcEngine(this, program, buildPath, dataPath);
+      //engine.start();
+      engine.start(presenting ? presentLocation : appletLocation);
+      //System.out.println("done iwth engine.start()");
+      //}
 
     } catch (PdeException e) { 
       //state = RUNNER_ERROR;
@@ -297,7 +301,7 @@ public class PdeEditor extends Panel {
 	    //if (frame != null) frame.toFront();
 	    try {
 	      //((KjcEngine)(runner.engine)).window.toFront();
-	      engine.front();
+	      engine.window.toFront();
 	    } catch (Exception ex) { }
 	  }
 	}
@@ -320,7 +324,7 @@ public class PdeEditor extends Panel {
 
     try {
       //((KjcEngine)(runner.engine)).window.toFront();
-      engine.front();
+      engine.window.toFront();
 
     } catch (Exception e) {
       // rather than writing code to check all the posible
@@ -380,6 +384,20 @@ public class PdeEditor extends Panel {
   // may just roll this in with the other code
   // -> keep this around for closing the external window
   public void doClose() {
+    // grab window position
+    if (engine != null) {
+      if ((presentationWindow == null) || 
+	  (!presentationWindow.isVisible())) {
+	appletLocation = engine.window.getLocation();
+      }
+
+      // prone to bugs and doesn't work yet
+      //      if ((presentationWindow != null) &&
+      //	  (presentationWindow.isVisible())) {
+      //	presentLocation = engine.window.getLocation();
+      //      }
+    }
+
     if (running) {
       //System.out.println("was running, will call doStop()");
       doStop();
@@ -609,6 +627,9 @@ public class PdeEditor extends Panel {
 
       //header.setProject(file.getName(), projectDir);
       header.reset();
+
+      presentLocation = null;
+      appletLocation = null;
 
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();

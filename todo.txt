@@ -1,4 +1,20 @@
 0037
+X copying files from 'data' dir is not recursive.. fixed
+X move structure of app/application dirs around a bit
+X make a new 'dist' function for building
+X save window position (only during session) of sketch run window
+X shouldn't substitute f's for: "Univers76.vlw.gz";
+X   need lots of testing--this changes lots of things
+X fixed commentsCodec which was mangling things
+o present mode doesn't work for draw()
+X   tested, seems to be fine?
+X console - convert tabs to spaces
+o   line wrapping (but save info for resize? noo..)
+X fix to line numbers being off for KjcEngine exception highlights
+X changed error color slightly for console to fit status error 
+X size() not being called in setup is gonna cause lots of headaches
+X   hack: put exception handler around setup and re-call if necessary
+X linefeeds were wrong in BApplet
 
 bagel
 a _ do some serial testing
@@ -7,38 +23,20 @@ a _   serial works poorly for starting/stopping applets
 a _     this is behaving strangely
 a _     breaks on every 2nd run when using serial apps (or others?)
 a _       try calling gc on stop as well
-a _ size() not being called in setup is gonna cause lots of headaches
 
-ui
+pde
 a _ saving to gzipped 'versions' file
 a _   autosave every few minutes, also on each compile, also on save
 a _   mark each as 'save', 'autosave', 'failed' or 'successful' compile
 a _   also include a timestamp
+a _ make scrollbar for console
 a _ remove projects if created but nothing happens to them
-a _ console work
-a _   make scrollbar for console
-a _   convert tabs to 8 spaces
-a o   line wrapping (but save info for resize? noo..)
 a _ option to delete current project
-
-play
-a _ save window position (only during session) of sketch run window
-a _ present mode doesn't work for draw()
 a _ see if play being highlighted can be implemented again
-a _ shouldn't substitute f's for: "Univers76.vlw.gz";
-
-pde
 a _ class unloading not happening
 a _   when doing an extends ProcessingApplet
 a _   need to add randomizer to even non-self gen'd classes
 a _   or figure out how to unload old classes.. grr
-a _ copying files from 'data' dir is not recursive
-
-cvs
-a _ move structure of app/application dirs around a bit
-a _ make a new 'dist' function for building
-a _   easier to build on mac for pc than vice-versa..
-a _ small script to remove CVS directories from a tree
 
 windows
 _ figure out how to do do simple .exe with icons
@@ -92,6 +90,7 @@ a _   something that docks better to java serial api
 a _ check to see if lines for error messages are off
 
 release
+a _ small script to remove CVS directories from a tree
 a _ get icon in macos9/macosx/windows formats
 a _ check osname under win98 and linux
 a _ write message to people who signed up for p5 alpha
@@ -105,6 +104,7 @@ a _   these should become the standard test cases for everything
 a _ faq on where the project is going
 a _   information on how to submit bugs to p5-bugs@proce55ing.net
 a _     include release number, platform, and a copy of the code
+a _ need comprehensive set of tests for 'f' substitution scenarios
 
 web
 a _ online discussion/talk system (gets people using the site too)

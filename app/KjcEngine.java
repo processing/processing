@@ -44,7 +44,7 @@ public class KjcEngine extends PdeEngine {
 
   boolean running;
   KjcApplet applet;
-  Window window;
+  //Window window;
 
   Process process;
   static int portnum = 8192;
@@ -69,6 +69,8 @@ public class KjcEngine extends PdeEngine {
     if (dataPath != null) {
       File dataDir = new File(dataPath);
       if (dataDir.exists()) {
+	PdeEditor.copyDir(dataDir, buildDir);
+	/*
 	String files[] = dataDir.list();
 	for (int i = 0; i < files.length; i++) {
 	  File sourceFile = new File(dataDir, files[i]);
@@ -78,6 +80,7 @@ public class KjcEngine extends PdeEngine {
 	  //	     "  target is " + targetFile);
 	  PdeEditor.copyFile(sourceFile, targetFile);
 	}
+	*/
       }
     }
 
@@ -123,7 +126,21 @@ public class KjcEngine extends PdeEngine {
       program = commentsCodec(program /*, true*/);
 
       // insert 'f' for all floats
+      // shouldn't substitute f's for: "Univers76.vlw.gz";
       if (PdeBase.getBoolean("compiler.substitute_f", true)) {
+	/*
+	  a = 0.2 * 3
+	  (3.)
+	  (.3 * 6)
+	  (.30*7)
+
+	  next to white space \s or math ops +-/*()
+   
+	 */
+	program = substipoot(program, "([\\s\\+\\-\\/\\*\\(\\)])(\\d+\\.\\d*)([\\s\\+\\-\\/\\*\\(\\)])", "$1$2f$3");
+	program = substipoot(program, "([\\s\\+\\-\\/\\*\\(\\)])(\\d*\\.\\d+)([\\s\\+\\-\\/\\*\\(\\)])", "$1$2f$3");
+
+	/*
 	// allow 3. to work (also allows x.x too)
 	program = substipoot(program, "(\\d+\\.\\d*)(\\D)", "$1f$2");
 	program = substipoot(program, "(\\d+\\.\\d*)ff", "$1f");
@@ -131,29 +148,7 @@ public class KjcEngine extends PdeEngine {
 	// allow .3 to work (also allows x.x)
 	program = substipoot(program, "(\\d*\\.\\d+)(\\D)", "$1f$2");
 	program = substipoot(program, "(\\d*\\.\\d+)ff", "$1f");
-
-	/*
-	PatternMatcher matcher = new Perl5Matcher();
-	PatternCompiler compiler = new Perl5Compiler();
-	Pattern pattern = null;
-
-	try {
-	  pattern = compiler.compile("(\\d+\\.\\d+)([\\D^f])");
-	  //pattern = compiler.compile("(\\.\\d+)([^f])");
-	  //String $1f
-
-	} catch (MalformedPatternException e){
-	  System.err.println("Bad pattern.");
-	  System.err.println(e.getMessage());
-	  System.exit(1);
-	}
-
-	Perl5Substitution subst = 
-	  new Perl5Substitution("$1f$2", Perl5Substitution.INTERPOLATE_ALL);
-	program = Util.substitute(matcher, pattern, subst, program, 
-				  Util.SUBSTITUTE_ALL);
 	*/
-	//System.out.println(program);
       }
 
       // allow int(3.75) instead of just (int)3.75
@@ -162,44 +157,6 @@ public class KjcEngine extends PdeEngine {
 	program = substipoot(program, "([^A-Za-z0-9_])char\\((.*)\\)", "$1(char)($2)");
 	program = substipoot(program, "([^A-Za-z0-9_])int\\((.*)\\)", "$1(int)($2)");
 	program = substipoot(program, "([^A-Za-z0-9_])float\\((.*)\\)", "$1(float)($2)");
-
-	//program = substipoot(program, "(\\W)float\\((.*)\\)", "$1(float)($2)");
-	//program = substipoot(program, "(\\W)int\\((.*)\\)", "$1(int)($2)");
-	//System.out.println(program);
-	/*
-	PatternMatcher matcher = new Perl5Matcher();
-	PatternCompiler compiler = new Perl5Compiler();
-	Pattern pattern = null;
-	Perl5Substitution subst;
-
-	try {
-	  pattern = compiler.compile("\\sfloat\\((.*)\\)");
-
-	} catch (MalformedPatternException e){
-	  System.err.println("Bad pattern.");
-	  System.err.println(e.getMessage());
-	  System.exit(1);
-	}
-
-	subst = new Perl5Substitution(" (float)$1", 
-				      Perl5Substitution.INTERPOLATE_ALL);
-	program = Util.substitute(matcher, pattern, subst, program, 
-				  Util.SUBSTITUTE_ALL);	
-
-	try {
-	  pattern = compiler.compile("\\sint\\((.*)\\)");
-
-	} catch (MalformedPatternException e){
-	  System.err.println("Bad pattern.");
-	  System.err.println(e.getMessage());
-	  System.exit(1);
-	}
-
-	subst = new Perl5Substitution(" (int)$1", 
-				      Perl5Substitution.INTERPOLATE_ALL);
-	program = Util.substitute(matcher, pattern, subst, program, 
-				  Util.SUBSTITUTE_ALL);	
-	*/
       }
 
       if (PdeBase.getBoolean("compiler.color_datatype", true)) {
@@ -385,7 +342,8 @@ public class KjcEngine extends PdeEngine {
 	  slash = false;
 
 	} else {
-	  if ((p[i] > 32) && (p[i] < 127)) {
+	  //if ((p[i] > 32) && (p[i] < 127)) {
+	  if ((p[i] >= 0x30) && (p[i] < 127)) {
 	    p[i] = rotateTable[p[i]];
 	    //p[i] = encode ? encodeTable[p[i]] : decodeTable[p[i]];
 	  }
@@ -487,12 +445,14 @@ public class KjcEngine extends PdeEngine {
 	  String lineNumberStr = s.substring(index + len + 1);
 	  index = lineNumberStr.indexOf(')');
 	  lineNumberStr = lineNumberStr.substring(0, index);
-	  System.err.println("error line is: " + lineNumberStr);
+	  //System.err.println("error line is: " + lineNumberStr);
 	  try {
-	    exception.line = Integer.parseInt(lineNumberStr) - 2;
+	    exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
 	    //System.out.println("exception in RUNNING");
 	    editor.error(exception);
-	  } catch (NumberFormatException e) {  }
+	  } catch (NumberFormatException e) {  
+	    e.printStackTrace();
+	  }
 	} else if ((index = s.indexOf(tempClass)) != -1) {
 	  // code to check for:
 	  // at Temporary_484_3845.loop(Compiled Code)
@@ -564,7 +524,8 @@ public class KjcEngine extends PdeEngine {
   }
 
 
-  public void start() throws PdeException {  // part of PdeEngine
+  // part of PdeEngine
+  public void start(Point windowLocation) throws PdeException {  
     int numero1 = (int) (Math.random() * 10000);
     int numero2 = (int) (Math.random() * 10000);
     tempClass = TEMP_CLASS + "_" + numero1 + "_" + numero2;
@@ -801,6 +762,9 @@ public class KjcEngine extends PdeEngine {
 
 	//window.pack();
 	applet.setVisible(true);  // no effect
+	if (windowLocation != null) {
+	  window.setLocation(windowLocation);
+	}
 	window.show();
 	applet.requestFocus();  // necessary for key events
       }
@@ -827,9 +791,9 @@ public class KjcEngine extends PdeEngine {
   }
 
 
-  public void front() {  // part of PdeEngine
-    window.toFront();
-  }
+  //public void front() {  // part of PdeEngine
+  //window.toFront();
+  //}
 
 
   protected void cleanup() {
