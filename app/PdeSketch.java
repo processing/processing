@@ -1454,9 +1454,17 @@ public class PdeSketch {
       File libraryFolder = (File)enum.nextElement();
       //System.out.println("exporting files from " + libFolder);
       File exportSettings = new File(libraryFolder, "export.txt");
-      String exportList[]; // = null;
+      String exportList[] = null;
       if (exportSettings.exists()) {
-        exportList = PApplet.loadStrings(exportSettings);
+        //exportList = PApplet.loadStrings(exportSettings);
+        String info[] = PApplet.loadStrings(exportSettings);
+        for (int i = 0; i < info.length; i++) {
+          if (info[i].startsWith("applet")) {
+            int idx = info[i].indexOf('=');  // get applet= or applet =
+            String commas = info[i].substring(idx+1).trim();
+            exportList = PApplet.split(commas, ", ");
+          }
+        }
       } else {
         exportList = libraryFolder.list();
       }
