@@ -14,6 +14,26 @@ X cosmetic fixes
 X   is PdeEditorHeader one pixel too tall
 X   move the tabs over just slightly
 
+sketchbook/prefs location
+_ read from registry key to get the proper name for these folders
+_   also find some way to do this on the mac
+_   on non-english windows (or at the broad) these will be named differently
+_   http://support.microsoft.com/?kbid=221837&sd=RMVP
+_ move to ~/Application Data/Processing for windows
+_   and ~/Library/Processing for macosx
+_   and ~/.processing for linux
+_   if it can't write prefs here, try creating a subfolder inside p5
+_     and if that fails, then tell the user that they suck
+_ prompt for sketchbook location on linux
+_   or on mac/pc if it can't write anywhere else
+_ creating sketchbook / lab situations
+_   test to see if it's possible to write to "My Documents"
+_   if not, should bring up a prompt asking where to put sketchbook
+_   also put something in lib/preferences.txt for default location
+_     this way a course admin can change the default location
+
+_ bring back "rename" ?
+
 _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
@@ -63,12 +83,6 @@ _   zip, unzip, jikes, etc
 macosx
 _ resize box intrudes on the scroller for the console area
 _ horizontal scroller is always present
-
-_ creating sketchbook / lab situations
-_   test to see if it's possible to write to "My Documents"
-_   if not, should bring up a prompt asking where to put sketchbook
-_   also put something in lib/preferences.txt for default location
-_     this way a course admin can change the default location
 
 _ allow to use doubles on casting -- particularly for Math.cos() et al
 
@@ -197,13 +211,6 @@ key press, or if it's because they're often accompanied by a println()
 sure if related. same for PATH and CLASSPATH.
 * some virus scanning software, particularly older NAV versions cause
 the trouble. 
-
-
-static apps/scripts
-_ static applets need to be able to resize themselves on 'play'
-_ figure out what to do with static apps exported as application
-_   needs to just hang there
-_ scripts (w/ no graphics) will need to call exit() explicitly
 
 
 libraries
