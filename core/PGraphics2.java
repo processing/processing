@@ -255,9 +255,11 @@ public class PGraphics2 extends PGraphics {
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
       if (vertexCount == 1) {
+        //System.out.println("starting poly path " + x + " " + y);
         gpath = new GeneralPath();
         gpath.moveTo(x, y);
       } else {
+        //System.out.println("continuing poly path " + x + " " + y);
         gpath.lineTo(x, y);
       }
       break;
@@ -313,8 +315,6 @@ public class PGraphics2 extends PGraphics {
   public void endShape() {
     //System.out.println("endShape");
 
-    shape = 0;
-
     switch (shape) {
     case LINE_STRIP:
       stroke_shape(gpath);
@@ -328,10 +328,13 @@ public class PGraphics2 extends PGraphics {
     case POLYGON:
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
+      //System.out.println("finishing polygon");
       gpath.closePath();
       draw_shape(gpath);
       break;
     }
+
+    shape = 0;
   }
 
 
@@ -358,10 +361,12 @@ public class PGraphics2 extends PGraphics {
 
   protected void draw_shape(Shape s) {
     if (fill) {
+      //System.out.println("filling shape");
       graphics.setColor(fillColorObject);
       graphics.fill(s);
     }
     if (stroke) {
+      //System.out.println("stroking shape");
       graphics.setColor(strokeColorObject);
       graphics.draw(s);
     }

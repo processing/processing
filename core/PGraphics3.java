@@ -855,20 +855,39 @@ public class PGraphics3 extends PGraphics {
     // ------------------------------------------------------------------
     // TRANSFORM / LIGHT / CLIP
 
-    light_and_transform();
+    handle_lighting();
+
+
+
+    // ------------------------------------------------------------------
+    // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
+
+    for (int i = vertex_start; i < vertex_end; i++) {
+      float vx[] = vertices[i];
+
+      float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
+      float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
+      float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
+      float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
+
+      if (ow != 0) {
+        ox /= ow; oy /= ow; oz /= ow;
+      }
+
+      vx[X] = width * (ONE + ox) / 2.0f;
+      vx[Y] = height * (ONE + oy) / 2.0f;
+      vx[Z] = (oz + ONE) / 2.0f;
+    }
 
 
     // ------------------------------------------------------------------
     // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
 
     // if true, the shapes will be rendered on endFrame
-    if (hints[DEPTH_SORT]) {
-      shape = 0;
-      return;
+    if (!hints[DEPTH_SORT]) {
+      if (fill) render_triangles();
+      if (stroke) render_lines();
     }
-
-    if (fill) render_triangles();
-    if (stroke) render_lines();
 
     shape = 0;
   }
@@ -997,6 +1016,8 @@ public class PGraphics3 extends PGraphics {
    * from code by john w. ratcliff (jratcliff at verant.com)
    */
   private void triangulate_polygon() {
+    System.out.println("triangulating polygon " +
+                       vertex_start + " " + vertex_end);
 
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0.0f;
@@ -1103,7 +1124,7 @@ public class PGraphics3 extends PGraphics {
    * so that other renderers can override. For instance, with OpenGL,
    * this section is all handled on the graphics card.
    */
-  protected void light_and_transform() {
+  protected void handle_lighting() {
 
     // ------------------------------------------------------------------
     // CULLING
@@ -1203,27 +1224,6 @@ public class PGraphics3 extends PGraphics {
       //for (int i = 0; i < triangleCount; i ++) {
       //}
     //}
-
-
-    // ------------------------------------------------------------------
-    // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
-
-    for (int i = vertex_start; i < vertex_end; i++) {
-      float vx[] = vertices[i];
-
-      float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
-      float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
-      float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
-      float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
-
-      if (ow != 0) {
-        ox /= ow; oy /= ow; oz /= ow;
-      }
-
-      vx[X] = width * (ONE + ox) / 2.0f;
-      vx[Y] = height * (ONE + oy) / 2.0f;
-      vx[Z] = (oz + ONE) / 2.0f;
-    }
   }
 
 
