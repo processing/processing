@@ -561,20 +561,21 @@ public class PGraphics2 extends PGraphics {
     if (who.cache == null) {
       who.cache = new BufferedImage(who.width, who.height,
                                     BufferedImage.TYPE_INT_ARGB);
-      who.modified();  // mark the whole thing for update
+      who.updatePixels();  // mark the whole thing for update
     }
 
     if (who.modified) {
       // update the sub-portion of the image as necessary
       BufferedImage bi = (BufferedImage) who.cache;
 
-      bi.setRGB(who.mx1, who.my1,
-                who.mx2 - who.mx1 + 1,
-                who.my2 - who.my1 + 1,
+      bi.setRGB(who.mx1,
+                who.my1,
+                who.mx2 - who.mx1,
+                who.my2 - who.my1,
                 who.pixels,
                 who.my1*who.width + who.mx1,  // offset for copy
                 who.width);  // scan size
-      who.resetModified();
+      who.pixelsUpdated();
     }
   }
 
@@ -843,7 +844,7 @@ public class PGraphics2 extends PGraphics {
 
 
   public void copy(PImage src, int dx, int dy) {
-    // TODO if this image is not RGB, needs to behave differently
+    // TODO if this image is not ARGB or RGB, needs to behave differently
     //      (if it's gray, need to copy gray pixels)
     //      for alpha, just leave it be.. copy() doesn't composite
     ((BufferedImage) image).setRGB(dx, dy, src.width, src.height,

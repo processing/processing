@@ -4,7 +4,7 @@
   PImage - storage class for pixel data
   Part of the Processing project - http://Proce55ing.net
 
-  Copyright (c) 2001-03
+  Copyright (c) 2001-05
   Ben Fry, Massachusetts Institute of Technology and
   Casey Reas, Interaction Design Institute Ivrea
 
@@ -28,6 +28,7 @@ package processing.core;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.lang.reflect.*;
 import java.io.*;
 
 
@@ -83,6 +84,9 @@ public class PImage implements PConstants, Cloneable {
   // note! inherited by PGraphics
   public int imageMode = CORNER;
   public boolean smooth = false;
+
+  /** native storage for java 1.3 image object */
+  //public Object image;
 
   /** for subclasses that need to store info about the image */
   public Object cache;
@@ -186,10 +190,15 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * mode is one of CORNERS, CORNER, CENTER
+   * mode is one of CORNERS or CORNER, because the others are
+   * just too weird for the other functions
    */
   public void imageMode(int mode) {
-    imageMode = mode;
+    if ((imageMode == CORNER) || (imageMode == CORNERS)) {
+      imageMode = mode;
+    } else {
+      throw new RuntimeException("imageMode() only works with CORNER or CORNERS");
+    }
   }
 
 
@@ -216,41 +225,124 @@ public class PImage implements PConstants, Cloneable {
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
 
 
-  public void modified() {
-    mx1 = 0;
-    my1 = 0;
-    mx2 = width - 1;
-    my2 = height - 1;
-    modified = true;
+  /*
+  public int[] loadPixels() {
+    return getPixels(0, 0, width, height);
+  }
+  */
+
+
+  /**
+   * Note that when using imageMode(CORNERS),
+   * the x2 and y2 positions are non-inclusive.
+   */
+  /*
+  public int[] loadPixels(int x1, int y1, int x2, int y2) {
+    if (modified) {
+      // have to set the modified region to include the min/max
+      // of the coordinates coming in.
+      // also, mustn't get the pixels for the section that's
+      // already been marked as modified. gah.
+      // too complicated, just throw an error
+      String msg =
+        "getPixels(x, y, w, h) cannot be used multiple times. " +
+        "Use getPixels() once to get the entire image instead.";
+      throw new RuntimeException(msg);
+    }
+
+    if (imageMode == CORNER) {  // x2, y2 are w/h
+      x2 += x1;
+      y2 += y1;
+    }
+
+    if (pixels == null) {  // this is a java 1.3 buffered image
+      if (image == null) {  // this is just an error
+        throw new RuntimeException("PImage not properly setup for getPixels()");
+      } else {
+        pixels = new int[width*height];
+      }
+    }
+
+    if (image == null) {
+      // this happens when using just the 1.1 library
+      // no need to do anything, since the pixels have already been grabbed
+
+    } else {
+      // copy the contents of the buffered image to pixels[]
+      //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, width);
+      try {
+        //System.out.println("running getrgb...");
+        Class bufferedImageClass =
+          Class.forName("java.awt.image.BufferedImage");
+        // getRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
+        Method getRgbMethod =
+          bufferedImageClass.getMethod("getRGB", new Class[] {
+            Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE,
+            int[].class, Integer.TYPE, Integer.TYPE
+          });
+        getRgbMethod.invoke(image, new Object[] {
+          new Integer(x1), new Integer(y1),
+          new Integer(x2 - x1 + 1), new Integer(y2 - y1 + 1),
+          pixels, new Integer(0), new Integer(width)
+        });
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return pixels;  // just to be nice
+  }
+  */
+
+
+  /**
+   * Mark all pixels as needing update.
+   */
+  public void updatePixels() {
+    updatePixels(0, 0, width, height);
   }
 
-  public void modified(int x, int y) {
-    if (x < mx1) mx1 = x;
-    if (x > mx2) mx2 = x;
-    if (y < my1) my1 = y;
-    if (y > my2) my2 = y;
-    modified = true;
+
+  /**
+   * Note that when using imageMode(CORNERS),
+   * the x2 and y2 positions are non-inclusive.
+   */
+  public void updatePixels(int x1, int y1, int x2, int y2) {
+    //if (!modified) {  // could just set directly, but..
+    //}
+
+    if (imageMode == CORNER) {  // x2, y2 are w/h
+      x2 += x1;
+      y2 += y1;
+    }
+
+    if (!modified) {
+      mx1 = x1;
+      mx2 = x2;
+      my1 = y1;
+      my2 = y2;
+      modified = true;
+
+    } else {
+      if (x1 < mx1) mx1 = x1;
+      if (x1 > mx2) mx2 = x1;
+      if (y1 < my1) my1 = y1;
+      if (y1 > my2) my2 = y1;
+
+      if (x2 < mx1) mx1 = x2;
+      if (x2 > mx2) mx2 = x2;
+      if (y2 < my1) my1 = y2;
+      if (y2 > my2) my2 = y2;
+    }
   }
 
-  public void modified(int x1, int y1, int x2, int y2) {
-    if (x1 < mx1) mx1 = x1;
-    if (x1 > mx2) mx2 = x1;
-    if (y1 < my1) my1 = y1;
-    if (y1 > my2) my2 = y1;
 
-    if (x2 < mx1) mx1 = x2;
-    if (x2 > mx2) mx2 = x2;
-    if (y2 < my1) my1 = y2;
-    if (y2 > my2) my2 = y2;
-
-    modified = true;
-  }
-
-  public void resetModified() {
-    mx1 = -Integer.MAX_VALUE;
-    my1 = -Integer.MAX_VALUE;
-    mx2 = Integer.MAX_VALUE;
-    my2 = Integer.MAX_VALUE;
+  public void pixelsUpdated() {
+    //mx1 = Integer.MAX_VALUE;
+    //my1 = Integer.MAX_VALUE;
+    //mx2 = -Integer.MAX_VALUE;
+    //my2 = -Integer.MAX_VALUE;
+    modified = false;
   }
 
 
@@ -283,10 +375,10 @@ public class PImage implements PConstants, Cloneable {
       w = (w - x);
       h = (h - x);
 
-    } else if (imageMode == CENTER) {
+    //} else if (imageMode == CENTER) {
       // w/h are the proper w/h, but x/y need to be moved
-      x -= w/2;
-      y -= h/2;
+      //x -= w/2;
+      //y -= h/2;
     }
 
     if (x < 0) x = 0;
@@ -506,9 +598,9 @@ public class PImage implements PConstants, Cloneable {
       sx2 += sx1; sy2 += sy1;
       dx2 += dx1; dy2 += dy1;
 
-    } else if (imageMode == CENTER) {
-      sx2 /= 2f; sy2 /= 2f;
-      dx2 /= 2f; dy2 /= 2f;
+    //} else if (imageMode == CENTER) {
+      //sx2 /= 2f; sy2 /= 2f;
+      //dx2 /= 2f; dy2 /= 2f;
     }
 
     if ((src == this) &&
@@ -585,9 +677,9 @@ public class PImage implements PConstants, Cloneable {
       sx2 += sx1; sy2 += sy1;
       dx2 += dx1; dy2 += dy1;
 
-    } else if (imageMode == CENTER) {
-      sx2 /= 2f; sy2 /= 2f;
-      dx2 /= 2f; dy2 /= 2f;
+    //} else if (imageMode == CENTER) {
+      //sx2 /= 2f; sy2 /= 2f;
+      //dx2 /= 2f; dy2 /= 2f;
     }
 
     if ((src == this) &&
