@@ -4,6 +4,13 @@ pde
 _ don't popup offscreen if editor window is way left. 
 _   just make sure the x coord > 10 or so (if not presenting)
 _ don't throw exceptions for serial on startup if no serial available?
+_ as approaches 1000 lines, editorconsole has arrayindexoutof bounds
+int a; 
+void loop()  
+{ 
+  a++; 
+  println(a); 
+} 
 
 sketchbook
 _ organizing directories, save to other directories blows up
