@@ -37,7 +37,9 @@ import javax.sound.sampled.*;
 
 public class PSound2 extends PSound {
   PApplet applet;
+
   Clip clip;
+  FloatControl gainControl;
 
 
   public PSound2(PApplet applet, InputStream input) {
@@ -46,6 +48,8 @@ public class PSound2 extends PSound {
     try {
       AudioInputStream stream =
         AudioSystem.getAudioInputStream(input);
+
+      // *** this code appears as though it may just be faulty ***
 
       // At present, ALAW and ULAW encodings must be converted
       // to PCM_SIGNED before it can be played
@@ -59,6 +63,8 @@ public class PSound2 extends PSound {
                                  format.getFrameRate(),
                                  true);  // big endian
         stream = AudioSystem.getAudioInputStream(format, stream);
+        //} else {
+        //System.out.println("no conversion necessary");
       }
 
       int frameLength = (int) stream.getFrameLength();
@@ -67,7 +73,11 @@ public class PSound2 extends PSound {
         new DataLine.Info(Clip.class, stream.getFormat(),
                           frameLength * frameSize);
 
-      Clip clip = (Clip) AudioSystem.getLine(info);
+      clip = (Clip) AudioSystem.getLine(info);
+
+      // seems that you can't make more than one of these
+      gainControl =
+        (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
 
       // This method does not return until completely loaded
       clip.open(stream);
@@ -82,6 +92,8 @@ public class PSound2 extends PSound {
         }
         });
       */
+
+      applet.registerDispose(this);
 
     } catch (Exception e) {
       error("<init>", e);
@@ -126,8 +138,21 @@ public class PSound2 extends PSound {
    * Stops the audio and rewinds to the beginning.
    */
   public void stop() {
+    // clip may become null in the midst of this method
+    //if (clip != null) clip.stop();
+    //if (clip != null) clip.setFramePosition(0);
     clip.stop();
     clip.setFramePosition(0);
+  }
+
+
+  /**
+   * This is registered externally so that the host applet
+   * will kill off the playback thread.
+   */
+  public void dispose() {
+    stop();
+    clip = null;
   }
 
 
@@ -150,10 +175,7 @@ public class PSound2 extends PSound {
 
 
   public void volume(float v) {  // ranges 0..1
-    FloatControl gainControl =
-      (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-    double gain = .5D;    // number between 0 and 1 (loudest)
-    float dB = (float)(Math.log(gain)/Math.log(10.0)*20.0);
+    float dB = (float)(Math.log(v)/Math.log(10.0)*20.0);
     gainControl.setValue(dB);
   }
 
