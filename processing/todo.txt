@@ -28,6 +28,19 @@ X     try calling gc on stop as well
 X make it simpler to build the code.. 
 X   buzz.pl actually no longer needed (no ifdefs)
 o   use a regular makefile for everything
+X getResource stuff breaks, sketch.properties can't save
+X   FileNotFoundException: /FILE9/+/sketch.properties
+X doc: requires java 1.3.1 update 1
+X button backgrounds are weird since not square
+X   (seen when asking to save a file etc)
+X   see if possible to set background of button object
+X   or maybe just background of the awt object it sits on
+X get casey's examples into the sketchbook
+X   these should become the standard test cases for everything
+o crashes when people click on help in top bar (same in DBN) [macos9]
+X   not reproduced.. mrjappbuilder seems stabler?
+X use osx utilities to setfileinfo for .jar files etc
+o try to build macutils under osx
 
 a _ this code is not performing correctly
 BImage b;  // declare variable "b" of type BImage
@@ -51,79 +64,53 @@ endShape();
 bagel
 a _ serial
 a _   pde menu item for listing serial ports available
-a _   document a bit more regarding its use
 
 pde
 a _ move background() out of draw() for draw mode apps
 a _ click on project name to quickly go to rename mode
 a _ make scrollbar for console
 a _ remove projects if created but nothing happens to them
-a _ option to delete current project
 a _ see if play being highlighted can be implemented again
-a _ for 'java' mode, try run using external vm
-a _   would need to get error output stream from app.. argh
-a _   only allow under win/osx/linux
-a _   not clear how to kill the process.. does that work w/ 1.3?
-? _ lockup when something missing from classpath on dynamic load
 
 macos9
-X getResource stuff breaks, sketch.properties can't save
-X   FileNotFoundException: /FILE9/+/sketch.properties
 a _ apple control keys register as edit events in buffer
 a _   use Toolkit.getShortcutKeymask() to figure out what's up
-a _ button backgrounds are weird since not square
-a _   (seen when asking to save a file etc)
-a _   see if possible to set background of button object
-a _   or maybe just background of the awt object it sits on
-a _ use type/creator Pde1
-a _ crashes when people click on help in top bar (same in DBN) [macos9]
-a _ use osx utilities to setfileinfo for .jar files etc
-a _ try to build macutils under osx
-
-macosx
-a _ splash screen 
-a _ handlers for basic events
-a _   MRJAboutHandler (just show splash screen)
-a _   MRJPrefsHandler (open pde.properties in a text editor)
-a _   MRJQuitHandler (confirm quit, may need to be in another thread)
-a _ remove 'quit' from file menu
-a _ doc: requires java 1.3.1 update 1
+a _ set file type/creator for .pde files.. TEXTPde1
 
 macos
-a _ MRJOpenApplicationHandler and MRJOpenDocumentHandler
-a _   especially the open document fella
-a _   under osx, app won't get doc unless app already launched
 a _ implement menuitem to load ref and to launch p5.net
 a _   MRJFileUtils.openURL(String url) throws IOException
+a _ serial port code needs to be implemented
+a _   something that docks better to java serial api
 a _ dataInputStream, setUseCaches on the url to false
 a _   URLConnection.setUseCaches(false)
 a _   parent.obj.close() on the url
-a _ serial port code needs to be implemented
-a _   something that docks better to java serial api
 a _ check to see if lines for error messages are off
-a _ set file type/creator for .pde files.. TEXTPde1
+
+windwows
+a _ splash screen.. check win95 book for simple code
+
+linux
+a _ test the gcc executable, and tweak dist script accordingly
 
 release
+a _ add 'readme.txt' to dist.sh.. change notes to revisions
 a _ add examples to dist.sh scripts
 a _   separate shared script to cleanup?
 a _   or small script to remove CVS directories from a tree
 a _ check osname under win98 and linux
-b _ figure out about distributing source
-b _   kjc is gnu, so source needs to be available
-a _ get all of casey's examples into the sketchbook
-a _   these should become the standard test cases for everything
-a _ faq on where the project is going
 a _   information on how to submit bugs to p5-bugs@proce55ing.net
 a _     include release number, platform, and a copy of the code
 a _ need comprehensive set of tests for 'f' substitution scenarios
 
-web
+web / docs
 a _ online discussion/talk system (gets people using the site too)
 a _ online signup cgi for people to add themselves to the list
 a _ see about setting up simple bug tracker/feature system
 a _   queue for people reporting things externally
 a _   bugzilla but simpler
 a _   would also be nice for people to be able to vote on features
+a _ document serial a bit more in release notes
 
 dammit we need a text editor.
 gonna get sick of people bitching about it.
@@ -284,13 +271,20 @@ _ fill, background, stroke all with int version for packed rgb
 
 
 PDE / high
-b _ class unloading not happening
-b _   when doing an extends ProcessingApplet
+b _ for 'java' mode, try run using external vm
+b _   would need to get error output stream from app.. argh
+b _   only allow under win/osx/linux
+b _   not clear how to kill the process.. does that work w/ 1.3?
+b _ class unloading not happening in java mode
 b _   need to add randomizer to even non-self gen'd classes
 b _   or figure out how to unload old classes.. grr
+b _ lockup when something missing from classpath on dynamic load
+b _   but makes no error.. peditorconsole probably swallowing it
 
 
 PDE / medium
+b _ option to delete current project (trickier)
+b _   also needs to have method for verify.. blech
 b _ beautify is broken
 b _ sketch: sketch-000 is dumb
 b _ check logs to see where we're getting traffic from
@@ -389,6 +383,8 @@ _ dbn2p5 converter.. ooh!
 
 PDE / dist
 b _ need document icons
+b _ figure out about distributing source
+b _   kjc is gnu, so source needs to be available
 
 
 PDE / windows
@@ -396,6 +392,26 @@ b _ windows launcher/exe
 b _   splash screen
 b _   build from command line, using gcc
 b _   file association for .pde files
+
+
+PDE / macos
+b _ handlers for basic events
+b _   MRJAboutHandler (just show splash screen)
+b _     image for 'about processing'
+b _   MRJPrefsHandler (open pde.properties in a text editor)
+b _   MRJQuitHandler (confirm quit, may need to be in another thread)
+b _   MRJOpenApplicationHandler and MRJOpenDocumentHandler
+b _     especially the open document fella
+b _     under osx, app won't get doc unless app already launched
+
+
+PDE / macosx
+b _ splash screen 
+b _ remove 'quit' from file menu
+
+
+PDE / linux
+b _ splash screen
 
 
 PDE / features
