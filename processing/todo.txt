@@ -1,30 +1,38 @@
-iprocessing todo list // last updated 28 september 2001
+iprocessing todo list // last updated 16 october 2001
 (most up-to-date version of this file is in processing cvs)
 
 
-KjcEngine died on line 367 with this:
-(trying to stop the applet)
-void setup() {
-  size(300, 300);
-  colorScale(100);
-}
+PEOPLE WHO WANT IT
+_ christophe buffet <christophe@wkmx.org>
 
-void loop() {
-  bezierCurve(10, 10,  100, 50,  50, 100,  290, 290);
-}
+
+changes to graphics
+_ rect now uses x, y, width, height instead of x1, y1, x2, y2
+_ circle has been replaced with ellipse
+_ box takes width, height, depth instead of six coordinates
+
 
 for 0010
+X make acu fonts work again
+X write code to use simple bitmap fonts
+_ docs
+_   explain using inner classes and using non-public classes
+_   start 'errors' section
+_     NullPointerException inside setup usually means no size()
+_   ability to write functions and inner classes
+_   mention ability to use import statements in java mode
+_     ability to do real (but not public) classes in same document
+_   make note in documentation about getting access to pixel array
+_     check to see if get/set functions in applet actually work
+_     fix documentation appropriately
+_   documentation says 'mouseDown' even though it's 'mousePressed'
 X strangeness with stroke when a rect goes off outside the window
 _ fix color cube applet 
 _   make it run in current version of processing
 _   fix background from showing up black
-_ make note in documentation about getting access to pixel array
-_   check to see if get/set functions in applet actually work
-_   fix documentation appropriately
 X redone random functions in processing applet
 _   update documentation on web page
 _ crappy way of determining if inside a class--ignores comments
-_ documentation says 'mouseDown' even though it's 'mousePressed'
 _ option to enable/disable frame on running applets
 _ compiling .java files leaves the .class files next to the .java
 _   make sure all the dirs in sketchbook added to classpath on startup
@@ -33,9 +41,18 @@ _ ability to include other code from sketchbook directory
 _   compile entire sketchbook on startup, then check for new files on compile?
 X   kjc not smart enough to just compile things that are in classpath
 _ when applet window is too large to fit, center and put in back
+_ notes about running on win98 and that stupid startup exception
+X add a file with bugs for testing
+_ fix bugs from the 'bugs' file 
+_ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
+_   better solution for this (error while opening image)
+_   and document how image loading works
 
 
 for 0011
+_ run java code besides processing applets 
+_   if not processing applet, look for a main(), no main give an error
+_ give warning when compiling w/o kjcprocessingapplet
 _ stop required before kill for applets that use serial
 _   this is behaving strangely
 _ new objects draw behind old objects with noBackground()
@@ -47,9 +64,7 @@ _   with serial port support
 
 PROCESSING - HIGH
 _ make images work again
-_ make acu fonts work again
 _ write code to bind with java fonts
-_ write code to use simple bitmap fonts
 _ bug in paren balancing
 _ shift-click on play for 'presentation mode'
 _   does full screen and hides editor window
