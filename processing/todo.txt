@@ -1,9 +1,21 @@
 0075 pde
-
 X backported to 73
 X   change horizontal offset to 5 instead of 4
 X   yet another tweak to the message() function in PdeRuntime
 X   add -target 1.1 to all the library make entries
+X find/replace
+o   add support for hitting 'ESC'
+o   option to ignore or match case
+X   when hitting 'find', select the text in the field
+X   add extra space to exterior of find (especially on windows)
+
+_ may need a progress bar for "save as"
+_   or just the file copy function in general
+_   since it may take a long time (i.e. 1000s of screen grabs)
+
+_ preproc: making all functions public that have no specifier
+_   this will make draw() etc all much easier
+_   as well as the library events
 
 _ basic sample audio playback needed for p5
 
@@ -301,6 +313,9 @@ PDE / Details
    1 _   call the person a genius and tell them to install java
    1 _ make some fancy extendo things because the tabs get too big
 
+   1 _ find/replace
+   1 _   only enable "find next" in menu after a find has happened
+
    1 _ tie .pde files as documents of the application
    1 _   figure out proper registry key for windows
    1 _     can be handled when the app first run (jni?)
@@ -370,16 +385,6 @@ PDE / Details
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
    1 _ make export put a timestamp in the html code (hidden or visible)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
-
-   1 _ find/replace
-   1 _   add support for hitting 'ESC'
-   1 _   option to ignore or match case
-   1 _   when hitting 'find', select the text in the field
-   1 _     give that field focus explicitly, rather than just for typing
-   1 _     right now, typing works, but no caret, no blue highlight
-   1 _     and on second find run, should instead select all the find string
-   1 _       so that typing will replace it directly
-   1 _   only enable "find next" in menu after a find has happened
 
    1 _ drag & drop implementation to add files to sketch
 
@@ -506,6 +511,11 @@ b _ splash screen
 
 
 DISTRIBUTION / Mac OS X
+1 _ fix find/replace focus issue on osx
+1 _     give that field focus explicitly, rather than just for typing
+1 _     right now, typing works, but no caret, no blue highlight
+1 _     and on second find run, should instead select all the find string
+1 _       so that typing will replace it directly
 b _ add mkdmg script to macosx build process
 b _   could significantly speed things up
 b _ set nice background for disk image on macosx
