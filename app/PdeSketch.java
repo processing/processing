@@ -1017,10 +1017,13 @@ public class PdeSketch {
                                importPackageList);
           if (className == null) {
             // TODO this is temporary for debugging
+            System.err.println("no class found in " + code[i].name);
+            /*
             System.err.println("class could not be determined for " + 
                                code[i].name + " hopefully an error has " + 
                                "already been reported.");
             return null;
+            */
           } else {
             code[i].preprocName = className + ".java";
           }
@@ -1028,6 +1031,7 @@ public class PdeSketch {
           if (i == 0) {
             // store this for the compiler and the runtime
             primaryClassName = className;
+            System.out.println("primary class " + primaryClassName);
 
             // check if the 'main' file is in java mode
             if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
@@ -1091,6 +1095,7 @@ public class PdeSketch {
     //
     PdeCompiler compiler = new PdeCompiler();
     boolean success = compiler.compile(this, buildPath);
+    System.out.println("success = " + success + " ... " + primaryClassName);
     return success ? primaryClassName : null;
   }
 

@@ -127,17 +127,20 @@ X   i.e. when double-clicking on them.. downloaded off web..
 X     but need to deal with simply, not providing a new exception case
 X begin writing 'new text file'
 
-040623 tuesday morning
+040623 tuesday morning / early afternoon
 X write 'new text file' (ctrl-t)
 X hitting return/enter on the status.edit() not always working
 X   it had been disabled, now re-enabled
 X also update status after "add file" of a .pde or .java
 X implement delete
 X implement hide/unhide
+X see if multiple files are actually compiling
+X   nope, they aren't properly.. need to figure this out
+X   empty files = no class name found.. that's a problem
 
-_ see if multiple files are actually compiling
-_   nope, they aren't properly.. need to figure this out
-_   empty files = no class name found.. that's a problem
+040623 tuesday afternoon
+_ continue work on multi-file compile
+
 _ see if sonia project can compile
 _ write export-to-application
 _ write export-to-library
