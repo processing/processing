@@ -102,7 +102,8 @@ echo Building PDE for JDK 1.4
 
 cd app
 
-CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar"
+CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar;${QT_JAVA_PATH}"
+
 
 # version for javac/1.1 testing
 #CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar;..\\build\\macos9\\JDKClasses.zip;..\\build\\macos9\\JDKToolsClasses.zip"
