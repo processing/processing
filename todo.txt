@@ -1,20 +1,25 @@
-0051
-X go through the bboard and make sure everything up to date here
-X   see if moved topics need to be deleted as well
-X     (log in from another machine as guest)
+0052
+
 _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 
-_ weirdness with mac swiss-german keyboard on []{}|
+_ disable image cache (setUseCaches?)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
+
 _ several examples broken (note from creas) in bugs.txt
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
+
+_ merge bboard groupings (syntax + programs)
+_   separate bboard and environment
 
 
 ////////////////////////////////////////////////////////////////////
 
 
 BAGEL / bugs
+_ gaps in lines for pmouseX, mouseX
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
 _ if image doesn't exist, spews null pointer exception and freaks
 _   locks up environment/machine, have to restart
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
@@ -35,6 +40,8 @@ _ too many push() will silently stop the applet inside a loop
 
 
 BAGEL / high
+b _ transparent gif images don't retain transparency (oy)
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
 b _ better access to projX et al
 b _   what's a better name? calcX? or write to an array?
 b _   projectX, projectY, .. or projectedX ? 
@@ -194,6 +201,8 @@ _ live video editing, wanting things more procedural
 
 
 PDE / bugs
+_ 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1045033284;start=0
 _ compiler barfs on: float[] moo = new int[10];  
 _   although no error comes through to p5 (benelek)
 _ when missing a closed brace, often has compiler error
@@ -227,6 +236,8 @@ _   exception when trying to write to stdout
 
 
 PDE / high
+_ be able to draw something inside setup
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
 _ mention connection to java and docs on getting started in java
 _ highlight a word and jump to it inside the reference
 _ splitints, et al.. have another version to specify what to use
