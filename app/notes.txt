@@ -1,3 +1,13 @@
+ABOUT REV 0034
+
+- fixed the problems with launching applets, implemented frame
+  around the applet being run, also implemented presentation mode
+
+- with any luck this one should be a little more stable than some
+  of these other ones in the 30s series that i keep releasing without
+  any sensible amount of quality control.
+
+
 ABOUT REV 0033
 
 - duplicate and rename now implemented, more (should be all) of 
