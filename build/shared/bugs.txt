@@ -109,7 +109,16 @@ changed in the future, but for now, they're not actually 'broken'.
 QUICKTIME FOR JAVA / VIDEO PROBLEMS
 
 - windows.. you must make sure that "QuickTime for Java" is
-  installed. 
+  installed. to install it, you need to download it at:
+  http://www.apple.com/quicktime/download/
+  if you install the version "with iTunes", there's a second
+  step. after the installation, go to Start Menu -> QuickTime ->
+  QuickTime Updater. when it runs, use the "Custom" install, scroll
+  down, and click the checkbox next to "QuickTime for Java" and then
+  install. if you install the version of QuickTime without iTunes,
+  you'll also need to use the "Custom" install, as outlined above. the
+  same is true if you have already installed QuickTime, and did not
+  use the "Custom" or "Full" install.
 
 - windows.. in order for camera input to work, you'll need to install
   a quicktime-compatible video digitizer (VDIG). we've had reasonable
