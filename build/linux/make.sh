@@ -92,7 +92,7 @@ cd app
 
 CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
 
-../build/linux/work/jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
@@ -104,48 +104,98 @@ cd ../../../..
 ### -- BUILD LIBRARIES ------------------------------------------------
 
 
+echo build libs for linux is incomplete... finish it
+exit
+
+
 cd build/linux
 
+PLATFORM=linux
 
-CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/rt.jar"
+#CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/rt.jar"
+CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
+JIKES=../build/$PLATFORM/work/jikes
+CORE=../build/$PLATFORM/work/lib/core.jar
+LIBRARIES=../build/$PLATFORM/work/libraries
+
+# move to processing/build 
+cd ..
 
 
 # SERIAL LIBRARY
-echo Build serial library...
-cd ../../lib/serial
-../../build/linux/work/jikes -target 1.1 +D -classpath "code/RXTXcomm.jar:$CLASSPATH" -d . *.java 
+echo Building serial library...
+cd ../serial
+$JIKES -target 1.1 +D -classpath "code/RXTXcomm.jar:$CORE:$CLASSPATH" -d . *.java 
 rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
-mkdir -p ../../build/linux/work/libraries/serial/library/
-cp library/serial.jar ../../build/linux/work/libraries/serial/library/
+mkdir -p $LIBRARIES/serial/library/
+cp library/serial.jar $LIBRARIES/serial/library/
 
 
 # NET LIBRARY
-echo Build net library...
-cd ../../lib/net
-../../build/linux/work/jikes -target 1.1 +D -d . *.java 
+echo Building net library...
+cd ../net
+$JIKES -target 1.1 +D -d . *.java 
 rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
-mkdir -p ../../build/linux/work/libraries/net/library/
-cp library/net.jar ../../build/linux/work/libraries/net/library/
+mkdir -p $LIBRARIES/net/library/
+cp library/net.jar $LIBRARIES/net/library/
+
+
+# VIDEO LIBRARY
+echo Building video library...
+QTJAVA=/System/Library/Java/Extensions/QTJava.zip
+if test -f "${QTJAVA}"
+then
+  echo "Found QuickTime for Java at $QTJAVA"
+else 
+  echo "QuickTime for Java must be installed before building."
+  exit 1;
+fi
+cd ../video
+$JIKES -target 1.1 +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
+rm -f library/video.jar
+zip -r0q library/video.jar processing
+rm -rf processing
+mkdir -p $LIBRARIES/video/library/
+cp library/video.jar $LIBRARIES/video/library/
+
+
+# OPENGL LIBRARY
+echo Building OpenGL library...
+cd ../opengl
+$JIKES -target 1.1 +D -classpath "library/jogl.jar:$CLASSPATH" -d . *.java 
+rm -f library/opengl.jar
+zip -r0q library/opengl.jar processing
+rm -rf processing
+mkdir -p $LIBRARIES/opengl/library/
+cp library/opengl.jar $LIBRARIES/opengl/library/
+
+
+CLASSPATH=../$CLASSPATH
+JIKES=../../build/$PLATFORM/work/jikes
+CORE=../../build/$PLATFORM/work/lib/core.jar
+LIBRARIES=../../build/$PLATFORM/work/libraries
 
 
 # PARTICLES LIBRARY
 echo Build particles library...
-cd ../../lib/particles
-../../build/linux/work/jikes -target 1.1 +D -d . *.java 
+cd ../lib/particles
+$JIKES -target 1.1 +D -d . *.java 
 rm -f library/particles.jar
 zip -r0q library/particles.jar simong
 rm -rf simong
-mkdir -p ../../build/linux/work/libraries/particles/library/
-cp library/particles.jar ../../build/linux/work/libraries/particles/library/
+mkdir -p $LIBRARIES/particles/library/
+cp library/particles.jar $LIBRARIES/particles/library/
 
+pwd 
 
-cd ../../build/linux
 
 
 ### -- BUILD STUB -----------------------------------------------
+
+cd ../../build/linux
 
 install -m 755 dist/processing work/processing

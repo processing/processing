@@ -1,10 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeRuntime - runs compiled java applet
+  PdeRuntime - runs a compiled java applet
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -52,10 +52,6 @@ public class PdeRuntime implements PdeMessageConsumer {
   OutputStream processOutput;
   PdeMessageSiphon processError;
 
-  //boolean externalRuntime;
-  //String libraryPath;
-  //String classPath;
-
 
   public PdeRuntime(PdeSketch sketch, PdeEditor editor) {
     this.sketch = sketch;
@@ -64,245 +60,18 @@ public class PdeRuntime implements PdeMessageConsumer {
 
 
   public void start(Point windowLocation) throws PdeException {
-
+    //System.out.println(" externalRuntime is " +  sketch.externalRuntime);
     this.leechErr = new PrintStream(new PdeMessageStream(this));
 
-    Point parentLoc = editor.getLocation();
-    Insets parentInsets = editor.getInsets();
-
-    int x1 = parentLoc.x - 20;
-    int y1 = parentLoc.y;
-
-    // try to figure out the size of the applet from the code
-
-    int initialWidth = PApplet.DEFAULT_WIDTH;
-    int initialHeight = PApplet.DEFAULT_HEIGHT;
-
     try {
-      PatternMatcher matcher = new Perl5Matcher();
-      PatternCompiler compiler = new Perl5Compiler();
+      if (editor.presenting) {
+        startPresenting();
 
-      // this matches against any uses of the size() function,
-      // whether they contain numbers of variables or whatever.
-      // this way, no warning is shown if size() isn't actually
-      // used in the applet, which is the case especially for
-      // beginners that are cutting/pasting from the reference.
-      String sizing =
-        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
-      Pattern pattern = compiler.compile(sizing);
+      } else if (sketch.externalRuntime) {
+        startExternalRuntime(windowLocation);
 
-      // adds a space at the beginning, in case size() is the very
-      // first thing in the program (very common), since the regexp
-      // needs to check for things in front of it.
-      PatternMatcherInput input =
-        new PatternMatcherInput(" " + sketch.code[0].program);
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
-        try {
-          initialWidth = Integer.parseInt(result.group(1).toString());
-          initialHeight = Integer.parseInt(result.group(2).toString());
-
-        } catch (NumberFormatException e) {
-          /*
-            // found a reference to size, but it didn't
-            // seem to contain numbers
-            final String message =
-            "The size of this applet could not automatically be\n" +
-            "determined from your code. You'll have to edit the\n" +
-            "HTML file to set the size of the applet.";
-
-            PdeBase.showWarning("Could not find applet size", message, null);
-          */
-        }
-      }  // else no size() command found
-    } catch (Exception e) {
-      e.printStackTrace(); // later fail silently
-    }
-
-    try {
-      if (sketch.externalRuntime) {
-        // if there was a saved location (this guy has been run more than
-        // once) then windowLocation will be set to the last position of
-        // the sketch window. this will be passed to the PApplet runner
-        // using something like --external=e30,20 where the e stands for
-        // exact. otherwise --external=x,y for just the regular positioning.
-        /*
-        String location = (windowLocation != null) ?
-          (PApplet.EXTERNAL_EXACT_LOCATION +
-           windowLocation.x + "," + windowLocation.y) :
-          (x1 + "," + y1);
-        */
-        String location =
-          (windowLocation != null) ?
-          (PApplet.EXT_EXACT_LOCATION +
-           windowLocation.x + "," + windowLocation.y) :
-          (PApplet.EXT_LOCATION + x1 + "," + y1);
-
-        //System.out.println("library path is " + sketch.libraryPath);
-        String command[] = new String[] {
-          //"cmd", "/c", "start",
-
-          "java",
-          "-Djava.library.path=" +
-          // sketch.libraryPath might be ""
-          // librariesClassPath will always have sep char prepended
-          sketch.libraryPath +
-          File.pathSeparator + System.getProperty("java.library.path"),
-          "-cp",
-          sketch.classPath + PdeSketchbook.librariesClassPath,
-          "processing.core.PApplet",
-          location,
-          PApplet.EXT_SIZE + initialWidth + "," + initialHeight,
-          PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
-          sketch.mainClassName
-        };
-        //PApplet.printarr(command);
-        //PApplet.println(PApplet.join(command, " "));
-
-        process = Runtime.getRuntime().exec(command);
-        processInput = new SystemOutSiphon(process.getInputStream());
-        processError = new PdeMessageSiphon(process.getErrorStream(), this);
-        processOutput = process.getOutputStream();
-
-      } else {  // !externalRuntime
-        PdeClassLoader loader = new PdeClassLoader();
-        Class c = loader.loadClass(sketch.mainClassName);
-        applet = (PApplet) c.newInstance();
-
-        // replaces setRuntime with PApplet having leechErr [fry]
-        applet.leechErr = leechErr;
-        applet.folder = sketch.folder.getAbsolutePath();
-
-        // has to be before init
-        //applet.serialProperties(PdePreferences.properties);
-        applet.init();
-        if (applet.exception != null) {
-          /*
-            TODO: fix me
-          if (applet.exception instanceof PortInUseException) {
-            throw new PdeException("Another program is already " +
-                                   "using the serial port.");
-          } else {
-          */
-          throw new PdeException(applet.exception.getMessage());
-        }
-        applet.start();
-
-        if (editor.presenting) {
-          //window = new Window(new Frame());
-          // toxi_030903: attach applet window to editor's presentation window
-          window = new Window(editor.presentationWindow);
-          // toxi_030903: moved keyListener to PdeEditor's presentationWindow
-
-        } else {
-          //window = new Frame(sketch.name); // use ugly windows
-          window = new Frame(sketch.name); // use ugly windows
-          ((Frame)window).setResizable(false);
-          if (editor.icon != null) {
-            ((Frame)window).setIconImage(editor.icon);
-          }
-          window.pack(); // to get a peer, size set later, need for insets
-
-          window.addWindowListener(new WindowAdapter() {
-              public void windowClosing(WindowEvent e) {
-                stop();
-                editor.doClose();
-              }
-            });
-
-          // toxi_030903: only attach keyListener if not in presentation mode
-          // else events are coming directly from editor.presentationWindow
-          applet.addKeyListener(new KeyAdapter() {
-              public void keyPressed(KeyEvent e) {
-                //System.out.println("applet got " + e);
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                  stop();
-                  editor.doClose();
-                }
-              }
-            });
-          y1 += parentInsets.top;
-        }
-        window.add(applet);
-
-        Dimension screen =
-          Toolkit.getDefaultToolkit().getScreenSize();
-
-        window.setLayout(null);
-        if (editor.presenting) {
-          /*
-          window.setBounds((screen.width - applet.width) / 2,
-                           (screen.height - applet.height) / 2,
-                           applet.width, applet.height);
-          applet.setBounds(0, 0, applet.width, applet.height);
-          */
-          window.setBounds((screen.width - initialWidth) / 2,
-                           (screen.height - initialHeight) / 2,
-                           initialWidth, initialHeight);
-          applet.setBounds(0, 0, initialWidth, initialHeight);
-
-        } else {
-          Insets insets = window.getInsets();
-          //System.out.println(insets);
-
-          if ((applet.width != 0) &&
-              (applet.height != 0) &&
-              (applet.width != PApplet.DEFAULT_WIDTH) &&
-              (applet.height != PApplet.DEFAULT_HEIGHT)) {
-            initialWidth = applet.width;
-            initialHeight = applet.height;
-          }
-
-          int minW = PdePreferences.getInteger("run.window.width.minimum");
-          int minH = PdePreferences.getInteger("run.window.height.minimum");
-          int windowW =
-            Math.max(initialWidth, minW) + insets.left + insets.right;
-            //Math.max(applet.width, minW) + insets.left + insets.right;
-          int windowH =
-            Math.max(initialHeight, minH) + insets.top + insets.bottom;
-            //Math.max(applet.height, minH) + insets.top + insets.bottom;
-
-          if (x1 - windowW > 10) {  // if it fits to the left of the window
-            window.setBounds(x1 - windowW, y1, windowW, windowH);
-            //windowX = x1 - ww;
-            //windowY = y1;
-
-          } else { // if it fits inside the editor window
-            x1 = parentLoc.x + PdePreferences.GRID_SIZE * 2;  // 66
-            y1 = parentLoc.y + PdePreferences.GRID_SIZE * 2;  // 66
-
-            if ((x1 + windowW > screen.width - PdePreferences.GRID_SIZE) ||
-                (y1 + windowH > screen.height - PdePreferences.GRID_SIZE)) {
-              // otherwise center on screen
-              x1 = (screen.width - windowW) / 2;
-              y1 = (screen.height - windowH) / 2;
-            }
-            window.setBounds(x1, y1, windowW, windowH); //ww, wh);
-          }
-
-          Color windowBgColor = PdePreferences.getColor("run.window.bgcolor");
-          window.setBackground(windowBgColor);
-
-          /*
-          applet.setBounds((windowW - applet.width)/2,
-                           insets.top + ((windowH -
-                                          insets.top - insets.bottom) -
-                                         applet.height)/2,
-                           windowW, windowH);
-          */
-          applet.setBounds((windowW - initialWidth)/2,
-                           insets.top + ((windowH -
-                                          insets.top - insets.bottom) -
-                                         initialHeight)/2,
-                           windowW, windowH);
-        }
-
-        applet.setVisible(true);  // no effect
-        if (windowLocation != null) {
-          window.setLocation(windowLocation);
-        }
-        window.show();
-        applet.requestFocus();  // necessary for key events
+      } else {
+        startInternal(windowLocation);
       }
 
     } catch (Exception e) {
@@ -316,6 +85,173 @@ public class PdeRuntime implements PdeMessageConsumer {
       leechErr.println(PApplet.LEECH_WAKEUP);
       e.printStackTrace(this.leechErr);
     }
+  }
+
+
+  public void startPresenting() throws Exception {
+    String command[] = new String[] {
+      "java",
+      "-Djava.library.path=" +
+      sketch.libraryPath +
+      File.pathSeparator + System.getProperty("java.library.path"),
+      "-cp",
+      sketch.classPath + PdeSketchbook.librariesClassPath,
+      "processing.core.PApplet",
+      PApplet.ARGS_EXTERNAL,
+      PApplet.ARGS_PRESENT,
+      PApplet.ARGS_PRESENT_BGCOLOR + "=" +
+      PdePreferences.get("run.present.bgcolor"),
+      PApplet.ARGS_DISPLAY + "=" +
+      PdePreferences.get("run.display"),
+      PApplet.ARGS_SKETCH_FOLDER + "=" +
+      sketch.folder.getAbsolutePath(),
+      sketch.mainClassName
+    };
+
+    process = Runtime.getRuntime().exec(command);
+    processInput = new SystemOutSiphon(process.getInputStream());
+    processError = new PdeMessageSiphon(process.getErrorStream(), this);
+    processOutput = process.getOutputStream();
+  }
+
+
+  public void startExternalRuntime(Point windowLocation) throws Exception {
+    // if there was a saved location (this guy has been run more than
+    // once) then windowLocation will be set to the last position of
+    // the sketch window. this will be passed to the PApplet runner
+    // using something like --external=e30,20 where the e stands for
+    // exact. otherwise --external=x,y for just the regular positioning.
+    Point editorLocation = editor.getLocation();
+    String location =
+      (windowLocation != null) ?
+      (PApplet.ARGS_LOCATION + "=" +
+       windowLocation.x + "," + windowLocation.y) :
+      (PApplet.ARGS_EDITOR_LOCATION + "=" +
+       editorLocation.x + "," + editorLocation.y);
+
+    //System.out.println("library path is " + sketch.libraryPath);
+    String command[] = new String[] {
+      // this made the code folder bug go away, but killed stdio
+      //"cmd", "/c", "start",
+      "java",
+      "-Djava.library.path=" +
+      // sketch.libraryPath might be ""
+      // librariesClassPath will always have sep char prepended
+      sketch.libraryPath +
+      File.pathSeparator + System.getProperty("java.library.path"),
+      "-cp",
+      sketch.classPath + PdeSketchbook.librariesClassPath,
+      "processing.core.PApplet",
+      location,
+      PApplet.ARGS_EXTERNAL,
+      PApplet.ARGS_DISPLAY + "=" + PdePreferences.get("run.display"),
+      PApplet.ARGS_SKETCH_FOLDER + "=" + sketch.folder.getAbsolutePath(),
+      sketch.mainClassName
+    };
+    //PApplet.printarr(command);
+    //PApplet.println(PApplet.join(command, " "));
+
+    process = Runtime.getRuntime().exec(command);
+    processInput = new SystemOutSiphon(process.getInputStream());
+    processError = new PdeMessageSiphon(process.getErrorStream(), this);
+    processOutput = process.getOutputStream();
+  }
+
+
+  public void startInternal(Point windowLocation) throws Exception {
+    Point editorLocation = editor.getLocation();
+    //Insets editorInsets = editor.getInsets();
+
+    int windowX = editorLocation.x;
+    int windowY = editorLocation.y + editor.getInsets().top;
+
+    PdeClassLoader loader = new PdeClassLoader();
+    Class c = loader.loadClass(sketch.mainClassName);
+    applet = (PApplet) c.newInstance();
+
+    applet.leechErr = leechErr;
+    applet.folder = sketch.folder.getAbsolutePath();
+
+    applet.init();
+    //applet.start();
+
+    while ((applet.width == 0) && !applet.finished) {
+      try {
+        if (applet.exception != null) {
+          throw new PdeException(applet.exception.getMessage());
+        }
+        Thread.sleep(5);
+      } catch (InterruptedException e) { }
+    }
+
+    window = new Frame(sketch.name); // use ugly window
+    ((Frame)window).setResizable(false);
+    if (editor.icon != null) {
+      ((Frame)window).setIconImage(editor.icon);
+    }
+    window.pack(); // to get a peer, size set later, need for insets
+
+    window.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          stop();
+          editor.doClose();
+        }
+      });
+
+    applet.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            stop();
+            editor.doClose();
+          }
+        }
+      });
+
+    window.add(applet);
+
+    Dimension screen =
+      Toolkit.getDefaultToolkit().getScreenSize();
+
+    window.setLayout(null);
+    Insets insets = window.getInsets();
+
+    int minW = PdePreferences.getInteger("run.window.width.minimum");
+    int minH = PdePreferences.getInteger("run.window.height.minimum");
+    int windowW =
+      Math.max(applet.width, minW) + insets.left + insets.right;
+    int windowH =
+      Math.max(applet.height, minH) + insets.top + insets.bottom;
+
+    if (windowX - windowW > 10) {  // if it fits to the left of the window
+      window.setBounds(windowX - windowW, windowY, windowW, windowH);
+
+    } else { // if it fits inside the editor window
+      windowX = editorLocation.x + PdePreferences.GRID_SIZE * 2;  // 66
+      windowY = editorLocation.y + PdePreferences.GRID_SIZE * 2;  // 66
+
+      if ((windowX + windowW > screen.width - PdePreferences.GRID_SIZE) ||
+          (windowY + windowH > screen.height - PdePreferences.GRID_SIZE)) {
+        // otherwise center on screen
+        windowX = (screen.width - windowW) / 2;
+        windowY = (screen.height - windowH) / 2;
+      }
+      window.setBounds(windowX, windowY, windowW, windowH); //ww, wh);
+    }
+
+    Color windowBgColor = PdePreferences.getColor("run.window.bgcolor");
+    window.setBackground(windowBgColor);
+
+    int usableH = windowH - insets.top - insets.bottom;
+    applet.setBounds((windowW - applet.width)/2,
+                     insets.top + (usableH - applet.height) / 2,
+                     windowW, windowH);
+
+    applet.setVisible(true);  // no effect
+    if (windowLocation != null) {
+      window.setLocation(windowLocation);
+    }
+    window.show();
+    applet.requestFocus();  // necessary for key events
   }
 
 

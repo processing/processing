@@ -1153,9 +1153,9 @@ public class PdeSketch {
     }
 
     // if running in opengl mode, this is gonna be external
-    if (PdePreferences.get("renderer").equals("opengl")) {
-      externalRuntime = true;
-    }
+    //if (PdePreferences.get("renderer").equals("opengl")) {
+    //externalRuntime = true;
+    //}
 
     // 2. run preproc on that code using the sugg class name
     //    to create a single .java file and write to buildpath

@@ -31,6 +31,23 @@ import java.awt.event.KeyEvent;
 
 public interface PConstants {
 
+  // renderers known to processing.core
+
+  static final String P2D    = "processing.core.PGraphics";
+  static final String P3D    = "processing.core.PGraphics3";
+  static final String JAVA2D = "processing.core.PGraphics2";
+  static final String OPENGL = "processing.opengl.PGraphicsGL";
+
+
+  // platform IDs for PApplet.platform
+
+  static final int WINDOWS = 1;
+  static final int MACOS9  = 2;
+  static final int MACOSX  = 3;
+  static final int LINUX   = 4;
+  static final int OTHER   = 0;
+
+
   // for better parity between c++ version (at no speed cost)
 
   static final float EPSILON   = 0.0001f;
