@@ -30,6 +30,42 @@ X addition to pde.properties to list the imports for various jdk versions
 X set jdk version for export inside pde.properties
 X option to set what browser is in use
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074106123;start=0
+X text(x, y, z)
+_ make sure applet.html uses processing.org
+
+X CONTROL wasn't properly set in BConstants
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058788
+
+//_ framerate() has a bug that seems to
+_ rotated text has a bug for when it goes offscreen
+_   patch rotated text (from visualclusto) into bfont
+
+X macosx.. flickering several times on startup
+X   fixed this, along with other sluggishness related threading issues
+
+_ find() hangs on replacing "println" with "//println"
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076740626
+
+_ font builder bounds checking causing trouble
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
+
+_ adding files to data folder that are already in the data folder
+_   makes the file zero, because of internal error
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
+
+_ mgorbet stroke transparency problem
+_  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
+
+_ present mode makes keyPressed() repeat like nutty
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076425568
+
+X cameraMode(PERSPECTIVE) and cameraMode(ORTHOGRAPHIC) setup basic cameras
+X   if the user wants a custom camera, call cameraMode(CUSTOM); before begin()
+X printMatrix() and printCamera() to output the matrices for each
+
+_ get jikes 1.19 in there
+_ angleMode(DEGREES) and angleMode(RADIANS)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 
 _ put SecurityException things around file i/o for applets
 _   rather than checking online(), since applets might be signed
@@ -156,6 +192,8 @@ _   iterate through the 'library' folders
 _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
+_ simong: request a preloop and postloop call for libraries
+_   this would avoid having to patch BApplet
 
 
 BAGEL
@@ -176,6 +214,8 @@ _ camera clipping
 _ put screenshots into their sketch folder
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 _   add a method BApplet.setPath() or something like that
+_ add color(gray) and color(gray, alpha)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074180764
 
 
 IMAGE
@@ -236,8 +276,7 @@ _ doesn't seem interested in quitting properly (?)
 
 
 BUGS / Mac OS X
-_ flickering several times on startup
-_   also a strange box showing up in the corner
+_ also a strange box showing up in the corner
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073111031
 
 
@@ -248,6 +287,7 @@ _   until you quit the processing running the server
 _   (the server starts and stops fine)
 _ add constants for building NET, move stuff around in bagel dir
 _ some method for just downloading the entire contents of a url
+_ add udp support
 
 
 VIDEO
@@ -255,8 +295,10 @@ _ selecting input source (wintv board and quickcam installed.. problem)
 _ including qtjava in path when in java mode (oops)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073523928;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076679293;start=0
 _ beginVideo not colored
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
+_ video commands not color coded
 _ things will freeze if winvdig not installed
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
 _ quicktime 6.4 update breaks p5 on the mac?
@@ -277,7 +319,19 @@ _ make BVideo subclass BImage
 _   make sure the high bits are getting set as opaque
 _ quicktime exporter or image sequence export
 _   fairly quick--just use experimental code from dbn
-
+_ this hangs frequently on the mac (prolly a sync issue)
+_   karsten's stuff has same problem
+_   but the roger's video tracking does not
+void videoEvent()
+{
+  for(int i=0; i<width*height; i++) {
+    if((video.pixels[i] >> 16 & 0xFF) > threshold) {
+      blackwhite.pixels[i] = #FFFFFF;
+    } else {
+      blackwhite.pixels[i] = #000000;
+    }
+  }
+}
 
 _ problems running external vm/vm is hanging
 _   seems to be happening because of virus scanning software (norton)
@@ -428,6 +482,7 @@ _ clean up PdeTokenMarker, probably just alphabetize
 _ remove .DS_Store boogers, especially from win/linux distributions
 _ NullPointerException when alt is pressed
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
 _ check what other functions require BGraphics to exist but shouldn't
 _ color has to be called inside or after setup
 _ loadImage must be used inside or after setup
@@ -540,6 +595,8 @@ BAGEL / Rendering
    b _   lists of names of objects, or the 'line number' buffer
    b _   but how to determine *where* on object the hit occurs
 
+     _ add option to sort triangles back to front so alpha works
+     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
 
 ca b _ lines
 ca b X   rewrite line and stroke code, it's a buggy mess
@@ -701,6 +758,9 @@ PDE / Details
    1 _ rename/saveas doesn't properly have its focus set
    1 _   the whole thing is selected, but not directly editable
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
+
+   1 _ make export put a timestamp in the html code (hidden or visible)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
 
 
 PDE / Font Builder
