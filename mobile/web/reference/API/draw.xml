@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>draw()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code>
+void setup() {
+  size(200, 200);
+  noStroke();
+}
+
+int a = 0;
+
+void draw() {
+  fill(a);
+  a = a + 1;
+  if (a &gt; width) {
+    a = 0;
+  }
+  rect(a, 0, 2, 200); 
+}
+</code>
+</example>
+
+<description>
+Continuously executes the lines of code contained inside its block until the program is stopped or <b>noLoop()</b> is called. Calling <b>redraw()</b> will cause the code inside <b>draw()</b> to execute once and calling <b>loop()</b> will cause the code inside <b>draw()</b> to execute continuously. The <b>draw()</b> function is used in conjunction with <b>setup()</b>. The number of times <b>draw()</b> executes in each second may be controlled with the <b>delay()</b> and <b>framerate()</b> functions.
+</description>
+
+<syntax>
+draw() {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>A sequence of statements to be executed over and over again</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+setup()
+loop()
+noLoop()
+</related>
+
+<availability>1.0</availability>
+
+<type>Processing Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>day()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Time &amp; Date</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>day_.jar</image>
+<code>
+void setup() {
+  PFont metaBold;
+  metaBold = loadFont("fonts/Meta-Bold.vlw.gz"); 
+  setFont(metaBold, 44); 
+  hint(SMOOTH_IMAGES); 
+}
+
+void loop() {
+  int d = day();    // Values from 1 - 31
+  int m = month();  // Values from 1 - 12
+  int y = year();   // 2003, 2004, 2005, etc.
+  String s = String.valueOf(d);
+  text(s, 10, 28);
+  s = String.valueOf(m);
+  text(s, 10, 56); 
+  s = String.valueOf(y);
+  text(s, 10, 84);
+}
+</code>
+</example>
+
+<description>
+Processing communicates with the clock on your computer. The <b>day()</b> function returns the current day as a value from 1 - 31.
+</description>
+
+<syntax>
+day()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

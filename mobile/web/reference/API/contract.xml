@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<root>
+<name>contract()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int[] ia = {0, 1, 2, 3, 4, 5, 6, 7};
+println(ia.length);  // Prints "8"
+ia = contract(ia, 5);
+println(ia.length);  // Prints "5"
+</code>
+</example>
+
+<description>
+Decreases the size of an array. The required <b>newSize</b> parameter provides precise control over the decrease in size.
+</description>
+
+<syntax>
+contract(<c>array</c>, <c>newSize</c>)
+</syntax>
+
+<parameter>
+<label>array</label>
+<description>booleans[], bytes[], chars[], ints[], floats[], or Strings[]</description>
+</parameter>
+
+<parameter>
+<label>newSize</label>
+<description>positive int: new size for the array</description>
+</parameter>
+
+<returns>Array (the same datatype as the input)</returns>
+
+<related>
+expand()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

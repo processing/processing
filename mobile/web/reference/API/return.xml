@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>return</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int val = 30;
+ 
+void draw() {
+  int t = timestwo(val);
+  println(t);
+}
+
+int timestwo(int doubledVal) {
+  doubledVal = doubledVal * 2;
+  return doubledVal;
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int[] vals = {10, 20, 30};
+  
+void draw() {
+  int[] t = timestwo(vals);
+  println(t);
+}
+
+int[] timestwo(int[] doubledVals) {
+  for(int i=0; i&lt;b.length; i++) {
+    b[i] = b[i] * 2;
+  }
+  return doubledVals;
+}
+</code>
+</example>
+
+<description>
+Keyword used to indicate the value to return from a function. The value being returned must be the same datatype as defined in the function declaration. Functions declared with <b>void</b> can't return values and shouldn't include a return value. Functions can't include more than one <b>return</b> and the statement including <b>return</b> must be the last line in the function.
+</description>
+
+<syntax>
+<c>type</c> <c>function</c> {
+  <c>statements</c>
+  return <c>value</c>
+}
+</syntax>
+
+<parameter>
+<label>type</label>
+<description>boolean, byte, char, int, float, String, boolean[], byte[], char[], int[], float[], String[]</description>
+</parameter>
+
+<parameter>
+<label>function</label>
+<description>any function that is being defined</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>must be the same datatype as the type parameter</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+</root>

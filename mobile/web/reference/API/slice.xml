@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<root>
+
+<name>slice()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+String sa1[] = { "OH ", "NY ", "CA ", "VA ", "CO ", "IL "};
+String sa2[] = slice(sa1, 1);
+print(sa2);  // Prints "NY CA VA CO IL "
+println();
+String sa3[] = slice(sa1, 2, 3);
+print(sa3);  // Prints "CA VA CO "
+</code>
+</example>
+
+<description>
+Extracts an array of elements from an existing array. The <b>array</b> parameter defines the array from which the elements will be copied and the <b>offset</b> and <b>length</b> parameters determine which elements to extract. If no <b>length</b> is given, elements will be extracted from the <b>offset</b> to the end of the array. When specifying the <b>offset</b> remember the first array element is 0. This function does not change the source array.
+</description>
+
+<syntax>
+slice(<c>array</c>, <c>offset</c>)
+slice(<c>array</c>, <c>offset</c>, <c>length</c>)
+</syntax>
+
+<parameter>
+<label>array</label>
+<description>booleans[], bytes[], chars[], ints[], floats[], or Strings[]: base array</description>
+</parameter>
+
+<parameter>
+<label>offset</label>
+<description>int: position to begin</description>
+</parameter>
+
+<parameter>
+<label>length</label>
+<description>int: number of values to extract</description>
+</parameter>
+
+<returns>Array (the same datatype as the input)</returns>
+
+<related>
+splice()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>red()</name>
+
+<category>Color</category>
+
+<subcategory>Creating &amp; Reading</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>red_.gif</image>
+<code>
+noStroke();
+color c = color(0, 126, 255);
+fill(c);
+rect(15, 20, 35, 60);
+float value = red(c);  // Sets "value" to "0"
+fill(value);
+rect(50, 20, 35, 60);
+</code>
+</example>
+
+<description>
+Extracts the red value from a color.
+</description>
+
+<syntax>
+red(<c>color</c>)
+</syntax>
+
+<parameter>
+<label>color</label>
+<description>any value of the color datatype</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+green() 
+blue() 
+hue() 
+saturation() 
+brightness() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
