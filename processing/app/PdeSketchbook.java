@@ -46,6 +46,47 @@ public class PdeSketchbook {
 
   public PdeSketchbook(PdeEditor editor) {
     this.editor = editor;
+
+    sketchbookPath = PdePreferences.get("sketchbook.path");
+
+    if (sketchbookPath == null) {
+      // by default, set default sketchbook path to the user's 
+      // home folder with 'sketchbook' as a subdirectory of that
+      File home = new File(System.getProperty("user.home"));
+
+      if (PdeBase.platform == PdeBase.MACOSX) {
+        // on macosx put the sketchbook in the "Documents" folder
+        home = new File(home, "Documents");
+
+      } else if (PdeBase.platform == PdeBase.WINDOWS) {
+        // on windows put the sketchbook in the "My Documents" folder
+        home = new File(home, "My Documents");
+      }
+
+      String folderName = PdePreferences.get("sketchbook.name.default");
+      //System.out.println("home = " + home);
+      //System.out.println("fname = " + folderName);
+      sketchbookFolder = new File(home, folderName);
+      PdePreferences.set("sketchbook.path", 
+                         sketchbookFolder.getAbsolutePath());
+
+      if (!sketchbookFolder.exists()) {  // in case it exists already
+        sketchbookFolder.mkdirs();
+      }
+
+      /*
+      sketchbookFolder = new File(PdePreferences.get("sketchbook.path"));
+      sketchbookPath = sketchbookFolder.getAbsolutePath();
+      if (!sketchbookFolder.exists()) {
+        System.err.println("sketchbook folder doesn't exist, " + 
+                           "making a new one");
+        sketchbookFolder.mkdirs();
+      }
+      */
+    } else {
+      sketchbookFolder = new File(sketchbookPath);
+    }
+
     menu = new JMenu("Open");
   }
 
@@ -85,14 +126,6 @@ public class PdeSketchbook {
       //newSketchItem.addActionListener(this);
       //menu.add(newSkechItem);
       //menu.addSeparator();
-
-      sketchbookFolder = new File(PdePreferences.get("sketchbook.path"));
-      sketchbookPath = sketchbookFolder.getAbsolutePath();
-      if (!sketchbookFolder.exists()) {
-        System.err.println("sketchbook folder doesn't exist, " + 
-                           "making a new one");
-        sketchbookFolder.mkdirs();
-      }
 
       addSketches(menu, sketchbookFolder);
 

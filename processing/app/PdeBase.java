@@ -86,12 +86,8 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
   public PdeBase() {
 
-    // build the editor object
-
-    editor = new PdeEditor();
-
-
     // figure out which operating system
+    // this has to be first, since editor needs to know
 
     if (System.getProperty("mrj.version") != null) {  // running on a mac
       platform = (System.getProperty("os.name").equals("Mac OS X")) ?
@@ -114,6 +110,11 @@ public class PdeBase /*extends JFrame implements ActionListener*/
         System.out.println("unhandled osname: \"" + osname + "\"");
       }
     }
+
+
+    // build the editor object
+
+    editor = new PdeEditor();
 
 
     // set the look and feel before opening the window
