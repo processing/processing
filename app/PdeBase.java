@@ -29,12 +29,17 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
-import javax.comm.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
+
+#ifndef RXTX
+import javax.comm.*;
+#else
+import gnu.io.*;
+#endif
 
 #ifdef MACOS
 import com.apple.mrj.*;
@@ -824,7 +829,7 @@ public class PdeBase extends Frame
         }
       }
     } catch (UnsatisfiedLinkError e) {
-      //e.printStackTrace();
+      e.printStackTrace();
       problem = true;
 
     } catch (Exception e) {
@@ -833,7 +838,7 @@ public class PdeBase extends Frame
     }
 
     if (serialMenu.getItemCount() == 0) {
-      //System.out.println("dimming serial menu");
+      System.out.println("dimming serial menu");
       serialMenu.setEnabled(false);
     }
 
@@ -842,6 +847,7 @@ public class PdeBase extends Frame
     // correct lib, but it's at least one that's loaded inside
     // the javacomm solaris stuff, which is the .jar that's included
     // with the osx release (and rxtx takes over)
+    /*
     if (platform == MACOSX) {
       try {
         System.loadLibrary("SolarisSerialParallel");
@@ -850,6 +856,7 @@ public class PdeBase extends Frame
         problem = true;
       }
     }
+    */
 
     // only warn them if this is the first time
     if (problem && firstTime) {
