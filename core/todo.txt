@@ -195,6 +195,11 @@ X bug in get() that was removing the high bits (rather than adding)
 040921 evening
 X lots of work on libraries, figuring out PLibrary api
 
+040922 
+X get library stuff debugged
+X port arcball and finish up dxf writer
+X beginCamera() no longer sets an identity matrix
+
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
