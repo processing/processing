@@ -3,6 +3,13 @@ iprocessing todo list // last updated 28 september 2001
 
 
 for 0010
+_ make note in documentation about getting access to pixel array
+_   check to see if get/set functions in applet actually work
+_   fix documentation appropriately
+X redone random functions in processing applet
+_   update documentation on web page
+_ crappy way of determining if inside a class--ignores comments
+_ documentation says 'mouseDown' even though it's 'mousePressed'
 _ option to enable/disable frame on running applets
 _ compiling .java files leaves the .class files next to the .java
 _   make sure all the dirs in sketchbook added to classpath on startup
