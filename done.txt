@@ -1,3 +1,184 @@
+0075 pde
+X backported to 73
+X   change horizontal offset to 5 instead of 4
+X   yet another tweak to the message() function in PdeRuntime
+X   add -target 1.1 to all the library make entries
+X find/replace
+o   add support for hitting 'ESC'
+o   option to ignore or match case
+X   when hitting 'find', select the text in the field
+X   add extra space to exterior of find (especially on windows)
+X fixes to the horizontal scrollbar
+X   still not perfect, but some tweaks for improvement
+X horizontal scroller is always present
+X   fixed, was a problem of sizing with the new inset size
+X cosmetic fixes
+X   is PdeEditorHeader one pixel too tall
+X   move the tabs over just slightly
+X resize box intrudes on the scroller for the console area
+X   need to set grow boxes intruding to false
+X   1.3 version (deprecated): 
+X     -Dcom.apple.mrj.application.growbox.intrudes=false
+X   1.4 version (much nicer): -Dapple.awt.showGrowBox=false
+X add mkdmg script to macosx build process
+X   could significantly speed things up
+X make sure that the preproc stuff gets built once
+X   especially straight out of cvs
+X menu option for Renderer > to "Core" or "OpenGL"
+X   on export, uses this setting to determine if jogl is added to project
+o if additional tab is "public" class.. then make external?
+X   this seems too dangerous
+X make font builder vertically resizable
+X   200 pt font hoses things / hides buttons
+X rename/delete work
+X   rename is now enabled on the first tab
+X   delete on first tab will also delete the entire sketch
+X   leaving an empty sketch will remove it
+X     avoids creating a zillion sketches when deleting/clearing up sketchbook
+X   disable 'hide' menu item for the main code tab
+
+sketchbook/prefs location
+X read from registry key to get the proper name for these folders
+X   also find some way to do this on the mac
+X   on non-english windows (or at the broad) these will be named differently
+X   http://support.microsoft.com/?kbid=221837&sd=RMVP
+X   or is there a proper way to do this with java params?
+X move to ~/Application Data/Processing for windows
+X   and ~/Library/Processing for macosx
+X   and ~/.processing for linux
+X   if it can't write prefs here, try creating a subfolder inside p5
+X     and if that fails, then tell the user that they suck
+X prompt for sketchbook location on linux
+X   or on mac/pc if it can't write anywhere else
+X creating sketchbook / lab situations
+X   test to see if it's possible to write to "My Documents"
+X   if not, should bring up a prompt asking where to put sketchbook
+X   also put something in lib/preferences.txt for default location
+X     this way a course admin can change the default location
+o need to check if volume is read-only, notify and quit if it is
+o   people are trying to run off the disk image
+o   actually that should be fine.. 
+o     but make sure the prefs location can be written
+o   need to pay attention to when running from read-only drive
+o     reported by brandenberg
+o    "p5 will launch from the disk image, but will 
+o     not draw the sketch name bar doesn't appear"
+X include preferences.txt option to write to p5 folder first
+X   this can be altered by instructors and re-packaged
+X fixed a couple bugs causing the jnilib stuff to crash
+X put 'play' on a SwingWorker thread
+X   test this on a pc to see how it goes, especially with opengl
+X   doesn't seem to help anything
+X PdeRuntime -> SystemOutSiphon, removed MIN_PRIORITY setting
+o hack to not use console on the code folder 
+o   no errors will propogate, but it should run fine
+X lib/build should not be a subfolder of p5
+X   p5 environment installed to /Applications on lab machines
+X   instead use a temp folder
+X   maybe when running on lab machines in that case, always java mode?
+X   or is it possible to add to java.class.path while app is running?
+X     have to use a special class loader
+X new class loader for single files 
+X   if more than one class defined, forces it to run externally
+X     (basically any time it sees "class" in the code..
+X     may be subject to errors, but errs on side of just running ext)
+X   runs out of processing data folder
+X fix for toolbar being one pixel off breaks the windows version
+X   need to only do the fix on the mac.. ugh
+X macosx is using /Library instead of ~/Library.. get this fixed
+X   domain version wasn't in the stubs.. grr
+X   or maybe it's an int or something?
+X   just use reflection to call the function instead
+X "use external editor" is broken
+X   throws exception on load()
+X make preproc only build once (across osx, windows, linux)
+X preproc: making all functions public that have no specifier
+X   this will make draw() etc all much easier
+X   as well as the library events
+X   focusGained/focusLost was added.. 
+o if a data file is in the sketch (not data) folder export breaks
+o   works fine in the editor, but on export gets a nullpointer ex
+X   no way around this, because needs to be able to read from local dir
+X if saving a read-only sketch, default to sketchbook folder
+X   (before was prompting to save inside the same folder.. annoying)
+
+building libraries - not gonna build libs in p5 ide for 1.0
+o compiling - main file is a .java not a .pde
+o   also where no root .pde file with the same name.. (i.e. video)
+o on "new library" fill in the default code for the lib
+o record imports from java files as well
+o ignore imports from java.* or maybe just things pde's classpath
+o after export of library, rebuild "import library" menu
+o write export-to-library
+o   need to be able to produce the serial, video, etc libs
+o   see if sonia project can compile
+
+libraries
+X libraries could handle a series of events..
+X   i.e. a 'completion' event, or 'new data' event
+X   these could be registered on obejcts in a general way
+X implemented many events
+X  movieEvent, cameraEvent, soundEvent
+X  serialEvent, clientEvent, serverEvent
+X if videoEvent exists, don't auto-read?
+X   though for serial this would only grab the last byte
+X   video bug on osx? an error message when quitting video sketches:
+X   java.io.IOException: Bad file descriptor 
+X     at java.io.FileInputStream.readBytes(Native Method) etc... ). 
+o bring back some form of beginSerial/beginVideo
+o   openSerial(), serial().. 
+o   should it prompt or use the first available if none specified?
+X run library destroy after hitting 'stop'
+X   quicktime audio doesn't stop after hitting 'stop'
+X   weirdness external stop not calling stop(), just finished = true
+X bring back serial event via reflection
+X add serial.last() to api
+X video - try to replicate bug that causes hang with camera
+X   happens when winvdig, camera or quicktime are not properly installed
+X   documented better in bugs.txt, and sometimes caught in Camera.<init>
+
+fixed in previous releases
+X dist.sh needs to auto-remove .DS_Store boogers
+X write script to remove .DS_Store and CVS folders from dist
+X   # remove DS_Store files
+X   sudo find . -name ".DS_Store" -depth -exec rm {} \;
+X add a "make archive" option
+X   doesn't rename sketch, just names zip file sketch + time stamp
+
+hanging bug - now fixed, need to post on the board about it
+X keypressed hanging on applets with a code folder
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
+X problems running external vm/vm is hanging
+X   seems to be happening because of virus scanning software (norton)
+o   may need to launch the applet (using 'start') 
+o     and talk over a socket instead
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
+X     something in that one about mouse position halting or not
+to try: 1) don't use a bufferedreader.. just read it and then use a
+buffered reader around the byte array 2) don't do anything with the
+input, and just read it off without signalling message()
+* it may be something to do with the editor consoles. try shutting off
+output to the console and see if it'll still crash.
+* most likely related to io streams to the external java process. when
+run via a disconnected process, using "cmd /c start java", the thing
+will never hang. in that instance, the process terminates almost
+immediately, and no i/o needs to happen (since it's a cmd prompt that
+never shows up). 
+* it could also be a graphics sync bug that just gets more testy
+because the environment, a second java process, is running at the same
+time. mis.newPixels() may hork since it's over in the applet's thread,
+and it might be calling repaint() or Toolkit.sync() to update the
+image on-screen. 
+* shows up on key presses.. not sure if this is because of the actual
+key press, or if it's because they're often accompanied by a println()
+* blank spaces in filenames/parent folder often cause trouble.. not
+sure if related. same for PATH and CLASSPATH.
+* some virus scanning software, particularly older NAV versions cause
+the trouble. 
+
+
 0074 pde
 X added florian's new icons
 
