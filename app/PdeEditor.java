@@ -975,7 +975,10 @@ afterwards, some of these steps need a cleanup function
 	  buffer.append('\n');
 	}
 	program = buffer.toString();
+	//System.out.print(program);
 	textarea.editorSetText(program);
+
+	//System.out.print(textarea.getText());
 
 	/*
 	int length = (int) isketchFile.length();
@@ -1085,7 +1088,17 @@ afterwards, some of these steps need a cleanup function
     }
     makeHistory(s, SAVE);
     File file = new File(directory, filename);
+
     try {
+      System.out.print(s);
+
+      BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes())));
+
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+	System.out.println("'" + line + "'");
+      }
+
       FileWriter writer = new FileWriter(file);
       writer.write(s);
       writer.flush();
@@ -1805,6 +1818,14 @@ afterwards, some of these steps need a cleanup function
     }
     return buffer;
   }
+
+  /*
+  static {
+    String a = "D:\\fry\\processing\\app\\PdeBase.java";
+    String b = "D:\\fry\\processing\\app\\PdeBase.maybe.java";
+    copyFile(new File(a), new File(b));
+  }
+  */
 
   static protected void copyFile(File afile, File bfile) {
     try {
