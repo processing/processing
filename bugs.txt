@@ -1,3 +1,153 @@
+4 of the examples stopped compiling (for the same reason) with their port to
+version 47/48
+
+the error is:
+Cannot find class "color" [JLS 8]
+
+it has something to do with confusion in passing colors into methods and
+classes.
+
+the examples affected:
+drawing 02
+input09
+input08
+transform05
+
+
+/ / / / / / / / / / / /
+
+also that pesky pmouseX, pmouseY seems to be behaving oddly again.
+it's skipping beats. try this:
+
+void setup() {
+  size(200, 200);
+  noBackground();
+  refresh();
+}
+
+void loop() {
+  stroke(255);
+  if(mousePressed && pmouseX != 0 && pmouseY != 0) {
+    line(mouseX, mouseY, pmouseX, pmouseY);
+  }
+}
+
+// the kludge with pmouseX != 0 etc. has to do with their default to 0.
+// would it be possible to automatically have P5 set the pmouseX and
+// pmouseY to mouseX and mouseY on the first frame?
+// comment that line out to see what i'm talking about
+
+
+....................................................
+
+Gizmo[][] life = new Gizmo[30][30];
+
+void setup()
+{
+  size(300, 300);
+  background(255, 255, 255); 
+  stroke(0, 0, 0);
+      
+  for (int a = 0; a < 30; a++)
+    for (int b = 0; b < 30; b++)
+    {
+      life[a][b] = new Gizmo(a, b);
+      life[a][b].init();
+    }     
+}
+
+void loop()
+{
+  if (mouseX >= 0 && mouseX <= 300 && mouseY >= 0 && mouseY <= 300)
+  {
+    int ex = (mouseX - (mouseX % 10)) / 10;
+    int why = (mouseY - (mouseY % 10)) / 10;
+  }
+  else
+  {
+    ex = 0; 
+    why = 0;  
+  }
+
+  if (life[ex][why].alive == false && mousePressed)
+    life[ex][why].make();
+  else if (life[ex][why].alive == true && mousePressed)
+    life[ex][why].kill();
+
+  drawbg();
+}
+
+void drawbg()
+{
+  for (int why = 0; why < 30; why++)
+    for (int ex = 0; ex < 30; ex++)
+    {
+      if (life[ex][why].alive == true)
+      {
+        fill(150, 20, 20);
+        rect(ex * 10, why * 10, 10, 10);
+      }
+      else
+      {
+        fill(0, 0, 0);
+        rect(ex * 10, why * 10, 10, 10);
+      }
+}
+        
+      
+
+class Gizmo
+{
+  int x;
+  int y;
+  boolean alive;
+  Point[] neighbours = new Point[8]; 
+  
+  Gizmo (int ex, int why)
+  {
+    x = ex;
+    y = why;
+  }
+  
+  void init();
+  {
+    for (int i = 0; i < 8; i++)
+      neighbours[i] = new Point(0,0);
+  }
+  
+  void make()
+  {
+    alive == true;
+  }
+  
+  void kill()
+  {
+    alive == false;
+  } 
+}
+
+class Point
+{
+  int x;
+  int y;
+  
+  Point (int ex, int why)
+  {
+    x = ex;
+    y = why;
+  }
+  
+  void set(int ex, int why)
+  {
+    x = ex;
+    y = why;
+  }
+}
+
+
+................................................................
+
+
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
 _   check output from file that's created.. seems to fail silently(?)
