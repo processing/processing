@@ -585,7 +585,11 @@ public class PdeSketch {
                                    "Save sketch folder as...",
                                    FileDialog.SAVE);
     // always default to the sketchbook folder..
-    fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    //fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    fd.setDirectory(folder.getParent());
+    fd.setFile(folder.getName());
+    //System.out.println("setting to " + folder.getParent());
+
     // TODO or maybe this should default to the
     //      parent dir of the old folder?
 
@@ -607,6 +611,22 @@ public class PdeSketch {
                           "as the old. I ain't not doin nuthin'.", null);
       return false;
     }
+
+    // check to see if the user is trying to save this sketch
+    // inside the same sketch
+    try {
+      String newPath = newFolder.getCanonicalPath() + File.separator;
+      String oldPath = folder.getCanonicalPath() + File.separator;
+      //System.out.println(newPath);
+      //System.out.println(oldPath);
+
+      if (newPath.indexOf(oldPath) == 0) {
+        PdeBase.showWarning("How very Borges of you",
+                            "You cannot save the sketch into a folder\n" +
+                            "inside itself. This would go on forever.", null);
+        return false;
+      }
+    } catch (IOException e) { }
 
     // copy the entire contents of the sketch folder
     PdeBase.copyDir(folder, newFolder);
@@ -650,6 +670,9 @@ public class PdeSketch {
     // get the changes into the sketchbook menu
     //sketchbook.rebuildMenu();
     // done inside PdeEditor instead
+
+    // update the tabs for the name change
+    editor.header.repaint();
 
     // let PdeEditor know that the save was successful
     return true;
