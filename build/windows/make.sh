@@ -188,3 +188,14 @@ zip -r0q library/particles.jar simong
 rm -rf simong
 mkdir -p ../../build/windows/work/libraries/particles/library/
 cp library/particles.jar ../../build/windows/work/libraries/particles/library/
+
+
+# OPENGL LIBRARY
+echo Building OpenGL library...
+cd ../../lib/opengl
+../../build/windows/work/jikes +D -classpath "library\\jogl.jar;$CLASSPATH" -d . *.java 
+rm -f library/opengl.jar
+zip -r0q library/opengl.jar processing
+rm -rf processing
+mkdir -p ../../build/windows/work/libraries/opengl/library/
+cp library/opengl.jar ../../build/windows/work/libraries/opengl/library/
