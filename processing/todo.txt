@@ -70,22 +70,10 @@ X "Processing" folder not properly created on new install
 X add noLoop() to static mode apps
 X remove "loop" from special inserts on preproc
 
+040920 afternoon 
+o when running externally, build into sketch folder?
+
 _ add all imported libs to hash table of jars
-
-_ after export of library, rebuild "import library" menu
-
-_ when running externally, build into sketch folder?
-
-
-_ static applets need to be able to resize themselves on 'play'
-_ figure out what to do with static apps exported as application
-_   needs to just hang there
-_ scripts will need to call exit() explicitly
-_ "create font" not working well with postscript font names
-_   need to remap the postscript name back to the java font name
-_   or keep a list of font objects, not just the names
-_     since already have the list, can use deriveFont
-_ tabs on macosx are stinking.. need to use line metrics class
 
 _ libraries
 _   attachLibrary(new libsomething()) and attachLibrary("pitaru.Sonia");
@@ -99,15 +87,11 @@ _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ where do libraries for distribution go?
 _   libraries subfolder of p5
-
-_ exception in setup() on external app doesn't kill run button 
-_   also doesn't kill external vm
-_ make preferences a modal dialog
-
-_ System.out isn't being heard from P* classes
-_   errors inside those classes also causing weirdness
-_   this might be a broader running as external app problem
-_   errorMessage in PSerial/PClient/PServer are all using System.out
+_ netscape.javascript not properly working in 1.4
+_   include 'netscape.javascript' as a library to be added
+_     but don't export it.. ugh..
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
+_ after export of library, rebuild "import library" menu
 
 _ get export working again
 _   make multiple jar files thing work as an option
@@ -117,6 +101,32 @@ _     user in advanced mode can switch to the other
 _     buttons on side of sketch do default (last) behavior
 _   include a note that 'applet' folder will get emptied/rewritten
 _     or rename the old applet folder to something else? (nah, too messy)
+
+_ System.out isn't being heard from P* classes
+_   errors inside those classes also causing weirdness
+_   this might be a broader running as external app problem
+_   errorMessage in PSerial/PClient/PServer are all using System.out
+
+
+_ write better handler for compiler error:
+_   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63:1:70: Semantic Error: You need to modify your classpath, sourcepath, bootclasspath, and/or extdirs setup. Package "poo/shoe" could not be found in:
+
+_ write handler for loop() error, warning user to rename loop to draw
+_   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6:29:11: Semantic Error: The method "void loop();" with default access cannot replace the accessible method "void loop();" with public access declared in type "processing.core.PApplet".
+
+_ static applets need to be able to resize themselves on 'play'
+_ figure out what to do with static apps exported as application
+_   needs to just hang there
+_ scripts (no graphics) will need to call exit() explicitly
+_ "create font" not working well with postscript font names
+_   need to remap the postscript name back to the java font name
+_   or keep a list of font objects, not just the names
+_     since already have the list, can use deriveFont
+_ tabs on macosx are stinking.. need to use line metrics class
+
+_ exception in setup() on external app doesn't kill run button 
+_   also doesn't kill external vm
+_ make preferences a modal dialog
 
 _ package processing.app for PdeBase, PdeEditor..
 
@@ -218,10 +228,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 o   is PdeEditorHeader one pixel too tall?
 _ menu option for Renderer > to "Core" or "OpenGL"
 _   on export, uses this setting to determine if jogl is added to project
-_ netscape.javascript not properly working in 1.4
-_   include 'netscape.javascript' as a library to be added
-_     but don't export it.. ugh..
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
 _ add a "make archive" option
 _   doesn't rename sketch, just names zip file sketch + time stamp
 _ need showError/Message/Warning/Prompt design from casey
@@ -230,6 +236,7 @@ _   with an 'email this' button? (include source code too?)
 _   also need a "prompt" dialog for asking filenames, etc
 _   implement and remove PdeEditorStatus stuff
 _ check into open-source paperwork for p5
+_ 
 
 
 ..................................................................
