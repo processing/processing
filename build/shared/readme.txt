@@ -228,12 +228,12 @@ is gonna do. you're playing with free, alpha software. get psyched!
 
 minimum requirements.. processing requires at least Mac OS X 10.1. 
 if you're running anything older than 10.2, you'll need "Java 1.3.1
-Update 1", the latter of which is available as a free update from the
-"Software Update" control panel. it can also be downloaded from
+Update 1", the latter of which is available as a free update from 
+the "Software Update" control panel. it can also be downloaded from
 http://www.apple.com/downloads/macosx/apple/ or from:
 http://www.apple.com/downloads/macosx/apple/java131.html
-for what it's worth, we don't test processing under mac os x 10.1 and
-we don't recommend it at all. 
+for what it's worth, we don't test processing under mac os x 10.1 
+and we don't recommend it at all. 
 
 mouse wheel support only works if you're using java 1.4. the latest
 version of java will be available via the software update control
@@ -241,11 +241,13 @@ panel.
 
 if you're having random troubles (exceptions being thrown, 
 screen painting weirdness, general confusion) you might want to 
-try running processing with java 1.3.1 instead. to do so, 
+try running processing with java 1.3.1 instead of java 1.4. to do so, 
 right-click or control-click the processing application and select 
 "Show Package Contents". go to Contents -> Resources -> and then 
-edit MRJApp.properties, to include the following line:
+open MRJApp.properties in a text editor. remove the # from this line:
 com.apple.mrj.application.JVMVersion=1.3.1
+and add a # in front of this line:
+com.apple.mrj.application.JVMVersion=1.3+
 
 in order to use the serial port under macosx, you'll need to install
 RXTX, the serial port driver. this is for more advanced users, and 
