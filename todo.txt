@@ -109,8 +109,9 @@ X   shift-new will always prompt with filedialog
 X dashes shouldn't be allowed in filenames for sketches
 X   actually, lost the naming stuff because now using FileDialog
 X   this also needs to be checked when building the sketch menu 
-
-_ write sketchbook.clean()
+X rewrite sketchbook.clean()
+X   prompt user if they don't have it set to auto
+X   add a pref to the preferences window
 
 _ don't force everything into a single .jar on export
 
