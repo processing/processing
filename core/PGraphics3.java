@@ -1417,6 +1417,58 @@ public class PGraphics3 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // SHAPES
+
+  public void point(float x, float y) {
+    point(x, y, 0);
+  }
+
+  public void point(float x, float y, float z) {
+  }
+
+  public void line(float x1, float y1, float x2, float y2) {
+    line(x1, y1, 0, x2, y2, 0);
+  }
+
+  public void line(float x1, float y1, float z1,
+                   float x2, float y2, float z2) {
+  }
+
+  public void triangle(float x1, float y1, float x2, float y2,
+                       float x3, float y3) {
+  }
+
+  //public void rectMode(int mode)
+
+  public void rect(float x1, float y1, float x2, float y2) {
+  }
+
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+  }
+
+  public void circle(float x, float y, float radius) {
+  }
+
+  public void ellipseMode(int mode) {
+  }
+
+  public void ellipse(float x, float y, float hradius, float vradius) {
+  }
+
+  //public void arcMode(int mode)
+
+  public void arc(float start, float stop,
+                  float x, float y, float radius) {
+  }
+
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr) {
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // CURVES
 
 
