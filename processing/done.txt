@@ -1,3 +1,52 @@
+0019
+questions answered..
+X is day, month, year overkill inside processingapplet? 
+X   decided no
+X loadImage or getImage? 
+X   loadImage sounds better to ben and casey
+X circle/square functions
+X   doesn't seem necessary
+X   main problem is that with ellipse, points aren't inside shape
+X should the default be 100x100
+X   yes, casey won
+X default background color: 204
+X   casey prevails again
+X maybe stop/kill button should only be a stop btn - yes
+X what to call 'pouch' directory? -- data
+X function name to toggle drawing from center: ellipseMode(), rectMode()
+X PImage, PFont or how to name?
+X   pImage, pFont, pGraphics, pSound
+X bezierVertex/catmullRomVertex poorly named (based on algo used)
+X   instead curveVertex/fitCurveVertex/etc.
+X   use curveVertex and bezierVertex
+bagel miscellaneous
+X change lightsOn/lightsOff to lights() and noLights()
+X beginShape() defaults to POLYGON
+X   introduce constants for other poly modes
+X add ellipseMode(), rectMode()
+X   CENTER_RADIUS, CENTER_DIAMETER, CORNER, TWO_CORNERS
+X bezier and catmullrom aren't setting ndim to at least two 
+X   ?? not sure why they would
+X translate(x, y) doesn't seem to affect a rect()
+X   flat_rect was being used where ndim was 2, not 0
+X curveVertex and bezierVertex instead of catmull/bezier crap
+X single color function
+X   need to clamp colors (nothing > 255 or < 0)
+X     (garbage created when color values out of range)
+X   do by simplifying stroke/fill/background inside bagel
+X     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
+X     needs to be done inside cpp version too.. minimize amt of code
+X   rewrite fill/stroke/etc to use same code
+X     doesn't need to be super fast, so the extra assigns no big deal
+X move MemoryImageSource out of bagel and into ProcessingApplet
+X   need to run bagel to just render to a large internal buffer
+X   this fits better with the c++ model of things
+X make default size be 100x100
+X make default background color 204
+X lightsOff() seems dumb with noStroke and noFill
+X   lights() and noLights()
+
+
 0018
 X fix fonts.. try megan's color selector applet
 
