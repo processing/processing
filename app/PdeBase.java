@@ -1010,7 +1010,9 @@ public class PdeBase extends Frame
         } else {
           // just launching the .html file via the shell works
           // but make sure to chmod +x the .html files first
-          Runtime.getRuntime().exec("cmd /c " + url);
+          // also place quotes around it in case there's a space
+          // in the user.dir part of the url
+          Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
         }
 
 #ifdef MACOS
@@ -1029,6 +1031,8 @@ public class PdeBase extends Frame
         //Runtime.getRuntime().exec("mozilla "+ currentDir + 
         //                          "/reference/index.html");
         // another wild ass guess
+
+        // probably need to replace spaces or use quotes here
         Runtime.getRuntime().exec("mozilla " + url);
 
       } else {
