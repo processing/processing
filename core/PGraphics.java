@@ -231,11 +231,10 @@ public class PGraphics extends PImage implements PConstants {
   float textureU, textureV;
   float normalX, normalY, normalZ;
 
-  // OLD_GRAPHICS
-  boolean texture;
+  // used by NEW_GRAPHICS, or by OLD_GRAPHICS simply as a boolean
+  private PImage textureImage;
 
   // NEW_GRAPHICS
-  private PImage textureImage;
   static final int DEFAULT_TEXTURES = 3;
   PImage textures[] = new PImage[DEFAULT_TEXTURES];
   int texture_index;
@@ -288,7 +287,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   int rect_mode    = CORNER;
-  int ellipse_mode = CORNER;
+  int ellipse_mode = CENTER;
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
@@ -639,7 +638,7 @@ public class PGraphics extends PImage implements PConstants {
       float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertex_count);
       vertices = temp;
-      System.out.println("allocating more vertices " + vertices.length);
+      message(CHATTER, "allocating more vertices " + vertices.length);
     }
 
     return vertices[vertex_count++];
@@ -652,10 +651,10 @@ public class PGraphics extends PImage implements PConstants {
       PImage temp[] = new PImage[texture_index<<1];
       System.arraycopy(textures, 0, temp, 0, texture_index);
       textures = temp;
-      System.out.println("allocating more textures " + textures.length);
+      message(CHATTER, "allocating more textures " + textures.length);
     }
 
-    if(textures[0] != null) {
+    if (textures[0] != null) {
       texture_index++;
     }
 
@@ -671,7 +670,7 @@ public class PGraphics extends PImage implements PConstants {
       int temp[][] = new int[lines_count<<1][LINE_FIELD_COUNT];
       System.arraycopy(lines, 0, temp, 0, lines_count);
       lines = temp;
-      System.out.println("allocating more lines " + lines.length);
+      message(CHATTER, "allocating more lines " + lines.length);
     }
 
     lines[lines_count][PA] = a;
@@ -698,7 +697,7 @@ public class PGraphics extends PImage implements PConstants {
       int temp[][] = new int[triangles_count<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangles_count);
       triangles = temp;
-      System.out.println("allocating more triangles " + triangles.length);
+      message(CHATTER, "allocating more triangles " + triangles.length);
     }
 
     triangles[triangles_count][VA] = a;
@@ -946,15 +945,17 @@ public class PGraphics extends PImage implements PConstants {
         triangles_count = 0;
       }
 
-      textureImage = null;
     } else {  // OLD_GRAPHICS
       polygon.reset(0);
       fpolygon.reset(4);
       spolygon.reset(4);
 
-      texture = false;
+      //texture = false;
+      //textureImage = null;
       polygon.interpUV = false;
     }
+    textureImage = null;
+
     cvertexIndex = 0;
     cverticesFlat = true;
 
@@ -973,16 +974,16 @@ public class PGraphics extends PImage implements PConstants {
    */
   //public void textureImage(PImage image) {
   public void texture(PImage image) {
+    textureImage = image;
+
     if (hints[NEW_GRAPHICS]) {
       if (z_order == true) {
         addTexture(image);
       } else {
         triangle.setTexture(image);
       }
-      textureImage = image;
-
     } else {  // OLD_GRAPHICS
-      texture = true;    polygon.texture(image);
+      polygon.texture(image);
     }
   }
 
@@ -1031,7 +1032,7 @@ public class PGraphics extends PImage implements PConstants {
       }   
 
     } else {  // OLD_GRAPHICS
-      if (!texture) {
+      if (textureImage == null) {
         message(PROBLEM, "gotta use texture() " + 
                 "after beginShape() and before vertex()");
         return;
@@ -1090,7 +1091,6 @@ public class PGraphics extends PImage implements PConstants {
         normalChanged = true;
       }
     }
-
     normalX = nx;
     normalY = ny;
     normalZ = nz;
@@ -1098,17 +1098,23 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void vertex(float x, float y) {
+    //if (polygon.redundantVertex(x, y, 0)) return;
+    //cvertexIndex = 0;
     setup_vertex(nextVertex(), x, y, 0);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
+    //if (polygon.redundantVertex(x, y, 0)) return;
+    //cvertexIndex = 0;
     vertex_texture(u, v);
     setup_vertex(nextVertex(), x, y, 0);
   }
 
 
   public void vertex(float x, float y, float z) {
+    //if (polygon.redundantVertex(x, y, z)) return;
+    //cvertexIndex = 0;
     unchangedZ = false;
     dimensions = 3;
     setup_vertex(nextVertex(), x, y, z);
@@ -1117,6 +1123,8 @@ public class PGraphics extends PImage implements PConstants {
 
   public void vertex(float x, float y, float z,  
                      float u, float v) {
+    //if (polygon.redundantVertex(x, y, z)) return;
+    //cvertexIndex = 0;
     vertex_texture(u, v);
     unchangedZ = false;
     dimensions = 3;
@@ -1125,7 +1133,12 @@ public class PGraphics extends PImage implements PConstants {
 
 
   private void setup_vertex(float vertex[], float x, float y, float z) {
-    cvertexIndex = 0; // reset curves to start
+    if (polygon.redundantVertex(x, y, z)) return;
+
+    // user called vertex(), so that invalidates anything queued
+    // up for curve vertices. if this is internally called by 
+    // spline_segment, then cvertexIndex will be saved and restored.
+    cvertexIndex = 0;
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -1147,12 +1160,11 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     // this complicated if construct may defeat the purpose
-    if (((hints[NEW_GRAPHICS]) && (textureImage != null)) ||
-        ((!hints[NEW_GRAPHICS]) && texture)) {
+    if (textureImage != null) {
       vertex[U] = textureU;
       vertex[V] = textureV;
     }
-    
+
     if (normalChanged) {
       vertex[NX] = normalX;
       vertex[NY] = normalY; 
@@ -1161,7 +1173,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  private void c_vertex(float x, float y, float z, boolean bezier) {
+  private void curve_vertex(float x, float y, float z, boolean bezier) {
     // if more than 128 points, shift everything back to the beginning
     if (cvertexIndex == CVERTEX_ALLOC) {
       System.arraycopy(cvertex[CVERTEX_ALLOC-3], 0, 
@@ -1175,10 +1187,51 @@ public class PGraphics extends PImage implements PConstants {
     // add the vertex here
     // cvertexIndex and cvertexCount are reset to zero 
     // when regular vertex() is called, so store it
-    int savedIndex = cvertexIndex + 1;
-    if (cverticesFlat && (z != 0)) cverticesFlat = false;
-    setup_vertex(cvertex[cvertexIndex], x, y, z);
-    cvertexIndex = savedIndex; // restore cvertexIndex
+//    int savedIndex = cvertexIndex + 1;
+    //System.out.println(cvertexIndex);
+
+    // 'flat' may be a misnomer here because it's actually just
+    // calculating whether z is zero, so that it knows whether
+    // to calculate all three params, or just two for x and y.
+    if (cverticesFlat) {
+      if (z != 0) cverticesFlat = false;
+    }
+    //setup_vertex2(cvertex[cvertexIndex], x, y, z);
+    float vertex[] = cvertex[cvertexIndex];
+
+    vertex[MX] = x;
+    vertex[MY] = y;
+    vertex[MZ] = z;
+
+    if (_fill) {
+      vertex[R] = fillR;
+      vertex[G] = fillG;
+      vertex[B] = fillB;
+      vertex[A] = fillA;
+    }
+
+    if (_stroke) {
+      vertex[SR] = strokeR;
+      vertex[SG] = strokeG;
+      vertex[SB] = strokeB;
+      vertex[SA] = strokeA;
+      vertex[WT] = strokeWeight;
+    }
+
+    // this complicated if construct may defeat the purpose
+    if (textureImage != null) {
+      vertex[U] = textureU;
+      vertex[V] = textureV;
+    }
+
+    if (normalChanged) {
+      vertex[NX] = normalX;
+      vertex[NY] = normalY; 
+      vertex[NZ] = normalZ;
+    }
+
+    cvertexIndex++;
+//    cvertexIndex = savedIndex; // restore cvertexIndex
 
     // draw a segment if there are enough points
     if (cvertexIndex > 3) {
@@ -1245,7 +1298,7 @@ public class PGraphics extends PImage implements PConstants {
                          cvertex[cvertexIndex-1][MX], 
                          cvertex[cvertexIndex-1][MY],
                          cvertex[cvertexIndex-1][MZ],
-                         cvertex[cvertexIndex-3][MX], 
+                         cvertex[cvertexIndex-3][MX],
                          cvertex[cvertexIndex-3][MY], 
                          cvertex[cvertexIndex-3][MZ], 
                          curve_draw, curve_detail);
@@ -1253,7 +1306,8 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
     // spline_segment() calls vertex(), which clears cvertexIndex
-    cvertexIndex = savedIndex; 
+//    cvertexIndex = savedIndex; 
+    //cvertexIndex++;
   }
 
 
@@ -1261,28 +1315,28 @@ public class PGraphics extends PImage implements PConstants {
    * See notes with the bezier() function.
    */
   public void bezierVertex(float x, float y) {
-    c_vertex(x, y, 0, true);
+    curve_vertex(x, y, 0, true);
   }
 
   /**
    * See notes with the bezier() function.
    */
   public void bezierVertex(float x, float y, float z) {
-    c_vertex(x, y, z, true);
+    curve_vertex(x, y, z, true);
   }
 
   /**
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y) {
-    c_vertex(x, y, 0, false);
+    curve_vertex(x, y, 0, false);
   }
 
   /**
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y, float z) {
-    c_vertex(x, y, z, false);
+    curve_vertex(x, y, z, false);
   }
 
 
@@ -2228,7 +2282,7 @@ public class PGraphics extends PImage implements PConstants {
 
     // copy render parameters
 
-    if (texture) {
+    if (textureImage != null) {
       tpolygon.texture(polygon.timage);
     }
 
@@ -3958,12 +4012,15 @@ public class PGraphics extends PImage implements PConstants {
     float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
     float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
 
+    // vertex() will reset cvertexIndex, so save it
+    int cvertexSaved = cvertexIndex;
     vertex(x0, y0);
     for (int j = 0; j < segments; j++) {
       x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
       y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
       vertex(x0, y0);
     }
+    cvertexIndex = cvertexSaved;
   }
 
 
@@ -3986,14 +4043,19 @@ public class PGraphics extends PImage implements PConstants {
     float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
     float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
 
+    unchangedZ = false;
+    dimensions = 3;
+
+    // vertex() will reset cvertexIndex, so save it
+    int cvertexSaved = cvertexIndex;
     vertex(x0, y0, z0);
     for (int j = 0; j < segments; j++) {
       x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
       y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
       z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-      //vertex(x1, y1, z1);
       vertex(x0, y0, z0);
     }
+    cvertexIndex = cvertexSaved;
   }
 
 
