@@ -53,6 +53,11 @@ major changes: (things that break your code)
 
 - quicktime is no longer required to be installed on windows
 
+- the 'fonts' folder has been removed. these were old (had no special
+  characters like umlauts and whatnot) and of questionable copyright
+  status, so we took them out. you can create fonts to your heart's
+  content using the "Create Font" option.
+
 - history has been (temporarily?) removed. in the meantime under the
   "Tools" menu is an option named "Archive Sketch" which will zip up
   the contents of the current sketch folder into a numbered archive.
