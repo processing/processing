@@ -1849,6 +1849,12 @@ afterwards, some of these steps need a cleanup function
       }
     }
     if (end == -1) end = len;
+
+    // sometimes KJC claims that the line it found an error in is 
+    // the last line in the file + 1.  Just highlight the last line 
+    // in this case. [dmose]
+    if (st == -1) st = len;
+
     //System.out.println("st/end: "+st+"/"+end);
     textarea.select(st, end);
     //if (iexplorerp) {
