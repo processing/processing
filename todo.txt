@@ -54,7 +54,7 @@ X several menu changes as discussed with casey
 X   (capitalization, export/export app, tools)
 X add preference for showing library stuff
 
-040913
+040913 morning
 X figure out why user libraries not being added
 X in lib mode, show internal libraries as part of the 'open' menu 
 X make a note that p5 has to be restarted for libs
@@ -62,6 +62,10 @@ X import all libraries into classpath
 X   all libs found during sketchbook build + all libs in libraries
 X   this means sketchbook menu will need to be rebuilt after lib build
 X   append the user's classpath to the end of that
+
+040913 afternoon
+X "Processing" folder not properly created on new install
+
 _ when running externally, build into sketch folder
 _ after export of library, rebuild "import library" menu
 
