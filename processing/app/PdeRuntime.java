@@ -4,8 +4,8 @@
   PdeRuntime - runs compiled java applet
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
   boolean newMessage;
   int messageLineCount;
+  boolean foundMessageSource;
 
   Process process;
   OutputStream processOutput;
@@ -356,17 +357,20 @@ public class PdeRuntime implements PdeMessageConsumer {
     // this is BApplet sending a message saying "i'm about to spew 
     // a stack trace because an error occurred during BApplet.run()"
     if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
-      //System.err.println("got wakeup");
+      // newMessage being set to 'true' means that the next time 
+      // message() is called, expect the first line of the actual
+      // error message & stack trace to be sent from the applet.
       newMessage = true;
       return;  // this line ignored
     }
 
     // if s.length <=2, ignore it because that probably means 
-    // that it's just the platform line-terminators.  
+    // that it's just the platform line-terminators.
     if (newMessage && s.length() > 2) {
       exception = new PdeException(s);  // type of java ex
       //System.out.println("setting ex type to " + s);
       newMessage = false;
+      foundMessageSource = false;
       messageLineCount = 0;
 
     } else {
@@ -375,8 +379,69 @@ public class PdeRuntime implements PdeMessageConsumer {
       // TODO this is insufficient. need to cycle through the 
       // different classes that are currently loaded and see if
       // there is an error in one of them.
-      String className = sketch.mainClassName;
+      //String className = sketch.mainClassName;
 
+      //\s+at\s([\w\d\._]+)\.([\<\w\d_]+)\(([\w\d_].java\:(\d+)
+
+      /*
+java.lang.NullPointerException
+        at javatest.<init>(javatest.java:5)
+        at Temporary_2425_1153.draw(Temporary_2425_1153.java:11)
+        at BApplet.nextFrame(BApplet.java:481)
+        at BApplet.run(BApplet.java:428)
+        at java.lang.Thread.run(Unknown Source)
+      */
+
+      if (!foundMessageSource) {
+        //    "     at javatest.<init>(javatest.java:5)"
+        // -> "javatest.<init>(javatest.java:5)"
+        int afterAt = s.indexOf("at") + 3;
+        if (afterAt == -1) {
+          System.err.println(s);
+          return;
+        }
+        s = s.substring(afterAt + 1);
+
+        //    "javatest.<init>(javatest.java:5)"
+        // -> "javatest.<init>" and "(javatest.java:5)"
+        int startParen = s.indexOf('(');
+        // at javatest.<init>(javatest.java:5)
+        String pkgClassFxn = null;
+        //String fileLine = null;
+        int codeIndex = -1;
+        int lineIndex = -1;
+
+        if (startParen == -1) {
+          pkgClassFxn = s;
+
+        } else {
+          pkgClassFxn = s.substring(0, startParen);
+          // "(javatest.java:5)"
+          String fileAndLine = s.substring(startParen + 1);
+          fileAndLine = fileAndLine.substring(0, fileAndLine.length() - 1);
+          //if (!fileAndLine.equals("Unknown Source")) {
+          // "javatest.java:5"
+          int colonIndex = fileAndLine.indexOf(':');
+          if (colonIndex != -1) {
+            String filename = fileAndLine.substring(0, colonIndex);
+            // "javatest.java" and "5"
+            for (int i = 0; i < sketch.codeCount; i++) {
+              if (sketch.code[i].preprocName.equals(filename)) {
+                codeIndex = i;
+                break;
+              }
+            }
+            // lineIndex is 1-indexed, but editor wants zero-indexed
+            lineIndex = Integer.parseInt(fileAndLine.substring(colonIndex + 1));
+            //System.out.println("code/line is " + codeIndex + " " + lineIndex);
+            exception = new PdeException(exception.getMessage(),
+                                         codeIndex, lineIndex - 1, -1);
+            foundMessageSource = true;
+          }
+        }
+        editor.error(exception);
+
+      /*
       int index = s.indexOf(className + ".java");
       if (index != -1) {
         int len = (className + ".java").length();
@@ -385,10 +450,14 @@ public class PdeRuntime implements PdeMessageConsumer {
         lineNumberStr = lineNumberStr.substring(0, index);
         try {
           exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
-          editor.error(exception);
-        } catch (NumberFormatException e) {  
-          e.printStackTrace();  // a recursive error waiting to happen?
-        }
+        } catch (NumberFormatException e) { }  
+          //e.printStackTrace();  // a recursive error waiting to happen?
+        // if nfe occurs, who cares, still send the error on up
+        editor.error(exception);
+      */
+
+        /*
+          // WARNING THESE ARE DISABLED!!
       } else if ((index = s.indexOf(className + ".class")) != -1) {
         // code to check for:
         // at Temporary_484_3845.loop(Compiled Code)
@@ -412,16 +481,17 @@ public class PdeRuntime implements PdeMessageConsumer {
         // because pootie() (re)sets the exception title
         // and throws it, but then the line number gets set 
         // because of the line that comes after
-
+        */
+      
       } else if (messageLineCount > 5) {
         // this means the class name may not be mentioned 
         // in the stack trace.. this is just a general purpose
         // error, but needs to make it through anyway.
         // so if five lines have gone past, might as well signal
-        //System.out.println("signalling");
         messageLineCount = -100;
         exception = new PdeException(exception.getMessage());
         editor.error(exception);
+
       } else {
         //System.err.print(s);
       } 
