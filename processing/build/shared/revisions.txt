@@ -4,15 +4,56 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
-ABOUT REV 0061 - 
+ABOUT REV 0061 - 23 september 2003
+
+this is a brief addendum release to revision 60, that fixes a few
+small things. if you've downloaded 60, this isn't necessarily a
+"must-have", but it fixes a few quirks that showed up in the final
+stages of rev 60.
+
+if you used a previous version of processing, and haven't yet tried
+60, then please read its release notes, as many things have changed.
+
 
 [ bug fixes ]
+
+- fixed a handful of examples that were broken in rev 60.
 
 - modifications to the sound code that prevented it from running with
   the microsoft java 1.1 vm.
 
+- removed "width 200 high 200" message that showed up during export.
+
+- fixed IllegalAccessError that showed up in applets that had inner
+  classes, when run inside the ancient microsoft java vm. 
+
+- brightened the red color used for error messages in the console,
+  since some found it hard to read. also note that you can always set
+  this color yourself by editing the pde.properties file that is found
+  inside the 'lib' folder.
+
+- fixed saveFrame() to allow for just "blah.tif", as was stated in
+  this document for rev 60.
+
+- removing .DS_Store files from the windows release
+
+
+[ additions ] 
+
+- if no reference is found for "found in reference", p5 provides a
+  message rather than doing nothing.
+
 
 [ known problems ]
+
+- a complete list of known problems can be found in the revisions.txt
+  entry for release 60.
+
+- a lot of println() commands will make the environment really slow or
+  even lock up completely. it's because the console can't keep
+  up. we're working on a fix.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+
 
 
 [ common problems, not actually bugs ]
@@ -22,6 +63,9 @@ ABOUT REV 0061 -
   java classes. i suppose if lots of people find this upsetting, we
   could add some extra code to unhinge the resulting class name from
   the sketch name, but it adds complexity, and complexity == bugs. :)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 ABOUT REV 0060 - 22 september 2003
