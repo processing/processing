@@ -697,7 +697,7 @@ public class PdeSketch {
 
     boolean writeHtml = true;
     if (appletDir.exists()) {
-      File htmlFile = new new File(appletDir, "index.html");
+      File htmlFile = new File(appletDir, "index.html");
       if (htmlFile.exists() && !replaceHtml) {
         writeHtml = false;
       }

@@ -57,11 +57,11 @@ public class PdePreprocessor {
    */
   public PdePreprocessor() { 
     defaultImports[JDK11] = 
-      BApplet.splitStrings(PdePreferences.get("compiler.imports.jdk11"), ',');
+      BApplet.split(PdePreferences.get("compiler.imports.jdk11"), ',');
     defaultImports[JDK13] = 
-      BApplet.splitStrings(PdePreferences.get("compiler.imports.jdk13"), ',');
+      BApplet.split(PdePreferences.get("compiler.imports.jdk13"), ',');
     defaultImports[JDK14] = 
-      BApplet.splitStrings(PdePreferences.get("compiler.imports.jdk14"), ',');
+      BApplet.split(PdePreferences.get("compiler.imports.jdk14"), ',');
   }
 
 
@@ -105,13 +105,14 @@ public class PdePreprocessor {
             p2[index++] = 'u';
             char str[] = Integer.toHexString(c).toCharArray();
             // add leading zeros, so that the length is 4
-            for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
+            //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
+            for (int m = 0; m < 4 - str.length; m++) p2[index++] = '0';
             System.arraycopy(str, 0, p2, index, str.length);
             index += str.length;
           }
         }
+        program = new String(p2, 0, index);
       }
-      program = new String(p2, 0, index);
     }
 
     // do this after the program gets re-combobulated
