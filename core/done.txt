@@ -1,3 +1,69 @@
+0075
+X textureMode(NORMAL_SPACE)  screws up the image() command
+X   image() appears to require IMAGE_SPACE to function properly. 
+X added focusGained() and focusLost()
+X lots of changes to internal naming of vars
+X screenX(x, y) and screenY(x, y) added for noDepth()
+X add TRIANGLE_FAN
+X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
+X modify targa and tiff writing routines to break into header writing
+X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
+X MAJOR CHANGE: RGBA becomes ARGB for accuracy
+o uv coords > 1 shouldn't clamp, they should just repeat ala opengl
+o   actually i think opengl has a setting for it
+o remove need to use depth() at the beginning
+X   need only be set once
+X pmouseX is broken again
+X   remove pmouseX/Y altogether
+X   maintain things a bit different
+o   email the beta@ list to see how people are using pmouseX
+X changed PMovie.length to PMovie.duration
+X move around/simplify loadImage() inside PApplet 
+X working to add more die() statements inside PApplet
+o can ALPHA fonts work using the other replace modes?
+
+fixed in previous releases
+X text stuff
+X   text() with alignment doesn't work for multiple lines
+X   don't change the size of a font when in screen space mode
+X   patch rotated text (from visualclusto) into bfont
+X   what sort of api? textSpace(ROTATED) ?
+X   rotated text has a bug for when it goes offscreen
+
+opengl
+X why is the thing hanging until 'stop' is hit?
+X   what happens when stop is hit that sets it free?
+X   (at what point does it start working properly?)
+X cache needs to also make things a power of 2
+X   if images are already a power of 2, then needn't re-alloc
+X cacheIndex needs to be set to -1 when the image is modified
+X   or maybe have a modified() function?
+X debug why certain spots are having errors (see 'problem here' notes)
+X   INVALID_OPERATION after drawing lines for cube
+X fix noLoop bug
+X remove errors when drawing textures
+X reverse y coordinates
+X make play button un-highlight with opengl
+X   also make window move messages work properly
+X   very necessary, since opens window at 100x100
+X   problem was the threading issues
+X bring back renderer menu
+X   reading/saving pref for opengl renderer
+X remove cameraMode(PERSPECTIVE) on each frame
+X   why is the first one failing?
+X still threading issues with running opengl 
+X   threading really horks up dual processor machine.. 
+X   first run hangs until quit 
+X   though doesn't seem to replicate when p5 is restarted
+X make sure background() gets called at least once with opengl
+X   otherwise screen never actually updates
+X beginFrame() around setup()
+X   draw mode stuff happens inside setup.. 
+o   or maybe need to get better at size() inside of draw() ? 
+X   make this consistent with the regular PApplet
+X     otherwise things are going to be weird/difficult for debugging
+
+
 0074 core
 X removed zbuffer precision hack in PLine to improve z ordering
 X no longer set g.dimensions = 3 when using vertex(x, y, 0)
