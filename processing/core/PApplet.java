@@ -1534,8 +1534,12 @@ public class PApplet extends Applet
    * Wrapper for tedious Integer.parseInt function
    */
   static public int toInt(String what) {
-    return toInt(what, 0);
+    try {
+      return Integer.parseInt(what);
+    } catch (NumberFormatException e) { }
+    return 0;
   }
+
 
   /**
    * Wrapper for tedious Integer.parseInt function
@@ -1562,6 +1566,7 @@ public class PApplet extends Applet
     return toInt(what, 0);
   }
 
+
   /**
    * Make an array of int elements from an array of String objects.
    * If the String can't be parsed as a number, its entry in the
@@ -1582,6 +1587,26 @@ public class PApplet extends Applet
       }
     }
     return output;
+  }
+
+
+  /**
+   * Cast a float to an int.
+   */
+  static public int toInt(float what) {
+    return (int) what;
+  }
+
+
+  /**
+   * Create an array of ints that correspond to an array of floats.
+   */
+  static public int[] toInt(float what[]) {
+    int inties[] = new int[what.length];
+    for (int i = 0; i < what.length; i++) {
+      inties[i] = (int)what[i];
+    }
+    return inties;
   }
 
 
@@ -1608,12 +1633,34 @@ public class PApplet extends Applet
 
 
   /**
+   * Cast an int to a float.
+   */
+  static public float toFloat(int what) {
+    return (float)what;
+  }
+
+
+  /**
+   * Create an array of ints that correspond to an array of floats.
+   */
+  static public float[] toFloat(int what[]) {
+    float floaties[] = new float[what.length];
+    for (int i = 0; i < what.length; i++) {
+      //floaties[i] = (float)what[i];
+      floaties[i] = what[i];
+    }
+    return floaties;
+  }
+
+
+  /**
    * Convert an array of Strings into an array of floats.
    * See the documentation for toInt().
    */
   static public float[] toFloat(String what[]) {
     return toFloat(what, 0);
   }
+
 
   /**
    * Convert an array of Strings into an array of floats.
