@@ -2,12 +2,17 @@
 X editor.buttons.bgcolor default value was wrong
 X sketch.properties exception when closing on linux and mac
 X   urlstr was garbage because of windows-specific code
+X test build macos9 version with JDK13 flag turned off
 
-_ build macos9 version with JDK13 flag turned off
-_ dbn2p5 converter.. ooh!
+_ make buttons taller by 4 pixels (looking bad on macos9/macosx)
+_   change to uppercase (looks dumb on mac, and casey doesn't like)
+_ save window position (only during session) of sketch run window
+_ present mode should hide editor frame
+_ present mode doesn't work for draw()
 
 bagel
 a _ fold simpleserial into BApplet
+a _   set serial properties inside bagel in kjcengine
 a _   sprint an sprintln functions
 a _   make i/o work just like mouse (event driven, with dflt behavior)
 a _   need to have function to enable it in setup
@@ -33,21 +38,6 @@ a o   line wrapping (but save info for resize? noo..)
 play
 a _ shouldn't substitute f's for: "Univers76.vlw.gz";
 
-macos
-a _ implement menuitem to load ref and to launch p5.net
-a _   need fxns to test platform and java version
-a _ how to make double-clickable version for osx
-a _ crashes when people click on help in top bar (same in DBN) [macos9]
-a _ dataInputStream, setUseCaches on the url to false
-a _   URLConnection.setUseCaches(false)
-a _   parent.obj.close() on the url
-a _ serial port code needs to be implemented
-a _   something that docks better to java serial api
-a _ need double-clickable application version for the mac
-a _   if os9, this is a no-brainer.. for osx may take a little time
-a _ lines being highlighted for errors are off (?)
-a _   test this on other platforms as well
-
 pde
 a _ class unloading not happening
 a _   when doing an extends ProcessingApplet
@@ -55,18 +45,62 @@ a _   need to add randomizer to even non-self gen'd classes
 a _   or figure out how to unload old classes.. grr
 a _ copying files from 'data' dir is not recursive
 
+cvs
+a _ move structure of app/application dirs around a bit
+a _ make a new 'dist' function for building
+a _   easier to build on mac for pc than vice-versa..
+a _ small script to remove CVS directories from a tree
+
 windows
 _ figure out how to do do simple .exe with icons
 _   also file association for .pde files
 _   use launcher code from sun jre
 _   needs to be built from command line
 
-cvs / release
+macos9
+a _ getResource stuff breaks, sketch.properties can't save
+a _   FileNotFoundException: /FILE9/+/sketch.properties
+a _ apple control keys register as edit events in buffer
+a _   use Toolkit.getShortcutKeymask() to figure out what's up
+a _ button backgrounds are weird since not square
+a _   (seen when asking to save a file etc)
+a _   see if possible to set background of button object
+a _   or maybe just background of the awt object it sits on
+a _ use type/creator Pde1
+a _ crashes when people click on help in top bar (same in DBN) [macos9]
+
+macosx
+a _ how to make double-clickable version for osx
+a _   might be as simple as combined jar with manifest and symlink
+a _   jar doesn't like opening pde.properties b/c getClass fails
+a _ app title comes up as PdeBase
+a _   -Xdock:name property or 
+a _   com.apple.mrj.application.apple.menu.about.name (gulp)
+a _ handlers for basic events
+a _   MRJAboutHandler (just show splash screen)
+a _   MRJPrefsHandler (open pde.properties in a text editor)
+a _   MRJQuitHandler (confirm quit, may need to be in another thread)
+a _ remove 'quit' from file menu
+a _ requires java 1.3.1 update 1
+a _ -XDock:icon (lowercase dock?) to set icon, or
+a _   .icns file in the Contents/Resources of the bundle
+a _   check tn on java runtime properties for macosx
+
+macos
+a _ MRJOpenApplicationHandler and MRJOpenDocumentHandler
+a _   especially the open document fella
+a _   under osx, app won't get doc unless app already launched
+a _ implement menuitem to load ref and to launch p5.net
+a _   need fxns to test platform and java version
+a _ dataInputStream, setUseCaches on the url to false
+a _   URLConnection.setUseCaches(false)
+a _   parent.obj.close() on the url
+a _ serial port code needs to be implemented
+a _   something that docks better to java serial api
+a _ check to see if lines for error messages are off
+
+release
 a _ write message to people who signed up for p5 alpha
-a _ move structure of app/application dirs around a bit
-a _ small script to remove CVS directories from a tree
-a _ make a new 'dist' function for building
-a _   easier to build on mac for pc than vice-versa..
 a _ collapse pdeengine/pderunner/kjcengine a bit
 a _ figure out about distributing source
 a _   kjc is gnu, so source needs to be available
@@ -75,6 +109,14 @@ a _     buzz.pl actually no longer needed (no ifdefs)
 a _     use a regular makefile for everything
 a _ get all of casey's examples into the sketchbook
 a _   these should become the standard test cases for everything
+
+web
+a _ online discussion/talk system (gets people using the site too)
+a _ online signup cgi for people to add themselves to the list
+a _ see about setting up simple bug tracker/feature system
+a _   queue for people reporting things externally
+a _   bugzilla but simpler
+a _   would also be nice for people to be able to vote on features
 
 
 ////////////////////////////////////////////////////////////////////
@@ -222,6 +264,7 @@ PDE / high
 
 
 PDE / medium
+b _ beautify is broken
 b _ sketch: sketch-000 is dumb
 b _ check logs to see where we're getting traffic from
 b _ event to explorer to open 'parts' directory of project
@@ -299,7 +342,6 @@ b _ remove Editor's frame instance, replace refs with PdeBase.frame
 
 
 PDE / low
-_ beautify is (slightly?) broken
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
@@ -315,6 +357,7 @@ _ stop() method in applet should stop kjc environment
 _   should be able to call stop() to 'quit' an applet
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
+_ dbn2p5 converter.. ooh!
 
 
 PDE / features
@@ -354,15 +397,6 @@ _   version # stored in .java file
 _   if a new version is available, asks 'do you want to update?'
 _   multi-file: quicksort + sortable
 _ check out interface builder for interesting tidbits
-
-
-WEB
-a _ online discussion/talk system (gets people using the site too)
-a _ online signup cgi for people to add themselves to the list
-_ see about setting up simple bug tracker/feature system
-_   queue for people reporting things externally
-_   bugzilla but simpler
-_   would also be nice for people to be able to vote on features
 
 
 DOCS / guide
@@ -550,3 +584,6 @@ rm -rf cpp
 cd ..
 rm -rf web (optional, if you're only doing java dev)
 cvs update -P (prune empty directories)
+
+need to have comm.jar in the CLASSPATH to build bagel
+just gotta be that way, it's too messy otherwise
