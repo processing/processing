@@ -146,16 +146,16 @@ X add a "make archive" option
 X   doesn't rename sketch, just names zip file sketch + time stamp
 
 hanging bug - now fixed, need to post on the board about it
-_ keypressed hanging on applets with a code folder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
-_ problems running external vm/vm is hanging
-_   seems to be happening because of virus scanning software (norton)
-_   may need to launch the applet (using 'start') 
-_     and talk over a socket instead
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
-_     something in that one about mouse position halting or not
+X keypressed hanging on applets with a code folder
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
+X problems running external vm/vm is hanging
+X   seems to be happening because of virus scanning software (norton)
+o   may need to launch the applet (using 'start') 
+o     and talk over a socket instead
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
+X     something in that one about mouse position halting or not
 to try: 1) don't use a bufferedreader.. just read it and then use a
 buffered reader around the byte array 2) don't do anything with the
 input, and just read it off without signalling message()
@@ -274,6 +274,9 @@ _   maybe something that shows stack trace?
 _   with an 'email this' button? (include source code too?)
 _   also need a "prompt" dialog for asking filenames, etc
 _   implement and remove PdeEditorStatus stuff
+_ beginShape() defaults to beginShape(POLYGON)
+_   needs to be noted for the reference
+_ make a note that u/v coordinates clamp at 0 and 1
 
 _ different name for 'lib' folder because of libraries folder?
 _   avoid some confusion for when describing the libraries folder to users
