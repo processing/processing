@@ -11,6 +11,15 @@ X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
 X modify targa and tiff writing routines to break into header writing
 X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
 X MAJOR CHANGE: RGBA becomes ARGB for accuracy
+o uv coords > 1 shouldn't clamp, they should just repeat ala opengl
+o   actually i think opengl has a setting for it
+_   make a note that u/v coordinates clamp
+o remove need to use depth() at the beginning
+X   need only be set once
+X pmouseX is broken again
+X   remove pmouseX/Y altogether
+X   maintain things a bit different
+o   email the beta@ list to see how people are using pmouseX
 
 opengl
 X why is the thing hanging until 'stop' is hit?
@@ -25,12 +34,18 @@ X   INVALID_OPERATION after drawing lines for cube
 X fix noLoop bug
 X remove errors when drawing textures
 X reverse y coordinates
+X make play button un-highlight with opengl
+X   also make window move messages work properly
+X   very necessary, since opens window at 100x100
+X   problem was the threading issues
 
-_ beginFrame() around setup()
-_   draw mode stuff happens inside setup.. 
-_   or maybe need to get better at size() inside of draw() ? 
+X beginFrame() around setup()
+X   draw mode stuff happens inside setup.. 
+o   or maybe need to get better at size() inside of draw() ? 
 _   make this consistent with the regular PApplet
 _     otherwise things are going to be weird/difficult for debugging
+
+_ when running externally, regular applets don't get placed properly
 
 _ still threading issues with running opengl 
 _   first run hangs until quit 
@@ -42,17 +57,15 @@ _ fix endian ordering issues so that things work properly
 _ figure out min/max texture sizes when binding to avoid problems
 _   minimum texture size may be 64x64
 _   might need to enforce it as a minimum
+_ what should the update image function be called?
 
-_ remove need to use depth() at the beginning
+_ get loop, noLoop, redraw, and framerate all working in opengl
+_   needs custom animator thread..
+
 _ and cameraMode(PERSPECTIVE) on each frame
 _   why is the first one failing?
 
-_ get loop, noLoop, redraw, and framerate all working
-_   needs custom animator thread..
-
-_ make play button un-highlight with opengl
-_   also make window move messages work properly
-_   very necessary, since opens window at 100x100
+_ be consistent about getXxx() methods
 
 _ can ALPHA fonts work using the other replace modes?
 _ resolve ARGB versus RGBA versus just A issues for fonts
@@ -61,8 +74,8 @@ _   if so, just switch the image code to expect alpha in the high bits
 _   fonts probably need to be RGBA, not ALPHA style images
 _   there's nothing really ALPHA about them?
 
-_ implement fullscreen().. this takes over the screen as best it can
-_   really more like present mode.. 
+_ implement fullsize().. this takes over the screen as best it can
+_   or should it be more like present mode?
 _   that if applet is 500x500, centers on a 800x600 window
 _   though how do you get the screen size? 
 _     screen.width and screen.height? 
@@ -142,10 +155,6 @@ _ how to handle full screen (opengl especially) or no screen (for scripts)
 
 _ image loading bug is huge
 
-_ pmouseX is broken again
-_   maintain things a bit different
-_   email the beta@ list to see how people are using pmouseX
-
 _ need timer in as part of the api
 _   or at least include an example that uses it
 
@@ -170,9 +179,6 @@ _   just have a "thin_flat_line" option in opengl code
 _ image("blah.jpg"); 
 _ loadImage() is broken on some machines
 _   hacked for a fix in 72, but need to better coordinate with openStream()
-
-_ uv coords > 1 shouldn't clamp, they should just repeat ala opengl
-_   actually i think opengl has a setting for it
 
 _ renderers can plug in:
 _   at direct api level
