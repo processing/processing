@@ -6,25 +6,189 @@ about to enjoy is extremely hot.
 
 ABOUT REV 0060 - 
 
+IMPORTANT NOTE! ACHTUNG!
+YOUR OLD CODE WILL PROBABLY BE BROKEN WITH THIS RELEASE.
 
-[ api changes ]
+read the section on api changes very carefully, because a few
+functions have been renamed, and the behavior of background() has
+changed completely. almost all programs will have to be updated.
 
-- if you get an error saying:
+but the happy part is that there are many many new features, and this
+change to the behavior of background() means lots of positive things.
+
+we decided to make as many of these naming changes as possible all at
+once, so that you only have to really mess with your code a single
+time. as casey put it, it's better to remove the band-aid quickly.
+
+if you're confused, all the examples have been updated for this
+release to use the new function names and background methods. a quick
+glance through them should help clear things up.
+
+
+[ api changes -- read carefully, avoid headaches ]
+
+- noBackground() no longer exists, so remove it from your code.
+
+- background() actually clears the screen immediately, rather than
+  simply setting a color. this means that you should use background()
+  a the beginning of loop(), if you want your applications to behave
+  similar to the way they used to.
+
+- hint(SMOOTH_IMAGES) no longer exists, and is simply the default.
+  just remove it from your code. if you get an error saying:
   "No field named "SMOOTH_IMAGES" was found in type "Temporary_NNNN_NNNN".
   you should remove the line "hint(SMOOTH_IMAGES);" from your program.
   SMOOTH_IMAGES is no longer needed and has been removed.
 
+- fill() no longer colors images. if you want to color images, use
+  tint(), which is just like its cousins fill and stroke. like its
+  cousins, there's also noTint(), his (her?) contrarian twin.
+
+- getPixel() -> get() and setPixel() -> set()
+
+- get() and set() work directly on BImage objects.
+
+- get(int x, int y, int width, int height) copies a section of pixels
+  and puts them in a BImage. (based on code from toxi)
+
+- screenGrab() -> saveFrame()
+  saveFrame() will save a sequence of numbered tiff images
+  saveFrame("blah.tif") will save the current frame as blah.tif
+  saveFrame("blah-####.tif") will save a sequence of images
+    as blah-0000.tif, blah-0001.tif, etc.
+  saveFrame("blah.tga") will save the current frame as targa.
+  saveFrame("blah-####.tga") is up to you to figure out.
+
+- strokeWidth() -> strokeWeight()
+
+- bezier(a, b, c, d, t) -> bezierPoint(a, b, c, d, t);
+  curve(a, b, c, d, t) -> curvePoint(a, b, c, d, t);
+
+- vertexTexture(u, v) has been rolled into vertex(), so:
+  vertex(x, y); vertexTexture(u, v); -> vertex(x, y, u, v);
+  vertex(x, y, z); vertexTexture(u, v); -> vertex(x, y, z, u, v);
+
+- vertexNormal() -> normal()
+
+- font.stringWidth(String s) -> font.width(String s)
+  font.charWidth(char c) -> font.width(char c)
+
+
+[ additions ] 
+
+- BImage.save(String filename) has been implemented. the filename
+  should be something and a .tif or .tga at the end to determine how
+  the file should be saved.
+
+- background(BImage image); has been implemented, so your background
+  can automatically be replaced with an image. note that the image
+  must be the same size as your drawing area.
+
+- BImage.copy() returns a copy of an image. better yet, 
+  BImage.copy(int width, int height) returns a copy of an image, but
+  resized to that specific size. (code contributed by toxi)
+
+- online() returns a true or false for whether an applet is online or
+  not. (or really, whether it's running in a proper applet viewer)
+
+- status(String text) shows a string in a browser's status bar, or
+  sends it to the console in an application. (this replaces
+  Applet.showStatus if you're familiar with that)
+
+- bezierTangent() now implemented, but curveTangent() is unfinished.
+
+- param(String p) reads params from your html code for your applet.
+
+- text(float something, float x, float y) and 
+  text(int something, float x, float y) have been implemented.
+  just because their syntax is otherwise cumbersome.
+
+- textMode(ALIGN_LEFT), textMode(ALIGN_CENTER), textMode(ALIGN_RIGHT)
+  are implemented, and do what you might expect them to.
+
+- clean and pretty two dimensional circles and ellipses have been
+  implemented. this will speed and beautify your 2D elliptical needs.
+
+- added several error messages to provide more useful feedback about
+  misuse of font api functions or common problems.
+
+- added an error message (instead of failing silently) for when
+  noCursor() is attempted in an exported applet.
+
+- BImage.blendMode() has been added, thanks to toxi. details and
+  examples are forthcoming. 
+
+- it is now possible to draw inside of setup(). 
+
+- you are no longer restricted to using numbers (rather than
+  variables) for size() and background().
+
+- BGraphics now subclasses BImage. if you don't know what that means,
+  don't worry about it. just trust me.
+
+
+[ bug fixes ]
+
+- fixed significant CLASSPATH and quicktime for java problems. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184794;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184892;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064185169;start=0
+
+- properly asks for "save changes?" before quitting the application. 
+  this had disappeared and it was scary.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165653;start=0
+
+- sketch folder is no longer deleted if the sketch is empty but
+  something was placed in the data folder.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064160655;start=0
+
+- "present" mode repairs contributed by toxi (thankyouthankyouthankyou)
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166151;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166198;start=0
+
+- new preprocessor from dan mosedale that fixes a myriad of strange
+  errors with code that was completely proper but misunderstood.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165730;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165923;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166659;start=0
+
+- perlin noise now works, also thanks to toxi.
+
+- single pixel lines finally have alpha and z values. thick lines are
+  coming soon. (code from ivrea-funded carlos)
+
+- color() with alpha now works properly
+
+- repaired the function formerly known as screenGrab() so that it is
+  far less likely to run out of memory the way it did before. in
+  general, if you can get the thing on screen, you should be able to
+  save it to disk with the new implementation.
+
+- fixed bug where bezier curves weren't quite straight because of an
+  internal rounding error. also fixed another related bug.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166242;start=0
+
+- no more gaps when using pmouseX and pmouseY. this caused a problem
+  for the continous_lines example since they weren't, err, continuous.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166777;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
+
+- removed ugly white borders around gui elements that show up on
+  macosx (workaround for a bug in apple's java 1.3 implementation).
+
+- removed an extra push() and pop() in the text(), which may speed
+  things up a bit.
+
+- we've silenced the "couldn't delete..." messages
+
 
 [ known problems, pardon our dust ]
+
+- stroke widths that aren't 1 are probably broken.
 
 - the size of exported applets has jumped in this release. this will
   get smaller again in a future release. we're in the middle of
   transitioning between two different sets of rendering/graphics code.
-
-- single pixel lines draw on top of everything. they have no alpha
-  value so they can't be semi-transparent, and no z-coordinate.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
 
 - clipping planes are not yet implemented. meaning that objects may
   sometimes fly into the camera and turn upside down or do other tricks.
@@ -36,6 +200,32 @@ ABOUT REV 0060 -
   polygons won't draw properly.
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062469819;start=0
 
+- jikes is ~9 megabytes in size, which is a bit obnoxious. it doesn't
+  hurt anything but we plan to put it on a diet for a future release.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
+
+- curveTangent() is not yet implemented. contributions welcome.
+
+- strokeMiter() and strokeJoin() exist but are not implemented.
+
+- textures warp in strange ways due to perspective problems.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
+
+- smooth() is not completely implemented. there will be quirks in how
+  it draws (like a weird flat line at the end of a shape, or areas
+  that are less than smooth).
+
+- on windows, processing can't be run from a folder that has non-ascii
+  characters in its name. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+
+- video examples sometimes crash the whole environment on windows
+
+- net needs work, it's currently sending unicode, instead of ascii or
+  UTF-8, data. this can cause problems with other programs.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 ABOUT REV 0059 - 31 august 2003
