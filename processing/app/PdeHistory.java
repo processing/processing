@@ -77,6 +77,14 @@ public class PdeHistory {
   }
 
 
+  /**
+   * Set the path for the current sketch
+   */
+  public void setPath(String path) {
+    historyFile = new File(path, "history.gz");
+  }
+
+
   public void attachMenu(JMenu parent) {
     //if (PdePreferences.getBoolean("history.recording")) {
     menu = new JMenu("History");
@@ -261,20 +269,23 @@ public class PdeHistory {
 
 
   //public void rebuildHistoryMenu(Menu menu, String path) {
-  public void rebuildMenu(String path) {
+  public void rebuildMenu() {  //String path) {
     //if (!recordingHistory) return;
     //if (!PdePreferences.getBoolean("history.recording")) return;
 
     menu.removeAll();
 
-    File hfile = new File(path);
-    if (!hfile.exists()) return;  // no history yet
+    //File hfile = new File(path);
+    //if (!hfile.exists()) return;  // no history yet
+    if (!historyFile.exists()) return;
 
     JMenuItem item = new JMenuItem("Clear History");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (!historyFile.delete()) {
-            System.err.println("couldn't erase history");
+            //System.err.println("couldn't erase history");
+            PdeBase.showWarning("History Problem", 
+                                "Could not erase history", null);
           }
           rebuildMenu(historyFile.getPath());
         }
@@ -283,7 +294,7 @@ public class PdeHistory {
     menu.addSeparator();
 
     try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(path))));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(historyFile))));
       String line = null;
 
       int historyCount = 0;
