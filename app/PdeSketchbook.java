@@ -161,9 +161,7 @@ public class PdeSketchbook {
   }
 
 
-  protected boolean addSketches(Menu menu, File folder) {
-                               // /*boolean allowUser,*/ boolean root) 
-    throws IOException {
+  protected boolean addSketches(Menu menu, File folder) throws IOException {
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
 
@@ -199,7 +197,7 @@ public class PdeSketchbook {
       }
     }
     return ifound;
-  } 
+  }
 
 
   /**

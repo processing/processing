@@ -198,7 +198,7 @@ public class PdeEditor extends JFrame
     rightPanel.add(header, BorderLayout.NORTH);
 
     textarea = new JEditTextArea();
-    textarea.setRightClickPopup(new TextAreaPopup(textarea));
+    textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
     // assemble console panel, consisting of status area and the console itself
@@ -2415,21 +2415,21 @@ public class PdeEditor extends JFrame
     String currentDir = System.getProperty("user.dir");
     String referenceFile = null;
 
-    JEditTextArea parent;
+    //static JEditTextArea parent;
 
     JMenuItem cutItem, copyItem;
     JMenuItem referenceItem;
 
 
-    public TextAreaPopup(JEditTextArea parent) {
-      this.parent = parent;
+    public TextAreaPopup(/*JEditTextArea parent*/) {
+      //this.parent = parent;
 
       JMenuItem item;
 
       cutItem = new JMenuItem("Cut");
       cutItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            parent.cut();
+            textarea.cut();
           }
       });
       this.add(cutItem);
@@ -2437,7 +2437,7 @@ public class PdeEditor extends JFrame
       copyItem = new JMenuItem("Copy");
       copyItem.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
-	    parent.copy();
+	    textarea.copy();
 	  }
         });
       this.add(copyItem);
@@ -2445,7 +2445,7 @@ public class PdeEditor extends JFrame
       item = new JMenuItem("Paste");
       item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
-	    parent.paste();
+	    textarea.paste();
 	  }
         });
       this.add(item);
@@ -2455,7 +2455,7 @@ public class PdeEditor extends JFrame
       item = new JMenuItem("Select All");
       item.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  parent.selectAll();
+	  textarea.selectAll();
 	}
       });
       this.add(item);
@@ -2497,11 +2497,11 @@ public class PdeEditor extends JFrame
     // if no text is selected, disable copy and cut menu items
     public void show(Component component, int x, int y)
     {
-      if (parent.isSelectionActive()) {
+      if (textarea.isSelectionActive()) {
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
 
-        referenceFile = PdeKeywords.getReference(parent.getSelectedText());
+        referenceFile = PdeKeywords.getReference(textarea.getSelectedText());
         if (referenceFile != null) {
           referenceItem.setEnabled(true);
         }

@@ -92,7 +92,7 @@ public class PdePreferences extends JComponent {
   int wide, high;
 
   JTextField sketchbookLocationField;
-  JCheckBox newSketchPromptBox;
+  JCheckBox sketchPromptBox;
   JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
 
@@ -129,7 +129,7 @@ public class PdePreferences extends JComponent {
     } catch (Exception e) {
       PdeBase.showError(null, "Could not read default settings.\n" + 
                         "You'll need to reinstall Processing.", e);
-      System.exit(1);
+      //System.exit(1);
       //System.err.println("Error reading default settings");
       //e.printStackTrace();
     }
@@ -168,6 +168,12 @@ public class PdePreferences extends JComponent {
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
+
+      // set default sketchbook path to the user's home folder
+      // with 'sketchbook' as a subdirectory of that
+      File sketchbookDir = new File(home, "sketchbook");
+      set("sketchbook.path", sketchbookDir.getAbsolutePath());
+
       //firstTime = true;
       save();  // will save the defaults out to the file
 
@@ -177,12 +183,12 @@ public class PdePreferences extends JComponent {
       try {
         load(new FileInputStream(preferencesFile));
 
-      } catch (Exception e) {
+      } catch (Exception ex) {
         PdeBase.showError("Error reading preferences", 
                           "Error reading the preferences file. " +
-                          "Please delete\n" +
-                          perferencesFile.getAbsolutePath() + "\n" + 
-                          "and restart Processing.", e);
+                          "Please delete (or move)\n" +
+                          preferencesFile.getAbsolutePath() +
+                          " and restart Processing.", ex);
       }
     }
 
@@ -216,7 +222,7 @@ public class PdePreferences extends JComponent {
     d = sketchPromptBox.getPreferredSize();
     sketchPromptBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
-    top += d.height + BETWEEN;
+    top += d.height + GUI_BETWEEN;
 
 
     // Sketchbook location: [...............................]  [ Browse ]
@@ -233,8 +239,8 @@ public class PdePreferences extends JComponent {
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           JFileChooser fc = new JFileChooser();
-          fc.setFile(sketchbookLocationField.getText());
-          fc.setFileSectionMode(JFileChooser.DIRECTORIES_ONLY);
+          fc.setSelectedFile(new File(sketchbookLocationField.getText()));
+          fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
           int returned = fc.showOpenDialog(new JDialog());
           if (returned == JFileChooser.APPROVE_OPTION) {
@@ -251,8 +257,8 @@ public class PdePreferences extends JComponent {
     label.setBounds(left, top + (vmax-d.height)/2, 
                     d.width, d.height);
     h = left + d.width + GUI_BETWEEN;
-    sketchbookLocation.setBounds(h, top + (vmax-d2.height)/2, 
-                                 d2.width, d2.height);
+    sketchbookLocationField.setBounds(h, top + (vmax-d2.height)/2, 
+                                      d2.width, d2.height);
     h += d2.width + GUI_BETWEEN;
     button.setBounds(h, top + (vmax-d3.height)/2, 
                      d3.width, d3.height);
@@ -268,7 +274,7 @@ public class PdePreferences extends JComponent {
     d = exportLibraryBox.getPreferredSize();
     exportLibraryBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
-    top += d.height + BETWEEN;
+    top += d.height + GUI_BETWEEN;
 
 
     // [ ] Use external editor
@@ -278,7 +284,7 @@ public class PdePreferences extends JComponent {
     d = externalEditorBox.getPreferredSize();
     externalEditorBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
-    top += d.height + BETWEEN;
+    top += d.height + GUI_BETWEEN;
 
 
     // More preferences are in the ...
@@ -289,14 +295,14 @@ public class PdePreferences extends JComponent {
       PdeBase.platforms[PdeBase.platform] + ".properties";
 
     JTextArea textarea = new JTextArea(blather);
-    textarea.setBorder(new EmptyBorder(SMALL, SMALL, SMALL, SMALL));
+    textarea.setBorder(new EmptyBorder(GUI_SMALL, GUI_SMALL, GUI_SMALL, GUI_SMALL));
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
 
     //pain.add(label);
     d = textarea.getPreferredSize();
     textarea.setBounds(left, top, d.width, d.height);
-    top += d.height + BETWEEN;
+    top += d.height + GUI_BETWEEN;
 
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
@@ -304,13 +310,13 @@ public class PdePreferences extends JComponent {
     button = new JButton(PROMPT_OK);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          apply();
+          applyFrame();
           disposeFrame();
         }
       });
     pain.add(button);
-    button.setBounds(LEFT, top, BUTTON_WIDTH, BUTTON_HEIGHT);
-    h = LEFT + BUTTON_WIDTH + GUI_BETWEEN;
+    button.setBounds(left, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    h = left + BUTTON_WIDTH + GUI_BETWEEN;
 
     //d = button.getPreferredSize();
 
@@ -323,12 +329,12 @@ public class PdePreferences extends JComponent {
     pain.add(button);
     button.setBounds(h, top, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-    top += BUTTON_HEIGHT + BETWEEN;
+    top += BUTTON_HEIGHT + GUI_BETWEEN;
 
     //
 
-    wide = right + BIG;
-    high = top + BIG;
+    wide = right + GUI_BIG;
+    high = top + GUI_BIG;
     setSize(wide, high);
 
     Container content = frame.getContentPane();
@@ -373,13 +379,13 @@ public class PdePreferences extends JComponent {
     //editor.setExternalEditor(getBoolean("editor.external"));
     // put each of the settings into the table
 
-    putBoolean("sketchbook.prompt", sketchPrompBox.getSelected());
+    setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
 
-    put("sketchbook.path", sketchbookLocation.getText());
+    set("sketchbook.path", sketchbookLocationField.getText());
 
-    putBoolean("export.library", exportLibraryBox.getSelected());
+    setBoolean("export.library", exportLibraryBox.isSelected());
 
-    putBoolean("editor.external", externalEditorBox.getSelected());
+    setBoolean("editor.external", externalEditorBox.isSelected());
   }
 
 
@@ -388,7 +394,7 @@ public class PdePreferences extends JComponent {
 
     sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
 
-    sketchbookLocation.setText(get("sketchbook.path"));
+    sketchbookLocationField.setText(get("sketchbook.path"));
 
     exportLibraryBox.setSelected(getBoolean("export.library"));
 
@@ -401,7 +407,7 @@ public class PdePreferences extends JComponent {
   // .................................................................
 
 
-  public void load(InputStream input) {
+  public void load(InputStream input) throws IOException {
     BufferedReader reader = 
       new BufferedReader(new InputStreamReader(input));
 
@@ -428,8 +434,8 @@ public class PdePreferences extends JComponent {
       FileOutputStream output = new FileOutputStream(preferencesFile);
       PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
 
-      Enumeration enum = table.keys(); //properties.propertyNames();
-      while (enum.hasMoreElements()) {
+      Enumeration e = table.keys(); //properties.propertyNames();
+      while (e.hasMoreElements()) {
         String key = (String) e.nextElement();
         writer.println(key + "=" + ((String) table.get(key)));
       }
@@ -499,8 +505,8 @@ public class PdePreferences extends JComponent {
       skprops.close();
       */
 
-    } catch (IOException e) {
-      PdeBase.showWarning(null, "Error while saving the settings file", e);
+    } catch (IOException ex) {
+      PdeBase.showWarning(null, "Error while saving the settings file", ex);
       //e.printStackTrace();
     }
   }
@@ -535,7 +541,7 @@ public class PdePreferences extends JComponent {
 
 
   static public boolean getBoolean(String attribute) {
-    String value = get(attribute, null);
+    String value = get(attribute); //, null);
     return (new Boolean(value)).booleanValue();
 
     /*
@@ -553,7 +559,7 @@ public class PdePreferences extends JComponent {
   }
 
 
-  static public boolean setBoolean(String attribute, boolean value) {
+  static public void setBoolean(String attribute, boolean value) {
     set(attribute, value ? "true" : "false");
   }
 
@@ -586,7 +592,7 @@ public class PdePreferences extends JComponent {
 
   static public Color getColor(String name /*, Color otherwise*/) {
     Color parsed = null;
-    String s = get(name, null);
+    String s = get(name); //, null);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
         int v = Integer.parseInt(s.substring(1), 16);
@@ -594,13 +600,17 @@ public class PdePreferences extends JComponent {
       } catch (Exception e) {
       }
     }
-    if (parsed == null) return otherwise;
+    //if (parsed == null) return otherwise;
     return parsed;
   }
 
 
-  static public Color setColor(String attr, Color what) {
-    
+  static public void setColor(String attr, Color what) {
+    String r = Integer.toHexString(what.getRed());
+    String g = Integer.toHexString(what.getGreen());
+    String b = Integer.toHexString(what.getBlue());
+    set(attr, "#" + r.substring(r.length() - 2) + 
+        g.substring(g.length() - 2) + b.substring(b.length() - 2));
   }
 
 
