@@ -168,6 +168,11 @@ _ added background(BImage)
 _ screenGrab -> saveFrame
 _ textMode for alignments .. ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT
 _   ALIGN_XXXX becuase LEFT already used for keys
+X implement text(int something) and text(float something)
+o   and perhaps others?
+X textSpace SCREEN_SPACE and OBJECT_SPACE
+X strokeMode/strokeWidth -> 
+X   strokeWeight, strokeJoin, strokeMiter  
 
   // imaging API keywords	  	  
   pdeKeywords.add("REPLACE", Token.LITERAL1);
@@ -183,11 +188,7 @@ _   ALIGN_XXXX becuase LEFT already used for keys
 
 
 API
-X implement text(int something) and text(float something)
-o   and perhaps others?
-_ textSpace SCREEN_SPACE and OBJECT_SPACE
 _ need bezierTangent() code
-_ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
 _ param() function 
 _   also include code to read from properties file
 _   for application mode or while inside the environment
