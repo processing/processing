@@ -2397,13 +2397,13 @@ public class PApplet extends Applet
   }
 
 
-  public void bezierSegments(int segments) {
-    g.bezierSegments(segments);
+  public void bezierDetail(int detail) {
+    g.bezierDetail(detail);
   }
 
 
-  public void curveSegments(int segments) {
-    g.curveSegments(segments);
+  public void curveDetail(int detail) {
+    g.curveDetail(detail);
   }
 
 
