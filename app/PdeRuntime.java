@@ -109,8 +109,8 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     this.leechErr = leechErr;
 
-    Point parentLoc = editor.base.getLocation();
-    Insets parentInsets = editor.base.getInsets();
+    Point parentLoc = editor.getLocation();
+    Insets parentInsets = editor.getInsets();
 
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
@@ -146,7 +146,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         applet.leechErr = leechErr;
 
         // has to be before init
-        applet.serialProperties(PdePreferences.properties);
+        //applet.serialProperties(PdePreferences.properties);
         applet.init();
         if (applet.exception != null) {
           if (applet.exception instanceof PortInUseException) {
@@ -257,8 +257,8 @@ public class PdeRuntime implements PdeMessageConsumer {
           Insets insets = window.getInsets();
           //System.out.println(insets);
 
-          int minW = PdePreferences.getInteger("run.window.width.minimum", 120);
-          int minH = PdePreferences.getInteger("run.window.height.minimum", 120);
+          int minW = PdePreferences.getInteger("run.window.width.minimum");
+          int minH = PdePreferences.getInteger("run.window.height.minimum");
           int windowW = Math.max(applet.width, minW) + insets.left + insets.right;
           int windowH = Math.max(applet.height, minH) + insets.top + insets.bottom;
 
