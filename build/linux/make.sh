@@ -57,8 +57,8 @@ perl make.pl SERIAL SONIC
 cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting
-echo Building bagel for export
-perl make.pl
+echo Building bagel for export with sonic
+perl make.pl SONIC
 cp classes/*.class ../build/linux/work/lib/export/
 
 cd ..
