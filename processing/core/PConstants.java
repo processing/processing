@@ -75,6 +75,16 @@ public interface PConstants {
   static final int GIF   = 3;
 
 
+  // filter/convert types
+
+  static final int BLACK_WHITE   = 0;
+  static final int GRAYSCALE     = 1;
+  static final int BLUR          = 2;
+  static final int GAUSSIAN_BLUR = 3;
+  static final int POSTERIZE     = 4;
+  static final int FIND_EDGES    = 5;
+
+
   // blend mode keyword definitions
 
   public final static int REPLACE  = 0;
@@ -95,9 +105,9 @@ public interface PConstants {
 
   // for messages
 
-  static final int CHATTER = 0;
+  static final int CHATTER   = 0;
   static final int COMPLAINT = 1;
-  static final int PROBLEM = 2;
+  static final int PROBLEM   = 2;
 
 
   // types of projection matrices

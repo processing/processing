@@ -231,6 +231,7 @@ public class PdePreprocessor {
    */
   void writeHeader(PrintStream out, String imports[], 
                    String className) {
+    //out.print("package pootime;");
 
     // emit emports that are needed for classes from the code folder
     if (imports != null) {
@@ -247,7 +248,7 @@ public class PdePreprocessor {
     if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13; };
     if (jdkVersionStr.equals("1.4")) { jdkVersion = JDK14; };
 
-    for (int i = 0; i < jdkVersion; i++) {
+    for (int i = 0; i <= jdkVersion; i++) {
       for (int j = 0; j < defaultImports[i].length; j++) {
         out.print("import " + defaultImports[i][j] + ".*; ");        
       }
