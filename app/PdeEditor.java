@@ -79,6 +79,7 @@ public class PdeEditor extends Panel {
 
   boolean running;
   boolean presenting;
+  boolean renaming;
 
   PdeBase base;
 
@@ -507,12 +508,13 @@ public class PdeEditor extends Panel {
 	  // read lines until the next separator
 	  //textarea.editorSetText("");
 	  line = reader.readLine(); // ignored
-	  String sep = System.getProperty("line.separator");
+	  //String sep = System.getProperty("line.separator");
 	  StringBuffer buffer = new StringBuffer();
 	  while ((line = reader.readLine()) != null) {
 	    if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
 	    //textarea.append(line + sep);
-	    buffer.append(line + sep);
+	    //buffer.append(line + sep);  // JTextPane wants only \n going in
+	    buffer.append(line + "\n");
 	    //System.out.println("'" + line + "'");
 	  }
 	  textarea.editorSetText(buffer.toString());
@@ -893,17 +895,29 @@ afterwards, some of these steps need a cleanup function
     //System.err.println("made it");
     try {
       //if (true) throw new IOException("blah");
+      String program = null;
 
-      FileInputStream input = new FileInputStream(isketchFile);
-      int length = (int) isketchFile.length();
-      String program = "";
-      if (length != 0) {
-	byte data[] = new byte[length];
-
-	int count = 0;
-	while (count != length) {
-	  data[count++] = (byte) input.read();
+      if (isketchFile.length() != 0) {
+	FileInputStream input = new FileInputStream(isketchFile);
+	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+	StringBuffer buffer = new StringBuffer();
+	String line = null;
+	while ((line = reader.readLine()) != null) {
+	  buffer.append(line);
+	  buffer.append('\n');
 	}
+	program = buffer.toString();
+	textarea.editorSetText(program);
+
+	/*
+	int length = (int) isketchFile.length();
+	if (length != 0) {
+	  byte data[] = new byte[length];
+
+	  int count = 0;
+	  while (count != length) {
+	    data[count++] = (byte) input.read();
+	  }
 	// set the last dir and file, so that they're
 	// the defaults when you try to save again
 	//lastDirectory = file.getCanonicalPath(); //directory;
@@ -914,13 +928,14 @@ afterwards, some of these steps need a cleanup function
 	//textarea.editorSetText(app.languageEncode(data));
 	// what the hell was i thinking when i wrote this code
 	//if (app.encoding == null)
-	program = new String(data);
+	  program = new String(data);
 	//textarea.editorSetText(new String(data));
 	//System.out.println(" loading program = " + new String(data));
 	//else 
 	//textarea.editorSetText(new String(data, app.encoding));
-
 	textarea.editorSetText(program);
+	*/
+
 	// may be needed because settext fires an event
 	//setSketchModified(false); 
 
@@ -1017,9 +1032,15 @@ afterwards, some of these steps need a cleanup function
   }
 
 
-  public void skSaveAs() {
+  public void skSaveAs(boolean rename) {
     doStop();
-    status.edit("Save sketch as...", sketchName);
+
+    this.renaming = rename;
+    if (rename) {
+      status.edit("Rename sketch to...", sketchName);
+    } else {
+      status.edit("Save sketch as...", sketchName);
+    }
   }
 
   public void skSaveAs2(String newSketchName) {
@@ -1047,9 +1068,9 @@ afterwards, some of these steps need a cleanup function
     new File(newSketchDir, sketchName + ".pde").delete();
 
     // remove the old dir (!)
-    //if (rename) removeDir(sketchDir);
-    // oops.. has to be done before opening, otherwise the new
-    // dir is set to sketchDir.. duh..
+    if (renaming) removeDir(sketchDir);
+    // (important!) has to be done before opening, 
+    // otherwise the new dir is set to sketchDir.. 
 
     base.rebuildSketchbookMenu();
 
