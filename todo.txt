@@ -23,12 +23,11 @@ X   open the discourse board in another window, ask to post the code
 
 X set PATH to include java (!)
 X   external classes currently require expert release
-_   code written for linux, test it
+X   code written for linux, test it
 _   code written for windows, rebuild the exe and test it
-
 _ update the release of jikes that's used
 X   updated for macosx
-_   compile new version for linux
+X   compile new version for linux
 _   compile new version for windows
 
 _ netscape/javascript had to be included for linux and for expert
