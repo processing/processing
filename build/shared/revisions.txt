@@ -53,9 +53,14 @@ ABOUT REV 0044
 
 [ bug fixes ]
 
+- sketch windows won't pop up offscreen anymore.. and if a sketch
+  window is too large, it will simply center on-screen.
+
 - names with underscores and other illegal characters weren't being
   restrained. this allowed / and : to be used when renaming/saving
   sketches, which caused the app to blow up.
+
+- console window doesn't die as it approaches 1000 lines of text
 
 
 ABOUT REV 0043 - "ALPHA" - 2 august 2002
