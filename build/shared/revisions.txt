@@ -7,6 +7,24 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0077
+
++ forgot to mention in rev 75 that double-clicking a .pde file on the
+mac will now launch processing with that sketch running
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0076
+
+this was a quick release that fixed launcher issues on both mac os x
+and windows. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0075
 
 * DON'T USE THIS RELEASE IF YOU'RE ON ANY SORT OF MEDICATION *
