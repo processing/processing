@@ -203,8 +203,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   // perspective setup
   public float cameraFOV;
-  public float cameraEyeX, cameraEyeY;
-  public float cameraEyeDist, cameraNearDist, cameraFarDist;
+  public float cameraX, cameraY, cameraZ;
+  public float cameraNear, cameraFar;
   public float cameraAspect;
 
   public float p00, p01, p02, p03; // projection matrix
@@ -332,11 +332,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   // introduced new vars for more flexible code
   static final float sinLUT[], cosLUT[];
   static final float SINCOS_PRECISION = 0.5f;
-  static final int SINCOS_LENGTH=(int)(360f/SINCOS_PRECISION);
+  static final int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
   static {
     sinLUT = new float[SINCOS_LENGTH];
     cosLUT = new float[SINCOS_LENGTH];
-    for (int i=0; i<SINCOS_LENGTH; i++) {
+    for (int i = 0; i < SINCOS_LENGTH; i++) {
       sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
       cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
     }
@@ -419,12 +419,27 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     // init perspective projection based on new dimensions
     cameraFOV = 60; // at least for now
-    cameraEyeX = width / 2.0f;
-    cameraEyeY = height / 2.0f;
-    cameraEyeDist = cameraEyeY / ((float) tan(PI * cameraFOV / 360f));
-    cameraNearDist = cameraEyeDist / 10.0f;
-    cameraFarDist = cameraEyeDist * 10.0f;
+    cameraX = width / 2.0f;
+    cameraY = height / 2.0f;
+    cameraZ = cameraY / ((float) tan(PI * cameraFOV / 360f));
+    cameraNear = cameraZ / 10.0f;
+    cameraFar = cameraZ * 10.0f;
     cameraAspect = (float)width / (float)height;
+
+    // init lights (here instead of allocate b/c needed by opengl)
+    light = new boolean[MAX_LIGHTS];
+    lightX = new float[MAX_LIGHTS];
+    lightY = new float[MAX_LIGHTS];
+    lightZ = new float[MAX_LIGHTS];
+    lightAmbientR = new float[MAX_LIGHTS];
+    lightAmbientG = new float[MAX_LIGHTS];
+    lightAmbientB = new float[MAX_LIGHTS];
+    lightDiffuseR = new float[MAX_LIGHTS];
+    lightDiffuseG = new float[MAX_LIGHTS];
+    lightDiffuseB = new float[MAX_LIGHTS];
+    lightSpecularR = new float[MAX_LIGHTS];
+    lightSpecularG = new float[MAX_LIGHTS];
+    lightSpecularB = new float[MAX_LIGHTS];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // otherwise just hose the user if it's custom
@@ -454,21 +469,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     line = new PLine(this);
     triangle = new PTriangle(this);
-
-    // init lights
-    light = new boolean[MAX_LIGHTS];
-    lightX = new float[MAX_LIGHTS];
-    lightY = new float[MAX_LIGHTS];
-    lightZ = new float[MAX_LIGHTS];
-    lightAmbientR = new float[MAX_LIGHTS];
-    lightAmbientG = new float[MAX_LIGHTS];
-    lightAmbientB = new float[MAX_LIGHTS];
-    lightDiffuseR = new float[MAX_LIGHTS];
-    lightDiffuseG = new float[MAX_LIGHTS];
-    lightDiffuseB = new float[MAX_LIGHTS];
-    lightSpecularR = new float[MAX_LIGHTS];
-    lightSpecularG = new float[MAX_LIGHTS];
-    lightSpecularB = new float[MAX_LIGHTS];
   }
 
 
@@ -497,7 +497,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     lightEnable(0);
     lightAmbient(0, 0, 0, 0);
 
-    light(1, cameraEyeX, cameraEyeY, cameraEyeDist, 255, 255, 255);
+    light(1, cameraX, cameraY, cameraZ, 255, 255, 255);
 
     textureMode(IMAGE_SPACE);
     rectMode(CORNER);
@@ -536,12 +536,12 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     // reset lines
     lineCount = 0;
-    line.reset();
+    if (line != null) line.reset();  // is this necessary?
     pathCount = 0;
 
     // reset triangles
     triangleCount = 0;
-    triangle.reset();
+    if (triangle != null) triangle.reset();  // necessary?
 
     // reset textures
     texture_index = 0;
@@ -612,10 +612,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       // reset vertex, line and triangle information
       // every shape is rendered at endShape();
       vertex_count = 0;
-      line.reset();
+      if (line != null) line.reset();  // necessary?
       lineCount = 0;
       pathCount = 0;
-      triangle.reset();
+      if (triangle != null) triangle.reset();  // necessary?
       triangleCount = 0;
     }
     textureImage = null;
@@ -1226,6 +1226,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       float c[] = vertices[triangles[i][VERTEX3]];
       int tex = triangles[i][TEXTURE_INDEX];
       int index = triangles[i][INDEX];
+
+      System.out.println("A " + a[X] + " " + a[Y] + " " + a[Z]);
+      System.out.println("B " + b[X] + " " + b[Y] + " " + b[Z]);
+      System.out.println("C " + c[X] + " " + c[Y] + " " + c[Z]);
 
       triangle.reset();
 
@@ -4180,16 +4184,17 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * Note that this setting gets nuked if resize() is called.
    */
   public void cameraMode(int mode) {
-    if (cameraMode == PERSPECTIVE) {
+    if (mode == PERSPECTIVE) {
+      System.out.println("setting camera to perspective");
       beginCamera();
       resetMatrix();
-      perspective(cameraFOV, cameraAspect, cameraNearDist, cameraFarDist);
-      lookat(cameraEyeX, cameraEyeY, cameraEyeDist,
-             cameraEyeX, cameraEyeY, 0,
+      perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
+      lookat(cameraX, cameraY, cameraZ,
+             cameraX, cameraY, 0,
              0, 1, 0);
       endCamera();
 
-    } else if (cameraMode == ORTHOGRAPHIC) {
+    } else if (mode == ORTHOGRAPHIC) {
       beginCamera();
       resetMatrix();
       ortho(0, width, 0, height, -10, 10);
