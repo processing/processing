@@ -426,8 +426,17 @@ public class PdeBase extends Frame
         public void actionPerformed(ActionEvent e) { 
           if (editor.textarea.isSelectionActive()) {
             String text = editor.textarea.getSelectedText();
-            String referenceFile = (String) keywords.get(text);
-            showReference(referenceFile);
+            if (text.length() == 0) {
+              editor.message("First select a word to find in the reference.");
+
+            } else {
+              String referenceFile = (String) keywords.get(text);
+              if (referenceFile == null) {
+                editor.message("No reference available for \"" + text + "\"");
+              } else {
+                showReference(referenceFile);
+              }
+            }
           }
         }
       });

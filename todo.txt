@@ -13,15 +13,19 @@ X     save("blah.tif") will save the current frame as blah.tif.
 X     the syntax is either saveFrame() or saveFrame("blah-####.tif")
 X     either no properties passed-in or a name INCL. the ####'s
 X save() is not color-coded as a proper P5-command!
+X IllegalAccessError when running examples with inner classes in msjvm
+X   problem is that .class files are in both the applet folder and jar
+X   need to remove them from the applet folder
+X     weren't properly removed on windows b/c file was left open
+X if no reference found, provide message
+X   watch out for people selecting the parens or part of the function
 
 _ serious sluggishness with applets
 _   beginShape/endShape.. 3D scenes with boxes..
 
-_ IllegalAccessError when running examples with inner classes in msjvm
-
-_ if no reference found, provide message
-_   watch out for people selecting the parens or part of the function
 _ red of the console color is difficult to read
+
+_ remove .DS_Store files from windows build (oops)
 
 cr X some new examples to fix noBackground and setPixel problems
 cr X   image/transparency is broken (removing noBackground() is fixing it...)
@@ -80,6 +84,9 @@ bf b _     main sticking point will be serial/qtjava in exports
 
 
 LOWER (post beta tweaks, non-structural)
+_ error if you try to hit export twice on a sketch
+_   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
+_   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
 _ clean up PdeTokenMarker, probably just alphabetize
 _ remove .DS_Store boogers, especially from win/linux distributions
 _ NullPointerException when alt is pressed
