@@ -46,11 +46,18 @@ ks X faster version of _blend() function
 ks X MAX_LIGHTS instead of '10' sprinkled through the code
 
 after 0056rc1
-X patched up ellipse code because adaptive sizing not working properly
-X   added more segments to the adaptive sizing algo
-X   reported by benelek
-X fixed bug in BPolyogn.scanline for textures walking out of bounds
-X   reported by benelek
+bf X patched up ellipse code because adaptive sizing not working properly
+bf X   added more segments to the adaptive sizing algo
+bf X   reported by benelek
+bf X fixed bug in BPolyogn.scanline for textures walking out of bounds
+bf X   reported by benelek
+bf X point() wasn't getting a proper alpha value for drawing
+bf X   reported by benelek
+bf X add .tif extension when screenGrab() filename doesn't include it
+bf X   reported by benelek
+bf X add beginNet, endNet, net weren't colored
+bf X   reported by benelek
+hb X patch for server makes netEvent messages
 
 
 ..................................................................
