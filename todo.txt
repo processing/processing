@@ -28,50 +28,13 @@ _ maybe stop/kill button should only be a stop btn
 
 
 for 0010
-_ make size() work for draw() mode
-_ finish color function inside applet
-_   do by simplifying stroke/fill/background inside bagel
-_     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
-_ font support
-_   use gzip to compress bitmaps (made 115k vlw font -> 16k)
-_   loadImage/loadFont or getImage/getFont?
-_   text(char c), text(string s)
-_   current acu fonts are broken
-_   write code to bind/convert java fonts
-_ image support
-_   image() and 2D/2D affine versions of it
-_ min() seems funny/unavailable
-_ screenGrab() code (single frame to tif) 
 _ add java.* to top of processingapplet default base class used by kjc
-_ KjcProcessingApplet is dumb, kjc should make subst itself
+X KjcProcessingApplet is dumb, kjc should make subst itself
 o   give warning when compiling w/o kjcprocessingapplet
 _ z=0 shit, 2D stuff needs to draw over z=0 plane
 _   new objects draw behind old objects with noBackground()
-_ no stroke should show up on image()
-_ fill being set on image() produces weird results
-_   has to be set, but doesn't actually affect color
-_ docs
-_   explain using inner classes and using non-public classes
-_   start 'errors' section
-_     NullPointerException inside setup usually means no size()
-_   ability to write functions and inner classes
-_   mention ability to use import statements in java mode
-_     ability to do real (but not public) classes in same document
-_   make note in documentation about getting access to pixel array
-_     check to see if get/set functions in applet actually work
-_     fix documentation appropriately
-_   documentation says 'mouseDown' even though it's 'mousePressed'
-_   when images aren't found on disk
-_   image formats supported (gif and jpeg)
-_   notes about running on win98 and that stupid startup exception
-_   make note in documentation about convex polygons
-_ fix color cube applet 
-_   make it run in current version of processing
-_   fix background from showing up black
-_ fix crappy way of determining if inside a class--ignores comments
-_ post new macintosh version
-_   with serial port support
-_ include stdout/stderr in the processing window
+X fix crappy way of determining if inside a class--ignores comments
+X   hope this fis works.. not tested much
 X make acu fonts work again
 X write code to use simple bitmap fonts
 X add a file with bugs for testing
@@ -96,9 +59,68 @@ X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
 X nice to have a random number generator between -1..1 
 X   as well as an integer random; instead of just 0..1
 X show creas how to get access to cvs
+X documentation says 'mouseDown' even though it's 'mousePressed'
+X font support
+X   use gzip to compress bitmaps (made 115k vlw font -> 16k)
+X   loadImage/loadFont or getImage/getFont?
+X   text(char c), text(string s)
+X   current acu fonts are broken
+X image support
+X   image() and 2D/2D affine versions of it
+X   no stroke should show up on image()
+X   fill being set on image() produces weird results
+X     has to be set, but doesn't actually affect color
+X min() seems funny/unavailable
+X   worked fine for me
 
 
 for 0011
+_ write code to bind/convert java fonts
+_ finish color function inside applet
+_   do by simplifying stroke/fill/background inside bagel
+_     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
+_ screenGrab() code (single frame to tif) 
+_ include stdout/stderr in the processing window
+_   option to toggle window on/off (not just in properties, but realtime)
+_   set # of lines in properties
+_ fix color cube applet 
+_   make it run in current version of processing
+_   fix background from showing up black
+
+
+for 0012
+_ make size() work for draw() mode
+_   inside KjcEngine, reach in and grab calls to 'size'
+_   if call is not using a constant number, then punt
+_ fixed width fonts
+_   document fixed width font format
+_   write code for reading uncompressed b/w tiff images
+
+
+for 0013 (first semi-public release)
+_ docs
+_   explain using inner classes and using non-public classes
+_   start 'errors' section
+_     NullPointerException inside setup usually means no size()
+_   ability to write functions and inner classes
+_   mention ability to use import statements in java mode
+_     ability to do real (but not public) classes in same document
+_   make note in documentation about getting access to pixel array
+_     pixels[] is in ProcessingApplet
+_     check to see if get/set functions in applet actually work
+_     fix documentation appropriately
+_   when images aren't found on disk
+_   image formats supported (gif and jpeg)
+_   notes about running on win98 and that stupid startup exception
+_   make note in documentation about convex polygons
+_ post new macintosh version
+_   with serial port support
+_ move website to cvs
+_ setting a fill color when drawing an image should affect the image
+_   or maybe image.setColor or setTone to mix a specific color in
+
+
+for 0014
 _ option to enable/disable frame on running applets
 _   more like photoshop - presentation mode w/ nothing or frames on all
 _ compiling .java files leaves the .class files next to the .java
@@ -120,7 +142,7 @@ _   breaks on every 2nd run when using serial apps (or others?)
 _     try calling gc on stop as well
 
 
-for 0012
+for 0015
 _ fix bugs from the 'bugs' file 
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
