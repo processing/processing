@@ -542,8 +542,9 @@ public class PGraphics2 extends PGraphics {
 
 
   protected void imageImpl(PImage who,
-                            float x, float y, float w, float h,
-                            int u1, int v1, int u2, int v2) {
+                           float x1, float y1, float x2, float y2,
+                           //float x, float y, float w, float h,
+                           int u1, int v1, int u2, int v2) {
     if (who.cache == null) {
       who.cache = new BufferedImage(who.width, who.height,
                                     BufferedImage.TYPE_INT_ARGB);
@@ -565,11 +566,12 @@ public class PGraphics2 extends PGraphics {
       who.modified = false;
     }
 
-    int x2 = (int) (x + w);
-    int y2 = (int) (y + h);
+    //int x2 = (int) (x + w);
+    //int y2 = (int) (y + h);
 
     graphics.drawImage((Image) who.cache,
-                       (int) x, (int) y, x2, y2,
+                       //(int) x, (int) y, x2, y2,
+                       (int) x1, (int) y1, (int) x2, (int) y2,
                        u1, v1, u2, v2, null);
   }
 
