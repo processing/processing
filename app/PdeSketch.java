@@ -22,59 +22,6 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/*
-
-Export to:  [ Applet (for the web)   + ]    [  OK  ]
-
-[ ] OK to overwrite HTML file   <-- only visible if there is one there
-                                    remembers previous setting as a pref
-
-> Advanced
-
-  Version: [ Java 1.1   + ]
-
-  Using a version of Java other than 1.1 will require
-  your Windows users to install the Java Plug-In, 
-  and your Macintosh users to be running OS X.
-
-
-
-
-Export to:    [ Application   + ]    [  OK  ]
-
-> Advanced
-
-  Platform: [ Mac OS X   + ]     <-- defaults to your current platform
-              Windows
-              jar file
-
-  Exports the application as a double-clickable .app package, 
-  compatible with Mac OS X. 
-
-  Exports the application as a double-clickable .exe 
-  and a handful of supporting files. 
-
-  A jar file can be used on any platform that has Java
-  installed. Simply doube-click the jar to run the application. 
-  It is the simplest (but ugliest) method for exporting. 
-
-
-  Version: [ Java 1.3   + ]
-
-  Java 1.3 is the recommended setting for exporting
-  applications. Applications will run on any Windows or
-  Unix machine that has java installed, and on Mac OS X.
-
-
-
-Export to:   [ Library       + ]    [  OK  ]
-
-> Advanced   
-  
-  (no settings here?)
-
- */
-
 public class PdeSketch {
   // name of sketch, which is the name of main file 
   // (without .pde or .java extension)
@@ -492,172 +439,257 @@ public class PdeSketch {
   }
 
 
-  public void exportApplet(boolean replaceHtml) {
+  /**
+   * Called by PdeEditor to handle someone having selected 'export'. 
+   * Pops up a dialog box for export options, and then calls the
+   * necessary function with the parameters from the window.
+   *
+   *
+   * +-------------------------------------------------------+
+   * +                                                       +
+   * + Export to:  [ Applet (for the web)   + ]    [  OK  ]  +
+   * +                                                       +
+   * + [ ] OK to overwrite HTML file   <-- only visible if there is one there
+   * +                                     remembers previous setting as a pref
+   * + > Advanced                                            +
+   * +                                                       +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.1   + ]                           +
+   * +                                                       +
+   * +   Recommended version of Java when exporting applets. +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.3   + ]                           +
+   * +                                                       +
+   * +   Java 1.3 is not recommended for applets,            +
+   * +   unless you are using features that require it.      +
+   * +   Using a version of Java other than 1.1 will require +
+   * +   your Windows users to install the Java Plug-In,     +
+   * +   and your Macintosh users to be running OS X.        +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.4   + ]                           +
+   * +                                                       +
+   * +   identical message as 1.3 above...                   +
+   * +                                                       +
+   * +-------------------------------------------------------+
+   * 
+   * +-------------------------------------------------------+
+   * +                                                       +
+   * + Export to:  [ Application            + ]    [  OK  ]  + 
+   * +                                                       +
+   * + > Advanced                                            +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.1   + ]                           +
+   * +                                                       +
+   * +   Not much point to using Java 1.1 for applications.  +
+   * +   To run applications, all users will have to         + 
+   * +   install Java, in which case they'll most likely     +
+   * +   have version 1.3 or later.                          +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.3   + ]                           +
+   * +                                                       +
+   * +   Java 1.3 is the recommended setting for exporting   +
+   * +   applications. Applications will run on any Windows  +
+   * +   or Unix machine with Java installed. Mac OS X has   +
+   * +   Java installed with the operation system, so there  +
+   * +   is no additional installation will be required.     +
+   * +                                                       +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +                                                       +
+   * +   Platform: [ Mac OS X   + ]    <-- defaults to current platform
+   * +                                                       +
+   * +   Exports the application as a double-clickable       + 
+   * +   .app package, compatible with Mac OS X.             +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Platform: [ Windows    + ]                          +
+   * +                                                       +
+   * +   Exports the application as a double-clickable       +
+   * +   .exe and a handful of supporting files.             +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Platform: [ jar file   + ]                          +
+   * +                                                       +
+   * +   A jar file can be used on any platform that has     +
+   * +   Java installed. Simply doube-click the jar (or type +
+   * +   "java -jar sketch.jar" at a command prompt) to run  +
+   * +   the application. It is the least fancy method for   +
+   * +   exporting.                                          +
+   * +                                                       +
+   * +-------------------------------------------------------+
+   *
+
+   * +-------------------------------------------------------+
+   * +                                                       +
+   * + Export to:  [ Library                + ]    [  OK  ]  +
+   * +                                                       +
+   * +-------------------------------------------------------+
+   */
+  public boolean export() throws Exception {
+    return exportApplet(true);
+  }
+
+
+  public boolean exportApplet(boolean replaceHtml) throws Exception {
     //File appletDir, String exportSketchName, File dataDir) {
-    try {
-      String program = textarea.getText();
+    //String program = textarea.getText();
 
-      // create the project directory
-      // pass null for datapath because the files shouldn't be 
-      // copied to the build dir.. that's only for the temp stuff
-      File appletDir = new File(directory, "applet");
+    // create the project directory
+    // pass null for datapath because the files shouldn't be 
+    // copied to the build dir.. that's only for the temp stuff
+    File appletDir = new File(directory, "applet");
 
-      boolean writeHtml = true;
-      if (appletDir.exists()) {
-        File htmlFile = new new File(appletDir, "index.html");
-        if (htmlFile.exists() && !replaceHtml) {
-          writeHtml = false;
-        }
-      } else {
-        appletDir.mkdirs();
+    boolean writeHtml = true;
+    if (appletDir.exists()) {
+      File htmlFile = new new File(appletDir, "index.html");
+      if (htmlFile.exists() && !replaceHtml) {
+        writeHtml = false;
       }
+    } else {
+      appletDir.mkdirs();
+    }
 
-      // build the sketch 
-      String foundName = build(name, appletDir.getPath());
+    // build the sketch 
+    String foundName = build(name, appletDir.getPath());
 
-      // (already reported) error during export, exit this function
-      if (foundName == null) {
-        buttons.clear();
-        return;
-      }
+    // (already reported) error during export, exit this function
+    if (foundName == null) return false;
 
-      // if name != exportSketchName, then that's weirdness
-      // BUG unfortunately, that can also be a bug in the preproc :(
-      if (!name.equals(foundName)) {
-        PdeBase.showWarning("Error during export", 
-                            "Sketch name is " + name + " but the sketch\n" +
-                            "name in the code was " + foundName);
-        return;
-      }
+    // if name != exportSketchName, then that's weirdness
+    // BUG unfortunately, that can also be a bug in the preproc :(
+    if (!name.equals(foundName)) {
+      PdeBase.showWarning("Error during export", 
+                          "Sketch name is " + name + " but the sketch\n" +
+                          "name in the code was " + foundName);
+      return false;
+    }
 
-      if (writeHtml) {
-        int wide = BApplet.DEFAULT_WIDTH;
-        int high = BApplet.DEFAULT_HEIGHT;
+    if (writeHtml) {
+      int wide = BApplet.DEFAULT_WIDTH;
+      int high = BApplet.DEFAULT_HEIGHT;
 
+      //try {
+      PatternMatcher matcher = new Perl5Matcher();
+      PatternCompiler compiler = new Perl5Compiler();
+
+      // this matches against any uses of the size() function, 
+      // whether they contain numbers of variables or whatever. 
+      // this way, no warning is shown if size() isn't actually 
+      // used in the applet, which is the case especially for 
+      // beginners that are cutting/pasting from the reference.
+      String sizing = 
+        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
+      Pattern pattern = compiler.compile(sizing);
+
+      // adds a space at the beginning, in case size() is the very 
+      // first thing in the program (very common), since the regexp 
+      // needs to check for things in front of it.
+      PatternMatcherInput input = new PatternMatcherInput(" " + program);
+      if (matcher.contains(input, pattern)) {
+        MatchResult result = matcher.getMatch();
         try {
-          PatternMatcher matcher = new Perl5Matcher();
-          PatternCompiler compiler = new Perl5Compiler();
+          wide = Integer.parseInt(result.group(1).toString());
+          high = Integer.parseInt(result.group(2).toString());
 
-          // this matches against any uses of the size() function, 
-          // whether they contain numbers of variables or whatever. 
-          // this way, no warning is shown if size() isn't actually 
-          // used in the applet, which is the case especially for 
-          // beginners that are cutting/pasting from the reference.
-          String sizing = 
-            "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
-          Pattern pattern = compiler.compile(sizing);
+        } catch (NumberFormatException e) {
+          // found a reference to size, but it didn't 
+          // seem to contain numbers
+          final String message = 
+            "The size of this applet could not automatically be\n" +
+            "determined from your code. You'll have to edit the\n" + 
+            "HTML file to set the size of the applet.";
 
-          // adds a space at the beginning, in case size() is the very 
-          // first thing in the program (very common), since the regexp 
-          // needs to check for things in front of it.
-          PatternMatcherInput input = new PatternMatcherInput(" " + program);
-          if (matcher.contains(input, pattern)) {
-            MatchResult result = matcher.getMatch();
-            try {
-              wide = Integer.parseInt(result.group(1).toString());
-              high = Integer.parseInt(result.group(2).toString());
-
-            } catch (NumberFormatException e) {
-              // found a reference to size, but it didn't 
-              // seem to contain numbers
-              final String message = 
-                "The size of this applet could not automatically be\n" +
-                "determined from your code. You'll have to edit the\n" + 
-                "HTML file to set the size of the applet.";
-
-              PdeBase.showWarning("Could not find applet size", message, null);
-            }
-          }  // else no size() command found
-
-        } catch (MalformedPatternException e) {
-          PdeBase.showWarning("Internal Problem",
-                              "An internal error occurred while trying\n" + 
-                              "to export the sketch. Please report this.", e);
+          PdeBase.showWarning("Could not find applet size", message, null);
         }
+      }  // else no size() command found
 
-        StringBuffer sources = new StringBuffer();
-        for (int i = 0; i < codeCount; i++) {
-          sources.append("<a href=\'" + code[i].file.getName() + "\">" + 
-                         code[i].name + "</a> ");
-        }
+      // handle this in editor instead, rare or nonexistant
+      //} catch (MalformedPatternException e) {
+      //PdeBase.showWarning("Internal Problem",
+      //                    "An internal error occurred while trying\n" + 
+      //                    "to export the sketch. Please report this.", e);
+      //return false;
+      //}
 
-        File htmlOutputFile = new File(appletDir, "index.html");
-        FileOutputStream fos = new FileOutputStream(htmlOutputFile);
-        PrintStream ps = new PrintStream(fos);
-
-        // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
-
-        InputStream is = PdeBase.getStream("applet.html");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-          if (line.indexOf("@@") != -1) {
-            StringBuffer sb = new StringBuffer(line);
-            int index = 0;
-            while ((index = sb.indexOf("@@sketch@@")) != -1) {
-              sb.replace(index, index + "@@sketch@@".length(), 
-                         name);
-            }
-            while ((index = sb.indexOf("@@source@@")) != -1) {
-              sb.replace(index, index + "@@source@@".length(), 
-                         sources.toString());
-            }
-            while ((index = sb.indexOf("@@archive@@")) != -1) {
-              sb.replace(index, index + "@@archive@@".length(), 
-                         name + ".jar");
-            }
-            while ((index = sb.indexOf("@@width@@")) != -1) {
-              sb.replace(index, index + "@@width@@".length(), 
-                         String.valueOf(wide));
-            }
-            while ((index = sb.indexOf("@@height@@")) != -1) {
-              sb.replace(index, index + "@@height@@".length(), 
-                         String.valueOf(wide));
-            }
-            line = sb.toString();
-          }
-          ps.println(line);
-        }
-
-        reader.close();
-
-        ps.flush();
-        ps.close();
-      }
-
-      // copy the source files to the target, since we like
-      // to encourage people to share their code
+      StringBuffer sources = new StringBuffer();
       for (int i = 0; i < codeCount; i++) {
-        PdeBase.copyFile(code[i].file, 
-                         new File(appletDir, code[i].file.getName()));
+        sources.append("<a href=\'" + code[i].file.getName() + "\">" + 
+                       code[i].name + "</a> ");
       }
 
-      // create new .jar file
-      FileOutputStream zipOutputFile = 
-        new FileOutputStream(new File(appletDir, name + ".jar"));
-      ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
-      ZipEntry entry;
+      File htmlOutputFile = new File(appletDir, "index.html");
+      FileOutputStream fos = new FileOutputStream(htmlOutputFile);
+      PrintStream ps = new PrintStream(fos);
 
-      // add the contents of the code folder to the jar
-      // unpacks all jar files 
-      File codeFolder = new File(sketchDir, "code");
-      if (codeFolder.exists()) {
-        String includes = PdeCompiler.contentsToClassPath(codeFolder);
-        packClassPathIntoZipFile(includes, zos);
+      // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+
+      InputStream is = PdeBase.getStream("applet.html");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (line.indexOf("@@") != -1) {
+          StringBuffer sb = new StringBuffer(line);
+          int index = 0;
+          while ((index = sb.indexOf("@@sketch@@")) != -1) {
+            sb.replace(index, index + "@@sketch@@".length(), 
+                       name);
+          }
+          while ((index = sb.indexOf("@@source@@")) != -1) {
+            sb.replace(index, index + "@@source@@".length(), 
+                       sources.toString());
+          }
+          while ((index = sb.indexOf("@@archive@@")) != -1) {
+            sb.replace(index, index + "@@archive@@".length(), 
+                       name + ".jar");
+          }
+          while ((index = sb.indexOf("@@width@@")) != -1) {
+            sb.replace(index, index + "@@width@@".length(), 
+                       String.valueOf(wide));
+          }
+          while ((index = sb.indexOf("@@height@@")) != -1) {
+            sb.replace(index, index + "@@height@@".length(), 
+                       String.valueOf(wide));
+          }
+          line = sb.toString();
+        }
+        ps.println(line);
       }
 
-      // add the appropriate bagel to the classpath
-      String jdkVersionStr = PdePreferences.get("compiler.jdk_version");
-      String bagelJar = "lib/export11.jar";  // default
-      if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
-        bagelJar = "lib/export13.jar";
-      }
-      //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
-      //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
-      packClassPathIntoZipFile(bagelJar);
-      
-      /*
+      reader.close();
+      ps.flush();
+      ps.close();
+    }
+
+    // copy the source files to the target, since we like
+    // to encourage people to share their code
+    for (int i = 0; i < codeCount; i++) {
+      PdeBase.copyFile(code[i].file, 
+                       new File(appletDir, code[i].file.getName()));
+    }
+
+    // create new .jar file
+    FileOutputStream zipOutputFile = 
+      new FileOutputStream(new File(appletDir, name + ".jar"));
+    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+    ZipEntry entry;
+
+    // add the contents of the code folder to the jar
+    // unpacks all jar files 
+    File codeFolder = new File(sketchDir, "code");
+    if (codeFolder.exists()) {
+      String includes = PdeCompiler.contentsToClassPath(codeFolder);
+      packClassPathIntoZipFile(includes, zos);
+    }
+
+    // add the appropriate bagel to the classpath
+    String jdkVersionStr = PdePreferences.get("compiler.jdk_version");
+    String bagelJar = "lib/export11.jar";  // default
+    if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
+      bagelJar = "lib/export13.jar";
+    }
+    //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
+    //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
+    packClassPathIntoZipFile(bagelJar);
+
+    /*
       // add the contents of lib/export to the jar file
       // these are the jdk11-only bagel classes
       String exportDir = ("lib" + File.separator + 
@@ -671,78 +703,67 @@ public class PdeSketch {
         zos.write(PdeBase.grabFile(new File(exportDir + bagelClasses[i])));
         zos.closeEntry();
       }
-      */
+    */
 
-      // TODO these two loops are insufficient.
-      // should instead recursively add entire contents of build folder
-      // the data folder will already be a subdirectory
-      // and the classes may be buried in subfolders if a package name was used
+    // TODO these two loops are insufficient.
+    // should instead recursively add entire contents of build folder
+    // the data folder will already be a subdirectory
+    // and the classes may be buried in subfolders if a package name was used
 
-      // files to include from data directory
-      if ((dataDir != null) && (dataDir.exists())) {
-        String datafiles[] = dataDir.list();
-        for (int i = 0; i < datafiles.length; i++) {
-          // don't export hidden files
-          // skipping dot prefix removes all: . .. .DS_Store
-          if (datafiles[i].charAt(0) == '.') continue;
+    // files to include from data directory
+    if ((dataDir != null) && (dataDir.exists())) {
+      String datafiles[] = dataDir.list();
+      for (int i = 0; i < datafiles.length; i++) {
+        // don't export hidden files
+        // skipping dot prefix removes all: . .. .DS_Store
+        if (datafiles[i].charAt(0) == '.') continue;
 
-          entry = new ZipEntry(datafiles[i]);
-          zos.putNextEntry(entry);
-          zos.write(PdeBase.grabFile(new File(dataDir, datafiles[i])));
-          zos.closeEntry();
-        }
+        entry = new ZipEntry(datafiles[i]);
+        zos.putNextEntry(entry);
+        zos.write(PdeBase.grabFile(new File(dataDir, datafiles[i])));
+        zos.closeEntry();
       }
-
-      // add the project's .class files to the jar
-      // just grabs everything from the build directory
-      // since there may be some inner classes
-      // (add any .class files from the applet dir, then delete them)
-      String classfiles[] = appletDir.list();
-      for (int i = 0; i < classfiles.length; i++) {
-        if (classfiles[i].endsWith(".class")) {
-          entry = new ZipEntry(classfiles[i]);
-          zos.putNextEntry(entry);
-          zos.write(PdeBase.grabFile(new File(appletDir, classfiles[i])));
-          zos.closeEntry();
-        }
-      }
-
-      // remove the .class files from the applet folder. if they're not 
-      // removed, the msjvm will complain about an illegal access error, 
-      // since the classes are outside the jar file.
-      for (int i = 0; i < classfiles.length; i++) {
-        if (classfiles[i].endsWith(".class")) {
-          File deadguy = new File(appletDir, classfiles[i]);
-          if (!deadguy.delete()) {
-            PdeBase.showWarning("Could not delete", 
-                                classfiles[i] + " could not \n" +
-                                "be deleted from the applet folder.  \n" + 
-                                "You'll need to remove it by hand.", null);
-          }
-        }
-      }
-
-      // close up the jar file
-      zos.flush();
-      zos.close();
-
-      // make a copy of the .pde file to post on the web
-      FileOutputStream sketchOutput = 
-        new FileOutputStream(new File(appletDir, name + ".pde"));
-      PrintWriter sketchWriter = 
-        new PrintWriter(new OutputStreamWriter(sketchOutput));
-      sketchWriter.print(program);
-      sketchWriter.flush();
-      sketchWriter.close();
-
-      message("Done exporting.");
-      PdeBase.openFolder(appletDir);
-
-    } catch (Exception e) {
-      message("Error during export.");
-      e.printStackTrace();
     }
-    buttons.clear();
+
+    // add the project's .class files to the jar
+    // just grabs everything from the build directory
+    // since there may be some inner classes
+    // (add any .class files from the applet dir, then delete them)
+    String classfiles[] = appletDir.list();
+    for (int i = 0; i < classfiles.length; i++) {
+      if (classfiles[i].endsWith(".class")) {
+        entry = new ZipEntry(classfiles[i]);
+        zos.putNextEntry(entry);
+        zos.write(PdeBase.grabFile(new File(appletDir, classfiles[i])));
+        zos.closeEntry();
+      }
+    }
+
+    // remove the .class files from the applet folder. if they're not 
+    // removed, the msjvm will complain about an illegal access error, 
+    // since the classes are outside the jar file.
+    for (int i = 0; i < classfiles.length; i++) {
+      if (classfiles[i].endsWith(".class")) {
+        File deadguy = new File(appletDir, classfiles[i]);
+        if (!deadguy.delete()) {
+          PdeBase.showWarning("Could not delete", 
+                              classfiles[i] + " could not \n" +
+                              "be deleted from the applet folder.  \n" + 
+                              "You'll need to remove it by hand.", null);
+        }
+      }
+    }
+
+    // close up the jar file
+    zos.flush();
+    zos.close();
+
+    PdeBase.openFolder(appletDir);
+
+    //} catch (Exception e) {
+    //e.printStackTrace();
+    //}
+    return true;
   }
 
 
@@ -750,8 +771,9 @@ public class PdeSketch {
    * Slurps up .class files from a colon (or semicolon on windows) 
    * separated list of paths and adds them to a ZipOutputStream.
    */
-  static public void packClassPathIntoZipFile(String path, ZipOutputStream zos) 
-  throws IOException {
+  static public void packClassPathIntoZipFile(String path, 
+                                              ZipOutputStream zos) 
+    throws IOException {
     String pieces[] = 
       BApplet.splitStrings(path, File.pathSeparatorChar);
 
@@ -814,10 +836,10 @@ public class PdeSketch {
    * can be called recursively to walk through folders looking
    * for more goodies that will be added to the ZipOutputStream.
    */
-  static public void packClassPathIntoZipFileRecursive(File dir, String sofar, 
-                                           ZipOutputStream zos) 
-  throws IOException {
-
+  static public void packClassPathIntoZipFileRecursive(File dir, 
+                                                       String sofar, 
+                                                       ZipOutputStream zos) 
+    throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
       //if (files[i].equals(".") || files[i].equals("..")) continue;
