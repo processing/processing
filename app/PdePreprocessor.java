@@ -78,8 +78,7 @@ public class PdePreprocessor {
    * @return the classname of the exported Java
    */
   public String write(String program, String buildPath,
-                      String name, String imports[],
-                      int javaVersion) throws java.lang.Exception {
+                      String name, String imports[]) throws java.lang.Exception {
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
@@ -144,7 +143,7 @@ public class PdePreprocessor {
     PrintStream stream = new PrintStream(
       new FileOutputStream(buildPath + File.separator + name + ".java"));
 
-    writeHeader(stream, imports, javaVersion, name);
+    writeHeader(stream, imports, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
@@ -172,6 +171,7 @@ public class PdePreprocessor {
     return name;
   }
 
+
   /**
    * Write any required header material (eg imports, class decl stuff)
    * 
@@ -180,7 +180,7 @@ public class PdePreprocessor {
    * @param name                Name of the class being created.
    */
   void writeHeader(PrintStream out, String imports[], 
-                   int javaVersion, String className) {
+                   String className) {
 
     // emit emports that are needed for classes from the code folder
     if (imports != null) {
@@ -191,7 +191,13 @@ public class PdePreprocessor {
 
     // emit standard imports (read from pde.properties)
     // for each language level that's being used.
-    for (int i = 0; i < javaVersion; i++) {
+    String jdkVersionStr = PdePreferences.get("compiler.jdk_version");
+
+    int jdkVersion = JDK11;  // default
+    if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13 };
+    if (jdkVersionStr.equals("1.4")) { jdkVersion = JDK14 };
+
+    for (int i = 0; i < jdkVersion; i++) {
       for (int j = 0; j < defaultImports[i].length; j++) {
         out.print("import " + defaultImports[i][j] + ".*; ");        
       }
