@@ -10,9 +10,9 @@ _ new colors chosen by casey
 
 _ disappearing text caret on win2k
 _   works in 'insert' mode
+_ framerate() and framerate(15)
 _ pmouseX problem reported by casey (in bugs.txt)
 _ weirdness with mac swiss-german keyboard on []{}|
-_ framerate() and framerate(15)
 _ several examples broken (note from creas) in bugs.txt
 
 
