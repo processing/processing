@@ -4528,17 +4528,19 @@ v              PApplet.this.stop();
 
         int locationX = location[0] - 20;
         int locationY = location[1];
-        //System.out.println("x,y " + locationX + " " + locationY);
 
-        //frame.setTitle(str(setupComplete));
+        // applet.width and .height are zero here
+        /*
         int minW = 120;
         int minH = 120;
         int windowW =
           Math.max(applet.width, minW) + insets.left + insets.right;
         int windowH =
           Math.max(applet.height, minH) + insets.top + insets.bottom;
+        */
+        int windowW = 120 + insets.left + insets.right;
+        int windowH = 120 + insets.top + insets.bottom;
         frame.setSize(windowW, windowH);
-        //frame.setTitle(windowW + " " + windowH);
 
         if (exactLocation) {
           frame.setLocation(location[0], location[1]);
@@ -4547,6 +4549,7 @@ v              PApplet.this.stop();
           if (locationX - windowW > 10) {
             // if it fits to the left of the window
             frame.setLocation(locationX - windowW, locationY);
+
           } else {
             // if it fits inside the editor window,
             // offset slightly from upper lefthand corner
@@ -4563,19 +4566,27 @@ v              PApplet.this.stop();
             frame.setLocation(locationX, locationY);
           }
         }
+        //System.out.println("applet izzat: " + applet.width + " " +
+        //                 applet.height);
 
         frame.setLayout(null);
         frame.add(applet);
         frame.setBackground(SystemColor.control);
+        /*
         applet.setBounds((windowW - applet.width)/2,
                          insets.top + ((windowH - insets.top - insets.bottom) -
                                        applet.height)/2,
+                         windowW, windowH);
+        */
+        applet.setBounds((windowW - 100) / 2,
+                         insets.top + ((windowH - insets.top - insets.bottom) -
+                                       100)/2,
                          windowW, windowH);
 
         applet.setupExternal(frame);
 
       } else {  // !external
-        System.out.println("applet not external");
+        //System.out.println("applet not external");
 
         // remove applet name from args passed in
         applet.args = new String[args.length - 1];

@@ -99,7 +99,6 @@ public class PdeRuntime implements PdeMessageConsumer {
           // sketch.libraryPath might be ""
           // librariesClassPath will always have sep char prepended
           sketch.libraryPath +
-          //PdeSketchbook.librariesClassPath +
           File.pathSeparator + System.getProperty("java.library.path"),
           "-cp",
           sketch.classPath + PdeSketchbook.librariesClassPath,
@@ -107,30 +106,18 @@ public class PdeRuntime implements PdeMessageConsumer {
           location,
           PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
           sketch.mainClassName
-
-          //, "1>", "C:\\net1.txt"
-          //, "2>", "C:\\net2.txt"
         };
         //PApplet.printarr(command);
         //PApplet.println(PApplet.join(command, " "));
 
-        //for (int i = 0; i < command.length; i++) {
-        //  System.out.println(i + " = " + command[i]);
-        //}
-
-        //PApplet.println(PApplet.join(command, " "));
         process = Runtime.getRuntime().exec(command);
         processInput = new SystemOutSiphon(process.getInputStream());
         processError = new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
 
-        //processOutput.write(' ');
-        //processOutput.flush();
-
       } else {  // !externalRuntime
-        //Class c = Class.forName(className);
-        //Class c = Class.forName(sketch.mainClassName);
-        Class c = PdeBase.loader.loadClass(sketch.mainClassName);
+        PdeClassLoader loader = new PdeClassLoader();
+        Class c = loader.loadClass(sketch.mainClassName);
         applet = (PApplet) c.newInstance();
 
         // replaces setRuntime with PApplet having leechErr [fry]
@@ -151,34 +138,6 @@ public class PdeRuntime implements PdeMessageConsumer {
           throw new PdeException(applet.exception.getMessage());
         }
         applet.start();
-
-        /*
-          // appears to be no longer necessary now that draw()
-          // is gonna be run inside of setup()
-
-        // check to see if it's a draw mode applet
-        boolean drawMode = false;
-        try {
-          Method meth[] = c.getDeclaredMethods();
-          for (int i = 0; i < meth.length; i++) {
-            //System.out.println(meth[i].getName());
-            if (meth[i].getName().equals("draw")) drawMode = true;
-          }
-        } catch (SecurityException e) {
-          e.printStackTrace();
-        }
-        // if it's a draw mode app, don't even show on-screen
-        // until it's finished rendering, otherwise the width/height
-        // may not have been properly set.
-        if (drawMode) {
-          //System.out.println("draw mode");
-          while ((applet.frame != 1) && (!applet.finished)) {
-            try {
-              Thread.sleep(100);
-            } catch (InterruptedException e) { }
-          }
-        }
-        */
 
         if (editor.presenting) {
           //window = new Window(new Frame());
@@ -210,43 +169,15 @@ public class PdeRuntime implements PdeMessageConsumer {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                   stop();
                   editor.doClose();
-                  //new DelayedClose(editor);
-                  //editor.doClose();
                 }
-                //System.out.println("consuming1");
-                //e.consume();
-                //System.out.println("consuming2");
               }
             });
           y1 += parentInsets.top;
         }
-        // toxi_030903: moved this in the above else branch
-        // if (!(window instanceof Frame)) y1 += parentInsets.top;
-
         window.add(applet);
-
-        // @#$((* java 1.3
-        // removed because didn't seem to be needed anymore
-        // also, was causing offset troubles
-        /*
-          window.addMouseListener(applet);
-          window.addMouseMotionListener(applet);
-          window.addKeyListener(applet);
-        */
 
         Dimension screen =
           Toolkit.getDefaultToolkit().getScreenSize();
-
-        //System.out.println(SystemColor.windowBorder.toString());
-
-        /*
-        int appletWidth = applet.width;
-        int appletHeight = applet.height;
-        if ((appletWidth == 0) || (appletHeight == 0)) {
-          appletWidth = PApplet.DEFAULT_WIDTH;
-          appletWidth = PApplet.DEFAULT_HEIGHT;
-        }
-        */
 
         window.setLayout(null);
         if (editor.presenting) {
@@ -315,38 +246,25 @@ public class PdeRuntime implements PdeMessageConsumer {
     }
   }
 
-  public void stop() {
-    //System.out.println();
-    //System.out.println("PdeRuntime.stop()");
 
+  public void stop() {
     // check for null in case stop is called during compilation
     if (applet != null) {
       applet.stop();
-      //if (window != null) window.hide();
 
       // above avoids NullPointerExceptions
       // but still threading is too complex, and so
       // some boogers are being left behind
-
       applet = null;
-      //window = null;
 
     } else if (process != null) {  // running externally
-      //System.out.println("killing external process");
-
       try {
-        //System.out.println("writing to stop process");
-        processOutput.write('s');
-        //System.out.println("written");
+        processOutput.write(PApplet.EXTERNAL_STOP);
         processOutput.flush();
-        //System.out.println("flushing");
 
       } catch (IOException e) {
-        //System.err.println("error stopping external applet");
-        //e.printStackTrace();
         close();
       }
-      //System.out.println("out");
     }
   }
 
@@ -486,7 +404,6 @@ java.lang.NullPointerException
             if (codeIndex != -1) {
               // lineIndex is 1-indexed, but editor wants zero-indexed
               lineIndex = Integer.parseInt(fileAndLine.substring(colonIndex + 1));
-              //System.out.println("code/line is " + codeIndex + " " + lineIndex);
               exception = new PdeException(exception.getMessage(),
                                            codeIndex, lineIndex - 1, -1);
               exception.hideStackTrace = true;
@@ -554,6 +471,9 @@ java.lang.NullPointerException
       //System.out.println("got it " + s);
     }
   }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   /**
