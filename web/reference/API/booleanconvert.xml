@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>boolean()</name>
+
+<category>Data</category>
+
+<subcategory>Conversion</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+float f = 0.0;
+boolean b = boolean(f);
+println(f + " : " + b);  // Prints "0.0 : false"
+
+int i = 1;
+b = boolean(i);
+println(i + " : " + b);  // Prints "1 : true"
+
+i = 3445;
+b = boolean(i);
+println(i + " : " + b);  // Prints "3445 : true"
+</code>
+</example>
+
+<description>
+Converts a primitive datatype, string, or array to its boolean representation. The number 0 evaluates to false and all other numbers evaluate to true.
+</description>
+
+<syntax>
+boolean(<c>val</c>)
+</syntax>
+
+<parameter>
+<label>val</label>
+<description>int, float, char, byte, String, int[], float[], char[], byte[], String[]</description>
+</parameter>
+
+<returns>byte</returns>
+
+<related>
+boolean
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>append()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+String sa1[] = { "OH ", "NY ", "CA "}; 
+String sa2[] = append(sa1, "MA "); 
+print(sa2);  // Prints "OH NY CA MA" 
+</code>
+</example>
+
+<description>
+Expands an array by one element and adds data to the new position. The datatype of the <b>element</b> parameter must be the same as the datatype of the array.
+</description>
+
+<syntax>
+append(<c>array</c>, <c>element</c>)
+</syntax>
+
+<parameter>
+<label>array</label>
+<description>boolean[], byte[], char[], int[], float[], or String[]</description>
+</parameter>
+
+<parameter>
+<label>element</label>
+<description>new data for the array</description>
+</parameter>
+
+<returns>Array (the same datatype as the input)</returns>
+
+<related>
+shorten()
+expand()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+</root>

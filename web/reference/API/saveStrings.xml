@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>saveStrings()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+String words = "apple bear cat dog";
+String list[] = splitStrings(words);
+
+// now write the strings to a file, each on a separate line
+saveStrings("nouns.txt", list);
+</code>
+</example>
+
+<description>
+Writes an array of strings to a file, one line per string. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+</description>
+
+<syntax>
+saveStrings(<c>filename</c>, <c>strings</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>filename for output</description>
+</parameter>
+
+<parameter>
+<label>strings</label>
+<description>string array to be written</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadStrings()
+loadBytes() 
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+<level>Extended</level>
+
+
+
+
+
+</root>

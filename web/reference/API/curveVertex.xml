@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>curveVertex()</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>Application &amp; Web</usage>
+
+<example>
+<image>curveVertex_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+curveVertex(84,  91);
+curveVertex(84,  91);
+curveVertex(68,  19);
+curveVertex(21,  17);
+curveVertex(32, 100);
+curveVertex(32, 100);
+endShape();
+</code>
+</example>
+
+<description>
+Specifies vertex coordinates for curves. This function may only be called between <b>beginShape()</b> and <b>endShape()</b>. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines.
+</description>
+
+<syntax>
+curveVertex(<c>x</c>, <c>y</c>) 
+curveVertex(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>The x-coordinate of the vertex, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>The y-coordinate of the vertex, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>The z-coordinate of the vertex, either a float or int</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+beginShape()
+endShape()
+vertex()
+bezierVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
