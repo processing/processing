@@ -1929,11 +1929,11 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void imageImpl(PImage image,
-                           float x1, float y1, float w, float h,
+                           float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
 
-    float x2 = x1 + w;
-    float y2 = y1 + h;
+    //float x2 = x1 + w;
+    //float y2 = y1 + h;
 
     boolean savedStroke = stroke;
     boolean savedFill = fill;
@@ -1960,6 +1960,8 @@ public class PGraphics3 extends PGraphics {
       fillB = 1;
       fillA = 1;
     }
+
+    //System.out.println(fill + " " + fillR + " " + fillG + " " + fillB);
 
     beginShape(QUADS);
     texture(image);

@@ -177,11 +177,8 @@ public class PFont implements PConstants {
 
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
-      //int pixels[] = new int[64 * 64];
       int pixels[] = new int[twidth * theight];
-      //images[i] = new PImage(pixels, 64, 64, ALPHA);
       images[i] = new PImage(pixels, twidth, theight, ALPHA);
-      //images[i] = new PImage(pixels, twidth, theight, RGBA);
       int bitmapSize = height[i] * width[i];
 
       byte temp[] = new byte[bitmapSize];
@@ -193,23 +190,16 @@ public class PFont implements PConstants {
       for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
           int valu = temp[y*w + x] & 0xff;
-          //images[i].pixels[y * twidth + x] = valu;
-
           images[i].pixels[y * twidth + x] = valu;
           //(valu << 24) | 0xFFFFFF;  // windows
-            //0xFFFFFF00 | valu;  // macosx
+          //0xFFFFFF00 | valu;  // macosx
 
-          //(valu << 24) | (valu << 16) | (valu << 8) | valu;
-          //0x8040ff40;
-            //(valu << 24) | (valu << 16) | (valu << 8) | valu;
           //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
         }
         //System.out.println();
       }
       //System.out.println();
     }
-    ///cached = false;
-
     //resetSize();
     //space = OBJECT_SPACE;
     //align = ALIGN_LEFT;
@@ -477,17 +467,30 @@ public class PFont implements PConstants {
 
       //parent.rectImpl(x1, y1, x2, y2);
 
-      //boolean savedTint = parent.tint;
-      //int savedTintColor = parent.tintColor;
-      //parent.tint = true;
-      //parent.tintColor = parent.fillColor;
+      boolean savedTint = parent.tint;
+      int savedTintColor = parent.tintColor;
+      float savedTintR = parent.tintR;
+      float savedTintG = parent.tintG;
+      float savedTintB = parent.tintB;
+      float savedTintA = parent.tintA;
+
+      parent.tint = true;
+      parent.tintColor = parent.fillColor;
+      parent.tintR = parent.fillR;
+      parent.tintG = parent.fillG;
+      parent.tintB = parent.fillB;
+      parent.tintA = parent.fillA;
 
       parent.imageImpl(images[glyph],
-                       x1, y1, x2-x1, y2-y1,
+                       x1, y1, x2, y2, //x2-x1, y2-y1,
                        0, 0, width[glyph], height[glyph]);
 
-      //parent.tint = savedTint;
-      //parent.tintColor = savedTintColor;
+      parent.tint = savedTint;
+      parent.tintColor = savedTintColor;
+      parent.tintR = savedTintR;
+      parent.tintG = savedTintG;
+      parent.tintB = savedTintB;
+      parent.tintA = savedTintA;
 
       /*
       // this code was moved here (instead of using parent.image)
@@ -609,9 +612,9 @@ public class PFont implements PConstants {
   }
 
 
-  private void textLine(int start, int stop,
-                        float x, float y, float z,
-                        PGraphics parent) {
+  protected void textLine(int start, int stop,
+                          float x, float y, float z,
+                          PGraphics parent) {
     //float startX = x;
     //int index = 0;
     //char previous = 0;
@@ -641,15 +644,15 @@ public class PFont implements PConstants {
 
   /**
    * Draw text in a box that is constrained to a particular size.
-   * The current rectMode() determines what the coordinates mean
-   * (whether x1/y1/x2/y2 or x/y/w/h).
+   * The parent PApplet will have converted the coords based on
+   * the current rectMode().
    *
    * Note that the x,y coords of the start of the box
    * will align with the *ascent* of the text, not the baseline,
    * as is the case for the other text() functions.
    */
-  public void text(String str, float boxX1, float boxY1, float boxZ,
-                   float boxX2, float boxY2, PGraphics parent) {
+  public void text(String str, float boxX1, float boxY1,
+                   float boxX2, float boxY2, float boxZ, PGraphics parent) {
     float spaceWidth = width(' ');
     float runningX = boxX1;
     float currentY = boxY1;
@@ -748,7 +751,7 @@ public class PFont implements PConstants {
   }
 
 
-  // ....................................................................
+  //////////////////////////////////////////////////////////////
 
 
   /**
@@ -808,10 +811,19 @@ public class PFont implements PConstants {
   };
 
 
+  /**
+   * Create a new .vlw font on the fly. See documentation with
+   * the later version of this constructor.
+   */
   public PFont(String name, int size) {
     this(new Font(name, Font.PLAIN, size), false, true);
   }
 
+
+  /**
+   * Create a new .vlw font on the fly. See documentation with
+   * the later version of this constructor.
+   */
   public PFont(String name, int size, boolean smooth) {
     this(new Font(name, Font.PLAIN, size), false, smooth);
   }
