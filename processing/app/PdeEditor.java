@@ -1409,7 +1409,7 @@ afterwards, some of these steps need a cleanup function
       ps.println("      <td>&nbsp;</td>");
       ps.println("    </tr>");
       ps.println("    <tr>");
-      ps.println("      <td><applet code=\"" + exportSketchName + " archive=\"" + exportSketchName + ".jar width=" + wide + " height=" + high + ">");
+      ps.println("      <td><applet code=\"" + exportSketchName + "\" archive=\"" + exportSketchName + ".jar\" width=" + wide + " height=" + high + ">");
       ps.println("        </applet></td>");
       ps.println("    </tr>");
       ps.println("    <tr>");

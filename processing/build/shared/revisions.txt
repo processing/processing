@@ -1,3 +1,10 @@
+ABOUT REV 0050 - 27 january 2003
+
+released a little sooner than hoped, to fix a single showstopper bug
+first discovered by josh nimoy. two sets of quotes were left out of
+the export-to-web code, which web pages that didn't work.
+
+
 ABOUT REV 0049 - 26 january 2003
 
 a release of p5 to honor the national tv advertising holiday
