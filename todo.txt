@@ -69,8 +69,8 @@ _ include stdout/stderr in the processing window
 _   option to toggle window on/off (not just in properties, but realtime)
 _   set # of lines in properties
 _ remove .java and .class files for compiled classes
-_ note about bug in sun vm for freaking out
-_ note about memory running out, using ms and mx
+_ technote about bug in sun vm for freaking out
+_ technote about memory running out, using ms and mx
 _ add special cvs generic user
 _ special case lines of thickness 1
 _ mac version for casey
@@ -79,6 +79,7 @@ _   with serial for michael
 _ look into maxx programming
 _ live video editing, wanting things more procedural
 _ illustrator exporting
+_   version of Illustrator.java that uses bagel api
 
 
 for 0015
