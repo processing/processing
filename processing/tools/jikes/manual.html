@@ -1,0 +1,192 @@
+<HTML><HEAD><TITLE>Manpage of jikes</TITLE>
+</HEAD><BODY>
+<H1>jikes</H1>
+Section: User Commands  (1)<BR><A HREF="#index">Index</A>
+<HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+jikes - java source to bytecode compiler
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>jikes</B>
+[<B>-bootclasspath</B> path]
+[<B>-classpath</B> path]
+[<B>-d</B> directory]
+[<B>-debug</B>]
+[<B>-depend</B>]
+[<B>-deprecation</B>]
+[<B>-encoding</B> encoding]
+[<B>-extdirs</B> path]
+[<B>-g</B>]
+[<B>-nowarn</B>]
+[<B>-nowrite</B>]
+[<B>-O</B>]
+[<B>-verbose</B>]
+[<B>-sourcepath</B> path]
+[<B>-Xdepend</B>]
+[<B>-Xstdout</B>]
+[<B>++</B>]
+[<B>+B</B>]
+[<B>+OLDCSO</B>]
+[<B>+D</B>]
+[<B>+DR=</B>filename]
+[<B>+E</B>]
+[<B>+F</B>]
+[<B>+K</B>]
+[<B>+M</B>]
+[<B>+P</B>]
+[<B>+T</B>nn]
+[<B>+U</B>]
+[<B>+Z</B>]
+[<B>+c</B>]
+file.java
+...
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<B>Jikes</B> translates Java(TM) source files to bytecode. Features
+include strict adherence to the language specification, automatic
+makefile generation and incremental compilation. It is maintained
+by the Jikes Project.
+<P>
+<A NAME="lbAE">&nbsp;</A>
+<H2>OPTIONS</H2>
+
+<B>Jikes</B> may be invoked with the following command-line options:
+<DL COMPACT>
+<DT><B>-bootclasspath</B> path<DD>
+use path for the bootclasspath
+<DT><B>-classpath</B> path<DD>
+use path for CLASSPATH
+<DT><B>-d</B> directory<DD>
+write class files in specified directory
+<DT><B>-debug<DD>
+no effect (recognized for compatibility)
+<DT>-depend<DD>
+recompile all used classes
+<DT>-deprecation<DD>
+report uses of deprecated features
+<DT>-encoding<DD>
+use specified encoding to read source files
+<DT>-extdirs</B> path<DD>
+use path for extensions directories
+<DT><B>-g<DD>
+debug (generate LocalVariableTable attribute)
+<DT>-nowarn<DD>
+do not issue warning messages
+<DT>-nowrite<DD>
+do not write any class files
+<DT>-O<DD>
+do not write LineNumberTable
+<DT>-sourcepath</B> path<DD>
+use path for specifying &quot;source only&quot; directories
+<DT><B>-verbose<DD>
+list files read and written
+<DT>-Xdepend<DD>
+same as -depend
+<DT>-Xstdout<DD>
+write error messages to standard output, not stderr
+<DT>++<DD>
+compile in incremental mode
+<DT>+B<DD>
+do not invoke bytecode generator
+<DT>+OLDCSO<DD>
+Select to use same classpath search order as in older versions of Jikes (for compatibility). 
+<DT>+D<DD>
+report errors immediately in emacs-form without buffering
+<DT>+DR</B>=filename<DD>
+write report of dependencies to specified file
+<DT><B>+E<DD>
+list errors in emacs-form
+<DT>+F<DD>
+do full dependence check except for Zip and Jar files
+<DT>+K</B>name=TypeKeyWord<DD>
+map name to type keyword
+<DT><B>+M<DD>
+generate makefile dependencies
+<DT>+P<DD>
+Pedantic compilation - issues lots of warnings
+<DT>+T</B>nn<DD>
+set value of tab to nn spaces
+<DT><B>+U<DD>
+do full dependence check including Zip and Jar files
+<DT>+Z<DD>
+treat cautions as errors
+<DT>+c<DD>
+do not discard comments from lexer output
+</DL>
+<P>
+
+An argument may have the form </B><I>@file</I>; each line of <I>file</I> is
+then interpreted as an argument, except that lines beginning with
+<I>@</I> are not expanded recursively.
+<P>
+<A NAME="lbAF">&nbsp;</A>
+<H2>FILES</H2>
+
+<B>Jikes</B> has several options related to classpath searching.
+The -bootclasspath, -extdirs, and -sourcepath options are the same
+as in javac.  In addition to being specified on the command line, the
+environment variables BOOTCLASSPATH, EXTDIRS, and SOURCEPATH may also be
+used to specify values for these options, respectively.  <B>Jikes</B> also
+has the -classpath option as in javac, with the corresponding environment
+variable CLASSPATH.  The classpath may also be specified in the environment
+variable JIKESPATH.  If JIKESPATH and CLASSPATH coexist, preference will be
+given to JIKESPATH.  A value specified on the command line will be always
+be given preference over the value of any environment variable.  All the
+directories and files specified in these options or environment variables
+must be in a colon-separated list, e.g., &quot;.:$HOME/java/jre/lib/rt.jar&quot;.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<DL COMPACT>
+<DT>Jikes Project homepage <DD>
+<I><A HREF="http://oss.software.ibm.com/developerworks/opensource/jikes/">http://oss.software.ibm.com/developerworks/opensource/jikes/</A></I>
+for news of recent developments,
+to download new versions, 
+to report bugs, or 
+to learn how to participate in the development process.
+<P>
+</DL>
+<A NAME="lbAH">&nbsp;</A>
+<H2>COPYRIGHT</H2>
+
+Copyright &#169; 1996, 1997, 1998, 1999, 2000, 2001,
+International Business Machines Corporation and others. All Rights Reserved.
+<P>
+
+<B>Jikes</B> is licensed under the <I>IBM Public License</I>, included
+in the file <I>license.htm</I> distributed with the program, and also
+available at the Jikes Project URL.
+
+Portions of <B>Jikes</B> are derived from prior, freely distributable
+projects.  For more details on this code, see the comments in
+src/double.h, src/platform.h, and src/unzip.h.
+<P>
+<A NAME="lbAI">&nbsp;</A>
+<H2>NOTES</H2>
+
+Java is a registered trademark of Sun Microsystems, Inc.
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">OPTIONS</A><DD>
+<DT><A HREF="#lbAF">FILES</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+<DT><A HREF="#lbAH">COPYRIGHT</A><DD>
+<DT><A HREF="#lbAI">NOTES</A><DD>
+</DL>
+<HR>
+This document was created by man2html from the Jikes manual page,
+it was then manualy stripped of invalid hrefs for distro.<BR>
+Time: 09:00:00 GMT, May 13, 2001
+</BODY>
+</HTML>
