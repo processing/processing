@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 
 
@@ -28,6 +29,7 @@ public class PdeEditorConsole extends Component {
   String lines[];
   boolean isError[];
   int firstLine;
+  int scrollOffset;
 
   byte cline[] = new byte[1024];
   byte clength;
@@ -36,6 +38,12 @@ public class PdeEditorConsole extends Component {
   Color bgColor;
   Color fgColorErr;
   Color fgColorOut;
+  Color scrollEnabledColor;
+  Color scrollDisabledColor;
+
+  int scrollLeft, scrollRight;
+  int scrollUpTop, scrollUpBottom;
+  int scrollDownTop, scrollDownBottom;
 
   Font font;
   FontMetrics metrics;
@@ -68,7 +76,11 @@ public class PdeEditorConsole extends Component {
       systemOut = System.out;
       systemErr = System.err;
 
-      if (PdeBase.getBoolean("editor.console.out.enabled", false)) {
+      // not text thing on macos
+      boolean tod = ((PdeBase.platform != PdeBase.MACOSX) &&
+		     (PdeBase.platform != PdeBase.MACOS9));
+
+      if (PdeBase.getBoolean("editor.console.out.enabled", tod)) {
 	String outFileName = 
 	  PdeBase.get("editor.console.out.file", "lib/stdout.txt");
 	try {
@@ -78,7 +90,7 @@ public class PdeEditorConsole extends Component {
 	}
       }
 
-      if (PdeBase.getBoolean("editor.console.err.enabled", false)) {
+      if (PdeBase.getBoolean("editor.console.err.enabled", tod)) {
 	String errFileName = 
 	  PdeBase.get("editor.console.err.file", "lib/stderr.txt");
 	try {
@@ -105,6 +117,25 @@ public class PdeEditorConsole extends Component {
       isError[i] = false;
     }
     firstLine = 0;
+
+    addMouseListener(new MouseAdapter() {
+	public void mousePressed(MouseEvent e) {
+	  int x = e.getX(); 
+	  int y = e.getY();
+	  if (!((x > scrollLeft) && (x < scrollRight)))
+	    return;
+
+	  if ((y > scrollUpTop) && (y < scrollUpBottom)) {
+	    scrollOffset -= lineCount;
+	    update();
+
+	  } else if ((y > scrollDownTop) && (y < scrollDownBottom)) {
+	    scrollOffset += lineCount;
+	    if (scrollOffset > 0) scrollOffset = 0;
+	    update();
+	  }
+	}
+      });
   }
 
 
@@ -127,6 +158,12 @@ public class PdeEditorConsole extends Component {
 				    new Color(153, 153, 153));
       fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
 				    new Color(204, 51, 0));
+      scrollEnabledColor = 
+	PdeBase.getColor("editor.console.scrollbox.color.enabled", 
+			 new Color(51, 51, 51));
+      scrollDisabledColor = 
+	PdeBase.getColor("editor.console.scrollbox.color.disabled", 
+			 new Color(35, 35, 35));
       screen.setFont(font);
       metrics = screen.getFontMetrics();
       ascent = metrics.getAscent();
@@ -178,11 +215,33 @@ public class PdeEditorConsole extends Component {
     g.fillRect(0, 0, imageW, imageH);
 
     for (int i = 0; i < lineCount; i++) {
-      int ii = (firstLine + i) % maxLineCount;
+      //int ii = (firstLine + i) % maxLineCount;
+      int ii = (firstLine + i) + scrollOffset;
+      while (ii < 0) ii += maxLineCount;
+      if (ii > maxLineCount) ii = ii % maxLineCount;
+
       g.setColor(isError[ii] ? fgColorErr : fgColorOut);
       //System.out.println(leading);
       g.drawString(lines[ii], HINSET, VINSET + ascent + i*ascent);
     }
+
+    final int SCROLL_INSET = 4;
+    final int SCROLL_SIZE = 12;
+
+    scrollRight = sizeW - SCROLL_INSET;
+    scrollLeft = scrollRight - SCROLL_SIZE;
+
+    scrollUpTop = SCROLL_INSET;
+    scrollUpBottom = scrollUpTop + SCROLL_SIZE;
+
+    scrollDownBottom = sizeH - SCROLL_INSET;
+    scrollDownTop = scrollDownBottom - SCROLL_SIZE;
+
+    g.setColor(scrollEnabledColor);
+    g.fillRect(scrollLeft, scrollUpTop, SCROLL_SIZE, SCROLL_SIZE);
+    g.setColor((scrollOffset != 0) ? 
+	       scrollEnabledColor : scrollDisabledColor);
+    g.fillRect(scrollLeft, scrollDownTop, SCROLL_SIZE, SCROLL_SIZE);
 
     screen.drawImage(offscreen, 0, 0, null);
   }
@@ -242,6 +301,7 @@ public class PdeEditorConsole extends Component {
       firstLine = (firstLine + 1) % maxLineCount;
       //systemOut.println((err ? "ERR: " : "OUT: ") + what);
       systemOut.println(what);
+      scrollOffset = 0;
     }
     update();
   }

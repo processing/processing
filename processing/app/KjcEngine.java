@@ -248,7 +248,8 @@ public class KjcEngine extends PdeEngine {
 	compiler = new Perl5Compiler();
 	try {
 	  pattern = 
-	    compiler.compile("^([^A-Za-z0-9_]+)(size\\(\\s*\\d+,\\s*\\d+\\s*\\);)");
+	    compiler.compile("[\\s\\;](size\\(\\s*\\d+,\\s*\\d+\\s*\\);)");
+	    //compiler.compile("^([^A-Za-z0-9_]+)(size\\(\\s*\\d+,\\s*\\d+\\s*\\);)");
 
 	} catch (MalformedPatternException e){
 	  e.printStackTrace();
@@ -277,7 +278,8 @@ public class KjcEngine extends PdeEngine {
 	// this winds up removing every reference to size()
 	// not really intended, but will help things work
 
-	subst = new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
+	subst = new Perl5Substitution("", Perl5Substitution.INTERPOLATE_ALL);
+	//subst = new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
 	program = Util.substitute(matcher, pattern, subst, program, 
 				  Util.SUBSTITUTE_ALL);
 
@@ -288,7 +290,9 @@ public class KjcEngine extends PdeEngine {
 	compiler = new Perl5Compiler();
 	try {
 	  pattern = 
-	    compiler.compile("^([^A-Za-z0-9_]+)(background\\(.*\\);)");
+	    compiler.compile("[\\s\\;](background\\(.*\\);)");
+	  //[\\s\\;]
+	    //compiler.compile("([^A-Za-z0-9_]+)(background\\(.*\\);)");
 
 	} catch (MalformedPatternException e){
 	  //System.err.println("Bad pattern.");
@@ -315,7 +319,8 @@ public class KjcEngine extends PdeEngine {
 	// remove references to size()
 	// this winds up removing every reference to size()
 	// not really intended, but will help things work
-	subst = new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
+	subst = new Perl5Substitution("", Perl5Substitution.INTERPOLATE_ALL);
+	//subst = new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
 	program = Util.substitute(matcher, pattern, subst, program, 
 				  Util.SUBSTITUTE_ALL);
 

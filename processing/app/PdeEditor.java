@@ -105,6 +105,11 @@ public class PdeEditor extends Panel {
     textarea.setFont(PdeBase.getFont("editor.program.font",
 				       new Font("Monospaced", 
 						Font.PLAIN, 12)));
+    textarea.addMouseMotionListener(new MouseMotionAdapter() {
+	public void mouseMoved(MouseEvent e) {
+	  frame.setCursor(Frame.CROSSHAIR_CURSOR);
+	}
+      });
     rightPanel.add("Center", textarea);
 
     Panel statusPanel = new Panel();
@@ -1173,6 +1178,31 @@ public class PdeEditor extends Panel {
 
   protected void doQuit2() {
     doStop();
+
+    // clear out projects that are empty
+    if (PdeBase.getBoolean("sketchbook.auto_clean", true)) {
+      String userPath = base.sketchbookPath + File.separator + userName;
+      File userFolder = new File(userPath);
+      if (userFolder.exists()) {  // huh?
+	String entries[] = new File(userPath).list();
+	if (entries != null) {
+	  for (int j = 0; j < entries.length; j++) {
+	    if ((entries[j].equals(".")) || 
+		(entries[j].equals(".."))) continue;
+	    File preyDir = new File(userPath, entries[j]);
+	    File prey = new File(preyDir, entries[j] + ".pde");
+	    if (prey.exists()) {
+	      if (prey.length() == 0) {
+		//System.out.println("remove: " + prey);
+		removeDir(preyDir);
+	      }
+	    } else {
+	      //System.out.println(prey + " doesn't exist.. weird");
+	    }
+	  }
+	}
+      }
+    }
 
     // write sketch.properties
     try {
