@@ -4,7 +4,7 @@
   PdeHistory - handler for storing history information about a project
   Part of the Processing project - http://Proce55ing.net
 
-  Except where noted, code is written by Ben Fry and
+  Except where noted, code is written by Ben Fry
   Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
