@@ -207,7 +207,9 @@ public class PdeEditor extends JPanel {
                                    screen.height + insets.top + insets.bottom);
     } else {
       presentationWindow = new Frame();
+#ifdef JDK14
       ((Frame)presentationWindow).setUndecorated(true);
+#endif
       presentationWindow.setBounds(0, 0, screen.width, screen.height);
     }
 
