@@ -600,6 +600,8 @@ public class KjcEngine extends PdeEngine {
 	applet = (KjcApplet) c.newInstance();
 	//((KjcApplet)applet).errStream = leechErr;
 	applet.setEngine(this);
+	// has to be before init
+	applet.serialProperties(PdeBase.properties);
 	applet.init();
 	applet.start();
 
