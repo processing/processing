@@ -2201,29 +2201,34 @@ public class PApplet extends Applet
 
   //
 
-  static public void append(byte b[], byte value) {
+  static public byte[] append(byte b[], byte value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
+    return b;
   }
 
-  static public void append(char b[], char value) {
+  static public char[] append(char b[], char value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
+    return b;
   }
 
-  static public void append(int b[], int value) {
+  static public int[] append(int b[], int value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
+    return b;
   }
 
-  static public void append(float b[], float value) {
+  static public float[] append(float b[], float value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
+    return b;
   }
 
-  static public void append(String b[], String value) {
+  static public String[] append(String b[], String value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
+    return b;
   }
 
   //

@@ -47,6 +47,7 @@ X   colorMode broken for red() green() etc
 X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
 X   add color(gray) and color(gray, alpha)
 X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089898189;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1090133107
 o update() mode needs to be hacked in (?)
 X make 'online' a boolean
 X pass in args[] from main
@@ -120,6 +121,9 @@ X full casting operations on primitives and arrays of them
 X text(String text, x, y, width, height)  // based on rectMode
 X   textMode() for align left, center, right (no justify.. har!)
 X hex(), binary(), unhex(), unbinary()
+
+040725 
+X fix array functions not returning a value
 
 _ processing.net -> PClient, PServer
 
