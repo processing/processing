@@ -163,6 +163,8 @@ public class PdeEditorStatus extends Panel
   */
 
   public void prompt(String message) {
+    //System.out.println("prompting...");
+
     mode = PROMPT;
     this.message = message;
 
