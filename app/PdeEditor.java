@@ -805,16 +805,8 @@ afterwards, some of these steps need a cleanup function
     }
   }
 
-  public void doStop() {
-    /*
-    if (presenting) {
-      presenting = false; // to avoid endless recursion
-      doClose();
-      //presentationWindow.hide();
-      return;
-    }
-    */
 
+  public void doStop() {
     if (pdeRuntime != null) pdeRuntime.stop();
     if (watcher != null) watcher.stop();
     //System.out.println("stop2");
