@@ -4,6 +4,42 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0053 - 4 april 2003
+
+[ major bug fixes ]
+
+- finally found and fixed the 'disappearing caret' bug that some
+  people were having on windows. text editor is much more usable.
+
+- fixes to non-smoothed images, no longer makes a weird line in the
+  center of some images, or leaves out a line of pixels at the end.
+
+- lots of fixes to anti-aliasing, though it's still not anywhere near
+  perfect. still suffers most of the problems mentioned below.
+
+
+[ small tweaks ]
+
+- color(r, g, b, a) now works, also color c = #RRGGBBAA (like web
+  colors, but with alpha at the end)
+
+
+[ known bugs ]
+
+- alpha is a little weird (mostly doesn't work) on lines. it won't
+  work on single pixel lines unless smooth() is turned on. 
+
+- smooth() is still imperfect. you may find some jagged edges. text
+  marches in a funny way (i.e. typography04). shapes don't always
+  properly overlap (i.e. you can see triangles on spheres)
+
+- images with smooth() enabled are coming out a little garbled
+
+- concave polygons don't draw properly
+
+- lots of other exciting things just waiting to be found out!
+
+
 ABOUT REV 0052 - 5 march 2003
 
 [ feature additions ] 
