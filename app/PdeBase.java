@@ -1202,7 +1202,7 @@ public class PdeBase extends Frame
    * Implements the other cross-platform headache of opening
    * a folder in the machine's native file browser.
    */
-  public void openFolder(File file) {
+  static public void openFolder(File file) {
     try {
       String folder = file.getCanonicalPath();
 
