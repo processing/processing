@@ -4,7 +4,7 @@
   PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004- Ben Fry and Casey Reas
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -25,11 +25,9 @@
 
 package processing.core;
 
-//import java.applet.*;
 import java.awt.*;
-//import java.awt.event.*;
 import java.awt.image.*;
-//import java.io.*;
+
 
 public class PGraphics3 extends PGraphics {
 
@@ -207,7 +205,7 @@ public class PGraphics3 extends PGraphics {
     allocate();
 
     // clear the screen with the old background color
-    background(backgroundColor);
+    //background(backgroundColor);
 
     // init perspective projection based on new dimensions
     cameraFOV = 60; // at least for now
@@ -246,7 +244,9 @@ public class PGraphics3 extends PGraphics {
     // because of a java 1.1 bug, pixels must be registered as
     // opaque before their first run, the memimgsrc will flicker
     // and run very slowly.
-    for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
+    backgroundColor |= 0xff000000;  // just for good measure
+    for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
+    //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
 
     cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
     mis = new MemoryImageSource(width, height, pixels, 0, width);
@@ -254,7 +254,6 @@ public class PGraphics3 extends PGraphics {
     mis.setAnimated(true);
     image = Toolkit.getDefaultToolkit().createImage(mis);
 
-    // TODO don't allocate these until depth() is called
     zbuffer = new float[pixelCount];
     stencil = new int[pixelCount];
 
@@ -266,6 +265,9 @@ public class PGraphics3 extends PGraphics {
   public void defaults() {
     super.defaults();
 
+    cameraMode(PERSPECTIVE);
+
+    //System.out.println("PGraphics3.defaults()");
     // easiest for beginners
     textureMode(IMAGE_SPACE);
 
@@ -1394,6 +1396,24 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // BASIC SHAPES
+
+
+  public void point(float x, float y) {
+    point(x, y, 0);
+  }
+
+
+  public void point(float x, float y, float z) {
+    beginShape(POINTS);
+    vertex(x, y, z);
+    endShape();
+  }
+
+  /*
   private void point3(float x, float y, float z, int color) {
     // need to get scaled version of the stroke
     float x1 = screenX(x - 0.5f, y - 0.5f, z);
@@ -1414,59 +1434,145 @@ public class PGraphics3 extends PGraphics {
       // these will be
     }
   }
+  */
 
-
-
-  //////////////////////////////////////////////////////////////
-
-  // SHAPES
-
-  public void point(float x, float y) {
-    point(x, y, 0);
-  }
-
-  public void point(float x, float y, float z) {
-  }
 
   public void line(float x1, float y1, float x2, float y2) {
     line(x1, y1, 0, x2, y2, 0);
   }
 
+
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
+    beginShape(LINES);
+    vertex(x1, y1, z1);
+    vertex(x2, y2, z2);
+    endShape();
   }
+
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
+    beginShape(TRIANGLES);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    vertex(x3, y3);
+    endShape();
   }
 
-  //public void rectMode(int mode)
-
-  public void rect(float x1, float y1, float x2, float y2) {
-  }
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
+    beginShape(QUADS);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    vertex(x3, y3);
+    vertex(x4, y4);
+    endShape();
   }
 
-  public void circle(float x, float y, float radius) {
+
+
+  //////////////////////////////////////////////////////////////
+
+  // PLACED SHAPES
+
+
+  public void draw_rect(float x1, float y1, float x2, float y2) {
+    quad(x1, y1,  x2, y1,  x2, y2,  x1, y2);
   }
 
-  public void ellipseMode(int mode) {
+
+  protected void draw_ellipse(float x, float y, float hradius, float vradius) {
+    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
+    // now uses current scale factors to determine "real" transformed radius
+
+    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
+    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
+
+    // notched this up to *3 instead of *2 because things were
+    // looking a little rough, i.e. the calculate->arctangent example [fry]
+
+    // also removed the m00 and m11 because those were causing weirdness
+    // need an actual measure of magnitude in there [fry]
+
+    int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+
+    // [toxi031031] adapted to use new lookup tables
+    float inc = (float)SINCOS_LENGTH / cAccuracy;
+
+    float val = 0;
+    beginShape(POLYGON);
+    for (int i = 0; i < cAccuracy; i++) {
+      vertex(x + cosLUT[(int) val] * hradius,
+             y + sinLUT[(int) val] * vradius);
+      val += inc;
+    }
+    endShape();
   }
 
-  public void ellipse(float x, float y, float hradius, float vradius) {
+
+  /**
+   * Start and stop are in radians, converted by the parent function.
+   * Note that the radians can be greater (or less) than TWO_PI.
+   * This is so that an arc can be drawn that crosses zero mark,
+   * and the user will still collect $200.
+   */
+  protected void draw_arc(float start, float stop,
+                          float x, float y, float w, float h) {
+    float hr = w / 2f;
+    float vr = h / 2f;
+
+    if (fill) {
+      // shut off stroke for a minute
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(TRIANGLE_FAN);
+      vertex(x, y);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        vertex(x + cosLUT[ii] * hr,
+               y + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      // Almost identical to above, but this uses a LINE_STRIP
+      // and doesn't include the first (center) vertex.
+
+      boolean savedFill = fill;
+      fill = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(LINE_STRIP);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        vertex(x + cosLUT[ii] * hr,
+               y + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      fill = savedFill;
+    }
   }
 
-  //public void arcMode(int mode)
-
-  public void arc(float start, float stop,
-                  float x, float y, float radius) {
-  }
-
-  public void arc(float start, float stop,
-                  float x, float y, float hr, float vr) {
-  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1493,12 +1599,7 @@ public class PGraphics3 extends PGraphics {
   // 3D BOX
 
 
-  // solid or wire depends on settings for stroke and fill
-  // slices/stacks can be set by an advanced option
-
-  //public void cube(float size) {
   public void box(float size) {
-    //box(-size/2, -size/2, -size/2,  size/2, size/2, size/2);
     box(size, size, size);
   }
 
@@ -1506,15 +1607,14 @@ public class PGraphics3 extends PGraphics {
   // OPT this isn't the least bit efficient
   //     because it redraws lines along the vertices
   //     ugly ugly ugly!
-  //public void box(float x1, float y1, float z1,
-  //          float x2, float y2, float z2) {
   public void box(float w, float h, float d) {
     float x1 = -w/2f; float x2 = w/2f;
     float y1 = -h/2f; float y2 = h/2f;
     float z1 = -d/2f; float z2 = d/2f;
 
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
-    triangle.setCulling(true);
+    if (triangle != null) {  // triangle is null in gl
+      triangle.setCulling(true);
+    }
 
     beginShape(QUADS);
 
@@ -1556,8 +1656,9 @@ public class PGraphics3 extends PGraphics {
 
     endShape();
 
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
-    triangle.setCulling(false);
+    if (triangle != null) {  // triangle is null in gl
+      triangle.setCulling(false);
+    }
   }
 
 
@@ -1637,8 +1738,9 @@ public class PGraphics3 extends PGraphics {
     if (x!=0f && y!=0f && z!=0f) translate(x,y,z);
     scale(r);
 
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
-    triangle.setCulling(true);
+    if (triangle != null) {  // triangle is null in gl
+      triangle.setCulling(true);
+    }
 
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
@@ -1681,8 +1783,9 @@ public class PGraphics3 extends PGraphics {
     endShape();
     pop();
 
-    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
-    triangle.setCulling(false);
+    if (triangle != null) {  // triangle is null in gl
+      triangle.setCulling(false);
+    }
   }
 
 
@@ -2236,6 +2339,8 @@ public class PGraphics3 extends PGraphics {
    * even if noDepth() was called before draw() exited.
    */
   public void clear() {
+    //System.out.println("PGraphics3.clear(" +
+    //                 PApplet.hex(backgroundColor) + ")");
     for (int i = 0; i < pixelCount; i++) {
       pixels[i] = backgroundColor;
       zbuffer[i] = MAX_FLOAT;

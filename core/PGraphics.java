@@ -279,6 +279,7 @@ public class PGraphics extends PImage implements PConstants {
     resize(iwidth, iheight);
 
     // init color/stroke/fill
+    // called instead just before setup on first frame
     //defaults();
 
     // clear geometry for loading later
@@ -744,12 +745,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // LINE
-
-
   public void line(float x1, float y1, float x2, float y2) {
     // TODO
   }
@@ -761,14 +756,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // TRIANGLE
-
-
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
+    // TODO
+  }
+
+
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
     // TODO
   }
 
@@ -809,19 +804,12 @@ public class PGraphics extends PImage implements PConstants {
       y1 -= vradius;
     }
 
-    // TODO write rect drawing function
+    draw_rect(x1, y1, x2, y2);
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // QUAD
-
-
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4) {
-    // TODO
+  protected void draw_rect(float x1, float y1, float x2, float y2) {
+    // TODO write rect drawing function
   }
 
 
@@ -857,6 +845,11 @@ public class PGraphics extends PImage implements PConstants {
       y = b - d/2f;
     }
 
+    draw_ellipse(x, y, w, h);
+  }
+
+
+  protected void draw_ellipse(float x, float y, float w, float h) {
     // TODO draw an ellipse
   }
 
@@ -900,7 +893,12 @@ public class PGraphics extends PImage implements PConstants {
       while (stop < start) stop += TWO_PI;
     }
 
-    // TODO draw an arc
+    draw_arc(start, stop, x, y, w, h);
+  }
+
+
+  protected void draw_arc(float start, float stop,
+                          float x, float y, float w, float h) {
   }
 
 
@@ -1407,7 +1405,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.resetLeading();
 
     } else {
-      System.err.println("Ignoring improperly loaded font in textFont()");
+      throw new RuntimeException("a null PFont was passed to textFont()");
     }
   }
 
@@ -1424,7 +1422,7 @@ public class PGraphics extends PImage implements PConstants {
       textSize = size;
 
     } else {
-      System.err.println("First set a font before setting its size.");
+      throw new RuntimeException("use textFont() before textSize()");
     }
   }
 
@@ -1434,7 +1432,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.leading(leading);
 
     } else {
-      System.err.println("First set a font before setting its leading.");
+      throw new RuntimeException("use textFont() before textLeading()");
     }
   }
 
@@ -1444,7 +1442,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.align(mode);
 
     } else {
-      System.err.println("First set a font before setting its mode.");
+      throw new RuntimeException("use textFont() before textMode()");
     }
   }
 
@@ -1454,7 +1452,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.space(space);
 
     } else {
-      System.err.println("First set a font before setting the space.");
+      throw new RuntimeException("use textFont() before textSpace()");
     }
   }
 
@@ -1464,7 +1462,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.text(c, x, y, this);
 
     } else {
-      System.err.println("text(): first set a font before drawing text");
+      throw new RuntimeException("use textFont() before text()");
     }
   }
 
@@ -1479,7 +1477,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.text(s, x, y, this);
 
     } else {
-      System.err.println("text(): first set a font before drawing text");
+      throw new RuntimeException("use textFont() before text()");
     }
   }
 
@@ -1521,7 +1519,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont.text(s, x1, y1, x2, y2, this);
 
     } else {
-      System.err.println("text(): first set a font before drawing text");
+      throw new RuntimeException("use textFont() before text()");
     }
   }
 
@@ -1564,11 +1562,6 @@ public class PGraphics extends PImage implements PConstants {
   // MATRIX TRANSFORMATIONS
 
 
-  public void angleMode(int mode) {
-    angleMode = mode;
-  }
-
-
   public void translate(float tx, float ty) {
     m02 += tx*m00 + ty*m01 + m02;
     m12 += tx*m10 + ty*m11 + m12;
@@ -1579,16 +1572,9 @@ public class PGraphics extends PImage implements PConstants {
     // not supported in 2D
   }
 
-  public void rotateX(float angle) {
-    // not supported in 2D
-  }
 
-  public void rotateY(float angle) {
-    // not supported in 2D
-  }
-
-  public void rotateZ(float angle) {
-    // not supported in 2D
+  public void angleMode(int mode) {
+    angleMode = mode;
   }
 
 
@@ -1602,6 +1588,19 @@ public class PGraphics extends PImage implements PConstants {
     float c = cos(angle);
     float s = sin(angle);
     applyMatrix(c, -s, 0,  s, c, 0);
+  }
+
+
+  public void rotateX(float angle) {
+    // not supported in 2D
+  }
+
+  public void rotateY(float angle) {
+    // not supported in 2D
+  }
+
+  public void rotateZ(float angle) {
+    // not supported in 2D
   }
 
 
