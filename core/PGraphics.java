@@ -4280,9 +4280,36 @@ public class PGraphics extends PImage
     text(s, x, y, 0, w, h);
   }
 
-  public void text(String s, float x, float y, float z, float w, float h) {
+  public void text(String s, float x1, float y1, float z, float x2, float y2) {
     if (text_font != null) {
-      text_font.text(s, x, y, z, w, h, this);
+      float hradius, vradius;
+      switch (rect_mode) {
+      case CORNER:
+        x2 += x1; y2 += y1;
+        break;
+      case CENTER_RADIUS:
+        hradius = x2;
+        vradius = y2;
+        x2 = x1 + hradius;
+        y2 = y1 + vradius;
+        x1 -= hradius;
+        y1 -= vradius;
+        break;
+      case CENTER:
+        hradius = x2 / 2.0f;
+        vradius = y2 / 2.0f;
+        x2 = x1 + hradius;
+        y2 = y1 + vradius;
+        x1 -= hradius;
+        y1 -= vradius;
+      }
+      if (x2 < x1) {
+        float temp = x1; x1 = x2; x2 = temp;
+      }
+      if (y2 < y1) {
+        float temp = y1; y1 = y2; y2 = temp;
+      }
+      text_font.text(s, x1, y1, z, x2, y2, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");

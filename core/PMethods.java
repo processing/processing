@@ -189,7 +189,7 @@ public interface PMethods {
 
   public void text(String s, float x, float y, float w, float h);
 
-  public void text(String s, float x, float y, float z, float w, float h);
+  public void text(String s, float x1, float y1, float z, float x2, float y2);
 
   public void text(int num, float x, float y);
 
