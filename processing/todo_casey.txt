@@ -1,0 +1,737 @@
+/ / / / / / / / / /
+
+I'm totally confused about how mouseDown keyDown mouseUp keyUp is supposed to be working so i can't document it. do you have simple examples?
+below is what i've been trying:
+
+int mx = 0;
+int my = 0;
+void setup() {
+  size(200, 200);
+  background(102);
+}
+void loop() {
+  rect(mx, my, 50, 50);
+}
+//public void mouseDown(int x, int y) {
+//  mx = x;
+//  my = y;
+//}
+//public boolean mouseDown(Event e, int x, int y) {
+//  mx = x;
+//  my = y;
+//  return true;
+//}
+public void mouseDown(int x, int y, int button) {
+  mx = x;
+  my = y;
+}
+  
+
+/ / / / / / / / / /
+
+
+
+
+
+
+
+
+Notes from Version 37 -- PC Windows2000 Professional
+
+/ / / / / / / / / /
+Frequently i'll trying to play a program with an error. Proce55ing will tell me that i have a syntax error. I will correct the error, but when i hit run it then give me a sequence of error text:
+Exception occurred during event dispatching:
+java.lang.NullPointerException
+
+if you quit the environment and then repost in the code it will run fine.
+
+for example run this problematic code:
+ex. 
+color rr = #FFCC00;
+fill(255);
+rect(20, 20, 50, 50);
+fill(rr);
+rect(50, 50, 50, 50);
+
+then fix the error and run again:
+//ex. 
+color rr = #FFCC00;
+fill(255);
+rect(20, 20, 50, 50);
+fill(rr);
+rect(50, 50, 50, 50);
+
+
+/ / / / / / / / / /
+history is super cool. no problems yet with it.
+
+/ / / / / / / / / /
+the "double" bug is back
+proce55ing thinks the following numbers are a double:
+float a = .5;
+float b = 0.5;
+
+/ / / / / / / / / /
+when you click on the link for proce55ing reference it should take you to the index page, not the environment page
+
+
+
+
+/ / / / / / / / / /
+/ / / / / / / / / /
+/ / / / / / / / / /
+
+Extended notes from Version 36 -- PC Windows2000 Professional
+
+/ / / / / / / / / /
+background() is not working
+
+not working here:
+size(200, 200);
+background(255, 255, 255);
+fill(255, 204, 0);
+rect(30, 20, 50, 50);
+
+but is working here:
+void setup() {
+  size(200, 200);
+  background(255, 255, 255);
+}
+void loop() {
+  noStroke();
+  fill(255, 204, 0);
+  rect(30, 20, 50, 50);
+}
+
+/ / / / / / / / / /
+fill() is not detecting if an int or color is being passed in...
+
+ex.
+color cc = #ffcc00;
+fill(cc);
+rect(30, 20, 55, 55);
+
+
+/ / / / / / / / / /
+
+
+
+Notes from Version 36
+
+
+///////////////////////////////////
+
+after an applet with an image exports, it will load fine once, but not
+after?
+the applet loads fine the first time and displays the image, but when you
+hard refresh, it only displays a black box in the place the image was. it
+will not longer load.
+actually soft refresh is fine but fn-refresh kills the images. after this
+point, no images will load. if explorer is restarted the problem is fixed.
+
+///////////////////////////////////
+
+in advanced mode (java mode) you have to quit p5 and reopen to see changes
+to the code. if you make a change and hit run button, the change is not
+visible
+
+
+///////////////////////////////////
+
+the fill() method with one parameter is not distinguishing if the one parameter is an int of the datatype color. need to check the first four bits i think.
+
+ex. 
+color rr = #FFCC00;
+fill(255);
+rect(20, 20, 50, 50);
+fill(rr);
+rect(50, 50, 50, 50);
+
+
+///////////////////////////////////
+
+
+Notes from Version 35
+
+///////////////////////////////////
+
+Tag -- I'm it. Clean and review all documentation. Examples.
+
+///////////////////////////////////
+HIGH PRIORITY
+
+background() is not working
+
+curveVertex() is not behaving like curve(). is this your intention?
+
+imageMode() seems to be gone
+
+
+///////////////////////////////////
+
+LOW PRIORITY
+
+setPixel(i, j, #99CC00); // not working anymore Syntax error: unexpected token: CC00
+
+when the image is 100x100 or so and the window is 120x120, the mouse calls are off when the cursor enters and leaves the upper left corner.
+ex.
+void setup() { size(100,100); }
+void loop() {
+  fill(102);
+  rect(mouseX - 5, mouseY - 5, 10, 10);
+}
+
+
+triangle_strip, quad_strip are no filling without outlines
+ex.
+fill(204, 204, 0);
+beginShape(TRIANGLE_STRIP);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+
+There should be an option to "delete" in file menu (the list can get really long)
+
+How is the number chosen for sketch_??? (it seems random when "new" activated)
+
+box is not opaque
+ex.
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40);
+
+if there is no call to size() in setup(), could there be a default size?
+
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+more bugs for version35
+
+if an image name has a number in it, it will not load
+
+after an applet with an image exports, it will load fine once, but not after? 
+it seems that each image will load into the browser once, but no more.
+the applet loads fine the first time and displays the image, but when you hard refresh, it only displays a black box in the place the image was. it will not longer load.
+actually soft refresh is fine but fn-refresh kills the images. after this point, no images will load. if explorer is restarted the problem is fixed.
+
+in advanced mode (java mode) you have to quit p5 and reopen to see changes to the code. if you make a change and hit run button, the change is not visible
+
+questions for documentation
+are images included in the .jar on export to applet?
+
+
+Fun. Export sketchbook. 
+
+Exports the entire contents of the sketchbook to a web presentation...
+
+
+////////////////////////////////////////////////////////////////
+
+Done (Send to Ben)
+Icons for 32px and 16px
+Splash screen
+New buttons for GUI
+
+Todo
+Add examples to cvs (ask ben where to put)
+
+Icons
+macosx: 128 pixel splash, then 48,32,16,12 pixel sizes
+macos9: 32, 16, 12 pixel sizes
+windows: 32, 16 pixel
+linux: none currently
+
+
+WEB
+a _ add documentation for "width" and "height"
+a _ Re-document environment to account for sketchbook
+a X Mention images must go in the data directory within the sketch directory
+a _ New curve docs for Catmull 
+a X Color mode images don't match with the code!
+a X Make sure Tissue code is correct in the software section
+
+a _ Discussion board working
+a _   Admin password changed
+a _   Users obscured unless already logged in
+a _   Finish fixing the type style
+a _ Script for adding people to the list...
+a _ What is the status on serial???
+
+b _ change header "radians, degrees, conversion"
+b _ increase height of top header
+b _ javascript for top header to alternate through images
+b _ Docs for mouseDown and keyDown
+b _ Switch name of "Info" to Information
+b _   Categories within Information:
+b _   Proce55ing in brief / Introduction (answer what and why)
+b _   People
+b _   Copyright and Licensing
+b _   Contact and feedback
+b _   Links
+b _ Download page
+b _   Requirements
+b _   Links to files
+b _   Installation instructions
+b _ Include FAQ on the top right of every page (Information / FAQ)
+b _   Include questions What is Proce55ing? Why is it called Proce55ing? Who is involved?   
+b _ Remove Happenings from the upper left of every page -- link only from home page
+b _ Automate the examples section
+b _ Automate the software section
+b _ Software
+b _   Make anti-aliased version of Tissue, change colors to greens
+b _   Include new software from Peter and Golan
+b _   Include code for Valence or must remove
+b _ Email people for participation in Software and Discussion d-designer e-educator a-artist
+b _   US d    Peter Cho
+b _   US aed  Golan Levin
+b _   US a    Kelly Heaton
+b _   US a    Mark Napier
+b _   AU a    Lia
+b _   US ae   Joshua Davis
+b _   US a    Josh On
+b _   GB d    James Tindall
+b _   US e    Dan Boyarski
+b _   DE de   Joachim Sauter
+b _   CH de   Elise Co
+b _   ?? de   James Patterson
+b _   US eda  Maeda
+b _   FI ae   Juha Huuskonen
+b _   GB e    Gillian
+
+      In addition, ask people to make software
+      yugop
+      *jared
+      *sami
+      marius
+      *erik natski
+      *manny tan
+      *omar
+      axel (busy)
+      reed
+      *nik!!!
+      ade ward
+
+
+EXAMPLES
+a _ Add to cvs (ask ben where)
+b _ Complete set for beta
+
+ 
+REFERENCE
+a _ Build reference section for type
+a _ Add datatype conversion between char and byte
+a _ Alter doc for the 1 pixel lines on 3D objects
+a X Environment. Editor Features
+a X Data. Byte, Char, Color, String Datatype conversion
+a X Object
+a _ Colors. Creating and Reading color
+a _ Shape. BeginShape (curveVertex)
+a _ IO. Serial???
+b _ Reference (New categories)
+b _   Download & Installation
+b _   Getting Started(Language basics)
+b _   Programming basics
+b _ Document message window including println() and print()
+b _ Complete the Complete Reference
+b _ Add TechNotes? (What is a better name?)
+b _ Where are classes documented?
+b _ Where are comments, statement, etc. documented?
+b _ Make note regarding convex polygons
+b _ Add a section of programming basics to the reference
+      comment
+      block
+      statement
+      statement terminator
+      "execute"
+      parameter
+b_ Add Getting Started to reference
+      Comments
+      Statement
+      ; Statement terminator
+
+
+Questions
+_ _ Can we input video through serial???
+_ _ Can we incorporate helper funcions such at grid() or invisibles() to show the matrix or also
+    the center points of various shapes that are being drawn
+_ _ Should basic math function like abs() should have an int prototype
+_ _ What are we doing about convex polygons?
+_ _ A key command for inserting function prototypes, such as ctl-f to add a for loop
+_ _ Make a second version of all drawing primitives that are objects so you can:
+      rectangle.height = 55;
+      rectangle.height = 120;
+      rectangle.angle = PI;
+_ _ mouseX, mouseY, width, height, pmouseX, pmouseY should be reserved and create errors when people try to assign them (l-value error?)
+_ _ Should we discuss bitwise operators?
+_ _ I don't think the links to Proce55ing.net and Reference should be in the "file" menu
+
+
+
+
+
+/////////////////////////////////////////////////////
+
+BELOW FOLLOW NOTES THAT I DON'T WANT TO LOSE...
+
+/////////////////////////////////////////////////////
+
+Lessons from Blujay website
+
+Tutorial
+  Foreward
+  Installation (Windows, Mac, Linux)
+  Getting Started - edit, compile, execute
+  A bit more...
+  Creating a new project
+  Debugging
+  Creating applets
+  Creating stand-alone applications
+  Other operations
+
+Users
+
+
+/////////////////////////////////////////////////////
+
+Uploading from CVS to webserver
+
+What is the ACG webserver: Gabo
+
+- ssh to gabo gabo.media.mit.edu
+- login as fred, a lovely fellow
+- navigate to docroot.p5 and...
+- cvs update -d
+- cvs update -P
+
+
+
+/////////////////////////////////////////////////////
+
+Proce55ing Concepts (both technical and design)
+  Coordinate systems (Cartisian, <<radial>> )(object coordinates vs. environmental)
+  Data ?? or is this broken down into array, variable
+  File
+  Color (different spaces and mappings)
+  Algebra
+  Parameterized form
+  Curves (Bezier vs Catmull-Rom, other)
+  Trigonometry/Geometry
+  Abstraction
+  Transformations |using Push and Pop| matrix stack...
+  Algorithm
+  Analog vs. Digital
+  Object-Oriented design
+  Vector vs. Raster ( a matter of prepresentation, not form )
+  I/O (Serial Communication . also USB...)
+
+  Image (signal) processing
+  Computer as a generalized system (big computer, small computer)
+  Array
+  Variable
+
+  Other potential Concepts:
+  Artificial Life
+  Artificial Intelligence
+  Network
+  Multiuser
+
+
+  There should be a series of tools written (in processing) that help elucidate the concepts
+  Color picker, Transformations, Curves, Coordinates, Trigonometry, Parameterized form
+
+
+/////////////////////////////////////////////////////
+
+THE BOOK
+
+How do I discuss the larger issues of interaction, motion, form, structure???
+A. This is primarily a design/art book. These are the major issues supported through technical discussion
+
+It's not about "how to design" but how to think about design within the context of programmatic media
+Or is it programming within the context of design/art. with design/art as a subtext...
+NO is is definately about the media. interactive media. with programming being essential for support
+A synthesis or aesthetics and technique. A synthesis of theory and practice...
+
+I need to find three excellent sources for each of these concepts...
+Kernigan & Ritchie, Petzhold, Hillis, Foley and vanDamn, Algorithms, Lev Manevich
+
+The reference section explains how something is done and provides definitions
+The concepts section explains a concept from scratch in detail and in context
+
+Both the reference and the examples refer to the topics...
+The reference can allude to the concepts, but act as a refresher. Concepts "teach" from scratch.
+This is a nonlinear book...
+Concepts also refer to certain examples...
+
+Have a alphabetical reference of methods all keywords that maps to the reference structure
+Include the general reference in the book, but not the technical reference
+
+Proce55ing exists outside of the continually shifting commercial software market
+
+Remember to develop a dictionary. Terminology is an important part of learning
+
+throughout the book, different feels. should not feel like
+proce55ing is a tool for only one style
+  a. clean flat (casey)
+  b. data viz (ben)
+  c. drawings+photocopy (rough)
+  d. photographic polish
+
+?? Should arguments be called parameters?
+
+computers treat numbers in a mathematical way, 
+but we don't perceive color this way. for us, color perception is relative...
+we adapt our perception to the context of the environment...
+
+
+
+////////////////////////////////////////////////////////////////////
+
+Questions for profile...
+
+When and how did you start making software?
+Do you consider making art/design and programming separate tasks or the same?
+
+
+
+
+////////////////////////////////////////////////////////////////////
+
+Structure for the technical reference...
+"Category" is hidden from users
+
+Name           Line
+Category       Shape
+Example        (image) line(20, 30, 55, 55);
+Syntax         line(int x1, int y1, int x2, int y2);
+Parameters     x1  The x-coordinate of the first point
+               y2  The y-coordinate of the first point
+               x2  The x-coordinate of the second point
+               y2  The y-coordinate of the sedond point
+Description    This method draws a line to the screen. 
+               A line is a direct path between two points.
+               Blah...
+Returns        None
+Availablility  Proce55ing _ALPHA_
+Related        beginShape(LINES);
+               beginShape(LINE_STRIP);
+               beginShape(LINE_LOOP);
+
+
+advanced documentation, bit operators...
+
+/////////////////////////////////////////////////////////////////////
+
+tail -f /home/web/logs/processing-error_log
+
+// Running commands within a perl file
+`mv BApplet.java BApplet.temp`;
+
+//////////////////////////////////////////////////////////////////////
+
+Proce55ing Summer Plan
+
+June
+Release alpha
+
+July 
+Correct documentation for Alpha
+Write documentation for Beta, general and technical
+Commission software and quotes for BBS
+
+August
+Develop complete set of examples
+
+September
+
+
+//////////////////////////////////////////////////////////////////////
+
+Beginning
+Environment
+Data
+Color
+Shape
+Image
+I/O
+Control
+Math
+Transform
+Lights & Camera
+
+
+//////////////////////////////////////////////////////////////////////
+
+Book
+Most sections are totally independent...
+
+//
+
+v1.1
+Begin (Getting Started: Download, Installation, Programming Basics)
+Form
+Motion
+Interact
+Color
+XX Type
+XX Space
+Interact
+End
+
+//
+
+v1.2
+Begin (Getting Started: Download, Installation, Running a program)
+
+Elements
+Form 
+Motion
+Response
+Color 
+Image
+Type
+Space
+
+Concepts
+Reference (API, Language Reference, Alphabetical index & Subject index, Bagel + Java)
+
+End
+
+//
+
+v2.0
+Adapt  (adaptive interface)  
+Emerge (emergent systems)
+Evolve (a-life)
+Play   (games)
+Sonic  (sound) // ( This could be an entire book easily )
+Touch  (tangible) // ( This could be an entire book easily )
+
+
+//////////////////////////////////////////////////////////////////////
+
+REFERENCE/DOCUMENTATION
+
+v1.0
+//Download (how to get the software)
+//Install (how to install the software)
+Proce55ing Environment (how to use and what it does)
+Language Reference (the language through prose and examples)
+Complete Language Reference (categories)
+TechNotes (the finer points, tricks, and tips)
+
+//v1.1
+//IDE - Environment
+//API - Reference
+
+
+v1.2
+
+//Download (how to get it) - on the download page, very obvious
+Language (only advanced, the previous basic reference is reformatted as a tutorial)
+Environment (how to use and what it does)
+Install (how to install it - WIN, LINUX, MACX, MAC9)
+TechNotes (the finer points, tricks, and tips)
+
+
+
+LEARNING
+
+Examples - annotated code samples
+  Elements
+  Form
+  Motion
+  Response
+  Color
+  Image
+  Type
+  Space
+Tutorials - walk through different tasks (improved previous reference)
+  Begin (statement, command, comment, program, ... )
+  Elements
+  Form
+  Motion
+  Response
+  Color
+  Image
+  Type
+  Space
+  Document
+Concepts - basic ideas that support the work
+Glossary - definitions, terminology
+XX Workshops - we do workshops (maybe leave for happenings)
+XX Curriculum - 
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+DICTIONARY/GLOSSARY
+
+compiler
+API
+IDE
+variable
+program
+algorithm
+pseudo-random
+bit
+byte
+char
+boolean
+bit-depth
+gif
+jpg
+hexidecimal
+serial
+block
+class
+object
+instance
+parameter
+constant
+constructor
+expression
+statement
+data tyte
+operator
+keyword
+
+
+//////////////////////////////////////////////////////////////////////
+
+WEB EXAMPLE SECTIONS (examples of workshop problems -- all designed)
+
+Proce55ing ALPHA SUMMER 2002 
+
+Proce55ing BETA WINTER 2003
+
+Proce55ing 1.0 FALL 2003
+Elements
+Form
+Motion
+Response (action-reaction)
+Color 
+Image
+Type
+Space
+
+Proce55ing 2.0 FALL 2004
+Adapt    (adaptive interface)  
+Emerge   (emergent systems)
+Evolve   (alife)
+Play     (games)
+Sonic    (sound synthesis and analysis)
+Touch    (physical computing)
+Info     (information visualization)
+Connect  (multi-user)
+
+
+
+

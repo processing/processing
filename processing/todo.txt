@@ -485,8 +485,8 @@ _ check out interface builder for interesting tidbits
 
 
 DOCS / guide
-_ document imageMode, planeMode, ellipseMode
-_ 'rot' example not working in release 18
+X _ document imageMode, planeMode, ellipseMode
+X _ 'rot' example not working in release 18
 _ list of reserved keywords
 _   make note of functions/variables used by ProcessingApplet
 _     using them in your app will break things (i.e. init())
@@ -496,8 +496,8 @@ _   NullPointerException inside setup usually means no size()
 _ ability to write functions and inner classes
 _ mention ability to use import statements in java mode
 _   ability to do real (but not public) classes in same document
-_ make note in documentation about getting access to pixel array
-_   pixels[] is in ProcessingApplet
+X _ make note in documentation about getting access to pixel array
+X _   pixels[] is in ProcessingApplet
 _   check to see if get/set functions in applet actually work
 _   fix documentation appropriately
 _ image formats supported (gif and jpeg)
@@ -539,7 +539,7 @@ _ if (a) ? 3 : 4
 _ formatting printf-style things
 _ audio input
 _ audio synthesis
-_ just saying 'millis' in processingapplet, instead of getMillis()
+X _ just saying 'millis' in processingapplet, instead of getMillis()
 _ keyPressed, keyReleased, mousePressed, mouseReleased
 
 
@@ -600,11 +600,11 @@ _   i.e. are line and point working in 3D?
 _ why did i think that z was backwards from gl?
 
 things noticed while casey watched him using the software
-_ if no 0 before decimal place in a number it breaks
-_ display window should have separate close box
-_ save window positions on closing (due to crashing)
-_ title of the file should be shown
-_ needs to be a menubar
+X _ if no 0 before decimal place in a number it breaks
+X _ display window should have separate close box
+X _ save window positions on closing (due to crashing)
+X _ title of the file should be shown
+X _ needs to be a menubar
 _ text editor is quite bad (hiding cursor thing)
 
 biggest problems from french workshop
@@ -622,7 +622,7 @@ _   or in a small printed book that serves as a reference
 _ courseware not complete--difficult to collect assignments
 
 questions to resolve
-_ is it necessary to have fullscreen option on toolbar anymore?
+X _ is it necessary to have fullscreen option on toolbar anymore?
 _ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
 _ should we use jdk 1.3 or msft vm?
 
@@ -693,3 +693,4 @@ _   retain unix file permissions for linux
 _   resource fork goodness for the mac
 _   hhmmm
 _ for jgl version of bagel, jgl.jar needs to be in classpath
+
