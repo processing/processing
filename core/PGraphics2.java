@@ -546,12 +546,31 @@ public class PGraphics2 extends PGraphics {
                            //float x, float y, float w, float h,
                            int u1, int v1, int u2, int v2) {
     if (who.cache == null) {
-      who.cache = new BufferedImage(who.width, who.height,
-                                    BufferedImage.TYPE_INT_ARGB);
+      who.cache = new ImageCache(who);
+
+      //who.cache = new BufferedImage(who.width, who.height,
+      //                            BufferedImage.TYPE_INT_ARGB);
       who.updatePixels();  // mark the whole thing for update
     }
 
+    ImageCache cash = (ImageCache) who.cache;
+    // if image previously was tinted, or the color changed
+    // or the image was tinted, and tint is now disabled
+    if ((tint && (!cash.tinted || (cash.tintedColor != tintColor))) ||
+        (!tint && cash.tinted)) {
+      // for tint change, mark all pixels as needing update
+      who.updatePixels();
+    }
+
     if (who.modified) {
+      cash.update();
+      who.modified = false;
+    }
+
+      /*
+    if (who.modified) {
+      ((ImageCache) who.cache).update();
+
       // update the sub-portion of the image as necessary
       BufferedImage bi = (BufferedImage) who.cache;
 
@@ -565,14 +584,123 @@ public class PGraphics2 extends PGraphics {
       //who.pixelsUpdated();
       who.modified = false;
     }
+      */
 
     //int x2 = (int) (x + w);
     //int y2 = (int) (y + h);
 
-    graphics.drawImage((Image) who.cache,
+    graphics.drawImage(((ImageCache) who.cache).image,
                        //(int) x, (int) y, x2, y2,
                        (int) x1, (int) y1, (int) x2, (int) y2,
                        u1, v1, u2, v2, null);
+  }
+
+
+  class ImageCache {
+    PImage source;
+    boolean tinted;
+    int tintedColor;
+    int tintedPixels[];
+    BufferedImage image;
+
+    public ImageCache(PImage source) {
+      this.source = source;
+      // if RGB, set the image type to RGB,
+      // otherwise it's ALPHA or ARGB, and use an ARGB bimage
+      int type = (source.format == RGB) ?
+        BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+      image = new BufferedImage(source.width, source.height, type);
+    }
+
+    public void update() {  //boolean t, int argb) {
+      if ((source.format == ARGB) || (source.format == RGB)) {
+        if (tint) {
+          // create tintedPixels[] if necessary
+          if (tintedPixels == null) {
+            tintedPixels = new int[source.width * source.height];
+          }
+
+          int argb2 = tintColor;
+          int a2 = (tintColor >> 24) & 0xff;
+          int r2 = (tintColor >> 16) & 0xff;
+          int g2 = (tintColor >> 8) & 0xff;
+          int b2 = (tintColor) & 0xff;
+
+          // multiply each of the color components into tintedPixels
+          for (int i = 0; i < tintedPixels.length; i++) {
+            int argb1 = source.pixels[i];
+            int a1 = (argb1 >> 24) & 0xff;
+            int r1 = (argb1 >> 16) & 0xff;
+            int g1 = (argb1 >> 8) & 0xff;
+            int b1 = (argb1) & 0xff;
+
+            tintedPixels[i] =
+              (((a2 * a1) & 0xff00) << 16) |
+              (((r2 * r1) & 0xff00) << 8) |
+              ((g2 * g1) & 0xff00) |
+              (((b2 * b1) & 0xff00) >> 8);
+          }
+          tinted = true;
+          tintedColor = tintColor;
+
+          // finally, do a setRGB based on tintedPixels
+          image.setRGB(0, 0, source.width, source.height,
+                       tintedPixels, 0, source.width);
+
+        } else {  // no tint
+          // just do a setRGB like before
+          image.setRGB(0, 0, source.width, source.height,
+                       source.pixels, 0, source.width);
+        }
+
+      } else if (source.format == ALPHA) {
+        if (tintedPixels == null) {
+          tintedPixels = new int[source.width * source.height];
+        }
+
+        int lowbits = tintColor & 0x00ffffff;
+        if (((tintColor >> 24) & 0xff) >= 254) {
+          // no actual alpha to the tint, set the image's alpha
+          // as the high 8 bits, and use the color as the low 24 bits
+          for (int i = 0; i < tintedPixels.length; i++) {
+            // don't bother with the math if value is zero
+            tintedPixels[i] = (source.pixels[i] == 0) ?
+              0 : (source.pixels[i] << 24) | lowbits;
+          }
+
+        } else {
+          // multiply each image alpha by the tint alpha
+          int alphabits = (tintColor >> 24) & 0xff;
+          for (int i = 0; i < tintedPixels.length; i++) {
+            tintedPixels[i] = (source.pixels[i] == 0) ?
+              0 : (((alphabits * source.pixels[i]) & 0xFF00) << 16) | lowbits;
+          }
+        }
+
+        // mark the pixels for next time
+        tinted = true;
+        tintedColor = tintColor;
+
+        // finally, do a setRGB based on tintedPixels
+        image.setRGB(0, 0, source.width, source.height,
+                     tintedPixels, 0, source.width);
+        /*
+        int argb2 = tint ? tintColor : 0xFFFFFFFF;
+        int a2 = (tintColor >> 24) & 0xff;
+        int r2 = (tintColor >> 16) & 0xff;
+        int g2 = (tintColor >> 8) & 0xff;
+        int b2 = (tintColor) & 0xff;
+
+          // multiply each of the color components into tintedPixels
+          for (int i = 0; i < tintedPixels.length; i++) {
+            int argb1 = source.pixels[i];
+            int a1 = (argb1 >> 24) & 0xff;
+            int r1 = (argb1 >> 16) & 0xff;
+            int g1 = (argb1 >> 8) & 0xff;
+            int b1 = (argb1) & 0xff;
+        */
+      }
+    }
   }
 
 
