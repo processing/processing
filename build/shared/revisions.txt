@@ -1,3 +1,63 @@
+ABOUT REV 0044
+
+[ features ] 
+
+- can now use an external program to edit, such as bbedit on the pc or
+  emacs on unix. select 'use exteral editor' and the textarea will
+  become un-editable. you can then edit with your favorite text
+  editor, and the code will be updated in the window each time you hit
+  the 'run' button.
+
+- added ability to set foreground and background colors of the
+  editor. editor.program.fgcolor and editor.program.bgcolor can be set
+  to your favorite color in pde.properties. also the the background
+  color indicating 'external editor' is in use can be set via
+  editor.program.bgcolor.external.
+
+- more file i/o and data processing capabilities, see changes under
+  api additions
+
+- 'beautify' is now enabled, though it may eat all your code in the
+  process. if it does, just go back to the previous version by using
+  the history menu, and get to the proce55ing website and let us know
+  the change of events.
+
+[ api additions ]
+
+- String[] loadStrings(String filename) 
+  returns the lines of a file as entries in an array of strings
+
+- byte[] loadBytes(String filename) 
+  retrieves a file's contents and places them into a byte array for
+  easy processing
+
+- String[] splitStrings(String what) 
+  String[] splitStrings(String what, char splitChar) 
+  splits a String into several smaller strings wherever there's a
+  space. ie. splitStrings("quick brown fox") becomes an array with
+  elements "quick", "brown" and "fox". the 'splitChar' is optional,
+  you can have the line broken up by tabs (if you use '\t') or any
+  other character.
+
+- int[] splitInts(String what)
+  int[] splitInts(String what, char splitChar)
+  same as above, but parses the line as integers
+
+- float[] splitFloats(String what)
+  float[] splitFloats(String what, char splitChar)
+  you can imagine what this one does
+
+[ api changes ]
+
+- getStream is now loadStream
+
+[ bug fixes ]
+
+- names with underscores and other illegal characters weren't being
+  restrained. this allowed / and : to be used when renaming/saving
+  sketches, which caused the app to blow up.
+
+
 ABOUT REV 0043 - "ALPHA" - 2 august 2002
 
 - this is the official "alpha" release. released for all platforms

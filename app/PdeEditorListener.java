@@ -32,6 +32,9 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
 
 
   public void keyPressed(KeyEvent event) {
+    // don't do things if the textarea isn't editable
+    if (editor.externalEditor) return;
+
     // only works with TextArea, because it needs 'insert'
     //TextComponent tc = (TextComponent) event.getSource();
     tc = (TextArea) event.getSource();
