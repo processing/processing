@@ -6,18 +6,17 @@
 if test -d work
 then
 else
-  echo Setting up directories to build P5 under Mac OS X
-  mkdir work
-#  unzip -q -d work jre.zip
-  cp -r ../shared/lib work/
-  rm -rf work/lib/CVS
+  echo Setting up directories to under Mac OS X
+  cp -r ../shared work
+
   mkdir work/lib/export
   mkdir work/lib/build
-  cp -r ../shared/sketchbook work/
+
   mkdir work/classes
-  # this will copy cvs files intact, meaning that changes
-  # could be made and checked back in.. interesting
-#  cp dist/run.bat work/
+
+  cp dist/run.bat work/
+  cp dist/lib/pde.properties_macosx work/lib/
+
   echo
 fi
 
