@@ -1213,10 +1213,9 @@ public class PFont implements PConstants {
 
       for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
-          int value = 255 - (samples[y * mbox3 + x] & 0xff);
-          //int value = 255 - raster.getSample(x, y, 0);
+          int val = 255 - (samples[y * mbox3 + x] & 0xff);
           int pindex = (y - minY) * width[index] + (x - minX);
-          bitmaps[index].pixels[pindex] = value;
+          bitmaps[index].pixels[pindex] = val;
         }
       }
       index++;

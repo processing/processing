@@ -1,3 +1,7 @@
+0076 core
+X no changes, only launcher issues
+
+
 0075
 X textureMode(NORMAL_SPACE)  screws up the image() command
 X   image() appears to require IMAGE_SPACE to function properly. 
