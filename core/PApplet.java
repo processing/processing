@@ -110,8 +110,8 @@ public class PApplet extends Applet
 
   //boolean drawMethod;
   //boolean loopMethod;
-  boolean looping;
-  boolean redraw;
+  protected boolean looping;
+  protected boolean redraw;
 
   // true if inside the loop method
   //boolean insideLoop;
@@ -145,9 +145,9 @@ public class PApplet extends Applet
   static public final int DEFAULT_HEIGHT = 100;
   public int width, height;
 
-  int libraryCount;
-  PLibrary libraries[];
-  boolean libraryCalls[][];
+  protected int libraryCount;
+  protected PLibrary libraries[];
+  protected boolean libraryCalls[][];
   //int registeredCount[];
   //PLibrary registered[][];
 
@@ -4221,6 +4221,24 @@ public class PApplet extends Applet
 
   public PImage get() {
     return g.get();
+  }
+
+
+  static public void saveHeaderTIFF(OutputStream output,
+                                    int width, int height) throws IOException {
+     PGraphics.saveHeaderTIFF(output, width, height);
+  }
+
+
+  static public void saveTIFF(OutputStream output, int pixels[],
+                              int width, int height) throws IOException {
+     PGraphics.saveTIFF(output, pixels, width, height);
+  }
+
+
+  static public void saveTGA(OutputStream output, int pixels[],
+                             int width, int height) throws IOException {
+     PGraphics.saveTGA(output, pixels, width, height);
   }
 
 

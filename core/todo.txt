@@ -13,6 +13,10 @@ opengl
 _ cache needs to also make things a power of 2
 _   if images are already a power of 2, then needn't re-alloc
 _   warn people that they should make images be a pow of 2
+_ cacheIndex needs to be set to -1 when the image is modified
+_   or maybe have a modified() function?
+_ lights cannot be enabled/disabled throughout 
+_   lighting will be based on what's left at endFrame()
 
 _ fonts probably need to be RGBA, not ALPHA style images
 _   there's nothing really ALPHA about them?
@@ -22,9 +26,16 @@ _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 _ don't allocate zbuffer & stencil until depth() is called
 
+_ modify targa and tiff writing routines to break into header writing
+
+
 random tasks
 _ someone to figure out a good model for adaptive sizing of circles
 _   also goes for arcs, though will be weighted based on arc size
+_ figure out why tiff images won't open with after effects
+_   open with photoshop, resave, see which tags change
+_   particularly of those that are included in the original image
+_   perhaps something gets corrected? 
 
 _ arc with stroke only draws the arc shape itself
 _   may need a 'wedge' function to draw a stroke around the whole thing
@@ -35,6 +46,7 @@ _ image loading bug is huge
 
 _ pmouseX is broken again
 _   maintain things a bit different
+_   email the beta@ list to see how people are using pmouseX
 
 _ need timer in as part of the api
 _   or at least include an example that uses it
