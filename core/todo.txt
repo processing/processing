@@ -85,7 +85,7 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ angleMode(DEGREES) and angleMode(RADIANS)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 _ figure out how to handle cached images, multiple images
-_   MediaTracker blocking is prolly making jar downlaod really slow
+_   MediaTracker blocking is prolly making jar download really slow
 
 
 BUGS
@@ -221,12 +221,6 @@ _   (the server starts and stops fine)
 _ add constants for building NET, move stuff around in bagel dir
 _ some method for just downloading the entire contents of a url
 _ add udp support
-
-
-VIDEO
-_ things will freeze if winvdig not installed
-_   video hanging without a camera installed
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
 
 
 thesis / acg
