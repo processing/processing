@@ -4399,11 +4399,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void pixelsUpdated() {
-     g.pixelsUpdated();
-  }
-
-
   public int get(int x, int y) {
     return g.get(x, y);
   }
