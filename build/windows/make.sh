@@ -189,7 +189,6 @@ rm -rf simong
 mkdir -p ../../build/windows/work/libraries/particles/library/
 cp library/particles.jar ../../build/windows/work/libraries/particles/library/
 
-exit;
 
 # OPENGL LIBRARY
 echo Building OpenGL library...

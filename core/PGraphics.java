@@ -60,7 +60,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   // needs to happen before background() is called
   // and resize.. so it's gotta be outside
-  boolean hints[] = new boolean[HINT_COUNT];
+  protected boolean hints[] = new boolean[HINT_COUNT];
 
 
   // ........................................................
@@ -296,7 +296,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   public PImage textureImage;
 
   static final int DEFAULT_TEXTURES = 3;
-  PImage textures[] = new PImage[DEFAULT_TEXTURES];
+  protected PImage textures[] = new PImage[DEFAULT_TEXTURES];
   int texture_index;
 
 
@@ -537,6 +537,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     // reset lines
     lineCount = 0;
     line.reset();
+    pathCount = 0;
 
     // reset triangles
     triangleCount = 0;
@@ -561,11 +562,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     // (but can't return, since needs to update memimgsrc
     if (hints[DEPTH_SORT]) {
       if (triangleCount > 0) {
-        //depth_sort_triangles();  // not yet
+        depth_sort_triangles();
         render_triangles();
       }
       if (lineCount > 0) {
-        //depth_sort_lines();  // not yet
+        depth_sort_lines();
         render_lines();
       }
     }
@@ -613,6 +614,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       vertex_count = 0;
       line.reset();
       lineCount = 0;
+      pathCount = 0;
       triangle.reset();
       triangleCount = 0;
     }
@@ -1116,6 +1118,27 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
     // ------------------------------------------------------------------
+    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (X, Y, Z)
+
+    if (depth) {
+      for (int i = vertex_start; i < vertex_end; i++) {
+        float vertex[] = vertices[i];
+
+        vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
+        vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
+        vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
+        vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
+      }
+    } else {
+      // if no depth in use, then the points can be transformed simpler
+      for (int i = vertex_start; i < vertex_end; i++) {
+        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
+        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
+      }
+    }
+
+
+    // ------------------------------------------------------------------
     // TRANSFORM / LIGHT / CLIP
 
     light_and_transform();
@@ -1193,8 +1216,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  //protected void depth_sort_triangles() {
-  //}
+  protected void depth_sort_triangles() {
+  }
 
   protected void render_triangles() {
     for (int i = 0; i < triangleCount; i ++) {
@@ -1225,8 +1248,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  //protected void depth_sort_lines() {
-  //}
+  protected void depth_sort_lines() {
+  }
 
   public void render_lines() {
     for (int i = 0; i < lineCount; i ++) {
@@ -1367,33 +1390,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * this section is all handled on the graphics card.
    */
   protected void light_and_transform() {
-
-    // ------------------------------------------------------------------
-    // 2D POINTS FROM MODEL (MX, MY, MZ) DIRECTLY TO VIEW SPACE (X, Y, Z)
-
-    if (!depth) {
-      // if no depth in use, then the points can be transformed
-      for (int i = vertex_start; i < vertex_end; i++) {
-        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
-        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
-      }
-    }
-
-
-    // ------------------------------------------------------------------
-    // 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (VX, VY, VZ)
-
-    if (depth) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float vertex[] = vertices[i];
-
-        vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
-        vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
-        vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
-        vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
-      }
-    }
-
 
     // ------------------------------------------------------------------
     // CULLING
@@ -4614,12 +4610,12 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    *
    * (note: no need for bounds check since it's a 32 bit number)
    */
-  protected void calc_color_from(int rgb) {
-    calcColor = rgb;
-    calcAi = (rgb >> 24) & 0xff;
-    calcRi = (rgb >> 16) & 0xff;
-    calcGi = (rgb >> 8) & 0xff;
-    calcBi = rgb & 0xff;
+  protected void calc_color_from(int argb) {
+    calcColor = argb;
+    calcAi = (argb >> 24) & 0xff;
+    calcRi = (argb >> 16) & 0xff;
+    calcGi = (argb >> 8) & 0xff;
+    calcBi = argb & 0xff;
     calcA = (float)calcAi / 255.0f;
     calcR = (float)calcRi / 255.0f;
     calcG = (float)calcGi / 255.0f;
