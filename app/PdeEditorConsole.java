@@ -166,11 +166,11 @@ public class PdeEditorConsole extends JScrollPane {
       }
     }
 
-    //for (int i = 0; i < lines; i++) {
-      //appendText("b\r\n", false);
-    //appendText("\n", false);
-    //appendText(System.getProperty("line.separator"), false);
-    //}
+    // to fix ugliness.. normally macosx java 1.3 puts an 
+    // ugly white border around this object, so turn it off.
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      setBorder(null);
+    }
   }
 
 

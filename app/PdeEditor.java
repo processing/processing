@@ -147,6 +147,7 @@ public class PdeEditor extends JPanel {
  
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
+    //System.out.println(consolePanel.getInsets());
     consolePanel.setLayout(new BorderLayout());
 
     status = new PdeEditorStatus(this);
@@ -162,6 +163,12 @@ public class PdeEditor extends JPanel {
     splitPane.setContinuousLayout(true);
     // if window increases in size, give all of increase to textarea (top pane)
     splitPane.setResizeWeight(1D);
+
+    // to fix ugliness.. normally macosx java 1.3 puts an 
+    // ugly white border around this object, so turn it off.
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      splitPane.setBorder(null);
+    }
 
     // the default size on windows is too small and kinda ugly
     int dividerSize = PdeBase.getInteger("editor.divider.size", 0);

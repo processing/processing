@@ -179,7 +179,6 @@ public class PdeBase extends Frame
 
   public PdeBase() {
     super(WINDOW_TITLE);
-    //frame = this;  // clean this up later
 
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
