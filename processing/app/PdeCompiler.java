@@ -2,7 +2,7 @@
 
 /*
   PdeCompiler - default compiler class that connects to jikes
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 
@@ -30,7 +30,7 @@ import javax.swing.*;
 
 public class PdeCompiler implements PdeMessageConsumer {
   static final String BUGS_URL = 
-    "http://Proce55ing.net/bugs/";
+    "http://processing.org/bugs/";
   static final String SUPER_BADNESS = 
     "Compiler error, please submit this code to " + BUGS_URL;
 
@@ -302,7 +302,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     int importCount = 0;
 
     String pieces[] = 
-      BApplet.splitStrings(path, File.pathSeparatorChar);
+      BApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       //System.out.println("checking piece " + pieces[i]);
@@ -382,7 +382,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   static public void magicExports(String path, ZipOutputStream zos) 
   throws IOException {
     String pieces[] = 
-      BApplet.splitStrings(path, File.pathSeparatorChar);
+      BApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;

@@ -2,7 +2,7 @@
 
 /*
   PdePreprocessor - default ANTLR-generated parser
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 
@@ -78,6 +78,43 @@ public class PdePreprocessor {
   boolean usingExternal; // use an external process to display the applet?
 
   public PdePreprocessor(String program, String buildPath) {
+
+    if (PdeBase.getBoolean("compiler.substitute_unicode", true)) {
+      // check for non-ascii chars (these will be/must be in unicode format)
+      char p[] = program.toCharArray();
+      int unicodeCount = 0;
+      for (int i = 0; i < p.length; i++) {
+        if (p[i] > 127) unicodeCount++;
+      }
+      // if non-ascii chars are in there, convert to unicode escapes
+      if (unicodeCount != 0) {
+        // add unicodeCount * 5.. replacing each unicode char 
+        // with six digit uXXXX sequence (xxxx is in hex)
+        // (except for nbsp chars which will be a replaced with a space)
+        int index = 0;
+        char p2[] = new char[p.length + unicodeCount*5];
+        for (int i = 0; i < p.length; i++) {
+          if (p[i] < 128) {
+            p2[index++] = p[i];
+
+          } else if (p[i] == 160) {  // unicode for non-breaking space
+            p2[index++] = ' ';
+
+          } else {
+            int c = p[i];
+            p2[index++] = '\\';
+            p2[index++] = 'u';
+            char str[] = Integer.toHexString(c).toCharArray();
+            // add leading zeros, so that the length is 4
+            for (int j = 0; j < 4 - str.length; j++) p2[index++] = '0';
+            System.arraycopy(str, 0, p2, index, str.length);
+            index += str.length;
+          }
+        }
+        program = new String(p2, 0, index);
+      }
+    }
+
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 

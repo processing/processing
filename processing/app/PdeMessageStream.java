@@ -2,7 +2,7 @@
 
 /*
   PdeMessageStream - outputstream to handle stdout/stderr messages
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 

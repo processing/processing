@@ -2,8 +2,9 @@
 
 /*
   PdeFontBuilder - gui interface to font creation heaven/hell
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
+  Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -21,14 +22,9 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-//import java.net.*;
-//import java.text.*;
-//import java.util.*;
-//import java.util.zip.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -41,9 +37,11 @@ public class PdeFontBuilder extends JFrame {
   JList fontSelector;
   JComboBox styleSelector;
   JTextField sizeSelector;
+  JCheckBox smoothBox;
   JTextArea sample;
   JButton okButton;
   JTextField filenameField;
+  boolean smooth = true;
 
   Font font;
 
@@ -57,12 +55,21 @@ public class PdeFontBuilder extends JFrame {
 
   // font.deriveFont(float size)
 
-  public PdeFontBuilder(File targetFolder) {
+  public PdeFontBuilder() {
     super("Create Font");
 
-    this.targetFolder = targetFolder;
+    Container paine = getContentPane();
+    paine.setLayout(new BorderLayout()); //10, 10));
 
-    Container pain = getContentPane();
+    //Dimension d = new Dimension(5, 5);
+    //paine.add(new Box.Filler(d, d, d), BorderLayout.WEST);
+
+    JPanel pain = new JPanel();
+    //pain.setBorder(BorderFactory.createLineBorder(Color.black));
+    //pain.setBorder(new EmptyBorder(10, 20, 20, 20));
+    pain.setBorder(new EmptyBorder(13, 13, 13, 13));
+    paine.add(pain, BorderLayout.CENTER);
+
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
     String labelText = 
@@ -72,7 +79,10 @@ public class PdeFontBuilder extends JFrame {
 
     //JLabel label = new JLabel(labelText);
     JTextArea textarea = new JTextArea(labelText);
-    textarea.setBorder(new EmptyBorder(10, 20, 10, 20));
+    textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
+    textarea.setBackground(null);
+    textarea.setEditable(false);
+    textarea.setHighlighter(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
     //pain.add(label);
@@ -101,26 +111,34 @@ public class PdeFontBuilder extends JFrame {
     // don't care about families starting with . or #
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
-#ifdef JDK13
     // getFontList is deprecated in 1.4, so this has to be used
     GraphicsEnvironment ge = 
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-    //Font fonts[] = ge.getAllFonts();
-    String flist[] = ge.getAvailableFontFamilyNames();
-#else
-    //fontSelector = new JComboBox();
-    String flist[] = Toolkit.getDefaultToolkit().getFontList();
-#endif
+    Font fonts[] = ge.getAllFonts();
+    String flist[] = new String[fonts.length];
 
-    int index = 0;
+    //String flist[] = ge.getAvailableFontFamilyNames();
+    //fontSelector = new JComboBox();
+    // old jdk11 version
+    //String flist[] = Toolkit.getDefaultToolkit().getFontList();
+
+    /*
     for (int i = 0; i < flist.length; i++) {
       if ((flist[i].indexOf('.') == 0) || (flist[i].indexOf('#') == 0) ||
           (flist[i].equals("Dialog")) || (flist[i].equals("DialogInput")) ||
           (flist[i].equals("Serif")) || (flist[i].equals("SansSerif")) ||
           (flist[i].equals("Monospaced"))) continue;
-      flist[index++] = flist[i];
+      //flist[index++] = flist[i];
+      Font f = new Font(flist[i], Font.PLAIN, 1);
+      flist[index++] = f.getPSName();
     }
+    */
+    int index = 0;
+    for (int i = 0; i < fonts.length; i++) {
+      flist[index++] = fonts[i].getPSName();
+    }
+
     list = new String[index];
     System.arraycopy(flist, 0, list, 0, index);
 
@@ -134,13 +152,17 @@ public class PdeFontBuilder extends JFrame {
             selection = fontSelector.getSelectedIndex();
             okButton.setEnabled(true);
 
+            update();
+
+            /*
             int fontsize = 0;
             try {
               fontsize = Integer.parseInt(sizeSelector.getText().trim());
               //System.out.println("'" + sizeSelector.getText() + "'");
             } catch (NumberFormatException e2) { }
 
-            if (fontsize != 0) {
+            // if a deselect occurred, selection will be -1
+            if ((fontsize != 0) && (selection != -1)) {
               font = new Font(list[selection], Font.PLAIN, fontsize);
               //System.out.println("setting font to " + font);
               sample.setFont(font);
@@ -148,6 +170,7 @@ public class PdeFontBuilder extends JFrame {
               String filenameSuggestion = list[selection].replace(' ', '_');
               filenameField.setText(filenameSuggestion);
             }
+            */
             //filenameField.paintComponent(filenameField.getGraphics());
             //getContentPane().repaint();
           }
@@ -155,6 +178,7 @@ public class PdeFontBuilder extends JFrame {
       });
 
     fontSelector.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    fontSelector.setVisibleRowCount(12);
     JScrollPane fontScroller = new JScrollPane(fontSelector);
     pain.add(fontScroller);
     //fontSelector.setFont(new Font("SansSerif", Font.PLAIN, 10));
@@ -166,14 +190,21 @@ public class PdeFontBuilder extends JFrame {
       });
     */
 
+    Dimension d1 = new Dimension(13, 13);
+    //paine.add(new Box.Filler(d, d, d), BorderLayout.WEST);
+    pain.add(new Box.Filler(d1, d1, d1));
+
+    // see http://rinkworks.com/words/pangrams.shtml
     sample = new JTextArea("The quick brown fox blah blah.") {
+        //"Forsaking monastic tradition, twelve jovial friars gave up their vocation for a questionable existence on the flying trapeze.") {
         public void paintComponent(Graphics g) {
+          //System.out.println("disabling aa");
           Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                              true ? 
-                              RenderingHints.VALUE_ANTIALIAS_ON :
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-          super.paintComponent(g);
+          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                              smooth ? 
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+          super.paintComponent(g2);
         }
       };
 
@@ -208,20 +239,39 @@ public class PdeFontBuilder extends JFrame {
     panel.add(styleSelector);
     */
 
+    Dimension d2 = new Dimension(6, 6);
+    pain.add(new Box.Filler(d2, d2, d2));
+
     JPanel panel = new JPanel();
     panel.add(new JLabel("Size:"));
     sizeSelector = new JTextField("48 ");
+    sizeSelector.getDocument().addDocumentListener(new DocumentListener() {
+	public void insertUpdate(DocumentEvent e) { update(); }
+	public void removeUpdate(DocumentEvent e) { update(); }
+        public void changedUpdate(DocumentEvent e) { }
+      });
+
     panel.add(sizeSelector);
     JLabel rec = new JLabel("(Recommended size for 3D use is 48 points)");
     if (PdeBase.platform == PdeBase.MACOSX) {
       rec.setFont(new Font("Dialog", Font.PLAIN, 10));
     }
     panel.add(rec);
+
+    smoothBox = new JCheckBox("Smooth");
+    smoothBox.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          smooth = smoothBox.isSelected();
+        }
+      });
+    smoothBox.setSelected(smooth);
+    panel.add(smoothBox);
+
     pain.add(panel);
 
     JPanel filestuff = new JPanel();
     filestuff.add(new JLabel("Filename:"));
-    filestuff.add(filenameField = new JTextField(25));
+    filestuff.add(filenameField = new JTextField(20));
     filestuff.add(new JLabel(".vlw"));
     pain.add(filestuff);
 
@@ -252,12 +302,40 @@ public class PdeFontBuilder extends JFrame {
     // do this after pack so it doesn't affect layout
     sample.setFont(new Font(list[0], Font.PLAIN, 48));
 
+    fontSelector.setSelectedIndex(0);
+    //selection = 0;
+    //update(); // ??
+
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension size = getSize();
 
     setLocation((screen.width - size.width) / 2,
                 (screen.height - size.height) / 2);
+  }
+
+
+  public void show(File targetFolder) {
+    this.targetFolder = targetFolder;
     show();
+  }
+
+
+  public void update() {
+    int fontsize = 0;
+    try {
+      fontsize = Integer.parseInt(sizeSelector.getText().trim());
+      //System.out.println("'" + sizeSelector.getText() + "'");
+    } catch (NumberFormatException e2) { }
+
+    // if a deselect occurred, selection will be -1
+    if ((fontsize != 0) && (fontsize < 256) && (selection != -1)) {
+      font = new Font(list[selection], Font.PLAIN, fontsize);
+      //System.out.println("setting font to " + font);
+      sample.setFont(font);
+
+      String filenameSuggestion = list[selection].replace(' ', '_');
+      filenameField.setText(filenameSuggestion);
+    }
   }
 
 
@@ -285,7 +363,7 @@ public class PdeFontBuilder extends JFrame {
 
     try {
       font = new Font(list[selection], Font.PLAIN, fontsize);
-      BFont f = new BFont(font, true);
+      BFont f = new BFont(font, smooth);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();

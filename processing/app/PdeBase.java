@@ -2,7 +2,7 @@
 
 /*
   PdeBase - base class for the main processing application
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 
@@ -58,7 +58,7 @@ public class PdeBase extends Frame
              , MRJPrefsHandler
 #endif
 {
-  static final String VERSION = "0067 Alpha";
+  static final String VERSION = "0069 Alpha";
 
   static Properties properties;
   static Properties keywords; // keyword -> reference html lookup
@@ -103,7 +103,8 @@ public class PdeBase extends Frame
   CheckboxMenuItem normalItem, openglItem;
   //MenuItem illustratorItem;
 
-  
+  PdeFontBuilder fontBuilder;
+
 
   static final String WINDOW_TITLE = "Processing";
 
@@ -208,9 +209,6 @@ public class PdeBase extends Frame
       //System.err.println("userdir = " + System.getProperty("user.dir"));
 
       if (PdeBase.platform == PdeBase.MACOSX) {
-        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-        //properties.load(new FileInputStream(pkg + "pde.properties"));
-        //properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
         properties.load(new FileInputStream("lib/pde.properties"));
         properties.load(new FileInputStream("lib/pde_macosx.properties"));
 
@@ -575,7 +573,7 @@ public class PdeBase extends Frame
     menu = new Menu("Help");
     menu.add(new MenuItem("Help"));
     menu.add(new MenuItem("Reference"));
-    menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
+    menu.add(new MenuItem("Processing.org", new MenuShortcut('5')));
 
     // macosx already has its own about menu
     if (platform != MACOSX) {
@@ -1137,7 +1135,11 @@ public class PdeBase extends Frame
       editor.addFile();
 
     } else if (command.equals("Create font...")) {
-      new PdeFontBuilder(new File(editor.sketchDir, "data"));
+      if (fontBuilder == null) {
+        fontBuilder = new PdeFontBuilder();
+      } 
+      fontBuilder.show(new File(editor.sketchDir, "data"));
+      //new PdeFontBuilder(new File(editor.sketchDir, "data"));
 
     } else if (command.equals("Show sketch folder")) {
       openFolder(editor.sketchDir);
@@ -1148,8 +1150,8 @@ public class PdeBase extends Frame
               File.separator + "environment" +
               File.separator + "index.html");
 
-    } else if (command.equals("Proce55ing.net")) {
-      openURL("http://Proce55ing.net/");
+    } else if (command.equals("Processing.org")) {
+      openURL("http://processing.org/");
 
     } else if (command.equals("Reference")) {
       openURL(System.getProperty("user.dir") + File.separator + 
@@ -1391,8 +1393,6 @@ public class PdeBase extends Frame
     Toolkit tk = Toolkit.getDefaultToolkit();
 
     if (PdeBase.platform == PdeBase.MACOSX) {
-      //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-      //image = tk.getImage(pkg + name);
       image = tk.getImage("lib/" + name);
     } else if (PdeBase.platform == PdeBase.MACOS9) {
       image = tk.getImage("lib/" + name);

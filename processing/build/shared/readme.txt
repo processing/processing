@@ -90,13 +90,13 @@ ok where was i.. next, check the bboard to see if something related
 has been reported, or if there is already a workaround.
 
 best method is to post to the bulletin board at:
-http://proce55ing.net/discourse/
+http://processing.org/discourse/
 we prefer for you to use the bboard for bugs, since:
 - we like to use the bboard as a way to track bugs and get feedback
 - casey and ben can't always respond quickly to email 
 - and there are several knowledgeable people on the bboard
 if you want to go straight to the bugs page, it's: 
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
+http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 when reporting this "bug" please include information about
 1. the revision number (i.e. 0048)
@@ -426,10 +426,10 @@ results. the design of the software supports and encourages sketching
 and the website presents fragments of projects and exposes the
 concepts behind finished software.
 
-"Proce55ing" is the spelling we use for the url (processing.net being
-unavailable) and while it's a combination of numbers and letters but
-is simply pronounced "processing." you also might see "p5" used as a
-shortened version of the name. 
+"Proce55ing" is the spelling we formerly used for the url 
+(processing.net being unavailable) and while it's a combination of 
+numbers and letters but is simply pronounced "processing." 
+you also might see "p5" used as a shortened version of the name. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -440,7 +440,7 @@ PROCESSING IS FREE TO DOWNLOAD / FREE TO USE
 we think it's important to have Processing freely available, rather
 than selling it for a million dollars under some godawful yearly
 contract update scheme. to that end, we encourage people to distribute
-the word widely and refer them to the site: http://Proce55ing.net
+the word widely and refer them to the site: http://processing.org
 
 on most of our own projects, we usually list them as "Built with
 Processing" or something similar, with a link back to the site. of

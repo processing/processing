@@ -147,16 +147,16 @@ CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\
 export CLASSPATH
 
 # make version with serial for the application
-echo Building bagel with serial, sonic, video and jdk13 support
-perl make.pl JIKES=../build/windows/work/jikes SERIAL SONIC VIDEO JDK13
+echo Building bagel with serial, sonic, video, net and jdk13 support
+perl make.pl JIKES=../build/windows/work/jikes SERIAL SONIC NETWORK VIDEO JDK13
 cp classes/*.class ../build/windows/work/classes/
 
 # still debating on whether to include jdk118 classes..
 #CLASSPATH="..\\bagel\\jdk118.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 
 # make simpler version for applet exporting, only 1.1 functions
-echo Building bagel for export with sonic support
-perl make.pl JIKES=../build/windows/work/jikes SONIC
+echo Building bagel for export with sonic and net support
+perl make.pl JIKES=../build/windows/work/jikes SONIC NETWORK
 cp classes/*.class ../build/windows/work/lib/export/
 
 cd ..

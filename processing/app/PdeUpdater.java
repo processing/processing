@@ -2,7 +2,7 @@
 
 /*
   PdeUpdater - self-updater code.. when was the last this worked?
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 

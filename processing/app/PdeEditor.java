@@ -2,7 +2,7 @@
 
 /*
   PdeEditor - main editor panel for the processing ide
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 
@@ -711,7 +711,13 @@ public class PdeEditor extends JPanel {
     //System.out.println("RUNNING");
     buttons.run();
 
+    // do this for the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
+
+    // clear the console on each run, unless the user doesn't want to 
+    if (PdeBase.getBoolean("editor.console.auto_clear", true)) {
+      console.clear();
+    }
 
     if (externalEditor) {
       // history gets screwed by the open..
@@ -1481,7 +1487,7 @@ public class PdeEditor extends JPanel {
       ps.println("      <td><a href=\"" + exportSketchName + ".pde\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\">Source code</font></a></td>");
       ps.println("    </tr>");
       ps.println("    <tr>");
-      ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://Proce55ing.net\">Processing</a></font></td>");
+      ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://processing.org\">Processing</a></font></td>");
       ps.println("    </tr>");
       ps.println("  </table>");
       ps.println("</center>");

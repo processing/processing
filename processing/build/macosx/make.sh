@@ -27,6 +27,13 @@ if test -d work
 then
   echo 
 else
+  if test -f /sw/bin/cp
+  then
+    echo
+  else
+    echo You need to install fink and fileutils
+  fi
+
   echo Setting up directories to build under Mac OS X
   cp -r ../shared work
 
@@ -63,7 +70,8 @@ else
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
-  cp -dpR dist/Processing.app work/
+  #/sw/bin/cp -dpR dist/Processing.app work/
+  /sw/bin/cp -a dist/Processing.app work/
   #cd work/Processing.app
   #find . -name "CVS" -depth -exec rm {} \;
   #cd ../..
@@ -102,13 +110,13 @@ CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/Syste
 export CLASSPATH
 
 ### --- make version with all the goodies for the application
-echo Building bagel with serial, video, audio, and jdk13 support
-perl make.pl JIKES=../build/macosx/work/jikes SERIAL RXTX VIDEO SONIC JDK13
+echo Building bagel with serial, video, audio, net, and jdk13 support
+perl make.pl JIKES=../build/macosx/work/jikes SERIAL RXTX VIDEO NETWORK SONIC JDK13
 cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
-echo Building bagel for export with audio
-perl make.pl JIKES=../build/macosx/work/jikes SONIC
+echo Building bagel for export with audio and net
+perl make.pl JIKES=../build/macosx/work/jikes SONIC NETWORK
 cp classes/*.class ../build/macosx/work/lib/export/
 
 cd ..

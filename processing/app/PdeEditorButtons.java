@@ -2,7 +2,7 @@
 
 /*
   PdeEditorButtons - run/stop/etc buttons for the ide
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 

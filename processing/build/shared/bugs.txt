@@ -80,32 +80,33 @@ list, see the bboard for more, and inside ben's head for others.
 
 - beautify has problems with indenting when lines with a brace are
   commented out, and also ignores switch statements.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
 
 - network examples haven't been updated for the latest api, so they
   will likely break in releases 60 and higher.
 
 - clipping planes are not yet implemented. meaning that objects may
   sometimes fly into the camera and turn upside down or do other tricks.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
 
-- concave polygons still don't work, meaning that lots of irregular
-  polygons won't draw properly.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062469819;start=0
+- there is a bug that when smoothing is enabled, sometimes thin lines 
+  will be visible within a concave polygon. this will just have to be 
+  fixed in a future release. however, as long as stroke() is enabled 
+  on the polygon, the lines should not be visible.
 
 - a lot of println() commands will make the environment really slow or
   even lock up completely. it's because the console can't keep
   up. we're working on a fix.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
 - the app doesn't provide an option to 'cancel' when it so politely asks
   if you want to "save changes before quitting?". this is because of
   java weirdness that we're trying to straighten out. the vm seems to
   be force quitting itself, even if cancel is selected. 
 
-- lines with stroke weights that aren't 1 are probably broken.
+- lines with stroke weights that aren't 1 are sometimes strange.
 
 - single pixel lines still have some problems with drawing over things.
 
@@ -118,7 +119,7 @@ list, see the bboard for more, and inside ben's head for others.
 - strokeMiter() and strokeJoin() exist but are not implemented.
 
 - textures warp in strange ways due to perspective problems.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
 
 - smooth() is not completely implemented. there will be quirks in how
   it draws (like a weird flat line at the end of a shape, or areas
@@ -126,13 +127,13 @@ list, see the bboard for more, and inside ben's head for others.
 
 - on windows, processing can't be run from a folder that has non-ascii
   characters in its name. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
 
 - video examples sometimes crash the whole environment on windows
 
 - jikes is ~9 megabytes in size, which is a bit obnoxious. it doesn't
   hurt anything but we plan to put it on a diet for a future release.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
 
 - net needs work, it's currently sending unicode, instead of ascii or
   UTF-8, data. this can cause problems with other programs.
@@ -147,7 +148,7 @@ list, see the bboard for more, and inside ben's head for others.
 - using saveFrame() or saveBytes() or some of those things will cause
   trouble inside applets. we'll try to do better error trapping soon
   so that your applet doesn't crash when this happens. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
 
 
 ..................................................................

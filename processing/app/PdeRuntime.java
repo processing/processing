@@ -2,7 +2,7 @@
 
 /*
   PdeRuntime - runs compiled java applet
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03 
   Ben Fry, Massachusetts Institute of Technology and 
@@ -119,7 +119,11 @@ public class PdeRuntime implements PdeMessageConsumer {
       if (externalRuntime) {
         String command[] = new String[] { 
           "java",
-          "-Djava.library.path=" + codeFolderPath,
+          // ms and mx must be in this order for the mac
+          "-Xms" + PdeBase.get("run.external.memory", "128") + "m",
+          "-Xmx" + PdeBase.get("run.external.memory", "128") + "m",
+          "-Djava.library.path=" + (codeFolderPath + File.pathSeparator + 
+                                    System.getProperty("java.library.path")),
           "-cp",
           externalPaths,
           "BApplet",
@@ -143,6 +147,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         // replaces setRuntime with BApplet having leechErr [fry]
         //applet.setRuntime(this);
+        //System.out.println("applet leech err is " + leechErr);
         applet.leechErr = leechErr;
 
         // has to be before init
@@ -438,8 +443,8 @@ public class PdeRuntime implements PdeMessageConsumer {
     //System.err.println("message " + s.length() + ":" + s);
     if (s.length() > 2) System.err.println(s);
 
-    if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
-      //System.err.println("got wakeup");
+    if (s.indexOf(BApplet.LEECH_WAKEUP) != -1) {
+      //System.out.println("got wakeup");
       newMessage = true;
       return;  // this line ignored
     }
