@@ -6,6 +6,63 @@ import java.util.*;
 import java.awt.event.*;
 
 
+/*
+
+
+[ File ]
+New
+Open ->
+Save
+Duplicate
+Export
+-
+Proce55ing.net
+Reference
+-
+Quit
+
+
+[ Open-> (Sketchbook) ]
+sketch-001
+sketch-002
+sketch-003
+-- 
+Course ->
+Examples -> 
+Users ->
+Proce55ing.net ->
+--
+Refresh List
+Compile All
+
+
+[ Edit ]
+Undo
+-
+Cut
+Copy 
+Paste
+-
+Select all
+
+
+[ Sketch ]
+Play
+Present
+Stop
+
+
+new sketch just makes a new sketch, doesn't ask for name
+tries to do numbered version based on sketches already present
+
+last section is configurable
+choose a name for the entries, and a url for the base of the code
+  file urls will be local, don't include file:/// to user
+  http urls are base of directory where the code is found
+
+*/ 
+
+
 public class PdeBase /*extends Component*/ implements ActionListener {
   //static PdeApplet applet;
   static Properties properties;
@@ -19,12 +76,15 @@ public class PdeBase /*extends Component*/ implements ActionListener {
   static Frame frame;
   WindowAdapter windowListener;
 
+  File sketchbookFolder;
+  String sketchbookPath;
+
   static final String WINDOW_TITLE = "Proce55ing";
+
 
   static public void main(String args[]) {
     PdeBase app = new PdeBase();
   }
-
 
   public PdeBase() {
     frame = new Frame(WINDOW_TITLE); 
@@ -107,6 +167,32 @@ public class PdeBase /*extends Component*/ implements ActionListener {
     //add("Center", editor);
     frame.add("Center", editor);
 
+    MenuBar menubar = new MenuBar();
+
+    Menu menu;
+    MenuItem item;
+
+    fileOpenItem = new MenuItem("Open");
+
+    menu = new Menu("File");
+    menu.add(new MenuItem("New"));
+    menu.add(new MenuItem("Open"));
+    menu.add(new MenuItem("New"));
+    menu.add(new MenuItem("New"));
+    menu.add(new MenuItem("New"));
+    menu.add(new MenuItem("New"));
+
+
+    /*
+    Menu fileMenu = new Menu("File");
+    MenuItem mi;
+    goodies.add(new MenuItem("Save QuickTime movie..."));
+    goodies.add(new MenuItem("Quit"));
+    goodies.addActionListener(this);
+    menubar.add(goodies);
+    frame.setMenuBar(menubar);
+    */
+
     Insets insets = frame.getInsets();
     Toolkit tk = Toolkit.getDefaultToolkit();
     Dimension screen = tk.getScreenSize();
@@ -128,6 +214,91 @@ public class PdeBase /*extends Component*/ implements ActionListener {
     frame.show();  // added back in for pde
   }
 
+
+  // listener for sketchbk items uses getParent() to figure out
+  // the directories above it
+
+  class SketchbookMenuListener implements ActionListener {
+    //PdeEditor editor;
+    String path;
+
+    public SketchbookMenuListener(/*PdeEditor editor,*/ String path) {
+      //this.editor = editor;
+      this.path = path;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      //if (e.getActionCommand().equals(NEW_SKETCH_ITEM)) {
+      //editor.handleNew();
+
+      //} else {
+      editor.sketchbookOpen(path + File.separator + e.getActionCommand());
+      //}
+    }
+  }
+
+
+  public void rebuildSketchbookMenu(Menu menu) {
+    menu.removeAll();
+
+    try {
+      //MenuItem newSketchItem = new MenuItem("New Sketch");
+      //newSketchItem.addActionListener(this);
+      //menu.add(newSkechItem);
+      //menu.addSeparator();
+
+      sketchbookFolder = new File("sketchbook");
+      sketchbookPath = sketchbookFolder.getCanonicalPath();
+
+
+      // files for the current user (for now, most likely 'default')
+
+      // header knows what the current user is
+      String userPath = sketchbookPath + File.separator + header.user;
+
+      SketchbookMenuListener userMenuListener = 
+	new SketchbookMenuListener(userPath);
+
+      String entries[] = new File(userPath).list();
+      for (int j = 0; j < entries.length; j++) {
+	if ((entries[j].equals(".")) || 
+	    (entries[j].equals(".."))) continue;
+	MenuItem item = new MenuItem(entries[j]);
+	item.addActionListener(userMenuListener);
+	menu.add(item);
+	//submenu.add(entries[j]);
+      }
+      menu.addSeparator();
+
+
+      // other available subdirectories
+
+      String toplevel[] = sketchbookFolder.list();
+      for (int i = 0; i < toplevel; i++) {
+	if ((toplevel[i].equals(header.user)) ||
+	    (toplevel[i].equals(".")) ||
+	    (toplevel[i].equals(".."))) continue;
+
+	Menu subMenu = new Menu(toplevel[i]);
+	File subFolder = new File(sketchbookFolder, toplevel[i]);
+	String subPath = subfolder.getCanonicalPath();
+	SketchbookMenuListener subMenuListener = 
+	  new SketchbookMenuListener(subPath);
+
+	String entries[] = subfolder.list();
+	for (int j = 0; j < entries.length; j++) {
+	  if ((entries[j].equals(".")) || 
+	      (entries[j].equals(".."))) continue;
+	  submenu.add(entries[j]);
+	}
+
+	menu.add(submenu);
+      }
+      menu.addSeparator();
+
+
+    Menu skmenu = new Menu("Sketchbook");
+  }
 
   public void actionPerformed(ActionEvent event) {
     String command = event.getActionCommand();

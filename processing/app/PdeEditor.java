@@ -8,63 +8,6 @@ import java.util.*;
 import java.util.zip.*;
 
 
-/*
-
-
-[ File ]
-New
-Open ->
-Save
-Duplicate
-Export
--
-Proce55ing.net
-Reference
--
-Quit
-
-
-[ Open-> (Sketchbook) ]
-sketch-001
-sketch-002
-sketch-003
--- 
-Course ->
-Examples -> 
-Users ->
-Proce55ing.net ->
---
-Refresh List
-Compile All
-
-
-[ Edit ]
-Undo
--
-Cut
-Copy 
-Paste
--
-Select all
-
-
-[ Sketch ]
-Play
-Present
-Stop
-
-
-new sketch just makes a new sketch, doesn't ask for name
-tries to do numbered version based on sketches already present
-
-last section is configurable
-choose a name for the entries, and a url for the base of the code
-  file urls will be local, don't include file:/// to user
-  http urls are base of directory where the code is found
-
-*/ 
-
-
 public class PdeEditor extends Panel {
 
   static final String DEFAULT_PROGRAM = "// type program here\n";
@@ -265,6 +208,7 @@ public class PdeEditor extends Panel {
     }
     buttons.clear();
   }
+  */
 
 
   public void handleNew() {
@@ -312,6 +256,10 @@ public class PdeEditor extends Panel {
     System.out.println("gonna open " + path);
   }
   */
+
+
+  public void sketchbookOpen() {
+  }
 
 
   public void doOpen() {
