@@ -81,7 +81,7 @@ public class PdePreprocessor {
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
-    usingExternal = PdeBase.getBoolean("play.external", false);
+    usingExternal = PdePreferences.getBoolean("play.external", false);
   }
 
   /**
@@ -95,7 +95,7 @@ public class PdePreprocessor {
    * @return the classname of the exported Java
    */
   public String writeJava(String name, String imports[],
-                          boolean extendsNormal,
+                          /*boolean extendsNormal,*/
                           boolean exporting) throws java.lang.Exception {
 
     // create a lexer with the stream reader, and tell it to handle 
@@ -159,7 +159,7 @@ public class PdePreprocessor {
     PrintStream stream = new PrintStream(
       new FileOutputStream(buildPath + File.separator + name + ".java"));
 
-    writeHeader(stream, imports, extendsNormal, exporting, name);
+    writeHeader(stream, imports, /*extendsNormal,*/ exporting, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
@@ -170,7 +170,7 @@ public class PdePreprocessor {
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
 
-    if (PdeBase.getBoolean("compiler.output_parse_tree", false)) {
+    if (PdePreferences.getBoolean("compiler.output_parse_tree", false)) {
 
       stream = new PrintStream(new FileOutputStream("parseTree.xml"));
       stream.println("<?xml version=\"1.0\"?>");
@@ -196,8 +196,8 @@ public class PdePreprocessor {
    * @param name                Name of the class being created.
    */
   void writeHeader(PrintStream out, String imports[], 
-                   boolean extendsNormal, boolean exporting,
-                   String name) {
+                   /*boolean extendsNormal,*/ 
+                   boolean exporting, String name) {
 
     if (imports != null) {
       //System.out.println("imports not null");
@@ -220,7 +220,8 @@ public class PdePreprocessor {
         }
       }
 
-      String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+      //String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+      String extendsWhat = "BApplet";
 
       out.print("public class " + name + " extends " +
                 extendsWhat + " {");
