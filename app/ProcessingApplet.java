@@ -1,6 +1,7 @@
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 
@@ -31,6 +32,8 @@ public class ProcessingApplet extends Applet
   Thread thread;
 
   int width, height;
+
+  PrintStream errStream;
 
 
   public void init() {
@@ -127,55 +130,68 @@ public class ProcessingApplet extends Applet
   public void run() {
     while ((Thread.currentThread() == thread) && !finished) {
 
-      // setup
-      if (timing) {
-	actualMillis = System.currentTimeMillis();
-	calendar = null;
-      }
-
-      // attempt to draw a static image using draw()
-      if (!drawn) {
-	// always do this once. empty if not overridden
-	g.beginFrame();
-	draw();
-	if (!drawMethod) {
-	  // that frame was bogus, mark it as such
-	  // before ending the frame so that it doesn't get
-	  // saved to a quicktime movie or whatever
-
-	  // might be as simple as not calling endFrame?
+      try {
+	// setup
+	if (timing) {
+	  actualMillis = System.currentTimeMillis();
+	  calendar = null;
 	}
-	if (drawMethod) {
+
+	// attempt to draw a static image using draw()
+	if (!drawn) {
+	  // always do this once. empty if not overridden
+	  g.beginFrame();
+	  draw();
+	  if (!drawMethod) {
+	    // that frame was bogus, mark it as such
+	    // before ending the frame so that it doesn't get
+	    // saved to a quicktime movie or whatever
+
+	    // might be as simple as not calling endFrame?
+	  }
+	  if (drawMethod) {
+	    g.endFrame();
+	    update();
+	    finished = true;
+	  }
+	  drawn = true;
+	}
+
+	// if not a static app, run the loop
+	if (!drawMethod) {
+	  g.beginFrame();
+	  loop();
 	  g.endFrame();
 	  update();
+	}
+
+	// takedown
+	if (!loopMethod) {
 	  finished = true;
 	}
-	drawn = true;
-      }
 
-      // if not a static app, run the loop
-      if (!drawMethod) {
-	g.beginFrame();
-	loop();
-	g.endFrame();
-	update();
-      }
+	if (mousePressedBriefly) {
+	  mousePressedBriefly = false;
+	  mousePressed = false;
+	}
 
-      // takedown
-      if (!loopMethod) {
-	finished = true;
-      }
+	if (keyPressedBriefly) {
+	  keyPressedBriefly = false;
+	  keyPressed = false;
+	}
 
-      if (mousePressedBriefly) {
-	mousePressedBriefly = false;
-	mousePressed = false;
+	// with any luck, kjcengine will be listening
+	// and slurp this right up
+      } catch (Exception e) {  
+	//System.out.println("exception caught in run");
+	//System.err.println("i'm here in err");
+	if (errStream != null) {
+	  errStream.print("MAKE WAY");
+	  e.printStackTrace(errStream);
+	} else {
+	  e.printStackTrace();
+	}
       }
-
-      if (keyPressedBriefly) {
-	keyPressedBriefly = false;
-	keyPressed = false;
-      }
-
       // sleep to make OS happy
       try {
 	thread.sleep(5);
@@ -312,6 +328,181 @@ public class ProcessingApplet extends Applet
   // ------------------------------------------------------------
 
 
+  // these functions are really slow, but easy to use
+  // if folks are advanced enough to want something faster, 
+  // they can write it themselves (not difficult)
+
+  public float getRed(int x, int y) {
+    if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
+      return (g.backR * g.colorMaxX);
+    }
+    int r1 = (g.pixels[y*width + x] >> 16) & 0xff;
+    return g.colorMaxX * ((float)r1 / 255.0f);
+  }
+
+  public float getGreen(int x, int y) {
+    if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
+      return (g.backR * g.colorMaxX);
+    }
+    int g1 = (g.pixels[y*width + x] >> 8) & 0xff;
+    return g.colorMaxX * ((float)g1 / 255.0f);
+  }
+
+  public float getBlue(int x, int y) {
+    if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
+      return (g.backR * g.colorMaxX);
+    }
+    int b1 = (g.pixels[y*width + x]) & 0xff;
+    return g.colorMaxX * ((float)b1 / 255.0f);
+  }
+
+
+  public void setRed(int x, int y, float value) {
+    if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
+      return;
+    }
+    if (value < 0) value = 0;
+    if (value > g.colorMaxX) value = g.colorMaxX;
+
+    int masked = (g.pixels[y*width + x]) & 0xff00ffff;
+    g.pixels[y*width + x] = masked |
+      (((int) (255.0f * value / g.colorMaxX)) << 16);
+  }
+
+  public void setGreen(int x, int y, float value) {
+    if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
+      return;
+    }
+    if (value < 0) value = 0;
+    if (value > g.colorMaxY) value = g.colorMaxY;
+
+    int masked = (g.pixels[y*width + x]) & 0xffff00ff;
+    g.pixels[y*width + x] = masked |
+      (((int) (255.0f * value / g.colorMaxY)) << 8);
+  }
+
+  public void setBlue(int x, int y, float value) {
+    if ((x < 0) || (x > g.width1) || (y < 0) || (y > g.height1)) {
+      return;
+    }
+    if (value < 0) value = 0;
+    if (value > g.colorMaxZ) value = g.colorMaxZ;
+
+    int masked = (g.pixels[y*width + x]) & 0xffffff00;
+    g.pixels[y*width + x] = masked |
+      ((int) (255.0f * value / g.colorMaxZ));
+  }
+
+
+  /*
+  public float getHue(int x, int y) {
+  }
+
+  public float getSaturation(int x, int y) {
+  }
+
+  public float getBrightness(int x, int y) {
+  }
+
+
+  public void setHue(int x, int y, float h) {
+  }
+
+  public void setSaturation(int x, int y, float s) {
+  }
+
+  public void setBrightness(int x, int y, float b) {
+  }
+
+
+  public float getGray(int x, int y) {
+  }
+
+  public void setGray(int x, int y, float value) {
+  }
+  */
+
+
+  // ------------------------------------------------------------
+
+
+  public void rotateX(float angle) {
+    g.rotate(angle, 1, 0, 0);
+  }
+
+  public void rotateY(float angle) {
+    g.rotate(angle, 0, 1, 0);
+  }
+
+  public void rotateZ(float angle) {
+    g.rotate(angle, 0, 0, 1);
+  }
+
+
+  // ------------------------------------------------------------
+
+  // math stuff for convenience
+
+  
+  public final float sin(float angle) {
+    return (float)Math.sin(angle);
+  }
+
+  public final float cos(float angle) {
+    return (float)Math.cos(angle);
+  }
+
+  public final float tan(float angle) {
+    return (float)Math.tan(angle);
+  }
+
+  public final float atan2(float a, float b) {
+    return (float)Math.atan2(a, b);
+  }
+
+
+  public final float sq(float a) {
+    return a*a;
+  }
+
+  public final float sqrt(float a) {
+    return (float)Math.sqrt(a);
+  }
+
+  public final float pow(float a, float b) {
+    return (float)Math.pow(a, b);
+  }
+
+  public final float abs(float n) {
+    return (n < 0) ? -n : n;
+  }
+
+
+  public final float max(float a, float b) {
+    return Math.max(a, b);
+  }
+
+  public final float max(float a, float b, float c) {
+    return Math.max(a, Math.max(b, c));
+  }
+
+  public final float min(float a, float b) {
+    return Math.min(a, b);
+  }
+
+  public final float min(float a, float b, float c) {
+    return Math.min(a, Math.min(b, c));
+  }
+
+
+  public final float random() {
+    return (float)Math.random();
+  }
+
+
+  // ------------------------------------------------------------
+
+
   public void beginFrame() {
     g.beginFrame();
   }
@@ -392,6 +583,10 @@ public class ProcessingApplet extends Applet
   public void box(float x1, float y1, float z1,
 		  float x2, float y2, float z2) {
     g.box(x1, y1, z1, x2, y2, z2);
+  }
+
+  public void circle(float x, float y, float radius) {
+    g.circle(x, y, radius);
   }
 
   public void sphere(float radius) {
