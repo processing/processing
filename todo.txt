@@ -1,29 +1,27 @@
-0064
-X re-enable (bad) thick line code since it was completely shut off
-X set default filename for the font
-X line 6:1: unexpected char: 0xA0
-X clicking cancel on 'save changes' doesn't cancel, but still quits
-X   removed the cancel button
+0065
+X fix SMOOTH_IMAGES problem with how text had been modified
+X include version number in the about box
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
+X Ctrl-B will beautify the code and send the cursor back to the
+X   beginning of the the text. Then you have to scroll back to 
+X   where you were... ok, so maybe I am a heavy user of Ctrl-B.
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
 
 
-_ figure out how to cancel 'save changes' on macosx and windows
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
-_ set PATH to include java (!)
-_ history could be gzipped and appended to history.dat
-_   along with another file that is actually a table of offsets
-_   no need to make the thing a gzip stream
-_   checkbox on menu for 'record history' ?
-_   history converter option?
-_ jikes errors are missing newline/linefeed ?
-_ using run-expert.bat on 62 causes NullPointerException weirdness
-_ network/shared_canvas, network/value has old code
-_ write script to remove .DS_Store and CVS folders from dist
-_ include version number in the about box
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
-_ change run.bat, run-expert.bat to use 128m
+DEVELOPERS
+_ try ariel's Thread.yield() suggestion
+_ set default framerate of 24? 30?
+_ BImage.replicate for straight 1:1 copy, blend() for blended version
+_   remove the blendMode function because it's confusing 
 
 
 MEDIUM
+_ set PATH to include java (!)
+_ jikes errors are missing newline/linefeed ?
+_ using run-expert.bat on 62 causes NullPointerException weirdness (?)
+_ network/shared_canvas, network/value has old code
+_ write script to remove .DS_Store and CVS folders from dist
+_ change run.bat, run-expert.bat to use 128m
 _ ability to include other .java and .pde code from sketchbook folder
 _   'add files' for .java or .pde pulls into the folder
 _ light(x, y, z, c1, c2, c3, TYPE)
@@ -105,8 +103,12 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 
 
 history
-_ history causing trouble
-_   super slow with a huge sketch
+_ history causing trouble - super slow with a huge sketch
+_   could instead be gzipped and appended to history.dat
+_   along with another file that is actually a table of offsets
+_   no need to make the thing a gzip stream
+_   checkbox on menu for 'record history' ?
+_   history converter option?
 
 
 multiple files / java mode
@@ -169,7 +171,12 @@ leonhard@rathner.com
 
 
 LOWER (post beta tweaks, non-structural)
-
+_ Ctrl-Z will undo, but the window will not scroll to where the 
+_   "undoing" is happening. This can lead the user to assume that
+_   actually nothing is happening and overundo. 
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+_ figure out how to cancel 'save changes' on macosx and windows
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
 _ error if you try to hit export twice on a sketch
 _   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
 _   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
@@ -221,6 +228,7 @@ _     because it just quit without finishing
 _ macosx handleQuit forces termination (at least on 1.3)
 _   figure out how to prevent it, and add the 'cancel' button back
 _ drag & drop implementation to add files to sketch
+_ do a better job of maintaining cursor during beautify 
 
 
 thesis / acg

@@ -243,6 +243,9 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
   }
 
   public void mouseMoved(MouseEvent e) {
+    // mouse events before paint();
+    if (state == null) return; 
+
     if (state[OPEN] != INACTIVE) {
       // avoid flicker, since there will probably be an update event
       setState(OPEN, INACTIVE, false);
