@@ -32,6 +32,13 @@ import java.io.*;
 
 
 /**
+ * [fry 0407XX] 
+ * - get() on RGB images sets the high bits to opaque
+ * - modification of naming for functions
+ * - inclusion of Object.clone()
+ * - make get(), copy(), blend() honor imageMode
+ * - lots of moving things around for new megabucket api
+ * 
  * [toxi 030722]
  * advanced copying/blitting code 
  *
@@ -269,13 +276,36 @@ public class PImage implements PConstants, Cloneable {
   // GET/SET PIXELS
 
 
+  /**
+   * Returns a "color" type (a packed 32 bit int with the color.
+   * If the image is in RGB format (i.e. on a PVideo object), 
+   * the value will get its high bits set, because of the likely
+   * case that they haven't been already.
+   */
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
-    return pixels[y*width + x];
+    return (format == RGB) ? 
+      (pixels[y*width + x] & 0xff000000) : pixels[y*width + x];
   }
 
 
+  /**
+   * Grab a subsection of a PImage, and copy it into a fresh PImage.
+   * This honors imageMode() for the coordinates.
+   */
   public PImage get(int x, int y, int w, int h) {
+    if (image_mode == CORNERS) {  // if CORNER, do nothing
+      //x2 += x1; y2 += y1; 
+      // w/h are x2/y2 in this case, bring em down to size
+      w = (w - x);
+      h = (h - x);
+
+    } else if (image_mode == CENTER) {
+      // w/h are the proper w/h, but x/y need to be moved
+      x -= w/2;
+      y -= h/2;
+    }
+
     if (x < 0) x = 0;
     if (y < 0) y = 0;
 
