@@ -336,10 +336,9 @@ public class PdeCompiler implements PdeMessageConsumer {
   /**
    * Return the path for a folder, with appended paths to 
    * any .jar or .zip files inside that folder.
-   * This will prepend a colon so that it can be directly
-   * appended to another path string.
+   * This will prepend a colon (or whatever the path separator is)
+   * so that it can be directly appended to another path string.
    */
-  //static public String includeFolder(File folder) {
   static public String contentsToClassPath(File folder) {
     if (folder == null) return "";
 
@@ -370,7 +369,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       e.printStackTrace();  // this would be odd
     }
     //System.out.println("included path is " + abuffer.toString());
-    packageListFromClassPath(abuffer.toString());  // WHY?
+    //packageListFromClassPath(abuffer.toString());  // WHY?
     return abuffer.toString();
   }
 

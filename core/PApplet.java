@@ -601,7 +601,6 @@ public class PApplet extends Applet
       mousePressed();
       break;
     case MouseEvent.MOUSE_RELEASED:
-      System.out.println("mouse released");
       mousePressed = false;
       mouseReleased();
       break;

@@ -189,6 +189,9 @@ X   this was problem with rendering an image from PGraphics on board
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655;start=0
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1080671926;start=0
 
+040921 morning
+X bug in get() that was removing the high bits (rather than adding)
+
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
