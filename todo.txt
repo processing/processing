@@ -26,6 +26,11 @@ X start working on "save as"
 
 040622 monday
 X finish "save as"
+X adding files to data folder that are already in the data folder
+X   makes the file zero, because of internal error
+X   added something to check to make sure they weren't the same
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
+
 _ after using sketchbook menu as popup, disappears from file menu
 _ re-implement history
 _ write sketchbook.clean()
@@ -43,10 +48,6 @@ _ if 'applet.html' is in sketch folder, use that as the template
 _ comments -> embedding in applet text? (ala javadoc)
 _   would this help casey with the examples?
 
-
-_ adding files to data folder that are already in the data folder
-_   makes the file zero, because of internal error
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
 
 
 discuss with casey

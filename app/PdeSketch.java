@@ -424,6 +424,16 @@ public class PdeSketch {
       if (!dataFolder.exists()) dataFolder.mkdirs();
       destFile = new File(dataFolder, filename);
     }
+
+    // make sure they aren't the same file
+    if (sourceFile.equals(destFile)) {
+      PdeBase.showWarning("You can't fool me", 
+                          "This file has already been copied to the\n" +
+                          "location where you're trying to add it.\n" +
+                          "I ain't not doin nuthin'.", null);
+      return;
+    }
+
     try {
       PdeBase.copyFile(sourceFile, destFile);
     } catch (IOException e) {
@@ -1262,14 +1272,6 @@ public class PdeSketch {
     }
   }
 
-
-  /**
-   * Returns the path to the sketch folder. 
-   * Used by PdeEditor.handleSaveAs()
-   */
-  //public String getPath() {
-  //return sketchFolder.getPath();
-  //}
 
   /**
    * Returns path to the main .pde file for this sketch.
