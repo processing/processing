@@ -275,6 +275,10 @@ public class PApplet extends Applet
 
 
   public void depth() {
+    if (g.textFont != null) {
+      die("textFont() cannot be used before calling depth()");
+    }
+
     // OPT if PGraphics already exists, pass in its pixels[]
     //     buffer so as not to re-allocate all that memory again
     if (g.width != 0) {
@@ -1265,8 +1269,7 @@ public class PApplet extends Applet
    */
   public void die(String what) {
     stop();
-
-    throw new RuntimeException("died: " + what);
+    throw new RuntimeException(what);
     /*
     if (online) {
       System.err.println("i'm dead.. " + what);
@@ -2077,6 +2080,10 @@ public class PApplet extends Applet
 
 
   public PFont loadFont(String filename) {
+    //if (g == null) {  // just for good measure
+    //die("loadFont() only be used inside setup() or draw()");
+    //}
+
     try {
       String lower = filename.toLowerCase();
       InputStream input = openStream(filename);
@@ -2085,6 +2092,7 @@ public class PApplet extends Applet
         input = new GZIPInputStream(input);
 
       } else if (!lower.endsWith(".vlw")) {
+        // this gets thrown down below
         throw new IOException("I don't know how to load a font named " +
                               filename);
       }
@@ -4880,15 +4888,15 @@ v              PApplet.this.stop();
   }
 
 
-  public void textFont(PFont which) {
-    if (recorder != null) recorder.textFont(which);
-    g.textFont(which);
-  }
-
-
   public void textFont(PFont which, float size) {
     if (recorder != null) recorder.textFont(which, size);
     g.textFont(which, size);
+  }
+
+
+  public void textFont(PFont which) {
+    if (recorder != null) recorder.textFont(which);
+    g.textFont(which);
   }
 
 
@@ -4913,6 +4921,26 @@ v              PApplet.this.stop();
   public void textSpace(int space) {
     if (recorder != null) recorder.textSpace(space);
     g.textSpace(space);
+  }
+
+
+  public float textAscent() {
+    return g.textAscent();
+  }
+
+
+  public float textDescent() {
+    return g.textDescent();
+  }
+
+
+  public float textWidth(char c) {
+    return g.textWidth(c);
+  }
+
+
+  public float textWidth(String s) {
+    return g.textWidth(s);
   }
 
 
@@ -4946,9 +4974,9 @@ v              PApplet.this.stop();
   }
 
 
-  public void text(String s, float x1, float y1, float z, float x2, float y2) {
-    if (recorder != null) recorder.text(s, x1, y1, z, x2, y2);
-    g.text(s, x1, y1, z, x2, y2);
+  public void text(String s, float x1, float y1, float x2, float y2, float z) {
+    if (recorder != null) recorder.text(s, x1, y1, x2, y2, z);
+    g.text(s, x1, y1, x2, y2, z);
   }
 
 

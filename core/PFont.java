@@ -4,7 +4,7 @@
   PFont - font object for text rendering
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry & Casey Reas
+  Copyright (c) 2004-05 Ben Fry & Casey Reas
   Portions Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -81,18 +81,19 @@ public class PFont implements PConstants {
   public int descent;
 
   // scaling, for convenience
-  public float size;
-  public float leading;
-  public int align;
-  public int space;
+  //public float size;
+  //public float leading;
+  //public int align;
+  //public int space;
 
   int ascii[];  // quick lookup for the ascii chars
   //boolean cached;
 
-  // used by the text() functions to avoid over-allocation of memory
-  private char textBuffer[] = new char[8 * 1024];
-  private char widthBuffer[] = new char[8 * 1024];
+  // shared by the text() functions to avoid incessant allocation of memory
+  protected char textBuffer[] = new char[8 * 1024];
+  protected char widthBuffer[] = new char[8 * 1024];
 
+  //public PGraphics parent;
 
   public PFont() { }  // for PFontAI subclass and font builder
 
@@ -194,9 +195,8 @@ public class PFont implements PConstants {
           int valu = temp[y*w + x] & 0xff;
           //images[i].pixels[y * twidth + x] = valu;
 
-          images[i].pixels[y * twidth + x] =
-            //valu;
-            (valu << 24) | 0xFFFFFF;  // windows
+          images[i].pixels[y * twidth + x] = valu;
+          //(valu << 24) | 0xFFFFFF;  // windows
             //0xFFFFFF00 | valu;  // macosx
 
           //(valu << 24) | (valu << 16) | (valu << 8) | valu;
@@ -210,10 +210,9 @@ public class PFont implements PConstants {
     }
     ///cached = false;
 
-    resetSize();
-    //resetLeading(); // ??
-    space = OBJECT_SPACE;
-    align = ALIGN_LEFT;
+    //resetSize();
+    //space = OBJECT_SPACE;
+    //align = ALIGN_LEFT;
   }
 
     //static boolean isSpace(int c) {
@@ -282,7 +281,7 @@ public class PFont implements PConstants {
   // whups, this used the p5 charset rather than what was inside the font
   // meaning that old fonts would crash.. fixed for 0069
 
-  private int index_hunt(int c, int start, int stop) {
+  protected int index_hunt(int c, int start, int stop) {
     //System.err.println("checking between " + start + " and " + stop);
     int pivot = (start + stop) / 2;
 
@@ -301,6 +300,7 @@ public class PFont implements PConstants {
   }
 
 
+  /*
   public void space(int which) {
     this.space = which;
     if (space == SCREEN_SPACE) {
@@ -313,13 +313,19 @@ public class PFont implements PConstants {
   public void align(int which) {
     this.align = which;
   }
+  */
 
 
+  /**
+   * Currently un-implemented for .vlw fonts,
+   * but honored for layout in case subclasses use it.
+   */
   public float kern(char a, char b) {
     return 0;  // * size, but since zero..
   }
 
 
+  /*
   public void resetSize() {
     //size = 12;
     size = mbox;  // default size for the font
@@ -341,28 +347,45 @@ public class PFont implements PConstants {
   public void leading(float ileading) {
     leading = ileading;
   }
+  */
 
 
+  /**
+   * Returns the ascent of this font from the baseline.
+   * The value is based on a font of size 1.
+   */
   public float ascent() {
-    return ((float)ascent / fheight) * size;
+    return ((float)ascent / fheight); // * size;
   }
 
 
+  /**
+   * Returns how far this font descends from the baseline.
+   * The value is based on a font size of 1.
+   */
   public float descent() {
-    return ((float)descent / fheight) * size;
+    return ((float)descent / fheight); // * size;
   }
 
 
+  /**
+   * Width of this character for a font of size 1.
+   */
   public float width(char c) {
     if (c == 32) return width('i');
 
     int cc = index(c);
     if (cc == -1) return 0;
 
-    return ((float)setWidth[cc] / fwidth) * size;
+    //return ((float)setWidth[cc] / fwidth) * size;
+    return ((float)setWidth[cc] / fwidth); // * size;
   }
 
 
+  /**
+   * Return the width of a line of text of size 1. If the text has
+   * multiple lines, this returns the length of the longest line.
+   */
   public float width(String str) {
     int length = str.length();
     if (length > widthBuffer.length) {
@@ -399,12 +422,31 @@ public class PFont implements PConstants {
   }
 
 
+  /**
+   * Draw a character at an x, y position.
+   */
   public void text(char c, float x, float y, PGraphics parent) {
     text(c, x, y, 0, parent);
   }
 
 
   public void text(char c, float x, float y, float z, PGraphics parent) {
+    if (parent.textMode == ALIGN_CENTER) {
+      x -= parent.textSize * width(c) / 2f;
+
+    } else if (parent.textMode == ALIGN_RIGHT) {
+      x -= parent.textSize * width(c);
+    }
+
+    textImpl(c, x, y, z, parent);
+  }
+
+
+  /**
+   * Draw a character at an x, y, z position.
+   */
+  //public void text(char c, float x, float y, float z, PGraphics parent) {
+  protected void textImpl(char c, float x, float y, float z, PGraphics parent) {
     //if (!valid) return;
     //if (!exists(c)) return;
 
@@ -422,20 +464,30 @@ public class PFont implements PConstants {
     }
     */
 
-    if (space == OBJECT_SPACE) {
+    if (parent.textSpace == OBJECT_SPACE) {
       float high    = (float) height[glyph]     / fheight;
       float bwidth  = (float) width[glyph]      / fwidth;
       float lextent = (float) leftExtent[glyph] / fwidth;
       float textent = (float) topExtent[glyph]  / fheight;
 
-      float x1 = x + lextent * size;
-      float y1 = y - textent * size;
-      float x2 = x1 + bwidth * size;
-      float y2 = y1 + high * size;
+      float x1 = x + lextent * parent.textSize;
+      float y1 = y - textent * parent.textSize;
+      float x2 = x1 + bwidth * parent.textSize;
+      float y2 = y1 + high * parent.textSize;
+
+      //parent.rectImpl(x1, y1, x2, y2);
+
+      //boolean savedTint = parent.tint;
+      //int savedTintColor = parent.tintColor;
+      //parent.tint = true;
+      //parent.tintColor = parent.fillColor;
 
       parent.imageImpl(images[glyph],
                        x1, y1, x2-x1, y2-y1,
                        0, 0, width[glyph], height[glyph]);
+
+      //parent.tint = savedTint;
+      //parent.tintColor = savedTintColor;
 
       /*
       // this code was moved here (instead of using parent.image)
@@ -547,7 +599,7 @@ public class PFont implements PConstants {
       if (textBuffer[index] == '\n') {
         textLine(start, index, x, y, z, parent);
         start = index + 1;
-        y += leading;
+        y += parent.textLeading;
       }
       index++;
     }
@@ -564,15 +616,15 @@ public class PFont implements PConstants {
     //int index = 0;
     //char previous = 0;
 
-    if (align == ALIGN_CENTER) {
-      x -= calcWidth(textBuffer, start, stop) / 2f;
+    if (parent.textMode == ALIGN_CENTER) {
+      x -= parent.textSize * calcWidth(textBuffer, start, stop) / 2f;
 
-    } else if (align == ALIGN_RIGHT) {
-      x -= calcWidth(textBuffer, start, stop);
+    } else if (parent.textMode == ALIGN_RIGHT) {
+      x -= parent.textSize * calcWidth(textBuffer, start, stop);
     }
 
     for (int index = start; index < stop; index++) {
-      text(textBuffer[index], x, y, z, parent);
+      textImpl(textBuffer[index], x, y, z, parent);
       x += width(textBuffer[index]);
     }
   }
@@ -605,9 +657,9 @@ public class PFont implements PConstants {
     //float right = x + w;
 
     float lineX = boxX1;
-    if (align == ALIGN_CENTER) {
+    if (parent.textMode == ALIGN_CENTER) {
       lineX = lineX + boxWidth/2f;
-    } else if (align == ALIGN_RIGHT) {
+    } else if (parent.textMode == ALIGN_RIGHT) {
       lineX = boxX2;
     }
 
@@ -666,7 +718,7 @@ public class PFont implements PConstants {
           wordStart = index;
           wordStop = index;
           runningX = boxX1;
-          currentY += leading;
+          currentY += parent.textLeading;
           if (currentY > boxY2) return;  // box is now full
 
         } else {
@@ -682,7 +734,7 @@ public class PFont implements PConstants {
         }
         lineStart = index + 1;
         wordStart = lineStart;
-        currentY += leading;
+        currentY += parent.textLeading;
         if (currentY > boxY2) return;  // box is now full
       }
       index++;
@@ -692,248 +744,6 @@ public class PFont implements PConstants {
       //System.out.println("line not empty " +
       //                 new String(textBuffer, lineStart, index));
       textLine(lineStart, index, lineX, currentY, boxZ, parent);
-    }
-  }
-
-
-  // .................................................................
-
-
-  /**
-   * Draw SCREEN_SPACE text on its left edge.
-   * This method is incomplete and should not be used.
-   */
-  public void ltext(String str, float x, float y, PGraphics parent) {
-    float startY = y;
-    int index = 0;
-    char previous = 0;
-
-    int length = str.length();
-    if (length > textBuffer.length) {
-      textBuffer = new char[length + 10];
-    }
-    str.getChars(0, length, textBuffer, 0);
-
-    while (index < length) {
-      if (textBuffer[index] == '\n') {
-        y = startY;
-        x += leading;
-        previous = 0;
-
-      } else {
-        ltext(textBuffer[index], x, y, parent);
-        y -= width(textBuffer[index]);
-        if (previous != 0)
-          y -= kern(previous, textBuffer[index]);
-        previous = textBuffer[index];
-      }
-      index++;
-    }
-  }
-
-
-  /**
-   * Draw SCREEN_SPACE text on its left edge.
-   * This method is incomplete and should not be used.
-   */
-  public void ltext(char c, float x, float y, PGraphics parent) {
-    int glyph = index(c);
-    if (glyph == -1) return;
-
-    // top-lefthand corner of the char
-    int sx = (int) x - topExtent[glyph];
-    int sy = (int) y - leftExtent[glyph];
-
-    // boundary of the character's pixel buffer to copy
-    int px = 0;
-    int py = 0;
-    int pw = width[glyph];
-    int ph = height[glyph];
-
-    // if the character is off the screen
-    if ((sx >= parent.width) ||         // top of letter past width
-        (sy - pw >= parent.height) ||
-        (sy + pw < 0) ||
-        (sx + ph < 0)) return;
-
-    if (sx < 0) {  // if starting x is off screen
-      py -= sx;
-      ph += sx;
-      sx = 0;
-    }
-    if (sx + ph >= parent.width) {
-      ph -= ((sx + ph) - parent.width);
-    }
-
-    if (sy < pw) {
-      //int extra = pw - sy;
-      pw -= -1 + pw - sy;
-      //px -= sy;
-      //pw += sy;
-      //sy = 0;
-    }
-    if (sy >= parent.height) {  // off bottom edge
-      int extra = 1 + sy - parent.height;
-      pw -= extra;
-      px += extra;
-      sy -= extra;
-      //pw -= ((sy + pw) - parent.height);
-    }
-
-    int fr = parent.fillRi;
-    int fg = parent.fillGi;
-    int fb = parent.fillBi;
-    int fa = parent.fillAi;
-
-    int pixels1[] = images[glyph].pixels;
-    int pixels2[] = parent.pixels;
-
-    // loop over the source pixels in the character image
-    // row & col is the row and column of the source image
-    // (but they become col & row in the target image)
-    for (int row = py; row < py + ph; row++) {
-      for (int col = px; col < px + pw; col++) {
-        int a1 = (fa * pixels1[row * twidth + col]) >> 8;
-        int a2 = a1 ^ 0xff;
-        int p1 = pixels1[row * width[glyph] + col];
-
-        try {
-          int index = (sy + px-col)*parent.width + (sx+row-py);
-          int p2 = pixels2[index];
-
-          pixels2[index] =
-            (0xff000000 |
-             (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
-             (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
-             (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
-        } catch (ArrayIndexOutOfBoundsException e) {
-          System.out.println("out of bounds " + sy + " " + px + " " + col);
-        }
-      }
-    }
-  }
-
-
-  // .................................................................
-
-
-  /**
-   * Draw SCREEN_SPACE text on its right edge.
-   * This method is incomplete and should not be used.
-   */
-  public void rtext(String str, float x, float y, PGraphics parent) {
-    float startY = y;
-    int index = 0;
-    char previous = 0;
-
-    int length = str.length();
-    if (length > textBuffer.length) {
-      textBuffer = new char[length + 10];
-    }
-    str.getChars(0, length, textBuffer, 0);
-
-    while (index < length) {
-      if (textBuffer[index] == '\n') {
-        y = startY;
-        x += leading;
-        previous = 0;
-
-      } else {
-        rtext(textBuffer[index], x, y, parent);
-        y += width(textBuffer[index]);
-        if (previous != 0)
-          y += kern(previous, textBuffer[index]);
-        previous = textBuffer[index];
-      }
-      index++;
-    }
-  }
-
-
-  /**
-   * Draw SCREEN_SPACE text on its right edge.
-   * This method is incomplete and should not be used.
-   */
-  public void rtext(char c, float x, float y, PGraphics parent) {
-    int glyph = index(c);
-    if (glyph == -1) return;
-
-    // starting point on the screen
-    int sx = (int) x + topExtent[glyph];
-    int sy = (int) y + leftExtent[glyph];
-
-    // boundary of the character's pixel buffer to copy
-    int px = 0;
-    int py = 0;
-    int pw = width[glyph];
-    int ph = height[glyph];
-
-    // if the character is off the screen
-    if ((sx - ph >= parent.width) || (sy >= parent.height) ||
-        (sy + pw < 0) || (sx < 0)) return;
-
-    // off the left of screen, cut off bottom of letter
-    if (sx < ph) {
-      //x0 -= xx;  // chop that amount off of the image area to be copied
-      //w0 += xx;  // and reduce the width by that (negative) amount
-      //py0 -= xx;  // if x = -3, cut off 3 pixels from the bottom
-      //ph0 += xx;
-      ph -= (ph - sx) - 1;
-      //sx = 0;
-    }
-    // off the right of the screen, cut off top of the letter
-    if (sx >= parent.width) {
-      int extra = sx - (parent.width-1);
-      py += extra;
-      ph -= extra;
-      //sx = parent.width-1;
-    }
-    // off the top, cut off left edge of letter
-    if (sy < 0) {
-      int extra = -sy;
-      px += extra;
-      pw -= extra;
-      sy = 0;
-    }
-    // off the bottom, cut off right edge of letter
-    if (sy + pw >= parent.height-1) {
-      int extra = (sy + pw) - parent.height;
-      pw -= extra;
-    }
-
-    int fr = parent.fillRi;
-    int fg = parent.fillGi;
-    int fb = parent.fillBi;
-    int fa = parent.fillAi;
-
-    int fpixels[] = images[glyph].pixels;
-    int spixels[] = parent.pixels;
-
-    // loop over the source pixels in the character image
-    // row & col is the row and column of the source image
-    // (but they become col & row in the target image)
-    for (int row = py; row < py + ph; row++) {
-      for (int col = px; col < px + pw; col++) {
-        int a1 = (fa * fpixels[row * twidth + col]) >> 8;
-        int a2 = a1 ^ 0xff;
-        int p1 = fpixels[row * width[glyph] + col];
-
-        try {
-          //int index = (yy + x0-col)*parent.width + (xx+row-y0);
-          //int index = (sy + px-col)*parent.width + (sx+row-py);
-          int index = (sy + px+col)*parent.width + (sx-row);
-          int p2 = spixels[index];
-
-          // x coord is backwards
-          spixels[index] =
-            (0xff000000 |
-             (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
-             (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
-             (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
-        } catch (ArrayIndexOutOfBoundsException e) {
-          System.out.println("out of bounds " + sy + " " + px + " " + col);
-        }
-      }
     }
   }
 
@@ -1006,6 +816,15 @@ public class PFont implements PConstants {
     this(new Font(name, Font.PLAIN, size), false, smooth);
   }
 
+
+  /**
+   * Use reflection to create a new .vlw font on the fly.
+   * This only works with Java 1.3 and higher.
+   *
+   * @param Font the font object to create from
+   * @param all true to include all available characters in the font
+   * @param smooth true to enable smoothing/anti-aliasing
+   */
   public PFont(Font font, boolean all, boolean smooth) {
     try {
       this.charCount = all ? 65536 : charset.length;
