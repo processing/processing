@@ -42,6 +42,7 @@ X examples should be in a submenu of open
 _ System.out isn't being heard from P* classes
 _   errors inside those classes also causing weirdness
 _   this might be a broader running as external app problem
+_   errorMessage in PSerial/PClient/PServer are all using System.out
 
 _ add preference for showing library stuff
 _ make built-in libraries read-only
@@ -56,7 +57,7 @@ _ register for setup() calls
 _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ where do libraries for distribution go?
-_   libraries subfolder of p5? or inside examples?
+_   libraries subfolder of p5
 _ String in apache classes and java.lang
 _   maybe ignore classes not inside the p5 libs dir?
 o   need to be able to select between which to include
@@ -65,7 +66,7 @@ o   auto-resolve by saying java.* wins, others ask
 _ get export working again
 _   make multiple jar files thing work.. blech
 _   include a note that 'applet' folder will get emptied/rewritten
-_     or rename the old applet folder to something else? (nah, too many)
+_     or rename the old applet folder to something else? (nah, too messy)
 _   don't force everything into a single .jar on export
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
 
