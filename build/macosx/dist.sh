@@ -73,7 +73,8 @@ rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
 #cp `which jikes` processing
-gunzip < dist/jikes.gz > processing/jikes
+#gunzip < dist/jikes.gz > processing/jikes
+cp dist/jikes processing/
 chmod a+x processing/jikes
  
 cp dist/lib/pde_macosx.properties processing/lib/
