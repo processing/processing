@@ -35,6 +35,8 @@ _   or figure out how to unload old classes.. grr
 
 
 ANNOYANCES
+_ doing way too much work to draw thin lines
+_   using full 3D polygon fella for semi-obviously 1 pixel lines
 _ apparent NullPointerException when things way offscreen
 _   i.e. glyphrot with scale set to 4
 _ Compiler.disable() message is weird and doesn't always work
@@ -44,15 +46,17 @@ _ erroneous errors from kjc regarding 'var not inited'
 _   is there any way to disable this message?
 _ z coordinates are backwards from gl (at least from mazo)
 _ look into using serialporteventlistener for simpleserial
+_ see about setting up simple bug tracker/feature system
+_   would also be nice for people to be able to vote on features
 
 
 for 0014
-_ examples - setting background using a full screen image
-_   uses System.arraycopy for speed
-_ write code to bind/convert java fonts
+X examples - setting background using a full screen image
+X   uses System.arraycopy for speed
 _ finish color function inside applet
 _   do by simplifying stroke/fill/background inside bagel
 _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
+_     needs to be done inside cpp version too.. minimize amt of code
 _ include stdout/stderr in the processing window
 _   option to toggle window on/off (not just in properties, but realtime)
 _   set # of lines in properties
@@ -64,11 +68,12 @@ _ make size() work for draw() mode
 _   inside KjcEngine, reach in and grab calls to 'size'
 _   if call is not using a constant number, then punt
 _ fixed width fonts
-_   document fixed width font format
+_   document fixed width font format as technote
 _   write code for reading uncompressed b/w tiff images
 
 
 for 0016 (first semi-public release)
+_ write code to bind/convert java fonts
 _ docs
 _   explain using inner classes and using non-public classes
 _   start 'errors' section
@@ -89,6 +94,7 @@ _   with serial port support
 _ move website to cvs
 _ setting a fill color when drawing an image should affect the image
 _   or maybe image.setColor or setTone to mix a specific color in
+_ new user interface?
 
 
 for 0017
