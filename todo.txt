@@ -3,6 +3,13 @@ X error message when an import isn't available
 o particle examples c & d don't have their extra files
 o let's not call it 'expert', let's just say w/o java
 X new thread-safer version of the PdeEditorConsole
+X add build for particles lib
+
+_ make sure that the preproc stuff gets built once
+_   especially straight out of cvs
+_ also out of cvs
+_   check for necessary tools to be installed
+_   zip, unzip, jikes, etc
 
 macosx
 _ resize box intrudes on the scroller for the console area
@@ -74,6 +81,9 @@ _ make exit() and/or size(0, 0) work for scripts
 libraries
 _ if videoEvent exists, don't auto-read?
 _   though for serial this would only grab the last byte
+_   video bug on osx? an error message when quitting video sketches:
+    java.io.IOException: Bad file descriptor 
+_     at java.io.FileInputStream.readBytes(Native Method) etc... ). 
 _ how to queue lib events until the end of loop
 _   call them inside post()!
 _ bring back some form of beginSerial/beginVideo
