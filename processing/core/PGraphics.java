@@ -3815,7 +3815,7 @@ public class PGraphics extends PImage implements PConstants {
         c[i][j] /= 2f;
       }
     }
-    setup_spline_forward(detail, curve_forward);
+    setup_spline_forward(segments, curve_forward);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
