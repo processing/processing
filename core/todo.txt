@@ -9,6 +9,22 @@ X fix noLoop() not properly running
 X also fix redraw() to include interrupt() again
 X loadPixels throwing NPEs
 X fixes to SCREEN_SPACE text not being sized properly
+X loadPixels()/updatePixels() on screen space text (ouch)
+
+_ really need to take a look at the curve/vertex code
+_   make sure we don't want curveVertices(1,2,3,u,v)
+_   also make test cases so that java2d and java11 behave the same
+
+_ should nf() handle commas as well?
+_   yes, and add nf(int what) so that non-padded version works
+_   but don't put commas into the zero-padded version
+_   make nf/nfs/nfp not so weird
+
+_ text should maybe use built-in font if available?
+_ don't use pixels to do screen space text inside PFont
+_   add a function in PGraphics for direct pixel image impl 
+_   in java2d, can quickly blit the image itself
+_   this way, can isolate it for gl too, which will use glBitmap
 
 X made loadStrings() and openStream(File) static again
 _   fix other stuff that's supposed to be static

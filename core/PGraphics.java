@@ -1568,7 +1568,9 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(char c, float x, float y) {
     if (textFont != null) {
+      if (textSpace == SCREEN_SPACE) loadPixels();
       textFont.text(c, x, y, this);
+      if (textSpace == SCREEN_SPACE) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -1585,7 +1587,9 @@ public class PGraphics extends PImage implements PConstants {
     // this just has to pass through.. if z is not zero when
     // drawing to non-depth(), the PFont will have to throw an error.
     if (textFont != null) {
+      if (textSpace == SCREEN_SPACE) loadPixels();
       textFont.text(c, x, y, z, this);
+      if (textSpace == SCREEN_SPACE) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -1597,8 +1601,9 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(String s, float x, float y) {
     if (textFont != null) {
+      if (textSpace == SCREEN_SPACE) loadPixels();
       textFont.text(s, x, y, this);
-
+      if (textSpace == SCREEN_SPACE) updatePixels();
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
@@ -1614,7 +1619,9 @@ public class PGraphics extends PImage implements PConstants {
     // this just has to pass through.. if z is not zero when
     // drawing to non-depth(), the PFont will have to throw an error.
     if (textFont != null) {
+      if (textSpace == SCREEN_SPACE) loadPixels();
       textFont.text(s, x, y, z, this);
+      if (textSpace == SCREEN_SPACE) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -1662,7 +1669,9 @@ public class PGraphics extends PImage implements PConstants {
       if (y2 < y1) {
         float temp = y1; y1 = y2; y2 = temp;
       }
+      if (textSpace == SCREEN_SPACE) loadPixels();
       textFont.text(s, x1, y1, x2, y2, this);
+      if (textSpace == SCREEN_SPACE) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");

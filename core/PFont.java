@@ -530,7 +530,7 @@ public class PFont implements PConstants {
       */
 
     } else {  // SCREEN_SPACE
-      parent.loadPixels();
+      //parent.loadPixels();
 
       int xx = (int) x + leftExtent[glyph];;
       int yy = (int) y - topExtent[glyph];
@@ -585,7 +585,7 @@ public class PFont implements PConstants {
              (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
         }
       }
-      parent.updatePixels();
+      //parent.updatePixels();
     }
   }
 
