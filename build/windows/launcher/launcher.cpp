@@ -72,7 +72,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
-               "Proce55ing Error", MB_OK);
+               "Processing Error", MB_OK);
     return 0;
   }
 
@@ -108,7 +108,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   if (!ShellExecuteEx(&ShExecInfo)) {
     MessageBox(NULL, "Error calling ShellExecuteEx()", 
-               "Proce55ing Error", MB_OK);
+               "Processing Error", MB_OK);
     return 0;
   }
 
@@ -120,19 +120,19 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     case ERROR_PATH_NOT_FOUND:
 	    MessageBox(NULL, "A required file could not be found. \n"
                  "You may need to install a Java runtime\n"
-                 "or re-install Proce55ing.",
-                 "Proce55ing Error", MB_OK);
+                 "or re-install Processing.",
+                 "Processing Error", MB_OK);
 	    break;
     case 0:
     case SE_ERR_OOM:
 	    MessageBox(NULL, "Not enough memory or resources to run at"
-                 " this time.", "Proce55ing Error", MB_OK);
+                 " this time.", "Processing Error", MB_OK);
 	    
 	    break;
     default:
 	    MessageBox(NULL, "There is a problem with your installation.\n"
                  "If the problem persists, re-install the program.", 
-                 "Proce55ing Error", MB_OK);
+                 "Processing Error", MB_OK);
 	    break;
     }
   }
