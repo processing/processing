@@ -275,20 +275,19 @@ public class PdeEditor extends Panel {
   }
 
 
-#ifdef RECORDER
-  public void doRecord() {
-    //doStop();
-    doClose();
-    PdeRecorder.start(this, graphics.width, graphics.height);
-    doRun();
-  }
-#endif
-
+  //  #ifdef RECORDER
+  //  public void doRecord() {
+  //    //doStop();
+  //    doClose();
+  //    PdeRecorder.start(this, graphics.width, graphics.height);
+  //    doRun();
+  //  }
+  //#endif
 
   public void doStop() {
-#ifdef RECORDER
-    if (!running) return;
-#endif
+    //#ifdef RECORDER
+    //    if (!running) return;
+    //#endif
     terminate();
     buttons.clear();
     running = false;
@@ -1113,9 +1112,9 @@ public class PdeEditor extends Panel {
 
 
   public void finished() {  // part of PdeEnvironment
-#ifdef RECORDER
-    PdeRecorder.stop();
-#endif
+    //#ifdef RECORDER
+    //    PdeRecorder.stop();
+    //#endif
     running = false;
     buttons.clearRun();
     message("Done.");
