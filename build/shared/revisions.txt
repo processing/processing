@@ -4,6 +4,98 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0056 - 27 june 2003
+
+[ shouting outwards ]
+
+this isn't everybody, but thanks much to the folks who helped on the
+*software* side of this release:
+
+hernando and casey have completed an additional 15 examples covering
+topics of video, network, and tangible.  
+
+this is the first release with pre-testers (benelek and mkoser)
+checking thingsout before we accidentally push out a bad
+release. also timothy mohn handling the macos9 and macosx packaging
+process.
+
+arielm, the bagel papa poule, has been catalogging the graphics engine
+bugs and creating tests for each of them.
+
+toxi has done several fixes and tweaks to the graphics engine, details
+listed below.
+
+[ new features (new bugs) ]
+
+- added more words to the syntax coloring
+
+- added a constructor for BImage that takes a java.awt.Image
+
+- added FileInputStream version of loadStream for locally running code
+
+- added screenGrab(String filename)
+
+- loadStream/loadBytes work with InputStreams and URLs
+
+- get current stroke/fill/background color with:
+  color f = fill();
+  color s = stroke();
+  color b = background();
+
+- handling of up/down/left/right and control/shift/alt keys, e.g.
+
+  void keyPressed()  
+  { 
+    if (key == UP) { 
+      println("up"); 
+ 
+    } else if (key == DOWN) { 
+      println("down") { 
+ 
+    } else { 
+      println("around"); 
+    } 
+  } 
+
+- link(String urlname) now implemented as a simpler way to get to URLs
+
+
+[ bug fixes ]
+
+most of these were reported by folks on the bboard. thank you all!
+the people who notified us of the bug are in [brackets] though we may
+have missed a few.. some of these are reported multiple times..
+
+- transparent gif images now draw properly.. no more workarounds!
+  [reported by several people]
+
+- reference now properly unpacks, rather than sitting in the folder
+  like a dumb zip file. oops. [mkoser, benelek]
+
+- imageMode issues have been ironed out
+
+- added print(char c) and println(char c) so that they don't just 
+  print numbers to the console
+
+- fonts were taking up more memory than necessary (found by arielm)
+
+- added ceil/floor to syntax coloring
+
+
+[ performance ]
+
+- fast 'flat' image drawing has been enabled again and debugged
+
+- fast image drawing then rewritten and debugged again (by toxi)
+
+- last line highlights properly on error (fix by danm)
+
+- code for much faster lines and points (by toxi)
+
+- adaptive circle segment sizing (by toxi)
+
+
+
 ABOUT REV 0055 - 27 may 2003
 
 WARNING! THIS RELEASE IS LESS TESTED THAN SOME OTHERS, AND INCLUDES
