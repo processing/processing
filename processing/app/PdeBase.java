@@ -48,6 +48,8 @@ public class PdeBase {
 
   static String openedAtStartup;
 
+  static ClassLoader loader;
+
   PdeEditor editor;
 
   static final int WINDOWS = 1;
@@ -139,6 +141,10 @@ public class PdeBase {
 
     // show the window
     editor.show();
+
+
+    // maybe?
+    loader = new PdeClassLoader();
   }
 
 
@@ -157,7 +163,11 @@ public class PdeBase {
   static public File getProcessingDataFolder() {
     File dataFolder = null;
 
-    if (platform == MACOSX) {
+    String pref = PdePreferences.get("settings.path");
+    if (pref != null) {
+      dataFolder = new File(pref);
+
+    } else if (platform == MACOSX) {
       // carbon folder constants
       // http://developer.apple.com/documentation/Carbon/Reference
       //   /Folder_Manager/folder_manager_ref/constant_6.html#/
@@ -212,8 +222,8 @@ public class PdeBase {
         String appDataPath = localKey.getStringValue("AppData");
         //System.out.println("app data path is " + appDataPath);
         //System.exit(0);
-        topKey.closeKey();  // necessary?
-        localKey.closeKey();
+        //topKey.closeKey();  // necessary?
+        //localKey.closeKey();
 
         dataFolder = new File(appDataPath, "Processing");
 
@@ -230,7 +240,25 @@ public class PdeBase {
     }
 
     // create the folder if it doesn't exist already
-    if (!dataFolder.exists()) dataFolder.mkdirs();
+    boolean result = true;
+    if (!dataFolder.exists()) {
+      result = dataFolder.mkdirs();
+    }
+
+    if (!result) {
+      // try the fallback location
+      String fallback = PdePreferences.get("settings.path.fallback");
+      dataFolder = new File(fallback);
+      if (!dataFolder.exists()) {
+        result = dataFolder.mkdirs();
+      }
+    }
+
+    if (!result) {
+      showError("Settings issues",
+                "Processing cannot run because it could not\n" +
+                "create a folder to store your settings.", null);
+    }
 
     return dataFolder;
   }
@@ -239,6 +267,27 @@ public class PdeBase {
   static public File getProcessingDataFile(String filename) {
     return new File(getProcessingDataFolder(), filename);
   }
+
+
+  static public File getBuildFolder() {
+    File folder = new File(getProcessingDataFolder(), "build");
+    if (!folder.exists()) folder.mkdirs();
+    return folder;
+  }
+
+
+  /*
+  static public void addBuildFolderToClassPath() {
+    String path = getBuildFolder().getAbsolutePath();
+    String jcp = System.getProperty("java.class.path");
+    if (jcp.indexOf(path) == -1) {
+      System.setProperty("java.class.path", path + File.pathSeparator + jcp);
+      //return new File(getProcessingDataFolder(), "build");
+      System.out.println("jcp is now " +
+                         System.getProperty("java.class.path"));
+    }
+  }
+  */
 
 
   static public File getDefaultSketchbookFolder() {
@@ -291,8 +340,8 @@ public class PdeBase {
           "\\Explorer\\Shell Folders";
         RegistryKey localKey = topKey.openSubKey(localKeyPath);
         String personalPath = localKey.getStringValue("Personal");
-        topKey.closeKey();  // necessary?
-        localKey.closeKey();
+        //topKey.closeKey();  // necessary?
+        //localKey.closeKey();
 
         sketchbookFolder = new File(personalPath, "Processing");
 
@@ -300,18 +349,44 @@ public class PdeBase {
         showError("Problem getting documents folder",
                   "Error getting the Processing sketchbook folder.", e);
       }
+
+    } else {
+      // on linux (or elsewhere?) prompt the user for the location
+      JFileChooser fc = new JFileChooser();
+      //fc.setSelectedFile(new File(sketchbookLocationField.getText()));
+      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+      int returned = fc.showOpenDialog(new JDialog());
+      if (returned == JFileChooser.APPROVE_OPTION) {
+        //File file = fc.getSelectedFile();
+        //sketchbookLocationField.setText(file.getAbsolutePath());
+        sketchbookFolder = fc.getSelectedFile();
+
+      } else {
+        System.exit(0);
+      }
     }
 
-    // if it failed, or if on linux, prompt the user or quit
-    /*
-      File home = new File(System.getProperty("user.home"));
-      File phome = new File(home, ".processing");
-      if (!phome.exists()) phome.mkdirs();
-      return phome;
-    */
-
     // create the folder if it doesn't exist already
-    if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
+    boolean result = true;
+    if (!sketchbookFolder.exists()) {
+      result = sketchbookFolder.mkdirs();
+    }
+
+    if (!result) {
+      // try the fallback location
+      String fallback = PdePreferences.get("sketchbook.path.fallback");
+      sketchbookFolder = new File(fallback);
+      if (!sketchbookFolder.exists()) {
+        result = sketchbookFolder.mkdirs();
+      }
+    }
+
+    if (!result) {
+      showError("error",
+                "Processing cannot run because it could not\n" +
+                "create a folder to store your sketchbook.", null);
+    }
 
     return sketchbookFolder;
   }

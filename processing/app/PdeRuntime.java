@@ -128,7 +128,8 @@ public class PdeRuntime implements PdeMessageConsumer {
 
       } else {  // !externalRuntime
         //Class c = Class.forName(className);
-        Class c = Class.forName(sketch.mainClassName);
+        //Class c = Class.forName(sketch.mainClassName);
+        Class c = PdeBase.loader.loadClass(sketch.mainClassName);
         applet = (PApplet) c.newInstance();
 
         // replaces setRuntime with PApplet having leechErr [fry]
@@ -569,7 +570,9 @@ java.lang.NullPointerException
       // unless this is set to min, it seems to hork the app
       // since it's in charge of stuffing the editor console with strings
       // maybe it's time to get rid of/fix that friggin console
-      thread.setPriority(Thread.MIN_PRIORITY);
+      // ...disabled for 0075, with 0074's fix for code folder hanging
+      // this only seems to make the console unresponsive
+      //thread.setPriority(Thread.MIN_PRIORITY);
       thread.start();
     }
 
