@@ -12,6 +12,22 @@ X   wrote script to force me to fix them
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
 X apple has update qtjava for quicktime 6.4, thank god
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
+X size not properly detected when "size()" was the first thing
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067217366;start=0
+X nasty but where System.out was being piped to System.err
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067218548;start=0
+
+console
+dh b _ clear console each time 'run' gets hit
+dh b _   don't actually clear, just advance by the number of lines visible
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
+dh b _   can't copy text from console directly (winxp and macosx)
+bf 1 _ console -> should be using JEditTextArea not TextPane
+bf b _ set decent fonts (probably same as editor above), looks bad on mac
+bf b _ console runs really really slow with a lot of println() calls
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
@@ -50,6 +66,10 @@ _     so that typing will replace it directly
 _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
+
+_ add something to font editor to enable/disable smoothing
+_ mac -> vlw (or sbit?) font converter
+_   need to add font metrics code
 
 
 ................
@@ -179,18 +199,6 @@ dh b _ may need to start putting properties somewhere besides lib
 dh b _   home directory  (or preferences folder under macos9)
 dh b _ put screenshots into sketch folder
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
-
-
-console
-dh b _ clear console each time 'run' gets hit
-dh b _   don't actually clear, just advance by the number of lines visible
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
-dh b _   can't copy text from console directly (winxp and macosx)
-bf 1 _ console -> should be using JEditTextArea not TextPane
-bf b _ set decent fonts (probably same as editor above), looks bad on mac
-bf b _ console runs really really slow with a lot of println() calls
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
 
 history
