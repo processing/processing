@@ -1,38 +1,6 @@
-0071
-o get linux version for 0071
-X suppress "bad file descriptor" error on mac os x
-X alphabetizing sketch menu
-X   uppercase being capitalized before lowercase
-X   need to mix case.. use toLowerCase before compare
-X add a little gap on editor frame at the left
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1097363967;start=0
-X add to readme or bugs.. 
-X   menus that are too long just get clipped on the screen
-X     can't be fixed because it's a java/os issue
-X   also strange menu behavior for popups, especially on osx we can't fix
-o if applet.html is present, open that in the editor too.
-o   or do we make people use dreamweaver?
-o   nixed by casey, we're not dreamweaver
-X macosx not exporting core.jar 
-X   the jar is buried Contents/Resources/Java
-X don't enable externalRuntime with multiple code files that are pde
-X   no longer separate classes
-X remove "file" from "new file".. maybe just "new tab"?
-X   not really separate files, so that could be trouble.
-X add file of a .pde or .java file should update the tabs bar
-X   and prolly not really complain if it's in the same folder
-X dim "rename" when the main tab is selected (since user needs to "save as")
-X "save ass" issues
-X   "save as" not properly updating the tab header
-X   also include the name of the previous sketch for "save as"
-X   prevent folks from saving a sketch inside its own folder
-X     will cause bizarro recursive folder action
-X remove grow box from applet frame
+0072 pde
+X error message when an import isn't available
 
-macosx
-X verify that export is working from processing.app
-o check into ryan's macosx java bug.. 
-o   see why coords are going negative
 
 //
 
