@@ -30,7 +30,7 @@ else
   echo Setting up directories to build under Mac OS X
   cp -r ../shared work
 
-  echo Extracting examples
+  echo Extracting examples...
   cd work/sketchbook
   unzip -q examples.zip
   rm examples.zip
@@ -51,7 +51,7 @@ else
   cp dist/lib/pde_macosx.properties work/lib/
 
   # grab serial goodies
-  echo Copying serial support from bagel dir
+  echo Copying serial support from bagel dir...
   cp ../../bagel/serial/RXTXcomm.jar work/lib/
   cp ../../bagel/serial/libSerial.jnilib work/
 
@@ -61,6 +61,7 @@ else
   #cp ../../bagel/opengl/libGL4JavaJauGljJNI13.jnilib work/
 
   # to have a copy of this guy around for messing with
+  echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
   cp -dpR dist/Processing.app work/
   #cd work/Processing.app
@@ -69,10 +70,12 @@ else
 
   # get jikes and depedencies
   #gunzip < dist/jikes.gz > work/jikes
+  echo Copying jikes...
   cp dist/jikes work/
   chmod +x work/jikes
 
   # build classes/grammar for preprocessor
+  echo Building antlr grammar code...
   cd ../../app/preprocessor
   # first build the default java goop
   java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g

@@ -166,7 +166,7 @@ ks X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;a
 ks X getPixel() and other fxns for BImage
 
 
-assigned to dan haskovec, but instead completed by toxi
+assigned to danh, but completed by toxi
 ks X present mode, click background window and front window hides
 ks X   wasn't present in jdk 1.3, focus manager changed in 1.4
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166198;start=0
@@ -174,6 +174,12 @@ ks X focus not properly set in present mode
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166151;start=0
 ks X escape key not quitting presentation mode
 ks X   no events seem to be coming through at all
+
+
+assigned to danh, but fixed by fry or danm
+dh o environment locks up when error stream isn't for the class
+dh o   this happens when it's another thread (i.e. image fetcher)
+dh o KjcEngine exceptions (formerly 'ex found in run') should be cleaner
 
 
 from carlos' contract, but implemented by fry
@@ -256,13 +262,43 @@ X notify user when size() is bad
 X   need to use oro matcher when trying to grab the applet size (export?)
 X macosx doesn't listen if 'cancel' is selected for save changes on quit
 X   but windows works fine, so it's a macosx problem
+X   removed cancel button on macosx when quitting
 X open button getting stuck on windows
-_ make sure no CVS folders or .DS_Store files in the distribution
 
+
+from the rest of the crew
+dm X linux can't find jikes, so users have to put it in their PATH
 ks X BImage.get() was only grabbing a single line of pixels
-dm _ problem with inner classes and helix example
-cr _ new reference for rev 60
+dm X problem with inner classes and helix example
 
+
+received no verification, and other purges from the list
+o windows 95/98/ME seems to be broken
+o   ME doesn't seem to like the .exe, but run.bat worked ok
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028990066
+o lockup/freezes (mKoser and zeitgeist)
+o   jre icon not appearing in the systray
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
+o getting mouse movement outside the window
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
+X building releases from scratch 
+X   this is a useful developer task before release
+X     build all releases from a clean cvs
+X   tries to make work/ without bagel serial existing and blows up
+X     b/c bagel checkout happens later
+X   all code needs to be buildable from scratch
+X internal naming of _fill, image_mode, textureOrientation
+X   these all need to jive better with one another
+X   ie. perhaps just 'fill', so that it can be used for a get
+X look at ken perlin renderer code
+
+
+..................................................................
+
+
+0060 final
+bf _ make sure no CVS folders or .DS_Store files in the distribution
+cr _ new reference for rev 60
 
 ..................................................................
 
@@ -276,10 +312,6 @@ _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
-_ net problems
-_   when you stop the client, it freezes 
-_     until you quit the processing running the server
-_   The server starts and stops fine.
 o modify antlr stuff to conditionally recompile in make.sh
 _   compile antlr inside the initial setup of the work dir
 X     done for macosx
@@ -292,9 +324,6 @@ _   modify macosx to use jikes from p5
 _   in general, things are way simpler on the pc
 _ better 1.3/1.4 support.. properly detect vm
 _   use when deciding which classes to import
-_ if size() not found in export/compile, ask the user
-_   size(myWidth, myHeight) -> set static var in BGraphics
-_     for the last size that was used, use as default for fill-in field
 _ better support for running locally
 _   code to read from properties file from param()
 _     for application mode or while inside the environment
@@ -360,12 +389,6 @@ _   reader code should just catch the exception if they're not gzipped
 _   and try to re-download them
 _ if (loop == false) and (draw == false) then provide an error
 _   so user knows that one or the other is needed
-_ building releases from scratch 
-_   this is a useful developer task before release
-_     build all releases from a clean cvs
-_   tries to make work/ without bagel serial existing and blows up
-_     b/c bagel checkout happens later
-_   all code needs to be buildable from scratch
 _ make PdeEditorStatus modal
 _   problem on quit (using JOptionPane as a band-aid)
 _   also a problem because user can use the ui while prompt is visible
@@ -379,16 +402,16 @@ _ macosx handleQuit forces termination (at least on 1.3)
 _   figure out how to prevent it, and add the 'cancel' button back
 
 
+network api
+_ don't send unicode data
+_ when you stop the client, it freezes 
+_   until you quit the processing running the server
+_   (the server starts and stops fine)
+_ add constants for building NET, move stuff around in bagel dir
+
+
 VOLUNTEER TASKS
 _ need curveTangent() code
-
-
-INTERNAL
-_ add constants for building NET, move stuff around in bagel dir
-_ internal naming of _fill, image_mode, textureOrientation
-_   these all need to jive better with one another
-_   ie. perhaps just 'fill', so that it can be used for a get
-_ look at ken perlin renderer code
 
 
 NEW GRAPHICS
@@ -402,19 +425,7 @@ _ sphere code needs only front face polygon
 _   all triangles must be counter-clockwise (front-facing)
 
 
-awaiting verification
-b _ windows 95/98/ME seems to be broken
-b _   ME doesn't seem to like the .exe, but run.bat worked ok
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028990066
-b _ lockup/freezes (mKoser and zeitgeist)
-b _   jre icon not appearing in the systray
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
-b _ getting mouse movement outside the window
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
-
-
 ..................................................................
-
 
 
 _ developers who may be interested in p5 helping: 
@@ -425,9 +436,6 @@ leonhard@rathner.com
 
 
 ..................................................................
-
-
-FRY PILE
 
 
 sketchbook 
@@ -463,28 +471,17 @@ _   make sure the high bits are getting set as opaque
 
 
 additional console fixes
-dh b _   clear console each time 'run' gets hit
-dh b _     don't actually clear, just advance by the number of lines visible
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+dh b _ clear console each time 'run' gets hit
+dh b _   don't actually clear, just advance by the number of lines visible
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
 dh b _   can't copy text from console directly (winxp and macosx)
 bf 1 _ console -> should be using JEditTextArea not TextPane
 bf b _ set decent fonts (probably same as editor above), looks bad on mac
-bf b _ http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
-
-
-macosx
-_ random lockups seem common in 1.4
-_ test more to see if runtime exceptions are coming through
-_ track down error in PdeCompiler for message parsing
-_   was missing the error about a package being gone
-_   comment out /System/Library/ code to track that down
-b _ set nice background for disk image on macosx
-b _ Contents/Resources/Java can take jnilib files
+bf b _ console runs really really slow with a lot of println() calls
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
 
 linux
-_ can't find jikes, so users have to put it in their PATH
-_   dmose may have fixed this
 _ doesn't seem interested in quitting properly (?)
 _ switch to swing menus, because motif widgets are nasty
 
@@ -530,6 +527,7 @@ bf _   sorting of polygons/lines on simple painters algorithm
 bf _   better lighting model to show darkness at various depths
 bf _     maybe just ultra-high res bitmaps from gl
 bf _   version of BApplet that replaces g. with ai. or pdf.
+bf _ history.. add my diffs sketch
 
 
 licensing
@@ -543,13 +541,6 @@ bf _   although jedit is under gpl, if we switch to its syntax pkg
 bf _     more info about use is in package.html
 bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
-
-
-random todos (low priority.. just notes to self)
-bf _ history.. add my diffs sketch
-bf _ look into eclipse ide a little more
-bf _ actionscript has nice hastables.. as does perl/python
-bf _   would be nice to get better implementation in there
 
 
 ..................................................................
@@ -566,10 +557,8 @@ low enough importance that they'll be fixed after beta.
 
 things for post-beta, to be sorted through later
 
-1 _ history causing trouble
-1 _   super slow with a huge sketch
-1 _ winamp/audio getting starved or crackly while applets running
-1 _   thread priority too high? or something weird
+b _ history causing trouble
+b _   super slow with a huge sketch
 1 _ don't cache stuff from loadStrings and others
 1 _   mac java vm won't give up old version of file
 1 _   or use setUseCaches(false)
@@ -652,6 +641,8 @@ _ file i/o: file listing util that leaves out . and ..
 _ rotateRight(), rotateLeft(), flipHorizontal().. etc
 _   for an actual 'transformations' object
 _ write tiff (or other) header for image stream
+_ actionscript has nice hastables.. as does perl/python
+_   would be nice to get better implementation in there
 
 
 ..................................................................
@@ -775,8 +766,8 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 
 BAGEL / Serial
 
-   b _ basic usb support?
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
+   1 _ basic usb support?
+   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
 
 
 BAGEL / Details
@@ -955,9 +946,6 @@ Possible?
 
 PDE / Runtime (includes classloading)
 
-dh b _ environment locks up when error stream isn't for the class
-dh b _   this happens when it's another thread (i.e. image fetcher)
-dh b _   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
 dh b _ for 'java' mode, try run using external vm
 dh b _   would need to get error output stream from app.. argh
 dh b _   only allow under win/osx/linux
@@ -1143,19 +1131,21 @@ How the environment gets packed up, downloaded, and installed.
 
 DISTRIBUTION / General 
 b _ need more comprehensive list of 'known bugs'
-b _ need to purge 55 spelling from lots of things
-b _   window title code, name of .exe and .app files
 b _ need more comprehensive list of 'known suggestions'
-b _ people like downloadable reference + net isn't cheap everywhere
 b _ beta release will include source code
 b _ write notes about running p5 on another platforms 
 b _   this was some feedback from running on bsd:
 b _   /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
 b _   need to use the 1.3 vm, and get a fake platform name
 b _   otherwise, goes looking for lib/pde_.properties or something
+1 _ if size() not found in export/compile, ask the user
+1 _   size(myWidth, myHeight) -> set static var in BGraphics
+1 _     for the last size that was used, use as default for fill-in field
 
 
 DISTRIBUTION / Windows
+1 _ winamp/audio getting starved or crackly while applets running
+1 _   thread priority too high? or something weird
 1 _ need splash screen, startup takes a long time
 1 _ tie .pde files as documents of the application
 1 _   figure out proper registry key for windows
@@ -1172,6 +1162,13 @@ b _ splash screen
 
 
 DISTRIBUTION / Mac OS X
+b _ set nice background for disk image on macosx
+1 _ random lockups seem common in 1.4
+1 _ test more to see if runtime exceptions are coming through
+1 _ track down error in PdeCompiler for message parsing
+1 _   was missing the error about a package being gone
+1 _   can comment out /System/Library/ as a test
+1 _ Contents/Resources/Java can take jnilib files
 1 _ set file type/creator for .pde files of examples
 1 _ would be nice to have macosx packaged up as a single .app file
 1 _ is there a way to set the color of the Frame growbox?
@@ -1181,7 +1178,7 @@ DISTRIBUTION / Mac OS X
 
 DISTRIBUTION / Mac OS 9
 
-todo
+leftover todos
 _ set file type for jar and html files on export
 _   (not done on osx, safari doesn't set for html files)
 _   why is bbedit the type for the other files? make simpletext
