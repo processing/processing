@@ -37,6 +37,8 @@ rm -f processing/*~
 
 rm -rf processing/CVS
 rm -rf processing/lib/CVS
+rm -rf processing/lib/netscape/CVS
+rm -rf processing/lib/netscape/javascript/CVS
 rm -rf processing/fonts/CVS
 rm -rf processing/reference/CVS
 rm -rf processing/reference/images/CVS
