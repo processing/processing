@@ -129,6 +129,8 @@ public interface PMethods {
 
   public void ellipse(float x, float y, float hradius, float vradius);
 
+  public void circle(float x, float y, float radius);
+
   public float bezierPoint(float a, float b, float c, float d,
                            float t);
 
