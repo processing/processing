@@ -135,6 +135,13 @@ ide fun
 - forgot to mention in rev 75 that double-clicking a .pde file on the
 mac will now launch processing with that sketch running
 
+- i've replaced the cvs version of jikes that we'd been using with
+  jikes 1.22, a real release, and the very latest. it's only 2 or 3MB
+  (instead of 8 or 9MB) and crashes much less. yay! the reason we can
+  make the switch is that 1.22 supports -target 1.1 again (it had
+  disappeared in some of the previous releases, and it's absolutely
+  essential for p5).
+
 
 bugs
 
