@@ -151,6 +151,29 @@ public class PdeEditor extends Panel {
     //textarea.addKeyListener(listener);
     //textarea.addFocusListener(listener);
 
+    textarea.addKeyListener(new KeyAdapter() {
+	public void keyPressed(KeyEvent event) {
+	  // don't do things if the textarea isn't editable
+	  if (externalEditor) return;
+
+	  // only works with TextArea, because it needs 'insert'
+	  //tc = (TextArea) event.getSource();
+	  //deselect();
+	  char c = event.getKeyChar();
+	  int code = event.getKeyCode();
+	  //System.out.println(event);
+
+	  if (!sketchModified) {
+	    if ((code == KeyEvent.VK_BACK_SPACE) || 
+		(code == KeyEvent.VK_TAB) || 
+		(code == KeyEvent.VK_ENTER) || 
+		((c >= 32) && (c < 128))) {
+	      setSketchModified(true);
+	    }
+	  }
+	}
+      });
+
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
 	(PdeBase.platform == PdeBase.MACOS9)) {
@@ -818,10 +841,13 @@ public class PdeEditor extends Panel {
 	//if (app.encoding == null)
 	program = new String(data);
 	//textarea.editorSetText(new String(data));
-	textarea.editorSetText(program);
 	//System.out.println(" loading program = " + new String(data));
 	//else 
 	//textarea.editorSetText(new String(data, app.encoding));
+
+	textarea.editorSetText(program);
+	// may be needed because settext fires an event
+	//setSketchModified(false); 
 
       } else {
 	textarea.editorSetText("");
