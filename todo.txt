@@ -40,6 +40,7 @@ X   alpha images were 0xAAAAAAAA b/c of javagl
 X images were broken with noSmooth
 X color is ugly for 'use external editor' with new color scheme
 X   now uses color for current line
+X re-enable SMOOTH_IMAGES
 
 
 FIXED, BUT NEEDS POST TO BBOARD ON RELEASE
