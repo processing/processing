@@ -130,11 +130,13 @@ public class PdeBase extends Frame implements ActionListener {
     frame = this;  // clean this up later
     //#ifdef JDK14
 
+    /*
     this.addComponentListener(new ComponentAdapter() {
 	public void componentResized(ComponentEvent e) {
-	  System.out.println(e);
+	  System.out.println("frame listener: " + e);
 	}
       });
+    */
 
     //#endif
 
