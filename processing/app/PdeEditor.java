@@ -201,8 +201,9 @@ public class PdeEditor extends Panel {
 
     // hopefully these are no longer needed w/ swing
     // (that was wishful thinking, they still are, until we switch to jedit)
-    PdeEditorListener listener = new PdeEditorListener(this);
-    textarea.addKeyListener(listener);
+    PdeEditorListener listener = new PdeEditorListener(this, textarea);
+    textarea.pdeEditorListener = listener;
+    //textarea.addKeyListener(listener);
     //textarea.addFocusListener(listener);
 
     /*
@@ -451,6 +452,17 @@ public class PdeEditor extends Panel {
   }
 
 
+  protected void changeText(String what, boolean emptyUndo) {
+    textarea.setText(what);
+
+    // TODO need to wipe out the undo state here
+    if (emptyUndo) PdeBase.undo.discardAllEdits();
+
+    textarea.select(0, 0);    // move to the beginning of the document
+    textarea.requestFocus();  // get the caret blinking
+  }
+
+
   // mode is RUN, SAVE or AUTO
   public void makeHistory(String program, int mode) {
     if (!base.recordingHistory) return;
@@ -574,7 +586,6 @@ public class PdeEditor extends Panel {
 	}
 	if (found) {
 	  // read lines until the next separator
-	  //textarea.editorSetText("");
 	  line = reader.readLine(); // ignored
 	  //String sep = System.getProperty("line.separator");
 	  StringBuffer buffer = new StringBuffer();
@@ -586,8 +597,7 @@ public class PdeEditor extends Panel {
 	    //System.out.println("'" + line + "'");
 	  }
 	  //textarea.editorSetText(buffer.toString());
-	  textarea.setText(buffer.toString());
-	  textarea.select(0, 0);
+	  changeText(buffer.toString(), true);
 	  historyLast = textarea.getText();
 	  setSketchModified(false);
 
@@ -990,8 +1000,7 @@ afterwards, some of these steps need a cleanup function
 	program = buffer.toString();
 	//System.out.print(program);
 	//textarea.editorSetText(program);
-	textarea.setText(program);
-	textarea.select(0, 0);
+	changeText(program, true);
 
 	//System.out.print(textarea.getText());
 
@@ -1028,8 +1037,9 @@ afterwards, some of these steps need a cleanup function
       } else {
 	//System.out.println("new guy, so setting empty");
 	// style info only gets set if there's text
-	textarea.setText("");
-	textarea.select(0, 0);
+	//textarea.setText("");
+	//textarea.select(0, 0);
+	changeText("", true);
 	//textarea.editorSetText(" ");
 	// now set to now text. yay hack!
 	//textarea.editorSetText(""); // this doesn't work. oh well
@@ -1200,7 +1210,8 @@ afterwards, some of these steps need a cleanup function
 
     // update with the new junk and save that as the new code
     //textarea.editorSetText(textareaContents);
-    textarea.setText(textareaContents);
+    //textarea.setText(textareaContents);
+    changeText(textareaContents, true);
     textarea.setCaretPosition(textareaPosition);
     doSave();
   }
@@ -1705,8 +1716,9 @@ afterwards, some of these steps need a cleanup function
       }
     }
     //textarea.editorSetText(buffer.toString());
-    textarea.setText(buffer.toString());
-    textarea.select(0, 0);
+    //textarea.setText(buffer.toString());
+    //textarea.select(0, 0);
+    changeText(buffer.toString(), false);
     setSketchModified(true);
     buttons.clear();
   }
@@ -1722,12 +1734,17 @@ afterwards, some of these steps need a cleanup function
     base.saveAsMenuItem.setEnabled(!external);
     base.beautifyMenuItem.setEnabled(!external);
 
+    // disable line highlight and turn off the caret when disabling
+    TextAreaPainter painter = textarea.getPainter();
     if (external) {
-      textarea.setBackground(PdeBase.getColor("editor.program.bgcolor.external", new Color(204, 204, 204)));
+      painter.setBackground(PdeBase.getColor("editor.program.bgcolor.external", new Color(204, 204, 204)));
+      painter.lineHighlight = false;
+      textarea.setCaretVisible(false);
 
     } else {
-      textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
-					      Color.white));
+      painter.setBackground(PdeBase.getColor("editor.program.bgcolor", Color.white));
+      painter.lineHighlight = PdeBase.getBoolean("editor.program.linehighlight.enabled", true);
+      textarea.setCaretVisible(true);
     }
   }
 
