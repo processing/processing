@@ -61,6 +61,8 @@ public class PdeEditorConsole extends JScrollPane {
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
 
+    maxLineCount = PdePreferences.getInteger("console.length");
+
     consoleTextPane = new JTextPane();
     consoleTextPane.setEditable(false);
     consoleDoc = consoleTextPane.getStyledDocument();
@@ -97,8 +99,6 @@ public class PdeEditorConsole extends JScrollPane {
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
 
-    System.out.println("BLRHUHG");
-
     // calculate height of a line of text in pixels 
     // and size window accordingly
     FontMetrics metrics = this.getFontMetrics(font);
@@ -107,8 +107,6 @@ public class PdeEditorConsole extends JScrollPane {
     int sizeFudge = 6; //10; // unclear why this is necessary, but it is
     setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
     setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
-
-    System.out.println("BLRHUHG 2");
 
     if (systemOut == null) {
       systemOut = System.out;
@@ -130,35 +128,26 @@ public class PdeEditorConsole extends JScrollPane {
                             "files used to store the console output.", e);
       }
 
-    System.out.println("BLRHUHG 2b ");
-
       consoleOut = 
         new PrintStream(new PdeEditorConsoleStream(this, false, stdoutFile));
-    System.out.println("BLRHUHG 2c " + consoleOut);
       consoleErr = 
         new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
-    System.out.println("BLRHUHG 2d " + consoleErr);
+
       if (PdePreferences.getBoolean("console")) {
-        System.out.println("BLRHUHG 2e " + consoleOut);
         try {
           System.setOut(consoleOut);
-          System.out.println("BLRHUHG 2f " + consoleErr);
           System.setErr(consoleErr);
-          System.out.println("BLRHUHG 2g " + consoleErr);
         } catch (Exception e) {
-          e.printStackTrace();
+          e.printStackTrace(systemOut);
         }
       }
     }
-
-    System.out.println("BLRHUHG 3");
 
     // to fix ugliness.. normally macosx java 1.3 puts an 
     // ugly white border around this object, so turn it off.
     if (PdeBase.platform == PdeBase.MACOSX) {
       setBorder(null);
     }
-    System.out.println("BLRHUHG 4");
   }
 
 
@@ -211,7 +200,7 @@ public class PdeEditorConsole extends JScrollPane {
 
 
   private void appendText(String text, boolean err) {
-    if (true) return;
+    //if (true) return;
 
     try {
       // check how many lines have been used so far
@@ -222,8 +211,10 @@ public class PdeEditorConsole extends JScrollPane {
       if (overage > 0) {
         // if 1200 lines, and 1000 lines is max, 
         // find the position of the end of the 200th line
-        System.out.println("overage is " + overage);
+        //systemOut.println("overage is " + overage);
         Element lineElement = element.getElement(overage);
+        if (lineElement == null) return;  // do nuthin
+
         int endOffset = lineElement.getEndOffset();
         // remove to the end of the 200th line
         consoleDoc.remove(0, endOffset);
