@@ -276,7 +276,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
    * Called when a new sketch is opened.
    */
   public void rebuild() {
-    System.out.println("rebuilding editor header");
+    //System.out.println("rebuilding editor header");
     rebuildMenu(); 
     repaint();
   }

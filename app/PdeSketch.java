@@ -227,7 +227,7 @@ public class PdeSketch {
   //public void setCurrentModified(boolean what) {
   //public void setModified(boolean what) {
   public void setModified() {
-    System.out.println("setting modified for " + current.program);
+    //System.out.println("setting modified for " + current.program);
     //modified = true;
     current.modified = true;
     //editor.header.repaint();
