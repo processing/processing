@@ -67,6 +67,8 @@ public class PdeEditorTextPane extends JTextPane {
     setStyledDocument(document);
     textPane = this;
 
+    //setDoubleBuffered(true);
+
     //textPane.setCaretPosition(0);
     //textPane.setMargin(new Insets(5,5,5,5));
 
@@ -122,23 +124,29 @@ public class PdeEditorTextPane extends JTextPane {
     StyleConstants.setItalic(dstyle, false);
     //styles.put("body", style);
 
+    /*
     styles.put("body",         PdeBase.getStyle("body", dstyle));
     styles.put("tag",          PdeBase.getStyle("tag", dstyle));
     styles.put("endtag",       PdeBase.getStyle("tag", dstyle)); // same
     styles.put("reference",    PdeBase.getStyle("reference", dstyle));
     styles.put("name",         PdeBase.getStyle("name", dstyle));
     styles.put("value",        PdeBase.getStyle("value", dstyle));
+    styles.put("preprocessor", PdeBase.getStyle("preprocessor", dstyle));
     styles.put("text",         PdeBase.getStyle("text", dstyle));
+    */
+
     styles.put("reservedWord", PdeBase.getStyle("reserved_word", dstyle));
-    styles.put("identifier",   PdeBase.getStyle("identifier", dstyle));
+    styles.put("whitespace",   PdeBase.getStyle("whitespace", dstyle));
     styles.put("literal",      PdeBase.getStyle("literal", dstyle));
     styles.put("separator",    PdeBase.getStyle("separator", dstyle));
-    styles.put("operator",     PdeBase.getStyle("operator", dstyle));
+    styles.put("identifier",   PdeBase.getStyle("identifier", dstyle));
     styles.put("comment",      PdeBase.getStyle("comment", dstyle));
-    styles.put("preprocessor", PdeBase.getStyle("preprocessor", dstyle));
-    styles.put("whitespace",   PdeBase.getStyle("whitespace", dstyle));
+    styles.put("operator",     PdeBase.getStyle("operator", dstyle));
+
+    /*
     styles.put("error",        PdeBase.getStyle("error", dstyle));
     styles.put("unknown",      PdeBase.getStyle("unknown", dstyle));
+    */
 
     // create the new document.
     documentReader = new DocumentReader(document);
@@ -178,18 +186,21 @@ public class PdeEditorTextPane extends JTextPane {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  public void setText(String program) {
+  public void editorSetText(String program) {
     try {
+      //System.out.println("good settext ");
       document.remove(0, document.getLength());
-      document.insertString(0, program, grabStyle("text"));
+      //document.insertString(0, program, grabStyle("text"));
+      document.insertString(0, program, grabStyle("whitespace"));
 
     } catch (BadLocationException ble) {
       System.err.println("PdeEditorTextPane.setText() failed");
     }
   }
 
-  public String getText() {
+
+  /*
+  public String egetText() {
     try {
       return document.getText(0, document.getLength());
 
@@ -198,7 +209,9 @@ public class PdeEditorTextPane extends JTextPane {
     }
     return null;
   }
+  */
 
+  /*
 
   public void setCaretPosition(int what) {
     textPane.setCaretPosition(what);
@@ -409,12 +422,14 @@ public class PdeEditorTextPane extends JTextPane {
 	      // to the hash table that has been set up ahead of time.
 	      synchronized (doclock){
 		if (t.getCharEnd() <= document.getLength()){
-		  document.setCharacterAttributes(
-						  t.getCharBegin() + change,
+		  //		  System.out.println(t.getDescription() + " " + 
+		  //	     (t.getCharBegin() + change));
+		  //if (!t.getDescription().equals("text")) {
+		  document.setCharacterAttributes(t.getCharBegin() + change,
 						  t.getCharEnd()-t.getCharBegin(),
 						  grabStyle(t.getDescription()),
-						  true
-						  );                                                                  
+						  true);
+		  //}
 		  // record the position of the last bit of text that we colored
 		  dpEnd = new DocPosition(t.getCharEnd());
 		}
@@ -521,7 +536,7 @@ public class PdeEditorTextPane extends JTextPane {
    * @param adjustment amount of text inserted or removed
    *    at the starting point.
    */
-  public void color(int position, int adjustment){
+  public void color(int position, int adjustment) {
     colorer.color(position, adjustment);
   }
 
