@@ -74,7 +74,7 @@ echo Building PDE for JDK 1.3
 
 CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/oro.jar:$MACOSX_CLASSPATH
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS *.java lexer/*.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS *.java jeditsyntax/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
