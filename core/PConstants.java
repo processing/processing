@@ -53,6 +53,12 @@ public interface PConstants {
   static final float RAD_TO_DEG = 180.0f/PI;
 
 
+  // angle modes
+
+  static final int RADIANS = 0;  
+  static final int DEGREES = 1;
+
+
   // used by split, all the standard whitespace chars
   // (uncludes unicode nbsp, that little bostage) 
 
@@ -87,12 +93,21 @@ public interface PConstants {
 
   // blend mode keyword definitions
 
-  public final static int REPLACE  = 0;
-  public final static int BLEND    = 1;
-  public final static int ADD      = 2;
-  public final static int SUBTRACT = 4;
-  public final static int LIGHTEST = 8;
-  public final static int DARKEST  = 16;
+  public final static int REPLACE    = 0;
+  public final static int BLEND      = 1 << 0;
+  public final static int ADD        = 1 << 1;
+  public final static int SUBTRACT   = 1 << 2;
+  public final static int LIGHTEST   = 1 << 3;
+  public final static int DARKEST    = 1 << 4;
+
+  // incomplete, slated for beta
+  public final static int DIFFERENCE = 1 << 5; 
+  public final static int MULTIPLY   = 1 << 6;
+  public final static int SCREEN     = 1 << 7;
+  public final static int OVERLAY    = 1 << 8;
+  public final static int HARD_LIGHT = 1 << 9;
+  public final static int SOFT_LIGHT = 1 << 10;
+
 
 
   // colour component bitmasks
