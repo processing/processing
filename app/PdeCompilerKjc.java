@@ -87,8 +87,7 @@ public class PdeCompilerKjc extends PdeCompiler {
 
     } else {
       //System.err.println("don't understand: " + s);
-      exception = new PdeException("Error while compiling, " + 
-                                   "please send code to bugs@proce55ing.net");
+      exception = new PdeException(SUPER_BADNESS);
       editor.error(exception);
     }
   }

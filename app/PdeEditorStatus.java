@@ -81,22 +81,22 @@ public class PdeEditorStatus extends Panel
     if (bgcolor == null) {
       bgcolor = new Color[4];
       bgcolor[0] = PdeBase.getColor("editor.status.notice.bgcolor",
-				    new Color(102, 102, 102));
+                                    new Color(102, 102, 102));
       bgcolor[1] = PdeBase.getColor("editor.status.error.bgcolor",
-				    new Color(102, 26, 0));
+                                    new Color(102, 26, 0));
       bgcolor[2] = PdeBase.getColor("editor.status.prompt.bgcolor",
-				    new Color(204, 153, 0));
+                                    new Color(204, 153, 0));
       bgcolor[3] = PdeBase.getColor("editor.status.prompt.bgcolor",
-				    new Color(204, 153, 0));
+                                    new Color(204, 153, 0));
       fgcolor = new Color[4];
       fgcolor[0] = PdeBase.getColor("editor.status.notice.fgcolor",
-				    new Color(255, 255, 255));
+                                    new Color(255, 255, 255));
       fgcolor[1] = PdeBase.getColor("editor.status.error.fgcolor",
-				    new Color(255, 255, 255));
+                                    new Color(255, 255, 255));
       fgcolor[2] = PdeBase.getColor("editor.status.prompt.fgcolor",
-				    new Color(0, 0, 0));
+                                    new Color(0, 0, 0));
       fgcolor[3] = PdeBase.getColor("editor.status.prompt.fgcolor",
-				    new Color(0, 0, 0));
+                                    new Color(0, 0, 0));
     }
   }
 
@@ -130,18 +130,18 @@ public class PdeEditorStatus extends Panel
   public void run() {
     while (Thread.currentThread() == promptThread) {
       if (response != 0) {
-	//System.out.println("stopping prompt thread");
-	//promptThread.stop();
-	//System.out.println("exiting prompt loop");
-	unprompt();
-	break;
+        //System.out.println("stopping prompt thread");
+        //promptThread.stop();
+        //System.out.println("exiting prompt loop");
+        unprompt();
+        break;
 
       } else {
-	try {
-	  //System.out.println("inside prompt thread " + 
-	  //System.currentTimeMillis());
-	  Thread.sleep(100);
-	} catch (InterruptedException e) { }
+        try {
+          //System.out.println("inside prompt thread " + 
+          //System.currentTimeMillis());
+          Thread.sleep(100);
+        } catch (InterruptedException e) { }
       }
     }
   }
@@ -219,10 +219,10 @@ public class PdeEditorStatus extends Panel
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)( 
       // os9 seems to work if bg of component is set, but x still a bastard
       if (PdeBase.platform == PdeBase.MACOSX) {
-	yesButton.setBackground(bgcolor[PROMPT]);
-	noButton.setBackground(bgcolor[PROMPT]);
-	cancelButton.setBackground(bgcolor[PROMPT]);
-	okButton.setBackground(bgcolor[PROMPT]);
+        yesButton.setBackground(bgcolor[PROMPT]);
+        noButton.setBackground(bgcolor[PROMPT]);
+        cancelButton.setBackground(bgcolor[PROMPT]);
+        okButton.setBackground(bgcolor[PROMPT]);
       }
       setLayout(null);
 
@@ -245,87 +245,87 @@ public class PdeEditorStatus extends Panel
       editField.addActionListener(this);
 
       if (PdeBase.platform != PdeBase.MACOSX) {
-	editField.addKeyListener(new KeyAdapter() {
-	    protected void noop() { }
+        editField.addKeyListener(new KeyAdapter() {
+            protected void noop() { }
 
-	    public void keyPressed(KeyEvent event) {
-	      //System.out.println("got event " + event + "  " + KeyEvent.VK_SPACE);
-	      int c = event.getKeyChar();
-	      int code = event.getKeyCode();
-	    
-	      if (code == KeyEvent.VK_ENTER) {
-		// accept the input
-		//editor.skDuplicateRename2(editField.getText(), editRename);
-		editor.skSaveAs2(editField.getText());
-		unedit();
-		event.consume();
+            public void keyPressed(KeyEvent event) {
+              //System.out.println("got event " + event + "  " + KeyEvent.VK_SPACE);
+              int c = event.getKeyChar();
+              int code = event.getKeyCode();
+            
+              if (code == KeyEvent.VK_ENTER) {
+                // accept the input
+                //editor.skDuplicateRename2(editField.getText(), editRename);
+                editor.skSaveAs2(editField.getText());
+                unedit();
+                event.consume();
 
-	      } else if ((code == KeyEvent.VK_BACK_SPACE) ||
-			 (code == KeyEvent.VK_DELETE) || 
-			 (code == KeyEvent.VK_RIGHT) || 
-			 (code == KeyEvent.VK_LEFT) || 
-			 (code == KeyEvent.VK_UP) || 
-			 (code == KeyEvent.VK_DOWN) || 
-			 (code == KeyEvent.VK_HOME) || 
-			 (code == KeyEvent.VK_END) || 
-			 (code == KeyEvent.VK_SHIFT)) {
-		//System.out.println("nothing to see here");
-		noop();
+              } else if ((code == KeyEvent.VK_BACK_SPACE) ||
+                         (code == KeyEvent.VK_DELETE) || 
+                         (code == KeyEvent.VK_RIGHT) || 
+                         (code == KeyEvent.VK_LEFT) || 
+                         (code == KeyEvent.VK_UP) || 
+                         (code == KeyEvent.VK_DOWN) || 
+                         (code == KeyEvent.VK_HOME) || 
+                         (code == KeyEvent.VK_END) || 
+                         (code == KeyEvent.VK_SHIFT)) {
+                //System.out.println("nothing to see here");
+                noop();
 
-	      } else if (code == KeyEvent.VK_ESCAPE) {
-		unedit();
-		editor.buttons.clear();
-		event.consume();
+              } else if (code == KeyEvent.VK_ESCAPE) {
+                unedit();
+                editor.buttons.clear();
+                event.consume();
 
-		//} else if (c == ' ') {
-	      } else if (code == KeyEvent.VK_SPACE) {
-		//System.out.println("got a space");
-		// if a space, insert an underscore
-		//editField.insert("_", editField.getCaretPosition());
-		/* tried to play nice and see where it got me
-		   editField.dispatchEvent(new KeyEvent(editField, 
-		   KeyEvent.KEY_PRESSED,
-		   System.currentTimeMillis(),
-		   0, 45, '_'));
-		*/
-		//System.out.println("start/end = " + 
-		//		 editField.getSelectionStart() + " " +
-		//		 editField.getSelectionEnd());
-		String t = editField.getText();
-		//int p = editField.getCaretPosition();
-		//editField.setText(t.substring(0, p) + "_" + t.substring(p));
-		//editField.setCaretPosition(p+1);
-		int start = editField.getSelectionStart();
-		int end = editField.getSelectionEnd();
-		editField.setText(t.substring(0, start) + "_" +
-				  t.substring(end));
-		editField.setCaretPosition(start+1);
-		//System.out.println("consuming event");
-		event.consume();
+                //} else if (c == ' ') {
+              } else if (code == KeyEvent.VK_SPACE) {
+                //System.out.println("got a space");
+                // if a space, insert an underscore
+                //editField.insert("_", editField.getCaretPosition());
+                /* tried to play nice and see where it got me
+                   editField.dispatchEvent(new KeyEvent(editField, 
+                   KeyEvent.KEY_PRESSED,
+                   System.currentTimeMillis(),
+                   0, 45, '_'));
+                */
+                //System.out.println("start/end = " + 
+                //                 editField.getSelectionStart() + " " +
+                //                 editField.getSelectionEnd());
+                String t = editField.getText();
+                //int p = editField.getCaretPosition();
+                //editField.setText(t.substring(0, p) + "_" + t.substring(p));
+                //editField.setCaretPosition(p+1);
+                int start = editField.getSelectionStart();
+                int end = editField.getSelectionEnd();
+                editField.setText(t.substring(0, start) + "_" +
+                                  t.substring(end));
+                editField.setCaretPosition(start+1);
+                //System.out.println("consuming event");
+                event.consume();
 
-	      } else if (c == '_') {
-		noop();
-		// everything fine
+              } else if (c == '_') {
+                noop();
+                // everything fine
 
-	      } else if (((code >= 'A') && (code <= 'Z')) &&
-			 (((c >= 'A') && (c <= 'Z')) ||
-			  ((c >= 'a') && (c <= 'z')))) {
-		// everything fine, catches upper and lower
-		noop();
+              } else if (((code >= 'A') && (code <= 'Z')) &&
+                         (((c >= 'A') && (c <= 'Z')) ||
+                          ((c >= 'a') && (c <= 'z')))) {
+                // everything fine, catches upper and lower
+                noop();
 
-	      } else if ((c >= '0') && (c <= '9')) {
-		if (editField.getCaretPosition() == 0) {
-		  // number not allowed as first digit
-		  //System.out.println("bad number bad");
-		  event.consume();
-		}
-	      } else {
-		event.consume();
-		//System.out.println("code is " + code + "  char = " + c);
-	      }
-	      //System.out.println("code is " + code + "  char = " + c);
-	    }
-	  });
+              } else if ((c >= '0') && (c <= '9')) {
+                if (editField.getCaretPosition() == 0) {
+                  // number not allowed as first digit
+                  //System.out.println("bad number bad");
+                  event.consume();
+                }
+              } else {
+                event.consume();
+                //System.out.println("code is " + code + "  char = " + c);
+              }
+              //System.out.println("code is " + code + "  char = " + c);
+            }
+          });
       }
       add(editField);
       editField.setVisible(false);
@@ -336,14 +336,14 @@ public class PdeEditorStatus extends Panel
       // component has been resized
 
       if ((size.width > imageW) || (size.height > imageH)) {
-	// nix the image and recreate, it's too small
-	offscreen = null;
+        // nix the image and recreate, it's too small
+        offscreen = null;
 
       } else {
-	// who cares, just resize
-	sizeW = size.width; 
-	sizeH = size.height;
-	setButtonBounds();
+        // who cares, just resize
+        sizeW = size.width; 
+        sizeH = size.height;
+        setButtonBounds();
       }
     }
 
@@ -359,7 +359,7 @@ public class PdeEditorStatus extends Panel
     Graphics g = offscreen.getGraphics();
     if (font == null) {
       font = PdeBase.getFont("editor.status.font",
-			       new Font("SansSerif", Font.PLAIN, 12));
+                               new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
       ascent = metrics.getAscent();
@@ -388,7 +388,7 @@ public class PdeEditorStatus extends Panel
     cancelButton.setBounds(cancelLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
 
     editField.setBounds(yesLeft-BUTTON_WIDTH, top, 
-			BUTTON_WIDTH*2, BUTTON_HEIGHT);
+                        BUTTON_WIDTH*2, BUTTON_HEIGHT);
     okButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
   }
 
@@ -432,15 +432,15 @@ public class PdeEditorStatus extends Panel
       String answer = editField.getText();
 
       if (PdeBase.platform == PdeBase.MACOSX) {
-	char unscrubbed[] = editField.getText().toCharArray();
-	for (int i = 0; i < unscrubbed.length; i++) {
-	  if (!(((unscrubbed[i] >= '0') && (unscrubbed[i] <= '9')) ||
-		((unscrubbed[i] >= 'A') && (unscrubbed[i] <= 'Z')) ||
-		((unscrubbed[i] >= 'a') && (unscrubbed[i] <= 'z')))) {
-	    unscrubbed[i] = '_';
-	  }
-	}
-	answer = new String(unscrubbed);
+        char unscrubbed[] = editField.getText().toCharArray();
+        for (int i = 0; i < unscrubbed.length; i++) {
+          if (!(((unscrubbed[i] >= '0') && (unscrubbed[i] <= '9')) ||
+                ((unscrubbed[i] >= 'A') && (unscrubbed[i] <= 'Z')) ||
+                ((unscrubbed[i] >= 'a') && (unscrubbed[i] <= 'z')))) {
+            unscrubbed[i] = '_';
+          }
+        }
+        answer = new String(unscrubbed);
       }
       editor.skSaveAs2(answer);
       //editor.skDuplicateRename2(editField.getText(), editRename);
