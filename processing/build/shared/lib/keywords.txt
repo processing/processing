@@ -48,7 +48,7 @@ ROUND_JOIN	LITERAL1
 SCREEN_SPACE	LITERAL1	
 SHIFT	LITERAL1	
 SQUARE_ENDCAP	LITERAL1	
-SUBSTRACT	LITERAL1	
+SUBTRACT	LITERAL1	
 TEXT	LITERAL1	
 THIRD_PI	LITERAL1	
 TRAINGLES	LITERAL1	
@@ -127,6 +127,7 @@ acos	KEYWORD2	acos_
 alpha	KEYWORD2	alpha_
 angleMode	KEYWORD2	angleMode_
 append	KEYWORD2	append_
+arc	KEYWORD2	arc_
 Array	KEYWORD1	Array
 []		arrayaccess
 asin	KEYWORD2	asin_
@@ -189,6 +190,7 @@ endShape	KEYWORD2	endShape_
 expand	KEYWORD2	expand_
 false	KEYWORD1	false
 fill	KEYWORD2	fill_
+filter	KEYWORD2	filter_
 float	KEYWORD1	float
 float	KEYWORD2	float_
 floor	KEYWORD2	floor_
@@ -212,7 +214,7 @@ int	KEYWORD1	int
 int	KEYWORD2	int_
 join	KEYWORD2	join_
 key	LITERAL2	key
-key	LITERAL2	keyCode
+keyCode	LITERAL2	keyCode
 keyPressed	KEYWORD2	keyPressed_
 keyPressed	LITERAL2	keyPressed
 keyReleased	KEYWORD2	keyReleased_
@@ -271,17 +273,15 @@ PI	LITERAL1	PI
 PImage	KEYWORD1	PImage
 alpha	KEYWORD2	PImage_alpha_
 blend	KEYWORD2	PImage_blend_
-clone	KEYWORD2	PImage_clone_
 copy	KEYWORD2	PImage_copy_
 filter	KEYWORD2	PImage_filter_
 get	KEYWORD2	PImage_get_
 height	LITERAL2	PImage_height
+mask	KEYWORD2	PImage_mask_
 pixels	LITERAL2	PImage_pixels
 set	KEYWORD2	PImage_set_
 width	LITERAL2	PImage_width
 pixels	LITERAL2	pixels
-pmouseX	LITERAL2	pmouseX
-pmouseY	LITERAL2	pmouseY
 point	KEYWORD2	point_
 pop	KEYWORD2	pop_
 pow	KEYWORD2	pow_
@@ -340,18 +340,23 @@ substring	KEYWORD2	String_substring_
 toLowerCase	KEYWORD2	String_toLowerCase_
 toUpperCase	KEYWORD2	String_toUpperCase_
 stroke	KEYWORD2	stroke_
+strokeCap	KEYWORD2	strokeCap_
+strokeJoin	KEYWORD2	strokeJoin_
 strokeWeight	KEYWORD2	strokeWeight_
 -=		subtractassign
 switch	KEYWORD2	switch_
 tan	KEYWORD2	tan_
 text	KEYWORD2	text_
+textAlign	KEYWORD2	textAlign_
+textAscent	KEYWORD2	textAscent_
+textDescent	KEYWORD2	textDescent_
 textFont	KEYWORD2	textFont_
 textLeading	KEYWORD2	textLeading_
 textMode	KEYWORD2	textMode_
 textSize	KEYWORD2	textSize_
-textSpace	KEYWORD2	textSpace_
 texture	KEYWORD2	texture_
 textureMode	KEYWORD2	textureMode_
+textWidth	KEYWORD2	textWidth_
 tint	KEYWORD2	tint_
 translate	KEYWORD2	translate_
 triangle	KEYWORD2	triangle_
