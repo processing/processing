@@ -292,8 +292,7 @@ public class PImage implements PConstants, Cloneable {
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     return (format == RGB) ? 
-      (pixels[y*width + x] & 0x00ffffff) : pixels[y*width + x];
-      //(pixels[y*width + x] & 0xff000000) : pixels[y*width + x];
+      (pixels[y*width + x] | 0xff000000) : pixels[y*width + x];
   }
 
 
