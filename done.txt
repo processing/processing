@@ -1,3 +1,45 @@
+0059
+X write p5 language spec
+X beginSerial(String port) and beginSerial(String port, int rate)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1061595591;start=0
+X optimize color() when in colorMode(RGB, 255) to just pack the int
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1062072434;start=0
+X imageMode() shouldn't affect fonts
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
+X replacing spaces with underscores.. 
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062103523;start=0
+X   patch keyTyped event instead of keyPressed
+X   remove reference in readme about macosx problem w/ it
+X   test on macosx
+X   test on linux
+X qtjava search path is too fragile
+o   use %WINDIR%\System32\qtjava.zip and %QTJAVA%
+o   or even the system %CLASSPATH%
+o   maybe just ask user to select the file directly
+X   may have spaces, so should also fix those
+X   QTJAVA seems to be showing up in %WINDIR%\System not just system32
+X   modify make.sh for windows to use $QTJAVA instead of guessing
+X     and complain about non-installation if it ain't there
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
+X p5 not working in msjvm (prolly non-1.1 code)
+X   build and hack in new jikes for all platforms
+X   add "-target 1.1" when exporting to applet (or always?)
+o   might be java.awt.Cursor in BConstants
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
+
+known issues/bugs
+* quicktime for java is *required* on windows.. it's installed by
+default on macosx, and not used at all on linux. 
+* QTJAVA environment variable is used to find quicktime. if that's not
+properly set, then you won't be able to run.
+* lots of 'cannot delete ...' messages
+* present mode is almost completely broken and often flickers like mad
+* sound not always stopping when 'stop' his hit (i.e. the mixer example)
+* run.bat hasn't been given love for a while and may not work
+* reference loading doesn't seem to be working
+
+
 0058
 X update the readme.. had missed some spots
 
