@@ -1,315 +1,16 @@
 0070 pde
-o don't allow editing of multiple files in this release
-o   but support multiple java/pde files through the 'add file' option
-o check in licenses/dist stuff for jikes etc
-o who has the copyright? (mit does)
-o SystemColor doesn't differentiate between menu background and top
-o   probably fixed in swing, but we're using java.awt.Menu
-o   test by rewriting with java.awt.Menu
-X beautify is ignoring the setting for number of spaces on tabs
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083708360;start=0
-X clean up PdeTokenMarker, probably just alphabetize
-X saving issues (all the same bug, as it turns out)
-X   save changes to null
-X   sketch is changing before the "save changes?" is complete
-X     as a result, 'cancel' does nothing
-X   always ask save changes, even if nothing changed
 
-040620 sunday 
-X remove 'sketchbook.prompt' (comment it out)
-X   not really needed
-X   remove prompt stuff from the preferences panel
-X clean up the "more options" in prefs panel 
-X   to use JLabel instead of JTextArea
-X   font was wrong on windows
-X start working on "save as"
+_ run java mode when large 'data' folder is in use
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
 
-040621 monday morning
-X finish "save as"
-X adding files to data folder that are already in the data folder
-X   makes the file zero, because of internal error
-X   added something to check to make sure they weren't the same
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
-X implement read-only sketch folder
-X   examples are sort of there but need to be debugged
-X   read-only files should be checked
-X check if file is read-only, and if so, ask where to put sketch
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149564;start=0
-X how to handle examples: read only, somewhere inside lib
-X move examples to folder that goes w/ p5 app
-X   set examples somehow read-only
-X 'save as' from examples puts into examples dir.. :(
-X   make it default to the user's sketch dir
-
-040621 monday mid-day
-X see if changing the sketchbook location actually works
-X   after changing sketchbook location, need to rebuild the menu
-X hide the editor window while prefs is open
-X   this way the prefs can be properly applied
-
-mostly notes from things that have been fixed along the way:
-X fix code for changing the sketch folder
-X   'new sketch' goes into the wrong folder
-X   but saving and all that works properly
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184449;start=0
-X sketch.properties should go into user.home
-X   otherwise moving sketch folder will kill it
-X   last-used sketch not being saved
-X if sketchbook.dir is set, makes new sketchbook folder
-X   reads sketchbook properly from other folder
-X   but creates a new folder for new sketches to go into
-X sketchbook.dir not properly read or written
-X install sketchbook into another location on person's machine
-X   use System.getProperty("user.home"); 
-X   remove the 'default' for sketchbook
-X   bring this up on bboard and get votes
-X   win2k: my documents, macosx: ~/Documents, linux: ~/sketchbook
-X open mode
-X   on application open, override 'open' mode
-X   and just open an empty sketch in the sketchbook folder
-X when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
-
-040621 monday afternoon
-X if a "save as" is forced, make sure that the sketchbook menu is updated
-X sort sketch names in the open menu
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
-X code folder was causing mega-crashes
-X rewrite magic import methods to only use packages where classes found
-X   was adding all folders in the classpath
-X workaround for the // causing an OutOfMemoryError
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
-
-040621 monday evening/night
-X jikes errors have no newlines because it's a buffered reader
-X   and the newlines are removed when read
-X make the filedialog come up with the p5 window on handlenew
-X   sets the parent frame to the PdeEditor
-X find() hangs on replacing "println" with "//println"
-X   "replace all" should start at the beginning of the buffer, move to end
-X     after replace all, caret moves to end of document
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076740626
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080213711
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083093129
-X after using sketchbook menu as popup, disappears from file menu
-X   probably just need to build two
-X   the popup from the toolbar needs an "Open..." on it as well
-X make save() return true/false so it doesn't say "saved" when it hasn't
-X export is badly broken, fix it.. file names were backwards
-X if 'applet.html' is in sketch folder, use that as the template
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1083935144
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082124454;start=0
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074240197;start=0
-X get the console working again
-X   appendText is disabled due to NullPointerEx on startup
-X empty the console when a new sketch is opened
-X   if console.auto_clear is set to true, will clear on run and open
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1086972918
-X maybe bring back the prompt option for "new sketch"
-X   sometimes nice just to have it create an unnamed sketch quickly
-X   shift-new will always prompt with filedialog
-X dashes shouldn't be allowed in filenames for sketches
-X   actually, lost the naming stuff because now using FileDialog
-X   this also needs to be checked when building the sketch menu 
-X rewrite sketchbook.clean()
-X   prompt user if they don't have it set to auto
-X   add a pref to the preferences window
-
-040622 monday late night
-X set handleOpen to use editor as its parent frame
-X what happens when the .pde file isn't named 
-X   the same as the enclosing folder?
-X   maybe put up a window saying no way, and ask:
-X   ( ) rename enclosing or ( ) add a subfolder
-X   or maybe even ( ) rename the sketch file
-X   also double-check to see if there *is* a proper pde in the folder
-X     in which case, default to that (maybe show a message?)
-X   it's useful to have loose .pde files be runnable..
-X   i.e. when double-clicking on them.. downloaded off web.. 
-X     but need to deal with simply, not providing a new exception case
-X begin writing 'new text file'
-
-040622 tuesday morning / early afternoon
-X write 'new text file' (ctrl-t)
-X hitting return/enter on the status.edit() not always working
-X   it had been disabled, now re-enabled
-X also update status after "add file" of a .pde or .java
-X implement delete
-X implement hide/unhide
-X see if multiple files are actually compiling
-X   nope, they aren't properly.. need to figure this out
-X   empty files = no class name found.. that's a problem
-
-040623 wednesday afternoon
-X continue work on multi-file compile
-X test that .java files can be created
-X   allow user to type a period '.' when entering filename
-X   but remove it again if it's not .pde or .java
-X clean up error handling for empty files (quiet error)
-X preproc messages don't say the file
-
-040706 discuss with casey
-X how should history be handled
-X   per-sketch, not per-file
-X   just looks like old history setup anyways
-X is the sketch folder something that is never seen by the user?
-X   i.e. flash programs 'import' all data, etc
-X   same with how imovie works
-X   no, not for 1.0
-o jikes is exporting column as well.. use it?
-o   3:23:3:25 -> line 3, col 23 to 25
-o   decided a bad idea, too difficult
-X don't bother with 'advanced' on export dialog
-X   that can come later, if needed
-X how to handle .pde vs .java
-X   how to determine what the 'main' file is
-X   sun won't want us to say things are .java when they aren't
-X .pde files opened on their own
-X what should the prefs file be named?
-X horizontal buttons? need final decision [yes]
-X remove underscores from the tab title?
-X   nope, casey says not necessary
-X need nice yes/no dialog boxes, also 
-o does "Open" go at the beginning or end of the sketch popup
-X we need opengl support in there
-X   otherwise we're going to be stuck behind director
-X   go with sun's jogl project
-X core.jar included with .class? or make one jar?
-X libraries and package naming for core & serial etc
-X vec3f, matrix4f classes.. our own or java3d?
-
-040706 first day with creas
-X runtime errors not making it through
-X   now properly handling multiple files
-X also test with multiple files / external run
-X   oh wait, this is only for external run.. duh
-o jikes messages are getting lost (?)
-o ctrl-t doesn't always work
-o   after using the popup menu once, it stops working
-X jikes errors are missing newline/linefeed ?
-o using run-expert.bat on 62 causes NullPointerException weirdness (?)
-
-040707 wednesday morning and early afternoon
-X bring this up for discussion on the board
-X   will splitting actually help.. can jars come from multiple places?
-X spend a bunch of time tracking down more issues on the board
-X add .java to file name in the tab
-X change name of prefs to Processing Preferences.txt
-X implement clone for BImage
-X api name changes for imaging functions
-X   constant SUBSTRACT -> SUBTRACT 
-
-040707 afternoon
-X minor bug with when setting sketchbook to a bad location
-X add export back to the file menu
-X long discussion about how to put things together
-X working on debugging thread weirdness on casey's machine
-
-040707 night
-X change "add file" to import
-X change "new" to "new file"
-X CENTER instead of CENTER_DIAMETER
-o make CENTER default for ellipses
-X move imageMode() to BImage
-X put bagel into its own package
-X   processing.core -> PApplet, PGraphics, PLine, PTriangle, PPolygon
-X rename replicate() as copy()
-X what is set(x, y, image) -> remove it, make a copy() instead
-X modify image functions to use imageMode
-
-040707 late
-X lots more work on make.sh for both mac and pc
-X further tweaking of the new class structure
-X trying to get the build scripts wrapped up/working
-X remove more (all?) ifdefs from code base
-
-040708 morning / early afternoon
-X more work on ifdef removal / build scripts
-X ask creas about src or dest in image functions
-X finish imaging api
-X modify make.sh to build processing.core
-
-040708 afternoon / early evening
-X lots of work on making packaged classes work
-X modify preproc to handle "void setup" -> "public void setup"
-o preproc bug: text(String.valueOf(i+1), left + i*20, top);
-o   unexpected token "String"
-X make more things public (i.e. pixels)
-X get casting working properly.. int() maps to toInt()? 
-X   what is performance hit for this thing?
-X remove substitute_image/font
-X remove String casting
-X rename compiler.* to preproc.*
-X OutOfMemoryError still showing up when no CR at end of app
-
-040708 evening before dinner
-X curve/bezierSegments -> curveDetail
-X remove doubling on curve()
-X move around notes about curve stuff
-
-040708 later
-X working on serial library
-
-040709 daytime
-X fight with serial library on windows all afternoon
-X finish and test on macosx as well
-X remove chatter in PdeSketchbook re: filenamefilter
-X   COM1 19200 for phone
-X add "available" function to PSerial
-
-040709 evening
-X working on video library, get camera working again
-X getCameras() or getPorts() or list() ?
-X make sure it's possible to use multiple cameras
-X figure out how polling works
-X   is it possible to check if new frames are available?
-X   properly synchronize() the pixels
-X   may need to always copy to a new array? (or does it already?)
-
-040709 later evening
-X working on movie setup
-o import -> javax.comm.properties -> data folder.. hm
-
-040710 sunday
-X work on video/movie all afternoon
-X get movie working again
-
-040712 monday morning / early afternoon
-X PVideo fix time api to take time in seconds
-X processing.video -> PMovie (file), PCamera (capture)
-X processing.serial -> PSerial, [PUsb]
-
-other stuff / cleaning up
-X don't allow apostrophe (i.e. casey's_cells) when naming sketch!
-X when exporting applet, line numbers will be off.. 
-o   when not exporting with new preproc code, imports all on same line
-o   make preproc keep track of how many lines were added
-X rewrite video, net, serial libraries to be separate
-X move the mac to java 1.4
-X   1.4 is being used externally, and wheel mouse would be nice
-X   not doing currently, lots of strange repaint bugs
-X     all fixable for sure, but no point before beta since low priority
-X macosx.. random lockups seem common in 1.4
-o completeness of toInt/toFloat/toBoolean etc in preproc and PApplet
-X error if you try to hit export twice on a sketch (just make synch'd)
-X   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
-X   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
-o ctrl-5 (at least on xp) is marking the current sketch as modified
-X   just removed the ctrl-5 option since not really needed
-o rotateRight(), rotateLeft(), flipHorizontal().. etc
-o   for an actual 'transformations' object
-o should BSpace be included?
-X better 1.3/1.4 support.. properly detect vm
-X   use when deciding which classes to import
-o network/shared_canvas, network/value has old code
-o change run.bat, run-expert.bat to use 128m
-o ability to include other .java and .pde code from sketchbook folder
-o   'add files' for .java or .pde pulls into the folder
+_ "save as" needs to update the editorheader
 
 _ make additional .pde files embed themselves into the main class
 
 _ processing.net -> PClient, PServer
 
-_ "save as" needs to update the editorheader
+_ readUntil() should do the proper thing if the data is not available
+_   i.e. either return null, or block until it's available? -> ret null
 
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
@@ -337,6 +38,19 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;ac
 
 _ support for editor plugins
 _   make beautify plugin ("autoformat"?)
+
+   1 _ beautify
+   1 _   //for (int i = 0; i < 10; i++) {
+   1 _   } catch (IOException e) { }
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
+   1 _   need to ignore comments.. but not those inside quotes.. oog
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+   1 _   ignores colons for case statements
+   1 _   need to tie this to the parser instead
+   1 _ do a better job of maintaining cursor during beautify 
+   1 _ only beautify a particular section of code
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+
 _   make "get quicktime libs" function
 _     can java get the root directory for system/win32 etc?
 _   make dynamically loaded plugins and "tools" menu
@@ -345,8 +59,26 @@ _     break out beautify as its own plugin
 _ processing.app -> PdeBase, PdeEditor..
 
 _ api for file-based renderers
+_   need to work this out since it will affect other api changes
 _   size(0, 0) and then ai.size(10000, 20000)
 _   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+
+_ text(String text, x, y, width, height)  // based on rectMode
+_   textMode() for align left, center, right (no justify.. har!)
+
+_ implement new version of history
+_   make history folder, and a zip (not gz) file for each entry
+_   history causing trouble - super slow with a huge sketch
+_     could instead be gzipped and appended to history.dat
+_     along with another file that is actually a table of offsets
+_     no need to make the thing a gzip stream
+_     checkbox on menu for 'record history' ?
+_     history converter option?
+_   only first 20 entries visible?
+_   zlib file becoming corrupt (not flushed after close?)
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
+_   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 
 README
@@ -363,94 +95,18 @@ _ code folder problems - antivirus or firewall
 _ update readme with notes from bboard about "built with processing"
 
 
-BUGS (not sure if these are in next release or not)
+......................................................................
+
+
+really nasty bugs (fix in 0070 if possible)
 _ threading issues on casey's laptop
 _ odd error in System.err stream coming from running external
 _   dies after a while or goes weird
 _   make sure exceptions with .class work
 
 
-......................................................................
-
-
-NOT REQUIRED FOR NEXT RELEASE
-
-_ prefs need to have a default
-_   otherwise old prefs and new p5 will cause trouble
+0071 or later
 _ write export-to-application
-_ write export-to-library
-_   need to be able to produce the serial, video, etc libs
-_   see if sonia project can compile
-_ implement horizontal version of PdeEditorButtons
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
-o   is PdeEditorHeader one pixel too tall?
-_ menu option for Renderer > to "Core" or "OpenGL"
-_   on export, uses this setting to determine if jogl is added to project
-_ netscape.javascript not properly working in 1.4
-_   include 'netscape.javascript' as a library to be added
-_     but don't export it.. ugh..
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
-_ add a "make archive" option
-_   doesn't rename sketch, just names zip file sketch + time stamp
-_ need showError/Message/Warning design from casey
-_   then implement new design (with exception trace)
-_ check into open-source paperwork for p5
-_ run java mode when large 'data' folder is in use
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
-
-
-BUGS / preproc
-_ casting problems in the parser
-_   float u = float(x)/width; works.
-_   float u = (float(x)/width); doesn't work: "unexpected token: float".
-_   float u = (x/float(width)); works! 
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084011098;start=0
-_ if last line of code is a comment with no CR after it,
-_   an OutOfMemoryError wants to happen, 
-_   but right now there's a hack to add a CR in PdePreprocessor
-_ return (int(5.5)) causes an error
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083624993;start=0
-
-
-BUGS / Windows
-_ NullPointerException when alt is pressed
-_   might be something to do with the applet frame being an awt not swing
-_   event first goes to the applet listener, needs to consume the event
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
-_ p5's exe prolly has trouble when PATH has quotes (or spaces?)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
-_   CLASSPATH figured out what to do with quotes, but not PATH
-_ problems running external vm/vm is hanging
-_   seems to be happening because of virus scanning software (norton)
-_   may need to launch the applet (using 'start') 
-_     and talk over a socket instead
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
-_     something in that one about mouse position halting or not
-
-
-BUGS / Linux
-_ doesn't seem interested in quitting properly (?)
-
-
-CONSOLE
-_ error messages run off the edge and go invisible
-_   actually this is just for the editor status box
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
-_ console -> should be using JEditTextArea not TextPane
-_ make new TextAreaDefaults class for the console
-_ figure out how to color lines for errors and non (since not syntax)
-_ set decent fonts (probably same as editor above), looks bad on mac
-
-_ multi-line errors a mess in jikes
-_   maybe a dropdown list thing, with the first just shown?
-
-
-application export
-_ ability to export 'applications' (not just applets)
 _   lock feature for present mode (part of export to application?)
 _   application can still do serial (qt, other stuff?) 
 _   applet runs in browser, though applet on cbagel is everything..
@@ -467,74 +123,29 @@ _     this will need to detect whether the user has their own main()
 _     or even BApplet.main(new String[] { getClass().getName() });
 _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
 _     main sticking point will be serial/qtjava in exports
-
-
-history
-_ history causing trouble - super slow with a huge sketch
-_   could instead be gzipped and appended to history.dat
-_   along with another file that is actually a table of offsets
-_   no need to make the thing a gzip stream
-_   checkbox on menu for 'record history' ?
-_   history converter option?
-_ only first 20 entries visible?
-_ get code from revisionist in there
-_ zlib file becoming corrupt (not flushed after close?)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
-
-
-licensing
-_ about box 
-_   bring up information about gpl, lgpl, and ibmpl
-_ jedit syntax is under mit license
-_   http://www.opensource.org/licenses/mit-license.php
-_   although jedit is under gpl, if we switch to its syntax pkg
-_     more info about use is in package.html
-_     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
-_     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
-
-
-VOLUNTEER TASKS
-_ need curveTangent() code
+_ write export-to-library
+_   need to be able to produce the serial, video, etc libs
+_   see if sonia project can compile
+_ implement horizontal version of PdeEditorButtons
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
+o   is PdeEditorHeader one pixel too tall?
+_ menu option for Renderer > to "Core" or "OpenGL"
+_   on export, uses this setting to determine if jogl is added to project
+_ netscape.javascript not properly working in 1.4
+_   include 'netscape.javascript' as a library to be added
+_     but don't export it.. ugh..
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
+_ add a "make archive" option
+_   doesn't rename sketch, just names zip file sketch + time stamp
+_ need showError/Message/Warning/Prompt design from casey
+_   maybe something that shows stack trace?
+_   with an 'email this' button? (include source code too?)
+_   also need a "prompt" dialog for asking filenames, etc
+_   implement and remove PdeEditorStatus stuff
+_ check into open-source paperwork for p5
 
 
 ..................................................................
-
-
-LOWER (post beta tweaks, non-structural)
-1 _ Ctrl-Z will undo, but the window will not scroll to where the 
-1 _   "undoing" is happening. This can lead the user to assume that
-1 _   actually nothing is happening and overundo. 
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
-1 _ figure out how to cancel 'save changes' on macosx and windows
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
-_ check what other functions require BGraphics to exist but shouldn't
-_ color has to be called inside or after setup
-
-_ loadImage must be used inside or after setup
-_   either document this and/or provide a better error message
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
-
-b _ need to change all the copyrights over to mit "except where noted"
-_ fix the problem causing all the "couldn't delete" messages
-_ class naming from dan
-_   If you name a class the same name as the sketch project, 
-_   you get an error about contained classes with duplicate names 
-_   when you try to export for web.
-_ if (loop == false) and (draw == false) then provide an error
-_   so user knows that one or the other is needed
-_ make PdeEditorStatus modal
-_   problem on quit (using JOptionPane as a band-aid)
-_   also a problem because user can use the ui while prompt is visible
-_   needs proper blocking, the way Dialog.show() does
-_   so that that status window can be used while quitting
-_   (currently cannot because it quits before getting response)
-_   tried to pop up a modal Dialog in exactly the same location
-_     but couldn't remove the decoration from the window (jvm bug?)
-_     because it just quit without finishing
-_ macosx handleQuit forces termination (at least on 1.3)
-_   figure out how to prevent it, and add the 'cancel' button back
-_ drag & drop implementation to add files to sketch
 
 
 
@@ -546,6 +157,12 @@ PDE - Processing Development Environment
 
 
 PDE / Details
+
+   b _ running present mode with a bug in the program hoses things
+   b _   make sure the program compiles before starting present mode
+   1 _ processing.exe: problem if expert version is run, and no java installed
+   1 _   call the person a genius and tell them to install java
+   1 _ make some fancy extendo things because the tabs get too big
 
    1 _ properly open .pde files opened from explorer/finder
 
@@ -559,12 +176,12 @@ PDE / Details
    1 _   objects probably not getting finalized
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
 
-   b _ need to check if volume is read-only, notify and quit if it is
-   b _   people are trying to run off the disk image
-   b _   need to pay attention to when running from read-only drive
-   b _     reported by brandenberg
-   b _    "p5 will launch from the disk image, but will 
-   b _     not draw the sketch name bar doesn't appear"
+   1 _ need to check if volume is read-only, notify and quit if it is
+   1 _   people are trying to run off the disk image
+   1 _   need to pay attention to when running from read-only drive
+   1 _     reported by brandenberg
+   1 _    "p5 will launch from the disk image, but will 
+   1 _     not draw the sketch name bar doesn't appear"
 
    1 _ size() has memory limitations (pitaru)
    1 _   catch OutOfMemoryError inside size() and let the user know
@@ -576,20 +193,11 @@ PDE / Details
    1 _     also when using draw() instead of loop()
    1 _       applet needs to notify runner that it has terminated
    1 _   if export fails (compile error) need deselect
-   1 _ only copy data files into build dir when there are changes
-   1 _   make sure the still relevant files aren't removed
-   1 _   setLastModified on the files after copying (jdk13)
-   1 _ better handling of AccessControlException in applets
-   1 _   on loadImage and loadStream
    1 _ exceptions in draw() apps aren't caught
    1 _   the program resize(200, 200); just does nothing (doesn't complain)
    1 _ if 'void' left out before loop or setup, cryptic message about
    1 _   'constructor loop must be named Temporary_23498_2343'
    1 _   add a better handler for this specific thing?
-   1 _ sketches can't be named starting with numbers (D.YOO)
-   1 _   either provide an error message or explanation for this
-   1 _   or allow the sketch name to be separte from the class/folder names
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
    1 _ menu weirdness (benelek)
    1 _   when u've got a menu open, move a cursor over the text area
    1 _   and back over the menu, the text-area cursor type remains. 
@@ -597,38 +205,26 @@ PDE / Details
    1 _ scroll bar has some painting weirdness with jedit textarea
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
-   1 _ rename doesn't set focus to renamer area
-   1 _   under windows, immediately typing after rename doesn't select it
-
-   1 _ some method to store a description of a sketch in its comments
-   1 _   then embed that into the html page
+   1 _ rename/saveas doesn't properly have its focus set
+   1 _   under windows, immediately typing after rename doesn't select
+   1 _   the whole thing is selected, but not directly editable
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
+   1 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
+   1 _   so user thinks nothing is happening and overundo. 
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+   1 _ figure out how to cancel 'save changes' on macosx and windows
+   1 _   macosx handleQuit seems to force termination (at least on 1.3)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
    1 _ don't cache stuff from loadStrings and others
    1 _   mac java vm won't give up old version of file
    1 _   or use setUseCaches(false)
    1 _ too many frames drawn before window visible - especially on mac
-   1 _ examples should be read-only
-   1 _   stored in a separate folder from the sketchbook
-   1 _ error message dialog?
-   1 _   maybe something that shows stack trace 
-   1 _   with an 'email this' button? (include source code too?)
    1 _ dim edit menus as appropriate during selection/no selection/etc
    1 _ switch to newer revision of jedit?
    1 _   is enormous horizontal scroller issue fixed properly
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
-   1 _ for title-clicking of sketch name, change to a btn
-   1 _   or somehow mark what it's going to do, rather than just doing it
-
-   1 _ beautify
-   1 _   //for (int i = 0; i < 10; i++) {
-   1 _   } catch (IOException e) { }
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
-   1 _   need to ignore comments.. but not those inside quotes.. oog
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-   1 _   ignores colons for case statements
-   1 _   need to tie this to the parser instead
-   1 _ do a better job of maintaining cursor during beautify 
-   1 _ only beautify a particular section of code
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+   1 _ make export put a timestamp in the html code (hidden or visible)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
 
    1 _ find/replace
    1 _   add support for hitting 'ESC'
@@ -640,18 +236,7 @@ PDE / Details
    1 _       so that typing will replace it directly
    1 _   only enable "find next" in menu after a find has happened
 
-   1 _ rename/saveas doesn't properly have its focus set
-   1 _   the whole thing is selected, but not directly editable
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
-
-   1 _ make export put a timestamp in the html code (hidden or visible)
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
-
-   b _ running present mode with a bug in the program hoses things
-   b _   make sure the program compiles before starting present mode
-   1 _ processing.exe: problem if expert version is run, and no java installed
-   1 _   call the person a genius and tell them to install java
-   1 _ make some fancy extendo things because the tabs get too big
+   1 _ drag & drop implementation to add files to sketch
 
 
 PDE / Compiler
@@ -660,6 +245,20 @@ PDE / Compiler
    1 X   will jikes do it if the -source is set to 1.1? nope.. 
    1 X     notes inside PdeCompiler
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
+
+
+BUGS / Preprocessor
+
+   1 _ casting problems in the parser
+   1 _   float u = float(x)/width; works.
+   1 _   float u = (float(x)/width); doesn't work: "unexpected token: float".
+   1 _   float u = (x/float(width)); works! 
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084011098;start=0
+   1 _ if last line of code is a comment with no CR after it,
+   1 _   an OutOfMemoryError wants to happen, 
+   1 _   but right now there's a hack to add a CR in PdePreprocessor
+   1 _ return (int(5.5)) causes an error
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083624993;start=0
 
 
 PDE / Font Builder
@@ -678,9 +277,17 @@ PDE / Features
    b _   add all .jar files in lib/plugins on startup
    b _ make some kind of internal color picker
    b _   could be a separate window that's always around if needed
-   b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
    1 _ external editor -> add a command to launch
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+
+
+PDE / Console
+
+   1 _ error messages run off the edge and go invisible
+   1 _   actually this is just for the editor status box
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
+   1 _ multi-line errors a mess in jikes
+   1 _   maybe a dropdown list thing, with the first just shown?
 
 
 
@@ -694,6 +301,7 @@ How the environment gets packed up, downloaded, and installed.
 
 
 DISTRIBUTION / General 
+b _ need to change all the copyrights over to mit "except where noted"
 b _ dist.sh needs to auto-remove .DS_Store boogers
 b _ write script to remove .DS_Store and CVS folders from dist
 b _   # remove DS_Store files
@@ -716,6 +324,30 @@ b _   otherwise, goes looking for lib/pde_.properties or something
 1 _   compile antlr inside the initial setup of the work dir
 1 X     done for macosx
 1 _     fix this for windows and linux
+1 _ about box 
+1 _   bring up information about gpl, lgpl, and ibmpl
+1 _   jedit syntax is under mit license
+1 _     http://www.opensource.org/licenses/mit-license.php
+
+
+BUGS / Windows
+1 _ NullPointerException when alt is pressed
+1 _   might be something to do with the applet frame being an awt not swing
+1 _   event first goes to the applet listener, needs to consume the event
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
+1 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
+1 _   CLASSPATH figured out what to do with quotes, but not PATH
+1 _ problems running external vm/vm is hanging
+1 _   seems to be happening because of virus scanning software (norton)
+1 _   may need to launch the applet (using 'start') 
+1 _     and talk over a socket instead
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
+1 _     something in that one about mouse position halting or not
 
 
 DISTRIBUTION / Windows
@@ -733,6 +365,7 @@ DISTRIBUTION / Windows
 
 
 DISTRIBUTION / Linux
+1 _ doesn't seem interested in quitting properly (?)
 b _ splash screen
 1 _ ctrl-t is not stopping a sketch
 1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074810469
@@ -796,83 +429,18 @@ schoenerwissen
 b X 7 day search on discourse board
 
 
-..................................................................
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
+FRY
 
-api work
+My grab of examples/libraries that I'd like to make. Most of these are
+things I've already written in some form or another, but need to take
+the time to package up and release.
 
-ugly but no ideas yet
-_ serialWrite -> sprint ? 
-_ noSmooth
-_ noFill()
-_ rectMode means rectPlacement
-_   becomes a problem when strokeMode and strokeWidth are mixed
-_ beginRect() beginLineLoop() et al. ?
-
-_ begin/end.. beginSerial/endSerial -> 
-_   openSerial/closeSerial ?
-_   startSerial/stopSerial
-_ need some model for i/o that makes more sense
-_   getting whole words from serial, network, and files
-_   or buffers of specific length with a sync byte
-_ split to take strings (ie. for ", ")
-_ quicksort should probably just be made into 'sort' class
-_   it's the only one ever used
-_   can this be done using an inner class?
-
-_ go through examples to see if there's other annoying syntax
-
-additions that i want
-_ image(BImage, x, y, float scale) (found in illustrator stuff)
-_ textrect(String text, x, y, width, height)  // based on rectMode
-_   textMode() for align left, center, right (no justify.. har!)
-_ file i/o: file listing util that leaves out . and ..
-_ write tiff (or other) header for image stream
-_   make a class/library for this guy
-
-
-..................................................................
-
-
-// notes on an implementation of a 'shape' class..
-// as long as using an additional pde file...
-
-..to still maintain rect() instead of g.rect()
-..and the rest of the p5 features
-
-// shape or "processing" means to add all kinds of methods like:
-// public void point(float x, float y) {  g.point(x, y);  }
-// and that the class 'implements' ShapeInterface..
-//
-shape class Something {
-
-  void setup() {
-    // not used, or called on first draw
-
-    // but maybe required (even if behind the scenes) 
-    // so that this can use "implements ShapeInterface"
-  }
-
-  void draw() {  // uses internal g. that's been set by parent
-  }
-}
-
-
-in the .pde parent:
-
-void loop() {
-  shape(somethingInstance);
-}
-
-where the shape() method in BApplet looks like:
-
-shape(ShapeInterface o) {
-  o.graphics(this.g);  // has to be a method, since intf
-  o.draw();
-}
-
-
-FRY WISH LIST
+_ example showing quicksort code
+_   and how to implement/use as an inner class
 _ arcball
 _ joystick
 _ particles (from multip?)
@@ -893,3 +461,5 @@ _   could just include a compiled version of the diff app, ala jikes
 _ something about using regexps in p5
 _   wrap up oro for simple matching
 _   (as alternative to the sun classes.. link to those in the docs)
+_ method for file handling, recursive walk-through a directory
+_   file i/o: file listing util that leaves out . and ..
