@@ -729,7 +729,21 @@ public class KjcEngine extends PdeEngine {
 	  int mh = PdeBase.getInteger("run.window.height.minimum", 120);
 	  int ww = Math.max(applet.width, mw) + insets.left + insets.right;
 	  int wh = Math.max(applet.height, mh) + insets.top + insets.bottom;
-	  window.setBounds(x1 - ww, y1, ww, wh);
+	  if (x1 - ww > 10) {  // if it fits to the left of the window
+	    window.setBounds(x1 - ww, y1, ww, wh);
+
+	  } else { // if it fits inside the editor window
+	    x1 = parentLoc.x + PdeEditor.GRID_SIZE * 2;
+	    y1 = parentLoc.y + PdeEditor.GRID_SIZE * 2;
+
+	    if ((x1 + ww > screen.width - PdeEditor.GRID_SIZE) ||
+		(y1 + wh > screen.height - PdeEditor.GRID_SIZE)) {
+	      // otherwise center on screen
+	      x1 = (screen.width - ww) / 2;
+	      y1 = (screen.height - wh) / 2;
+	    }
+	    window.setBounds(x1, y1, ww, wh);
+	  }
 
 	  Color windowBgColor = 
 	    PdeBase.getColor("run.window.bgcolor", SystemColor.control); 
