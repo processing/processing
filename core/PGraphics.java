@@ -4,8 +4,8 @@
   PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2004- Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
-  (Except where noted that the author is not Ben Fry)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -140,8 +140,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   /** Set by strokeJoin(), read-only */
   public int strokeJoin;
 
-  /** Set by strokeMiter(), read-only */
-  public int strokeMiter;
+  /** Set by strokeCap(), read-only */
+  public int strokeCap;
 
   // lighting
   static final int MAX_LIGHTS = 10;
@@ -278,7 +278,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   // ........................................................
 
-  // curve vertices
+  // spline vertices
 
   static final int SPLINE_VERTEX_ALLOC = 128;
   float spline_vertex[][];
@@ -314,6 +314,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   public int rectMode;
   public int ellipseMode;
+  public int arcMode;
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
@@ -476,6 +477,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     textureMode = IMAGE_SPACE;
     rectMode    = CORNER;
     ellipseMode = CENTER;
+    arcMode     = CENTER;
     angleMode   = RADIANS;
 
     // no current font
@@ -537,11 +539,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     // (but can't return, since needs to update memimgsrc
     if (hints[DEPTH_SORT]) {
       if (triangleCount > 0) {
-        depth_sort_triangles();
+        //depth_sort_triangles();  // not yet
         render_triangles();
       }
       if (lineCount > 0) {
-        depth_sort_lines();
+        //depth_sort_lines();  // not yet
         render_lines();
       }
     }
@@ -1291,7 +1293,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     lines[lineCount][PB] = b;
     lines[lineCount][LI] = -1;
 
-    lines[lineCount][SM] = strokeMiter | strokeJoin;
+    lines[lineCount][SM] = strokeCap | strokeJoin;
     lineCount++;
   }
 
@@ -1318,8 +1320,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  protected void depth_sort_triangles() {
-  }
+  //protected void depth_sort_triangles() {
+  //}
 
   protected void render_triangles() {
     for (int i = 0; i < triangleCount; i ++) {
@@ -1350,8 +1352,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  protected void depth_sort_lines() {
-  }
+  //protected void depth_sort_lines() {
+  //}
 
   public void render_lines() {
     for (int i = 0; i < lineCount; i ++) {
@@ -1672,22 +1674,98 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void point(float x, float y) {
-    beginShape(POINTS);
-    vertex(x, y);
-    endShape();
+    point(x, y, 0);
   }
 
 
   public void point(float x, float y, float z) {
-    beginShape(POINTS);
-    vertex(x, y, z);
-    endShape();
+    if (depth) {
+      if (strokeWeight < 2) {
+        // just a single dot on the screen with a z value
+        // TODO what is lighting calculation for this point?
+        point0(screenX(x, y, z),
+               screenY(x, y, z),
+               screenZ(x, y, z), strokeColor);
+
+      } else {
+        float cx = screenX(x, y, z);
+        float cy = screenX(x, y, z);
+        float hsw = strokeWeight / 2f;
+
+        if (strokeCap == ROUND_ENDCAP) {
+          // non-smoothed, filled circle
+          circle0_rough_fill(cx, cy, z, hsw, strokeColor);
+
+        } else {  // otherwise one of the square endcaps
+          //if ((strokeCap == PROJECTED_ENDCAP) ||
+          //    (strokeCap == SQUARE_ENDCAP)) {
+          // technically, if SQUARE_ENDCAP, nothing should be drawn
+          // but we'll go easy on the lads
+          // non-smoothed (since 3D), filled square
+
+          int x1 = (int) (cx - hsw + 0.5f);
+          int y1 = (int) (cy - hsw + 0.5f);
+          int x2 = (int) (cx + hsw + 0.5f);
+          int y2 = (int) (cy + hsw + 0.5f);
+
+          rect0_rough_fill(x1, y1, x2, y2, z, strokeColor);
+        }
+      }
+
+    } else {  // noDepth
+      if (strokeWeight < 2) {
+        point0(screenX(x, y), screenY(x, y), 0, strokeColor);
+
+      } else {
+        float hsw = strokeWeight / 2f;
+
+        if ((strokeCap == PROJECTED_ENDCAP) ||
+            (strokeCap == SQUARE_ENDCAP)) {
+          rect0_fill(x - hsw, y - hsw, x + hsw, y + hsw, 0, strokeColor);
+
+        } else if (strokeCap == ROUND_ENDCAP) {
+          circle0_fill(x - hsw, y - hsw, 0, hsw, strokeColor);
+        }
+      }
+    }
   }
 
 
-  private void thin_point(int x, int y, float z, int color) {
-    // necessary? [fry] yes! [toxi]
-    if (x<0 || x>width1 || y<0 || y>height1) return;
+  private void point3(float x, float y, float z, int color) {
+    // need to get scaled version of the stroke
+    float x1 = screenX(x - 0.5f, y - 0.5f, z);
+    float y1 = screenY(x - 0.5f, y - 0.5f, z);
+    float x2 = screenX(x + 0.5f, y + 0.5f, z);
+    float y2 = screenY(x + 0.5f, y + 0.5f, z);
+
+    float weight = (abs(x2 - x1) + abs(y2 - y1)) / 2f;
+    if (weight < 1.5f) {
+      int xx = (int) ((x1 + x2) / 2f);
+      int yy = (int) ((y1 + y2) / 2f);
+      point0(xx, yy, z, color);
+      zbuffer[yy*width + xx] = screenZ(x, y, z);
+      //stencil?
+
+    } else {
+      // actually has some weight, need to draw shapes instead
+      // these will be
+    }
+  }
+
+
+  private void point2(float x, float y, int color) {
+
+  }
+
+
+  private void point0(float xx, float yy, float z, int color) {
+    point0((int) (xx + 0.5f), (int) (yy + 0.5f), z, color);
+  }
+
+
+  private void point0(int x, int y, float z, int color) {
+    if ((x < 0) || (x > width1) ||
+        (y < 0) || (y > height1)) return;
 
     int index = y*width + x;
     if ((color & 0xff000000) == 0xff000000) {  // opaque
@@ -1707,7 +1785,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
       pixels[index] =  0xff000000 | (r << 8) | g | b;
     }
-    zbuffer[index] = z;
+    if (zbuffer != null) zbuffer[index] = z;
   }
 
 
@@ -1977,36 +2055,55 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   protected void rect2_fill(float x1, float y1, float x2, float y2) {
     if ((m01 != 0) || (m10 != 0)) {
       // this is actually transformed, transform points and draw a quad
-      quad0(screenX(x1, y1), screenY(x1, y1),
-            screenX(x2, y1), screenY(x2, y1),
-            screenX(x2, y2), screenY(x2, y2),
-            screenX(x1, y2), screenY(x1, y2));
+      quad0_fill(screenX(x1, y1), screenY(x1, y1),
+                 screenX(x2, y1), screenY(x2, y1),
+                 screenX(x2, y2), screenY(x2, y2),
+                 screenX(x1, y2), screenY(x1, y2), fillColor);
 
     } else {
       if ((m00 == 1) && (m11 == 1)) {
         // no scale, but maybe a translate
-        rect0_fill(x1 + m02, y1 + m12, x2 + m02, y2 + m12);
+        rect0_fill(x1 + m02, y1 + m12, x2 + m02, y2 + m12, 0, fillColor);
 
       } else {
         // scaled, maybe translated
         rect0_fill(screenX(x1, y1), screenY(x1, y1),
-                   screenX(x2, y2), screenY(x2, y2));
+                   screenX(x2, y2), screenY(x2, y2), 0, fillColor);
       }
     }
   }
 
 
-  protected void rect0_fill(float x1, float y1, float x2, float y2) {
+  protected void rect0_fill(float x1, float y1, float x2, float y2,
+                            float z, int color) {
+    if (smooth) {
+      rect0_smooth_fill(x1, y1, x2, y2, z, color);
+
+    } else {
+      rect0_rough_fill((int) (x1+0.5f), (int) (y1+0.5f),
+                       (int) (x2+0.5f), (int) (y2+0.5f), z, color);
+    }
+  }
+
+
+  protected void rect0_smooth_fill(float x1, float y1, float x2, float y2,
+                                   float z, int color) {
+    quad0_smooth_fill(x1, y1, x2, y1, x2, y2, x1, y2, color);
+  }
+
+
+  protected void rect0_rough_fill(int x1, int y1, int x2, int y2,
+                                  float z, int color) {
     // needs to check if smooth
     // or if there's an affine transform on the shape
     // also the points are now floats instead of ints
 
     //System.out.println("flat quad");
     if (y2 < y1) {
-      float temp = y1; y1 = y2; y2 = temp;
+      int temp = y1; y1 = y2; y2 = temp;
     }
     if (x2 < x1) {
-      float temp = x1; x1 = x2; x2 = temp;
+      int temp = x1; x1 = x2; x2 = temp;
     }
     // checking to watch out for boogers
     if ((x1 > width1) || (x2 < 0) ||
@@ -2078,8 +2175,58 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  public void quad0(float x1, float y1, float x2, float y2,
-                    float x3, float y3, float x4, float y4) {
+  protected void quad0_fill(float x1, float y1, float x2, float y2,
+                            float x3, float y3, float x4, float y4,
+                            int color) {
+    if (smooth) {
+      quad0_smooth_fill(x1, y1, x2, y2, x3, y3, x4, y4, color);
+
+    } else {
+      quad0_rough_fill((int) (x1+0.5f), (int) (y1+0.5f),
+                       (int) (x2+0.5f), (int) (y2+0.5f),
+                       (int) (x3+0.5f), (int) (y3+0.5f),
+                       (int) (x4+0.5f), (int) (y4+0.5f),
+                       color);
+    }
+  }
+
+
+  protected void quad0_smooth_fill(float x1, float y1, float x2, float y2,
+                                   float x3, float y3, float x4, float y4,
+                                   int color) {
+  }
+
+
+  protected void quad0_rough_fill(float x1, float y1, float x2, float y2,
+                                  float x3, float y3, float x4, float y4,
+                                  int color) {
+  }
+
+
+  protected void quad0_stroke(float x1, float y1, float x2, float y2,
+                              float x3, float y3, float x4, float y4,
+                              int color) {
+    if (smooth) {
+      quad0_smooth_stroke(x1, y1, x2, y2, x3, y3, x4, y4, color);
+
+    } else {
+      quad0_rough_stroke((int) (x1+0.5f), (int) (y1+0.5f),
+                         (int) (x2+0.5f), (int) (y2+0.5f),
+                         (int) (x3+0.5f), (int) (y3+0.5f),
+                         (int) (x4+0.5f), (int) (y4+0.5f), color);
+    }
+  }
+
+
+  protected void quad0_smooth_stroke(float x1, float y1, float x2, float y2,
+                                     float x3, float y3, float x4, float y4,
+                                     int color) {
+  }
+
+
+  protected void quad0_rough_stroke(float x1, float y1, float x2, float y2,
+                                    float x3, float y3, float x4, float y4,
+                                    int color) {
   }
 
 
@@ -2203,6 +2350,73 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // ARC
+
+
+  public void arcMode(int mode) {
+    arcMode = mode;
+  }
+
+
+  public void arc(float start, float stop,
+                  float x, float y, float radius) {
+    arc(start, stop, x, y, radius, radius);
+  }
+
+
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr) {
+    switch (arcMode) {
+    case CENTER_RADIUS:
+      break;
+    case CENTER:
+      hr /= 2f; vr /= 2f;
+      break;
+    case CORNER:
+      hr /= 2f; vr /= 2f;
+      x += hr; y += vr;
+      break;
+    case CORNERS:
+      hr = (hr - x) / 2f;
+      vr = (vr - y) / 2f;
+      x += hr;
+      y += vr;
+      break;
+    }
+
+    if (depth) {
+      if (fill) arc3_fill(start, stop, x, y, hr, vr);
+      if (stroke) arc3_stroke(start, stop, x, y, hr, vr);
+
+    } else {
+      if (fill) arc2_fill(start, stop, x, y, hr, vr);
+      if (stroke) arc2_stroke(start, stop, x, y, hr, vr);
+    }
+  }
+
+
+  protected void arc3_fill(float start, float stop,
+                           float x, float y, float hr, float vr) {
+  }
+
+
+  protected void arc3_stroke(float start, float stop,
+                             float x, float y, float hr, float vr) {
+  }
+
+
+  protected void arc2_fill(float start, float stop,
+                           float x, float y, float hr, float vr) {
+  }
+
+
+  protected void arc2_stroke(float start, float stop,
+                             float x, float y, float hr, float vr) {
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // ELLIPSE
 
 
@@ -2231,7 +2445,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       hradius = (hradius - x) / 2f;
       vradius = (vradius - y) / 2f;
       x += hradius;
-      y += hradius;
+      y += vradius;
       break;
     }
 
@@ -2258,6 +2472,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   protected void ellipse2_stroke(float x, float y, float h, float v) {
   }
 
+  /*
   protected void ellipse_mess(float x, float y,
                               float hradius, float vradius) {
     // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
@@ -2286,10 +2501,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     if (plain && flat) {
       if (hradius == vradius) {
-        flat_circle((int)x, (int)y, (int)hradius);
+        circle0((int)x, (int)y, (int)hradius);
 
       } else {
-        flat_ellipse((int)x, (int)y, (int)hradius, (int)vradius);
+        ellipse0((int)x, (int)y, (int)hradius, (int)vradius);
       }
 
     } else {
@@ -2306,16 +2521,128 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       endShape();
     }
   }
+  */
 
 
+  /*
+  private void flat_ellipse(int centerX, int centerY, int a, int b) {
+    //FIXME
+    //if (dimensions == 2) {  // probably a translate but no scale
+      centerX = (int) screenX(centerX, centerY, 0);
+      centerY = (int) screenY(centerX, centerY, 0);
+      //}
+    if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
+    if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
+  }
+  */
+
+
+  private void ellipse0_stroke_rough(int cx, int cy, int a, int b) {
+    ellipse0_rough(cx, cy, a, b, false);
+  }
+
+
+  private void ellipse0_fill_rough(int cx, int cy, int a, int b) {
+    ellipse0_rough(cx, cy, a, b, true);
+  }
+
+
+  /**
+   * Bresenham-style ellipse drawing function, adapted from a posting to
+   * comp.graphics.algortihms.
+   *
+   * This function is included because the quality is so much better,
+   * and the drawing significantly faster than with adaptive ellipses
+   * drawn using the sine/cosine tables.
+   *
+   * @param centerX x coordinate of the center
+   * @param centerY y coordinate of the center
+   * @param a horizontal radius
+   * @param b vertical radius
+   */
+  private void ellipse0_rough(int centerX, int centerY,
+                              int a, int b, boolean filling) {
+    //int x, y, a2, b2, s, t;
+
+    int a2 = a*a;
+    int b2 = b*b;
+    int x = 0;
+    int y = b;
+    int s = a2*(1-2*b) + 2*b2;
+    int t = b2 - 2*a2*(2*b-1);
+    ellipse0_rough_internal(centerX, centerY, x, y, filling);
+
+    do {
+      if (s < 0) {
+        s += 2*b2*(2*x+3);
+        t += 4*b2*(x+1);
+        x++;
+      } else if (t < 0) {
+        s += 2*b2*(2*x+3) - 4*a2*(y-1);
+        t += 4*b2*(x+1) - 2*a2*(2*y-3);
+        x++;
+        y--;
+      } else {
+        s -= 4*a2*(y-1);
+        t -= 2*a2*(2*y-3);
+        y--;
+      }
+      ellipse0_rough_internal(centerX, centerY, x, y, filling);
+
+    } while (y > 0);
+  }
+
+  private final void ellipse0_rough_internal(int centerX, int centerY,
+                                             int ellipseX, int ellipseY,
+                                             boolean filling) {
+    // unfortunately this can't handle fill and stroke simultaneously,
+    // because the fill will later replace some of the stroke points
+
+    if (filling) {
+      for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
+        point0(i, centerY - ellipseY, 0, fillColor);
+        point0(i, centerY + ellipseY, 0, fillColor);
+      }
+    } else {
+      point0(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
+      point0(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
+      point0(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
+      point0(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
+    }
+  }
+
+
+  /*
   private void flat_circle(int centerX, int centerY, int radius) {
     // FIXME
     //if (dimensions == 2) {  // translate but no scale
       centerX = (int) screenX(centerX, centerY, 0);
       centerY = (int) screenY(centerX, centerY, 0);
       //}
-    if (fill) flat_circle_fill(centerX, centerY, radius);
-    if (stroke) flat_circle_stroke(centerX, centerY, radius);
+    if (fill) circle0_fill(centerX, centerY, radius);
+    if (stroke) circle0_stroke(centerX, centerY, radius);
+  }
+  */
+
+
+  private void circle0(float x, float y, float r) {
+    if (fill) circle0_fill(x, y, 0, r, fillColor);
+    if (stroke) circle0_stroke(x, y, 0, r, strokeColor);
+  }
+
+
+  private void circle0_stroke(float x, float y, float z, float r, int color) {
+    if (smooth) {
+      circle0_stroke_smooth(x, y, z, r, color);
+    } else {
+      circle0_stroke_rough(x, y, z, r, color);
+    }
+  }
+
+
+  private void circle0_stroke_smooth(float x, float y, float z,
+                                     float r, int color) {
+    // TODO draw a circle that's smoothed in screen space coords
   }
 
 
@@ -2343,13 +2670,18 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * @param yc y center
    * @param r radius
    */
-  private void flat_circle_stroke(int xC, int yC, int r) {
+  private void circle0_stroke_rough(float xcf, float ycf, float z,
+                                    float rf, int color) {
+    int xc = (int) (xcf + 0.5f);
+    int yc = (int) (ycf + 0.5f);
+    int r = (int) (rf + 0.5f);
+
     int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
     while (x < y) {
-      thin_point(xC + x, yC + y, 0, strokeColor); // NNE
-      thin_point(xC + y, yC - x, 0, strokeColor); // ESE
-      thin_point(xC - x, yC - y, 0, strokeColor); // SSW
-      thin_point(xC - y, yC + x, 0, strokeColor); // WNW
+      point0(xc + x, yc + y, z, color); // NNE
+      point0(xc + y, yc - x, z, color); // ESE
+      point0(xc - x, yc - y, z, color); // SSW
+      point0(xc - y, yc + x, z, color); // WNW
 
       x++; E += u; u += 2;
       if (v < 2 * E) {
@@ -2357,12 +2689,22 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       }
       if (x > y) break;
 
-      thin_point(xC + y, yC + x, 0, strokeColor); // ENE
-      thin_point(xC + x, yC - y, 0, strokeColor); // SSE
-      thin_point(xC - y, yC - x, 0, strokeColor); // WSW
-      thin_point(xC - x, yC + y, 0, strokeColor); // NNW
+      point0(xc + y, yc + x, z, color); // ENE
+      point0(xc + x, yc - y, z, color); // SSE
+      point0(xc - y, yc - x, z, color); // WSW
+      point0(xc - x, yc + y, z, color); // NNW
     }
   }
+
+
+  private void circle0_fill(float x, float y, float z, float r, int color) {
+    if (smooth) {
+      circle0_smooth_fill(x, y, z, r, color);
+    } else {
+      circle0_rough_fill(x, y, z, r, color);
+    }
+  }
+
 
   /**
    * Heavily adapted version of the above algorithm that handles
@@ -2376,20 +2718,25 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * @param yc y center
    * @param r radius
    */
-  private void flat_circle_fill(int xc, int yc, int r) {
+  private void circle0_rough_fill(float xcf, float ycf, float z,
+                                  float rf, int color) {
+    int xc = (int) (xcf + 0.5f);
+    int yc = (int) (ycf + 0.5f);
+    int r = (int) (rf + 0.5f);
+
     int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
     while (x < y) {
       for (int xx = xc; xx < xc + x; xx++) {  // NNE
-        thin_point(xx, yc + y, 0, fillColor);
+        point0(xx, yc + y, z, color);
       }
       for (int xx = xc; xx < xc + y; xx++) {  // ESE
-        thin_point(xx, yc - x, 0, fillColor);
+        point0(xx, yc - x, z, color);
       }
       for (int xx = xc - x; xx < xc; xx++) {  // SSW
-        thin_point(xx, yc - y, 0, fillColor);
+        point0(xx, yc - y, z, color);
       }
       for (int xx = xc - y; xx < xc; xx++) {  // WNW
-        thin_point(xx, yc + x, 0, fillColor);
+        point0(xx, yc + x, z, color);
       }
 
       x++; E += u; u += 2;
@@ -2399,96 +2746,24 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       if (x > y) break;
 
       for (int xx = xc; xx < xc + y; xx++) {  // ENE
-        thin_point(xx, yc + x, 0, fillColor);
+        point0(xx, yc + x, z, color);
       }
       for (int xx = xc; xx < xc + x; xx++) {  // SSE
-        thin_point(xx, yc - y, 0, fillColor);
+        point0(xx, yc - y, z, color);
       }
       for (int xx = xc - y; xx < xc; xx++) {  // WSW
-        thin_point(xx, yc - x, 0, fillColor);
+        point0(xx, yc - x, z, color);
       }
       for (int xx = xc - x; xx < xc; xx++) {  // NNW
-        thin_point(xx, yc + y, 0, fillColor);
+        point0(xx, yc + y, z, color);
       }
     }
   }
 
-  // unfortunately this can't handle fill and stroke simultaneously,
-  // because the fill will later replace some of the stroke points
 
-  private final void flat_ellipse_symmetry(int centerX, int centerY,
-                                           int ellipseX, int ellipseY,
-                                           boolean filling) {
-    if (filling) {
-      for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
-        thin_point(i, centerY - ellipseY, 0, fillColor);
-        thin_point(i, centerY + ellipseY, 0, fillColor);
-      }
-    } else {
-      thin_point(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
-      thin_point(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
-      thin_point(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
-      thin_point(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
-    }
+  private void circle0_smooth_fill(float x, float y, float z,
+                                   float r, int color) {
   }
-
-
-  /**
-   * Bresenham-style ellipse drawing function, adapted from a posting to
-   * comp.graphics.algortihms.
-   *
-   * This function is included because the quality is so much better,
-   * and the drawing significantly faster than with adaptive ellipses
-   * drawn using the sine/cosine tables.
-   *
-   * @param centerX x coordinate of the center
-   * @param centerY y coordinate of the center
-   * @param a horizontal radius
-   * @param b vertical radius
-   */
-  private void flat_ellipse_internal(int centerX, int centerY,
-                                     int a, int b, boolean filling) {
-    int x, y, a2, b2, s, t;
-
-    a2 = a*a;
-    b2 = b*b;
-    x = 0;
-    y = b;
-    s = a2*(1-2*b) + 2*b2;
-    t = b2 - 2*a2*(2*b-1);
-    flat_ellipse_symmetry(centerX, centerY, x, y, filling);
-
-    do {
-      if (s < 0) {
-        s += 2*b2*(2*x+3);
-        t += 4*b2*(x+1);
-        x++;
-      } else if (t < 0) {
-        s += 2*b2*(2*x+3) - 4*a2*(y-1);
-        t += 4*b2*(x+1) - 2*a2*(2*y-3);
-        x++;
-        y--;
-      } else {
-        s -= 4*a2*(y-1);
-        t -= 2*a2*(2*y-3);
-        y--;
-      }
-      flat_ellipse_symmetry(centerX, centerY, x, y, filling);
-
-    } while (y > 0);
-  }
-
-
-  private void flat_ellipse(int centerX, int centerY, int a, int b) {
-    //FIXME
-    //if (dimensions == 2) {  // probably a translate but no scale
-      centerX = (int) screenX(centerX, centerY, 0);
-      centerY = (int) screenY(centerX, centerY, 0);
-      //}
-    if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
-    if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
-  }
-
 
 
   //////////////////////////////////////////////////////////////
@@ -3026,7 +3301,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // 3D SHAPES, DRAWN FROM CENTER
+  // 3D BOX
 
 
   // solid or wire depends on settings for stroke and fill
@@ -3095,6 +3370,12 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
     triangle.setCulling(false);
   }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // 3D SPHERE
 
 
   // [toxi031031] used by the new sphere code below
@@ -4311,8 +4592,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  public void strokeMiter(int miter) {
-    strokeMiter = miter;
+  public void strokeCap(int cap) {
+    strokeCap = cap;
   }
 
 
