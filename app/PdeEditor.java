@@ -96,7 +96,7 @@ public class PdeEditor extends JFrame
   JMenuItem saveAsMenuItem;
   JMenuItem beautifyMenuItem;
 
-  JMenu exportMenu;
+  //JMenu exportMenu;
 
   // 
 
@@ -429,7 +429,7 @@ public class PdeEditor extends JFrame
 
     // in case library option has been enabled or disabled
 
-    buildExportMenu();
+    //buildExportMenu();
 
 
     // in case moved to a new location
@@ -508,8 +508,25 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    exportMenu = buildExportMenu();
-    menu.add(exportMenu);
+    item = newMenuItem("Export", 'E');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.message("Exporting code...");
+          try {
+            if (sketch.export()) {
+              message("Done exporting.");
+            } else {
+              // error message will already be visible
+            }
+          } catch (Exception e) {
+            editor.message("Error during export.");
+            e.printStackTrace();
+          }
+          buttons.clear();
+        }
+      });
+    //exportMenu = buildExportMenu();
+    //menu.add(exportMenu);
 
     menu.addSeparator();
 
@@ -547,6 +564,7 @@ public class PdeEditor extends JFrame
   }
 
 
+  /*
   protected JMenu buildExportMenu() {
     if (exportMenu == null) {
       exportMenu = new JMenu("Export");
@@ -574,6 +592,7 @@ public class PdeEditor extends JFrame
     }
     return exportMenu;
   }
+  */
 
 
   protected JMenu buildSketchMenu() {
@@ -1755,12 +1774,15 @@ public class PdeEditor extends JFrame
   }
 
 
+  /*
   public void skExport() {
     doStop();
     message("Exporting for the web...");
     File appletDir = new File(sketchDir, "applet");
     handleExport(appletDir, sketchName, new File(sketchDir, "data"));
   }
+  */
+
 
   /*
   public void doExport() {
