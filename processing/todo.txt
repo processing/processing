@@ -5,6 +5,9 @@ X TWO_CORNERS -> CORNERS
 X major: fix error message stream mid-compile
 X   ClassCastException on startup (or not found?)
 
+_ split KjcEngine into three parts
+_ move build directory to root in cvs
+_   and update scripts accordingly
 
 bagel
 _ need to finish fill mode of flat circle function
