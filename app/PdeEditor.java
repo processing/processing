@@ -1096,7 +1096,6 @@ public class PdeEditor extends JFrame
 
   public void setSketchModified(boolean what) {
     header.sketchModified = what;
-    //header.update();
     header.repaint();
     sketchModified = what;
   }
@@ -1118,10 +1117,7 @@ public class PdeEditor extends JFrame
       String prompt = "Save changes to " + sketch.name + "?  ";
 
       if (checking == DO_QUIT) {
-
         int result = 0;
-
-        //if (PdeBase.platform == PdeBase.MACOSX) {
 
         // macosx java kills the app even though cancel might get hit
         // so the cancel button is (temporarily) left off
@@ -1142,16 +1138,16 @@ public class PdeEditor extends JFrame
                                               options[0]);  // default to save
 
           /*
-        } else {
-          Object[] options = { "Yes", "No", "Cancel" };
-          result = JOptionPane.showOptionDialog(this,
-                                                prompt,
-                                                "Quit",
-                                                JOptionPane.YES_NO_CANCEL_OPTION,
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                null,
-                                                options, 
-                                                options[2]);
+      } else {
+        Object[] options = { "Yes", "No", "Cancel" };
+        result = JOptionPane.showOptionDialog(this,
+                                              prompt,
+                                              "Quit",
+                                              JOptionPane.YES_NO_CANCEL_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null,
+                                              options, 
+                                              options[2]);
           */
 
         if (result == JOptionPane.YES_OPTION) {
