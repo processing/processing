@@ -258,7 +258,7 @@ public interface PConstants {
 
   static final int SCALE_STROKE_WIDTH      = 0;
   static final int LIGHTING_AFFECTS_STROKE = 1;
-  static final int NEW_GRAPHICS            = 2;
+  //static final int NEW_GRAPHICS            = 2;
   static final int DISABLE_TEXT_SMOOTH     = 3;
   static final int DISABLE_SMOOTH_HACK     = 4;
   static final int NO_DEPTH_TEST           = 5;
