@@ -1,4 +1,4 @@
-processing todo list // last updated 16 october 2001
+processing todo list
 (most up-to-date version of this file is in processing cvs)
 
 
@@ -12,13 +12,6 @@ Daniel Evan Schwartz <design@roomn8.com>
 Roger Langley <galahad@uslink.net>
 Roy Macarthur <roy@mcarthur.com>
 Fabrice Clérot <fabrice.clerot@francetelecom.com>
-
-
-changes to graphics
-_ rect now uses x, y, width, height instead of x1, y1, x2, y2
-_ circle has been replaced with ellipse (uses xywh)
-_ box takes diameter, or width, height, depth [NOT IN CPP]
-_ sphere is the same as box [NOT IN CPP]
 
 
 where is?
@@ -46,7 +39,7 @@ _ alpha, anti-aliasing
 
 open
 _ is day, month, year overkill inside processingapplet?
-_ PImage, PFont (?)
+_ PImage, PFont or how to name?
 _ loadImage or getImage?
 _ bezierVertex/catmullRomVertex poorly named (based on algo used)
 _   instead curveVertex/fitCurveVertex/etc.
@@ -56,14 +49,11 @@ _ add java.* to top of processingapplet default base class used by kjc
 
 
 for 0010
-_ are line and point working in 3D?
-_ keys don't work, even when overriding keyTyped etc.
 _ z=0 shit, 2D stuff needs to draw over z=0 plane
+_   new objects draw behind old objects with noBackground()
 _ no stroke should show up on image()
 _ fill being set on image() produces weird results
 _   has to be set, but doesn't actually affect color
-_ include stdout/stderr in the processing window
-_   stderr in red color
 _ docs
 _   explain using inner classes and using non-public classes
 _   start 'errors' section
@@ -76,7 +66,8 @@ _     check to see if get/set functions in applet actually work
 _     fix documentation appropriately
 _   documentation says 'mouseDown' even though it's 'mousePressed'
 _   when images aren't found on disk
-_   image formats supported
+_   image formats supported (gif and jpeg)
+_   notes about running on win98 and that stupid startup exception
 _ fix color cube applet 
 _   make it run in current version of processing
 _   fix background from showing up black
@@ -88,30 +79,40 @@ _   if new dir added, must restart processing (this is acceptable)
 _ ability to include other code from sketchbook directory
 _   compile entire sketchbook on startup, then check for new files on compile?
 _ when applet window is too large to fit, center and put in back
-_ notes about running on win98 and that stupid startup exception
-_ fix bugs from the 'bugs' file 
 _ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
 _   better solution for this (error while opening image)
 _   and document how image loading works
+_ post new macintosh version
+_   with serial port support
 X make acu fonts work again
 X write code to use simple bitmap fonts
 X add a file with bugs for testing
 X kjc not smart enough to just compile things that are in classpath
 X redo random functions in processing applet
 X strangeness with stroke when a rect goes off outside the window
+X rect now uses x, y, width, height instead of x1, y1, x2, y2
+X circle has been replaced with ellipse (uses xywh)
+X box takes diameter, or width, height, depth [NOT IN CPP]
+X sphere is the same as box [NOT IN CPP]
 
 
 for 0011
+_ keys don't work, even when overriding keyTyped etc.
+_ include stdout/stderr in the processing window
+_   stderr in red color
+_ modify kjc to take a PrintWriter, instead of current weird hacks
+_ are line and point working in 3D?
+_ stop required before kill for applets that use serial
+_   this is behaving strangely
+_   breaks on every 2nd run when using serial apps (or others?)
+_     try calling gc on stop as well
+
+
+for 0012
+_ fix bugs from the 'bugs' file 
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
 _ give warning when compiling w/o kjcprocessingapplet
-_ stop required before kill for applets that use serial
-_   this is behaving strangely
-_ new objects draw behind old objects with noBackground()
-_ breaks on every 2nd run when using serial apps (or others?)
-_   try calling gc on stop as well
-_ post new macintosh version
-_   with serial port support
 
 
 PROCESSING - HIGH
