@@ -87,10 +87,10 @@ public class ProcessingApplet extends Applet
   }
 
 
-  //public Dimension getPreferredSize() {
-  //println("getting pref'd size");
-  //return new Dimension(width, height);
-  //}
+  public Dimension getPreferredSize() {
+    //println("getting pref'd size");
+    return new Dimension(width, height);
+  }
 
 
   // ------------------------------------------------------------
@@ -231,6 +231,11 @@ public class ProcessingApplet extends Applet
 
     g = new Bagel(width, height);
     pixels = g.pixels;
+
+    // set this here, and if not inside browser, getDocumentBase()
+    // will fail with a NullPointerException, and cause applet to
+    // be set to null. might be a better way to deal with that, but..
+    g.applet = this;
 
     // do all the defaults down here, because
     // subclasses need to go through this function
@@ -698,6 +703,47 @@ public class ProcessingApplet extends Applet
 
   // ------------------------------------------------------------
 
+  // run as application
+
+
+  static public void main(String args[]) {
+    if (args.length != 1) {
+      System.err.println("error: ProcessingApplet <appletname>");
+      System.exit(1);
+    }
+
+    try {
+      Frame frame = new Frame();
+      Class c = Class.forName(args[0]);
+      ProcessingApplet applet = (ProcessingApplet) c.newInstance();
+      applet.init();
+      applet.start();
+
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+      frame.add(applet);
+      frame.pack();
+
+      frame.setLocation((screen.width - applet.g.width) / 2,
+			(screen.height - applet.g.height) / 2);
+
+      frame.show();
+      applet.requestFocus(); // get keydowns right away
+
+      frame.addWindowListener(new WindowAdapter() {
+	  public void windowClosing(WindowEvent e) {
+	    System.exit(0);
+	  }
+	});
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+
+  // ------------------------------------------------------------
+
   // public functions from bagel
 
 
@@ -853,6 +899,11 @@ public class ProcessingApplet extends Applet
 
   public BagelFont loadFont(String name) {
    return g.loadFont(name);
+  }
+
+
+  public void setFont(BagelFont which) {
+    g.setFont(which);
   }
 
 
@@ -1069,13 +1120,13 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void smoothingOn() {
-    g.smoothingOn();
+  public void hint(int which) {
+    g.hint(which);
   }
 
 
-  public void smoothingOff() {
-    g.smoothingOff();
+  public void unhint(int which) {
+    g.unhint(which);
   }
 
 
