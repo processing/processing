@@ -23,8 +23,7 @@
 */
 
 
-#ifdef BEN_COULD_EVER_FINISH_SIXTY_EIGHT
-
+#ifdef THINGS_WERENT_SO_BUSY
 
 import java.awt.*;
 import java.awt.event.*;
@@ -59,9 +58,11 @@ public class PdeHistory {
   ActionListener menuListener;
 
 
-  public PdeHistory(Sketch sketch) {
-    //this.editor = editor;
+  //public PdeHistory(PdeEditor editor) {
+  //this.editor = editor;
+  //}
 
+  public PdeHistory(Sketch sketch) {
     menu = new JMenu("History");
 
     menuListener = new ActionListener() {

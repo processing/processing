@@ -122,7 +122,7 @@ public class PdeEditor extends JFrame
 
   // 
 
-  //PdeHistory history;
+  //PdeHistory history;  // TODO re-enable history
   PdeSketchbook sketchbook;
   PdePreferences preferences;
   PdeEditorFind find;
@@ -160,7 +160,8 @@ public class PdeEditor extends JFrame
       });
 
     PdeKeywords keywords = new PdeKeywords();
-    history = new PdeHistory(this);
+    // TODO re-enable history
+    //history = new PdeHistory(this);
     sketchbook = new PdeSketchbook(this);
 
     JMenuBar menubar = new JMenuBar();
@@ -654,7 +655,8 @@ public class PdeEditor extends JFrame
       menu.add(item);
     }
 
-    history.attachMenu(menu);
+    // TODO re-enable history
+    //history.attachMenu(menu);
     return menu;
   }
 
@@ -1340,9 +1342,12 @@ public class PdeEditor extends JFrame
       sketch.directory = isketchDir;
       setSketchModified(false);
 
+      /*
+        // TODO re-enable history
       history.setPath(sketchFile.getParent(), readOnlySketch());
       history.rebuildMenu();
       history.lastRecorded = program;
+      */
 
       header.reset();
 
@@ -1393,10 +1398,11 @@ public class PdeEditor extends JFrame
         return; // user cancelled
       }
     }
-    //makeHistory(s, SAVE);
-    history.record(s, PdeHistory.SAVE);
-    File file = new File(directory, filename);
 
+    // TODO re-enable history
+    //history.record(s, PdeHistory.SAVE);
+
+    File file = new File(directory, filename);
     try {
       //System.out.println("handleSave: results of getText");
       //System.out.print(s);
@@ -1624,8 +1630,9 @@ public class PdeEditor extends JFrame
 
   public void doBeautify() {
     String prog = textarea.getText();
-    //makeHistory(prog, BEAUTIFY);
-    history.record(prog, PdeHistory.BEAUTIFY);
+
+    // TODO re-enable history
+    //history.record(prog, PdeHistory.BEAUTIFY);
 
     char program[] = prog.toCharArray();
     StringBuffer buffer = new StringBuffer();
