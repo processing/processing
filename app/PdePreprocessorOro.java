@@ -33,6 +33,7 @@ public class PdePreprocessorOro extends PdePreprocessor {
 
   public PdePreprocessorOro(String program, String buildPath) {
     super(program, buildPath);
+    this.program = program;
   }
 
   // writes .java file into buildPath
