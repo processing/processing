@@ -4406,6 +4406,23 @@ public class PApplet extends Applet
   }
 
 
+  public void arcMode(int mode) {
+     g.arcMode(mode);
+  }
+
+
+  public void arc(float start, float stop,
+                  float x, float y, float radius) {
+     g.arc(start, stop, x, y, radius);
+  }
+
+
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr) {
+     g.arc(start, stop, x, y, hr, vr);
+  }
+
+
   public void ellipseMode(int mode) {
      g.ellipseMode(mode);
   }
@@ -4866,8 +4883,8 @@ public class PApplet extends Applet
   }
 
 
-  public void strokeMiter(int miter) {
-     g.strokeMiter(miter);
+  public void strokeCap(int cap) {
+     g.strokeCap(cap);
   }
 
 
