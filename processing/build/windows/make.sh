@@ -132,21 +132,21 @@ CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\w
 # SERIAL LIBRARY
 echo Build serial library...
 cd ../../lib/serial
-../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
-zip -r0q serial.jar processing
+../../build/windows/work/jikes +D -classpath "code\\RXTXcomm.jar;$CLASSPATH" -d . *.java 
+zip -r0q library/serial.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/serial/library/
-cp serial.jar ../../build/windows/work/libraries/serial/library/
+cp library/serial.jar ../../build/windows/work/libraries/serial/library/
 
 
 # NET LIBRARY
 echo Build net library...
 cd ../../lib/net
 ../../build/windows/work/jikes +D -d . *.java 
-zip -r0q net.jar processing
+zip -r0q library/net.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/net/library/
-cp net.jar ../../build/windows/work/libraries/net/library/
+cp library/net.jar ../../build/windows/work/libraries/net/library/
 
 
 # VIDEO LIBRARY
@@ -163,7 +163,7 @@ else
 fi
 cd ../../lib/video
 ../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
-zip -r0q video.jar processing
+zip -r0q library/video.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/video/library/
-cp video.jar ../../build/windows/work/libraries/video/library/
+cp library/video.jar ../../build/windows/work/libraries/video/library/
