@@ -209,7 +209,8 @@ public class PdeEditor extends JFrame
     header = new PdeEditorHeader(this);
     rightPanel.add(header, BorderLayout.NORTH);
 
-    textarea = new JEditTextArea();
+    //textarea = new JEditTextArea();
+    textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
