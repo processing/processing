@@ -205,6 +205,14 @@ dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 post-0057c1
 X deal with spaces in user.dir (!) 
 X   affects reference, and prolly compiling too
+X alt key pressed spews errors about components
+X   prolly because of swing/awt component problems
+X   switched to JFrame instead of Frame for PdeBase
+X do objects need to be swing components to draw properly?
+X   macosx has update weirdness for non JComponent items
+X     actually it's weirdness *with* JComponent items
+X   http://java.sun.com/docs/books/tutorial/uiswing/painting/overview.html
+X   probably why end of text messages under osx getting chopped?
 
 
 ..................................................................
@@ -212,10 +220,6 @@ X   affects reference, and prolly compiling too
 
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
-
-X alt key pressed spews errors about components
-X   prolly because of swing/awt component problems
-X   switched to JFrame instead of Frame for PdeBase
 
 _ write readme.txt and revisions.txt
 _   windows: audio is broken, use jdk 1.4.1 if you need audio
@@ -225,17 +229,11 @@ _   catch security exceptions around applet i/o calls
 
 
 macosx
-_ do objects need to be swing components to draw properly?
-_   macosx has update weirdness for non JComponent items
-_   probably why end of text messages under osx getting chopped?
-_ test to see if runtime exceptions are coming through
-_ track down error in PdeCompiler for message parsing
-_   was missing the error about a package being gone
-_   comment out /System/Library/ code to track that down
+_ test to make sure that serial is working
+_   make .command file to set serial permissions
 
 
 windows
-_ see if mods to PdeCompiler work on windows
 _ modify build instructions for the many changes
 _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 
@@ -253,6 +251,8 @@ _ test rxtx on linux with sun vm
 
 0058
 
+
+_ see if mods to PdeCompiler work on windows
 
 _ video.pixels don't seem to have high bytes set
 _   so fill(video.pixels[blah]) doesn't work
@@ -299,6 +299,10 @@ bf b o   what's with the 2 blank lines on startup?
 
 
 macosx
+_ test more to see if runtime exceptions are coming through
+_ track down error in PdeCompiler for message parsing
+_   was missing the error about a package being gone
+_   comment out /System/Library/ code to track that down
 _ build gl4java for java 1.4
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
