@@ -1,3 +1,43 @@
+moved to sourceforge by arielm 
+
+
+BAGEL / Bugs
+
+   b _ bezier is broken for > 4 points
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042201137
+
+   b _ image(img, x, y) in CENTER_DIAMETER is actually center radius
+   b _    should make sure that x, y just makes it proper size
+
+   b _ simage() is screwy.. 
+   b _   its invocation is broken (image_mode can't be two things at once)
+   b _   doesn't actually use image_mode for placement
+   b _   also doesn't support RGBA
+
+   b _ smooth images drawing strangely (missing first line of pixels)
+   b _   also smoothed even if not distorted
+   b _   aliased and anti-aliased images don't line up
+   b _     text (text04) marching around strangely
+   b _ problems with u/v are likely to also be there for colors
+   b _   u/v should be affected by w for proper perspective
+   b _ nonsmooth frame around circle gets drawn 8x away
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050451728
+   b _ texture weirdness at 90 degree angles
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
+   b _ sphere() and other polygons don't connect flush with one another
+   b _   could hack by making each slightly larger than necessary
+
+   b _ repair lines (even if slow)
+   b _   single pixel lines have no alpha and no z
+   b _   fix all the random line types to support alpha
+
+   b _ anti-aliasing. smooth(), noSmooth() 
+   b _   need to verify that this works consistently throughout
+
+   b _ alpha. fill(r, g, b, a), stroke(r, g, b, a),
+   b _   need to verify that this works consistently throughout
+
+
 0055
 X incorporated (but not yet tested) net code
 X how to include sign with nf()
