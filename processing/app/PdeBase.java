@@ -216,6 +216,7 @@ public class PdeBase extends Frame implements ActionListener {
     saveAsMenuItem = new MenuItem("Save as...", new MenuShortcut('S', true));
     menu.add(saveMenuItem);
     menu.add(saveAsMenuItem);
+    menu.add(new MenuItem("Rename..."));
     //menu.add(new MenuItem("Save", new MenuShortcut('S')));
     //menu.add(new MenuItem("Save as...", new MenuShortcut('S', true)));
     //menu.add(new MenuItem("Rename", new MenuShortcut('S', true)));
@@ -750,7 +751,10 @@ public class PdeBase extends Frame implements ActionListener {
       editor.doSave();
 
     } else if (command.equals("Save as...")) {
-      editor.skSaveAs();
+      editor.skSaveAs(false);
+
+    } else if (command.equals("Rename...")) {
+      editor.skSaveAs(true);
 
       /*
     } else if (command.equals("Rename")) {
