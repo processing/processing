@@ -32,6 +32,8 @@ import java.awt.image.*;
 //import java.io.*;
 
 
+// Graphics, GeneralPath, AffineTransform, BasicStroke, Graphics2D
+
 public class PGraphics2 extends PGraphics {
 
   Graphics2D graphics;
@@ -371,23 +373,38 @@ public class PGraphics2 extends PGraphics {
 
 
   public void point(float x, float y) {
+    graphics.setColor(strokeColorObject);
     graphics.drawLine(x1, y1, x2, y2);
   }
 
+
   public void line(float x1, float y1, float x2, float y2) {
+    graphics.setColor(strokeColorObject);
     graphics.drawLine(x1, y1, x2, y2);
   }
+
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-
+    // TODO
   }
+
 
   public void rect(float x1, float y1, float x2, float y2) {
+    if (fill) {
+      graphics.setColor(fillColorObject);
+      graphics.fillRect(x1, y1, x2, y2);
+    }
+    if (stroke) {
+      graphics.setColor(strokeColorObject);
+      graphics.drawRect(x1, y1, x2, y2);
+    }
   }
+
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
+
   }
 
   public void image(PImage image, float x1, float y1) {
@@ -622,21 +639,30 @@ public class PGraphics2 extends PGraphics {
   // STROKE/FILL/BACKGROUND
 
 
+  protected Color tintColorObject;
+  protected Color fillColorObject;
+  protected Color strokeColorObject;
+
   protected void calc_tint() {
     super.calc_tint();
     // ??? how to do this
+    tintColorObject = new Color(tintColor);
   }
 
   protected void calc_fill() {
     super.calc_fill();
-    graphics.setPaint(new Color(fillColor));
+    //graphics.setPaint(new Color(fillColor));
+    fillColorObject = new Color(fillColor);
   }
 
   protected void calc_stroke() {
     super.calc_stroke();
     ///graphics.setStroke(new Color(fillColor));
+    strokeColorObject = new Color(strokeColor);
   }
 
+
+  /*
   public void noTint() {
   }
 
@@ -645,6 +671,7 @@ public class PGraphics2 extends PGraphics {
 
   public void noStroke() {
   }
+  */
 
 
   public void background(PImage image) {
