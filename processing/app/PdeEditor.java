@@ -292,7 +292,9 @@ public class PdeEditor extends Panel {
 	    //System.out.println("pwindow activated");
 	    // editor doesn't necessarily have to be on top
 	    //presentationWindow.toBack();
-	    if (frame != null) frame.toFront();
+
+	    // don't move the editor window to the front after all
+	    //if (frame != null) frame.toFront();
 	    try {
 	      //((KjcEngine)(runner.engine)).window.toFront();
 	      engine.front();

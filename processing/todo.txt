@@ -28,46 +28,26 @@ X   remove 'extends' from kjcengine, make an instance of Main
 X     may need to subclass at.dms.kjc.Main to override the exit()
 X   make pdeengine a class
 X   remove pderunner, collapse into pdeengine
+X checked line z problem bug.. it's b/c single pixel lines have no z
+X fold simpleserial into BApplet
+X   set serial properties inside bagel in kjcengine
+o   sprint an sprintln functions
+X     nixed because they're too weird, don't make sense w/ actual use
+X   serial.messageReceived extra long crap in demo.pde (clean up?)
+X     improve simpleserial and clean up a bit
+X   need to have function to enable it in setup
+X   make i/o work just like mouse (event driven, with dflt behavior)
+X present mode should hide editor frame
 
-_ save window position (only during session) of sketch run window
-_ present mode should hide editor frame
-_ present mode doesn't work for draw()
+BUGS
+X mouse coords coming from window when outside applet.. bad!
+X   just removed the listeners on the window.. don't seem to be needed
 
-_ mouse coords coming from window when outside applet.. bad!
-void setup() { 
-  size(100,100); 
-} 
-void loop() {
-  fill(102);
-  rect(mouseX - 5, mouseY - 5, 10, 10);
-}
 
-triangle_strip, quad_strip are no filling without outlines
-> fill(204, 204, 0);
-> beginShape(TRIANGLE_STRIP);
-> vertex(30, 75);
-> vertex(40, 20);
-> vertex(50, 75);
-> vertex(60, 20);
-> vertex(70, 75);
-> vertex(80, 20);
-> vertex(90, 75);
-> endShape();
-
-_ box is not opaque
-> translate(58, 48, 0); 
-> rotateY(0.5);
-> box(40);
 
 bagel
-a _ fold simpleserial into BApplet
-a _   set serial properties inside bagel in kjcengine
-a _   sprint an sprintln functions
-a _   make i/o work just like mouse (event driven, with dflt behavior)
-a _   need to have function to enable it in setup
-a _   serial.messageReceived extra long crap in demo.pde (clean up?)
-a _     improve simpleserial and clean up a bit
-a _     document a bit more regarding its use
+a _ do some serial testing
+a _   document a bit more regarding its use
 a _   serial works poorly for starting/stopping applets
 a _     this is behaving strangely
 a _     breaks on every 2nd run when using serial apps (or others?)
@@ -87,6 +67,9 @@ a o   line wrapping (but save info for resize? noo..)
 a _ option to delete current project
 
 play
+a _ save window position (only during session) of sketch run window
+a _ present mode doesn't work for draw()
+a _ see if play being highlighted can be implemented again
 a _ shouldn't substitute f's for: "Univers76.vlw.gz";
 
 pde
@@ -192,7 +175,13 @@ b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
 b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 b _ implement clipping planes and clipping of objects
-_ clipping [may be needed for current genome browser project]
+b _ clipping [may be needed for current genome browser project]
+b _ box is not opaque
+b X   problem is that lines are drawn second
+b X   one pixel lines have no z value.. argh
+b   translate(58, 48, 0); 
+b   rotateY(0.5);
+b   box(40);
 
 
 BAGEL / medium

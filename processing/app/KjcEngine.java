@@ -660,9 +660,13 @@ public class KjcEngine extends PdeEngine {
 	window.add(applet);
 
 	// @#$((* java 1.3
+	// removed because didn't seem to be needed anymore
+	// also, was causing offset troubles
+	/*
 	window.addMouseListener(applet);
 	window.addMouseMotionListener(applet);
 	window.addKeyListener(applet);
+	*/
 
 	Dimension screen = 
 	  Toolkit.getDefaultToolkit().getScreenSize();
