@@ -28,6 +28,12 @@ X make a preference panel to set pde.properties stuff
 X new html code for eolas patent case
 X   move html to external file in the lib folder
 
+X re-enable line highlight
+X fix background color
+X get bracket highlighting to work 
+X why won't loop() go bold? -> java 1.4 problem on the mac
+_   test what it does on the pc
+
 goodbye macos9
 X posted to message board about it going away
 o leftover todos
