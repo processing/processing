@@ -127,31 +127,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
       }
     }
   }
-  /*
-  // there's a bug in the QTJAVA installer, that sets this
-  // to a bad value if no java has been installed. grr.
-  // as a result, it's better just to ignore it.
-  // keep this code around since may be re-enabled later
-  if (getenv("QTJAVA") != NULL) {
-    strcpy(env_qtjava, getenv("QTJAVA"));
-    if (env_qtjava[0] == '\"') {
-      // starting quote in qtjava.. almost always
-      env_qtjava++;
-
-      int len = strlen(env_qtjava);
-      if (env_qtjava[len-1] == '\"') {
-        env_qtjava[len-1] = 0;
-      } else {
-        // a starting quote but no ending quote..
-      }
-    }
-    int last = strlen(env_qtjava);
-    env_qtjava[last++] = ';';
-    env_qtjava[last] = 0;
-  } else {
-    env_qtjava[0] = 0;
-  }
-  */
 
   // NO! put quotes around contents of cp, because %s might have spaces in it.
   // don't put quotes in it, because it's setting the environment variable
@@ -163,7 +138,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           //"'"
 
           "%s"
-          //"%s"
+          "%s"
           //"%s"
 
           //"%s\\lib\\comm.jar;"
@@ -185,7 +160,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           // the first three %s args
           //local_jre_installed ? "java\\lib\\rt.jar;java\\lib\\jaws.jar;" : "", 
           local_jre_installed ? "java\\lib\\rt.jar;" : "", 
-          //qtjava_path,
+          qtjava_path,
           //env_classpath, 
 
           // the next several %s args
