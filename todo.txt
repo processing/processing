@@ -215,17 +215,18 @@ _   write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 
 
+windows
+_ see if mods to PdeCompiler work on windows
+_ modify build instructions for the many changes
+_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+
+
 linux
 _ make mention that linux is i386
 _ bring linux up to 1.4
 _   grab rxtx for linux and include with distribution
 _ make sure a copy of jikes is included
 _ test rxtx on linux with sun vm
-
-
-windows
-_ modify build instructions for the many changes
-_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 
 
 ..................................................................
