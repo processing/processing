@@ -115,7 +115,12 @@ _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
 
+_ color channels seem to be swapped on windows in displaying image example
+_   check on the mac to see what it looks like
+
 _ get text working again
+_   partially the problem is with ALPHA images
+_     how should they be stored internally
 _   also colored text, requires tint() to work properly
 
 _ move textMode and textSpace back out of PFont

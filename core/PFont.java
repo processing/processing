@@ -195,8 +195,8 @@ public class PFont implements PConstants {
           //images[i].pixels[y * twidth + x] = valu;
 
           images[i].pixels[y * twidth + x] =
-            valu;
-            //(valu << 24) | 0xFFFFFF;  // windows
+            //valu;
+            (valu << 24) | 0xFFFFFF;  // windows
             //0xFFFFFF00 | valu;  // macosx
 
           //(valu << 24) | (valu << 16) | (valu << 8) | valu;
