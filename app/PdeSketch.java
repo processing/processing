@@ -241,15 +241,6 @@ public class PdeSketch {
 
   boolean renamingCode;
 
-  /*
-  public void nameCode(String newName) {
-    if (renamingCode) {
-      renameCode2(newName);
-    } else {
-      newCode2(newName);
-    }
-  }
-  */
 
   public void newCode() { 
     //System.out.println("new code");
@@ -279,8 +270,12 @@ public class PdeSketch {
    * where they diverge.
    */
   public void nameCode(String newName) {
-    // if renaming to the same thing as before, just ignore
-    if (renamingCode && newName.equals(current.name)) {
+    // if renaming to the same thing as before, just ignore.
+    // also ignoring case here, because i don't want to write 
+    // a bunch of special stuff for each platform
+    // (osx is case insensitive but preserving, windows insensitive,
+    // *nix is sensitive and preserving.. argh)
+    if (renamingCode && newName.equalsIgnoreCase(current.name)) {
       // exit quietly for the 'rename' case.
       // if it's a 'new' then an error will occur down below
       return;
@@ -303,6 +298,14 @@ public class PdeSketch {
     } else {
       newFilename = newName + ".pde";
       newFlavor = PDE;
+    }
+
+    // dots are allowed for the .pde and .java, but not in general
+    // so make sure the user didn't name things poo.time.pde
+    // or something like that (nothing against poo time)
+    if (newName.indexOf('.') != -1) {
+      newName = PdeSketchbook.sanitizedName(newName);
+      newFilename = newName + ((newFlavor == PDE) ? ".pde" : ".java");
     }
 
     // create the new file, new PdeCode object and load it
@@ -1016,14 +1019,12 @@ public class PdeSketch {
                                (i == 0) ? suggestedClassName : null, 
                                importPackageList);
           if (className == null) {
-            // TODO this is temporary for debugging
-            System.err.println("no class found in " + code[i].name);
-            /*
-            System.err.println("class could not be determined for " + 
-                               code[i].name + " hopefully an error has " + 
-                               "already been reported.");
-            return null;
-            */
+            // this situation might be perfectly fine, 
+            // (i.e. if the file is empty)
+            System.out.println("No class found in " + code[i].name);
+            System.out.println("(any code in that file will be ignored)");
+            System.out.println();
+
           } else {
             code[i].preprocName = className + ".java";
           }
@@ -1031,7 +1032,7 @@ public class PdeSketch {
           if (i == 0) {
             // store this for the compiler and the runtime
             primaryClassName = className;
-            System.out.println("primary class " + primaryClassName);
+            //System.out.println("primary class " + primaryClassName);
 
             // check if the 'main' file is in java mode
             if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
@@ -1095,7 +1096,7 @@ public class PdeSketch {
     //
     PdeCompiler compiler = new PdeCompiler();
     boolean success = compiler.compile(this, buildPath);
-    System.out.println("success = " + success + " ... " + primaryClassName);
+    //System.out.println("success = " + success + " ... " + primaryClassName);
     return success ? primaryClassName : null;
   }
 

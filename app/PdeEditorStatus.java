@@ -333,7 +333,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
               //System.out.println("consuming event");
               event.consume();
 
-            } else if ((c == '_') ||
+            } else if ((c == '_') || (c == '.') ||  // allow .pde and .java
                        ((c >= 'A') && (c <= 'Z')) ||
                        ((c >= 'a') && (c <= 'z'))) {
               // everything fine, catches upper and lower
