@@ -22,21 +22,23 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import processing.core.*;
+
 import java.awt.*; // for window 
 import java.awt.event.*; // also for window
 import java.io.*;
 import java.lang.reflect.*;
 
-#ifndef RXTX
-import javax.comm.*;
-#else
-import gnu.io.*;
-#endif
+//#ifndef RXTX
+//import javax.comm.*;
+//#else
+//import gnu.io.*;
+//#endif
 
 
 public class PdeRuntime implements PdeMessageConsumer {
 
-  BApplet applet;
+  PApplet applet;
   PdeException exception;
   Window window;
   PrintStream leechErr;
@@ -77,11 +79,11 @@ public class PdeRuntime implements PdeMessageConsumer {
       if (sketch.externalRuntime) {
         // if there was a saved location (this guy has been run more than
         // once) then windowLocation will be set to the last position of
-        // the sketch window. this will be passed to the BApplet runner
+        // the sketch window. this will be passed to the PApplet runner
         // using something like --external=e30,20 where the e stands for
         // exact. otherwise --external=x,y for just the regular positioning.
         String location = (windowLocation != null) ? 
-          (BApplet.EXTERNAL_EXACT_LOCATION + 
+          (PApplet.EXTERNAL_EXACT_LOCATION + 
            windowLocation.x + "," + windowLocation.y) : 
           (x1 + "," + y1);      
 
@@ -90,8 +92,8 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-Djava.library.path=" + sketch.libraryPath,  // might be ""
           "-cp",
           sketch.classPath,
-          "BApplet",
-          BApplet.EXTERNAL_FLAG + location,
+          "PApplet",
+          PApplet.EXTERNAL_FLAG + location,
           sketch.mainClassName
         };
 
@@ -103,21 +105,23 @@ public class PdeRuntime implements PdeMessageConsumer {
       } else {
         //Class c = Class.forName(className);
         Class c = Class.forName(sketch.mainClassName);
-        applet = (BApplet) c.newInstance();
+        applet = (PApplet) c.newInstance();
 
-        // replaces setRuntime with BApplet having leechErr [fry]
+        // replaces setRuntime with PApplet having leechErr [fry]
         applet.leechErr = leechErr;
 
         // has to be before init
         //applet.serialProperties(PdePreferences.properties);
         applet.init();
         if (applet.exception != null) {
+          /*
+            TODO: fix me
           if (applet.exception instanceof PortInUseException) {
             throw new PdeException("Another program is already " +
                                    "using the serial port.");
           } else {
-            throw new PdeException(applet.exception.getMessage());
-          }
+          */
+          throw new PdeException(applet.exception.getMessage());
         }
         applet.start();
 
@@ -208,8 +212,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         int appletWidth = applet.width;
         int appletHeight = applet.height;
         if ((appletWidth == 0) || (appletHeight == 0)) {
-          appletWidth = BApplet.DEFAULT_WIDTH;
-          appletWidth = BApplet.DEFAULT_HEIGHT;
+          appletWidth = PApplet.DEFAULT_WIDTH;
+          appletWidth = PApplet.DEFAULT_HEIGHT;
         }
         */
 
@@ -273,7 +277,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
       // mod by fry for removal of KjcEngine
       applet.finished = true;
-      leechErr.println(BApplet.LEECH_WAKEUP);
+      leechErr.println(PApplet.LEECH_WAKEUP);
       e.printStackTrace(this.leechErr);
     }
   }
@@ -332,16 +336,16 @@ public class PdeRuntime implements PdeMessageConsumer {
 
 
   public void message(String s) {
-    // this is BApplet sending a message (via System.out.println)
+    // this is PApplet sending a message (via System.out.println)
     // that signals that the applet has been quit.
-    if (s.indexOf(BApplet.EXTERNAL_QUIT) == 0) {
+    if (s.indexOf(PApplet.EXTERNAL_QUIT) == 0) {
       editor.doClose();
       return;
     }
 
-    // this is the BApplet sending us a message that the applet
+    // this is the PApplet sending us a message that the applet
     // is being moved to a new window location
-    if (s.indexOf(BApplet.EXTERNAL_MOVE) == 0) {
+    if (s.indexOf(PApplet.EXTERNAL_MOVE) == 0) {
       String nums = s.substring(s.indexOf(' ') + 1);
       int space = nums.indexOf(' ');
       int left = Integer.parseInt(nums.substring(0, space));
@@ -354,9 +358,9 @@ public class PdeRuntime implements PdeMessageConsumer {
     //System.err.println("message " + s.length() + ":" + s);
     if (s.length() > 2) System.err.println(s);
 
-    // this is BApplet sending a message saying "i'm about to spew 
-    // a stack trace because an error occurred during BApplet.run()"
-    if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
+    // this is PApplet sending a message saying "i'm about to spew 
+    // a stack trace because an error occurred during PApplet.run()"
+    if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
       // newMessage being set to 'true' means that the next time 
       // message() is called, expect the first line of the actual
       // error message & stack trace to be sent from the applet.
@@ -387,8 +391,8 @@ public class PdeRuntime implements PdeMessageConsumer {
 java.lang.NullPointerException
         at javatest.<init>(javatest.java:5)
         at Temporary_2425_1153.draw(Temporary_2425_1153.java:11)
-        at BApplet.nextFrame(BApplet.java:481)
-        at BApplet.run(BApplet.java:428)
+        at PApplet.nextFrame(PApplet.java:481)
+        at PApplet.run(PApplet.java:428)
         at java.lang.Thread.run(Unknown Source)
       */
 
