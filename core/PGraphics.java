@@ -200,7 +200,7 @@ public class PGraphics extends PImage
 
   // vertices
   static final int DEFAULT_VERTICES = 512;
-  float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
+  public float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   int vertex_count;  // total number of vertices
   int vertex_start;  // pos of first vertex of current shape in vertices array
   int vertex_end;    // total number of vertex in current shape
@@ -217,8 +217,8 @@ public class PGraphics extends PImage
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
   PTriangle triangle; // used for rendering
-  int triangles[][] = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
-  int triangles_count;   // total number of triangles
+  public int triangles[][] = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
+  public int triangleCount;   // total number of triangles
 
   // other options
   public boolean clip = true;
@@ -425,7 +425,7 @@ public class PGraphics extends PImage
 
       // init triangles
       triangle = new PTriangle(this);
-      triangles_count = 0;
+      triangleCount = 0;
 
       // textures
       texture_index = 0;
@@ -553,7 +553,7 @@ public class PGraphics extends PImage
       line.reset();
 
       // reset triangles
-      triangles_count = 0;
+      triangleCount = 0;
       triangle.reset();
 
       // reset textures
@@ -582,7 +582,7 @@ public class PGraphics extends PImage
         //quick_sort_triangles();
 
         // RENDER TRIANGLES
-        for (int i = 0; i < triangles_count; i ++) {
+        for (int i = 0; i < triangleCount; i ++) {
           //System.out.println("rendering triangle " + i);
 
           float a[] = vertices[triangles[i][VA]];
@@ -703,26 +703,26 @@ public class PGraphics extends PImage
 
   protected final void add_triangle(int a, int b, int c) {
 
-    if (triangles_count == triangles.length) {
-      int temp[][] = new int[triangles_count<<1][TRIANGLE_FIELD_COUNT];
-      System.arraycopy(triangles, 0, temp, 0, triangles_count);
+    if (triangleCount == triangles.length) {
+      int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
+      System.arraycopy(triangles, 0, temp, 0, triangleCount);
       triangles = temp;
       message(CHATTER, "allocating more triangles " + triangles.length);
     }
 
-    triangles[triangles_count][VA] = a;
-    triangles[triangles_count][VB] = b;
-    triangles[triangles_count][VC] = c;
+    triangles[triangleCount][VA] = a;
+    triangles[triangleCount][VB] = b;
+    triangles[triangleCount][VC] = c;
 
     if (textureImage == null) {
-      triangles[triangles_count][TEX] = -1;
+      triangles[triangleCount][TEX] = -1;
     } else {
-      triangles[triangles_count][TEX] = texture_index;
+      triangles[triangleCount][TEX] = texture_index;
     }
 
-    triangles[triangles_count][TI] = shape_index;
+    triangles[triangleCount][TI] = shape_index;
 
-    triangles_count ++;
+    triangleCount ++;
 
     return;
   }
@@ -952,7 +952,7 @@ public class PGraphics extends PImage
         line.reset();
         lines_count = 0;
         triangle.reset();
-        triangles_count = 0;
+        triangleCount = 0;
       }
 
     } else {  // OLD_GRAPHICS
@@ -1651,7 +1651,7 @@ public class PGraphics extends PImage
           //line3dClip();
       //}
 
-      //for (int i = 0; i < triangles_count; i ++) {
+      //for (int i = 0; i < triangleCount; i ++) {
       //}
     //}
 
@@ -1688,7 +1688,7 @@ public class PGraphics extends PImage
     // render all triangles in current shape
     if (_fill) {
 
-      for (int i = 0; i < triangles_count; i ++) {
+      for (int i = 0; i < triangleCount; i ++) {
         float a[] = vertices[triangles[i][VA]];
         float b[] = vertices[triangles[i][VB]];
         float c[] = vertices[triangles[i][VC]];
@@ -4472,26 +4472,42 @@ public class PGraphics extends PImage
   // CAMERA METHODS
 
 
+  /**
+   * Set matrix mode to the camera matrix 
+   * (instead of the current transformation matrix).
+   * This means applyMatrix, resetMatrix etc 
+   * will affect the camera. You'll need to call 
+   * resetMatrix() if you want to completely change
+   * the camera's settings.
+   */
   public void beginCamera() {
-    resetMatrix();
   }
+
 
   public void cameraMode(int icameraMode) {
     camera_mode = icameraMode;  // this doesn't do much
 
     if (camera_mode == PERSPECTIVE) {
       beginCamera();
+      resetMatrix();
       perspective(fov, aspect, nearDist, farDist);
       lookat(eyeX, eyeY, eyeDist,  eyeX, eyeY, 0,  0, 1, 0);
       endCamera();
 
     } else if (camera_mode == ORTHOGRAPHIC) {
       beginCamera();
+      resetMatrix();
       ortho(0, width, 0, height, -10, 10);
       endCamera();
     }
   }
 
+
+  /**
+   * Record the current settings into the camera matrix.
+   * And set the matrix mode back to the current
+   * transformation matrix. After which, the CTM will reset.
+   */
   public void endCamera() {
     p00 = m00; p01 = m01; p02 = m02; p03 = m03;
     p10 = m10; p11 = m11; p12 = m12; p13 = m13;
@@ -4615,7 +4631,9 @@ public class PGraphics extends PImage
   // CAMERA TRANSFORMATIONS
 
 
-  // based on mesa, matrix.c
+  /**
+   * Same as gluOrtho(). Implementation based on Mesa's matrix.c
+   */
   public void ortho(float left, float right, 
                     float bottom, float top,
                     float near, float far) {
@@ -4823,14 +4841,19 @@ public class PGraphics extends PImage
   }
 
 
+  /**
+   * This will scale in all three dimensions, but not set the 
+   * dimensions higher than two, in case this is still 2D mode.
+   */
   public void scale(float s) {
-    if (dimensions == 3) {
-      applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
+    //if (dimensions == 3) {
+    applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
+    if (dimensions < 2) dimensions = 2;
 
-    } else {
-      dimensions = 2;
-      applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
-    }
+    //} else {
+    //dimensions = 2;
+    //applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    //}
 
     // figure out whether 2D or 3D matrix
     //scale(xyz, xyz, xyz); 
@@ -5322,12 +5345,16 @@ public class PGraphics extends PImage
   // DEPTH and LIGHTS
 
 
+  /** semi-placeholder */
   public void depth() {
     depth = true;
+    dimensions = 3;
   }
 
+  /** semi-placeholder */
   public void noDepth() {
     depth = false;
+    dimensions = 0;
   }
 
 
