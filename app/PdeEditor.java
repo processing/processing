@@ -199,7 +199,8 @@ public class PdeEditor extends JFrame
 
     pain.add("West", leftPanel);
     */
-    pain.add("West", new PdeEditorButtons(this));
+    buttons = new PdeEditorButtons(this);
+    pain.add("West", buttons);
 
     JPanel rightPanel = new JPanel();
     rightPanel.setLayout(new BorderLayout());
@@ -341,7 +342,7 @@ public class PdeEditor extends JFrame
       });
 
     // can this happen here?
-    restorePreferences();
+    //restorePreferences();
   }
 
 
@@ -380,6 +381,7 @@ public class PdeEditor extends JFrame
     }
 
     if (windowPositionInvalid) {
+      System.out.println("using default size");
       int windowH = PdePreferences.getInteger("default.window.height");
       int windowW = PdePreferences.getInteger("default.window.width");
       setBounds((screen.width - windowW) / 2, 
@@ -408,6 +410,8 @@ public class PdeEditor extends JFrame
       } else {
         skNew();
       }
+    } else {
+      skNew();
     }
 
 
@@ -504,8 +508,6 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    //sketchbookMenu = new JMenu("Open");
-    //menu.add(sketchbookMenu);
     menu.add(sketchbook.rebuildMenu());
 
     saveMenuItem = newMenuItem("Save", 'S');
@@ -532,8 +534,6 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    //menu.addSeparator();
-
     exportMenu = buildExportMenu();
     menu.add(exportMenu);
 
@@ -547,10 +547,10 @@ public class PdeEditor extends JFrame
     item.setEnabled(false);
     menu.add(item);
 
-    menu.addSeparator();
-
     // macosx already has its own preferences and quit menu
     if (PdeBase.platform != PdeBase.MACOSX) {
+      menu.addSeparator();
+
       item = new JMenuItem("Preferences");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -569,8 +569,6 @@ public class PdeEditor extends JFrame
         });
       menu.add(item);
     }
-    //menu.addActionListener(this);
-    //menubar.add(menu);
     return menu;
   }
 
@@ -693,7 +691,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = new JMenuItem("Proce55ing.net", '5');
+    item = newMenuItem("Proce55ing.net", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           PdeBase.openURL("http://Proce55ing.net/");
@@ -1326,8 +1324,10 @@ public class PdeEditor extends JFrame
     if (watcher != null) watcher.stop();
     //System.out.println("stop2");
     message(EMPTY);
-    //System.out.println("stop3");
-    buttons.clear();
+
+    // the buttons are still null during the constructor
+    /*if (buttons != null)*/ buttons.clear();
+
     //System.out.println("stop4");
     running = false;
     //System.out.println("NOT RUNNING");
@@ -1473,7 +1473,7 @@ public class PdeEditor extends JFrame
     switch (checking) {
     case SK_NEW: skNew2(); break;
     case SK_OPEN: skOpen2(openingPath, openingName); break;
-    case DO_OPEN: doOpen2(); break;
+      //case DO_OPEN: doOpen2(); break;
     case DO_QUIT: doQuit2(); break;
     }
     checking = 0;
@@ -1575,6 +1575,7 @@ public class PdeEditor extends JFrame
   }
 
 
+  /*
   public void doOpen() {
     checkModified(DO_OPEN);
   }
@@ -1599,6 +1600,7 @@ public class PdeEditor extends JFrame
 
     handleOpen(filename, new File(directory, filename), null);
   }
+  */
 
 
   protected void handleOpen(String isketchName, 
@@ -2384,7 +2386,7 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Cleanup temp files
+   * Cleanup temporary files
    */
   protected void cleanTempFiles() {
     if (tempBuildPath == null) return;
@@ -2450,8 +2452,6 @@ public class PdeEditor extends JFrame
 	  }
         });
       this.add(item);
-      
-      //this.addSeparator();
 
       item = new JMenuItem("Select All");
       item.addActionListener(new ActionListener() {
