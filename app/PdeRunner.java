@@ -103,6 +103,9 @@ public class PdeRunner implements Runnable {
 	//String buildPath = 
 	//editor.sketchFile.getParent() + File.separator + "build";
 	String buildPath = "lib" + File.separator + "build";  // TEMPORARY
+	File buildDir = new File(buildPath);
+	if (!buildDir.exists()) buildDir.mkdirs();
+
 	String dataPath = 
 	  editor.sketchFile.getParent() + File.separator + "data";
 
@@ -148,9 +151,7 @@ public class PdeRunner implements Runnable {
       editor.error(e);
 
     } catch (Exception e) {
-#ifndef KVM
       e.printStackTrace();
-#endif
       this.stop();
     }	
   }
