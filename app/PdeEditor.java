@@ -1313,8 +1313,7 @@ public class PdeEditor extends JPanel {
           try {
             wide = Integer.parseInt(result.group(1).toString());
             high = Integer.parseInt(result.group(2).toString());
-
-            System.out.println("width " + wide + " high " + high);
+            //System.out.println("width " + wide + " high " + high);
 
           } catch (NumberFormatException e) {
 
