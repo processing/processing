@@ -1,6 +1,9 @@
 0073
+X textureMode(NORMAL_SPACE)  screws up the image() command
+X   image() appears to require IMAGE_SPACE to function properly. 
 X added focusGained() and focusLost()
 _   add to preprocessor
+X lots of changes to internal naming of vars
 
 _ image("blah.jpg"); 
 _ loadImage() is broken on some machines
@@ -8,8 +11,6 @@ _   hacked for a fix in 72, but need to better coordinate with openStream()
 
 _ uv coords > 1 shouldn't clamp, they should just repeat ala opengl
 _   actually i think opengl has a setting for it
-_ textureMode(NORMAL_SPACE)  screws up the image() command
-_   image() appears to require IMAGE_SPACE to function properly. 
 
 _ fishwick bug with text() and shapes
 _   ellipses no longer completed when g.dimensions = 2 or 3,

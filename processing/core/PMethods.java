@@ -60,7 +60,7 @@ public interface PMethods {
 
   public void texture(PImage image);
 
-  public void textureMode(int texture_mode);
+  public void textureMode(int textureMode);
 
   public void normal(float nx, float ny, float nz);
 
