@@ -2558,18 +2558,18 @@ public class PGraphics extends PImage implements PConstants {
 
   class Path {
 
-    public void moveTo(float x, float y) {
+    public void moveTo(float x, float y) {  // ignore
     }
 
-    public void lineTo(float x, float y) {
+    public void lineTo(float x, float y) {  // ignore
     }
 
-    public void curveTo(float x1, float y1,
+    public void curveTo(float x1, float y1,  // ignore
                         float x2, float y2,
                         float x3, float y3) {
     }
 
-    public void closePath() {
+    public void closePath() {  // ignore
     }
   }
 

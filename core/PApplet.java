@@ -4656,11 +4656,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void defaults() {
-     g.defaults();
-  }
-
-
   public void beginFrame() {
      g.beginFrame();
   }
@@ -4671,8 +4666,43 @@ v              PApplet.this.stop();
   }
 
 
+  public void defaults() {
+     g.defaults();
+  }
+
+
+  public void hint(int which) {
+     g.hint(which);
+  }
+
+
+  public void unhint(int which) {
+     g.unhint(which);
+  }
+
+
+  public void beginShape() {
+     g.beginShape();
+  }
+
+
   public void beginShape(int kind) {
      g.beginShape(kind);
+  }
+
+
+  public void normal(float nx, float ny, float nz) {
+     g.normal(nx, ny, nz);
+  }
+
+
+  public void textureMode(int mode) {
+     g.textureMode(mode);
+  }
+
+
+  public void texture(PImage image) {
+     g.texture(image);
   }
 
 
@@ -4691,8 +4721,7 @@ v              PApplet.this.stop();
   }
 
 
-  public void vertex(float x, float y, float z,
-                     float u, float v) {
+  public void vertex(float x, float y, float z, float u, float v) {
      g.vertex(x, y, z, u, v);
   }
 
@@ -4714,21 +4743,6 @@ v              PApplet.this.stop();
 
   public void curveVertex(float x, float y, float z) {
      g.curveVertex(x, y, z);
-  }
-
-
-  public void normal(float nx, float ny, float nz) {
-     g.normal(nx, ny, nz);
-  }
-
-
-  public void textureMode(int mode) {
-     g.textureMode(mode);
-  }
-
-
-  public void texture(PImage image) {
-     g.texture(image);
   }
 
 
@@ -4761,6 +4775,11 @@ v              PApplet.this.stop();
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
      g.triangle(x1, y1, x2, y2, x3, y3);
+  }
+
+
+  public void rectMode(int mode) {
+     g.rectMode(mode);
   }
 
 
@@ -4802,14 +4821,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void bezier(float x1, float y1, float z1,
-                     float x2, float y2, float z2,
-                     float x3, float y3, float z3,
-                     float x4, float y4, float z4) {
-     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-  }
-
-
   public void box(float size) {
      g.box(size);
   }
@@ -4835,6 +4846,177 @@ v              PApplet.this.stop();
   }
 
 
+  public float bezierPoint(float a, float b, float c, float d, float t) {
+    return g.bezierPoint(a, b, c, d, t);
+  }
+
+
+  public float bezierTangent(float a, float b, float c, float d, float t) {
+    return g.bezierTangent(a, b, c, d, t);
+  }
+
+
+  public void bezier(float x1, float y1,
+                     float x2, float y2,
+                     float x3, float y3,
+                     float x4, float y4) {
+     g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
+  public void bezier(float x1, float y1, float z1,
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3,
+                     float x4, float y4, float z4) {
+     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+  }
+
+
+  public void bezierDetail(int detail) {
+     g.bezierDetail(detail);
+  }
+
+
+  public void curveDetail(int detail) {
+     g.curveDetail(detail);
+  }
+
+
+  public void curveTightness(float tightness) {
+     g.curveTightness(tightness);
+  }
+
+
+  public float curvePoint(float a, float b, float c, float d, float t) {
+    return g.curvePoint(a, b, c, d, t);
+  }
+
+
+  public float curveTangent(float a, float b, float c, float d,
+                            float t) {
+    return g.curveTangent(a, b, c, d, t);
+  }
+
+
+  public void curve(float x1, float y1,
+                    float x2, float y2,
+                    float x3, float y3,
+                    float x4, float y4) {
+     g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
+  public void curve(float x1, float y1, float z1,
+                    float x2, float y2, float z2,
+                    float x3, float y3, float z3,
+                    float x4, float y4, float z4) {
+     g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+  }
+
+
+  public void image(PImage image, float x, float y) {
+     g.image(image, x, y);
+  }
+
+
+  public void image(PImage image,
+                    float a, float b, float c, float d) {
+     g.image(image, a, b, c, d);
+  }
+
+
+  public void image(PImage image,
+                    float a, float b, float c, float d,
+                    int u1, int v1, int u2, int v2) {
+     g.image(image, a, b, c, d, u1, v1, u2, v2);
+  }
+
+
+  public void textFont(PFont which) {
+     g.textFont(which);
+  }
+
+
+  public void textFont(PFont which, float size) {
+     g.textFont(which, size);
+  }
+
+
+  public void textSize(float size) {
+     g.textSize(size);
+  }
+
+
+  public void textLeading(float leading) {
+     g.textLeading(leading);
+  }
+
+
+  public void textMode(int mode) {
+     g.textMode(mode);
+  }
+
+
+  public void textSpace(int space) {
+     g.textSpace(space);
+  }
+
+
+  public void text(char c, float x, float y) {
+     g.text(c, x, y);
+  }
+
+
+  public void text(char c, float x, float y, float z) {
+     g.text(c, x, y, z);
+  }
+
+
+  public void text(String s, float x, float y) {
+     g.text(s, x, y);
+  }
+
+
+  public void text(String s, float x, float y, float z) {
+     g.text(s, x, y, z);
+  }
+
+
+  public void text(String s, float x1, float y1, float x2, float y2) {
+     g.text(s, x1, y1, x2, y2);
+  }
+
+
+  public void text(String s, float x1, float y1, float z, float x2, float y2) {
+     g.text(s, x1, y1, z, x2, y2);
+  }
+
+
+  public void text(int num, float x, float y) {
+     g.text(num, x, y);
+  }
+
+
+  public void text(int num, float x, float y, float z) {
+     g.text(num, x, y, z);
+  }
+
+
+  public void text(float num, float x, float y) {
+     g.text(num, x, y);
+  }
+
+
+  public void text(float num, float x, float y, float z) {
+     g.text(num, x, y, z);
+  }
+
+
+  public void angleMode(int mode) {
+     g.angleMode(mode);
+  }
+
+
   public void translate(float tx, float ty) {
      g.translate(tx, ty);
   }
@@ -4855,18 +5037,18 @@ v              PApplet.this.stop();
   }
 
 
-  public void rotate(float angle) {
-     g.rotate(angle);
-  }
-
-
   public void rotateZ(float angle) {
      g.rotateZ(angle);
   }
 
 
-  public void rotate(float angle, float v0, float v1, float v2) {
-     g.rotate(angle, v0, v1, v2);
+  public void rotate(float angle) {
+     g.rotate(angle);
+  }
+
+
+  public void rotate(float angle, float vx, float vy, float vz) {
+     g.rotate(angle, vx, vy, vz);
   }
 
 
@@ -4897,6 +5079,12 @@ v              PApplet.this.stop();
 
   public void resetMatrix() {
      g.resetMatrix();
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+     g.applyMatrix(n00, n01, n02, n10, n11, n12);
   }
 
 
@@ -4998,16 +5186,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void background(PImage image) {
-     g.background(image);
-  }
-
-
-  public void clear() {
-     g.clear();
-  }
-
-
   public void lights() {
      g.lights();
   }
@@ -5051,5 +5229,192 @@ v              PApplet.this.stop();
 
   public void lightSpecular(int num, float x, float y, float z) {
      g.lightSpecular(num, x, y, z);
+  }
+
+
+  public void colorMode(int mode) {
+     g.colorMode(mode);
+  }
+
+
+  public void colorMode(int mode, float max) {
+     g.colorMode(mode, max);
+  }
+
+
+  public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ) {
+     g.colorMode(mode, maxX, maxY, maxZ);
+  }
+
+
+  public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ, float maxA) {
+     g.colorMode(mode, maxX, maxY, maxZ, maxA);
+  }
+
+
+  public void noTint() {
+     g.noTint();
+  }
+
+
+  public void tint(int rgb) {
+     g.tint(rgb);
+  }
+
+
+  public void tint(float gray) {
+     g.tint(gray);
+  }
+
+
+  public void tint(float gray, float alpha) {
+     g.tint(gray, alpha);
+  }
+
+
+  public void tint(float x, float y, float z) {
+     g.tint(x, y, z);
+  }
+
+
+  public void tint(float x, float y, float z, float a) {
+     g.tint(x, y, z, a);
+  }
+
+
+  public void noFill() {
+     g.noFill();
+  }
+
+
+  public void fill(int rgb) {
+     g.fill(rgb);
+  }
+
+
+  public void fill(float gray) {
+     g.fill(gray);
+  }
+
+
+  public void fill(float gray, float alpha) {
+     g.fill(gray, alpha);
+  }
+
+
+  public void fill(float x, float y, float z) {
+     g.fill(x, y, z);
+  }
+
+
+  public void fill(float x, float y, float z, float a) {
+     g.fill(x, y, z, a);
+  }
+
+
+  public void strokeWeight(float weight) {
+     g.strokeWeight(weight);
+  }
+
+
+  public void strokeJoin(int join) {
+     g.strokeJoin(join);
+  }
+
+
+  public void strokeCap(int cap) {
+     g.strokeCap(cap);
+  }
+
+
+  public void noStroke() {
+     g.noStroke();
+  }
+
+
+  public void stroke(int rgb) {
+     g.stroke(rgb);
+  }
+
+
+  public void stroke(float gray) {
+     g.stroke(gray);
+  }
+
+
+  public void stroke(float gray, float alpha) {
+     g.stroke(gray, alpha);
+  }
+
+
+  public void stroke(float x, float y, float z) {
+     g.stroke(x, y, z);
+  }
+
+
+  public void stroke(float x, float y, float z, float a) {
+     g.stroke(x, y, z, a);
+  }
+
+
+  public void background(int rgb) {
+     g.background(rgb);
+  }
+
+
+  public void background(float gray) {
+     g.background(gray);
+  }
+
+
+  public void background(float x, float y, float z) {
+     g.background(x, y, z);
+  }
+
+
+  public void background(PImage image) {
+     g.background(image);
+  }
+
+
+  public void clear() {
+     g.clear();
+  }
+
+
+  public final float alpha(int what) {
+    return g.alpha(what);
+  }
+
+
+  public final float red(int what) {
+    return g.red(what);
+  }
+
+
+  public final float green(int what) {
+    return g.green(what);
+  }
+
+
+  public final float blue(int what) {
+    return g.blue(what);
+  }
+
+
+  public final float hue(int what) {
+    return g.hue(what);
+  }
+
+
+  public final float saturation(int what) {
+    return g.saturation(what);
+  }
+
+
+  public final float brightness(int what) {
+    return g.brightness(what);
   }
 }
