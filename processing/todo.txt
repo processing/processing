@@ -19,7 +19,21 @@ X re-implement sketchModified yet again (using keylistener)
 X set font on textarea in case things break
 X need examples to work for submenus (casey's got too many)
 
+_ remove .class files on save as [dimitre]
+When I am working in a project and I save it with another name, 
+all the old files are copyied to new directory, and some of the old 
+unused .class files and images remains inside new project JAR files. 
+
+_ pmouseX should be set at the end of loop(), not on mouse movement
+
+_ use date in the sketch name sketch_021104 
+_   with a _2 if needed or '021104a' '021104b' etc
+_   when using save as, allow to remove the old (numbered) sketch
+
+_ method of collapsing history for useful versions
+_   archive associated files as well.. data/etc
 _ exception when trying to write to stdout
+_ set frame title of launched window to the name of the sketch
 
 bagel
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
@@ -33,13 +47,15 @@ _ make bagel usable on its own w/o applet
 _   but retain functionality, ie. image i/o
 
 pde
+_ "color.jpg" or "int.jpg" causes trouble
+_ "http://acg.media.mit.edu" doesn't work because of //
+_ subst Image -> BImage, Font -> BFont
+
 _ auto indent on next line no longer works
 _ tabs no longer convert to 2 spaces
 _ balance parens is no longer available
 
 _ better default size than 300x300 when starting up first time
-_ "color.jpg" or "int.jpg" causes trouble
-_ subst Image -> BImage, Font -> BFont
 _ better message for PortInUseException (full explanation)
 _ split KjcEngine into three parts
 _ move build directory to root in cvs (on server)
@@ -51,6 +67,8 @@ _ talk to casey about better default colors
 windows
 _ windows 95/98/ME seems to be broken
 _   ME seems to be very broken
+_ lockup/freezes (mKoser and zeitgeist)
+_   jre icon not appearing in the systray
 
 macosx 
 _ put mac rxtx inside the p5 folder (hide it?)
@@ -96,6 +114,19 @@ _ long list from frederik (fdb)
   line to the end of the following line. It doesn't extend the
   selection when pressed twice. It also selects the line under the
   current line. 
+
+some further ahead..
+_ put processing/bagel into sourceforge cvs
+_ bring cbagel up to par
+_ modify cbagel for opie
+_ would be interesting to build pre-processor for java p5
+_   but that converts into cpp version of bagel apps.. mmm
+_ update cbagel to current bagel status
+_ add update() style application (called once at start, then only when queued)
+_   still a threaded app? just doesn't update inside loop
+_ get gcc tied into processing
+_ java disassembly inside p5
+_   and assmebling it back again
 
 
 KEEP AN EYE OUT...
@@ -682,6 +713,16 @@ BXSocket, BXServerSocket
   BXNetwork
 
 BXSerial
+
+> - playback of samples :
+>     - methods: startSound (loop_num, start_ms, end_ms) , stopSound(),
+> volume() , pan()
+>     - properties: duration
+>     - formats: wav ( mp3 would be nice for compression )
+>     - events: onSoundEnd(), onSoundLoop()
+>
+> - synthesis (generating waves, filtering waves) would be wonderful to have
+> as well, but i think that samples should come first.
 
 BXSound, BXSampler or BXAudio
   play aiff or mp3 sound with a single command
