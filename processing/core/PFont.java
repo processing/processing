@@ -563,4 +563,259 @@ public class PFont implements PConstants {
       if (yy > h) return;  // too big for box
     }
   }
+
+
+  // .................................................................
+
+
+  /**
+   * Draw SCREEN_SPACE text on its left edge.
+   * This method is incomplete and should not be used.
+   */
+  public void ltext(String str, float x, float y, PGraphics parent) {
+    float startY = y;
+    int index = 0;
+    char previous = 0;
+
+    int length = str.length();
+    if (length > c.length) {
+      c = new char[length + 10];
+    }
+    str.getChars(0, length, c, 0);
+
+    while (index < length) {
+      if (c[index] == '\n') {
+	y = startY;
+	x += leading;
+        previous = 0;
+
+      } else {
+        ltext(c[index], x, y, parent);
+	y -= width(c[index]);
+        if (previous != 0)
+	  y -= kern(previous, c[index]);
+        previous = c[index];
+      }
+      index++;
+    }
+  }
+
+
+  /**
+   * Draw SCREEN_SPACE text on its left edge.
+   * This method is incomplete and should not be used.
+   */
+  public void ltext(char c, float x, float y, PGraphics parent) {
+    //PGraphics parent = g;
+    PFont font = this;
+
+    int glyph = font.index(c);
+    if (glyph == -1) return;
+
+    //int xx = (int) x + font.leftExtent[glyph];
+    //int yy = (int) y - font.topExtent[glyph];
+    // starting point on the screen
+    int xx = (int) x - font.topExtent[glyph];
+    //+ font.leftExtent[glyph];
+    //int yy = (int) y + font.leftExtent[glyph]; //- font.topExtent[glyph];
+    //int yy = (int)y;
+    int yy = (int) y - font.leftExtent[glyph];
+
+    // boundary of the character's pixel buffer to copy
+    int x0 = 0;
+    int y0 = 0;
+    int w0 = font.width[glyph];
+    int h0 = font.height[glyph];
+
+    // if the character is off the screen
+    if ((xx >= parent.width) || (yy >= parent.height) ||
+	(yy + w0 < 0) || (xx + h0 < 0)) return;
+	//(xx + w0 < 0) || (yy + h0 < 0)) return;
+
+    if (xx < 0) {  // if starting x is off screen
+      //x0 -= xx;  // chop that amount off of the image area to be copied
+      //w0 += xx;  // and reduce the width by that (negative) amount
+      y0 -= xx;
+      h0 += xx;
+      xx = 0;
+    }
+    if (yy < 0) {
+      //y0 -= yy;
+      //h0 += yy;
+      x0 -= yy;
+      w0 += yy;
+      yy = 0;
+    }
+    //if (xx + w0 > parent.width) {  // if the ending x is off screen
+    if (xx + h0 > parent.width) {  // if the ending x is off screen
+      //w0 -= ((xx + w0) - parent.width);
+      h0 -= ((xx + h0) - parent.width);
+    }
+    //if (yy + h0 > parent.height) {
+    if (yy + w0 > parent.height) {
+      //h0 -= ((yy + h0) - parent.height);
+      w0 -= ((yy + w0) - parent.height);
+    }
+
+    int fr = parent.fillRi;
+    int fg = parent.fillGi;
+    int fb = parent.fillBi;
+    int fa = parent.fillAi;
+
+    int pixels1[] = font.images[glyph].pixels;
+    int pixels2[] = parent.pixels;
+
+    // loop over the source pixels in the character image
+    // row & col is the row and column of the source image
+    // (but they become col & row in the target image)
+    for (int row = y0; row < y0 + h0; row++) {
+      for (int col = x0; col < x0 + w0; col++) {
+	int a1 = (fa * pixels1[row * font.twidth + col]) >> 8;
+	int a2 = a1 ^ 0xff;
+	int p1 = pixels1[row * font.width[glyph] + col];
+
+        try {
+          //int index = (yy + row-y0)*parent.width + (xx+col-x0);
+          int index = (yy + x0-col)*parent.width + (xx+row-y0);
+          //int index = (yy + col)*parent.width + (xx+row-y0);
+          int p2 = pixels2[index];
+
+          pixels2[index] = 
+            (0xff000000 | 
+             (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
+             (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
+             (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
+        } catch (ArrayIndexOutOfBoundsException e) {
+          System.out.println("out of bounds " + yy + " " + x0 + " " + col);
+        }
+      }
+    }
+  }
+
+
+  // .................................................................
+
+
+  /**
+   * Draw SCREEN_SPACE text on its right edge.
+   * This method is incomplete and should not be used.
+   */
+  public void rtext(String str, float x, float y, PGraphics parent) {
+    float startY = y;
+    int index = 0;
+    char previous = 0;
+
+    int length = str.length();
+    if (length > c.length) {
+      c = new char[length + 10];
+    }
+    str.getChars(0, length, c, 0);
+
+    while (index < length) {
+      if (c[index] == '\n') {
+	y = startY;
+	x += leading;
+        previous = 0;
+
+      } else {
+        rtext(c[index], x, y, parent);
+	y += width(c[index]);
+        if (previous != 0)
+	  y += kern(previous, c[index]);
+        previous = c[index];
+      }
+      index++;
+    }
+  }
+
+
+  /**
+   * Draw SCREEN_SPACE text on its right edge.
+   * This method is incomplete and should not be used.
+   */
+  public void rtext(char c, float x, float y, PGraphics parent) {
+    int glyph = index(c);
+    if (glyph == -1) return;
+
+    parent.stroke(150);
+    parent.line(x, y, x, y+10);
+
+    // starting point on the screen
+    int sx = (int) x + topExtent[glyph];
+    int sy = (int) y + leftExtent[glyph];
+
+    // boundary of the character's pixel buffer to copy
+    int px = 0;
+    int py = 0;
+    int pw = width[glyph];
+    int ph = height[glyph];
+
+    // if the character is off the screen
+    if ((sx + ph >= parent.width) || (sy >= parent.height) ||
+        (sy + pw < 0) || (sx < 0)) return;
+
+    // off the left of screen, cut off bottom of letter
+    if (sx < ph) {
+      //x0 -= xx;  // chop that amount off of the image area to be copied
+      //w0 += xx;  // and reduce the width by that (negative) amount
+      //py0 -= xx;  // if x = -3, cut off 3 pixels from the bottom
+      //ph0 += xx;
+      ph -= (ph - sx);
+      //sx = 0;
+    }
+    // off the right of the screen, cut off top of the letter
+    if (sx >= parent.width) {
+      int extra = sx - (parent.width-1);
+      py += extra;
+      ph -= extra;
+      sx = parent.width-1;
+    }
+    // off the top, cut off left edge of letter
+    if (sy < 0) {
+      int extra = -sy;
+      px += extra;
+      pw -= extra;
+      sy = 0;
+    }
+    // off the bottom, cut off right edge of letter
+    if (sy + pw >= parent.height-1) {
+      int extra = (sy + pw) - (parent.height-1);
+      pw -= extra;
+    }
+
+    int fr = parent.fillRi;
+    int fg = parent.fillGi;
+    int fb = parent.fillBi;
+    int fa = parent.fillAi;
+
+    int fpixels[] = images[glyph].pixels;
+    int spixels[] = parent.pixels;
+
+    // loop over the source pixels in the character image
+    // row & col is the row and column of the source image
+    // (but they become col & row in the target image)
+    for (int row = py; row < py + ph; row++) {
+      for (int col = px; col < px + pw; col++) {
+	int a1 = (fa * fpixels[row * twidth + col]) >> 8;
+	int a2 = a1 ^ 0xff;
+	int p1 = fpixels[row * width[glyph] + col];
+
+        try {
+          //int index = (yy + x0-col)*parent.width + (xx+row-y0);
+          //int index = (sy + px-col)*parent.width + (sx+row-py);
+          int index = (sy + px+col)*parent.width + (sx+row-py);
+          int p2 = spixels[index];
+
+          // x coord is backwards
+          spixels[index] = 
+            (0xff000000 | 
+             (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
+             (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
+             (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
+        } catch (ArrayIndexOutOfBoundsException e) {
+          System.out.println("out of bounds " + sy + " " + px + " " + col);
+        }
+      }
+    }
+  }
 }
