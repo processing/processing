@@ -14,6 +14,17 @@ ABOUT REV 0080
 - keywords have also been updated
 
 
+forgot to mention for previous releases:
+
+- to make a copy of an image, just use get(), which is the same as
+  get(0, 0, image.width, image.height)
+
+- copy(PImage, x, y) has been replaced by set(x, y, PImage) for better
+  parity with the get() methods.
+
+- macosx users can once again scroll downwards in the console, 
+  thanks to the little bar with the line numbers
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
