@@ -1356,7 +1356,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       }
 
       sketch = new PdeSketch(this, path);
-      exportAppItem.setEnabled(!sketch.isLibrary());
+      // TODO re-enable this once export application works
+      exportAppItem.setEnabled(false && !sketch.isLibrary());
       buttons.disableRun(sketch.isLibrary());
       header.rebuild();
       if (PdePreferences.getBoolean("console.auto_clear")) {
