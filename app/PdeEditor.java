@@ -912,11 +912,14 @@ public class PdeEditor extends JFrame
    * Show the (already created on app init) preferences window.
    */
   public void handlePrefs() {
-    // make sure this blocks until finished
-    preferences.showFrame();
+    // since this can't actually block, it'll hide
+    // the editor window while the prefs are open
+    preferences.showFrame(this);
+    // and then call applyPreferences if 'ok' is hit
+    // and then unhide
 
     // may need to rebuild sketch and other menus
-    applyPreferences();
+    //applyPreferences();
 
     // next have editor do its thing
     //editor.appyPreferences();
