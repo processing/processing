@@ -45,12 +45,7 @@ import com.apple.mrj.*;
  * general interaction with the system (launching URLs, loading 
  * files and images, etc) that comes from that.
  */
-public class PdeBase extends JFrame implements ActionListener
-#ifdef MACOS
-             , MRJAboutHandler
-             , MRJQuitHandler
-             , MRJPrefsHandler
-#endif
+public class PdeBase /*extends JFrame implements ActionListener*/
 {
   static final String VERSION = "0068 Alpha";
 
@@ -69,12 +64,6 @@ public class PdeBase extends JFrame implements ActionListener
   PdeEditor editor;
 
   //WindowAdapter windowListener;
-
-  //Menu serialMenu;
-  JMenuItem saveMenuItem;
-  JMenuItem saveAsMenuItem;
-  JMenuItem beautifyMenuItem;
-  //CheckboxMenuItem externalEditorItem;
 
   //Menu renderMenu;
   //CheckboxMenuItem normalItem, openglItem;
@@ -99,15 +88,7 @@ public class PdeBase extends JFrame implements ActionListener
   }
 
 
-  // hack for #@#)$(* macosx
-  public Dimension getMinimumSize() {
-    return new Dimension(500, 500);
-  }
-
-
   public PdeBase() {
-    super(WINDOW_TITLE);
-
 
     // figure out which operating system
 
@@ -150,25 +131,6 @@ public class PdeBase extends JFrame implements ActionListener
     }
 
 
-    // set the window icon
-
-    try {
-      icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
-      this.setIconImage(icon);
-    } catch (Exception e) { } // fail silently, no big whup
-
-
-    // add listener to handle window close box hit event
-
-    addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          handleQuit();
-        }
-      });
-    //frame.addWindowListener(windowListener);
-    //this.addWindowListener(windowListener);
-
-
     // load in preferences (last sketch used, window placement, etc)
 
     preferences = new PdePreferences();
@@ -206,364 +168,27 @@ public class PdeBase extends JFrame implements ActionListener
 
     // build the editor object
 
+    editor = new PdeEditor();
+    editor.pack();
+    editor.show();
+
+
     //editor = new PdeEditor(this);
     //getContentPane().setLayout(new BorderLayout());
     //getContentPane().add("Center", editor);
 
 
-#ifdef MACOS
-      // #@$*(@#$ apple.. always gotta think different
-      MRJApplicationUtils.registerAboutHandler(this);
-      MRJApplicationUtils.registerPrefsHandler(this);
-      MRJApplicationUtils.registerQuitHandler(this);
-#endif
-
     // load preferences and finish up
 
     // handle layout
-    this.pack();  // maybe this should be before the setBounds call
+    //this.pack();  // maybe this should be before the setBounds call
     // do window placement before loading sketch stuff
-    restorePreferences();
+    //restorePreferences();
 
     // now that everything is set up, open last-used sketch, etc.
-    editor.restorePreferences();
+    //editor.restorePreferences();
 
-    show();
-  }
-
-
-  public void restorePreferences() {
-    // figure out window placement
-
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    boolean windowPositionInvalid = false;
-
-    if (PdePreferences.get("last.screen.height") != null) {
-      // if screen size has changed, the window coordinates no longer
-      // make sense, so don't use them unless they're identical
-      int screenW = getInteger("last.screen.width");
-      int screenH = getInteger("last.screen.height");
-
-      if ((screen.width != screenW) || (screen.height != screenH)) {
-        windowPositionInvalid = true;
-      }
-    } else {
-      windowPositionInvalid = true;
-    }
-
-    if (windowPositionInvalid) {
-      int windowH = PdePreferences.getInteger("default.window.height");
-      int windowW = PdePreferences.getInteger("default.window.width");
-      setBounds((screen.width - windowW) / 2, 
-                (screen.height - windowH) / 2,
-                windowW, windowH);
-      // this will be invalid as well, so grab the new value
-      PdePreferences.setInteger("last.divider.location", 
-                                splitPane.getDividerLocation());
-    } else {
-      setBounds(PdePreferences.getInteger("last.window.x"), 
-                PdePreferences.getInteger("last.window.y"), 
-                PdePreferences.getInteger("last.window.width"), 
-                PdePreferences.getInteger("last.window.height"));
-    }
-
-    applyPreferences();
-  }
-
-
-  public void applyPreferences() {
-    rebuildSketchbookMenu(sketchbookMenu);
-  }
-
-
-  public void storePreferences() {
-    Rectangle bounds = getBounds();
-    PdePreferences.setInteger("last.window.x", bounds.x);
-    PdePreferences.setInteger("last.window.y", bounds.y);
-    PdePreferences.setInteger("last.window.width", bounds.width);
-    PdePreferences.setInteger("last.window.height", bounds.height);
-  }
-
-
-  // listener for sketchbk items uses getParent() to figure out
-  // the directories above it
-
-  class SketchbookMenuListener implements ActionListener {
-    String path;
-
-    public SketchbookMenuListener(String path) {
-      this.path = path;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      String name = e.getActionCommand();
-      editor.skOpen(path + File.separator + name, name);
-    }
-  }
-
-  public void rebuildSketchbookMenu() {
-    rebuildSketchbookMenu(sketchbookMenu);
-  }
-
-  public void rebuildSketchbookMenu(Menu menu) {
-    menu.removeAll();
-
-    try {
-      //MenuItem newSketchItem = new MenuItem("New Sketch");
-      //newSketchItem.addActionListener(this);
-      //menu.add(newSkechItem);
-      //menu.addSeparator();
-
-      sketchbookFolder = 
-        new File(PdePreferences.get("sketchbook.path", "sketchbook"));
-      sketchbookPath = sketchbookFolder.getAbsolutePath();
-      if (!sketchbookFolder.exists()) {
-        System.err.println("sketchbook folder doesn't exist, " + 
-                           "making a new one");
-        sketchbookFolder.mkdirs();
-      }
-
-      // files for the current user (for now, most likely 'default')
-
-      // header knows what the current user is
-      String userPath = sketchbookPath + 
-        File.separator + editor.userName;
-
-      File userFolder = new File(userPath);
-      if (!userFolder.exists()) {
-        System.err.println("sketchbook folder for '" + editor.userName + 
-                           "' doesn't exist, creating a new one");
-        userFolder.mkdirs();
-      }
-
-      /*
-      SketchbookMenuListener userMenuListener = 
-        new SketchbookMenuListener(userPath);
-
-      String entries[] = new File(userPath).list();
-      boolean added = false;
-      for (int j = 0; j < entries.length; j++) {
-        if (entries[j].equals(".") || 
-            entries[j].equals("..") ||
-            entries[j].equals("CVS")) continue;
-        //entries[j].equals(".cvsignore")) continue;
-        added = true;
-        if (new File(userPath, entries[j] + File.separator + 
-                     entries[j] + ".pde").exists()) {
-          MenuItem item = new MenuItem(entries[j]);
-          item.addActionListener(userMenuListener);
-          menu.add(item);
-        }
-        //submenu.add(entries[j]);
-      }
-      if (!added) {
-        MenuItem item = new MenuItem("No sketches");
-        item.setEnabled(false);
-        menu.add(item);
-      }
-      menu.addSeparator();
-      */
-      if (addSketches(menu, userFolder, false)) {
-        menu.addSeparator();
-      }
-      if (!addSketches(menu, sketchbookFolder, true)) {
-        MenuItem item = new MenuItem("No sketches");
-        item.setEnabled(false);
-        menu.add(item);
-      }
-
-      /*
-      // doesn't seem that refresh is worthy of its own menu item
-      // people can stop and restart p5 if they want to muck with it
-      menu.addSeparator();
-      MenuItem item = new MenuItem("Refresh");
-      item.addActionListener(this);
-      menu.add(item);
-      */
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  protected boolean addSketches(Menu menu, File folder, 
-                                /*boolean allowUser,*/ boolean root) 
-    throws IOException {
-    // skip .DS_Store files, etc
-    if (!folder.isDirectory()) return false;
-
-    String list[] = folder.list();
-    SketchbookMenuListener listener = 
-      new SketchbookMenuListener(folder.getAbsolutePath());
-
-    boolean ifound = false;
-
-    for (int i = 0; i < list.length; i++) {
-      if (list[i].equals(editor.userName) && root) continue;
-
-      if (list[i].equals(".") ||
-          list[i].equals("..") ||
-          list[i].equals("CVS")) continue;
-
-      File subfolder = new File(folder, list[i]);
-      if (new File(subfolder, list[i] + ".pde").exists()) {
-        MenuItem item = new MenuItem(list[i]);
-        item.addActionListener(listener);
-        menu.add(item);
-        ifound = true;
-
-      } else {  // might contain other dirs, get recursive
-        Menu submenu = new Menu(list[i]);
-        // needs to be separate var 
-        // otherwise would set ifound to false
-        boolean found = addSketches(submenu, subfolder, false);
-        if (found) {
-          menu.add(submenu);
-          ifound = true;
-        }
-      }
-    }
-    return ifound;
-  }
-
-
-  // interfaces for MRJ Handlers, but naming is fine 
-  // so used internally for everything else
-
-  public void handleAbout() {
-    //System.out.println("the about box will now be shown");
-    final Image image = getImage("about.jpg", this);
-    int w = image.getWidth(this);
-    int h = image.getHeight(this);
-    final Window window = new Window(this) {
-        public void paint(Graphics g) {
-          g.drawImage(image, 0, 0, null);
-
-          /*
-            // does nothing..
-          Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-          */
-
-          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
-          g.setColor(Color.white);
-          g.drawString(VERSION, 50, 30);
-        }
-      };
-    window.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          window.dispose();
-        }
-      });
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
-    window.show();
-  }
-
-
-  /**
-   * Show the (already created on app init) preferences window.
-   */
-  public void handlePrefs() {
-    // make sure this blocks until finished
-    preferences.showFrame();
-
-    // may need to rebuild sketch and other menus
-    applyPreferences();
-
-    // next have editor do its thing
-    editor.appyPreferences();
-  }
-
-
-  /** 
-   * Quit, but first ask user if it's ok. Also store preferences
-   * to disk just in case they want to quit. Final exit() happens 
-   * in PdeEditor since it has the callback from PdeEditorStatus.
-   */
-  public void handleQuit() {
-    storePreferences();
-    editor.storePreferences();
-
-    // this will save the prefs even if quit is cancelled, but who cares
-    PdePreferences.save();
-
-    // check to see if the person actually wants to quit
-    editor.doQuit();
-  }
-
-
-  /**
-   * Handle menu selections.
-   */
-  public void actionPerformed(ActionEvent event) {
-    String command = event.getActionCommand();
-    //System.out.println(command);
-
-    if (command.equals("New")) {
-      editor.skNew();
-      //editor.initiate(Editor.NEW);
-
-    } else if (command.equals("Save")) {
-      editor.doSave();
-
-    } else if (command.equals("Save as...")) {
-      editor.skSaveAs(false);
-
-    } else if (command.equals("Rename...")) {
-      editor.skSaveAs(true);
-
-    } else if (command.equals("Export to Web")) {
-      editor.skExport();
-
-    } else if (command.equals("Preferences")) {
-      handlePrefs();
-
-    } else if (command.equals("Quit")) {
-      handleQuit();
-
-    } else if (command.equals("Run")) {
-      editor.doRun(false);
-
-    } else if (command.equals("Present")) {
-      editor.doRun(true);
-
-    } else if (command.equals("Stop")) {    
-      if (editor.presenting) {
-        editor.doClose();
-      } else {
-        editor.doStop();
-      }
-    } else if (command.equals("Beautify")) {
-      editor.doBeautify();
-
-    } else if (command.equals("Add file...")) {
-      editor.addFile();
-
-    } else if (command.equals("Create font...")) {
-      new PdeFontBuilder(new File(editor.sketchDir, "data"));
-
-    } else if (command.equals("Show sketch folder")) {
-      openFolder(editor.sketchDir);
-
-    } else if (command.equals("Help")) {
-      openURL(System.getProperty("user.dir") + 
-              File.separator + "reference" + 
-              File.separator + "environment" +
-              File.separator + "index.html");
-
-    } else if (command.equals("Proce55ing.net")) {
-      openURL("http://Proce55ing.net/");
-
-    } else if (command.equals("Reference")) {
-      openURL(System.getProperty("user.dir") + File.separator + 
-              "reference" + File.separator + "index.html");
-
-    } else if (command.equals("About Processing")) {
-      handleAbout();
-    }
+    //show();
   }
 
 
@@ -691,7 +316,11 @@ public class PdeBase extends JFrame implements ActionListener
 
   //
 
-  // could also do showMessage with JOptionPane.INFORMATION_MESSAGE
+  static public void showMessage(String title, String message) {
+    if (title == null) title = "Message";
+    JOptionPane.showMessageDialog(this, message, title,
+                                  JOptionPane.INFORMATION_MESSAGE);
+  }
 
   //
 
@@ -718,12 +347,8 @@ public class PdeBase extends JFrame implements ActionListener
 
   //
 
-  // used by PdeEditorButtons, but probably more later
   static public Image getImage(String name, Component who) {
     Image image = null;
-    //if (isApplet()) {
-    //image = applet.getImage(applet.getCodeBase(), name);
-    //} else {
     Toolkit tk = Toolkit.getDefaultToolkit();
 
     if (PdeBase.platform == PdeBase.MACOSX) {
@@ -747,5 +372,120 @@ public class PdeBase extends JFrame implements ActionListener
       tracker.waitForAll();
     } catch (InterruptedException e) { }      
     return image;
+  }
+
+
+  // ...................................................................
+
+
+  static protected byte[] grabFile(File file) throws IOException {
+    int size = (int) file.length();
+    FileInputStream input = new FileInputStream(file);
+    byte buffer[] = new byte[size];
+    int offset = 0;
+    int bytesRead;
+    while ((bytesRead = input.read(buffer, offset, size-offset)) != -1) {
+      offset += bytesRead;
+      if (bytesRead == 0) break;
+    }
+    input.close();  // weren't properly being closed
+    input = null;
+    return buffer;
+  }
+
+
+  static protected void copyFile(File afile, File bfile) {
+    try {
+      FileInputStream from = new FileInputStream(afile);
+      FileOutputStream to = new FileOutputStream(bfile);
+      byte[] buffer = new byte[4096];
+      int bytesRead;
+      while ((bytesRead = from.read(buffer)) != -1) {
+        to.write(buffer, 0, bytesRead);
+      }
+      to.flush();
+      from.close(); // ??
+      from = null;
+      to.close(); // ??
+      to = null;
+
+#ifdef JDK13
+      bfile.setLastModified(afile.lastModified());  // jdk13 required
+#endif
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  static protected void copyDir(File sourceDir, File targetDir) {
+    String files[] = sourceDir.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+      File source = new File(sourceDir, files[i]);
+      File target = new File(targetDir, files[i]);
+      if (source.isDirectory()) {
+        target.mkdirs();
+        copyDir(source, target);
+#ifdef JDK13
+        target.setLastModified(source.lastModified());
+#endif
+      } else {
+        copyFile(source, target);
+      }
+    }
+  }
+
+  // cleanup temp files
+  //
+  //static protected void cleanTempFiles(String buildPath) {
+  //static protected void cleanTempFiles() {
+  protected void cleanTempFiles() {
+    if (tempBuildPath == null) return;
+
+    // if the java runtime is holding onto any files in the build dir, we
+    // won't be able to delete them, so we need to force a gc here
+    //
+    System.gc();
+
+    //File dirObject = new File(buildPath);
+    File dirObject = new File(tempBuildPath);
+
+    // note that we can't remove the builddir itself, otherwise
+    // the next time we start up, internal runs using PdeRuntime won't
+    // work because the build dir won't exist at startup, so the classloader
+    // will ignore the fact that that dir is in the CLASSPATH in run.sh
+    //
+    if (dirObject.exists()) {
+      removeDescendants(dirObject);
+    }
+  }
+
+  // remove all files in a directory
+  //
+  static protected void removeDescendants(File dir) {
+    String files[] = dir.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+      File dead = new File(dir, files[i]);
+      if (!dead.isDirectory()) {
+        if (!PdePreferences.getBoolean("editor.save_build_files", false)) {
+          if (!dead.delete()) {
+            // temporarily disabled
+            //System.err.println("couldn't delete " + dead);
+          }
+        }
+      } else {
+        removeDir(dead);
+        //dead.delete();
+      }
+    }
+  }
+
+  // remove all files in a directory and the dir itself
+  //
+  static protected void removeDir(File dir) {
+    //System.out.println("removing " + dir);
+    removeDescendants(dir);
+    dir.delete();
   }
 }
