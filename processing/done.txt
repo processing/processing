@@ -1,3 +1,61 @@
+0044
+X added optimized flat circle (not ellipse) function
+X   then removed it again because it's not quite finished
+X   need to be able to fill using the same function
+X added additional file i/o functions to bagel
+X   loadStrings and splitInts, splitFloats, etc
+X getStream is now loadStream
+X set bg/fg color of text editing area
+X add option for running with external editor
+X   sets text area to not editable, changes color
+X   gets new text on each run.. calls handleOpen2 or whatever
+X   disables save.. save as ?
+X organizing directories, save to other directories blows up
+X   for now, disallow the / or : characters
+X   there was a bug that required a noop() b/c of jikes or 1.3 problems
+X is problem w/ beautify that it has no menu event handler?
+X   write event handler, and make sure it doesn't work for external ed
+X don't popup offscreen if editor window is way left. 
+X   just make sure the x coord > 10 or so (if not presenting)
+X     if so, pop up window 50, 50 from upper left corner
+X   if it still won't fit, center the window on screen
+X don't throw exceptions for serial on startup if no serial available?
+o   gets upset on osx if rxtx not installed during menu building
+X   actually, it just throws UnsatisfiedLinkError
+X     make a note in the readme, particularly wrt macos
+X readme additions
+X   size() and background() need regular nums, no vars
+X   hidden features/niceties
+X     click sketch title to rename
+X     mention shift-run for present mode
+X   known issues
+X     macos sketch window resizing strangely
+X     win95/98/me version acts poorly or doesn't run
+X as approaches 1000 lines, editorconsole has arrayindexoutof bounds
+X console scroller obscured by window resizer intruding
+X arrow keys broken (but with shift they work..)
+X   hacked in basic arrow key support
+X include instructions for rxtx or the install itself
+X   just include the .pkg, since causing exceptions now
+X make sure space->underscore conversion working properly for 'save as'
+X   file names with a space get "_ " instead of a space ?
+X   under osx, consuming event doesn't work, so don't do it real time
+X sketch window resizing strangely
+X   can make width/height larger, but only height smaller
+X   check apple site for technote/bug listing
+X     jes grabbed examples for me
+X   getMinimumSize() on textarea is probably causing trouble
+X     better just to pre-empt it on the frame, b/c textarea didn't do much
+X apple-a for select all tries to quit
+X   can't reproduce
+X escape on presentation mode--no key events seem to be coming through
+X make default font size for editor the next size smaller
+X include names of all people who submitted bugs
+X use self-extractor and make sure no 8.3 filenames
+X use a .dmg to distribute 
+X   make sure no DS_Store files are included
+
+
 0043
 o arrow keys don't work in the textarea.. known issue
 X   add note to release notes
