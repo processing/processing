@@ -1,6 +1,7 @@
 PROCESSING DEVELOPMENT ENVIRONMENT
 
-(c) 2001-03 Massachusetts Institute of Technology 
+(c) 2001-03 Ben Fry and Casey Reas
+Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
 
 
@@ -38,11 +39,8 @@ lather, rinse, repeat as necessary.
 
 THANKS TO...
 
-all the people on the bboard who reported bugs for this release. 
-it's been really helpful for us. 
-
-also thanks to everyone who's been posting examples on the site, 
-we're excited about what we're seeing.
+thanks to the many people who have been helping us out. 
+it's huge. i'll get a nice long list of y'all in here soon.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -82,8 +80,14 @@ term "issue."
 first, be sure to check under the notes for your specific platform to
 make sure it isn't a known issue or that there isn't a simple fix.
 
-second, check the bboard to see if something related has been
-reported, or if there is already a workaround.
+note! avoid the urge to just email us at processing@media.mit.edu, 
+or sending mail to ben or casey directly. while you may prefer the
+privacy of an email, it's much quicker for you to ask the whole gang,
+who are super helpful. we also what we use to keep track of bugs, so
+we may just ask you to use the bboard anyway.
+
+ok where was i.. next, check the bboard to see if something related
+has been reported, or if there is already a workaround.
 
 best method is to post to the bulletin board at:
 http://proce55ing.net/discourse/
@@ -239,6 +243,8 @@ mouse wheel support only works if you're using java 1.4. the latest
 version of java will be available via the software update control
 panel.
 
+(actually this paragraph is only relevant if you want to try java 1.4,
+ since we wound up using 1.3 as the default for release 58)
 if you're having random troubles (exceptions being thrown, 
 screen painting weirdness, general confusion) you might want to 
 try running processing with java 1.3.1 instead of java 1.4. to do so, 
@@ -259,7 +265,10 @@ need to be changed). if you're getting a "serial port is already in
 use by another application" it's possible that you haven't run this
 script. you may also need to reboot after running the script. on my
 machine, i installed the keyspan driver for my usb-serial converter,
-ran the script, and then rebooted in order for things to work. 
+ran the script, and then rebooted in order for things to work. in the
+past, i've used a keyspan 28X dual port adapter, and the selection i
+use on the serial port menu reads "/dev/cu.USA28X21P1.1". you'll
+probably have something similar. don't mind the frightening names.
 
 naming of sketches.. on other platforms, you aren't allowed to type
 characters besides letters, numbers, and underscores for the names of
@@ -271,9 +280,7 @@ sick of all these workarounds.
 quitting presentation mode.. on other platforms, hitting the 
 'escape' key will quickly get you out of presentation mode. however, 
 there seems to be some key event weirdness under osx. we hope to find 
-a fix someday, but ben doesn't have a mac of his own for testing, 
-so he doesn't have much time to track down workarounds for all of 
-apple's bugs.
+a fix someday.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -285,9 +292,14 @@ we have temporarily suspended development for mac os 9, because we
 don't have time to fight with this dying os before beta. we hope to
 resume mac os 9 development before releasing the final 1.0 version.
 
+for releases earlier than 57:
+
 java applications on classic mac os are in a bad state, as apple has
 decided (rightfully so) to abandon further development of their java
 runtime under OS 9.
+
+serial works fairly well with my keyspan usb/serial adapter. thank god
+for patrick beard and jdirect.
 
 versions: we only test under Mac OS 9.2.2, all others.. who knows?
 
@@ -304,7 +316,7 @@ win95/98/me seem to have some trouble, but we think it's just with
 the .exe that we use, so that'll get fixed in the future. you can try
 using the 'run.bat' file instead, and see if that works better.
 
-the release is now split into 'basic' and 'advanced' versions. the 
+the release is now split into 'standard' and 'expert' versions. the 
 basic release includes a working java vm, and is all set up and ready 
 to go. the advanced version is for people who already have java 
 installed (and don't want to deal with the 20MB download), and know 
@@ -328,6 +340,36 @@ for us, since we're such a small group!)
 "hs_err_pid10XX.txt" error.. this is something within the java vm that
 we can't fix. it's not clear what the problem is, but it seems to have
 show up with java 1.4.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+LINUX
+
+the processing application is just a shell script, you can use this
+as a guide to getting p5 to run with your specific configuration,
+because who knows what sort of setup you have. this release was tested
+on a redhat 9 box, and sun's jre 1.4.2 is included with the
+download. replacing (or making a symlink to) the contents of the
+'java' folder will let you tie in a preferred jvm for your machine.
+
+jikes.. just as 58 was being released, we ran into a problem where
+jikes (the java compiler used by p5) couldn't be found by the
+application on linux. faced with the deadline, we decided to put up an
+error message saying it wasn't found. you should make sure jikes
+version 1.18 (we strongly recommend this specific version!) is
+installed on your machine and in your path.
+
+serial.. this release uses rxtx-2.1_6 (just like macosx). you may get
+error message spew to the console when starting the application saying
+"Permission denied" and "No permission to create lock file" and to
+read "INSTALL". this is because you need to add yourself to either the
+uucp or lock group so that processing can write to /var/lock so it
+doesn't get in a fight with other applications talking on the serial
+port. supposedly, adding yourself to one of these groups will work
+(didn't for me, but i'm a little clueless) or running processing as
+root will get rid of the errors (not a great solution). 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -357,29 +399,6 @@ sketchbook -> default -> SKETCH_NAME
 starting with version 44, there are several functions that make
 dealing with data in files much easier (loadFile, loadStrings,
 splitStrings, etc) so file i/o should be fun!
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-SERIAL PORT
-
-the serial port is a useful way to hook things up to hardware
-devices of your own devising. the reference describes the specifics 
-of how to use the serial port.
-
-the windows version works well, much better than in previous releases.
-
-on macos9, works fairly well with my keyspan usb/serial adapter. thank
-god for patrick beard and jdirect.
-
-on macosx, need rxtx to be installed (pkg included with p5 download),
-follow their bizarre instructions. on my machine, i'm using a keyspan
-28X dual port adapter, and the selection i use on the serial port menu
-reads "/dev/cu.USA28X21P1.1". your mileage may vary.
-
-linux.. haven't tested but it's the ibm vm and their own
-implementation, but it may just work.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -424,12 +443,13 @@ course this isn't a necessity, but it makes us happy when you do.
 
 SOURCE CODE / OPEN SOURCE / GPL BLAH BLAH
 
-we plan for this project to be "open source", that trendy moniker
-which means that you'll be able to look at all the code that's behind
-the processing development environment and the graphics engine used in
-tandem with it. we can't promise, since we're still working on getting
-the licensing taken care of with our employers, but we think this
-should likely happen soon.
+we plan for this project to be "open source", everyone's favorite
+phrase that means that you'll be able to get your grubby little mitts
+all over our code (all the code that's behind the processing
+development environment and the graphics engine used in tandem with
+it). we can't promise, since we're still working on getting the
+licensing taken care of with our employers, but we think this should
+likely happen soon.
 
 the export libraries (internally known as 'bagel') will probably be
 LGPL, which means they can be used as a library and included in your
@@ -449,7 +469,11 @@ processing will have to be released gpl. more about the oro tools is
 at: http://www.savarese.org/oro/ and the home for kopi/kjc is here:
 http://www.dms.at/kopi/
 
-we're sorry that the source code isn't available just yet, we're
+kjc is being phased out in favor of the jikes compiler from ibm:
+http://oss.software.ibm.com/developerworks/opensource/jikes/
+which is covered by the ibm public license.
+
+we're sorry that our source code isn't available just yet, we're
 cleaning and scrubbing it, it was a decision between getting the alpha
 out to people to try versus taking a few more weeks to clean up the
 project and deal with the technology licensing departments at mit and
