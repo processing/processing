@@ -1,3 +1,26 @@
+ABOUT REV 0039 - 31 july 2002
+
+[ you feel yourself getting very sleepy ]
+
+- repaired run/present modes.. now much smoother. use ESC to quit out
+  of present mode (or stop & close window when in regular mode).
+
+- fixed links to reference and web site from file menu. works on the
+  mac now, and maybe even linux.
+
+- build 'release' version of Proce55ing.exe that doesn't scare casey
+  and need MFC42.DLL
+
+- tested serial for windows, macos, macosx.. serial working really
+  well for windows
+
+- removed 'edit' menu because it's worthless
+
+- fixed run.bat for windows
+
+- many tidbits of testing on multiple platforms
+
+
 ABOUT REV 0038 - 30 july 2002
 
 [ the excitement doesn't stop ]
