@@ -10,7 +10,9 @@ rm -f processing.zip
 cp -r ../shared processing
 # something like the following might be better:
 # find / -name "*.mp3" -exec rm -f {}\;
+# and same for cvsignore
 rm -rf processing/lib/CVS
+rm -rf processing/fonts/CVS
 rm -rf processing/reference/CVS
 rm -rf processing/reference/images/CVS
 rm -rf processing/sketchbook/CVS
@@ -30,7 +32,9 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
-cp dist/run.bat work/
+cp dist/run.bat 
+cp dist/run95.bat
+cp dist/lib/pde.properties_windows processing/lib/
 
 # convert notes.txt to windows LFs
 
