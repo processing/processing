@@ -35,21 +35,22 @@ import javax.swing.event.*;
 public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   static final String title[] = {
-    "", "run", "stop", "new", "open", "save", "export"
+    "Run", "Stop", "New", "Open", "Save", "Export"
+    //"run", "stop", "new", "open", "save", "export"
   };
 
   static final int BUTTON_COUNT  = title.length;
-  static final int BUTTON_WIDTH  = PdePreferences.GRID_SIZE;
-  static final int BUTTON_HEIGHT = PdePreferences.GRID_SIZE;
+  static final int BUTTON_WIDTH  = 27; //PdePreferences.GRID_SIZE;
+  static final int BUTTON_HEIGHT = 32; //PdePreferences.GRID_SIZE;
+  static final int BUTTON_GAP = 15; //BUTTON_WIDTH / 2;
 
-  static final int NOTHING  = 0;
-  static final int RUN      = 1;
-  static final int STOP     = 2;
+  static final int RUN      = 0;
+  static final int STOP     = 1;
 
-  static final int NEW      = 3;
-  static final int OPEN     = 4;
-  static final int SAVE     = 5;
-  static final int EXPORT   = 6;
+  static final int NEW      = 2;
+  static final int OPEN     = 3;
+  static final int SAVE     = 4;
+  static final int EXPORT   = 5;
 
   static final int INACTIVE = 0;
   static final int ROLLOVER = 1;
@@ -78,13 +79,13 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   Image stateImage[];
   int which[]; // mapping indices to implementation
 
-  int x1, x2;
-  int y1[], y2[];
+  int x1[], x2[];
+  int y1, y2;
 
   String status;
   Font statusFont;
   Color statusColor;
-  int statusY;
+  //int statusY;
 
 
   public PdeEditorButtons(PdeEditor editor) {
@@ -94,7 +95,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     buttonCount = 0;
     which = new int[BUTTON_COUNT];
 
-    which[buttonCount++] = NOTHING;
+    //which[buttonCount++] = NOTHING;
     which[buttonCount++] = RUN;
     which[buttonCount++] = STOP;
     which[buttonCount++] = NEW;
@@ -108,35 +109,14 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
     status = "";
 
-    //setLayout(null);
-    //status = new JLabel();
     statusFont = PdePreferences.getFont("buttons.status.font");
     statusColor = PdePreferences.getColor("buttons.status.color");
-    //add(status);
 
-    //status.setBounds(-5, BUTTON_COUNT * BUTTON_HEIGHT,
-    //               BUTTON_WIDTH + 15, BUTTON_HEIGHT);
-    //status.setAlignment(Label.CENTER);
-    statusY = (BUTTON_COUNT + 1) * BUTTON_HEIGHT;
+    //statusY = (BUTTON_COUNT + 1) * BUTTON_HEIGHT;
 
     addMouseListener(this);
     addMouseMotionListener(this);
   }
-
-
-  /*
-  public void update() {
-    paint(this.getGraphics());
-  }
-
-  public void update(Graphics g) {
-    paint(g);
-  }
-  */
-
-  //public void paintComponent(Graphics g) {
-  //super.paintComponent(g);
-  //}
 
 
   public void paintComponent(Graphics screen) {
@@ -145,20 +125,20 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
       rollover = new Image[BUTTON_COUNT];
       active   = new Image[BUTTON_COUNT];
 
-      //state = new int[BUTTON_COUNT];
+      int IMAGE_SIZE = 33;
 
       for (int i = 0; i < BUTTON_COUNT; i++) {
         inactive[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
         Graphics g = inactive[i].getGraphics();
-        g.drawImage(buttons, -(i*BUTTON_WIDTH), -2*BUTTON_HEIGHT, null);
+        g.drawImage(buttons, -(i*IMAGE_SIZE) - 3, -2*IMAGE_SIZE, null);
 
         rollover[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
         g = rollover[i].getGraphics();
-        g.drawImage(buttons, -(i*BUTTON_WIDTH), -1*BUTTON_HEIGHT, null);
+        g.drawImage(buttons, -(i*IMAGE_SIZE) - 3, -1*IMAGE_SIZE, null);
 
         active[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
         g = active[i].getGraphics();
-        g.drawImage(buttons, -(i*BUTTON_WIDTH), -0*BUTTON_HEIGHT, null);
+        g.drawImage(buttons, -(i*IMAGE_SIZE) - 3, -0*IMAGE_SIZE, null);
       }
 
       state = new int[buttonCount];
@@ -174,17 +154,18 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
       width = size.width;
       height = size.height;
 
-      x1 = 0;
-      x2 = BUTTON_WIDTH;
+      y1 = 0;
+      y2 = BUTTON_HEIGHT;
 
-      y1 = new int[buttonCount];
-      y2 = new int[buttonCount];
+      x1 = new int[buttonCount];
+      x2 = new int[buttonCount];
 
-      int offsetY = 0;
+      int offsetX = 3;
       for (int i = 0; i < buttonCount; i++) {
-        y1[i] = offsetY;
-        y2[i] = offsetY + BUTTON_HEIGHT;
-        offsetY = y2[i];
+        x1[i] = offsetX;
+        if (i == 2) x1[i] += BUTTON_GAP;
+        x2[i] = x1[i] + BUTTON_WIDTH;
+        offsetX = x2[i];
       }
     }
     Graphics g = offscreen.getGraphics();
@@ -192,24 +173,24 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     g.fillRect(0, 0, width, height);
 
     for (int i = 0; i < buttonCount; i++) {
-      //g.drawImage(stateImage[i], x1[i], y1, null);
-      g.drawImage(stateImage[i], x1, y1[i], null);
+      g.drawImage(stateImage[i], x1[i], y1, null);
     }
 
     g.setColor(statusColor);
     g.setFont(statusFont);
 
-    // if i ever find the guy who wrote the java2d api,
-    // i will hurt him. or just laugh in his face. or pity him.
+    /*
+    // if i ever find the guy who wrote the java2d api, i will hurt him.
     Graphics2D g2 = (Graphics2D) g;
     FontRenderContext frc = g2.getFontRenderContext();
     float statusW = (float) statusFont.getStringBounds(status, frc).getWidth();
     float statusX = (getSize().width - statusW) / 2;
-
-    //int statusWidth = g.getFontMetrics().stringWidth(status);
-    //int statusX = (getSize().width - statusWidth) / 2;
-
     g2.drawString(status, statusX, statusY);
+    */
+    //int statusY = (BUTTON_HEIGHT + statusFont.getAscent()) / 2;
+    int statusY = (BUTTON_HEIGHT + g.getFontMetrics().getAscent()) / 2;
+    g.drawString(status, buttonCount * BUTTON_WIDTH + 2 * BUTTON_GAP, statusY);
+
     screen.drawImage(offscreen, 0, 0, null);
   }
 
@@ -233,8 +214,8 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   public void handleMouse(int x, int y) {
     if (currentRollover != -1) {
-      if ((y > y1[currentRollover]) && (x > x1) &&
-          (y < y2[currentRollover]) && (x < x2)) {
+      if ((x > x1[currentRollover]) && (y > y1) &&
+          (x < x2[currentRollover]) && (y < y2)) {
         return;
 
       } else {
@@ -258,13 +239,12 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   private int findSelection(int x, int y) {
     // if app loads slowly and cursor is near the buttons
     // when it comes up, the app may not have time to load
-    if ((y1 == null) || (y2 == null)) return -1;
+    if ((x1 == null) || (x2 == null)) return -1;
 
     for (int i = 0; i < buttonCount; i++) {
-      if ((x > x1) && (y > y1[i]) &&
-          (x < x2) && (y < y2[i])) {
-        //if ((x > x1[i]) && (y > y1) &&
-        //(x < x2[i]) && (y < y2)) {
+      if ((y > y1) && (x > x1[i]) &&
+          (y < y2) && (x < x2[i])) {
+        //System.out.println("sel is " + i);
         return i;
       }
     }
@@ -301,13 +281,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     if (state[OPEN] != INACTIVE) {
       setState(OPEN, INACTIVE, true);
     }
-
-    // kludge
-    //for (int i = 0; i < BUTTON_COUNT; i++) {
-    //messageClear(title[i]);
-    //}
     status = "";
-    //mouseMove(e);
     handleMouse(e.getX(), e.getY());
   }
 
@@ -405,6 +379,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     status = msg;
   }
 
+
   public void messageClear(String msg) {
     //if (status.getText().equals(msg + "  ")) status.setText(PdeEditor.EMPTY);
     if (status.equals(msg)) status = "";
@@ -412,6 +387,17 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
 
   public Dimension getPreferredSize() {
-    return new Dimension(BUTTON_WIDTH, (BUTTON_COUNT + 1)*BUTTON_HEIGHT);
+    return new Dimension((BUTTON_COUNT + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
+    //return new Dimension(BUTTON_WIDTH, (BUTTON_COUNT + 1)*BUTTON_HEIGHT);
+  }
+
+
+  public Dimension getMinimumSize() {
+    return getPreferredSize();
+  }
+
+
+  public Dimension getMaximumSize() {
+    return new Dimension(3000, BUTTON_HEIGHT);
   }
 }
