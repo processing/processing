@@ -1,9 +1,10 @@
 import java.awt.*;
-import java.applet.Applet;
+import java.awt.event.*;
+//import java.applet.Applet;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.awt.event.*;
+import java.util.zip.*;
 
 
 public class PdeBase implements ActionListener {
@@ -19,6 +20,15 @@ public class PdeBase implements ActionListener {
   Menu sketchbookMenu;
   File sketchbookFolder;
   String sketchbookPath;
+
+  boolean recordingHistory;
+  Menu historyMenu;
+  ActionListener historyMenuListener = 
+    new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  editor.retrieveHistory(e.getActionCommand());
+	}
+      };
 
   static final String WINDOW_TITLE = "Proce55ing";
 
@@ -163,6 +173,24 @@ public class PdeBase implements ActionListener {
     menu.add(new MenuItem("Present", new MenuShortcut('P')));
     menu.add(new MenuItem("Stop"));
     menu.addSeparator();
+
+    recordingHistory = getBoolean("history.recording", true);
+    if (recordingHistory) {
+      historyMenu = new Menu("History");
+      menu.add(historyMenu);
+      item = new MenuItem("Clear History");
+      item.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+	    if (!editor.historyFile.delete()) {
+	      System.err.println("couldn't erase history");
+	    }
+	    rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
+	  }
+	});
+      menu.add(item);
+      menu.addSeparator();
+    }
+
     item = new MenuItem("Beautify", new MenuShortcut('B'));
     item.setEnabled(false);
     menu.add(item);
@@ -234,7 +262,6 @@ public class PdeBase implements ActionListener {
       //File.separator + name + ".pde");
     }
   }
-
 
   public void rebuildSketchbookMenu() {
     rebuildSketchbookMenu(sketchbookMenu);
@@ -327,6 +354,88 @@ public class PdeBase implements ActionListener {
       MenuItem item = new MenuItem("Refresh");
       item.addActionListener(this);
       menu.add(item);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  /*
+  class HistoryMenuListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      editor.selectHistory(e.getActionCommand);
+    }
+  }
+  */
+
+  public void rebuildHistoryMenu(String path) {
+    rebuildHistoryMenu(historyMenu, path);
+  }
+
+  public void rebuildHistoryMenu(Menu menu, String path) {
+    if (!recordingHistory) return;
+
+    menu.removeAll();
+    File hfile = new File(path);
+    if (!hfile.exists()) return;
+
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(path))));
+      String line = null;
+
+      int historyCount = 0;
+      String historyList[] = new String[100];
+
+      try {
+	while ((line = reader.readLine()) != null) {
+	//while (line = reader.readLine()) {
+	//while (true) { line = reader.readLine();
+	  //if (line == null) continue;
+	  //System.out.println("line: " + line);
+	  if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
+	    // next line is the good stuff
+	    line = reader.readLine();
+	    int version = 
+	      Integer.parseInt(line.substring(0, line.indexOf(' ')));
+	    if (version == 1) {
+	      String whysub = line.substring(2);  // after "1 "
+	      String why = whysub.substring(0, whysub.indexOf(" -"));
+	      //System.out.println("'" + why + "'");
+
+	      String readable = line.substring(line.lastIndexOf("-") + 2);
+	      if (historyList.length == historyCount) {
+		String temp[] = new String[historyCount*2];
+		System.arraycopy(historyList, 0, temp, 0, historyCount);
+		historyList = temp;
+	      }
+	      historyList[historyCount++] = why + " - " + readable;
+
+	    } // otherwise don't know what to do
+	  }
+	}
+	//System.out.println(line);
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
+
+      // add the items to the menu in reverse order
+      /*
+      ActionListener historyMenuListener = 
+	new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	      editor.retrieveHistory(e.getActionCommand());
+	    }
+	  };
+      */
+
+      for (int i = historyCount-1; i >= 0; --i) {
+	MenuItem mi = new MenuItem(historyList[i]);
+	mi.addActionListener(historyMenuListener);
+	menu.add(mi);
+      }
+
+      reader.close();
 
     } catch (IOException e) {
       e.printStackTrace();
