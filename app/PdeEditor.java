@@ -177,22 +177,46 @@ public class PdeEditor extends Panel {
 
     rightPanel.add("Center", textarea);
 
-    /*
     Panel statusPanel = new Panel();
     //statusPanel.setLayout(new BorderLayout());
     statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
+    ///statusPanel.setLayout(new BorderLayout());
+    
     //statusPanel.setLayout(new FlowLayout(FlowLayout.VERTICAL));
+    
     status = new PdeEditorStatus(this);
     statusPanel.add("Center", status);
+    ///statusPanel.add(BorderLayout.NORTH, status);
+    
     console = new PdeEditorConsole(this);
     statusPanel.add("South", console);
+    ///statusPanel.add(BorderLayout.NORTH, console);
+    
     rightPanel.add("South", statusPanel);
-    */
+    //statusPanel.setMaximumSize(new Dimension(300, 50));
+    
+
+/* not sure why this doesn't work, probably a heavy vs. lightweight component issue
+    Panel consolePanel = new Panel();
+    consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
 
     status = new PdeEditorStatus(this);
-    rightPanel.add(status);
+    consolePanel.add("North",status);
     console = new PdeEditorConsole(this);
-    rightPanel.add(console);
+    consolePanel.add("South",console);
+
+///
+        JSplitPane splitPane = new JSplitPane(
+                                       JSplitPane.VERTICAL_SPLIT,
+///                                       textarea, consolePanel);
+        //splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerLocation(100);
+
+        //Provide minimum sizes for the two components in the split pane
+        Dimension minimumSize = new Dimension(200, 300);
+        top.setMinimumSize(minimumSize);
+        bottom.setMinimumSize(minimumSize);
+*/
 
     /*
     //pain = statusPanel;
@@ -318,6 +342,7 @@ public class PdeEditor extends Panel {
 	public void mousePressed(MouseEvent e) {
 	  //System.out.println("got stop");
 	  //doStop();
+          setVisible(true);
 	  doClose();
 
 #ifdef JDK13
@@ -340,14 +365,56 @@ public class PdeEditor extends Panel {
     // windowActivated doesn't seem to do much, so focus listener better
     presentationWindow.addFocusListener(new FocusAdapter() {
 	public void focusGained(FocusEvent e) {
-	  //System.out.println("focusGained: " + e);
+	  //System.out.println("presentationWindow focusGained: " + e);
 	  //if (frame != null) frame.toFront();  // editor to front
-	  try {
-	    //System.out.println("moving to front");
-	    pdeRuntime.window.toFront();
-	  } catch (Exception ex) { }
+	  if (! pdeRuntime.window.isVisible()) {
+            try {
+              //System.out.println("moving to front");
+              pdeRuntime.window.toFront();
+            } catch (Exception ex) { }
+	  }
 	}
       });
+
+    textarea.addFocusListener(new FocusAdapter() {
+	public void focusGained(FocusEvent e) {
+	  //System.err.println("textarea focusGained: " + e);
+	  if (presenting == true) {
+	    try {
+              presentationWindow.toFront();
+	      pdeRuntime.window.toFront();
+	    } catch (Exception ex) { }
+	  }
+	}
+      });
+    
+    // if user clicks on background presentationWindow, restore applet window
+    // ("engine.window") to the front immediately
+    presentationWindow.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        //System.out.println("mouseClicked: " + e.toString());
+        try {
+	  //System.out.println("moving to front");
+	  pdeRuntime.window.toFront();
+	} catch (Exception ex) { }
+      }
+      public void mousePressed(MouseEvent e)  {
+//        System.out.println("mousePressed: " + e.toString());
+        //presentationWindow.toFront();
+        try {
+	  //System.out.println("moving to front");
+	  pdeRuntime.window.toFront();
+	} catch (Exception ex) { }
+      }
+      public void mouseReleased(MouseEvent e)  {
+        //System.out.println("mouseReleased: " + e.toString());
+        try {
+	  //System.out.println("moving to front");
+	  pdeRuntime.window.toFront();
+	  } catch (Exception ex) { }
+      }
+    });
+
 
     /*
     presentationWindow.addWindowListener(new WindowAdapter() {
@@ -654,6 +721,8 @@ public class PdeEditor extends Panel {
 
     try {
       if (presenting) {
+        //this.toBack();
+        this.setVisible(false);
         presentationWindow.show();
         presentationWindow.toFront();
         //doRun(true);

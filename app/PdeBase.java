@@ -264,6 +264,8 @@ public class PdeBase extends Frame implements ActionListener {
 
     menu.addSeparator();
 
+    // "cut" and "copy" should really only be enabled if some text 
+    // is currently selected
     item = new MenuItem("Cut", new MenuShortcut('X'));
     item.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -898,7 +900,10 @@ public class PdeBase extends Frame implements ActionListener {
     } else if (command.equals("Reference")) {
       if (platform == WINDOWS) {
 	try {
-	  Runtime.getRuntime().exec("cmd /c reference\\index.html");
+	  //Runtime.getRuntime().exec("cmd /c reference\\index.html");
+	  String currentDir = System.getProperty("user.dir");
+	  Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
+	    + "\\reference\\index.html");
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}
@@ -917,7 +922,8 @@ public class PdeBase extends Frame implements ActionListener {
       } else if (platform == LINUX) {
 	try {
 	  // another wild ass guess
-	  Runtime.getRuntime().exec("mozilla reference/index.html");
+	  String currentDir = System.getProperty("user.dir");
+	  Runtime.getRuntime().exec("mozilla "+ currentDir + "/reference/index.html");
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}

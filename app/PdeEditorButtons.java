@@ -1,10 +1,14 @@
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
 
-//import javax.swing.*;
+//import java.awt.Image;
+
+import javax.swing.*;
+import javax.swing.event.*;
 
 
-public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
+//public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
+public class PdeEditorButtons extends JPanel implements MouseInputListener {
   static final String EMPTY_STATUS = "                                                                 ";
 
   // run, stop, save, export, open
@@ -94,6 +98,9 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
     status.setBounds(-5, BUTTON_COUNT*BUTTON_HEIGHT, 
 		     BUTTON_WIDTH + 15, BUTTON_HEIGHT);
     status.setAlignment(Label.CENTER);
+    
+    addMouseListener(this);
+    addMouseMotionListener(this);
   }
 
 
@@ -212,9 +219,19 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
     screen.drawImage(offscreen, 0, 0, null);
     //screen.fillRect(0, 0, 10, 10);
   }
+  
+  public void mouseMoved(MouseEvent e) {
+    mouseMove(e);
+  }
 
-
-  public boolean mouseMove(Event e, int x, int y) {
+  public void mouseDragged(MouseEvent e) {
+    //mouseMove(e);
+  }
+  
+  public void mouseMove(MouseEvent e) {
+    int x = e.getX();
+    int y = e.getY();
+    
     //System.out.println(x + ", " + y);
     if (currentRollover != -1) {
       if ((y > y1[currentRollover]) && (x > x1) &&
@@ -222,7 +239,8 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
       //if ((x > x1[currentRollover]) && (y > y1) &&
       //  (x < x2[currentRollover]) && (y < y2)) {
 	//System.out.println("same");
-	return true; // no change
+	///return true; // no change
+	return;
 
       } else {
 	//state[currentRollover] = INACTIVE_STATE;
@@ -234,7 +252,8 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
       }
     }
     int sel = findSelection(x, y);
-    if (sel == -1) return true;
+    //if (sel == -1) return true;
+    if (sel == -1) return;
     
     if (state[sel] != ACTIVE) {
       //state[sel] = ROLLOVER_STATE;
@@ -258,7 +277,7 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
     }
     */
     //update();
-    return true;
+    ///return true;
   }
 
   private int findSelection(int x, int y) {
@@ -295,23 +314,28 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
     if (updateAfter) update();
   }
 
-  public boolean mouseEnter(Event e, int x, int y) {
-    return mouseMove(e, x, y);
+  public void mouseEntered(MouseEvent e) {
+    mouseMove(e);
   }
 
-  public boolean mouseExit(Event e, int x, int y) {
+  public void mouseExited(MouseEvent e) {
     // kludge
     for (int i = 0; i < BUTTON_COUNT; i++) {
       messageClear(title[i]);
     }
-    return mouseMove(e, x, y);
+    mouseMove(e);
   }
 
   int wasDown = -1;
 
-  public boolean mouseDown(Event e, int x, int y) {
+  //public boolean mouseDown(Event e, int x, int y) {
+  public void mousePressed(MouseEvent e) {
+    int x = e.getX();
+    int y = e.getY();
+    
     int sel = findSelection(x, y);
-    if (sel == -1) return false;
+    ///if (sel == -1) return false;
+    if (sel == -1) return;
     currentRollover = -1;
     currentSelection = sel;
     setState(sel, ACTIVE, true);
@@ -326,7 +350,6 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
       editor.base.rebuildSketchbookMenu(popup);
       popup.show(this, x, y);
     }
-    return true;
   }
 
 
@@ -340,13 +363,17 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
   }
     */
 
-
-  public boolean mouseUp(Event e, int x, int y) {
+  public void mouseClicked(MouseEvent e) {
+    // this space intentionally left blank
+  }
+  
+  ///public boolean mouseUp(Event e, int x, int y) {
+  public void mouseReleased(MouseEvent e) {
     //switch (which[sel]) {
     switch (currentSelection) {
 
     case RUN: 
-      editor.doRun(e.shiftDown());
+      editor.doRun(e.isShiftDown());
       //if (e.shiftDown()) {
       //editor.doPresent();
       //} else {
@@ -402,7 +429,7 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
 
     currentSelection = -1;
     //update();
-    return true;
+    ///return true;
   }
 
   public void clear() { // (int button) {
