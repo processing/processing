@@ -76,9 +76,6 @@ public class PdeRuntime implements PdeMessageConsumer {
         new PdeMessageSiphon(process.getErrorStream(), this);
       } else {
         Class c = Class.forName(className);
-
-        // to get rid of KjcEngine [fry]
-        //applet = (KjcApplet) c.newInstance();
         applet = (BApplet) c.newInstance();
 
         // replaces setRuntime with BApplet having leechErr [fry]
@@ -265,6 +262,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     //System.out.println();
   }
 
+
   public void close() {
     //if (window != null) window.hide();
     if (window != null) {
@@ -274,7 +272,9 @@ public class PdeRuntime implements PdeMessageConsumer {
     }
   }
 
+
   public void message(String s) {
+    //System.err.println("message " + s.length() + ":" + s);
     if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
       newMessage = true;
       return;  // this line ignored
