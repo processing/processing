@@ -74,10 +74,18 @@ X   the multiple thread killing code was in there for a reason
 X   not tested on macos9.. 
 X hiding the cursor. noCursor(), cursor()/cursor(ARROW), cursor(HAND), cursor(CROSS), cursor(image_file)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
+X default size of console is bad.. 
+o   prolly need to stuff in 4 blank lines
+o runtime exceptions not coming through on either mac or windows
+X   works fine on windows
+X   when array wasn't large enough for curveMode, blank red line
+
 
 [dh] X export to .pde file rather than java
 [dh] X   or at least link to that from the web page
 [dh] X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
+[dh] o background of menus on winxp is white
+[dh] X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
 
 
 macosx
@@ -165,7 +173,17 @@ dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
+_ perlin noise should be tested for 1d case
+_ test to make sure cursor code works in vm
+_   modify bagel building to include JDK13 flag
+_   and behaves properly in a browser
+_ do objects need to be swing components to draw properly?
+_   macosx has update weirdness for non JComponent items
+_   probably why end of text messages under osx getting chopped?
+
+
 macosx
+_ test to see if runtime exceptions are comign through
 _ get jikes118 in there.. also in cvs
 _   add note to instructions for how to use
 _ what's hanging the application on start in 1.4?
@@ -184,9 +202,6 @@ X   should cvs be changed or just do this as a renaming step?
 X     changed in cvs
 _ jikes is not properly wired to Proce55ing.app
 _   puts a couple dots on random lines
-_ do objects need to be swing components to draw properly?
-_   macosx has update weirdness for non JComponent items
-_   probably why end of text messages under osx getting chopped?
 
 serial port work
 _ modify build scripts for rxtx on osx
@@ -203,15 +218,8 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 o     will need to be done for gl4java as well
 _ if dimming serial menu, put up another message
-
-
-_ modify bagel building to include JDK13 flag
-_   test to make sure cursor code works in vm
-_   and behaves properly in a browser
-
-57 _ runtime exceptions not coming through on either mac or windows
-57 _   when array wasn't large enough for curveMode, blank red line
-57 _ perlin noise should be tested for 1d case
+_ remove serial folder for windows
+_   modify readme for the expert version
 
 
 linux
@@ -722,8 +730,6 @@ dh b _   objects probably not getting finalized
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
 dh 1 _ beautify() ignores colons for case statements
 dh 1 _   need to tie this to the parser instead
-dh 1 _ background of menus on winxp is white
-dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
 dh 1 _   SystemColor doesn't differentiate between menu background and top
 dh 1 _   probably fixed in swing, but we're using java.awt.Menu
 dh 1 _   test by rewriting with java.awt.Menu

@@ -21,12 +21,12 @@ else
   echo Extracting reference...
   cd work
   unzip -q reference.zip
-
   # necessary for launching reference from shell/command prompt
   # which is done internally to view reference
-  cd reference
-  chmod -R +x *.html
-  cd ..
+  chmod +x reference/*.html
+  # needed by 'help' menu
+  chmod +x reference/environment/*.html
+  # chmod -R +x *.html doesn't seem to work
 
   rm reference.zip
   cd ..
@@ -92,23 +92,15 @@ unset JIKESPATH
 
 if test -d /cygdrive/c/WINNT
 then
-  # windows 2000 or nt
+  # Windows 2000 or NT
   QT_JAVA_PATH="C:\\WINNT\\system32\\QTJava.zip"
 else
-  # other versions of windows, including xp
+  # Windows 95, 98, ME and XP (does it really run on 95?)
   QT_JAVA_PATH="C:\\WINDOWS\\system32\\QTJava.zip"
 fi
-# another alternative
-#QT_JAVA_PATH=../build/shared/lib/qtjava.zip
-
-# regular version
-#CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar;${QT_JAVA_PATH}"
 
 # new regular version
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
-
-# rxtx version
-#CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\RXTXcomm.jar;${QT_JAVA_PATH}"
 
 # make version with serial for the application
 echo Building bagel with serial, sonic, video and jdk13 support
@@ -129,23 +121,10 @@ echo Building PDE for JDK 1.4
 
 cd app
 
-# rxtx version
-#CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\RXTXcomm.jar;${QT_JAVA_PATH}"
-
-# original version 
-#CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar;${QT_JAVA_PATH}"
-
 # new javax.comm location
 CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 
-# version for javac/1.1 testing
-#CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\ext\\comm.jar;..\\build\\macos9\\JDKClasses.zip;..\\build\\macos9\\JDKToolsClasses.zip"
-
 perl ../bagel/buzz.pl "jikes +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJDK13 -dJDK14 *.java jeditsyntax/*.java
-
-# version for javac/1.1 testing
-#perl ../bagel/buzz.pl "jikes -target 1.1 +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJAVAC *.java jeditsyntax/*.java
-#perl ../bagel/buzz.pl "javac -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJAVAC *.java jeditsyntax/*.java
 
 cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
