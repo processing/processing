@@ -34,6 +34,7 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
+import javax.swing.undo.*;
 
 import com.oroinc.text.regex.*;
 
@@ -42,13 +43,13 @@ import com.apple.mrj.*;
 #endif
 
 
-public class PdeEditor extends JPanel {
+public class PdeEditor extends JFrame {
+  // yeah
+  static final String WINDOW_TITLE = "Processing";
+
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
-
-  static final String HISTORY_SEPARATOR = 
-    "#################################################";
 
   static final int SK_NEW  = 1;
   static final int SK_OPEN = 2;
@@ -57,11 +58,6 @@ public class PdeEditor extends JPanel {
   int checking;
   String openingPath; 
   String openingName;
-
-  static final int RUN      = 5; // for history
-  static final int SAVE     = 6;
-  static final int AUTOSAVE = 7;
-  static final int BEAUTIFY = 8;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -73,24 +69,12 @@ public class PdeEditor extends JPanel {
 
   JEditTextArea textarea;
 
-  //boolean externalEditor;
-
   // currently opened program
-  //String userName;   // user currently logged in
   String sketchName; // name of the file (w/o pde if a sketch)
   File sketchFile;   // the .pde file itself
   File sketchDir;    // if a sketchbook project, the parent dir
   boolean sketchModified;
 
-  File historyFile;
-  //OutputStream historyStream;
-  //PrintWriter historyWriter;
-  String historyLast;
-
-  //String lastDirectory;
-  //String lastFile;
-
-  //PdeRunner runner;
   Point appletLocation; //= new Point(0, 0);
   Point presentLocation; // = new Point(0, 0);
 
@@ -103,7 +87,11 @@ public class PdeEditor extends JPanel {
   String externalPaths;
   File externalCode;
 
-  //static final int INSET_SIZE = 5;
+  JMenuItem saveMenuItem;
+  JMenuItem saveAsMenuItem;
+  JMenuItem beautifyMenuItem;
+
+  // 
 
   boolean running;
   boolean presenting;
@@ -120,6 +108,8 @@ public class PdeEditor extends JPanel {
   static final String TEMP_CLASS = "Temporary";
 
   // undo fellers
+  JMenuItem undoItem, redoItem;
+
   protected UndoAction undoAction;
   protected RedoAction redoAction;
   static public UndoManager undo = new UndoManager(); // editor needs this guy
@@ -128,7 +118,15 @@ public class PdeEditor extends JPanel {
   public PdeEditor(PdeBase base) {
     this.base = base;
 
-    setLayout(new BorderLayout());
+    history = new PdeHistory(this);
+    sketchbook = new PdeSketchbook(this);
+
+    JMenuBar menubar = new JMenuBar();
+    menubar.add(buildFileMenu());
+    menubar.add(buildEditMenu());
+
+    Container pain = getContentPane();
+    pain.setLayout(new BorderLayout());
 
     Panel leftPanel = new Panel();
     leftPanel.setLayout(new BorderLayout());
@@ -142,7 +140,7 @@ public class PdeEditor extends JPanel {
     dummy.setBackground(buttonBgColor);
     leftPanel.add("Center", dummy);
 
-    add("West", leftPanel);
+    pain.add("West", leftPanel);
 
     JPanel rightPanel = new JPanel();
     rightPanel.setLayout(new BorderLayout());
@@ -186,7 +184,7 @@ public class PdeEditor extends JPanel {
 
     rightPanel.add(splitPane, BorderLayout.CENTER);
 
-    add("Center", rightPanel);
+    pain.add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
     // (that was wishful thinking, they still are, until we switch to jedit)
@@ -284,6 +282,9 @@ public class PdeEditor extends JPanel {
   }
 
 
+  // ...................................................................
+
+
   /**
    * Post-constructor setup for the editor area. Loads the last
    * sketch that was used (if any), and restores other Editor settings.
@@ -324,9 +325,9 @@ public class PdeEditor extends JPanel {
     boolean external = getBoolean("editor.external");
 
     textarea.setEditable(!external);
-    base.saveMenuItem.setEnabled(!external);
-    base.saveAsMenuItem.setEnabled(!external);
-    base.beautifyMenuItem.setEnabled(!external);
+    saveMenuItem.setEnabled(!external);
+    saveAsMenuItem.setEnabled(!external);
+    beautifyMenuItem.setEnabled(!external);
 
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
@@ -362,15 +363,97 @@ public class PdeEditor extends JPanel {
   // ...................................................................
 
 
+  protected JMenu buildFileMenu() {
+    JMenuItem item;
+    JMenu menu = new Menu("File");
+
+    item = newMenuItem("New", 'N');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          skNew();
+        }
+      });
+    menu.add(item);
+
+    sketchbookMenu = new Menu("Open");
+    menu.add(sketchbookMenu);
+    saveMenuItem = new MenuItem("Save", new MenuShortcut('S'));
+    saveAsMenuItem = new MenuItem("Save as...", new MenuShortcut('S', true));
+    menu.add(saveMenuItem);
+    menu.add(saveAsMenuItem);
+    menu.add(new MenuItem("Rename..."));
+    menu.addSeparator();
+
+    menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
+    item = new MenuItem("Export Application", new MenuShortcut('E', true));
+    item.setEnabled(false);
+    menu.add(item);
+
+    if (PdeBase.platform != PdeBase.MACOSX) {
+      menu.add(new MenuItem("Preferences"));
+      menu.addSeparator();
+      menu.add(new MenuItem("Quit", new MenuShortcut('Q')));
+    }
+    menu.addActionListener(this);
+    //menubar.add(menu);
+    return menu;
+  }
+
+
+  protected JMenu buildSketchMenu() {
+    JMenuItem item;
+    JMenu menu = new Menu("Sketch");
+
+    menu.add(newMenuItem("Run", 'R'));
+    menu.add(newMenuItem("Present", 'R', true));
+    menu.add(newMenuItem("Stop", 'T'));
+    menu.addSeparator();
+
+    menu.add(newMenuItem("Add file..."));
+    menu.add(newMenuItem("Create font..."));
+
+    if ((platform == WINDOWS) || (platform == MACOSX)) {
+      // no way to do an 'open in file browser' on other platforms
+      // since there isn't any sort of standard
+      menu.add(newMenuItem("Show sketch folder"));
+    }
+
+    history.attachMenu(menu);
+
+    menu.addActionListener(this);
+    menubar.add(menu);  // add the sketch menu
+
+
+    // help menu
+
+    menu = new Menu("Help");
+    menu.add(new MenuItem("Help"));
+    menu.add(new MenuItem("Reference"));
+    menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
+
+    // macosx already has its own about menu
+    if (platform != MACOSX) {
+      menu.addSeparator();
+      menu.add(new MenuItem("About Processing"));
+    }
+    menu.addActionListener(this);
+    menubar.setHelpMenu(menu);
+
+
+    // set all menus
+
+    this.setMenuBar(menubar);
+
+
   public JMenu buildEditMenu() {
     JMenu menu = new JMenu("Edit");
     JMenuItem item; 
 
-    undoItem = PdeBase.newMenuItem("Undo", 'Z');
+    undoItem = newMenuItem("Undo", 'Z');
     undoItem.addActionListener(undoAction = new UndoAction());
     menu.add(undoItem);
 
-    redoItem = PdeBase.newMenuItem("Redo", 'Y');
+    redoItem = newMenuItem("Redo", 'Y');
     redoItem.addActionListener(redoAction = new RedoAction());
     menu.add(redoItem);
 
@@ -378,7 +461,7 @@ public class PdeEditor extends JPanel {
 
     // "cut" and "copy" should really only be enabled 
     // if some text is currently selected
-    item = PdeBase.newMenuItem("Cut", 'X');
+    item = newMenuItem("Cut", 'X');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.cut();
@@ -386,7 +469,7 @@ public class PdeEditor extends JPanel {
       });
     menu.add(item);
 
-    item = PdeBase.newMenuItem("Copy", 'C');
+    item = newMenuItem("Copy", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.copy();
@@ -394,7 +477,7 @@ public class PdeEditor extends JPanel {
       });
     menu.add(item);
 
-    item = PdeBase.newMenuItem("Paste", 'V');
+    item = newMenuItem("Paste", 'V');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.paste();
@@ -402,7 +485,7 @@ public class PdeEditor extends JPanel {
       });
     menu.add(item);
 
-    item = PdeBase.newMenuItem("Select All", 'A');
+    item = newMenuItem("Select All", 'A');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.selectAll();
@@ -410,13 +493,13 @@ public class PdeEditor extends JPanel {
       });
     menu.add(item);
 
-    beautifyMenuItem = PdeBase.newMenuItem("Beautify", 'B');
+    beautifyMenuItem = newMenuItem("Beautify", 'B');
     beautifyMenuItem.addActionListener(this);
     menu.add(beautifyMenuItem);
 
     menu.addSeparator();
 
-    item = PdeBase.newMenuItem("Find...", 'F');
+    item = newMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           find();
@@ -424,7 +507,7 @@ public class PdeEditor extends JPanel {
       });
     menu.add(item);
 
-    item = PdeBase.newMenuItem("Find Next", 'G');
+    item = newMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           findNext();
@@ -432,7 +515,7 @@ public class PdeEditor extends JPanel {
       });
     menu.add(item);
 
-    item = PdeBase.newMenuItem("Find in Reference", 'F', true);
+    item = newMenuItem("Find in Reference", 'F', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
           if (textarea.isSelectionActive()) {
@@ -452,6 +535,19 @@ public class PdeEditor extends JPanel {
         }
       });
     menu.add(item);
+  }
+
+
+  // antidote for overthought swing api mess for setting accelerators
+
+  static public JMenuItem newMenuItem(String title, char what) {
+    return newMenuItem(title, what, false);
+  }
+
+  static public JMenuItem newMenuItem(String title, char what, boolean shift) {
+    JMenuItem menuItem = new JMenuItem(title);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | (shift ? ActionEvent.SHIFT_MASK : 0)));
+    return menuItem;
   }
 
 
@@ -541,160 +637,6 @@ public class PdeEditor extends JPanel {
 
     textarea.select(0, 0);    // move to the beginning of the document
     textarea.requestFocus();  // get the caret blinking
-  }
-
-
-  // mode is RUN, SAVE or AUTO
-  public void makeHistory(String program, int mode) {
-    if (!base.recordingHistory) return;
-    //if (historyLast.equals(program) && !externalEditor) return;
-    if ((historyLast != null) &&
-        (historyLast.equals(program))) return;
-
-    String modeStr = null;
-    switch (mode) {
-    case RUN: modeStr = "run"; break;
-    case SAVE: modeStr = "save"; break;
-    case AUTOSAVE: modeStr = "autosave"; break;
-    case BEAUTIFY: modeStr = "beautify"; break;
-    }
-
-    try {
-      boolean noPreviousHistory = false;
-
-      ByteArrayOutputStream old = null;
-      if (historyFile.exists()) {
-        InputStream oldStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(historyFile)));
-        old = new ByteArrayOutputStream();
-
-        int c = oldStream.read();
-        while (c != -1) {
-          old.write(c);
-          c = oldStream.read();
-        }
-        //return out.toByteArray();
-        oldStream.close();
-
-      } else {
-        noPreviousHistory = true;  // rebuild menu
-      }
-
-      OutputStream historyStream = 
-        new GZIPOutputStream(new FileOutputStream(historyFile));
-
-      if (old != null) {
-        historyStream.write(old.toByteArray());
-      }
-      PrintWriter historyWriter = 
-        new PrintWriter(new OutputStreamWriter(historyStream));
-
-      historyWriter.println();
-      historyWriter.println(HISTORY_SEPARATOR);
-
-      Calendar now = Calendar.getInstance();
-      // 2002 06 18  11 43 29
-      // when listing, study for descrepancies.. if all are
-      // 2002, then don't list the year and soforth.
-      // for the other end, if all minutes are unique, 
-      // then don't show seconds
-      int year = now.get(Calendar.YEAR);
-      int month = now.get(Calendar.MONTH) + 1;
-      int day = now.get(Calendar.DAY_OF_MONTH);
-      int hour = now.get(Calendar.HOUR_OF_DAY);
-      int minute = now.get(Calendar.MINUTE);
-      int second = now.get(Calendar.SECOND);
-      String parseDate = year + " " + month + " " + day + " " +
-        hour + " " + minute + " " + second;
-
-      String readableDate = now.getTime().toString();
-
-      // increment this so sketchbook won't be mangled 
-      // each time this format has to change
-      String historyVersion = "1";
-      //Date date = new Date();
-      //String datestamp = date.toString();
-
-      historyWriter.println(historyVersion + " " + modeStr + " - " + 
-                            parseDate + " - " + readableDate);
-      historyWriter.println();
-      historyWriter.println(program);
-      historyWriter.flush();  // ??
-      historyLast = program;
-
-      //JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
-      MenuItem menuItem = new MenuItem(modeStr + " - " + readableDate);
-      menuItem.addActionListener(base.historyMenuListener);
-      base.historyMenu.insert(menuItem, 2);
-
-      historyWriter.flush();
-      historyWriter.close();
-
-      if (noPreviousHistory) {  
-        // to get add the actual menu, to get the 'clear' item in there
-        base.rebuildHistoryMenu(historyFile.getPath());
-      }
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  public void retrieveHistory(String selection) {
-    //System.out.println("sel '" + selection + "'");
-    String readableDate = 
-      selection.substring(selection.indexOf("-") + 2);
-
-    // make history for the current guy
-    makeHistory(textarea.getText(), AUTOSAVE);
-    // mark editor text as having been edited
-
-    try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(historyFile))));
-      String line = null;
-
-      int historyCount = 0;
-      String historyList[] = new String[100];
-
-      try {
-        boolean found = false;
-        while ((line = reader.readLine()) != null) {
-          //System.out.println("->" + line);
-          if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
-            line = reader.readLine();
-            if (line.indexOf(readableDate) != -1) {  // this is the one
-              found = true;
-              break;
-            }
-          }
-        }
-        if (found) {
-          // read lines until the next separator
-          line = reader.readLine(); // ignored
-          //String sep = System.getProperty("line.separator");
-          StringBuffer buffer = new StringBuffer();
-          while ((line = reader.readLine()) != null) {
-            if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
-            //textarea.append(line + sep);
-            //buffer.append(line + sep);  // JTextPane wants only \n going in
-            buffer.append(line + "\n");
-            //System.out.println("'" + line + "'");
-          }
-          //textarea.editorSetText(buffer.toString());
-          changeText(buffer.toString(), true);
-          historyLast = textarea.getText();
-          setSketchModified(false);
-
-        } else {
-          System.err.println("couldn't find history entry for " + 
-                             "'" + readableDate + "'");
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
 

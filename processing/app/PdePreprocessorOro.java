@@ -23,6 +23,11 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+
+#ifdef HELL_HAS_FROZEN_OVER
+// disable this guy for a little while
+
+
 import com.oroinc.text.regex.*;
 import java.io.*;
 
@@ -430,3 +435,6 @@ public class PdePreprocessorOro extends PdePreprocessor {
     //}
   }
 }
+
+
+#endif
