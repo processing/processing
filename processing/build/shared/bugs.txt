@@ -68,8 +68,15 @@ KNOWN BUGS
 the real deal, keeping us awake at night
 
 
+- haven't yet modified the default html to make changes for the eolas
+  case. we have the code (thanks to toxi) but it won't be in until 67.
+
 - beautify doesn't retain the *exact* position of the caret within the
   text. 
+
+- .dll and .jnilib files only work if they're in the same folder as
+  the processing app. in the future, they will run properly just from
+  within your 'code' folder.
 
 - java mode in rev 63 and higher only works if you have java available
   in your path--meaning that you've installed it yourself under
