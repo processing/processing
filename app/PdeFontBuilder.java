@@ -37,6 +37,8 @@ import javax.swing.event.*;
 public class PdeFontBuilder extends JFrame {
   File targetFolder;
 
+  Dimension windowSize;
+
   JList fontSelector;
   JComboBox styleSelector;
   JTextField sizeSelector;
@@ -315,7 +317,7 @@ public class PdeFontBuilder extends JFrame {
 
     getRootPane().setDefaultButton(okButton);
 
-    setResizable(false);
+    //setResizable(false);
     pack();
 
     // do this after pack so it doesn't affect layout
@@ -326,10 +328,22 @@ public class PdeFontBuilder extends JFrame {
     //update(); // ??
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension size = getSize();
+    windowSize = getSize();
 
-    setLocation((screen.width - size.width) / 2,
-                (screen.height - size.height) / 2);
+    setLocation((screen.width - windowSize.width) / 2,
+                (screen.height - windowSize.height) / 2);
+  }
+
+
+  /**
+   * make the window vertically resizable
+   */
+  public Dimension getMaximumSize() {
+    return new Dimension(windowSize.width, 2000);
+  }
+
+  public Dimension getMinimumSize() {
+    return windowSize;
   }
 
 

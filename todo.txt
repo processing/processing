@@ -22,6 +22,14 @@ X     -Dcom.apple.mrj.application.growbox.intrudes=false
 X   1.4 version (much nicer): -Dapple.awt.showGrowBox=false
 X add mkdmg script to macosx build process
 X   could significantly speed things up
+X make sure that the preproc stuff gets built once
+X   especially straight out of cvs
+X menu option for Renderer > to "Core" or "OpenGL"
+X   on export, uses this setting to determine if jogl is added to project
+o if additional tab is "public" class.. then make external?
+X   this seems too dangerous
+X make font builder vertically resizable
+X   200 pt font hoses things / hides buttons
 
 sketchbook/prefs location
 X read from registry key to get the proper name for these folders
@@ -86,147 +94,50 @@ o if a data file is in the sketch (not data) folder export breaks
 o   works fine in the editor, but on export gets a nullpointer ex
 X   no way around this, because needs to be able to read from local dir
 
-
-//
-
-
-MESS TO SORT
-
-_ get an xml library in there
-
-_ what's up with int() -> toInt() conversion?
-
-_ use screen manager to run present mode properly
-_   set both versions to require java 1.4
-_   change the Info.plist inside macosx
-_   and add something to PdeBase to make sure that it's in 1.4
-
-_ bring back "rename" ?
-
-_ may need a progress bar for "save as"
-_   or just the file copy function in general
-_   since it may take a long time (i.e. 1000s of screen grabs)
-
-_ scanning sketchbook folder may be extremely slow 
-_   not sure why this would be the case
-
-_ subfolders in the 'data' directory don't work
-
-_ make sure that the preproc stuff gets built once
-_   especially straight out of cvs
-_ also out of cvs
-_   check for necessary tools to be installed
-_   zip, unzip, jikes, etc
-
-_ allow to use doubles on casting -- particularly for Math.cos() et al
-
-_ ctrl-tab to switch between tabs
-
-_ make notes about preproc
-_   subclasses need to use "public void keyPressed" not "void keyPressed"
-
-_ round() is not colored
-
-_ add serial.last() to api
-_   also bring back serial event via reflection
-
-_ "save as" shouldn't show save as dialog for sketches 
-_   unless that's the current mode that's being used
-
-_ "new midlet" option.. keeping things open for midlet projects
-
-_ track loadImage() with filenames that are inconsistent
-_   i.e. mixed case filename in sketch is different in windows
-_   but when uploaded to a unix server causes a serious problem
-_   use canonicalPath to flag possible problems
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
-
-_ mouse wheel broken in the text editor? (windows jdk 1.5?) 
-
-_ make font builder vertically resizable
-_   200 pt font hoses things / hides buttons
-
-_ save caret position when switching tabs
-
-_ add mnemonics for menus (alt-f to open 'file')
-
-_ if additional tab is "public" class.. then make external?
-
-
-......................................................................
-
-
-PROBLEMS FOR NEW USERS (workshop)
-_ making it easier to draw shapes
-_ missing semicolons - better error message
-_ "unexpected token void" -> "You're mixing dynamic and static mode"
-_ forgetting the quotes around strings
-_ separate reference for /dev version
-_ angleMode(DEGREES) -> mistyped keywords, caps being wrong
-
-more
-_ keypressed should maybe throw an error
-
-
-......................................................................
-
-
-casey notes
-_ sketches no longer require a "data" folder
-_ "draw" is not highlighted as a keyword.. other keywords?
-_   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
-_   PClient(), PClient.available(), PClient.read(), 
-_   PServer(), PServer.dispose(), PServer.write(), attach(), length
-_ example that uses loop/noLoop, or redraw?
-_ talk to creas about making html files for bugs, readme, revisions.
-_   or how they should relate to the 'faq'.. readme -> faq? 
-_ make a sketch that shows loading from the web
-_ make another sketch that shows loading from a file
-
-_ nanoxml problems with manifest
-
-_ make exit() and/or size(0, 0) work for scripts
+building libraries - not gonna build libs in p5 ide for 1.0
+o compiling - main file is a .java not a .pde
+o   also where no root .pde file with the same name.. (i.e. video)
+o on "new library" fill in the default code for the lib
+o record imports from java files as well
+o ignore imports from java.* or maybe just things pde's classpath
+o after export of library, rebuild "import library" menu
+o write export-to-library
+o   need to be able to produce the serial, video, etc libs
+o   see if sonia project can compile
 
 libraries
-_ if videoEvent exists, don't auto-read?
-_   though for serial this would only grab the last byte
-_   video bug on osx? an error message when quitting video sketches:
-    java.io.IOException: Bad file descriptor 
-_     at java.io.FileInputStream.readBytes(Native Method) etc... ). 
-_ how to queue lib events until the end of loop
-_   call them inside post()!
-_ bring back some form of beginSerial/beginVideo
-_   openSerial(), serial().. 
-_   should it prompt or use the first available if none specified?
-_ serial - if null serial port name, prompt for one
-_   if "" for name, use the default / first in the list
-_ run library destroy after hitting 'stop'
-_   quicktime audio doesn't stop after hitting 'stop'
-_   weirdness external stop not calling stop(), just finished = true
+X libraries could handle a series of events..
+X   i.e. a 'completion' event, or 'new data' event
+X   these could be registered on obejcts in a general way
+X implemented many events
+X  movieEvent, cameraEvent, soundEvent
+X  serialEvent, clientEvent, serverEvent
+X if videoEvent exists, don't auto-read?
+X   though for serial this would only grab the last byte
+X   video bug on osx? an error message when quitting video sketches:
+X   java.io.IOException: Bad file descriptor 
+X     at java.io.FileInputStream.readBytes(Native Method) etc... ). 
+o bring back some form of beginSerial/beginVideo
+o   openSerial(), serial().. 
+o   should it prompt or use the first available if none specified?
+X run library destroy after hitting 'stop'
+X   quicktime audio doesn't stop after hitting 'stop'
+X   weirdness external stop not calling stop(), just finished = true
+X bring back serial event via reflection
+X add serial.last() to api
+X video - try to replicate bug that causes hang with camera
+X   happens when winvdig, camera or quicktime are not properly installed
+X   documented better in bugs.txt, and sometimes caught in Camera.<init>
 
-_ properly handle non-ascii chars in p5 folder name
-_   or at least warn the user to install somehwere else
-_ track down the cause of the processing.exe not starting bugs
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
+fixed in previous releases
+X dist.sh needs to auto-remove .DS_Store boogers
+X write script to remove .DS_Store and CVS folders from dist
+X   # remove DS_Store files
+X   sudo find . -name ".DS_Store" -depth -exec rm {} \;
+X add a "make archive" option
+X   doesn't rename sketch, just names zip file sketch + time stamp
 
-_ different name for 'lib' folder because of libraries folder
-
-_ implement new version of history
-_   make history folder, and a zip (not gz) file for each entry
-_   history causing trouble - super slow with a huge sketch
-_     could instead be gzipped and appended to history.dat
-_     along with another file that is actually a table of offsets
-_     no need to make the thing a gzip stream
-_     checkbox on menu for 'record history' ?
-_     history converter option?
-_   only first 20 entries visible?
-_   zlib file becoming corrupt (not flushed after close?)
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
-_   shortcut to walk through history, ala photoshop (ctrl-alt-z)
-
+hanging bug - now fixed, need to post on the board about it
 _ keypressed hanging on applets with a code folder
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
 _ problems running external vm/vm is hanging
@@ -237,8 +148,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
 _     something in that one about mouse position halting or not
-
-hanging bug
 to try: 1) don't use a bufferedreader.. just read it and then use a
 buffered reader around the byte array 2) don't do anything with the
 input, and just read it off without signalling message()
@@ -262,23 +171,115 @@ sure if related. same for PATH and CLASSPATH.
 the trouble. 
 
 
-libraries
-_ compiling - main file is a .java not a .pde
-_   also where no root .pde file with the same name.. (i.e. video)
-_ on "new library" fill in the default code for the lib
-_ record imports from java files as well
-_ ignore imports from java.* or maybe just things pde's classpath
-_ after export of library, rebuild "import library" menu
+//
 
+_ get an xml library in there
+_   nanoxml problems with manifest
 
-really nasty bugs (fix in 0070 if possible)
-_ threading issues on casey's laptop
+check these errors to see if they still exist
 _ odd error in System.err stream coming from running external
 _   dies after a while or goes weird
 _   make sure exceptions with .class work
 _ openStream returning 'null' really horked up the letters applet
 _   no System.out was coming through
 _   System.err was getting cut off before finishing
+
+libraries
+_ should we queue lib events until the end of loop?
+_   lib could call queueEvent with the args
+_   then call them inside post()
+_ add prompt() method to Camera ("" means default, null is prompt)
+_ add prompt() method to Serial
+
+_ straighten out int() -> toInt() conversion in the preproc
+_   add use of doubles on casting -- particularly for Math.cos() et al
+
+_ use screen manager to run present mode properly
+_   set both versions to require java 1.4
+_   change the Info.plist inside macosx
+_   and add something to PdeBase to make sure that it's in 1.4
+
+_ bring back "rename" ?
+_ may need a progress bar for "save as"
+_   or just the file copy function in general
+_   since it may take a long time (i.e. 1000s of screen grabs)
+
+_ scanning sketchbook folder may be extremely slow 
+_   not sure why this would be the case
+
+_ subfolders in the 'data' directory don't work
+
+_ don't allow goofy case versions of reserved words
+_   keypressed should maybe throw an error
+
+_ "save as" shouldn't show save as dialog for sketches 
+_   unless that's the current mode that's being used
+
+_ "new midlet" option.. keeping things open for midlet projects
+
+_ track loadImage() with filenames that are inconsistent
+_   i.e. mixed case filename in sketch is different in windows
+_   but when uploaded to a unix server causes a serious problem
+_   use canonicalPath to flag possible problems
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
+
+_ mouse wheel broken in the text editor? (windows jdk 1.5?) 
+
+
+......................................................................
+
+
+PROBLEMS FOR NEW USERS
+_ making it easier to draw shapes
+_ missing semicolons - better error message
+_ "unexpected token void" -> "You're mixing dynamic and static mode"
+_ forgetting the quotes around strings
+_ separate reference for /dev version
+_ angleMode(DEGREES) -> mistyped keywords, caps being wrong
+
+
+TALK TO CASEY ABOUT...
+_ sketches no longer require a "data" folder
+_ "draw" is not highlighted as a keyword.. other keywords?
+_   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
+_   PClient(), PClient.available(), PClient.read(), 
+_   PServer(), PServer.dispose(), PServer.write(), attach(), length
+_   round() is not colored
+_ example that uses loop/noLoop, or redraw?
+_ talk to creas about making html files for bugs, readme, revisions.
+_   or how they should relate to the 'faq'.. readme -> faq? 
+_ make a sketch that shows loading from the web
+_ make another sketch that shows loading from a file
+_ make notes about preproc
+_   subclasses need to use "public void keyPressed" not "void keyPressed"
+_ write a threading example
+_   or handle this some more intelligent way, super.stop() is needed.
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
+_ write an example that uses Hashtable
+_ and another that uses Vector
+_ need showError/Message/Warning/Prompt design from casey
+_   maybe something that shows stack trace?
+_   with an 'email this' button? (include source code too?)
+_   also need a "prompt" dialog for asking filenames, etc
+_   implement and remove PdeEditorStatus stuff
+
+_ different name for 'lib' folder because of libraries folder?
+_   avoid some confusion for when describing the libraries folder to users
+
+_ implement new version of history
+_   make history folder, and a zip (not gz) file for each entry
+_   history causing trouble - super slow with a huge sketch
+_     could instead be gzipped and appended to history.dat
+_     along with another file that is actually a table of offsets
+_     no need to make the thing a gzip stream
+_     checkbox on menu for 'record history' ?
+_     history converter option?
+_   only first 20 entries visible?
+_   zlib file becoming corrupt (not flushed after close?)
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
+_   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 
 _ support for editor plugins
@@ -299,12 +300,6 @@ o   make "get quicktime libs" function
 o     can java get the root directory for system/win32 etc?
 
 
-_ write a threading example
-_   or handle this some more intelligent way, super.stop() is needed.
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
-
-
 export stuff
 _ make multiple jar files thing work as an option
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
@@ -313,20 +308,6 @@ _   user in advanced mode can switch to the other
 _   buttons on side of sketch do default (last) behavior
 _ include a note that 'applet' folder will get emptied/rewritten
 _   or rename the old applet folder to something else? (nah, too messy)
-
-
-_ redo preferences panel to use proper swing layout etc
-_ exception in setup() on external app doesn't kill run button 
-_   also doesn't kill external vm
-_ make preferences a modal dialog
-_ package processing.app for PdeBase, PdeEditor..
-
-
-_ video - try to replicate bug that causes hang with camera
-_   happens when winvdig, camera or quicktime are not properly installed
-
-
-0071 or later
 _ write export-to-application
 _   lock feature for present mode (part of export to application?)
 _   application can still do serial (qt, other stuff?) 
@@ -344,20 +325,9 @@ _     this will need to detect whether the user has their own main()
 _     or even BApplet.main(new String[] { getClass().getName() });
 _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
 _     main sticking point will be serial/qtjava in exports
-_ write export-to-library
-_   need to be able to produce the serial, video, etc libs
-_   see if sonia project can compile
+
 _ implement horizontal version of PdeEditorButtons
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
-_ menu option for Renderer > to "Core" or "OpenGL"
-_   on export, uses this setting to determine if jogl is added to project
-_ add a "make archive" option
-_   doesn't rename sketch, just names zip file sketch + time stamp
-_ need showError/Message/Warning/Prompt design from casey
-_   maybe something that shows stack trace?
-_   with an 'email this' button? (include source code too?)
-_   also need a "prompt" dialog for asking filenames, etc
-_   implement and remove PdeEditorStatus stuff
 
 
 
@@ -369,6 +339,19 @@ PDE - Processing Development Environment
 
 
 PDE / Details
+
+   1 _ preferences
+   1 _   make preferences a modal dialog
+   1 _     it's annoying when it hides itself
+   1 _   redo panel to use proper swing layout etc
+
+   1 _ exception in setup() on external app doesn't kill run button 
+   1 _   also doesn't kill external vm
+   1 _ package processing.app for PdeBase, PdeEditor..
+
+   1 _ save caret position when switching tabs
+   1 _ ctrl-tab to switch between tabs
+   1 _ add mnemonics for menus (alt-f to open 'file')
 
    b _ running present mode with a bug in the program hoses things
    b _   make sure the program compiles before starting present mode
@@ -513,11 +496,12 @@ How the environment gets packed up, downloaded, and installed.
 
 
 DISTRIBUTION / General 
+
+
+b _ also out of cvs
+b _   check for necessary tools to be installed
+b _   zip, unzip, jikes, etc
 b _ need to change all the copyrights over to mit "except where noted"
-b _ dist.sh needs to auto-remove .DS_Store boogers
-b _ write script to remove .DS_Store and CVS folders from dist
-b _   # remove DS_Store files
-b _   sudo find . -name ".DS_Store" -depth -exec rm {} \;
 b _ need more comprehensive list of 'known bugs'
 b _ need more comprehensive list of 'known suggestions'
 b _ javadoc "advanced" reference by beta
@@ -555,6 +539,12 @@ BUGS / Windows
 
 
 DISTRIBUTION / Windows
+b _ properly handle non-ascii chars in p5 folder name
+b _   or at least warn the user to install somehwere else
+b _ track down the cause of the processing.exe not starting bugs
+b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
 1 _ winamp/audio getting starved or crackly while applets running
 1 _   thread priority too high? or something weird
 1 _ need splash screen, startup takes a long time
