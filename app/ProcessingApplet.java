@@ -723,6 +723,10 @@ public class ProcessingApplet extends Applet
     g.colorMode(colorMode, maxX, maxY, maxZ, maxA);
   }
 
+  public void colorScale(int max) {
+    g.colorScale(max);
+  }
+
   public void colorScale(int maxX, int maxY, int maxZ, int maxA) {
     g.colorScale(maxX, maxY, maxZ, maxA);
   }
@@ -769,6 +773,10 @@ public class ProcessingApplet extends Applet
 
   public void stroke(float x, float y, float z, float a) {
     g.stroke(x, y, z, a);
+  }
+
+  public void clear() {
+    g.clear();
   }
 
   public void noBackground() {
