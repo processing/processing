@@ -2,21 +2,17 @@
 
 import java.io.*;
 
-// XXXdmose error checking
-
 class PdeMessageSiphon implements Runnable {
-  BufferedReader stdout, stderr;
-  PrintStream leechErr;
+  BufferedReader streamReader;
   Thread thread;
   PdeMessageConsumer consumer;
 
-  public PdeMessageSiphon(InputStream stdout, InputStream stderr,
-                          PdeMessageConsumer consumer) {
+  public PdeMessageSiphon(InputStream stream, PdeMessageConsumer consumer) {
 
-    // XXXdmose error checking here
-
-    this.stdout = new BufferedReader(new InputStreamReader(stdout));
-    this.stderr = new BufferedReader(new InputStreamReader(stderr));
+    // we use a BufferedReader in order to be able to read a line
+    // at a time
+    //
+    this.streamReader = new BufferedReader(new InputStreamReader(stream));
     this.consumer = consumer;
 
     thread = new Thread(this);
@@ -27,31 +23,18 @@ class PdeMessageSiphon implements Runnable {
     
     String currentLine;
 
-    while (Thread.currentThread() == thread) {
-
-      // XXX put back while loops
-
-      try {
-        if (stderr.ready()) {
-          currentLine = stderr.readLine();
-          System.err.println(currentLine);
-          consumer.message(currentLine);
-        }
-
-        if (stdout.ready()) {
-          currentLine = stdout.readLine();
-          System.err.println(currentLine);
-          consumer.message(currentLine);
-        }
-
-        Thread.sleep(10);
-
-      } catch (Exception e) { 
-        System.err.println("PdeMessageSiphon err " + e);
-
-        thread.stop();
-        thread = null;
+    try {
+      // process data until we hit EOF; this may block
+      //
+      while ((currentLine = streamReader.readLine()) != null) {
+        consumer.message(currentLine);
+        //System.err.println(currentLine);
       }
+    } catch (Exception e) { 
+      System.err.println("PdeMessageSiphon err " + e);
+      thread.stop();
     }
+    
+    //System.err.println("siphon thread exiting");
   }
 }
