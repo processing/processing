@@ -248,7 +248,7 @@ public class PdeSketchbook {
     // TODO this doesn't seem to ever be used. AWESOME.
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
-          System.out.println("check filter on " + dir + " " + name);
+          //System.out.println("check filter on " + dir + " " + name);
           return name.endsWith(".pde");
         }
       });
