@@ -64,6 +64,12 @@ public class PdeBase extends Frame implements ActionListener {
 
 
   static public void main(String args[]) {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) { 
+      e.printStackTrace();
+    }
+
     //System.getProperties().list(System.out);
     //System.out.println(System.getProperty("java.class.path"));
 
