@@ -178,11 +178,18 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
 
   public void doClose() {
-    if (playing) doStop();
+    if (playing) {
+      //System.out.println("was playing, will call doStop()");
+      doStop();
+    }
+
     // some code to close the window here
     try {
       // runner.engine is null (runner is not)
       ((KjcEngine)(runner.engine)).close();
+      // runner shouldn't be set to null because it gets reused
+      //System.err.println("runner = " + runner);
+      //runner = null;
     } catch (Exception e) { }
     buttons.clear();
   }
