@@ -15,6 +15,24 @@ X   for now, disallow the / or : characters
 X   there was a bug that required a noop() b/c of jikes or 1.3 problems
 X is problem w/ beautify that it has no menu event handler?
 X   write event handler, and make sure it doesn't work for external ed
+X don't popup offscreen if editor window is way left. 
+X   just make sure the x coord > 10 or so (if not presenting)
+X     if so, pop up window 50, 50 from upper left corner
+X   if it still won't fit, center the window on screen
+X don't throw exceptions for serial on startup if no serial available?
+o   gets upset on osx if rxtx not installed during menu building
+X   actually, it just throws UnsatisfiedLinkError
+X     make a note in the readme, particularly wrt macos
+X readme additions
+X   size() and background() need regular nums, no vars
+X   hidden features/niceties
+X     click sketch title to rename
+X     mention shift-run for present mode
+X   known issues
+X     macos sketch window resizing strangely
+X     win95/98/me version acts poorly or doesn't run
+X as approaches 1000 lines, editorconsole has arrayindexoutof bounds
+
 
 bagel
 _ need to finish fill mode of flat circle function
@@ -22,30 +40,9 @@ _ 'image' is too generic a variable to have inside BApplet
 _   check for others that shouldn't be used
 
 pde
-44 _ don't popup offscreen if editor window is way left. 
-44 _   just make sure the x coord > 10 or so (if not presenting)
-44 _     if so, pop up window 50, 50 from upper left corner
-44 _   if it still won't fit, center the window on screen
-44 _ don't throw exceptions for serial on startup if no serial available?
-44 _   gets upset on osx if rxtx not installed during menu building
-44 _ as approaches 1000 lines, editorconsole has arrayindexoutof bounds
-int a; 
-void loop()
-{ 
-  a++; 
-  println(a); 
-} 
 _ locking up on run (under win2k? others?) 
 _   rare but present, every 100th time or so
 
-readme
-44 _ size() and background() need regular nums, no vars
-44 _ hidden features/niceties
-44 _   click sketch title to rename
-44 _   mention shift-run for present mode
-44 _ known issues
-44 _   macos sketch window resizing strangely
-44 _   win95/98/me version acts poorly or doesn't run
 
 windows
 44 _ use self-extractor and make sure no 8.3 filenames
@@ -58,6 +55,7 @@ macos
 44 _   file names with a space get "_ " instead of a space ?
 
 macosx 
+44 _ make default font size for editor the next size smaller
 44 _ include instructions for rxtx or the install itself
 44 _   just include the .pkg, since causing exceptions now
 44 _ use a .dmg to distribute 
