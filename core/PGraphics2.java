@@ -374,11 +374,147 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  public void vertex(float x, float y) {
+    float vertex[];
+
+    if (shapeVertices) {
+      if (vertexCount == vertices.length) {
+        float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+        System.arraycopy(vertices, 0, temp, 0, vertexCount);
+        vertices = temp;
+        message(CHATTER, "allocating more vertices " + vertices.length);
+      }
+      vertex = vertices[vertexCount++];
+      vertex[MX] = x;
+      vertex[MY] = y;
+    }
+
+    switch (shape) {
+
+    case POINTS:
+      point(x, y);
+      break;
+
+    case LINES:
+      if ((vertexCount % 2) == 0) {
+        line(vertices[vertexCount-2][MX],
+             vertices[vertexCount-2][MY], x, y);
+      }
+      break;
+
+    case LINE_STRIP:
+    case LINE_LOOP:
+      if (vertexCount == 1) {
+        path = new GeneralPath();
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+      break;
+
+    case TRIANGLES:
+      if ((vertexCount % 3) == 0) {
+        triangle(vertices[vertexCount - 3][MX],
+                 vertices[vertexCount - 3][MY],
+                 vertices[vertexCount - 2][MX],
+                 vertices[vertexCount - 2][MY],
+                 x, y);
+      }
+      break;
+
+    case TRIANGLE_STRIP:
+      if (vertexCount == 3) {
+        triangle(vertices[0][MX], vertices[0][MY],
+                 vertices[1][MX], vertices[1][MY],
+                 x, y);
+      } else if (vertexCount > 3) {
+        path = new GeneralPath();
+        // when vertexCount == 4, draw an un-closed triangle
+        // for indices 2, 3, 1
+        path.moveTo(vertices[vertexCount - 2][MX],
+                    vertices[vertexCount - 2][MY]);
+        path.lineTo(vertices[vertexCount - 1][MX],
+                    vertices[vertexCount - 1][MY]);
+        path.lineTo(vertices[vertexCount - 3][MX],
+                    vertices[vertexCount - 3][MY]);
+        draw_shape(path);
+      }
+      break;
+
+    case TRIANGLE_FAN:
+      if (vertexCount == 3) {
+        triangle(vertices[0][MX], vertices[0][MY],
+                 vertices[1][MX], vertices[1][MY],
+                 x, y);
+      } else if (vertexCount > 3) {
+        path = new GeneralPath();
+        // when vertexCount > 3, draw an un-closed triangle
+        // for indices 0 (center), previous, current
+        path.moveTo(vertices[0][MX],
+                    vertices[0][MY]);
+        path.lineTo(vertices[vertexCount - 2][MX],
+                    vertices[vertexCount - 2][MY]);
+        path.lineTo(x, y);
+        draw_shape(path);
+      }
+      break;
+
+    case QUADS:
+      break;
+
+    case QUAD_STRIP:
+      break;
+
+    case POLYGON:
+    case CONCAVE_POLYGON:
+    case CONVEX_POLYGON:
+      break;
+    }
+  }
+
+  public void endShape() {
+    switch (shape) {
+
+    case LINE_STRIP:
+      stroke_shape(path);
+      break;
+
+    case LINE_LOOP:
+      path.closePath();
+      stroke_shape(path);
+      break;
+
+    case POLYGON:
+    case CONCAVE_POLYGON:
+    case CONVEX_POLYGON:
+      path.closePath();
+      draw_shape(path);
+      break;
+    }
+  }
+
+  public void curveVertex(float x, float y) {
+  }
+
 
   //////////////////////////////////////////////////////////////
 
   // SHAPES
 
+
+  protected void fill_shape(Shape s) {
+    if (fill) {
+      graphics.setColor(fillColorObject);
+      graphics.fill(s);
+    }
+  }
+
+  protected void stroke_shape(Shape s) {
+    if (stroke) {
+      graphics.setColor(strokeColorObject);
+      graphics.draw(s);
+    }
+  }
 
   protected void draw_shape(Shape s) {
     if (fill) {
