@@ -52,14 +52,12 @@ o     not draw the sketch name bar doesn't appear"
 X include preferences.txt option to write to p5 folder first
 X   this can be altered by instructors and re-packaged
 X fixed a couple bugs causing the jnilib stuff to crash
-
 X put 'play' on a SwingWorker thread
 X   test this on a pc to see how it goes, especially with opengl
 X   doesn't seem to help anything
 X PdeRuntime -> SystemOutSiphon, removed MIN_PRIORITY setting
 o hack to not use console on the code folder 
 o   no errors will propogate, but it should run fine
-
 X lib/build should not be a subfolder of p5
 X   p5 environment installed to /Applications on lab machines
 X   instead use a temp folder
@@ -73,17 +71,16 @@ X     may be subject to errors, but errs on side of just running ext)
 X   runs out of processing data folder
 X fix for toolbar being one pixel off breaks the windows version
 X   need to only do the fix on the mac.. ugh
+X macosx is using /Library instead of ~/Library.. get this fixed
+X   domain version wasn't in the stubs.. grr
+X   or maybe it's an int or something?
+X   just use reflection to call the function instead
 
 _ "use external editor" is broken
 _   throws exception on load()
 
 _ if a data file is in the sketch (not data) folder export breaks
 _   works fine in the editor, but on export gets a nullpointer ex
-
-_ macosx is using /Library instead of ~/Library.. get this fixed
-_   domain version wasn't in the stubs.. grr
-_   or maybe it's an int or something?
-_   just use reflection to call the function instead
 
 _ preproc: making all functions public that have no specifier
 _   this will make draw() etc all much easier
