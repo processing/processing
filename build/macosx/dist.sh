@@ -1,8 +1,14 @@
 #!/bin/sh
 
-#REVISION=`head -c 4 ../../todo.txt`
-# 'head' for osx doesn't support -c.. what a pisser
-REVISION=0000
+
+if test -f /sw/bin/head
+then
+  # a more useful version of head than what's included with osx
+  REVISION=`head -c 4 ../../todo.txt`
+else
+  # can't get four bytes of head (osx doesn't support -c)
+  REVISION=0000
+fi
 
 ./make.sh
 
