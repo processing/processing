@@ -6,7 +6,7 @@ X much reworking for run/present modes
 X   run/present modes are getting confused
 X   [esc] to exit presentation mode
 X remove 'edit' menu because it's worthless
-X build 'release' version of app that doesn't need MFC42D.dll
+X build 'release' version of app that doesn't need MFC42D.DLL
 X check on linefeeds and other errors with bbs on web site
 X serial
 X   some method for getting list of serial ports
