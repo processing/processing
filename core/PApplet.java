@@ -4,7 +4,7 @@
   PApplet - applet base class for the bagel engine
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004- Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -4028,6 +4028,7 @@ public class PApplet extends Applet
       Frame frame = new Frame();
       frame.setResizable(false);  // remove the grow box
       frame.pack();  // get insets. get more.
+      frame.show();  // gl hack
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
 
@@ -4040,9 +4041,13 @@ public class PApplet extends Applet
       applet.init();
       applet.start();
 
+      System.out.println("applet inited, started");
+
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       if (external) {
+        System.out.println("applet is external");
+
         Insets insets = frame.getInsets();  // does pack() first above
         //System.out.println(insets);
 
@@ -4095,6 +4100,8 @@ public class PApplet extends Applet
         applet.setupExternal(frame);
 
       } else {  // !external
+        System.out.println("applet not external");
+
         // remove applet name from args passed in
         applet.args = new String[args.length - 1];
         System.arraycopy(args, 1, applet.args, 0, args.length - 1);
@@ -4112,9 +4119,13 @@ public class PApplet extends Applet
             }
           });
       }
+      System.out.println("showing frame");
 
       frame.show();
+      System.out.println("applet requesting focus");
       applet.requestFocus(); // ask for keydowns
+
+      System.out.println("exiting main()");
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -4224,15 +4235,15 @@ public class PApplet extends Applet
   }
 
 
-  static public void saveHeaderTIFF(OutputStream output,
-                                    int width, int height) throws IOException {
-     PGraphics.saveHeaderTIFF(output, width, height);
+  static public void saveHeaderTIF(OutputStream output,
+                                   int width, int height) throws IOException {
+     PGraphics.saveHeaderTIF(output, width, height);
   }
 
 
-  static public void saveTIFF(OutputStream output, int pixels[],
-                              int width, int height) throws IOException {
-     PGraphics.saveTIFF(output, pixels, width, height);
+  static public void saveTIF(OutputStream output, int pixels[],
+                             int width, int height) throws IOException {
+     PGraphics.saveTIF(output, pixels, width, height);
   }
 
 

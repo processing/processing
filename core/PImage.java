@@ -1031,8 +1031,8 @@ public class PImage implements PConstants, Cloneable {
     1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
   };
 
-  static public void saveHeaderTIFF(OutputStream output,
-                                    int width, int height) throws IOException {
+  static public void saveHeaderTIF(OutputStream output,
+                                   int width, int height) throws IOException {
     byte tiff[] = new byte[768];
     System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
 
@@ -1051,9 +1051,9 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  static public void saveTIFF(OutputStream output, int pixels[],
-                              int width, int height) throws IOException {
-    saveHeaderTIFF(output, width, height);
+  static public void saveTIF(OutputStream output, int pixels[],
+                             int width, int height) throws IOException {
+    saveHeaderTIF(output, width, height);
     for (int i = 0; i < pixels.length; i++) {
       output.write((pixels[i] >> 16) & 0xff);
       output.write((pixels[i] >> 8) & 0xff);
@@ -1125,7 +1125,7 @@ public class PImage implements PConstants, Cloneable {
           filename += ".tif";
         }
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        saveTIFF(os, pixels, width, height);
+        saveTIF(os, pixels, width, height);
       }
       os.flush();
       os.close();
