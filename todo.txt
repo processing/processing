@@ -111,21 +111,22 @@ X get rid of 'kill' button
 X int version of min and abs
 X introduce pImage, pFont, pGraphics, pConstants (pSound)
 
+a _ move everything to new bagel api names
+a _ draw mode needs to be better for workshops
+a _   make size() work for draw() mode
+a _     inside Engine, reach in and grab calls to 'size'
+a _     if call is not using a constant number, then punt
+a _ importing images doesn't work
 a _ add frame to launched window
 a _   add maximize event catcher to make fullscreen
 a _   shift-click on play to go directly into this 'presentation mode'
 a _ serial.messageReceived extra long crap in demo.pde (clean up?)
 a _ NullPointerException on startup in pde editor buttons
 a _   shows up on slower machines, probably images not loaded yet
-a _ draw mode needs to be better for workshops
-a _   make size() work for draw() mode
-a _     inside Engine, reach in and grab calls to 'size'
-a _     if call is not using a constant number, then punt
 a _ lines being highlighted for errors are off
 a _   test this on other platforms as well
 a _ use a vm that won't destroy the screen like sun/ibm does
 a _   this means msft or newer version of jdk
-a _ importing images doesn't work
 
 
 PDE / high & time consuming
@@ -159,7 +160,8 @@ a _   erroneous errors from kjc regarding 'var not inited'
 a _     is there any way to disable this message?
 a _   talk to simon about error streams and kjc
 a _     better piping of output from kjc
-a _     modify kjc to take a PrintWriter, instead of current weird hacks
+a _     modify kjc to take a PrintWriter, instead of current hacks
+
 b _ having to put 'f' after everything is a mess
 b _ related classes
 b _   better way to do parent and g.rect stuff in related classes
@@ -214,7 +216,7 @@ b _ ui for sketchbook/projects handling
 
 
 PDE / macos
-a _ crashes when people click on help in top bar (same in DBN)
+a _ crashes when people click on help in top bar (same in DBN) [macos9]
 a _ dataInputStream, setUseCaches on the url to false
 a _   URLConnection.setUseCaches(false)
 a _ parent.obj.close() on the url
