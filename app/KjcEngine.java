@@ -186,7 +186,11 @@ public class KjcEngine extends PdeEngine {
 	if (program.indexOf("color") == 0) program = " " + program;
 	// swap 'color' with 'int' when used as a datatype
 	program = substipoot(program, 
-			     "([;\\s])color([\\s])", "$1int$2");
+			     "([;\\s\\(])color([\\s\\[])", "$1int$2");
+	  // had to add ( at beginning for addPixel(color c...)
+			     //"([;\\s])color([\\s\\[])", "$1int$2");
+	  // had to add [ to that guy for color[] stuff
+			     //"([;\\s])color([\\s])", "$1int$2");
 			     //"([^A-Za-z0-9_.])color([^A-Za-z0-9_\\(.])", "$1int$2");
 	// color(something) like int() and the rest is no good
 	// because there is already a function called 'color' in BGraphics
