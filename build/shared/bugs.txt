@@ -30,6 +30,14 @@ changed in the future, but for now, they're not actually 'broken'.
 
 - 'preferences' will get better in a future release
 
+- the error message:
+  ## Component Manager: attempting to find symbols in a component
+  alias of type (regR/carP/x!bt)
+  is not something from processing, it is a bug in toast 5.2's video
+  cd support extension. to suppress the messages, move "Toast Video CD
+  Support.qtx" out of /Library/QuickTime (at least until you need to
+  do video cd work).
+
 
 ..................................................................
 
@@ -59,26 +67,20 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
 
 
 KNOWN BUGS
-the real deal, keeping us awake at night
+the real deal, keeping us awake at night.. this is only a partial
+list, see the bboard for more, and inside ben's head for others.
 
 
 - haven't yet modified the default html to make changes for the eolas
-  case. we have the code (thanks to toxi) but it won't be in until 67.
+  case. we have the code (thanks to toxi), but i haven't gotten it in
+  there yet. 
 
 - beautify doesn't retain the *exact* position of the caret within the
   text. 
 
 - beautify has problems with indenting when lines with a brace are
-  commented out, or with switch statements.
+  commented out, and also ignores switch statements.
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-
-- .dll and .jnilib files only work if they're in the same folder as
-  the processing app. in the future, they will run properly just from
-  within your 'code' folder.
-
-- java mode in rev 63 and higher only works if you have java available
-  in your path--meaning that you've installed it yourself under
-  windows or linux, or this will always be the case for macosx.
 
 - network examples haven't been updated for the latest api, so they
   will likely break in releases 60 and higher.
@@ -134,10 +136,6 @@ the real deal, keeping us awake at night
 
 - net needs work, it's currently sending unicode, instead of ascii or
   UTF-8, data. this can cause problems with other programs.
-
-- run.bat hasn't been given love for a while and may not work. at the
-  very least, you'll need to modify it to find your copy of quicktime
-  for java. 
 
 - sound doesn't always stop when the 'stop' button is hit (i.e. the
   mixer example seems broken). for now, you have to first quit
