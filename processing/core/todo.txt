@@ -1,6 +1,12 @@
 0071
 X properly swap alpha values when lines need to be rendered backwards
+X make cursor() commands public
 
+_ now that it's actually a key, should it be a char? (what's keyChar?)
+_   that way println(c) would work a little better..
+
+_ write PApplet2, a full screen version of PApplet
+_   this might be used for presentation mode
 
 text fixes
 _ if a word (no spaces) is too long to fit, insert a 'space'
