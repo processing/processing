@@ -1,4 +1,32 @@
-ABOUT REV 0035
+ABOUT REV 0036 - 27 july 2002
+
+significant hacking coming into deadline for alpha release
+
+[ features and additions ]
+
+- first rev off the press with the more semi-automated build
+  system. should be much easier to build all four platforms
+  more-or-less simultaneously.
+
+- folded serial into BApplet, though it's not fixed
+
+- built macos9 version
+
+[ bug fixes and tweaks ]
+
+- fixed exception when quitting on linux and mac
+
+- fixed height and background of buttons in the status area (macosx)
+
+- introduced os-specific properties files
+
+- fixed setPixel(i, j, #99cc00)
+
+- mouse no longer being funny when outside a 100x100 box in 
+  120x120 window
+
+
+ABOUT REV 0035 - 23 july 2002
 
 - duplicate/rename replaced with save as
 
@@ -16,7 +44,7 @@ ABOUT REV 0035
 - removed NullPointerException on startup
 
 
-ABOUT REV 0034
+ABOUT REV 0034 - 22 july 2002
 
 - fixed the problems with launching applets, implemented frame
   around the applet being run, also implemented presentation mode
@@ -26,7 +54,7 @@ ABOUT REV 0034
   any sensible amount of quality control.
 
 
-ABOUT REV 0033
+ABOUT REV 0033 - 8 july 2002
 
 - duplicate and rename now implemented, more (should be all) of 
   the menus are actually functional. some are hacks (item to
@@ -34,7 +62,7 @@ ABOUT REV 0033
   generally more consistent.
 
 
-ABOUT REV 0032
+ABOUT REV 0032 - 7 july 2002
 
 - another major release that irons out issues of export and 
   the toolbar. a button for a new project is included, and 
@@ -43,7 +71,7 @@ ABOUT REV 0032
   files accessed via getImage/getStream/etc. 
 
 
-ABOUT REV 0031
+ABOUT REV 0031 - 5 july 2002
 
 - this is a major release, representing several victories. 
   most important: sketchbook is finally in there. every piece 
@@ -69,7 +97,7 @@ ABOUT REV 0031
   and won't work if you switch to them
 
 
-ABOUT REV 0030
+ABOUT REV 0030 - 2 july 2002
 
 - fix bug where comments were being removed from exported files
 
@@ -78,7 +106,7 @@ ABOUT REV 0030
   color c = #ff00cc;
 
 
-ABOUT REV 0029
+ABOUT REV 0029 - 1 july 2002
 
 - actually updated pde.jar, export, pde.properties, BApplet.java 
   in sketchbook, removed extra dbn.pde from lib (it's in sketchbk)
@@ -93,7 +121,7 @@ ABOUT REV 0029
   for get/set pixel debate
 
 
-ABOUT REV 0028
+ABOUT REV 0028 - 1 july 2002
 
 - serial port should work again (win32comm was missing)
 
@@ -115,7 +143,7 @@ ABOUT REV 0028
 - jre now in its own subdirectory, separate from 'lib'
 
 
-ABOUT REV 0027
+ABOUT REV 0027 - 7 june 2002
 
 - released on the floor of dis2002. welcome to london.
 
@@ -126,14 +154,14 @@ ABOUT REV 0027
 _ latest iteration of colors and buttons
 
 
-ABOUT REV 0026
+ABOUT REV 0026 - 7 june 2002
 
 - fixed the situation where i'm a dork and forgot to 
   actually update the pde.jar file, which had rendered the 
   changes in rev 0025 irrelevant
 
 
-ABOUT REV 0025
+ABOUT REV 0025 - 6 june 2002
 
 - 'rect' is now 'plane'
 
@@ -146,14 +174,14 @@ ABOUT REV 0025
 - fixed long font names for the mac release
 
 
-ABOUT REV 0024
+ABOUT REV 0024 - 22 april 2002 afternoon
 
 - lighting was broken, but no longer
 
 - turned lights off by default
 
 
-ABOUT REV 0023
+ABOUT REV 0023 - 22 april 2002 3am
 
 - versions 21 through 23 dealt with getting the beast to work smoothly
   for the numer workshop
@@ -177,7 +205,7 @@ major release, significant, code-destroying changes
   in fact, don't ever use f with floats b/c you'll get an error
 
 
-ABOUT REV 0019
+ABOUT REV 0019 - 25 february 2002
 
 noticeable changes:
 
@@ -195,7 +223,7 @@ internal changes:
 - long list of other tidbits in cvs
 
 
-ABOUT REV 0018
+ABOUT REV 0018 - 11 february 2002
 
 bug fix:
 
@@ -209,7 +237,7 @@ feature:
   the size into g.projX, g.projY, g.projZ
 
 
-ABOUT REV 0017
+ABOUT REV 0017 - 23 january 2002
 
 features and tweaks:
 
@@ -249,7 +277,7 @@ known issues:
   this will ever be ready to go
 
 
-ABOUT REV 0016
+ABOUT REV 0016 - 20 january 2002
 
 - disabled (by default) the sketchiness from the previous version. so
   the commportinuse trouble is back, unless you re-enable the hack
@@ -259,7 +287,7 @@ ABOUT REV 0016
   number to avoid confusion
 
 
-ABOUT REV 0015
+ABOUT REV 0015 - 11 december 2001
 
 known issues:
 
@@ -282,7 +310,7 @@ features and tweaks:
   bonanza that starts after you've been running processing for a bit.
 
 
-ABOUT REV 0014
+ABOUT REV 0014 - 10 december 2001
 
 features and tweaks:
 
@@ -358,14 +386,14 @@ bugs fixed:
 - editor was selecting the wrong line for errors. 
 
 
-ABOUT REV 0012
+ABOUT REV 0012 - 29 november 2001
 
 this was a simple fix for a big problem... programs that included
 'extends ProcessingApplet' didn't work and gave a cryptic error
 message. other than that, no new features.
 
 
-ABOUT REV 0011
+ABOUT REV 0011 - 28 november 2001
 
 i've changed (broken) enough things in this new release that i'm
 writing down a list of changes. your programs may run a little funny
