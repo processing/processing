@@ -1,8 +1,54 @@
 0071
 o get linux version for 0071
 
+_ track loadImage() with filenames that are inconsistent
+_   i.e. mixed case filename in sketch is different in windows
+_   but when uploaded to a unix server causes a serious problem
+_   use canonicalPath to flag possible problems
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
+
+_ add a little gap on editor frame at the left
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1096486079;start=1
+
+_ macosx not exporting core.jar 
+_   the jar is buried Contents/Resources/Java
+
+_ alphabetizing sketch menu
+_   uppercase being capitalized before lowercase
+_   need to mix case.. use toLowerCase before compare
+
 _ add file of a .pde or .java file should update the tabs bar
 _   and prolly not really complain if it's in the same folder
+
+_ add to readme or bugs.. 
+_   menus that are too long just get clipped on the screen
+_     can't be fixed because it's a java/os issue
+_   also strange menu behavior for popups, especially on osx we can't fix
+
+_ don't enable externalRuntime with multiple code files that are pde
+_   no longer separate classes
+
+_ remove "file" from "new file".. maybe just "new tab"?
+_   not really separate files, so that could be trouble.
+
+_ "save as" not properly updating the tab header
+_ also include the name of the previous sketch for "save as"
+
+_ allow to use doubles on casting -- particularly for Math.cos() et al
+
+_ mouse wheel broken in the text editor? (windows jdk 1.5?) 
+
+_ dim "rename" when the main tab is selected (since user needs to "save as")
+
+_ make font builder vertically resizable
+_   200 pt font hoses things / hides buttons
+
+_ save caret position when switching tabs
+
+_ add mnemonics for menus (alt-f to open 'file')
+
+_ if applet.html is present, open that in the editor too.
+_   or do we make people use dreamweaver?
 
 
 ......................................................................
@@ -27,6 +73,10 @@ _ nanoxml problems with manifest
 _ make exit() and/or size(0, 0) work for scripts
 
 libraries
+_ if videoEvent exists, don't auto-read?
+_   though for serial this would only grab the last byte
+_ how to queue lib events until the end of loop
+_   call them inside post()!
 _ bring back some form of beginSerial/beginVideo
 _   openSerial(), serial().. 
 _   should it prompt or use the first available if none specified?
