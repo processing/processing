@@ -21,6 +21,8 @@ public class PdeEditorButtons extends Panel {
   static final int STOP     = 1;
   static final int CLOSE    = 2;
 
+  static final int GAP_POSITION = 1;
+
   static final int OPEN     = 3;
   static final int SAVE     = 4;
   static final int EXPORT   = 5;
@@ -67,7 +69,7 @@ public class PdeEditorButtons extends Panel {
     // always include these
     which[buttonCount++] = PLAY;
     which[buttonCount++] = STOP;
-    which[buttonCount++] = CLOSE;
+    //which[buttonCount++] = CLOSE;  // just removed for alpha
 
     // the rest are conditional
     //if (useOpenSave) {
@@ -142,7 +144,8 @@ public class PdeEditorButtons extends Panel {
 	x1[i] = offsetX;
 	x2[i] = offsetX + BUTTON_WIDTH;
 	offsetX += BUTTON_WIDTH + 4;
-	if (i == 2) offsetX += 8;  // extra space after play/stop/close
+	// extra space after play/stop/close
+	if (i == GAP_POSITION) offsetX += 8;  
       }
 
       /*
