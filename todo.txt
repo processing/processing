@@ -12,6 +12,7 @@ X   auto-create code and data folder via 'add files to sketch..'
 
 _ sketch.properties should go into user.home
 _   otherwise moving sketch folder will kill it
+_   last-used sketch not being saved
 X may need to start putting properties somewhere besides lib
 X   home directory  (or preferences folder under macos9)
 

@@ -1,16 +1,32 @@
+/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  PdeEditorFind - find/replace window for processing
+  Part of the Processing project - http://Proce55ing.net
+
+  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2001-03 Massachusetts Institute of Technology
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License 
+  along with this program; if not, write to the Free Software Foundation, 
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
 
-/*
-            Find: [    ]
-    Replace with: [    ]
-
-    [ ] Ignore Case
-
-    [Replace All] [Replace] [Replace & Find] [Previous] [Next]
-*/
 public class PdeEditorFind extends JFrame implements ActionListener {
   static final int BIG = 13;
   static final int SMALL = 6;
@@ -22,9 +38,6 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
   JButton replaceButton; 
   JButton replaceAllButton; 
-  //JButton replaceFindButton;
-  //JButton previousButton; 
-  //JButton nextButton;
   JButton findButton;
 
   boolean found;
