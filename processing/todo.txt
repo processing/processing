@@ -1,4 +1,4 @@
-processing todo list // last updated 13 september 2001
+processing todo list // last updated 17 september 2001
 (most up-to-date version of this file is in processing cvs)
 
 
@@ -8,15 +8,6 @@ _ bk(n), fill(n), stroke(n) should be consistent with tuples
 _ write dist.bat for releases
 _   don't forget to update 'export' dir with processing releases
 _ remove duplicates: LINE/LINES etc
-_ get serial i/o code working in processing
-_   how to kill serial when applet stopped
-_     finalizer prolly not getting called
-_ running out of memory, presumably b/c applets not being cleared
-_   happens inside init() of applet (at new Bagel())
-_   figure out why threads aren't actually dying
-_   disassociate processing applet with a window on stop?
-_   possible to maintain bagel, but kill applet?
-_   or copy bagel's image, and kill that too?
 _ make tab key work
 _   include auto-indent?
 _ what happens if size() not called inside setup() ?
@@ -27,6 +18,7 @@ _ post new macintosh version
 
 
 PROCESSING - MEDIUM
+_ compile from the sketchbook if there are changes
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _ curves not properly implemented as part of shape architecture 
@@ -106,6 +98,24 @@ _   comments would contain descriptions //!blah for printing and formatting
 _ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
 
 
-COMPLETED
+---------------------------------------------
+
+
+0006
+X get serial i/o code working in processing
+X   how to kill serial when applet stopped
+X     finalizer prolly not getting called
+
+0005
+X running out of memory, presumably b/c applets not being cleared
+X   happens inside init() of applet (at new Bagel())
+X   figure out why threads aren't actually dying
+X   disassociate processing applet with a window on stop?
+X   possible to maintain bagel, but kill applet?
+X   or copy bagel's image, and kill that too?
+
+0004
 X put debugging stuff back into Kjc (i disabled some stuff) 
+
+0001
 X convert documentation to html
