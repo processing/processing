@@ -2,7 +2,7 @@
 X ifdef JDK14 around a piece of 1.4 specific window code
 X use mozilla for opening urls in linux, switched to more compatible exec()
 o note in the docs: can't use transforms inside beginShape()
-o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068795597
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068795597
 X make components all swing components
 X   switch to swing menus (for linux), because motif widgets are nasty
 X moved 'find in reference' to the help menu
@@ -19,7 +19,7 @@ X may need to start putting properties somewhere besides lib
 X   home directory  (or preferences folder under macos9)
 X create font doesn't support umlauts
 X   fix up font code to generate unicode chars, at least for iso8859-1 charset
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
 X punt on the expert release? at least until beta? 
 X   nope, can't will annoy people and won't save enough time
 X clean up the fonts in the 
@@ -37,6 +37,11 @@ X   seems to be a mac-specific problem (probably because of monaco)
 X removed kjc classes
 X addition to pde.properties to list the imports for various jdk versions
 X set jdk version for export inside pde.properties
+X international: convert unicode chars to \uXXXX in the preproc
+X   if this causes trouble, change the preference for lib/pde.properties
+X   compiler.substitute_unicode = false
+X option to set what browser is in use
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074106123;start=0
 
 goodbye macos9
 X posted to message board about it going away
@@ -58,18 +63,24 @@ o allow import blahblah.blah.blah to get passed through
 o   and included with the imports list.
 X clear console each time 'run' gets hit
 X   don't actually clear, just advance by the number of lines visible
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
 X can't copy text from console directly (winxp and macosx)
 
 nixed
 o basic usb support?
-o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
 o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
 
 
-_ international: convert unicode chars to \uXXXX in the preproc
+_ once compiling again, change PdeException
+_   rename the class for a minute to find all references
+_   then add references to the *file index* in question
+_     this could be a headache since preproc doesn't know :(
+
+_ option for "ok to overwrite html"
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074240197;start=0
 
 _ fix command keys for menus (broken since switching to swing)
 
@@ -82,6 +93,8 @@ _   checks to see if there are other versions in the current folder
 _   or maybe just increments the numbers at the end of the sketch name
 
 VOLUNTEER
+_ figure out how eclipse or other IDEs handle running applets
+_   but retaining a connection to them without upsetting virus apps
 _ fix export to recursively copy contents of build folder
 _   currently only copies top-level classes and contents of data folder
 _ sync files into lib/build rather than copying everything new
@@ -102,7 +115,7 @@ _ noise() is (partially) broken in v67
 _ option for having multiple files open
 X   need ui for tabs from casey
 X   tabbed interface for multiple files
-X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
 _   "new text java/pde file" menu item
 
 
@@ -151,7 +164,7 @@ _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
 _ some way to properly quit sketch when stopped
 _   if people have other threads they've spawned, impossible to stop
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ rewrite bagel code.. 
 _   for this release, because it will break things along with the lib stuff
 _   switch to PImage, PApplet, etc
@@ -162,7 +175,7 @@ _ concave/convex polygons
 _ proper lineweight
 _ camera clipping
 _ put screenshots into their sketch folder
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 _   add a method BApplet.setPath() or something like that
 
 
@@ -186,14 +199,14 @@ void toGrayscale() {
 
 BUGS / PDE
 _ find/replace hangs when recapitalizing things
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1072994196;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1072994196;start=0
 _ if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError ensues
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 _ jikes errors have no newlines because it's a buffered reader
 _   and the newlines are removed when read
 _ mouse wheel not working properly, need to dynamically load 1.4 code
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ preproc bug: text(String.valueOf(i+1), left + i*20, top);
 _   unexpected token "String"
 
@@ -202,22 +215,22 @@ BUGS / Bagel
 _ doesn't work when outside a function:
 _   color bg_color = color(255,0,0);
 _ rect is not getting it's stroke color set
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
 _ alpha of zero still draws boogers on screen
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
 _ new sphere code from toxi
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
 _ colorMode broken for red() green() etc
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
 _ z values not set properly on ellipses?
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
 _ ellipses are just plain ugly
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
 
 
 BUGS / Windows
 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
 _   CLASSPATH figured out what to do with quotes, but not PATH
 
 
@@ -228,7 +241,7 @@ _ doesn't seem interested in quitting properly (?)
 BUGS / Mac OS X
 _ flickering several times on startup
 _   also a strange box showing up in the corner
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073111031
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073111031
 
 
 NETWORK
@@ -243,21 +256,21 @@ _ some method for just downloading the entire contents of a url
 VIDEO
 _ selecting input source (wintv board and quickcam installed.. problem)
 _ including qtjava in path when in java mode (oops)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073523928;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073523928;start=0
 _ beginVideo not colored
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
 _ things will freeze if winvdig not installed
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
 _ quicktime 6.4 update breaks p5 on the mac?
 _   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
 _   "Type quicktime.std.stdQTConstants was not found"
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
 _   http://docs.info.apple.com/article.html?artnum=120255
 _ split classes to BVideo and BMovie ? 
 _ video hanging without a camera installed
 _ just locks up after running examples, then does the 'can't delete' thing
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
 _ first row of video pixels are black
 _   casey says it may only be his camera
 _ video.pixels don't seem to have high bytes set
@@ -273,14 +286,14 @@ _ problems running external vm/vm is hanging
 _   seems to be happening because of virus scanning software (norton)
 _   may need to launch the applet (using 'start') 
 _     and talk over a socket instead
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
 
 
 CONSOLE
 _ set max frame rate at 60 fps? avoid the full-on spew to the console
 _ console runs really really slow with a lot of println() calls
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 _ console -> should be using JEditTextArea not TextPane
 _ make new TextAreaDefaults class for the console
 _ figure out how to color lines for errors and non (since not syntax)
@@ -330,7 +343,7 @@ dh b _   main() method needs to set layout manager if jexegen is to be used
 dh b _     (msft vm defaults to null layout manager)
 dh b _   also make sure pack() is happening
 dh b _   add manifest.mf to exported applets so that applications will work
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
+dh b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
 bf b _   BApplet.main(new String[] { "flashcards3" });
 bf b _     or even BApplet.main(new String[] { getClass().getName() });
 bf b _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
@@ -405,21 +418,21 @@ LOWER (post beta tweaks, non-structural)
 _ Ctrl-Z will undo, but the window will not scroll to where the 
 _   "undoing" is happening. This can lead the user to assume that
 _   actually nothing is happening and overundo. 
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
 _ figure out how to cancel 'save changes' on macosx and windows
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
 _ error if you try to hit export twice on a sketch
 _   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
 _   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
 _ clean up PdeTokenMarker, probably just alphabetize
 _ remove .DS_Store boogers, especially from win/linux distributions
 _ NullPointerException when alt is pressed
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
 _ check what other functions require BGraphics to exist but shouldn't
 _ color has to be called inside or after setup
 _ loadImage must be used inside or after setup
 _   either document this and/or provide a better error message
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
 _ include a note that 'applet' folder will get emptied/rewritten
 _   or rename the old applet folder to something else?
 _ don't allow apostrophe (i.e. casey's_cells) when naming sketch!
@@ -428,8 +441,8 @@ _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
 _ non-ascii filenames seem to be causing trouble
 _   maybe provide a message stating this when p5 is run?
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 _ need to change all the copyrights over to mit "except where noted"
 X when exporting applet, line numbers will be off.. 
 _   when not exporting with new preproc code, imports all on same line
@@ -477,7 +490,7 @@ _     with bagel, because those will be useful on other bagel platforms
 _     pApplet will call BagelMath.whatever, so still looks like cos()
 _   #ifdef to remove client and server code as well
 _   p5 classes into packages (bagel especially)
-_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
 _ break out BSerial as separate object like BVideo
 _   include rxtx and the rest of that setup in subfolder
 _   BSerial.flush and BSerial.available in object
@@ -541,9 +554,9 @@ ca b _   box is not opaque
 ca b X     problem is that lines are drawn second
 ca b X     one pixel lines have no z value.. argh
 ca b X     bug re: 3d depth sorting on lines
-ca b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+ca b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
 ca b _
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
 ca b _     translate(58, 48, 0); 
 ca b _     rotateY(0.5);
 ca b _     box(40);
@@ -552,10 +565,10 @@ ca b X concave/complex polygon
 ca b _   eventually POLYGON auto-detects convex/concave polygon
 ca b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 ca b X clipping objects (clipping planes?)
-ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
-ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
 ca b X   things are flying into the camera and halting apps
-ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
 ca b X   NullPointerException apparently when things way offscreen
 ca b _     i.e. glyphrot with scale set to 4
 ca b _     or at least that things get ridiculously slow
@@ -609,7 +622,7 @@ PDE / Details
    1 _ p5 becomes a memory hog (benelek and glen murphy)
    1 _   even without sketches open, perhaps not gc'ing properly
    1 _   objects probably not getting finalized
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
 
    b _ need to check if volume is read-only, notify and quit if it is
    b _   people are trying to run off the disk image
@@ -620,7 +633,7 @@ PDE / Details
 
    1 _ size() has memory limitations (pitaru)
    1 _   catch OutOfMemoryError inside size() and let the user know
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
    1 _ verify editor buttons working properly
    1 _   they're not.. mostly unresponsive, and often get stuck
    1 _   is play button properly unhighlighting? 
@@ -641,13 +654,13 @@ PDE / Details
    1 _ sketches can't be named starting with numbers (D.YOO)
    1 _   either provide an error message or explanation for this
    1 _   or allow the sketch name to be separte from the class/folder names
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
    1 _ menu weirdness (benelek)
    1 _   when u've got a menu open, move a cursor over the text area
    1 _   and back over the menu, the text-area cursor type remains. 
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
    1 _ scroll bar has some painting weirdness with jedit textarea
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
    1 _ rename doesn't set focus to renamer area
    1 _   under windows, immediately typing after rename doesn't select it
    1 _ SystemColor doesn't differentiate between menu background and top
@@ -675,7 +688,7 @@ PDE / Details
    1 _   //for (int i = 0; i < 10; i++) {
    1 _   } catch (IOException e) { }
    1 _   need to ignore comments.. but not those inside quotes.. oog
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
    1 _   ignores colons for case statements
    1 _   need to tie this to the parser instead
 
@@ -705,7 +718,7 @@ PDE / Features
    b _   could be a separate window that's always around if needed
    b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
    1 _ external editor -> add a command to launch
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
 
 
 
