@@ -1,417 +1,88 @@
-processing todo list
-(most up-to-date version of this file is in processing cvs)
-
-
-PEOPLE WHO WANT IT
-d.amarel <d.amarel@dotsperinch.com>
-Eric ANDRON <ericandron@wanadoo.fr>
-Bert Balcaen <bert@rekalldesign.com>
-Julian Bonilla <bonilla@fas.harvard.edu>
-"Sébastien BOY" <sboy@free.fr>
-christophe buffet <christophe@wkmx.org>
-Paul Caplan <caplan@theinternationale.com>
-Fabrice Clérot <fabrice.clerot@francetelecom.com>
-Los cos <awumpus2000@yahoo.com>
-Michael Davis <shyfter@imsa.edu>
-Marco Dinkel <marco@do-com.de>
-<ezDAC@free.fr>
-Andreas Friedrich <a.o.friedrich@web.de>
-Edward George <edward@suppose.co.uk>
-Andrej Jungnickel <andrej@nickelz-bros.de>
-Kay Koester <mail@ekay.de>
-matthew kowal <mkowal@postmaster.co.uk>
-Jean-Yves Herpet <jherpet@fnac.com>
-Kevin Lahoda <kevin@m.parsons.edu>
-Roger Langley <galahad@uslink.net>
-Isaac Levy <ike@visuallistening.com>
-Roy Macarthur <roy@mcarthur.com>
-fmainzer@gmx.net
-Oddur Snær Magnússon <oddur@magnusson.is>
-Roland Megnet <rmegnet@attglobal.net>
-Daniel Mendelsohn <dan@heads4sale.com>
-Daniel Mendelsohn <dmendel@optonline.net>
-Michael McGuffin <mjmcguff@dgp.toronto.edu>
-jtnimoy <jtnimoy@ucla.edu>
-widianto nugroho <widi@kmrg.itb.ac.id>
-Anthony Okolie <anthony@anthonyone.com>
-Andrew Otwell <andrew@heyotwell.com>
-Luis Miguel P. <luismi@standbyclick.com>
-John Reskusich <jreskus@thoughtdomain.com>
-Alex Robinson <alexr@cloudband.com>
-Daniel Evan Schwartz <design@roomn8.com>
-Enrico Trujillo <etrujill@unm.edu>
-Gregg Vesonder <gtv@research.att.com>
-Ronnie Vuine <wintermute@vuine.de>
-Andres Wanner <andres@pixelstorm.ch>
-Jeff Williams <jeffw@pinchy.org>
-Ian Wojtowicz <ian@woj.com>
-Matthew Kevin Wytch <wytch@execpc.com>
-andres <moscoca@bigpond.com>
+LATER QUESTIONS
+_ is it necessary to have fullscreen option on toolbar anymore?
 
 
 QUESTIONS
-X is day, month, year overkill inside processingapplet? 
-X   decided no
-X loadImage or getImage? 
-X   loadImage sounds better to ben and casey
-X circle/square functions
-X   doesn't seem necessary
-X   main problem is that with ellipse, points aren't inside shape
-X should the default be 100x100
-X   yes, casey won
-X default background color: 204
-X   casey prevails again
-X maybe stop/kill button should only be a stop btn - yes
-
-_ PImage, PFont or how to name?
-
-_ bezierVertex/catmullRomVertex poorly named (based on algo used)
-_   instead curveVertex/fitCurveVertex/etc.
-
-_ what to call 'pouch' directory?
-
-X function name to toggle drawing from center: ellipseMode(), rectMode()
-
-_ 'rot' example not working in release 18
-
-_ ui for sketchbook/projects handling
-
-_ online bug reporting system
-_   bugzilla but simpler
-
-
-QUESTIONS
-_ is it necessary to have fullscreen option on toolbar
-
-
-BAGEL
-_ add ellipseMode(), rectMode()
-_   CENTER_RADIUS, CENTER_DIAMETER, CORNER
-_ make default size be 100x100
-_ make default background color 204
-
-
-ENV
-_ get rid of 'kill' button
-_ add frame to launched window
-_   add maximize event catcher to make fullscreen
-
-
-_ having to put 'f' after everything is a mess
-_ better way to do parent and g.rect stuff in related classes
-_   implement g. passed into any function called draw()
-_   also important for things like cos, sin, max etc
-_   but maybe once you're doing more advanced code, that stuff's ok
-_     or using inner classes is better b/c class stuff works
-
-_ exporting to applet/.jar file
-_   include other .class files built besides the main one
-_   include referenced image and font files (can't do if numbered)
-
-
-TECHNOTES
-_ technote: using runtime.exec to run .ai files
-_   code to automatically open generated .ai files (exec(..ai))
-_ technote: debugging serial code
-_   hyperterminal - watching for binary garbage vs ascii text
-_   first debug (maybe even using ascii) and watch in hyperterminal
-_     or ship pooterm along with processing
-_   flicker - often ascii instead of binary
-_   timing of sleep, size of message, timing of write
-_   starting processing first, then stamp
-_ technote: using transformPoint
-_ technote: using curves
-_ technote: making things faster
-_ technote: memory running out, using ms and mx
-_   noBackground() if you're covering everything
-
-
-RANDOM UNSORTED MESS
-_ check out interface builder for interesting tidbits
-_ line() should make sure that fill() isn't set
-_ make an executable jar file for 1.3 stuff 
 _ lightsOff() seems dumb with noStroke and noFill
-_ make close() work to kill applet in kjc
+_ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
+_ should we use jdk 1.3 or msft vm?
 
 
-_ stop() method in applet should stop kjc environment
-_   should be able to call stop() to 'quit' an applet
-_ add method for exporting applications with processing
-_   wrapper that invokes the applet using a copy of the jre
-_ move MemoryImageSource out of bagel and into ProcessingApplet
-_   need to run bagel to just render to a large internal buffer
-_   this fits better with the c++ model of things
-_ version of ProcessingApplet that replaces g. with ai. or pdf.
-_ it's very unstable, previous versions such as 7 were solid. 
-_   problems come with moving (what's that mean?)
-_ fixed width fonts
-_   document fixed width font format as technote
-_   write code for reading uncompressed b/w tiff images
-_ maybe turn the external applet stuff off again
-_ garbage created when color values out of range
-
-_ serial.messageReceived extra long crap in demo.pde
-_ NullPointerException on startup in pde editor buttons
-_ exporting applets that have custom name problems:
-_   if extends processingapplet, the name user types must be same
-_   gets confused about paths and puts boogers in weird places
-_   doesn't compile correctly (must first compile with play)
-_   doesn't include additional (private) classes
-
-_ class unloading not happening
-_   when doing an extends ProcessingApplet
-_   need to add randomizer to even non-self gen'd classes
-_   or figure out how to unload old classes.. grr
-_ include stdout/stderr in the processing window
-_   option to toggle window on/off (not just in properties, but realtime)
-_   set # of lines in properties
-_ remove .java and .class files for compiled classes
-_ technote about bug in sun vm for freaking out
-_   also happened with ibm vm.. grr.. (or was it a path problem?)
-_ apparent NullPointerException when things way offscreen
-_   i.e. glyphrot with scale set to 4
-_   or at least that things get ridiculously slow
-_   clipping issues here.. but also something in scan converter
-_ Compiler.disable() message is weird and doesn't always work
-_ play never un-highlights
-_   especially with exceptions
-_ weird exception crap/messages.. erroneous shite
-_ look into using serialporteventlistener for simpleserial
-_ see about setting up simple bug tracker/feature system
-_   would also be nice for people to be able to vote on features
-_ look into maxx programming
-_ live video editing, wanting things more procedural
-_ illustrator exporting
-_   version of Illustrator.java that uses bagel api
-_ translateMiddle() ? to move to the middle of the screen?
-_ shouldn't do so much work (redrawing in loop) if waiting for input
-_   mode for when no full animation taking place
-_   otherwise machine is continually maxed out while app is running
-
-
-MACOS
-_ crashes when people click on help in top bar (same in DBN)
-_ dataInputStream, setUseCaches on the url to false
-_   URLConnection.setUseCaches(false)
-_ parent.obj.close() on the url
-_ writing serial code (something that docks better to java serial api)
-
-
-0018
-_ fonts are broken.. try megan's color selector applet
-_ when exporting 'name of folder for export...'
-_   default name should be from public class <xxxx>
-_   because otherwise errors are happening
-_   or name from user only determines folder name
-_     if extends ProcessingApplet [more compatible]
-
-_ export as application
-_   main() method needs to set layout manager if jexegen is to be used
-_     (msft vm defaults to null layout manager)
-_   also make sure pack() is happening
-
-0019
-_ z coordinates are backwards from gl (at least from mazo)
-_   how did this happen? what's the appropriate way to fix?
-_ not clipping areas from offscreen
-_   huge geometry slows things way down
+BAGEL / high
 _ single color function inside applet
 _   need to clamp colors (nothing > 255 or < 0)
 _   do by simplifying stroke/fill/background inside bagel
 _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
 _     needs to be done inside cpp version too.. minimize amt of code
-
-_ draw mode needs to be better for workshops
-_   make size() work for draw() mode
-_     inside KjcEngine, reach in and grab calls to 'size'
-_     if call is not using a constant number, then punt
-
-_ int version of min and abs
-_ fix bugs from the 'bugs' file
-_   then remove the file from cvs
-
-_ when exporting with as a named class file, need to export w/ that name
-_ make sure export is compiling first
-_   right now have to hit play and then hit export (?)
-_ lines being highlighted for errors are off
-
-_ rewrite line and stroke code, it's a buggy mess
-_ rewrite fill/stroke/etc to use same code
-_   doesn't need to be super fast, so the extra assigns no big deal
-
-_ WRITE CONVERTER FROM JAVA BAGEL -> CPP
-_   include #ifdefs for c stuff
-
-_ try with 1.4 frame buffer stuff to see if it's faster
-_   will 1.4 work on osx?
-_ it's really a pain to use external files in processing
-_   getStream sucks (zach rewrote)
-_   should be able to work for application or applets
-_   may want to use getResource() (to get things from .jar files)
-_ fix buzz.pl to not create ../../bagel 
-_ try using serial events from javacomm instead of just reading straight
-_ paren problems comes from overusing parens (too many closing)
-_   image[first[i], 0, 0) hitting last paren causes jump to top
-_ lib/pde.properties should be read using getResource
-_   otherwise path issues cause trouble (likely under win98)
-_ talk to simon about error streams and kjc
-_    better piping of output from kjc
-_ erroneous errors from kjc regarding 'var not inited'
-_   is there any way to disable this message?
+_   rewrite fill/stroke/etc to use same code
+_     doesn't need to be super fast, so the extra assigns no big deal
+_ add ellipseMode(), rectMode()
+_   CENTER_RADIUS, CENTER_DIAMETER, CORNER
+_ make default size be 100x100
+_ make default background color 204
+_ curveVertex and bezierVertex instead of catmull/bezier crap
+_ garbage created when color values out of range
+_ move MemoryImageSource out of bagel and into ProcessingApplet
+_   need to run bagel to just render to a large internal buffer
+_   this fits better with the c++ model of things
+_ beginShape() defaults to POLYGON
 _ bezier and catmullrom aren't setting ndim to at least two 
 _ translate(x, y) doesn't seem to affect a rect()
 _   same with rect. looks like this causing trouble with lots of things
-_ way to screen grab at higher resolution
-_   method for rendering at higher res and then scaling down
-_   (even if this causes signficant performance hit)
-_ single or multi-file cvs, not based on directories
-_   i.e. i want illustrator.java for a project
-_   version # stored in .java file
-_   if a new version is available, asks 'do you want to update?'
-_   multi-file: quicksort + sortable
-_ quicksort should probably just be made into 'sort' class
-_   it's the only one ever used
-_ stringutils.split is a useful one
 
 
-0030 (first semi-public release)
-_ write code to bind/convert java fonts
-_ docs
-_   explain using inner classes and using non-public classes
-_   start 'errors' section
-_     NullPointerException inside setup usually means no size()
-_   ability to write functions and inner classes
-_   mention ability to use import statements in java mode
-_     ability to do real (but not public) classes in same document
-_   make note in documentation about getting access to pixel array
-_     pixels[] is in ProcessingApplet
-_     check to see if get/set functions in applet actually work
-_     fix documentation appropriately
-_   when images aren't found on disk
-_   image formats supported (gif and jpeg)
-_   notes about running on win98 and that stupid startup exception
-_   make note in documentation about convex polygons
-_ post new macintosh version
-_   with serial port support
-_ setting a fill color when drawing an image should affect the image
-_   or maybe image.setColor or setTone to mix a specific color in
-_ new user interface?
+BAGEL / high & time consuming
+_ rewrite line and stroke code, it's a buggy mess
+_   lines become 2 pixels thick after a 3D transform 
+_   better handling of single-pixel special case
+_ anti-aliasing
+_ alpha
+_ concave/complex polygon shtuff
+_   eventually POLYGON auto-detects convex/concave polygon
+_   also add POLYGON_CONVEX and POLYGON_CONCAVE
+_ picking
 
 
-0031
-_ option to enable/disable frame on running applets
-_   more like photoshop - presentation mode w/ nothing or frames on all
-_ compiling .java files leaves the .class files next to the .java
-_   make sure all the dirs in sketchbook added to classpath on startup
-_   if new dir added, must restart processing (this is acceptable)
-_ ability to include other code from sketchbook directory
-_   compile entire sketchbook on startup, then check for new files on compile?
-_ when applet window is too large to fit, center and put in back
+BAGEL / medium
+_ area copying functions
+_   copyPixel(x, y, to_x, to_y)
+_   copyArea(x, y, w, h, to_x, to_y)
+_   copyImage(x, y, w, h,  to_x, to_y)
+_ z coordinates are backwards from gl (at least from mazo)
+_   how did this happen? what's the appropriate way to fix?
+_ NullPointerException apparently when things way offscreen
+_   i.e. glyphrot with scale set to 4
+_   or at least that things get ridiculously slow
+_   clipping issues here.. but also something in scan converter
+_   not clipping areas from offscreen
+_     huge geometry slows things way down
 _ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
 _   better solution for this (error while opening image)
 _   and document how image loading works
-_ keys don't work, even when overriding keyTyped etc.
-_ stderr in red color
-_ modify kjc to take a PrintWriter, instead of current weird hacks
-_ are line and point working in 3D?
-_ stop required before kill for applets that use serial
-_   this is behaving strangely
-_   breaks on every 2nd run when using serial apps (or others?)
-_     try calling gc on stop as well
 
 
-0032
-_ run java code besides processing applets 
-_   if not processing applet, look for a main(), no main give an error
+BAGEL / medium & time consuming
+_ picking
+_   ability to write data other than image into the buffer
+_   user can introduce new kinds of buffers at will (!)
+_   lists of names of objects, or the 'line number' buffer
+_   but how to determine *where* on object the hit occurs?
+_ illustrator exporting
+_   version of Illustrator.java that uses bagel api
+_   sorting of polygons/lines on simple painters algorithm
+_   better lighting model to show darkness at various depths
+_     maybe just ultra-high res bitmaps from gl
 
 
-PROCESSING - NECESSITIES FOR BOOK
-_ audio output (play wav, au, aiff(?), mp3)
-_ alpha, anti-aliasing
-
-
-PROCESSING - HIGH
-_ bug in paren balancing
-_ shift-click on play for 'presentation mode'
-_   does full screen and hides editor window
-_ export doesn't work properly for stuff included from scrapbook
-_ write dist.bat for releases
-_   don't forget to update 'export' dir with processing releases
-_ what happens if size() not called inside setup() ?
-_ when using draw() instead of loop()
-_   applet needs to notify runner that it has terminated
-_ multiple types of KjcEngine (so that simplest model is available)
-_ write code for automatic macintosh releases
-_ make note of functions/variables used by ProcessingApplet
-_   using them in your app will break things (i.e. init())
-
-
-PROCESSING - MEDIUM
-_ comprehensive list of reserved keywords
-_ better handling on portinuse exception
-_   or general exception handling--could go through some interface
-_ compile from the sketchbook if there are changes
-_ if 'void' left out before loop or setup, cryptic message about
-_   'constructor loop must be named Temporary_23498_2343'
-_ curves not properly implemented as part of shape architecture 
-_ lines become 2 pixels thick after a 3D transform 
-_ kill button (without stop) doesn't clear play
-_ image grabbing code (write to tiff)
-_ build a linux/x86 release
-_ per-vertex coloring doesn't work
-_ the lights prolly shouldn't follow objects around
-_ work on courseware applet code signing
-_ why is z going negative, seems weird
-_   maybe view needs to go from -100 to 100 with zero at screen plane
-_ code to save a project to the main machine
-_   setting up 'project' directories
-_ delayUntil would be nice to have
-_   but at some point there has to be a cutoff
-_   have a library of useful code that people can add to programs
-_   otherwise things are too simple, and env is a crutch
-_ courseware menu
-_   list of 'people' and 'projects'; refresh 
-_   based on local dir named 'projects' or 'sketchbook'?
-_ copyPixel(x, y, to_x, to_y)
-_ copyArea(x, y, w, h, to_x, to_y)
-_ copyImage(image, x, y, w, h,  to_x, to_y)
-_ lesson plans (easier to translate)
-_ write example applets in processing
-_ courseware system 
-_   uploading pieces when finished - scrapbook/sketchbook model?
-_   download new versions of pde.jar from main machine
-_ quicktime exporter or image sequence export
-_ how to use ssh identity file to maintain auth for brancusi
-_ support for moving the camera around
-
-
-BAGEL
-_ where do the 'error line is 9' messages come from?
-_   these are runtime errors inside bagel code, how to trap?
-_ get web documentation back into cvs
-_ have to get rid of static i/o stuff before porting to c
-_   may also need to get rid of floating point constants
-_ area copying function: copy(x1, y1, w, h,  xto, yto);
-_ should math functions be moved in?
-_   this could help porting, and sanity in processingapplet
-_   io functions might be treated similarly
-_ some method of moving between 
-_   center oriented: x, y, radius (3D style)
-_   and 2D style: x1, y1, x2, y2
-_   or x, y, diameter
+BAGEL / lower
+_ move math functions into utility library associated
+_   with bagel, because those will be useful on other bagel platforms
+_   pApplet will call BagelMath.whatever, so still looks like cos()
+_ perlin noise function
 _ build in second matrix type: 2d affine
-_ add convex polygon type
-_ sketch in antialiasing functions
-_ how does color depth work on ipaq? 4-4-4? 5-6-5?
-_ font usage/substition solution
-_   java freetype? jni freetype to build texmap fonts?
-_   look at flash file format? (does it have kerning?)
-_ simpler bitmap fonts w/o smoothing, just 2D
-_ alpha blending (easier)
-_ antialiasing
-
-
-BAGEL - SHOULD
+_ make sure line() commands don't try to have a fill
+_ write code for reading uncompressed b/w tiff images
+_   incorporate for fixed width fonts
 _ bresenham (flat) oval function
 _ setting accuracy of circles/sphere
 _ setting accuracy of curve segments
@@ -424,12 +95,236 @@ _   currently disabled b/c homogenousColors not set false for vertices
 _   and code not written for curve vertices
 _ better lockout inside beginShape() to keep other things from happening
 _ when stroke in use, stroke letters (currently stroke doesn't affect
+_ try with 1.4 frame buffer stuff to see if it's faster
+_   will 1.4 work on osx?
+_ way to screen grab at higher resolution
+_   method for rendering at higher res and then scaling down
+_   (even if this causes signficant performance hit)
+_ look at glut for other needed shapes
+_ setting a fill color when drawing an image should affect the image
+_   or maybe image.setColor or setTone to mix a specific color in
+_ live video editing, wanting things more procedural
 
 
-DOCS / ADVANCED
+PDE / high
+_ get rid of 'kill' button
+_ add frame to launched window
+_   add maximize event catcher to make fullscreen
+_   shift-click on play to go directly into this 'presentation mode'
+_ introduce pImage, pFont, pGraphics, pConstants (pSound)
+_ serial.messageReceived extra long crap in demo.pde (clean up?)
+_ NullPointerException on startup in pde editor buttons
+_   shows up on slower machines, probably images not loaded yet
+_ int version of min and abs
+_ fix bugs from the 'bugs' file
+_   then remove the file from cvs
+_ draw mode needs to be better for workshops
+_   make size() work for draw() mode
+_     inside KjcEngine, reach in and grab calls to 'size'
+_     if call is not using a constant number, then punt
+_ lines being highlighted for errors are off
+_ use a vm that won't destroy the screen like sun/ibm does
+_   this means msft or newer version of jdk
+
+
+PDE / high & time consuming
+_ exporting to applet/.jar file
+_   'data' directory for all media
+_   include other .class files built besides the main one
+_   include referenced image and font files (can't do if numbered)
+_   exporting applets that have custom name problems:
+_     if extends processingapplet, the name user types must be same
+_     gets confused about paths and puts boogers in weird places
+_     doesn't compile correctly (must first compile with play)
+_     doesn't include additional (private) classes
+_   when exporting 'name of folder for export...'
+_     default name should be from public class <xxxx>
+_     because otherwise errors are happening
+_     or name from user only determines folder name
+_       if extends ProcessingApplet [more compatible]
+_   make sure export is compiling first
+_     right now have to hit play and then hit export (?)
+_   include main class info for executable jar file with jdk > 1.2
+_   remove .java and .class files for compiled classes
+_     (just clean up the boogers afterwards)
+_ it's really a pain to use external files in processing
+_   getStream sucks (zach rewrote)
+_   should be able to work for application or applets
+_   may want to use getResource() (to get things from .jar files)
+_ having to put 'f' after everything is a mess
+_ related classes
+_   better way to do parent and g.rect stuff in related classes
+_     implement g. passed into any function called draw()
+_     also important for things like cos, sin, max etc
+_     but maybe once you're doing more advanced code, that stuff's ok
+_       or using inner classes is better b/c class stuff works
+_   related classes also need to implement pConstants
+_ sketchbook
+_   compiling .java files leaves the .class files next to the .java
+_     make sure all the dirs in sketchbook added to classpath on startup
+_     if new dir added, must restart processing (this is acceptable)
+_   ability to include other code from sketchbook directory
+_     compile entire sketchbook on startup, check for new files on compile?
+_ serial works poorly for starting/stopping applets
+_   this is behaving strangely
+_   breaks on every 2nd run when using serial apps (or others?)
+_     try calling gc on stop as well
+
+
+PDE / high but after initial pre-release
+_ class unloading not happening
+_   when doing an extends ProcessingApplet
+_   need to add randomizer to even non-self gen'd classes
+_   or figure out how to unload old classes.. grr
+
+
+PDE / medium
+_ Compiler.disable() message is weird and doesn't always work
+_   probably just remove it for now
+_ kjc is really frustrating about some of its error/warning msgs
+_   'var not set' any way to disable these?
+_ font usage/substition solution
+_   write code to bind/convert java fonts
+_     best would be freetype or jdk 1.3/1.4
+_   java freetype? jni freetype to build texmap fonts?
+_   look at flash file format? (does it have kerning?)
+_ version of ProcessingApplet that replaces g. with ai. or pdf.
+_ include stdout/stderr in the processing window
+_   option to toggle window on/off (not just in properties, but realtime)
+_   set # of lines in properties
+_ play button not really working
+_   never un-highlights, especially with exceptions
+_   also when using draw() instead of loop()
+_     applet needs to notify runner that it has terminated
+_ look into using serialporteventlistener for simpleserial
+_   may help with problems due to threading/synchronizing
+_ lib/pde.properties should be read using getResource
+_   otherwise path issues cause trouble (likely under win98)
+_ make PdeEditorButtons wait until mouseup to change
+_   (currently doesn't feel as good as it could)
+_ check logs to see where we're getting traffic from
+_ licensing issues with kjc (before public release)
+_ support for moving the camera around
+
+
+PDE / medium & time consuming
+_ talk to simon about error streams and kjc
+_   better piping of output from kjc
+_   modify kjc to take a PrintWriter, instead of current weird hacks
+_ erroneous errors from kjc regarding 'var not inited'
+_   is there any way to disable this message?
+
+
+PDE / low
+_ if 'void' left out before loop or setup, cryptic message about
+_   'constructor loop must be named Temporary_23498_2343'
+_   add a better handler for this specific thing?
+_ shouldn't do so much work (redrawing in loop) if waiting for input
+_   mode for when no full animation taking place
+_   otherwise machine is continually maxed out while app is running
+_ quicktime exporter or image sequence export
+_   fairly quick--just use code from dbn
+_ bug in paren balancing
+_   paren problems comes from overusing parens (too many closing)
+_   image[first[i], 0, 0) hitting last paren causes jump to top
+_ export as application 
+_   not difficult to do, just some tweaking once applet export works
+_   wrapper that invokes the applet using a copy of the jre
+_   main() method needs to set layout manager if jexegen is to be used
+_     (msft vm defaults to null layout manager)
+_   also make sure pack() is happening
+_ stop() method in applet should stop kjc environment
+_   should be able to call stop() to 'quit' an applet
+_ make close() work to kill applet in kjc
+_ save window x, y, width, height to pde.properties on exit
+_ stderr in red color
+_ run java code besides processing applets 
+_   if not processing applet, look for a main(), no main give an error
+
+
+PDE / features
+_ might be nice to have some notion of plugins for pde
+_   color picker or other things written by folks
+_   add all .jar files in lib/plugins on startup
+_ make some kind of internal color picker
+_   could be a separate window that's always around if needed
+_ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
+_ a better editor: 
+_   syntax coloring
+_   emacs indents and key commands
+_   http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/je/index.html
+_   want emacs-style editor that's faster loading than emacs
+_ tweak updater a little bit so it's more likely to work
+_   use numbered versioning? 
+_   give updater feedback (progress dialog, error msg)
+
+
+PDE / science fiction
+_ toggle for showing a function name each time its hit
+_ toggle for showing line numbers within a function
+_   i'm here messages, tie in with breakpoints for debugger
+_   lightweight debugger, doesn't slow down, runs in back
+_ toggle to show attr/value for some var in simple way
+_ comments as debugging descriptors, output to console, shown in context
+_ comments as naming for shapes drawn after it,
+_   or some other model of naming based on inserted text with "" or // or #
+_   could fit nicely with printf-style statements and comments
+_   comments would contain descriptions //!blah for printing and formatting
+_ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+_ look into maxx programming
+_ single or multi-file cvs, not based on directories
+_   i.e. i want illustrator.java for a project
+_   version # stored in .java file
+_   if a new version is available, asks 'do you want to update?'
+_   multi-file: quicksort + sortable
+_ check out interface builder for interesting tidbits
+
+
+MISC / macos
+_ crashes when people click on help in top bar (same in DBN)
+_ dataInputStream, setUseCaches on the url to false
+_   URLConnection.setUseCaches(false)
+_ parent.obj.close() on the url
+_ serial port code needs to be implemented
+_   something that docks better to java serial api
+
+
+MISC / building
+_ build a linux/x86 release
+_ write converter for java bagel -> cpp version
+_   include #ifdefs for c stuff
+_ fix buzz.pl to not create ../../bagel 
+_ how to use ssh identity file to maintain auth for brancusi
+_ write dist.bat for releases
+_   don't forget to update 'export' dir with processing releases
+_   write code for automatic macintosh releases
+
+
+MISC / docs
+_ 'rot' example not working in release 18
+_ list of reserved keywords
+_   make note of functions/variables used by ProcessingApplet
+_     using them in your app will break things (i.e. init())
+_ explain using inner classes and using non-public classes
+_ start 'errors' section
+_   NullPointerException inside setup usually means no size()
+_ ability to write functions and inner classes
+_ mention ability to use import statements in java mode
+_   ability to do real (but not public) classes in same document
+_ make note in documentation about getting access to pixel array
+_   pixels[] is in ProcessingApplet
+_   check to see if get/set functions in applet actually work
+_   fix documentation appropriately
+_ image formats supported (gif and jpeg)
+_ notes about running on win98 and that stupid startup exception
+_ make note in documentation about convex polygons
+
+
+MISC / advanced docs
 _ adding lights
 _   control of position/color of default lights
 _ controlling camera movements
+_   mcguffin sent some notes about this
 _ multmatrix/identity
 _ constants besides PI, TWO_PI
 _ min/max with 3 parameters
@@ -441,84 +336,143 @@ _ just saying 'millis' in processingapplet, instead of getMillis()
 _ keyPressed, keyReleased, mousePressed, mouseReleased
 
 
-BUG WATCH 
-_ getMillis() returning 0 in some instances/on some machines
+MISC / ui
+_ ui for sketchbook/projects handling
 
 
-PROCESSING - FEATURES
-_ run code with a main() that's not a processing applet
-_ want emacs-style editor that's faster loading than emacs
-_ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
-_ a better editor: 
-_   syntax coloring
-_   emacs indents and key commands
-_   http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/je/index.html
+MISC / web
+_ see about setting up simple bug tracker/feature system
+_   queue for people reporting things externally
+_   bugzilla but simpler
+_   would also be nice for people to be able to vote on features
 
 
-PROCESSING - LOWER
-_ tweak updater a little bit so it's more likely to work
-_   use numbered versioning? 
-_   give updater feedback (progress dialog, error msg)
-_ move math functions into utility library associated
-_   with bagel, because those will be useful on other bagel platforms
-_ perlin noise function
-_ make some kind of internal color picker
-_   could be a separate window that's always around if needed
-_ save window x, y, width, height to pde.properties on exit
-_ bagelpublic.pl: open ProcessingApplet, rewrite after special token
-_ look at glut for other needed shapes
-_ make PdeEditorButtons wait until mouseup to change
-_   (currently doesn't feel as good as it could)
-_ licensing issues with kjc (before public release)
+MISC / technotes
+_ bug in sun vm for freaking out
+_   also happened with ibm vm.. grr.. (or was it a path problem?)
+_ fixed width font format as technote and how to use
+_ using runtime.exec to run .ai files
+_   code to automatically open generated .ai files (exec(..ai))
+_ debugging serial code
+_   hyperterminal - watching for binary garbage vs ascii text
+_   first debug (maybe even using ascii) and watch in hyperterminal
+_     or ship pooterm along with processing
+_   flicker - often ascii instead of binary
+_   timing of sleep, size of message, timing of write
+_   starting processing first, then stamp
+_ using transformPoint
+_ using curves
+_ making things faster
+_ memory running out, using ms and mx
+_ noBackground() if you're covering everything
+_ converting to/from ascii/decimal/hex/binary
 
 
-FEEDBACK
-_ mcguffin - camera control
-_ mcguffin - commands/parameters for code, simple ui for manipulating
+MISC / code tidbits for scrapbook
+_ delayUntil would be nice to have
+_   but at some point there has to be a cutoff
+_   have a library of useful code that people can add to programs
+_   otherwise things are too simple, and env is a crutch
+_ quicksort should probably just be made into 'sort' class
+_   it's the only one ever used
+_ stringutils.split is a useful one
+_ readFileLines et al
+_ translateMiddle() ? to move to the middle of the screen?
 
 
-ENV
-_ env. toggle for showing a function name each time its hit
-_ env. toggle for showing line numbers within a function
-_   i'm here messages, tie in with breakpoints for debugger
-_   lightweight debugger, doesn't slow down, runs in back
-_ env. toggle to show attr/value for some var in simple way
-_ comments as debugging descriptors, output to console, shown in context
-_ comments as naming for shapes drawn after it,
-_   or some other model of naming based on inserted text with "" or // or #
-_   could fit nicely with printf-style statements and comments
-_   comments would contain descriptions //!blah for printing and formatting
-_ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+MISC / things that break often/things to test
+_ handling of key events (both as applet and in application)
+_ per-vertex coloring for different kinds of shapes
+_ that each shape type works as expected
+_   what if one short or one too many vertices?
+_ transforms are affecting geometry
+_   i.e. are line and point working in 3D?
 
 
----------------------------------------------
+0019
+questions answered..
+X is day, month, year overkill inside processingapplet? 
+X   decided no
+X loadImage or getImage? 
+X   loadImage sounds better to ben and casey
+X circle/square functions
+X   doesn't seem necessary
+X   main problem is that with ellipse, points aren't inside shape
+X should the default be 100x100
+X   yes, casey won
+X default background color: 204
+X   casey prevails again
+X maybe stop/kill button should only be a stop btn - yes
+X what to call 'pouch' directory? -- data
+X function name to toggle drawing from center: ellipseMode(), rectMode()
+X PImage, PFont or how to name?
+X   pImage, pFont, pGraphics, pSound
+X bezierVertex/catmullRomVertex poorly named (based on algo used)
+X   instead curveVertex/fitCurveVertex/etc.
+X   use curveVertex and bezierVertex
 
 
-// ability to write data other than image into the buffer
-// pixels won't go away, embrace pixels in sophisticated way
-// lists of names of objects, or the 'line number' buffer
-// maybe user can introduce new kinds of buffers at will (!!!)
-
-// better 3D for valence/illustrator output:
-//   sorting of polygons/lines on simple painters algorithm
-//   better lighting model to show darkness at various depths
-//     maybe just ultra-high res bitmaps from gl
-
-// drawLine vs moveto, lineto
-// less of a deal, until fillpath, since that needs to store the
-// last several points. but maybe if it's inside a begin/end
-// then it's no big deal, and it's easy to implement
-
-// when casting to an int, should 0.5f be added first
-
-// functions that take 2d arguments are drawn on the
-// z = 0 plane, and not affected by current 3D transform matrix
+(first semi-public release)
 
 
----------------------------------------------
+(after first release)
 
-code tidbit:
 
+(necessities for book)
+_ audio output (play wav, au, aiff(?), mp3)
+_ alpha, anti-aliasing
+
+
+
+
+
+
+
+_ better handling on portinuse exception
+_   or general exception handling--could go through some interface
+_ compile from the sketchbook if there are changes
+_ the lights prolly shouldn't follow objects around
+
+
+BAGEL
+_ where do the 'error line is 9' messages come from?
+_   these are runtime errors inside bagel code, how to trap?
+_ have to get rid of static i/o stuff before porting to c
+_   may also need to get rid of floating point constants
+_ should math functions be moved in?
+_   this could help porting, and sanity in processingapplet
+_   io functions might be treated similarly
+_ add convex polygon type
+_ sketch in antialiasing functions
+_ alpha blending (easier)
+_ antialiasing
+
+
+BUH BYE / DONE
+_ lesson plans (easier to translate)
+_ write example applets in processing
+_ what happens if size() not called inside setup() ?
+X image grabbing code (write to tiff)
+_ why is z going negative, seems weird
+_   maybe view needs to go from -100 to 100 with zero at screen plane
+_ kill button (without stop) doesn't clear play
+_ per-vertex coloring doesn't work
+X bagelpublic.pl: open ProcessingApplet, rewrite after special token
+_ when exporting with as a named class file, need to export w/ that name
+_ curves not properly implemented as part of shape architecture 
+_ simpler bitmap fonts w/o smoothing, just 2D
+_ pixels won't go away, embrace pixels in sophisticated way
+
+COURSEWARE
+_ courseware system 
+_   uploading pieces when finished - scrapbook/sketchbook model?
+_   download new versions of pde.jar from main machine
+_ code to save a project to the main machine
+_   setting up 'project' directories
+_ work on courseware applet code signing
+_ courseware menu
+_   list of 'people' and 'projects'; refresh 
+_   based on local dir named 'projects' or 'sketchbook'?
 
 String binary(int value) {
   return "" + (((value & (1 << 7)) == 0) ? '0' : '1') +
@@ -531,183 +485,26 @@ String binary(int value) {
           (((value & (1 << 0)) == 0) ? '0' : '1');
 }
 
+// drawLine vs moveto, lineto
+// less of a deal, until fillpath, since that needs to store the
+// last several points. but maybe if it's inside a begin/end
+// then it's no big deal, and it's easy to implement
 
----------------------------------------------
+// when casting to an int, should 0.5f be added first
 
+// functions that take 2d arguments are drawn on the
+// z = 0 plane, and not affected by current 3D transform matrix
 
-0017 improve exporting and lines
-X g.applet = this at beginning of program
-X finish setFont with a font size
-X add 'hint' function for scaling line thickness
-X add hint for super smooth images
-X add preferredsize to processingapplet
-X bug in Bagel.loadImage that made images not work in applets
-X catch exception inside polygon scanner (slower?)
-X millis returns 0 (though getMillis() is fine)
-X explicity refresh screen on macosx at end of loop:
-X   java.awt.Toolkit.getDefaultToolkit().sync();
+X it's very unstable, previous versions such as 7 were solid. 
+X   problems come with moving (what's that mean?)
+X getMillis() returning 0 in some instances/on some machines
+X some method of moving between 
+X   center oriented: x, y, radius (3D style)
+X   and 2D style: x1, y1, x2, y2
+X   or x, y, diameter
 
-
-0016
-X disable play.external by default
-
-
-0015
-X flickery jumpy thing with canvas.. sun jvm bug
-X   switched to ibm java vm
-
-
-0014
-X fix z coordinate, ndims not being set to 3 
-X put bezierCurve and catmullRomCurve back in
-X examples - setting background using a full screen image
-X   uses System.arraycopy for speed
-X update to newer version of kjc (1.5B)
-X move website to cvs
-X   make fake cvs user that creas and i can share passwd of
-X unwarped_image() is broken (making things slow for jseo)
-X   then fix in c++ version
-X special case lines of thickness 1
-X   doing way too much work to draw thin lines
-X   using full 3D polygon fella for semi-obviously 1 pixel lines
-X may have fixed OutOfMemoryError problems
-X   run.bat had included -ms256m -mx256m
-
-
-0013 
-X ellipse draws in the opposite direction of the origin
-X actually fix the bug with extends
-X   wasn't included in previous release
-X option to set full screen background color
-X   uses fullscreen.bgcolor in lib/pde.properties
-X remove 'colorScale' from the default program in pde
-X fix color cube applet 
-X   make it run in current version of processing
-X   fix background from showing up black
-X screenGrab() code (single frame to tif)
-X externally loaded files are off by 1 line for errors
-
-
-0012
-X 'extends' replacement is mangling things.. fix it
-
-
-0011
-X image(img, x, y) was broken for unwarped mode, disabled it
-
-
-0010
-X add java.* to top of processingapplet default base class used by kjc
-X KjcProcessingApplet is dumb, kjc should make subst itself
-o   give warning when compiling w/o kjcprocessingapplet
-X random bug with an extra line being added in beginner mode
-X   (threw off error markings)
-X z=0 shit, 2D stuff needs to draw over z=0 plane
-X   new objects draw behind old objects with noBackground()
-X fix crappy way of determining if inside a class--ignores comments
-X   hope this fis works.. not tested much
-X make acu fonts work again
-X write code to use simple bitmap fonts
-X add a file with bugs for testing
-X kjc not smart enough to just compile things that are in classpath
-X redo random functions in processing applet
-X strangeness with stroke when a rect goes off outside the window
-X rect now uses x, y, width, height instead of x1, y1, x2, y2
-X circle has been replaced with ellipse (uses xywh)
-X box takes diameter, or width, height, depth [NOT IN CPP]
-X sphere is the same as box [NOT IN CPP]
-X got rid of colorscale and using colormode for all instead
-X   make changes in documentation
-X 'ellipse' instead of 'oval'?
-X   make note in documentation
-X catmullrom is broken 
-X   write documentation for new curve functions
-o make note in docs about removal of LINE from LINES
-X setting origins
-X   should shapes draw from center or from upper left?
-X   should ovals use radius or diameter?
-X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
-X nice to have a random number generator between -1..1 
-X   as well as an integer random; instead of just 0..1
-X show creas how to get access to cvs
-X documentation says 'mouseDown' even though it's 'mousePressed'
-X font support
-X   use gzip to compress bitmaps (made 115k vlw font -> 16k)
-X   loadImage/loadFont or getImage/getFont?
-X   text(char c), text(string s)
-X   current acu fonts are broken
-X image support
-X   image() and 2D/2D affine versions of it
-X   no stroke should show up on image()
-X   fill being set on image() produces weird results
-X     has to be set, but doesn't actually affect color
-X min() seems funny/unavailable
-X   worked fine for me
-
-
-0009
-X bagel fixes
-X   beginShape(POINTS) is not working, no marks are appearing 
-X     this was a pain in the ass to fix
-X   beginShape(LINE_LOOP) is not looping around 
-X   stroked POLYGON should emulate a LINE_LOOP
-X   fill white, stroke black, background white default in bagel
-X   remove duplicates: LINE/LINES etc
-X 'draw mode' applet support
-X 'advanced' applet support
-X   write documentation about having to use 'extends KjcProcessingApplet'
-X add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
-X   also add note about paren balancing doing strange things
-X   leave the others turned on, but parens off by default
-X enable/disable full screen leaves windows in back
-X   (may just require two toFront() calls)
-X   whenever background is frontmost, have it call tofront on editor
-
-
-0008
-X ctrl-s does 'save', button on toolbar does 'save as'
-X fixed auto-indent bug for editor
-X SimpleSerialDemo.pde had a bug (was old version)
-X re-enabled key commands for editor (tab expansion, auto-indent)
-
-
-0007
-X serial bugs
-X   ability to control sleep time from simple
-X   message[] not buffer[]
-X   synchronize
-X   signed byte crap is confusing, make into chars
-X bk(n), fill(n), stroke(n) should be consistent with tuples
-X make notes in serial docs
-X   processing app needs to start first
-X   currently a bug requiring stop the close before starting
-
-
-0006
-X get serial i/o code working in processing
-X   how to kill serial when applet stopped
-X     finalizer prolly not getting called
-
-
-0005
-X running out of memory, presumably b/c applets not being cleared
-X   happens inside init() of applet (at new Bagel())
-X   figure out why threads aren't actually dying
-X   disassociate processing applet with a window on stop?
-X   possible to maintain bagel, but kill applet?
-X   or copy bagel's image, and kill that too?
-
-
-0004
-X put debugging stuff back into Kjc (i disabled some stuff) 
-
-
-0001
-X convert documentation to html
-o setup imrf linux machine?
-
-
-DISCARD
-o get proce55ing.net, make that the target launch site
-o write a dbn compatability mode (forever() instead of loop() ?)
-
+FEEDBACK
+_ mcguffin - camera control
+_ mcguffin - commands/parameters for code, simple ui for manipulating
+_ when applet window is too large to fit, center and put in back
+_ keys don't work, even when overriding keyTyped etc.
