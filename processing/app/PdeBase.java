@@ -274,13 +274,13 @@ public class PdeBase extends Frame
           "Please download QuickTime from Apple at:\n" + 
           "http://www.apple.com/quicktime/download\n" + 
           "and use the 'Custom' install to make sure\n" +
-          "that QuickTime for Java is included." +
+          "that QuickTime for Java is included.\n" +
           "If it's already installed, try reinstalling.";
 
         JOptionPane.showMessageDialog(this, message, 
                                       "Could not find QuickTime for Java",
                                       JOptionPane.WARNING_MESSAGE);
-        System.exit(1);
+        System.exit(1);  // can't run without quicktime
       }
     }
 
