@@ -10,11 +10,19 @@ X   when hitting 'find', select the text in the field
 X   add extra space to exterior of find (especially on windows)
 X fixes to the horizontal scrollbar
 X   still not perfect, but some tweaks for improvement
+X horizontal scroller is always present
+X   fixed, was a problem of sizing with the new inset size
 X cosmetic fixes
 X   is PdeEditorHeader one pixel too tall
 X   move the tabs over just slightly
+X resize box intrudes on the scroller for the console area
+X   need to set grow boxes intruding to false
+X   1.3 version (deprecated): -Dcom.apple.mrj.application.growbox.intrudes=false
+X   1.4 version: -Dapple.awt.showGrowBox=false
+
 X put 'play' on a SwingWorker thread
-_   not sure if this is working or not
+_   test this on a pc to see how it goes, especially with opengl
+
 
 sketchbook/prefs location
 _ read from registry key to get the proper name for these folders
@@ -90,10 +98,6 @@ _   especially straight out of cvs
 _ also out of cvs
 _   check for necessary tools to be installed
 _   zip, unzip, jikes, etc
-
-macosx
-_ resize box intrudes on the scroller for the console area
-_ horizontal scroller is always present
 
 _ allow to use doubles on casting -- particularly for Math.cos() et al
 
@@ -437,6 +441,7 @@ PDE / Font Builder
    1 _ close/hide window on 'ESC'
    1 _ loading is very slow on the first time (getting all font names)
    1 _   show a progress/status bar while it's happening?
+   1 _   (would be useful to at least tell user that system not locked up)
    1 _ font builder chopping off parts of letters
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
 
