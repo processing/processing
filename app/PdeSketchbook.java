@@ -41,8 +41,9 @@ import com.apple.mrj.*;
 public class PdeSketchbook {
   PdeEditor editor;
 
-  JMenu menu;
   JMenu popup;
+  JMenu menu;
+  JMenu examples;
   JMenu addlib;
 
   // set to true after the first time it's built.
@@ -63,6 +64,11 @@ public class PdeSketchbook {
 
   static File librariesFolder;
   static String librariesPath;
+
+  // classpath for all known libraries for p5
+  // (both those in the p5/libs folder and those with lib subfolders
+  // found in the sketchbook)
+  static String librariesClassPath;
 
 
   public PdeSketchbook(PdeEditor editor) {
@@ -325,9 +331,14 @@ public class PdeSketchbook {
       boolean sketches = 
         addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
       if (sketches) popup.addSeparator();
-      JMenu examples = new JMenu("Examples");
-      addSketches(examples, examplesFolder);
-      popup.add(examples);
+      JMenu ex = new JMenu("Examples");
+      addSketches(ex, examplesFolder);
+      popup.add(ex);
+      if (PdePreferences.getBoolean("export.library")) {
+        JMenu m = new JMenu("Libraries");
+        addSketches(m, librariesFolder);
+        popup.add(m);
+      }
 
       // disable error messages while loading
       builtOnce = true;
@@ -336,6 +347,7 @@ public class PdeSketchbook {
       // rebuild the open menu
       menu.removeAll();
 
+      /*
       if (sketches) {
         addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
         menu.addSeparator();
@@ -343,14 +355,22 @@ public class PdeSketchbook {
       examples = new JMenu("Examples");
       addSketches(examples, examplesFolder);
       menu.add(examples);
+      */
+      if (sketches) {
+        addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+      }
+      examples = new JMenu("Examples");
+      addSketches(examples, examplesFolder);
+      //menu.add(examples);
 
-
-      // rebuild the "add library" menu
+      // rebuild the "import library" menu
       addlib.removeAll();
+      librariesClassPath = "";
       boolean libs = 
         addLibraries(addlib, new File(PdePreferences.get("sketchbook.path")));
-      if (libs) menu.addSeparator();
+      if (libs) addlib.addSeparator();
       addLibraries(addlib, librariesFolder);
+      //System.out.println("libraries cp is now " + librariesClassPath);
 
     } catch (IOException e) {
       PdeBase.showWarning("Problem while building sketchbook menu",
@@ -359,6 +379,11 @@ public class PdeSketchbook {
                           "kooky around here.", e);
     }
     return menu;
+  }
+
+
+  protected JMenu getExamplesMenu() {
+    return examples;
   }
 
 
@@ -493,6 +518,11 @@ public class PdeSketchbook {
           PdeBase.showMessage("Ignoring bad sketch name", mess);
           continue;
         }
+
+        // grab all jars and classes from this folder, 
+        // and append them to the library classpath
+        librariesClassPath += File.pathSeparatorChar + 
+          PdeCompiler.contentsToClassPath(exported);
 
         JMenuItem item = new JMenuItem(list[i]);
         item.addActionListener(listener);

@@ -90,9 +90,12 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         String command[] = new String[] { 
           "java",
-          "-Djava.library.path=" + sketch.libraryPath,  // might be ""
+          "-Djava.library.path=" + 
+          // sketch.libraryPath might be ""
+          // librariesClassPath will always have sep char prepended
+          sketch.libraryPath + PdeSketchbook.librariesClassPath,
           "-cp",
-          sketch.classPath,
+          sketch.classPath + PdeSketchbook.librariesClassPath,
           "processing.core.PApplet",
           location,
           PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),

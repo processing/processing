@@ -511,6 +511,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     menu.add(item);
 
     menu.add(sketchbook.rebuildMenu());
+    menu.add(sketchbook.getExamplesMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -670,6 +671,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     JMenuItem item;
 
     item = new JMenuItem("Help");
+    item.setEnabled(false);
+    /*
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           PdeBase.openURL(System.getProperty("user.dir") + File.separator + 
@@ -677,6 +680,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
                           File.separator + "index.html");
         }
       });
+    */
     menu.add(item);
 
     item = new JMenuItem("Reference");
