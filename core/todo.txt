@@ -7,6 +7,7 @@ X lots of changes to internal naming of vars
 X beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 X screenX(x, y) and screenY(x, y) added for noDepth()
+X add TRIANGLE_FAN
 
 opengl
 _ cache needs to also make things a power of 2
@@ -18,6 +19,13 @@ _   there's nothing really ALPHA about them?
 _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 _ don't allocate zbuffer & stencil until depth() is called
+
+random tasks
+_ someone to figure out a good model for adaptive sizing of circles
+_   also goes for arcs, though will be weighted based on arc size
+
+_ arc with stroke only draws the arc shape itself
+_   may need a 'wedge' function to draw a stroke around the whole thing
 
 _ how to handle full screen (opengl especially) or no screen (for scripts)
 
@@ -47,8 +55,6 @@ _   or not even drawn.. what a mess.
 
 _ only allocate stencil and zbuffer on first call to depth()
 _   this will require changes to PTriangle and PLine inside their loops
-
-_ add TRIANGLE_FAN
 
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code

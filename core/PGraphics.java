@@ -134,6 +134,14 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   /** True if depth() is enabled, read-only */
   public boolean depth;
 
+  /**
+   * Internal values for enabling/disabling 2D or 0D optimizations.
+   * These are normally turned on, but will be shut off for OpenGL.
+   * Also, users may want to disable them if they're causing trouble.
+   */
+  public boolean optimize0 = true;
+  public boolean optimize2 = true;
+
   /** Set by strokeWeight(), read-only */
   public float strokeWeight;
 
@@ -1129,173 +1137,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  /**
-   * This method handles the transformation, lighting, and clipping
-   * operations for the shapes. Broken out as a separate function
-   * so that other renderers can override. For instance, with OpenGL,
-   * this section is all handled on the graphics card.
-   */
-  protected void light_and_transform() {
-
-    // ------------------------------------------------------------------
-    // 2D POINTS FROM MODEL (MX, MY, MZ) DIRECTLY TO VIEW SPACE (X, Y, Z)
-
-    if (!depth) {
-      // if no depth in use, then the points can be transformed
-      for (int i = vertex_start; i < vertex_end; i++) {
-        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
-        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
-      }
-    }
-
-    // ------------------------------------------------------------------
-    // 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (VX, VY, VZ)
-
-    if (depth) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float vertex[] = vertices[i];
-
-        vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
-        vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
-        vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
-        vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
-      }
-    }
-
-
-    // ------------------------------------------------------------------
-    // CULLING
-
-    // simple culling
-    // if they share the same clipping code, then cull
-    /*
-    boolean clipped = true;
-    float x = vertices[vertex_start][X];
-    float y = vertices[vertex_start][Y];
-    int clipCode = ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
-            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
-    for (int i = vertex_start + 1; i < vertex_end; i++) {
-      x = vertices[i][X];
-      y = vertices[i][Y];
-      int code = ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
-            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
-      if (code != clipCode) {
-        clipped = false;
-        break;
-      }
-    }
-    if ((clipCode != 0) && clipped) return;
-    */
-
-    // ------------------------------------------------------------------
-    // NORMALS
-
-    if (!normalChanged) {
-      // fill first vertext w/ the normal
-      vertices[vertex_start][NX] = normalX;
-      vertices[vertex_start][NY] = normalY;
-      vertices[vertex_start][NZ] = normalZ;
-      // homogenousNormals saves time from below, which is expensive
-    }
-
-    for (int i = vertex_start; i < (normalChanged ? vertex_end : 1); i++) {
-      float v[] = vertices[i];
-      float nx = m00*v[NX] + m01*v[NY] + m02*v[NZ] + m03;
-      float ny = m10*v[NX] + m11*v[NY] + m12*v[NZ] + m13;
-      float nz = m20*v[NX] + m21*v[NY] + m22*v[NZ] + m23;
-      float nw = m30*v[NX] + m31*v[NY] + m32*v[NZ] + m33;
-
-      if (nw != 0) {
-        // divide by perspective coordinate
-        v[NX] = nx/nw; v[NY] = ny/nw; v[NZ] = nz/nw;
-      } else {
-        // can't do inline above
-        v[NX] = nx; v[NY] = ny; v[NZ] = nz;
-      }
-
-      float nlen = mag(v[NX], v[NY], v[NZ]);  // normalize
-      if (nlen != 0) {
-        v[NX] /= nlen; v[NY] /= nlen; v[NZ] /= nlen;
-      }
-    }
-
-
-    // ------------------------------------------------------------------
-    // LIGHTS
-
-    // if no lights enabled, then all the values for r, g, b
-    // have been set with calls to vertex() (no need to re-calculate here)
-
-    if (lights) {
-      float f[] = vertices[vertex_start];
-
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float v[] = vertices[i];
-        if (normalChanged) {
-          if (fill) {
-            calc_lighting(v[R],  v[G], v[B],
-                          v[MX], v[MY], v[MZ],
-                          v[NX], v[NY], v[NZ], v, R);
-          }
-          if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB],
-                          v[MX], v[MY], v[MZ],
-                          v[NX], v[NY], v[NZ], v, SR);
-          }
-        } else {
-          if (fill) {
-            calc_lighting(v[R],  v[G],  v[B],
-                          v[MX], v[MY], v[MZ],
-                          f[NX], f[NY], f[NZ], v, R);
-          }
-          if (stroke) {
-            calc_lighting(v[SR], v[SG], v[SB],
-                          v[MX], v[MY], v[MZ],
-                          f[NX], f[NY], f[NZ], v, SR);
-          }
-        }
-      }
-    }
-
-    // ------------------------------------------------------------------
-    // NEAR PLANE CLIPPING AND CULLING
-
-    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3) && clip) {
-      //float z_plane = eyeDist + ONE;
-
-      //for (int i = 0; i < lineCount; i ++) {
-          //line3dClip();
-      //}
-
-      //for (int i = 0; i < triangleCount; i ++) {
-      //}
-    //}
-
-    // ------------------------------------------------------------------
-    // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
-
-    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3)) {
-    if (depth) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float vx[] = vertices[i];
-
-        float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
-        float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
-        float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
-        float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
-
-        if (ow != 0) {
-          ox /= ow; oy /= ow; oz /= ow;
-        }
-
-        vx[X] = width * (ONE + ox) / 2.0f;
-        vx[Y] = height * (ONE + oy) / 2.0f;
-        vx[Z] = (oz + ONE) / 2.0f;
-      }
-    }
-  }
-
-
   protected final void add_path() {
     if (pathCount == pathOffset.length) {
       int temp1[] = new int[pathCount << 1];
@@ -1405,7 +1246,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       line.draw();
     }
   }
-
 
 
   /**
@@ -1518,6 +1358,178 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   //////////////////////////////////////////////////////////////
 
   // LIGHTS AND COLOR
+
+
+  /**
+   * This method handles the transformation, lighting, and clipping
+   * operations for the shapes. Broken out as a separate function
+   * so that other renderers can override. For instance, with OpenGL,
+   * this section is all handled on the graphics card.
+   */
+  protected void light_and_transform() {
+
+    // ------------------------------------------------------------------
+    // 2D POINTS FROM MODEL (MX, MY, MZ) DIRECTLY TO VIEW SPACE (X, Y, Z)
+
+    if (!depth) {
+      // if no depth in use, then the points can be transformed
+      for (int i = vertex_start; i < vertex_end; i++) {
+        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
+        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
+      }
+    }
+
+
+    // ------------------------------------------------------------------
+    // 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (VX, VY, VZ)
+
+    if (depth) {
+      for (int i = vertex_start; i < vertex_end; i++) {
+        float vertex[] = vertices[i];
+
+        vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
+        vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
+        vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
+        vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
+      }
+    }
+
+
+    // ------------------------------------------------------------------
+    // CULLING
+
+    // simple culling
+    // if they share the same clipping code, then cull
+    /*
+    boolean clipped = true;
+    float x = vertices[vertex_start][X];
+    float y = vertices[vertex_start][Y];
+    int clipCode = ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
+            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
+    for (int i = vertex_start + 1; i < vertex_end; i++) {
+      x = vertices[i][X];
+      y = vertices[i][Y];
+      int code = ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
+            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
+      if (code != clipCode) {
+        clipped = false;
+        break;
+      }
+    }
+    if ((clipCode != 0) && clipped) return;
+    */
+
+
+    // ------------------------------------------------------------------
+    // NORMALS
+
+    if (!normalChanged) {
+      // fill first vertext w/ the normal
+      vertices[vertex_start][NX] = normalX;
+      vertices[vertex_start][NY] = normalY;
+      vertices[vertex_start][NZ] = normalZ;
+      // homogenousNormals saves time from below, which is expensive
+    }
+
+    for (int i = vertex_start; i < (normalChanged ? vertex_end : 1); i++) {
+      float v[] = vertices[i];
+      float nx = m00*v[NX] + m01*v[NY] + m02*v[NZ] + m03;
+      float ny = m10*v[NX] + m11*v[NY] + m12*v[NZ] + m13;
+      float nz = m20*v[NX] + m21*v[NY] + m22*v[NZ] + m23;
+      float nw = m30*v[NX] + m31*v[NY] + m32*v[NZ] + m33;
+
+      if (nw != 0) {
+        // divide by perspective coordinate
+        v[NX] = nx/nw; v[NY] = ny/nw; v[NZ] = nz/nw;
+      } else {
+        // can't do inline above
+        v[NX] = nx; v[NY] = ny; v[NZ] = nz;
+      }
+
+      float nlen = mag(v[NX], v[NY], v[NZ]);  // normalize
+      if (nlen != 0) {
+        v[NX] /= nlen; v[NY] /= nlen; v[NZ] /= nlen;
+      }
+    }
+
+
+    // ------------------------------------------------------------------
+    // LIGHTS
+
+    // if no lights enabled, then all the values for r, g, b
+    // have been set with calls to vertex() (no need to re-calculate here)
+
+    if (lights) {
+      float f[] = vertices[vertex_start];
+
+      for (int i = vertex_start; i < vertex_end; i++) {
+        float v[] = vertices[i];
+        if (normalChanged) {
+          if (fill) {
+            calc_lighting(v[R],  v[G], v[B],
+                          v[MX], v[MY], v[MZ],
+                          v[NX], v[NY], v[NZ], v, R);
+          }
+          if (stroke) {
+            calc_lighting(v[SR], v[SG], v[SB],
+                          v[MX], v[MY], v[MZ],
+                          v[NX], v[NY], v[NZ], v, SR);
+          }
+        } else {
+          if (fill) {
+            calc_lighting(v[R],  v[G],  v[B],
+                          v[MX], v[MY], v[MZ],
+                          f[NX], f[NY], f[NZ], v, R);
+          }
+          if (stroke) {
+            calc_lighting(v[SR], v[SG], v[SB],
+                          v[MX], v[MY], v[MZ],
+                          f[NX], f[NY], f[NZ], v, SR);
+          }
+        }
+      }
+    }
+
+
+    // ------------------------------------------------------------------
+    // NEAR PLANE CLIPPING AND CULLING
+
+    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3) && clip) {
+      //float z_plane = eyeDist + ONE;
+
+      //for (int i = 0; i < lineCount; i ++) {
+          //line3dClip();
+      //}
+
+      //for (int i = 0; i < triangleCount; i ++) {
+      //}
+    //}
+
+
+    // ------------------------------------------------------------------
+    // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
+
+    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3)) {
+    if (depth) {
+      for (int i = vertex_start; i < vertex_end; i++) {
+        float vx[] = vertices[i];
+
+        float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
+        float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
+        float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
+        float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
+
+        if (ow != 0) {
+          ox /= ow; oy /= ow; oz /= ow;
+        }
+
+        vx[X] = width * (ONE + ox) / 2.0f;
+        vx[Y] = height * (ONE + oy) / 2.0f;
+        vx[Z] = (oz + ONE) / 2.0f;
+      }
+    }
+  }
+
 
   /**
    * lighting calculation of final colour.
@@ -1711,6 +1723,12 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void point(float x, float y, float z) {
+    // temporary, just for the opengl stuff
+    beginShape(POINTS);
+    vertex(x, y, z);
+    endShape();
+
+    /*
     if (depth) {
       if (strokeWeight < 2) {
         // just a single dot on the screen with a z value
@@ -1760,6 +1778,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         }
       }
     }
+    */
   }
 
 
@@ -2053,18 +2072,32 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       y1 -= vradius;
     }
 
-    if (depth) {
-      if (fill) rect3_fill(x1, y1, x2, y2);
-      if (stroke) rect3_stroke(x1, y1, x2, y2);
+    if (depth || !optimize2) {
+      rect3(x1, y1, x2, y2);
 
     } else {
-      if (fill) rect2_fill(x1, y1, x2, y2);
-      if (stroke) rect2_stroke(x1, y1, x2, y2);
+      rect2(x1, y1, x2, y2);
     }
+
+    /*
+    if (depth) {
+      rect3(x1, y1, x2, y2);
+
+    } else if ((m00 != 1) || (m11 != 1) ||
+               (m01 != 0) || (m10 != 0)) {
+      rect2(x1, y1, x2, y2);
+
+    } else {
+      rect0(x1 + m02, y1 + m12, x2 + m02, y2 + m12);
+    }
+    */
   }
 
 
-  protected void rect3_fill(float x1, float y1, float x2, float y2) {
+  /**
+   * This is the function overridden by other renderers.
+   */
+  protected void rect3(float x1, float y1, float x2, float y2) {
     beginShape(QUADS);
     vertex(x1, y1);
     vertex(x2, y1);
@@ -2074,13 +2107,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  protected void rect3_stroke(float x1, float y1, float x2, float y2) {
-    beginShape(QUADS);
-    vertex(x1, y1);
-    vertex(x2, y1);
-    vertex(x2, y2);
-    vertex(x1, y2);
-    endShape();
+  protected void rect2(float x1, float y1, float x2, float y2) {
+    if (fill) rect2_fill(x1, y1, x2, y2);
+    if (stroke) rect2_stroke(x1, y1, x2, y2);
   }
 
 
@@ -2268,12 +2297,24 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   // IMAGE
 
 
+  // NOPE this has to be overridden for opengl to prevent the
+  // NOPE upper situation from happening, since the mXX vars
+  // NOPE will be bad and glDrawPixels is slower drawing
+  // NOPE flat images than drawing an image as a texture..
   public void image(PImage image, float x1, float y1) {
-    if (!depth && !lights && !tint &&
-        (imageMode != CENTER_RADIUS)) {
+    if (optimize0 && !depth &&
+        (m00 == 1) && (m01 == 0) &&
+        (m10 == 0) && (m11 == 1)) {
       // if drawing a flat image with no warping,
       // use faster routine to draw direct to the screen
-      flat_image(image, (int)x1, (int)y1);
+      if ((imageMode == CENTER) ||
+          (imageMode == CENTER_RADIUS)) {
+        x1 -= image.width /2f;
+        y1 -= image.height / 2f;
+      }
+      image0(image,
+             (int) (x1 + m02 + 0.5f),
+             (int) (y1 + m12 + 0.5f));
 
     } else {
       int savedTextureMode = textureMode;
@@ -2298,6 +2339,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
+  // this probably needs to be broken into affine/non-affine versions
+  // since affine w/ smoothing is a fairly easy case to handle and
+  // with better quality and speed than using the full texture mapping.
   public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
@@ -2363,6 +2407,97 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   /**
+   * Image drawn in flat "screen space", with no scaling or warping.
+   * this is so common that a special routine is included for it,
+   * because the alternative is much slower.
+   *
+   * @param image image to be drawn
+   * @param sx1 x coordinate of upper-lefthand corner in screen space
+   * @param sy1 y coordinate of upper-lefthand corner in screen space
+   */
+  protected void image0(PImage image, int sx1, int sy1) {
+    int ix1 = 0;
+    int iy1 = 0;
+    int ix2 = image.width;
+    int iy2 = image.height;
+
+    /*
+    if (imageMode == CENTER) {
+      sx1 -= image.width / 2;
+      sy1 -= image.height / 2;
+    }
+    */
+
+    int sx2 = sx1 + image.width;
+    int sy2 = sy1 + image.height;
+
+    // don't draw if completely offscreen
+    // (without this check, ArrayIndexOutOfBoundsException)
+    if ((sx1 > width1) || (sx2 < 0) ||
+        (sy1 > height1) || (sy2 < 0)) return;
+
+    if (sx1 < 0) {  // off left edge
+      ix1 -= sx1;
+      sx1 = 0;
+    }
+    if (sy1 < 0) {  // off top edge
+      iy1 -= sy1;
+      sy1 = 0;
+    }
+    if (sx2 > width) {  // off right edge
+      ix2 -= sx2 - width;
+      sx2 = width;
+    }
+    if (sy2 > height) {  // off bottom edge
+      iy2 -= sy2 - height;
+      sy2 = height;
+    }
+
+    int source = iy1 * image.width + ix1;
+    int target = sy1 * width;
+
+    if (image.format == RGBA) {
+      for (int y = sy1; y < sy2; y++) {
+        int tx = 0;
+
+        for (int x = sx1; x < sx2; x++) {
+          pixels[target + x] =
+            _blend(pixels[target + x],
+                   image.pixels[source + tx],
+                   image.pixels[source + tx++] >>> 24);
+        }
+        source += image.width;
+        target += width;
+      }
+    } else if (image.format == ALPHA) {
+      for (int y = sy1; y < sy2; y++) {
+        int tx = 0;
+
+        for (int x = sx1; x < sx2; x++) {
+          pixels[target + x] =
+            _blend(pixels[target + x],
+                   fillColor,
+                   image.pixels[source + tx++]);
+        }
+        source += image.width;
+        target += width;
+      }
+
+    } else if (image.format == RGB) {
+      target += sx1;
+      int tw = sx2 - sx1;
+      for (int y = sy1; y < sy2; y++) {
+        System.arraycopy(image.pixels, source, pixels, target, tw);
+        // should set z coordinate in here
+        // or maybe not, since dims=0, meaning no relevant z
+        source += image.width;
+        target += width;
+      }
+    }
+  }
+
+
+  /**
    * Used by OpenGL implementations of PGraphics, so that images,
    * or textures, can be loaded into texture memory.
    */
@@ -2390,12 +2525,20 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
+  /**
+   * Identical parameters and placement to ellipse,
+   * but draws only an arc of that ellipse.
+   */
   public void arc(float start, float stop,
                   float x, float y, float radius) {
     arc(start, stop, x, y, radius, radius);
   }
 
 
+  /**
+   * Identical parameters and placement to ellipse,
+   * but draws only an arc of that ellipse.
+   */
   public void arc(float start, float stop,
                   float x, float y, float hr, float vr) {
     switch (arcMode) {
@@ -2416,24 +2559,96 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       break;
     }
 
-    if (depth) {
-      if (fill) arc3_fill(start, stop, x, y, hr, vr);
-      if (stroke) arc3_stroke(start, stop, x, y, hr, vr);
+    if (angleMode == DEGREES) {
+      start = start * DEG_TO_RAD;
+      stop = stop * DEG_TO_RAD;
+
+      // before running a while loop like this,
+      // make sure it will exit at some point.
+      if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
+      while (stop < start) stop += TWO_PI;
+    }
+
+    if (depth || !optimize2) {
+      arc3(start, stop, x, y, hr, vr);
 
     } else {
-      if (fill) arc2_fill(start, stop, x, y, hr, vr);
-      if (stroke) arc2_stroke(start, stop, x, y, hr, vr);
+      arc2(start, stop, x, y, hr, vr);
     }
   }
 
 
-  protected void arc3_fill(float start, float stop,
-                           float x, float y, float hr, float vr) {
+  protected void arc3(float start, float stop,
+                      float x, float y, float hr, float vr) {
+    if (fill) arc3_fill(start, stop, x, y, hr, vr);
+    if (stroke) arc3_stroke(start, stop, x, y, hr, vr);
   }
 
 
+  /**
+   * Start and stop are in radians, converted by the parent function.
+   * Note that the radians can be greater (or less) than TWO_PI.
+   * This is so that an arc can be drawn that crosses zero mark,
+   * and the user will still collect $200.
+   */
+  protected void arc3_fill(float start, float stop,
+                           float x, float y, float hr, float vr) {
+    // shut off stroke for a minute
+    boolean savedStroke = stroke;
+    stroke = false;
+
+    int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+    int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+    beginShape(TRIANGLE_FAN);
+    vertex(x, y);
+    int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+    for (int i = startLUT; i < stopLUT; i += increment) {
+      int ii = i % SINCOS_LENGTH;
+      vertex(x + cosLUT[ii] * hr,
+             y + sinLUT[ii] * vr);
+    }
+    // draw last point explicitly for accuracy
+    vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+           y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+    endShape();
+
+    stroke = savedStroke;
+  }
+
+
+  /**
+   * Almost identical to the arc3_fill() command, but this one
+   * uses a LINE_STRIP and doesn't include the first (center) vertex.
+   */
   protected void arc3_stroke(float start, float stop,
                              float x, float y, float hr, float vr) {
+    boolean savedFill = fill;
+    fill = false;
+
+    int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+    int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+    beginShape(LINE_STRIP);
+    int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+    for (int i = startLUT; i < stopLUT; i += increment) {
+      int ii = i % SINCOS_LENGTH;
+      vertex(x + cosLUT[ii] * hr,
+             y + sinLUT[ii] * vr);
+    }
+    // draw last point explicitly for accuracy
+    vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+           y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+    endShape();
+
+    fill = savedFill;
+  }
+
+
+  protected void arc2(float start, float stop,
+                      float x, float y, float hr, float vr) {
+    if (fill) arc2_fill(start, stop, x, y, hr, vr);
+    if (stroke) arc2_stroke(start, stop, x, y, hr, vr);
   }
 
 
@@ -2795,100 +3010,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   private void circle0_smooth_fill(float x, float y, float z,
                                    float r, int color) {
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-  // IMAGE
-
-
-  /**
-   * Image drawn in flat "screen space", with no scaling or warping.
-   * this is so common that a special routine is included for it,
-   * because the alternative is much slower.
-   *
-   * @param  image  image to be drawn
-   * @param  sx1    x coordinate of upper-lefthand corner in screen space
-   * @param  sy1    y coordinate of upper-lefthand corner in screen space
-   */
-  protected void flat_image(PImage image, int sx1, int sy1) {
-    int ix1 = 0;
-    int iy1 = 0;
-    int ix2 = image.width;
-    int iy2 = image.height;
-
-    if (imageMode == CENTER) {
-      sx1 -= image.width / 2;
-      sy1 -= image.height / 2;
-    }
-
-    int sx2 = sx1 + image.width;
-    int sy2 = sy1 + image.height;
-
-    // don't draw if completely offscreen
-    // (without this check, ArrayIndexOutOfBoundsException)
-    if ((sx1 > width1) || (sx2 < 0) ||
-        (sy1 > height1) || (sy2 < 0)) return;
-
-    if (sx1 < 0) {  // off left edge
-      ix1 -= sx1;
-      sx1 = 0;
-    }
-    if (sy1 < 0) {  // off top edge
-      iy1 -= sy1;
-      sy1 = 0;
-    }
-    if (sx2 > width) {  // off right edge
-      ix2 -= sx2 - width;
-      sx2 = width;
-    }
-    if (sy2 > height) {  // off bottom edge
-      iy2 -= sy2 - height;
-      sy2 = height;
-    }
-
-    int source = iy1 * image.width + ix1;
-    int target = sy1 * width;
-
-    if (image.format == RGBA) {
-      for (int y = sy1; y < sy2; y++) {
-        int tx = 0;
-
-        for (int x = sx1; x < sx2; x++) {
-          pixels[target + x] =
-            _blend(pixels[target + x],
-                   image.pixels[source + tx],
-                   image.pixels[source + tx++] >>> 24);
-        }
-        source += image.width;
-        target += width;
-      }
-    } else if (image.format == ALPHA) {
-      for (int y = sy1; y < sy2; y++) {
-        int tx = 0;
-
-        for (int x = sx1; x < sx2; x++) {
-          pixels[target + x] =
-            _blend(pixels[target + x],
-                   fillColor,
-                   image.pixels[source + tx++]);
-        }
-        source += image.width;
-        target += width;
-      }
-
-    } else if (image.format == RGB) {
-      target += sx1;
-      int tw = sx2 - sx1;
-      for (int y = sy1; y < sy2; y++) {
-        System.arraycopy(image.pixels, source, pixels, target, tw);
-        // should set z coordinate in here
-        // or maybe not, since dims=0, meaning no relevant z
-        source += image.width;
-        target += width;
-      }
-    }
   }
 
 
@@ -3702,7 +3823,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void translate(float tx, float ty) {
-    if (depth) {
+    if (!depth) {
       m03 += tx*m00 + ty*m01 + m02;
       m13 += tx*m10 + ty*m11 + m12;
       m23 += tx*m20 + ty*m21 + m22;
