@@ -1776,16 +1776,40 @@ public class PdeEditor extends JFrame
 
 
   public void error(Exception e) {
-    status.error(e.getMessage());
+    //System.out.println("ERORROOROROR 1");
+    //status.error(e.getMessage());
+
+    // not sure if any RuntimeExceptions will actually arrive
+    // through here, but gonna check for em just in case.
+    String mess = e.getMessage();
+    //System.out.println("MESSY: " + mess);
+    String rxString = "RuntimeException: ";
+    if (mess.indexOf(rxString) == 0) {
+      mess = mess.substring(rxString.length());
+      //System.out.println("MESS2: " + mess);
+    }
+    status.error(mess);
+
     e.printStackTrace();
   }
 
 
   public void error(PdeException e) {
+    //System.out.println("ERORROOROROR 2");
     if (e.file >= 0) sketch.setCurrent(e.file);
     if (e.line >= 0) highlightLine(e.line);
 
-    status.error(e.getMessage());
+    // remove the RuntimeException: message since it's not
+    // really all that useful to the user
+    //status.error(e.getMessage());
+    String mess = e.getMessage();
+    String rxString = "RuntimeException: ";
+    if (mess.indexOf(rxString) == 0) {
+      mess = mess.substring(rxString.length());
+      //System.out.println("MESS3: " + mess);
+    }
+    status.error(mess);
+
     buttons.clearRun();
   }
 

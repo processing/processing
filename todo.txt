@@ -12,6 +12,7 @@ X   (same as applet exporter function)
 o when using core graphics, don't show applet frame until first frame
 o   (in opengl, open frame early, make sure this isn't inhibited)
 X   probably can't do this, since don't know at runtime if it's gl
+X RuntimeException 
 
 create a new sketch
 create a new tab named "a"
