@@ -204,6 +204,10 @@ cd ../..
 CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\work\\java\\lib\\rt.jar"
 
 cd ../../lib/serial
+../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
+#../../build/windows/work/jikes +D -classpath "comm.jar;$CLASSPATH" -d . *.java 
+zip -r0q serial.jar processing
+rm -rf processing
 
-../../build/windows/work/jikes +D -classpath "comm.jar;$CLASSPATH" -d . *.java 
+cp serial.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\rxtx_work\\code"
 
