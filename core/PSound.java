@@ -39,6 +39,9 @@ public class PSound {
   PApplet applet;
 
 
+  public PSound() { }  // for subclass
+
+
   public PSound(PApplet applet, InputStream input) {
     this.applet = applet;
 
