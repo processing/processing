@@ -153,7 +153,7 @@ public class PPolygon implements PConstants {
     pixels = parent.pixels;
     zbuffer = parent.zbuffer;
 
-    noDepthTest = !parent.depthTest;
+    noDepthTest = parent.hints[NO_DEPTH_TEST]; //!parent.depthTest;
     smoothing = parent.smooth;
 
     // by default, text turns on smoothing for the textures
