@@ -1,10 +1,11 @@
 #!/bin/sh
 
 
-### -- CHECK TO MAKE SURE BAGEL EXISTS -------------------------
-
 # move to base 'processing' directory
 cd ../..
+
+
+### -- CHECK TO MAKE SURE BAGEL EXISTS -------------------------
 
 # make sure bagel exists, if not, check it out of cvs
 if test -d bagel
@@ -17,11 +18,11 @@ else
   cd ..
 fi
 
-# back to where we came from
-cd build/windows
-
 
 ### -- SETUP WORK DIR -------------------------------------------
+
+# back to where we came from
+cd build/windows
 
 if test -d work
 then
@@ -87,15 +88,16 @@ else
   chmod +x work/jikes.exe
 fi
 
-
-### -- START BUILDING -------------------------------------------
-
-# move to base 'processing' directory
 cd ../..
-
 
 ### -- BUILD BAGEL ----------------------------------------------
 
+#################### TEMPORARY #####################
+if false
+then
+#################### TEMPORARY #####################
+
+# move to bagel inside base 'processing' directory
 cd bagel
 
 # clear jikespath to avoid problems if it is defined elsewhere 
@@ -119,46 +121,12 @@ else
   fi
 fi
 
-#if test -d /cygdrive/c/WINNT
-#then
-  # Windows 2000 or NT
-#  QT_JAVA_PATH="C:\\WINNT\\system32\\QTJava.zip"
-#else
-  # Windows 95, 98, ME and XP (does it really run on 95?)
-#  QT_JAVA_PATH="C:\\WINDOWS\\system32\\QTJava.zip"
-#fi
-
-# remove quotes from around QTJAVA env var so it can be used
-#QT_JAVA_PATH=`perl -e '$qt = $ENV{'QTJAVA'}; $qt =~ s/\"//g; print $qt'`;
-# (ok so i don't know awk or sed or whatever i shoulda used for that..)
-
-#if test -f "${QT_JAVA_PATH}"
-#then
-#else
-#  echo "QTJAVA environment variable is set to:"
-#  echo $QTJAVA
-#  echo "but that file doesn't seem to exist."
-#  echo "y'all need to fix that before you can compile."
-#  exit;
-#fi
-
 # new regular version
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 export CLASSPATH
 
-# make version with serial for the application
-#echo Building bagel with serial, sonic, video, net and jdk13 support
-#perl make.pl JIKES=../build/windows/work/jikes SERIAL SONIC NETWORK VIDEO JDK13
 perl make.pl JIKES=../build/windows/work/jikes JDK13
 cp classes/*.class ../build/windows/work/classes/
-
-# still debating on whether to include jdk118 classes..
-#CLASSPATH="..\\bagel\\jdk118.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
-
-# make simpler version for applet exporting, only 1.1 functions
-#echo Building bagel for export with sonic and net support
-#perl make.pl JIKES=../build/windows/work/jikes SONIC NETWORK
-#cp classes/*.class ../build/windows/work/lib/export/
 
 
 echo Building export classes for 1.1
@@ -175,16 +143,15 @@ cd classes
 zip -0q ../../build/windows/work/lib/export13.jar *.class
 cd ..
 
-# back to processing base dir
+# back to base processing dir
 cd ..
 
 
-### -- BUILD PDE ------------------------------------------------
+### -- BUILD PREPROC ---------------------------------------------
 
 echo Building PDE for JDK 1.4
 
-cd app
-cd preprocessor
+cd app/preprocessor
 
 # first build the default java goop
 ../../build/windows/work/java/bin/java \
@@ -195,7 +162,17 @@ cd preprocessor
     -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
     -glib java.g pde.g
 
-cd ..
+# back to base processing dir
+cd ../..
+
+#################### TEMPORARY #####################
+fi
+#################### TEMPORARY #####################
+
+
+### -- BUILD PDE ------------------------------------------------
+
+cd app
 
 CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 

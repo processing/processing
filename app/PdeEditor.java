@@ -1117,7 +1117,8 @@ public class PdeEditor extends JFrame
     //openingName = name;
 
     //if (!sketch.isModified()) {
-    if (sketch.modified) checkModified2();
+    //if (sketch.modified) checkModified2();
+    if (!sketch.modified) checkModified2();
 
     String prompt = "Save changes to " + sketch.name + "?  ";
 
@@ -1150,7 +1151,7 @@ public class PdeEditor extends JFrame
                                                 options[0]);  
 
       if (result == JOptionPane.YES_OPTION) {
-        sketch.save();
+        handleSave2(); 
         checkModified2();
 
       } else if (result == JOptionPane.NO_OPTION) {
@@ -1353,15 +1354,20 @@ public class PdeEditor extends JFrame
   }
   */
 
+
   // there is no handleSave1 since there's never a need to prompt
   public void handleSave2() {
     message("Saving...");
     try {
       sketch.save();
+
     } catch (Exception e) {
+      // show the error as a message in the window
       error(e);
-      //message("Error during export.");
-      //e.printStackTrace();
+
+      // zero out the current action, 
+      // so that checkModified2 will just do nothing
+      checking = 0;
     }
     buttons.clear();      
   }

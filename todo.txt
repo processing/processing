@@ -1,5 +1,8 @@
 0070 pde
 
+_ problems with hanging video when not in the root of the c drive
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084464062;start=0
+
 _ casting problems in the parser
 _   float u = float(x)/width; works.
 _   float u = (float(x)/width); doesn't work: "unexpected token: float".
