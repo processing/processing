@@ -29,7 +29,7 @@ import java.awt.event.*;
 import java.io.*;
 //import java.net.*;
 //import java.text.*;
-//import java.util.*;
+import java.util.*;
 //import java.util.zip.*;
 
 import javax.swing.*;
@@ -49,6 +49,7 @@ public class PdeFontBuilder extends JFrame {
   JButton okButton;
   JTextField filenameField;
 
+  Hashtable table;
   boolean smooth = true;
   boolean all = false;
 
@@ -124,6 +125,7 @@ public class PdeFontBuilder extends JFrame {
 
     Font fonts[] = ge.getAllFonts();
     String flist[] = new String[fonts.length];
+    table = new Hashtable();
 
     //String flist[] = ge.getAvailableFontFamilyNames();
     //fontSelector = new JComboBox();
@@ -144,6 +146,7 @@ public class PdeFontBuilder extends JFrame {
     int index = 0;
     for (int i = 0; i < fonts.length; i++) {
       flist[index++] = fonts[i].getPSName();
+      table.put(fonts[i].getPSName(), fonts[i]);
     }
 
     list = new String[index];
@@ -158,7 +161,6 @@ public class PdeFontBuilder extends JFrame {
             //selection = e.getFirstIndex();
             selection = fontSelector.getSelectedIndex();
             okButton.setEnabled(true);
-
             update();
 
             /*
@@ -271,6 +273,7 @@ public class PdeFontBuilder extends JFrame {
     smoothBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
           smooth = smoothBox.isSelected();
+          update();
         }
       });
     smoothBox.setSelected(smooth);
@@ -346,12 +349,15 @@ public class PdeFontBuilder extends JFrame {
     } catch (NumberFormatException e2) { }
 
     // if a deselect occurred, selection will be -1
-    if ((fontsize != 0) && (fontsize < 256) && (selection != -1)) {
-      font = new Font(list[selection], Font.PLAIN, fontsize);
+    if ((fontsize > 0) && (fontsize < 256) && (selection != -1)) {
+      //font = new Font(list[selection], Font.PLAIN, fontsize);
+      Font instance = (Font) table.get(list[selection]);
+      font = instance.deriveFont(Font.PLAIN, fontsize);
       //System.out.println("setting font to " + font);
       sample.setFont(font);
 
       String filenameSuggestion = list[selection].replace(' ', '_');
+      filenameSuggestion += "-" + fontsize;
       filenameField.setText(filenameSuggestion);
     }
   }
@@ -380,7 +386,8 @@ public class PdeFontBuilder extends JFrame {
     }
 
     try {
-      font = new Font(list[selection], Font.PLAIN, fontsize);
+      Font instance = (Font) table.get(list[selection]);
+      font = instance.deriveFont(Font.PLAIN, fontsize);
       PFont2 f = new PFont2(font, all, smooth);
 
       // make sure the 'data' folder exists
