@@ -370,7 +370,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       e.printStackTrace();  // this would be odd
     }
     //System.out.println("included path is " + abuffer.toString());
-    packageListFromClassPath(abuffer.toString());
+    packageListFromClassPath(abuffer.toString());  // WHY?
     return abuffer.toString();
   }
 
