@@ -1,4 +1,4 @@
-#!/perl/bin/perl
+#!/usr/bin/perl
 
 # needs to make a temporary directory, compile into that
 # clear out contents of temporary directory at begin of compile
@@ -13,19 +13,33 @@
 
 $blank_line = "\n";
 
+
+# tell me about this here system
+if ($ENV{'WINDIR'} ne '') {
+    $separator = "\\";
+    $path_separator = ';';
+# need path to mkdir for win32, because 'mkdir' defaults to the
+# crappy dos version.. need to use cygwin instead
+    $mkdir_path = 'd:\\cygwin\\bin\\mkdir';
+    $platform = 'windows';
+} else {
+    $separator = '/';
+    $path_separator = ':';
+    $mkdir_path = '/bin/mkdir';
+    $platform = 'unix';
+}
+# something else needed here for macosx
+# maybe something with OSTYPE or HOSTTYPE (esp OSTYPE)
+# e.g. OSTYPE=linux-gnu HOSTTYPE=i386
+
+
+# create the temporary directory
 $temp_dir = "buzztemp";
 if (-d $temp_dir) {
     `rm -rf $temp_dir`;
 }
 mkdirs($temp_dir, 0777) || die $!;
 
-if ($ENV{'WINDIR'} ne '') {
-    $separator = "\\";
-    $windows = 1;
-} else {
-    $separator = '/';
-    $unix = 1;
-}
 
 #print "args = @ARGV\n";
 $command = shift(@ARGV);
@@ -41,7 +55,7 @@ if ($command =~ /-classpath/) {
 $classpath = $ENV{"CLASSPATH"};
 if ($classpath eq "") {
     # find java in the path
-    if ($windows) {
+    if ($platform eq 'windows') {
 	@elements = split(';', $ENV{"PATH"});
 	foreach $element (@elements) {
 	    #print "trying $element\\java.exe\n";
@@ -54,27 +68,31 @@ if ($classpath eq "") {
 	if ($classpath eq "") {
 	    die "java.exe is not in your path, and classpath not set";
 	}
-    } else {
-	die "code for searching path not written for unix";
+
+    } elsif ($platform eq 'unix') {
+	die "code for searching path not written for unix\nset environment varilable for CLASSPATH before using.\n";
+
+    } elsif ($platform eq 'macosx') {
     }
 }
 
 
 # if target directory, -d, option is used, add it to CLASSPATH
 if ($command =~ /\-d\s(\S*)/) {
-    if ($windows) {
-	$classpath = "$1;$classpath";
-    } else {
-	$classpath = "$1:$classpath";
-    }
+    $classpath = "$1$path_separator$classpath";
 }
+
 
 foreach $arg (@ARGV) {
     if ($arg =~ /^-d(.*)/) {
 	$params{$1} = 1;
     #} elsif ($arg =~/^-c(.*)/) {
 	#$compiler = $1;
+
     } elsif ($arg =~ /\.java$/) {
+
+	# this only gets hit under windows, because *.java won't be
+	# expanded under the command line.. 
 	if ($arg =~ /(.*)\*\.java$/) {
 	    # gotta expand * to all matching
 	    #print "expanding *.java from \"$1\"\n";
@@ -101,6 +119,20 @@ foreach $arg (@ARGV) {
 	    }
 	    
 	} else {
+	    # make the directory that this file is in, in case it's 
+	    # buried more than one level deep. this is especially 
+	    # important under unix, because the above mkdir stuff won't
+	    # get hit due to *.java being expanded on the cmd line
+	    $arg =~ /(.*)$separator([\w\d]+\.java)/;
+	    $file_path = $1;
+	    $file_name = $2;
+	    if ($file_path ne '') {
+		#print "_${file_path}_ and _${file_name}_\n";
+		#if (!(-d $file_path)) {
+		mkdirs("$temp_dir$separator$file_path", 0777);
+		#}
+	    }
+
 	    unshift @file_list, $arg;	
 	}
     }
@@ -119,6 +151,7 @@ foreach $file (@file_list) {
     @new_contents = ();
     &read_positive;
 
+    #printf "try to make $temp_dir$separator$file\n";
     open(OUTPUT, ">$temp_dir$separator$file") || die $!;
     print OUTPUT reverse(@new_contents);
     close(OUTPUT);
@@ -221,7 +254,8 @@ sub read_negative {
 # this turned into a hack because i was lazy
 sub mkdirs {
     my $d = @_[0];
-    $d =~ s/\\/\//g;
-    my $result = `d:\\cygwin\\bin\\mkdir -p $d`;
+    #print "making dir $d\n";
+    $d =~ s/\\/\//g; # make backslashes into fwd slashes
+    my $result = `$mkdir_path -p $d`;
     return 1;
 }
