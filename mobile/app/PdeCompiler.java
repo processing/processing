@@ -133,10 +133,11 @@ public class PdeCompiler implements PdeMessageConsumer {
         buildPath + File.separator + sketch.code[i].preprocName;
     }
     */
-
-    //for (int i = 0; i < command.length; i++) {
-      //System.out.println("cmd " + i + ": " + command[i]);
-    //}
+/*
+    for (int i = 0; i < command.length; i++) {
+      System.out.println("cmd " + i + ": " + command[i]);
+    }
+ */
 
     firstErrorFound = false;  // haven't found any errors yet
     secondErrorFound = false;
@@ -199,7 +200,8 @@ public class PdeCompiler implements PdeMessageConsumer {
     }
 
     // success would mean that 'result' is set to zero
-    return (result == 0); // ? true : false;
+    //// MOBILE: jikes returns result 1 with wierd errors even though files compile ok
+    return firstErrorFound;//(result == 0); // ? true : false;
   }
 
 
@@ -215,7 +217,8 @@ public class PdeCompiler implements PdeMessageConsumer {
   public void message(String s) {
     // This receives messages as full lines, so a newline needs 
     // to be added as they're printed to the console.
-    System.err.println(s);    
+    //// MOBILE: moving to end due to wierd jikes output
+    //System.err.println(s);    
     
     // ignore cautions
     if (s.indexOf("Caution") != -1) return;
@@ -284,6 +287,7 @@ public class PdeCompiler implements PdeMessageConsumer {
         }
 
         // if executing at this point, this is *at least* the first error
+        /// MOBILE: moving to end due to wierd jikes output
         firstErrorFound = true;
 
         //err += "error:".length();
@@ -327,12 +331,20 @@ public class PdeCompiler implements PdeMessageConsumer {
           }
         }        
 
+        //// MOBILE: ignore wierd jikes errors that get output even though it compiles fine
         if (description.indexOf("Type java.io.Serializable was not found.") != -1) {
           return;
         }
         if (description.indexOf("Type java.lang.Cloneable was not found.") != -1) {
           return;          
         }
+        if (description.indexOf("A non-standard version of the type \"java.lang.StringBuffer\" was found.") != -1) {
+          return;
+        }
+        
+        //// MOBILE: moving to end due to wierd jikes output
+        firstErrorFound = true;
+        System.err.println(s);    
         
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);

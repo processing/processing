@@ -15,9 +15,9 @@
         <!-- Check if processing has been checked out and set property accordingly-->
         <available property="ischeckedout" file="processing" type="dir"/>        
         <!-- home directory of cygwin -->
-        <property name="cygwin.dir" value="C:/Sdk/cygwin"/>
+        <property name="cygwin.dir" value="C:/cygwin"/>
         <!-- the absolute path of the basedir, specified here with unix slashes -->
-        <property name="parent.dir" value="C:/Projects/processing"/>
+        <property name="parent.dir" value="C:/projects/processing"/>
         <!-- the absolute path of a WTK implementation for building core files -->
         <property name="wtk.dir" value="C:/WTK22"/>
         <!-- the boot classpath to use when compiling core files -->
@@ -27,7 +27,7 @@
     </target>
        
     <!-- checks out a tagged copy of processing if it hasn't been done so already. -->
-    <target name="checkout" unless="ischeckedout">
+    <target name="checkout" depends="init" unless="ischeckedout">
         <!-- perform the cvs update to get clean files. -->
         <exec executable="${cygwin.dir}/bin/bash.exe">
             <arg value="--login"/>

@@ -1832,7 +1832,7 @@ public class PdeSketch {
                              wtkLibPath + "midpapi10.jar";
     //// this is just to satisfy Jikes which wants java.io.Serializable and java.lang.Cloneable to be reachable...
     //System.out.println(System.getProperty ("java.home"));
-    bootClassPath += File.pathSeparator + System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+    //bootClassPath += File.pathSeparator + System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
     String   additionalClassPath = "lib" + File.separator + "mobile.jar";
     String foundName = build(midletDir.getPath(), name, baseClass, baseImports, 
                              bootClassPath, additionalClassPath);
