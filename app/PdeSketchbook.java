@@ -130,7 +130,7 @@ public class PdeSketchbook {
    * Handle creating a sketch folder, return its base .pde file
    * or null if the operation was cancelled.
    */
-  public String handleNew(boolean startup,
+  public String handleNew(boolean noPrompt,
                           boolean shift,
                           boolean library) throws IOException {
     File newbieDir = null;
@@ -147,7 +147,7 @@ public class PdeSketchbook {
     // unless, ermm, they user tested it and people preferred that as
     // a way to get started. shite. now i hate myself.
     //
-    if (startup) prompt = false;
+    if (noPrompt) prompt = false;
 
     if (prompt) {
     //if (!startup) {

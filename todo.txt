@@ -30,9 +30,12 @@ o if additional tab is "public" class.. then make external?
 X   this seems too dangerous
 X make font builder vertically resizable
 X   200 pt font hoses things / hides buttons
-X bring back "rename" ?
+X rename/delete work
 X   rename is now enabled on the first tab
-X   'delete' is disabled on the first tab (what would you do after delete?)
+X   delete on first tab will also delete the entire sketch
+X   leaving an empty sketch will remove it
+X     avoids creating a zillion sketches when deleting/clearing up sketchbook
+X   disable 'hide' menu item for the main code tab
 
 sketchbook/prefs location
 X read from registry key to get the proper name for these folders

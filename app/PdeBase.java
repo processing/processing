@@ -88,7 +88,6 @@ public class PdeBase {
 
 
   public PdeBase() {
-
     // figure out which operating system
     // this has to be first, since editor needs to know
 
@@ -796,8 +795,10 @@ public class PdeBase {
   static public int calcFolderSize(File folder) {
     int size = 0;
 
-    //System.out.println("calcFolderSize " + folder);
     String files[] = folder.list();
+    // null if folder doesn't exist, happens when deleting sketch
+    if (files == null) return -1;
+
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || (files[i].equals("..")) ||
           files[i].equals(".DS_Store")) continue;
