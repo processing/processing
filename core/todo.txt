@@ -34,10 +34,12 @@ o   make width() return values based on natural size?
 X   not a great idea.. plus java2d uses 1 pixel font for things
 X email simon re: lighting api
 X   things are actually more on track than expected
-
+X goodbye sphere(x, y, z, r)
 X camera is swapping colors in gl (on mac?)
 X   in fact, all textures on mac were swapping colors
 _   test this on windows to see if fixed
+
+o should available() be waiting() or something like that instead?
 
 implemented in 79
 X make sure arc goes in the right direction that we want it to
@@ -46,9 +48,24 @@ X   (make sure that PGraphics3 goes the same direction)
 
 BETA
 
-PGraphics 
+_ take a look to see what needs to happen to get PAppletGL merged in
+_   i.e. can i just extend GLCanvas?
 
-_ remove PMethods as actual class... 
+_ don't grab pixels of java2d images unless asked
+_   this is the difference between a lot of loadPixels() and not
+_   so important to have it in before beta if that's the change
+
+_ new PGraphics(PImage)
+_ if (modified) don't loadPixels again, just ignore it
+_   make a note that updatePixels() only sets a flag in PImage
+_     (but not PGraphics, which does it immediately)
+
+_ get PGraphics working again (with crappy line support) 
+
+_ remove PMethods as actual class, use recordFrame(PGraphics)
+_   size(200, 200, "processing.illustrator.PGraphicsAI");
+_ make vertexCount etc properly accessible in PGraphics3
+_   so that people can do things like the dxf renderer
 
 size(200, 200, P3D) - createGraphics and placement issues 
 _ make pappletgl work back inside papplet
@@ -82,7 +99,11 @@ X   is it because the lock was taken off (g) in PApplet?
 _ add something to PApplet to have constants for the platform
 _   needed for error messages (winvdig?) and other misc
 
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+NOT NECESSARY BEFORE BETA
 
 _ allow save(), saveFrame() et al to properly pass in absolute paths
 _   (so that it doesn't always save to the applet folder)
@@ -132,21 +153,10 @@ void draw() {
 }
 
 PGraphicsGL
-_ check once lighting actually works
-_   background color seems to be wrong?
-
-. . . . . 
-
-add simon's new 3d code as soon as he has gl working
-  and make a release based on that
-
-0079 java 1.1 graphics comes back
-
-0080 export to application
-
+_ background color seems to be wrong?
+_   check this once lighting actually works
 
 api questions
-_ should available() be waiting() or something like that instead?
 
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
 
@@ -177,12 +187,6 @@ _ expose api to launch files, folders, URLs
 _   use with/in place of link()
 
 _ PPolygon no longer in use and PLine is a mess
-
-video lib
-_ grabbing sub-devices from camera in the lib (via list() or whatever)
-_   actually, need to use numbered indices (multiple w/ same name)
-_     list should be: "0 - Logitech QuickCam (Blah)"
-_     and then use the indices (or the str i guess) to choose
 
 _ something really bad happened with println() in this release
 _   perhaps only without a code folder and/or running in java2d mode?

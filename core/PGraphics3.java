@@ -1801,24 +1801,31 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  // cache all the points of the sphere in a static array
-  // top and bottom are just a bunch of triangles that land
-  // in the center point
-
-  // sphere is a series of concentric circles who radii vary
-  // along the shape, based on, er.. cos or something
-
-  // [toxi031031] new sphere code. removed all multiplies with
-  // radius, as scale() will take care of that anyway
-
-  // [toxi031223] updated sphere code (removed modulos)
-  // and introduced sphereAt(x,y,z,r)
-  // to avoid additional translate()'s on the user/sketch side
+  /**
+   * Draw a sphere with radius r centered at coordinate 0, 0, 0.
+   * <P>
+   * Implementation notes:
+   * <P>
+   * cache all the points of the sphere in a static array
+   * top and bottom are just a bunch of triangles that land
+   * in the center point
+   * <P>
+   * sphere is a series of concentric circles who radii vary
+   * along the shape, based on, er.. cos or something
+   * <PRE>
+   * [toxi031031] new sphere code. removed all multiplies with
+   * radius, as scale() will take care of that anyway
+   *
+   * [toxi031223] updated sphere code (removed modulos)
+   * and introduced sphereAt(x,y,z,r)
+   * to avoid additional translate()'s on the user/sketch side
+   * </PRE>
+   */
   public void sphere(float r) {
-    sphere(0, 0, 0, r);
-  }
+    float x = 0;  // TODO clean this back up again
+    float y = 0;
+    float z = 0;
 
-  public void sphere(float x, float y, float z, float r) {
     if (sphereDetail == 0) {
       sphereDetail(30);
     }
