@@ -50,7 +50,7 @@ BEGIN
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#endif\r\n"
-    "#include ""res\\other.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""resources.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
     "#include ""afxres.rc""         // Standard components\r\n"
     "#endif\0"
 END
@@ -65,8 +65,8 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\application.ico"
-IDR_DOCUMENT            ICON    DISCARDABLE     "res\\document.ico"
+IDR_MAINFRAME           ICON    DISCARDABLE     "application.ico"
+IDR_DOCUMENT            ICON    DISCARDABLE     "document.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -167,7 +167,7 @@ END
 LANGUAGE 9, 1
 #pragma code_page(1252)
 #endif
-#include "res\other.rc2"  // non-Microsoft Visual C++ edited resources
+#include "resources.rc2"  // non-Microsoft Visual C++ edited resources
 #include "afxres.rc"         // Standard components
 #endif
 /////////////////////////////////////////////////////////////////////////////
