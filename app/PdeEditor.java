@@ -664,6 +664,17 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       });
     menu.add(item);
 
+    item = new JMenuItem("Archive Sketch");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          //new PdeFontBuilder().show(sketch.dataFolder);
+          Archiver archiver = new Archiver();
+          archiver.setup(PdeEditor.this);
+          archiver.show();
+        }
+      });
+    menu.add(item);
+
     return menu;
   }
 
