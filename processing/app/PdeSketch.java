@@ -363,6 +363,11 @@ public class PdeSketch {
         File newFolder = new File(folder.getParentFile(), newName);
         boolean success = folder.renameTo(newFolder);
         folder = newFolder;
+
+        // get the changes into the sketchbook menu
+        editor.sketchbook.rebuildMenus();
+
+        // reload the sketch
         load();
 
       } else {
@@ -402,16 +407,19 @@ public class PdeSketch {
   public void deleteCode() {
     // don't allow delete of the main code
     // TODO maybe gray out the menu on setCurrent(0)
+    /*
     if (current == code[0]) {
       PdeBase.showMessage("Can't do that",
                           "You cannot delete the main " +
                           ".pde file from a sketch\n");
       return;
     }
+    */
 
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
-    String prompt =
+    String prompt = (current == code[0]) ?
+      "Are you sure you want to delete this sketch?" :
       "Are you sure you want to delete \"" + current.name + "\"?";
     int result = JOptionPane.showOptionDialog(editor,
                                               prompt,
@@ -422,21 +430,33 @@ public class PdeSketch {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      // delete the file
-      if (!current.file.delete()) {
-        PdeBase.showMessage("Couldn't do it",
-                            "Could not delete \"" + current.name + "\".");
-        return;
+      if (current == code[0]) {
+        // delete the entire sketch
+        PdeBase.removeDir(folder);
+
+        // get the changes into the sketchbook menu
+        //sketchbook.rebuildMenus();
+
+        // make a new sketch, and i think this will rebuild the sketch menu
+        editor.handleNew();
+
+      } else {
+        // delete the file
+        if (!current.file.delete()) {
+          PdeBase.showMessage("Couldn't do it",
+                              "Could not delete \"" + current.name + "\".");
+          return;
+        }
+
+        // remove code from the list
+        removeCode(current);
+
+        // just set current tab to the main tab
+        setCurrent(0);
+
+        // update the tabs
+        editor.header.repaint();
       }
-
-      // remove code from the list
-      removeCode(current);
-
-      // just set current tab to the main tab
-      setCurrent(0);
-
-      // update the tabs
-      editor.header.repaint();
     }
   }
 

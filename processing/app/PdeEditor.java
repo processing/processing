@@ -1311,6 +1311,19 @@ public class PdeEditor extends JFrame
 
 
   /**
+   * Extra public method so that PdeSketch can call
+   * this when a sketch is selected to be deleted,
+   * and it won't prompt for save as.
+   */
+  public void handleNew() {
+    doStop();
+    handleNewShift = false;
+    handleNewLibrary = false;
+    handleNew2(true);
+  }
+
+
+  /**
    * User selected "New Library", this will act just like handleNew
    * but internally set a flag that the new guy is a library,
    * meaning that a "library" subfolder will be added.
@@ -1326,12 +1339,13 @@ public class PdeEditor extends JFrame
   /**
    * Does all the plumbing to create a new project
    * then calls handleOpen to load it up.
-   * @param startup true if the app is starting (auto-create a sketch)
+   *
+   * @param noPrompt true if the app is starting (auto-create a sketch)
    */
-  protected void handleNew2(boolean startup) {
+  protected void handleNew2(boolean noPrompt) {
     try {
       String pdePath =
-        sketchbook.handleNew(startup, handleNewShift, handleNewLibrary);
+        sketchbook.handleNew(noPrompt, handleNewShift, handleNewLibrary);
       if (pdePath != null) handleOpen2(pdePath);
 
     } catch (IOException e) {
@@ -1376,6 +1390,18 @@ public class PdeEditor extends JFrame
    * need to be saved.
    */
   protected void handleOpen2(String path) {
+    if (sketch != null) {
+      // if leaving an empty sketch (i.e. the default) do an
+      // auto-clean right away
+      if (PdeBase.calcFolderSize(sketch.folder) == 0) {
+        //System.err.println("removing empty poopster");
+        PdeBase.removeDir(sketch.folder);
+        sketchbook.rebuildMenus();
+      }
+    //} else {
+      //System.err.println("sketch was null");
+    }
+
     try {
       // check to make sure that this .pde file is
       // in a folder of the same name

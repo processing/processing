@@ -46,7 +46,7 @@ public class PdeEditorHeader extends JComponent {
   JMenu menu;
   JPopupMenu popup;
 
-  JMenuItem deleteItem;
+  JMenuItem hideItem;
 
   int menuLeft;
   int menuRight;
@@ -168,9 +168,8 @@ public class PdeEditorHeader extends JComponent {
       tabRight = new int[sketch.codeCount];
     }
 
-    // disable rename on the first tab
-    deleteItem.setEnabled(sketch.current != sketch.code[0]);
-    // re-enabling for 75 to bring back renaming of sketches
+    // disable hide on the first tab
+    hideItem.setEnabled(sketch.current != sketch.code[0]);
 
     //int x = 0; //PdePreferences.GUI_SMALL;
     int x = (PdeBase.platform == PdeBase.MACOSX) ? 0 : 1;
@@ -308,7 +307,6 @@ public class PdeEditorHeader extends JComponent {
         }
       });
     menu.add(item);
-    deleteItem = item;
 
     item = new JMenuItem("Hide");
     item.addActionListener(new ActionListener() {
@@ -317,6 +315,7 @@ public class PdeEditorHeader extends JComponent {
         }
       });
     menu.add(item);
+    hideItem = item;
 
     JMenu unhide = new JMenu("Unhide");
     ActionListener unhideListener = new ActionListener() {
