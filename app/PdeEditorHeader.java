@@ -291,6 +291,8 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     Reset file list (not needed?)
   */
   //public JMenu rebuildMenu() {
+  //JMenuItem newItem;
+
   public void rebuildMenu() {
     if (menu != null) {
       menu.removeAll();
@@ -313,18 +315,33 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     }
     JMenuItem item;
 
-    item = new JMenuItem("New");
+    item = PdeEditor.newJMenuItem("New", 'T');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
-          System.out.println("TODO write code for New");
+          //System.out.println("TODO write code for New");
+          editor.sketch.newCode();
         }
       });
     menu.add(item);
 
+    /*
+    if (newItem == null) {
+      newItem = PdeEditor.newJMenuItem("New", 'T');
+      newItem.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) { 
+            //System.out.println("TODO write code for New");
+            editor.sketch.newCode();
+          }
+        });
+    }
+    System.out.println("adding new");
+    menu.add(newItem);
+    */
+
     item = new JMenuItem("Rename");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
-          System.out.println("TODO write code for Rename");
+          editor.sketch.renameCode();
         }
       });
     menu.add(item);
@@ -332,7 +349,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     item = new JMenuItem("Delete");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
-          System.out.println("TODO write code for Delete");
+          editor.sketch.deleteCode();
         }
       });
     menu.add(item);
@@ -340,8 +357,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     item = new JMenuItem("Hide");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
-          // don't let the user hide if only 1 file open
-          System.out.println("TODO write code for Hide");
+          editor.sketch.hideCode();
         }
       });
     menu.add(item);
@@ -349,7 +365,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     JMenu unhide = new JMenu("Unhide");
     ActionListener unhideListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.unhide((String) (e.getActionCommand()));
+          editor.sketch.unhideCode((String) (e.getActionCommand()));
           rebuildMenu();
         }
       };
@@ -375,7 +391,8 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
       ActionListener jumpListener = new ActionListener() {
           public void actionPerformed(ActionEvent e) { 
             //System.out.println("jump to " + e.getActionCommand());
-            System.out.println("jump to " + e);
+            //System.out.println("jump to " + e);
+            editor.sketch.setCurrent(e.getActionCommand());
           }
         };
       for (int i = 0; i < sketch.codeCount; i++) {
