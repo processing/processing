@@ -140,26 +140,35 @@ public interface PMethods {
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3);
 
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4);
+
+  //
+
   public void rectMode(int mode);
 
   public void rect(float x1, float y1, float x2, float y2);
 
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4);
+  //protected void draw_rect(float x1, float y1, float x2, float y2);
 
-  //public void circle(float x, float y, float radius);
+  // REMOVED public void circle(float x, float y, float radius);
 
   public void ellipseMode(int mode);
 
   public void ellipse(float x, float y, float hradius, float vradius);
 
-  //public void arcMode(int mode);
+  //protected void draw_ellipse(float x, float y, float hradius, float vradius);
 
-  //public void arc(float start, float stop,
-  //              float x, float y, float radius);
+  // REMOVED public void arcMode(int mode);
+
+  // REMOVED public void arc(float start, float stop,
+  //               float x, float y, float radius);
 
   public void arc(float start, float stop,
                   float x, float y, float hr, float vr);
+
+  //protected void draw_arc(float start, float stop,
+  //                      float x, float y, float hr, float vr);
 
   //
 
@@ -263,19 +272,19 @@ public interface PMethods {
 
   //
 
-  public void angleMode(int mode);
-
   public void translate(float tx, float ty);
 
   public void translate(float tx, float ty, float tz);
+
+  public void angleMode(int mode);
+
+  public void rotate(float angle);
 
   public void rotateX(float angle);
 
   public void rotateY(float angle);
 
   public void rotateZ(float angle);
-
-  public void rotate(float angle);
 
   public void rotate(float angle, float v0, float v1, float v2);
 
