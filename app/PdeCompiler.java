@@ -27,7 +27,7 @@ import java.io.*;
 import javax.swing.*;
 
 
-public class PdeCompiler implements PdeMessageConsumer{
+public class PdeCompiler implements PdeMessageConsumer {
   static final String SUPER_BADNESS = 
     "Strange error while compiling, " + 
     "please send code to processing@media.mit.edu";
@@ -71,7 +71,7 @@ public class PdeCompiler implements PdeMessageConsumer{
           abuffer.append(":/System/Library/Java/Extensions/" + list[i]);
         }
       }
-      additional = abuffer.toString();      
+      additional = abuffer.toString();
 #endif
     }
 
@@ -81,6 +81,7 @@ public class PdeCompiler implements PdeMessageConsumer{
     String command[] = new String[] { 
 #ifdef MACOS
       // linux doesn't seem to like this
+      // though windows probably doesn't care
       userdir + "jikes",
 #else 
       "jikes",
@@ -95,8 +96,9 @@ public class PdeCompiler implements PdeMessageConsumer{
       "-bootclasspath",
       System.getProperty("sun.boot.class.path") + additional,
 
-      // definitely needed on macos, but not tested elsewhere
-      // probably wouldn't hurt on the others
+      // needed for macosx so that the classpath is set properly
+      // also for windows because qtjava will most likely be here
+      // and for linux, it just doesn't hurt
       "-classpath",
       System.getProperty("java.class.path"),
 

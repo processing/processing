@@ -58,10 +58,9 @@ public class PdePreprocessor {
 #endif
   };
 
-  static final int BEGINNER     = 0;
-  static final int INTERMEDIATE = 1;
-  static final int ADVANCED     = 2;
-
+  static final int BEGINNER     = 0;  // "static" according to the docs
+  static final int INTERMEDIATE = 1;  // "active" 
+  static final int ADVANCED     = 2;  // "java" 
   static int programType = -1;
 
   String tempClass;
