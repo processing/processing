@@ -1,3 +1,10 @@
+ABOUT REV 0026
+
+- fixed the situation where i'm a dork and forgot to 
+  actually update the pde.jar file, which had rendered the 
+  changes in rev 0025 irrelevant
+
+
 ABOUT REV 0025
 
 - 'rect' is now 'plane'
