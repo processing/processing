@@ -31,7 +31,8 @@ import java.io.*;
 import java.util.*;
 
 
-public class PdeEditorTextPane extends JPanel {
+//public class PdeEditorTextPane extends JPanel {
+public class PdeEditorTextPane extends JTextPane {
   protected JTextPane textPane;
 
   // styled document that is the model for the textPane
@@ -55,24 +56,38 @@ public class PdeEditorTextPane extends JPanel {
     // initial set up that sets the title
     //super("Programmer's Editor Demonstration");
 
+    //setBackground(Color.orange);
+
     // Create the document model.
     document = new HighLightedDocument();
 
     // Create the text pane and configure it.
-    textPane = new JTextPane(document);
-    textPane.setCaretPosition(0);
+
+    //textPane = new JTextPane(document);
+    setStyledDocument(document);
+    textPane = this;
+
+    //textPane.setCaretPosition(0);
     //textPane.setMargin(new Insets(5,5,5,5));
-    JScrollPane scrollPane = new JScrollPane(textPane);
+
+    //JScrollPane scroller = new JScrollPane();
+    //JViewport viewport = scroller.getViewport();
+    //viewport.add(textPane);
+
+    ////    JScrollPane scrollPane = new JScrollPane(textPane);
 
     // specify the initial size and location for the window.
     //scrollPane.setPreferredSize(new Dimension(620, 460));
+    //scrollPane.pack();
     //setLocation(50, 50);
 
     // Add the components to the frame.
     //JPanel contentPane = new JPanel(new BorderLayout());
     //contentPane.add(scrollPane, BorderLayout.CENTER);
     //setContentPane(contentPane);
-    add(scrollPane, BorderLayout.CENTER);
+    ////    add(scrollPane, BorderLayout.CENTER);
+
+    //scrollPane.setPreferredSize(getPreferredSize());
 
     // Set up the menu bar.
     //    JMenu styleMenu = createStyleMenu();
@@ -107,23 +122,23 @@ public class PdeEditorTextPane extends JPanel {
     StyleConstants.setItalic(dstyle, false);
     //styles.put("body", style);
 
-    styles.put("body",         PdeBase.getStyle("body"), dstyle);
-    styles.put("tag",          PdeBase.getStyle("tag"), dstyle);
-    styles.put("endtag",       PdeBase.getStyle("tag"), dstyle); // same
-    styles.put("reference",    PdeBase.getStyle("reference"), dstyle);
-    styles.put("name",         PdeBase.getStyle("name"), dstyle);
-    styles.put("value",        PdeBase.getStyle("value"), dstyle);
-    styles.put("text",         PdeBase.getStyle("text"), dstyle);
-    styles.put("reservedWord", PdeBase.getStyle("reserved_word"), dstyle);
-    styles.put("identifier",   PdeBase.getStyle("identifier"), dstyle);
-    styles.put("literal",      PdeBase.getStyle("literal"), dstyle);
-    styles.put("separator",    PdeBase.getStyle("separator"), dstyle);
-    styles.put("operator",     PdeBase.getStyle("operator"), dstyle);
-    styles.put("comment",      PdeBase.getStyle("comment"), dstyle);
-    styles.put("preprocessor", PdeBase.getStyle("preprocessor"), dstyle);
-    styles.put("whitespace",   PdeBase.getStyle("whitespace"), dstyle);
-    styles.put("error",        PdeBase.getStyle("error"), dstyle);
-    styles.put("unknown",      PdeBase.getStyle("unknown"), dstyle);
+    styles.put("body",         PdeBase.getStyle("body", dstyle));
+    styles.put("tag",          PdeBase.getStyle("tag", dstyle));
+    styles.put("endtag",       PdeBase.getStyle("tag", dstyle)); // same
+    styles.put("reference",    PdeBase.getStyle("reference", dstyle));
+    styles.put("name",         PdeBase.getStyle("name", dstyle));
+    styles.put("value",        PdeBase.getStyle("value", dstyle));
+    styles.put("text",         PdeBase.getStyle("text", dstyle));
+    styles.put("reservedWord", PdeBase.getStyle("reserved_word", dstyle));
+    styles.put("identifier",   PdeBase.getStyle("identifier", dstyle));
+    styles.put("literal",      PdeBase.getStyle("literal", dstyle));
+    styles.put("separator",    PdeBase.getStyle("separator", dstyle));
+    styles.put("operator",     PdeBase.getStyle("operator", dstyle));
+    styles.put("comment",      PdeBase.getStyle("comment", dstyle));
+    styles.put("preprocessor", PdeBase.getStyle("preprocessor", dstyle));
+    styles.put("whitespace",   PdeBase.getStyle("whitespace", dstyle));
+    styles.put("error",        PdeBase.getStyle("error", dstyle));
+    styles.put("unknown",      PdeBase.getStyle("unknown", dstyle));
 
     // create the new document.
     documentReader = new DocumentReader(document);
@@ -131,19 +146,20 @@ public class PdeEditorTextPane extends JPanel {
     // Put the initial text into the text pane and
     // set it's initial coloring style.
     //    initDocument();
-    String initString = 
-      ("/**\n" +
-       " * Simple common test program.\n" +
-       " */\n" +
-       "public class HelloWorld {\n" +
-       "    public static void main(String[] args) {\n" +
-       "        // Display the greeting.\n" +
-       "        System.out.println(\"Hello World!\");\n" +
-       "    }\n" +
-       "}\n");
 
+    //    String initString = 
+    //      ("/**\n" +
+    //       " * Simple common test program.\n" +
+    //       " */\n" +
+    //       "public class HelloWorld {\n" +
+    //       "    public static void main(String[] args) {\n" +
+    //       "        // Display the greeting.\n" +
+    //       "        System.out.println(\"Hello World!\");\n" +
+    //       "    }\n" +
+    //       "}\n");
     syntaxLexer = new JavaLexer(documentReader);
 
+    /*
     try {
       document.insertString(document.getLength(), 
 			    initString, 
@@ -151,11 +167,60 @@ public class PdeEditorTextPane extends JPanel {
     } catch (BadLocationException ble) {
       System.err.println("Couldn't insert initial text.");
     }
+    */
 
     // put it all together and show it.
     //pack();
     //setVisible(true);
   }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  /*
+  public void setText(String program) {
+    try {
+      document.remove(0, document.getLength());
+      document.insertString(0, program, grabStyle("text"));
+
+    } catch (BadLocationException ble) {
+      System.err.println("PdeEditorTextPane.setText() failed");
+    }
+  }
+
+  public String getText() {
+    try {
+      return document.getText(0, document.getLength());
+
+    } catch (BadLocationException ble) {
+      System.err.println("PdeEditorTextPane.getText() failed");
+    }
+    return null;
+  }
+
+
+  public void setCaretPosition(int what) {
+    textPane.setCaretPosition(what);
+  }
+
+  public int getCaretPosition() {
+    return textPane.getCaretPosition();
+  }
+
+
+  public void setEditable(boolean maybe) {
+    textPane.setEditable(maybe);
+  }
+
+
+  public void select(int start, int stop) {
+    textPane.select(start, stop);
+  }
+  */
+
+
+  //////////////////////////////////////////////////////////////
 
 
   /**
@@ -347,7 +412,7 @@ public class PdeEditorTextPane extends JPanel {
 		  document.setCharacterAttributes(
 						  t.getCharBegin() + change,
 						  t.getCharEnd()-t.getCharBegin(),
-						  getStyle(t.getDescription()),
+						  grabStyle(t.getDescription()),
 						  true
 						  );                                                                  
 		  // record the position of the last bit of text that we colored
@@ -556,7 +621,7 @@ public class PdeEditorTextPane extends JPanel {
    *      or null if the styleName is not known.
    * @return the style
    */
-  private SimpleAttributeSet getStyle(String styleName){
+  private SimpleAttributeSet grabStyle(String styleName){
     return ((SimpleAttributeSet)styles.get(styleName));
   }
 
@@ -727,7 +792,9 @@ public class PdeEditorTextPane extends JPanel {
    * removes to color them.
    */
   private class HighLightedDocument extends DefaultStyledDocument {
-    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+    public void insertString(int offs, String str, AttributeSet a) 
+      throws BadLocationException {
+
       synchronized (doclock){
 	super.insertString(offs, str, a);
 	color(offs, str.length());
@@ -744,6 +811,7 @@ public class PdeEditorTextPane extends JPanel {
     }
   }
 }
+
 
 /**
  * A wrapper for a position in a document appropriate for storing
@@ -815,6 +883,7 @@ class DocPosition {
   }
 }
 
+
 /**
  * A comparator appropriate for use with Collections of
  * DocPositions.
@@ -860,6 +929,7 @@ class DocPositionComparator implements Comparator{
     }
   }
 }
+
 
 /**
  * A reader interface for an abstract document.  Since

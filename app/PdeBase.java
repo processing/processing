@@ -1,11 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
-//import java.applet.Applet;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.comm.*;
+
+// for getStyle method (may be temporary)
+import javax.swing.text.*;
 
 
 public class PdeBase implements ActionListener {
@@ -783,7 +785,7 @@ public class PdeBase implements ActionListener {
 
   static public SimpleAttributeSet getStyle(String what, 
 					    SimpleAttributeSet otherwise) {
-    String str = get("editor.program." + which + ".style");
+    String str = get("editor.program." + what + ".style");
     if (str == null) return otherwise;  // ENABLE LATER
     StringTokenizer st = new StringTokenizer(str, ",");
 
@@ -795,7 +797,7 @@ public class PdeBase implements ActionListener {
     StyleConstants.setBold(style, s.indexOf("bold") != -1);
     StyleConstants.setItalic(style, s.indexOf("italic") != -1);
 
-    StyleConstants.setSize(style, Integer.parseInt(st.nextToken()));
+    StyleConstants.setFontSize(style, Integer.parseInt(st.nextToken()));
 
     s = st.nextToken();
     if (s.indexOf("#") == 0) s = s.substring(1);

@@ -40,8 +40,9 @@ public class PdeEditor extends Panel {
   PdeEditorHeader header;
   PdeEditorStatus status;
   PdeEditorConsole console;
-  //TextArea textarea;
-  JEditorPane textarea;
+
+  //JEditorPane textarea;
+  PdeEditorTextPane textarea;
 
   boolean externalEditor;
 
@@ -105,44 +106,29 @@ public class PdeEditor extends Panel {
     header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
 
-    /*
-    textarea = 
-      new TextArea("",
-		   PdeBase.getInteger("editor.program.rows", 20),
-		   PdeBase.getInteger("editor.program.columns", 60),
-		   TextArea.SCROLLBARS_VERTICAL_ONLY);
-    */
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception e) { 
       e.printStackTrace();
     }
 
+    textarea = new PdeEditorTextPane();
+
     JScrollPane scroller = new JScrollPane();
     JViewport viewport = scroller.getViewport();
-
-    textarea = new JEditorPane("text/java", "");
-
+    //textarea = new JEditorPane("text/java", "");
     viewport.add(textarea);
-    //viewport.setBackingStoreEnabled(true);
 
-    textarea.setFont(PdeBase.getFont("editor.program.font",
-				       new Font("Monospaced", 
-						Font.PLAIN, 12)));
-    textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
-					    Color.black));
-    textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
-					    Color.white));
-    /*
-    textarea.addMouseMotionListener(new MouseMotionAdapter() {
-	public void mouseMoved(MouseEvent e) {
-	  frame.setCursor(Frame.CROSSHAIR_CURSOR);
-	}
-      });
-    */
+    //textarea.setFont(PdeBase.getFont("editor.program.font",
+    //			       new Font("Monospaced", 
+    //					Font.PLAIN, 12)));
+    //textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
+    //			    Color.black));
+    //textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
+    //				    Color.white));
 
-    //rightPanel.add("Center", textarea);
     rightPanel.add("Center", scroller);
+    //rightPanel.add("Center", textarea);
 
     Panel statusPanel = new Panel();
     statusPanel.setLayout(new BorderLayout());
@@ -154,13 +140,10 @@ public class PdeEditor extends Panel {
 
     add("Center", rightPanel);
 
-    //if (!PdeBase.isMacintosh()) {  // this still relevant?
-    /*
-      // hopefully these are no longer needed w/ swing
-    PdeEditorListener listener = new PdeEditorListener(this);
-    textarea.addKeyListener(listener);
-    textarea.addFocusListener(listener);
-    */
+    // hopefully these are no longer needed w/ swing
+    //PdeEditorListener listener = new PdeEditorListener(this);
+    //textarea.addKeyListener(listener);
+    //textarea.addFocusListener(listener);
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
