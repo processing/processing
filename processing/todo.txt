@@ -19,6 +19,8 @@ X resize box intrudes on the scroller for the console area
 X   need to set grow boxes intruding to false
 X   1.3 version (deprecated): -Dcom.apple.mrj.application.growbox.intrudes=false
 X   1.4 version: -Dapple.awt.showGrowBox=false
+X add mkdmg script to macosx build process
+X   could significantly speed things up
 
 X put 'play' on a SwingWorker thread
 _   test this on a pc to see how it goes, especially with opengl
@@ -49,6 +51,8 @@ _   need to pay attention to when running from read-only drive
 _     reported by brandenberg
 _    "p5 will launch from the disk image, but will 
 _     not draw the sketch name bar doesn't appear"
+_ includes preferences.txt option to write to p5 folder first
+_   this can be altered by instructors and re-packaged
 
 _ bring back "rename" ?
 
@@ -538,8 +542,6 @@ DISTRIBUTION / Mac OS X
 1 _     right now, typing works, but no caret, no blue highlight
 1 _     and on second find run, should instead select all the find string
 1 _       so that typing will replace it directly
-b _ add mkdmg script to macosx build process
-b _   could significantly speed things up
 b _ set nice background for disk image on macosx
 1 _ test more to see if runtime exceptions are coming through
 1 _ track down error in PdeCompiler for message parsing
