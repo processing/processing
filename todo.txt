@@ -1,26 +1,7 @@
-0042
-X fixed ArrayIndexOutOfBoundsException in texture use
-X added icon to replace the coffee cup
-X see if play being highlighted can be implemented again
-X   especially important because of speed issues
+0043
+o arrow keys don't work in the textarea.. known issue
+X   add note to release notes
 
-0042 BUGS
-X this code is not performing correctly (triangle strip)
-X   (see example in reference for expected output)
-X   -> turns out it's correct, but not great
-beginShape(TRIANGLE_STRIP);
-vertex(30, 75);
-vertex(40, 20);
-vertex(50, 75);
-vertex(60, 20);
-vertex(70, 75);
-vertex(80, 20);
-vertex(90, 75);
-endShape();
-
-
-macosx
-a _ arrow keys don't work in the textarea
 
 web / docs
 a _ finish writing 'readme.txt'
@@ -29,8 +10,6 @@ a _   "this is alpha, we're heading to beta with series of sm releases"
 a _ document serial a bit more in release notes
 a _ how do we encourage/point to updates?
 a _   auto updater? check for releases page in menu?
-
-
 
 
 ////////////////////////////////////////////////////////////////////
