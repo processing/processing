@@ -352,28 +352,47 @@ public class PdeBase {
   }
 
 
-  static public void copyFile(File afile, File bfile) {
-    try {
-      FileInputStream from = new FileInputStream(afile);
-      FileOutputStream to = new FileOutputStream(bfile);
-      byte[] buffer = new byte[4096];
-      int bytesRead;
-      while ((bytesRead = from.read(buffer)) != -1) {
-        to.write(buffer, 0, bytesRead);
-      }
-      to.flush();
-      from.close(); // ??
-      from = null;
-      to.close(); // ??
-      to = null;
+  static public void copyFile(File afile, File bfile) throws IOException {
+    //try {
+    InputStream from = new BufferedInputStream(new FileInputStream(afile));
+    OutputStream to = new BufferedOutputStream(new FileOutputStream(bfile));
+    byte[] buffer = new byte[16 * 1024];
+    int bytesRead;
+    while ((bytesRead = from.read(buffer)) != -1) {
+      to.write(buffer, 0, bytesRead);
+    }
+    to.flush();
+    from.close(); // ??
+    from = null;
+    to.close(); // ??
+    to = null;
 
 #ifdef JDK13
-      bfile.setLastModified(afile.lastModified());  // jdk13 required
+  bfile.setLastModified(afile.lastModified());  // jdk13+ required
 #endif
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  //} catch (IOException e) {
+  //  e.printStackTrace();
+  //}
   }
+
+
+  /**
+   * Spew the contents of a String object out to a file.
+   */
+  static public void saveFile(String contents, File location) 
+    throws IOException {
+
+    BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(contents.getBytes())));
+    PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(location)));
+
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      writer.println(line);
+    }
+    writer.flush();
+    writer.close();        
+  }
+
 
   static public void copyDir(File sourceDir, File targetDir) {
     String files[] = sourceDir.list();
