@@ -257,8 +257,10 @@ public class PdePreprocessor {
 
     // unclear if this actually works, but it's worth a shot
     //
-    ((CommonAST)parserAST).setVerboseStringConversion(
-      true, parser.getTokenNames());
+    //((CommonAST)parserAST).setVerboseStringConversion(
+    //  true, parser.getTokenNames());
+    // (made to use the static version because of jikes 1.22 warning)
+    CommonAST.setVerboseStringConversion(true, parser.getTokenNames());
 
     // if this is an advanced program, the classname is already defined.
     //
