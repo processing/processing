@@ -1,4 +1,4 @@
-iprocessing todo list // last updated 17 september 2001
+iprocessing todo list // last updated 28 september 2001
 (most up-to-date version of this file is in processing cvs)
 
 
@@ -12,18 +12,17 @@ X   fill white, stroke black, background white default in bagel
 X   remove duplicates: LINE/LINES etc
 X 'draw mode' applet support
 X 'advanced' applet support
-_   write documentation about having to use 'extends KjcProcessingApplet'
-_ option to enable/disable frame
-_ add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
-_   also add note about paren balancing doing strange things
-_   leave the others turned on, but parens off by default
-_ getMillis() doesn't seem to work
-_   write email to creas to see what the problem is
-_ enable/disable full screen leaves windows in back
-_   (may just require two toFront() calls)
+X   write documentation about having to use 'extends KjcProcessingApplet'
+X add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
+X   also add note about paren balancing doing strange things
+X   leave the others turned on, but parens off by default
+X enable/disable full screen leaves windows in back
+X   (may just require two toFront() calls)
+X   whenever background is frontmost, have it call tofront on editor
 
 
 for 0010
+_ option to enable/disable frame
 _ compiling .java files leaves the .class files next to the .java
 _   make sure all the dirs in sketchbook added to classpath on startup
 _   if new dir added, must restart processing (this is acceptable)
@@ -104,7 +103,12 @@ _ show creas how to get access to cvs
 _ how to use ssh identity file to maintain auth for brancusi
 
 
+BUG WATCH 
+_ getMillis() returning 0 in some instances/on some machines
+
+
 PROCESSING - FEATURES
+_ run code with a main() that's not a processing applet
 _ want emacs-style editor that's faster loading than emacs
 _ anti-aliasing
 _ alpha
