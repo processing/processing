@@ -5,6 +5,8 @@ processing todo list // last updated 13 september 2001
 PROCESSING - HIGH
 _ processing applet: fill white, stroke black
 _ bk(n), fill(n), stroke(n) should be consistent with tuples
+_ write dist.bat for releases
+_   don't forget to update 'export' dir with processing releases
 _ remove duplicates: LINE/LINES etc
 _ get serial i/o code working in processing
 _   how to kill serial when applet stopped
@@ -25,6 +27,8 @@ _ post new macintosh version
 
 
 PROCESSING - MEDIUM
+_ if 'void' left out before loop or setup, cryptic message about
+_   'constructor loop must be named Temporary_23498_2343'
 _ curves not properly implemented as part of shape architecture 
 _ beginShape(POINTS) is not working, no marks are appearing 
 _ beginShape(LINE_LOOP) is not looping around 

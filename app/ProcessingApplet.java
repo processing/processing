@@ -73,6 +73,16 @@ public class ProcessingApplet extends Applet
       thread.stop();
       thread = null;
     }
+
+    // kill off any associated threads
+    Thread threads[] = new Thread[Thread.activeCount()];
+    Thread.enumerate(threads);
+    for (int i = 0; i < threads.length; i++) {
+      if (threads[i].getName().indexOf("Thread-") == 0) {
+	//System.out.println("stopping " + threads[i].getName());
+	threads[i].stop();
+      }
+    }
   }
 
 
