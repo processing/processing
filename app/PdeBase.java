@@ -45,27 +45,11 @@ import com.apple.mrj.*;
  * general interaction with the system (launching URLs, loading 
  * files and images, etc) that comes from that.
  */
-public class PdeBase /*extends JFrame implements ActionListener*/
-{
+public class PdeBase {
   static final String VERSION = "0068 Alpha";
 
-  //static Frame frame;  // now 'this'
-  //static String encoding;
-  //static Image icon;
-
-  // indicator that this is the first time this feller has used p5
-  //static boolean firstTime;
-
-  //boolean errorState;
   PdeEditor editor;
 
-  //WindowAdapter windowListener;
-
-  //Menu renderMenu;
-  //CheckboxMenuItem normalItem, openglItem;
-  //MenuItem illustratorItem;
-
-  // the platforms
   static final int WINDOWS = 1;
   static final int MACOS9  = 2;
   static final int MACOSX  = 3;
@@ -79,7 +63,6 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
 
   static public void main(String args[]) {
-    //System.getProperties().list(System.out);
     PdeBase app = new PdeBase();
   }
 
@@ -112,11 +95,6 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     }
 
 
-    // build the editor object
-
-    editor = new PdeEditor();
-
-
     // set the look and feel before opening the window
 
     try {
@@ -133,56 +111,17 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     }
 
 
-    // load in preferences (last sketch used, window placement, etc)
-
-    //preferences = new PdePreferences();
-
-
-    // read in the keywords for the reference
-
-    //final String KEYWORDS = "pde_keywords.properties";
-    /*
-    keywords = new Properties();
-
-    try {
-      keywords.load(PdeBase.getStream("pde_keywords.properties"));
-
-    } catch (Exception e) {
-      String message = 
-        "An error occurred while loading the keywords,\n" + 
-        "\"Find in reference\" will not be available.";
-      JOptionPane.showMessageDialog(editor, message, 
-                                    "Problem loading keywords",
-                                    JOptionPane.WARNING_MESSAGE);
-
-      System.err.println(e.toString());
-      e.printStackTrace();
-    }
-    */
+    // build the editor object
+    editor = new PdeEditor();
 
     // get things rawkin
-
-    //editor.restorePreferences();  // done at end of constructor
     editor.pack();
+
+    // has to be here to set window size properly
+    editor.restorePreferences();
+
+    // show the window
     editor.show();
-
-
-    //editor = new PdeEditor(this);
-    //getContentPane().setLayout(new BorderLayout());
-    //getContentPane().add("Center", editor);
-
-
-    // load preferences and finish up
-
-    // handle layout
-    //this.pack();  // maybe this should be before the setBounds call
-    // do window placement before loading sketch stuff
-    //restorePreferences();
-
-    // now that everything is set up, open last-used sketch, etc.
-    //editor.restorePreferences();
-
-    //show();
   }
 
 
@@ -378,7 +317,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   }
 
 
-  static public InputStream getStream(/*Class cls,*/ String filename) 
+  static public InputStream getStream(String filename) 
     throws IOException {
     if ((PdeBase.platform == PdeBase.MACOSX) || 
         (PdeBase.platform == PdeBase.MACOS9)) {
@@ -387,7 +326,6 @@ public class PdeBase /*extends JFrame implements ActionListener*/
       // actually, this is only the case when running as a .app, 
       // since it works fine from run.sh, but not Processing.app
       return new FileInputStream("lib/" + filename);
-
     } 
 
     // all other, more reasonable operating systems
