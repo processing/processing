@@ -1,70 +1,28 @@
-0031a
-X lib/pde.properties should be read using getResource
-X   otherwise path issues cause trouble (likely under win98)
-X take state information out of Header
-X cleanup lastFile/lastDirectory
-X save (just) last program run in sketch.properties
-X coloring of error, message, etc changed in pde.properties
-X finish save changes stuff
+0033a
+X implement 'duplicate'
+X implement renaming of projects
+X renaming projects
+X   make sure people don't use - or other illegal chars
+X     on export or naming sketches--no spaces(!)
+o   changed by clicking on the name and typing
+X new/duplicate/rename should rebuild skopen menu
+X item to launch proce55ing.net
+X item to launch reference in browser
 
-0031b
-X editorlistener shouldn't track menu commands as changes to file
-X   ctrl keys bksp/del/enter/return/tab then space on up
-X   indicator for changes?
-X   need to implement code for whether changes have been made
-X   check for key events in textarea or something
-X     if key events, compare contents against the existing file
-X userName not getting set before sketchbook menu is built
-X add 'refresh list' item to the sketchbook menu
+0033b
+X check all menus to make sure they all work/make sense
+X   disable the ones that aren't implemented
+X in progress working on presentation mode
 
-0031c
-X ability to set directory for compiling in kjcengine
+0033c
 
-0031d
-X make sure compiling into build directory
-X   and once compiled there, read all classes for export
-
-_ do backup
-_ write class loader or figure out how to change classpath
-_   might be able to load classes using forInstance on each file
-_   using byte array version of constructor
-_ remove everything from build when starting a new build
-_   (don't do this until it's clear that it's working well!)
-
-_ implement popup menu
-_ move structure of app/application dirs around a bit
-_ renaming projects
-
-_ write message to people who signed up for p5 alpha
-
-_ saving to gzipped 'versions' file
-_   autosave every few minutes, also on each compile
-_ remove projects if created but nothing happens to them
-_ small script to remove CVS directories from a tree
-
-casey bugs
-a _ mousePressed() not working, also mouseReleased
-a _   also has to be public void mousePressed() for kjc
-a _ translate is disabling color
-a _   (probably because of lighting)
-a _ keypressed is not persistent
-a _   key repeat in os vs. how java handles it
-a _   search java faq for info about getting around it
-a X you should be able to create methods in drawing mode
-a X   this shouldn't work, make void draw() {} to allow
-
-b _ remove Editor's frame instance, replace refs with PdeBase.frame
-b _ sketch: sketch-000 is dumb
-
-pdebase simple
-_ remove 'encoding' crap from PdeBase
-_   only existed b/c of reading as bytes and not using jdk11 methods
-_ cleanup program/inline_program crap.. take out scheme stuff
-_ better readFile/loadImage inside PdeBase
-_   temp array should be resizable inside readFile
-_   use getresource for loading image
+a _ write message to people who signed up for p5 alpha
+a _ collapse pdeengine/pderunner/kjcengine to some extent
 
 play
+a _ implement presentation mode
+_   editor frame doesn't have to be in front
+_     include button in present mode to bring editor back up
 a _ add frame to launched window
 a X   add maximize event catcher to make fullscreen
 a o     doesn't work, because of screen sizing stupidity
@@ -73,236 +31,55 @@ a _ make all windows 120x120?
 a _   default program should be large, 300x200 or so
 a _   what if it's smaller? boundary of color 51, 51, 51 around it
 
-bagel-related
-_ background(), fill(), stroke() using color datatype
-_   check 0xff high bits to see if it's an int gray value or a color
-_ fix curve()/bezier()
-_   also make curve() work as 6 point with doubled endpoints
-_ noClear -- implement with noBackground
-_   need to set bg color even if updated
-_ update/noUpdate() could also be done to force explicit updates only
-_   for ui-type applications that don't need to continually redraw
+bagel
+a _ mousePressed() not working, also mouseReleased
+a _   also has to be public void mousePressed() for kjc
+a _ background(), fill(), stroke() using color datatype
+a _   check 0xff high bits to see if it's an int gray value or a color
+a _ fix curve()/bezier()
+a _   also make curve() work as 6 point with doubled endpoints
+a _ translate is disabling color
+a _   (probably because of lighting)
+
+macos
+a _ implement menuitem to load ref and to launch p5.net
+a _   need fxns to test platform and java version
+a _ how to make double-clickable version for osx
+a _ crashes when people click on help in top bar (same in DBN) [macos9]
+a _ dataInputStream, setUseCaches on the url to false
+a _   URLConnection.setUseCaches(false)
+a _ parent.obj.close() on the url
+a _ serial port code needs to be implemented
+a _   something that docks better to java serial api
+a _ need double-clickable application version for the mac
+a _   if os9, this is a no-brainer.. for osx may take a little time
 
 ui
-a _ 'open' button is a switch-to button
-a _   pops up list of everything in the sketchbook
-a o   first item is 'new sketch', followed by delimeter
-a _   next is list of subdirs other than current user, then delim
-a _   the rest are the items in the current user's folder
-a _ need 'new' button on the toolbar (or first sketch menuitem?)
-a _   the zero looking one might be good (instead of export)
-a _   export could be three circles in a row, overlapping
-a _ everything is a project.. what about short snippets of code?
-a _   this version won't be able to access everything from scrapbook
-a _   (that requires a more robust class loader)
-a _ sketch.properties contains the last program run
-a _   also the window positions, etc
-a _   saves screen size, so if screen size changed, window pos reset
-a _   if it doesn't exist, starts with a new project
-a _     for a new project, name it untitled-0001 or as appropriate
-a _       so that previous projects aren't written over
-a _ need to update PdeKeyListener for new ui.. 
-a _   remove open, add d for duplicate, r for rename, others ?
-a _ verify save when
-a _   closing p5 window
-a _   moving to other sketch
-_ project name is changed by clicking on the name and typing
-_ user name is changed by clicking and typing
-_   after user hits 'enter', checks to see if user exists
-_     if not, pops up message asking if they want to change
-_       message goes in same spot as error/status label (turns yellow?)
-_     if user says 'no', then 
+a _ saving to gzipped 'versions' file
+a _   autosave every few minutes, also on each compile, also on save
+a _   mark each as 'save', 'autosave', 'failed' or 'successful' compile
+a _   also include a timestamp
+a _ remove projects if created but nothing happens to them
 
-users
-a _ if default user, don't show the 'user' string in pde window
-a _ item in pde.properties to set the name of the current user
-_ menu option to change username/login
-_   if new user, offer to rename 'default' if it contains things
+cvs
+a _ move structure of app/application dirs around a bit
+a _ small script to remove CVS directories from a tree
 
-export
-a _   exporting applets that have custom name problems:
-a _     if extends processingapplet, the name user types must be same
-a _     gets confused about paths and puts boogers in weird places
-a _     doesn't compile correctly (must first compile with play)
-a _     doesn't include additional (private) classes
-a _   when exporting 'name of folder for export...'
-a _     default name should be from public class <xxxx>
-a _     because otherwise errors are happening
-a _     or name from user only determines folder name
-a _       if extends ProcessingApplet [more compatible]
-a _   make sure export is compiling first
-a _     right now have to hit play and then hit export (?)
-a _   include main class info for executable jar file with jdk > 1.2
-a _ file structure for export
-a _   need to set project name for files
-a _   include other .class files built besides the main one
-a _     compile into 'classes' folder
-a _   include referenced image and font files (can't do if numbered)
-a _ difference between exporting an applet and an application
-a _   application can still do serial (qt, other stuff?) 
-a _   applet runs in browser, though applet on cbagel is everything..
-
-included files
-a _   'data' directory for all media
-a _   make included media part of the .jar file 
-a _   it's really a pain to use external files in processing
-a _     getStream sucks (zach rewrote)
-a _     should be able to work for application or applets
-a _     may want to use getResource() (to get things from .jar files)
-
-compiling
-a _   remove .java and .class files for compiled classes
-a _     (just clean up the boogers afterwards)
-a _   compiling .java files leaves the .class files next to the .java
-a _     make sure all the dirs in sketchbook added to classpath on startup
-a _     if new dir added, must restart processing (this is acceptable)
-a _ kjc is really frustrating about some of its error/warning msgs
-a _   erroneous errors from kjc regarding 'var not inited'
-a _     is there any way to disable this message?
-a _   talk to simon about error streams and kjc
-a _     better piping of output from kjc
-a _     modify kjc to take a PrintWriter, instead of current hacks
-a _   might be able to set default values for vars using perl5subst
-
-running
-a _   ability to include other code from sketchbook directory
-a _     compile entire sketchbook on startup, check for new files on compile?
-
-is this true?
-a _ lines being highlighted for errors are off
+a _ lines being highlighted for errors are off (?)
 a _   test this on other platforms as well
-a _ importing images doesn't work (?)
-a _ Compiler.disable() message is weird and doesn't always work
-a _   probably just remove it for now
-
-other mess
-_ make a new 'dist' function for building
-_ exceptions in draw() apps aren't caught
-_   the program resize(200, 200); just does nothing (doesn't complain)
-_ fold simpleserial into BApplet
-_   sprint an sprintln functions
-_   make i/o work just like mouse (event driven, with dflt behavior)
-_   need to have function to enable it in setup
-_ console work
-_   make scrollbar for console
-_   convert tabs to 8 spaces
-_   line wrapping (but save info for resize? noo..)
+a _ make a new 'dist' function for building
+a _   easier to build on mac for pc than vice-versa..
+a _ fold simpleserial into BApplet
+a _   sprint an sprintln functions
+a _   make i/o work just like mouse (event driven, with dflt behavior)
+a _   need to have function to enable it in setup
+a _ console work
+a _   make scrollbar for console
+a _   convert tabs to 8 spaces
+a o   line wrapping (but save info for resize? noo..)
 
 
-JAVA BUGS
-_ cursor disappears in textarea and doesn't reappear until re-entry
-_   windows: jre 1.3.1_03 through 1.4.0_01
-
-
-UNSORTED
-_ pde.properties_osx, pde.properties_os9, pde.properties,win ?
-_ work towards alpha release
-_   alpha transparency
-_   line drawing problems
-_     need 3d version of bresenham
-_ image caching.. to be used as texture memory on accel platforms
-_ make processing useful/usable
-_   start working on writing pdf files
-_   loading images/files from same dir as .pde file
-_   option to use jikes
-_   use external editor or write a usable one
-_ write simple class for lcd panel 
-_   build adapter to plug directly into db9 serial port
-_   figure out characters used on screen by default (check web)
-_   make unicode converter from unicode char -> lcd screen bytes
-_   hook up lcd screen to power/serial port to test
-_   code to reprogram lcd screen
-_ look through rabbit api
-_   look into integration of cmd line compiler
-_ check out flash for its text editor
-_ write function to swap different names for Proce55ing
-_   use for window title
-_   simple app that does swapping of letters as an animation
-
-
-BUILDING P5
--> where to install jikes, jre, others?
-   jre may need to be back in cvs, but annoying for dist
-   because of all the CVS directories that it makes
-cvs co processing
-cd processing
-cvs co bagel
-cd bagel
-rm -rf jgl
-rm -rf cpp
-cd ..
-rm -rf web (optional, if you're only doing java dev)
-cvs update -P (prune empty directories)
-
-
-(C)BAGEL WORK
-_ try screengrab using malloc and/or gobs of extra memory
-_   debug the version inside bagel b/c it's simpler
-_ bagel needs to be able to resize itself
-_   also to address screen as if it's another size
-_     is that simply a matter of changing the viewport?
-_   letterboxing as appropriate
-_ build windows app for testing bagel c++ ... -lgdi32 for cygwin
-_ updates from p5 api changes
-_   triangle() 6 parameters
-_   quad() 8 parameters
-_   rect/rectMode again
-_   new color solution
-_     color() -> uses colorMode
-_     red/green/blue() hue/saturation/value() functions
-_     getPixel/setPixel
-_     swap in 'color' as an int
-_     color c = #67aa78
-_   keyDown(), mouseDown(), lastMouseX, lastMouseY
-_   degrees(), radians()
-
-
-teaching 3D
-_ expectation for 3D objects is that they begin in the center
-_   rather than a translate(W/2, H/2) then draw rotating cube
-
-things noticed while casey watched him using the software
-_ if no 0 before decimal place in a number it breaks
-_ display window should have separate close box
-_ save window positions on closing (due to crashing)
-_ title of the file should be shown
-_ needs to be a menubar
-_ text editor is quite bad (hiding cursor thing)
-
-bagel/cbagel stuff
-_ try screengrab using malloc and/or gobs of extra memory
-_   debug the version inside bagel b/c it's simpler
-_ bagel needs to be able to resize itself
-_   also to address screen as if it's another size
-_     is that simply a matter of changing the viewport?
-_   letterboxing as appropriate
-
-things noticed while casey watched him using the software
-_ if no 0 before decimal place in a number it breaks
-_ display window should have separate close box
-_ save window positions on closing (due to crashing)
-_ title of the file should be shown
-_ needs to be a menubar
-_ text editor is quite bad (hiding cursor thing)
-
-biggest problems from french workshop
-_ syntax more difficult than expected: semicolons and braces
-_   part is translation issue--wasn't a quick fix
-_ curly braces weren't on the keyboard
-_ encouraging people to indent their code for clarity
-_ slow to understand 'blocks'
-_   translation issue but could be aided by visual cues in editor
-_   might be better to use braces on separate lines to reinforce
-_ couldn't enforce people working on specific exercises
-_ too many cubes.. people playing with 3d before understanding it
-_ would be nice to have examples for all concepts on site
-_   or in a small printed book that serves as a reference
-_ courseware not complete--difficult to collect assignments
-
-questions to resolve
-_ is it necessary to have fullscreen option on toolbar anymore?
-_ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
-_ should we use jdk 1.3 or msft vm?
+////////////////////////////////////////////////////////////////////
 
 
 BAGEL / high
@@ -336,6 +113,13 @@ b _     huge geometry slows things way down
 b _ adaptive sizing of circle segmenting based on rendered size
 b _ make size() available throughout
 b _ stroked version of sphere is just a circle
+b _ noClear -- implement with noBackground
+b _   need to set bg color even if updated
+b _ update/noUpdate() could also be done to force explicit updates only
+b _   for ui-type applications that don't need to continually redraw
+b _ keypressed is not persistent
+b _   key repeat in os vs. how java handles it
+b _   search java faq for info about getting around it
 
 
 BAGEL / medium & time consuming
@@ -351,12 +135,11 @@ b _   sorting of polygons/lines on simple painters algorithm
 b _   better lighting model to show darkness at various depths
 b _     maybe just ultra-high res bitmaps from gl
 b _   version of ProcessingApplet that replaces g. with ai. or pdf.
-
-_ picking
-_   ability to write data other than image into the buffer
-_   user can introduce new kinds of buffers at will (!)
-_   lists of names of objects, or the 'line number' buffer
-_   but how to determine *where* on object the hit occurs?
+b _ picking
+b _   ability to write data other than image into the buffer
+b _   user can introduce new kinds of buffers at will (!)
+b _   lists of names of objects, or the 'line number' buffer
+b _   but how to determine *where* on object the hit occurs?
 
 
 BAGEL / lower
@@ -404,15 +187,36 @@ _   or maybe image.setColor or setTone to mix a specific color in
 _ live video editing, wanting things more procedural
 
 
+(C)BAGEL WORK
+_ try screengrab using malloc and/or gobs of extra memory
+_   debug the version inside bagel b/c it's simpler
+_ bagel needs to be able to resize itself
+_   also to address screen as if it's another size
+_     is that simply a matter of changing the viewport?
+_   letterboxing as appropriate
+_ build windows app for testing bagel c++ ... -lgdi32 for cygwin
+_ updates from p5 api changes
+_   triangle() 6 parameters
+_   quad() 8 parameters
+_   rect/rectMode again
+_   new color solution
+_     color() -> uses colorMode
+_     red/green/blue() hue/saturation/value() functions
+_     getPixel/setPixel
+_     swap in 'color' as an int
+_     color c = #67aa78
+_   keyDown(), mouseDown(), lastMouseX, lastMouseY
+_   degrees(), radians()
+
+
+////////////////////////////////////////////////////////////////////
+
+
 PDE / high
 b _ serial.messageReceived extra long crap in demo.pde (clean up?)
 b _   improve simpleserial and clean up a bit
 b _   document a bit more regarding its use
 b _   should serial be an event like mouse/key
-b _ NullPointerException on startup in pde editor buttons
-b _   shows up on slower machines, probably images not loaded yet
-b _ use a vm that won't destroy the screen like sun/ibm does
-b _   this means msft or newer version of jdk
 
 
 PDE / high & time consuming
@@ -427,6 +231,7 @@ b _   or figure out how to unload old classes.. grr
 
 
 PDE / medium
+b _ sketch: sketch-000 is dumb
 b _ check logs to see where we're getting traffic from
 b _ event to explorer to open 'parts' directory of project
 b _ option to toggle console on/off (not just in properties, but realtime)
@@ -447,26 +252,61 @@ b _   java freetype? jni freetype to build texmap fonts?
 b _   look at flash file format? (does it have kerning?)
 b _ example: multi-user server app (shared whiteboard)
 b _ example: basic network app
-b _ work out getStream
 b _ file i/o utility classes
 b _   read as set of lines, read as cells in grid, read num sequence
 b _   then methods for writing all of the same
+b _ exceptions in draw() apps aren't caught
+b _   the program resize(200, 200); just does nothing (doesn't complain)
+b _ menu option to change username/login
+b _   if new user, offer to rename 'default' if it contains things
+b _ user name is changed by clicking and typing
+b _   after user hits 'enter', checks to see if user exists
+b _     if not, pops up message asking if they want to change
+b _       message goes in same spot as error/status label (turns yellow?)
+b _     if user says 'no', then 
+b _ ability to export 'applications' (not just applets)
+b _   application can still do serial (qt, other stuff?) 
+b _   applet runs in browser, though applet on cbagel is everything..
+b _   include main class info for executable jar file with jdk > 1.2
+b _   not difficult to do, just some tweaking once applet export works
+b _   wrapper that invokes the applet using a copy of the jre
+b _   main() method needs to set layout manager if jexegen is to be used
+b _     (msft vm defaults to null layout manager)
+b _   also make sure pack() is happening
+b _ kjc is really frustrating about some of its error/warning msgs
+b _   erroneous errors from kjc regarding 'var not inited'
+b _     is there any way to disable this message?
+b _   talk to simon about error streams and kjc
+b _     better piping of output from kjc
+b _     modify kjc to take a PrintWriter, instead of current hacks
+b _   might be able to set default values for vars using perl5subst
+b _ ability to include other code from sketchbook directory
+b _   compile entire sketchbook on startup, check for new files on compile?
+b _ Compiler.disable() message is weird and doesn't always work
+b _   probably just remove it for now
 
+cosmetic [lower priority]
+b _ only copy data files into build when there are changes
+b _   make sure the still relevant files aren't removed
+b _   setLastModified on the files after copying (jdk13)
+b _ editorbuttons: if nothing selected on popup, need to deselect
+b _ editorbuttons: if export fails (compile error) need deselect
+b _ may want to throw exceptions from bagel
+b _   but catch them inside bapplet--as part of making things easier
 
-PDE / macos
-a _ how to make double-clickable version for osx
-a _ crashes when people click on help in top bar (same in DBN) [macos9]
-a _ dataInputStream, setUseCaches on the url to false
-a _   URLConnection.setUseCaches(false)
-a _ parent.obj.close() on the url
-b _ serial port code needs to be implemented
-b _   something that docks better to java serial api
-b _ need double-clickable application version for the mac
-a _   if os9, this is a no-brainer.. for osx may take a little time
+pdebase cleanup [lower priority]
+b _ remove 'encoding' crap from PdeBase
+b _   only existed b/c of reading as bytes and not using jdk11 methods
+b _ cleanup program/inline_program crap.. take out scheme stuff
+b _ better readFile/loadImage inside PdeBase
+b _   temp array should be resizable inside readFile
+b _   might just use ByteArray streams
+b _   use getresource for loading image
+b _ remove Editor's frame instance, replace refs with PdeBase.frame
 
 
 PDE / low
-_ beautify is slightly broken
+_ beautify is (slightly?) broken
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
@@ -478,17 +318,8 @@ _   fairly quick--just use code from dbn
 _ bug in paren balancing
 _   paren problems comes from overusing parens (too many closing)
 _   image[first[i], 0, 0) hitting last paren causes jump to top
-_ export as application 
-_   not difficult to do, just some tweaking once applet export works
-_   wrapper that invokes the applet using a copy of the jre
-_   main() method needs to set layout manager if jexegen is to be used
-_     (msft vm defaults to null layout manager)
-_   also make sure pack() is happening
 _ stop() method in applet should stop kjc environment
 _   should be able to call stop() to 'quit' an applet
-_ make close() work to kill applet in kjc
-_ save window x, y, width, height to pde.properties on exit
-_ stderr in red color
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
 
@@ -654,3 +485,74 @@ _   what if one short or one too many vertices?
 _ transforms are affecting geometry
 _   i.e. are line and point working in 3D?
 _ why did i think that z was backwards from gl?
+
+things noticed while casey watched him using the software
+_ if no 0 before decimal place in a number it breaks
+_ display window should have separate close box
+_ save window positions on closing (due to crashing)
+_ title of the file should be shown
+_ needs to be a menubar
+_ text editor is quite bad (hiding cursor thing)
+
+biggest problems from french workshop
+_ syntax more difficult than expected: semicolons and braces
+_   part is translation issue--wasn't a quick fix
+_ curly braces weren't on the keyboard
+_ encouraging people to indent their code for clarity
+_ slow to understand 'blocks'
+_   translation issue but could be aided by visual cues in editor
+_   might be better to use braces on separate lines to reinforce
+_ couldn't enforce people working on specific exercises
+_ too many cubes.. people playing with 3d before understanding it
+_ would be nice to have examples for all concepts on site
+_   or in a small printed book that serves as a reference
+_ courseware not complete--difficult to collect assignments
+
+questions to resolve
+_ is it necessary to have fullscreen option on toolbar anymore?
+_ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
+_ should we use jdk 1.3 or msft vm?
+
+teaching 3D
+_ expectation for 3D objects is that they begin in the center
+_   rather than a translate(W/2, H/2) then draw rotating cube
+
+JAVA BUGS
+_ cursor disappears in textarea and doesn't reappear until re-entry
+_   windows: jre 1.3.1_03 through 1.4.0_01
+
+
+UNSORTED
+_ pde.properties_osx, pde.properties_os9, pde.properties,win ?
+_ make processing useful/usable
+_   start working on writing pdf files
+_   loading images/files from same dir as .pde file
+_   option to use jikes
+_   use external editor or write a usable one
+_ write simple class for lcd panel 
+_   build adapter to plug directly into db9 serial port
+_   figure out characters used on screen by default (check web)
+_   make unicode converter from unicode char -> lcd screen bytes
+_   hook up lcd screen to power/serial port to test
+_   code to reprogram lcd screen
+_ look through rabbit api
+_   look into integration of cmd line compiler
+_ check out flash for its text editor
+_ write function to swap different names for Proce55ing
+_   use for window title
+_   simple app that does swapping of letters as an animation
+
+
+BUILDING P5
+-> where to install jikes, jre, others?
+   jre may need to be back in cvs, but annoying for dist
+   because of all the CVS directories that it makes
+cvs co processing
+cd processing
+cvs co bagel
+cd bagel
+rm -rf jgl
+rm -rf cpp
+cd ..
+rm -rf web (optional, if you're only doing java dev)
+cvs update -P (prune empty directories)

@@ -1,16 +1,14 @@
-#ifdef EDITOR
-
-
 import java.awt.*;
+import java.awt.event.*;
 
 
-public class PdeEditorButtons extends Panel {
+public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
   static final String EMPTY_STATUS = "                                                                 ";
 
   // run, stop, save, export, open
 
   static final String title[] = {
-    "", "run", "stop", "save", "open", "export"
+    "", "run", "stop", "new", "open", "save", "export"
     //"", "Run", "Stop", "Save", "Open", "Export"
     //"Run", "Stop", "Close",
     //"Open", "Save", "Export Applet", "Print", "Beautify",
@@ -21,13 +19,14 @@ public class PdeEditorButtons extends Panel {
   static final int BUTTON_WIDTH  = PdeEditor.GRID_SIZE; //33;
   static final int BUTTON_HEIGHT = PdeEditor.GRID_SIZE; //33;
 
-  static final int NOTHING    = 0;
-  static final int RUN       = 1;
-  static final int STOP       = 2;
+  static final int NOTHING  = 0;
+  static final int RUN      = 1;
+  static final int STOP     = 2;
 
-  static final int SAVE     = 3;
+  static final int NEW      = 3;
   static final int OPEN     = 4;
-  static final int EXPORT   = 5;
+  static final int SAVE     = 5;
+  static final int EXPORT   = 6;
 
   //static final int PRINT               = 6;
   //static final int BEAUTIFY            = 7;
@@ -51,6 +50,8 @@ public class PdeEditorButtons extends Panel {
   int currentRollover;
   int currentSelection;
 
+  PopupMenu popup;
+
   int buttonCount;
   int state[];
   Image stateImage[];
@@ -72,8 +73,9 @@ public class PdeEditorButtons extends Panel {
     which[buttonCount++] = NOTHING;
     which[buttonCount++] = RUN;
     which[buttonCount++] = STOP;
-    which[buttonCount++] = SAVE;
+    which[buttonCount++] = NEW;
     which[buttonCount++] = OPEN;
+    which[buttonCount++] = SAVE;
     which[buttonCount++] = EXPORT;
 
     currentRollover = -1;
@@ -311,23 +313,64 @@ public class PdeEditorButtons extends Panel {
     currentSelection = sel;
     setState(sel, ACTIVE, true);
 
+    if (currentSelection == OPEN) {
+      if (popup == null) {
+	popup = new PopupMenu();
+	add(popup);
+      }
+      //popup.addActionListener(this);
+      editor.base.rebuildSketchbookMenu(popup);
+      popup.show(this, x, y);
+    }
     return true;
   }
+
+
+    /*
+  public void actionPerformed(ActionEvent e) {
+    System.err.println(e);
+    if (e.getSource() == popup) {
+      System.err.println("posting bogus mouseup");
+      mouseUp(null, 0, 0);
+    }
+  }
+    */
 
 
   public boolean mouseUp(Event e, int x, int y) {
     //switch (which[sel]) {
     switch (currentSelection) {
 
-    case RUN: editor.doRun(); break;
+    case RUN: 
+      if (e.shiftDown()) {
+	editor.doPresent();
+      } else {
+	editor.doRun(false); 
+      }
+      break;
+
     case STOP: setState(RUN, INACTIVE, true); editor.doStop(); break;
       //case CLOSE: editor.doClose(); break;
 
-    case OPEN:  editor.doOpen(); break;
+      //case OPEN:  editor.doOpen(); break;
+      /*
+      case OPEN:  
+	System.err.println("popup mouseup");
+      //popup.setVisible(false);
+      remove(popup);
+      // kill the popup?
+      //PopupMenu popup = new PopupMenu();
+      //editor.base.rebuildSketchbookMenu(popup);
+      //popup.show(this, x, y);
+      break;
+      */
       //editor.doOpen(this, BUTTON_WIDTH, OPEN * BUTTON_HEIGHT); 
 
-    case SAVE: editor.doSaveAs(); break;
-    case EXPORT: editor.doExport(); break;
+    case NEW: editor.skNew(); break;
+
+      //case SAVE: editor.doSaveAs(); break;
+    case SAVE: editor.doSave(); break;
+    case EXPORT: editor.skExport(); break;
       //case PRINT: editor.doPrint(); break;
       //case BEAUTIFY: editor.doBeautify(); break;
 
@@ -399,5 +442,3 @@ public class PdeEditorButtons extends Panel {
     return new Dimension(BUTTON_WIDTH, (BUTTON_COUNT + 1)*BUTTON_HEIGHT);
   }
 }
-
-#endif

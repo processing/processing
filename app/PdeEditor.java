@@ -1,5 +1,3 @@
-#ifdef EDITOR
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -47,16 +45,18 @@ public class PdeEditor extends Panel {
   PdeRunner runner;
 
   Frame frame;
-  Window fullScreenWindow;
+  Window presentationWindow;
 
   static final int GRID_SIZE  = 33;
   static final int INSET_SIZE = 5;
 
   boolean running;
+  boolean presenting;
 
+  PdeBase base;
 
-  public PdeEditor(/*PdeBase app,*/ /*String program*/) {
-    //this.app = app;
+  public PdeEditor(PdeBase base /*String program*/) {
+    this.base = base;
 
     setLayout(new BorderLayout());
 
@@ -172,7 +172,7 @@ public class PdeEditor extends Panel {
   }
 
 
-  public void doRun() {
+  public void doRun(boolean presentation) {
     //doStop();
     doClose();
     running = true;
@@ -183,6 +183,95 @@ public class PdeEditor extends Panel {
 
     // required so that key events go to the panel and <key> works
     //graphics.requestFocus();  // removed for pde
+  }
+
+
+  public void doPresent() {
+    // full screen, but also no frame on the launched window
+
+    if (presentationWindow == null) {
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      if (PdeBase.isMacintosh()) {
+	presentationWindow = new Frame();
+
+	// mrj is still (with version 2.2.x) a piece of shit, 
+	// and doesn't return valid insets for frames
+	//presentationWindow.pack(); // make a peer so insets are valid
+	//Insets insets = presentationWindow.getInsets();
+	// the extra +20 is because the resize boxes intrude
+	Insets insets = new Insets(21, 5, 5 + 20, 5);
+	//System.out.println(insets);
+
+	presentationWindow.setBounds(-insets.left, -insets.top, 
+				   screen.width + insets.left + insets.right, 
+				   screen.height + insets.top + insets.bottom);
+      } else {
+	presentationWindow = new Window(new Frame());
+	presentationWindow.setBounds(0, 0, screen.width, screen.height);
+      }
+
+      // full screen window needs to have method to stop
+      // for now, click on small 'stop' text in lower-lefthand corner
+      // will a label catch mouse events?
+      Label label = new Label("stop");
+      presentationWindow.setLayout(null);
+      presentationWindow.add(label);
+      Dimension labelSize = label.getPreferredSize();
+      label.setBounds(5, screen.height - 5 - labelSize.height, 
+		      labelSize.width, labelSize.height);
+
+      Color presentationBgColor = 
+	PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
+      presentationWindow.setBackground(presentationBgColor);
+
+      /*
+      presentationWindow.addWindowListener(new WindowAdapter() {
+	  public void windowActivated(WindowEvent e) {
+	    System.out.println("activated");
+	  }
+	}
+      );
+      */
+      presentationWindow.addFocusListener(new FocusAdapter() {
+	  public void focusGained(FocusEvent e) {
+	    //System.out.println("activated");
+	    /*PdeApplication.*/ 
+	    if (frame != null) frame.toFront();
+	  }
+	}
+      );
+    }
+    presentationWindow.show();
+    presentationWindow.toFront();
+
+    // not sure what to do with applet..
+    // (since i can't bring the browser window to the front)
+    // unless there's a method in AppletContext
+    //if (frame != null) frame.toFront();
+
+    /*
+    try {
+      //System.out.println("my parent is " + getParent());
+      ((PdeApplication)getParent()).frame.toFront();
+    } catch (Exception e) { }
+    */
+
+    try {
+      ((KjcEngine)(runner.engine)).window.toFront();
+    } catch (Exception e) {
+      // rather than writing code to check all the posible
+      // errors with the above statement, just fail quietly
+      //System.out.println("couldn't bring kjc engine window forward");
+    }
+    //if (runner.engine != null) {
+    //if (runner.engine instanceof KjcEngine) {	
+    //}
+    //}
+
+    //buttons.clear();
+
+    presenting = true;
+    doRun(true);
   }
 
 
@@ -203,6 +292,11 @@ public class PdeEditor extends Panel {
     terminate();
     buttons.clear();
     running = false;
+
+    if (presenting) {
+      presentationWindow.hide();
+      presenting = false;
+    }
   }
 
 
@@ -291,14 +385,14 @@ public class PdeEditor extends Panel {
 
       do {
 	int index = (int) (Math.random() * 1000);
-	sketchName = "sketch-" + pad3(index);
+	sketchName = "sketch_" + pad3(index);
 	sketchDir = new File(sketchbookDir, sketchName);
       } while (sketchDir.exists());
 
       // mkdir for new project name
       sketchDir.mkdirs();
       new File(sketchDir, "data").mkdirs();
-      new File(sketchDir, "build").mkdirs();
+      //new File(sketchDir, "build").mkdirs();
 
       // make empty pde file
       File sketchFile = new File(sketchDir, sketchName + ".pde");
@@ -306,6 +400,9 @@ public class PdeEditor extends Panel {
 
       // make 'data' 'applet' dirs inside that
       // actually, don't, that way can avoid too much extra mess
+
+      // rebuild the menu here
+      base.rebuildSketchbookMenu();
 
       // now open it up
       //skOpen(sketchFile, sketchDir);
@@ -318,8 +415,8 @@ public class PdeEditor extends Panel {
   }
 
   static String pad3(int what) {
-    if (what < 10) return "000" + what;
-    else if (what < 100) return "00" + what;
+    if (what < 10) return "00" + what;
+    else if (what < 100) return "0" + what;
     else return String.valueOf(what);
   }
 
@@ -380,6 +477,10 @@ public class PdeEditor extends Panel {
 
   protected void handleOpen(String isketchName, 
 			    File isketchFile, File isketchDir) {
+    if (!isketchFile.exists()) {
+      status.error("no file named " + isketchName);
+      return;
+    }
     //System.err.println("i'm here!");
     //System.err.println(isketchName);
     //System.err.println(isketchFile);
@@ -417,7 +518,7 @@ public class PdeEditor extends Panel {
       } else {
 	textarea.setText("");
       }
-
+      //System.out.println("should be done opening");
       sketchName = isketchName;
       sketchFile = isketchFile;
       sketchDir = isketchDir;
@@ -491,18 +592,110 @@ public class PdeEditor extends Panel {
   }
 
 
-  public void skDuplicate() {
-    System.err.println("sketch duplicate not yet implemented");
+  public void skDuplicateRename(boolean rename) {
+    status.edit(rename ? "Rename to?" : "Duplicate title?", 
+		sketchName, rename);
+  }
+
+  public void skDuplicateRename2(String newSketchName, boolean rename) {
+    if (newSketchName.equals(sketchName)) {
+      // explain to the user that they're lame
+      System.err.println("what kind of a loser " + 
+			 (rename ? "renames the directory" :
+			  "creates a duplicate") + 
+			 " using the same name?");
+      return;
+    }
+    //System.out.println("rename to " + newname);
+    doSave(); // save changes before renaming.. risky but oh well
+    // call skOpen2("sketchbook/default/example1", "example1");
+    // which is sketchDir, sketchName
+    File newSketchDir = new File(sketchDir.getParent() +
+				 File.separator + newSketchName);
+    File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
+    //System.out.println("new shite:");
+    //System.out.println(newSketchName);
+    //System.out.println(newSketchDir);
+    //System.out.println(newSketchFile);
+    //boolean result = sketchDir.renameTo(newSketchDir);
+    //System.out.println(result);
+
+    /*
+    System.out.println("move \"" + sketchFile.getPath() + "\" " +
+		       newSketchName + ".pde");
+    System.out.println("move \"" + sketchDir.getPath() + "\" " + 
+		       newSketchName);
+    */
+
+    // make new dir
+    newSketchDir.mkdirs();
+    // copy the sketch file itself with new name
+    copyFile(sketchFile, newSketchFile);
+
+    // copy everything from the old dir to the new one
+    copyDir(sketchDir, newSketchDir);
+
+    // remove the old sketch file from the new dir
+    new File(newSketchDir, sketchName + ".pde").delete();
+
+    // remove the old dir (!)
+    if (rename) removeDir(sketchDir);
+    // oops.. has to be done before opening, otherwise the new
+    // dir is set to sketchDir.. duh..
+
+    base.rebuildSketchbookMenu();
+
+    // open the new guy
+    if (rename) handleOpen(newSketchName, newSketchFile, newSketchDir);
+
+    /*
+    try {
+      Runtime rt = Runtime.getRuntime();
+      System.err.println("22");
+      Process process = 
+	rt.exec("cmd /c move \"" + sketchFile.getPath() + "\" " +
+		newSketchName + ".pde");
+      System.err.println("1");
+      InputStream errors = process.getErrorStream();
+      System.err.println("33");
+      while (errors.available() > 0) {
+	System.err.println("reading errors");
+	System.out.print((char)errors.read());
+      }
+      System.err.println("waiting for");
+      try {
+	process.waitFor();
+      } catch (InterruptedException e) { }
+      System.err.println("done maybe");
+      //Runtime.getRuntime().exec("move \"" + sketchDir.getPath() + "\" " + 
+      //			newSketchName);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    */
+
+    //if (result) {
+    //if (sketchDir.renameTo(newSketchDir)) {
+    //} else {
+    //System.err.println("couldn't rename " + sketchDir + " to " + 
+    //		 newSketchDir);
+    //} 
   }
 
 
+  //public void skDuplicate() {
+    //System.err.println("sketch duplicate not yet implemented");
+  //}
+
+
   public void skExport() {
+    message("Exporting for the web...");
     File appletDir = new File(sketchDir, "applet");
     handleExport(appletDir, sketchName, new File(sketchDir, "data"));
   }
 
   public void doExport() {
-    message("Exporting to applet...");
+    message("Exporting for the web...");
     String s = textarea.getText();
     FileDialog fd = new FileDialog(new Frame(), 
 				   "Create applet project named...", 
@@ -536,7 +729,11 @@ public class PdeEditor extends Panel {
       String program = textarea.getText();
 
       // create the project directory
-      KjcEngine engine = new KjcEngine(program, appletDir.getPath(), this);
+      // pass null for datapath because the files shouldn't be 
+      // copied to the build dir.. that's only for the temp stuff
+      KjcEngine engine = new KjcEngine(program, appletDir.getPath(), 
+				       null, this);
+				       //dataDir.getPath(), this);
       //File projectDir = new File(appletDir, projectName);
       //projectDir.mkdirs();
       appletDir.mkdirs();
@@ -549,10 +746,12 @@ public class PdeEditor extends Panel {
 	return;
       }
 
+      // not necessary, now compiles into applet dir
+      //System.out.println("exportskname = " + exportSketchName);
       // copy .java to project dir
-      String javaName = exportSketchName + ".java";
+      //String javaName = exportSketchName + ".java";
       //copyFile(new File(javaName), new File(projectDir, javaName));
-      copyFile(new File(javaName), new File(appletDir, javaName));
+      //copyFile(new File(javaName), new File(appletDir, javaName));
 
       // remove temporary .java and .class files
       //engine.cleanup();
@@ -634,17 +833,34 @@ public class PdeEditor extends Panel {
       // add the project's .class to the jar
       // actually, these should grab everything from the build directory
       // since there may be some inner classes
+      /*
       entry = new ZipEntry(exportSketchName + ".class");
       zos.putNextEntry(entry);
       zos.write(grabFile(new File("lib", exportSketchName + ".class")));
       zos.closeEntry();
+      */
+      // add any .class files from the applet dir, then delete them
+      String classfiles[] = appletDir.list();
+      for (int i = 0; i < classfiles.length; i++) {
+	if (classfiles[i].endsWith(".class")) {
+	  entry = new ZipEntry(classfiles[i]);
+	  zos.putNextEntry(entry);
+	  zos.write(grabFile(new File(appletDir, classfiles[i])));
+	  zos.closeEntry();
+	}
+      }
+      for (int i = 0; i < classfiles.length; i++) {
+	if (classfiles[i].endsWith(".class")) {
+	  new File(appletDir, classfiles[i]).delete();  // not yet
+	}
+      }
 
       // close up the jar file
       zos.flush();
       zos.close();
       //zipOutputFile.close();
 
-      engine.cleanup();
+      //engine.cleanup();  // no! buildPath is applet!
 
       message("Done exporting.");
 
@@ -696,6 +912,8 @@ public class PdeEditor extends Panel {
   }
 
   protected void doQuit2() {
+    doStop();
+
     // write sketch.properties
     try {
       URL url = getClass().getResource("buttons.gif");
@@ -829,84 +1047,6 @@ public class PdeEditor extends Panel {
   }
 
 
-  public void enableFullScreen() {
-    if (fullScreenWindow == null) {
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      if (PdeBase.isMacintosh()) {
-	fullScreenWindow = new Frame();
-
-	// mrj is still (with version 2.2.x) a piece of shit, 
-	// and doesn't return valid insets for frames
-	//fullScreenWindow.pack(); // make a peer so insets are valid
-	//Insets insets = fullScreenWindow.getInsets();
-	// the extra +20 is because the resize boxes intrude
-	Insets insets = new Insets(21, 5, 5 + 20, 5);
-	//System.out.println(insets);
-
-	fullScreenWindow.setBounds(-insets.left, -insets.top, 
-				   screen.width + insets.left + insets.right, 
-				   screen.height + insets.top + insets.bottom);
-      } else {
-	fullScreenWindow = new Window(new Frame());
-	fullScreenWindow.setBounds(0, 0, screen.width, screen.height);
-      }
-      Color fullScreenBgColor = 
-	PdeBase.getColor("fullscreen.bgcolor", new Color(102, 102, 102));
-      fullScreenWindow.setBackground(fullScreenBgColor);
-
-      /*
-      fullScreenWindow.addWindowListener(new WindowAdapter() {
-	  public void windowActivated(WindowEvent e) {
-	    System.out.println("activated");
-	  }
-	}
-      );
-      */
-      fullScreenWindow.addFocusListener(new FocusAdapter() {
-	  public void focusGained(FocusEvent e) {
-	    //System.out.println("activated");
-	    /*PdeApplication.*/ 
-	    if (frame != null) frame.toFront();
-	  }
-	}
-      );
-    }
-    fullScreenWindow.show();
-    fullScreenWindow.toFront();
-
-    // not sure what to do with applet..
-    // (since i can't bring the browser window to the front)
-    // unless there's a method in AppletContext
-    //if (frame != null) frame.toFront();
-
-    /*
-    try {
-      //System.out.println("my parent is " + getParent());
-      ((PdeApplication)getParent()).frame.toFront();
-    } catch (Exception e) { }
-    */
-
-    try {
-      ((KjcEngine)(runner.engine)).window.toFront();
-    } catch (Exception e) {
-      // rather than writing code to check all the posible
-      // errors with the above statement, just fail quietly
-      //System.out.println("couldn't bring kjc engine window forward");
-    }
-    //if (runner.engine != null) {
-    //if (runner.engine instanceof KjcEngine) {	
-    //}
-    //}
-
-    buttons.clear();
-  }
-
-  public void disableFullScreen() {
-    fullScreenWindow.hide();
-    buttons.clear();
-  }
-
-
   public void terminate() {   // part of PdeEnvironment
     runner.stop();
     message(EMPTY);
@@ -1021,12 +1161,52 @@ public class PdeEditor extends Panel {
       while ((bytesRead = from.read(buffer)) != -1) {
 	to.write(buffer, 0, bytesRead);
       }
+      to.flush();
+      from.close(); // ??
+      to.close(); // ??
+
+      bfile.setLastModified(afile.lastModified());  // jdk13 required
+
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
+
+  static protected void copyDir(File sourceDir, File targetDir) {
+    System.out.println("dir " + sourceDir);
+    System.out.println(" -> " + targetDir);
+    System.out.println();
+
+    String files[] = sourceDir.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+      File source = new File(sourceDir, files[i]);
+      File target = new File(targetDir, files[i]);
+      if (source.isDirectory()) {
+	target.mkdirs();
+	copyDir(source, target);
+	target.setLastModified(source.lastModified());
+      } else {
+	copyFile(source, target);
+      }
+    }
+  }
+
+  static protected void removeDir(File dir) {
+    System.out.println("removing " + dir);
+
+    String files[] = dir.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+      File dead = new File(dir, files[i]);
+      if (!dead.isDirectory()) {
+	if (!dead.delete()) System.err.println("couldn't delete " + dead);
+      } else {
+	removeDir(dead);
+	//dead.delete();
+      }
+    }
+    dir.delete();
+  }
 }
-
-
-#endif
 

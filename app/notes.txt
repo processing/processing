@@ -1,3 +1,38 @@
+ABOUT REV 0032
+
+- another major release that irons out issues of export and 
+  the toolbar. a button for a new project is included, and 
+  the toolbar items properly open/load/save entries to/from
+  the sketchbook. export should be working, as should external 
+  files accessed via getImage/getStream/etc. 
+
+
+ABOUT REV 0031
+
+- this is a major release, representing several victories. 
+  most important: sketchbook is finally in there. every piece 
+  of work is a 'sketch', a very lightweight project setup. 
+
+- export has not been tested and has a good bit of new code
+  so that may be problematic.
+
+- menubar with all available options--note that these relate to
+  sketchbook, and that the toolbar buttons may not work as well.
+  use menus/key commands where possible(!)
+
+- generally more application-like with prompts for the user
+  for saving changes when closing a sketch or quitting.
+  editor now keeps track of changes made. window positions and
+  the last sketch opened are saved.
+
+- concept of a user name associated with the app, right now
+  just set to 'default' but in beta will be able to change
+  the name for workshops and general use. 
+
+- current items in sketchbook (serial/dbn) aren't in correct format,
+  and won't work if you switch to them
+
+
 ABOUT REV 0030
 
 - fix bug where comments were being removed from exported files

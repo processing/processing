@@ -99,8 +99,12 @@ public class PdeRunner implements Runnable {
 	*/
 
 	//engine = new KjcEngine(program, "lib", editor);
-	String buildPath = 
-	  editor.sketchFile.getParent() + File.separator + "build";
+	//this.buildPath = "lib" + File.separator + "build";  // TEMPORARY
+	//String buildPath = 
+	//editor.sketchFile.getParent() + File.separator + "build";
+	String buildPath = "lib" + File.separator + "build";  // TEMPORARY
+	String dataPath = 
+	  editor.sketchFile.getParent() + File.separator + "data";
 
 	/*
 	Properties props = System.getProperties();
@@ -113,7 +117,7 @@ public class PdeRunner implements Runnable {
 	System.setProperties(props);
 	*/
 
-	engine = new KjcEngine(program, buildPath, editor);
+	engine = new KjcEngine(program, buildPath, dataPath, editor);
 	engine.start();
 
 	/*
@@ -161,6 +165,7 @@ public class PdeRunner implements Runnable {
   public void stop() {
     if (engine != null) {
       engine.stop();
+      ((KjcEngine)engine).cleanup();
       /*
       if (forceStop) {
 	thread.stop();
