@@ -35,12 +35,6 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-#ifndef RXTX
-import javax.comm.*;
-#else
-import gnu.io.*;
-#endif
-
 #ifdef MACOS
 import com.apple.mrj.*;
 #endif
@@ -58,9 +52,9 @@ public class PdeBase extends Frame
              , MRJPrefsHandler
 #endif
 {
-  static final String VERSION = "0067 Alpha";
+  static final String VERSION = "0068 Alpha";
 
-  static Properties properties;
+  //static Properties properties;
   static Properties keywords; // keyword -> reference html lookup
 
   //static Frame frame;  // now 'this'
@@ -92,12 +86,12 @@ public class PdeBase extends Frame
         }
       };
 
-  Menu serialMenu;
+  //Menu serialMenu;
   MenuItem undoItem, redoItem;
   MenuItem saveMenuItem;
   MenuItem saveAsMenuItem;
   MenuItem beautifyMenuItem;
-  CheckboxMenuItem externalEditorItem;
+  //CheckboxMenuItem externalEditorItem;
 
   //Menu renderMenu;
   CheckboxMenuItem normalItem, openglItem;
@@ -199,116 +193,7 @@ public class PdeBase extends Frame
     //frame.addWindowListener(windowListener);
     this.addWindowListener(windowListener);
 
-    properties = new Properties();
-    try {
-      //properties.load(new FileInputStream("lib/pde.properties"));
-      //#URL where = getClass().getResource("PdeBase.class");
-      //System.err.println(where);
-      //System.getProperties().list(System.err);
-      //System.err.println("userdir = " + System.getProperty("user.dir"));
-
-      if (PdeBase.platform == PdeBase.MACOSX) {
-        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-        //properties.load(new FileInputStream(pkg + "pde.properties"));
-        //properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
-        properties.load(new FileInputStream("lib/pde.properties"));
-        properties.load(new FileInputStream("lib/pde_macosx.properties"));
-
-      } else if (PdeBase.platform == PdeBase.MACOS9) {
-        properties.load(new FileInputStream("lib/pde.properties"));
-        properties.load(new FileInputStream("lib/pde_macos9.properties"));
-
-      } else {  
-        // under win95, current dir not set properly
-        // so using a relative url like "lib/" won't work
-        properties.load(getClass().getResource("pde.properties").openStream());
-        String platformProps = "pde_" + platforms[platform] + ".properties";
-        properties.load(getClass().getResource(platformProps).openStream());
-      }
-      //properties.list(System.out);
-
-    } catch (Exception e) {
-      System.err.println("Error reading pde.properties");
-      e.printStackTrace();
-      //System.exit(1);
-    }
-
-
-    // 0058 check to see if quicktime for java is installed on windows
-    // 0058 since it's temporarily required for 0058
-    // 0059 still required for 0059, since BApplet uses it when
-    // 0059 compiled with video enabled. the fix for this ain't easy.
-
-    if (platform == WINDOWS) {
-      //println(System.getenv("QTJAVA"));
-      //Process p = Runtime.getRuntime().exec("c:\\windows\\system32\\cmd.exe /C set");
-      /*
-      try {
-        Process p = Runtime.getRuntime().exec("cmd /C echo %QTJAVA%");
-        InputStream is = p.getInputStream();
-        StringBuffer sb = new StringBuffer();
-        int c;
-        while ((c = is.read()) != '\r') {
-          if (c == '\"') continue;
-          //println(c);
-          sb.append((char)c);
-        }
-        is.close();
-        println(">>" + sb.toString() + "<<");
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      */
-
-      // location for 95/98/ME/XP
-      //File qt1 = new File("C:\\WINDOWS\\system32\\QTJava.zip");
-      // location for win2k
-      //File qt2 = new File("C:\\WINNT\\system32\\QTJava.zip");
-
-      //if (!qt1.exists() && !qt2.exists()) {
-      //System.out.println("jcp = " + System.getProperty("java.class.path"));
-
-      try {
-        Class c = Class.forName("quicktime.std.StdQTConstants");
-        //System.out.println("class is " + c);
-
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-
-        final String message = 
-          "QuickTime for Java could not be found.\n" +
-          "Please download QuickTime from Apple at:\n" + 
-          "http://www.apple.com/quicktime/download\n" + 
-          "and use the 'Custom' install to make sure\n" +
-          "that QuickTime for Java is included.\n" +
-          "If it's already installed, try reinstalling\n" + 
-          "or read bugs.txt for other possible remedies.";
-
-        JOptionPane.showMessageDialog(this, message, 
-                                      "Could not find QuickTime for Java",
-                                      JOptionPane.WARNING_MESSAGE);
-        System.exit(1);  // can't run without quicktime
-      }
-
-    } else if (platform == MACOSX) {
-      try {
-        Class c = Class.forName("quicktime.std.StdQTConstants");
-
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-
-        final String message = 
-          "Could not load QuickTime for Java. This probably means\n" +
-          "that you've installed QuickTime 6.4, in which Apple has\n" +
-          "neglected to include QuickTime for Java. More information\n" +
-          "and a (temporary) fix can be found in bugs.txt.";
-
-        JOptionPane.showMessageDialog(this, message, 
-                                      "This headache's for you, big Steve",
-                                      JOptionPane.WARNING_MESSAGE);
-        System.exit(1);  // can't run without quicktime
-      }
-    }
+    prefs = new PdePreferences();
 
     // read in the keywords for the reference
 
@@ -525,8 +410,8 @@ public class PdeBase extends Frame
     menu.addSeparator();
 
     //menu.addSeparator();
-    serialMenu = new Menu("Serial Port");
-    menu.add(serialMenu);
+    //serialMenu = new Menu("Serial Port");
+    //menu.add(serialMenu);
 
     Menu rendererMenu = new Menu("Renderer");
 #ifdef OPENGL
@@ -553,6 +438,7 @@ public class PdeBase extends Frame
         }
       });
 
+    /*
     externalEditorItem = new CheckboxMenuItem("Use External Editor");
     externalEditorItem.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -565,6 +451,7 @@ public class PdeBase extends Frame
       }
     });
     menu.add(externalEditorItem);
+    */
 
     menu.addActionListener(this);
     menubar.add(menu);  // add the sketch menu
@@ -600,34 +487,16 @@ public class PdeBase extends Frame
     this.pack();  // maybe this should be before the setBounds call
 
     //editor.frame = frame;  // no longer really used
-    editor.init();
+    //editor.init();
+
+    // now that everything is set up, open last-used sketch, etc.
+    prefs.apply();
+
     rebuildSketchbookMenu(sketchbookMenu);
-    buildSerialMenu();
+    //buildSerialMenu();
     this.show();  // added back in for pde
   }
 
-  /*
-    PdeEditorTextPane
-
-  Hashtable actions;
-
-  //The following two methods allow us to find an
-  //action provided by the editor kit by its name.
-  private void createActionTable(JTextComponent textComponent) {
-    actions = new Hashtable();
-    Action[] actionsArray = textComponent.getActions();
-    for (int i = 0; i < actionsArray.length; i++) {
-      Action a = actionsArray[i];
-      actions.put(a.getValue(Action.NAME), a);
-    }
-  }
-
-  private Action getActionByName(String name) {
-    //System.out.println(name);
-    //System.out.println(name + " " + actions);
-    return (Action)(actions.get(name));
-  }
-  */
 
   //This one listens for edits that can be undone.
   protected class MyUndoableEditListener implements UndoableEditListener {
@@ -942,106 +811,6 @@ public class PdeBase extends Frame
   }
 
 
-  class SerialMenuListener implements ItemListener /*, ActionListener*/ {
-    //public SerialMenuListener() { }
-
-    public void itemStateChanged(ItemEvent e) {
-      int count = serialMenu.getItemCount();
-      for (int i = 0; i < count; i++) {
-        ((CheckboxMenuItem)serialMenu.getItem(i)).setState(false);
-      }
-      CheckboxMenuItem item = (CheckboxMenuItem)e.getSource();
-      item.setState(true);
-      String name = item.getLabel();
-      //System.out.println(item.getLabel());
-      PdeBase.properties.put("serial.port", name);
-      //System.out.println("set to " + get("serial.port"));
-    }
-    
-    /*
-    public void actionPerformed(ActionEvent e) {
-      System.out.println(e.getSource());
-      String name = e.getActionCommand();
-      PdeBase.properties.put("serial.port", name);
-      System.out.println("set to " + get("serial.port"));
-      //editor.skOpen(path + File.separator + name, name);
-      // need to push "serial.port" into PdeBase.properties
-    }
-    */
-  }
-
-  protected void buildSerialMenu() {
-    // get list of names for serial ports
-    // have the default port checked (if present)
-
-    SerialMenuListener listener = new SerialMenuListener();
-    String defaultName = get("serial.port", "unspecified");
-    boolean problem = false;
-
-    // if this is failing, it may be because
-    // lib/javax.comm.properties is missing.
-    // java is weird about how it searches for java.comm.properties
-    // so it tends to be very fragile. i.e. quotes in the CLASSPATH
-    // environment variable will hose things.
-    try {
-      //System.out.println("building port list");
-      Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-      while (portList.hasMoreElements()) {
-        CommPortIdentifier portId = 
-          (CommPortIdentifier) portList.nextElement();
-        //System.out.println(portId);
-
-        if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-          //if (portId.getName().equals(port)) {
-          String name = portId.getName();
-          CheckboxMenuItem mi = 
-            new CheckboxMenuItem(name, name.equals(defaultName));
-          //mi.addActionListener(listener);
-          mi.addItemListener(listener);
-          serialMenu.add(mi);
-        }
-      }
-    } catch (UnsatisfiedLinkError e) {
-      e.printStackTrace();
-      problem = true;
-
-    } catch (Exception e) {
-      System.out.println("exception building serial menu");
-      e.printStackTrace();
-    }
-
-    if (serialMenu.getItemCount() == 0) {
-      //System.out.println("dimming serial menu");
-      serialMenu.setEnabled(false);
-    }
-
-    // macosx fails on its own when trying to load the library
-    // so need to explicitly try here.. not sure if this is the 
-    // correct lib, but it's at least one that's loaded inside
-    // the javacomm solaris stuff, which is the .jar that's included
-    // with the osx release (and rxtx takes over)
-    /*
-    if (platform == MACOSX) {
-      try {
-        System.loadLibrary("SolarisSerialParallel");
-      } catch (UnsatisfiedLinkError e) {
-        //e.printStackTrace();
-        problem = true;
-      }
-    }
-    */
-
-    // only warn them if this is the first time
-    if (problem && firstTime) {
-      JOptionPane.showMessageDialog(this, //frame,
-                                    "Serial port support not installed.\n" +
-                                    "Check the readme for instructions\n" +
-                                    "if you need to use the serial port.    ",
-                                    "Serial Port Warning",
-                                    JOptionPane.WARNING_MESSAGE);
-    }
-  }
-
   // interfaces for MRJ Handlers, but naming is fine 
   // so used internally for everything else
 
@@ -1077,6 +846,8 @@ public class PdeBase extends Frame
   }
 
   public void handlePrefs() {
+    new PdePreferences();
+    /*
     JOptionPane.showMessageDialog(this, //frame,
                                   "Preferences are in the 'lib' folder\n" +
                                   "inside text files named pde.properties\n" +
@@ -1084,6 +855,7 @@ public class PdeBase extends Frame
                                   ".properties",
                                   "Preferences",
                                   JOptionPane.INFORMATION_MESSAGE);
+    */
     //System.out.println("now showing preferences");
   }
 
@@ -1412,74 +1184,4 @@ public class PdeBase extends Frame
     } catch (InterruptedException e) { }      
     return image;
   }
-
-
-  // this could be pruned further
-  // also a similar version inside PdeEditor 
-  // (at least the binary portion)
-  /*
-  static public String getFile(String filename) {
-    if (filename.length() == 0) {
-      return null;
-    }
-    URL url;
-    InputStream stream = null;
-    String openMe;
-    byte temp[] = new byte[65536];  // 64k, 16k was too small
-
-    try {
-      // if running as an application, get file from disk
-      stream = new FileInputStream(filename);
-
-    } catch (Exception e1) { try {
-      url = this.getClass().getResource(filename);
-      stream = url.openStream();
-
-    } catch (Exception e2) { try {
-      // Try to open the param string as a URL
-      url = new URL(filename);
-      stream = url.openStream();
-        
-    } catch (Exception e3) {
-      return null;
-    } } }
-
-    try {
-      int offset = 0;
-      while (true) {
-        int byteCount = stream.read(temp, offset, 1024);
-        if (byteCount <= 0) break;
-        offset += byteCount;
-      }
-      byte program[] = new byte[offset];
-      System.arraycopy(temp, 0, program, 0, offset);
-
-      //return languageEncode(program);
-      // convert the bytes based on the current encoding
-      try {
-        if (encoding == null)
-          return new String(program);
-        return new String(program, encoding);
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-        encoding = null;
-        return new String(program);
-      }
-
-    } catch (Exception e) {
-      System.err.println("problem during download");
-      e.printStackTrace();
-      return null;
-    }
-  }
-  */
-
-  /*
-  static public boolean hasFullPrivileges() {
-    //if (applet == null) return true;  // application
-    //return false;
-    return !isApplet();
-  }
-  */
 }
-
