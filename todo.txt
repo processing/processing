@@ -85,14 +85,12 @@ X   this would avoid having to patch BApplet
 X register for setup() calls
 X where do libraries for distribution go?
 X   libraries subfolder of p5
-
-_ PLibrary lib = attach(new PClient());
-_ compiling - main file is a .java not a .pde
-_   also where no root .pde file with the same name.. (i.e. video)
-_ crap.. libraries need to be in packages for this to work
-_   but annoying: attach("simong.particlesystem.ParticleSystem") 
-_ record imports from java files as well
-_ ignore imports from java.* or maybe just things pde's classpath
+X PLibrary lib = attach(new PClient());
+X get export working again
+X System.out isn't being heard from P* classes
+X   errors inside those classes also causing weirdness
+X   this might be a broader running as external app problem
+X   errorMessage in PSerial/PClient/PServer are all using System.out
 
 _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
@@ -100,9 +98,16 @@ _ netscape.javascript not properly working in 1.4
 _   include 'netscape.javascript' as a library to be added
 _     but don't export it.. ugh..
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
+
+library stuff
+_ compiling - main file is a .java not a .pde
+_   also where no root .pde file with the same name.. (i.e. video)
+_ crap.. libraries need to be in packages for this to work
+_   but annoying: attach("simong.particlesystem.ParticleSystem") 
+_ record imports from java files as well
+_ ignore imports from java.* or maybe just things pde's classpath
 _ after export of library, rebuild "import library" menu
 _ should library be called extension?
-
 
 _ keypressed hanging on applets with a code folder
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
@@ -115,19 +120,14 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
 _     something in that one about mouse position halting or not
 
-_ get export working again
-_   make multiple jar files thing work as an option
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
-_     applet default is one file, application default is multiple
-_     user in advanced mode can switch to the other
-_     buttons on side of sketch do default (last) behavior
-_   include a note that 'applet' folder will get emptied/rewritten
-_     or rename the old applet folder to something else? (nah, too messy)
-
-_ System.out isn't being heard from P* classes
-_   errors inside those classes also causing weirdness
-_   this might be a broader running as external app problem
-_   errorMessage in PSerial/PClient/PServer are all using System.out
+export stuff
+_ make multiple jar files thing work as an option
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+_   applet default is one file, application default is multiple
+_   user in advanced mode can switch to the other
+_   buttons on side of sketch do default (last) behavior
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else? (nah, too messy)
 
 
 _ write better handler for compiler error:
