@@ -54,6 +54,10 @@ import javax.swing.undo.*;
  */
 public class PdePreferences extends JComponent {
 
+  // what to call the feller
+
+  static final String PREFS_FILE = "Processing Preferences.txt";
+
   // prompt text stuff
 
   static final String PROMPT_YES     = "Yes";
@@ -140,7 +144,7 @@ public class PdePreferences extends JComponent {
     // next load user preferences file
 
     File home = new File(System.getProperty("user.home"));
-    preferencesFile = new File(home, ".processing");
+    preferencesFile = new File(home, PREFS_FILE);
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists

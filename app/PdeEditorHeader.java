@@ -212,8 +212,11 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     for (int i = 0; i < sketch.codeCount; i++) {
       PdeCode code = sketch.code[i];
 
+      String codeName = (code.flavor == PdeSketch.PDE) ? 
+        code.name : code.file.getName();
+
       // if modified, add the li'l glyph next to the name
-      String text = "  " + code.name + (code.modified ? " \u00A7" : "  ");
+      String text = "  " + codeName + (code.modified ? " \u00A7" : "  ");
       //System.out.println("code " + i + " " + text);
 
       int textWidth = metrics.stringWidth(text);
