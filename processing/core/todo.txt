@@ -44,6 +44,11 @@ X   problem was the threading issues
 X bring back renderer menu
 X   reading/saving pref for opengl renderer
 
+_ basic sample audio playback needed for p5
+_   make separate java 1.1 and java 1.3 classes
+_   once debugged, merge these back together and use reflection
+_     (unless it's a messy disaster)
+
 X beginFrame() around setup()
 X   draw mode stuff happens inside setup.. 
 o   or maybe need to get better at size() inside of draw() ? 
@@ -59,6 +64,9 @@ _ when running externally, applets don't always get placed properly
 _   problem is in gl and in core, and is inconsistent
 _   move more logic for layout into PApplet.. maybe a static method?
 _   this way can avoid duplicating / breaking things
+
+_ add prompt() method to Camera and Serial
+_   allows user to select default input device
 
 _ still threading issues with running opengl 
 _   first run hangs until quit 

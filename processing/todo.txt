@@ -86,8 +86,6 @@ o if a data file is in the sketch (not data) folder export breaks
 o   works fine in the editor, but on export gets a nullpointer ex
 X   no way around this, because needs to be able to read from local dir
 
-_ basic sample audio playback needed for p5
-
 
 //
 
