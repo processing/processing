@@ -1,4 +1,27 @@
 0063
+X beautify menu became disabled when moved
+X BImage(int width, int height) constructor
+X trying to track down sluggishness with applets.. 
+X   beginShape/endShape.. 3D scenes with boxes..
+X   newPixels is in BGraphics.endFrame, 
+X   screen.drawImage is in BApplet.paint
+X   need to move both to BApplet.paint()
+
+_ external applet stuff
+X   set initial position of external applets via BApplet
+_   send messages for window location
+_   closing window doesn't disable the stop button
+_   hitting 'stop' should freeze applet, not close window
+_   what was the random NullPointerException
+_   'add files' for .class, .zip, .jar should drop the stuff in
+
+_ jikes errors are missing newline/linefeed ?
+
+_ using run-expert.bat on 62 causes NullPointerException weirdness
+_ network/shared_canvas, network/value has old code
+_ write script to remove .DS_Store and CVS folders from dist
+_ include version number in the about box
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
 
 assigned to dan haskovec, completed by fry
 X for 'java' mode, try run using external vm
@@ -17,21 +40,11 @@ X   or figure out how to unload old classes.. grr
 X lockup when something missing from classpath on dynamic load
 X   but makes no error.. peditorconsole probably swallowing it
 
-_ using run-expert.bat on 62 causes NullPointerException weirdness
-
-_ ability to include other .java and .pde code from sketchbook folder
-
-_ network/shared_canvas, network/value has old code
-
-_ trying to track down sluggishness with applets.. 
-_   beginShape/endShape.. 3D scenes with boxes..
-
-_ write script to remove .DS_Store and CVS folders from dist
 
 
 MEDIUM
-_ include version number in the about box
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
+_ ability to include other .java and .pde code from sketchbook folder
+_   'add files' for .java or .pde pulls into the folder
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 _ better 1.3/1.4 support.. properly detect vm
