@@ -23,6 +23,42 @@
   Boston, MA  02111-1307  USA
 */
 
+/*
+
+if depth buffer sorting turned on?
+
+with depth(), stroke() *or* fill() but not both
+
+
+point
+  depth
+    strokeWeight < 2
+      rough single pixel dot with a z value
+        rgb
+        rgba
+    strokeWeight >= 2
+      round endcap
+        rough filled circle with a z value
+          rgb
+          rgba
+      square endcap
+        rough filled square with a z value
+          rgb
+          rgba
+  noDepth
+    strokeWeight < 2
+      rough single pixel dot (no z value)
+    strokeWeight >= 2
+
+
+quad
+  depth
+    strokeWeight < 2
+      series of single pixel lines that surround
+    strokeWeight >= 2
+
+*/
+
 package processing.core;
 
 import java.applet.*;
