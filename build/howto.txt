@@ -130,6 +130,21 @@ cd /yourpath/to/processing
   'Details' button in the updater, and if it lists "Not installed" 
   for "QuickTime for Java", well, take care of that.
 
+* make sure that qtjava is in your classpath as well, done
+  properly. arielm had problems with this, and adds:
+
+  so i checked a bit and it seems that the quicktime 4 java
+  installation (at least on windows xp) is broken, for the 2 following
+  reasons:
+  1) CLASSPATH is defined as a "System variable" 
+     instead of a "User variable"
+  2) the value of CLASSPATH is encosed into quotes (")
+
+  after manually fixing these issues, things were fine. (either
+  properly place quotes around a single version of CLASSPATH, or use a
+  version that doesn't need to be quoted and has no spaces,
+  i.e. replace 'Program Files' with the 8.3 dos version: 'PROGRA~1'
+  (indeed, this awful nomenclature still works).
 
 
 5. BUILD IT
