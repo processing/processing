@@ -26,6 +26,14 @@ o   or have a way to syntax color them
 o put processing/bagel into sourceforge cvs FOR BETA
 o   probably after kjc/engine stuff restructured
 o bring cbagel up to par
+X remove 'encoding' crap from PdeBase
+X   only existed b/c of reading as bytes and not using jdk11 methods
+X cleanup program/inline_program crap.. take out scheme stuff
+X better readFile/loadImage inside PdeBase
+X   temp array should be resizable inside readFile
+X   might just use ByteArray streams
+X   use getresource for loading image
+X remove Editor's frame instance, replace refs with PdeBase.frame
 
 
 0048
