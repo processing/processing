@@ -44,6 +44,7 @@ X console: scroll to most current line, or scroll as changing
 X windows tabbedpane separator is too small
 X   added line to pde_windows.properties
 X store divider location to sketch.properties
+X about box that just shows the splash image
 
 
 macosx
@@ -82,6 +83,15 @@ X why doesn't processing.app work anymore
 X   machine was screwy
 X perlin noise 1D. noise() 
 X double-check to see if wheel mouse is working
+X macosx quit handler takes over ctrl-q
+X   so file->quit doesn't get called on close
+X   so sketch.properties doesn't get saved
+X handlers for basic events
+X   MRJAboutHandler (just show splash screen)
+X     image for 'about processing'
+X   MRJPrefsHandler (open pde.properties in a text editor)
+X   MRJQuitHandler (confirm quit, may need to be in another thread)
+X remove 'quit' from file menu (osx only)
 
 
 dh X save last-used serial to sketch.properties on quit
@@ -107,29 +117,17 @@ BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
 macosx
-
-X macosx quit handler takes over ctrl-q
-X   so file->quit doesn't get called on close
-X   so sketch.properties doesn't get saved
-X handlers for basic events
-b _   MRJAboutHandler (just show splash screen)
-b _     image for 'about processing'
-X   MRJPrefsHandler (open pde.properties in a text editor)
-X   MRJQuitHandler (confirm quit, may need to be in another thread)
-
 b _ why do command keys / menu shortcuts get passed through?
 b _   cmd-s drops an s into the text area (grr)
 b _   only happened on java 1.3 if the cmd-key was unused
 b _ change Proce55ing.app to Processing.app
 b _   should cvs be changed or just do this as a renaming step?
 b _ build gl4java for java 1.4
-b _ remove 'quit' from file menu (osx only)
 b _ Event.consume() doesn't work on entry fields 
 b _   manifests itself in sketch naming, can't be constrained
 b _   may not be the case under swing?
 b _ escape key not quitting presentation mode
 b _   no events seem to be coming through at all
-b _ splash screen 
 b _ select all (apple-a) on azerty keyboard is quitting the app
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
 b _ why are the end of text messages under osx getting chopped?
@@ -150,7 +148,6 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
 
-
 bf b _ tweak video to get it working
 bf b _   beginVideo(int, int, int) not found
 bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
@@ -169,14 +166,15 @@ additional console fixes
 dh b _   clear console each time 'run' gets hit
 dh b _     don't actually clear, just advance by the number of lines visible
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-dh b _   can't copy text from console directly
+dh b _   can't copy text from console directly (winxp and macosx)
 bf 1 _ console -> should be using JEditTextArea not TextPane
-bf b _   set decent fonts (probably same as editor above), looks bad on mac
-bf b _   remove the border around the edge
+bf b _ set decent fonts (probably same as editor above), looks bad on mac
+bf b o   remove the border around the edge
 bf b o   what's with the 2 blank lines on startup?
 
 
 linux
+_ make mention that linux is i386
 _ bring linux up to 1.4
 _   grab rxtx for linux and include with distribution
 
@@ -303,6 +301,7 @@ The graphics library is called Bagel, which is an internal name.
 BAGEL / Graphics API Additions
 
 ap b _ hiding the cursor. noCursor(), cursor()/cursor(ARROW), cursor(HAND), cursor(CROSS), cursor(image_file)
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
 
 ks b _ images and pixel copying (api for this?)
 ks b _   copyPixel(x, y, to_x, to_y)
@@ -562,6 +561,7 @@ _   setup (200, 200) causes the default size to be used but setup(200, 200) work
 _ no longer require size() to come first.
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059517526
 _ compiler barfs on: float[] moo = new int[10];  
 _   although no error comes through to p5 (benelek)
 _ int() doesn't work inside other functions
