@@ -9,7 +9,8 @@ REVISION=0000
 echo Creating P5 distribution for revision $REVISION...
 
 # remove any old boogers
-rm -rf processing
+rm -rf processing 
+rm -rf processing-0000-macosx
 rm -f processing-*.hqx
 
 # use 'shared' files as starting point
@@ -54,7 +55,7 @@ rm -rf processing/lib/export/CVS
 # get platform-specific goodies from the dist dir
 #cp dist/Proce55ing processing/
 cp dist/lib/pde.properties_macosx processing/lib/
-cp dist/lib/comm.jar processing/lib/
+#cp dist/lib/comm.jar processing/lib/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
@@ -63,7 +64,7 @@ cp dist/lib/comm.jar processing/lib/
 #unix2dos processing/lib/pde.properties_macosx 2> /dev/null
 
 # zip it all up for release
-echo Zipping and finishing...
+#echo Zipping and finishing...
 P5=processing-$REVISION
 mv processing $P5-macosx
 #zip -rq $P5.zip $P5
