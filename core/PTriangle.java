@@ -348,7 +348,7 @@ public class PTriangle implements PConstants
     F_TEX_HEIGHT = TEX_HEIGHT-1;
     INTERPOLATE_UV = true;
 
-    if (image.format == RGBA) {
+    if (image.format == ARGB) {
       m_drawFlags|=R_TEXTURE32;
     } else if (image.format == RGB) {
       m_drawFlags|=R_TEXTURE24;
