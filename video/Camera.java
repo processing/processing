@@ -35,8 +35,8 @@ import quicktime.std.sg.*;
 import quicktime.util.RawEncodedImage;
 
 
-public class Camera extends PImage
-implements StdQTConstants, StdQTConstants4, Runnable {
+public class Camera extends PImage implements Runnable {
+                            //implements StdQTConstants, StdQTConstants4, Runnable {
   PApplet parent;
   Method cameraEventMethod;
   String name; // keep track for error messages

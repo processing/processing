@@ -146,7 +146,7 @@ PLATFORM=windows
 
 
 CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar:..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
-JIKES="..\\build\\$PLATFORM\\work\\jikes"
+JIKES="..\\build\\$PLATFORM\\work\\jikes.exe"
 CORE="..\\build\\$PLATFORM\\work\\lib\\core.jar"
 LIBRARIES="..\\build\\$PLATFORM\\work\\libraries"
 

@@ -144,6 +144,9 @@ _   and include an md5hash to see if the file is correct
 
 _ straighten out int() -> toInt() conversion in the preproc
 
+_ move build scripts to something better like ant
+_   too much to maintain the multiple versions, no dependencies, too much code
+
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 
