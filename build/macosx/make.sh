@@ -48,7 +48,7 @@ else
   mkdir work/classes
 
   # get a copy of the mac-specific properties
-  cp dist/lib/pde_macosx.properties work/lib/
+  #cp dist/lib/pde_macosx.properties work/lib/
 
   # grab serial goodies
   echo Copying serial support from bagel dir...

@@ -54,14 +54,14 @@ rm -rf processing/lib/export/CVS
 #cp work/Proce55ing processing/
 #cp work/processing processing/
 install -m 755 stub.sh processing/processing
-cp dist/lib/pde_linux.properties processing/lib/
+#cp dist/lib/pde_linux.properties processing/lib/
 
 # make sure notes.txt is unix LFs
 # the 2> is because the app is a little chatty
 dos2unix processing/readme.txt 2> /dev/null
 dos2unix processing/revisions.txt 2> /dev/null
 dos2unix processing/lib/pde.properties 2> /dev/null
-dos2unix processing/lib/pde_linux.properties 2> /dev/null
+#dos2unix processing/lib/pde_linux.properties 2> /dev/null
 
 # get the serial stuff
 echo Copying serial support from bagel dir

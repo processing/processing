@@ -55,6 +55,10 @@ import gnu.io.*;
   it contains the contents of 
   pde.properties + pde_platform.properties
   and then begins writing additional sketch.properties stuff
+
+  this class no longer uses the Properties class, since 
+  properties files are iso8859-1, which is highly likely to 
+  be a problem when trying to save sketch folders and locations
  */
 public class PdePreferences extends JComponent {
 
@@ -74,36 +78,13 @@ public class PdePreferences extends JComponent {
 
   // data model
 
-  static Properties properties;  // needs to be accessible everywhere
-  static Hashtable defaults;
+  static Hashtable table;
 
   File preferencesFile;
-  boolean firstTime;  // first time this feller has been run
+  //boolean firstTime;  // first time this feller has been run
 
 
   public PdePreferences() {
-
-    /*
-    switch (PdeBase.platform) {
-    case PdeBase.WINDOWS:
-      // the larger divider on windows is ugly with the little arrows
-      // this makes it large enough to see (mouse changes) and use, 
-      // but keeps it from being annoyingly obtrusive
-      defaults.put("editor.divider.size", "2");
-      break;
-
-    case PdeBase.MACOSX:
-      // the usual 12 point from other platforms is too big on osx
-      // monospaced on java 1.3 was monaco, but on 1.4 it has changed
-      // to courier, which actually matches other platforms better.
-      // (and removes the 12 point being too large issue)
-      // and monaco is nicer on macosx, so use that explicitly
-      defaults.put("editor.program.font", "Monaco,plain,10");
-      defaults.put("editor.console.font", "Monaco,plain,10");
-      break;
-    }
-    */
-
 
     // getting started
 
@@ -119,25 +100,59 @@ public class PdePreferences extends JComponent {
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
 
-      String platformFilename = 
-        "pde_" + PdeBase.platforms[PdeBase.platform] + ".properties";
-
       try {
         if ((PdeBase.platform == PdeBase.MACOSX) ||
             (PdeBase.platform == PdeBase.MACOS9)) {
-          properties.load(new FileInputStream("lib/pde.properties"));
-          properties.load(new FileInputStream("lib/" + platformFilename));
+          load(new FileInputStream("lib/pde.properties"));
 
         } else {  
           // under win95, current dir not set properly
           // so using a relative url like "lib/" won't work
-          properties.load(getClass().getResource("pde.properties").openStream());
-          properties.load(getClass().getResource(platformFilename).openStream());
+          load(getClass().getResource("pde.properties").openStream());
         }
 
       } catch (Exception e) {
-        System.err.println("Error reading default settings");
-        e.printStackTrace();
+        showError(null, "Could not read default settings.\n" + 
+                  "You'll need to reinstall Processing.", e);
+        System.exit(1);
+        //System.err.println("Error reading default settings");
+        //e.printStackTrace();
+      }
+
+      firstTime = true;
+
+    } else {
+      // load the previous preferences file
+
+      try {
+        load(new FileInputStream(preferencesFile));
+
+      } catch (Exception e) {
+        showError("Error reading preferences", 
+                  "Error reading the preferences file. Please delete\n" +
+                  perferencesFile.getCanonicalPath() + "\n" + 
+                  "and restart Processing.", e);
+      }
+    }
+
+
+    // check for platform-specific properties
+
+    String platformExtension = "." + PdeBase.platforms[PdeBase.platform];
+    int extensionLength = platformExtension.length();
+
+    Enumeration e = properties.propertyNames();
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      if (key.endsWith(platformExtension)) {
+        // this is a key specific to a particular platform
+        String actualKey = key.substring(0, key.length() - extensionLength);
+        String value = get(key);
+
+        System.out.println("found platform specific prop \"" + 
+                           actualKey + "\" \"" + value + "\"");
+        properties.put(actualKey, value);
+        System.out.println("now set to " + table.get(actualKey));
       }
     }
 
@@ -295,75 +310,38 @@ public class PdePreferences extends JComponent {
   }
 
 
+  public void load(InputStream input) {
+    BufferedReader reader = 
+      new BufferedReader(new InputStreamReader(input));
+
+    table = new Hashtable();
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      if (line.charAt(0) == '#') continue;
+
+      int equals = line.indexOf('=');
+      String key = line.substring(0, equals).trim();
+      String value = line.substring(equals + 1).trim();
+      table.put(key, value);
+    }
+    reader.close();
+  }
+
+
+
   // change settings based on what was chosen in the prefs
 
   public void apply() {
-    //if (external editor checked) {
-      editor.setExternalEditor(true);
-      //}
+    //editor.setExternalEditor(getBoolean("editor.external"));
+    // put each of the settings into the table
   }
 
 
   // open the last-used sketch, etc
 
   public void init() {
-    // load the last program that was in use
-
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    int windowX = -1, windowY = 0, windowW = 0, windowH = 0;
-
-    //Properties skprops = new Properties();
-    //try {
-    //if (PdeBase.platform == PdeBase.MACOSX) {
-    //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-    //skprops.load(new FileInputStream(pkg + "sketch.properties"));
-    //skprops.load(new FileInputStream("lib/sketch.properties"));
-
-    //} else if (PdeBase.platform == PdeBase.MACOS9) {
-    //  skprops.load(new FileInputStream("lib/sketch.properties"));
-
-    //} else {
-    //skprops.load(getClass().getResource("sketch.properties").openStream());
-    //}
-
-    windowX = Integer.parseInt(skprops.getProperty("last.window.x", "-1"));
-    windowY = Integer.parseInt(skprops.getProperty("last.window.y", "-1"));
-    windowW = Integer.parseInt(skprops.getProperty("last.window.w", "-1"));
-    windowH = Integer.parseInt(skprops.getProperty("last.window.h", "-1"));
-
-    // if screen size has changed, the window coordinates no longer
-    // make sense, so don't use them unless they're identical
-    int screenW = Integer.parseInt(skprops.getProperty("last.screen.w", "-1"));
-    int screenH = Integer.parseInt(skprops.getProperty("last.screen.h", "-1"));
-
-    if ((screen.width != screenW) || (screen.height != screenH)) {
-      // probably not valid for this machine, so invalidate sizing
-      windowX = -1;
-    }
-
-    if (windowX != -1) {
-      String dividerLocation = 
-        skprops.getProperty("last.divider.location");
-      if (dividerLocation != null) {
-        splitPane.setDividerLocation(Integer.parseInt(dividerLocation));
-      }
-    }
-
-    // 
-
-    String path = skprops.getProperty("last.sketch.directory");
-    String name = skprops.getProperty("last.sketch.name");
 
     //String what = path + File.separator + name + ".pde";
-
-    if (new File(path + File.separator + name + ".pde").exists()) {
-      //userName = user;
-      editor.skOpen(path, name);
-
-    } else {
-      //userName = "default";
-      editor.skNew();
-    }
 
     // 
 
@@ -381,26 +359,15 @@ public class PdePreferences extends JComponent {
       //e.printStackTrace();
 
       // indicator that this is the first time this feller has used p5
-      firstTime = true;
+    //firstTime = true;
 
       // even if folder for 'default' user doesn't exist, or
       // sketchbook itself is missing, mkdirs() will make it happy
       //userName = "default";
 
       // doesn't exist, not available, make my own
-      skNew();
-    }
-
-    if (windowX == -1) {
-      //System.out.println("using defaults for window size");
-      windowW = PdePreferences.getInteger("window.width", 500);
-      windowH = PdePreferences.getInteger("window.height", 500);
-      windowX = (screen.width - windowW) / 2;
-      windowY = (screen.height - windowH) / 2;
-    }
-    //PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
-    base.setBounds(windowX, windowY, windowW, windowH);
-    //rebuildSketchbookMenu(PdeBase.sketchbookMenu);
+      //skNew();
+      //}
   }
 
   /*
@@ -478,8 +445,13 @@ public class PdePreferences extends JComponent {
 
       //skprops.put("serial.port", PdePreferences.get("serial.port", "unspecified"));
 
-      skprops.save(output, "Settings for processing. " + 
-                   "See lib/pde.properties for defaults.");
+      // save() is deprecated, and didn't properly
+      // throw exceptions when it wasn't working
+      skprops.store(output, "Settings for processing. " + 
+                    "See lib/pde.properties for defaults.");
+
+      // need to close the stream.. didn't do this before
+      skprops.close();
 
     } catch (IOException e) {
       PdeBase.showError(null, "Error while saving the settings file", e);

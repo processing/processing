@@ -64,7 +64,7 @@ chmod +x processing/jikes.exe
 # get platform-specific goodies from the dist dir
 cp launcher/processing.exe processing/
 cp dist/run.bat processing/
-cp dist/lib/pde_windows.properties processing/lib/
+#cp dist/lib/pde_windows.properties processing/lib/
 
 # get serial stuff from the bagel dir
 cp ../../bagel/serial/comm.jar processing/lib/
@@ -77,7 +77,7 @@ chmod +x processing/win32com.dll
 unix2dos processing/readme.txt 2> /dev/null
 unix2dos processing/revisions.txt 2> /dev/null
 unix2dos processing/lib/pde.properties 2> /dev/null
-unix2dos processing/lib/pde_windows.properties 2> /dev/null
+#unix2dos processing/lib/pde_windows.properties 2> /dev/null
 
 # zip it all up for release
 echo Packaging standard release...
