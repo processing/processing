@@ -33,6 +33,16 @@ cd ../..
 
 ### -- BUILD BAGEL ----------------------------------------------
 cd ..
+# make sure bagel exists, if not, check it out of cvs
+if test -d bagel
+then 
+else
+  echo Doing CVS checkout of bagel...
+  cvs co bagel
+  cd bagel
+  cvs update -P
+  cd ..
+fi
 cd bagel
 
 CLASSPATH=../app/build/windows/work/java/lib/rt.jar:../app/build/windows/work/java/lib/ext/comm.jar
@@ -58,7 +68,7 @@ echo Building PDE for JDK 1.3
 
 CLASSPATH=build/windows/work/classes:build/windows/work/lib/kjc.jar:build/windows/work/lib/oro.jar:build/windows/work/java/lib/rt.jar:build/windows/work/java/lib/ext/comm.jar
 
-perl buzz.pl "jikes +D -classpath $CLASSPATH -d build/windows/work/classes" -dJDK13 *.java kjc/*.java 
+perl buzz.pl "jikes +D -classpath $CLASSPATH -d build/windows/work/classes" -dJDK13 *.java 
 
 cd build/windows/work/classes
 rm -f ../lib/pde.jar
