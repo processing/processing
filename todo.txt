@@ -267,18 +267,21 @@ X   may need to always copy to a new array? (or does it already?)
 
 040709 later evening
 X working on movie setup
+o import -> javax.comm.properties -> data folder.. hm
 
 040710
 
 _ get movie working again
 _ provide a useful error message when winvdig not installed (for capture)
 _   also be able to set one in particular
+_ things will freeze if winvdig not installed (todo over in core)
+_   video hanging without a camera installed
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
 
 _ error in System.err stream coming from running external
 _   dies after a while or goes weird
 
 _ save as needs to update the editorheader
-_ import -> javax.comm.properties -> data folder.. hm
 _ String in apache classes and java.lang
 _   need to be able to select between which to include
 _   auto-resolve by saying java.* wins, others ask
@@ -361,6 +364,8 @@ _ texture mapping bugs in graphics engine
 1 _   arcball, joystick, particles (from multip)
 1 _   other phyics (collisions)
 1 _   java3d classes for vec3f and matrix
+1 _ quicktime exporter or image sequence export
+1 _   fairly quick--just use experimental code from dbn
 
 2 _ comments -> embedding in applet text? (ala javadoc)
 2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076967353
@@ -415,6 +420,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError wants to happen, 
 _   but right now there's a hack to add a CR in PdePreprocessor
+_ return (int(5.5)) causes an error
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083624993;start=0
 
 
 BUGS / Windows
@@ -735,10 +742,6 @@ b _   otherwise, goes looking for lib/pde_.properties or something
 
 
 DISTRIBUTION / Windows
-1 _ don't force install of qtjava
-1 _   this requires a separate version of bagel that doesn't use video
-1 _   or a version that loads video dynamically. that kinda sucks.
-1 _   maybe could even compile it in with jikes? (blech)
 1 _ winamp/audio getting starved or crackly while applets running
 1 _   thread priority too high? or something weird
 1 _ need splash screen, startup takes a long time
