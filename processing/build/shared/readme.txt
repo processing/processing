@@ -277,13 +277,6 @@ a forced reboot. (while this may seem nutty, you might run into it if
 your adapter is plugged into your usb keyboard, and you have the
 keyboard plugged into a monitor/keyboard switcher).
 
-naming of sketches.. on other platforms, you aren't allowed to type
-characters besides letters, numbers, and underscores for the names of
-sketches. because of what looks like a bug in osx java, this feature
-is disabled, and the file is simply renamed (bad characters are
-replaced with underscores) after you hit 'ok'. boo apple.. i'm getting
-sick of all these workarounds.
-
 quitting presentation mode.. on other platforms, hitting the 
 'escape' key will quickly get you out of presentation mode. however, 
 there seems to be some key event weirdness under osx. we hope to find 

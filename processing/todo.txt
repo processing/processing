@@ -6,40 +6,39 @@ X optimize color() when in colorMode(RGB, 255) to just pack the int
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1062072434;start=0
 X imageMode() shouldn't affect fonts
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
-
-_ replacing spaces with underscores.. 
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062103523;start=0
-_   patch keyTyped event instead of keyPressed
-_   remove reference in readme about macosx problem w/ it
-
-_ qtjava search path is too fragile
-_   don't force install, set a flag
-_   use %WINDIR%\System32\qtjava.zip and %QTJAVA%
+X replacing spaces with underscores.. 
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062103523;start=0
+X   patch keyTyped event instead of keyPressed
+X   remove reference in readme about macosx problem w/ it
+X   test on macosx
+X   test on linux
+X qtjava search path is too fragile
+o   use %WINDIR%\System32\qtjava.zip and %QTJAVA%
 o   or even the system %CLASSPATH%
-_   maybe just ask user to select the file directly
-_   may have spaces, so should also fix those
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
-_   QTJAVA seems to be showing up in %WINDIR%\System not just system32
-_   modify make.sh for windows to use $QTJAVA instead of guessing
-_     and complain about non-installation if it ain't there
-
-_ p5 not working in msjvm (prolly non-1.1 code)
-_   build and hack in new jikes for all platforms
-_   add "-target 1.1" when exporting to applet (or always?)
+o   maybe just ask user to select the file directly
+X   may have spaces, so should also fix those
+X   QTJAVA seems to be showing up in %WINDIR%\System not just system32
+X   modify make.sh for windows to use $QTJAVA instead of guessing
+X     and complain about non-installation if it ain't there
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
+X p5 not working in msjvm (prolly non-1.1 code)
+X   build and hack in new jikes for all platforms
+X   add "-target 1.1" when exporting to applet (or always?)
 o   might be java.awt.Cursor in BConstants
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
 
-_ only allow one pmouseX update outside of loop
-_   to avoid jumping lines (drawing -> continuous_lines)
-
-
-known bugs
+known issues/bugs
+* quicktime for java is *required* on windows.. it's installed by
+default on macosx, and not used at all on linux. 
+* QTJAVA environment variable is used to find quicktime. if that's not
+properly set, then you won't be able to run.
 * lots of 'cannot delete ...' messages
 * present mode is almost completely broken and often flickers like mad
 * sound not always stopping when 'stop' his hit (i.e. the mixer example)
 * run.bat hasn't been given love for a while and may not work
 * reference loading doesn't seem to be working
+
 
 ..................................................................
 
@@ -60,6 +59,9 @@ dh b _     (msft vm defaults to null layout manager)
 dh b _   also make sure pack() is happening
 dh b _   add manifest.mf to exported applets so that applications will work
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
+
+_ only allow one pmouseX update outside of loop
+_   to avoid jumping lines (drawing -> continuous_lines)
 
 _ internal naming of _fill, image_mode, textureOrientation
 _   these all need to jive better with one another
@@ -291,6 +293,18 @@ bf _ history.. add my diffs sketch
 bf _ look into eclipse ide a little more
 bf _ actionscript has nice hastables.. as does perl/python
 bf _   would be nice to get better implementation in there
+
+
+..................................................................
+
+
+things attempted for beta but found to be too time consuming, and of
+low enough importance that they'll be fixed after beta.
+
+1 _ don't force install of qtjava
+1 _   this requires a separate version of bagel that doesn't use video
+1 _   or a version that loads video dynamically. that kinda sucks.
+1 _   maybe could even compile it in with jikes? (blech)
 
 
 ..................................................................
