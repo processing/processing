@@ -175,12 +175,7 @@ public class PApplet extends Applet
 
     // can/may be resized later
     //g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    initg();
-
-    addMouseListener(this);
-    addMouseMotionListener(this);
-    addKeyListener(this);
-    addFocusListener(this);
+    initGraphics();
 
     // send tab keys through to the PApplet
     try {
@@ -190,8 +185,8 @@ public class PApplet extends Applet
           Component.class.getMethod("setFocusTraversalKeysEnabled",
                                     new Class[] { Boolean.TYPE });
         defocus.invoke(this, new Object[] { Boolean.FALSE });
-      } else {
-        System.out.println(jdkVersion);
+      //} else {
+        //System.out.println(jdkVersion);
       }
     } catch (Exception e) { }  // oh well
 
@@ -250,8 +245,14 @@ public class PApplet extends Applet
 
   // override for subclasses (i.e. opengl)
   // so that init() doesn't have to be replicated
-  public void initg() {
+  public void initGraphics() {
     g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
+    // 0073: moved here so that can be overridden for PAppletGL
+    addMouseListener(this);
+    addMouseMotionListener(this);
+    addKeyListener(this);
+    addFocusListener(this);
   }
 
 
@@ -915,12 +916,19 @@ public class PApplet extends Applet
   // and i run the block.
 
 
+  public void focusGained() { }
+
   public void focusGained(FocusEvent e) {
     focused = true;
+    focusGained();
   }
+
+
+  public void focusLost() { }
 
   public void focusLost(FocusEvent e) {
     focused = false;
+    focusLost();
   }
 
 
@@ -4172,7 +4180,7 @@ public class PApplet extends Applet
   }
 
 
-  public void copy(int sx1, int sy1, int sx2, int sy2, 
+  public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
      g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
@@ -4199,13 +4207,13 @@ public class PApplet extends Applet
   }
 
 
-  public void blend(int sx1, int sy1, int sx2, int sy2, 
+  public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
