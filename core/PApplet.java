@@ -5683,6 +5683,18 @@ v              PApplet.this.stop();
   }
 
 
+  public void clearLights() {
+    if (recorder != null) recorder.clearLights();
+    g.clearLights();
+  }
+
+
+  public void defaultLights() {
+    if (recorder != null) recorder.defaultLights();
+    g.defaultLights();
+  }
+
+
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
     if (recorder != null) recorder.light(num, x, y, z, red, green, blue);
