@@ -203,11 +203,27 @@ cd ../..
 
 CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\work\\java\\lib\\rt.jar"
 
+
 cd ../../lib/serial
 ../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
-#../../build/windows/work/jikes +D -classpath "comm.jar;$CLASSPATH" -d . *.java 
 zip -r0q serial.jar processing
 rm -rf processing
-
 cp serial.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\rxtx_work\\code"
+
+
+QTJAVA="$WINDIR\\system32\\QTJava.zip"
+if test -f "${QTJAVA}"
+then
+  echo "Found Quicktime at $QTJAVA"
+else 
+  echo "could not find qtjava.zip in"
+  echo "${WINDIR}\\system32\\qtjava.zip"
+  echo "quicktime for java must be installed before building."
+  exit 1;
+fi
+cd ../../lib/video
+../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . PCamera.java 
+zip -r0q video.jar processing
+rm -rf processing
+cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\new_camera_action\\code"
 
