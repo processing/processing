@@ -398,7 +398,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   // ...................................................................
 
 
-  static protected byte[] grabFile(File file) throws IOException {
+  static public byte[] grabFile(File file) throws IOException {
     int size = (int) file.length();
     FileInputStream input = new FileInputStream(file);
     byte buffer[] = new byte[size];
@@ -414,7 +414,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   }
 
 
-  static protected void copyFile(File afile, File bfile) {
+  static public void copyFile(File afile, File bfile) {
     try {
       FileInputStream from = new FileInputStream(afile);
       FileOutputStream to = new FileOutputStream(bfile);
@@ -437,7 +437,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     }
   }
 
-  static protected void copyDir(File sourceDir, File targetDir) {
+  static public void copyDir(File sourceDir, File targetDir) {
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
@@ -456,16 +456,27 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   }
 
 
-  // remove all files in a directory
-  //
+  /**
+   * Remove all files in a directory and the directory itself.
+   */
+  static public void removeDir(File dir) {
+    //System.out.println("removing " + dir);
+    removeDescendants(dir);
+    dir.delete();
+  }
+
+
+  /**
+   * Recursively remove all files within a directory, 
+   * used with removeDir().
+   */
   static protected void removeDescendants(File dir) {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-        //if (!PdePreferences.getBoolean("editor.save_build_files", false)) {
-        if (!PdePreferences.getBoolean("editor.save_build_files")) {
+        if (!PdePreferences.getBoolean("compiler.save_build_files")) {
           if (!dead.delete()) {
             // temporarily disabled
             //System.err.println("couldn't delete " + dead);
@@ -479,11 +490,26 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   }
 
 
-  // remove all files in a directory and the dir itself
-  //
-  static protected void removeDir(File dir) {
-    //System.out.println("removing " + dir);
-    removeDescendants(dir);
-    dir.delete();
+  /**
+   * Calculate the size of the contents of a folder. 
+   * Used to determine whether sketches are empty or not. 
+   * Note that the function calls itself recursively.
+   */
+  static public int calcFolderSize(File folder) {
+    int size = 0;
+
+    //System.out.println("calcFolderSize " + folder);
+    String files[] = folder.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || (files[i].equals("..")) ||
+          files[i].equals(".DS_Store")) continue;
+      File fella = new File(folder, files[i]);
+      if (fella.isDirectory()) {
+        size += calcFolderSize(fella);
+      } else {
+        size += (int) fella.length();
+      }
+    }
+    return size;
   }
 }

@@ -30,12 +30,7 @@ import javax.swing.*;
 import sun.awt.AppContext;  // from java.awt.Dialog, for blocking
 
 
-#ifndef SWINGSUCKS
-public class PdeEditorStatus extends JPanel
-#else
-public class PdeEditorStatus extends Panel 
-#endif
-  implements ActionListener /*, Runnable*/ {
+public class PdeEditorStatus extends JPanel implements ActionListener {
   static Color bgcolor[];
   static Color fgcolor[];
 
@@ -64,22 +59,13 @@ public class PdeEditorStatus extends Panel
   int sizeW, sizeH;
   int imageW, imageH;
 
-#ifndef SWINGSUCKS
   JButton yesButton;
   JButton noButton;
   JButton cancelButton;
   JButton okButton;
   JTextField editField;
-#else
-  Button yesButton;
-  Button noButton;
-  Button cancelButton;
-  Button okButton;
-  TextField editField;
-#endif
 
-  //boolean editRename;
-  Thread promptThread;
+  //Thread promptThread;
   int response;
 
 
@@ -89,23 +75,24 @@ public class PdeEditorStatus extends Panel
 
     if (bgcolor == null) {
       bgcolor = new Color[4];
-      bgcolor[0] = PdePreferences.getColor("editor.status.notice.bgcolor",
-                                           new Color(102, 102, 102));
-      bgcolor[1] = PdePreferences.getColor("editor.status.error.bgcolor",
-                                           new Color(102, 26, 0));
-      bgcolor[2] = PdePreferences.getColor("editor.status.prompt.bgcolor",
-                                           new Color(204, 153, 0));
-      bgcolor[3] = PdePreferences.getColor("editor.status.prompt.bgcolor",
-                                           new Color(204, 153, 0));
+      bgcolor[0] = PdePreferences.getColor("editor.status.notice.bgcolor");
+      //new Color(102, 102, 102));
+      bgcolor[1] = PdePreferences.getColor("editor.status.error.bgcolor");
+      //new Color(102, 26, 0));
+      bgcolor[2] = PdePreferences.getColor("editor.status.prompt.bgcolor");
+      //new Color(204, 153, 0));
+      bgcolor[3] = PdePreferences.getColor("editor.status.prompt.bgcolor");
+      //new Color(204, 153, 0));
+
       fgcolor = new Color[4];
-      fgcolor[0] = PdePreferences.getColor("editor.status.notice.fgcolor",
-                                           new Color(255, 255, 255));
-      fgcolor[1] = PdePreferences.getColor("editor.status.error.fgcolor",
-                                           new Color(255, 255, 255));
-      fgcolor[2] = PdePreferences.getColor("editor.status.prompt.fgcolor",
-                                           new Color(0, 0, 0));
-      fgcolor[3] = PdePreferences.getColor("editor.status.prompt.fgcolor",
-                                           new Color(0, 0, 0));
+      fgcolor[0] = PdePreferences.getColor("editor.status.notice.fgcolor");
+      //new Color(255, 255, 255));
+      fgcolor[1] = PdePreferences.getColor("editor.status.error.fgcolor");
+      //new Color(255, 255, 255));
+      fgcolor[2] = PdePreferences.getColor("editor.status.prompt.fgcolor");
+      //new Color(0, 0, 0));
+      fgcolor[3] = PdePreferences.getColor("editor.status.prompt.fgcolor");
+      //new Color(0, 0, 0));
     }
   }
 
@@ -420,8 +407,8 @@ public class PdeEditorStatus extends Panel
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdePreferences.getFont("editor.status.font",
-                             new Font("SansSerif", Font.PLAIN, 12));
+      font = PdePreferences.getFont("status.font");
+      //new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
       ascent = metrics.getAscent();
@@ -434,7 +421,7 @@ public class PdeEditorStatus extends Panel
 
     g.setColor(fgcolor[mode]);
     g.setFont(font); // needs to be set each time on osx
-    g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + ascent) / 2);
+    g.drawString(message, PdePreferences.GUI_SMALL, (sizeH + ascent) / 2);
 
     screen.drawImage(offscreen, 0, 0, null);
   }
@@ -442,17 +429,11 @@ public class PdeEditorStatus extends Panel
 
   protected void setup() {
     if (yesButton == null) {
-#ifndef SWINGSUCKS
-      yesButton = new JButton(PROMPT_YES);
-      noButton = new JButton(PROMPT_NO);
-      cancelButton = new JButton(PROMPT_CANCEL);
-      okButton = new JButton(PROMPT_OK);
-#else
-      yesButton = new Button(PROMPT_YES);
-      noButton = new Button(PROMPT_NO);
-      cancelButton = new Button(PROMPT_CANCEL);
-      okButton = new Button(PROMPT_OK);
-#endif
+
+      yesButton    = new JButton(PdePreferences.PROMPT_YES);
+      noButton     = new JButton(PdePreferences.PROMPT_NO);
+      cancelButton = new JButton(PdePreferences.PROMPT_CANCEL);
+      okButton     = new JButton(PdePreferences.PROMPT_OK);
 
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)( 
       // os9 seems to work if bg of component is set, but x still a bastard
@@ -479,11 +460,7 @@ public class PdeEditorStatus extends Panel
       cancelButton.setVisible(false);
       okButton.setVisible(false);
 
-#ifndef SWINGSUCKS
       editField = new JTextField();
-#else
-      editField = new TextField();
-#endif
       editField.addActionListener(this);
 
       //if (PdeBase.platform != PdeBase.MACOSX) {
@@ -585,23 +562,24 @@ public class PdeEditorStatus extends Panel
 
 
   protected void setButtonBounds() {
-    int top = (sizeH - BUTTON_HEIGHT) / 2;
+    int top = (sizeH - PdePreferences.BUTTON_HEIGHT) / 2;
+    int eachButton = PdePreferences.GUI_SMALL + PdePreferences.BUTTON_WIDTH;
 
-    int cancelLeft = sizeW - PdeEditor.INSET_SIZE - PdePreferences.BUTTON_WIDTH;
-    int noLeft = cancelLeft - PdeEditor.INSET_SIZE - PdePreferences.BUTTON_WIDTH;
-    int yesLeft = noLeft - PdeEditor.INSET_SIZE - PdePreferences.BUTTON_WIDTH;
+    int cancelLeft = sizeW      - eachButton;
+    int noLeft     = cancelLeft - eachButton;
+    int yesLeft    = noLeft     - eachButton;
 
-    yesButton.setBounds(yesLeft, top, 
-                        PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
-    noButton.setBounds(noLeft, top, 
-                       PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
-    cancelButton.setBounds(cancelLeft, top, 
-                           PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    yesButton.setLocation(yesLeft, top);
+    noButton.setLocation(noLeft, top);
+    cancelButton.setLocation(cancelLeft, top);
+    editField.setLocation(yesLeft - PdePreferences.BUTTON_WIDTH, top);
+    okButton.setLocation(noLeft, top);
 
-    editField.setBounds(yesLeft - PdePreferences.BUTTON_WIDTH, top, 
-                        PdePreferences.BUTTON_WIDTH*2, PdePreferences.BUTTON_HEIGHT);
-    okButton.setBounds(noLeft, top, 
-                       PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    yesButton.setSize(   PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    noButton.setSize(    PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    cancelButton.setSize(PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    okButton.setSize(    PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    editField.setSize( 2*PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
   }
 
 
@@ -610,11 +588,11 @@ public class PdeEditorStatus extends Panel
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, PdeEditor.GRID_SIZE);
+    return new Dimension(300, PdePreferences.GRID_SIZE);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, PdeEditor.GRID_SIZE);    
+    return new Dimension(3000, PdePreferences.GRID_SIZE);    
   }
 
 
@@ -642,22 +620,7 @@ public class PdeEditorStatus extends Panel
 
     } else if (e.getSource() == okButton) {
       String answer = editField.getText();
-      /*
-        // no longer necessary, better key trapping via keyTyped()
-      if (PdeBase.platform == PdeBase.MACOSX) {
-        char unscrubbed[] = editField.getText().toCharArray();
-        for (int i = 0; i < unscrubbed.length; i++) {
-          if (!(((unscrubbed[i] >= '0') && (unscrubbed[i] <= '9')) ||
-                ((unscrubbed[i] >= 'A') && (unscrubbed[i] <= 'Z')) ||
-                ((unscrubbed[i] >= 'a') && (unscrubbed[i] <= 'z')))) {
-            unscrubbed[i] = '_';
-          }
-        }
-        answer = new String(unscrubbed);
-      }
-      */
       editor.skSaveAs2(answer);
-      //editor.skDuplicateRename2(editField.getText(), editRename);
       unedit();
 
     } else if (e.getSource() == editField) {
@@ -665,15 +628,3 @@ public class PdeEditorStatus extends Panel
     }
   }
 }
-
-
-  /*
-  Color noticeBgColor = new Color(102, 102, 102);
-  Color noticeFgColor = new Color(255, 255, 255);
-
-  Color errorBgColor = new Color(102, 26, 0);
-  Color errorFgColor = new Color(255, 255, 255);
-
-  Color promptBgColor = new Color(204, 153, 0);
-  Color promptFgColor = new COlor(0, 0, 0);
-  */
