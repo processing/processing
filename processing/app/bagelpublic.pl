@@ -1,4 +1,4 @@
-open(F, "bagel/Bagel.java") || die $!;
+open(F, "../../bagel/Bagel.java") || die $!;
 @contents = <F>;
 close(F);
 
