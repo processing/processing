@@ -29,7 +29,7 @@ import java.io.*;
 import javax.swing.*;
 
 
-public class PdeEditorHeader extends JComponent {
+public class PdeEditorHeader extends JComponent implements MouseInputListener {
   //static final String SKETCH_TITLER = "sketch";
 
   //static Color primaryColor;
@@ -42,9 +42,6 @@ public class PdeEditorHeader extends JComponent {
   int tabLeft[];
   int tabRight[];
 
-  int menuLeft;
-  int menuRight;
-
   //int sketchLeft;
   //int sketchRight;
   //int sketchTitleLeft;
@@ -56,8 +53,13 @@ public class PdeEditorHeader extends JComponent {
 
   //
 
-  boolean menuVisible;
   JMenu menu;
+
+  //boolean menuVisible;
+  JPopupMenu popup;
+
+  int menuLeft;
+  int menuRight;
 
   //
 
@@ -114,6 +116,9 @@ public class PdeEditorHeader extends JComponent {
           }
         }
       });
+
+    addMouseListener(this);
+    //addMouseMotionListener(this);
   }
 
 
@@ -201,7 +206,7 @@ public class PdeEditorHeader extends JComponent {
     menuLeft = sizeW - (16 + pieces[0][MENU].getWidth());
     menuRight = sizeW - 16;
     // draw the dropdown menu target
-    g.drawImage(pieces[menuVisible ? SELECTED : UNSELECTED][MENU], 
+    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU], 
                 menuLeft, 0);
 
     /*
@@ -241,6 +246,19 @@ public class PdeEditorHeader extends JComponent {
       menu.removeAll();
     } else {
       menu = new JMenu();
+      popup = menu.getPopUp();
+      add(popup);
+      popup.addPopupMenuListener(new PopupMenuListener() { 
+          public void popupMenuCanceled(PopupMenuEvent e) {
+            // on redraw, the isVisible() will get checked.
+            // actually, a repaint may be fired anyway, so this 
+            // may be redundant.
+            repaint();
+          }
+
+          //public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { }
+          //public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
+        });
     }
     JMenuItem item;
 
@@ -315,6 +333,39 @@ public class PdeEditorHeader extends JComponent {
       item.addActionListener(jumpListener);
       menu.add(item);
     }
+  }
+
+
+  public void deselectMenu() {
+    menuVisible = false; 
+    repaint();
+  }
+
+
+  public void mousePressed(MouseEvent e) {
+    int x = e.getX();
+    int y = e.getY();
+
+    if ((x > menuLeft) && (x < menuRight)) {
+      popup.show(this, x, y);
+
+    } else {
+      for (int i = 0; i < fileCount; i++) {
+        if ((x > tabLeft[i]) && (x < tabRight[i])) {
+          showTab(i);
+        }
+      }
+    }
+  }
+
+
+  public void showTab(int which) {
+    current = which;
+
+    
+
+    // set to the text for this file, and wipe out the undo buffer
+    editor.changeText(contents, true); 
   }
 
 

@@ -26,16 +26,26 @@ public class PdeSketch {
   String name; 
   File directory; 
 
+  static final int PDE = 0;
+  static final int JAVA = 1;
+
   int current;
 
   int fileCount;
   String names[];
   File files[];
+  int flavor[]; 
+  String program[];
   boolean modified[];
 
   int hiddenCount;
   String hiddenNames[];
   File hiddenFiles[];
+
+  //String sketchName; // name of the file (w/o pde if a sketch)
+  //File sketchFile;   // the .pde file itself
+  //File sketchDir;    // if a sketchbook project, the parent dir
+  //boolean sketchModified;
 
 
   /**
@@ -66,6 +76,8 @@ public class PdeSketch {
     names = new String[fileCount];
     files = new File[fileCount];
     modified = new boolean[fileCount];
+    flavor = new int[fileCount];
+    program = new String[fileCount];
     hiddenNames = new String[hiddenCount];
     hiddenFiles = new File[hiddenCount];
 
@@ -78,11 +90,13 @@ public class PdeSketch {
       if (list[i].endsWith(".pde")) {
 	names[fileCounter] = list[i].substring(0, list[i].length() - 4);
 	files[fileCounter] = new File(directory, list[i]);
+        flavor[fileCounter] = PDE;
 	fileCounter++;
 
       } else if (list[i].endsWith(".java")) {
 	names[fileCounter] = list[i].substring(0, list[i].length() - 5);
 	files[fileCounter] = new File(directory, list[i]);
+        flavor[fileCounter] = JAVA;
 	fileCounter++;
 
       } else if (list[i].endsWith(".pde.x")) {
@@ -99,15 +113,51 @@ public class PdeSketch {
   }
 
 
-  public boolean getModified() {
+  /**
+   * Have the contents of the currently visible tab been modified.
+   */
+  /*
+  public boolean isCurrentModified() {
     return modified[current];
   }
+  */
+
+
+  /**
+   * Returns true if this is a read-only sketch. Used for the 
+   * examples directory, or when sketches are loaded from read-only
+   * volumes or folders without appropraite permissions.
+   */
+  public boolean isReadOnly() {
+    return false;
+  }
+
+
+  /**
+   * Path to the data folder of this sketch.
+   */
+  /*
+  public File getDataDirectory() {
+    File dataDir = new File(directory, "data");
+    return dataDir.exists() ? dataDir : null;
+  }
+  */
+
+  // copy contents of data dir
+  // eventually, if the files already exist in the target, don't' bother.
+  public void updateDataDirectory(File buildDir) {
+    File dataDir = new File(directory, "data");
+    if (dataDir.exists()) {
+      PdeBase.copyDir(dataDir, buildDir);
+    }
+  }
+
 
 
   /**
    * Returns path to the main .pde file for this sketch.
    */
-  public String getPath() {
+  public String getMainFilePath() {
     return files[0].getAbsolutePath();
   }
 }

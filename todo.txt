@@ -34,6 +34,7 @@ X get bracket highlighting to work
 X why won't loop() go bold? -> java 1.4 problem on the mac
 X   test what it does on the pc
 X   seems to be a mac-specific problem (probably because of monaco)
+X removed kjc classes
 
 goodbye macos9
 X posted to message board about it going away
@@ -65,6 +66,18 @@ o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
 
+_ history: "archive this version" 
+_   makes a numbered archive of the current sketch as a zip file
+_   checks to see if there are other versions in the current folder
+_   or maybe just increments the numbers at the end of the sketch name
+
+when creating a new file, suggest untitled.pde
+they can put a .java or .pde extension on the file
+if no extension is found, add the .pde extension
+if the file has a .pde extension, then it will be run through the preproc.
+
+
+_ international: convert unicode chars to \uXXXX in the preproc
 
 _ fix command keys for menus (broken since switching to swing)
 
@@ -568,11 +581,12 @@ BAGEL / Fonts
 PDE - Processing Development Environment
 
 
-
-PDE / Runtime (includes classloading)
-
-
 PDE / Details
+
+   1 _ implement page setup and print
+   1 _   pretty printing of code in project
+   1 _   option to just print all code in project
+   1 _   option to export all the code as colored html
 
    1 _ p5 becomes a memory hog (benelek and glen murphy)
    1 _   even without sketches open, perhaps not gc'ing properly
