@@ -90,7 +90,8 @@ X circles and spheres
 X   bresenham (flat) oval function
 X   finish fill mode of flat circle function
 o   setting accuracy of circles/sphere
-
+X some flag to know whether applet is online or not
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 
 fixes because of dmose parser
 dm X move to antlr
@@ -174,6 +175,7 @@ o   and perhaps others?
 X textSpace SCREEN_SPACE and OBJECT_SPACE
 X strokeMode/strokeWidth -> 
 X   strokeWeight, strokeJoin, strokeMiter  
+X param(), online(), and status() functions
 
   // imaging API keywords	  	  
   pdeKeywords.add("REPLACE", Token.LITERAL1);
@@ -189,12 +191,11 @@ X   strokeWeight, strokeJoin, strokeMiter
 
 
 API
-_ param() function 
-_   also include code to read from properties file
+
+_ code to read from properties file from param()
 _   for application mode or while inside the environment
 _   these properties will be written to html on export
-_ some flag to know whether applet is online or not
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+
 _   fix link, loadStrings, saveBytes code once that's fixed
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
