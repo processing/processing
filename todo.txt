@@ -111,6 +111,8 @@ _ curveMode -> curveSegments, curveTightness
 _ removed fill(), stroke(), background() with no args
 _   (used to return current)
 _ getPixel/setPixel -> get/set
+_ addition of copy(), duplicate(), alpha(), and blendMode()
+_   all the imaging modes that go with those guys
 _ tint() colors images, not fill()
 
   // imaging API keywords	  	  
@@ -120,13 +122,6 @@ _ tint() colors images, not fill()
   pdeKeywords.add("SUBSTRACT", Token.LITERAL1);
   pdeKeywords.add("LIGHTEST", Token.LITERAL1);
   pdeKeywords.add("DARKEST", Token.LITERAL1);
-	  
-  pdeKeywords.add("blendMode",  Token.KEYWORD2);
-  pdeKeywords.add("copyPixel",  Token.KEYWORD2);
-  pdeKeywords.add("copyImage",  Token.KEYWORD2);
-  pdeKeywords.add("copyRegion",  Token.KEYWORD2);
-  pdeKeywords.add("region",  Token.KEYWORD2);
-  pdeKeywords.add("mask",  Token.KEYWORD2);
 
 
 ..................................................................
