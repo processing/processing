@@ -3469,7 +3469,7 @@ public class PApplet extends Applet
   public void setupExternal(Frame frame) {
     //externalRuntime = true;
 
-    Thread thread = new Thread() {  //new Runnable() {
+    Thread ethread = new Thread() {  //new Runnable() {
         public void run() {
           
           while ((Thread.currentThread() == this) && !finished) {
@@ -3491,7 +3491,7 @@ public class PApplet extends Applet
           }
         }
       };
-    thread.start();
+    ethread.start();
 
     frame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
