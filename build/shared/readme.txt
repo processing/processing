@@ -316,6 +316,15 @@ out of memory? try adjusting the parameters in the file 'run.bat' and
 use that to run instead of Proce55ing.exe. short instructions can be
 found inside that file.
 
+mouse issues: by default, windows seems to skip every other pixel on
+screen, causing weirdness for some drawing applications done with
+p5. if you're seeing this, you can fix it by going to the windows
+"mouse" control panel, the "pointer options" tab, and select "enhance
+pointer precision." (this was actually tracked down by someone else in
+the p5 community, whose name i have misplaced. if it was you, please
+drop me a line so you can be properly cited. this kind of help is huge
+for us, since we're such a small group!)
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
