@@ -60,8 +60,13 @@ X do applets know when they're stopped? stop? dispose?
 X   would be good to set a param in p5 so that the thread dies
 X   if people have other threads they've spawned, impossible to stop
 
+X include a lerp()? is there one in flash?
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
+_   should it be called lerp or mix?
+X acos, asin, log, exp, ceil/floor, pow, mag(x,y,z)
 
 MEGABUCKET (api)
+
 _ color issues
 _   add color(gray) and color(gray, alpha)
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074180764
@@ -78,9 +83,6 @@ _ include in the docs: don't override stop()
 _   or handle this some more intelligent way, super.stop() is needed.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
-_ include a lerp()? is there one in flash?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
-_ acos/asin/etc? 
 _ angleMode(DEGREES) and angleMode(RADIANS)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 _ figure out how to handle cached images, multiple images
@@ -100,7 +102,9 @@ _   append/unappend (no push/pop), shift/unshift,
 _   slice, splice, reverse, concat, split
 _ more blend() modes? (the five listed on the thread below?)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
+_   seems like semi-standard modes
 _ update() mode needs to be hacked in (?)
+_ make 'online' a boolean
 
 
 _ illustrator export / rendering mode
@@ -215,6 +219,7 @@ CORE / PGraphics
    1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
    1 _   scaled ellipse showing up as a hexagon
    1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
    1 _   problem with the fill
    1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
    1 _   z values not set properly on ellipses?

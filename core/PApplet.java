@@ -1065,6 +1065,14 @@ public class PApplet extends Applet
     return (float)Math.sqrt(a);
   }
 
+  static public final float log(float a) {
+    return (float)Math.log(a);
+  }
+
+  static public final float exp(float a) {
+    return (float)Math.exp(a);
+  }
+
   static public final float pow(float a, float b) {
     return (float)Math.pow(a, b);
   }
@@ -1084,6 +1092,11 @@ public class PApplet extends Applet
 
   static public final float min(float a, float b, float c) {
     return Math.min(a, Math.min(b, c));
+  }
+
+
+  static public final float lerp(float a, float b, float amt) {
+    return a + (b-a) * amt;
   }
 
   static public final float constrain(float amt, float low, float high) {
@@ -1124,6 +1137,18 @@ public class PApplet extends Applet
     return (float)Math.tan(angle);
   }
 
+  static public final float asin(float angle) {
+    return (float)Math.asin(angle);
+  }
+
+  static public final float acos(float angle) {
+    return (float)Math.acos(angle);
+  }
+
+  static public final float atan(float angle) {
+    return (float)Math.atan(angle);
+  }
+
   static public final float atan2(float a, float b) {
     return (float)Math.atan2(a, b);
   }
@@ -1151,12 +1176,21 @@ public class PApplet extends Applet
   }
 
 
+  static public final float mag(float a, float b) {
+    return (float)Math.sqrt(a*a + b*b);
+  }
+
+  static public final float mag(float a, float b, float c) {
+    return (float)Math.sqrt(a*a + b*b + c*c);
+  }
+
+
   static public final float dist(float x1, float y1, float x2, float y2) {
     return sqrt(sq(x2-x1) + sq(y2-y1));
   }
 
   static public final float dist(float x1, float y1, float z1,
-                          float x2, float y2, float z2) {
+                                 float x2, float y2, float z2) {
     return sqrt(sq(x2-x1) + sq(y2-y1) + sq(z2-z1));
   }
 
