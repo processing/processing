@@ -323,11 +323,19 @@ public class PdeBase {
       // not clear if i can write to this folder tho..
       try {
         MRJOSType domainDocuments = new MRJOSType("docs");
-        File libraryFolder = MRJFileUtils.findFolder(domainDocuments);
-          //MRJFileUtils.findFolder(kUserDomain, domainDocuments);
-        sketchbookFolder = new File(libraryFolder, "Processing");
+        //File libraryFolder = MRJFileUtils.findFolder(domainDocuments);
 
-      } catch (FileNotFoundException e) {
+        // for 77, try switching this to the user domain, just to be sure
+        Method findFolderMethod =
+          MRJFileUtils.class.getMethod("findFolder",
+                                       new Class[] { Short.TYPE,
+                                                     MRJOSType.class });
+        File documentsFolder = (File)
+          findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
+                                                       domainDocuments });
+        sketchbookFolder = new File(documentsFolder, "Processing");
+
+      } catch (Exception e) {
         showError("sketch folder problem",
                   "Could not locate default sketch folder location.", e);
       }

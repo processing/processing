@@ -1266,6 +1266,8 @@ public class PApplet extends Applet
   public void die(String what) {
     stop();
 
+    throw new RuntimeException("died: " + what);
+    /*
     if (online) {
       System.err.println("i'm dead.. " + what);
 
@@ -1273,6 +1275,7 @@ public class PApplet extends Applet
       System.err.println(what);
       System.exit(1);
     }
+    */
   }
 
 
