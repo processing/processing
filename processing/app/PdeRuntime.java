@@ -75,8 +75,6 @@ public class PdeRuntime implements PdeMessageConsumer {
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
 
-    //externalPaths = 
-    //externalPaths + PdeCompiler.calcClassPath();
     try {
       //if (PdeBase.getBoolean("play.external", false)) {
       //System.out.println(externalPaths);      
@@ -288,21 +286,17 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     if (process != null) {  // running externally
       //System.out.println("killing external process");
-      //process.destroy();
+      process.destroy();
+      process = null;
 
-      //System.out.println("cutting umbilical cord");
+      /*
       try {
         FileOutputStream fos = new FileOutputStream("die");
         fos.close();
       } catch (Exception e) {
         e.printStackTrace();
       }
-      //try {
-      //umbilical.close();
-      //umbilical = null;
-      //} catch (IOException e) {
-      //e.printStackTrace();w
-      //}
+      */
     }
 
     //System.gc();
