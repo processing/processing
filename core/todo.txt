@@ -105,6 +105,9 @@ _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
 
+_ get frame recording working
+_ also have a simple way to hook in triangle leeches to PGraphics3
+
 _ implement PGraphics2.curveVertex()
 
 _ move textMode and textSpace back out of PFont
@@ -114,9 +117,6 @@ _   can't, just use a RuntimeException
 _ get regular graphics engine working again
 _   smooth is no longer working
 _   ellipses aren't handled
-
-_ get frame recording working
-_ also have a simple way to hook in triangle leeches to PGraphics3
 
 _ default to single byte input from serial port
 _   and add serial.setBuffer() for message length as alternative
