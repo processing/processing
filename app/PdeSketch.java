@@ -204,6 +204,21 @@ public class PdeSketch {
 
 
   /**
+   * Save all code in the current sketch.
+   */
+  public void save() {
+    for (int i = 0; i < codeCount; i++) {
+      code[i].save();
+    }
+  }
+
+
+  public void saveCurrent() {
+    current.save();
+  }
+
+
+  /**
    * Prompt the user for a new file to the sketch. 
    * This could be .class or .jar files for the code folder,
    * .pde or .java files for the project,
@@ -247,6 +262,25 @@ public class PdeSketch {
       destFile = new File(dataFolder, filename);
     }
     PdeBase.copyFile(sourceFile, destFile);
+  }
+
+
+  /**
+   * Sets the modified value for the code in the frontmost tab.
+   */
+  public void setCurrentModified(boolean what) {
+    current.modified = what;
+  }
+
+
+  /**
+   * Return true if any of the items are modified.
+   */
+  public void isModified() {
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].modified) return true;
+    }
+    return false;
   }
 
 

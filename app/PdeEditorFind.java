@@ -121,7 +121,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
     setBounds((screen.width - wide) / 2,
 	      (screen.height - high) / 2, wide, high);
-    show();
+    //show();  // done byte PdeEditor instead
   }
 
 
@@ -151,7 +151,8 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     found = false;
 
     String search = findField.getText();
-    if (search.length() == 0) return;
+    // this will catch "find next" being called when no search yet
+    if (search.length() == 0) return;  
 
     String text = editor.textarea.getText();
 

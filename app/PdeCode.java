@@ -43,34 +43,67 @@ public class PdeCode {
   }
 
 
-  public void load() {
+  public void load() throws IOException {
     program = null;
-    try {
-      if (files[i].length() != 0) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
-        StringBuffer buffer = new StringBuffer();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-          buffer.append(line);
-          buffer.append('\n');
-        }
-        reader.close();
-        program = buffer.toString();
 
-      } else {
-        // empty code file.. no worries, might be getting filled up
-        program = "";
+    if (file.length() != 0) {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
+      StringBuffer buffer = new StringBuffer();
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        buffer.append(line);
+        buffer.append('\n');
       }
+      reader.close();
+      program = buffer.toString();
 
+    } else {
+      // empty code file.. no worries, might be getting filled up
+      program = "";
+    }
+
+    /*
     } catch (IOException e) {
       PdeBase.showWarning("Error loading file", 
                           "Error while opening the file\n" + 
                           file.getPath(), e);
       program = null;  // just in case
-    }
+    */
 
     //if (program != null) {
     //history = new History(file);
     //}
+  }
+
+
+  public void save() throws IOException {
+    // TODO re-enable history
+    //history.record(s, PdeHistory.SAVE);
+
+    //File file = new File(directory, filename);
+    //try {
+    //System.out.println("handleSave: results of getText");
+    //System.out.print(s);
+ 
+    ByteArrayInputStream bis = new ByteArrayInputStream(s.getBytes());
+    InputStreamReader isr = new InputStreamReader(bis);
+    BufferedReader reader = new BufferedReader(isr);
+
+    FileWriter fw = new FileWriter(file);
+    PrintWriter writer = new PrintWriter(new BufferedWriter(fw));
+
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      //System.out.println("w '" + line + "'");
+      writer.println(line);
+    }
+    writer.flush();
+    writer.close();
+
+    /*
+    sketchFile = file;
+    setSketchModified(false);
+    message("Done saving " + filename + ".");
+    */
   }
 }
