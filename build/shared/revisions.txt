@@ -1,3 +1,9 @@
+this file is a list of changes between each release. this is not a
+general reference of how to use processing, because the information
+for older releases will be super crusty. caution: the beverage you're
+about to enjoy is extremely hot.
+
+
 ABOUT REV 0051 - 31 january 2003
 
 enables key presses in the editor when 'alt' or 'option' is pressed. 
