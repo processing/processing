@@ -33,6 +33,10 @@ public class PdeBase implements ActionListener {
       };
 
   Menu serialMenu;
+  MenuItem saveMenuItem;
+  MenuItem saveAsMenuItem;
+  MenuItem beautifyMenuItem;
+  CheckboxMenuItem externalEditorItem;
 
   static final String WINDOW_TITLE = "Proce55ing";
 
@@ -172,8 +176,12 @@ public class PdeBase implements ActionListener {
     sketchbookMenu = new Menu("Open");
     //rebuildSketchbookMenu(openMenu);
     menu.add(sketchbookMenu);
-    menu.add(new MenuItem("Save", new MenuShortcut('S')));
-    menu.add(new MenuItem("Save as...", new MenuShortcut('S', true)));
+    saveMenuItem = new MenuItem("Save", new MenuShortcut('S'));
+    saveAsMenuItem = new MenuItem("Save as...", new MenuShortcut('S', true));
+    menu.add(saveMenuItem);
+    menu.add(saveAsMenuItem);
+    //menu.add(new MenuItem("Save", new MenuShortcut('S')));
+    //menu.add(new MenuItem("Save as...", new MenuShortcut('S', true)));
     //menu.add(new MenuItem("Rename", new MenuShortcut('S', true)));
     //menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
     menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
@@ -228,16 +236,29 @@ public class PdeBase implements ActionListener {
       menu.addSeparator();
     }
 
-    item = new MenuItem("Beautify", new MenuShortcut('B'));
-    item.setEnabled(false);
-    menu.add(item);
-    menu.addActionListener(this);
+    beautifyMenuItem = new MenuItem("Beautify", new MenuShortcut('B'));
+    //item.setEnabled(false);
+    menu.add(beautifyMenuItem);
 
     //menu.addSeparator();
     serialMenu = new Menu("Serial Port");
     menu.add(serialMenu);
     buildSerialMenu();
 
+    externalEditorItem = new CheckboxMenuItem("Use External Editor");
+    externalEditorItem.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+	//System.out.println(e);
+	if (e.getStateChange() == ItemEvent.SELECTED) {
+	  editor.setExternalEditor(true);
+	} else {
+	  editor.setExternalEditor(false);
+	}
+      }
+    });
+    menu.add(externalEditorItem);
+
+    menu.addActionListener(this);
     menubar.add(menu);  // add the sketch menu
 
     frame.setMenuBar(menubar);
@@ -627,6 +648,17 @@ public class PdeBase implements ActionListener {
     } else if (command.equals("Refresh")) {    
       //System.err.println("got refresh");
       rebuildSketchbookMenu(sketchbookMenu);      
+
+    } else if (command.equals("Beautify")) {
+      editor.doBeautify();
+
+      //} else if (command.equals("Use External Editor")) {
+      //boolean external = externalEditorItem.getState();
+      //external = !external;
+      //editor.setExternalEditor(external);
+
+      // disable save, save as menus
+      
     }
     //if (command.equals("Save QuickTime movie...")) {
     //  ((PdeEditor)environment).doRecord();

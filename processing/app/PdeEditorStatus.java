@@ -218,7 +218,10 @@ public class PdeEditorStatus extends Panel
       editField = new TextField();
       editField.addActionListener(this);
       editField.addKeyListener(new KeyAdapter() {
+	  protected void noop() { }
+
 	  public void keyPressed(KeyEvent event) {
+	    //System.out.println("got event " + event + "  " + KeyEvent.VK_SPACE);
 	    int c = event.getKeyChar();
 	    int code = event.getKeyCode();
 	    
@@ -238,13 +241,17 @@ public class PdeEditorStatus extends Panel
 		       (code == KeyEvent.VK_HOME) || 
 		       (code == KeyEvent.VK_END) || 
 		       (code == KeyEvent.VK_SHIFT)) {
+	      //System.out.println("nothing to see here");
+	      noop();
 
 	    } else if (code == KeyEvent.VK_ESCAPE) {
 	      unedit();
 	      editor.buttons.clear();
 	      event.consume();
 
-	    } else if (c == ' ') {
+	      //} else if (c == ' ') {
+	    } else if (code == KeyEvent.VK_SPACE) {
+	      //System.out.println("got a space");
 	      // if a space, insert an underscore
 	      //editField.insert("_", editField.getCaretPosition());
 	      /* tried to play nice and see where it got me
@@ -264,15 +271,18 @@ public class PdeEditorStatus extends Panel
 	      int end = editField.getSelectionEnd();
 	      editField.setText(t.substring(0, start) + "_" +
 				t.substring(end));
+	      editField.setCaretPosition(start+1);
 	      event.consume();
 
 	    } else if (c == '_') {
+	      noop();
 		// everything fine
 
 	    } else if (((code >= 'A') && (code <= 'Z')) &&
 		       (((c >= 'A') && (c <= 'Z')) ||
 			((c >= 'a') && (c <= 'z')))) {
 		// everything fine, catches upper and lower
+	      noop();
 	      
 	    } else if ((c >= '0') && (c <= '9')) {
 	      if (editField.getCaretPosition() == 0) {
