@@ -4,17 +4,25 @@ X   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 X   usually need to remove the 'work' dir
 X   modify macosx to use jikes from p5
 X   in general, things are way simpler on the pc
+X move 'clear history' into the history menu itself
+X move beautify to the edit menu
+X menu item for copying data files to the sketch
+X "add files to sketch..." menu item
 
-_ serious sluggishness with applets
+assigned to dan haskovec, completed by fry
+X event to explorer to open 'data' directory of project
+X   better just to go directly to the sketch's folder
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
+
+_ trying to track down sluggishness with applets.. 
 _   beginShape/endShape.. 3D scenes with boxes..
+
 _ write script to remove .DS_Store and CVS folders from dist
 
 
 MEDIUM
 _ include version number in the about box
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
-_ adding files to sketch.. menu item
-_   also do drag & drop implementation to pull in files
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 _ better 1.3/1.4 support.. properly detect vm
@@ -212,6 +220,7 @@ _     but couldn't remove the decoration from the window (jvm bug?)
 _     because it just quit without finishing
 _ macosx handleQuit forces termination (at least on 1.3)
 _   figure out how to prevent it, and add the 'cancel' button back
+_ drag & drop implementation to add files to sketch
 
 
 thesis / acg
@@ -619,9 +628,6 @@ dh b _   could be a separate window that's always around if needed
 dh b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
 dh b _ external editor -> add a command to launch
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
-dh b _ event to explorer to open 'data' directory of project
-dh b _   better just to go directly to the sketch's folder
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
 
    1 _ make a preference panel to set pde.properties stuff
    1 _ open button stays stuck if no sketch is selected from popup
