@@ -1019,17 +1019,6 @@ public class PApplet extends Applet
 
 
   /**
-   * Explicitly exit the applet. Inserted as a call for static
-   * mode apps, but is generally necessary because apps no longer
-   * have draw/loop separation.
-   */
-  public void exit() {
-    stop();
-    // TODO if not running as an applet, do a System.exit() here
-  }
-
-
-  /**
    * Function for an applet/application to kill itself and
    * display an error. Mostly this is here to be improved later.
    */
@@ -1054,6 +1043,16 @@ public class PApplet extends Applet
     die(what);
   }
 
+
+  /**
+   * Explicitly exit the applet. Inserted as a call for static
+   * mode apps, but is generally necessary because apps no longer
+   * have draw/loop separation.
+   */
+  public void exit() {
+    stop();
+    // TODO if not running as an applet, do a System.exit() here
+  }
 
 
   // ------------------------------------------------------------
