@@ -366,6 +366,7 @@ public class PLine implements PConstants
       return;
     }
 
+    /*
     // draw antialias polygon lines for non stroked polygons
     if (BLENDER && SMOOTH) {
       // fix for endpoints not being drawn
@@ -376,6 +377,7 @@ public class PLine implements PConstants
       drawline_blender(x_array[0], y_array[0], x_array[1], y_array[1]);
       return;
     }
+    */
 
     // draw normal strokes
     if (SMOOTH) {
@@ -1114,6 +1116,7 @@ public class PLine implements PConstants
    * Special "blender" line code by sami,
    * used for anti-aliasing polygon edges
    */
+  /*
   private void drawline_blender(double x0, double y0, double x1, double y1)
   {
     double tmp;
@@ -1279,10 +1282,5 @@ public class PLine implements PConstants
       }
     }
   }
+  */
 }
-
-
-
-
-
-

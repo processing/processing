@@ -180,6 +180,12 @@ OPENGL PROBLEMS
   have this graphics chipset on your machine before installing.
   (thanks to Daniel Shiffman for finding this fix!)
 
+- on macosx, i don't think there's much we can do about the following error:
+  Error: view not ready, cannot lock focus at 
+  "/Users/kbr/JavaNet/jogl/src/native/jogl/
+   MacOSXWindowSystemInterface.m:createContext:51"
+  this shows up sometimes on run, just hit run again and things oughta work.
+
 - on windows, if you're getting a lot of opengl crashing, blue screens, 
   or other mess, your driver might be bad. if you're using a dell, use
   the driver they provide (support.dell.com) instead of what might be a 

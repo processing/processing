@@ -83,12 +83,13 @@ public interface PConstants {
 
   // filter/convert types
 
-  static final int BLACK_WHITE   = 10;
-  static final int GRAYSCALE     = 11;
-  static final int BLUR          = 12;
-  static final int GAUSSIAN_BLUR = 13;
-  static final int POSTERIZE     = 14;
-  static final int FIND_EDGES    = 15;
+  static final int BLUR      = 12;
+  //static final int EDGES     = 15;  // removed
+  static final int GRAY      = 11;
+  static final int INVERT    = 13;
+  static final int POSTERIZE = 14;
+  static final int THRESHOLD = 10;
+  // RGB is also a filter option
 
 
   // blend mode keyword definitions
@@ -156,8 +157,8 @@ public interface PConstants {
   static final int QUAD_STRIP      = (1 << 7) | 1;
 
   static final int POLYGON         = (1 << 8) | 0;
-  static final int CONCAVE_POLYGON = (1 << 8) | 1;
-  static final int CONVEX_POLYGON  = (1 << 8) | 2;
+  //static final int CONCAVE_POLYGON = (1 << 8) | 1;
+  //static final int CONVEX_POLYGON  = (1 << 8) | 2;
 
 
   // shape modes
@@ -195,15 +196,14 @@ public interface PConstants {
 
   // stroke modes
 
-  static final int SQUARE    = 1 << 0;
-  static final int ROUND     = 1 << 1;
-  static final int PROJECTED = 1 << 2;
-  static final int CAP_MASK = SQUARE | ROUND | PROJECTED;
-
-  static final int MITERED     = 1 << 3;
+  static final int SQUARE   = 1 << 0;
+  static final int ROUND    = 1 << 1;
+  static final int PROJECT  = 1 << 2;
+  //static final int CAP_MASK = SQUARE | ROUND | PROJECT;
+  static final int MITER    = 1 << 3;
   //static final int ROUND       = 1 << 4;
-  static final int BEVELED     = 1 << 5;
-  static final int JOIN_MASK = MITERED | ROUND | BEVELED;
+  static final int BEVEL    = 1 << 5;
+  //static final int JOIN_MASK = MITERED | ROUND | BEVELED;
 
 
   // lighting
@@ -216,8 +216,8 @@ public interface PConstants {
 
   // net
 
-  static final int CLIENT = 0;
-  static final int SERVER = 1;
+  //static final int CLIENT = 0;
+  //static final int SERVER = 1;
 
 
   // key constants

@@ -2,11 +2,12 @@
 
 /*
   PImage - storage class for pixel data
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-05
   Ben Fry, Massachusetts Institute of Technology and
   Casey Reas, Interaction Design Institute Ivrea
+  Additional code contributions from toxi
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,7 +34,7 @@ import java.io.*;
 
 
 /**
- * [fry 0407XX]
+ * <PRE>[fry 0407XX]
  * - get() on RGB images sets the high bits to opaque
  * - modification of naming for functions
  * - inclusion of Object.clone()
@@ -66,7 +67,7 @@ import java.io.*;
  * image object as parameter. this is to provide an easy syntax for cases
  * where the main pixel buffer is the destination. as those methods are
  * overloaded in BApplet, users can call those functions directly without
- * explicitly giving a reference to PGraphics.
+ * explicitly giving a reference to PGraphics.</PRE>
  */
 public class PImage implements PConstants, Cloneable {
 
@@ -299,14 +300,14 @@ public class PImage implements PConstants, Cloneable {
    * For subclasses where the pixels[] buffer isn't set by default,
    * this should copy all data into the pixels[] array
    */
-  public void loadPixels() {
+  public void loadPixels() {  // ignore
   }
 
 
   /**
    * Mark all pixels as needing update.
    */
-  public void updatePixels() {
+  public void updatePixels() {  // ignore
     updatePixels(0, 0, width, height);
   }
 
@@ -315,7 +316,7 @@ public class PImage implements PConstants, Cloneable {
    * Note that when using imageMode(CORNERS),
    * the x2 and y2 positions are non-inclusive.
    */
-  public void updatePixels(int x1, int y1, int x2, int y2) {
+  public void updatePixels(int x1, int y1, int x2, int y2) {  // ignore
     //if (!modified) {  // could just set directly, but..
     //}
 
@@ -382,15 +383,16 @@ public class PImage implements PConstants, Cloneable {
       // w/h are x2/y2 in this case, bring em down to size
       w = (w - x);
       h = (h - x);
-
-    //} else if (imageMode == CENTER) {
-      // w/h are the proper w/h, but x/y need to be moved
-      //x -= w/2;
-      //y -= h/2;
     }
 
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
+    if (x < 0) {
+      w += x; // clip off the left edge
+      x = 0;
+    }
+    if (y < 0) {
+      h += y; // clip off some of the height
+      y = 0;
+    }
 
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
@@ -410,10 +412,8 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Convenience method to avoid an extra cast,
-   * and the exception handling.
+   * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
    */
-  /*
   public PImage get() {
     try {
       return (PImage) clone();
@@ -421,7 +421,6 @@ public class PImage implements PConstants, Cloneable {
       return null;
     }
   }
-  */
 
 
   public void set(int x, int y, int c) {
@@ -487,31 +486,26 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Options to filter an image in place.
-   * RGB set all the high bits in the image to opaque
-   *     and sets the format to RGB
-   * FIND_EDGES (no params) .. high pass filter
-   * BLUR (no params)
-   * GAUSSIAN_BLUR (one param)
-   * BLACK_WHITE? (param for midpoint)
-   * GRAYSCALE
-   * POSTERIZE (int num of levels)
+   * Method to apply a variety of basic filters to this image.
+   * <P>
+   * <UL>
+   * <LI>filter(BLUR) provides a basic blur.
+   * <LI>filter(GRAY) converts the image to grayscale.
+   * <LI>filter(INVERT) will invert the color components in the image.
+   * <LI>filter(RGB) set all the high bits in the image to opaque
+   * and sets the format to RGB.
+   * <LI>filter(THRESHOLD) converts the image to black and white.
+   * </UL>
    */
   public void filter(int kind) {
     switch (kind) {
 
-      case RGB:
-        for (int i = 0; i < pixels.length; i++) {
-          pixels[i] |= 0xff000000;
-        }
-        format = RGB;
+      case BLUR:
+        // TODO write basic low-pass filter blur here
+        // what does photoshop do on the edges with this guy?
         break;
 
-      case BLACK_WHITE:
-        filter(BLACK_WHITE, 0.5f);
-        break;
-
-      case GRAYSCALE:
+      case GRAY:
         // Converts RGB image data into grayscale using
         // weighted RGB components, and keeps alpha channel intact.
         // [toxi 040115]
@@ -525,14 +519,87 @@ public class PImage implements PConstants, Cloneable {
           pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
         }
         break;
+
+      case INVERT:
+        for (int i = 0; i < pixels.length; i++) {
+          //pixels[i] = 0xff000000 |
+          pixels[i] ^= 0xffffff;
+        }
+        break;
+
+      case POSTERIZE:
+        throw new RuntimeException("Use filter(POSTERIZE, int levels) " +
+                                   "instead of filter(POSTERIZE)");
+
+      case RGB:
+        for (int i = 0; i < pixels.length; i++) {
+          pixels[i] |= 0xff000000;
+        }
+        format = RGB;
+        break;
+
+      case THRESHOLD:
+        filter(THRESHOLD, 0.5f);
+        break;
     }
+    updatePixels();  // mark as modified
   }
 
 
+  /**
+   * Method to apply a variety of basic filters to this image.
+   * These filters all take a parameter.
+   * <P>
+   * <UL>
+   * <LI>filter(BLUR, float radius) performas a gaussian blur of the
+   * specified radius.
+   * <LI>filter(POSTERIZE, int levels) will posterize the image to
+   * between 2 and 255 levels.
+   * <LI>filter(THRESHOLD, float center) allows you to set the
+   * center point for the threshold. It takes a value from 0 to 1.0.
+   * </UL>
+   */
   public void filter(int kind, float param) {
     switch (kind) {
 
-      case BLACK_WHITE:  // greater than or equal to the threshold
+      case BLUR:
+        // TODO write gaussian blur
+        break;
+
+      case GRAY:
+        throw new RuntimeException("Use filter(GRAY) instead of " +
+                                   "filter(GRAY, param)");
+
+      case INVERT:
+        throw new RuntimeException("Use filter(INVERT) instead of " +
+                                   "filter(INVERT, param)");
+
+      case POSTERIZE:
+        int levels = (int)param;
+        if ((levels < 2) || (levels > 255)) {
+          throw new RuntimeException("Levels must be between 2 and 255 for " +
+                                     "filter(POSTERIZE, levels)");
+        }
+        // TODO not optimized
+        int levels256 = 256 / levels;
+        int levels1 = levels - 1;
+        for (int i = 0; i < pixels.length; i++) {
+          int rlevel = ((pixels[i] >> 16) & 0xff) / levels256;
+          int glevel = ((pixels[i] >> 8) & 0xff) / levels256;
+          int blevel = (pixels[i] & 0xff) / levels256;
+
+          rlevel = (rlevel * 255 / levels1) & 0xff;
+          glevel = (glevel * 255 / levels1) & 0xff;
+          blevel = (blevel * 255 / levels1) & 0xff;
+
+          pixels[i] = ((0xff000000 & pixels[i]) |
+                       (rlevel << 16) |
+                       (glevel << 8) |
+                       blevel);
+        }
+        break;
+
+      case THRESHOLD:  // greater than or equal to the threshold
         int thresh = (int) (param * 255);
         for (int i = 0; i < pixels.length; i++) {
           int max = Math.max((pixels[i] & RED_MASK) >> 16,
@@ -543,10 +610,11 @@ public class PImage implements PConstants, Cloneable {
         }
         break;
 
-      case GRAYSCALE:
-        filter(GRAYSCALE);
-        break;
+      case RGB:
+        throw new RuntimeException("Use filter(RGB) instead of " +
+                                   "filter(RGB, param)");
     }
+    updatePixels();  // mark as modified
   }
 
 
