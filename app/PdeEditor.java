@@ -1400,7 +1400,7 @@ afterwards, some of these steps need a cleanup function
 
       ps.println("<html>");
       ps.println("<head>");
-      ps.println("<title>" + exportSketchName + " : Built with Proce55ing</title>");
+      ps.println("<title>" + exportSketchName + " : Built with Processing</title>");
       ps.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
       ps.println("<BODY BGCOLOR=\"#666666\" text=\"#FFFFFF\" link=\"#CCCC00\" vlink=\"#CCCC00\" alink=\"#999900\">");
       ps.println("<center>");
@@ -1419,7 +1419,7 @@ afterwards, some of these steps need a cleanup function
       ps.println("      <td><a href=\"" + exportSketchName + ".java\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\">Source code</font></a></td>");
       ps.println("    </tr>");
       ps.println("    <tr>");
-      ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://Proce55ing.net\">Proce55ing</a></font></td>");
+      ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://Proce55ing.net\">Processing</a></font></td>");
       ps.println("    </tr>");
       ps.println("  </table>");
       ps.println("</center>");
