@@ -125,16 +125,13 @@ public class PdePreprocessor {
     //
     PdeRecognizer parser = new PdeRecognizer(filter);
 
-    // XXXdmose comments and stuff
+    // use our extended AST class
+    //
     parser.setASTNodeClass("antlr.ExtendedCommonASTWithHiddenTokens");
 
     // start parsing at the compilationUnit non-terminal
     //
-    try {
-      parser.pdeProgram();
-    } catch (Exception e) {
-      System.err.println("exception: " + e);
-    }
+    parser.pdeProgram();
 
     // set up the AST for traversal by PdeEmitter
     //
@@ -163,7 +160,6 @@ public class PdePreprocessor {
     writeHeader(stream, extendsNormal, exporting, name);
 
     emitter.setOut(stream);
-    // XXXdmose should try block encompass more?
     emitter.print(rootNode);
 
     writeFooter(stream);
