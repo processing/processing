@@ -19,7 +19,7 @@ public class PdeKeyListener extends KeyAdapter {
     case 16: editor.doPrint(); break;  // control p for print
     case 18: editor.doPlay(); break;  // control r for run
     case 19: editor.doSave(); break;  // control s for save
-    case 20: editor.doSnapshot(); break;  // control t for snapshot
+      //case 20: editor.doSnapshot(); break;  // control t for snapshot
       // escape only works from the runpanel, because that's
       // who's getting all the key events while running
       //case 27: editor.terminate(); break;  // escape to stop	

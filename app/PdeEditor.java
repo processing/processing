@@ -210,7 +210,7 @@ public class PdeEditor extends Panel {
   }
   */
 
-
+  /*
   public void handleNew() {
     try {
       // does all the plumbing to create a new project
@@ -258,7 +258,8 @@ public class PdeEditor extends Panel {
   */
 
 
-  public void sketchbookOpen() {
+  public void sketchbookOpen(String path) {
+    System.out.println("PdeEditor.sketchBookOpen: " + path);
   }
 
 
@@ -512,168 +513,6 @@ public class PdeEditor extends Panel {
   }
 
 
-  public void doSnapshot() {
-  /*
-    //dbcp.msg("Sending your file to the server...");
-    message("Sending your file to the server...");
-
-    try {
-      String programStr = textarea.getText();
-      //byte imageData[] = dbrp.runners[dbrp.current].dbg.getPixels();
-      //byte imageData[] = graphics.getPixels();
-      String imageStr = new String(graphics.makeTiffData());
-
-      URL appletUrl = app.getDocumentBase();
-      String document = appletUrl.getFile();
-      document = document.substring(0, document.lastIndexOf("?"));
-      URL url = new URL("http", appletUrl.getHost(), document);
-
-      URLConnection conn = url.openConnection();
-      conn.setDoInput(true);
-      conn.setDoOutput(true);
-      conn.setUseCaches(false);
-      conn.setRequestProperty("Content-Type", 
-			      "application/x-www-form-urlencoded");
-
-      DataOutputStream printout = 
-	new DataOutputStream(conn.getOutputStream());
-
-      String content = 
-	"save_as=" + URLEncoder.encode(PdeBase.get("save_as")) + 
-	"&save_image=" + URLEncoder.encode(imageStr) +
-	"&save_program=" + URLEncoder.encode(programStr);
-
-      printout.writeBytes(content);
-      printout.flush();
-      printout.close();
-	    
-      // what did they say back?
-      DataInputStream input = 
-	new DataInputStream(conn.getInputStream());
-      String str = null;
-      while ((str = input.readLine()) != null) {
-	//System.out.println(str);
-      }
-      input.close();	    
-      message("Done saving file.");
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      message("Problem: Your work could not be saved.");
-    }
-    buttons.clear();
-  */
-  }
-
-
-  static byte tiffHeader[] = {
-    77, 77, 0, 42, 0, 0, 0, 8, 0, 9, 0, -2, 0, 4, 0, 0, 0, 1, 0, 0,
-    0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0, 0, 1, 
-    0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 3, 0, 0, 0, 122, 1, 6, 0, 3, 0, 
-    0, 0, 1, 0, 2, 0, 0, 1, 17, 0, 4, 0, 0, 0, 1, 0, 0, 3, 0, 1, 21, 
-    0, 3, 0, 0, 0, 1, 0, 3, 0, 0, 1, 22, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 
-    1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
-  };
-
-  static byte[] makeTiffData(int pixels[], int width, int height) {
-    byte tiff[] = new byte[768 + width*height*3];
-    System.arraycopy(tiffHeader, 0, tiff, 0, tiffHeader.length);
-    tiff[30] = (byte) ((width >> 8) & 0xff);
-    tiff[31] = (byte) ((width) & 0xff);
-    tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
-    tiff[43] = tiff[103] = (byte) ((height) & 0xff);
-    int count = width*height*3;
-    tiff[114] = (byte) ((count >> 24) & 0xff);
-    tiff[115] = (byte) ((count >> 16) & 0xff);
-    tiff[116] = (byte) ((count >> 8) & 0xff);
-    tiff[117] = (byte) ((count) & 0xff);
-    int index = 768;
-    for (int i = 0; i < pixels.length; i++) {
-      tiff[index++] = (byte) ((pixels[i] >> 16) & 0xff);
-      tiff[index++] = (byte) ((pixels[i] >> 8) & 0xff);
-      tiff[index++] = (byte) ((pixels[i] >> 0) & 0xff);
-    }
-    return tiff;
-  }
-
-  //public byte[] makeTiffData() {
-  //return makeTiffData(pixels, width, height);
-  //}
-
-  public void doSaveTiff() {
-  /*
-    message("Saving TIFF image...");
-    String s = textarea.getText();
-    FileDialog fd = new FileDialog(new Frame(), 
-				   "Save image as...", 
-				   FileDialog.SAVE);
-    fd.setDirectory(lastDirectory);
-    fd.setFile("untitled.tif");
-    fd.show();
-	
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-    if (filename == null) return;
-
-    File file = new File(directory, filename);
-    try {
-      FileOutputStream fos = new FileOutputStream(file);
-      byte data[] = graphics.makeTiffData();
-      fos.write(data);
-      fos.flush();
-      fos.close();
-
-      lastDirectory = directory;
-      message("Done saving image.");
-
-    } catch (IOException e) {
-      e.printStackTrace();
-      message("An error occurred, no image could be written.");
-    }
-  */
-  }
-
-
-  /*
-  static void writeTiffHeader(OutputStream os, int width, int height) 
-    throws IOException {
-    byte header[] = new byte[768];
-    System.arraycopy(tiffHeader, 0, header, 0, tiffHeader.length);
-    header[30] = (byte) ((width >> 8) & 0xff);
-    header[31] = (byte) ((width) & 0xff);
-    header[42] = header[102] = (byte) ((height >> 8) & 0xff);
-    header[43] = header[103] = (byte) ((height) & 0xff);
-    int count = width*height*3;
-    header[114] = (byte) ((count >> 24) & 0xff);
-    header[115] = (byte) ((count >> 16) & 0xff);
-    header[116] = (byte) ((count >> 8) & 0xff);
-    header[117] = (byte) ((count) & 0xff);
-    os.write(header);
-  }
-
-  static void writeTiff(OutputStream os, int width, int height, int pixels[]) {
-    writeTiffHeader(os, width, height);
-    for (int i = 0; i < pixels.length; i++) {
-      write((pixels[i] >> 16) & 0xff);
-      write((pixels[i] >> 8) & 0xff);
-      write(pixels[i] & 0xff);
-    }
-    os.flush();
-  } 
-  */
-
-  /*
-  static public byte[] makePgmData(byte inData[], int width, int height) {
-    String headerStr = "P5 " + width + " " + height + " 255\n";
-    byte header[] = headerStr.getBytes();
-    int count = width * height;
-    byte outData[] = new byte[header.length + count];
-    System.arraycopy(header, 0, outData, 0, header.length);
-    System.arraycopy(inData, 0, outData, header.length, count);
-    return outData;
-  }
-  */
-
   public void doPrint() {
     /*
     Frame frame = new Frame(); // bullocks
@@ -708,20 +547,24 @@ public class PdeEditor extends Panel {
   }
 
 
+  public void doQuit() {
+    System.exit(0);
+  }
+
+
   public void doBeautify() {
-    /*
     String prog = textarea.getText();
-    if ((prog.charAt(0) == '#') || (prog.charAt(0) == ';')) {
-      message("Only DBN code can be made beautiful.");
-      buttons.clear();
-      return;
-    }
+    //if ((prog.charAt(0) == '#') || (prog.charAt(0) == ';')) {
+    //message("Only DBN code can be made beautiful.");
+    //buttons.clear();
+    //return;
+    //}
     char program[] = prog.toCharArray();
     StringBuffer buffer = new StringBuffer();
     boolean gotBlankLine = false;
     int index = 0;
     int level = 0;
-	
+
     while (index != program.length) {
       int begin = index;
       while ((program[index] != '\n') &&
@@ -752,22 +595,33 @@ public class PdeEditor extends Panel {
 	  gotBlankLine = true;
 	}
       } else {
-	if (line.charAt(0) == '}') {
+	System.out.println(level);
+	int idx = -1;
+	String myline = line.substring(0);
+	while (myline.lastIndexOf('}') != idx) {
+	  idx = myline.indexOf('}');
+	  myline = myline.substring(idx+1);
 	  level--;
 	}
-	for (int i = 0; i < level*3; i++) {
+	for (int i = 0; i < level*2; i++) {
 	  buffer.append(' ');
 	}
 	buffer.append(line);
 	buffer.append('\n');
-	if (line.charAt(0) == '{') {
+	//if (line.charAt(0) == '{') {
+	//level++;
+	//}
+	idx = -1;
+	myline = line.substring(0);
+	while (myline.lastIndexOf('{') != idx) {
+	  idx = myline.indexOf('{');
+	  myline = myline.substring(idx+1);
 	  level++;
 	}
 	gotBlankLine = false;
       }
     }
     textarea.setText(buffer.toString());
-    */
     buttons.clear();
   }
 
@@ -938,28 +792,6 @@ public class PdeEditor extends Panel {
     status.unnotice(msg);
   }
 }
-
-
-/*
-class OpenMenuListener implements ActionListener {
-  PdeEditor editor;
-  String path;
-
-  public OpenMenuListener(PdeEditor editor, String path) {
-    this.editor = editor;
-    this.path = path;
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals(NEW_SKETCH_ITEM)) {
-      editor.handleNew();
-
-    } else {
-      editor.handleOpen(path + File.separator + e.getActionCommand());
-    }
-  }
-}
-*/
 
 
 #endif

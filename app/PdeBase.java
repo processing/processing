@@ -6,73 +6,13 @@ import java.util.*;
 import java.awt.event.*;
 
 
-/*
-
-
-[ File ]
-New
-Open ->
-Save
-Duplicate
-Export
--
-Proce55ing.net
-Reference
--
-Quit
-
-
-[ Open-> (Sketchbook) ]
-sketch-001
-sketch-002
-sketch-003
--- 
-Course ->
-Examples -> 
-Users ->
-Proce55ing.net ->
---
-Refresh List
-Compile All
-
-
-[ Edit ]
-Undo
--
-Cut
-Copy 
-Paste
--
-Select all
-
-
-[ Sketch ]
-Play
-Present
-Stop
-
-
-new sketch just makes a new sketch, doesn't ask for name
-tries to do numbered version based on sketches already present
-
-last section is configurable
-choose a name for the entries, and a url for the base of the code
-  file urls will be local, don't include file:/// to user
-  http urls are base of directory where the code is found
-
-*/ 
-
-
-public class PdeBase /*extends Component*/ implements ActionListener {
-  //static PdeApplet applet;
+public class PdeBase implements ActionListener {
   static Properties properties;
   boolean errorState;
 
   String encoding;
   PdeEditor editor;
 
-  // made static so that toFront() can be called by 
-  // full screen code in editor
   static Frame frame;
   WindowAdapter windowListener;
 
@@ -91,24 +31,16 @@ public class PdeBase /*extends Component*/ implements ActionListener {
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-	System.exit(0);
+	//System.exit(0);
+	editor.doQuit();
       }
     };
     frame.addWindowListener(windowListener);
 
-#ifdef RECORDER
-    MenuBar menubar = new MenuBar();
-    Menu goodies = new Menu("Processing");
-    goodies.add(new MenuItem("Save QuickTime movie..."));
-    goodies.add(new MenuItem("Quit"));
-    goodies.addActionListener(this);
-    menubar.add(goodies);
-    frame.setMenuBar(menubar);
-#endif
-
     properties = new Properties();
     try {
-      properties.load(new FileInputStream("lib/pde.properties"));
+      //properties.load(new FileInputStream("lib/pde.properties"));
+      properties.load(getClass().getResource("pde.properties").openStream());
 
     } catch (Exception e) {
       System.err.println("Error reading pde.properties");
@@ -117,23 +49,8 @@ public class PdeBase /*extends Component*/ implements ActionListener {
     }
     int width = getInteger("window.width", 600);
     int height = getInteger("window.height", 350);
-    // ms jdk requires that BorderLayout is set explicitly
-    //frame.add("Center", this);
-
-    //applet = this;
-    //System.getProperties().list(System.out);
-    //System.out.println("home = " + System.getProperty("user.home"));
-    //System.out.println("prefix = " + System.getProperty("sys.prefix"));
 
     encoding = get("encoding");
-
-    //String mode = get("mode", "editor");
-    //System.err.println("mode is " + mode);
-    //if (mode.equals("editor")) {
-
-    //System.err.println("editor not yet complete");
-    //System.err.println("editor dammit");
-    //System.exit(0);
     boolean beautify = false; 
     boolean convertSemicolons = false;
     String program = get("program"); 
@@ -157,40 +74,28 @@ public class PdeBase /*extends Component*/ implements ActionListener {
 	}  
       }
     } 
-    //add(hostess = new PdeEditor(this, program));
-    //PdeEditor editor = new PdeEditor(this, program);
     editor = new PdeEditor(/*this,*/ program);
-    //if (beautify) editor.doBeautify(); 
-
     frame.setLayout(new BorderLayout());
-    //setLayout(new BorderLayout());
-    //add("Center", editor);
     frame.add("Center", editor);
 
-    MenuBar menubar = new MenuBar();
 
+    MenuBar menubar = new MenuBar();
     Menu menu;
     MenuItem item;
 
     menu = new Menu("File");
     menu.add(new MenuItem("New"));
-    //menu.add(new MenuItem("Open"));
-
     Menu openMenu = new Menu("Open");
     rebuildSketchbookMenu(openMenu);
     menu.add(openMenu);
-
     menu.add(new MenuItem("Save"));
     menu.add(new MenuItem("Duplicate"));
     menu.add(new MenuItem("Export"));
     menu.addSeparator();
-
     menu.add(new MenuItem("Proce55ing.net"));
     menu.add(new MenuItem("Reference"));
     menu.addSeparator();
-
     menu.add(new MenuItem("Quit"));
-
     menubar.add(menu);
 
     // completely un-functional edit menu
@@ -205,14 +110,12 @@ public class PdeBase /*extends Component*/ implements ActionListener {
     menu.setEnabled(false);
     menubar.add(menu);
 
-
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Play"));
     menu.add(new MenuItem("Present"));
     menu.add(new MenuItem("Stop"));
     menu.addActionListener(this);
     menubar.add(menu);
-
 
     frame.setMenuBar(menubar);
 
@@ -284,12 +187,25 @@ public class PdeBase /*extends Component*/ implements ActionListener {
 
       sketchbookFolder = new File("sketchbook");
       sketchbookPath = sketchbookFolder.getCanonicalPath();
+      if (!sketchbookFolder.exists()) {
+	System.err.println("sketchbook folder doesn't exist, " + 
+			   "making a new one");
+	sketchbookFolder.mkdirs();
+      }
 
 
       // files for the current user (for now, most likely 'default')
 
       // header knows what the current user is
-      String userPath = sketchbookPath + File.separator + header.user;
+      String userPath = sketchbookPath + 
+	File.separator + editor.header.user;
+
+      File userFolder = new File(userPath);
+      if (!userFolder.exists()) {
+	System.err.println("sketchbook folder for '" + editor.header.user + 
+			   "' doesn't exist, creating a new one");
+	userFolder.mkdirs();
+      }
 
       SketchbookMenuListener userMenuListener = 
 	new SketchbookMenuListener(userPath);
@@ -309,27 +225,30 @@ public class PdeBase /*extends Component*/ implements ActionListener {
       // other available subdirectories
 
       String toplevel[] = sketchbookFolder.list();
-      for (int i = 0; i < toplevel; i++) {
-	if ((toplevel[i].equals(header.user)) ||
+      for (int i = 0; i < toplevel.length; i++) {
+	if ((toplevel[i].equals(editor.header.user)) ||
 	    (toplevel[i].equals(".")) ||
 	    (toplevel[i].equals(".."))) continue;
 
 	Menu subMenu = new Menu(toplevel[i]);
 	File subFolder = new File(sketchbookFolder, toplevel[i]);
-	String subPath = subfolder.getCanonicalPath();
+	String subPath = subFolder.getCanonicalPath();
 	SketchbookMenuListener subMenuListener = 
 	  new SketchbookMenuListener(subPath);
 
-	String entries[] = subFolder.list();
+	entries = subFolder.list();
 	for (int j = 0; j < entries.length; j++) {
 	  if ((entries[j].equals(".")) || 
 	      (entries[j].equals(".."))) continue;
-	  subMenu.add(entries[j]);
+	  //subMenu.add(entries[j]);
+	  MenuItem item = new MenuItem(entries[j]);
+	  item.addActionListener(subMenuListener);
+	  subMenu.add(item);
 	}
 
 	menu.add(subMenu);
       }
-      menu.addSeparator();
+      //menu.addSeparator();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -339,6 +258,13 @@ public class PdeBase /*extends Component*/ implements ActionListener {
 
   public void actionPerformed(ActionEvent event) {
     String command = event.getActionCommand();
+
+    if (command.equals("Quit")) {
+      editor.doQuit();
+
+    } else if (command.equals("")) {
+    
+    }
     //if (command.equals("Save QuickTime movie...")) {
     //  ((PdeEditor)environment).doRecord();
     //} else if (command.equals("Quit")) {
