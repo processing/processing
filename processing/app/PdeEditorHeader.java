@@ -135,8 +135,6 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
-    // DISABLED TEMPORARILY FOR 0022
-    /*
     g.setColor(secondaryColor);
     g.drawString(PROJECT_TITLER, projectTitleLeft, baseline);
     g.drawString(USER_TITLER, userTitleLeft, baseline);
@@ -144,7 +142,6 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     g.setColor(primaryColor);
     g.drawString(project, projectLeft, baseline);
     g.drawString(user, userLeft, baseline);
-    */
 
     //g.setColor(fgColor[mode]);
     //g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + fontAscent) / 2);
