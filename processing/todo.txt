@@ -1,6 +1,9 @@
 0036
 X editor.buttons.bgcolor default value was wrong
+X sketch.properties exception when closing on linux and mac
+X   urlstr was garbage because of windows-specific code
 
+_ build macos9 version with JDK13 flag turned off
 _ dbn2p5 converter.. ooh!
 
 bagel
