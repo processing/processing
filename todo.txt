@@ -1,14 +1,42 @@
 0067
-_ don't forget to change the revision number on release
-_ netscape/javascript had to be included for linux and for expert
+X it's possible to write non-1.1 code, even syntax
+X   would -source 1.1 help this? -> nope
+X fixed IllegalArgumentException for people using run.bat and run-expert.bat
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132725
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132753
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135344;start=0
+X save/saveFrame was super-slow.. wasn't buffering the outputstream
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135103;start=0
+X don't forget to change the revision number on release
+X   wrote script to force me to fix them
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
+X apple has update qtjava for quicktime 6.4, thank god
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
+
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
+
+_ netscape/javascript had to be included for linux and for expert
+_   add it to the cvs and the build scripts
+_   also needs to be included for 1.4 on the mac
+
 _ BImage.smooth() ?
 _ mouse wheel not working on macosx, need to dynamically load 1.4 code
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ simong interested in helping
 _ set PATH to include java (!)
 _   external classes currently require expert release
+
+_ update the release of jikes that's used
+X   updated for macosx
+_   compile new version for linux
+_   compile new version for windows
+
+_ println() and System.out.println() from external classes has trouble
+_   println() / print() not always flushing until after app quits
+
+_ change "send to bugs@proce55ing.net" to a longer popup dialog
+_   open the discourse board in another window, ask to post the code
 
 _ find/replace.. when hitting 'find', select the text in the field
 _   give that field focus explicitly, rather than just for typing
@@ -20,9 +48,6 @@ _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
 
-_ it's possible to write non-1.1 code, even syntax
-_   would -source 1.1 help this? 
-_  'final int' needs to be 'static final int' in 1.1
 
 ................
 
@@ -47,6 +72,13 @@ rect(mouseX, mouseY, 200, 200);
 
 ................
 
+casey priorities:
+graphics engine up to spec
+video/net/sound up to spec
+multiple files open 
+compile libraries within p5
+
+................
 
 PREPROC
 _ text(String.valueOf(i+1), left + i*20, top);
@@ -72,19 +104,6 @@ _   so fill(video.pixels[blah]) doesn't work
 _   test against 'pixels' example
 _ make BVideo subclass BImage
 _   make sure the high bits are getting set as opaque
-
-
-_ problems for beautify:
-_   //for (int i = 0; i < 10; i++) {
-_   } catch (IOException e) { }
-_   need to ignore comments.. but not those inside quotes.. oog
-_ add ESC to font builder, and find
-_ font builder should open back up with the same selection
-_   maybe just hide it, just like find
-_ font builder should update when the size for the font is changed
-_  (so long as the size itself is valid)
-_ why aren't cursors working on the mac
-_ clearing the text area on the mac
 
 
 DEVELOPERS
@@ -675,6 +694,18 @@ dh 1 _ rename doesn't set focus to renamer area
    1 _ for title-clicking of sketch name, change to a btn
    1 _   or somehow mark what it's going to do, rather than just doing it
 
+   1 _ problems for beautify:
+   1 _   //for (int i = 0; i < 10; i++) {
+   1 _   } catch (IOException e) { }
+   1 _   need to ignore comments.. but not those inside quotes.. oog
+   1 _ add ESC to font builder, and find
+   1 _ font builder should open back up with the same selection
+   1 _   maybe just hide it, just like find
+   1 _ font builder should update when the size for the font is changed
+   1 _  (so long as the size itself is valid)
+   1 _ why aren't cursors working on the mac
+   1 _ clearing the text area on the mac
+
 
 PDE / Features
 
@@ -805,6 +836,10 @@ b _ splash screen
 
 
 DISTRIBUTION / Mac OS X
+1 _ move the mac to java 1.4
+1 _   1.4 is being used externally, and wheel mouse would be nice
+1 _   not doing currently, lots of strange repaint bugs
+1 _     all fixable for sure, but no point before beta since low priority
 b _ set nice background for disk image on macosx
 1 _ random lockups seem common in 1.4
 1 _ test more to see if runtime exceptions are coming through
