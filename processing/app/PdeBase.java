@@ -864,71 +864,11 @@ public class PdeBase extends Frame implements ActionListener {
       editor.skExport();
 
     } else if (command.equals("Proce55ing.net")) {
-      if (platform == WINDOWS) {
-        try {
-          Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore http://Proce55ing.net");
-          //Runtime.getRuntime().exec("start http://Proce55ing.net");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
-      } else if ((platform == MACOS9) || (platform == MACOSX)) {
-#ifdef MACOS
-        /*
-        try {
-          com.apple.mrj.MRJFileUtils.openURL("http://Proce55ing.net");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        */
-#endif
-
-      } else if (platform == LINUX) {
-        try {
-          // wild ass guess
-          Runtime.getRuntime().exec("mozilla http://Proce55ing.net");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
-      } else {
-        System.err.println("unspecified platform");
-      }
+      openURL("http://Proce55ing.net/");
 
     } else if (command.equals("Reference")) {
-      if (platform == WINDOWS) {
-        try {
-          //Runtime.getRuntime().exec("cmd /c reference\\index.html");
-          String currentDir = System.getProperty("user.dir");
-          Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
-            + "\\reference\\index.html");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
-      } else if ((platform == MACOSX) || (platform == MACOS9)) {
-#ifdef MACOS
-        /*
-        try {
-          com.apple.mrj.MRJFileUtils.openURL("reference/index.html");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        */
-#endif
-
-      } else if (platform == LINUX) {
-        try {
-          // another wild ass guess
-          String currentDir = System.getProperty("user.dir");
-          Runtime.getRuntime().exec("mozilla "+ currentDir + "/reference/index.html");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
-      } else {
-        System.err.println("unspecified platform");
-      }
+      openURL(System.getProperty("user.dir") + File.separator + 
+              "reference" + File.separator + "index.html");
 
     } else if (command.equals("Quit")) {
       editor.doQuit();
@@ -963,32 +903,54 @@ public class PdeBase extends Frame implements ActionListener {
       // disable save, save as menus
       
     }
-    //if (command.equals("Save QuickTime movie...")) {
-    //  ((PdeEditor)environment).doRecord();
-    //} else if (command.equals("Quit")) {
-    //  System.exit(0);
-    //}
   }
 
 
-  // does this do anything useful?
-  /*
-  public void destroy() {
-    if (editor != null) {
-      editor.terminate();
+  static public void openURL(String url) { 
+    try {
+      if (platform == WINDOWS) {
+        // this is not guaranteed to work, because who knows if the 
+        // path will always be c:\progra~1 et al. also if the user has
+        // a different browser set as their default (which would 
+        // include me) it'd be annoying to be dropped into ie.
+        //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
+
+	// this uses a shell execute to launch the .html file
+        // note that under cygwin, the .html files have to be chmodded +x
+        // after they're unpacked from the zip file. i don't know why,
+        // and don't understand what this does in terms of windows 
+        // permissions. without the chmod, the command prompt says 
+        // "Access is denied" in both cygwin and the "dos" prompt.
+        //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" + 
+        //                        referenceFile + ".html");
+        Runtime.getRuntime().exec("cmd /c " + url);
+
+#ifdef MACOS
+      } else if (platform == MACOSX) {
+        //com.apple.eio.FileManager.openURL(url);
+        if (!url.startsWith("http://")) url = "file://" + url;
+        System.out.println("trying to open " + url);
+        com.apple.mrj.MRJFileUtils.openURL(url);
+
+      } else if (platform == MACOS9) {
+        com.apple.mrj.MRJFileUtils.openURL(url);
+#endif
+
+      } else if (platform == LINUX) {
+        // another wild ass guess
+        String currentDir = System.getProperty("user.dir");
+        //Runtime.getRuntime().exec("mozilla "+ currentDir + "/reference/index.html");
+        Runtime.getRuntime().exec("mozilla " + url);
+
+      } else {
+        System.err.println("unspecified platform");
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
-  */
 
-  /*
-  public void paint(Graphics g) {
-    if (errorState) {
-      g.setColor(Color.red);
-      Dimension d = size();
-      g.fillRect(0, 0, d.width, d.height);
-    }
-  }
-  */
 
   // all the information from pde.properties
 
