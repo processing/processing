@@ -32,12 +32,14 @@ public class PdePreprocessor {
 
   static final String applet_imports[] = {
     "java.applet", "java.awt", "java.awt.image", "java.awt.event",
-    "java.io", "java.net", "java.text", "java.util", "java.util.zip"
+    "java.io", "java.net", "java.text", "java.util", "java.util.zip",
+    "netscape.javascript"
   };
 
   static final String application_imports[] = {
     "java.applet", "java.awt", "java.awt.image", "java.awt.event",
     "java.io", "java.net", "java.text", "java.util", "java.util.zip",
+    "netscape.javascript",
 #ifndef RXTX
     "javax.comm",
 #else
