@@ -343,6 +343,11 @@ public class PGraphics extends PImage
   }
 
 
+  /**
+   * Called in repsonse to a resize event, handles setting the
+   * new width and height internally, as well as re-allocating
+   * the pixel buffer for the new size.
+   */
   public void resize(int iwidth, int iheight) {  // ignore
     //System.out.println("resize " + iwidth + " " + iheight);
 
@@ -365,17 +370,12 @@ public class PGraphics extends PImage
     farDist = eyeDist * 10.0f;
     aspect = (float)width / (float)height;
 
-    //beginCamera();
-    //perspective(fov, aspect, nearDist, farDist);
-    //lookat(eyeX, eyeY, eyeDist,  eyeX, eyeY, 0,  0, 1, 0);
-    //endCamera();
-    //camera_mode = PERSPECTIVE;
     cameraMode(PERSPECTIVE);
   }
 
 
-  // broken out because of subclassign for opengl
-  private void allocate() {
+  // broken out because of subclassing for opengl
+  protected void allocate() {
     pixelCount = width * height;
     pixels = new int[pixelCount];
 
