@@ -727,9 +727,6 @@ public class PFont implements PConstants {
     int glyph = index(c);
     if (glyph == -1) return;
 
-    parent.stroke(150);
-    parent.line(x, y, x, y+10);
-
     // starting point on the screen
     int sx = (int) x + topExtent[glyph];
     int sy = (int) y + leftExtent[glyph];
