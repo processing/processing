@@ -32,6 +32,8 @@ public class PdeEditorLineStatus extends JComponent {
   JEditTextArea textarea;
   int start = -1, stop;
 
+  Image resize;
+
   Color foreground;
   Color background;
   Font font;
@@ -49,6 +51,9 @@ public class PdeEditorLineStatus extends JComponent {
     foreground = PdePreferences.getColor("linestatus.color");
     high = PdePreferences.getInteger("linestatus.height");
 
+    if (PdeBase.isMacOS()) {
+      resize = PdeBase.getImage("resize.gif", this);
+    }
     //linestatus.bgcolor = #000000
     //linestatus.font    = SansSerif,plain,10
     //linestatus.color   = #FFFFFF
@@ -87,6 +92,10 @@ public class PdeEditorLineStatus extends JComponent {
     g.setColor(foreground);
     int baseline = (high + g.getFontMetrics().getAscent()) / 2;
     g.drawString(text, 6, baseline);
+
+    if (PdeBase.isMacOS()) {
+      g.drawImage(resize, size.width - 20, 0, this);
+    }
   }
 
 

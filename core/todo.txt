@@ -1,7 +1,15 @@
 0082 core
+X make jdkVersion, jdkVersionName, platform, platformName variables
+X additional note about screen sizes and displays
+X sto instead of stop in present mode
+
+GraphicsDevice theDevice =
+  frame.getGraphicsConfiguration().getDevice();
 
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
+
+_ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
 
 _ apply tint() to textures as well
 _   otherwise no good way to color textures
@@ -20,6 +28,8 @@ _   if size is screen.width and screen.height, does its best
 _   needs to get the size of the main screen
 
 _ make illustrator lib
+
+_ move really general things out of PConstants (X, Y, Z..)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
