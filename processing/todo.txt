@@ -4,6 +4,8 @@ X suppress "bad file descriptor" error on mac os x
 X alphabetizing sketch menu
 X   uppercase being capitalized before lowercase
 X   need to mix case.. use toLowerCase before compare
+X add a little gap on editor frame at the left
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1097363967;start=0
 
 _ make notes about preproc
 _   subclasses need to use "public void keyPressed" not "void keyPressed"
@@ -31,9 +33,6 @@ _   i.e. mixed case filename in sketch is different in windows
 _   but when uploaded to a unix server causes a serious problem
 _   use canonicalPath to flag possible problems
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
-
-_ add a little gap on editor frame at the left
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1096486079;start=1
 
 _ macosx not exporting core.jar 
 _   the jar is buried Contents/Resources/Java
