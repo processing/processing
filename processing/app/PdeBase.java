@@ -591,17 +591,19 @@ public class PdeBase extends Frame implements ActionListener {
 
   protected void addSketches(Menu menu, File folder, boolean root) 
     throws IOException {
+    // skip .DS_Store files, etc
+    if (!folder.isDirectory()) return;
+
     String list[] = folder.list();
     SketchbookMenuListener listener = 
       new SketchbookMenuListener(folder.getCanonicalPath());
 
     for (int i = 0; i < list.length; i++) {
       if (list[i].equals(editor.userName) && root) continue;
-	  
+
       if (list[i].equals(".") ||
 	  list[i].equals("..") ||
-	  list[i].equals("CVS") ||
-	  list[i].equals(".cvsignore")) continue;
+	  list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
       if (new File(subfolder, list[i] + ".pde").exists()) {
