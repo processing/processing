@@ -135,6 +135,9 @@ public class PGraphicsGL extends PGraphics3 {
       // updates.
       canvas.setNoAutoRedrawMode(true);
 
+      // maybe this will help?
+      canvas.requestFocus();
+
       // done with this business
       displayed = true;
     }

@@ -6,6 +6,11 @@ o   this is both for PApplet and PdeRuntime
 o   PApplet screen size constant is no good
 X   nope, because centers on default screen
 X external apps don't stop at all when 'stop' is hit
+o revisions.txt et al aren't properly having LFs converted
+X   false alarm, was only on rev 69
+X set default window height to 600 so that it appears properly
+X   windows version was smashing it at the bottom when new prefs
+X don't allow saved window position to be outside the current display
 
 _ moving an external window around a lot will halt the parent
 _   does move even need to be called? could just wait till stop?
@@ -64,7 +69,12 @@ _   lib could call queueEvent with the args
 _   then call them inside post()
 _ scrubbing all the code to include proper license and copyright info
 
-_ revisions.txt et al aren't properly having LFs converted
+Not sure what triggers it, possibly scrolling with mousewheel?, but
+sometimes Processing output window gets stuck thinking it should
+scroll to the top, so if you have an output larger than the allowable
+space, it will show you the last line, but then pops the scrollbar
+back to the top.  I think the only way to stop it is to quit out of
+processing and relaunch. 
 
 _ update checker (can be turned off in prefs)
 _   send unique id, and information about person's java vm/platform
