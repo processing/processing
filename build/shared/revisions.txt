@@ -4,6 +4,173 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0057 - 5 august 2003
+
+
+[ additions ]
+
+- an all-new compiler (jikes) has been wired in by dan mosedale. this
+  is super exciting, because of all the compiler trouble we've had in
+  the past. thanks to ivrea for providing funding for dan.
+
+- a scrolling, selectable console has been implemented by dan
+  haskovec, another of our ivrea-funded hackers.
+
+- context menu cut/copy/paste (right-click in the text area) also
+  implemented by dan h.
+
+- saveBytes and saveStrings now implemented (and documented in the
+  reference)
+
+- curveMode(int segments) and bezierMode(int segments) now
+  implemented. these control the number of line segments used to draw
+  a curve. the default has always been 20, but you now have the option
+  to set it higher or lower. 
+
+- there's also curveMode(int segments, float squishy) determines the
+  squishiness when drawing catmull-rom curves. normally this is set to
+  zero, but setting different values will produce more bubbley curves
+  that don't necessarily connect all the points. 
+
+- a new function has been added to calculate points along a bezier
+  curve, rather than just drawing it. so for the old function:
+  bezier(x1, y1, x2, y2, x3, y3, x4, y4); 
+  if you wanted to draw 10 segments along it:
+
+  beginShape(LINE_STRIP);
+  for (int i = 0; i <= 10; i++) {
+    float t = i / 10.0;  // t should go from 0..1 along the curve
+    float x = bezier(x1, x2, x3, x4, t);  // get the x coordinate
+    float y = bezier(y1, y2, y3, y4, t);  // get the y coordinate
+    vertex(x, y);
+  }
+  endShape();
+
+  this was also asked for/inquired about in the following bboard posts:
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989
+
+  the same syntax also works for curve() in addition to bezier().  
+
+- functions have been added to set the cursor, based on code
+  contributed by amit pitaru (thanks amit!) usage is in the reference.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
+
+
+[ updates ] 
+
+- 'export' now exports and links the .pde file instead of the .java
+  file, and links that from the web page that is produced
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
+
+- sound actually stops when the 'stop' button is hit.
+
+- video, net, and sound all work more than once, no longer requiring
+  you to quit processing to run a video/net/sound example again.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
+
+- syntax and examples for video have been sorted out.
+
+- modified millis() to always return useful values
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635
+
+- last-used serial port is saved when quitting the environment
+
+- changed more things from "Proce55ing" to "Processing", since the
+  other naming was confusing lots of people. let us know if there are
+  parts we've missed.
+
+
+[ bug fixes ]
+
+- long bezier curves are finally fixed
+
+- got rid of a semi-frequent ArrayIndexOutOfBoundsException when
+  smooth() was enabled and images were involved
+
+
+[ known issues / bugs ] 
+
+- 'export to application' remains unimplemented, though it's closer,
+  and should be ready in 58 or 59.
+
+- 'preferences' will get better in a future release
+
+- the noise() functions were added, but don't yet work, they'll be
+  fixed for 58.
+
+- macosx hangs randomly, though not consistently enough to figure out
+  what's going on.
+
+- on some machines, presentation mode seems to have become unusable,
+  this will be fixed in 58.
+
+- the horizontal scroller for the text area has some weirdness, this
+  may not be fixed until after beta, depending on how bad it is.
+
+- using screenGrab() or saveBytes() or some of those things will cause
+  trouble inside applets. in 58, we'll try to do better error trapping
+  so that your applet doesn't crash when this happens. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
+
+
+[ windows ] 
+
+- windows uses java 1.4.2. in general, this is better, except for 
+  problems with generating some kinds of audio. if you're having audio
+  trouble, then install java 1.4.1, and remove the 'java' folder from
+  the processing distribution to use it.
+
+- differences between the 'expert' and normal releases for windows
+  have been minimized significantly. as long as you have a jvm
+  installed (1.4 strongly preferred), you may as well use the expert
+  version. 
+
+- serial port has been improved, and requires no additional
+  installation steps, even for the 'exper't release.
+
+- slightly better processing.exe for windows
+
+- background of menus is no longer white, apparently it was a jvm
+  problem, and it's fixed in 1.4.2.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
+
+
+[ mac os x ]
+
+- macosx updated to use java 1.4. similar to the pc, this is better
+  but not always. if you're having trouble, check the instructions in
+  readme.txt to see switch it back to 1.3 (which was the default for
+  the previous release)
+
+- reference loading and opening the p5 site finally works
+
+- fixed the menus to make them more mac-like. added help menu, removed
+  the extra 'quit' menu from 'file', etc. 
+
+- the serial port has been ironed out, and requires no longer requires
+  additional installation, although you do need to double-click the
+  serial_setup.command script to set up some permissions (unless
+  you've installed rxtx 2.1_6 already.. if you don't know what that
+  means, run the script). more information in readme.txt. thanks to
+  tom igoe for input and heckling to get this to work.
+
+
+[ mac os 9 ]
+
+- macos9 support is in the freezer until after beta. we still want to
+  support macos9, but it was taking too much of our time as we're on a
+  strict september deadline for the beta release.
+
+
+[ phew ]
+
+- that's a lotta stuff
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0056 - 3 july 2003
 
 [ shouting outwards ]
