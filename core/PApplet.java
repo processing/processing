@@ -264,6 +264,8 @@ public class PApplet extends Applet
   // maybe start should also be used as the method for kicking
   // the thread on, instead of doing it inside paint()
   public void stop() {
+    //finished = true; 
+
     if (thread != null) {
       thread = null;
     }
@@ -597,6 +599,7 @@ public class PApplet extends Applet
     }
     if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
                               " thread finished");
+    //stop();  // call to shutdown libs?
   }
 
 
@@ -1058,7 +1061,7 @@ public class PApplet extends Applet
    * only works for applets, but eventually should be implemented
    * for applications as well, using code from PdeBase.
    */
-  void link(String here) {
+  public void link(String here) {
     if (!online) {
       System.err.println("Can't open " + here);
       System.err.println("link() only works inside a web browser");
@@ -1074,7 +1077,7 @@ public class PApplet extends Applet
     }
   }
 
-  void link(String here, String there) {
+  public void link(String here, String there) {
     if (!online) {
       System.err.println("Can't open " + here);
       System.err.println("link() only works inside a web browser");
@@ -3899,10 +3902,12 @@ public class PApplet extends Applet
               int anything = System.in.read();
               if (anything == EXTERNAL_STOP) {
                 finished = true;
+                //stop();
                 //thread = null;  // kill self
               }
             } catch (IOException e) {
               // not tested (needed?) but seems correct
+              //stop();
               finished = true;
               //thread = null;
             }
