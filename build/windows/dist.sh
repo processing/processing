@@ -1,16 +1,26 @@
 #!/bin/sh
 
-echo Creating P5 distribution...
+REVISION=`head -c 4 ../shared/../../../todo.txt`
+
+#if ($1 == '') then
+#  echo usage: ./make.sh NNNN, with version number as NNNN
+#  exit
+#fi
+
+./make.sh
+
+echo Creating P5 distribution for revision $REVISION...
 
 # remove any old boogers
 rm -rf processing
-rm -f processing.zip
+rm -f processing-*.zip
 
 # use 'shared' files as starting point
 cp -r ../shared processing
 # something like the following might be better:
 # find / -name "*.mp3" -exec rm -f {}\;
 # and same for cvsignore
+rm -rf processing/CVS
 rm -rf processing/lib/CVS
 rm -rf processing/fonts/CVS
 rm -rf processing/reference/CVS
@@ -32,15 +42,23 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
-cp dist/run.bat 
-cp dist/run95.bat
+cp dist/run.bat processing/
+cp dist/run95.bat processing/
 cp dist/lib/pde.properties_windows processing/lib/
 
 # convert notes.txt to windows LFs
+# the 2> is because the app is a little chatty
+unix2dos processing/notes.txt 2> /dev/null
+unix2dos processing/lib/pde.properties 2> /dev/null
+unix2dos processing/lib/pde.properties_windows 2> /dev/null
 
 # zip it all up for release
 echo Zipping and finishing...
-zip -rq processing.zip processing
+P5=processing-$REVISION
+mv processing $P5
+zip -rq $P5.zip $P5
+rm -rf $P5
+#zip -rq processing-$1.zip processing
 #rm -rf processing
 
 echo Done.

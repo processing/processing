@@ -1,3 +1,47 @@
+0036
+X editor.buttons.bgcolor default value was wrong
+X sketch.properties exception when closing on linux and mac
+X   urlstr was garbage because of windows-specific code
+X test build macos9 version with JDK13 flag turned off
+X make buttons taller by 4 pixels (looking bad on macos9/macosx)
+X   change to uppercase (looks dumb on mac, and casey doesn't like)
+X set background color of buttons in EditorStatus
+X   modify to only change it under aqua.. does screwy things for windows
+X check splash screen and icons into cvs
+X macosx.. editor.status.font needs to be size 12
+X   same under windows, just wasn't being set properly before
+X   header font needed to be set each time as well
+X introduce pde.properties_OSNAME
+X   tested to make sure it joins with the other pde.properties ok
+X setPixel(i, j, #99CC00);  
+X   not working anymore Syntax error: unexpected token: CC00
+X   problem was substitute only worked along with = 
+X perl should be ok to be cygwin perl.. try deinstalling activestate
+o should fix paren balancing bug.. 
+X   just disable by default for alpha
+o background() not working
+X   checked but couldn't duplicate
+X change editorlistener properties to use underscores
+X imageMode() was gone.. now replaced
+X collapse pdeengine/pderunner/kjcengine
+X   remove 'extends' from kjcengine, make an instance of Main
+X     may need to subclass at.dms.kjc.Main to override the exit()
+X   make pdeengine a class
+X   remove pderunner, collapse into pdeengine
+X checked line z problem bug.. it's b/c single pixel lines have no z
+X fold simpleserial into BApplet
+X   set serial properties inside bagel in kjcengine
+o   sprint an sprintln functions
+X     nixed because they're too weird, don't make sense w/ actual use
+X   serial.messageReceived extra long crap in demo.pde (clean up?)
+X     improve simpleserial and clean up a bit
+X   need to have function to enable it in setup
+X   make i/o work just like mouse (event driven, with dflt behavior)
+X present mode should hide editor frame
+X mouse coords coming from window when outside applet.. bad!
+X   just removed the listeners on the window.. don't seem to be needed
+
+
 0035
 X fixed a NullPointerException on startup 
 X   when sketch.properties didn't exist, shouldn't print error
