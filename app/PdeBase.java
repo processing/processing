@@ -215,7 +215,7 @@ public class PdeBase {
         topKey.closeKey();  // necessary?
         localKey.closeKey();
 
-        return new File(appDataPath, "Processing");
+        dataFolder = new File(appDataPath, "Processing");
 
       } catch (Exception e) {
         showError("Problem getting data folder",
@@ -312,6 +312,8 @@ public class PdeBase {
 
     // create the folder if it doesn't exist already
     if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
+
+    return sketchbookFolder;
   }
 
 
