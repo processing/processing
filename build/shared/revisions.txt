@@ -7,6 +7,38 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0079 - 31 March 2005
+
+* horizontal toolbar! new colors! current line number indicator! *
+
+cosmetic fixes only in today's release. we lost our internet connection
+last night before i could post rev 78 for windows, so if casey returns
+from his meeting soon enough, we'll also post a rev 79 for windows (and 
+just skip 78 since we didn't get to it).
+
+- you must delete your preferences.txt file for this release, 
+  otherwise things are gonna look super ugly.
+  on macosx: ~/Library/Processing/preferences.txt
+  on windows: Documents and Settings/username/
+              Application Data/Processing/preferences.txt
+
+- the ui is now blonde... casey decided that it was time to go horizontal 
+  with the toolbar buttons. drunk with power, he wound up re-coloring
+  everything while he was at it. as a result your prefs will get nuked
+  the first time you run with this release.
+
+- added a status bar at the bottom of the screen that displays the 
+  current line number (or range). this is an interim solution until
+  we can put in real line numbers, but hopefully this does the trick
+  for a while, since the text editor component we use doesn't support
+  line numbers. 
+
+- ctrl-O added for the "Open" menu item. don't get too wild.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0078 - 30 March 2005
 
 this release includes a large number of fixes for the 2D graphics engine. 
