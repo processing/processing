@@ -17,7 +17,7 @@ $temp_dir = "buzztemp";
 if (-d $temp_dir) {
     `rm -rf $temp_dir`;
 }
-mkdir($temp_dir, 0777) || die $!;
+mkdirs($temp_dir, 0777) || die $!;
 
 if ($ENV{'WINDIR'} ne '') {
     $separator = "\\";
@@ -83,7 +83,7 @@ foreach $arg (@ARGV) {
 		$dir = '.';
 	    } else {
 		#print "creating dir $temp_dir$separator$dir\n";
-		mkdir("$temp_dir$separator$dir", 0777) || die $!;
+		mkdirs("$temp_dir$separator$dir", 0777) || die "$temp_dir$separator$dir $!";
 	    }
 	    opendir(DIR, $dir) || die $!;
 	    @dcontents = readdir(DIR);
@@ -215,3 +215,12 @@ sub read_negative {
     }
 }
 
+
+# recursively make directories if they don't yet exist
+# this turned into a hack because i was lazy
+sub mkdirs {
+    my $d = @_[0];
+    $d =~ s/\\/\//g;
+    my $result = `d:\\cygwin\\bin\\mkdir -p $d`;
+    return 1;
+}
