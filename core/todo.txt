@@ -30,7 +30,15 @@ o     or is just a message to save the next frame (problem for anim)
 X vertices max out at 512.. make it grow
 X add gzipInput and gzipOutput
 
+_ PFont.list() to return string list of all the available fonts
+_   textFont with a named font can use the renderer/os font
+_   for postscript, can grab the real font
+_   -> altho problem here is that really the fonts just need a name
+_      since needs to render to screen as well
+
 _ get regular graphics engine working again
+_   smooth is no longer working
+_   ellipses aren't handled
 
 _ look for size() method to determine default size of applet
 _   (same as applet exporter function)
@@ -40,6 +48,11 @@ _   (in opengl, open frame early, make sure this isn't inhibited)
 _ default to single byte input from serial port
 _   and add serial.setBuffer() for message length as alternative
 _   or serial.setDelimiter() to fire message on delim
+
+_ move textMode and textSpace back out of PFont
+_   use die() to fail in font situations
+
+_ die() may need to throw a RuntimeException
 
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
