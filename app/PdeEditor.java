@@ -63,6 +63,8 @@ public class PdeEditor extends Panel {
   Frame frame;
   Window presentationWindow;
 
+  RunButtonWatcher watcher;
+
   static final int GRID_SIZE  = 33;
   static final int INSET_SIZE = 5;
 
@@ -395,6 +397,7 @@ public class PdeEditor extends Panel {
     //doStop();
     doClose();
     running = true;
+    //System.out.println("RUNNING");
     buttons.run();
 
     presenting = present;
@@ -430,6 +433,8 @@ public class PdeEditor extends Panel {
       //System.out.println("done iwth engine.start()");
       //}
 
+      watcher = new RunButtonWatcher();
+
     } catch (PdeException e) { 
       //state = RUNNER_ERROR;
       //forceStop = false;
@@ -450,6 +455,33 @@ public class PdeEditor extends Panel {
     //graphics.requestFocus();  // removed for pde    
   }
 
+  class RunButtonWatcher implements Runnable {
+    Thread thread;
+
+    public RunButtonWatcher() {
+      thread = new Thread(this);
+      thread.start();
+    }
+
+    public void run() {
+      while (Thread.currentThread() == thread) {
+	KjcEngine eng = (KjcEngine)engine;
+	if ((engine != null) && (eng.applet != null)) {
+	  //System.out.println(eng.applet.finished);
+	  buttons.running(!eng.applet.finished);
+	  //} else {
+	  //System.out.println("still pooping");
+	}
+	try {
+	  Thread.sleep(250);
+	} catch (InterruptedException e) { }
+      }
+    }
+
+    public void stop() {
+      thread.stop();
+    }
+  }
 
   public void doStop() {
     /*
@@ -463,12 +495,14 @@ public class PdeEditor extends Panel {
 
     //System.out.println("stop1");
     if (engine != null) engine.stop();
+    if (watcher != null) watcher.stop();
     //System.out.println("stop2");
     message(EMPTY);
     //System.out.println("stop3");
     buttons.clear();
     //System.out.println("stop4");
     running = false;
+    //System.out.println("NOT RUNNING");
     //System.out.println("stop5");
   }
 
@@ -557,6 +591,7 @@ public class PdeEditor extends Panel {
 
   // local vars prevent sketchName from being set
   public void skNew() {
+    doStop();
     checkModified(SK_NEW);
   }
 
@@ -625,6 +660,7 @@ public class PdeEditor extends Panel {
   */
 
   public void skOpen(String path, String name) {
+    doStop();
     checkModified(SK_OPEN, path, name);
   }
 
@@ -807,6 +843,7 @@ public class PdeEditor extends Panel {
 
 
   public void skSaveAs() {
+    doStop();
     status.edit("Save sketch as...", sketchName);
   }
 
@@ -944,6 +981,7 @@ public class PdeEditor extends Panel {
 
 
   public void skExport() {
+    doStop();
     message("Exporting for the web...");
     File appletDir = new File(sketchDir, "applet");
     handleExport(appletDir, sketchName, new File(sketchDir, "data"));
@@ -1172,12 +1210,13 @@ public class PdeEditor extends Panel {
 
 
   public void doQuit() {
+    doStop();
     //if (!checkModified()) return;
     checkModified(DO_QUIT);
   }
 
   protected void doQuit2() {
-    doStop();
+    //doStop();
 
     // clear out projects that are empty
     if (PdeBase.getBoolean("sketchbook.auto_clean", true)) {
@@ -1420,6 +1459,7 @@ public class PdeEditor extends Panel {
     //    PdeRecorder.stop();
     //#endif
     running = false;
+    //System.out.println("NOT RUNNING");
     buttons.clearRun();
     message("Done.");
   }

@@ -12,6 +12,7 @@ public class PdeBase implements ActionListener {
   static Properties properties;
   static Frame frame;
   static String encoding;
+  static Image icon;
 
   boolean errorState;
   PdeEditor editor;
@@ -81,6 +82,11 @@ public class PdeBase implements ActionListener {
 
   public PdeBase() {
     frame = new Frame(WINDOW_TITLE);
+
+    try {
+      icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
+      frame.setIconImage(icon);
+    } catch (Exception e) { } // fail silently
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
