@@ -21,7 +21,13 @@ X -XDock:icon (lowercase dock?) to set icon, or
 X   .icns file in the Contents/Resources of the bundle
 X   check tn on java runtime properties for macosx
 X need fxns to test platform and java version
-
+X serial works poorly for starting/stopping applets
+X   appears to be fixed through use of static object in bagel
+X   breaks on every 2nd run when using serial apps (or others?)
+X     try calling gc on stop as well
+X make it simpler to build the code.. 
+X   buzz.pl actually no longer needed (no ifdefs)
+o   use a regular makefile for everything
 
 a _ this code is not performing correctly
 BImage b;  // declare variable "b" of type BImage
@@ -43,13 +49,9 @@ vertex(90, 75);
 endShape();
 
 bagel
-a _ do some serial testing
+a _ serial
 a _   pde menu item for listing serial ports available
 a _   document a bit more regarding its use
-a _   serial works poorly for starting/stopping applets
-a _     this is behaving strangely
-a _     breaks on every 2nd run when using serial apps (or others?)
-a _       try calling gc on stop as well
 
 pde
 a _ move background() out of draw() for draw mode apps
@@ -65,8 +67,8 @@ a _   not clear how to kill the process.. does that work w/ 1.3?
 ? _ lockup when something missing from classpath on dynamic load
 
 macos9
-a _ getResource stuff breaks, sketch.properties can't save
-a _   FileNotFoundException: /FILE9/+/sketch.properties
+X getResource stuff breaks, sketch.properties can't save
+X   FileNotFoundException: /FILE9/+/sketch.properties
 a _ apple control keys register as edit events in buffer
 a _   use Toolkit.getShortcutKeymask() to figure out what's up
 a _ button backgrounds are weird since not square
@@ -79,12 +81,13 @@ a _ use osx utilities to setfileinfo for .jar files etc
 a _ try to build macutils under osx
 
 macosx
+a _ splash screen 
 a _ handlers for basic events
 a _   MRJAboutHandler (just show splash screen)
 a _   MRJPrefsHandler (open pde.properties in a text editor)
 a _   MRJQuitHandler (confirm quit, may need to be in another thread)
 a _ remove 'quit' from file menu
-a _ requires java 1.3.1 update 1
+a _ doc: requires java 1.3.1 update 1
 
 macos
 a _ MRJOpenApplicationHandler and MRJOpenDocumentHandler
@@ -101,13 +104,12 @@ a _ check to see if lines for error messages are off
 a _ set file type/creator for .pde files.. TEXTPde1
 
 release
-a _ small script to remove CVS directories from a tree
+a _ add examples to dist.sh scripts
+a _   separate shared script to cleanup?
+a _   or small script to remove CVS directories from a tree
 a _ check osname under win98 and linux
-a _ figure out about distributing source
-a _   kjc is gnu, so source needs to be available
-a _   make it simpler to build the code.. 
-a _     buzz.pl actually no longer needed (no ifdefs)
-a _     use a regular makefile for everything
+b _ figure out about distributing source
+b _   kjc is gnu, so source needs to be available
 a _ get all of casey's examples into the sketchbook
 a _   these should become the standard test cases for everything
 a _ faq on where the project is going

@@ -127,9 +127,6 @@ public class PdeEditorStatus extends Panel
     this.message = message;
 
     response = 0;
-    //yesButton.setBackground(bgcolor[mode]);
-    //noButton.setBackground(bgcolor[mode]);
-    //cancelButton.setBackground(bgcolor[mode]);
     yesButton.setVisible(true);
     noButton.setVisible(true);
     cancelButton.setVisible(true);
@@ -157,8 +154,6 @@ public class PdeEditorStatus extends Panel
     //this.editRename = rename;
 
     response = 0;
-    //okButton.setBackground(bgcolor[mode]);
-    //cancelButton.setBackground(bgcolor[mode]);
     okButton.setVisible(true);
     cancelButton.setVisible(true);
     editField.setText(dflt);
@@ -177,6 +172,7 @@ public class PdeEditorStatus extends Panel
 
   public void update() {
     Graphics g = this.getGraphics();
+    setBackground(bgcolor[mode]);
     if (g != null) paint(g);
   }
 
@@ -193,6 +189,7 @@ public class PdeEditorStatus extends Panel
       okButton = new Button(PROMPT_OK);
 
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)( 
+      /*
       if ((PdeBase.platform == PdeBase.MACOSX) ||
 	  (PdeBase.platform == PdeBase.MACOS9)) {
 	yesButton.setBackground(bgcolor[PROMPT]);
@@ -200,7 +197,7 @@ public class PdeEditorStatus extends Panel
 	cancelButton.setBackground(bgcolor[PROMPT]);
 	okButton.setBackground(bgcolor[PROMPT]);
       }
-
+      */
       setLayout(null);
 
       yesButton.addActionListener(this);
