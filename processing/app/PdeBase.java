@@ -172,15 +172,49 @@ public class PdeBase /*extends Component*/ implements ActionListener {
     Menu menu;
     MenuItem item;
 
-    fileOpenItem = new MenuItem("Open");
-
     menu = new Menu("File");
     menu.add(new MenuItem("New"));
-    menu.add(new MenuItem("Open"));
-    menu.add(new MenuItem("New"));
-    menu.add(new MenuItem("New"));
-    menu.add(new MenuItem("New"));
-    menu.add(new MenuItem("New"));
+    //menu.add(new MenuItem("Open"));
+
+    Menu openMenu = new Menu("Open");
+    rebuildSketchbookMenu(openMenu);
+    menu.add(openMenu);
+
+    menu.add(new MenuItem("Save"));
+    menu.add(new MenuItem("Duplicate"));
+    menu.add(new MenuItem("Export"));
+    menu.addSeparator();
+
+    menu.add(new MenuItem("Proce55ing.net"));
+    menu.add(new MenuItem("Reference"));
+    menu.addSeparator();
+
+    menu.add(new MenuItem("Quit"));
+
+    menubar.add(menu);
+
+    // completely un-functional edit menu
+    menu = new Menu("Edit");
+    menu.add(new MenuItem("Undo"));
+    menu.addSeparator();    
+    menu.add(new MenuItem("Cut"));
+    menu.add(new MenuItem("Copy"));
+    menu.add(new MenuItem("Paste"));
+    menu.addSeparator();
+    menu.add(new MenuItem("Select all"));
+    menu.setEnabled(false);
+    menubar.add(menu);
+
+
+    menu = new Menu("Sketch");
+    menu.add(new MenuItem("Play"));
+    menu.add(new MenuItem("Present"));
+    menu.add(new MenuItem("Stop"));
+    menu.addActionListener(this);
+    menubar.add(menu);
+
+
+    frame.setMenuBar(menubar);
 
 
     /*
@@ -192,6 +226,7 @@ public class PdeBase /*extends Component*/ implements ActionListener {
     menubar.add(goodies);
     frame.setMenuBar(menubar);
     */
+
 
     Insets insets = frame.getInsets();
     Toolkit tk = Toolkit.getDefaultToolkit();
@@ -285,20 +320,22 @@ public class PdeBase /*extends Component*/ implements ActionListener {
 	SketchbookMenuListener subMenuListener = 
 	  new SketchbookMenuListener(subPath);
 
-	String entries[] = subfolder.list();
+	String entries[] = subFolder.list();
 	for (int j = 0; j < entries.length; j++) {
 	  if ((entries[j].equals(".")) || 
 	      (entries[j].equals(".."))) continue;
-	  submenu.add(entries[j]);
+	  subMenu.add(entries[j]);
 	}
 
-	menu.add(submenu);
+	menu.add(subMenu);
       }
       menu.addSeparator();
 
-
-    Menu skmenu = new Menu("Sketchbook");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
+
 
   public void actionPerformed(ActionEvent event) {
     String command = event.getActionCommand();
