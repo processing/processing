@@ -133,6 +133,7 @@ CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\w
 echo Build serial library...
 cd ../../lib/serial
 ../../build/windows/work/jikes +D -classpath "code\\RXTXcomm.jar;$CLASSPATH" -d . *.java 
+rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/serial/library/
@@ -143,6 +144,7 @@ cp library/serial.jar ../../build/windows/work/libraries/serial/library/
 echo Build net library...
 cd ../../lib/net
 ../../build/windows/work/jikes +D -d . *.java 
+rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/net/library/
@@ -163,6 +165,7 @@ else
 fi
 cd ../../lib/video
 ../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
+rm -f library/video.jar
 zip -r0q library/video.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/video/library/

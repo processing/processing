@@ -217,8 +217,9 @@ X add to "common problems"
 X   junk in the classpath can often cause trouble
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094871304
 X history is not implemented in this version
-
 X update build instructions for cvs
+
+0070p6
 X macosx
 X   check to see if new linemetrics stuff is working better (it's not)
 X     redo setFont() in PdeEditorHeader
@@ -226,10 +227,28 @@ X   enable the "use screen menubar" stuff (finch?)
 X   check to see if it's running ok with new java update
 X   update to new shell runner (old mrj guy was ancient)
 
+0070p7
+X fix run.bat and run-expert.bat
+X remove library path debug message
+X catch error message for "quicktime.std" 
+X move packages to processing.video, processing.serial, etc.
+X   need to update the set of new examples
+X make sure the library features are disabled by default
+X find serial example from tom igoe, include with new examples
+X remove sketchbook -> libraries until it works
+X serial_setup.command is missing from osx distribution
+X   fix the note in the readme about it
+
+_ properly import qtjava from processing.exe
+
+
 with casey
 _ figure out what to include for examples/libraries
 _ let's not call it 'expert', let's just say w/o java
-_ "draw" is not highlighted as a keyword
+_ "draw" is not highlighted as a keyword.. other keywords?
+_   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
+_   PClient(), PClient.available(), PClient.read(), 
+_   PServer(), PServer.dispose(), PServer.write(), attach(), length
 
 
 ......................................................................
