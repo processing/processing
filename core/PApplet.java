@@ -2261,6 +2261,87 @@ public class PApplet extends Applet
 
   // ------------------------------------------------------------
 
+  // color functions, moved here so that they can work without
+  // the graphics actually being instantiated
+
+
+  public final int color(int gray) {
+    if (g == null) {
+      gray &= 0xff; // cut the bounds on this feller
+      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+    }
+    return g.color(gray);
+  }
+
+
+  public final int color(float fgray) {
+    if (g == null) {
+      int gray = ((int) fgray) & 0xff;
+      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+    }
+    return g.color(fgray);
+  }
+
+
+  public final int color(int gray, int alpha) {
+    if (g == null) {
+      gray &= 0xff; // cut the bounds on this feller
+      alpha &= 0xff;
+      return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
+    }
+    return g.color(gray, alpha);
+  }
+
+
+  public final int color(float fgray, float falpha) {
+    if (g == null) {
+      int gray = ((int) fgray) & 0xff;
+      int alpha = ((int) falpha) & 0xff;
+      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+    }
+    return g.color(fgray, falpha);
+  }
+
+
+  public final int color(int x, int y, int z) {
+    if (g == null) {
+      return 0xff000000 | 
+        ((x & 0xff) << 16) | ((y & 0xff) << 8) | (z & 0xff);
+    }
+    return g.color(x, y, z);
+  }
+
+
+  public final int color(float x, float y, float z) {
+    if (g == null) {
+      return 0xff000000 | 
+        (((int)x & 0xff) << 16) | (((int)y & 0xff) << 8) | ((int)z & 0xff);
+    }
+    return g.color(x, y, z);
+  }
+
+
+  public final int color(int x, int y, int z, int a) {
+    if (g == null) {
+      return ((a & 0xff) << 24) |
+        ((x & 0xff) << 16) | ((y & 0xff) << 8) | (z & 0xff);
+    }    
+    return g.color(x, y, z, a);
+  }
+
+
+  public final int color(float x, float y, float z, float a) {
+    if (g == null) {
+      return (((int)a & 0xff) << 24) |
+        (((int)x & 0xff) << 16) | (((int)y & 0xff) << 8) | ((int)z & 0xff);
+    }
+    return g.color(x, y, z, a);
+  }
+
+
+  // ------------------------------------------------------------
+
+  // everything below this line is automatically generated. no touch.
   // public functions for processing.core
 
 
@@ -3196,46 +3277,6 @@ public class PApplet extends Applet
 
   public void sort(double what[], int count, Object objects[]) {
     g.sort(what, count, objects);
-  }
-
-
-  public final int color(int gray) {
-   return g.color(gray);
-  }
-
-
-  public final int color(float gray) {
-   return g.color(gray);
-  }
-
-
-  public final int color(int gray, int alpha) {
-   return g.color(gray, alpha);
-  }
-
-
-  public final int color(float gray, float alpha) {
-   return g.color(gray, alpha);
-  }
-
-
-  public final int color(int x, int y, int z) {
-   return g.color(x, y, z);
-  }
-
-
-  public final int color(float x, float y, float z) {
-   return g.color(x, y, z);
-  }
-
-
-  public final int color(int x, int y, int z, int a) {
-   return g.color(x, y, z, a);
-  }
-
-
-  public final int color(float x, float y, float z, float a) {
-   return g.color(x, y, z, a);
   }
 
 

@@ -59,26 +59,26 @@ o   all triangles must be counter-clockwise (front-facing)
 X do applets know when they're stopped? stop? dispose?
 X   would be good to set a param in p5 so that the thread dies
 X   if people have other threads they've spawned, impossible to stop
+X api to properly sense when applet has focus
+X   add a 'focused' variable to the applet
+X   code now in zipdecode, maybe just list this as a standard thing?
 
 X include a lerp()? is there one in flash?
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
 X   should it be called lerp or mix?
 X acos, asin, log, exp, ceil/floor, pow, mag(x,y,z)
-X add color(gray) and color(gray, alpha)
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089898189;start=0
+X color issues
+X   doesn't work when outside a function:
+X     color bg_color = color(255,0,0);
+X   colorMode broken for red() green() etc
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
+X   add color(gray) and color(gray, alpha)
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089898189;start=0
 
 MEGABUCKET (api)
 _ passing in args[] from main
-_ color issues
-_   doesn't work when outside a function:
-_     color bg_color = color(255,0,0);
-_   colorMode broken for red() green() etc
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
-_ api to properly sense when applet has focus
-_   add a 'focused' variable to the applet
-_   code now in zipdecode, maybe just list this as a standard thing?
 _ include in the docs: don't override stop()
 _   or handle this some more intelligent way, super.stop() is needed.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
@@ -184,17 +184,17 @@ CORE / PGraphics
    b _ lines
    b _   z value hack for lines is causing trouble for 2D
    b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
-   b X   rewrite line and stroke code, it's a buggy mess
-   b X     lines become 2 pixels thick after a 3D transform 
-   b X     better handling of single-pixel special case
+   b _   rewrite line and stroke code, it's a buggy mess
+   b _     lines become 2 pixels thick after a 3D transform 
+   b _     better handling of single-pixel special case
    b _       flat_line_retribution is a hack, can go away
    b _ mgorbet stroke transparency problem
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
-   b ?   make sure line() commands don't try to have a fill
+   b _   make sure line() commands don't try to have a fill
    b _   box is not opaque
-   b X     problem is that lines are drawn second
-   b X     one pixel lines have no z value.. argh
-   b X     bug re: 3d depth sorting on lines
+   b _     problem is that lines are drawn second
+   b _     one pixel lines have no z value.. argh
+   b _     bug re: 3d depth sorting on lines
    b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
    b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
    b _     translate(58, 48, 0); 
@@ -215,21 +215,10 @@ CORE / PGraphics
    1 _ alpha of zero still draws boogers on screen
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
-
-   b _ super nasty lineweight issue:
-void setup()
-{
-   size(400, 400);
-}
-
-void loop()
-{
-   stroke(#ff0000);
-   strokeWeight(2);
-   line(0, 0, 40, 40);
-   point(100, 100);
-   rect(200, 200, 100, 100);
-}
+   1 _ color
+   1 _   rounding errors on color conversion
+   1 _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
+   1 _   will return 127, instead of 128.
 
    1 _ ellipse problems
    1 _   weird ellipse bug with an alpha line in same image

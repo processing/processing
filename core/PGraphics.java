@@ -69,11 +69,14 @@ public class PGraphics extends PImage implements PConstants {
   // if it's a one-word feller like 'fill' or 'stroke'
   // then an underscore is placed in front: _fill
 
+  int color_mode;
+  // color_scale is for *internal* scaling, true if colorMode(1) 
+  // since that's what's easiest for the internal stuff..
+  boolean color_scale;
+  boolean color_rgb255;
   // color parameters
   // internally, colors are 0..1 for the floats
   // this makes the lighting computations clearer
-  int color_mode;
-  boolean color_scale;
   float colorMaxX;
   float colorMaxY;
   float colorMaxZ;
@@ -113,9 +116,10 @@ public class PGraphics extends PImage implements PConstants {
   int calci;
   boolean calc_alpha;
 
-  // cache for hsb conversion values for get/set pixel
+  /** The last rgb value converted to hsb */
   int cacheHsbKey;
-  float cacheHsbValue[] = new float[3]; // init to zero
+  /** Result of the last conversion to hsb */
+  float cacheHsbValue[] = new float[3]; // inits to zero
 
   // lighting
   static final int MAX_LIGHTS = 10;
@@ -5051,6 +5055,12 @@ public class PGraphics extends PImage implements PConstants {
     // if color max values are all 1, then no need to scale
     color_scale = ((maxA != ONE) || (maxX != maxY) || 
                    (maxY != maxZ) || (maxZ != maxA));
+
+    // if color is rgb/0..255 this will make it easier for the
+    // red() green() etc functions
+    color_rgb255 = (color_mode == RGB) && 
+      (colorMaxA == 255) && (colorMaxX == 255) && 
+      (colorMaxY == 255) && (colorMaxZ == 255);
   }
 
 
@@ -5887,57 +5897,57 @@ public class PGraphics extends PImage implements PConstants {
   // they can write it themselves (not difficult)
 
 
-  public final int color(int gray) {
-    if ((color_mode == RGB) && (!color_scale)) {
+  public final int color(int gray) {  // ignore
+    if (color_rgb255) {
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
     calc_color(gray);
     return calci;
   }
 
-  public final int color(float gray) {
+  public final int color(float gray) {  // ignore
     calc_color(gray);
     return calci;
   }
 
 
-  public final int color(int gray, int alpha) {
-    if ((color_mode == RGB) && (!color_scale)) {
+  public final int color(int gray, int alpha) {  // ignore
+    if (color_rgb255) {
       return (gray << 24) | (gray << 16) | (gray << 8) | gray;
     }
     calc_color(gray, alpha);
     return calci;
   }
 
-  public final int color(float gray, float alpha) {
+  public final int color(float gray, float alpha) {  // ignore
     calc_color(gray, alpha);
     return calci;
   }
 
 
-  public final int color(int x, int y, int z) {
-    if ((color_mode == RGB) && (!color_scale)) {
+  public final int color(int x, int y, int z) {  // ignore
+    if (color_rgb255) {
       return 0xff000000 | (x << 16) | (y << 8) | z;
     }
     calc_color(x, y, z);
     return calci;
   }
 
-  public final int color(float x, float y, float z) {
+  public final int color(float x, float y, float z) {  // ignore
     calc_color(x, y, z);
     return calci;
   }
 
 
-  public final int color(int x, int y, int z, int a) {
-    if ((color_mode == RGB) && (!color_scale)) {
+  public final int color(int x, int y, int z, int a) {  // ignore
+    if (color_rgb255) {
       return (a << 24) | (x << 16) | (y << 8) | z;
     } 
     calc_color(x, y, z, a);
     return calci;
   }
 
-  public final int color(float x, float y, float z, float a) {
+  public final int color(float x, float y, float z, float a) {  // ignore
     calc_color(x, y, z, a);
     return calci;
   }
@@ -5951,20 +5961,19 @@ public class PGraphics extends PImage implements PConstants {
 
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
-    System.out.println((color_mode == RGB) + " " + color_scale);
-    if ((color_mode == RGB) && (!color_scale)) return c;
+    if (color_rgb255) return c;
     return (c / 255.0f) * colorMaxX;
   }
 
   public final float green(int what) {
     float c = (what >> 8) & 0xff;
-    if ((color_mode == RGB) && (!color_scale)) return c;
+    if (color_rgb255) return c;
     return (c / 255.0f) * colorMaxY;
   }
 
   public final float blue(int what) {
     float c = (what) & 0xff;
-    if ((color_mode == RGB) && (!color_scale)) return c;
+    if (color_rgb255) return c;
     return (c / 255.0f) * colorMaxZ;
   }
 
