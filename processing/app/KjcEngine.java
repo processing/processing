@@ -568,30 +568,16 @@ public class KjcEngine extends PdeEngine {
     Insets parentInsets = frame.getInsets();
     
     int x1 = parentLoc.x - 20;
-    //int y1 = parentLoc.y + parentInsets.top;  // for Window version
-    int y1 = parentLoc.y; // + parentInsets.top;
+    int y1 = parentLoc.y;
 
-    // then instantiate class poo using class.forName
     try {
       if (PdeBase.getBoolean("play.external", false)) {
 	String cmd = PdeBase.get("play.externalCommand");
-
-	//System.out.println(
-	process = Runtime.getRuntime().exec(/*"cmd /c " +*/ cmd + " " + tempClass + 
+	process = Runtime.getRuntime().exec(/*"cmd /c " +*/ 
+					    cmd + " " + tempClass + 
 					    " " + x1 + " " + y1);
 	new KjcMessageSiphon(process.getInputStream(), 
 			     process.getErrorStream(), leechErr);
-
-	//tempClass + " " + portnum);
-	//umbilical = new ServerSocket(portnum);
-	//umbilical.accept();
-	//portnum++;
-
-	//InputStream is = process.getErrorStream();
-	//InputStream is = process.getInputStream();
-	//while (true) {
-	//System.out.print((char) is.read());
-	//}
 
       } else {
 	// temporarily disabled
@@ -609,6 +595,17 @@ public class KjcEngine extends PdeEngine {
 
 	if (editor.presenting) {
 	  window = new Window(new Frame());
+	  window.addKeyListener(new KeyAdapter() {
+	      public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+		  //editor.doClose();
+		  //new DelayedClose(editor);
+		  stop();
+		  editor.doClose();
+		}
+	      }
+	    });
+
 	} else {
 	  window = new Frame(); // gonna use ugly windows instead
 	  ((Frame)window).setResizable(false);
@@ -616,13 +613,27 @@ public class KjcEngine extends PdeEngine {
 
 	  window.addWindowListener(new WindowAdapter() {
 	      public void windowClosing(WindowEvent e) {
-		//System.exit(0);
+		stop();
 		editor.doClose();
+		//new DelayedClose(editor);
+		//editor.doClose();
+		//editor.doStop();
 	      }
 	    });
 	}
 	if (!(window instanceof Frame)) y1 += parentInsets.top;
 	window.add(applet);
+
+	applet.addKeyListener(new KeyAdapter() {
+	    public void keyPressed(KeyEvent e) {
+	      if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+		stop();
+		editor.doClose();
+		//new DelayedClose(editor);
+		//editor.doClose();
+	      }
+	    }
+	  });
 
 	// @#$((* java 1.3
 	// removed because didn't seem to be needed anymore
@@ -665,106 +676,8 @@ public class KjcEngine extends PdeEngine {
 	  applet.setBounds((ww - applet.width)/2, 
 			   insets.top + ((wh-insets.top-insets.bottom) -
 					 applet.height)/2, ww, wh);
-	  /*
-	  window.setBounds(x1 - applet.width, y1, 
-			   //parentLoc.x - (applet.width + 20), 
-			   //parentLoc.y + parentInsets.top, 
-			   applet.width, applet.height);
-	  */
 	}
 
-	//new WindowDragger(window, applet.height);
-	/*
-	window.add(new MouseMotionAdapter() {
-	    int px, py;
-
-	    public mouseDragged(MouseEvent e) {
-	    }
-	  });
-	*/
-
-	/*
-	window.addWindowListener(new WindowAdapter() {
-	    public void windowOpened(WindowEvent e) {
-	      System.out.println(e);
-	    }
-
-	    public void windowClosing(WindowEvent e) {
-	      System.out.println(e);
-	    }
-
-	    public void windowClosed(WindowEvent e) {
-	      System.out.println(e);
-	    }
-
-	    public void windowIconified(WindowEvent e) {
-	      System.out.println(e);
-	    }
-
-	    public void windowDeiconified(WindowEvent e) {
-	      System.out.println(e);
-	    }
-
-	    public void windowActivated(WindowEvent e) {
-	      System.out.println(e);
-	    }
-
-	    public void windowDeactivated(WindowEvent e) {
-	      System.out.println(e);
-	    }
-	  });
-	*/
-
-	/*
-	window.addComponentListener(new ComponentAdapter() {
-	    public void componentResized(ComponentEvent e) {
-	      Frame f = (Frame) e.getComponent(); // me
-	      Rectangle bounds = f.getBounds();
-	      Insets insets = f.getInsets();
-	      System.out.println(insets);
-
-	      if ((bounds.x == -insets.left) &&
-		  (bounds.y == -insets.bottom)) { // half-assed maximizing
-
-		Dimension screen = 
-		  Toolkit.getDefaultToolkit().getScreenSize();
-
-		//System.out.println(f.getInsets());
-		//System.out.println(e.getComponent().getClass());
-		System.out.println("asking for bounds " + 
-				   (screen.height + insets.top + insets.bottom));
-		f.setBounds(-insets.left, -insets.top,
-			    screen.width + insets.left + insets.right,
-			    screen.height + insets.top + insets.bottom);
-
-		f.doLayout();
-		// center the applet in the window
-		
-	      }
-	      System.out.println(e);
-	    }
-
-	    public void componentMoved(ComponentEvent e) {
-	      //System.out.println(e);
-	    }
-
-	    public void componentShown(ComponentEvent e) {
-	      //System.out.println(e);
-	    }
-
-	    public void componentHidden(ComponentEvent e) {
-	      //System.out.println(e);
-	    }
-	  });
-
-	window.add(applet, BorderLayout.CENTER);
-	window.add(new Label(), BorderLayout.NORTH);
-	window.add(new Label(), BorderLayout.SOUTH);
-	window.add(new Label(), BorderLayout.EAST);
-	window.add(new Label(), BorderLayout.WEST);
-	*/
-
-	//window.pack();
 	applet.setVisible(true);  // no effect
 	if (windowLocation != null) {
 	  window.setLocation(windowLocation);
@@ -774,12 +687,7 @@ public class KjcEngine extends PdeEngine {
       }
       running = true;
 
-      //while (running) { }
-      // since this is already contained in a thread
-      //applet.run(); 
-
       //need to parse this code to give a decent error message
-
       //internal error
       //java.lang.NullPointerException
       //  at ProcessingApplet.colorMode(ProcessingApplet.java:652)
@@ -793,11 +701,6 @@ public class KjcEngine extends PdeEngine {
       //if (exception != null) throw exception;
     }
   }
-
-
-  //public void front() {  // part of PdeEngine
-  //window.toFront();
-  //}
 
 
   protected void cleanup() {
@@ -891,6 +794,17 @@ public class KjcEngine extends PdeEngine {
     }
   }
 
+
+  /*
+class DelayedClose {
+  public DelayedClose(PdeEditor ed) {
+    System.out.println("stopping");
+    stop();
+    System.out.println("successful");
+    ed.doClose();
+  }
+}
+  */
 
   //public void inform(String message) { 
   //System.out.println("informing: " + message);
@@ -1057,6 +971,38 @@ class KjcMessageStream extends OutputStream {
     System.out.println("leech3: '" + ((char)b) + "'");
   }
 }
+
+
+/*
+  class DelayedClose implements Runnable {
+    PdeEditor ed;
+    Thread thread;
+
+    public DelayedClose(PdeEditor ed) {
+      this.ed = ed;
+      thread = new Thread(this);
+      thread.start();
+    }
+
+    public void run() {
+      boolean finished = false;
+
+      while (!finished) {
+	ed.doStop();
+	System.out.println("delayed close stage 1");
+	if (Thread.currentThread() == thread) {
+	  System.out.println("delayed close stage 2");
+	  try {
+	    Thread.sleep(2000);
+	  } catch (InterruptedException e) { }
+	  System.out.println("closing now");
+	  ed.doClose();
+	  finished = true;
+	}
+      }
+    }
+  }
+*/
 
 
 /*

@@ -342,14 +342,22 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
     switch (currentSelection) {
 
     case RUN: 
-      if (e.shiftDown()) {
-	editor.doPresent();
-      } else {
-	editor.doRun(false); 
-      }
+      editor.doRun(e.shiftDown());
+      //if (e.shiftDown()) {
+      //editor.doPresent();
+      //} else {
+      //editor.doRun(false); 
+      //}
       break;
 
-    case STOP: setState(RUN, INACTIVE, true); editor.doStop(); break;
+    case STOP: 
+      setState(RUN, INACTIVE, true); 
+      if (editor.presenting) {
+	editor.doClose();
+      } else {
+	editor.doStop(); 
+      }
+      break;
       //case CLOSE: editor.doClose(); break;
 
       //case OPEN:  editor.doOpen(); break;
