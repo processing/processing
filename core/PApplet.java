@@ -179,7 +179,6 @@ public class PApplet extends Applet
     // send tab keys through to the PApplet
     try {
       if (jdkVersion >= 1.4) {
-        System.out.println("hello");
         //setFocusTraversalKeysEnabled(false);  // 1.4-only function
         Method defocus = 
           Component.class.getMethod("setFocusTraversalKeysEnabled",
