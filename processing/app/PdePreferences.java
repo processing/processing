@@ -182,6 +182,7 @@ public class PdePreferences extends JComponent {
 
     // [ ] Prompt for name and folder when creating new sketch
 
+    /*
     sketchPromptBox = 
       new JCheckBox("Prompt for name when opening or creating a sketch");
     pain.add(sketchPromptBox);
@@ -189,6 +190,7 @@ public class PdePreferences extends JComponent {
     sketchPromptBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
+    */
 
 
     // Sketchbook location: 
@@ -200,7 +202,7 @@ public class PdePreferences extends JComponent {
     label.setBounds(left, top, d.width, d.height);
     top += d.height; // + GUI_SMALL;
 
-    sketchbookLocationField = new JTextField(30);
+    sketchbookLocationField = new JTextField(40);
     pain.add(sketchbookLocationField);
     d = sketchbookLocationField.getPreferredSize();
 
@@ -259,6 +261,7 @@ public class PdePreferences extends JComponent {
 
     // More preferences are in the ...
 
+    /*
     String blather = 
       "More preferences can be edited directly\n" + 
       "in the file " + preferencesFile.getAbsolutePath();
@@ -272,10 +275,19 @@ public class PdePreferences extends JComponent {
     textarea.setBackground(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
+    */
+    label = new JLabel("More preferences can be edited directly");
+    pain.add(label);
+    d = label.getPreferredSize();
+    label.setBounds(left, top, d.width, d.height);
+    top += d.height; // + GUI_SMALL;
 
-    d = textarea.getPreferredSize();
-    textarea.setBounds(left, top, d.width, d.height);
-    top += d.height; // + GUI_BETWEEN;
+    label = new JLabel("in the file " + preferencesFile.getAbsolutePath());
+    pain.add(label);
+    d = label.getPreferredSize();
+    label.setBounds(left, top, d.width, d.height);
+    //textarea.setBounds(left, top, d.width, d.height);
+    //top += d.height; // + GUI_BETWEEN;
 
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
@@ -361,7 +373,7 @@ public class PdePreferences extends JComponent {
     //editor.setExternalEditor(getBoolean("editor.external"));
     // put each of the settings into the table
 
-    setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
+    //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
 
     set("sketchbook.path", sketchbookLocationField.getText());
 
@@ -374,7 +386,7 @@ public class PdePreferences extends JComponent {
   public void showFrame() {
     // reset all settings to their actual status
 
-    sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
+    //sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
 
     sketchbookLocationField.setText(get("sketchbook.path"));
 

@@ -15,13 +15,29 @@ X   sketch is changing before the "save changes?" is complete
 X     as a result, 'cancel' does nothing
 X   always ask save changes, even if nothing changed
 
-
 mangling and mess
-_ remove the 'sketchbook.prompt' mess
+X remove 'sketchbook.prompt' (comment it out)
+X   not really needed
+X   remove prompt stuff from the preferences panel
+X clean up the "more options" in prefs panel 
+X   to use JLabel instead of JTextArea
+X   font was wrong on windows
+X start working on "save as"
+
+_ finish "save as"
+_ after using sketchbook menu as popup, disappears from file menu
 _ re-implement history
 _ write sketchbook.clean()
 _ write 'new text file'
+_ implement read-only sketch folder
+_   examples are sort of there but need to be debugged
+_   read-only files should be checked
+_ get the console working again
+_   appendText is disabled due to NullPointerEx on startup
 
+_ is the sketch folder something that is never seen by the user?
+_   i.e. flash programs 'import' all data, etc
+_   same with how imovie works
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing
@@ -41,7 +57,7 @@ notes for release
 _ quicktime full uninstall/reinstall
 _ code folder problems
 _ find bug
-_   hm, lots of other things that are on here..
+_ hm, lots of other bugs from this list..
 _ update readme with notes from bboard about "built with processing"
 
 _ find() hangs on replacing "println" with "//println"
