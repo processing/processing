@@ -4,8 +4,8 @@ import java.awt.event.*;
 
 public class PdeEditorStatus extends Panel 
   implements ActionListener /*, Runnable*/ {
-  static Color bgColor[];
-  static Color fgColor[];
+  static Color bgcolor[];
+  static Color fgcolor[];
 
   static final int NOTICE = 0;
   static final int ERROR  = 1;
@@ -17,14 +17,14 @@ public class PdeEditorStatus extends Panel
   static final int CANCEL = 3;
   static final int OK     = 4;
 
-  static final String PROMPT_YES     = "yes";
-  static final String PROMPT_NO      = "no";
-  static final String PROMPT_CANCEL  = "cancel";
-  static final String PROMPT_OK      = "ok";
+  static final String PROMPT_YES     = "Yes";
+  static final String PROMPT_NO      = "No";
+  static final String PROMPT_CANCEL  = "Cancel";
+  static final String PROMPT_OK      = "Ok";
   static final String NO_MESSAGE     = "";
 
   static final int BUTTON_WIDTH  = 66;
-  static final int BUTTON_HEIGHT = 20;
+  static final int BUTTON_HEIGHT = 24; //20;
 
   PdeEditor editor;
 
@@ -53,24 +53,24 @@ public class PdeEditorStatus extends Panel
     this.editor = editor;
     empty();
 
-    if (bgColor == null) {
-      bgColor = new Color[4];
-      bgColor[0] = PdeBase.getColor("editor.status.notice.bgcolor",
+    if (bgcolor == null) {
+      bgcolor = new Color[4];
+      bgcolor[0] = PdeBase.getColor("editor.status.notice.bgcolor",
 				    new Color(102, 102, 102));
-      bgColor[1] = PdeBase.getColor("editor.status.error.bgcolor",
+      bgcolor[1] = PdeBase.getColor("editor.status.error.bgcolor",
 				    new Color(102, 26, 0));
-      bgColor[2] = PdeBase.getColor("editor.status.prompt.bgcolor",
+      bgcolor[2] = PdeBase.getColor("editor.status.prompt.bgcolor",
 				    new Color(204, 153, 0));
-      bgColor[3] = PdeBase.getColor("editor.status.prompt.bgcolor",
+      bgcolor[3] = PdeBase.getColor("editor.status.prompt.bgcolor",
 				    new Color(204, 153, 0));
-      fgColor = new Color[4];
-      fgColor[0] = PdeBase.getColor("editor.status.notice.fgcolor",
+      fgcolor = new Color[4];
+      fgcolor[0] = PdeBase.getColor("editor.status.notice.fgcolor",
 				    new Color(255, 255, 255));
-      fgColor[1] = PdeBase.getColor("editor.status.error.fgcolor",
+      fgcolor[1] = PdeBase.getColor("editor.status.error.fgcolor",
 				    new Color(255, 255, 255));
-      fgColor[2] = PdeBase.getColor("editor.status.prompt.fgcolor",
+      fgcolor[2] = PdeBase.getColor("editor.status.prompt.fgcolor",
 				    new Color(0, 0, 0));
-      fgColor[3] = PdeBase.getColor("editor.status.prompt.fgcolor",
+      fgcolor[3] = PdeBase.getColor("editor.status.prompt.fgcolor",
 				    new Color(0, 0, 0));
     }
   }
@@ -127,6 +127,9 @@ public class PdeEditorStatus extends Panel
     this.message = message;
 
     response = 0;
+    //yesButton.setBackground(bgcolor[mode]);
+    //noButton.setBackground(bgcolor[mode]);
+    //cancelButton.setBackground(bgcolor[mode]);
     yesButton.setVisible(true);
     noButton.setVisible(true);
     cancelButton.setVisible(true);
@@ -154,6 +157,8 @@ public class PdeEditorStatus extends Panel
     //this.editRename = rename;
 
     response = 0;
+    //okButton.setBackground(bgcolor[mode]);
+    //cancelButton.setBackground(bgcolor[mode]);
     okButton.setVisible(true);
     cancelButton.setVisible(true);
     editField.setText(dflt);
@@ -186,6 +191,12 @@ public class PdeEditorStatus extends Panel
       noButton = new Button(PROMPT_NO);
       cancelButton = new Button(PROMPT_CANCEL);
       okButton = new Button(PROMPT_OK);
+
+      yesButton.setBackground(bgcolor[PROMPT]);
+      noButton.setBackground(bgcolor[PROMPT]);
+      cancelButton.setBackground(bgcolor[PROMPT]);
+      okButton.setBackground(bgcolor[PROMPT]);
+
       setLayout(null);
 
       yesButton.addActionListener(this);
@@ -308,16 +319,16 @@ public class PdeEditorStatus extends Panel
     if (font == null) {
       font = PdeBase.getFont("editor.status.font",
 			       new Font("SansSerif", Font.PLAIN, 10));
-      //font = new Font("SansSerif", Font.PLAIN, 10);
       g.setFont(font);
       metrics = g.getFontMetrics();
       ascent = metrics.getAscent();
     }
 
-    g.setColor(bgColor[mode]);
+    g.setColor(bgcolor[mode]);
     g.fillRect(0, 0, imageW, imageH);
 
-    g.setColor(fgColor[mode]);
+    g.setColor(fgcolor[mode]);
+    g.setFont(font); // needs to be set each time on osx
     g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + ascent) / 2);
 
     screen.drawImage(offscreen, 0, 0, null);
