@@ -31,19 +31,23 @@ X should java 1.3 classes be included in the imports
 X   but not for exported applets? (might create some confusion)
 X   included java audio classes for 1.3
 X   included xml classes for 1.4
-
+X pmouseX should be set at the end of loop(), not on mouse movement
+X allow 3d curves
+X   curveVertex and bezierVertex that take 3 args
+X   3d versions of bezier() and curve()
 
 bagel
-_ pmouseX should be set at the end of loop(), not on mouse movement
 _ images don't load during setup()
 
-_ make bagel usable on its own w/o applet
+_ make bagel usable on its own as a drawing surface
+_   needs to be used as a component, without applet 
 _   but retain functionality, ie. image i/o
 _ finish fill mode of flat circle function
 _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
+_ get syntax coloring debugged?
 _ set frame title of launched window to the name of the sketch
 _ when renaming a sketch, select the text in the field, 
     so you can type the new name immediately. 
@@ -68,7 +72,6 @@ _ lots of problems with the console [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
-
 _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
 _ support 'classes' folder, through the use of a classloader
