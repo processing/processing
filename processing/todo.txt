@@ -254,19 +254,17 @@ dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;a
 
 X notify user when size() is bad
 X   need to use oro matcher when trying to grab the applet size (export?)
-_ open button getting stuck on windows
 X macosx doesn't listen if 'cancel' is selected for save changes on quit
 X   but windows works fine, so it's a macosx problem
+X open button getting stuck on windows
+_ make sure no CVS folders or .DS_Store files in the distribution
 
-fixes from toxi 
-X BImage.get() was only grabbing a single line of pixels
+ks X BImage.get() was only grabbing a single line of pixels
+dm _ problem with inner classes and helix example
+cr _ new reference for rev 60
 
 
 ..................................................................
-
-
-0060
-_ make sure no CVS folders or .DS_Store files in the distribution
 
 
 MEDIUM
