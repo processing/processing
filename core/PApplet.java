@@ -262,6 +262,8 @@ public class PApplet extends Applet
 
 
   public void depth() {
+    // OPT if PGraphics already exists, pass in its pixels[]
+    //     buffer so as not to re-allocate all that memory again
     if (g.width != 0) {
       g = new PGraphics3(g.width, g.height);
     } else {
@@ -4670,9 +4672,9 @@ v              PApplet.this.stop();
   }
 
 
-  public void arc(float start, float stop,
-                  float a, float b, float c, float d) {
-     g.arc(start, stop, a, b, c, d);
+  public void arc(float a, float b, float c, float d,
+                  float start, float stop) {
+     g.arc(a, b, c, d, start, stop);
   }
 
 

@@ -306,7 +306,7 @@ public class PGraphics extends PImage implements PConstants {
     allocate();
 
     // clear the screen with the old background color
-    background(backgroundColor);
+    //background(backgroundColor);
   }
 
 
@@ -318,7 +318,9 @@ public class PGraphics extends PImage implements PConstants {
     // because of a java 1.1 bug, pixels must be registered as
     // opaque before their first run, the memimgsrc will flicker
     // and run very slowly.
-    for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
+    backgroundColor |= 0xff000000;  // just for good measure
+    for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
+    //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
 
     cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
     mis = new MemoryImageSource(width, height, pixels, 0, width);
@@ -865,8 +867,8 @@ public class PGraphics extends PImage implements PConstants {
    * angleMode() sets DEGREES or RADIANS for the start & stop
    * ellipseMode() sets the placement.
    */
-  public void arc(float start, float stop,
-                  float a, float b, float c, float d) {
+  public void arc(float a, float b, float c, float d,
+                  float start, float stop) {
     float x = a;
     float y = b;
     float w = c;
@@ -901,8 +903,8 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void arcImpl(float start, float stop,
-                         float x, float y, float w, float h) {
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop) {
   }
 
 
