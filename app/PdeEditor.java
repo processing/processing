@@ -1,3 +1,5 @@
+// -*- Mode: JDE; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -66,8 +68,6 @@ public class PdeEditor extends Panel {
   //String lastFile;
 
   //PdeRunner runner;
-  //KjcEngine engine;
-  PdeEngine engine;
   Point appletLocation; //= new Point(0, 0);
   Point presentLocation; // = new Point(0, 0);
 
@@ -75,6 +75,8 @@ public class PdeEditor extends Panel {
   Window presentationWindow;
 
   RunButtonWatcher watcher;
+
+  PdeRuntime pdeRuntime;
 
   static final int GRID_SIZE  = 33;
   static final int INSET_SIZE = 5;
@@ -84,6 +86,13 @@ public class PdeEditor extends Panel {
   boolean renaming;
 
   PdeBase base;
+
+  PrintStream leechErr;
+  PdeMessageStream messageStream;
+  String buildPath;
+
+  static final String TEMP_CLASS = "Temporary";
+
 
     // hack while fixing layout issues
     //Component pain;
@@ -335,7 +344,7 @@ public class PdeEditor extends Panel {
 	  //if (frame != null) frame.toFront();  // editor to front
 	  try {
 	    //System.out.println("moving to front");
-	    engine.window.toFront();
+	    pdeRuntime.window.toFront();
 	  } catch (Exception ex) { }
 	}
       });
@@ -645,27 +654,33 @@ public class PdeEditor extends Panel {
 
     try {
       if (presenting) {
-	presentationWindow.show();
-	presentationWindow.toFront();
-	//doRun(true);
+        presentationWindow.show();
+        presentationWindow.toFront();
+        //doRun(true);
       }
 
       String program = textarea.getText();
       makeHistory(program, RUN);
 
-      //if (program.length() != 0) {
-      String buildPath = "lib" + File.separator + "build";  // TEMPORARY
       //if (PdeBase.platform == PdeBase.MACOSX) {
-	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	//buildPath = pkg + "build";
+      //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+      //buildPath = pkg + "build";
       //}
+      buildPath = "lib" + File.separator + "build";
 
       File buildDir = new File(buildPath);
-      if (!buildDir.exists()) buildDir.mkdirs();
+      if (!buildDir.exists()) {
+        buildDir.mkdirs();
+      }
 
-      String dataPath = 
-	sketchFile.getParent() + File.separator + "data";
-      //editor.sketchFile.getParent() + File.separator + "data";
+      String dataPath = sketchFile.getParent() + File.separator + "data";
+
+      if (dataPath != null) {
+        File dataDir = new File(dataPath);
+        if (dataDir.exists()) {
+          PdeEditor.copyDir(dataDir, buildDir);
+        }
+      }
 
 /*
 this needs to be reworked. there are three essential parts
@@ -690,21 +705,60 @@ this needs to be reworked. there are three essential parts
 
 afterwards, some of these steps need a cleanup function
 */
+      int numero1 = (int) (Math.random() * 10000);
+      int numero2 = (int) (Math.random() * 10000);
+      String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
 
-      engine = new KjcEngine(this, program, buildPath, dataPath);
-      //engine.start();
-      //engine.start(presenting ? presentLocation : appletLocation);
-      engine.start(presenting ? presentLocation : appletLocation);
-      //System.out.println("done iwth engine.start()");
-      //}
+      // do the preprocessing and write a .java file
+      //
+      // in an advanced program, the returned classname could be different,
+      // which is why we need to set className based on the return value
+      //
+      PdePreprocessor preprocessorOro =
+        new PdePreprocessorOro(program, buildPath);
+      className = preprocessorOro.writeJava(className, true);
 
-      watcher = new RunButtonWatcher();
+      // compile the program
+      //
+      PdeCompiler compilerKjc = new PdeCompilerKjc(buildPath, className, this);
 
+      // this will catch and parse errors during compilation
+      messageStream = new PdeMessageStream(this, compilerKjc);
+      leechErr = new PrintStream(messageStream);
+
+      boolean result = compilerKjc.compileJava(leechErr);
+
+      // if the compilation worked, run the applet
+      //
+      if (result) {
+
+        // create a runtime object
+        pdeRuntime = new PdeRuntime(this, className);
+
+        // use the runtime object to consume the errors now
+        messageStream.setMessageConsumer(pdeRuntime);
+
+        // start the applet
+        pdeRuntime.start(presenting ? presentLocation : appletLocation,
+                         leechErr);
+
+        // spawn a thread to update PDE GUI state
+        watcher = new RunButtonWatcher();
+
+      } else {
+        cleanTempFiles(buildPath);
+      }
     } catch (PdeException e) { 
       //state = RUNNER_ERROR;
       //forceStop = false;
       //this.stop();
-      engine.stop();
+
+      // if we made it to the runtime stage, stop that thread
+      //
+      if (pdeRuntime != null) {
+        pdeRuntime.stop();
+      }
+      cleanTempFiles(buildPath);
       e.printStackTrace();
       //editor.error(e);
       error(e);
@@ -712,8 +766,16 @@ afterwards, some of these steps need a cleanup function
     } catch (Exception e) {
       e.printStackTrace();
       //this.stop();
-      engine.stop();
+
+      // if we made it to the runtime stage, stop that thread
+      //
+      if (pdeRuntime != null) {
+        pdeRuntime.stop();
+      }
+
+      cleanTempFiles(buildPath);
     }	
+
     //engine = null;
     //System.out.println("out of doRun()");
     // required so that key events go to the panel and <key> works
@@ -730,16 +792,15 @@ afterwards, some of these steps need a cleanup function
 
     public void run() {
       while (Thread.currentThread() == thread) {
-	KjcEngine eng = (KjcEngine)engine;
-	if ((engine != null) && (eng.applet != null)) {
-	  //System.out.println(eng.applet.finished);
-	  buttons.running(!eng.applet.finished);
-	  //} else {
-	  //System.out.println("still pooping");
-	}
-	try {
-	  Thread.sleep(250);
-	} catch (InterruptedException e) { }
+        if ((pdeRuntime != null) && (pdeRuntime.applet != null)) {
+          //System.out.println(pdeRuntime.applet.finished);
+          buttons.running(!pdeRuntime.applet.finished);
+          //} else {
+          //System.out.println("still pooping");
+        }
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException e) { }
       }
     }
 
@@ -758,8 +819,7 @@ afterwards, some of these steps need a cleanup function
     }
     */
 
-    //System.out.println("stop1");
-    if (engine != null) engine.stop();
+    if (pdeRuntime != null) pdeRuntime.stop();
     if (watcher != null) watcher.stop();
     //System.out.println("stop2");
     message(EMPTY);
@@ -784,7 +844,7 @@ afterwards, some of these steps need a cleanup function
 
     } else {
       try {
-	appletLocation = engine.window.getLocation();
+        appletLocation = pdeRuntime.window.getLocation();
       } catch (NullPointerException e) { }
     }
     //System.out.println("doclose2");
@@ -796,12 +856,17 @@ afterwards, some of these steps need a cleanup function
 
     //System.out.println("doclose3");
     try {
-      engine.close();  // kills the window
-      engine = null; // will this help?
-
+      if (pdeRuntime != null) {
+        pdeRuntime.close();  // kills the window
+        pdeRuntime = null; // will this help?
+      }
     } catch (Exception e) { }
     //System.out.println("doclose4");
     //buttons.clear();  // done by doStop
+
+    if (buildPath != null) {
+      cleanTempFiles(buildPath);
+    }
   }
 
 
@@ -1364,19 +1429,28 @@ afterwards, some of these steps need a cleanup function
       // create the project directory
       // pass null for datapath because the files shouldn't be 
       // copied to the build dir.. that's only for the temp stuff
-      KjcEngine ex_engine = new KjcEngine(this, program, 
-					  appletDir.getPath(), null);
-				       //dataDir.getPath(), this);
+
       //File projectDir = new File(appletDir, projectName);
       //projectDir.mkdirs();
       appletDir.mkdirs();
 
-      // projectName will be updated with actual class name
-      exportSketchName = ex_engine.writeJava(exportSketchName, false);
-      if (!ex_engine.compileJava()) {
-	//throw new Exception("error while compiling, couldn't export");
-	// message() will already have error message in this case
-	return;
+      // preprocess the program
+      //
+      PdePreprocessor preprocessorOro =
+        new PdePreprocessorOro(program, appletDir.getPath());
+      exportSketchName = preprocessorOro.writeJava(exportSketchName, false);
+
+      PdeCompiler compilerKjc = new PdeCompilerKjc(appletDir.getPath(),
+                                                   exportSketchName, this);
+
+      // this will catch and parse errors during compilation
+      messageStream = new PdeMessageStream(this, compilerKjc);
+      leechErr = new PrintStream(messageStream);
+
+      if (!compilerKjc.compileJava(leechErr)) {
+        //throw new Exception("error while compiling, couldn't export");
+        // message() will already have error message in this case
+        return;
       }
 
       // not necessary, now compiles into applet dir
@@ -1387,7 +1461,7 @@ afterwards, some of these steps need a cleanup function
       //copyFile(new File(javaName), new File(appletDir, javaName));
 
       // remove temporary .java and .class files
-      //ex_engine.cleanup();
+      // cleanTempFiles(buildPath);
 
       int wide = BApplet.DEFAULT_WIDTH;
       int high = BApplet.DEFAULT_HEIGHT;
@@ -1850,8 +1924,8 @@ afterwards, some of these steps need a cleanup function
     }
     if (end == -1) end = len;
 
-    // sometimes KJC claims that the line it found an error in is 
-    // the last line in the file + 1.  Just highlight the last line 
+    // sometimes KJC claims that the line it found an error in is
+    // the last line in the file + 1.  Just highlight the last line
     // in this case. [dmose]
     if (st == -1) st = len;
 
@@ -1971,21 +2045,50 @@ afterwards, some of these steps need a cleanup function
     }
   }
 
-  static protected void removeDir(File dir) {
-    //System.out.println("removing " + dir);
+  // cleanup temp files
+  //
+  static protected void cleanTempFiles(String buildPath) {
+
+    // if the java runtime is holding onto any files in the build dir, we
+    // won't be able to delete them, so we need to force a gc here
+    //
+    System.gc();
+
+    File dirObject = new File(buildPath);
+    
+    // note that we can't remove the builddir itself, otherwise
+    // the next time we start up, internal runs using PdeRuntime won't
+    // work because the build dir won't exist at startup, so the classloader
+    // will ignore the fact that that dir is in the CLASSPATH in run.sh
+    //
+    if (dirObject.exists()) {
+      removeDescendants(dirObject);
+    }
+  }
+
+  // remove all files in a directory
+  //
+  static protected void removeDescendants(File dir) {
 
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-	if (!dead.delete()) System.err.println("couldn't delete " + dead);
+        if (!dead.delete())
+          System.err.println("couldn't delete " + dead);
       } else {
-	removeDir(dead);
-	//dead.delete();
+        removeDir(dead);
+        //dead.delete();
       }
     }
+  }
+
+  // remove all files in a directory and the dir itself
+  //
+  static protected void removeDir(File dir) {
+    //System.out.println("removing " + dir);
+    removeDescendants(dir);
     dir.delete();
   }
 }
-
