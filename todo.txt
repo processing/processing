@@ -245,7 +245,7 @@ X fix threading issue, don't call "break"
 X fixed a bunch of weird chmod stuff for windows
 X update with other examples
 
-0070p8
+0070p8 (final)
 X height for applets wasn't working properly
 X debug font stuff in processing.core
 X   mbox wasn't set properly (not a power of 2) 
@@ -256,17 +256,14 @@ X readme.txt/bugs.txt: strange hangs, errors that don't come up:
 X   watch out for loadFont() outside of setup
 X   or other things that can cause errors
 X change PSerial to serial, also PMovie etc..
+X included simon's particles library in cvs & with dist
+X examples updated
 
-_ bring back some form of beginSerial/beginVideo
-_   openSerial(), serial().. 
-_   should it prompt or use the first available if none specified?
-_   serial(null, ...) could prompt
 
-_ nanoxml problems with manifest
+......................................................................
 
-_ make exit() and/or size(0, 0) work for scripts
 
-_ figure out what to include for examples/libraries
+casey notes
 _ sketches no longer require a "data" folder
 _ let's not call it 'expert', let's just say w/o java
 _ "draw" is not highlighted as a keyword.. other keywords?
@@ -274,13 +271,21 @@ _   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
 _   PClient(), PClient.available(), PClient.read(), 
 _   PServer(), PServer.dispose(), PServer.write(), attach(), length
 _ example that uses loop/noLoop, or redraw?
+_ talk to creas about making html files for bugs, readme, revisions.
+_   or how they should relate to the 'faq'.. readme -> faq? 
+_ make a sketch that shows loading from the web
+_ make another sketch that shows loading from a file
 
+_ nanoxml problems with manifest
 
-......................................................................
+_ make exit() and/or size(0, 0) work for scripts
 
-
+libraries
+_ bring back some form of beginSerial/beginVideo
+_   openSerial(), serial().. 
+_   should it prompt or use the first available if none specified?
 _ serial - if null serial port name, prompt for one
-
+_   if "" for name, use the default / first in the list
 _ run library destroy after hitting 'stop'
 _   quicktime audio doesn't stop after hitting 'stop'
 _   weirdness external stop not calling stop(), just finished = true
@@ -292,14 +297,9 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
 
-_ talk to creas about making html files for bugs, readme, revisions.
-_   or how they should relate to the 'faq'.. readme -> faq? 
-
 _ different name for 'lib' folder because of libraries folder
 
 _ get linux version for 0071
-_ make a sketch that shows loading from the web
-_ make another sketch that shows loading from a file
 
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
