@@ -30,13 +30,13 @@ X     will cause bizarro recursive folder action
 X remove grow box from applet frame
 
 macosx
-_ verify that export is working from processing.app
-_ check into ryan's macosx java bug.. 
-_   see why coords are going negative
-
-_ allow to use doubles on casting -- particularly for Math.cos() et al
+X verify that export is working from processing.app
+o check into ryan's macosx java bug.. 
+o   see why coords are going negative
 
 //
+
+_ allow to use doubles on casting -- particularly for Math.cos() et al
 
 _ ctrl-tab to switch between tabs
 
