@@ -69,8 +69,11 @@ import java.io.*;
  */
 public class PImage implements PConstants, Cloneable {
 
-  // note that RGB images still require 0xff in the high byte
-  // because of how they'll be manipulated by other functions
+  /**
+   * Format for this image, one of RGB, RGBA or ALPHA.
+   * note that RGB images still require 0xff in the high byte
+   * because of how they'll be manipulated by other functions
+   */
   public int format;
 
   public int pixels[];
@@ -81,7 +84,7 @@ public class PImage implements PConstants, Cloneable {
   int image_mode = CORNER;
   boolean smooth = false;
 
-  // for gl subclass / hardware accel
+  /** for gl subclass / hardware accel */
   public int cacheIndex;
 
   // private fields
@@ -97,21 +100,25 @@ public class PImage implements PConstants, Cloneable {
   static final int PREC_MAXVAL = PRECISIONF-1;
   static final int PREC_ALPHA_SHIFT = 24-PRECISIONB;
   static final int PREC_RED_SHIFT = 16-PRECISIONB;
-  
-  
+
+
   /** 
-   * Constructor required by java compiler for subclasses.
+   * Create an empty image object, set its format to RGB.
+   * The pixel array is not allocated.
    */
-  public PImage() { }
+  public PImage() { 
+    format = RGB;  // makes sure that this guy is useful
+    cacheIndex = -1;
+  }
 
 
   /**
-   * Create a new (transparent) image of a specific size.
+   * Create a new RGB (alpha ignored) image of a specific size.
    * All pixels are set to zero, meaning black, but since the
    * alpha is zero, it will be transparent.
    */
   public PImage(int width, int height) {
-    setup(width, height, RGBA);
+    setup(width, height, RGB);
     //this(new int[width * height], width, height, RGBA);
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
