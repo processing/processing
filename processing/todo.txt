@@ -35,6 +35,8 @@ X why won't loop() go bold? -> java 1.4 problem on the mac
 X   test what it does on the pc
 X   seems to be a mac-specific problem (probably because of monaco)
 X removed kjc classes
+X addition to pde.properties to list the imports for various jdk versions
+X set jdk version for export inside pde.properties
 
 goodbye macos9
 X posted to message board about it going away
