@@ -457,7 +457,8 @@ public class PApplet extends Applet
 
 
   public void draw() {
-    finished = true;  // if no draw method, then...
+    // if no draw method, then shut things down
+    finished = true;
   }
 
 
@@ -465,7 +466,9 @@ public class PApplet extends Applet
     if (!looping) {
       redraw = true;
       if (thread != null) {
-        //thread.interrupt();  // wake from sleep
+        // wake from sleep (necessary otherwise it'll be
+        // up to 10 seconds before update)
+        thread.interrupt();
       }
     }
   }
@@ -475,7 +478,9 @@ public class PApplet extends Applet
     if (!looping) {
       looping = true;
       if (thread != null) {
-        //thread.interrupt();  // wake from sleep
+        // wake from sleep (necessary otherwise it'll be
+        // up to 10 seconds before update)
+        thread.interrupt();
       }
     }
   }
