@@ -1,5 +1,8 @@
 0027
 X change editor.button_bgcolor -> editor.buttons.bgcolor
+X if no 0 before decimal place in a number it breaks
+X change plane to quad
+X get new casey colors and buttons
 
 
 UNSORTED
@@ -24,6 +27,22 @@ _   code to reprogram lcd screen
 _ look through rabbit api
 _   look into integration of cmd line compiler
 _ check out flash for its text editor
+
+bagel/cbagel stuff
+_ try screengrab using malloc and/or gobs of extra memory
+_   debug the version inside bagel b/c it's simpler
+_ bagel needs to be able to resize itself
+_   also to address screen as if it's another size
+_     is that simply a matter of changing the viewport?
+_   letterboxing as appropriate
+
+things noticed while casey watched him using the software
+_ if no 0 before decimal place in a number it breaks
+_ display window should have separate close box
+_ save window positions on closing (due to crashing)
+_ title of the file should be shown
+_ needs to be a menubar
+_ text editor is quite bad (hiding cursor thing)
 
 biggest problems from french workshop
 _ syntax more difficult than expected: semicolons and braces
