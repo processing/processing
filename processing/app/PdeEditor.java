@@ -109,7 +109,9 @@ public class PdeEditor extends JPanel {
 
   //PrintStream leechErr;
   PdeMessageStream messageStream;
-  String buildPath;
+
+  // location for lib/build, contents for which will be emptied
+  String tempBuildPath;
 
   static final String TEMP_CLASS = "Temporary";
 
@@ -538,27 +540,29 @@ public class PdeEditor extends JPanel {
   }
 
 
+  // in an advanced program, the returned classname could be different,
+  // which is why the className is set based on the return value.
+  // @param exporting if set, then code is cleaner, 
+  //                  but line numbers won't line up properly.
+  //                  also modifies which imports (1.1 only) are included.
+  // @return null if compilation failed, className if not
+  //
+  protected String build(String program, String className,
+                         String buildPath, boolean exporting) 
+    throws PdeException, Exception {
 
-  /*
-  protected boolean build(String program, String className) {
-    try {
-      // do the preprocessing and write a .java file
-      //
-      // in an advanced program, the returned classname could be different,
-      // which is why we need to set className based on the return value
-      //
+    // true if this should extend BApplet instead of BAppletGL
+    boolean extendsNormal = base.normalItem.getState();
+
       PdePreprocessor preprocessor = null;
-
       if (PdeBase.getBoolean("preprocessor.antlr", true)) {
         preprocessor = new PdePreprocessor(program, buildPath);
         try {
-          //System.out.println("using antlr");
-          className = preprocessor.writeJava(className, 
-                                             base.normalItem.getState(),
-                                             false);
+          className = 
+            preprocessor.writeJava(className, extendsNormal, false);
+
         } catch (antlr.RecognitionException ae) {
           // this even returns a column
-          System.out.println(ae.toString());
           throw new PdeException(ae.getMessage(), 
                                  ae.getLine() - 1, ae.getColumn());
 
@@ -566,21 +570,11 @@ public class PdeEditor extends JPanel {
           System.err.println("Uncaught exception type:" + ex.getClass());
           ex.printStackTrace();
           throw new PdeException(ex.toString());
-          //System.out.println("pissed about: '" + ex.getMessage() + "'");
-          //ex.printStackTrace();
-          // if there was an issue (including unrecoverable parse errors)
-          // try falling back to the old preprocessor
-          //preprocessor = new PdePreprocessorOro(program, buildPath);
-          //className = preprocessor.writeJava(className, 
-          //                               base.normalItem.getState(), 
-          //                               false);
         }
-      } else {
-      //System.out.println("not using antlr");
+      } else {  // use the old oro processor (yech)
         preprocessor = new PdePreprocessorOro(program, buildPath);
-        className = preprocessor.writeJava(className, 
-                                           base.normalItem.getState(),
-                                           false);
+        className = 
+          preprocessor.writeJava(className, extendsNormal, false);
       }
 
       // compile the program
@@ -598,15 +592,14 @@ public class PdeEditor extends JPanel {
       // (this will catch and parse errors during compilation
       // the messageStream will call message() for 'compiler')
       messageStream = new PdeMessageStream(compiler);
-      PrintStream leechErr = new PrintStream(messageStream);
+      //PrintStream leechErr = new PrintStream(messageStream);
       //boolean result = compiler.compileJava(leechErr);
-      return compiler.compileJava(leechErr);
+      //return compiler.compileJava(leechErr);
+      boolean success = 
+        compiler.compileJava(new PrintStream(messageStream));
 
-    } catch (PdeException e) {
-      return false;
-    }
+      return success ? className : null;
   }
-  */
 
 
 
@@ -642,9 +635,10 @@ public class PdeEditor extends JPanel {
       //String pkg = "Proce55ing.app/Contents/Resources/Java/";
       //buildPath = pkg + "build";
       //}
-      buildPath = "lib" + File.separator + "build";
+      //buildPath = "lib" + File.separator + "build";
+      tempBuildPath = "lib" + File.separator + "build";
 
-      File buildDir = new File(buildPath);
+      File buildDir = new File(tempBuildPath);
       if (!buildDir.exists()) {
         buildDir.mkdirs();
       }
@@ -690,6 +684,9 @@ public class PdeEditor extends JPanel {
       /// 
 
 
+      className = build(program, className, tempBuildPath, false);
+
+      /*
       // do the preprocessing and write a .java file
       //
       // in an advanced program, the returned classname could be different,
@@ -751,6 +748,7 @@ public class PdeEditor extends JPanel {
       boolean result = compiler.compileJava(leechErr);
 
       // messageStream gets reset after this anyways
+      */
 
 
       /// 
@@ -758,13 +756,15 @@ public class PdeEditor extends JPanel {
 
       // if the compilation worked, run the applet
       //
-      if (result) {
+      //if (result) {
+      if (className != null) {
 
         // create a runtime object
         pdeRuntime = new PdeRuntime(this, className);
 
         // use the runtime object to consume the errors now
         //messageStream.setMessageConsumer(pdeRuntime);
+        // no need to bother recycling the old guy
         PdeMessageStream messageStream = new PdeMessageStream(pdeRuntime);
 
         // start the applet
@@ -777,13 +777,13 @@ public class PdeEditor extends JPanel {
 
       } else {
         // [dmose] throw an exception here?
-        // [fry] i think the exception already gets thrown by the runtime
-        cleanTempFiles(buildPath);
+        // [fry] iirc the exception will have already been thrown
+        cleanTempFiles(); //tempBuildPath);
       }
     } catch (PdeException e) { 
-      // if we made it to the runtime stage, stop that thread
+      // if we made it to the runtime stage, unwind that thread
       if (pdeRuntime != null) pdeRuntime.stop();
-      cleanTempFiles(buildPath);
+      cleanTempFiles(); //tempBuildPath);
 
       // printing the stack trace may be overkill since it happens
       // even on a simple parse error
@@ -791,13 +791,13 @@ public class PdeEditor extends JPanel {
 
       error(e);
 
-    } catch (Exception e) {
+    } catch (Exception e) {  // something more general happened
       e.printStackTrace();
 
-      // if we made it to the runtime stage, stop that thread
+      // if we made it to the runtime stage, unwind that thread
       if (pdeRuntime != null) pdeRuntime.stop();
 
-      cleanTempFiles(buildPath);
+      cleanTempFiles(); //tempBuildPath);
     }        
 
     //engine = null;
@@ -881,9 +881,9 @@ public class PdeEditor extends JPanel {
     //System.out.println("doclose4");
     //buttons.clear();  // done by doStop
 
-    if (buildPath != null) {
-      cleanTempFiles(buildPath);
-    }
+    //if (buildPath != null) {
+    cleanTempFiles(); //buildPath);
+    //}
   }
 
 
@@ -1266,6 +1266,15 @@ public class PdeEditor extends JPanel {
       ///
 
 
+      exportSketchName = 
+        build(program, exportSketchName, appletDir.getPath(), true);
+
+      if (exportSketchName == null) {
+        buttons.clear();
+        return;
+      }
+
+      /*
       // preprocess the program
       //
       PdePreprocessor preprocessor = null;
@@ -1300,7 +1309,7 @@ public class PdeEditor extends JPanel {
         new PdeCompiler(appletDir.getPath(), exportSketchName, this);
 
       // this will catch and parse errors during compilation
-      messageStream = new PdeMessageStream(/*this,*/ compiler);
+      messageStream = new PdeMessageStream(compiler);
       PrintStream leechErr = new PrintStream(messageStream);
 
       if (!compiler.compileJava(leechErr)) {
@@ -1308,6 +1317,7 @@ public class PdeEditor extends JPanel {
         // message() will already have error message in this case
         return;
       }
+      */
 
 
       ///
@@ -1828,15 +1838,19 @@ public class PdeEditor extends JPanel {
 
   // cleanup temp files
   //
-  static protected void cleanTempFiles(String buildPath) {
+  //static protected void cleanTempFiles(String buildPath) {
+  //static protected void cleanTempFiles() {
+  protected void cleanTempFiles() {
+    if (tempBuildPath == null) return;
 
     // if the java runtime is holding onto any files in the build dir, we
     // won't be able to delete them, so we need to force a gc here
     //
     System.gc();
 
-    File dirObject = new File(buildPath);
-    
+    //File dirObject = new File(buildPath);
+    File dirObject = new File(tempBuildPath);
+
     // note that we can't remove the builddir itself, otherwise
     // the next time we start up, internal runs using PdeRuntime won't
     // work because the build dir won't exist at startup, so the classloader
@@ -1850,14 +1864,15 @@ public class PdeEditor extends JPanel {
   // remove all files in a directory
   //
   static protected void removeDescendants(File dir) {
-
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-        if (!dead.delete())
-          System.err.println("couldn't delete " + dead);
+        if (!dead.delete()) {
+          // temporarily disabled
+          //System.err.println("couldn't delete " + dead);
+        }
       } else {
         removeDir(dead);
         //dead.delete();
