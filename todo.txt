@@ -27,12 +27,13 @@ X   do this once unicode support has been added to the regular fonts
 X make a preference panel to set pde.properties stuff
 X new html code for eolas patent case
 X   move html to external file in the lib folder
-
+X re-merge old code back in for textareadefaults?
 X re-enable line highlight
 X fix background color
 X get bracket highlighting to work 
 X why won't loop() go bold? -> java 1.4 problem on the mac
-_   test what it does on the pc
+X   test what it does on the pc
+X   seems to be a mac-specific problem (probably because of monaco)
 
 goodbye macos9
 X posted to message board about it going away
@@ -65,8 +66,10 @@ o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
 
 
+_ fix command keys for menus (broken since switching to swing)
+
 _ option for having multiple files open
-_   need ui for tabs from casey
+X   need ui for tabs from casey
 _   tabbed interface for multiple files
 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
 _   "new text java/pde file" menu item
@@ -150,25 +153,35 @@ void toGrayscale() {
 }
 
 
-BUGS
+BUGS / PDE
 _ find/replace hangs when recapitalizing things
-_ doesn't work when outside a function:
-_   color bg_color = color(255,0,0);
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1072994196;start=0
 _ if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError ensues
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 _ jikes errors have no newlines because it's a buffered reader
 _   and the newlines are removed when read
+_ mouse wheel not working properly, need to dynamically load 1.4 code
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
+_ preproc bug: text(String.valueOf(i+1), left + i*20, top);
+_   unexpected token "String"
+
+
+BUGS / Bagel
+_ doesn't work when outside a function:
+_   color bg_color = color(255,0,0);
+_ rect is not getting it's stroke color set
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
+_ alpha of zero still draws boogers on screen
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
 _ new sphere code from toxi
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
 _ colorMode broken for red() green() etc
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
 _ z values not set properly on ellipses?
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
-_ mouse wheel not working properly, need to dynamically load 1.4 code
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
-_ preproc bug: text(String.valueOf(i+1), left + i*20, top);
-_   unexpected token "String"
+_ ellipses are just plain ugly
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
 
 
 BUGS / Windows
@@ -182,7 +195,9 @@ _ doesn't seem interested in quitting properly (?)
 
 
 BUGS / Mac OS X
-_ why are cmd keys for menus not working (on mac only?)
+_ flickering several times on startup
+_   also a strange box showing up in the corner
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073111031
 
 
 NETWORK
@@ -198,6 +213,7 @@ VIDEO
 _ selecting input source (wintv board and quickcam installed.. problem)
 _ including qtjava in path when in java mode (oops)
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073523928;start=0
 _ beginVideo not colored
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
 _ things will freeze if winvdig not installed
@@ -231,34 +247,13 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 
 CONSOLE
-_ console -> should be using JEditTextArea not TextPane
-_ set decent fonts (probably same as editor above), looks bad on mac
+_ set max frame rate at 60 fps? avoid the full-on spew to the console
 _ console runs really really slow with a lot of println() calls
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
-
-
-................
-
-
-// Rect is not getting it's stroke color set
-
-void setup() {
-size(400, 400);
-//fill(255, 153); // This line fixes the issue
-}
-
-void loop() {
-//translate(0, 0, 0); //This line makes lines disappear
-background(0);
-strokeWeight(10.0);
-stroke(0, 102, 153, 153);
-line(0, 0, mouseX, mouseY);
-line(width, height, width-mouseX, height-mouseX);
-rect(mouseX, mouseY, 200, 200);
-}
-
-
-................
+_ console -> should be using JEditTextArea not TextPane
+_ make new TextAreaDefaults class for the console
+_ figure out how to color lines for errors and non (since not syntax)
+_ set decent fonts (probably same as editor above), looks bad on mac
 
 
 
@@ -500,6 +495,7 @@ BAGEL / Rendering
    b _   user can introduce new kinds of buffers at will (!)
    b _   lists of names of objects, or the 'line number' buffer
    b _   but how to determine *where* on object the hit occurs
+
 
 ca b _ lines
 ca b X   rewrite line and stroke code, it's a buggy mess
