@@ -146,7 +146,10 @@ public class PApplet extends Applet
   public int width, height;
 
   int libraryCount;
-  PLibrary libraries[]; 
+  PLibrary libraries[];
+  boolean libraryCalls[][];
+  //int registeredCount[];
+  //PLibrary registered[][];
 
   // this text isn't seen unless PApplet is used on its
   // own and someone takes advantage of leechErr.. not likely
@@ -231,9 +234,9 @@ public class PApplet extends Applet
     this.pixels = g.pixels;
     this.width = g.width;
     this.height = g.height;
-    //g.applet = this;
 
-    //setupComplete = true;
+    libraries = new PLibrary[10];
+    libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
 
     try {
       getAppletContext();
@@ -252,8 +255,6 @@ public class PApplet extends Applet
 
 
   public void start() {
-    //System.out.println("PApplet.start");
-
     thread = new Thread(this);
     thread.start();
   }
@@ -266,25 +267,9 @@ public class PApplet extends Applet
       thread = null;
     }
 
-    // DEPRECATED as of jdk 1.2.. ugh.. will this work?
-    /*
-    // kill off any associated threads
-    Thread threads[] = new Thread[Thread.activeCount()];
-    Thread.enumerate(threads);
-    for (int i = 0; i < threads.length; i++) {
-      // sometimes these get killed off before i can get 'em
-      if (threads[i] == null) continue;
-
-      if (threads[i].getName().indexOf("Thread-") == 0) {
-        //System.out.println("stopping " + threads[i].getName());
-        threads[i].stop();
-      }
-    }
-    */
-
     for (int i = 0; i < libraryCount; i++) {
-      if (libraries[i] != null) {
-        libraries[i].stop();  // endNet/endSerial etc
+      if (libraryCalls[i][PLibrary.DISPOSE]) {
+        libraries[i].dispose();  // endNet/endSerial etc
       }
     }
   }
@@ -307,6 +292,56 @@ public class PApplet extends Applet
 
   public Dimension getPreferredSize() {
     return new Dimension(width, height);
+  }
+
+
+  // ------------------------------------------------------------
+
+
+  public void attach(PLibrary library) {
+    if (libraryCount == libraries.length) {
+      PLibrary temp[] = new PLibrary[libraryCount << 1];
+      System.arraycopy(libraries, 0, temp, 0, libraryCount);
+      libraries = temp;
+      boolean ctemp[][] = new boolean[libraryCount << 1][];
+      System.arraycopy(libraryCalls, 0, ctemp, 0, libraryCount);
+      libraryCalls = ctemp;
+    }
+    libraries[libraryCount] = library;
+    libraryCalls[libraryCount] = new boolean[PLibrary.CALL_COUNT];
+    libraryCount++;
+  }
+
+
+  public void attach(String libraryName) {
+    try {
+      Class c = Class.forName(libraryName);
+      PLibrary library = (PLibrary) c.newInstance();
+      library.setup(this);
+
+    } catch (ClassNotFoundException e) {
+      System.err.println("Could not find library \"" + libraryName + "\"");
+      System.err.println("Make sure it's in the libraries folder, ");
+      System.err.println("or exported somewhere inside the sketchbook,");
+      System.err.println("or inside the \"code\" folder of this sketch.");
+
+    } catch (IllegalAccessException e) {
+      System.err.println("Could not load library \"" + libraryName + "\"");
+      e.printStackTrace();
+
+    } catch (InstantiationException e) {
+      System.err.println("Could not load library \"" + libraryName + "\"");
+      e.printStackTrace();
+    }
+  }
+
+
+  public void registerCall(PLibrary library, int call) {
+    for (int i = 0; i < libraryCount; i++) {
+      if (libraries[i] == library) {
+        libraryCalls[i][call] = true;
+      }
+    }
   }
 
 
@@ -364,6 +399,12 @@ public class PApplet extends Applet
     this.pixels = g.pixels;
     this.width = g.width;
     this.height = g.height;
+
+    for (int i = 0; i < libraryCount; i++) {
+      if (libraryCalls[i][PLibrary.SIZE]) {
+        libraries[i].size(width, height);  // endNet/endSerial etc
+      }
+    }
 
     // set this here, and if not inside browser, getDocumentBase()
     // will fail with a NullPointerException, and cause applet to
@@ -456,6 +497,11 @@ public class PApplet extends Applet
             g.beginFrame();
             if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
                                       " 1b draw");
+
+            for (int i = 0; i < libraryCount; i++) {
+              if (libraryCalls[PLibrary.PRE][i]) libraries[i].pre();
+            }
+
             draw();
 
             // these are called *after* loop so that valid
@@ -466,26 +512,35 @@ public class PApplet extends Applet
             dequeueKeyEvents();
             if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
                                       " 2b endFrame");
-            g.endFrame();
-          //}  // end sync
 
-          //update();
-          // formerly 'update'
-          //if (firstFrame) firstFrame = false; 
-          // internal frame counter
-          frameCount++;
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
-                                    "   3a calling repaint() " + frameCount);
-          repaint();
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
-                                    "   3b calling Toolkit.sync " + frameCount);
-          getToolkit().sync();  // force repaint now (proper method)
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+            for (int i = 0; i < libraryCount; i++) {
+              if (libraryCalls[PLibrary.DRAW][i]) libraries[i].draw();
+            }
+
+            g.endFrame();
+            //}  // end sync
+
+            //update();
+            // formerly 'update'
+            //if (firstFrame) firstFrame = false; 
+            // internal frame counter
+            frameCount++;
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      "   3a calling repaint() " + frameCount);
+            repaint();
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      "   3b calling Toolkit.sync " + frameCount);
+            getToolkit().sync();  // force repaint now (proper method)
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
                                     "   3c done " + frameCount);
-          //if (THREAD_DEBUG) println("   3d waiting");
-          //wait();
-          //if (THREAD_DEBUG) println("   3d out of wait");
-          //frameCount++;
+            //if (THREAD_DEBUG) println("   3d waiting");
+            //wait();
+            //if (THREAD_DEBUG) println("   3d out of wait");
+            //frameCount++;
+
+            for (int i = 0; i < libraryCount; i++) {
+              if (libraryCalls[PLibrary.POST][i]) libraries[i].post();
+            }            
           }
         }
         redraw = false;  // unset 'redraw' flag in case it was set
@@ -583,6 +638,12 @@ public class PApplet extends Applet
     mouseX = event.getX();
     mouseY = event.getY();
     mouseEvent = event;
+
+    for (int i = 0; i < libraryCount; i++) {
+      if (libraryCalls[i][PLibrary.MOUSE]) {
+        libraries[i].mouse(event);  // endNet/endSerial etc
+      }
+    }
 
     // this used to only be called on mouseMoved and mouseDragged 
     // change it back if people run into trouble
@@ -728,6 +789,12 @@ public class PApplet extends Applet
     keyEvent = event;
     key = event.getKeyChar();
     keyCode = event.getKeyCode();
+
+    for (int i = 0; i < libraryCount; i++) {
+      if (libraryCalls[i][PLibrary.KEY]) {
+        libraries[i].key(event);  // endNet/endSerial etc
+      }
+    }
 
     switch (event.getID()) {
     case KeyEvent.KEY_PRESSED:  
@@ -2005,11 +2072,9 @@ public class PApplet extends Applet
    * I want to read lines from a file. I have RSI from typing these
    * eight lines of code so many times.
    */
-  public BufferedReader reader(File file) {
+  public BufferedReader reader(String filename) {
     try {
-      FileInputStream fis = new FileInputStream(file);
-      InputStreamReader isr = new InputStreamReader(fis);
-      return new BufferedReader(isr);
+      return reader(openStream(filename));
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -2019,19 +2084,63 @@ public class PApplet extends Applet
 
 
   /**
-   * I want to print lines to a file. I have RSI from typing these
-   * eight lines of code so many times.
+   * I want to read lines from a file. And I'm still annoyed.
    */
-  public PrintWriter writer(File file) {
+  public BufferedReader reader(File file) {
     try {
-      FileOutputStream fos = new FileOutputStream(file);
-      OutputStreamWriter osw = new OutputStreamWriter(fos);
-      return new PrintWriter(osw);
+      return reader(new FileInputStream(file));
 
     } catch (IOException e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+
+  /**
+   * I want to read lines from a stream. If I have to type the
+   * following lines any more I'm gonna send Sun my medical bills.
+   */
+  public BufferedReader reader(InputStream input) throws IOException {
+    InputStreamReader isr = new InputStreamReader(input);
+    return new BufferedReader(isr);
+  }
+
+
+  /**
+   * I want to print lines to a file. Why can't I?
+   */
+  public PrintWriter writer(String filename) {
+    try {
+      return writer(new FileOutputStream(save_location(filename, true)));
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * I want to print lines to a file. I have RSI from typing these
+   * eight lines of code so many times.
+   */
+  public PrintWriter writer(File file) {
+    try {
+      return writer(new FileOutputStream(file));
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * I want to print lines to a file. Why am I always explaining myself?
+   * It's the JavaSoft API engineers who need to explain themselves.
+   */
+  public PrintWriter writer(OutputStream output) throws IOException {
+    OutputStreamWriter osw = new OutputStreamWriter(output);
+    return new PrintWriter(osw);
   }
 
 
