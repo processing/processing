@@ -115,6 +115,24 @@ public class PdeEditor extends Panel {
 		   PdeBase.getInteger("editor.program.rows", 20),
 		   PdeBase.getInteger("editor.program.columns", 60),
 		   TextArea.SCROLLBARS_VERTICAL_ONLY);
+
+    /* {
+	  public Dimension minimumSize() {
+	    System.out.println("old minimum");
+	    return new Dimension(100, 100);
+	  }
+
+	  public Dimension getMinimumSize() {
+	    System.out.println("new minimum");
+	    return new Dimension(100, 100);
+	  }
+
+	  public Dimension getMinimumSize(int r, int c) {
+	    System.out.println("new minimum 2");
+	    return new Dimension(100, 100);
+	  }
+	  };*/
+
     textarea.setFont(PdeBase.getFont("editor.program.font",
 				       new Font("Monospaced", 
 						Font.PLAIN, 12)));
@@ -166,6 +184,11 @@ public class PdeEditor extends Panel {
     } else {
       presentationWindow = new Window(new Frame());
       presentationWindow.setBounds(0, 0, screen.width, screen.height);
+      //presentationWindow.addKeyListener(new KeyAdapter() {
+      //  public void keyPressed(KeyEvent e) {
+      //    System.out.println("pwindow got " + e);
+      //  }
+      //});
     }
 
     Label label = new Label("stop");
