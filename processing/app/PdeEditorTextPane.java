@@ -140,11 +140,14 @@ public class PdeEditorTextPane extends JTextPane {
     styles.put("text",         PdeBase.getStyle("text", dstyle));
     */
 
+    styles.put("default",      PdeBase.getStyle("default", dstyle));
+    styles.put("identifier",   PdeBase.getStyle("default", dstyle));
+
     styles.put("reservedWord", PdeBase.getStyle("reserved_word", dstyle));
     styles.put("whitespace",   PdeBase.getStyle("whitespace", dstyle));
     styles.put("literal",      PdeBase.getStyle("literal", dstyle));
     styles.put("separator",    PdeBase.getStyle("separator", dstyle));
-    styles.put("identifier",   PdeBase.getStyle("identifier", dstyle));
+    //styles.put("identifier",   PdeBase.getStyle("identifier", dstyle));
     styles.put("comment",      PdeBase.getStyle("comment", dstyle));
     styles.put("operator",     PdeBase.getStyle("operator", dstyle));
 
@@ -196,7 +199,11 @@ public class PdeEditorTextPane extends JTextPane {
       //System.out.println("good settext ");
       document.remove(0, document.getLength());
       //document.insertString(0, program, grabStyle("text"));
-      document.insertString(0, program, grabStyle("whitespace"));
+      //document.insertString(0, program, grabStyle("whitespace"));
+      //Style style = (Style) grabStyle("default");
+      //if (style != null) setLogicalStyle(style);
+      document.insertString(0, program, grabStyle("default"));
+      //setCaretPosition(0);
 
     } catch (BadLocationException ble) {
       System.err.println("PdeEditorTextPane.setText() failed");
