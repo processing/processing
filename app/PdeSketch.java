@@ -855,23 +855,6 @@ public class PdeSketch {
     // better connected to the dataFolder stuff below.
     cleanup();
 
-    // copy contents of data dir into lib/build
-    // TODO write a file sync procedure here.. if the files 
-    //      already exist in the target, or haven't been modified
-    //      don't' bother. this can waste a lot of time when running.
-    //File dataDir = new File(folder, "data");
-    if (dataFolder.exists()) {
-      // just drop the files in the build folder (pre-68)
-      //PdeBase.copyDir(dataDir, buildDir);
-      // drop the files into a 'data' subfolder of the build dir
-      try {
-        PdeBase.copyDir(dataFolder, new File(tempBuildFolder, "data"));
-      } catch (IOException e) {
-        e.printStackTrace();
-        throw new PdeException("Problem copying files from data folder");
-      }
-    }
-
     // make up a temporary class name to suggest.
     // name will only be used if the code is not in ADVANCED mode.
     String suggestedClassName = 
@@ -881,6 +864,21 @@ public class PdeSketch {
     // handle preprocessing the main file's code
     mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
     // externalPaths is magically set by build()
+
+    if (!externalRuntime) {  // only if not running externally already
+      // copy contents of data dir into lib/build
+      if (dataFolder.exists()) {
+        // just drop the files in the build folder (pre-68)
+        //PdeBase.copyDir(dataDir, buildDir);
+        // drop the files into a 'data' subfolder of the build dir
+        try {
+          PdeBase.copyDir(dataFolder, new File(tempBuildFolder, "data"));
+        } catch (IOException e) {
+          e.printStackTrace();
+          throw new PdeException("Problem copying files from data folder");
+        }
+      }
+    }
 
     // if the compilation worked, run the applet
 //    if (mainClassName != null) {
@@ -984,6 +982,11 @@ public class PdeSketch {
       externalRuntime = (codeCount > 1);  // may still be set true later
       importPackageList = null;
       libraryPath = "";
+    }
+
+    // if 'data' folder is large, set to external runtime
+    if (PdeBase.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
+      externalRuntime = true;
     }
 
     // first run preproc on the 'main' file, using the sugg class name
