@@ -12,6 +12,18 @@ ABOUT REV 0061 -
   the microsoft java 1.1 vm.
 
 
+[ known problems ]
+
+
+[ common problems, not actually bugs ]
+
+- names of sketches cannot start with a number, or have spaces
+  inside. this is mostly because of a restriction on the naming of
+  java classes. i suppose if lots of people find this upsetting, we
+  could add some extra code to unhinge the resulting class name from
+  the sketch name, but it adds complexity, and complexity == bugs. :)
+
+
 ABOUT REV 0060 - 22 september 2003
 
 IMPORTANT NOTE! ACHTUNG!

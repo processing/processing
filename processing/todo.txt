@@ -1,6 +1,33 @@
 0061
 X remove private references in audio code that were breaking audio
 X   with the microsoft java vm
+X   the audio examples are not 1.1 compliant. the error:
+X   java.lang.IllegalAccessError: field AU_FILE is final
+X remove 'width 200 high 200' debugging message on export
+X fix saveFrame to allow saveFrame("blah.tif")
+X   better as a way to avoid potential confusion
+X   in the revisions.txt you write:
+X     "saveFrame("blah.tif") will save the current frame as blah.tif"
+X     ...this is not true
+X     save("blah.tif") will save the current frame as blah.tif.
+X     the syntax is either saveFrame() or saveFrame("blah-####.tif")
+X     either no properties passed-in or a name INCL. the ####'s
+X save() is not color-coded as a proper P5-command!
+
+_ serious sluggishness with applets
+_   beginShape/endShape.. 3D scenes with boxes..
+
+_ IllegalAccessError when running examples with inner classes in msjvm
+
+_ if no reference found, provide message
+_   watch out for people selecting the parens or part of the function
+_ red of the console color is difficult to read
+
+cr X some new examples to fix noBackground and setPixel problems
+cr X   image/transparency is broken (removing noBackground() is fixing it...)
+cr X   form/vertices_3d: background() is still within setup()
+cr X   cellular_automata_3 had noBackground()
+cr X fix for typography/helix example checked in
 
 
 ..................................................................
