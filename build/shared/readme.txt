@@ -114,6 +114,12 @@ GENERAL NOTES / COMMON MISTAKES
   background color of the app before it starts, so since variables
   are determined while the program is running, things break. 
 
+- names of sketches cannot start with a number, or have spaces
+  inside. this is mostly because of a restriction on the naming of
+  java classes. i suppose if lots of people find this upsetting, we
+  could add some extra code to unhinge the resulting class name from
+  the sketch name, but it adds complexity, and complexity == bugs. :)
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
