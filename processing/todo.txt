@@ -12,6 +12,9 @@ o   in favor of requiring a specific jvm, and using registry to find
 X see if mods to PdeCompiler work on windows
 
 fixes because of dmose parser
+X move to antlr
+X float z= float(x) + float(y); 
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062471182;start=0
 X compiler barfs on: float[] moo = new int[10];  
 X   although no error comes through to p5 (benelek)
 X   this was a kjc error, so it's fixed with jikes
@@ -27,32 +30,39 @@ X weird comments bug (// on last line causes oro trouble)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
 
 
-
 the big stuff:
+
+NEW PARSER
+
+API MODS: tint/size/background/lights
 
 LOADING CODE FROM CLASSES DIR
 
 "JAVA MODE" (VIA EXTERNAL VM?)
 
-FONT SUCKAGE
-
-API MODS: tint/size/background/lights
-
 API NAMING
 
 .. 
 
+the slipping stuff:
 
 new code from sami/carlos
 
-integrating dan's new parser
+FONT SUCKAGE
 
 ..
 
 
+X when exporting applet, line numbers will be off.. 
+_   when not exporting with new preproc code, imports all on same line
+_   make preproc keep track of how many lines were added
+
 _ modify antlr stuff to conditionally recompile in make.sh
 _   only recompile if asked or if changes
 
+_ size(myWidth, myHeight) -> set static var in BGraphics
+_   for the last size that was used, use as default when 
+_   prompting for the size of the exported applet
 _ modify how size() works
 _   allow size() to be called multiple times
 _   only works once in applet
@@ -85,7 +95,9 @@ _ modify background() to actually clear the screen
 _   modify readme.txt regarding background() requiring constants
 
 
-_ remove "couldn't delete.." messages
+X remove "couldn't delete.." messages
+
+_ fix the problem causing all the "couldn't delete" messages
 
 _ help->reference and find in reference don't work on some machines
 _   complaints from osx and windows..
@@ -510,7 +522,9 @@ ca b X     problem is that lines are drawn second
 ca b X     one pixel lines have no z value.. argh
 ca b X     bug re: 3d depth sorting on lines
 ca b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
-ca b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+ca b _
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+
 ca b _     translate(58, 48, 0); 
 ca b _     rotateY(0.5);
 ca b _     box(40);
@@ -667,8 +681,6 @@ PDE - Processing Development Environment
 PDE / Pre-preprocessor 
 Currently using Oro for search and replace preprocessor,
 but Dan Mosedale is moving us to ANTLR
-
-dm X move to antlr
 
 dm b _ additional data conversions to avoid this syntax:
 dm b _   Integer.toString(), Integer.parseInt()
