@@ -1,7 +1,14 @@
 0079 core
 
+_ size() doing a setBounds() is really bad
+_   because it means things can't be embedded properly
+
 _ printarr() of null array crashes without an error
 _ actually, errors from many crashes not coming through on the mac?
+
+_ proper full screen code for present mode
+_   why do mouse motion events go away in full screen mode
+_   or with a Window object
 
 createGraphics and placement issues
 _ make pappletgl work back inside papplet

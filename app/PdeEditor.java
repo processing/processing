@@ -76,8 +76,12 @@ public class PdeEditor extends JFrame
   JSplitPane splitPane;
   JPanel consolePanel;
 
+  JLabel lineNumberComponent;
+
   // currently opened program
   public PdeSketch sketch;
+
+  PdeEditorLineStatus lineStatus;
 
   public JEditTextArea textarea;
   PdeEditorListener listener;
@@ -171,22 +175,34 @@ public class PdeEditor extends JFrame
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
 
-    buttons = new PdeEditorButtons(this);
-    pain.add("West", buttons);
+    Box box = Box.createVerticalBox();
 
-    JPanel rightPanel = new JPanel();
-    rightPanel.setLayout(new BorderLayout());
+    Box upper = Box.createVerticalBox();
+    //JPanel box = new JPanel();
+    //box.setLayout(new FlowLayout(FlowLayout.VERTICAL));
+
+    buttons = new PdeEditorButtons(this);
+    //pain.add("West", buttons);
+    //box.add(buttons);
+    upper.add(buttons);
+
+    //JPanel rightPanel = new JPanel();
+    //rightPanel.setLayout(new BorderLayout());
 
     header = new PdeEditorHeader(this);
-    rightPanel.add(header, BorderLayout.NORTH);
+    //rightPanel.add(header, BorderLayout.NORTH);
+    //box.add(header);
+    upper.add(header);
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
-    textarea.setHorizontalOffset(5);
+    textarea.setHorizontalOffset(6);
     //textarea.setBorder(new EmptyBorder(0, 20, 0, 0));
     //textarea.setBackground(Color.white);
+
+    //textarea.setMaximumSize(new Dimension(3000, 3000));
 
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
@@ -199,13 +215,27 @@ public class PdeEditor extends JFrame
     console = new PdeEditorConsole(this);
     consolePanel.add(console, BorderLayout.CENTER);
 
+    /*
+    lineNumberComponent = new JLabel(" 1234"); //, JLabel.LEFT);
+    lineNumberComponent.setBackground(Color.BLACK);
+    lineNumberComponent.setForeground(Color.WHITE);
+    lineNumberComponent.setFont(new Font("SansSerif", Font.PLAIN, 10));
+    box.add(lineNumberComponent);
+    */
+    lineStatus = new PdeEditorLineStatus(textarea);
+    consolePanel.add(lineStatus, BorderLayout.SOUTH);
+    //box.add(lineStatus);
+
+    upper.add(textarea);
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                               textarea, consolePanel);
+                               upper, consolePanel);
+                               //textarea, consolePanel);
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);
-    // if window increases in size, give all of increase to textarea (top pane)
+    // if window increases in size, give all of increase to
+    // the textarea in the uppper pane
     splitPane.setResizeWeight(1D);
 
     // to fix ugliness.. normally macosx java 1.3 puts an
@@ -220,14 +250,25 @@ public class PdeEditor extends JFrame
       splitPane.setDividerSize(dividerSize);
     }
 
-    rightPanel.add(splitPane, BorderLayout.CENTER);
+    splitPane.setMinimumSize(new Dimension(600, 600));
+    //splitPane.setBackground(Color.RED);
+    //splitPane.setMaximumSize(new Dimension(3000, 3000));
+    ///rightPanel.add(splitPane, BorderLayout.CENTER);
+    box.add(splitPane);
 
-    pain.add("Center", rightPanel);
+    //setBackground(Color.green);
+    //box.add(textarea);
+    //box.add(consolePanel);
+
+    //pain.add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
     listener = new PdeEditorListener(this, textarea);
-    textarea.pdeEditorListener = listener;
+    //textarea.editorListener = listener;
+
+    //pain.add("West", box);
+    pain.add(box);
 
     // set the undo stuff for this feller
     Document document = textarea.getDocument();
