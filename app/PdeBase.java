@@ -416,6 +416,7 @@ public class PdeBase extends Frame
     menu.add(item);
 
     beautifyMenuItem = new MenuItem("Beautify", new MenuShortcut('B'));
+    beautifyMenuItem.addActionListener(this);
     menu.add(beautifyMenuItem);
 
     menu.addSeparator();
@@ -957,7 +958,10 @@ public class PdeBase extends Frame
     boolean problem = false;
 
     // if this is failing, it may be because
-    // lib/javax.comm.properties is missing
+    // lib/javax.comm.properties is missing.
+    // java is weird about how it searches for java.comm.properties
+    // so it tends to be very fragile. i.e. quotes in the CLASSPATH
+    // environment variable will hose things.
     try {
       //System.out.println("building port list");
       Enumeration portList = CommPortIdentifier.getPortIdentifiers();
@@ -965,7 +969,7 @@ public class PdeBase extends Frame
         CommPortIdentifier portId = 
           (CommPortIdentifier) portList.nextElement();
         //System.out.println(portId);
-        
+
         if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
           //if (portId.getName().equals(port)) {
           String name = portId.getName();
