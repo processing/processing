@@ -30,8 +30,30 @@ X splitints, et al.. have another version to specify what to use
 X   when the value gets a NumberFormatException.. ie.
 X   splitInts("blah blah blah", ' ', 0);
 X   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
+X remove groupings of NumberFormat
+X change NumberFormat to nf
+
 X use System.arraycopy for clear().. could be way fast
 _   test to see how much faster the new arraycopy version is
+
+   b _ if image doesn't exist, spews null pointer exception and freaks
+   b _   locks up environment/machine, have to restart
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
+          Uncaught error fetching image: 
+          java.lang.NullPointerException 
+           at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
+           at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
+           at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
+           at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
+           at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+
+_ image of 256x256 doesn't draw the last line of pixels
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
+
+_ syntax coloring of built-in java objects.. i.e. String
+_   probably want to include everything that's in java.lang and maybe others
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
 
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
@@ -45,10 +67,6 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 
 _ several examples broken (note from creas) in bugs.txt
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
-
-_ setup( ){} has an error, setup(){} does not
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
-_   setup (200, 200) causes the default size to be used but setup(200, 200) works fine
 
 _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
@@ -200,16 +218,6 @@ BAGEL / Details
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
    b _ gaps in lines for pmouseX, mouseX
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
-   b _ if image doesn't exist, spews null pointer exception and freaks
-   b _   locks up environment/machine, have to restart
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
-          Uncaught error fetching image: 
-          java.lang.NullPointerException 
-           at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
-           at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
-           at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
-           at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
-           at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
    b _ too many push() will silently stop the applet inside a loop
    b _   test winding polygons in different directions
    b _   test lighting to see how it compares with gl
@@ -322,12 +330,16 @@ PDE / Pre-preprocessor
 Currently using Oro for search and replace preprocessor.
 Future plans to use Javacup for preprocessor and Jikes for compiler.
 
+_ 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
+_ setup( ){} has an error, setup(){} does not
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
+_   setup (200, 200) causes the default size to be used but setup(200, 200) works fine
 _ no longer require size() to come first.
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
 _ separate preprocessor from other kjc-specific code 
-_ 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1045033284;start=0
 _ compiler barfs on: float[] moo = new int[10];  
 _   although no error comes through to p5 (benelek)
 _ switch to java cup (one day's work)
