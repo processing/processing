@@ -97,14 +97,16 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         if (editor.presenting) {
           //window = new Window(new Frame());
-		  // toxi_030903: attach applet window to editor's presentation window
-		  window = new Window(editor.presentationWindow);
-		  // toxi_030903: moved keyListener to PdeEditor's presentationWindow
+          // toxi_030903: attach applet window to editor's presentation window
+          window = new Window(editor.presentationWindow);
+          // toxi_030903: moved keyListener to PdeEditor's presentationWindow
 
         } else {
-          window = new Frame(editor.sketchName); // gonna use ugly windows instead
+          window = new Frame(editor.sketchName); // use ugly windows
           ((Frame)window).setResizable(false);
-          if (PdeBase.icon != null) ((Frame)window).setIconImage(PdeBase.icon);
+          if (PdeBase.icon != null) {
+            ((Frame)window).setIconImage(PdeBase.icon);
+          }
           window.pack(); // to get a peer, size set later, need for insets
 
           window.addWindowListener(new WindowAdapter() {
@@ -113,25 +115,24 @@ public class PdeRuntime implements PdeMessageConsumer {
                 editor.doClose();
               }
             });
-		
-		// toxi_030903: only attach keyListener if not in presentation mode
-		// else events are coming directly from editor.presentationWindow
-        applet.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-              //System.out.println("applet got " + e);
-              if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                stop();
-                editor.doClose();
-                //new DelayedClose(editor);
-                //editor.doClose();
-              }
-            }
-          });
 
-		  y1 += parentInsets.top;
+          // toxi_030903: only attach keyListener if not in presentation mode
+          // else events are coming directly from editor.presentationWindow
+          applet.addKeyListener(new KeyAdapter() {
+              public void keyPressed(KeyEvent e) {
+                //System.out.println("applet got " + e);
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                  stop();
+                  editor.doClose();
+                  //new DelayedClose(editor);
+                  //editor.doClose();
+                }
+              }
+            });
+          y1 += parentInsets.top;
         }
-		// toxi_030903: moved this in the above else branch
-	    // if (!(window instanceof Frame)) y1 += parentInsets.top;
+        // toxi_030903: moved this in the above else branch
+        // if (!(window instanceof Frame)) y1 += parentInsets.top;
 
         window.add(applet);
 
