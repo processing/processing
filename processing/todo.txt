@@ -35,13 +35,14 @@ X   the clear history thing gets in the way
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066501376;start=0
 X stroke on smoothed polygons was drawing at 8x
 X macosx open sketch folder problems.. spaces in filename problem?
-X   also seems to be problem for reference?
+X   also was a problem for reference
+X help->reference and find in reference don't work on some machines
+X   complaints from osx and windows..
+X after hitting replace, dim the replace button
+X   otherwise it causes another replace to happen
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
-
-_ after hitting replace, dim the replace button
-_   otherwise it causes another replace to happen
 
 _ included code is not packaged in the outgoing jar file on export
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
@@ -75,6 +76,12 @@ _ mouse wheel not working on macosx, need to dynamically load 1.4 code
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ simong interested in helping
 
+_ find/replace.. when hitting 'find', select the text in the field
+_   give that field focus explicitly, rather than just for typing
+_   right now, typing works, but no caret, no blue highlight
+_   and on second find run, should instead select all the find string
+_     so that typing will replace it directly
+
 _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
@@ -92,7 +99,7 @@ _   auto-create code and data folder when doing the 'add files to sketch..'
 
 
 lotsa video issues
-_ quicktime 6.4 update breaks p5 on the mac
+_ quicktime 6.4 update breaks p5 on the mac?
 _   "Type quicktime.std.stdQTConstants was not found"
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
 _ split classes to BVideo and BMovie ? 
@@ -308,8 +315,6 @@ X when exporting applet, line numbers will be off..
 _   when not exporting with new preproc code, imports all on same line
 _   make preproc keep track of how many lines were added
 _ fix the problem causing all the "couldn't delete" messages
-_ help->reference and find in reference don't work on some machines
-_   complaints from osx and windows..
 X when exporting applet, line numbers will be off.. 
 _   when not exporting with new preproc code, imports all on same line
 _   make preproc keep track of how many lines were added

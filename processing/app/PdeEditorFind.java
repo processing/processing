@@ -133,6 +133,10 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   // once found, select it (and go to that line)
 
   public void find() {
+    // in case search len is zero, 
+    // otherwise replace all will go into an infinite loop
+    found = false;
+
     String search = findField.getText();
     if (search.length() == 0) return;
 
@@ -168,6 +172,9 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     if (!found) return;  // don't replace if nothing found
     editor.textarea.setSelectedText(replaceField.getText());
     editor.setSketchModified(true);
+
+    // don't allow a double replace
+    replaceButton.setEnabled(false);
   }
 
 
