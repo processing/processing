@@ -39,7 +39,9 @@ class PdeMessageSiphon implements Runnable {
     this.consumer = consumer;
 
     thread = new Thread(this);
-    thread.setPriority(Thread.MIN_PRIORITY);
+    // don't set priority too low, otherwise exceptions won't
+    // bubble up in time (i.e. compile errors)
+    //thread.setPriority(Thread.MIN_PRIORITY);
     thread.start();
   }
 
