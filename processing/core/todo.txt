@@ -89,6 +89,7 @@ _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
 _ decide on whether to use PTools
 _   i.e. move math functions into utility library
 _   check what other functions require PGraphics to exist but shouldn't
