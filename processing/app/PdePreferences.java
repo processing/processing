@@ -185,7 +185,6 @@ public class PdePreferences extends JComponent {
 
     // [ ] Prompt for name and folder when creating new sketch
 
-    /*
     sketchPromptBox = 
       new JCheckBox("Prompt for name when opening or creating a sketch");
     pain.add(sketchPromptBox);
@@ -193,7 +192,6 @@ public class PdePreferences extends JComponent {
     sketchPromptBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-    */
 
 
     // Sketchbook location: 
@@ -343,16 +341,6 @@ public class PdePreferences extends JComponent {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     frame.setLocation((screen.width - wide) / 2,
                       (screen.height - high) / 2);
-
-    //
-
-    /*
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          frame.hide();
-        }
-      });
-    */
   }
 
 
@@ -378,7 +366,7 @@ public class PdePreferences extends JComponent {
     //editor.setExternalEditor(getBoolean("editor.external"));
     // put each of the settings into the table
 
-    //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
+    setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     set("sketchbook.path", sketchbookLocationField.getText());
     setBoolean("export.library", exportLibraryBox.isSelected());
     setBoolean("editor.external", externalEditorBox.isSelected());
@@ -391,7 +379,7 @@ public class PdePreferences extends JComponent {
     editor.hide();
 
     // set all settings entry boxes to their actual status
-    //sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
+    sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
     sketchbookLocationField.setText(get("sketchbook.path"));
     exportLibraryBox.setSelected(getBoolean("export.library"));
     externalEditorBox.setSelected(getBoolean("editor.external"));
