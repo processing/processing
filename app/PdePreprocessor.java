@@ -135,6 +135,11 @@ public class PdePreprocessor {
       name = getFirstClassName(parserAST);
     }
 
+    // if 'null' was passed in for the name, but this isn't 
+    // a 'java' mode class, then there's a problem, so punt.
+    // 
+    if (name == null) return null;
+
     // output the code
     //
     PdeEmitter emitter = new PdeEmitter();

@@ -76,45 +76,41 @@ Export to:   [ Library       + ]    [  OK  ]
 
  */
 
-public class Sketch {
+public class PdeSketch {
   String path;  // path to 'main' file for this sketch
 
-  String name; 
+  String name;
   File directory;
 
   static final int PDE = 0;
   static final int JAVA = 1; 
 
-  //int current;
-  Code current;
+  PdeCode current;
   int codeCount;
-  Code code[];
+  PdeCode code[];
 
   int hiddenCount;
-  Code hidden[];
-
-
-  /*
-  String names[];
-  File files[];
-  int flavor[]; 
-  String program[];
-  boolean modified[];
-  PdeHistory history[];
-  */
-
-  //int hiddenCount;
-  //String hiddenNames[];
-  //File hiddenFiles[];
+  PdeCode hidden[];
 
 
   /**
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
    */
-  public Sketch(String path) {
+  public PdeSketch(String path) throws IOException {
     File mainFile = new File(path);
     System.out.println("main file is " + mainFile);
+
+    main = mainFile.getName();
+    /*
+    if (main.endsWith(".pde")) {
+      main = main.substring(0, main.length() - 4);
+
+    } else if (main.endsWith(".java")) {
+      main = main.substring(0, main.length() - 5);
+    }
+    */
+
     directory = new File(path.getParent());
     System.out.println("sketch dir is " + directory);
 
@@ -144,14 +140,8 @@ public class Sketch {
       else if (list[i].endsWith(".java.x")) hiddenCount++;
     }
 
-    code = new Code[codeCount];
-    //names = new String[fileCount];
-    //files = new File[fileCount];
-    //flavor = new int[fileCount];
-
-    hidden = new Code[hiddenCount];
-    //hiddenNames = new String[hiddenCount];
-    //hiddenFiles = new File[hiddenCount];
+    code = new PdeCode[codeCount];
+    hidden = new PdeCode[hiddenCount];
 
     int fileCounter = 0;
     int hiddenCounter = 0;
@@ -159,27 +149,27 @@ public class Sketch {
     for (int i = 0; i < list.length; i++) {
       if (list[i].endsWith(".pde")) {
         code[fileCounter++] = 
-          new Code(list[i].substring(0, list[i].length() - 4), 
-                   new File(directory, list[i]), 
-                   PDE);
+          new PdeCode(list[i].substring(0, list[i].length() - 4), 
+                      new File(directory, list[i]), 
+                      PDE);
 
       } else if (list[i].endsWith(".java")) {
         code[fileCounter++] = 
-          new Code(list[i].substring(0, list[i].length() - 5),
-                   new File(directory, list[i]),
-                   JAVA);
+          new PdeCode(list[i].substring(0, list[i].length() - 5),
+                      new File(directory, list[i]),
+                      JAVA);
 
       } else if (list[i].endsWith(".pde.x")) {
         hidden[hiddenCounter++] = 
-          new Code(list[i].substring(0, list[i].length() - 6),
-                   new File(directory, list[i]),
-                   PDE);
+          new PdeCode(list[i].substring(0, list[i].length() - 6),
+                      new File(directory, list[i]),
+                      PDE);
 
       } else if (list[i].endsWith(".java.x")) {
         hidden[hiddenCounter++] = 
-          new Code(list[i].substring(0, list[i].length() - 7),
-                   new File(directory, list[i]),
-                   JAVA);
+          new PdeCode(list[i].substring(0, list[i].length() - 7),
+                      new File(directory, list[i]),
+                      JAVA);
       }      
     }
 
@@ -195,6 +185,35 @@ public class Sketch {
 
       } else {
         index++;
+      }
+    }
+
+    // move the main class to the first tab
+    // start at 1, if it's at zero, don't bother
+    for (int i = 1; i < codeCount; i++) {
+      if (code[i].file.getName().equals("main")) {
+        System.out.println("found main code at slot " + i);
+        PdeCode temp = code[0];
+        code[0] = code[i];
+        code[i] = temp;
+      }
+    }
+
+    // cheap-ass sort of the rest of the files
+    // it's a dumb, slow sort, but there shouldn't be more than ~5 files
+    for (int i = 1; i < codeCount; i++) {
+      int who = i;
+      //String who = code[i].name;
+      //int whoIndex = i;
+      for (int j = i + 1; j < codeCount; j++) {
+        if (code[j].name.compare(code[who].name) < 0) {
+          who = j;  // this guy is earlier in the alphabet
+        }
+      }
+      if (who != i) {  // swap with someone
+        PdeCode temp = code[who];
+        code[who] = code[i];
+        code[i] = temp;
       }
     }
   }
@@ -227,12 +246,17 @@ public class Sketch {
 
   /**
    * This is not Runnable.run(), but a handler for the run() command.
+   *
+   * run externally if a code folder exists, 
+   * or if more than one file is in the project
+   *
    */
   public void run() {
     try {
-      //String program = textarea.getText();
       current.program = textarea.getText();
-      current.history.record(program, PdeHistory.RUN);
+
+      // TODO record history here
+      //current.history.record(program, PdeHistory.RUN);
 
       // if an external editor is being used, need to grab the
       // latest version of the code from the file.
@@ -266,18 +290,20 @@ public class Sketch {
         PdeBase.copyDir(dataDir, new File(buildDir, "data"));
       }
 
+      // start with the main 
+
       // make up a temporary class name to suggest
       // only used if the code is not in ADVANCED mode
       String suggestedClassName = 
         ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
          "_" + String.valueOf((int) (Math.random() * 10000)));
 
-      // handle building the code
-      className = build(program, suggestedClassName, tempBuildPath);
+      // handle preprocessing the main file's code
+      String mainClassName = build(tempBuildPath, suggestedClassName);
       // externalPaths is magically set by build()
 
       // if the compilation worked, run the applet
-      if (className != null) {
+      if (mainClassName != null) {
 
         if (externalPaths == null) {
           externalPaths = 
@@ -365,22 +391,30 @@ public class Sketch {
   // which is why the className is set based on the return value.
   // @return null if compilation failed, className if not
   //
-  protected String build(String program, String suggestedClassName,
-                         String buildPath) throws PdeException, Exception {
+  protected String build(String buildPath, String suggestedClassName)
+    throws PdeException, Exception {
 
-    externalRuntime = false;
-    externalPaths = null;
-    String externalImports[] = null;
+    boolean externalRuntime = false;
+    //externalPaths = null;
+    String additionalImports[] = null;
+    String additionalClassPath = null;
 
-    externalCode = new File(sketchDir, "code");
-    if (externalCode.exists()) {
+    // figure out the contents of the code folder to see if there
+    // are files that need to be added to the imports
+    File codeFolder = new File(sketchDir, "code");
+    if (codeFolder.exists()) {
       externalRuntime = true;
-      externalPaths = PdeCompiler.contentsToClassPath(externalCode);
-      externalImports = PdeCompiler.magicImports(externalPaths);
-
+      additionalClassPath = PdeCompiler.contentsToClassPath(codeFolder);
+      additionalImports = PdeCompiler.magicImports(additionalClassPath);
     } else {
-      externalCode = null;
+      codeFolder = null;
     }
+
+    // first run preproc on the 'main' file, using the sugg class name
+    // then for code 1..count
+    //   if .java, write programs[i] to buildpath
+    //   if .pde, run preproc to buildpath
+    //     if no class def'd for the pde file, then complain
 
     PdePreprocessor preprocessor = new PdePreprocessor();
     try {
@@ -429,6 +463,9 @@ public class Sketch {
     if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
       externalRuntime = true; // we in advanced mode now, boy
     }
+    if (codeCount > 1) {
+      externalRuntime = true;
+    }
 
     // compile the program
     //
@@ -456,6 +493,17 @@ public class Sketch {
   }
 
 
+  // move things around in the array (as opposed to full reload)
+
+  // may need to call setCurrent() if the tab was the last one
+  // or maybe just call setCurrent(0) for good measure
+
+  // don't allow the user to hide the 0 tab (the main file)
+
+  public void hide(int which) {
+  }
+
+
   /**
    * Path to the data folder of this sketch.
    */
@@ -473,53 +521,54 @@ public class Sketch {
   public String getMainFilePath() {
     return files[0].getAbsolutePath();
   }
+}
 
 
-  class Code {
-    String name;  // pretty name (no extension), not the full file name
-    File file;
-    int flavor;
+class PdeCode {
+  String name;  // pretty name (no extension), not the full file name
+  File file;
+  int flavor;
 
-    String program;
-    boolean modified;
-    History history;
-
-
-    public Code(String name, File file, int flavor) {
-      this.name = name;
-      this.file = file;
-      this.flavor = flavor;
-    }
+  String program;
+  boolean modified;
+  //History history;  // later
 
 
-    public void load() {
-      program = null;
-      try {
-        if (files[i].length() != 0) {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
-          StringBuffer buffer = new StringBuffer();
-          String line = null;
-          while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-            buffer.append('\n');
-          }
-          reader.close();
-          program = buffer.toString();
-
-        } else {
-          // empty code file.. no worries, might be getting filled up
-          program = "";
-        }
-
-      } catch (IOException e) {
-        Pdebase.showWarning("Error loading file", 
-                            "Error while opening the file\n" + 
-                            files[i].getPath(), e);
-        program = null;  // just in case
-      }
-
-      if (program != null) {
-        history = new History(file);
-      }
-    }
+  public PdeCode(String name, File file, int flavor) {
+    this.name = name;
+    this.file = file;
+    this.flavor = flavor;
   }
+
+
+  public void load() {
+    program = null;
+    try {
+      if (files[i].length() != 0) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
+        StringBuffer buffer = new StringBuffer();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+          buffer.append(line);
+          buffer.append('\n');
+        }
+        reader.close();
+        program = buffer.toString();
+
+      } else {
+        // empty code file.. no worries, might be getting filled up
+        program = "";
+      }
+
+    } catch (IOException e) {
+      PdeBase.showWarning("Error loading file", 
+                          "Error while opening the file\n" + 
+                          files[i].getPath(), e);
+      program = null;  // just in case
+    }
+
+    //if (program != null) {
+    //history = new History(file);
+    //}
+  }
+}

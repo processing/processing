@@ -68,6 +68,9 @@ o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
 
+_ re-implement history (disabled for 68)
+_ sync files into lib/build rather than copying everything new
+
 _ history: "archive this version" 
 _   makes a numbered archive of the current sketch as a zip file
 _   checks to see if there are other versions in the current folder
