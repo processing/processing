@@ -6,7 +6,13 @@ X   make sure that fill(int a) / stroke(int a) work if an alpha is set
 _ int() doesn't work inside other functions
 _   argh, need a real parser
 
+_ constrain() still in the motion04 sketch
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050131287
+
 _ probably time to send out another message about this release
+
+_ present mode, click background window and front window hides
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
 
 _ repair lines (even if slow)
 _   single pixel lines have no alpha and no z
@@ -20,6 +26,9 @@ _   aliased and anti-aliased images don't line up
 _     text (text04) marching around strangely
 _ problems with u/v are likely to also be there for colors
 _   u/v should be affected by w for proper perspective
+_ should image(img, x, y, alpha) work instead of using fill?
+_   or maybe another word for fill/stroke.. apply? colorize?
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1050323800
 
 _ sphere() and other polygons don't connect flush with one another
 _   could hack by making each slightly larger than necessary
@@ -93,6 +102,7 @@ http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=p
    b _   copyArea(x, y, w, h, to_x, to_y)
    b _   copyImage(x, y, w, h,  to_x, to_y)
    b _   resize of bimage, make a copy of image?
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
 
    b _ curves
    b _   curveMode(), curveMode to tweak the s parameter of catmullrom
@@ -403,16 +413,17 @@ _   compile entire sketchbook on startup, check for new files on compile?
 
 PDE / Details
 
-_ rename doesn't set focus to renamer area
-_ rename sketch 'can't rename' error (file being kept open)
-_   open sketch, make a change, save, run, rename -> error
-_ beautify() ignores colons for case statements
-_   need to tie this to the parser instead
 _ improve the console
 _   maybe it needs to be a textarea?
 _   printing of objects, esp when null, in jdk 14 seems to crash
 _   exception when trying to write to stdout
 _   can't copy text from console directly
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
+_ rename doesn't set focus to renamer area
+_ rename sketch 'can't rename' error (file being kept open)
+_   open sketch, make a change, save, run, rename -> error
+_ beautify() ignores colons for case statements
+_   need to tie this to the parser instead
 _ need to check if volume is read-only, notify and quit if it is
 _   people are trying to run off the disk image
 _   need to pay attention to when running from read-only drive
@@ -421,6 +432,8 @@ _    "p5 will launch from the disk image, but will
 _     not draw the sketch name bar doesn't appear"
 _ p5 becomes a memory hog (benelek and glen murphy)
 _   even without sketches open, perhaps not gc'ing properly
+_   objects probably not getting finalized
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
 _ save last-used serial to sketch.properties on quit
 _ size() has memory limitations (pitaru)
 _   catch OutOfMemoryError inside size() and let the user know
