@@ -51,7 +51,7 @@ public class PdeEditorConsole extends Component {
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
 
-    lineCount = PdeApplet.getInteger("editor.console.lines", 6);
+    lineCount = PdeBase.getInteger("editor.console.lines", 6);
 
     if (systemOut == null) {
       systemOut = System.out;
@@ -87,11 +87,11 @@ public class PdeEditorConsole extends Component {
   public void paint(Graphics screen) {
     //systemOut.println("paint()");
     if (bgColor == null) {
-      bgColor = PdeApplet.getColor("editor.console.bgcolor", 
+      bgColor = PdeBase.getColor("editor.console.bgcolor", 
 				   new Color(26, 26, 26));
-      fgColorOut = PdeApplet.getColor("editor.console.fgcolor.output", 
+      fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
 				      new Color(153, 153, 153));
-      fgColorErr = PdeApplet.getColor("editor.console.fgcolor.error", 
+      fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
 				      new Color(153, 0, 0));
       screen.setFont(font);
       metrics = screen.getFontMetrics();
@@ -130,7 +130,7 @@ public class PdeEditorConsole extends Component {
     Graphics g = offscreen.getGraphics();
     /*
     if (font == null) {
-      font = PdeApplet.getFont("editor.console.font", 
+      font = PdeBase.getFont("editor.console.font", 
 			       new Font("Monospaced", Font.PLAIN, 11));
       //font = new Font("SansSerif", Font.PLAIN, 10);
       g.setFont(font);
@@ -205,7 +205,7 @@ public class PdeEditorConsole extends Component {
   public Dimension getPreferredSize() {
     //systemOut.println("pref'd sizde");
     if (font == null) {
-      font = PdeApplet.getFont("editor.console.font", 
+      font = PdeBase.getFont("editor.console.font", 
 			       new Font("Monospaced", Font.PLAIN, 11));
       //font = new Font("SansSerif", Font.PLAIN, 10);
       //g.setFont(font);
