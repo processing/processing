@@ -760,7 +760,7 @@ public class PdeEditor extends JFrame
         public void actionPerformed(ActionEvent e) {
           // TODO find next should only be enabled after a 
           // search has actually taken place
-          find.find();
+          find.find(true);
         }
       });
     menu.add(item);
