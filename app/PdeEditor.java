@@ -562,7 +562,7 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("Run", 'R');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          doRun(false);
+          handleRun(false);
         }
       });
     menu.add(item);
@@ -570,7 +570,7 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("Present", 'R', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          doRun(true);
+          handleRun(true);
         }
       });
     menu.add(item);
@@ -945,7 +945,7 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void doRun(boolean present) {
+  public void handleRun(boolean present) {
     doClose();
     running = true;
     buttons.run();
