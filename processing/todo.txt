@@ -220,6 +220,9 @@ X history is not implemented in this version
 
 _ macosx - check to see if new linemetrics stuff is working better
 
+with casey
+_ figure out what to include for examples/libraries
+_ let's not call it 'expert', let's just say w/o java
 
 
 ......................................................................

@@ -7,11 +7,11 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0070 - 28 September 2004
+ABOUT REV 0070 - MEGABUCKET - 28 September 2004
 
 YOUR CODE WILL ALMOST CERTAINLY BREAK IN THIS RELEASE, READ THE
-"MAJOR CHANGES" SECTION TO SEE HOW TO FIX IT. this is one of the most
-major releases to date in terms of things that have been changed,
+"MAJOR CHANGES" SECTION BELOW TO SEE HOW TO FIX IT. this is one of the
+most major releases to date in terms of things that have been changed,
 fixed, or revised. however, we've tried to make all the api and setup
 changes that we'll need to before beta so that we only massively break
 your code once.
@@ -28,6 +28,10 @@ major changes: (things that break your code)
 
 - BImage, BFont, BGraphics, etc are all PImage, PFont, PGraphics.
   you'll need to rename them in your program.
+
+- libraries will almost certainly need to be rewritten for this
+  release. we're working with amit on an update to sonia and several
+  other libraries will be included in future releases.
 
 - mouse and key events are now properly queued, meaning that functions
   like mousePressed() and keyPressed() will be called at the *end* of
