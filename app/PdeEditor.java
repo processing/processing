@@ -137,7 +137,16 @@ public class PdeEditor extends Panel {
 
     Properties skprops = new Properties();
     try {
-      skprops.load(getClass().getResource("sketch.properties").openStream());
+      if (PdeBase.platform == PdeBase.MACOSX) {
+	String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	skprops.load(new FileInputStream(pkg + "sketch.properties"));
+
+      } else if (PdeBase.platform == PdeBase.MACOS9) {
+	skprops.load(new FileInputStream("lib/pde.properties"));
+
+      } else {
+	skprops.load(getClass().getResource("sketch.properties").openStream());
+      }
 
       int windowX = Integer.parseInt(skprops.getProperty("window.x", "-1"));
       int windowY = Integer.parseInt(skprops.getProperty("window.y", "-1"));
@@ -343,6 +352,11 @@ public class PdeEditor extends Panel {
 
       //if (program.length() != 0) {
       String buildPath = "lib" + File.separator + "build";  // TEMPORARY
+      if (PdeBase.platform == PdeBase.MACOSX) {
+	String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	buildPath = pkg + "build";
+      }
+
       File buildDir = new File(buildPath);
       if (!buildDir.exists()) buildDir.mkdirs();
 
@@ -1229,18 +1243,22 @@ public class PdeEditor extends Panel {
 
     // write sketch.properties
     try {
-      URL url = getClass().getResource("buttons.gif");
-      //String urlstr = url.toString();
-      //System.out.println(url.getFile());
-      //urlstr = urlstr.substring(6, urlstr.lastIndexOf("/") + 1) + 
-      //"sketch.properties";
-      String urlstr = url.getFile();
-      urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
-	"sketch.properties";
+      FileOutputStream output = null;
 
-      //System.out.println(urlstr);
-      //System.exit(0);
-      FileOutputStream output = new FileOutputStream(urlstr);
+      if (PdeBase.platform == PdeBase.MACOSX) {
+	String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	output = new FileOutputStream(pkg + "sketch.properties");
+
+      } else if (PdeBase.platform == PdeBase.MACOS9) {
+	output = new FileOutputStream("lib/pde.properties");
+
+      } else { // win95/98/ME doesn't set cwd properly
+	URL url = getClass().getResource("buttons.gif");
+	String urlstr = url.getFile();
+	urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
+	  "sketch.properties";
+	output = new FileOutputStream(urlstr);
+      }
 
       //url = new URL(urlstr + "sketch.properties");
 

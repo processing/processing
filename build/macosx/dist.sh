@@ -1,6 +1,8 @@
 #!/bin/sh
 
-REVISION=`head -c 4 ../../../todo.txt`
+#REVISION=`head -c 4 ../../../todo.txt`
+# 'head' for osx doesn't support -c.. what a pisser
+REVISION=0000
 
 ./make.sh
 
@@ -11,34 +13,44 @@ rm -rf processing
 rm -f processing-*.hqx
 
 # use 'shared' files as starting point
-cp -r ../shared processing
-# something like the following might be better:
-# find / -name "*.mp3" -exec rm -f {}\;
-# and same for cvsignore
+cp -r ../shared/fonts processing/
+cp -r ../shared/reference processing/
+cp -r ../shared/sketchbook processing/
+
 rm -rf processing/CVS
-rm -rf processing/lib/CVS
+#rm -rf processing/lib/CVS
 rm -rf processing/fonts/CVS
 rm -rf processing/reference/CVS
 rm -rf processing/reference/images/CVS
 rm -rf processing/sketchbook/CVS
 rm -rf processing/sketchbook/default/CVS
 rm -f processing/sketchbook/default/.cvsignore
-# will need to add a zillion of these for the reference..
 
-# add java (jre) files
-#unzip -q -d processing jre.zip
+# get package from the dist dir
+cp -r dist/Proce55ing.app processing/
+rm -rf processing/Proce55ing.app/CVS
+rm -rf processing/Proce55ing.app/Contents/CVS
+rm -rf processing/Proce55ing.app/Contents/MacOS/CVS
+rm -rf processing/Proce55ing.app/Contents/Resources/CVS
+rm -rf processing/Proce55ing.app/Contents/Resources/Java/CVS
+
+RES=processing/Proce55ing.app/Contents/Resources/Java/
+cp ../shared/dist/lib/*.jar $RES/
+cp ../shared/dist/lib/pde.properties $RES/
+cp ../shared/dist/lib/buttons.gif $RES/
+cp comm.jar $RES/
 
 # directories used by the app
-mkdir processing/lib/build
+#mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
-cp work/lib/pde.jar processing/lib/
-cp -r work/lib/export processing/lib/
-rm -rf processing/lib/export/CVS
+cp work/lib/pde.jar $RES/
+cp -r work/lib/export $RES/
+rm -rf $RES/export/CVS
 
 # get platform-specific goodies from the dist dir
-cp dist/Proce55ing processing/
-cp dist/lib/pde.properties_macosx processing/lib/
+#cp dist/Proce55ing processing/
+#cp dist/lib/pde.properties_macosx processing/lib/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
@@ -53,5 +65,6 @@ mv processing $P5-macosx
 #zip -rq $P5.zip $P5
 # nah, keep the new directory around
 #rm -rf $P5
+# if there is a command line tool to make a dmg from this dir.. hmm
 
 echo Done.
