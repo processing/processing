@@ -25,6 +25,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
@@ -184,16 +185,29 @@ public class PdeBase {
 
       // not clear if i can write to this folder tho..
       try {
+        /*
         if (false) {
+          // this is because the mrjtoolkit stubs don't have the
+          // thows exception around them
           new FileInputStream("ignored");
         }
+        */
 
+        // this method has to be dynamically loaded, because
         MRJOSType domainLibrary = new MRJOSType("dlib");
-        File libraryFolder = MRJFileUtils.findFolder(domainLibrary);
-          //MRJFileUtils.findFolder(kUserDomain, domainLibrary);
+        Method findFolderMethod =
+          MRJFileUtils.class.getMethod("findFolder",
+                                       new Class[] { Short.TYPE,
+                                                     MRJOSType.class });
+        File libraryFolder = (File)
+          findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
+                                                       domainLibrary });
+
         dataFolder = new File(libraryFolder, "Processing");
 
-      } catch (FileNotFoundException e) {
+      } catch (Exception e) {
+        // this could be FileNotFound or NoSuchMethod
+        //} catch (FileNotFoundException e) {
         //e.printStackTrace();
         //System.exit(1);
         showError("Problem getting data folder",
