@@ -4,62 +4,13 @@ X   modify make.sh to include JDK14 flag
 X video: get qtjava stuff working, modify make.sh to include paths
 X   also run.sh, the classpath on Proce55ing.app
 
-_ is video working (qtjava in path) on macos9?
 
-_ linux version doesn't work on rh9.. update the jvm
-
-
-
-mac
-_ double-check to see if wheel mouse is working
-_ had to disable MRJFileUtils stuff on osx at last minute before 53
-_   seems that file names changed between 1.3 and 1.4
-
-_ need more comprehensive list of 'known bugs'
-
-_ present mode, click background window and front window hides
-_   wasn't present in jdk 1.3, something changed in 1.4
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
-_   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
-
-_ repair lines (even if slow)
-_   single pixel lines have no alpha and no z
-_   fix all the random line types to support alpha
-
-_ smooth images drawing strangely (missing first line of pixels)
-_   also smoothed even if not distorted
-_   aliased and anti-aliased images don't line up
-_     text (text04) marching around strangely
-_ problems with u/v are likely to also be there for colors
-_   u/v should be affected by w for proper perspective
-_ nonsmooth frame around circle gets drawn 8x away
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050451728
-_ texture weirdness at 90 degree angles
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
-
-_ sphere() and other polygons don't connect flush with one another
-_   could hack by making each slightly larger than necessary
-
-
-
-DATA TIDBITS (for my own work, but also generally useful)
-_ writeBytes, writeStrings (actually saveBytes/saveStrings)
-_ split to take strings (ie. for ", ")
-_ versions of loadStream/loadBytes etc that use streams and/or urls
-_ file output, save strings or pile of bytes
-_ quicksort should probably just be made into 'sort' class
-_   it's the only one ever used
-_   can this be done using an inner class?
-_ read table/csv formatted data into a matrix
-_   pseudo-database format version of this that stores indexes to file
-_     rather than loading the whole thing at once
-_ more advanced splitting of files into rows/cols uses another class
-_   other class also has concept for random access of lines
-_   by storing the line positions, can access without loading all
-_   into memory because some files will be too large
-_ need some model for i/o that makes more sense
-_   getting whole words from serial, network, and files
-_   or buffers of specific length with a sync byte
+bf b _ add keyCode to BApplet (quick addition)
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
+bf b _ perlin noise 1D. noise() 
+bf b _ cartesian/polar conversion
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
 
 
 
@@ -86,15 +37,27 @@ BAGEL / Bugs
    b _   doesn't actually use image_mode for placement
    b _   also doesn't support RGBA
 
+   b _ smooth images drawing strangely (missing first line of pixels)
+   b _   also smoothed even if not distorted
+   b _   aliased and anti-aliased images don't line up
+   b _     text (text04) marching around strangely
+   b _ problems with u/v are likely to also be there for colors
+   b _   u/v should be affected by w for proper perspective
+   b _ nonsmooth frame around circle gets drawn 8x away
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050451728
+   b _ texture weirdness at 90 degree angles
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
+   b _ sphere() and other polygons don't connect flush with one another
+   b _   could hack by making each slightly larger than necessary
+
+   b _ repair lines (even if slow)
+   b _   single pixel lines have no alpha and no z
+   b _   fix all the random line types to support alpha
+
 
 BAGEL / Graphics API Additions
 
    b _ hiding the cursor. noCursor(), cursor()
-
-   b _ add keyCode to BApplet (quick addition)
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
-   b _ perlin noise 1D. noise() 
 
    b _ images and pixel copying (api for this?)
    b _   copyPixel(x, y, to_x, to_y)
@@ -129,9 +92,6 @@ bf b _   also BLight with same constructor, and on() and off() fxn
    b _ should image(img, x, y, alpha) work instead of using fill?
    b _   or maybe another word for fill/stroke.. apply? colorize?
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1050323800
-
-   2 _ drawMode() for MULTIPLY and ADD
-   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051208333
 
 
 BAGEL / Rendering
@@ -192,10 +152,10 @@ ca b _   create a simple generator for grayscale bdf fonts
 ca b _     document the change and make several of them
 ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
-   1 _ font support is overkill and sucks
-   1 _   need fast 2D text that's not affected by the transforms
-   1 _   also needs to look good, not squished from texture weirdness
-   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
+   b _ font support is overkill and sucks
+   b _   need fast 2D text that's not affected by the transforms
+   b _   also needs to look good, not squished from texture weirdness
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
 
    b _ circles and spheres
    b _   bresenham (flat) oval function
@@ -215,18 +175,39 @@ bf b _   better lighting model to show darkness at various depths
 bf b _     maybe just ultra-high res bitmaps from gl
 bf b _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
-   b _ getting current fill color and stroke color
-   b _   stroke() with no params?
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
+bf b _ getting current fill color and stroke color
+bf b _   stroke() with no params?
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
+
+
+BAGEL / Data API
+
+bf b _ writeBytes, writeStrings (actually saveBytes/saveStrings)
+bf b _ split to take strings (ie. for ", ")
+bf b _ versions of loadStream/loadBytes etc that use streams and/or urls
+bf b _ file output, save strings or pile of bytes
+bf b _ quicksort should probably just be made into 'sort' class
+bf b _   it's the only one ever used
+bf b _   can this be done using an inner class?
+bf b _ read table/csv formatted data into a matrix
+bf b _   pseudo-database format version of this that stores indexes to file
+bf b _     rather than loading the whole thing at once
+bf b _ more advanced splitting of files into rows/cols uses another class
+bf b _   other class also has concept for random access of lines
+bf b _   by storing the line positions, can access without loading all
+bf b _   into memory because some files will be too large
+bf b _ need some model for i/o that makes more sense
+bf b _   getting whole words from serial, network, and files
+bf b _   or buffers of specific length with a sync byte
 
 
 BAGEL / Details
 
-   b _ some flag to know whether applet is online or not
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
-   b _ cartesian/polar conversion
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
-   b _ make zbuffer available instead of g.zbuffer
+   b _ break out BSerial as separate object like BVideo
+   b _   BSerial.flush and BSerial.available
+bf b _ some flag to know whether applet is online or not
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+bf b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
    b _ transparent gif images don't retain transparency (oy)
@@ -244,17 +225,17 @@ BAGEL / Details
    b _   rather than app being enclosed in beginFrame/endFrame loop
    b _ images drawn from center don't work for simage()
    b _   currently calling slower image routine
-
-   b _ p5 classes into packages (bagel especially)
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
-
-   2 _ keypressed is not persistent
-   2 _   key repeat in os vs. how java handles it
-   2 _   search java faq for info about getting around it
+bf b _ p5 classes into packages (bagel especially)
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
 
 
 BAGEL / Future
 
+   2 _ keypressed is not persistent
+   2 _   key repeat in os vs. how java handles it
+   2 _   search java faq for info about getting around it
+   2 _ drawMode() for MULTIPLY and ADD
+   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051208333
    2 _ nicer/simpler api for moving the camera around
    2 _ better api for fonts
    2 _ fixed fonts are screwed, should only work at screen resolution
@@ -274,7 +255,6 @@ BAGEL / Future
    2 _   shouldn't do so much work (redrawing in loop) if waiting for input
    2 _     mode for when no full animation taking place
    2 _     otherwise machine is continually maxed out while app is running
-
    2 _ way to screen grab at higher resolution
    2 _   method for rendering at higher res and then scaling down
    2 _   (even if this causes signficant performance hit)
@@ -297,17 +277,7 @@ BAGEL / Future
 VIDEO 
 
 
-VIDEO / CAPTURE - Bagel Standard Extension by Hernando
-
-hb b _ beginVideo()
-hb b _ endVideo()
-hb b _ videoMode() 
-hb b _ videoEvent(); 
-hb b _ video[] 
-
-bf b _ incorporate hernando's code
-bf b _   add qt java libs to build process
-   b _ do same as video capture but running through movie file
+VIDEO / Capture - Bagel Standard Extension by Hernando
 
 
 VIDEO / Output - something like screengrab, employs qtjava
@@ -329,7 +299,7 @@ SOUND / Bagel Standard Extension by Carlos
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-PDE - PROCESSING DEVELOPMENT ENVIRONMENT
+PDE - Processing Development Environment
 
 
 
@@ -405,165 +375,164 @@ most of these items can be removed if kjc is dropped
 
 PDE / Runtime (includes classloading)
 
-_ environment locks up when error stream isn't for the class
-_   this happens when it's another thread (i.e. image fetcher)
-_   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
-_ focus not properly set in present mode
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
-_ for 'java' mode, try run using external vm
-_   would need to get error output stream from app.. argh
-_   only allow under win/osx/linux
-_   not clear how to kill the process.. does that work w/ 1.3?
-_ support 'classes' folder, through the use of a classloader
-_   could also be done by launching external java app
-_   all .jar files etc are added from this folder automatically
-_   'public class' thing to make things available to all sketches
-_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
-_ class unloading not happening in java mode
-_   need to add randomizer to even non-self gen'd classes
-_   or figure out how to unload old classes.. grr
-_ lockup when something missing from classpath on dynamic load
-_   but makes no error.. peditorconsole probably swallowing it
-_ ability to include other code from sketchbook directory
-_   compile entire sketchbook on startup, check for new files on compile?
+dh b _ environment locks up when error stream isn't for the class
+dh b _   this happens when it's another thread (i.e. image fetcher)
+dh b _   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
+dh b _ focus not properly set in present mode
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
+dh b _ for 'java' mode, try run using external vm
+dh b _   would need to get error output stream from app.. argh
+dh b _   only allow under win/osx/linux
+dh b _   not clear how to kill the process.. does that work w/ 1.3?
+dh b _ support 'classes' folder, through the use of a classloader
+dh b _   could also be done by launching external java app
+dh b _   all .jar files etc are added from this folder automatically
+dh b _   'public class' thing to make things available to all sketches
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
+dh b _ class unloading not happening in java mode
+dh b _   need to add randomizer to even non-self gen'd classes
+dh b _   or figure out how to unload old classes.. grr
+dh b _ lockup when something missing from classpath on dynamic load
+dh b _   but makes no error.. peditorconsole probably swallowing it
+dh b _ ability to include other code from sketchbook directory
+dh b _   compile entire sketchbook on startup, check for new files on compile?
+dh b _ present mode, click background window and front window hides
+dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
+dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
 
 
 PDE / Export
 
-   b _ export to .pde file rather than java
-   b _   or at least link to that from the web page
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
-   b _ add manifest.mf to exported applets so that applications will work
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
-   b _ ability to export 'applications' (not just applets)
-   b _   lock feature for present mode (part of export to application?)
-   b _   application can still do serial (qt, other stuff?) 
-   b _   applet runs in browser, though applet on cbagel is everything..
-   b _   include main class info for executable jar file with jdk > 1.2
-   b _   not difficult to do, just some tweaking once applet export works
-   b _   wrapper that invokes the applet using a copy of the jre
-   b _   main() method needs to set layout manager if jexegen is to be used
-   b _     (msft vm defaults to null layout manager)
-   b _   also make sure pack() is happening
+dh b _ export to .pde file rather than java
+dh b _   or at least link to that from the web page
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
+dh b _ add manifest.mf to exported applets so that applications will work
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
+dh b _ ability to export 'applications' (not just applets)
+dh b _   lock feature for present mode (part of export to application?)
+dh b _   application can still do serial (qt, other stuff?) 
+dh b _   applet runs in browser, though applet on cbagel is everything..
+dh b _   include main class info for executable jar file with jdk > 1.2
+dh b _   not difficult to do, just some tweaking once applet export works
+dh b _   wrapper that invokes the applet using a copy of the jre
+dh b _   main() method needs to set layout manager if jexegen is to be used
+dh b _     (msft vm defaults to null layout manager)
+dh b _   also make sure pack() is happening
 
 
 PDE / Editor
 if you dream it, you can do it.
 
-b _ find/replace
-b _   ctrl-f for find, g for find next, h for next occurrence of selected
-b _   "look up in reference" function for selecting keywords
-? _ context menu cut/copy/paste
-? _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
+dh b _ find/replace
+dh b _   ctrl-f for find, g for find next, h for next occurrence of selected
+dh b _   "look up in reference" function for selecting keywords
+dh b _ context menu cut/copy/paste
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
 
-2 _ features asked for on the bboard
+
+PDE / Details
+
+dh b _ improve the console
+dh b _   clear console each time 'run' gets hit
+dh b _     don't actually clear, just advance by the number of lines visible
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+dh b _   maybe it needs to be a textarea?
+dh b _   printing of objects, esp when null, in jdk 14 seems to crash
+dh b _     this may have been fixed
+dh b _   exception when trying to write to stdout
+dh b _   may need horizontal scroller, or text wrap
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
+dh b _   can't copy text from console directly
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
+dh b _ p5 becomes a memory hog (benelek and glen murphy)
+dh b _   even without sketches open, perhaps not gc'ing properly
+dh b _   objects probably not getting finalized
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
+
+dh 1 _ rename doesn't set focus to renamer area
+dh 1 _ rename sketch 'can't rename' error (file being kept open)
+dh 1 _   open sketch, make a change, save, run, rename -> error
+dh 1 _ beautify() ignores colons for case statements
+dh 1 _   need to tie this to the parser instead
+dh 1 _ background of menus on winxp is white
+dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
+dh 1 _   SystemColor doesn't differentiate between menu background and top
+dh 1 _   probably fixed in swing, but we're using java.awt.Menu
+dh 1 _   test by rewriting with java.awt.Menu
+dh 1 _ need to check if volume is read-only, notify and quit if it is
+dh 1 _   people are trying to run off the disk image
+dh 1 _   need to pay attention to when running from read-only drive
+dh 1 _     reported by brandenberg
+dh 1 _    "p5 will launch from the disk image, but will 
+dh 1 _     not draw the sketch name bar doesn't appear"
+dh 1 _ save last-used serial to sketch.properties on quit
+dh 1 _ size() has memory limitations (pitaru)
+dh 1 _   catch OutOfMemoryError inside size() and let the user know
+dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
+dh 1 _ 'save as' from examples puts into examples dir.. :(
+dh 1 _   make it default to the user's sketch dir
+dh 1 _ verify editor buttons working properly
+dh 1 _   is play button properly unhighlighting? 
+dh 1 _     does it unhighlight after compile or runtime errors?
+dh 1 _     also when using draw() instead of loop()
+dh 1 _       applet needs to notify runner that it has terminated
+dh 1 _   popup menu for sketches doesn't unhighlight if no sketch selected
+dh 1 _   if export fails (compile error) need deselect
+dh 1 _ only copy data files into build dir when there are changes
+dh 1 _   make sure the still relevant files aren't removed
+dh 1 _   setLastModified on the files after copying (jdk13)
+dh 1 _ better handling of AccessControlException in applets
+dh 1 _   on loadImage and loadStream
+dh 1 _ exceptions in draw() apps aren't caught
+dh 1 _   the program resize(200, 200); just does nothing (doesn't complain)
+dh 1 _ if 'void' left out before loop or setup, cryptic message about
+dh 1 _   'constructor loop must be named Temporary_23498_2343'
+dh 1 _   add a better handler for this specific thing?
+dh 1 _ sketches can't be named starting with numbers (D.YOO)
+dh 1 _   either provide an error message or explanation for this
+dh 1 _   or allow the sketch name to be separte from the class/folder names
+dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
+dh 1 _ menu weirdness (benelek)
+dh 1 _   when u've got a menu open, move a cursor over the text area
+dh 1 _   and back over the menu, the text-area cursor type remains. 
+dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
+dh 1 _ scroll bar has some painting weirdness with jedit textarea
+dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
+
+
+PDE / Features
+
+dh b _ some notion of plugins for pde
+dh b _   color picker or other things written by folks
+dh b _   add all .jar files in lib/plugins on startup
+dh b _ make some kind of internal color picker
+dh b _   could be a separate window that's always around if needed
+dh b _ highlight a word and jump to it inside the reference
+dh b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
+dh b _ may need to start putting properties somewhere besides lib
+dh b _   home directory  (or preferences folder under macos9)
+dh b _ put screenshots into sketch folder
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+dh b _ external editor -> add a command to launch
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+dh b _ event to explorer to open 'parts' directory of project
+dh b _ expose access to oro api, perhaps as a plugin
+dh b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
+
+
+PDE / see you next year
+not necessary for 1.0 release
+
+2 _ editor features asked for on the bboard
 2 _   line numbers like bbedit
 2 _   command to comment-out the current selection
 2 _   syntax coloring
 2 _   split screen
 2 _   collapsable functions, or quick access to functions
 2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
-
-
-PDE / Details
-
-b _ background of menus on winxp is white
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
-b _   SystemColor doesn't differentiate between menu background and top
-b _   probably fixed in swing, but we're using java.awt.Menu
-b _   test by rewriting with java.awt.Menu
-b _ improve the console
-b _   clear console each time 'run' gets hit
-b _     don't actually clear, just advance by the number of lines visible
-b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-b _   maybe it needs to be a textarea?
-b _   printing of objects, esp when null, in jdk 14 seems to crash
-b _     this may have been fixed
-b _   exception when trying to write to stdout
-b _   may need horizontal scroller, or text wrap
-b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
-b _   can't copy text from console directly
-b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
-2 _   make console like director messagewindow.. 
-2 _     ability to type commands and try functions
-b _ rename doesn't set focus to renamer area
-b _ rename sketch 'can't rename' error (file being kept open)
-b _   open sketch, make a change, save, run, rename -> error
-b _ beautify() ignores colons for case statements
-b _   need to tie this to the parser instead
-b _ need to check if volume is read-only, notify and quit if it is
-b _   people are trying to run off the disk image
-b _   need to pay attention to when running from read-only drive
-b _     reported by brandenberg
-b _    "p5 will launch from the disk image, but will 
-b _     not draw the sketch name bar doesn't appear"
-b _ p5 becomes a memory hog (benelek and glen murphy)
-b _   even without sketches open, perhaps not gc'ing properly
-b _   objects probably not getting finalized
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
-_ save last-used serial to sketch.properties on quit
-_ size() has memory limitations (pitaru)
-_   catch OutOfMemoryError inside size() and let the user know
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
-_ 'save as' from examples puts into examples dir.. :(
-_   make it default to the user's sketch dir
-_ verify editor buttons working properly
-_   is play button properly unhighlighting? 
-_     does it unhighlight after compile or runtime errors?
-_     also when using draw() instead of loop()
-_       applet needs to notify runner that it has terminated
-_   popup menu for sketches doesn't unhighlight if no sketch selected
-_   if export fails (compile error) need deselect
-_ only copy data files into build dir when there are changes
-_   make sure the still relevant files aren't removed
-_   setLastModified on the files after copying (jdk13)
-_ better handling of AccessControlException in applets
-_   on loadImage and loadStream
-_ exceptions in draw() apps aren't caught
-_   the program resize(200, 200); just does nothing (doesn't complain)
-_ if 'void' left out before loop or setup, cryptic message about
-_   'constructor loop must be named Temporary_23498_2343'
-_   add a better handler for this specific thing?
-_ sketches can't be named starting with numbers (D.YOO)
-_   either provide an error message or explanation for this
-_   or allow the sketch name to be separte from the class/folder names
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
-_ break out BSerial as separate object like BVideo
-_   BSerial.flush and BSerial.available
-
-
-PDE / Details (low priority)
-
-_ menu weirdness (benelek)
-_   when u've got a menu open, move a cursor over the text area
-_   and back over the menu, the text-area cursor type remains. 
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
-_ scroll bar has some painting weirdness with jedit textarea
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
-
-
-PDE / features
-
-b _ some notion of plugins for pde
-b _   color picker or other things written by folks
-b _   add all .jar files in lib/plugins on startup
-b _ make some kind of internal color picker
-b _   could be a separate window that's always around if needed
-b _ highlight a word and jump to it inside the reference
-b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
-b _ may need to start putting properties somewhere besides lib
-b _   home directory  (or preferences folder under macos9)
-b _ will need doubles for genomics work. ugh.
-b _   this is just enable/disable float stuff
-b _ put screenshots into sketch folder
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
-b _ external editor -> add a command to launch
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
-b _ event to explorer to open 'parts' directory of project
-b _ expose access to oro api, perhaps as a plugin
-b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
-
-
+2 _ make console like director messagewindow.. 
+2 _   ability to type commands and try functions
 2 _ menu option to change username/login
 2 _   if new user, offer to rename 'default' if it contains things
 2 _ user name is changed by clicking and typing
@@ -592,7 +561,7 @@ b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 
 
 PDE / science fiction
-features to be implemented by 2048
+features we love, but probably won't be implemented 2048
 
 3 _ toggle for showing a function name each time its hit
 3 _ toggle for showing line numbers within a function
@@ -629,6 +598,7 @@ How the environment gets packed up, downloaded, and installed.
 
 DISTRIBUTION / General 
 
+b _ need more comprehensive list of 'known bugs'
 b _ need to purge 55 spelling from lots of things
 b _   window title code, name of .exe and .app files
 b _ people like downloadable reference + net isn't cheap everywhere
@@ -653,6 +623,10 @@ b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 
 
 DISTRIBUTION / Mac OS
+b _ is video working (qtjava in path) on macos9?
+b _ double-check to see if wheel mouse is working
+b _ had to disable MRJFileUtils stuff on osx at last minute before 53
+b _   seems that file names changed between 1.3 and 1.4
 b _ reference doesn't launch on mac (mKoser) 
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038424448
 b _ handlers for basic events
@@ -704,606 +678,9 @@ Info.plist, setting JVMVersion
 
 
 DISTRIBUTION / Linux
+b _ doesn't work on rh9.. update the jvm
 b _ splash screen
 b _ test serial with ibm vm and all
 b _ look for jdk 1.4 to use instead of 1.3
 b _   make sure javacomm gets in there
 b _ test it a little more to make sure it works (cygwin x sucks)
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-casey -- this is a bunch of crap that i've scribbled down as i've
-thought of it.. maybe they should be moved to your list or removed if
-they're not useful?
-
-
-DOCS
-_ mention connection to java and docs on getting started in java
-_ make clear that setup is just for setup
-_   but should also in the future allow to create static image
-_ notes on debugging
-_   run with java -Xint blahblah (turns off jit)
-  // I don't know where this should live, on BBS? What do you think
-_ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
-_   also 'why p5' message from amit pitaru on 12/15/02
-_     and p5 versus flash stuff
-_   lists the main arguments, could be a useful document
-_ list of reserved keywords
-_   make note of functions/variables used by ProcessingApplet
-_     using them in your app will break things (i.e. init())
-_ explain using inner classes and using non-public classes
-_ start 'errors' section
-_   NullPointerException inside setup usually means no size()
-_ ability to write functions and inner classes
-_ mention ability to use import statements in java mode
-_   ability to do real (but not public) classes in same document
-_   check to see if get/set functions in applet actually work
-_   fix documentation appropriately
-_ image formats supported (gif and jpeg)
-_   if image doesn't load, just prints an error on console
-_ notes about running on win98 and that stupid startup exception
-_ make note in documentation about convex polygons
-
-
-DOCS / technotes
-_ using runtime.exec to run .ai files
-_   code to automatically open generated .ai files (exec(..ai))
-_ debugging serial code
-_   hyperterminal - watching for binary garbage vs ascii text
-_   first debug (maybe even using ascii) and watch in hyperterminal
-_     or ship pooterm along with processing
-_   flicker - often ascii instead of binary
-_   timing of sleep, size of message, timing of write
-_   starting processing first, then stamp
-_ using objectXYZ() and screenXYZ()
-_ using curves
-_ making things faster
-_ memory running out, using ms and mx
-_ noBackground() if you're covering everything
-_ converting to/from ascii/decimal/hex/binary
-_ fixed width font format as technote and how to use
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-LANGUAGE
-
-Adding to the API for advanced users, supporting concise coding
-
-
-foreach String line (lines)
-foreach (String line = lines)
-foreach (String line, lines)
-foreach (String line) of lines
-..would translate to..
-for (int i = 0; i < lines.length; i++) {
-    String line = lines[i];
-}
-
-for (int i = 0..10)  or  for (int i, 0..10)
-foreach (int i) of 0..10
-for (int i = start..stop)
-..translating to..
-for (int i = 0; i < 10; i++)   
-for (int i = start; i < stop; i++)
-
-emit(arrayImageX) or printvar? or vprint?
-..would translate to..
-println("arrayImageX = " + arrayImageX);
-
-emit(arrayImageX, arrayImageY)
-..would translate to..
-println("arrayImageX, arrayImageY = " + arrayImageX + ", " + arrayImageY)
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-EXTENSIONS
-
-Scribblings for future API...
-
-
-BXSocket, BXServerSocket
-  BXNetwork
-
-BXSerial
-
-> - playback of samples :
->     - methods: startSound (loop_num, start_ms, end_ms) , stopSound(),
-> volume() , pan()
->     - properties: duration
->     - formats: wav ( mp3 would be nice for compression )
->     - events: onSoundEnd(), onSoundLoop()
->
-> - synthesis (generating waves, filtering waves) would be wonderful to have
-> as well, but i think that samples should come first.
-
-BXSound, BXSampler or BXAudio
-  play aiff or mp3 sound with a single command
-  play buffer of samples with a single command
-  full class allows play/pause/more advanced loading
-
-BXMovieInput/Output or BXVideo or BXQuickTimeOutput/Input
-  BXMovie and BXCamera?
-
-BXImageIO, BXTiffImage
-
-BXDataFile (csv or tab separated data)
-  BXDataMatrix
-
-BXDatabase, BXDatabaseCache (keeps queries to fill out table)
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-
-MISCELLANEOUS NOTES
-
-
-Things that break often/things to test
-_ handling of key events (both as applet and in application)
-_ per-vertex coloring for different kinds of shapes
-_ that each shape type works as expected
-_   what if one short or one too many vertices?
-_ transforms are affecting geometry
-_   i.e. are line and point working in 3D?
-_ why did i think that z was backwards from gl?
-
-biggest problems from french workshop
-_ syntax more difficult than expected: semicolons and braces
-_   part is translation issue--wasn't a quick fix
-_ curly braces weren't on the keyboard
-_ encouraging people to indent their code for clarity
-_ slow to understand 'blocks'
-_   translation issue but could be aided by visual cues in editor
-_   might be better to use braces on separate lines to reinforce
-_ couldn't enforce people working on specific exercises
-_ too many cubes.. people playing with 3d before understanding it
-_ would be nice to have examples for all concepts on site
-_   or in a small printed book that serves as a reference
-_ courseware not complete--difficult to collect assignments
-
-teaching 3D
-_ expectation for 3D objects is that they begin in the center
-_   rather than a translate(W/2, H/2) then draw rotating cube
-
-_ make processing useful/usable
-_   start working on writing pdf files
-_   loading images/files from same dir as .pde file
-_   option to use jikes
-_   use external editor or write a usable one
-_ write simple class for lcd panel 
-_   build adapter to plug directly into db9 serial port
-_   figure out characters used on screen by default (check web)
-_   make unicode converter from unicode char -> lcd screen bytes
-_   hook up lcd screen to power/serial port to test
-_   code to reprogram lcd screen
-_ look through rabbit api
-_   look into integration of cmd line compiler
-_ check out flash for its text editor
-_ write function to swap different names for Proce55ing
-_   use for window title
-_   simple app that does swapping of letters as an animation
-
-also an interesting possibility (for tech-minded only)
-  use terminal emulator, and run iostream from process
-  use pooterm stuff for the emulation window
-  key commands would conflict
-  but could use emacs under osx, linux
-  use nano (maybe emacs?) under windows
-  and nothing for macos9  
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-
-BUILDING P5
-
-where to install jikes, jre, others?
-jre may need to be back in cvs, but annoying for dist
-because of all the CVS directories that it makes
-
-cvs co processing
-cd processing
-cvs update -P
-# optional, if you're only doing java dev
-rm -rf web 
-
-need to have rt.jar from jdk 1.1 and comm.jar in the CLASSPATH 
-to build bagel.. just gotta be that way, it's too messy otherwise
-
-need cygwin: zip, unzip, perl
-little guys: rm, cp, mv, tcsh
-
-build jikes for cygwin, use version 1.14, later than that has bugs
-./configure, make, make install
-add $cygwin/usr/local/bin to path
-
-dist directories contain only the files specific to that platform
-(those are the ones checked into cvs)
-  when dist.sh is run:
-  1) a copy of the dist dir is created, renamed 'processing-nnnn'
-  2) the remaining files are added (buttons.gif, pde.properties)
-  3) files are lf converted (i.e. notes.txt)
-comm.jar now needs to be in CLASSPATH for build environment
-
-macos may be superior platform for building
-  retain unix file permissions for linux
-  resource fork goodness for the mac
-
-for jgl version of bagel, jgl.jar needs to be in classpath
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-
-(C)BAGEL WORK
-
-The C Language version of the Bagel Graphics Library
-
-
-bagel engine: memoryimagesource, opengl, illustrator, postscript, pdf
-
-bagel to run on j2me / phones
-
-output to multiple languages: java -> c++ conversion
-
-cbagel engine: memory array, opengl bindings
-
-
-_ modify cbagel for opie
-_ would be interesting to build pre-processor for java p5
-_   but that converts into cpp version of bagel apps.. mmm
-_ update cbagel to current bagel status
-_ get gcc tied into processing
-_ java disassembly inside p5
-_   and assmebling it back again
-_ color() has a different meaning
-_   formerly a normalized 0..1 float to a packed rgb int
-_   now it's a color according to current standards
-_   float_color is a private version of the previous color()
-_ curve was broken (cvertexIndex being reset)
-_   curve() now doubles start/end points to be more logical
-_   (fits all four points by drawing six points)
-_ try screengrab using malloc and/or gobs of extra memory
-_   debug the version inside bagel b/c it's simpler
-_ bagel needs to be able to resize itself
-_   also to address screen as if it's another size
-_     is that simply a matter of changing the viewport?
-_   letterboxing as appropriate
-_ build windows app for testing bagel c++ ... -lgdi32 for cygwin
-_ updates from p5 api changes
-_   triangle() 6 parameters
-_   quad() 8 parameters
-_   rect/rectMode again
-_   new color solution
-_     color() -> uses colorMode
-_     red/green/blue() hue/saturation/value() functions
-_     getPixel/setPixel
-_     swap in 'color' as an int
-_     color c = #67aa78
-_   keyDown(), mouseDown(), lastMouseX, lastMouseY
-_   degrees(), radians()
-_ fill, background, stroke all with int version for packed rgb
-
-_ why won't glut shut up about modifiers?
-_ add millis() to bappletgl that returns glut millis
-
-_ BGL_PATH should turn paths into os9 ready paths for os9
-_ or whatever else for the other platforms
-_ macos9: font = loadFont(":fonts:Univers55.vlw");
-_ or could use a "File" style object
-_   or do all path conversions internally:
-_   loadFont, loadImage.. already do gz decoding
-
-_ makingmovie/screengrab should be moved into bapplet, 
-_ along with the stuff for making an ai screen grab
-
-_ mouseX/lastMouseX should be handled automatically
-_ mousePressed() function may not need vars passed in
-_ or maybe the only vars are alt/left-right/ctrl/shift
-
-_ maybe mouseevent is passed in, but not used in the
-_ function unless people want advanced features
-_ mouseX/mouseY/lastMouseX/lastMouseY all set by parent class
-
-_ lastKey and lastKeyCode -- not as useful as the mouse stuff
-
-
-
-////////////////////////////////////////////////////////////////////
-
-
-MENU PROPOSALS
-
-
-// File
-New 
-Open
-Save
-Save as
-Export Web
-Export Application
------
-Proce55ing.net
-Reference
------
-Quit
-
-
-// Edit
-Undo
-Redo
------
-Cut
-Copy 
-Paste
------
-Find     
-Replace  
------
-Select All 
-
-
-// Control
-Run
-Present
-Stop
------
-Step Forward  (farway future)
-Step Backward (faraway future)
-
-
-// Sketch
-History
-Clear History
-Beautify
-
-
-// Environment
-Serial Port
-Use External Editor
-
-
-
-////////////////////////////////////////////////////////////////////
-
-
-JAVA PACKAGES
-
-
-jdk 1.3 packages
-
-java.applet
-java.awt
-java.awt.color
-java.awt.datatransfer
-java.awt.dnd
-java.awt.event
-java.awt.font
-java.awt.geom
-java.awt.im
-java.awt.im.spi
-java.awt.image
-java.awt.image.renderable
-java.awt.print
-java.beans
-java.beans.beancontext
-java.io
-java.lang
-java.lang.ref
-java.lang.reflect
-java.math
-java.net
-java.rmi
-java.rmi.activation
-java.rmi.dgc
-java.rmi.registry
-java.rmi.server
-java.security
-java.security.acl
-java.security.cert
-java.security.interfaces
-java.security.spec
-java.sql
-java.text
-java.util
-java.util.jar
-java.util.zip
-javax.accessibility
-javax.naming
-javax.naming.directory
-javax.naming.event
-javax.naming.ldap
-javax.naming.spi
-javax.rmi
-javax.rmi.CORBA
-javax.sound.midi
-javax.sound.midi.spi
-javax.sound.sampled
-javax.sound.sampled.spi
-javax.swing
-javax.swing.border
-javax.swing.colorchooser
-javax.swing.event
-javax.swing.filechooser
-javax.swing.plaf
-javax.swing.plaf.basic
-javax.swing.plaf.metal
-javax.swing.plaf.multi
-javax.swing.table
-javax.swing.text
-javax.swing.text.html
-javax.swing.text.html.parser
-javax.swing.text.rtf
-javax.swing.tree
-javax.swing.undo
-javax.transaction
-org.omg.CORBA
-org.omg.CORBA_2_3
-org.omg.CORBA_2_3.portable
-org.omg.CORBA.DynAnyPackage
-org.omg.CORBA.ORBPackage
-org.omg.CORBA.portable
-org.omg.CORBA.TypeCodePackage
-org.omg.CosNaming
-org.omg.CosNaming.NamingContextPackage
-org.omg.SendingContext
-org.omg.stub.java.rmi 
-
-jdk 1.4 packages
-
-java.applet
-java.awt
-java.awt.color
-java.awt.datatransfer
-java.awt.dnd
-java.awt.event
-java.awt.font
-java.awt.geom
-java.awt.im
-java.awt.im.spi
-java.awt.image
-java.awt.image.renderable
-java.awt.print
-java.beans
-java.beans.beancontext
-java.io
-java.lang
-java.lang.ref
-java.lang.reflect
-java.math
-java.net
-java.nio
-java.nio.channels
-java.nio.channels.spi
-java.nio.charset
-java.nio.charset.spi
-java.rmi
-java.rmi.activation
-java.rmi.dgc
-java.rmi.registry
-java.rmi.server
-java.security
-java.security.acl
-java.security.cert
-java.security.interfaces
-java.security.spec
-java.sql
-java.text
-java.util
-java.util.jar
-java.util.logging
-java.util.prefs
-java.util.regex
-java.util.zip
-javax.accessibility
-javax.crypto
-javax.crypto.interfaces
-javax.crypto.spec
-javax.imageio
-javax.imageio.event
-javax.imageio.metadata
-javax.imageio.plugins.jpeg
-javax.imageio.spi
-javax.imageio.stream
-javax.naming
-javax.naming.directory
-javax.naming.event
-javax.naming.ldap
-javax.naming.spi
-javax.net
-javax.net.ssl
-javax.print
-javax.print.attribute
-javax.print.attribute.standard
-javax.print.event
-javax.rmi
-javax.rmi.CORBA
-javax.security.auth
-javax.security.auth.callback
-javax.security.auth.kerberos
-javax.security.auth.login
-javax.security.auth.spi
-javax.security.auth.x500
-javax.security.cert
-javax.sound.midi
-javax.sound.midi.spi
-javax.sound.sampled
-javax.sound.sampled.spi
-javax.sql
-javax.swing
-javax.swing.border
-javax.swing.colorchooser
-javax.swing.event
-javax.swing.filechooser
-javax.swing.plaf
-javax.swing.plaf.basic
-javax.swing.plaf.metal
-javax.swing.plaf.multi
-javax.swing.table
-javax.swing.text
-javax.swing.text.html
-javax.swing.text.html.parser
-javax.swing.text.rtf
-javax.swing.tree
-javax.swing.undo
-javax.transaction
-javax.transaction.xa
-javax.xml.parsers
-javax.xml.transform
-javax.xml.transform.dom
-javax.xml.transform.sax
-javax.xml.transform.stream
-org.ietf.jgss
-org.omg.CORBA
-org.omg.CORBA_2_3
-org.omg.CORBA_2_3.portable
-org.omg.CORBA.DynAnyPackage
-org.omg.CORBA.ORBPackage
-org.omg.CORBA.portable
-org.omg.CORBA.TypeCodePackage
-org.omg.CosNaming
-org.omg.CosNaming.NamingContextExtPackage
-org.omg.CosNaming.NamingContextPackage
-org.omg.Dynamic
-org.omg.DynamicAny
-org.omg.DynamicAny.DynAnyFactoryPackage
-org.omg.DynamicAny.DynAnyPackage
-org.omg.IOP
-org.omg.IOP.CodecFactoryPackage
-org.omg.IOP.CodecPackage
-org.omg.Messaging
-org.omg.PortableInterceptor
-org.omg.PortableInterceptor.ORBInitInfoPackage
-org.omg.PortableServer
-org.omg.PortableServer.CurrentPackage
-org.omg.PortableServer.POAManagerPackage
-org.omg.PortableServer.POAPackage
-org.omg.PortableServer.portable
-org.omg.PortableServer.ServantLocatorPackage
-org.omg.SendingContext
-org.omg.stub.java.rmi
-org.w3c.dom
-org.xml.sax
-org.xml.sax.ext
-org.xml.sax.helpers 
