@@ -31,6 +31,7 @@ LINE_LOOP	LITERAL1
 LINE_STRIP	LITERAL1	
 MOVE	LITERAL1	
 NORMAL_SPACE	LITERAL1	
+NO_DEPTH_TEST	LITERAL1	
 OBJECT_SPACE	LITERAL1	
 POINTS	LITERAL1	
 POLYGON	LITERAL1	
@@ -123,6 +124,7 @@ abs	KEYWORD2	abs_
 acos	KEYWORD2	acos_
 +=		addassign
 +		addition
+alpha	KEYWORD2	alpha_
 angleMode	KEYWORD2	angleMode_
 append	KEYWORD2	append_
 Array	KEYWORD1	Array
@@ -210,6 +212,7 @@ int	KEYWORD1	int
 int	KEYWORD2	int_
 join	KEYWORD2	join_
 key	LITERAL2	key
+key	LITERAL2	keyCode
 keyPressed	KEYWORD2	keyPressed_
 keyPressed	LITERAL2	keyPressed
 keyReleased	KEYWORD2	keyReleased_
@@ -228,7 +231,7 @@ log	KEYWORD2	log_
 &&		logicalAND
 !		logicalNOT
 ||		logicalOR
-loop	KEYWORD3	loop_
+loop	KEYWORD2	loop_
 max	KEYWORD2	max_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
@@ -255,6 +258,7 @@ noise	KEYWORD2	noise_
 noiseDetail	KEYWORD2	noiseDetail_
 noiseSeed	KEYWORD2	noiseSeed_
 noLights	KEYWORD2	noLights_
+noLoop	KEYWORD2	noLoop_
 noSmooth	KEYWORD2	noSmooth_
 noStroke	KEYWORD2	noStroke_
 noTint	KEYWORD2	noTint_
@@ -282,6 +286,7 @@ point	KEYWORD2	point_
 pop	KEYWORD2	pop_
 pow	KEYWORD2	pow_
 print	KEYWORD2	print_
+printarr	KEYWORD2	printarr_
 println	KEYWORD2	println_
 push	KEYWORD2	push_
 quad	KEYWORD2	quad_
@@ -291,6 +296,7 @@ randomSeed	KEYWORD2	randomSeed_
 rect	KEYWORD2	rect_
 rectMode	KEYWORD2	rectMode_
 red	KEYWORD2	red_
+redraw	KEYWORD2	redraw_
 return	KEYWORD1	return
 reverse	KEYWORD2	reverse_
 >>		rightshift
