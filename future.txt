@@ -1,5 +1,7 @@
 BAGEL / Future
 
+   2 _ sbit font support
+   2 _   both reading and building sbit fonts
    2 _ materials and shading
    2 _ camera object for moving scene
    2 _ cartesian/polar conversion

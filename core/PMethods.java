@@ -185,6 +185,10 @@ public interface PMethods {
 
   public void text(String s, float x, float y, float z);
 
+  public void text(String s, float x, float y, float w, float h);
+
+  public void text(String s, float x, float y, float z, float w, float h);
+
   public void text(int num, float x, float y);
 
   public void text(int num, float x, float y, float z);
