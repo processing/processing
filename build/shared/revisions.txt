@@ -3,6 +3,38 @@ general reference of how to use processing, because the information
 for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0065 - 30 september 2003
+
+one major bug fix that repairs nastiness in drawing text that showed
+up starting with rev 60. and some other tiny tidbits.
+
+
+[ bug fixes ] 
+
+- fonts have been return to their previous state, fixing some real
+  ugliness that appeared starting with release 60.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064722202
+
+- beautify does a better job of retaining the caret position, rather
+  than jumping back to the beginning of your code. it's not perfect
+  yet, but perfection will happen post-beta.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+
+
+[ additions ] 
+
+- hint(DISABLE_TEXT_SMOOTH) has been added at arielm's request. the
+  previous hint SMOOTH_IMAGES is now always enabled for text, 
+
+- the about box now includes the current release number
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 ABOUT REV 0064 - 29 september 2003
 

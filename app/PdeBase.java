@@ -58,6 +58,8 @@ public class PdeBase extends Frame
              , MRJPrefsHandler
 #endif
 {
+  static final String VERSION = "0065 Alpha";
+
   static Properties properties;
   static Properties keywords; // keyword -> reference html lookup
 
@@ -1032,6 +1034,17 @@ public class PdeBase extends Frame
     final Window window = new Window(this) {
         public void paint(Graphics g) {
           g.drawImage(image, 0, 0, null);
+
+          /*
+            // does nothing..
+          Graphics2D g2 = (Graphics2D) g;
+          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                              RenderingHints.VALUE_ANTIALIAS_OFF);
+          */
+
+          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+          g.setColor(Color.white);
+          g.drawString(VERSION, 50, 30);
         }
       };
     window.addMouseListener(new MouseAdapter() {
