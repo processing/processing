@@ -98,6 +98,10 @@ changed in the future, but for now, they're not actually 'broken'.
   when extra libraries, multiple source code files (more than one tab), 
   or extra code files in the 'code' folder are employed.
 
+- a long sketch menu that goes off the edge of the screen? doesn't
+  scroll properly? not much we can do. this is a java issue which
+  happens on most platforms. to get around it, you can organize your
+  sketches into subfolders which will appear as submenus.
 
 ..................................................................
 
