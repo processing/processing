@@ -77,6 +77,12 @@ public class PdePreprocessor {
    */
   public String write(String program, String buildPath, String name, 
                       String extraImports[]) throws java.lang.Exception {
+    // if the program ends with a comment, and no CR or LF
+    // an OutOfMemoryError will happen.. not gonna track down the
+    // bug now, so here's a hack for it:
+    if (program.endsWith("//")) {
+      program += "\n";
+    }
 
     if (PdePreferences.getBoolean("compiler.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
