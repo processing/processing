@@ -174,6 +174,12 @@ public interface PConstants {
   static final int IMAGE_SPACE   = 1;
 
 
+  // hrmm, can i avoid these?
+
+  //static final int DEFAULT_SIZE = Float.NaN;
+  //static final int DEFAULT_LEADING = Float.NaN;
+
+
   // text placement modes
 
   static final int SCREEN_SPACE  = 2;

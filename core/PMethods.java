@@ -171,6 +171,14 @@ public interface PMethods {
 
   public void textSpace(int space);
 
+  public float textAscent();
+
+  public float textDescent();
+
+  public float textWidth(char c);
+
+  public float textWidth(String s);
+
   public void text(char c, float x, float y);
 
   public void text(char c, float x, float y, float z);
@@ -181,7 +189,7 @@ public interface PMethods {
 
   public void text(String s, float x, float y, float w, float h);
 
-  public void text(String s, float x1, float y1, float z, float x2, float y2);
+  public void text(String s, float x1, float y1, float x2, float y2, float z);
 
   public void text(int num, float x, float y);
 
