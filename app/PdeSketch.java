@@ -24,16 +24,18 @@
 
 public class PdeSketch {
   static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
+  static String tempBuildFolder;
 
   // name of sketch, which is the name of main file 
   // (without .pde or .java extension)
   String name;  
 
-  // 
-  String path;  // path to 'main' file for this sketch
+  String mainFilename; // name of 'main' file, used by load()
+  //String path;  // path to 'main' file for this sketch
 
-  // the sketch folder
-  File folder;
+  File sketchFolder;
+  File dataFolder;
+  File codeFolder;
 
   static final int PDE = 0;
   static final int JAVA = 1; 
@@ -60,8 +62,8 @@ public class PdeSketch {
     File mainFile = new File(path);
     System.out.println("main file is " + mainFile);
 
-    main = mainFile.getName();
-    System.out.println("main file is " + main);
+    mainFilename = mainFile.getName();
+    System.out.println("main file is " + mainFilename);
     /*
     if (main.endsWith(".pde")) {
       main = main.substring(0, main.length() - 4);
@@ -71,8 +73,26 @@ public class PdeSketch {
     }
     */
 
+    // lib/build must exist when the application is started
+    // it is added to the CLASSPATH by default, but if it doesn't
+    // exist when the application is started, then java will remove
+    // the entry from the CLASSPATH, causing PdeRuntime to fail.
+    //
+    tempBuildFolder = new File(TEMP_BUILD_PATH);
+    if (!tempBuildFolder.exists()) {
+      tempBuildFolder.mkdirs();
+      PdeBase.showError("Required folder missing",
+                        "A required folder was missing from \n" +
+                        "from your installation of Processing.\n" +
+                        "It has now been replaced, please restart    \n" + 
+                        "the application to complete the repair.", null);
+    }
+
     folder = new File(path.getParent());
     System.out.println("sketch dir is " + folder);
+
+    codeFolder = new File(folder, "code");
+    dataFolder = new File(folder, "data");
 
     load();
   }
@@ -151,11 +171,12 @@ public class PdeSketch {
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
     for (int i = 1; i < codeCount; i++) {
-      if (code[i].file.getName().equals("main")) {
+      if (code[i].file.getName().equals(mainFilename)) {
         System.out.println("found main code at slot " + i);
         PdeCode temp = code[0];
         code[0] = code[i];
         code[i] = temp;
+        break;
       }
     }
 
@@ -163,8 +184,6 @@ public class PdeSketch {
     // it's a dumb, slow sort, but there shouldn't be more than ~5 files
     for (int i = 1; i < codeCount; i++) {
       int who = i;
-      //String who = code[i].name;
-      //int whoIndex = i;
       for (int j = i + 1; j < codeCount; j++) {
         if (code[j].name.compare(code[who].name) < 0) {
           who = j;  // this guy is earlier in the alphabet
@@ -209,7 +228,7 @@ public class PdeSketch {
         filename.toLowerCase().endsWith(".dll") || 
         filename.toLowerCase().endsWith(".jnilib") || 
         filename.toLowerCase().endsWith(".so")) {
-      File codeFolder = new File(this.folder, "code");
+      //File codeFolder = new File(this.folder, "code");
       if (!codeFolder.exists()) codeFolder.mkdirs();
       destFile = new File(codeFolder, filename);
 
@@ -218,7 +237,7 @@ public class PdeSketch {
       destFile = new File(this.folder, filename);
 
     } else {
-      File dataFolder = new File(this.folder, "data");
+      //File dataFolder = new File(this.folder, "data");
       if (!dataFolder.exists()) dataFolder.mkdirs();
       destFile = new File(dataFolder, filename);
     }
@@ -266,8 +285,9 @@ public class PdeSketch {
     // work because the build dir won't exist at startup, so the classloader
     // will ignore the fact that that dir is in the CLASSPATH in run.sh
     //
-    File dirObject = new File(TEMP_BUILD_PATH);
-    PdeBase.removeDescendants(dirObject);
+    //File dirObject = new File(TEMP_BUILD_PATH);
+    //PdeBase.removeDescendants(dirObject);
+    PdeBase.removeDescendants(tempBuildFolder);
   }
 
 
@@ -315,36 +335,26 @@ public class PdeSketch {
       load();
     }
 
-    // temporary build folder is inside 'lib'
-    // this is added to the classpath by default
-    tempBuildPath = "lib" + File.separator + "build";
-    File buildDir = new File(tempBuildPath);
-    if (!buildDir.exists()) {
-      buildDir.mkdirs();
-    }
-
     // copy contents of data dir into lib/build
     // TODO write a file sync procedure here.. if the files 
     //      already exist in the target, or haven't been modified
     //      don't' bother. this can waste a lot of time when running.
-    File dataDir = new File(folder, "data");
-    if (dataDir.exists()) {
+    //File dataDir = new File(folder, "data");
+    if (dataFolder.exists()) {
       // just drop the files in the build folder (pre-68)
       //PdeBase.copyDir(dataDir, buildDir);
       // drop the files into a 'data' subfolder of the build dir
       PdeBase.copyDir(dataDir, new File(buildDir, "data"));
     }
 
-    // start with the main 
-
-    // make up a temporary class name to suggest
-    // only used if the code is not in ADVANCED mode
+    // make up a temporary class name to suggest.
+    // name will only be used if the code is not in ADVANCED mode.
     String suggestedClassName = 
       ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
        "_" + String.valueOf((int) (Math.random() * 10000)));
 
     // handle preprocessing the main file's code
-    String mainClassName = build(tempBuildPath, suggestedClassName);
+    String mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
     // externalPaths is magically set by build()
 
     // if the compilation worked, run the applet
@@ -363,7 +373,7 @@ public class PdeSketch {
 
       // get a useful folder name for the 'code' folder
       // so that it can be included in the java.library.path
-      String codeFolderPath = "";
+      String libraryPath = "";
       if (externalCode != null) {
         libraryPath = externalCode.getCanonicalPath();
       }
@@ -479,13 +489,16 @@ public class PdeSketch {
    *
    * In an advanced program, the returned classname could be different,
    * which is why the className is set based on the return value.
+   * A compilation error will burp up a PdeException.
+   *
    * @return null if compilation failed, main class name if not
    */
   protected String build(String buildPath, String suggestedClassName)
-    throws PdeException, Exception {
+    throws PdeException {
 
-    String additionalImports[] = null;
-    classPath = buildPath;
+    String importPackageList[] = null;
+    classPath = buildPath + File.pathSeparator + 
+      System.getProperty("java.class.path");
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
@@ -494,11 +507,11 @@ public class PdeSketch {
       externalRuntime = true;
       classPath += File.separator + 
         PdeCompiler.contentsToClassPath(codeFolder);
-      additionalImports = PdeCompiler.magicImports(classPath);
+      importPackageList = PdeCompiler.magicImports(classPath);
       libraryPath = codeFolder.getCanonicalPath();
     } else {
       externalRuntime = (codeCount > 1);  // at least for now
-      additionalImports = null;
+      importPackageList = null;
       libraryPath = "";
     }
 
@@ -517,88 +530,84 @@ public class PdeSketch {
         String filename = code[i].name + ".java";
         PdeBase.saveFile(code[i].program, new File(buildPath, filename));
         code[i].preprocName = filename;
-        continue;
-      }
 
-      PdePreprocessor preprocessor = new PdePreprocessor();
-      try {
-        // if (i != 0) preproc will fail if a pde file is not 
-        // java mode, since that's required
-        String className = 
-          preprocessor.write(code[i].program, buildPath,
-                             (i == 0) ? suggestedClassName : null, 
-                             additionalImports);
-        if (className == null) {
-          System.err.println("class could not be determined for " + 
-                             code[i].name + " hopefully the error has " + 
-                             "already been reported.");
-          return null;
-        } else {
-          code[i].preprocName = className + ".java";
-        }
-
-        if (i == 0) {
-          // store this for the compiler and the runtime
-          mainClassName = className;
-
-          // check if the 'main' file is in java mode
-          if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
-            externalRuntime = true; // we in advanced mode now, boy
+      } else if (code[i].flavor == PDE) {
+        PdePreprocessor preprocessor = new PdePreprocessor();
+        try {
+          // if (i != 0) preproc will fail if a pde file is not 
+          // java mode, since that's required
+          String className = 
+            preprocessor.write(code[i].program, buildPath,
+                               (i == 0) ? suggestedClassName : null, 
+                               additionalImports);
+          if (className == null) {
+            // TODO this is temporary for debugging
+            System.err.println("class could not be determined for " + 
+                               code[i].name + " hopefully an error has " + 
+                               "already been reported.");
+            return null;
+          } else {
+            code[i].preprocName = className + ".java";
           }
+
+          if (i == 0) {
+            // store this for the compiler and the runtime
+            mainClassName = className;
+
+            // check if the 'main' file is in java mode
+            if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
+              externalRuntime = true; // we in advanced mode now, boy
+            }
+          }
+
+        } catch (antlr.RecognitionException re) {
+          // this even returns a column
+          throw new PdeException(re.getMessage(), 
+                                 re.getLine() - 1, re.getColumn());
+
+        } catch (antlr.TokenStreamRecognitionException tsre) {
+          // while this seems to store line and column internally,
+          // there doesn't seem to be a method to grab it.. 
+          // so instead it's done using a regexp
+
+          PatternMatcher matcher = new Perl5Matcher();
+          PatternCompiler compiler = new Perl5Compiler();
+          // line 3:1: unexpected char: 0xA0
+          String mess = "^line (\\d+):(\\d+):\\s";
+          Pattern pattern = compiler.compile(mess);
+
+          PatternMatcherInput input = 
+            new PatternMatcherInput(tsre.toString());
+          if (matcher.contains(input, pattern)) {
+            MatchResult result = matcher.getMatch();
+
+            int line = Integer.parseInt(result.group(1).toString());
+            int column = Integer.parseInt(result.group(2).toString());
+            throw new PdeException(tsre.getMessage(), line-1, column);
+
+          } else {
+            throw new PdeException(tsre.toString());
+          }
+
+        } catch (PdeException pe) {
+          // PdeExceptions are caught here and re-thrown, so that they don't 
+          // get lost in the more general "Exception" handler below. 
+          throw pe;
+          
+        } catch (Exception ex) {
+          // TODO better method for handling this? 
+          System.err.println("Uncaught exception type:" + ex.getClass());
+          ex.printStackTrace();
+          throw new PdeException(ex.toString());
         }
-
-      } catch (antlr.RecognitionException re) {
-        // this even returns a column
-        throw new PdeException(re.getMessage(), 
-                               re.getLine() - 1, re.getColumn());
-
-      } catch (antlr.TokenStreamRecognitionException tsre) {
-        // while this seems to store line and column internally,
-        // there doesn't seem to be a method to grab it.. 
-        // so instead it's done using a regexp
-
-        PatternMatcher matcher = new Perl5Matcher();
-        PatternCompiler compiler = new Perl5Compiler();
-        // line 3:1: unexpected char: 0xA0
-        String mess = "^line (\\d+):(\\d+):\\s";
-        Pattern pattern = compiler.compile(mess);
-
-        PatternMatcherInput input = 
-          new PatternMatcherInput(tsre.toString());
-        if (matcher.contains(input, pattern)) {
-          MatchResult result = matcher.getMatch();
-
-          int line = Integer.parseInt(result.group(1).toString());
-          int column = Integer.parseInt(result.group(2).toString());
-          throw new PdeException(tsre.getMessage(), line-1, column);
-
-        } else {
-          throw new PdeException(tsre.toString());
-        }
-
-      } catch (PdeException pe) {
-        throw pe;
-
-      } catch (Exception ex) {
-        System.err.println("Uncaught exception type:" + ex.getClass());
-        ex.printStackTrace();
-        throw new PdeException(ex.toString());
       }
     }
 
-    // compile the program
+    // compile the program. errors will happen as a PdeException
+    // that will bubble up to whomever called build().
     //
-    //PdeCompiler compiler = 
-      //new PdeCompiler(buildPath, mainClassName, externalCode, this);
-    PdeCompiler compiler = new PdeCompiler(this);
-
-    // run the compiler, and funnel errors to the leechErr
-    // which is a wrapped around 
-    // (this will catch and parse errors during compilation
-    // the messageStream will call message() for 'compiler')
-    messageStream = new PdeMessageStream(compiler);
-    boolean success = compiler.compile(new PrintStream(messageStream));
-
+    PdeCompiler compiler = new PdeCompiler();
+    boolean success = compiler.compile(this, buildPath);
     return success ? className : null;
   }
 
@@ -875,16 +884,17 @@ public class PdeSketch {
     // and the classes may be buried in subfolders if a package name was used
 
     // files to include from data directory
-    if ((dataDir != null) && (dataDir.exists())) {
-      String datafiles[] = dataDir.list();
-      for (int i = 0; i < datafiles.length; i++) {
+    //if ((dataDir != null) && (dataDir.exists())) {
+    if (dataFolder.exists()) {
+      String dataFiles[] = dataFolder.list();
+      for (int i = 0; i < dataFiles.length; i++) {
         // don't export hidden files
         // skipping dot prefix removes all: . .. .DS_Store
-        if (datafiles[i].charAt(0) == '.') continue;
+        if (dataFiles[i].charAt(0) == '.') continue;
 
-        entry = new ZipEntry(datafiles[i]);
+        entry = new ZipEntry(dataFiles[i]);
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(dataDir, datafiles[i])));
+        zos.write(PdeBase.grabFile(new File(dataFolder, dataFiles[i])));
         zos.closeEntry();
       }
     }
@@ -1055,21 +1065,10 @@ public class PdeSketch {
 
 
   /**
-   * Path to the data folder of this sketch.
-   */
-  /*
-  public File getDataDirectory() {
-    File dataDir = new File(directory, "data");
-    return dataDir.exists() ? dataDir : null;
-  }
-  */
-
-
-  /**
    * Returns path to the main .pde file for this sketch.
    */
   public String getMainFilePath() {
-    return files[0].getAbsolutePath();
+    return code[0].file.getAbsolutePath();
   }
 }
 
