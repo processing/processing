@@ -176,15 +176,14 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;
 X   key codes not properly coming through for UP/DOWN/etc
 X     had to bring back keyCode
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+X add redraw() function
+X   call redraw() on the first time through (to force initial draw)
+X   otherwise noLoop() in setup means no drawing happens at all
 
-_ add redraw() function
-_   call redraw() on the first time through (to force initial draw)
-_   otherwise noLoop() in setup means no drawing happens at all
 _ defaults for PApplet and PGraphics are different
 _   PGraphics has none.. PApplet has fill/stroke
 _ set PImage.format as RGB by default? 
 _   this was problem with rendering an image from PGraphics on board
-
 _ without setting the font, the values come out weird rotated text
 _   get rotated text into the screen space stuff
 
