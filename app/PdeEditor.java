@@ -63,7 +63,6 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
 
     Label dummy = new Label();
     dummy.setBackground(buttonBgColor);
-    //dummy.setBackground(new Color(0, 100, 0));
     leftPanel.add("Center", dummy);
 
     add("West", leftPanel);
@@ -113,9 +112,14 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     */
 
     if (program == null) program = DEFAULT_PROGRAM;
-    textarea = new TextArea(program, 20, 60,
-			    TextArea.SCROLLBARS_VERTICAL_ONLY);
-    textarea.setFont(PdeApplet.getFont("editor"));
+    textarea = 
+      new TextArea(program, 
+		   PdeApplet.getInteger("editor.program.rows", 20),
+		   PdeApplet.getInteger("editor.program.columns", 60),
+		   TextArea.SCROLLBARS_VERTICAL_ONLY);
+    textarea.setFont(PdeApplet.getFont("editor.program.font",
+				       new Font("Monospaced", 
+						Font.PLAIN, 12)));
     //right.add("Center", textarea);
     rightPanel.add("Center", textarea);
 
@@ -131,14 +135,19 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     statusPanel.add("North", errorLabel);
     */
     status = new PdeEditorStatus(this);
-    statusPanel.add("North", status);    
+    statusPanel.add("North", status);
 
     PdeEditorLabel stdoutLabel = new PdeEditorLabel(2);
-    Color stdoutBgColor = new Color(26, 26, 26);
-    Color stdoutFgColor = new Color(153, 153, 153);
+    Color stdoutBgColor = 
+      PdeApplet.getColor("editor.console.bgcolor", new Color(26, 26, 26));
+    Color stdoutFgColor = 
+      PdeApplet.getColor("editor.console.fgcolor", new Color(153, 153, 153));
     stdoutLabel.setBackground(stdoutBgColor);
     stdoutLabel.setForeground(stdoutFgColor);
-    stdoutLabel.setFont(new Font("monospaced", Font.PLAIN, 11));
+    Font stdoutFont = 
+      PdeApplet.getFont("editor.console.font", 
+			new Font("monospaced", Font.PLAIN, 11));
+    stdoutLabel.setFont(stdoutFont);
     //stdoutLabel.setText("Test the print");
     //stdoutLabel.setInsets(new Insets(4, 4, 4, 4));
     statusPanel.add("South", stdoutLabel);
