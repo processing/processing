@@ -23,7 +23,7 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066497131;start=0
 X include JSObject with p5's pde.jar
 X   jaws.jar is already included on mac.. 
-_   check to see if ok on pc (empty project -> new JSObject())
+X   check to see if ok on pc (empty project -> new JSObject())
 X   files are in jaws.jar: JSObject, JSException and JSUtil
 X curvePoint not initializing
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499669;start=0
@@ -50,9 +50,30 @@ X   no more .DS_Store or other similar files
 X included code is not packaged in the outgoing jar file on export
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066586882;start=0
 
+
+0067
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
+_ BImage.smooth() ?
+_ mouse wheel not working on macosx, need to dynamically load 1.4 code
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
+_ simong interested in helping
+_ set PATH to include java (!)
+_   external classes currently require expert release
 
+_ find/replace.. when hitting 'find', select the text in the field
+_   give that field focus explicitly, rather than just for typing
+_   right now, typing works, but no caret, no blue highlight
+_   and on second find run, should instead select all the find string
+_     so that typing will replace it directly
+
+_ dll and jnilib files have to be in the p5 folder (confirmed by amit)
+_   there should be other places that they work.. 
+_   could even copy the dll to the p5 folder from the code folder
+
+_ it's possible to write non-1.1 code, even syntax
+_   would -source 1.1 help this? 
+_  'final int' needs to be 'static final int' in 1.1
 
 ................
 
@@ -76,29 +97,6 @@ rect(mouseX, mouseY, 200, 200);
 
 
 ................
-
-
-0067
-_ BImage.smooth() ?
-_ mouse wheel not working on macosx, need to dynamically load 1.4 code
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
-_ simong interested in helping
-_ set PATH to include java (!)
-_   external classes currently require expert release
-
-_ find/replace.. when hitting 'find', select the text in the field
-_   give that field focus explicitly, rather than just for typing
-_   right now, typing works, but no caret, no blue highlight
-_   and on second find run, should instead select all the find string
-_     so that typing will replace it directly
-
-_ dll and jnilib files have to be in the p5 folder (confirmed by amit)
-_   there should be other places that they work.. 
-_   could even copy the dll to the p5 folder from the code folder
-
-_ it's possible to write non-1.1 code, even syntax
-_   would -source 1.1 help this? 
-_  'final int' needs to be 'static final int' in 1.1
 
 
 PREPROC
