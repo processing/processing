@@ -1,5 +1,7 @@
 BAGEL / Future
 
+   2 _ materials and shading
+   2 _ camera object for moving scene
    2 _ cartesian/polar conversion
    2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
    2 _   thread includes code for the 2D case
@@ -44,6 +46,9 @@ BAGEL / Future
 PDE / see you next year
 not necessary for 1.0 release
 
+2 _ comments -> embedding in applet text? (ala javadoc)
+2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076967353
+2 _   would this help casey with the examples?
 2 _ type-ahead/teaching functions
 2 _   very useful for learning to program
 2 _ font support is overkill and sucks
@@ -113,6 +118,11 @@ features we love, but probably won't be implemented 2048
 PDE / Pre-preprocessor & Compiler
 Currently using Oro for search and replace preprocessor,
 but Dan Mosedale is moving us to ANTLR
+
+   2 _ for int i for 0 to b.length
+   2 _ for i from 0 upto b.length
+   2 _ actionscript has nice hastables.. as does perl/python
+   2 _   would be nice to get better implementation in there
 
    2 _ additional data conversions to avoid this syntax:
    2 _   Integer.toString(), Integer.parseInt()

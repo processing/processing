@@ -1,4 +1,4 @@
-0070 bagel
+0070 core
 o check ordering of split() in java vs perl for regexp
 X don't include empty chars in font builder
 X   .vlw font files are enormous with full charset
@@ -23,43 +23,32 @@ X launcher.cpp broke serial.. see versions in processing.notcvs
 X rewrite bagel code.. 
 X   for this release, because it will break things along with the lib stuff
 X   switch to PImage, PApplet, etc
-X selecting input source (wintv board and quickcam installed.. problem)
 X bug in BImage.smooth() when resizing an image
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077669847
+X shut off the automatic gunzipping of streams, keep for fonts
 
-video
-X video commands not color coded
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
-o quicktime 6.4 update breaks p5 on the mac?
-o   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
-o   "Type quicktime.std.stdQTConstants was not found"
-o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
-o   http://docs.info.apple.com/article.html?artnum=120255
-X split classes to BVideo and BMovie ? 
-X don't force install of qtjava
-X   this requires a separate version of bagel that doesn't use video
-X   or a version that loads video dynamically. that kinda sucks.
-o   maybe could even compile it in with jikes? (blech)
-o hangs frequently on the mac (prolly a sync issue)
-o   karsten's stuff has same problem
-o   but the roger's video tracking does not
-X   should be fixed with new synchronization stuff
-X video.pixels don't seem to have high bytes set
-X   so fill(video.pixels[blah]) doesn't work
-X   test against 'pixels' example
-X   this is ok.. modify get() for RGB images to set high bits
-X make BVideo subclass BImage
-o   make sure the high bits are getting set as opaque
-X   get() now sets high bits, reference will explain PVideo.pixels[]
-X video keeps running, cpu load high, even after app killed
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086800853
-X just locks up after running examples, then does the 'can't delete' thing
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
-X problems with hanging video when not in the root of the c drive
-X   is this because of the LIBRARY_PATH having spaces?
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084464062;start=0
-X first row of video pixels are black
-X   casey says it may only be his camera (verified to be ok on my machine)
+
+cleaning up
+X make bagel more usable as standalone
+X   breakout BGraphics (have its own BImage)
+o   breakout BApplet into BComponent ? (fix out-of-bounds mouse - doesn't)
+o opengl export / rendering mode
+o   currently implemented, but somewhat broken
+o   finish this once all the line code is done
+o make possible to use buzz.pl to create versions w/ stuff removed
+o build gl4java for java 1.4
+o separating of BGraphics and BApplet
+o change copyrights on the files again (to match ?)
+X loadStrings has a problem with URLs and a code folder
+o   turned out to be a problem with firewall/antivirus software
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086551792
+o when running as an applet, need to loadStream from documentBase too
+o   problem is that BGraphics has the loadStream code, not BApplet
+o new sphere code from toxi
+o   already added a while back
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
+o sphere code needs only front face polygon 
+o   all triangles must be counter-clockwise (front-facing)
 
 
 MEGABUCKET (api)
@@ -80,60 +69,29 @@ _ doesn't work when outside a function:
 _   color bg_color = color(255,0,0);
 _ colorMode broken for red() green() etc
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
-_ key codes not properly coming through for UP/DOWN/etc
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
 _ angleMode(DEGREES) and angleMode(RADIANS)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
+_ decide on whether to use PTools
+_   i.e. move math functions into utility library
+_ look at BGraphics to see if setting an 'applet' could be used
+_   then other than that, if no applet set, no connection to PApplet
+_ new/old graphics, explicitly stating 2d/3d, huh?
+_   what to do about anti-aliasing.. oversample 2x?
+_ expand/subset for array operations (floats, ints, Strings)
+_   expand() on Object[] is worthless.. fix it with reflection?
+_     also, should it be named resize() instead?
+_   see if reflection will allow expand for all class types
+_   append/unappend (no push/pop), shift/unshift, 
+_   slice, splice, reverse, concat, split
+_ more blend() modes? (the five listed on the thread below?)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
 
 
-BUGS
-_ vertex coloring bug with carlos' new line code
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
-_ loadStrings has a problem with URLs and a code folder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086551792
 _ mkoser wish list
 _   filled polygons working with smooth()
 _   z-clipping
-_ problems with defining fill(255) vs fill(0xff808080)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891;start=2
-_ flicker happening on osx java 1.4, but not 1.3:
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297;start=0
-_ hint(NEW_GRAPHICS) needs to be called before allocate()
-_   otherwise stencil buffer and 'triangle' object are null on first run
-_ keypressed hanging on applets with a code folder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
-_ mousePressed, keyPressed, others.. queue them all
-_   queue multiple times
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
-_ strangeness with key codes on keyPressed
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
-_ cursor() broken in applets on macosx?
-_   or is it a java 1.4 versus java 1.3 problem?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
-
-
-IMAGE
-_ dynamically load code for png and others on loadImage/saveFrame?
-_ updated png encoder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
-_ more image file i/o.. more advanced in newer java
-_   read uncompressed tiff, read uncompressed tga files.
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994;start=15
-_ loadImage() seems to be caching everything from the jar
-_   make a note of how to disable this
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681#8
-_ get loadImage() to work properly with data folder
-_   should probably use the code from loadStream
-_   and the url stuff should be an alternate method altogether
-_ BImage.smooth() ?
-_ alpha not set on saveFrame, so can't be used in photoshop as a layer
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
-_ more blend() modes
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
 
 
 ............................................................
@@ -141,159 +99,41 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 
 0071 or later
 
-_ ed's thread re: fullscreen strategies
-_   could add a new BApplet that uses BufferStrategy?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
-
-_ embed all available chars from a font, so japanese, etc works
-
-_ colorMode(CMYK)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
-
-_ still some weirdness with thread flickering on the mac
-_   and frenetic display updates on the pc
-_ little window showing up on macosx when running
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
-
-_ expand() on Object[] is worthless.. fix it with reflection?
-_   also, should it be named resize() instead?
-
-_ link only works on absolute URLs
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
-
-_ saveFrame() to a folder horks things up if a mkdirs() is required
-_   on macosx, this makes things hang; on windows it just complains
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
-
-_ also a note about using regexps in p5
-_   would be nice to wrap oro for simple matching
-
-_ point() being funneled through beginShape is terribly slow
-_   go the other way 'round
-
-_ when running as an applet, need to loadStream from documentBase
-_   problem is that BGraphics has the loadStream code, not BApplet
-
-_ document hint() commands for advanced reference
-
 
 BUGS / graphics
-_ more weirdness with stroke on rect, prolly not alpha
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085799526
-_ rect is not getting it's stroke color set
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
-_ alpha of zero still draws boogers on screen
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
-_ new sphere code from toxi
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
-_ weird problem with drawing/filling squares
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
-_ last vertex on LINE_LOOP fades out
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
-_ rotated text has a bug for when it goes offscreen
-_   patch rotated text (from visualclusto) into bfont
-_ mgorbet stroke transparency problem
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
+
+_ fix param() to use a sketch.properties file when run as an app
+_   make this also be used in generating the html file
+_ fix link() to handle relative URLs
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
+_ add a method BApplet.setPath() or something like that
+_   use it to repair saveBytes, saveStrings, etc
+_   put screenshots into their sketch folder
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 _ put SecurityException things around file i/o for applets
 _   rather than checking online(), since applets might be signed
-_ shut off the automatic gunzipping
 
-
-BUGS / ellipse
-_ weird ellipse bug with an alpha line in same image
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
-_ scaled ellipse showing up as a hexagon
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
-_ problem with the fill
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
-_ z values not set properly on ellipses?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
-_ ellipses are just plain ugly
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
-
-
-NETWORK
-_ don't send unicode data
-_ when you stop the client, it freezes 
-_   until you quit the processing running the server
-_   (the server starts and stops fine)
-_ add constants for building NET, move stuff around in bagel dir
-_ some method for just downloading the entire contents of a url
-_ add udp support
-
-
-thesis / acg
-_ make bagel more usable as standalone
-_   breakout BGraphics (have its own BImage)
-_   breakout BApplet into BComponent ? (fix out-of-bounds mouse)
-_   possible use of BUtils ?
-_   write documentation on general use
-_     along with how to download from sourceforge (anonpass is blank)
-_   needs to be used as a component, without applet 
-_   but retain functionality, ie. image i/o
-_   exports pixels or a BImage or does MemoryImageSource itself
-_   move math functions into utility library associated
-_     with bagel, because those will be useful on other bagel platforms
-_     pApplet will call BagelMath.whatever, so still looks like cos()
-_ break out BSerial as separate object like BVideo
-_   include rxtx and the rest of that setup in subfolder
-_   BSerial.flush and BSerial.available in object
-_ opengl export / rendering mode
-_   currently implemented, but somewhat broken
-_   finish this once all the line code is done
-_ make possible to use buzz.pl to create versions w/ stuff removed
-_ build gl4java for java 1.4
-_ read table/csv formatted data into a matrix
-_   pseudo-database format version of this that stores indexes to file
-_     rather than loading the whole thing at once
-_ more advanced splitting of files into rows/cols uses another class
-_   other class also has concept for random access of lines
-_   by storing the line positions, can access without loading all
-_   into memory because some files will be too large
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
-_   version of Illustrator.java that uses bagel api
+_   version of Illustrator.java that uses core api
 _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
 _   version of BApplet that replaces g. with ai. or pdf.
-_ history.. add my diffs sketch
-_   could just include a compiled version of the diff app, ala jikes
-
-
-NEW GRAPHICS
-_ stroke not set on flat_rect
-_ when drawing fonts w/ sami's code, left edge has problem
-_   8-bit (alpha) textures not blending 
-_ near-plane clipping currently disabled for triangles, enabled for lines
-_   (but culling offscreen triangles works.. but may have been
-_   commented out by carlos)
-_ sphere code needs only front face polygon 
-_   all triangles must be counter-clockwise (front-facing)
-
+_   update illustrator code to use core api
+_     even if not actually working properly.. just in naming of things
+_   colorMode(CMYK)
+_     just does 1-r/1-g/1-b inside 
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
 _ some way to properly quit sketch when stopped
 _   if people have other threads they've spawned, impossible to stop
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ update() mode needs to be hacked in
-_ separating of BGraphics and BApplet
-_ change copyrights on the files again (to match ?)
-_ proper lineweight
-_ camera clipping
-_ put screenshots into their sketch folder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
-_   add a method BApplet.setPath() or something like that
-_ update illustrator code to use bagel api
-_   even if not actually working properly.. just in naming of things
-_ new networking client from simong 
-_ simong lighting code
+
 _ screenGrab() at the end of a draw mode program is problematic
 _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
-_ catch security exceptions around applet i/o calls
-_   not just for saving files, but provide better error msgs when
-_     attempting to download from another server
 
 
 
@@ -304,26 +144,55 @@ _     attempting to download from another server
 GRAPHICS LIBRARY
 
 A hybrid of OpenGL (3D Graphics) and some aspects of Postscript (Fill, Stroke)
-The graphics library is called Bagel, which is an internal name.
+The graphics library was formerly called Bagel, which is an internal name.
+
+
+CORE / Key/Mouse Events
+
+   b _ keypressed hanging on applets with a code folder
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
+   b _ mousePressed, keyPressed, others.. queue them all
+   b _   queue multiple times
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
+   b _ strangeness with key codes on keyPressed
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
+   b _ key codes not properly coming through for UP/DOWN/etc
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+
+
+CORE / Image
+
+   b _ dynamically load code for png and others on loadImage/saveFrame?
+   b _ updated png encoder
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
+   b _ more image file i/o.. more advanced in newer java
+   b _   read uncompressed tiff, read uncompressed tga files.
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994;start=15
+   b _ loadImage() seems to be caching everything from the jar
+   b _   make a note of how to disable this
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681#8
+   b _ get loadImage() to work properly with data folder
+   b _   should probably use the code from loadStream
+   b _   and the url stuff should be an alternate method altogether
+   b _ BImage.smooth() ?
+   b _ alpha not set on saveFrame, so can't be used in photoshop as a layer
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
 
 
 BAGEL / Rendering
 
-   b _ picking
-   b _   what is the API for picking?
-   b _   ability to write data other than image into the buffer
-   b _   user can introduce new kinds of buffers at will (!)
-   b _   lists of names of objects, or the 'line number' buffer
-   b _   but how to determine *where* on object the hit occurs
-
-     _ add option to sort triangles back to front so alpha works
-     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
-
    b _ lines
+   b _   last vertex on LINE_LOOP fades out
+   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
+   b _   vertex coloring bug with carlos' new line code
+   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
    b X   rewrite line and stroke code, it's a buggy mess
    b X     lines become 2 pixels thick after a 3D transform 
    b X     better handling of single-pixel special   se
    b _       flat_line_retribution is a hack, can go away
+   b _ mgorbet stroke transparency problem
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
    b ?   make sure line() commands don't try to have a fill
    b _   box is not opaque
    b X     problem is that lines are drawn second
@@ -341,23 +210,76 @@ BAGEL / Rendering
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077013848;start=0
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080347160
 
-   b X clipping objects (clipping planes?)
+   b _ more weirdness with stroke on rect, prolly not alpha
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085799526
+   b _ rect is not getting it's stroke color set
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
+   b _ weird problem with drawing/filling squares
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
+
+   1 _ ellipse problems
+   1 _   weird ellipse bug with an alpha line in same image
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
+   1 _   scaled ellipse showing up as a hexagon
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
+   1 _   problem with the fill
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
+   1 _   z values not set properly on ellipses?
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
+   1 _   ellipses are just plain ugly
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
+   1 _   toxi ellipses don't adapt properly with transformations
+
+   b _ lighting is completely buggy and broken
+   b _   add a lighting object
+   b _   simong wrote fixed lighting code
+
+   b _ texture mapping
+   b _   very odd, "doom era" stuff
+   b _   would it be possible to have a 'slow but accurate' mode?
+
+   b _ clipping planes
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-   b X   things are flying into the camera and halting apps
+   b _   things are flying into the camera and halting apps
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
-   b X   NullPointerException apparently when things way offscreen
+   b _   NullPointerException apparently when things way offscreen
    b _     i.e. glyphrot with scale set to 4
    b _     or at least that things get ridiculously slow
    b _     clipping issues here.. but also something in scan converter
-   b X     not clipping areas from offscreen
+   b _     not clipping areas from offscreen
    b _       huge geometry slows things way down
 
+   b _ picking
+   b _   what is the API for picking?
+   b _   ability to write data other than image into the buffer
+   b _   user can introduce new kinds of buffers at will (!)
+   b _   lists of names of objects, or the 'line number' buffer
+   b _   but how to determine *where* on object the hit occurs
+
+   1 _ points
+   1 _   point() being funneled through beginShape is terribly slow
+   1 _     go the other way 'round
+
+   1 _ add option to sort triangles back to front so alpha works
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
 
 
-BAGEL / Details
+CORE / PApplet runner
 
-   1 _ toxi ellipses don't adapt properly with transformations
+   b _ ed's thread re: fullscreen strategies
+   b _   could add a new BApplet that uses BufferStrategy?
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
+
+
+CORE / Details
+
+   1 _ saveFrame() to a folder horks things up if a mkdirs() is required
+   1 _   on macosx, this makes things hang; on windows it just complains
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
+   1 _ problems with defining fill(255) vs fill(0xff808080)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891;start=2
    1 _ what is the stroked version of a sphere? a circle?
    1 _ non-homogenous coloring for curve vertices
    1 _   properly interpolate
@@ -369,11 +291,53 @@ BAGEL / Details
    1 _   may be correct, it worked for nik
    1 _ inside draw() mode, delay() does nothing
    1 _   delay might be a good way to signal drawing to the screen/updating
+   1 _ catch security exceptions around applet i/o calls
+   1 _   not just for saving files, but provide better error msgs when
+   1 _     attempting to download from another server
+   1 _ alpha of zero still draws boogers on screen
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
 
 
-BAGEL / Fonts
+CORE / Documentation
 
+   1 _ write documentation on general use of processing.core
+   1 _   along with how to download from sourceforge (anonpass is blank)
+   1 _   note that applet is itself a Component
+
+
+CODE / Mac OS X
+
+   b _ still some weirdness with thread flickering on the mac
+   b _   and frenetic display updates on the pc
+   b _ little window showing up on macosx when running
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
+   b _ flicker happening on osx java 1.4, but not 1.3:
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297;start=0
+   b _ cursor() broken in applets on macosx?
+   b _   or is it a java 1.4 versus java 1.3 problem?
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
+
+
+CORE / Fonts
+
+   b _ embed all available chars from a font, so japanese, etc works
    1 _ sbit font support
    1 _   both reading and building sbit fonts
    * _ mac -> vlw (or sbit?) font converter
    * _   need to also read the fond for metrics
+   1 _ rotated text has a bug for when it goes offscreen
+   1 _   patch rotated text (from visualclusto) into bfont
+
+
+CORE / New Graphics
+What the hell do we do with this code?
+
+     _ stroke not set on flat_rect
+     _ when drawing fonts w/ sami's code, left edge has problem
+     _   8-bit (alpha) textures not blending 
+     _ near-plane clipping currently disabled for triangles, enabled for lines
+     _   (but culling offscreen triangles works.. but may have been
+     _   commented out by carlos)
+     _ hint(NEW_GRAPHICS) needs to be called before allocate()
+     _   otherwise stencil buffer and 'triangle' object are null on first run
