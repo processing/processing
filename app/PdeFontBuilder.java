@@ -42,6 +42,7 @@ public class PdeFontBuilder extends JFrame {
   JTextField sizeSelector;
   JTextArea sample;
   JButton okButton;
+  JTextField filenameField;
 
   Font font;
 
@@ -122,12 +123,12 @@ public class PdeFontBuilder extends JFrame {
           int fontsize = 0;
           try {
             fontsize = Integer.parseInt(sizeSelector.getText().trim());
-            System.out.println("'" + sizeSelector.getText() + "'");
+            //System.out.println("'" + sizeSelector.getText() + "'");
           } catch (NumberFormatException e2) { }
 
           if (fontsize != 0) {
             font = new Font(list[selection], Font.PLAIN, fontsize);
-            System.out.println("setting font to " + font);
+            //System.out.println("setting font to " + font);
             sample.setFont(font);
           }
         }
@@ -186,8 +187,13 @@ public class PdeFontBuilder extends JFrame {
       rec.setFont(new Font("Dialog", Font.PLAIN, 10));
     }
     panel.add(rec);
-
     pain.add(panel);
+
+    JPanel filestuff = new JPanel();
+    filestuff.add(new JLabel("Filename:"));
+    filestuff.add(filenameField = new JTextField(25));
+    filestuff.add(new JLabel(".vlw"));
+    pain.add(filestuff);
 
     JPanel buttons = new JPanel();
     JButton cancelButton = new JButton("Cancel");
@@ -213,6 +219,9 @@ public class PdeFontBuilder extends JFrame {
     setResizable(false);
     pack();
 
+    // do this after pack so it doesn't affect layout
+    sample.setFont(new Font(list[0], Font.PLAIN, 48));
+
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension size = getSize();
 
@@ -225,7 +234,7 @@ public class PdeFontBuilder extends JFrame {
   public void build() {
     int fontsize = 0;
     try {
-      fontsize = Integer.parseInt(sizeSelector.getText());
+      fontsize = Integer.parseInt(sizeSelector.getText().trim());
     } catch (NumberFormatException e) { }
 
     if (fontsize <= 0) {
@@ -234,7 +243,29 @@ public class PdeFontBuilder extends JFrame {
       return;
     }
 
-    font = new Font(list[selection], Font.PLAIN, fontsize);
+    String filename = filenameField.getText();
+    if (filename.length() == 0) {
+      JOptionPane.showMessageDialog(this, "Enter a file name for the font.",
+                                    "Lameness", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+    if (!filename.endsWith(".vlw")) {
+      filename += ".vlw";
+    }
+
+    try {
+      font = new Font(list[selection], Font.PLAIN, fontsize);
+      BFont f = new BFont(font, true);
+      f.write(new FileOutputStream(new File(targetFolder, filename)));
+
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(this, 
+                                    "An error occurred while creating font.",
+                                    "No font for you", 
+                                    JOptionPane.WARNING_MESSAGE);
+      e.printStackTrace();
+    }
+
     hide();
   }
 }
