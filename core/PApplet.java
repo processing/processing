@@ -4381,6 +4381,11 @@ v              PApplet.this.stop();
   }
 
 
+  public void loadPixels() {
+     g.loadPixels();
+  }
+
+
   public void updatePixels() {
      g.updatePixels();
   }
@@ -4403,11 +4408,6 @@ v              PApplet.this.stop();
 
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
-  }
-
-
-  public PImage get() {
-    return g.get();
   }
 
 
@@ -4775,8 +4775,8 @@ v              PApplet.this.stop();
 
 
   public void image(PImage image,
-                    float a, float b, float c, float d) {
-     g.image(image, a, b, c, d);
+                    float x, float y, float c, float d) {
+     g.image(image, x, y, c, d);
   }
 
 
@@ -5271,5 +5271,15 @@ v              PApplet.this.stop();
 
   public final float brightness(int what) {
     return g.brightness(what);
+  }
+
+
+  public void mask(int alpha[]) {
+     g.mask(alpha);
+  }
+
+
+  public void mask(PImage alpha) {
+     g.mask(alpha);
   }
 }

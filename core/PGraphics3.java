@@ -233,7 +233,7 @@ public class PGraphics3 extends PGraphics {
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
-    //if (depth) cameraMode(this.cameraMode);
+    cameraMode(this.cameraMode);
   }
 
 
@@ -923,6 +923,8 @@ public class PGraphics3 extends PGraphics {
   }
 
   protected void render_triangles() {
+  //public void render_triangles() {
+    //System.out.println("PGraphics3 render triangles");
     for (int i = 0; i < triangleCount; i ++) {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
