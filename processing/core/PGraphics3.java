@@ -128,8 +128,8 @@ public class PGraphics3 extends PGraphics {
   // ........................................................
 
   /**
-   * IMAGE_SPACE or NORMAL_SPACE, though this should probably
-   * be called textureSpace().. hrm
+   * IMAGE or NORMALIZED, though this should probably
+   * be called textureSpace().
    */
   public int textureMode;
 
@@ -311,7 +311,7 @@ public class PGraphics3 extends PGraphics {
 
     //System.out.println("PGraphics3.defaults()");
     // easiest for beginners
-    textureMode(IMAGE_SPACE);
+    textureMode(IMAGE);
 
     // better to leave this turned off by default
     noLights();
@@ -500,7 +500,7 @@ public class PGraphics3 extends PGraphics {
       //      "after beginShape() and before vertex()");
       //return;
     }
-    if (textureMode == IMAGE_SPACE) {
+    if (textureMode == IMAGE) {
       u /= (float) textureImage.width;
       v /= (float) textureImage.height;
     }
@@ -1949,7 +1949,7 @@ public class PGraphics3 extends PGraphics {
 
     stroke = false;
     fill = true;
-    textureMode = IMAGE_SPACE;
+    textureMode = IMAGE;
 
     float savedFillR = fillR;
     float savedFillG = fillG;

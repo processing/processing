@@ -998,10 +998,11 @@ public class PGraphics2 extends PGraphics {
     // blit image to the screen
     //g2.drawImage((BufferedImage) image.cache, 0, 0, null);
     //graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
-    push();
-    resetMatrix();
-    imageImpl(image, 0, 0, width, height, 0, 0, width, height);
-    pop();
+    set(0, 0, image);
+    //push();
+    //resetMatrix();
+    //imageImpl(image, 0, 0, width, height, 0, 0, width, height);
+    //pop();
   }
 
 
@@ -1064,6 +1065,7 @@ public class PGraphics2 extends PGraphics {
 
 
   public int get(int x, int y) {
+    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     return ((BufferedImage) image).getRGB(x, y);
   }
 
@@ -1115,7 +1117,19 @@ public class PGraphics2 extends PGraphics {
 
 
   public void set(int x, int y, int argb) {
+    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     ((BufferedImage) image).setRGB(x, y, argb);
+  }
+
+
+  public void set(int dx, int dy, PImage src) {
+    push();
+    imageImpl(src, 0, 0, width, height, 0, 0, width, height);
+    resetMatrix();
+    pop();
+    //loadPixels();
+    //super.set(dx, dy, src);
+    //updatePixels();
   }
 
 
@@ -1137,13 +1151,6 @@ public class PGraphics2 extends PGraphics {
 
 
   //////////////////////////////////////////////////////////////
-
-
-  public void copy(PImage src, int dx, int dy) {
-    loadPixels();
-    super.copy(src, dx, dy);
-    updatePixels();
-  }
 
 
   public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,

@@ -85,10 +85,11 @@ public class PApplet extends Applet
   protected int emouseX, emouseY;
 
   /**
-   * used to set pmouseX/Y to mouseX/Y the first time mouseX/Y are used,
-   * otherwise pmouseX/Y are always zero, causing a nasty jump. just using
-   * (frameCount == 0) won't work since mouseXxxxx() may not be called
-   * until a couple frames into things.
+   * Used to set pmouseX/Y to mouseX/Y the first time mouseX/Y are used,
+   * otherwise pmouseX/Y are always zero, causing a nasty jump.
+   * <P>
+   * Just using (frameCount == 0) won't work since mouseXxxxx()
+   * may not be called until a couple frames into things.
    */
   public boolean firstMouse;
 
@@ -96,14 +97,17 @@ public class PApplet extends Applet
   public MouseEvent mouseEvent;
 
   /**
-   * Last key pressed. If it's a coded key
-   * (arrows or ctrl/shift/alt, this will be set to 0xffff or 65535).
+   * Last key pressed.
+   * <P>
+   * If it's a coded key (arrows or ctrl/shift/alt,
+   * this will be set to 0xffff or 65535).
    */
   public char key;
 
   /**
-   * If the key is a coded key, i.e. up/down/ctrl/shift/alt
-   * the 'key' comes through as 0xffff (65535)
+   * If the key is a coded key such as UP/DOWN/CTRL/SHIFT/ALT,
+   * the 'key' comes through as 0xffff (65535) and keyCode will
+   * contain the proper value.
    */
   public int keyCode;
 
@@ -116,8 +120,10 @@ public class PApplet extends Applet
   public boolean focused = false;
 
   /**
-   * Is the applet online or not? This can be used to test how the
-   * applet should behave since online situations are different.
+   * true if the applet is online.
+   * <P>
+   * This can be used to test how the applet should behave
+   * since online situations are different (no file writing, etc).
    */
   public boolean online = false;
 
@@ -347,7 +353,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   public class RegisteredMethods {
@@ -451,7 +457,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   public void setup() {
@@ -504,7 +510,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   public void size(int iwidth, int iheight) {
@@ -791,7 +797,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   MouseEvent mouseEventQueue[] = new MouseEvent[10];
@@ -959,7 +965,7 @@ public class PApplet extends Applet
   public void mouseMoved() { }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   KeyEvent keyEventQueue[] = new KeyEvent[10];
@@ -1097,7 +1103,7 @@ public class PApplet extends Applet
   public void keyTyped() { }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
   // i am focused man, and i'm not afraid of death.
   // and i'm going all out. i circle the vultures in a van
@@ -1120,7 +1126,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
   // getting the time
 
@@ -1170,7 +1176,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
   // controlling time and playing god
 
@@ -1216,7 +1222,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   /**
@@ -1287,7 +1293,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   /**
@@ -1329,9 +1335,20 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
   // SCREEN GRABASS
+
+
+  /**
+   * This version of save() is an override of PImage.save(),
+   * rather than calling g.save(). This version properly saves
+   * the image to the applet folder (whereas save doesn't know
+   * where to put things)
+   */
+  public void save(String filename) {
+    g.save(savePath(filename));
+  }
 
 
   /**
@@ -1388,9 +1405,12 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
 
-  // CURSOR, base code contributed by amit pitaru
+  //////////////////////////////////////////////////////////////
+
+  // CURSOR
+
+  // based on code contributed by amit pitaru and jonathan feinberg
 
 
   int cursor_type = ARROW; // cursor type
@@ -1418,10 +1438,8 @@ public class PApplet extends Applet
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
     if (JDK_VERSION < 1.2) {
-      System.err.println("cursor() error: Java 1.2 or higher is " +
-                         "required to set cursors");
-      System.err.println("                (You're using version " +
-                         JDK_VERSION_STRING + ")");
+      System.err.println("Java 1.2 or higher is required to use cursor()");
+      System.err.println("(You're using version " + JDK_VERSION_STRING + ")");
       return;
     }
 
@@ -1449,7 +1467,7 @@ public class PApplet extends Applet
       cursor_visible = true;
 
     } catch (NoSuchMethodError e) {
-      System.out.println("cursor() is not available on " +
+      System.err.println("cursor() is not available on " +
                          nf((float)JDK_VERSION, 1, 1));
     } catch (IndexOutOfBoundsException e) {
       System.err.println("cursor() error: the hotspot " + hotspot +
@@ -1494,7 +1512,7 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+  //////////////////////////////////////////////////////////////
 
 
   static public void print(byte what) {
@@ -1805,8 +1823,10 @@ public class PApplet extends Applet
   Random internalRandom;
 
   /**
-   * Return a random number in the range [0, howbig)
-   * (0 is inclusive, non-inclusive of howbig)
+   * Return a random number in the range [0, howbig).
+   * <P>
+   * The number returned will range from zero up to
+   * (but not including) 'howbig'.
    */
   public final float random(float howbig) {
     // for some reason (rounding error?) Math.random() * 3
@@ -1829,8 +1849,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Return a random number in the range [howsmall, howbig)
-   * (inclusive of howsmall, non-inclusive of howbig)
+   * Return a random number in the range [howsmall, howbig).
+   * <P>
+   * The number returned will range from 'howsmall' up to
+   * (but not including 'howbig'.
+   * <P>
    * If howsmall is >= howbig, howsmall will be returned,
    * meaning that random(5, 5) will return 5 (useful)
    * and random(7, 4) will return 7 (not useful.. better idea?)
@@ -1884,22 +1907,23 @@ public class PApplet extends Applet
 
 
   /**
-   * Computes the Perlin noise function value at the point (x, y, z).
-   *
-   * @param x x coordinate
-   * @param y y coordinate
-   * @param z z coordinate
-   * @return the noise function value at (x, y, z)
+   * Computes the Perlin noise function value at point x.
    */
   public float noise(float x) {
     // is this legit? it's a dumb way to do it (but repair it later)
     return noise(x, 0f, 0f);
   }
 
+  /**
+   * Computes the Perlin noise function value at the point x, y.
+   */
   public float noise(float x, float y) {
     return noise(x, y, 0f);
   }
 
+  /**
+   * Computes the Perlin noise function value at x, y, z.
+   */
   public float noise(float x, float y, float z) {
     if (perlin == null) {
       if (perlinRandom == null) {
@@ -2310,7 +2334,7 @@ public class PApplet extends Applet
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
-  public PrintWriter writer(OutputStream output) {
+  static public PrintWriter writer(OutputStream output) {
     //try {
     OutputStreamWriter osw = new OutputStreamWriter(output);
     return new PrintWriter(osw);
@@ -2502,7 +2526,7 @@ public class PApplet extends Applet
   /**
    * Saves bytes to a specific File location specified by the user.
    */
-  public void saveBytes(File file, byte buffer[]) {
+  static public void saveBytes(File file, byte buffer[]) {
     try {
       String filename = file.getAbsolutePath();
       createPath(filename);
@@ -2519,15 +2543,15 @@ public class PApplet extends Applet
   /**
    * Spews a buffer of bytes to an OutputStream.
    */
-  public void saveBytes(OutputStream output, byte buffer[]) {
+  static public void saveBytes(OutputStream output, byte buffer[]) {
     try {
       //BufferedOutputStream bos = new BufferedOutputStream(output);
       output.write(buffer);
       output.flush();
 
     } catch (IOException e) {
-      System.err.println("error while saving bytes");
       e.printStackTrace();
+      throw new RuntimeException("Couldn't save bytes");
     }
   }
 
@@ -2541,13 +2565,13 @@ public class PApplet extends Applet
       fos.close();
 
     } catch (IOException e) {
-      System.err.println("error while saving strings");
       e.printStackTrace();
+      throw new RuntimeException("saveStrings() failed: " + e.getMessage());
     }
   }
 
 
-  public void saveStrings(File file, String strings[]) {
+  static public void saveStrings(File file, String strings[]) {
     try {
       String location = file.getAbsolutePath();
       createPath(location);
@@ -2561,7 +2585,8 @@ public class PApplet extends Applet
     }
   }
 
-  public void saveStrings(OutputStream output, String strings[]) {
+
+  static public void saveStrings(OutputStream output, String strings[]) {
     PrintWriter writer =
       new PrintWriter(new OutputStreamWriter(output));
     for (int i = 0; i < strings.length; i++) {
@@ -3324,6 +3349,7 @@ public class PApplet extends Applet
     //}
     return splits;
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -4522,25 +4548,21 @@ v              PApplet.this.stop();
   }
 
 
+  public void set(int x1, int y1, PImage image) {
+    if (recorder != null) recorder.set(x1, y1, image);
+    g.set(x1, y1, image);
+  }
+
+
   public void mask(int alpha[]) {
     if (recorder != null) recorder.mask(alpha);
     g.mask(alpha);
   }
 
 
-  static public void mask(PImage image, int alpha[]) {
-    PGraphics.mask(image, alpha);
-  }
-
-
   public void mask(PImage alpha) {
     if (recorder != null) recorder.mask(alpha);
     g.mask(alpha);
-  }
-
-
-  static public void mask(PImage image, PImage alpha) {
-    PGraphics.mask(image, alpha);
   }
 
 
@@ -4553,12 +4575,6 @@ v              PApplet.this.stop();
   public void filter(int kind, float param) {
     if (recorder != null) recorder.filter(kind, param);
     g.filter(kind, param);
-  }
-
-
-  public void copy(PImage src, int dx, int dy) {
-    if (recorder != null) recorder.copy(src, dx, dy);
-    g.copy(src, dx, dy);
   }
 
 
@@ -4610,15 +4626,15 @@ v              PApplet.this.stop();
   }
 
 
-  static public boolean saveHeaderTIF(OutputStream output,
+  static public boolean saveHeaderTIFF(OutputStream output,
                                       int width, int height) {
-    return PGraphics.saveHeaderTIF(output, width, height);
+    return PGraphics.saveHeaderTIFF(output, width, height);
   }
 
 
-  static public boolean saveTIF(OutputStream output, int pixels[],
-                                int width, int height) {
-    return PGraphics.saveTIF(output, pixels, width, height);
+  static public boolean saveTIFF(OutputStream output, int pixels[],
+                                 int width, int height) {
+    return PGraphics.saveTIFF(output, pixels, width, height);
   }
 
 
@@ -4631,12 +4647,6 @@ v              PApplet.this.stop();
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height) {
     return PGraphics.saveTGA(output, pixels, width, height);
-  }
-
-
-  public void save(String filename) {
-    if (recorder != null) recorder.save(filename);
-    g.save(filename);
   }
 
 
@@ -4960,15 +4970,15 @@ v              PApplet.this.stop();
   }
 
 
-  public void textMode(int mode) {
-    if (recorder != null) recorder.textMode(mode);
-    g.textMode(mode);
+  public void textAlign(int align) {
+    if (recorder != null) recorder.textAlign(align);
+    g.textAlign(align);
   }
 
 
-  public void textSpace(int space) {
-    if (recorder != null) recorder.textSpace(space);
-    g.textSpace(space);
+  public void textMode(int space) {
+    if (recorder != null) recorder.textMode(space);
+    g.textMode(space);
   }
 
 

@@ -163,6 +163,12 @@ public interface PMethods {
 
   //
 
+  public void textAlign(int alignment);
+
+  public float textAscent();
+
+  public float textDescent();
+
   public void textFont(PFont which);
 
   public void textFont(PFont which, float size);
@@ -172,12 +178,6 @@ public interface PMethods {
   public void textLeading(float leading);
 
   public void textMode(int mode);
-
-  public void textSpace(int space);
-
-  public float textAscent();
-
-  public float textDescent();
 
   public float textWidth(char c);
 
@@ -429,6 +429,8 @@ public interface PMethods {
 
   public void set(int x, int y, int argb);
 
+  public void set(int x, int y, PImage image);
+
   //
 
   public void mask(int alpha[]);
@@ -441,7 +443,7 @@ public interface PMethods {
 
   //
 
-  public void copy(PImage src, int dx, int dy);
+  //public void copy(PImage src, int dx, int dy);  // set instead
 
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2);
@@ -449,6 +451,8 @@ public interface PMethods {
   public void copy(PImage src,
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2);
+
+  //
 
   public void blend(int sx, int sy, int dx, int dy, int mode);
 
@@ -465,14 +469,14 @@ public interface PMethods {
   //
 
   /*
-  // WOULD LIKE A NICER NAME
-  static public boolean saveHeaderTIF(OutputStream output,
-                                      int width, int height);
+  // WOULD LIKE TO THINK OF NICER NAMES FOR ALL THESE
 
-  static public boolean saveTIF(OutputStream output, int pixels[],
-                                int width, int height);
+  static public boolean saveHeaderTIFF(OutputStream output,
+                                       int width, int height);
 
-  // WOULD LIKE A NICER NAME
+  static public boolean saveTIFF(OutputStream output, int pixels[],
+                                 int width, int height);
+
   static public boolean saveHeaderTGA(OutputStream output,
                                       int width, int height);
 
