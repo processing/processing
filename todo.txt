@@ -14,6 +14,8 @@ Roy Macarthur <roy@mcarthur.com>
 Fabrice Clérot <fabrice.clerot@francetelecom.com>
 "Daniel Mendelsohn @ Heads4Sale" <dan@heads4sale.com>
 Michael McGuffin <mjmcguff@dgp.toronto.edu>
+Bert Balcaen <bert@rekalldesign.com>
+Ian Wojtowicz <ian@woj.com>
 
 
 QUESTIONS
@@ -43,11 +45,40 @@ X   using full 3D polygon fella for semi-obviously 1 pixel lines
 X may have fixed OutOfMemoryError problems
 X   run.bat had included -ms256m -mx256m
 
+
+0015
+X flickery jumpy thing with canvas.. sun jvm bug
+X   switched to ibm java vm
+
+
+_ add preferredsize to processingapplet
+_ add method for exporting applications with processing
+_   wrapper that invokes the applet using a copy of the jre
+
+on macOSX, the screen needs to be explicitly refreshed. the kludge for this
+is to include the line
+java.awt.Toolkit.getDefaultToolkit().sync();
+at the end of loop
+
+_ mac version crashes when people click on help in top bar (same in DBN)
+
+_ it's very unstable, previous versions such as 7 were solid. 
+_   problems come with moving (what's that mean?)
+
+0016
+X bug in Bagel.loadImage that made images not work in applets
+_ maybe turn the external applet stuff off again
+
 _ mac version for casey
 _   with serial for michael
-_ flickery jumpy thing with canvas.. sun jvm bug
+_ bezier and catmullrom aren't setting ndim to at least two 
+_ garbage created when color values out of range
+_ exporting to applet/.jar file
+_   include other .class files built besides the main one
+_   include referenced image and font files (can't do if numbered)
 
 _ translate(x, y) doesn't seem to affect a rect()
+_   same with rect. looks like this causing trouble with lots of things
 _ debugging serial code
 _   hyperterminal - watching for binary garbage vs ascii text
 _   first debug (maybe even using ascii) and watch in hyperterminal
