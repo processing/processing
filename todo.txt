@@ -193,15 +193,30 @@ X bring this up for discussion on the board
 X   will splitting actually help.. can jars come from multiple places?
 X spend a bunch of time tracking down more issues on the board
 X add .java to file name in the tab
+X change name of prefs to Processing Preferences.txt
+X implement clone for BImage
+X api name changes for imaging functions
+X   constant SUBSTRACT -> SUBTRACT 
 
-_ api name changes for imaging functions
-_ change name of prefs to Processing Preferences.txt
+before next release
+
+_ CENTER instead of CENTER_DIAMETER
+_ make CENTER default for ellipses
+_ move imageMode() to BImage
+_   modify image functions to use imageMode
+_ rename replicate() as copy()
+_ what is set(x, y, image)
+
 _ put bagel into its own package
 _   processing.app -> PdeBase, PdeEditor..
 _   processing.core -> PApplet, PGraphics, PLine, PTriangle, PPolygon
 _   processing.serial -> PSerial, [PUsb]
 _   processing.video -> PMovie (file), PCamera (capture)
 _   processing.net -> PClient, PServer
+_ rewrite video, net, serial libraries to be separate
+
+not necessarily before release
+_ check into open-source paperwork for p5
 _ prefs need to have a default
 _   otherwise old prefs and new p5 will cause trouble
 _ api for file-based renderers
@@ -209,7 +224,6 @@ _   size(0, 0) and then ai.size(10000, 20000)
 _   saveFrame(PRenderer) or saveFrame("name", PRenderer)
 _ make dynamically loaded plugins and "tools" menu
 _   break out beautify as its own plugin
-
 _ write export-to-application
 _ write export-to-library
 _   need to be able to produce the serial, video, etc libs

@@ -92,11 +92,6 @@ cd ../..
 
 ### -- BUILD BAGEL ----------------------------------------------
 
-#################### TEMPORARY #####################
-if false
-then
-#################### TEMPORARY #####################
-
 # move to bagel inside base 'processing' directory
 cd bagel
 
@@ -146,6 +141,10 @@ cd ..
 # back to base processing dir
 cd ..
 
+#################### TEMPORARY #####################
+if false
+then
+#################### TEMPORARY #####################
 
 ### -- BUILD PREPROC ---------------------------------------------
 
