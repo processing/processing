@@ -92,8 +92,9 @@ public class PdeBase implements ActionListener {
     //rebuildSketchbookMenu(openMenu);
     menu.add(sketchbookMenu);
     menu.add(new MenuItem("Save", new MenuShortcut('S')));
-    menu.add(new MenuItem("Rename", new MenuShortcut('S', true)));
-    menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
+    menu.add(new MenuItem("Save as...", new MenuShortcut('S', true)));
+    //menu.add(new MenuItem("Rename", new MenuShortcut('S', true)));
+    //menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
     menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
     item = new MenuItem("Export Application", new MenuShortcut('E', true));
     item.setEnabled(false);
@@ -126,7 +127,9 @@ public class PdeBase implements ActionListener {
     menu.add(new MenuItem("Present", new MenuShortcut('P')));
     menu.add(new MenuItem("Stop"));
     menu.addSeparator();
-    menu.add(new MenuItem("Beautify", new MenuShortcut('B')));
+    item = new MenuItem("Beautify", new MenuShortcut('B'));
+    item.setEnabled(false);
+    menu.add(item);
     menu.addActionListener(this);
     menubar.add(menu);
 
@@ -304,11 +307,16 @@ public class PdeBase implements ActionListener {
     } else if (command.equals("Save")) {
       editor.doSave();
 
+    } else if (command.equals("Save as...")) {
+      editor.skSaveAs();
+
+      /*
     } else if (command.equals("Rename")) {
       editor.skDuplicateRename(true);
 
     } else if (command.equals("Duplicate")) {
       editor.skDuplicateRename(false);
+      */
 
     } else if (command.equals("Export to Web")) {
       editor.skExport();
