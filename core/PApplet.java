@@ -280,7 +280,7 @@ public class PApplet extends Applet
   // maybe start should also be used as the method for kicking
   // the thread on, instead of doing it inside paint()
   public void stop() {
-    //finished = true;
+    //finished = true;  // why did i comment this out?
 
     if (thread != null) {
       thread = null;
@@ -1881,6 +1881,18 @@ public class PApplet extends Applet
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // SOUND I/O
+
+
+  public PSound loadSound(String filename) {
+    return new PSound(this, openStream(filename));
+  }
+
+
+
   //////////////////////////////////////////////////////////////
 
   // IMAGE I/O
@@ -1949,7 +1961,7 @@ public class PApplet extends Applet
 
   // returns null if no image of that name is found
   public PImage loadImage(String filename, boolean force) {
-    Image awtimage = null;
+    //Image awtimage = null;
     //String randomizer = "?" + nf((int) (random()*10000), 4);
 
     /*
@@ -1986,28 +1998,50 @@ public class PApplet extends Applet
     }
     */
 
-    awtimage = Toolkit.getDefaultToolkit().createImage(loadBytes(filename));
+    Image awtImage =
+      Toolkit.getDefaultToolkit().createImage(loadBytes(filename));
 
+    /*
     if (awtimage == null) {
       System.err.println("could not load image " + filename);
       return null;
     }
+    */
 
+    /*
     Component component = this; //applet;
     if (component == null) {
       component = new Frame();
       ((Frame)component).pack();
       // now we have a peer! yay!
     }
-
     MediaTracker tracker = new MediaTracker(component);
-    tracker.addImage(awtimage, 0);
+    */
+
+    MediaTracker tracker = new MediaTracker(this);
+    tracker.addImage(awtImage, 0);
     try {
       tracker.waitForAll();
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      e.printStackTrace();  // non-fatal, right?
     }
 
+    PImage image = new PImage(awtImage);
+
+    // if it's a .gif image, test to see if it has transparency
+    if (filename.toLowerCase().endsWith(".gif")) {
+      for (int i = 0; i < image.pixels.length; i++) {
+        // since transparency is often at corners, hopefully this
+        // will find a non-transparent pixel quickly and exit
+        if ((image.pixels[i] & 0xff000000) != 0xff000000) {
+          image.format = ARGB;
+        }
+      }
+    }
+
+    return image;
+
+    /*
     int jwidth = awtimage.getWidth(null);
     int jheight = awtimage.getHeight(null);
 
@@ -2034,6 +2068,7 @@ public class PApplet extends Applet
       }
     }
     return new PImage(jpixels, jwidth, jheight, RGB);
+    */
   }
 
 
@@ -2185,8 +2220,12 @@ public class PApplet extends Applet
     try {
       return reader(openStream(filename));
 
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      if (filename == null) {
+        die("Filename passed to reader() was null", e);
+      } else {
+        die("Couldn't create a reader for " + filename, e);
+      }
     }
     return null;
   }
@@ -2195,12 +2234,16 @@ public class PApplet extends Applet
   /**
    * I want to read lines from a file. And I'm still annoyed.
    */
-  static public BufferedReader reader(File file) {
+  public BufferedReader reader(File file) {
     try {
       return reader(new FileInputStream(file));
 
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      if (file == null) {
+        die("File object passed to reader() was null", e);
+      } else {
+        die("Couldn't create a reader for " + file.getAbsolutePath(), e);
+      }
     }
     return null;
   }
@@ -2210,9 +2253,14 @@ public class PApplet extends Applet
    * I want to read lines from a stream. If I have to type the
    * following lines any more I'm gonna send Sun my medical bills.
    */
-  static public BufferedReader reader(InputStream input) throws IOException {
+  public BufferedReader reader(InputStream input) {
+    //try {
     InputStreamReader isr = new InputStreamReader(input);
     return new BufferedReader(isr);
+    //} catch (IOException e) {
+    //die("Couldn't create reader()", e);
+    //}
+    //return null;
   }
 
 
@@ -2223,8 +2271,12 @@ public class PApplet extends Applet
     try {
       return writer(new FileOutputStream(savePath(filename)));
 
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      if (filename == null) {
+        die("Filename passed to writer() was null", e);
+      } else {
+        die("Couldn't create a writer for " + filename, e);
+      }
     }
     return null;
   }
@@ -2233,12 +2285,16 @@ public class PApplet extends Applet
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
-  static public PrintWriter writer(File file) {
+  public PrintWriter writer(File file) {
     try {
       return writer(new FileOutputStream(file));
 
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      if (file == null) {
+        die("File object passed to writer() was null", e);
+      } else {
+        die("Couldn't create a writer for " + file.getAbsolutePath(), e);
+      }
     }
     return null;
   }
@@ -2247,80 +2303,96 @@ public class PApplet extends Applet
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
-  static public PrintWriter writer(OutputStream output) throws IOException {
+  public PrintWriter writer(OutputStream output) {
+    //try {
     OutputStreamWriter osw = new OutputStreamWriter(output);
     return new PrintWriter(osw);
+    //} catch (IOException e) {
+    //die("Couldn't create writer()", e);
+    //}
   }
 
 
-  public InputStream openStream(String filename) throws IOException {
-    InputStream stream = null;
+  public InputStream openStream(File file) {
+    try {
+      return new FileInputStream(file);
 
-    if (filename.startsWith("http://")) {
-      try {
-        URL url = new URL(filename);
-        stream = url.openStream();
-        return stream;
-
-      } catch (MalformedURLException e) {
-        e.printStackTrace();
-        return null;
+    } catch (IOException e) {
+      if (file == null) {
+        die("File passed to openStream() was null", e);
+      } else {
+        die("Couldn't openStream() for " + file.getAbsolutePath());
       }
     }
+    return null;
+  }
 
-    stream = getClass().getResourceAsStream(filename);
-    if (stream != null) return stream;
 
-    stream = getClass().getResourceAsStream("data/" + filename);
-    if (stream != null) return stream;
-
+  public InputStream openStream(String filename) {
     try {
+      InputStream stream = null;
+
+      if (filename.startsWith("http://")) {
+        try {
+          URL url = new URL(filename);
+          stream = url.openStream();
+          return stream;
+
+        } catch (MalformedURLException e) {
+          e.printStackTrace();
+          return null;
+        }
+      }
+
+      stream = getClass().getResourceAsStream(filename);
+      if (stream != null) return stream;
+
+      stream = getClass().getResourceAsStream("data/" + filename);
+      if (stream != null) return stream;
+
       try {
-        String location = folder + File.separator + "data";
-        File file = new File(location, filename);
-        stream = new FileInputStream(file);
-        if (stream != null) return stream;
+        try {
+          String location = folder + File.separator + "data";
+          File file = new File(location, filename);
+          stream = new FileInputStream(file);
+          if (stream != null) return stream;
 
-      } catch (Exception e) { }  // ignored
+        } catch (Exception e) { }  // ignored
 
-      try {
-        File file = new File(folder, filename);
-        stream = new FileInputStream(file);
-        if (stream != null) return stream;
+        try {
+          File file = new File(folder, filename);
+          stream = new FileInputStream(file);
+          if (stream != null) return stream;
 
-      } catch (Exception e) { }  // ignored
+        } catch (Exception e) { }  // ignored
 
-      try {
-        stream = new FileInputStream(new File("data", filename));
-        if (stream != null) return stream;
-      } catch (IOException e2) { }
+        try {
+          stream = new FileInputStream(new File("data", filename));
+          if (stream != null) return stream;
+        } catch (IOException e2) { }
 
-      try {
-        stream = new FileInputStream(filename);
-        if (stream != null) return stream;
-      } catch (IOException e1) { }
+        try {
+          stream = new FileInputStream(filename);
+          if (stream != null) return stream;
+        } catch (IOException e1) { }
 
-    } catch (SecurityException se) { }  // online, whups
+      } catch (SecurityException se) { }  // online, whups
 
-    if (stream == null) {
-      throw new IOException("openStream() could not open " + filename);
+      if (stream == null) {
+        throw new IOException("openStream() could not open " + filename);
+      }
+    } catch (Exception e) {
+      die(e.getMessage(), e);
     }
     return null;  // #$(*@ compiler
   }
 
 
   public byte[] loadBytes(String filename) {
-    try {
-      return loadBytes(openStream(filename));
-
-    } catch (IOException e) {
-      System.err.println("problem loading bytes from " + filename);
-      e.printStackTrace();
-    }
-    return null;
+    return loadBytes(openStream(filename));
   }
 
-  static public byte[] loadBytes(InputStream input) {
+  public byte[] loadBytes(InputStream input) {
     try {
       BufferedInputStream bis = new BufferedInputStream(input);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -2333,35 +2405,29 @@ public class PApplet extends Applet
       return out.toByteArray();
 
     } catch (IOException e) {
-      e.printStackTrace();
+      die("Couldn't load bytes from stream", e);
     }
     return null;
   }
 
 
-  static public String[] loadStrings(File file) {
-    try {
-      return loadStrings(new FileInputStream(file));
+  public String[] loadStrings(File file) {
+    InputStream is = openStream(file);
+    if (is != null) return loadStrings(is);
 
-    } catch (IOException e) {
-      System.err.println("problem loading strings from " + file);
-      e.printStackTrace();
-    }
+    die("Couldn't open " + file.getAbsolutePath());
     return null;
   }
 
   public String[] loadStrings(String filename) {
-    try {
-      return loadStrings(openStream(filename));
+    InputStream is = openStream(filename);
+    if (is != null) return loadStrings(is);
 
-    } catch (IOException e) {
-      System.err.println("problem loading strings from " + filename);
-      e.printStackTrace();
-    }
+    die("Couldn't open " + filename);
     return null;
   }
 
-  static public String[] loadStrings(InputStream input) {
+  public String[] loadStrings(InputStream input) {
     try {
       BufferedReader reader =
         new BufferedReader(new InputStreamReader(input));
@@ -2389,7 +2455,7 @@ public class PApplet extends Applet
       return output;
 
     } catch (IOException e) {
-      e.printStackTrace();
+      die("Error inside loadStrings()", e);
     }
     return null;
   }
