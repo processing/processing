@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PGraphics - main graphics and rendering context for bagel
+  PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-04 Massachusetts Institute of Technology 
@@ -39,18 +39,10 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  //int width, height;
   public int width1, height1;    // minus 1
-
   int pixelCount;
-  //public int pixels[];  // wtf? appletviewer wants this pubic
   public int stencil[];        // stencil buffer used to antialias polygons
   public float zbuffer[];
-  //boolean zbufferTainted;
-
-  //boolean depthTest;
-
-  //int frameCount;
 
   // ........................................................
 
@@ -1170,70 +1162,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /* 
-     CURVES
-
-     'curve' is a catmull-rom curve
-
-     curve(x1, y1, x2, y2, x3, y3, x4, y4) 
-     // is equivalent to:
-     beginShape();
-     curveVertex(x1, y1);
-     curveVertex(x1, y1);
-     curveVertex(x2, y2);
-     curveVertex(x3, y3);
-     curveVertex(x4, y4);
-     curveVertex(x4, y4);
-     endShape();
-     // the first and last points are doubled, because the catmull-rom
-     // algorithm needs the point 'before' and 'after' the segment to 
-     // guide how the curve will begin. it's six calls because without
-     // doubling the first and last point, curve() produces mostly 
-     // straight lines. not much fun.
-
-
-     'bezier' is a bezier curve
-
-     bezier(x1, y1, x2, y2, x3, y3, x4, y4)
-     // is equivalent to:
-     beginShape();
-     bezierVertex(x1, y1);
-     bezierVertex(x2, y2);
-     bezierVertex(x3, y3);
-     bezierVertex(x4, y4);
-     endShape();
-     // the first and last points are the on-curve points
-     // the middle two are the 'control' points, or 'handles' 
-     // in an application like illustrator.
-
-     // in postscript-speak, this would be:
-     moveto(x1, y1);
-     curveto(x2, y2, x3, y3, x4, y4);
-     // if you were to try and continue that curve like so:
-     curveto(x5, y5, x6, y6, x7, y7);
-     // this would be done in bagel by adding these statements:
-     curveVertex(x4, y4);
-     curveVertex(x5, y5);
-     curveVertex(x6, y6);
-     curveVertex(x7, y7);
-     // note that x4/y4 are being pulled from the previous
-     // curveto and used again.
-
-     this may be a bit more verbose, but in general, decisions opted 
-     for maximum flexibility, since these beginShape() commands are 
-     intended as a bit lower-level. rather than having many types of 
-     curveto (curve to corner, and several others described in the 
-     postscript and illustrator specs) let someone else implement a 
-     nice moveto/lineto/curveto library on top. in fact, it's tempting 
-     that we may put one in there ourselves.
-
-     another method for bezier (though not implemented this way)
-     1. first start with a call to vertex()
-     2. every three calls to bezierVertex produce a new segment
-     this option seemed no good because of the confusion of mixing
-     vertex and bezierVertex calls. 
-  */
-
   private void c_vertex(float x, float y, float z, boolean bezier) {
     // if more than 128 points, shift everything back to the beginning
     if (cvertexIndex == CVERTEX_ALLOC) {
@@ -1270,7 +1198,7 @@ public class PGraphics extends PImage implements PConstants {
                            cvertex[cvertexIndex-1][MY],
                            cvertex[cvertexIndex-4][MX], 
                            cvertex[cvertexIndex-4][MY], 
-                           bezier_draw, bezier_segments);
+                           bezier_draw, bezier_detail);
           } else {
             spline_segment(cvertex[cvertexIndex-4][MX], 
                            cvertex[cvertexIndex-4][MY], 
@@ -1287,7 +1215,7 @@ public class PGraphics extends PImage implements PConstants {
                            cvertex[cvertexIndex-4][MX], 
                            cvertex[cvertexIndex-4][MY], 
                            cvertex[cvertexIndex-4][MZ], 
-                           bezier_draw, bezier_segments);
+                           bezier_draw, bezier_detail);
           }
         }
       } else {  // !bezier
@@ -1304,7 +1232,7 @@ public class PGraphics extends PImage implements PConstants {
                          cvertex[cvertexIndex-1][MY],
                          cvertex[cvertexIndex-3][MX], 
                          cvertex[cvertexIndex-3][MY], 
-                         curve_draw, curve_segments);
+                         curve_draw, curve_detail);
         } else {
           spline_segment(cvertex[cvertexIndex-4][MX], 
                          cvertex[cvertexIndex-4][MY], 
@@ -1321,7 +1249,7 @@ public class PGraphics extends PImage implements PConstants {
                          cvertex[cvertexIndex-3][MX], 
                          cvertex[cvertexIndex-3][MY], 
                          cvertex[cvertexIndex-3][MZ], 
-                         curve_draw, curve_segments);
+                         curve_draw, curve_detail);
         }
       }
     }
@@ -1330,18 +1258,30 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * See notes with the bezier() function.
+   */
   public void bezierVertex(float x, float y) {
     c_vertex(x, y, 0, true);
   }
 
+  /**
+   * See notes with the bezier() function.
+   */
   public void bezierVertex(float x, float y, float z) {
     c_vertex(x, y, z, true);
   }
 
+  /**
+   * See notes with the curve() function.
+   */
   public void curveVertex(float x, float y) {
     c_vertex(x, y, 0, false);
   }
 
+  /**
+   * See notes with the curve() function.
+   */
   public void curveVertex(float x, float y, float z) {
     c_vertex(x, y, z, false);
   }
@@ -3708,6 +3648,46 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Draw a bezier curve. The first and last points are 
+   * the on-curve points. The middle two are the 'control' points, 
+   * or 'handles' in an application like Illustrator.
+   *
+   * Identical to typing:
+   * beginShape();
+   * bezierVertex(x1, y1);
+   * bezierVertex(x2, y2);
+   * bezierVertex(x3, y3);
+   * bezierVertex(x4, y4);
+   * endShape();
+   *
+   * In Postscript-speak, this would be:
+   * moveto(x1, y1);
+   * curveto(x2, y2, x3, y3, x4, y4);
+   * If you were to try and continue that curve like so:
+   * curveto(x5, y5, x6, y6, x7, y7);
+   * This would be done in bagel by adding these statements:
+   * curveVertex(x4, y4);
+   * curveVertex(x5, y5);
+   * curveVertex(x6, y6);
+   * curveVertex(x7, y7);
+   * Note that x4/y4 are being pulled from the previous
+   * curveto and used again.
+   *
+   * The solution here may be a bit more verbose than Postscript, 
+   * but in general, decisions opted for maximum flexibility, 
+   * since these beginShape() commands are intended as a bit lower-level. 
+   * Rather than having many types of curveto (curve to corner, 
+   * and several others described in the Postscript and Illustrator specs) 
+   * let someone else implement a nice moveto/lineto/curveto library on top. 
+   * In fact, it's tempting that we may put one in there ourselves.
+   *
+   * Another method for bezier (though not implemented this way)
+   * 1. first start with a call to vertex()
+   * 2. every three calls to bezierVertex produce a new segment
+   * This option seemed no good because of the confusion of mixing
+   * vertex and bezierVertex calls. 
+   */
   public void bezier(float x1, float y1, 
                      float x2, float y2,
                      float x3, float y3,
@@ -3734,9 +3714,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  //static final int BEZIER_SEGMENTS = 20;
+  //static final int BEZIER_DETAIL = 20;
   private boolean bezier_inited = false;
-  private int bezier_segments = 20; //BEZIER_SEGMENTS;
+  private int bezier_detail = 20; //BEZIER_DETAIL;
   // msjvm complained when bezier_basis was final
   private float bezier_basis[][] = {  
     { -1,  3, -3,  1},
@@ -3749,21 +3729,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   private void bezier_init() {
-    bezierSegments(bezier_segments); //BEZIER_SEGMENTS);
+    bezierDetail(bezier_detail); //BEZIER_DETAIL);
     //bezier_inited = true;
   }
 
 
-  public void bezierSegments(int segments) {
+  public void bezierDetail(int detail) {
     if (bezier_forward == null) {
       bezier_forward = new float[4][4];
       bezier_draw = new float[4][4];
     }
-    bezier_segments = segments;
+    bezier_detail = detail;
     bezier_inited = true;
 
     // setup matrix for forward differencing to speed up drawing
-    setup_spline_forward(segments, bezier_forward);
+    setup_spline_forward(detail, bezier_forward);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
@@ -3773,8 +3753,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // catmull-rom basis matrix, perhaps with optional s parameter
   private boolean curve_inited = false;
-  //static final int CURVE_SEGMENTS = 20;
-  private int curve_segments = 20; //CURVE_SEGMENTS;
+  //static final int CURVE_DETAIL = 20;
+  private int curve_detail = 20; //CURVE_DETAIL;
   private float curve_tightness = 0;
   private float curve_basis[][]; // = new float[4][4];
   private float curve_forward[][]; // = new float[4][4];
@@ -3782,19 +3762,19 @@ public class PGraphics extends PImage implements PConstants {
 
 
   private void curve_init() {
-    curve_mode(curve_segments, curve_tightness);
+    curve_mode(curve_detail, curve_tightness);
     //curve_inited = true;
   }
 
 
-  public void curveSegments(int segments) {
-    curve_mode(segments, curve_tightness);
+  public void curveDetail(int detail) {
+    curve_mode(detail, curve_tightness);
     //curve_inited = true;
   }
 
 
   public void curveTightness(float tightness) {
-    curve_mode(curve_segments, tightness);
+    curve_mode(curve_detail, tightness);
     //curve_inited = true;
   }
 
@@ -3811,9 +3791,9 @@ public class PGraphics extends PImage implements PConstants {
    * code more readable)
    */
   private void curve_mode(int segments, float s) {
-    curve_segments = segments;
+    curve_detail = segments;
     //curve_mode = ((curve_tightness != 0) ||
-    //            (curve_segments != CURVE_SEGMENTS));
+    //            (curve_segments != CURVE_DETAIL));
 
     if (curve_basis == null) {
       // allocate these when used, to save startup time
@@ -3835,7 +3815,7 @@ public class PGraphics extends PImage implements PConstants {
         c[i][j] /= 2f;
       }
     }
-    setup_spline_forward(segments, curve_forward);
+    setup_spline_forward(detail, curve_forward);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
@@ -3874,23 +3854,29 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Draws a segment of Catmull-Rom curve.
    *
-   * This function doubles the first and last points to use them 
-   * as control points, because four vertices for a Catmull-Rom
-   * is basically a line. So in the end, this will produce three
-   * curve segments (where bezier would only produce one with its
-   * complementary function).
+   * Identical to typing out:
+   * beginShape();
+   * curveVertex(x1, y1);
+   * curveVertex(x2, y2);
+   * curveVertex(x3, y3);
+   * curveVertex(x4, y4);
+   * endShape();
+   *
+   * As of 0070, this function no longer doubles the first and 
+   * last points. The curves are a bit more boring, but it's more 
+   * mathematically correct, and properly mirrored in curvePoint().
    */
   public void curve(float x1, float y1, 
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
     beginShape(LINE_STRIP);
-    curveVertex(x1, y1);
+    //curveVertex(x1, y1);
     curveVertex(x1, y1);
     curveVertex(x2, y2);
     curveVertex(x3, y3);
     curveVertex(x4, y4);
-    curveVertex(x4, y4);
+    //curveVertex(x4, y4);
     endShape();
   }
 
@@ -3900,12 +3886,12 @@ public class PGraphics extends PImage implements PConstants {
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
     beginShape(LINE_STRIP);
-    curveVertex(x1, y1, z1);
+    //curveVertex(x1, y1, z1);
     curveVertex(x1, y1, z1);
     curveVertex(x2, y2, z2);
     curveVertex(x3, y3, z3);
     curveVertex(x4, y4, z4);
-    curveVertex(x4, y4, z4);
+    //curveVertex(x4, y4, z4);
     endShape();
   }
 
