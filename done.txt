@@ -1,3 +1,10 @@
+0030
+X attempt to fold serial into bapplet, but mostly fail
+X   convert color -> int
+X     also include #ff00cc -> proper conversion
+X   comments are removed from exported files
+
+
 0029
 X triangle() 6 parameters
 X quad() 8 parameters
