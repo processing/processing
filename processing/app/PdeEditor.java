@@ -510,6 +510,18 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     // unless there's a method in AppletContext
     if (frame != null) frame.toFront();
 
+    try {
+      ((KjcEngine)(runner.engine)).window.toFront();
+    } catch (Exception e) {
+      // rather than writing code to check all the posible
+      // errors with the above statement, just fail quietly
+      //System.out.println("couldn't bring kjc engine window forward");
+    }
+    //if (runner.engine != null) {
+    //if (runner.engine instanceof KjcEngine) {	
+    //}
+    //}
+
     buttons.clear();
   }
 
