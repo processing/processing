@@ -1,123 +1,95 @@
-0046 
-X install new swing-based textarea with syntax highlighting
-X   improve the flicker problems (re-enable backing store?)
-X   set better defaults for coloring
-X   implement edit menu
-X   implement undo/redo
-X   re-implement sketchModified
-X these boxes overlap but shouldn't:
-X   may be simple <= instead of <, leftover from dbn
-int thick = 36;
-size(200, 200);
-background(0);
-noStroke();
-fill(153, 163, 0.0);
-rect(80, 0, thick, height/2);
-fill(102, 112, 0.0);
-rect(100, height/2, thick, height/2);
-X re-implement sketchModified yet again (using keylistener)
-X set font on textarea in case things break
-X need examples to work for submenus (casey's got too many)
-X why is javax.comm included a zillion times in exported .java file?
-X fix issues with new swing-based text area
-X   auto indent on next line no longer works
-X   tabs no longer convert to 2 spaces
-o   balance parens is no longer available
-X problem with axel's strings example [might be related to long lines]
-X   freezing problem, compiler was crashing and spewing bad message
-X move build directory to root in cvs (on server)
-X   and update scripts accordingly
-X should java 1.3 classes be included in the imports
-X   but not for exported applets? (might create some confusion)
-X   included java audio classes for 1.3
-X   included xml classes for 1.4
-X pmouseX should be set at the end of loop(), not on mouse movement
-X allow 3d curves
-X   curveVertex and bezierVertex that take 3 args
-X   3d versions of bezier() and curve()
-X preprocessor tweaks
-X   "http://acg.media.mit.edu" doesn't work because of //
-X   "color.jpg" -> "int.jpg" causes trouble
-X why does this line cause an error?
-// String url = "http:\u002f\u002fwww.Proce55ing.net"; 
-X   it's not in the preprocessor, but kopi seems to be having trouble
-X seems that file i/o may be picking up lots of extra \r 
-X   perhaps when doing setText, it's goobering things up
-X when renaming a sketch, select the text in the field, 
-X   so you can type the new name immediately. 
-X added 'rename' command
-X   also the default for clicking on the sketch's title
-o   option to rename when doing a 'save as' (remove old files)
-X remove .class files on save as [dimitre]
-X   remove .jar, .class, and .java files from the 'applet' dir
-When I am working in a project and I save it with another name, 
-all the old files are copyied to new directory, and some of the old 
-unused .class files and images remains inside new project JAR files. 
-X serial port
-X   better message for PortInUseException (full explanation)
-X   better message for when serial port code not available/not installed
-X set frame title of launched window to the name of the sketch
-X fixed history bug where first history made would crash
-X   this was previous unknown, but likely several found it (!)
-X macosx - check to see if swing is working properly
-X macosx - update build script to work with new layout
-X Add an Edit menu containing Undo/Redo/Cut/Copy/Paste/Select
-  All. It's standard Mac behaviour. 
-X long list from frederik (fdb)
-X If the cursor is at the last character of the last line of the 
-  text area, moving the cursor up or down using the arrow keys throws 
-  the following exception: 
-  java.lang.ArrayIndexOutOfBoundsException 
-    at PdeEditorListener.keyPressed(PdeEditorListener.java:86) 
-    at java.awt.Component.processKeyEvent(Component.java:3673) 
-X If the cursor is at the last character of the first line of the text
-  area, moving the cursor up using the arrow keys throws the same
-  exception. However, moving the cursor down doesn't throw one.  
-X Double-clicking a word doesn't select it, but the character after
-  it. (however, sometimes the behaviour is correct) 
-X Scrolling action when using cursor keys is not consistent with other
-  editors: The window should only scroll when it needs to; it now tries
-  to keep the cursor on the current line. (or one line below it) 
-X Using Apple-shift-arrowLeft to select from the cursor pos to the
-  beginning of the line, selects one character too little at the right
-  side. Apple-shift-arrowRight has the same issue (selects one char too
-  little at the left side). 
-X Using Apple-shift-arrowDown selects only from the beginning of this
-  line to the end of the following line. It doesn't extend the
-  selection when pressed twice. It also selects the line under the
-  current line. 
-X Pressing the tab key moves to the bottom of the text area.
-X hopefully fixed, but needs to be tested
-? Select All (Apple-A) closes the application 
-  (Ctrl-Q) on Azerty-keyboards 
-X use date in the sketch name sketch_021104 
-X   with a _2 if needed or '021104a' '021104b' etc
-X   when using save as, allow to remove the old (numbered) sketch
-X better default size than 300x300 when starting up first time
-X bug report from the site
-resizing the editor window in Mac OS X leaves the status bar in
-place. The result is an editor window with a grey bar layered on top,
-obscuring the editable text. 
-X fix default fonts, font size on mac
-X fix lots of annoying crap about highlighting lines on errors
-X re-enable console, add synchronized (hrmph)
-X added extra code for testing to for serial under osx
-X   also suppressed error text in console for exception-less fail
-X couldn't quit p5 when installed into a dir with spaces
-X   properties were saved to a urlencoded place, %20 was causing trouble
-X update dist script for new layout
-X   put mac rxtx inside the p5 folder (hide it?)
-X     include more strongly worded message about rxtx
-X macos9: update build/dist scripts to work with new layout
-X macos9: add swing.jar to dist (?)
-X linux: update build and dist scripts for new layout
-X linux: generate new rev
+0047
+
+_ add -Xmx128m -Xms128m because people running out of memory (pitaru)
+_   tried with a 3k x 1k image and things broke
+
+_ getting mouse movement outside the window
+
+_ reference doesn't launch on mac (mKoser)
+
+_ when trying to use serial, provide error if things not installed
+
+_ extra linefeeds is getting annoying for folks
+
+_ reported by fdb and brendanberg
+After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
+Exception in thread "main" java.lang.NullPointerException 
+  at PdeBase.addSketches(PdeBase.java:598 ) 
+  at PdeBase.addSketches(PdeBase.java:615) 
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575) 
+  at PdeBase.<init>(PdeBase.java:362) 
+  at PdeBase.main(PdeBase.java:102) 
+Removing all sketches would solve the problem. 
+
+_ reported by brandenberg
+_    need to pay attention to when running from read-only drive
+p5 will launch from the disk image, but will not draw the sketch name bar doesn't appear (possibly b/c the image is read-only)... 
+ i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
+ i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
+again, after i moved my sketches over it broke permanently... 
+
+_ lots of problems in moving sketches over
+
+_ make a note that size() has to come first [nluken]
+
+_ 46 dies when run from desktop on some machines [jes]
+While I've used random() in other projects often without fail, if I uncomment the 'float r = random(50);', the applet window fails to appear, with no error messages. 
+ 
+_ can't used random() inside constructor.. (Glen Murphy)
+_   maybe related to problems loading images in constructors
+_   check output from file that's created.. seems to fail silently(?)
+
+(this code is a mutilated version of working code, just to show the error). 
+
+int WIDTH = 500; 
+int HEIGHT = 500; 
+int NUMMINES = 6; 
+ 
+Mine mine[] = new Mine[NUMMINES]; 
+ 
+class Mine { 
+  int NUMSPOKES = 12; 
+   
+  float x, y, size; 
+  Spoke spoke[] = new Spoke[NUMSPOKES]; 
+   
+  Mine(float xIn, float yIn, float sizeIn) { 
+    x = xIn; 
+    y = yIn; 
+    size = sizeIn; 
+    for(int i = 0; i < NUMSPOKES; i++) { 
+ //float r = random(50); 
+ spoke[i] = new Spoke(size+i, i*5, i); 
+ } 
+    } 
+  } 
+ 
+class Spoke { 
+  float dist, dir, dirVel; 
+   
+  Spoke(float distIn, float dirIn, float dirVelIn) { 
+    } 
+  } 
+ 
+void setup() { 
+  size(500,500); 
+  ellipseMode(CENTER_DIAMETER); 
+   
+  for(int i = 0; i < NUMMINES; i++) { 
+    mine[i] = new Mine(random(0,WIDTH), random(0,HEIGHT), random(10,30)); 
+    } 
+  } 
+  
+void loop() { 
+ 
+  } 
+//////////////////////////  
+ 
 
 
-LATER RELEASES
 
 bagel
-_ images don't load during setup()
+_ images don't load during setup (?)
 _ make bagel usable on its own as a drawing surface
 _   needs to be used as a component, without applet 
 _   but retain functionality, ie. image i/o
@@ -126,6 +98,7 @@ _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
+_ shortcut to walk through history, ala photoshop (ctrl-alt-z)
 _ lots of problems with the console 
 _   [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
@@ -287,33 +260,6 @@ Use External Editor
 ////////////////////////////////////////////////////////////////////
 
 
-LANGUAGE
-
-foreach String line (lines)
-foreach (String line = lines)
-foreach (String line, lines)
-foreach (String line) of lines
-..would translate to..
-for (int i = 0; i < lines.length; i++) {
-    String line = lines[i];
-}
-
-for (int i = 0..10)  or  for (int i, 0..10)
-foreach (int i) of 0..10
-for (int i = start..stop)
-..translating to..
-for (int i = 0; i < 10; i++)   
-for (int i = start; i < stop; i++)
-
-emit(arrayImageX) or printvar? or vprint?
-..would translate to..
-println("arrayImageX = " + arrayImageX);
-
-emit(arrayImageX, arrayImageY)
-..would translate to..
-println("arrayImageX, arrayImageY = " + arrayImageX + ", " + arrayImageY)
-
-
 BAGEL / high
 b _ better access to projX et al
 b _   what's a better name? calcX? or write to an array?
@@ -323,13 +269,13 @@ b _   currently calling slower image routine
 
 
 BAGEL / high & time consuming
+b _ implement clipping planes and clipping of objects
+b _   things are flying into the camera and halting apps
 b _ color won't set for fonts
 b _ alpha
 b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
 b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
-b _ implement clipping planes and clipping of objects
-b _ clipping [may be needed for current genome browser project]
 b _ box is not opaque
 b X   problem is that lines are drawn second
 b X   one pixel lines have no z value.. argh
@@ -361,6 +307,12 @@ b _   for ui-type applications that don't need to continually redraw
 b _ keypressed is not persistent
 b _   key repeat in os vs. how java handles it
 b _   search java faq for info about getting around it
+b _ curves
+b _   curveMode to tweak the s parameter of catmullrom
+b _   setting accuracy of curve segments
+b _   evaluate curve into a buffer
+b _   curveVertex() not to require 4 points.. 
+b _     automatically doubles on endShape() or next call to vertex()
 
 
 BAGEL / medium & time consuming
@@ -393,7 +345,6 @@ _ illustrator, postscript or pdf export?
 _ export to static flash-based graphics
 _ function to evaluate bezier or catmullrom points
 _   used heavily in genome valence
-_ curveMode to tweak the s parameter of catmullrom
 _ why is every other pixel missing from mouse events?
 _ fixed fonts are screwed, should only work at screen resolution
 _   getStream for the filename doesn't work for directories
@@ -410,7 +361,6 @@ _ make sure line() commands don't try to have a fill
 _ write code for reading uncompressed b/w tiff images
 _   incorporate for fixed width fonts
 _ setting accuracy of circles/sphere
-_ setting accuracy of curve segments
 _ write shearing function
 _ optimize rotation functions
 _ test winding polygons in different directions
@@ -776,6 +726,40 @@ _ perlin noise function
 _ read table/csv formatted data into a matrix
 _   pseudo-database format version of this that stores indexes to file
 _     rather than loading the whole thing at once
+
+
+////////////////////////////////////////////////////////////////////
+
+
+LANGUAGE
+
+foreach String line (lines)
+foreach (String line = lines)
+foreach (String line, lines)
+foreach (String line) of lines
+..would translate to..
+for (int i = 0; i < lines.length; i++) {
+    String line = lines[i];
+}
+
+for (int i = 0..10)  or  for (int i, 0..10)
+foreach (int i) of 0..10
+for (int i = start..stop)
+..translating to..
+for (int i = 0; i < 10; i++)   
+for (int i = start; i < stop; i++)
+
+emit(arrayImageX) or printvar? or vprint?
+..would translate to..
+println("arrayImageX = " + arrayImageX);
+
+emit(arrayImageX, arrayImageY)
+..would translate to..
+println("arrayImageX, arrayImageY = " + arrayImageX + ", " + arrayImageY)
+
+
+////////////////////////////////////////////////////////////////////
+
 
 BXSocket, BXServerSocket
   BXNetwork
