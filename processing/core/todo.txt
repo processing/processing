@@ -1,22 +1,30 @@
 0077 core
+X bring back pmouseX/Y using a tricky method of storing separate
+X   values for inside draw() versus inside the event handler versions
 
-_ bring back pmouseX/Y using a tricky method of storing separate
-_   values for inside draw() versus inside the event handler versions
+_ be consistent about getXxx() methods
 
-_ metaballs example dies when using box()
-_   long string of exceptions, which are also missing their newlines
+_ basic sample audio playback needed for p5
+_   make separate java 1.1 and java 1.3 classes
 
-_ when running externally, applets don't always get placed properly
-_   if size is never set, then doesn't always layout
-_   problem is in gl and in core, and is inconsistent
-_   move more logic for layout into PApplet.. maybe a static method?
-_   this way can avoid duplicating / breaking things
+_ on start, mouseX is 0.. how to avoid?
+_   use firstMouse variable.. figure out naming
 
-_ depth() shouldn't be needed for opengl unless actually 3D
-_   right now the camera doesn't get set up unless you call depth()
+_ image loading bug is huge
 
-_ don't show applet frame until first frame
-_   but don't do it if it's a subclass, ie opengl..
+_ arc with stroke only draws the arc shape itself
+_   may need a 'wedge' function to draw a stroke around the whole thing
+
+_ explicitly state depth()/nodepth()
+_   don't allocate zbuffer & stencil until depth() is called
+
+_ add gzipInput and gzipOutput
+
+_ image(String name) and textFont(String name)
+_   do we change to font(arial, 12) ?
+_ loadImage() is broken on some machines
+_   hacked for a fix in 72, but need to better coordinate with openStream()
+_ 404 error because first searches applet directory on zipdecode
 
 _ how to handle full screen (opengl especially) or no screen (for scripts)
 _ implement fullsize().. this takes over the screen as best it can
@@ -25,12 +33,23 @@ _   that if applet is 500x500, centers on a 800x600 window
 _   though how do you get the screen size? 
 _     screen.width and screen.height? 
 
-_ resolve ARGB versus RGBA versus just A issues for fonts
-_   make sure that current scenario works identically on mac
-_   if so, just switch the image code to expect alpha in the high bits
-_   fonts probably need to be RGBA, not ALPHA style images
-_   there's nothing really ALPHA about them?
+_ when running externally, applets don't always get placed properly
+_   if size is never set, then doesn't always layout
+_   problem is in gl and in core, and is inconsistent
+_   move more logic for layout into PApplet.. maybe a static method?
+_   this way can avoid duplicating / breaking things
 
+_ when using core graphics, don't show applet frame until first frame
+_   (in opengl, open frame early, make sure this isn't inhibited)
+
+_ light(x, y, z, c1, c2, c3, TYPE)
+_   also BLight with same constructor, and on() and off() fxn
+
+//
+
+0078
+
+opengl
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
 _ fix endian ordering issues so that things work properly
@@ -39,30 +58,23 @@ _   minimum texture size may be 64x64
 _   might need to enforce it as a minimum
 _ what should the update image function be called?
 _ box and sphere are broken in gl
-
+_ metaballs example dies when using box()
+_   long string of exceptions, which are also missing their newlines
 _ get loop, noLoop, redraw, and framerate all working in opengl
 _   needs custom animator thread..
-
-_ basic sample audio playback needed for p5
-_   make separate java 1.1 and java 1.3 classes
-
-_ be consistent about getXxx() methods
+_ depth() shouldn't be needed for opengl unless actually 3D
+_   right now the camera doesn't get set up unless you call depth()
+_ resolve ARGB versus RGBA versus just A issues for fonts
+_   make sure that current scenario works identically on mac
+_   if so, just switch the image code to expect alpha in the high bits
+_   fonts probably need to be RGBA, not ALPHA style images
+_   there's nothing really ALPHA about them?
 
 
 //
 
-0076
-
-_ image loading bug is huge
-
-_ add gzipInput and gzipOutput
-
 _ should image i/o and sound i/o be moved into PImage and PSound?
 _   how to load external encoders/decoders
-
-
-_ image(String name) and textFont(String name)
-_   do we change to font(arial, 12) ?
 
 scripting
 _ document the use of "die" 
@@ -102,9 +114,6 @@ _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 
-_ explicitly state depth()/nodepth()
-_   don't allocate zbuffer & stencil until depth() is called
-
 _ massive graphics engine changes
 _   move to new graphics engine
 _     test with rgb cube, shut off smoothing
@@ -130,9 +139,6 @@ _   open with photoshop, resave, see which tags change
 _   particularly of those that are included in the original image
 _   perhaps something gets corrected? 
 
-_ arc with stroke only draws the arc shape itself
-_   may need a 'wedge' function to draw a stroke around the whole thing
-
 _ need timer in as part of the api
 _   or at least include an example that uses it
 
@@ -153,10 +159,6 @@ _   this will require changes to PTriangle and PLine inside their loops
 
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code
-
-_ image("blah.jpg"); 
-_ loadImage() is broken on some machines
-_   hacked for a fix in 72, but need to better coordinate with openStream()
 
 _ renderers can plug in:
 _   at direct api level
@@ -218,18 +220,16 @@ _   addcolor("blah blah blah", colornum);
 _   fill("blah blah blah");
 _   maybe this is bad practice--too slow, should use variables
 
-_ 404 error because first searches applet directory on zipdecode
-
-_ write PApplet2, a full screen version of PApplet
+_ write java 1.3 code for full screen version of PApplet
 _   this might be used for presentation mode
 
-_ api for file-based renderers
-_   need to work this out since it will affect other api changes
-_   size(0, 0) and then ai.size(10000, 20000)
-_     size 0 is code for internal to not show any window
-_   saveFrame(PRenderer) or saveFrame("name", PRenderer)
-_   saveFrame gets called at the beginning of loop()
-_     or is just a message to save the next frame (problem for anim)
+o api for file-based renderers
+o   need to work this out since it will affect other api changes
+o   size(0, 0) and then ai.size(10000, 20000)
+o     size 0 is code for internal to not show any window
+o   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+o   saveFrame gets called at the beginning of loop()
+o     or is just a message to save the next frame (problem for anim)
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
 _   update illustrator code to use core api
@@ -237,7 +237,7 @@ _     even if not actually working properly.. just in naming of things
 _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
-_   version of BApplet that replaces g. with ai. or pdf.
+o   version of BApplet that replaces g. with ai. or pdf.
 
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
@@ -246,9 +246,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ mkoser wish list
 _   filled polygons working with smooth()
 _   z-clipping
-
-_ light(x, y, z, c1, c2, c3, TYPE)
-_   also BLight with same constructor, and on() and off() fxn
 
 
 ////////////////////////////////////////////////////////////////////
