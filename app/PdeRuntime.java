@@ -90,6 +90,8 @@ public class PdeRuntime implements PdeMessageConsumer {
            windowLocation.x + "," + windowLocation.y) :
           (PApplet.EXT_LOCATION + x1 + "," + y1);
 
+        System.out.println("library path is " + sketch.libraryPath);
+
         String command[] = new String[] {
           //"cmd", "/c", "start", 
 
@@ -97,7 +99,8 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-Djava.library.path=" + 
           // sketch.libraryPath might be ""
           // librariesClassPath will always have sep char prepended
-          sketch.libraryPath + PdeSketchbook.librariesClassPath + 
+          sketch.libraryPath + 
+          //PdeSketchbook.librariesClassPath + 
           File.pathSeparator + System.getProperty("java.library.path"),
           "-cp",
           sketch.classPath + PdeSketchbook.librariesClassPath,
