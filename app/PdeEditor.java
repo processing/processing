@@ -587,6 +587,7 @@ public class PdeEditor extends Panel {
 	  }
 	  //textarea.editorSetText(buffer.toString());
 	  textarea.setText(buffer.toString());
+	  textarea.select(0, 0);
 	  historyLast = textarea.getText();
 	  setSketchModified(false);
 
@@ -990,6 +991,7 @@ afterwards, some of these steps need a cleanup function
 	//System.out.print(program);
 	//textarea.editorSetText(program);
 	textarea.setText(program);
+	textarea.select(0, 0);
 
 	//System.out.print(textarea.getText());
 
@@ -1027,6 +1029,7 @@ afterwards, some of these steps need a cleanup function
 	//System.out.println("new guy, so setting empty");
 	// style info only gets set if there's text
 	textarea.setText("");
+	textarea.select(0, 0);
 	//textarea.editorSetText(" ");
 	// now set to now text. yay hack!
 	//textarea.editorSetText(""); // this doesn't work. oh well
@@ -1703,6 +1706,7 @@ afterwards, some of these steps need a cleanup function
     }
     //textarea.editorSetText(buffer.toString());
     textarea.setText(buffer.toString());
+    textarea.select(0, 0);
     setSketchModified(true);
     buttons.clear();
   }
