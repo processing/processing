@@ -116,6 +116,9 @@ sure if related. same for PATH and CLASSPATH.
 * some virus scanning software, particularly older NAV versions cause
 the trouble. 
 
+_ remove fonts from distribution
+_ fix dist.sh for mac, pc, linux
+
 _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ netscape.javascript not properly working in 1.4
