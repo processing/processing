@@ -352,7 +352,6 @@ public class PFont implements PConstants {
       parent.endShape();
 
       parent.texture_mode = savedTextureMode;
-      //parent.smooth = savedSmooth;
       parent.drawing_text = false;
       parent._stroke = savedStroke;
 
@@ -396,16 +395,9 @@ public class PFont implements PConstants {
       int pixels1[] = images[glyph].pixels;
       int pixels2[] = parent.pixels;
 
-      //int index1 = y0 * iwidth; //0;
-      //int index2 = 0;
-
-      //for (int row = 0; row < height[glyph]; row++) {
       for (int row = y0; row < y0 + h0; row++) {
-        //for (int col = 0; col < width[glyph]; col++) {
         for (int col = x0; col < x0 + w0; col++) {
           int a1 = (fa * pixels1[row * iwidth + col]) >> 8;
-          //System.out.println(index1 + col);
-          //int a1 = (fa * pixels1[index1 + col]) >> 8;
           int a2 = a1 ^ 0xff;
           int p1 = pixels1[row * width[glyph] + col];
           int p2 = pixels2[(yy + row-y0)*parent.width + (xx+col-x0)];
@@ -416,7 +408,6 @@ public class PFont implements PConstants {
              (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
              (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
         }
-        //index1 += iwidth;
       }
     }
   }
