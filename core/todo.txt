@@ -189,16 +189,6 @@ X   this was problem with rendering an image from PGraphics on board
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655;start=0
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1080671926;start=0
 
-040920 later
-X remove "loop" from special inserts on preproc
-
-_ need to resolve rotated text in SCREEN_SPACE
-_   SCREEN_SPACE is weird for text
-_   does the font or PApplet control the size? (the font, ala java)
-_   without setting the font, the values come out weird rotated text
-_     get rotated text into the screen space stuff
-_ make PApplet2 that handles full screen 1.4 mode drawing
-
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
@@ -206,6 +196,13 @@ _   move to new graphics engine
 _     test with rgb cube, shut off smoothing
 _   make sure line artifacts are because of smoothing
 _   implement 2x oversampling for anti-aliasing
+
+_ need to resolve rotated text in SCREEN_SPACE
+_   SCREEN_SPACE is weird for text
+_   does the font or PApplet control the size? (the font, ala java)
+_   without setting the font, the values come out weird rotated text
+_     get rotated text into the screen space stuff
+_ make PApplet2 that handles full screen 1.4 mode drawing
 
 _ api for file-based renderers
 _   need to work this out since it will affect other api changes
