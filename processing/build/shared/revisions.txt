@@ -9,11 +9,17 @@ ABOUT REV 0060 -
 
 [ api changes ]
 
-- "No field named "SMOOTH_IMAGES" was found in type "Temporary_NNNN_NNNN".
-  SMOOTH_IMAGES is no longer needed, or supported.
+- if you get an error saying:
+  "No field named "SMOOTH_IMAGES" was found in type "Temporary_NNNN_NNNN".
+  you should remove the line "hint(SMOOTH_IMAGES);" from your program.
+  SMOOTH_IMAGES is no longer needed and has been removed.
 
 
-[ known bugs, pardon our dust ]
+[ known problems, pardon our dust ]
+
+- the size of exported applets has jumped in this release. this will
+  get smaller again in a future release. we're in the middle of
+  transitioning between two different sets of rendering/graphics code.
 
 - single pixel lines draw on top of everything. they have no alpha
   value so they can't be semi-transparent, and no z-coordinate.

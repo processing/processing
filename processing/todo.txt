@@ -147,31 +147,31 @@ ca o   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 
 api changes in progress -> COLORING FOR ALL THESE
-_ textureImage() -> texture()
-_ textureMode() IMAGE_SPACE or NORMAL_SPACE
-_ vertexNormal() -> normal();
-_ vertexTexture -> vertex(... u, v);
-_ bezier(... t) -> bezierPoint() 
+X textureImage() -> texture()
+X textureMode() IMAGE_SPACE or NORMAL_SPACE
+X vertexNormal() -> normal();
+X vertexTexture -> vertex(... u, v);
+X bezier(... t) -> bezierPoint() 
 X curveTangent and bezierTangent are in there
-_ curve(... t) -> curvePoint()
-_ bezierMode -> bezierSegments
-_ curveMode -> curveSegments, curveTightness
-_ setFont -> textFont(font) or textFont(font, size)
-_ textSize(size), textLeading(leading)
-_ BFont.charWidth, BFont.stringWidth -> BFont.width()
-_ BFont.drawChar, BFont.drawString -> BFont.text()
-_ removed fill(), stroke(), background() with no args
-_   (used to return current)
-_ getPixel/setPixel -> get/set
-_ addition of copy(), duplicate(), alpha(), and blendMode()
-_   all the imaging modes that go with those guys
-_ tint() colors images, not fill()
-_ shearX and shearY removed
-_ removed noBackground
-_ added background(BImage)
-_ screenGrab -> saveFrame
-_ textMode for alignments .. ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT
-_   ALIGN_XXXX becuase LEFT already used for keys
+X curve(... t) -> curvePoint()
+X bezierMode -> bezierSegments
+X curveMode -> curveSegments, curveTightness
+X setFont -> textFont(font) or textFont(font, size)
+X textSize(size), textLeading(leading)
+X BFont.charWidth, BFont.stringWidth -> BFont.width()
+X BFont.drawChar, BFont.drawString -> BFont.text()
+X removed fill(), stroke(), background() with no args
+X   (used to return current)
+X getPixel/setPixel -> get/set
+X addition of copy(), duplicate(), alpha(), and blendMode()
+X   all the imaging modes that go with those guys
+X tint() colors images, not fill()
+X shearX and shearY removed
+X removed noBackground
+X added background(BImage)
+X screenGrab -> saveFrame
+X textMode for alignments .. ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT
+X   ALIGN_XXXX becuase LEFT already used for keys
 X implement text(int something) and text(float something)
 o   and perhaps others?
 X textSpace SCREEN_SPACE and OBJECT_SPACE
@@ -192,8 +192,6 @@ X param(), online(), and status() functions
 
 
 API
-_ mousePressed, keyPressed, others.. queue them all
-_   queue multiple times
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 
@@ -218,6 +216,8 @@ _   need to use oro matcher when trying to grab the applet size (export?)
 
 
 MEDIUM
+_ mousePressed, keyPressed, others.. queue them all
+_   queue multiple times
 _ net problems
 _   when you stop the client, it freezes 
 _     until you quit the processing running the server
