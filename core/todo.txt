@@ -2,7 +2,6 @@
 X textureMode(NORMAL_SPACE)  screws up the image() command
 X   image() appears to require IMAGE_SPACE to function properly. 
 X added focusGained() and focusLost()
-_   add to preprocessor
 X lots of changes to internal naming of vars
 X beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
@@ -16,8 +15,8 @@ opengl
 X why is the thing hanging until 'stop' is hit?
 X   what happens when stop is hit that sets it free?
 X   (at what point does it start working properly?)
-_ debug why certain spots are having errors (see 'problem here' notes)
-_   INVALID_OPERATION after drawing lines for cube
+X debug why certain spots are having errors (see 'problem here' notes)
+X   INVALID_OPERATION after drawing lines for cube
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
@@ -26,7 +25,7 @@ _   there's nothing really ALPHA about them?
 _ remove need to use depth() at the beginning
 _ and cameraMode(PERSPECTIVE) on each frame
 _   why is the first one failing?
-_ reverse y coordinates
+/ reverse y coordinates
 _ minimum texture size may be 64x64
 _   might need to enforce it as a minimum
 X cache needs to also make things a power of 2
