@@ -1,0 +1,171 @@
+HOW TO BUILD PROCESSING
+
+
+//// WINDOWS
+
+
+// Steps for First Time Setup 
+
+
+1. INSTALL CYGWIN, downloadable from www.cygwin.com
+or directly link to the installer: www.cygwin.com/setup.exe
+
+** of the packages, begin with the defaults, and add:
+cvs - used for version control
+gzip - probably installed by default, just make sure
+perl - use this version, activestate or other distros have trouble
+tar, unzip, zip - for created archives
+textutils - i think this is included in the defaults, but make sure
+
+** these aren't required initially, but useful:
+openssh (command line ssh client)
+nano (handy/simple text editor) 
+
+** and be sure to select the option for 'unix line endings'.
+
+** other notes
+
+the installer is sometimes a little flakey, so it may take more than
+one try to get everything in there. you can also run the installer
+again to add new applications, so you might try just installing the
+base stuff, and then come back to install the other bits. 
+
+it's also useful to run the installer (grab a new one from the site,
+since it changes) every few months to keep things fresh.
+
+
+
+2. GRAB THE CODE FROM SOURCEFORGE
+
+* this grabs the code as an anonymous user. if you have a sourceforge
+  account, you should know how to grab the code as yourself.
+
+# first do this
+cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing login
+# just hit enter when it asks for a password
+
+# then do this (may take a while)
+cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co processing
+# (maybe even a long while for you dialup and international folks)
+
+# gonna do a few things in the p5 folder
+cd processing
+
+# if you're not doing web development, you won't need those folders
+rm -rf web web_gen
+
+# this is actually done by the build script, but you may as well do it now
+cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co bagel
+
+# a quick cleanup, removes empty (dead/old) folders
+cvs update -P
+
+# get back to the processing/ folder
+cd ..
+
+
+
+3. INSTALL JIKES
+
+* a copy of jikes, the ibm's free and speedy java compiler that we
+  use, has been placed in build/windows/jikes.exe.gz
+
+* NOTE! this version of jikes has been specially compiled under cygwin
+  to use : as a path separator, so that all the build scripts work. so
+  if you already have another version of jikes installed, this one is
+  the one you want for building P5. 
+
+* open up a cygwin shell, then go like dis:
+
+cd /yourpath/to/processing/build/windows
+# /yourpath/to is where you've placed the processing folder
+# for instance, if it's in c:\processing, the line below would be 
+# /cygdrive/c/processing/build/windows
+
+# make a copy of jikes
+cp jikes.exe.gz /usr/bin/
+
+# unpack and install
+cd /usr/bin
+gzip -d jikes.exe.gz
+chmod +x jikes.exe
+
+# make sure it's now in the path
+rehash
+
+# and see if it works by typing:
+jikes
+# if it doesn't list the options, then something wasn't installed
+# correctly. retrace your steps and see if you've done everything.
+# or if i've made an error in the instructions, lemme know.
+
+# back to home
+cd /yourpath/to/processing
+
+
+
+4. SET YOUR CLASSPATH (for bagel) 
+
+* you need a few things in your classpath, they are:
+  - the rt.jar from a java runtime (1.1 or 1.4) 
+  - comm.jar, from javacomm. you can find a copy in 
+    processing/build/windows/dist/lib/comm.jar
+    if you don't already have it installed
+
+* to add them to your CLASSPATH (win2k or xp), go to Control Panels -> 
+  System Properties -> Advanced -> Environment Variables
+  if CLASSPATH is already listed in one of the lefthand columns, 
+  just make sure it includes those two things. if it doesn't, add
+  them (with full paths to them), separated by semicolons.
+  on win98 or winme (ack! don't use em!) you'll have to mess with
+  autoexec.bat. but we strongly recommend not doing this on 98/ME.
+
+* you'll also need to install quicktime for java, if you're building
+  for windows or mac. grab a quicktime installer from: 
+  http://www.apple.com/quicktime/download/
+
+* if you already have quicktime installed, just make sure that
+  quicktime for java has already been installed, use the quicktime
+  updater (Program Files -> QuickTime -> QuickTime Updater) hit the
+  'Details' button in the updater, and if it lists "Not installed" 
+  for "QuickTime for Java", well, take care of that.
+
+
+
+5. BUILD IT
+
+* you'll need to close and re-open the cygwin window after setting
+  your CLASSPATH.
+
+# now to build for the first time:
+cd /path/to/processing/build/windows
+./make.sh
+
+# if everything went well, you'll have no errors. 
+# (need more doc here on common problems..)
+
+
+// Updating to the Latest Version
+
+1. Each time you want to update to latest version from cvs:
+
+cd /path/to/processing
+cvs -z3 update
+# -z3 means make it snappy (using compression)
+
+
+2. Or if new folders have been added, use:
+
+cd /path/to/processing
+cvs -z3 update -d -P
+# -d grabs new directories and -P cleans out old (empty) ones
+# cvs is a little brain dead about this stuff
+
+# if you've removed web/ and web_dev/, then do the update -d -P 
+# from inside app/ and bagel/ (rather than from the just the 
+# processing/ folder) otherwise -d will grab web and web_dev again
+
+# unfortunately there isn't a way to know (?) if new folders have
+# since been added. but if you're getting "class not found" errors
+# while building, then that's a good indicator that something is
+# missing from a subfolder.
