@@ -589,13 +589,52 @@ public class PdeEditor extends JPanel {
           preprocessor.writeJava(className, imports, 
                                  extendsNormal, false);
 
-      } catch (antlr.RecognitionException ae) {
+      } catch (antlr.RecognitionException re) {
         // this even returns a column
-        throw new PdeException(ae.getMessage(), 
-                               ae.getLine() - 1, ae.getColumn());
+        throw new PdeException(re.getMessage(), 
+                               re.getLine() - 1, re.getColumn());
+
+      } catch (antlr.TokenStreamRecognitionException tsre) {
+        // while this seems to store line and column internally,
+        // there doesn't seem to be a method to grab it.. 
+        // so instead it's done using a regexp
+
+        //try {
+        PatternMatcher matcher = new Perl5Matcher();
+        PatternCompiler compiler = new Perl5Compiler();
+        // line 3:1: unexpected char: 0xA0
+        String mess = "^line (\\d+):(\\d+):\\s";
+        Pattern pattern = compiler.compile(mess);
+
+        PatternMatcherInput input = 
+          new PatternMatcherInput(tsre.toString());
+        if (matcher.contains(input, pattern)) {
+          MatchResult result = matcher.getMatch();
+          //try {
+          int line = Integer.parseInt(result.group(1).toString());
+          int column = Integer.parseInt(result.group(2).toString());
+          throw new PdeException(tsre.getMessage(), line-1, column);
+
+          //} catch (NumberFormatException e) {
+          //}
+        } else {
+          //System.out.println("didn't match input");
+          throw new PdeException(tsre.toString());
+        }
+
+          /*
+            } catch (MalformedPatternException mpe){
+            mpe.printStackTrace();
+            
+            } catch (Exception e) {  // not understood
+            e.printStackTrace();
+            throw new PdeException(tsre.toString());
+            }
+          */
 
       } catch (PdeException pe) {
         throw pe;
+
       } catch (Exception ex) {
         System.err.println("Uncaught exception type:" + ex.getClass());
         ex.printStackTrace();
@@ -909,21 +948,27 @@ public class PdeEditor extends JPanel {
 
         int result = 0;
 
-        if (PdeBase.platform == PdeBase.MACOSX) {
-          // macosx java kills the app even though cancel might get hit
-          // so the cancel button is (temporarily) left off
-          // this may be treated differently in macosx java 1.4, 
-          // but 1.4 isn't currently stable enough to use.
-          Object[] options = { "Yes", "No" };
-          result = JOptionPane.showOptionDialog(this,
-                                                prompt,
-                                                "Quit",
-                                                JOptionPane.YES_NO_OPTION,
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                null,
-                                                options, 
-                                                options[0]);  // default to save
+        //if (PdeBase.platform == PdeBase.MACOSX) {
 
+        // macosx java kills the app even though cancel might get hit
+        // so the cancel button is (temporarily) left off
+        // this may be treated differently in macosx java 1.4, 
+        // but 1.4 isn't currently stable enough to use.
+
+        // turns out windows has the same problem (sometimes)
+        // disable cancel for now until a fix can be found.
+
+        Object[] options = { "Yes", "No" };
+        result = JOptionPane.showOptionDialog(this,
+                                              prompt,
+                                              "Quit",
+                                              JOptionPane.YES_NO_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null,
+                                              options, 
+                                              options[0]);  // default to save
+
+          /*
         } else {
           Object[] options = { "Yes", "No", "Cancel" };
           result = JOptionPane.showOptionDialog(this,
@@ -934,7 +979,7 @@ public class PdeEditor extends JPanel {
                                                 null,
                                                 options, 
                                                 options[2]);
-        }
+          */
 
         if (result == JOptionPane.YES_OPTION) {
           //System.out.println("yes");
@@ -952,7 +997,7 @@ public class PdeEditor extends JPanel {
           // does nothing
         }
 
-      } else {
+      } else {  // not quitting
         status.prompt(prompt);
       }
 

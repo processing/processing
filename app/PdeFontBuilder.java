@@ -141,6 +141,9 @@ public class PdeFontBuilder extends JFrame {
             font = new Font(list[selection], Font.PLAIN, fontsize);
             //System.out.println("setting font to " + font);
             sample.setFont(font);
+
+            String filenameSuggestion = list[selection].replace(' ', '_');
+            filenameField.setText(filenameSuggestion);
           }
         }
       });
