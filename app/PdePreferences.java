@@ -110,16 +110,21 @@ public class PdePreferences extends JComponent {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
 
+
     try {
+      load(PdeBase.getStream("pde.properties"));
+
+      /*
       if ((PdeBase.platform == PdeBase.MACOSX) ||
           (PdeBase.platform == PdeBase.MACOS9)) {
-        load(new FileInputStream("lib/pde.properties"));
+        //load(new FileInputStream("lib/pde.properties"));
 
       } else {  
         // under win95, current dir not set properly
         // so using a relative url like "lib/" won't work
         load(getClass().getResource("pde.properties").openStream());
       }
+      */
 
     } catch (Exception e) {
       showError(null, "Could not read default settings.\n" + 
@@ -173,10 +178,11 @@ public class PdePreferences extends JComponent {
         load(new FileInputStream(preferencesFile));
 
       } catch (Exception e) {
-        showError("Error reading preferences", 
-                  "Error reading the preferences file. Please delete\n" +
-                  perferencesFile.getAbsolutePath() + "\n" + 
-                  "and restart Processing.", e);
+        PdeBase.showError("Error reading preferences", 
+                          "Error reading the preferences file. " +
+                          "Please delete\n" +
+                          perferencesFile.getAbsolutePath() + "\n" + 
+                          "and restart Processing.", e);
       }
     }
 
@@ -356,7 +362,7 @@ public class PdePreferences extends JComponent {
 
 
   public void disposeFrame() {
-    frame.hide()
+    frame.hide();
     //frame.dispose();
   }
 
@@ -404,6 +410,7 @@ public class PdePreferences extends JComponent {
     while ((line = reader.readLine()) != null) {
       if (line.charAt(0) == '#') continue;
 
+      // this won't properly handle = signs being in the text
       int equals = line.indexOf('=');
       String key = line.substring(0, equals).trim();
       String value = line.substring(equals + 1).trim();
@@ -418,21 +425,30 @@ public class PdePreferences extends JComponent {
 
   public void save() {
     try {
+      FileOutputStream output = new FileOutputStream(preferencesFile);
+      PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
+
+      Enumeration enum = properties.propertyNames();
+      while (enum.hasMoreElements()) {
+        String key = (String) e.nextElement();
+        writer.println(key + "=" + properties.get(key));
+      }
+
+      writer.flush();
+      writer.close();
+
+      /*
       FileOutputStream output = null;
 
-      if (PdeBase.platform == PdeBase.MACOSX) {
-        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-        //output = new FileOutputStream(pkg + "sketch.properties");
-        output = new FileOutputStream("lib/sketch.properties");
-
-      } else if (PdeBase.platform == PdeBase.MACOS9) {
-        output = new FileOutputStream("lib/sketch.properties");
+      if ((PdeBase.platform == PdeBase.MACOSX) ||
+          (PdeBase.platform == PdeBase.MACOS9)) {
+        output = new FileOutputStream("lib/pde.properties");
 
       } else { // win95/98/ME doesn't set cwd properly
         URL url = getClass().getResource("buttons.gif");
         String urlstr = url.getFile();
         urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
-          "sketch.properties";
+          ".properties";
 #ifdef JDK13
         // the ifdef is weird, but it's set for everything but 
         // macos9, and this will never get hit 
@@ -442,13 +458,15 @@ public class PdePreferences extends JComponent {
         System.err.println("you should never see this message");
 #endif
       }
+      */
 
-      base.storePreferences();
+      /*
+      //base.storePreferences();
 
       Properties skprops = new Properties();
 
       //Rectangle window = PdeBase.frame.getBounds();
-      Rectangle window = base.getBounds();
+      Rectangle window = editor.getBounds();
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       skprops.put("last.window.x", String.valueOf(window.x));
@@ -479,9 +497,10 @@ public class PdePreferences extends JComponent {
 
       // need to close the stream.. didn't do this before
       skprops.close();
+      */
 
     } catch (IOException e) {
-      PdeBase.showError(null, "Error while saving the settings file", e);
+      PdeBase.showWarning(null, "Error while saving the settings file", e);
       //e.printStackTrace();
     }
   }
