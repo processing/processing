@@ -5,8 +5,10 @@ import java.awt.*;
 
 
 public class PdeEditorButtons extends Panel {
-  static final int BUTTON_COUNT = 9;
-  static final int BUTTON_WIDTH = 24;
+  static final String EMPTY_STATUS = "                                                                 ";
+
+  static final int BUTTON_COUNT  = 9;
+  static final int BUTTON_WIDTH  = 24;
   static final int BUTTON_HEIGHT = 24;
 
   static final String title[] = {
@@ -31,6 +33,7 @@ public class PdeEditorButtons extends Panel {
   static final int ACTIVE = 2;
 
   PdeEditor editor;
+  Label status;
 
   Image offscreen;
   int width, height;
@@ -129,13 +132,16 @@ public class PdeEditorButtons extends Panel {
       y2 = y1 + BUTTON_HEIGHT;
       
       int offsetX = 8;
-      for (int i = 0; i < 2; i++) {
+      //for (int i = 0; i < 2; i++) {
+      for (int i = 0; i < buttonCount; i++) {
 	//g.drawImage(stateImage[i], offsetX, offsetY, null);
 	x1[i] = offsetX;
 	x2[i] = offsetX + BUTTON_WIDTH;
 	offsetX += BUTTON_WIDTH + 4;
+	if (i == 1) offsetX += 8;  // extra space after play/stop
       }
-      
+
+      /*
       // start from righthand side and move left
       offsetX = width - 8 - BUTTON_WIDTH;
       for (int i = buttonCount-1; i >= 2; --i) {
@@ -144,6 +150,7 @@ public class PdeEditorButtons extends Panel {
 	x2[i] = offsetX + BUTTON_WIDTH;
 	offsetX -= BUTTON_WIDTH + 4;
       }
+      */
     }
     Graphics g = offscreen.getGraphics();
     g.setColor(getBackground());
@@ -187,12 +194,7 @@ public class PdeEditorButtons extends Panel {
 	//state[currentRollover] = INACTIVE_STATE;
 	//stateImage[currentRollover] = inactive[currentRollover];
 	setState(currentRollover, INACTIVE, true);
-	editor.messageClear(title[currentRollover]);
-	/*
-	if (editor.status.getText().equals(title[currentRollover])) {
-	  editor.message("");
-	}
-	*/
+	messageClear(title[currentRollover]);
 	currentRollover = -1;
 	//update();
       }
@@ -247,7 +249,7 @@ public class PdeEditorButtons extends Panel {
       break;
     case ROLLOVER: 
       stateImage[slot] = rollover[which[slot]]; 
-      editor.message(title[which[slot]]);
+      message(title[which[slot]]);
       break;
     }
     if (updateAfter) update();
@@ -260,11 +262,8 @@ public class PdeEditorButtons extends Panel {
   public boolean mouseExit(Event e, int x, int y) {
     // kludge
     for (int i = 0; i < BUTTON_COUNT; i++) {
-      editor.messageClear(title[i]);
+      messageClear(title[i]);
     }
-    //if (currentRollover != -1) {
-    //editor.message("");
-    //}
     return mouseMove(e, x, y);
   }
 
@@ -289,15 +288,13 @@ public class PdeEditorButtons extends Panel {
 
     case FULL_SCREEN: 
       editor.enableFullScreen(); 
-      //editor.messageClear(title[which[buttonCount-1]]);
       which[buttonCount-1] = DISABLE_FULL_SCREEN;
-      editor.message(title[which[buttonCount-1]]);
+      message(title[which[buttonCount-1]]);
       break;
     case DISABLE_FULL_SCREEN: 
       editor.disableFullScreen(); 
-      //editor.messageClear(title[which[buttonCount-1]]);
       which[buttonCount-1] = FULL_SCREEN;
-      editor.message(title[which[buttonCount-1]]);
+      message(title[which[buttonCount-1]]);
       break;
     }
     //update();
@@ -339,7 +336,16 @@ public class PdeEditorButtons extends Panel {
     return true;
   }
   */
-  
+
+  public void message(String msg) {  // formerly part of PdeEnvironment
+    status.setText(msg + "  ");  // don't mind the hack
+  }
+
+  public void messageClear(String msg) {
+    if (status.getText().equals(msg + "  ")) status.setText(PdeEditor.EMPTY);
+  }
+
+
   public Dimension preferredSize() {
     return new Dimension(200, 35);
   }
