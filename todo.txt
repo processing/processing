@@ -1,13 +1,14 @@
 0030
+X attempt to fold serial into bapplet, but mostly fail
 _ kjc issues
+_   modify to allow for the 'build' directory in lib
 X   convert color -> int
 X     also include #ff00cc -> proper conversion
 X   comments are removed from exported files
-_   modify to allow for the 'build' directory on lib
 _ make a new 'dist' function for building
 
 _ exceptions in draw() apps aren't caught
-_   the program resize(200, 200); just does nothing
+_   the program resize(200, 200); just does nothing (doesn't complain)
 _ fold simpleserial into BApplet
 _   sprint an sprintln functions
 _   make i/o work just like mouse (event driven, with dflt behavior)
@@ -53,6 +54,21 @@ _   after user hits 'enter', checks to see if user exists
 _     if not, pops up message asking if they want to change
 _       message goes in same spot as error/status label (turns yellow?)
 _     if user says 'no', then 
+
+
+BUILDING P5
+-> where to install jikes, jre, others?
+   jre may need to be back in cvs, but annoying for dist
+   because of all the CVS directories that it makes
+cvs co processing
+cd processing
+cvs co bagel
+cd bagel
+rm -rf jgl
+rm -rf cpp
+cd ..
+rm -rf web (optional, if you're only doing java dev)
+cvs update -P (prune empty directories)
 
 
 (C)BAGEL WORK
