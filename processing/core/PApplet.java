@@ -76,7 +76,7 @@ public class PApplet extends Applet
    * Last key pressed. If it's a coded key 
    * (arrows or ctrl/shift/alt, this will be set to 0xffff or 65535).
    */
-  public int key;
+  public char key;
 
   /**
    * If the key is a coded key, i.e. up/down/ctrl/shift/alt
@@ -515,7 +515,7 @@ public class PApplet extends Applet
                                       " 1b draw");
 
             for (int i = 0; i < libraryCount; i++) {
-              if (libraryCalls[PLibrary.PRE][i]) libraries[i].pre();
+              if (libraryCalls[i][PLibrary.PRE]) libraries[i].pre();
             }
 
             draw();
@@ -530,7 +530,7 @@ public class PApplet extends Applet
                                       " 2b endFrame");
 
             for (int i = 0; i < libraryCount; i++) {
-              if (libraryCalls[PLibrary.DRAW][i]) libraries[i].draw();
+              if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
             }
 
             g.endFrame();
@@ -555,7 +555,7 @@ public class PApplet extends Applet
             //frameCount++;
 
             for (int i = 0; i < libraryCount; i++) {
-              if (libraryCalls[PLibrary.POST][i]) libraries[i].post();
+              if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
             }            
           }
         }
@@ -4496,13 +4496,13 @@ public class PApplet extends Applet
   }
 
 
-  public void textFont(PFont which, float size) {
-     g.textFont(which, size);
+  public void textSize(float size) {
+     g.textSize(size);
   }
 
 
-  public void textSize(float size) {
-     g.textSize(size);
+  public void textFont(PFont which, float size) {
+     g.textFont(which, size);
   }
 
 

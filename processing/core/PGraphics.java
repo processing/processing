@@ -47,7 +47,7 @@ public class PGraphics extends PImage
   // specifics for java memoryimagesource
   DirectColorModel cm;
   MemoryImageSource mis;
-  Image image;
+  public Image image;
 
   // ........................................................
 
@@ -301,9 +301,11 @@ public class PGraphics extends PImage
   int sphere_detail = 0;
   float sphereX[], sphereY[], sphereZ[];
 
-  int text_mode;
-  int text_space;
+  //int text_mode;
+  //int text_space;
   PFont text_font;
+
+  // used by PFont/PGraphics.. forces higher quality texture rendering
   boolean drawing_text = false;  // used by PFont
 
 
@@ -495,8 +497,8 @@ public class PGraphics extends PImage
     rect_mode    = CORNER;
     ellipse_mode = CENTER;
     angle_mode   = RADIANS;
-    text_mode    = ALIGN_LEFT;
-    text_space   = OBJECT_SPACE;
+    //text_mode    = ALIGN_LEFT;
+    //text_space   = OBJECT_SPACE;
 
     for (int i = 2; i < MAX_LIGHTS; i++) {
       lightKind[i] = DISABLED;
@@ -4189,67 +4191,59 @@ public class PGraphics extends PImage
 
 
   public void textFont(PFont which) {
-    if (which == null) {
-      System.err.println("Ignoring improperly loaded font in textFont()");
-      return;
-    }
-    text_font = which;
-    if (text_space != SCREEN_SPACE) {
+    if (which != null) {
+      text_font = which;
       text_font.resetSize();
+      text_font.resetLeading();
+
     } else {
-      //text_font.size(text_font.iwidth);
-      text_font.size(text_font.mbox);
+      System.err.println("Ignoring improperly loaded font in textFont()");
     }
-    text_font.resetLeading();
   }
 
-  public void textFont(PFont which, float size) {
-    if (which == null) {
-      System.err.println("Ignoring improperly loaded font in textFont()");
-      return;
-    }
-    text_font = which;
-    if (text_space != SCREEN_SPACE) {
-      text_font.size(size);
-    } else {
-      System.err.println("Cannot set size of SCREEN_SPACE fonts");
-      //text_font.size(text_font.iwidth);
-      text_font.size(text_font.mbox);
-    }
-    text_font.resetLeading();
-  }
 
   public void textSize(float size) {
-    if (text_font == null) {
+    if (text_font != null) {
+      text_font.size(size);
+
+    } else {
       System.err.println("First set a font before setting its size.");
-      return;
     }
-    if (text_space == SCREEN_SPACE) {
-      System.err.println("Cannot set size of SCREEN_SPACE fonts.");
-      return;
-    }
-    text_font.size(size);
   }
+
+
+  public void textFont(PFont which, float size) {
+    textFont(which);
+    textSize(size);
+  }
+
 
   public void textLeading(float leading) {
-    if (text_font == null) {
+    if (text_font != null) {
+      text_font.leading(leading);
+
+    } else {
       System.err.println("First set a font before setting its leading.");
-      return;
     }
-    text_font.leading(leading);
   }
+
 
   public void textMode(int mode) {
-    text_mode = mode;
+    if (text_font != null) {
+      text_font.align(mode);
+
+    } else {
+      System.err.println("First set a font before setting its mode.");
+    }
   }
 
-  public void textSpace(int space) {
-    text_space = space;
 
-    if ((space == SCREEN_SPACE) && (text_font != null)) {
-      //text_font.size(text_font.iwidth);
-      text_font.size(text_font.mbox);
-      text_font.resetLeading();
+  public void textSpace(int space) {
+    if (text_font != null) {
+      text_font.space(space);
+
+    } else {
+      System.err.println("First set a font before setting the space.");
     }
   }
 
@@ -4259,17 +4253,12 @@ public class PGraphics extends PImage
   }
 
   public void text(char c, float x, float y, float z) {
-    if (text_font == null) {
-      System.err.println("text(): first set a font before drawing text");
-      return;
-    }
-    if (text_mode == ALIGN_CENTER) {
-      x -= text_font.width(c) / 2f;
+    if (text_font != null) {
+      text_font.text(c, x, y, z, this);
 
-    } else if (text_mode == ALIGN_RIGHT) {
-      x -= text_font.width(c);
+    } else {
+      System.err.println("text(): first set a font before drawing text");
     }
-    text_font.text(c, x, y, z, this);
   }
 
 
@@ -4278,17 +4267,12 @@ public class PGraphics extends PImage
   }
 
   public void text(String s, float x, float y, float z) {
-    if (text_font == null) {
-      System.err.println("text(): first set a font before drawing text");
-      return;
-    }
-    if (text_mode == ALIGN_CENTER) {
-      x -= text_font.width(s) / 2f;
+    if (text_font != null) {
+      text_font.text(s, x, y, z, this);
 
-    } else if (text_mode == ALIGN_RIGHT) {
-      x -= text_font.width(s);
+    } else {
+      System.err.println("text(): first set a font before drawing text");
     }
-    text_font.text(s, x, y, z, this);
   }
 
 
@@ -4297,18 +4281,12 @@ public class PGraphics extends PImage
   }
 
   public void text(String s, float x, float y, float z, float w, float h) {
-    if (text_font == null) {
-      System.err.println("text(): first set a font before drawing text");
-      return;
-    }
-    if (text_mode == ALIGN_CENTER) {
-      x -= text_font.width(s) / 2f;
+    if (text_font != null) {
+      text_font.text(s, x, y, z, w, h, this);
 
-    } else if (text_mode == ALIGN_RIGHT) {
-      x -= text_font.width(s);
+    } else {
+      System.err.println("text(): first set a font before drawing text");
     }
-    //text_font.text(s, x, y, z, this);
-    text_font.text(s, x, y, z, w, h, this);
   }
 
 
