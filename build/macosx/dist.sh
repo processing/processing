@@ -70,6 +70,7 @@ chmod +x processing/Processing.app/Contents/MacOS/JavaApplicationStub
 RES=processing/Processing.app/Contents/Resources/Java/
 mkdir -p $RES
 mv processing/lib/*.jar $RES/
+mv $RES/core.jar processing/lib/
 
 # directories used by the app
 mkdir processing/lib/build

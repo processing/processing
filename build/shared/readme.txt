@@ -203,6 +203,13 @@ quitting presentation mode.. on other platforms, hitting the
 there seems to be some key event weirdness under osx. we hope to find 
 a fix someday.
 
+out of memory? right-click on processing, select "show package
+contents", then edit "Info.plist" inside "Contents". change these lines:
+		<key>VMOptions</key>
+		<string>-Xms128M -Xmx256M</string>
+to set to something higher than 128M and 256M (128 and 256 megabytes
+of ram) as you need to / at your own risk.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
