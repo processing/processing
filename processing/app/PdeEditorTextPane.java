@@ -67,6 +67,8 @@ public class PdeEditorTextPane extends JTextPane {
     setStyledDocument(document);
     // MAYBE?    textPane = this;
 
+    //setPreferredSize(new Dimension(620, 460));
+
     //setDoubleBuffered(true);
 
     //textPane.setCaretPosition(0);
