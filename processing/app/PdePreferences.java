@@ -261,6 +261,7 @@ public class PdePreferences extends JComponent {
 
     exportLibraryBox = new JCheckBox("Enable advanced \"Library\" features" + 
                                      " (requires restart)");
+    exportLibraryBox.setEnabled(false);
     pain.add(exportLibraryBox);
     d = exportLibraryBox.getPreferredSize();
     exportLibraryBox.setBounds(left, top, d.width, d.height);
