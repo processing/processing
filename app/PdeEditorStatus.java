@@ -372,6 +372,10 @@ public class PdeEditorStatus extends Panel
     return new Dimension(300, PdeEditor.GRID_SIZE);
   }
 
+    public Dimension getMinimumSize() {
+	return getPreferredSize();
+    }
+
 
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == noButton) {

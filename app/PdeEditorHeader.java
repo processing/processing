@@ -203,6 +203,11 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
 
   public Dimension getPreferredSize() {
+      //return new Dimension(300, PdeEditor.GRID_SIZE);
+      return getMinimumSize();
+  }
+
+  public Dimension getMinimumSize() {
     return new Dimension(300, PdeEditor.GRID_SIZE);
   }
 
