@@ -29,17 +29,18 @@ import javax.swing.*;
 
 public class PdeCompiler implements PdeMessageConsumer {
   static final String BUGS_URL = 
-    "http://Proce55ing.net/bugs/";
+    "http://processing.org/bugs/";
   static final String SUPER_BADNESS = 
     "Compiler error, please submit this code to " + BUGS_URL;
 
-  String buildPath;
-  String className;
-  File includeFolder;
+  //String buildPath;
+  //String className;
+  //File includeFolder;
   PdeException exception;
-  PdeEditor editor;
+  //PdeEditor editor;
 
 
+  /*
   public PdeCompiler(String buildPath, String className, 
                      File includeFolder, PdeEditor editor) {
     this.buildPath = buildPath;
@@ -50,24 +51,27 @@ public class PdeCompiler implements PdeMessageConsumer {
 
 
   public boolean compile(PrintStream leechErr) {
+  */
+
+  public PdeCompiler() { }
+
+
+  public boolean compile(PdeSketch sketch) {
     String userdir = System.getProperty("user.dir") + File.separator;
 
     //System.out.println(userdir + "jikes");
     //System.out.println(System.getProperty("sun.boot.class.path"));
 
-    String command[] = new String[] { 
-#ifdef MACOS
+    String command[] = new String[] {
       // linux doesn't seem to like this
       // though windows probably doesn't care
-      userdir + "jikes",
-#else 
-      "jikes",
-#endif
+      ((PdeBase.platform == PdeBase.MACOSX) ? userdir + "jikes" : "jikes"),
 
       // necessary to make output classes compatible with 1.1
       // i.e. so that exported applets can work with ms jvm on the web
       "-target",
-      "1.1",
+      PdePreferences.get("compiler.jdk_version"),  //"1.1",
+      // let the incompatability headache begin
 
       // used when run without a vm ("expert" mode)
       "-bootclasspath",
@@ -93,7 +97,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     firstErrorFound = false;  // haven't found any errors yet
     secondErrorFound = false;
 
-    int result=0; // pre-initialized to quiet a bogus warning from jikes
+    int result = 0; // pre-initialized to quiet a bogus warning from jikes
     try { 
 
       // execute the compiler, and create threads to deal with the input
