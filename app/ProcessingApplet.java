@@ -57,6 +57,22 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public void start() {
+    thread = new Thread(this);
+    thread.start();
+  }
+
+
+  // maybe start should also be used as the method for kicking
+  // the thread on, instead of doing it inside paint()
+  public void stop() {
+    if (thread != null) {
+      thread.stop();
+      thread = null;
+    }
+  }
+
+
   // ------------------------------------------------------------
 
 
@@ -79,7 +95,8 @@ public class ProcessingApplet extends Applet
 
   // this is where screen grab could attach itself
   public void update() {
-    paint(this.getGraphics());
+    Graphics g = this.getGraphics();
+    if (g != null) paint(g);
   }
 
   public void update(Graphics screen) {
@@ -87,14 +104,23 @@ public class ProcessingApplet extends Applet
   }
 
   public void paint(Graphics screen) {
-    if (thread == null) {
+    /*
+    if ((thread == null) && !finished) {
       // kickstart my heart
       thread = new Thread(this);
       thread.start();
 
     } else {
+      if (screen == null) System.out.println("screen is null");
+      if (g == null) System.out.println("g is null");
       screen.drawImage(g.image, 0, 0, null);
     }
+    */
+    if (screen == null) 
+      System.out.println("ProcessinApplet.paint screen is null");
+    if (g == null) 
+      System.out.println("ProcessinApplet.paint g is null");
+    screen.drawImage(g.image, 0, 0, null);
   }
 
 
@@ -355,7 +381,7 @@ public class ProcessingApplet extends Applet
     g.rect(x1, y1, x2, y2);
   }
 
-  public void cube(float size) {  // radius*2
+  public void cube(float size) {
     g.cube(size);
   }
 
@@ -368,7 +394,7 @@ public class ProcessingApplet extends Applet
     g.sphere(radius);
   }
 
-  public void potato() {  // my teapot equivalent
+  public void potato() {
     g.potato();
   }
 

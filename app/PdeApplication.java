@@ -52,15 +52,24 @@ implements ActionListener
       e.printStackTrace();
       System.exit(1);
     }
-    int width = getInteger("width", 600);
-    int height = getInteger("height", 350);
+    int width = getInteger("window.width", 600);
+    int height = getInteger("window.height", 350);
     // ms jdk requires that BorderLayout is set explicitly
     frame.setLayout(new BorderLayout());
     frame.add("Center", this);
     init();
     Insets insets = frame.getInsets();
-    frame.reshape(50, 50, width + insets.left + insets.right, 
-		  height + insets.top + insets.bottom);
+
+    Toolkit tk = Toolkit.getDefaultToolkit();
+    Dimension screen = tk.getScreenSize();
+    int frameX = getInteger("window.x", (screen.width - width) / 2);
+    int frameY = getInteger("window.y", (screen.height - height) / 2);
+
+    frame.setBounds(frameX, frameY, 
+		    width + insets.left + insets.right, 
+		    height + insets.top + insets.bottom);
+    //frame.reshape(50, 50, width + insets.left + insets.right, 
+    //	  height + insets.top + insets.bottom);
 
     // i don't like this being here, but..
     //((PdeEditor)environment).graphics.frame = frame;
