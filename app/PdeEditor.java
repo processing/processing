@@ -590,29 +590,30 @@ public class PdeEditor extends JPanel {
         }
       }
 
-/*
-this needs to be reworked. there are three essential parts
+      /*
+        this needs to be reworked. there are three essential parts
 
-(0. if not java, then use another 'engine'.. i.e. python)
+        (0. if not java, then use another 'engine'.. i.e. python)
 
-1. do the p5 language preprocessing
-   -> this creates a working .java file in a specific location
-   better yet, just takes a chunk of java code and returns a new/better string
-   editor can take care of saving this to a file location
+        1. do the p5 language preprocessing
+        -> this creates a working .java file in a specific location
+           better yet, just takes a chunk of java code and returns a 
+           new/better string editor can take care of saving this to a 
+           file location
 
-2. compile the code from that location
-   -| catching errors along the way
-   -| currently done with kjc, but would be nice to use jikes
-   -> placing it in a ready classpath, or .. ?
+        2. compile the code from that location
+           catching errors along the way
+           currently done with kjc, but would be nice to use jikes
+           placing it in a ready classpath, or .. ?
 
-3. run the code 
-   needs to communicate location for window 
-     and maybe setup presentation space as well
-   -> currently done internally
-   -> would be nice to use external (at least on non-os9)
+        3. run the code 
+           needs to communicate location for window 
+           and maybe setup presentation space as well
+           -> currently done internally
+           -> would be nice to use external (at least on non-os9)
 
-afterwards, some of these steps need a cleanup function
-*/
+           afterwards, some of these steps need a cleanup function
+      */
       int numero1 = (int) (Math.random() * 10000);
       int numero2 = (int) (Math.random() * 10000);
       String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
@@ -803,16 +804,6 @@ afterwards, some of these steps need a cleanup function
     } else {
       checkModified2();
     }
-    /*
-    while (status.response == 0) {
-      System.out.println("waiting for a response " + 
-                         System.currentTimeMillis());
-      //try {
-      //Thread.sleep(100);
-      //} catch (InterruptedException e) { }
-    }
-    */
-    //return true;
   }
 
   public void checkModified2() {
@@ -893,25 +884,6 @@ afterwards, some of these steps need a cleanup function
     }
   }
 
-  /*
-  static String pad2(int what) {
-    if (what < 10) return "0" + what;
-    else return String.valueOf(what);
-  }
-
-  static String pad3(int what) {
-    if (what < 10) return "00" + what;
-    else if (what < 100) return "0" + what;
-    else return String.valueOf(what);
-  }
-
-  static String pad4(int what) {
-    if (what < 10) return "000" + what;
-    else if (what < 100) return "00" + what;
-    else if (what < 1000) return "0" + what;
-    else return String.valueOf(what);
-  }
-  */
 
   public void skOpen(String path, String name) {
     doStop();
@@ -919,20 +891,9 @@ afterwards, some of these steps need a cleanup function
   }
 
   protected void skOpen2(String path, String name) {
-    //System.out.println("skOpen2 " + path + " " + name);
-    //header.isProject = true;
-    //header.project = name;
-    //System.out.println("skopen " + path + " " + name);
     File osketchFile = new File(path, name + ".pde");
     File osketchDir = new File(path);
-    //System.out.println("skopen:");
-    //System.out.println("1: " + name);
-    //System.out.println("2: " + osketchFile);
-    //System.out.println("3: " + osketchDir);
     handleOpen(name, osketchFile, osketchDir);
-    //handleOpen(name, 
-    //       new File(path, name + ".pde"), 
-    //       new File(path));
   }
 
 
@@ -1064,15 +1025,6 @@ afterwards, some of these steps need a cleanup function
       writer.flush();
       writer.close();
 
-      /*
-      FileWriter writer = new FileWriter(file);
-      writer.write(s);
-      writer.flush();
-      writer.close();
-      */
-
-      //lastDirectory = directory;
-      //lastFile = filename;
       sketchFile = file;
       setSketchModified(false);
       message("Done saving " + filename + ".");
@@ -1153,98 +1105,6 @@ afterwards, some of these steps need a cleanup function
   }
 
 
-  /*
-  public void skDuplicateRename(boolean rename) {
-    status.edit(rename ? "Rename to?" : "Duplicate title?", 
-                sketchName, rename);
-  }
-
-  public void skDuplicateRename2(String newSketchName, boolean rename) {
-    if (newSketchName.equals(sketchName)) {
-      // explain to the user that they're lame
-      //      System.err.println("what kind of a loser " + 
-      //                         (rename ? "renames the directory" :
-      //                          "creates a duplicate") + 
-      //                         " using the same name?");
-      return;
-    }
-    //System.out.println("rename to " + newname);
-    doSave(); // save changes before renaming.. risky but oh well
-    // call skOpen2("sketchbook/default/example1", "example1");
-    // which is sketchDir, sketchName
-    File newSketchDir = new File(sketchDir.getParent() +
-                                 File.separator + newSketchName);
-    File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
-    //System.out.println("new shite:");
-    //System.out.println(newSketchName);
-    //System.out.println(newSketchDir);
-    //System.out.println(newSketchFile);
-    //boolean result = sketchDir.renameTo(newSketchDir);
-    //System.out.println(result);
-
-
-    //    System.out.println("move \"" + sketchFile.getPath() + "\" " +
-    //                       newSketchName + ".pde");
-    //    System.out.println("move \"" + sketchDir.getPath() + "\" " + 
-    //                       newSketchName);
-
-    // make new dir
-    newSketchDir.mkdirs();
-    // copy the sketch file itself with new name
-    copyFile(sketchFile, newSketchFile);
-
-    // copy everything from the old dir to the new one
-    copyDir(sketchDir, newSketchDir);
-
-    // remove the old sketch file from the new dir
-    new File(newSketchDir, sketchName + ".pde").delete();
-
-    // remove the old dir (!)
-    if (rename) removeDir(sketchDir);
-    // oops.. has to be done before opening, otherwise the new
-    // dir is set to sketchDir.. duh..
-
-    base.rebuildSketchbookMenu();
-
-    // open the new guy
-    if (rename) handleOpen(newSketchName, newSketchFile, newSketchDir);
-
-    //if (result) {
-    //if (sketchDir.renameTo(newSketchDir)) {
-    //} else {
-    //System.err.println("couldn't rename " + sketchDir + " to " + 
-    //                 newSketchDir);
-    //} 
-  }
-  */
-
-    /*
-    try {
-      Runtime rt = Runtime.getRuntime();
-      System.err.println("22");
-      Process process = 
-        rt.exec("cmd /c move \"" + sketchFile.getPath() + "\" " +
-                newSketchName + ".pde");
-      System.err.println("1");
-      InputStream errors = process.getErrorStream();
-      System.err.println("33");
-      while (errors.available() > 0) {
-        System.err.println("reading errors");
-        System.out.print((char)errors.read());
-      }
-      System.err.println("waiting for");
-      try {
-        process.waitFor();
-      } catch (InterruptedException e) { }
-      System.err.println("done maybe");
-      //Runtime.getRuntime().exec("move \"" + sketchDir.getPath() + "\" " + 
-      //                        newSketchName);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    */
-
-
   public void skExport() {
     doStop();
     message("Exporting for the web...");
@@ -1314,16 +1174,6 @@ afterwards, some of these steps need a cleanup function
         // message() will already have error message in this case
         return;
       }
-
-      // not necessary, now compiles into applet dir
-      //System.out.println("exportskname = " + exportSketchName);
-      // copy .java to project dir
-      //String javaName = exportSketchName + ".java";
-      //copyFile(new File(javaName), new File(projectDir, javaName));
-      //copyFile(new File(javaName), new File(appletDir, javaName));
-
-      // remove temporary .java and .class files
-      // cleanTempFiles(buildPath);
 
       int wide = BApplet.DEFAULT_WIDTH;
       int high = BApplet.DEFAULT_HEIGHT;
@@ -1571,27 +1421,6 @@ afterwards, some of these steps need a cleanup function
 #endif
       }
 
-      //url = new URL(urlstr + "sketch.properties");
-
-      /*
-      URL url = getClass().getResource("sketch.properties");
-      if (url == null) {
-        //url = getClass().getResource(getClass().getName() + ".class");
-        url = getClass().getResource("buttons.gif");
-        String urlstr = url.toString();
-        //int lastSlash = urlstr.lastIndexOf("/");
-        urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1);
-        //System.out.println(urlstr);
-        url = new URL(urlstr + "sketch.properties");
-      }
-      //System.out.println(url);
-      //System.exit(0);
-
-      URLConnection conn = url.openConnection();
-      conn.setDoOutput(true);
-      OutputStream pstream = conn.getOutputStream();
-      */
-
       Properties skprops = new Properties();
 
       Rectangle window = PdeBase.frame.getBounds();
@@ -1693,9 +1522,6 @@ afterwards, some of these steps need a cleanup function
         gotBlankLine = false;
       }
     }
-    //textarea.editorSetText(buffer.toString());
-    //textarea.setText(buffer.toString());
-    //textarea.select(0, 0);
     changeText(buffer.toString(), false);
     setSketchModified(true);
     buttons.clear();
@@ -1725,15 +1551,6 @@ afterwards, some of these steps need a cleanup function
       textarea.setCaretVisible(true);
     }
   }
-
-
-  /*
-  public void terminate() {   // part of PdeEnvironment
-    //runner.stop();
-    if (engine != null) engine.stop();
-    message(EMPTY);
-  }
-  */
 
 
   // TODO iron out bugs with this code under
@@ -1783,54 +1600,36 @@ afterwards, some of these steps need a cleanup function
     // in this case. [dmose]
     if (st == -1) st = len;
 
-    //System.out.println("st/end: "+st+"/"+end);
     textarea.select(st, end);
-    //if (iexplorerp) {
-    //textarea.invalidate();
-    //textarea.repaint();
-    //}
   }
 
 
   public void error(PdeException e) {   // part of PdeEnvironment
     if (e.line >= 0) highlightLine(e.line); 
-    //dbcp.repaint(); // button should go back to 'run'
-    //System.err.println(e.getMessage());
-    //message("Problem: " + e.getMessage());
 
     status.error(e.getMessage());
-    //message(e.getMessage());
-
     buttons.clearRun();
-
-    //showStatus(e.getMessage());
   }
 
 
   public void finished() {  // part of PdeEnvironment
-    //#ifdef RECORDER
-    //    PdeRecorder.stop();
-    //#endif
     running = false;
-    //System.out.println("NOT RUNNING");
     buttons.clearRun();
     message("Done.");
   }
 
 
   public void message(String msg) {  // part of PdeEnvironment
-    //status.setText(msg);
-    //System.out.println("PdeEditor.message " + msg);
     status.notice(msg);
   }
   
   
   public void messageClear(String msg) {
-    //if (status.getText().equals(msg)) status.setText(EMPTY);
-    //System.out.println("PdeEditor.messageClear " + msg);
     status.unnotice(msg);
   }
 
+
+  ///////////////////////////////////////////////////////////////////
 
   // utility functions
 
@@ -1871,10 +1670,6 @@ afterwards, some of these steps need a cleanup function
   }
 
   static protected void copyDir(File sourceDir, File targetDir) {
-    //System.out.println("dir " + sourceDir);
-    //System.out.println(" -> " + targetDir);
-    //System.out.println();
-
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
