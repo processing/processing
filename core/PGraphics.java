@@ -203,7 +203,7 @@ public class PGraphics extends PImage
 
   // OLD_GRAPHICS
 
-  PPolygon polygon;     // general polygon to use for shape
+  protected PPolygon polygon;     // general polygon to use for shape
   PPolygon fpolygon;    // used to fill polys for tri or quad strips
   PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
@@ -259,7 +259,7 @@ public class PGraphics extends PImage
   public float normalX, normalY, normalZ;
 
   // used by NEW_GRAPHICS, or by OLD_GRAPHICS simply as a boolean
-  private PImage textureImage;
+  public PImage textureImage;
 
   // NEW_GRAPHICS
   static final int DEFAULT_TEXTURES = 3;
@@ -274,7 +274,7 @@ public class PGraphics extends PImage
   boolean unchangedZ;
   boolean strokeChanged;
   boolean fillChanged;
-  boolean normalChanged;
+  protected boolean normalChanged;
 
 
   // ........................................................
@@ -318,7 +318,7 @@ public class PGraphics extends PImage
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  public int sphere_detail = 0;
+  public int sphereDetail = 0;
   float sphereX[], sphereY[], sphereZ[];
 
   //int text_mode;
@@ -515,8 +515,8 @@ public class PGraphics extends PImage
     lightG[1] = ONE;
     lightB[1] = ONE;
 
-    textureMode  = IMAGE_SPACE;
-    rectMode   = CORNER;
+    textureMode = IMAGE_SPACE;
+    rectMode    = CORNER;
     ellipseMode = CENTER;
     angleMode   = RADIANS;
     //text_mode    = ALIGN_LEFT;
@@ -3212,7 +3212,7 @@ public class PGraphics extends PImage
     int ix2 = image.width;
     int iy2 = image.height;
 
-    if (image_mode == CENTER) {
+    if (imageMode == CENTER) {
       sx1 -= image.width / 2;
       sy1 -= image.height / 2;
     }
@@ -3550,42 +3550,42 @@ public class PGraphics extends PImage
   // precompute vertices along unit sphere with new detail setting
 
   public void sphereDetail(int res) {
-    if (res<3) res=3; // force a minimum res
-    if (res != sphere_detail) {
-      float delta = (float)SINCOS_LENGTH/res;
-      float[] cx = new float[res];
-      float[] cz = new float[res];
-      // calc unit circle in XZ plane
-      for (int i = 0; i < res; i++) {
-        cx[i] = cosLUT[(int) (i*delta) % SINCOS_LENGTH];
-        cz[i] = sinLUT[(int) (i*delta) % SINCOS_LENGTH];
-      }
-      // computing vertexlist
-      // vertexlist starts at south pole
-      int vertCount = res * (res-1) + 2;
-      int currVert = 0;
+    if (res < 3) res = 3; // force a minimum res
+    if (res == sphereDetail) return;
 
-      // re-init arrays to store vertices
-      sphereX = new float[vertCount];
-      sphereY = new float[vertCount];
-      sphereZ = new float[vertCount];
-
-      float angle_step = (SINCOS_LENGTH*0.5f)/res;
-      float angle = angle_step;
-
-      // step along Y axis
-      for (int i = 1; i < res; i++) {
-        float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
-        float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
-        for (int j = 0; j < res; j++) {
-          sphereX[currVert] = cx[j] * curradius;
-          sphereY[currVert] = currY;
-          sphereZ[currVert++] = cz[j] * curradius;
-        }
-        angle += angle_step;
-      }
-      sphere_detail = res;
+    float delta = (float)SINCOS_LENGTH/res;
+    float[] cx = new float[res];
+    float[] cz = new float[res];
+    // calc unit circle in XZ plane
+    for (int i = 0; i < res; i++) {
+      cx[i] = cosLUT[(int) (i*delta) % SINCOS_LENGTH];
+      cz[i] = sinLUT[(int) (i*delta) % SINCOS_LENGTH];
     }
+    // computing vertexlist
+    // vertexlist starts at south pole
+    int vertCount = res * (res-1) + 2;
+    int currVert = 0;
+
+    // re-init arrays to store vertices
+    sphereX = new float[vertCount];
+    sphereY = new float[vertCount];
+    sphereZ = new float[vertCount];
+
+    float angle_step = (SINCOS_LENGTH*0.5f)/res;
+    float angle = angle_step;
+
+    // step along Y axis
+    for (int i = 1; i < res; i++) {
+      float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
+      float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
+      for (int j = 0; j < res; j++) {
+        sphereX[currVert] = cx[j] * curradius;
+        sphereY[currVert] = currY;
+        sphereZ[currVert++] = cz[j] * curradius;
+      }
+      angle += angle_step;
+    }
+    sphereDetail = res;
   }
 
 
@@ -3607,7 +3607,7 @@ public class PGraphics extends PImage
   }
 
   public void sphere(float x, float y, float z, float r) {
-    if (sphere_detail == 0) {
+    if (sphereDetail == 0) {
       sphereDetail(30);
     }
 
@@ -3620,7 +3620,7 @@ public class PGraphics extends PImage
 
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
-    for (int i = 0; i < sphere_detail; i++) {
+    for (int i = 0; i < sphereDetail; i++) {
       vertex(0, -1, 0);
       vertex(sphereX[i], sphereY[i], sphereZ[i]);
     }
@@ -3630,12 +3630,12 @@ public class PGraphics extends PImage
 
     // middle rings
     int voff = 0;
-    for(int i = 2; i < sphere_detail; i++) {
+    for(int i = 2; i < sphereDetail; i++) {
       v1=v11=voff;
-      voff += sphere_detail;
+      voff += sphereDetail;
       v2=voff;
       beginShape(TRIANGLE_STRIP);
-      for (int j = 0; j < sphere_detail; j++) {
+      for (int j = 0; j < sphereDetail; j++) {
         vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
         vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
       }
@@ -3649,7 +3649,7 @@ public class PGraphics extends PImage
 
     // add the northern cap
     beginShape(TRIANGLE_STRIP);
-    for (int i = 0; i < sphere_detail; i++) {
+    for (int i = 0; i < sphereDetail; i++) {
       v2 = voff + i;
       vertex(0, 1, 0);
       vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
@@ -4091,7 +4091,7 @@ public class PGraphics extends PImage
 
   public void image(PImage image, float x1, float y1) {
     if ((dimensions == 0) && !lights && !tint &&
-        (image_mode != CENTER_RADIUS)) {
+        (imageMode != CENTER_RADIUS)) {
       // if drawing a flat image with no warping,
       // use faster routine to draw direct to the screen
       flat_image(image, (int)x1, (int)y1);
@@ -4122,7 +4122,7 @@ public class PGraphics extends PImage
   public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
-    switch (image_mode) {
+    switch (imageMode) {
     case CORNERS:
       break;
     case CORNER:
@@ -4141,21 +4141,16 @@ public class PGraphics extends PImage
       break;
     }
 
-    // fill must be set to 'true' for image to show up
-    // (although need to do some sort of color blending)
-    // stroke should be set to false or it gets confusing
-    // (and annoying) because one has to keep disabling stroke
-
     boolean savedStroke = stroke;
     boolean savedFill = fill;
+
+    stroke = false;
+    fill = true;
 
     float savedFillR = fillR;
     float savedFillG = fillG;
     float savedFillB = fillB;
     float savedFillA = fillA;
-
-    stroke = false;
-    fill = true;
 
     if (tint) {
       fillR = tintR;
@@ -4164,7 +4159,10 @@ public class PGraphics extends PImage
       fillA = tintA;
 
     } else {
-      fillR = fillG = fillB = fillA = 1;
+      fillR = 1;
+      fillG = 1;
+      fillB = 1;
+      fillA = 1;
     }
 
     beginShape(QUADS);
@@ -4512,10 +4510,19 @@ public class PGraphics extends PImage
 
 
   /**
+   * Calling cameraMode(PERSPECTIVE) will setup the standard
+   * Processing transformation.
+   *
+   * cameraMode(ORTHOGRAPHIC) will setup a straight orthographic
+   * projection.
+   *
+   * cameraMode(CUSTOM) will set the perspective (camera) matrix
+   * to identity, after which time the user can make a mess.
+   *
    * Note that this setting gets nuked if resize() is called.
    */
-  public void cameraMode(int icameraMode) {
-    cameraMode = icameraMode;  // this doesn't do much
+  public void cameraMode(int mode) {
+    cameraMode = mode;  // this doesn't do much
 
     if (cameraMode == PERSPECTIVE) {
       beginCamera();
@@ -4530,6 +4537,11 @@ public class PGraphics extends PImage
       beginCamera();
       resetMatrix();
       ortho(0, width, 0, height, -10, 10);
+      endCamera();
+
+    } else if (cameraMode == CUSTOM) {
+      beginCamera();
+      resetMatrix();
       endCamera();
     }
   }
@@ -4922,13 +4934,13 @@ public class PGraphics extends PImage
   // COLOR
 
 
-  public void colorMode(int icolorMode) {
-    colorMode = icolorMode;
+  public void colorMode(int mode) {
+    colorMode = mode;
   }
 
 
-  public void colorMode(int icolorMode, float max) {
-    colorMode(icolorMode, max, max, max, max);
+  public void colorMode(int mode, float max) {
+    colorMode(mode, max, max, max, max);
   }
 
 
@@ -4936,15 +4948,15 @@ public class PGraphics extends PImage
   // so colorMode(RGB, 255, 255, 255) would retain the previous max alpha
   // could be a problem when colorMode(HSB, 360, 100, 100);
 
-  public void colorMode(int icolorMode,
+  public void colorMode(int mode,
                         float maxX, float maxY, float maxZ) {
-    colorMode(icolorMode, maxX, maxY, maxZ, colorModeA); //maxX); //ONE);
+    colorMode(mode, maxX, maxY, maxZ, colorModeA); //maxX); //ONE);
   }
 
 
-  public void colorMode(int icolorMode,
+  public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
-    colorMode = icolorMode;
+    colorMode = mode;
 
     colorModeX = maxX;  // still needs to be set for hsb
     colorModeY = maxY;
