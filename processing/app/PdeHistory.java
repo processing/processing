@@ -69,6 +69,8 @@ public class PdeHistory {
   public PdeHistory(PdeEditor editor) {
     this.editor = editor;
 
+    menu = new JMenu("History");
+
     menuListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           retrieve(e.getActionCommand());
@@ -87,7 +89,6 @@ public class PdeHistory {
 
   public void attachMenu(JMenu parent) {
     //if (PdePreferences.getBoolean("history.recording")) {
-    menu = new JMenu("History");
     parent.add(menu);
 
     // should leave enabled, since can still get old history
