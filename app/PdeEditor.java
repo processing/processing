@@ -65,6 +65,7 @@ public class PdeEditor extends JFrame
   static final int HANDLE_QUIT = 3;
   int checkModifiedMode;
   String handleOpenPath; 
+  boolean handleNewShift;
   //String handleSaveAsPath;
   //String openingName;
 
@@ -462,7 +463,7 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("New sketch", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleNew();
+          handleNew(false);
         }
       });
     menu.add(item);
@@ -1164,9 +1165,13 @@ public class PdeEditor extends JFrame
   /**
    * New was called (by buttons or by menu), first check modified
    * and if things work out ok, handleNew2() will be called.
+   *
+   * If shift is pressed when clicking the toolbar button, then
+   * force the opposite behavior from sketchbook.prompt's setting
    */
-  public void handleNew() {
+  public void handleNew(boolean shift) {
     doStop();
+    handleNewShift = shift;
     checkModified(HANDLE_NEW);
   }
 
@@ -1178,7 +1183,7 @@ public class PdeEditor extends JFrame
    */
   protected void handleNew2(boolean startup) {
     try {
-      String pdePath = sketchbook.handleNew(startup);
+      String pdePath = sketchbook.handleNew(startup, handleNewShift);
       if (pdePath != null) handleOpen2(pdePath);
 
     } catch (IOException e) {
