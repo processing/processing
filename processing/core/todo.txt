@@ -136,16 +136,15 @@ X incorporated NO_FLYING_POO line/poly hack developed for axel
 X sort() should return an array, rather than sort in place
 X fix binary function, had wrong offset number
 X   casey: i wan't able to get binary() to work at all:
-
-_ standalone 'alpha' function for PImage
+o Typography: Helix won't compile 
+o   works fine, just needs BFont -> PFont
+X standalone 'alpha' function for PImage (static methods for alpha fxns)
 
 The biggest problem was the key and mouse functions not working. For example:
 Input: Mouse_Functions
 Input: Keyboard_Functions
 
 Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
-
-Typography: Helix won't compile 
 
 ....
 

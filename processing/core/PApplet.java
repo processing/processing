@@ -3610,8 +3610,18 @@ public class PApplet extends Applet
   }
 
 
+  static public void alpha(PImage image, int alpha[]) {
+     PGraphics.alpha(image, alpha);
+  }
+
+
   public void alpha(PImage alpha) {
      g.alpha(alpha);
+  }
+
+
+  static public void alpha(PImage image, PImage alpha) {
+     PGraphics.alpha(image, alpha);
   }
 
 
