@@ -312,71 +312,70 @@ public class PdePreferences extends JComponent {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int windowX = -1, windowY = 0, windowW = 0, windowH = 0;
 
-    Properties skprops = new Properties();
-    try {
-      if (PdeBase.platform == PdeBase.MACOSX) {
-        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-        //skprops.load(new FileInputStream(pkg + "sketch.properties"));
-        skprops.load(new FileInputStream("lib/sketch.properties"));
+    //Properties skprops = new Properties();
+    //try {
+    //if (PdeBase.platform == PdeBase.MACOSX) {
+    //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+    //skprops.load(new FileInputStream(pkg + "sketch.properties"));
+    //skprops.load(new FileInputStream("lib/sketch.properties"));
 
-      } else if (PdeBase.platform == PdeBase.MACOS9) {
-        skprops.load(new FileInputStream("lib/sketch.properties"));
+    //} else if (PdeBase.platform == PdeBase.MACOS9) {
+    //  skprops.load(new FileInputStream("lib/sketch.properties"));
 
-      } else {
-        skprops.load(getClass().getResource("sketch.properties").openStream());
+    //} else {
+    //skprops.load(getClass().getResource("sketch.properties").openStream());
+    //}
+
+    windowX = Integer.parseInt(skprops.getProperty("last.window.x", "-1"));
+    windowY = Integer.parseInt(skprops.getProperty("last.window.y", "-1"));
+    windowW = Integer.parseInt(skprops.getProperty("last.window.w", "-1"));
+    windowH = Integer.parseInt(skprops.getProperty("last.window.h", "-1"));
+
+    // if screen size has changed, the window coordinates no longer
+    // make sense, so don't use them unless they're identical
+    int screenW = Integer.parseInt(skprops.getProperty("last.screen.w", "-1"));
+    int screenH = Integer.parseInt(skprops.getProperty("last.screen.h", "-1"));
+
+    if ((screen.width != screenW) || (screen.height != screenH)) {
+      // probably not valid for this machine, so invalidate sizing
+      windowX = -1;
+    }
+
+    if (windowX != -1) {
+      String dividerLocation = 
+        skprops.getProperty("last.divider.location");
+      if (dividerLocation != null) {
+        splitPane.setDividerLocation(Integer.parseInt(dividerLocation));
       }
+    }
 
-      windowX = Integer.parseInt(skprops.getProperty("window.x", "-1"));
-      windowY = Integer.parseInt(skprops.getProperty("window.y", "-1"));
-      windowW = Integer.parseInt(skprops.getProperty("window.w", "-1"));
-      windowH = Integer.parseInt(skprops.getProperty("window.h", "-1"));
+    // 
 
-      // if screen size has changed, the window coordinates no longer
-      // make sense, so don't use them unless they're identical
-      int screenW = Integer.parseInt(skprops.getProperty("screen.w", "-1"));
-      int screenH = Integer.parseInt(skprops.getProperty("screen.h", "-1"));
+    String path = skprops.getProperty("last.sketch.directory");
+    String name = skprops.getProperty("last.sketch.name");
 
-      if ((screen.width != screenW) || (screen.height != screenH)) {
-        // probably not valid for this machine, so invalidate sizing
-        windowX = -1;
-      }
+    //String what = path + File.separator + name + ".pde";
 
-      if (windowX != -1) {
-        String dividerLocation = 
-          skprops.getProperty("editor.divider.location");
-        if (dividerLocation != null) {
-          splitPane.setDividerLocation(Integer.parseInt(dividerLocation));
-        }
-      }
+    if (new File(path + File.separator + name + ".pde").exists()) {
+      //userName = user;
+      editor.skOpen(path, name);
 
-      // 
+    } else {
+      //userName = "default";
+      editor.skNew();
+    }
 
-      String name = skprops.getProperty("sketch.name");
-      String path = skprops.getProperty("sketch.directory");
-      //String user = skprops.getProperty("user.name");
+    // 
 
-      String what = path + File.separator + name + ".pde";
+    ///String serialPort = skprops.getProperty("serial.port");
+    //if (serialPort != null) {
+    //  properties.put("serial.port", serialPort);
+    //}
 
-      if (new File(what).exists()) {
-        userName = user;
-        skOpen(path, name);
+    //boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
+    //editor.setExternalEditor(ee);
 
-      } else {
-        userName = "default";
-        skNew();
-      }
-
-      // 
-
-      String serialPort = skprops.getProperty("serial.port");
-      if (serialPort != null) {
-        properties.put("serial.port", serialPort);
-      }
-
-      boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
-      setExternalEditor(ee);
-
-    } catch (Exception e) { 
+    ///} catch (Exception e) { 
       // this exception doesn't matter, it's just the normal course of things
       // the app reaches here when no sketch.properties file exists
       //e.printStackTrace();
@@ -386,7 +385,7 @@ public class PdePreferences extends JComponent {
 
       // even if folder for 'default' user doesn't exist, or
       // sketchbook itself is missing, mkdirs() will make it happy
-      userName = "default";
+      //userName = "default";
 
       // doesn't exist, not available, make my own
       skNew();
@@ -458,31 +457,35 @@ public class PdePreferences extends JComponent {
       Rectangle window = base.getBounds();
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-      skprops.put("window.x", String.valueOf(window.x));
-      skprops.put("window.y", String.valueOf(window.y));
-      skprops.put("window.w", String.valueOf(window.width));
-      skprops.put("window.h", String.valueOf(window.height));
+      skprops.put("last.window.x", String.valueOf(window.x));
+      skprops.put("last.window.y", String.valueOf(window.y));
+      skprops.put("last.window.w", String.valueOf(window.width));
+      skprops.put("last.window.h", String.valueOf(window.height));
 
-      skprops.put("screen.w", String.valueOf(screen.width));
-      skprops.put("screen.h", String.valueOf(screen.height));
+      skprops.put("last.screen.w", String.valueOf(screen.width));
+      skprops.put("last.screen.h", String.valueOf(screen.height));
 
-      skprops.put("sketch.name", sketchName);
-      skprops.put("sketch.directory", sketchDir.getCanonicalPath());
-      skprops.put("user.name", userName);
+      skprops.put("last.sketch.name", sketchName);
+      skprops.put("last.sketch.directory", sketchDir.getCanonicalPath());
+      //skprops.put("user.name", userName);
+
+      skprops.put("last.divider.location", 
+                  String.valueOf(splitPane.getDividerLocation()));
+
+      //
 
       skprops.put("editor.external", externalEditor ? "true" : "false");
-      skprops.put("editor.divider.location", 
-                  String.valueOf(splitPane.getDividerLocation()));
 
       //skprops.put("serial.port", PdePreferences.get("serial.port", "unspecified"));
 
-      skprops.save(output, "auto-generated by pde, please don't touch");
+      skprops.save(output, "Settings for processing. " + 
+                   "See lib/pde.properties for defaults.");
 
     } catch (IOException e) {
-      System.err.println("doQuit: error saving properties");
-      e.printStackTrace();
+      PdeBase.showError(null, "Error while saving the settings file", e);
+      //e.printStackTrace();
     }
-}
+  }
 
   // all the information from pde.properties
 
