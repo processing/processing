@@ -37,6 +37,13 @@ KNOWN BUGS
 the real deal, keeping us awake at night
 
 
+- java mode in rev 63 and higher only works if you have java available
+  in your path--meaning that you've installed it yourself under
+  windows or linux, or this will always be the case for macosx.
+
+- network examples haven't been updated for the latest api, so they
+  will likely break in releases 60 and higher.
+
 - clipping planes are not yet implemented. meaning that objects may
   sometimes fly into the camera and turn upside down or do other tricks.
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
