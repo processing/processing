@@ -172,6 +172,7 @@ public class PdeEditor extends JFrame
     upper.add(buttons);
 
     header = new PdeEditorHeader(this);
+    //header.setBorder(null);
     upper.add(header);
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
@@ -187,6 +188,8 @@ public class PdeEditor extends JFrame
     consolePanel.add(status, BorderLayout.NORTH);
 
     console = new PdeEditorConsole(this);
+    // windows puts an ugly border on this guy
+    console.setBorder(null);
     consolePanel.add(console, BorderLayout.CENTER);
 
     lineStatus = new PdeEditorLineStatus(textarea);
@@ -206,9 +209,7 @@ public class PdeEditor extends JFrame
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (PdeBase.isMacOS()) {
-      splitPane.setBorder(null);
-    }
+    splitPane.setBorder(null);
 
     // the default size on windows is too small and kinda ugly
     int dividerSize = PdePreferences.getInteger("editor.divider.size");
