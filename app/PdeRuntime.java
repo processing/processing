@@ -227,7 +227,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     //System.out.println();
     //System.out.println("* stopping");
 
-    // in case stop is called during compilation
+    // check for null in case stop is called during compilation
     if (applet != null) applet.stop();
     //if (window != null) window.hide();
 
