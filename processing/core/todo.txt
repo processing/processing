@@ -48,6 +48,7 @@ _   make this consistent with the regular PApplet
 _     otherwise things are going to be weird/difficult for debugging
 
 _ make sure background() gets called at least once with opengl
+_   otherwise screen never actually updates
 _ depth() shouldn't be needed for opengl unless actually 3D
 _   right now the camera doesn't get set up unless you call depth()
 
@@ -72,7 +73,7 @@ _ get loop, noLoop, redraw, and framerate all working in opengl
 _   needs custom animator thread..
 
 _ and cameraMode(PERSPECTIVE) on each frame
-_   why is the first one failing?
+o   why is the first one failing?
 
 _ be consistent about getXxx() methods
 
