@@ -28,19 +28,18 @@ bf _ remove lexer dir from cvs
 bf _ horizontal scroller on the mac has enormous range
 bf _ pde_keywords.properties isn't getting copied into work/lib
 
-_ need note about setting classpath on platforms when using expert
+bf _ need note about setting classpath on platforms when using expert
+bf _ jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 
-_ jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+bf _ history
+bf _   do people even use it
+bf _   oooh.. combine in app to show diffs
 
-_ history
-_   do people even use it
-_   oooh.. combine in app to show diffs
+bf _ get proper tab comments into source files
+bf _ get proper licensing info into source files
+bf _ write notes about p5 code spec
 
-_ get proper tab comments into source files
-_ get proper licensing info into source files
-_ write notes about p5 code spec
-
-_ console -> should be using JEditTextArea, not TextPane
+_ console -> should be using JEditTextArea not TextPane
 _   scroll to most current line, or scroll as changing
 _   set decent fonts (probably same as editor above), looks bad on mac
 _   remove the border around the edge

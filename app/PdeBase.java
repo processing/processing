@@ -1,3 +1,20 @@
+/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project
+  Copyright (c) 2001-03 Ben Fry and Casey Reas
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -38,9 +55,9 @@ public class PdeBase extends Frame implements ActionListener {
   Menu historyMenu;
   ActionListener historyMenuListener = 
     new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  editor.retrieveHistory(e.getActionCommand());
-	}
+        public void actionPerformed(ActionEvent e) {
+          editor.retrieveHistory(e.getActionCommand());
+        }
       };
 
   Menu serialMenu;
@@ -86,22 +103,22 @@ public class PdeBase extends Frame implements ActionListener {
       //System.out.println(System.getProperty("mrj.version"));
       //System.out.println(System.getProperty("os.name"));
       platform = (System.getProperty("os.name").equals("Mac OS X")) ?
-	MACOSX : MACOS9;
-	
+        MACOSX : MACOS9;
+        
     } else {
       //System.out.println("unknown OS");
       //System.out.println(System.getProperty("os.name"));
       String osname = System.getProperty("os.name");
       //System.out.println("osname is " + osname);
       if (osname.indexOf("Windows") != -1) {
-	platform = WINDOWS;
+        platform = WINDOWS;
 
       } else if (osname.equals("Linux")) {  // true for the ibm vm
-	platform = LINUX;
+        platform = LINUX;
 
       } else {
-	platform = WINDOWS;  // probably safest
-	System.out.println("unhandled osname: " + osname);
+        platform = WINDOWS;  // probably safest
+        System.out.println("unhandled osname: " + osname);
       }
     }
 
@@ -129,9 +146,9 @@ public class PdeBase extends Frame implements ActionListener {
       //#endif
     /*
     frame = new Frame(WINDOW_TITLE) {
-	public Dimension getMinimumSize() {
-	  return new Dimension(300, 300);
-	}
+        public Dimension getMinimumSize() {
+          return new Dimension(300, 300);
+        }
       };
     */
     frame = this;  // clean this up later
@@ -139,9 +156,9 @@ public class PdeBase extends Frame implements ActionListener {
 
     /*
     this.addComponentListener(new ComponentAdapter() {
-	public void componentResized(ComponentEvent e) {
-	  System.out.println("frame listener: " + e);
-	}
+        public void componentResized(ComponentEvent e) {
+          System.out.println("frame listener: " + e);
+        }
       });
     */
 
@@ -154,8 +171,8 @@ public class PdeBase extends Frame implements ActionListener {
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-	//System.exit(0);
-	editor.doQuit();
+        //System.exit(0);
+        editor.doQuit();
       }
     };
     frame.addWindowListener(windowListener);
@@ -169,22 +186,22 @@ public class PdeBase extends Frame implements ActionListener {
       //System.err.println("userdir = " + System.getProperty("user.dir"));
 
       if (PdeBase.platform == PdeBase.MACOSX) {
-	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	//properties.load(new FileInputStream(pkg + "pde.properties"));
-	//properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
-	properties.load(new FileInputStream("lib/pde.properties"));
-	properties.load(new FileInputStream("lib/pde_macosx.properties"));
+        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+        //properties.load(new FileInputStream(pkg + "pde.properties"));
+        //properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
+        properties.load(new FileInputStream("lib/pde.properties"));
+        properties.load(new FileInputStream("lib/pde_macosx.properties"));
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
-	properties.load(new FileInputStream("lib/pde.properties"));
-	properties.load(new FileInputStream("lib/pde_macos9.properties"));
+        properties.load(new FileInputStream("lib/pde.properties"));
+        properties.load(new FileInputStream("lib/pde_macos9.properties"));
 
       } else {  
-	// under win95, current dir not set properly
-	// so using a relative url like "lib/" won't work
-	properties.load(getClass().getResource("pde.properties").openStream());
-	String platformProps = "pde_" + platforms[platform] + ".properties";
-	properties.load(getClass().getResource(platformProps).openStream());
+        // under win95, current dir not set properly
+        // so using a relative url like "lib/" won't work
+        properties.load(getClass().getResource("pde.properties").openStream());
+        String platformProps = "pde_" + platforms[platform] + ".properties";
+        properties.load(getClass().getResource(platformProps).openStream());
       }
       //properties.list(System.out);
 
@@ -210,15 +227,15 @@ public class PdeBase extends Frame implements ActionListener {
     if (program != null) {
       // don't beautify if it's java code
       if (program.indexOf("extends PdePlayer") == -1) {
-	// don't convert ; to \n if scheme  
-	if (program.charAt(0) != ';') {  
-	  if (convertSemicolons) {
-	    program = program.replace(';', '\n'); 
-	  }
-	  // not scheme, but don't beautify if it's python 
-	  if (program.charAt(0) != '#') 
-	    beautify = true; 
-	}  
+        // don't convert ; to \n if scheme  
+        if (program.charAt(0) != ';') {  
+          if (convertSemicolons) {
+            program = program.replace(';', '\n'); 
+          }
+          // not scheme, but don't beautify if it's python 
+          if (program.charAt(0) != '#') 
+            beautify = true; 
+        }  
       }
     } 
     */
@@ -274,25 +291,25 @@ public class PdeBase extends Frame implements ActionListener {
     // is currently selected
     item = new MenuItem("Cut", new MenuShortcut('X'));
     item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  editor.textarea.cut();
-	}
+        public void actionPerformed(ActionEvent e) {
+          editor.textarea.cut();
+        }
       });
     menu.add(item);
 
     item = new MenuItem("Copy", new MenuShortcut('C'));
     item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  editor.textarea.copy();
-	}
+        public void actionPerformed(ActionEvent e) {
+          editor.textarea.copy();
+        }
       });
     menu.add(item);
 
     item = new MenuItem("Paste", new MenuShortcut('V'));
     item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  editor.textarea.paste();
-	}
+        public void actionPerformed(ActionEvent e) {
+          editor.textarea.paste();
+        }
       });
     menu.add(item);
 
@@ -300,9 +317,9 @@ public class PdeBase extends Frame implements ActionListener {
 
     item = new MenuItem("Select All", new MenuShortcut('A'));
     item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  editor.textarea.selectAll();
-	}
+        public void actionPerformed(ActionEvent e) {
+          editor.textarea.selectAll();
+        }
       });
     menu.add(item);
 
@@ -323,13 +340,13 @@ public class PdeBase extends Frame implements ActionListener {
       menu.add(historyMenu);
       item = new MenuItem("Clear History");
       item.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    if (!editor.historyFile.delete()) {
-	      System.err.println("couldn't erase history");
-	    }
-	    rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
-	  }
-	});
+          public void actionPerformed(ActionEvent e) {
+            if (!editor.historyFile.delete()) {
+              System.err.println("couldn't erase history");
+            }
+            rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
+          }
+        });
       menu.add(item);
       menu.addSeparator();
     }
@@ -349,30 +366,30 @@ public class PdeBase extends Frame implements ActionListener {
     rendererMenu.add(normalItem);
     normalItem.setState(true);
     normalItem.addItemListener(new ItemListener() {
-	public void itemStateChanged(ItemEvent e) {
-	  openglItem.setState(false);
-	  normalItem.setState(true);
-	}
+        public void itemStateChanged(ItemEvent e) {
+          openglItem.setState(false);
+          normalItem.setState(true);
+        }
       });
 
     openglItem = new CheckboxMenuItem("OpenGL");
     rendererMenu.add(openglItem);
     openglItem.addItemListener(new ItemListener() {
-	public void itemStateChanged(ItemEvent e) {
-	  openglItem.setState(true);
-	  normalItem.setState(false);
-	}
+        public void itemStateChanged(ItemEvent e) {
+          openglItem.setState(true);
+          normalItem.setState(false);
+        }
       });
 
     externalEditorItem = new CheckboxMenuItem("Use External Editor");
     externalEditorItem.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-	//System.out.println(e);
-	if (e.getStateChange() == ItemEvent.SELECTED) {
-	  editor.setExternalEditor(true);
-	} else {
-	  editor.setExternalEditor(false);
-	}
+        //System.out.println(e);
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+          editor.setExternalEditor(true);
+        } else {
+          editor.setExternalEditor(false);
+        }
       }
     });
     menu.add(externalEditorItem);
@@ -440,10 +457,10 @@ public class PdeBase extends Frame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
       try {
-	undo.undo();
+        undo.undo();
       } catch (CannotUndoException ex) {
-	//System.out.println("Unable to undo: " + ex);
-	//ex.printStackTrace();
+        //System.out.println("Unable to undo: " + ex);
+        //ex.printStackTrace();
       }
       updateUndoState();
       redoAction.updateRedoState();
@@ -451,13 +468,13 @@ public class PdeBase extends Frame implements ActionListener {
 
     protected void updateUndoState() {
       if (undo.canUndo()) {
-	this.setEnabled(true);
-	undoItem.setEnabled(true);
-	putValue(Action.NAME, undo.getUndoPresentationName());
+        this.setEnabled(true);
+        undoItem.setEnabled(true);
+        putValue(Action.NAME, undo.getUndoPresentationName());
       } else {
-	this.setEnabled(false);
-	undoItem.setEnabled(false);
-	putValue(Action.NAME, "Undo");
+        this.setEnabled(false);
+        undoItem.setEnabled(false);
+        putValue(Action.NAME, "Undo");
       }
     }      
   }    
@@ -471,10 +488,10 @@ public class PdeBase extends Frame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
       try {
-	undo.redo();
+        undo.redo();
       } catch (CannotRedoException ex) {
-	//System.out.println("Unable to redo: " + ex);
-	//ex.printStackTrace();
+        //System.out.println("Unable to redo: " + ex);
+        //ex.printStackTrace();
       }
       updateRedoState();
       undoAction.updateUndoState();
@@ -482,13 +499,13 @@ public class PdeBase extends Frame implements ActionListener {
 
     protected void updateRedoState() {
       if (undo.canRedo()) {
-	this.setEnabled(true);
-	redoItem.setEnabled(true);
-	putValue(Action.NAME, undo.getRedoPresentationName());
+        this.setEnabled(true);
+        redoItem.setEnabled(true);
+        putValue(Action.NAME, undo.getRedoPresentationName());
       } else {
-	this.setEnabled(false);
-	redoItem.setEnabled(false);
-	putValue(Action.NAME, "Redo");
+        this.setEnabled(false);
+        redoItem.setEnabled(false);
+        putValue(Action.NAME, "Redo");
       }
     }
   }    
@@ -527,58 +544,58 @@ public class PdeBase extends Frame implements ActionListener {
       sketchbookFolder = new File(get("sketchbook.path", "sketchbook"));
       sketchbookPath = sketchbookFolder.getCanonicalPath();
       if (!sketchbookFolder.exists()) {
-	System.err.println("sketchbook folder doesn't exist, " + 
-			   "making a new one");
-	sketchbookFolder.mkdirs();
+        System.err.println("sketchbook folder doesn't exist, " + 
+                           "making a new one");
+        sketchbookFolder.mkdirs();
       }
 
       // files for the current user (for now, most likely 'default')
 
       // header knows what the current user is
       String userPath = sketchbookPath + 
-	File.separator + editor.userName;
+        File.separator + editor.userName;
 
       File userFolder = new File(userPath);
       if (!userFolder.exists()) {
-	System.err.println("sketchbook folder for '" + editor.userName + 
-			   "' doesn't exist, creating a new one");
-	userFolder.mkdirs();
+        System.err.println("sketchbook folder for '" + editor.userName + 
+                           "' doesn't exist, creating a new one");
+        userFolder.mkdirs();
       }
 
       /*
       SketchbookMenuListener userMenuListener = 
-	new SketchbookMenuListener(userPath);
+        new SketchbookMenuListener(userPath);
 
       String entries[] = new File(userPath).list();
       boolean added = false;
       for (int j = 0; j < entries.length; j++) {
-	if (entries[j].equals(".") || 
-	    entries[j].equals("..") ||
-	    entries[j].equals("CVS")) continue;
-	//entries[j].equals(".cvsignore")) continue;
-	added = true;
-	if (new File(userPath, entries[j] + File.separator + 
-		     entries[j] + ".pde").exists()) {
-	  MenuItem item = new MenuItem(entries[j]);
-	  item.addActionListener(userMenuListener);
-	  menu.add(item);
-	}
-	//submenu.add(entries[j]);
+        if (entries[j].equals(".") || 
+            entries[j].equals("..") ||
+            entries[j].equals("CVS")) continue;
+        //entries[j].equals(".cvsignore")) continue;
+        added = true;
+        if (new File(userPath, entries[j] + File.separator + 
+                     entries[j] + ".pde").exists()) {
+          MenuItem item = new MenuItem(entries[j]);
+          item.addActionListener(userMenuListener);
+          menu.add(item);
+        }
+        //submenu.add(entries[j]);
       }
       if (!added) {
-	MenuItem item = new MenuItem("No sketches");
-	item.setEnabled(false);
-	menu.add(item);
+        MenuItem item = new MenuItem("No sketches");
+        item.setEnabled(false);
+        menu.add(item);
       }
       menu.addSeparator();
       */
       if (addSketches(menu, userFolder, false)) {
-	menu.addSeparator();
+        menu.addSeparator();
       }
       if (!addSketches(menu, sketchbookFolder, true)) {
-	MenuItem item = new MenuItem("No sketches");
-	item.setEnabled(false);
-	menu.add(item);
+        MenuItem item = new MenuItem("No sketches");
+        item.setEnabled(false);
+        menu.add(item);
       }
 
       /*
@@ -597,7 +614,7 @@ public class PdeBase extends Frame implements ActionListener {
 
 
   protected boolean addSketches(Menu menu, File folder, 
-				/*boolean allowUser,*/ boolean root) 
+                                /*boolean allowUser,*/ boolean root) 
     throws IOException {
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
@@ -612,25 +629,25 @@ public class PdeBase extends Frame implements ActionListener {
       if (list[i].equals(editor.userName) && root) continue;
 
       if (list[i].equals(".") ||
-	  list[i].equals("..") ||
-	  list[i].equals("CVS")) continue;
+          list[i].equals("..") ||
+          list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
       if (new File(subfolder, list[i] + ".pde").exists()) {
-	MenuItem item = new MenuItem(list[i]);
-	item.addActionListener(listener);
-	menu.add(item);
-	ifound = true;
+        MenuItem item = new MenuItem(list[i]);
+        item.addActionListener(listener);
+        menu.add(item);
+        ifound = true;
 
       } else {  // might contain other dirs, get recursive
-	Menu submenu = new Menu(list[i]);
-	// needs to be separate var 
-	// otherwise would set ifound to false
-	boolean found = addSketches(submenu, subfolder, false);
-	if (found) {
-	  menu.add(submenu);
-	  ifound = true;
-	}
+        Menu submenu = new Menu(list[i]);
+        // needs to be separate var 
+        // otherwise would set ifound to false
+        boolean found = addSketches(submenu, subfolder, false);
+        if (found) {
+          menu.add(submenu);
+          ifound = true;
+        }
       }
     }
     return ifound;
@@ -664,51 +681,51 @@ public class PdeBase extends Frame implements ActionListener {
       String historyList[] = new String[100];
 
       try {
-	while ((line = reader.readLine()) != null) {
-	//while (line = reader.readLine()) {
-	//while (true) { line = reader.readLine();
-	  //if (line == null) continue;
-	  //System.out.println("line: " + line);
-	  if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
-	    // next line is the good stuff
-	    line = reader.readLine();
-	    int version = 
-	      Integer.parseInt(line.substring(0, line.indexOf(' ')));
-	    if (version == 1) {
-	      String whysub = line.substring(2);  // after "1 "
-	      String why = whysub.substring(0, whysub.indexOf(" -"));
-	      //System.out.println("'" + why + "'");
+        while ((line = reader.readLine()) != null) {
+        //while (line = reader.readLine()) {
+        //while (true) { line = reader.readLine();
+          //if (line == null) continue;
+          //System.out.println("line: " + line);
+          if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
+            // next line is the good stuff
+            line = reader.readLine();
+            int version = 
+              Integer.parseInt(line.substring(0, line.indexOf(' ')));
+            if (version == 1) {
+              String whysub = line.substring(2);  // after "1 "
+              String why = whysub.substring(0, whysub.indexOf(" -"));
+              //System.out.println("'" + why + "'");
 
-	      String readable = line.substring(line.lastIndexOf("-") + 2);
-	      if (historyList.length == historyCount) {
-		String temp[] = new String[historyCount*2];
-		System.arraycopy(historyList, 0, temp, 0, historyCount);
-		historyList = temp;
-	      }
-	      historyList[historyCount++] = why + " - " + readable;
+              String readable = line.substring(line.lastIndexOf("-") + 2);
+              if (historyList.length == historyCount) {
+                String temp[] = new String[historyCount*2];
+                System.arraycopy(historyList, 0, temp, 0, historyCount);
+                historyList = temp;
+              }
+              historyList[historyCount++] = why + " - " + readable;
 
-	    } // otherwise don't know what to do
-	  }
-	}
-	//System.out.println(line);
+            } // otherwise don't know what to do
+          }
+        }
+        //System.out.println(line);
       } catch (IOException e) {
-	e.printStackTrace();
+        e.printStackTrace();
       }
 
       // add the items to the menu in reverse order
       /*
       ActionListener historyMenuListener = 
-	new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-	      editor.retrieveHistory(e.getActionCommand());
-	    }
-	  };
+        new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              editor.retrieveHistory(e.getActionCommand());
+            }
+          };
       */
 
       for (int i = historyCount-1; i >= 0; --i) {
-	MenuItem mi = new MenuItem(historyList[i]);
-	mi.addActionListener(historyMenuListener);
-	menu.add(mi);
+        MenuItem mi = new MenuItem(historyList[i]);
+        mi.addActionListener(historyMenuListener);
+        menu.add(mi);
       }
 
       reader.close();
@@ -725,7 +742,7 @@ public class PdeBase extends Frame implements ActionListener {
     public void itemStateChanged(ItemEvent e) {
       int count = serialMenu.getItemCount();
       for (int i = 0; i < count; i++) {
-	((CheckboxMenuItem)serialMenu.getItem(i)).setState(false);
+        ((CheckboxMenuItem)serialMenu.getItem(i)).setState(false);
       }
       CheckboxMenuItem item = (CheckboxMenuItem)e.getSource();
       item.setState(true);
@@ -761,19 +778,19 @@ public class PdeBase extends Frame implements ActionListener {
       //System.out.println("building port list");
       Enumeration portList = CommPortIdentifier.getPortIdentifiers();
       while (portList.hasMoreElements()) {
-	CommPortIdentifier portId = 
-	  (CommPortIdentifier) portList.nextElement();
-	//System.out.println(portId);
-	
-	if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-	  //if (portId.getName().equals(port)) {
-	  String name = portId.getName();
-	  CheckboxMenuItem mi = 
-	    new CheckboxMenuItem(name, name.equals(defaultName));
-	  //mi.addActionListener(listener);
-	  mi.addItemListener(listener);
-	  serialMenu.add(mi);
-	}
+        CommPortIdentifier portId = 
+          (CommPortIdentifier) portList.nextElement();
+        //System.out.println(portId);
+        
+        if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+          //if (portId.getName().equals(port)) {
+          String name = portId.getName();
+          CheckboxMenuItem mi = 
+            new CheckboxMenuItem(name, name.equals(defaultName));
+          //mi.addActionListener(listener);
+          mi.addItemListener(listener);
+          serialMenu.add(mi);
+        }
       }
     } catch (UnsatisfiedLinkError e) {
       //e.printStackTrace();
@@ -790,22 +807,22 @@ public class PdeBase extends Frame implements ActionListener {
     // the javacomm solaris stuff, which is the .jar that's included
     // with the osx release (and rxtx takes over)
     if (platform == MACOSX) {
-	try {
-	    System.loadLibrary("SolarisSerialParallel");
-	} catch (UnsatisfiedLinkError e) {
-	    //e.printStackTrace();
-	    problem = true;
-	}
+        try {
+            System.loadLibrary("SolarisSerialParallel");
+        } catch (UnsatisfiedLinkError e) {
+            //e.printStackTrace();
+            problem = true;
+        }
     }
 
     // only warn them if this is the first time
     if (problem && firstTime) {
       JOptionPane.showMessageDialog(frame,
-				    "Serial port support not installed.\n" +
-				    "Check the readme for instructions if you " +
-				    "need to use the serial port.   ",
-				    "Serial Port Warning",
-				    JOptionPane.WARNING_MESSAGE);
+                                    "Serial port support not installed.\n" +
+                                    "Check the readme for instructions if you " +
+                                    "need to use the serial port.   ",
+                                    "Serial Port Warning",
+                                    JOptionPane.WARNING_MESSAGE);
     }
   }
 
@@ -840,69 +857,69 @@ public class PdeBase extends Frame implements ActionListener {
 
     } else if (command.equals("Proce55ing.net")) {
       if (platform == WINDOWS) {
-	try {
-	  Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore http://Proce55ing.net");
-	  //Runtime.getRuntime().exec("start http://Proce55ing.net");
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
+        try {
+          Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore http://Proce55ing.net");
+          //Runtime.getRuntime().exec("start http://Proce55ing.net");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
 
       } else if ((platform == MACOS9) || (platform == MACOSX)) {
 #ifdef MACOS
-	/*
-	try {
-	  com.apple.mrj.MRJFileUtils.openURL("http://Proce55ing.net");
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
-	*/
+        /*
+        try {
+          com.apple.mrj.MRJFileUtils.openURL("http://Proce55ing.net");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        */
 #endif
 
       } else if (platform == LINUX) {
-	try {
-	  // wild ass guess
-	  Runtime.getRuntime().exec("mozilla http://Proce55ing.net");
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
+        try {
+          // wild ass guess
+          Runtime.getRuntime().exec("mozilla http://Proce55ing.net");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
 
       } else {
-	System.err.println("unspecified platform");
+        System.err.println("unspecified platform");
       }
 
     } else if (command.equals("Reference")) {
       if (platform == WINDOWS) {
-	try {
-	  //Runtime.getRuntime().exec("cmd /c reference\\index.html");
-	  String currentDir = System.getProperty("user.dir");
-	  Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
-	    + "\\reference\\index.html");
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
+        try {
+          //Runtime.getRuntime().exec("cmd /c reference\\index.html");
+          String currentDir = System.getProperty("user.dir");
+          Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
+            + "\\reference\\index.html");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
 
       } else if ((platform == MACOSX) || (platform == MACOS9)) {
 #ifdef MACOS
-	/*
-	try {
-	  com.apple.mrj.MRJFileUtils.openURL("reference/index.html");
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
-	*/
+        /*
+        try {
+          com.apple.mrj.MRJFileUtils.openURL("reference/index.html");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        */
 #endif
 
       } else if (platform == LINUX) {
-	try {
-	  // another wild ass guess
-	  String currentDir = System.getProperty("user.dir");
-	  Runtime.getRuntime().exec("mozilla "+ currentDir + "/reference/index.html");
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
+        try {
+          // another wild ass guess
+          String currentDir = System.getProperty("user.dir");
+          Runtime.getRuntime().exec("mozilla "+ currentDir + "/reference/index.html");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
 
       } else {
-	System.err.println("unspecified platform");
+        System.err.println("unspecified platform");
       }
 
     } else if (command.equals("Quit")) {
@@ -918,9 +935,9 @@ public class PdeBase extends Frame implements ActionListener {
 
     } else if (command.equals("Stop")) {    
       if (editor.presenting) {
-	editor.doClose();
+        editor.doClose();
       } else {
-	editor.doStop();
+        editor.doStop();
       }
 
     } else if (command.equals("Refresh")) {    
@@ -1020,8 +1037,8 @@ public class PdeBase extends Frame implements ActionListener {
     String s = get(name, null);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
-	int v = Integer.parseInt(s.substring(1), 16);
-	parsed = new Color(v);
+        int v = Integer.parseInt(s.substring(1), 16);
+        parsed = new Color(v);
       } catch (Exception e) {
       }
     }
@@ -1038,9 +1055,9 @@ public class PdeBase extends Frame implements ActionListener {
     String fontname = st.nextToken();
     String fontstyle = st.nextToken();
     return new Font(fontname, 
-		    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) | 
-		    ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
-		    Integer.parseInt(st.nextToken()));
+                    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) | 
+                    ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
+                    Integer.parseInt(st.nextToken()));
   }
 
 
@@ -1118,7 +1135,7 @@ public class PdeBase extends Frame implements ActionListener {
       // Try to open the param string as a URL
       url = new URL(filename);
       stream = url.openStream();
-	
+        
     } catch (Exception e3) {
       return null;
     } } }
@@ -1126,9 +1143,9 @@ public class PdeBase extends Frame implements ActionListener {
     try {
       int offset = 0;
       while (true) {
-	int byteCount = stream.read(temp, offset, 1024);
-	if (byteCount <= 0) break;
-	offset += byteCount;
+        int byteCount = stream.read(temp, offset, 1024);
+        if (byteCount <= 0) break;
+        offset += byteCount;
       }
       byte program[] = new byte[offset];
       System.arraycopy(temp, 0, program, 0, offset);
@@ -1136,13 +1153,13 @@ public class PdeBase extends Frame implements ActionListener {
       //return languageEncode(program);
       // convert the bytes based on the current encoding
       try {
-	if (encoding == null)
-	  return new String(program);
-	return new String(program, encoding);
+        if (encoding == null)
+          return new String(program);
+        return new String(program, encoding);
       } catch (UnsupportedEncodingException e) {
-	e.printStackTrace();
-	encoding = null;
-	return new String(program);
+        e.printStackTrace();
+        encoding = null;
+        return new String(program);
       }
 
     } catch (Exception e) {
