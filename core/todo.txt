@@ -8,6 +8,7 @@ X   this way can avoid duplicating / breaking things
 o what is the stroked version of a sphere? a circle?
 X write list of params that can be passed to PApplet
 o document in the code a note about how size() et al place themselves
+X saveFrame was double-adding the save path because of save() changes
 
 size(200, 200, P3D) - createGraphics and placement issues 
 X make pappletgl work back inside papplet
@@ -28,6 +29,8 @@ X   can this be done with g2 and if exception just falls back to g1?
 X   this way people can remove g1 by hand
 o size() that changes renderer will throw nasty exception in draw()
 X   or maybe that's ok? document that no changing renderers?
+X take a look to see what needs to happen to get PAppletGL merged in
+X   i.e. can i just extend GLCanvas?
 
 present mode
 o call present() from inside the code?
@@ -50,6 +53,9 @@ X   make sure the program compiles before starting present mode
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
 
+_ apply tint() to textures as well
+_   otherwise no good way to color textures
+
 _ cellular automata examples broken
 
 _ gl smoothing.. how to disable polygon but keep line enabled
@@ -71,14 +77,11 @@ _ make illustrator lib
 
 BETA
 
-_ take a look to see what needs to happen to get PAppletGL merged in
-_   i.e. can i just extend GLCanvas?
+_ get PGraphics.java engine working again
 
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
-
-_ get PGraphics.java engine working again
 
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage

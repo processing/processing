@@ -26,12 +26,20 @@ X   significantly limit range of cases.. if presenting ext is ok
 X   uses internal pretty much only when single class, etc
 X   remove initialWidth/Height stuff from PdeRuntime for when running internally
 
+
+monday evening
+
 _ when centering applet on-screen, needs to check for multiple screens
 _   this is both for PApplet and PdeRuntime
 _   PApplet screen size constant is no good
 
+_ ability to select monitor via preferences panel
 _ check current present code with multiple monitors
 _   if it's working, make it all reflection-based in PApplet
+
+_ first pass on full screen
+_   exceptions in full screen mode will quit the app completely
+_   (can't keep window open because things are hosed)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -53,10 +61,6 @@ _   nope, libraries can handle that themselves,
 _     and queue events by registering for draw or whatever they'd like
 _   lib could call queueEvent with the args
 _   then call them inside post()
-
-_ first pass on full screen
-_   exceptions in full screen mode will quit the app completely
-_   (can't keep window open because things are hosed)
 
 _ update checker (can be turned off in prefs)
 _   send unique id, and information about person's java vm/platform
@@ -109,6 +113,8 @@ the only way to make File>Save As actually save new files, as far as i
 can tell, is to Save As once, make at least one change, then Save. 
 
 what happens if folder already exists on save as?
+
+saving a project over an already existing project does not get rid of the .pde files that arent overwritten.  not sure if this is feature or bug, but it took me by surprise.  it seemed to only overwrite .pde files with the same name, but everything else in that project folder stays as is. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
