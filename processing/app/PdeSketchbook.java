@@ -314,8 +314,8 @@ public class PdeSketchbook {
       buildMenu(popupMenu);
 
       // rebuild the "import library" menu
-      importMenu.removeAll();
       librariesClassPath = "";
+      importMenu.removeAll();
       if (addLibraries(importMenu, new File(getSketchbookPath()))) {
         importMenu.addSeparator();
       }
