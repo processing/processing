@@ -226,57 +226,106 @@ public class KjcEngine extends PdeEngine {
       if (programType == BEGINNER) {
 	if (!kjc) writer.println();
 
-	// first determine the size of the program
-	PatternMatcher matcher = new Perl5Matcher();
-	PatternCompiler compiler = new Perl5Compiler();
+	// hack so that the regexp below works
+	//if (program.indexOf("size(") == 0) program = " " + program;
+	if ((program.indexOf("size(") == 0) || 
+	    (program.indexOf("background(") == 0)) {
+	  program = " " + program;
+	}
+
+
+	PatternMatcher matcher = null;
+	PatternCompiler compiler = null;
 	Pattern pattern = null;
+	Perl5Substitution subst = null;
+	PatternMatcherInput input = null;
 
 
 	///////// grab (first) reference to size()
 
 
-	// hack so that the regexp below works
-	if (program.indexOf("size(") == 0) program = " " + program;
-
+	matcher = new Perl5Matcher();
+	compiler = new Perl5Compiler();
 	try {
 	  pattern = 
 	    compiler.compile("^([^A-Za-z0-9_]+)(size\\(\\s*\\d+,\\s*\\d+\\s*\\);)");
 
 	} catch (MalformedPatternException e){
-	  System.err.println("Bad pattern.");
-	  System.err.println(e.getMessage());
+	  e.printStackTrace();
+	  //System.err.println("Bad pattern.");
+	  //System.err.println(e.getMessage());
 	  System.exit(1);
 	}
 
-	//PatternMatcher matcher = new Perl5Matcher();
-	String sizeInfo = "";
-	PatternMatcherInput input =
-	  new PatternMatcherInput(program);
+	String sizeInfo = null;
+	input = new PatternMatcherInput(program);
 	if (matcher.contains(input, pattern)) {
 	  MatchResult result = matcher.getMatch();
 	  //int wide = Integer.parseInt(result.group(1).toString());
 	  //int high = Integer.parseInt(result.group(2).toString());
-	  sizeInfo = "void setup() { " + result.group(0) + " } ";
-	  //sizeInfo = result.group(0);
+	  //sizeInfo = "void setup() { " + result.group(0) + " } ";
+	  sizeInfo = result.group(0);
 
 	} else {
-	  // no size() defined, make it 100x100
+	  // no size() defined, make it default
+	  sizeInfo = "size(" + BApplet.DEFAULT_WIDTH + ", " + 
+	    BApplet.DEFAULT_HEIGHT + "); ";
 	}
-
-	
-	// grab (first) reference to background()
 
 
 	// remove references to size()
 	// this winds up removing every reference to size()
 	// not really intended, but will help things work
-	Perl5Substitution subst = 
-	  new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
+
+	subst = new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
 	program = Util.substitute(matcher, pattern, subst, program, 
 				  Util.SUBSTITUTE_ALL);
-	//System.out.println(program);
 
+
+	/////////// grab (first) reference to background()
+
+	matcher = new Perl5Matcher();
+	compiler = new Perl5Compiler();
+	try {
+	  pattern = 
+	    compiler.compile("^([^A-Za-z0-9_]+)(background\\(.*\\);)");
+
+	} catch (MalformedPatternException e){
+	  //System.err.println("Bad pattern.");
+	  //System.err.println(e.getMessage());
+	  e.printStackTrace();
+	  System.exit(1);
+	}
+
+	String backgroundInfo = "";
+	input = new PatternMatcherInput(program);
+	if (matcher.contains(input, pattern)) {
+	  MatchResult result = matcher.getMatch();
+	  //int wide = Integer.parseInt(result.group(1).toString());
+	  //int high = Integer.parseInt(result.group(2).toString());
+	  //sizeInfo = "void setup() { " + result.group(0) + " } ";
+	  backgroundInfo = result.group(0);
+
+	  //} else {
+	  // no size() defined, make it default
+	  //sizeInfo = "size(" + BApplet.DEFAULT_WIDTH + ", " + 
+	  //BApplet.DEFAULT_HEIGHT + "); ";
+	}
+
+	// remove references to size()
+	// this winds up removing every reference to size()
+	// not really intended, but will help things work
+	subst = new Perl5Substitution("$1", Perl5Substitution.INTERPOLATE_ALL);
+	program = Util.substitute(matcher, pattern, subst, program, 
+				  Util.SUBSTITUTE_ALL);
+
+
+	//////// spew out the size and background info
+
+	writer.print("void setup() { ");
 	writer.print(sizeInfo);
+	writer.print(backgroundInfo);
+	writer.print("} ");
 	writer.print("void draw() {");
       }
 

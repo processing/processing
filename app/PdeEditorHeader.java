@@ -47,10 +47,8 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   int imageW, imageH;
 
 
-  public PdeEditorHeader(PdeEditor editor /*, String sketch, String user*/) {
-    this.editor = editor;
-    //this.sketch = sketch;
-    //this.user = user;
+  public PdeEditorHeader(PdeEditor eddie) { 
+    this.editor = eddie; // weird name for listener
 
     if (primaryColor == null) {
       backgroundColor = PdeBase.getColor("editor.header.bgcolor", 
@@ -60,6 +58,16 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
       secondaryColor = PdeBase.getColor("editor.header.fgcolor.secondary", 
 					new Color(153, 153, 153));
     }
+
+    addMouseListener(new MouseAdapter() {
+	public void mousePressed(MouseEvent e) {
+	  //System.out.println("got mouse");
+	  if ((sketchRight != 0) &&
+	      (e.getX() > sketchLeft) && (e.getX() < sketchRight)) {
+	    editor.skSaveAs();
+	  }
+	}
+      });
   }
 
 
@@ -133,9 +141,10 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     sketchTitleLeft = PdeEditor.INSET_SIZE;
     sketchLeft = sketchTitleLeft + 
       metrics.stringWidth(SKETCH_TITLER) + PdeEditor.INSET_SIZE;
-
-    int modifiedLeft = sketchLeft + 
-      metrics.stringWidth(editor.sketchName) + PdeEditor.INSET_SIZE;
+    sketchRight = sketchLeft + metrics.stringWidth(editor.sketchName);
+    int modifiedLeft = sketchLeft + PdeEditor.INSET_SIZE;
+    //int modifiedLeft = sketchLeft + 
+    //metrics.stringWidth(editor.sketchName) + PdeEditor.INSET_SIZE;
 
     //sketch = editor.sketchName;
     //if (sketch == null) sketch = "";
