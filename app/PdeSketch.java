@@ -27,6 +27,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import javax.swing.JOptionPane;
+
 import com.oroinc.text.regex.*;
 
 
@@ -317,7 +319,7 @@ public class PdeSketch {
         PdeBase.showWarning("Error",
                             "Could not rename \"" + current.file.getName() + 
                             "\" to \"" + newFile.getName() + "\"", null);
-        return;        
+        return;
       }
       current.file = newFile;
       current.name = newName;
@@ -347,13 +349,9 @@ public class PdeSketch {
   }
 
 
-  //public void renameCode2(String newName) {
-    // if 'ok' hit, then rename the feller
-
-  // update the tabs
-  //}
-
-
+  /**
+   * Remove a piece of code from the sketch and from the disk.
+   */
   public void deleteCode() {
     // don't allow delete of the main code
     // TODO maybe gray out the menu on setCurrent(0)
@@ -365,58 +363,131 @@ public class PdeSketch {
     }
 
     // confirm deletion with user, yes/no
+    Object[] options = { "OK", "Cancel" };
+    String prompt = 
+      "Are you sure you want to delete \"" + current.name + "\"?";
+    int result = JOptionPane.showOptionDialog(editor,
+                                              prompt,
+                                              "Delete",
+                                              JOptionPane.YES_NO_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null,
+                                              options, 
+                                              options[0]);  
+    if (result == JOptionPane.YES_OPTION) {
+      // delete the file
+      if (!current.file.delete()) {
+        PdeBase.showMessage("Couldn't do it", 
+                            "Could not delete \"" + current.name + "\".");
+        return;
+      }
 
-    // delete the file
+      // remove code from the list
+      removeCode(current);
 
-    // remove it from the internal list of files
-    // resort internal list of files
+      // just set current tab to the main tab
+      setCurrent(0);
 
-    // set current tab to the one to the left
-
-    // update the tabs
+      // update the tabs
+      editor.header.repaint();
+    }
   }
 
 
-  // move things around in the array (as opposed to full reload)
+  protected void removeCode(PdeCode which) {
+    // remove it from the internal list of files
+    // resort internal list of files
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i] == which) {
+        for (int j = i; j < codeCount-1; j++) {
+          code[j] = code[j+1];
+        }
+        codeCount--;
+        return;
+      }
+    }
+    System.err.println("removeCode: internal error.. could not find code");
+  }
 
-  // may need to call setCurrent() if the tab was the last one
-  // or maybe just call setCurrent(0) for good measure
-
-  // don't allow the user to hide the 0 tab (the main file)
 
   public void hideCode() {
     // don't allow hide of the main code
-    // maybe gray out the menu on setCurrent(0)
+    // TODO maybe gray out the menu on setCurrent(0)
+    if (current == code[0]) {
+      PdeBase.showMessage("Can't do that",
+                          "You cannot hide the main " + 
+                          ".pde file from a sketch\n");
+      return;
+    }
+
+    // rename the file
+    File newFile = new File(current.file.getAbsolutePath() + ".x");
+    if (!current.file.renameTo(newFile)) {
+      PdeBase.showWarning("Error",
+                          "Could not hide " + 
+                          "\"" + current.file.getName() + "\".", null);
+      return;
+    }
+    current.file = newFile;
+
+    // move it to the hidden list
+    if (hiddenCount == hidden.length) {
+      PdeCode temp[] = new PdeCode[hiddenCount+1];
+      System.arraycopy(hidden, 0, temp, 0, hiddenCount);
+      hidden = temp;
+    }
+    hidden[hiddenCount++] = current;
+
+    // remove it from the main list
+    removeCode(current);
+
+    // update the tabs
+    setCurrent(0);
+    editor.header.repaint();
   }
 
 
   public void unhideCode(String what) {
     //System.out.println("unhide " + e);
-    File from = null;
+    int unhideIndex = -1;
     for (int i = 0; i < hiddenCount; i++) {
       if (hidden[i].name.equals(what)) {
-        from = hidden[i].file;
+        unhideIndex = i;
+
+        // remove from the 'hidden' list
+        for (int j = i; j < hiddenCount-1; j++) {
+          hidden[j] = hidden[j+1];
+        }
+        hiddenCount--;
+        break;
       }
     }
-    if (from == null) {
-      System.err.println("could find " + what + " to unhide.");
+    if (unhideIndex == -1) {
+      System.err.println("internal error: could find " + what + " to unhide.");
       return;
     }
-
-    String filename = from.getName();
-    if (!filename.endsWith(".x")) {
-      System.err.println("error while trying to unhide a file");
-
-    } else if (!from.exists()) {
-      System.err.println("file no longer exists");
-
-    } else {
-      File to = new File(from.getPath(), 
-                         filename.substring(0, filename.length() - 2));
-      if (!from.renameTo(to)) {
-        System.err.println("problem while unhiding");
-      }
+    PdeCode unhideCode = hidden[unhideIndex];
+    if (!unhideCode.file.exists()) {
+      PdeBase.showMessage("Can't unhide",
+                          "The file \"" + what + "\" no longer exists.");
+      //System.out.println(unhideCode.file);
+      return;
     }
+    String unhidePath = unhideCode.file.getAbsolutePath();
+    File unhideFile = 
+      new File(unhidePath.substring(0, unhidePath.length() - 2));
+
+    if (!unhideCode.file.renameTo(unhideFile)) {
+      PdeBase.showMessage("Can't unhide",
+                          "The file \"" + what + "\" could not be" + 
+                          "renamed and unhidden.");
+      return;
+    }
+    unhideCode.file = unhideFile;
+    insertCode(unhideCode);
+    sortCode();
+    setCurrent(unhideCode.name);
+    editor.header.repaint();
   }
 
 

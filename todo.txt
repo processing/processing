@@ -132,9 +132,8 @@ X write 'new text file' (ctrl-t)
 X hitting return/enter on the status.edit() not always working
 X   it had been disabled, now re-enabled
 X also update status after "add file" of a .pde or .java
-
-_ implement delete
-_ implement hide/unhide
+X implement delete
+X implement hide/unhide
 
 _ see if multiple files are actually compiling
 _   nope, they aren't properly.. need to figure this out
