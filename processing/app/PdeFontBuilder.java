@@ -42,9 +42,11 @@ public class PdeFontBuilder extends JFrame {
   JList fontSelector;
   JComboBox styleSelector;
   JTextField sizeSelector;
+  JCheckBox smoothBox;
   JTextArea sample;
   JButton okButton;
   JTextField filenameField;
+  boolean smooth = true;
 
   Font font;
 
@@ -135,13 +137,17 @@ public class PdeFontBuilder extends JFrame {
             selection = fontSelector.getSelectedIndex();
             okButton.setEnabled(true);
 
+            update();
+
+            /*
             int fontsize = 0;
             try {
               fontsize = Integer.parseInt(sizeSelector.getText().trim());
               //System.out.println("'" + sizeSelector.getText() + "'");
             } catch (NumberFormatException e2) { }
 
-            if (fontsize != 0) {
+            // if a deselect occurred, selection will be -1
+            if ((fontsize != 0) && (selection != -1)) {
               font = new Font(list[selection], Font.PLAIN, fontsize);
               //System.out.println("setting font to " + font);
               sample.setFont(font);
@@ -149,6 +155,7 @@ public class PdeFontBuilder extends JFrame {
               String filenameSuggestion = list[selection].replace(' ', '_');
               filenameField.setText(filenameSuggestion);
             }
+            */
             //filenameField.paintComponent(filenameField.getGraphics());
             //getContentPane().repaint();
           }
@@ -167,14 +174,17 @@ public class PdeFontBuilder extends JFrame {
       });
     */
 
+    // see http://rinkworks.com/words/pangrams.shtml
     sample = new JTextArea("The quick brown fox blah blah.") {
+        //"Forsaking monastic tradition, twelve jovial friars gave up their vocation for a questionable existence on the flying trapeze.") {
         public void paintComponent(Graphics g) {
+          //System.out.println("disabling aa");
           Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                              true ? 
-                              RenderingHints.VALUE_ANTIALIAS_ON :
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-          super.paintComponent(g);
+          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                              smooth ? 
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+          super.paintComponent(g2);
         }
       };
 
@@ -212,17 +222,35 @@ public class PdeFontBuilder extends JFrame {
     JPanel panel = new JPanel();
     panel.add(new JLabel("Size:"));
     sizeSelector = new JTextField("48 ");
+    sizeSelector.getDocument().addDocumentListener(new DocumentListener() {
+	public void insertUpdate(DocumentEvent e) { update(); }
+	public void removeUpdate(DocumentEvent e) { update(); }
+        public void changedUpdate(DocumentEvent e) { }
+      });
+
     panel.add(sizeSelector);
     JLabel rec = new JLabel("(Recommended size for 3D use is 48 points)");
     if (PdeBase.platform == PdeBase.MACOSX) {
       rec.setFont(new Font("Dialog", Font.PLAIN, 10));
     }
     panel.add(rec);
+
+    smoothBox = new JCheckBox("Smooth");
+    smoothBox.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          //System.out.println(e);
+          smooth = smoothBox.isSelected();
+          System.out.println(smooth);
+        }
+      });
+    smoothBox.setSelected(smooth);
+    panel.add(smoothBox);
+
     pain.add(panel);
 
     JPanel filestuff = new JPanel();
     filestuff.add(new JLabel("Filename:"));
-    filestuff.add(filenameField = new JTextField(25));
+    filestuff.add(filenameField = new JTextField(20));
     filestuff.add(new JLabel(".vlw"));
     pain.add(filestuff);
 
@@ -253,12 +281,35 @@ public class PdeFontBuilder extends JFrame {
     // do this after pack so it doesn't affect layout
     sample.setFont(new Font(list[0], Font.PLAIN, 48));
 
+    fontSelector.setSelectedIndex(0);
+    //selection = 0;
+    //update(); // ??
+
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension size = getSize();
 
     setLocation((screen.width - size.width) / 2,
                 (screen.height - size.height) / 2);
     show();
+  }
+
+
+  public void update() {
+    int fontsize = 0;
+    try {
+      fontsize = Integer.parseInt(sizeSelector.getText().trim());
+      //System.out.println("'" + sizeSelector.getText() + "'");
+    } catch (NumberFormatException e2) { }
+
+    // if a deselect occurred, selection will be -1
+    if ((fontsize != 0) && (fontsize < 256) && (selection != -1)) {
+      font = new Font(list[selection], Font.PLAIN, fontsize);
+      //System.out.println("setting font to " + font);
+      sample.setFont(font);
+
+      String filenameSuggestion = list[selection].replace(' ', '_');
+      filenameField.setText(filenameSuggestion);
+    }
   }
 
 
@@ -286,7 +337,7 @@ public class PdeFontBuilder extends JFrame {
 
     try {
       font = new Font(list[selection], Font.PLAIN, fontsize);
-      BFont f = new BFont(font, true);
+      BFont f = new BFont(font, smooth);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();
