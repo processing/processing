@@ -1,27 +1,5 @@
-!		logicalNOT
-!=		inequality
-%		modulo
-&&		logicalAND
-(		parentheses
-)		parentheses
-*		multiply
-*/		multilinecomment
-+		add
-++		increment
-+=		addassign
-,		comma
--		negation
---		decrement
--=		subtractassign
-.		dot
-/		divide
-/*		multilinecomment
-//		comment
-;		semicolon
-<		lessthan
-<=		lessthanorequalto
->		greaterthan
->=		greaterthanorequalto
+# LITERAL1 specifies constants
+
 ADD	LITERAL1	
 ALIGN_CENTER	LITERAL1	
 ALIGN_LEFT	LITERAL1	
@@ -30,13 +8,7 @@ ALPHA	LITERAL1
 ALT	LITERAL1	
 ARROW	LITERAL1	
 BEVELED_JOIN	LITERAL1	
-BFont	KEYWORD1	BFont
-BImage	KEYWORD1	BImage
-BLEND	LITERAL1	
-BSound	KEYWORD1	BSound
-Boolean	KEYWORD1	
-Byte	KEYWORD1	
-CENTER_DIAMETER	LITERAL1	
+CENTER	LITERAL1	
 CENTER_RADIUS	LITERAL1	
 CONCAVE_POLYGON	LITERAL1	
 CONTROL	LITERAL1	
@@ -44,30 +16,22 @@ CONVEX_POLYGON	LITERAL1
 CORNER	LITERAL1	
 CORNERS	LITERAL1	
 CROSS	LITERAL1	
-Character	KEYWORD1	
-Class	KEYWORD1	
 DARKEST	LITERAL1	
 DEG_TO_RAD	LITERAL1	
 DISABLE_TEXT_SMOOTH	LITERAL1	
 DOWN	LITERAL1	
-Double	KEYWORD1	
-Float	KEYWORD1	
-HALF_PI	LITERAL1	HALF_PI
+BLEND	LITERAL1	
 HAND	LITERAL1	
 HSB	LITERAL1	
 IMAGE_SPACE	LITERAL1	
-Integer	KEYWORD1	
 LEFT	LITERAL1	
 LIGHTEST	LITERAL1	
 LINES	LITERAL1	
 LINE_LOOP	LITERAL1	
 LINE_STRIP	LITERAL1	
-MITERED_JOIN	LITERAL1	
 MOVE	LITERAL1	
-Math	KEYWORD1	
 NORMAL_SPACE	LITERAL1	
 OBJECT_SPACE	LITERAL1	
-PI	LITERAL1	PI
 POINTS	LITERAL1	
 POLYGON	LITERAL1	
 PROJECTED_ENDCAP	LITERAL1	
@@ -84,105 +48,201 @@ SCREEN_SPACE	LITERAL1
 SHIFT	LITERAL1	
 SQUARE_ENDCAP	LITERAL1	
 SUBSTRACT	LITERAL1	
-String	KEYWORD1	
-StringBuffer	KEYWORD1	
 TEXT	LITERAL1	
 THIRD_PI	LITERAL1	
 TRAINGLES	LITERAL1	
 TRIANGLE_STRIP	LITERAL1	
-TWO_PI	LITERAL1	TWO_PI
-Thread	KEYWORD1	
 UP	LITERAL1	
 WAIT	LITERAL1	
+false	LITERAL1	
+null	LITERAL1	
+super	LITERAL1	
+this	LITERAL1	
+true	LITERAL1	
+
+
+# KEYWORD1 specifies datatypes
+
+Boolean	KEYWORD1	
+Byte	KEYWORD1	
+Character	KEYWORD1	
+Class	KEYWORD1	
+Double	KEYWORD1	
+Float	KEYWORD1	
+Integer	KEYWORD1	
+Math	KEYWORD1	
+String	KEYWORD1	
+StringBuffer	KEYWORD1	
+Thread	KEYWORD1		
+abstract	KEYWORD1	
+catch	KEYWORD1	
+class	KEYWORD1	
+continue	KEYWORD1	
+default	KEYWORD1	
+do	KEYWORD1	
+double	KEYWORD1	
+extends	KEYWORD1	
+final	KEYWORD1	
+finally	KEYWORD1	
+import	KEYWORD1	
+implements	KEYWORD1	
+instanceof	KEYWORD1	
+interface	KEYWORD1	
+long	KEYWORD1	
+native	KEYWORD1	
+package	KEYWORD1	
+private	KEYWORD1	
+protected	KEYWORD1	
+public	KEYWORD1	
+return	KEYWORD1	
+short	KEYWORD1	
+static	KEYWORD1	
+switch	KEYWORD1	
+synchronized	KEYWORD1	
+throw	KEYWORD1	
+throws	KEYWORD1	
+transient	KEYWORD1	
+try	KEYWORD1	
+void	KEYWORD1	
+volatile	KEYWORD1	
+
+
+# KEYWORD2 specifies methods and functions
+
+cache	KEYWORD2	
+curveSegments	KEYWORD2	
+hint	KEYWORD2	
+unHint	KEYWORD2	
+
+
+# THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
+# THE TEXT BELOW IS AUTO-GENERATED
+
+# OPERATOR1 specifies operators
+# In the reference specify at <type>operator</type>
+
+!		logicalNOT
+!=		inequality
+%		modulo
+&&		logicalAND
+(		parentheses
+)		parentheses
+*		multiply
+*/		multilinecomment
++		add
+++		increment
++=		addassign
+,		comma
+-		subtract
+--		decrement
+-=		subtractassign
+.		dot
+/		divide
+/*		multilinecomment
+//		comment
+;		semicolon
+<		lessthan
+<=		lessthanorequalto
+>		greaterthan
+>=		greaterthanorequalto
+{		curlybraces
+||		logicalOR
+}		curlybraces
 [		arrayaccess
 =		assign
 ==		equality
 ]		arrayaccess
+
+
+# LITERAL1 specifies constants
+# In the reference specify at <type>constant</type>
+
+HALF_PI	LITERAL1	HALF_PI
+PI	LITERAL1	PI
+TWO_PI	LITERAL1	TWO_PI
+
+
+# LITERAL2 specifies internal variables
+# In the reference specify at <type>system variable</type>
+
+height	LITERAL2	height
+pixels	LITERAL2	pixels
+key	LITERAL2	key
+keyPressed	LITERAL2	keyPressed
+mouseX	LITERAL2	mouseX
+mouseY	LITERAL2	mouseY
+pmouseX	LITERAL2	pmouseX
+pmouseY	LITERAL2	pmouseY
+width	LITERAL2	width
+
+
+# KEYWORD1 specifies datatypes and reserved words
+# In the reference, specify as <type>datatype</type>
+# <type>structure</type>, or <type>keyword</type>
+# or <type>object</type>
+
+PFont	KEYWORD1	PFont
+PImage	KEYWORD1	PImage
+boolean	KEYWORD1	boolean_
+break	KEYWORD1	break_
+byte	KEYWORD1	byte_
+case	KEYWORD1	case_
+char	KEYWORD1	char_
+color	KEYWORD1	color_
+else	KEYWORD1	else
+if	KEYWORD1	if_
+float	KEYWORD1	float_
+for	KEYWORD1	for_
+int	KEYWORD1	int_
+new	KEYWORD1	new
+while	KEYWORD1	while_
+
+
+# KEYWORD2 specifies functions and methods
+# In the reference, specify as <type>function</type>
+# or <type>method</type>
+
 abs	KEYWORD2	abs_
-abstract	KEYWORD1	
-alpha	KEYWORD2	
+alpha	KEYWORD2	PImage_alpha_
 atan2	KEYWORD2	atan2_
 background	KEYWORD2	background_
-beginNet	KEYWORD2	
-beginSerial	KEYWORD2	beginSerial_
-beginShape	KEYWORD2	beginShape_
-beginSound	KEYWORD2	beginSound_
 bezier	KEYWORD2	bezier_
-bezierPoint	KEYWORD2	
-bezierSegments	KEYWORD2	
-bezierTangent	KEYWORD2	
+bezierPoint	KEYWORD2	bezierPoint_
+bezierSegments	KEYWORD2	bezierSegments_
+bezierTangent	KEYWORD2	bezierTangents_
 bezierVertex	KEYWORD2	bezierVertex_
-blendMode	KEYWORD2	
+blendMode	KEYWORD2	blendMode_
 blue	KEYWORD2	blue_
-boolean	KEYWORD1	boolean_
 box	KEYWORD2	box_
-break	KEYWORD1	
 brightness	KEYWORD2	brightness_
-byte	KEYWORD1	byte_
-cache	KEYWORD2	cache_
-case	KEYWORD1	
-catch	KEYWORD1	
-ceil	KEYWORD2	
-char	KEYWORD1	char_
-class	KEYWORD1	
-color	KEYWORD1	color_
+ceil	KEYWORD2	ceil_
 colorMode	KEYWORD2	colorMode_
-continue	KEYWORD1	
-copy	KEYWORD2	
+copy	KEYWORD2	copy_
 cos	KEYWORD2	cos_
-cursor	KEYWORD2	
+cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
-curvePoint	KEYWORD2	
-curveSegments	KEYWORD2	
-curveTangent	KEYWORD2	
-curveTightness	KEYWORD2	
+curvePoint	KEYWORD2	curvePoint_
+curveTangent	KEYWORD2	curveTangent_
+curveTightness	KEYWORD2	curveTightness_
 curveVertex	KEYWORD2	curveVertex_
 day	KEYWORD2	day_
-default	KEYWORD1	
 degrees	KEYWORD2	degrees_
 delay	KEYWORD2	delay_
-do	KEYWORD1	
-double	KEYWORD1	double_
-draw	KEYWORD3	
 ellipse	KEYWORD2	ellipse_
 ellipseMode	KEYWORD2	ellipseMode_
-else	KEYWORD1	else
-endNet	KEYWORD2	
-endSerial	KEYWORD2	endSerial_
 endShape	KEYWORD2	endShape_
-extends	KEYWORD1	
-false	LITERAL1	
 fill	KEYWORD2	fill_
-final	KEYWORD1	
-finally	KEYWORD1	
-float	KEYWORD1	float_
-floor	KEYWORD2	
-for	KEYWORD1	for_
+floor	KEYWORD2	floor_
 framerate	KEYWORD2	framerate_
 frequency	KEYWORD2	frequency_
-generate	KEYWORD2	generate_
-get	KEYWORD2	
-getPixel		getPixel_
+get	KEYWORD2	get_
 green	KEYWORD2	green_
-height	LITERAL2	height
-hint	KEYWORD2	
 hour	KEYWORD2	hour_
 hue	KEYWORD2	hue_
-if	KEYWORD1	if_
 image	KEYWORD2	image_
 imageMode	KEYWORD2	imageMode_
-implements	KEYWORD1	
-import	KEYWORD1	
-in	KEYWORD2	in_
-instanceof	KEYWORD1	
-int	KEYWORD1	int_
-interface	KEYWORD1	
-key	LITERAL2	key
-keyPressed	LITERAL2	keyPressed_
-keyReleased	LITERAL2	keyReleased_
-keyTyped	LITERAL2	keyTyped_
-length	LITERAL2	
-light		light_
+keyPressed	KEYWORD2	keyPressed_
+keyReleased	KEYWORD2	keyReleased_
 lights	KEYWORD2	lights_
 line	KEYWORD2	line_
 loadBytes	KEYWORD2	loadBytes_
@@ -191,55 +251,33 @@ loadImage	KEYWORD2	loadImage_
 loadSound	KEYWORD2	loadSound_
 loadStream	KEYWORD2	loadStream_
 loadStrings	KEYWORD2	loadStrings_
-long	KEYWORD1	
-loop	KEYWORD3	loop_
 max	KEYWORD2	max_
-microphone	KEYWORD2	microphone_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
 minute	KEYWORD2	minute_
 month	KEYWORD2	month_
-mouseClicked	LITERAL2	mouseClicked_
-mouseDragged	LITERAL2	mouseDragged_
-mouseEntered	LITERAL2	
-mouseExited	LITERAL2	mouseExited_
-mouseMoved	LITERAL2	mouseMoved_
-mousePressed	LITERAL2	mousePressed_
-mouseReleased	LITERAL2	mouseReleased_
-mouseX	LITERAL2	mouseX
-mouseY	LITERAL2	mouseY
-native	KEYWORD1	
-net	LITERAL2	
-netWrite	KEYWORD2	
-new	KEYWORD1	new
-nf		nf_
-noBackground		noBackground_
-noCursor	KEYWORD2	
+mouseDragged	KEYWORD2	mouseDragged_
+mouseMoved	KEYWORD2	mouseMoved_
+mousePressed	KEYWORD2	mousePressed_
+mouseReleased	KEYWORD2	mouseReleased_
+nf	KEYWORD2	nf_
+noBackground	KEYWORD2	noBackground_
+noCursor	KEYWORD2	noCursor_
 noFill	KEYWORD2	noFill_
 noLights	KEYWORD2	noLights_
 noSmooth	KEYWORD2	noSmooth_
 noStroke	KEYWORD2	noStroke_
-noTint	KEYWORD2	
-normal	KEYWORD2	
-null	LITERAL1	
-online	KEYWORD2	
-out	KEYWORD2	out_
-package	KEYWORD1	
-param	KEYWORD2	
+noTint	KEYWORD2	noTint_	
+normal	KEYWORD2	normal_
+online	KEYWORD2	online_
+param	KEYWORD2	param_
 pause	KEYWORD2	pause_
-pixels	LITERAL2	pixels
 play	KEYWORD2	play_
-pmouseX	LITERAL2	pmouseX
-pmouseY	LITERAL2	pmouseY
 point	KEYWORD2	point_
 pop	KEYWORD2	pop_
 pow	KEYWORD2	pow_
 print	KEYWORD2	print_
 println	KEYWORD2	println_
-private	KEYWORD1	
-project	KEYWORD2	project_
-protected	KEYWORD1	
-public	KEYWORD1	
 push	KEYWORD2	push_
 quad	KEYWORD2	quad_
 radians	KEYWORD2	radians_
@@ -248,83 +286,47 @@ rect	KEYWORD2	rect_
 rectMode	KEYWORD2	rectMode_
 red	KEYWORD2	red_
 repeat	KEYWORD2	repeat_
-replicate	KEYWORD2	
-return	KEYWORD1	
 rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
 rotateY	KEYWORD2	rotateY_
 rotateZ	KEYWORD2	rotateZ_
-samples	LITERAL2	
 saturation	KEYWORD2	saturation_
-save	KEYWORD2	
-saveBytes	KEYWORD2	
-saveFrame	KEYWORD2	
-saveStrings	KEYWORD2	
+save	KEYWORD2	save_
+saveBytes	KEYWORD2	saveBytes_
+saveFrame	KEYWORD2	saveFrame_
+saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
-screenGrab		screenGrab_
 second	KEYWORD2	second_
 seek	KEYWORD2	seek_
-serial	LITERAL2	serial
-serialEvent	LITERAL2	serialEvent_
-serialWrite	KEYWORD2	serialWrite_
-set	KEYWORD2	
-setFont		setFont_
-setPixel		setPixel_
-setup	KEYWORD3	setup_
-short	KEYWORD1	
+set	KEYWORD2	set_
+setFont	KEYWORD2	setFont_
 sin	KEYWORD2	sin_
 size	KEYWORD2	size_
 smooth	KEYWORD2	smooth_
-soundEvent	LITERAL2	soundEvent_
 sphere	KEYWORD2	sphere_
-splitFloats	KEYWORD2	splitFloats_
-splitInts	KEYWORD2	splitInts_
-splitStrings	KEYWORD2	splitStrings_
+split	KEYWORD2	split_
 sq	KEYWORD2	sq_
 sqrt	KEYWORD2	sqrt_
-static	KEYWORD1	
-status	KEYWORD2	
+status	KEYWORD2	status_
 stop	KEYWORD2	stop_
 stroke	KEYWORD2	stroke_
-strokeJoin	KEYWORD2	
-strokeMiter	KEYWORD2	
-strokeMode		strokeMode_
-strokeWeight	KEYWORD2	
-strokeWidth		strokeWidth_
-super	LITERAL1	
-switch	KEYWORD1	
-synchronized	KEYWORD1	
-synthesize	KEYWORD2	synthesize_
+strokeWeight	KEYWORD2	strokeWeight_
 tan	KEYWORD2	tan_
 text	KEYWORD2	text_
-textFont	KEYWORD2	
-textLeading	KEYWORD2	
-textMode	KEYWORD2	
-textSize	KEYWORD2	
-textSpace	KEYWORD2	
-texture	KEYWORD2	
-textureImage		textureImage_
-textureMode	KEYWORD2	
-this	LITERAL1	
-throw	KEYWORD1	
-throws	KEYWORD1	
-tint	KEYWORD2	
+texture	KEYWORD2	texture_
+textureMode	KEYWORD2	textureMode_
+tint	KEYWORD2	tint_
 transform	KEYWORD2	transform_
-transient	KEYWORD1	
 translate	KEYWORD2	translate_
 triangle	KEYWORD2	triangle_
-true	LITERAL1	
-try	KEYWORD1	
-unhint	KEYWORD2	
 vertex	KEYWORD2	vertex_
-vertexNormal		vertexNormal_
-vertexTexture		vertexTexture_
-void	KEYWORD1	void
-volatile	KEYWORD1	
 volume	KEYWORD2	volume_
-while	KEYWORD1	while_
-width	LITERAL2	width
 year	KEYWORD2	year_
-{		curlybraces
-||		logicalOR
-}		curlybraces
+
+
+# KEYWORD3 is the main structural component
+# In the reference, specify as <type>processing function</type>
+
+draw	KEYWORD3	draw_
+loop	KEYWORD3	loop_
+setup	KEYWORD3	setup_
