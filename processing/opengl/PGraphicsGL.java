@@ -136,7 +136,7 @@ public class PGraphicsGL extends PGraphics3 {
       canvas.setNoAutoRedrawMode(true);
 
       // maybe this will help?
-      canvas.requestFocus();
+      //canvas.requestFocus();
 
       // done with this business
       displayed = true;
@@ -204,8 +204,8 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  protected void resetLights() {
-    super.resetLights();
+  public void clearLights() {
+    super.clearLights();
     for (int i = 0; i < MAX_LIGHTS; i++) {
       lightDisable(i);
     }

@@ -2072,6 +2072,14 @@ public class PGraphics extends PImage implements PConstants {
     throw new RuntimeException("noLights() can only be used with depth()");
   }
 
+  public void clearLights() {
+    throw new RuntimeException("clearLights() can only be used with depth()");
+  }
+
+  public void defaultLights() {
+    throw new RuntimeException("defaultLights() can only be used with depth()");
+  }
+  
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
     throw new RuntimeException("light() can only be used with depth()");
