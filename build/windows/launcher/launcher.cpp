@@ -109,11 +109,14 @@ BOOL CLauncherApp::InitInstance()
 	strcpy(testpath, loaddir);
 	strcat(testpath, "\\java\\bin\\java.exe");
 	FILE *fp = fopen(testpath, "rb");
+	int localJreInstalled = (fp != NULL);
+	/*
 	if (fp == NULL) {
 		AfxMessageBox("no java runtime");
 	} else {
 		AfxMessageBox("found java runtime");
 	}
+	*/
 
     sprintf(cp, 
 		"-cp \""
@@ -122,15 +125,9 @@ BOOL CLauncherApp::InitInstance()
         "%s\\lib\\pde.jar;"
 	    "%s\\lib\\kjc.jar;"
 	    "%s\\lib\\oro.jar;"
-#ifdef LOCAL_JRE
-	    "%s\\java\\lib\\ext\\comm.jar"
-#endif
+	    "%s\\lib\\comm.jar;"
 		"\" ",
-#ifdef LOCAL_JRE
 	    loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
-#else		
-	    loaddir, loaddir, loaddir, loaddir, loaddir);
-#endif
 		
 	//sprintf(cp, "-cp ");
 	//strcat(cp, JAVA_CLASSPATH);
@@ -152,14 +149,15 @@ BOOL CLauncherApp::InitInstance()
 
 	char *executable = (char *)malloc(256 * sizeof(char));
 	// loaddir is the name path to the current application
-#ifdef LOCAL_JRE
-	strcpy(executable, loaddir);
-	// copy in the path for jrew, relative to launcher.exe
-	//strcat(executable, "\\bin\\jrew");
-	strcat(executable, "\\java\\bin\\javaw");
-#else 
-	strcpy(executable, "java");
-#endif
+
+	if (localJreInstalled) {
+		strcpy(executable, loaddir);
+		// copy in the path for jrew, relative to launcher.exe
+		//strcat(executable, "\\bin\\jrew");
+		strcat(executable, "\\java\\bin\\javaw");
+	} else {
+		strcpy(executable, "javaw");
+	}
 
 	//AfxMessageBox(executable);
 
