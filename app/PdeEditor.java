@@ -1539,7 +1539,7 @@ afterwards, some of these steps need a cleanup function
 	String urlstr = url.getFile();
 	urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
 	  "sketch.properties";
-	output = new FileOutputStream(urlstr);
+	output = new FileOutputStream(URLDecoder.decode(urlstr));
       }
 
       //url = new URL(urlstr + "sketch.properties");
