@@ -26,26 +26,33 @@
 import java.io.*;
 
 
+/** 
+ * this is used by PdeEditor, System.err is set to 
+ * new PrintStream(new PdeMessageStream())
+ *
+ * it's also used by PdeCompiler 
+ */
 class PdeMessageStream extends OutputStream {
 
-  PdeEditor editor;
+  //PdeEditor editor;
   PdeMessageConsumer messageConsumer;
 
-  public PdeMessageStream(PdeEditor editor,
+  public PdeMessageStream(/*PdeEditor editor,*/
                           PdeMessageConsumer messageConsumer) {
-    this.editor = editor;
+    //this.editor = editor;
     this.messageConsumer = messageConsumer;
   }
 
-  public void setMessageConsumer(PdeMessageConsumer messageConsumer) {
-    this.messageConsumer = messageConsumer;
-  }
+  //public void setMessageConsumer(PdeMessageConsumer messageConsumer) {
+  //this.messageConsumer = messageConsumer;
+  //}
 
   public void close() { }
 
   public void flush() { }
 
   public void write(byte b[]) { 
+    // this never seems to get called
     System.out.println("leech1: " + new String(b));
   }
 
@@ -55,6 +62,7 @@ class PdeMessageStream extends OutputStream {
   }
 
   public void write(int b) {
+    // this never seems to get called
     System.out.println("leech3: '" + ((char)b) + "'");
   }
 }

@@ -107,7 +107,7 @@ public class PdeEditor extends JPanel {
 
   PdeBase base;
 
-  PrintStream leechErr;
+  //PrintStream leechErr;
   PdeMessageStream messageStream;
   String buildPath;
 
@@ -538,6 +538,78 @@ public class PdeEditor extends JPanel {
   }
 
 
+
+  /*
+  protected boolean build(String program, String className) {
+    try {
+      // do the preprocessing and write a .java file
+      //
+      // in an advanced program, the returned classname could be different,
+      // which is why we need to set className based on the return value
+      //
+      PdePreprocessor preprocessor = null;
+
+      if (PdeBase.getBoolean("preprocessor.antlr", true)) {
+        preprocessor = new PdePreprocessor(program, buildPath);
+        try {
+          //System.out.println("using antlr");
+          className = preprocessor.writeJava(className, 
+                                             base.normalItem.getState(),
+                                             false);
+        } catch (antlr.RecognitionException ae) {
+          // this even returns a column
+          System.out.println(ae.toString());
+          throw new PdeException(ae.getMessage(), 
+                                 ae.getLine() - 1, ae.getColumn());
+
+        } catch (Exception ex) {
+          System.err.println("Uncaught exception type:" + ex.getClass());
+          ex.printStackTrace();
+          throw new PdeException(ex.toString());
+          //System.out.println("pissed about: '" + ex.getMessage() + "'");
+          //ex.printStackTrace();
+          // if there was an issue (including unrecoverable parse errors)
+          // try falling back to the old preprocessor
+          //preprocessor = new PdePreprocessorOro(program, buildPath);
+          //className = preprocessor.writeJava(className, 
+          //                               base.normalItem.getState(), 
+          //                               false);
+        }
+      } else {
+      //System.out.println("not using antlr");
+        preprocessor = new PdePreprocessorOro(program, buildPath);
+        className = preprocessor.writeJava(className, 
+                                           base.normalItem.getState(),
+                                           false);
+      }
+
+      // compile the program
+      //
+      PdeCompiler compiler = 
+        new PdeCompiler(buildPath, className, this);
+      // macos9 now officially broken.. see PdeCompilerJavac
+      //PdeCompiler compiler = 
+      //  ((PdeBase.platform == PdeBase.MACOS9) ? 
+      //   new PdeCompilerJavac(buildPath, className, this) :
+      //   new PdeCompiler(buildPath, className, this));
+
+      // run the compiler, and funnel errors to the leechErr
+      // which is a wrapped around 
+      // (this will catch and parse errors during compilation
+      // the messageStream will call message() for 'compiler')
+      messageStream = new PdeMessageStream(compiler);
+      PrintStream leechErr = new PrintStream(messageStream);
+      //boolean result = compiler.compileJava(leechErr);
+      return compiler.compileJava(leechErr);
+
+    } catch (PdeException e) {
+      return false;
+    }
+  }
+  */
+
+
+
   public void doRun(boolean present) {
     //System.out.println(System.getProperty("java.class.path"));
 
@@ -614,16 +686,50 @@ public class PdeEditor extends JPanel {
       int numero2 = (int) (Math.random() * 10000);
       String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
 
+
+      /// 
+
+
       // do the preprocessing and write a .java file
       //
       // in an advanced program, the returned classname could be different,
       // which is why we need to set className based on the return value
       //
-      PdePreprocessor preprocessorOro =
-        new PdePreprocessorOro(program, buildPath);
-      className = preprocessorOro.writeJava(className, 
-                                            base.normalItem.getState(),
-                                            false);
+      PdePreprocessor preprocessor = null;
+
+      if (PdeBase.getBoolean("preprocessor.antlr", true)) {
+        preprocessor = new PdePreprocessor(program, buildPath);
+        try {
+          //System.out.println("using antlr");
+          className = preprocessor.writeJava(className, 
+                                             base.normalItem.getState(),
+                                             false);
+        } catch (antlr.RecognitionException ae) {
+          // this even returns a column
+          System.out.println(ae.toString());
+          throw new PdeException(ae.getMessage(), 
+                                 ae.getLine() - 1, ae.getColumn());
+
+        } catch (Exception ex) {
+          System.err.println("Uncaught exception type:" + ex.getClass());
+          ex.printStackTrace();
+          throw new PdeException(ex.toString());
+          //System.out.println("pissed about: '" + ex.getMessage() + "'");
+          //ex.printStackTrace();
+          // if there was an issue (including unrecoverable parse errors)
+          // try falling back to the old preprocessor
+          //preprocessor = new PdePreprocessorOro(program, buildPath);
+          //className = preprocessor.writeJava(className, 
+          //                               base.normalItem.getState(), 
+          //                               false);
+        }
+      } else {
+        //System.out.println("not using antlr");
+        preprocessor = new PdePreprocessorOro(program, buildPath);
+        className = preprocessor.writeJava(className, 
+                                           base.normalItem.getState(),
+                                           false);
+      }
 
       // compile the program
       //
@@ -635,11 +741,20 @@ public class PdeEditor extends JPanel {
       //   new PdeCompilerJavac(buildPath, className, this) :
       //   new PdeCompiler(buildPath, className, this));
 
-      // this will catch and parse errors during compilation
-      messageStream = new PdeMessageStream(this, compiler);
-      leechErr = new PrintStream(messageStream);
-
+      // run the compiler, and funnel errors to the leechErr
+      // which is a wrapped around 
+      // (this will catch and parse errors during compilation
+      // the messageStream will call message() for 'compiler')
+      messageStream = new PdeMessageStream(compiler);
+      // leechErr also used while runnign the applet
+      PrintStream leechErr = new PrintStream(messageStream);
       boolean result = compiler.compileJava(leechErr);
+
+      // messageStream gets reset after this anyways
+
+
+      /// 
+
 
       // if the compilation worked, run the applet
       //
@@ -649,42 +764,38 @@ public class PdeEditor extends JPanel {
         pdeRuntime = new PdeRuntime(this, className);
 
         // use the runtime object to consume the errors now
-        messageStream.setMessageConsumer(pdeRuntime);
+        //messageStream.setMessageConsumer(pdeRuntime);
+        PdeMessageStream messageStream = new PdeMessageStream(pdeRuntime);
 
         // start the applet
         pdeRuntime.start(presenting ? presentLocation : appletLocation,
-                         leechErr);
+                         new PrintStream(messageStream));
+                         //leechErr);
 
         // spawn a thread to update PDE GUI state
         watcher = new RunButtonWatcher();
 
       } else {
+        // [dmose] throw an exception here?
+        // [fry] i think the exception already gets thrown by the runtime
         cleanTempFiles(buildPath);
       }
     } catch (PdeException e) { 
-      //state = RUNNER_ERROR;
-      //forceStop = false;
-      //this.stop();
-
       // if we made it to the runtime stage, stop that thread
-      //
-      if (pdeRuntime != null) {
-        pdeRuntime.stop();
-      }
+      if (pdeRuntime != null) pdeRuntime.stop();
       cleanTempFiles(buildPath);
-      e.printStackTrace();
-      //editor.error(e);
+
+      // printing the stack trace may be overkill since it happens
+      // even on a simple parse error
+      //e.printStackTrace();
+
       error(e);
 
     } catch (Exception e) {
       e.printStackTrace();
-      //this.stop();
 
       // if we made it to the runtime stage, stop that thread
-      //
-      if (pdeRuntime != null) {
-        pdeRuntime.stop();
-      }
+      if (pdeRuntime != null) pdeRuntime.stop();
 
       cleanTempFiles(buildPath);
     }        
@@ -1151,20 +1262,46 @@ public class PdeEditor extends JPanel {
       //projectDir.mkdirs();
       appletDir.mkdirs();
 
+
+      ///
+
+
       // preprocess the program
       //
-      PdePreprocessor preprocessorOro =
-        new PdePreprocessorOro(program, appletDir.getPath());
+      PdePreprocessor preprocessor = null;
+      if (PdeBase.getBoolean("preprocessor.antlr", true)) {
+        preprocessor = new PdePreprocessor(program, 
+                                           appletDir.getPath());
+        try { 
+          exportSketchName = 
+            preprocessor.writeJava(exportSketchName, 
+                                   base.normalItem.getState(),
+                                   true);
+        } catch (Exception ex) {
+          // if there was an issue (including unrecoverable parse errors)
+          // try falling back to the old preprocessor
+          preprocessor = 
+            new PdePreprocessorOro(program, appletDir.getPath());
+          exportSketchName = 
+            preprocessor.writeJava(exportSketchName, 
+                                   base.normalItem.getState(),
+                                   true);
+        }
+      } else {  // use old preproc
+        preprocessor = 
+          new PdePreprocessorOro(program, appletDir.getPath());
 
-      exportSketchName = 
-        preprocessorOro.writeJava(exportSketchName, 
-                                  base.normalItem.getState(), true);
+        exportSketchName = 
+          preprocessor.writeJava(exportSketchName, 
+                                 base.normalItem.getState(), true);
+      }
+
       PdeCompiler compiler = 
         new PdeCompiler(appletDir.getPath(), exportSketchName, this);
 
       // this will catch and parse errors during compilation
-      messageStream = new PdeMessageStream(this, compiler);
-      leechErr = new PrintStream(messageStream);
+      messageStream = new PdeMessageStream(/*this,*/ compiler);
+      PrintStream leechErr = new PrintStream(messageStream);
 
       if (!compiler.compileJava(leechErr)) {
         //throw new Exception("error while compiling, couldn't export");
@@ -1172,10 +1309,14 @@ public class PdeEditor extends JPanel {
         return;
       }
 
+
+      ///
+
+
       int wide = BApplet.DEFAULT_WIDTH;
       int high = BApplet.DEFAULT_HEIGHT;
 
-      int index = program.indexOf("size(");
+      int index = program.indexOf("size(");  // space in size ( problem!
       if (index != -1) {
         try {
           String str = program.substring(index + 5);
