@@ -15,20 +15,8 @@ X   send messages for window location
 X     remove 'wanna move' msg, and actually record the position
 X   'add files' for .class, .jar should drop the stuff into 'code'
 o   external classes using loadStream, etc have trouble
-
-_ history could be gzipped and appended to history.dat
-_   along with another file that is actually a table of offsets
-_   no need to make the thing a gzip stream
-_   checkbox on menu for 'record history' ?
-_   history converter option?
-
-_ jikes errors are missing newline/linefeed ?
-
-_ using run-expert.bat on 62 causes NullPointerException weirdness
-_ network/shared_canvas, network/value has old code
-_ write script to remove .DS_Store and CVS folders from dist
-_ include version number in the about box
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
+X bug in CLASSPATH setup inside processing.exe, had quotes
+X   was breaking the load of javax.comm.properties
 
 assigned to dan haskovec, completed by fry
 X for 'java' mode, try run using external vm
@@ -47,6 +35,20 @@ X   or figure out how to unload old classes.. grr
 X lockup when something missing from classpath on dynamic load
 X   but makes no error.. peditorconsole probably swallowing it
 
+
+0064
+_ set PATH to include java (!)
+_ history could be gzipped and appended to history.dat
+_   along with another file that is actually a table of offsets
+_   no need to make the thing a gzip stream
+_   checkbox on menu for 'record history' ?
+_   history converter option?
+_ jikes errors are missing newline/linefeed ?
+_ using run-expert.bat on 62 causes NullPointerException weirdness
+_ network/shared_canvas, network/value has old code
+_ write script to remove .DS_Store and CVS folders from dist
+_ include version number in the about box
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
 
 
 MEDIUM
