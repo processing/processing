@@ -83,7 +83,10 @@ public class PdeEditorButtons extends Panel {
 
     setLayout(null);
     status = new Label();
-    status.setFont(new Font("SansSerif", Font.PLAIN, 10));
+    status.setFont(PdeApplet.getFont("editor.buttons.status.font",
+				     new Font("SansSerif", Font.PLAIN, 10)));
+    status.setForeground(PdeApplet.getColor("editor.buttons.status.color",
+					    Color.black));
     //status.setForeground(Color.black);
     //status.setBackground(Color.yellow);
     add(status);
