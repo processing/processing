@@ -219,8 +219,8 @@ public class PImage implements PConstants, Cloneable {
   public void modified() {
     mx1 = 0;
     my1 = 0;
-    mx2 = width;
-    my2 = height;
+    mx2 = width - 1;
+    my2 = height - 1;
     modified = true;
   }
 

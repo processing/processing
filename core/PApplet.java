@@ -4794,30 +4794,19 @@ v              PApplet.this.stop();
   }
 
 
-  public void circle(float x, float y, float radius) {
-     g.circle(x, y, radius);
-  }
-
-
   public void ellipseMode(int mode) {
      g.ellipseMode(mode);
   }
 
 
-  public void ellipse(float x, float y, float hradius, float vradius) {
-     g.ellipse(x, y, hradius, vradius);
+  public void ellipse(float a, float b, float c, float d) {
+     g.ellipse(a, b, c, d);
   }
 
 
   public void arc(float start, float stop,
-                  float x, float y, float radius) {
-     g.arc(start, stop, x, y, radius);
-  }
-
-
-  public void arc(float start, float stop,
-                  float x, float y, float hr, float vr) {
-     g.arc(start, stop, x, y, hr, vr);
+                  float a, float b, float c, float d) {
+     g.arc(start, stop, a, b, c, d);
   }
 
 
