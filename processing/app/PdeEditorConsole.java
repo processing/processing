@@ -32,7 +32,8 @@ public class PdeEditorConsole extends Component {
   int scrollOffset;
 
   byte cline[] = new byte[4096];
-  byte clength;
+  //byte clength;
+  int clength;
   boolean cerror;
 
   Color bgColor;
@@ -220,8 +221,8 @@ public class PdeEditorConsole extends Component {
     g.fillRect(0, 0, imageW, imageH);
 
     for (int i = 0; i < lineCount; i++) {
-      //int ii = (firstLine + i) % maxLineCount;
-      int ii = (firstLine + i) + scrollOffset;
+      //int ii = (firstLine + i) + scrollOffset;
+      int ii = (firstLine + i + 1) + scrollOffset;
       while (ii < 0) ii += maxLineCount;
       if (ii >= maxLineCount) ii = ii % maxLineCount;
 
@@ -289,7 +290,9 @@ public class PdeEditorConsole extends Component {
 	  }
 
 	} else {
+	  //systemOut.println(clength + " " + cline.length + " " + ((char) b[i]));
 	  if (cline.length == clength) {
+	    //systemOut.println("expanding to " + (clength*2));
 	    byte temp[] = new byte[clength * 2];
 	    System.arraycopy(cline, 0, temp, 0, clength);
 	    cline = temp;
@@ -304,12 +307,12 @@ public class PdeEditorConsole extends Component {
   }
 
   public void message(String what, boolean err, boolean advance) {
-      // under osx, suppress the spew about the serial port
-      // to avoid an error every time someone loads their app
-      if (PdeBase.platform == PdeBase.MACOSX) {
-	  if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
-	  if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
-      }
+    // under osx, suppress the spew about the serial port
+    // to avoid an error every time someone loads their app
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
+      if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
+    }
 
     int currentLine = (firstLine + lineCount) % maxLineCount;
     lines[currentLine] = what;
@@ -318,8 +321,15 @@ public class PdeEditorConsole extends Component {
     if (advance) {
       firstLine = (firstLine + 1) % maxLineCount;
       //systemOut.println((err ? "ERR: " : "OUT: ") + what);
-      systemOut.println(what);
+      if (err) {
+	systemErr.println(what);
+      } else {
+	systemOut.println(what);
+      }
       scrollOffset = 0;
+      // added so for continual update of lines
+      currentLine = (firstLine + lineCount) % maxLineCount;
+      lines[currentLine] = "";  // make sure it's clear
     }
     update();
   }
