@@ -116,6 +116,8 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167640;start=0
 X error message when trying to do a screengrab from inside a browser
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167220;start=0
+X windows fresh checkout from cvs still has problems
+X   major changes to build scripts for far easier building under windows
 
 
 carlos line code for single pixel lines
@@ -124,6 +126,7 @@ bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=displ
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165995;start=0
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166034;start=0
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167337;start=0
+
 
 fixes because of dmose parser
 dm X move to antlr
@@ -149,6 +152,7 @@ bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display
 bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165923;start=0
 bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166659;start=0
 
+
 code from the madman
 ks X perlin noise is broken
 ks X targa export for images
@@ -169,7 +173,6 @@ ks X focus not properly set in present mode
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166151;start=0
 ks X escape key not quitting presentation mode
 ks X   no events seem to be coming through at all
-
 
 
 from carlos' contract, but implemented by fry
@@ -213,14 +216,6 @@ X   strokeWeight, strokeJoin, strokeMiter
 X param(), online(), and status() functions
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166444;start=0
 
-  // imaging API keywords	  	  
-  pdeKeywords.add("REPLACE", Token.LITERAL1);
-  pdeKeywords.add("BLEND", Token.LITERAL1);
-  pdeKeywords.add("ADD", Token.LITERAL1);
-  pdeKeywords.add("SUBSTRACT", Token.LITERAL1);
-  pdeKeywords.add("LIGHTEST", Token.LITERAL1);
-  pdeKeywords.add("DARKEST", Token.LITERAL1);
-
 
 ..................................................................
 
@@ -229,7 +224,6 @@ HIGH (to be completed for 0060)
 _ QTJAVA path and CLASSPATH are weird if java not first installed
 _   or just get set improperly, reinstalling quicktime doesn't help
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
-_ windows fresh checkout from cvs still has problems (?)
 
 
 MEDIUM
@@ -281,6 +275,7 @@ bf b _     main sticking point will be serial/qtjava in exports
 
 
 LOWER (post beta tweaks, non-structural)
+_ clean up PdeTokenMarker, probably just alphabetize
 _ remove .DS_Store boogers, especially from win/linux distributions
 _ NullPointerException when alt is pressed
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
