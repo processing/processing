@@ -25,9 +25,14 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 
+#ifndef SWINGSUCKS
+public class PdeEditorStatus extends JPanel 
+#else
 public class PdeEditorStatus extends Panel 
+#endif
   implements ActionListener /*, Runnable*/ {
   static Color bgcolor[];
   static Color fgcolor[];
@@ -64,11 +69,20 @@ public class PdeEditorStatus extends Panel
   int sizeW, sizeH;
   int imageW, imageH;
 
+#ifndef SWINGSUCKS
+  JButton yesButton;
+  JButton noButton;
+  JButton cancelButton;
+  JButton okButton;
+  JTextField editField;
+#else
   Button yesButton;
   Button noButton;
   Button cancelButton;
   Button okButton;
   TextField editField;
+#endif
+
   //boolean editRename;
   //Thread promptThread;
   int response;
@@ -196,6 +210,8 @@ public class PdeEditorStatus extends Panel
     empty();
   }
 
+
+#ifdef SWINGSUCKS
   public void update() {
     Graphics g = this.getGraphics();
     try {
@@ -207,14 +223,80 @@ public class PdeEditorStatus extends Panel
   public void update(Graphics g) {
     paint(g);
   }
+#else
+  public void update() { repaint(); }
+#endif
 
-  public void paint(Graphics screen) {
+
+#ifndef SWINGSUCKS
+  public void paintComponent(Graphics screen) 
+#else
+  public void paint(Graphics screen) 
+#endif
+  {
     //if (screen == null) return;
+    if (yesButton == null) setup();
+
+    Dimension size = getSize();
+    if ((size.width != sizeW) || (size.height != sizeH)) {
+      // component has been resized
+
+      if ((size.width > imageW) || (size.height > imageH)) {
+        // nix the image and recreate, it's too small
+        offscreen = null;
+
+      } else {
+        // who cares, just resize
+        sizeW = size.width; 
+        sizeH = size.height;
+        setButtonBounds();
+      }
+    }
+
+    if (offscreen == null) {
+      sizeW = size.width;
+      sizeH = size.height;
+      setButtonBounds();
+      imageW = sizeW;
+      imageH = sizeH;
+      offscreen = createImage(imageW, imageH);
+    }
+
+    Graphics g = offscreen.getGraphics();
+    if (font == null) {
+      font = PdeBase.getFont("editor.status.font",
+                             new Font("SansSerif", Font.PLAIN, 12));
+      g.setFont(font);
+      metrics = g.getFontMetrics();
+      ascent = metrics.getAscent();
+    }
+
+    //setBackground(bgcolor[mode]);  // does nothing
+
+    g.setColor(bgcolor[mode]);
+    g.fillRect(0, 0, imageW, imageH);
+
+    g.setColor(fgcolor[mode]);
+    g.setFont(font); // needs to be set each time on osx
+    g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + ascent) / 2);
+
+    screen.drawImage(offscreen, 0, 0, null);
+  }
+
+
+  protected void setup() {
     if (yesButton == null) {
+#ifndef SWINGSUCKS
+      yesButton = new JButton(PROMPT_YES);
+      noButton = new JButton(PROMPT_NO);
+      cancelButton = new JButton(PROMPT_CANCEL);
+      okButton = new JButton(PROMPT_OK);
+#else
       yesButton = new Button(PROMPT_YES);
       noButton = new Button(PROMPT_NO);
       cancelButton = new Button(PROMPT_CANCEL);
       okButton = new Button(PROMPT_OK);
+#endif
 
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)( 
       // os9 seems to work if bg of component is set, but x still a bastard
@@ -241,7 +323,11 @@ public class PdeEditorStatus extends Panel
       cancelButton.setVisible(false);
       okButton.setVisible(false);
 
+#ifndef SWINGSUCKS
+      editField = new JTextField();
+#else
       editField = new TextField();
+#endif
       editField.addActionListener(this);
 
       if (PdeBase.platform != PdeBase.MACOSX) {
@@ -330,49 +416,6 @@ public class PdeEditorStatus extends Panel
       add(editField);
       editField.setVisible(false);
     }
-
-    Dimension size = getSize();
-    if ((size.width != sizeW) || (size.height != sizeH)) {
-      // component has been resized
-
-      if ((size.width > imageW) || (size.height > imageH)) {
-        // nix the image and recreate, it's too small
-        offscreen = null;
-
-      } else {
-        // who cares, just resize
-        sizeW = size.width; 
-        sizeH = size.height;
-        setButtonBounds();
-      }
-    }
-
-    if (offscreen == null) {
-      sizeW = size.width;
-      sizeH = size.height;
-      setButtonBounds();
-      imageW = sizeW;
-      imageH = sizeH;
-      offscreen = createImage(imageW, imageH);
-    }
-
-    Graphics g = offscreen.getGraphics();
-    if (font == null) {
-      font = PdeBase.getFont("editor.status.font",
-                             new Font("SansSerif", Font.PLAIN, 12));
-      g.setFont(font);
-      metrics = g.getFontMetrics();
-      ascent = metrics.getAscent();
-    }
-
-    g.setColor(bgcolor[mode]);
-    g.fillRect(0, 0, imageW, imageH);
-
-    g.setColor(fgcolor[mode]);
-    g.setFont(font); // needs to be set each time on osx
-    g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + ascent) / 2);
-
-    screen.drawImage(offscreen, 0, 0, null);
   }
 
 
