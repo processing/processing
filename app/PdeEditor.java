@@ -1377,6 +1377,7 @@ public class PdeEditor extends JFrame
       // so that checkModified2 will just do nothing
       checking = 0;
     }
+    message("Done Saving.");
     buttons.clear();      
   }
 
