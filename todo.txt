@@ -85,7 +85,9 @@ _ fix command keys for menus (broken since switching to swing)
 
 _ PdeRuntime isn't properly handling messages from all classes in project
 _   get things up and running, and see how it looks
-_ fix make.sh and dist.sh for all platforms to include new export setup
+_ fix make.sh and dist.sh for all platforms 
+_   changes to the export setup and making the bagel jar files
+_   change of location for examples.zip and where they extract to
 _ re-implement history (disabled for 68)
 
 _ history: "archive this version" 

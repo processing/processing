@@ -31,11 +31,10 @@ else
   cp -r ../shared work
 
   echo Extracting examples...
-  #cd work/sketchbook
-  cd work/lib
+  cd work
   unzip -q examples.zip
   rm examples.zip
-  cd ../..
+  cd ..
 
   echo Extracting reference...
   cd work
