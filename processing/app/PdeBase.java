@@ -123,6 +123,38 @@ public class PdeBase {
   }
 
 
+  // .................................................................
+
+
+  static public File getProcessingHome() {
+    File home = new File(System.getProperty("user.home"));
+
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      // on macosx put the sketchbook in the "Documents" folder
+      return new File(home, "Documents" + File.separator + "Processing");
+
+    } else if (PdeBase.platform == PdeBase.WINDOWS) {
+      // on windows put the sketchbook in the "My Documents" folder
+      return new File(home, "My Documents" + File.separator + "Processing");
+    }
+
+    // for linux et al, make a dot folder
+    // if people don't like things being buried, they can move the sketches
+    // but the prefs will stay hidden in the dot folder
+    File phome = new File(home, ".processing");
+    if (!phome.exists()) phome.mkdirs();
+    return phome;
+  }
+
+
+  static public File getProcessingHome(String filename) {
+    return new File(getProcessingHome(), filename);
+  }
+
+
+  // .................................................................
+
+
   /**
    * Given the reference filename from the keywords list, 
    * builds a URL and passes it to openURL.

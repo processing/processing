@@ -43,6 +43,7 @@ public class PdeSketchbook {
 
   JMenu menu;
   JMenu popup;
+  JMenu addlib;
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
@@ -60,6 +61,9 @@ public class PdeSketchbook {
   static File examplesFolder;
   static String examplesPath;  // canonical path (for comparison)
 
+  static File librariesFolder;
+  static String librariesPath;
+
 
   public PdeSketchbook(PdeEditor editor) {
     this.editor = editor;
@@ -68,6 +72,9 @@ public class PdeSketchbook {
     // but only one instance of sketchbook will be built so who cares
     examplesFolder = new File(System.getProperty("user.dir"), "examples");
     examplesPath = examplesFolder.getAbsolutePath();
+
+    librariesFolder = new File(System.getProperty("user.dir"), "libraries");
+    librariesPath = librariesFolder.getAbsolutePath();
 
     //String sketchbookPath = PdePreferences.get("sketchbook.path");
     //if (sketchbookPath == null) {
@@ -87,12 +94,13 @@ public class PdeSketchbook {
         home = new File(home, "My Documents");
       }
       */
-      File home = PdePreferences.getProcessingHome();
 
-      String folderName = PdePreferences.get("sketchbook.name.default");
-      //System.out.println("home = " + home);
-      //System.out.println("fname = " + folderName);
-      File sketchbookFolder = new File(home, folderName);
+      // use a subfolder called 'sketchbook'
+      //File home = PdePreferences.getProcessingHome();
+      //String folderName = PdePreferences.get("sketchbook.name.default");
+      //File sketchbookFolder = new File(home, folderName);
+
+      File sketchbookFolder = PdeBase.getProcessingHome();
       PdePreferences.set("sketchbook.path", 
                          sketchbookFolder.getAbsolutePath());
 
@@ -100,6 +108,7 @@ public class PdeSketchbook {
     }
     menu = new JMenu("Sketchbook");
     popup = new JMenu("Sketchbook");
+    addlib = new JMenu("Add Library");
   }
 
 
@@ -276,8 +285,12 @@ public class PdeSketchbook {
 
 
   public JPopupMenu getPopupMenu() {
-    //return menu.getPopupMenu();
     return popup.getPopupMenu();
+  }
+
+
+  public JMenu getAddLibraryMenu() {
+    return addlib;
   }
 
 
@@ -290,10 +303,10 @@ public class PdeSketchbook {
    * the menu will disappear from its original location.
    */
   public JMenu rebuildMenu() {
-    menu.removeAll();
-    popup.removeAll();
-
     try {
+      // rebuild the popup menu
+      popup.removeAll();
+
       JMenuItem item = new JMenuItem("Open...");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -303,7 +316,6 @@ public class PdeSketchbook {
       popup.add(item);
       popup.addSeparator();
 
-      // identical to below
       boolean sketches = 
         addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
       if (sketches) popup.addSeparator();
@@ -314,7 +326,10 @@ public class PdeSketchbook {
       // disable error messages while loading
       builtOnce = true;
 
-      // (mostly) identical to above
+
+      // rebuild the open menu
+      menu.removeAll();
+
       if (sketches) {
         addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
         menu.addSeparator();
@@ -322,6 +337,14 @@ public class PdeSketchbook {
       examples = new JMenu("Examples");
       addSketches(examples, examplesFolder);
       menu.add(examples);
+
+
+      // rebuild the "add library" menu
+      addlib.removeAll();
+      boolean libs = 
+        addLibraries(addlib, new File(PdePreferences.get("sketchbook.path")));
+      if (libs) menu.addSeparator();
+      addLibraries(addlib, librariesFolder);
 
     } catch (IOException e) {
       PdeBase.showWarning("Problem while building sketchbook menu",
@@ -408,6 +431,81 @@ public class PdeSketchbook {
       }
     }
     return ifound;  // actually ignored, but..
+  }
+
+
+  protected boolean addLibraries(JMenu menu, File folder) throws IOException {
+    // skip .DS_Store files, etc
+    if (!folder.isDirectory()) return false;
+
+    String list[] = folder.list();
+    // if a bad folder or something like that, this might come back null
+    if (list == null) return false;
+
+    // alphabetize list, since it's not always alpha order
+    // use cheapie bubble-style sort which should be fine
+    // since not a tone of files, and things will mostly be sorted
+    // or may be completely sorted already by the os
+    for (int i = 0; i < list.length; i++) {
+      int who = i;
+      for (int j = i+1; j < list.length; j++) {
+        if (list[j].compareTo(list[who]) < 0) {
+          who = j;  // this guy is earlier in the alphabet
+        }
+      }
+      if (who != i) {  // swap with someone if changes made
+        String temp = list[who];
+        list[who] = list[i];
+        list[i] = temp;
+      }
+    }
+
+    ActionListener listener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.sketch.addLibrary(e.getActionCommand());
+        }
+      };
+
+    boolean ifound = false;
+
+    for (int i = 0; i < list.length; i++) {
+      if ((list[i].charAt(0) == '.') ||
+          list[i].equals("CVS")) continue;
+
+      File subfolder = new File(folder, list[i]);
+      File exported = new File(subfolder, "library");
+      File entry = new File(exported, list[i] + ".jar");
+      // if a .jar file of the same prefix as the folder exists
+      // inside the 'library' subfolder of the sketch
+      if (entry.exists()) {
+        String sanityCheck = sanitizedName(list[i]);
+        if (!sanityCheck.equals(list[i])) {
+          String mess = 
+            "The library \"" + list[i] + "\" cannot be used.\n" +
+            "Library names must contain only basic letters and numbers.\n" + 
+            "(ascii only and no spaces, and it cannot start with a number)";
+          PdeBase.showMessage("Ignoring bad sketch name", mess);
+          continue;
+        }
+
+        JMenuItem item = new JMenuItem(list[i]);
+        item.addActionListener(listener);
+        item.setActionCommand(entry.getAbsolutePath());
+        menu.add(item);
+        ifound = true;
+
+      } else {  // might contain other dirs, get recursive
+        JMenu submenu = new JMenu(list[i]);
+        // needs to be separate var 
+        // otherwise would set ifound to false
+        boolean found = addLibraries(submenu, subfolder); //, false);
+        if (found) {
+          menu.add(submenu);
+          ifound = true;
+        }
+      }
+    }
+    return ifound;
   }
 
 
