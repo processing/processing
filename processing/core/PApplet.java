@@ -4545,7 +4545,7 @@ v              PApplet.this.stop();
           setPriority(Thread.MIN_PRIORITY);
     */
     final Worker worker = new Worker();
-    worker.start();
+    //worker.start();
 
     /*
     final SwingWorker worker = new SwingWorker() {
