@@ -110,7 +110,13 @@ X   splice
 X   reverse
 X   concat
 
-_ full casting operations on primitives and arrays of them
+040717
+X make clone() into copy()
+X add a method BApplet.setPath() or something like that
+X   use it to repair saveBytes, saveStrings, etc
+X   put screenshots into their sketch folder
+o     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+X full casting operations on primitives and arrays of them
 
 _ array utiles on Object[] are worthless.. fix it with reflection?
 _   also, should it be named resize() instead?
@@ -318,10 +324,6 @@ CORE / PGraphics
 
 CORE / Details
 
-   1 _ add a method BApplet.setPath() or something like that
-   1 _   use it to repair saveBytes, saveStrings, etc
-   1 _   put screenshots into their sketch folder
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
    1 _ fix param() to use a sketch.properties file when run as an app
    1 _   make this also be used in generating the html file
    1 _ fix link() to handle relative URLs
