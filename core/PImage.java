@@ -85,9 +85,7 @@ public class PImage implements PConstants, Cloneable {
   public boolean smooth = false;
 
   /** for gl subclass / hardware accel */
-  public int tindex;
-  public int tpixels[];
-  public int twidth, theight;
+  public Object cache;
 
   // private fields
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
@@ -110,7 +108,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage() {
     format = RGB;  // makes sure that this guy is useful
-    tindex = -1;
+    cache = null;
   }
 
 
@@ -138,7 +136,7 @@ public class PImage implements PConstants, Cloneable {
     this.width = width;
     this.height = height;
     this.format = format;
-    this.tindex = -1;
+    this.cache = null;
   }
 
 
@@ -150,99 +148,7 @@ public class PImage implements PConstants, Cloneable {
     this.height = height;
     this.pixels = new int[width*height];
     this.format = format;
-    this.tindex = -1;
-  }
-
-
-  public void modified() {
-    tindex = -1;
-
-    // bit shifting this might be more efficient
-    int width2 = (int) Math.pow(2, Math.ceil(Math.log(width) / Math.log(2)));
-    int height2 = (int) Math.pow(2, Math.ceil(Math.log(height) / Math.log(2)));
-
-    if ((width2 > twidth) || (height2 > theight)) {
-      // either twidth/theight are zero, or size has changed
-      tpixels = null;
-    }
-    if (tpixels == null) {
-      twidth = width2;
-      theight = height2;
-      tpixels = new int[twidth * theight];
-    }
-
-    // copy image data into the texture
-    int p = 0;
-    int t = 0;
-
-    if (System.getProperty("sun.cpu.endian").equals("big")) {
-      switch (format) {
-      case ALPHA:
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            tpixels[t++] = 0xFFFFFF00 | pixels[p++];
-          }
-          t += twidth - width;
-        }
-        break;
-
-      case RGB:
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            int pixel = pixels[p++];
-            tpixels[t++] = (pixel << 8) | 0xff;
-          }
-          t += twidth - width;
-        }
-        break;
-
-      case ARGB:
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            int pixel = pixels[p++];
-            tpixels[t++] = (pixel << 8) | ((pixel >> 24) & 0xff);
-          }
-          t += twidth - width;
-        }
-        break;
-      }
-
-    } else {
-      switch (format) {
-      case ALPHA:
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            tpixels[t++] = (pixels[p++] << 24) | 0x00FFFFFF;
-          }
-          t += twidth - width;
-        }
-        break;
-
-      case RGB:
-        for (int y = 0; y < height; y++) {
-          System.arraycopy(pixels, p, tpixels, t, width);
-          p += width;
-          t += twidth;
-        }
-        break;
-
-      case ARGB:
-        for (int y = 0; y < height; y++) {
-          for (int x = 0; x < width; x++) {
-            int pixel = pixels[p++];
-            //      needs to be ABGR
-            // stored in memory ARGB
-            // so R and B must be swapped
-            tpixels[t++] =
-              ((pixel & 0xFF) << 16) |
-              ((pixel & 0xFF0000) >> 16) |
-              (pixel & 0xFF00FF00);
-          }
-          t += twidth - width;
-        }
-        break;
-      }
-    }
+    this.cache = null;
   }
 
 
@@ -265,7 +171,7 @@ public class PImage implements PConstants, Cloneable {
     } catch (InterruptedException e) { }
 
     format = RGB;
-    tindex = -1;
+    cache = null;
   }
 
 
