@@ -253,11 +253,16 @@ public class PApplet extends Applet
 
 
   public void createGraphics() {
-    g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    if (PApplet.jdkVersion >= 1.3) {
+      g = new PGraphics2(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    } else {
+      g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
   }
 
 
   public void depth() {
+    g = new PGraphics3(DEFAULT_WIDTH, DEFAULT_HEIGHT);
   }
 
 
@@ -583,7 +588,8 @@ public class PApplet extends Applet
             createGraphics();
           }
 
-          synchronized (g) {
+          // g may be rebuilt inside here, so turning of the sync
+          //synchronized (g) {
             if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 1a beginFrame");
             g.beginFrame();
@@ -595,6 +601,8 @@ public class PApplet extends Applet
               //createGraphics();
               defaults();
               setup();
+              // if depth() is called inside setup, pixels/width/height
+              // will be ok by the time it's back out again
 
               this.pixels = g.pixels;
               this.width = g.width;
@@ -653,7 +661,7 @@ public class PApplet extends Applet
             //for (int i = 0; i < libraryCount; i++) {
             //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
             //}
-          }
+          //}  // temporarily disabling the synchronize
         }
         redraw = false;  // unset 'redraw' flag in case it was set
 

@@ -178,9 +178,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // spline vertices
 
-  static final int SPLINE_VERTEX_ALLOC = 128;
-  protected float spline_vertex[][];
-  protected int spline_vertex_index;
+  static final int DEFAULT_SPLINE_VERTICES = 128;
+  protected float splineVertices[][];
+  protected int splineVertexCount;
   //boolean spline_vertices_flat;
 
 
@@ -380,12 +380,12 @@ public class PGraphics extends PImage implements PConstants {
     // every shape is rendered at endShape();
     vertexCount = 0;
 
-    spline_vertex_index = 0;
+    splineVertexCount = 0;
     //spline_vertices_flat = true;
 
     //strokeChanged = false;
     //fillChanged = false;
-    normalChanged = false;
+    //normalChanged = false;
   }
 
 
@@ -638,8 +638,8 @@ public class PGraphics extends PImage implements PConstants {
 
     // user called vertex(), so that invalidates anything queued
     // up for curve vertices. if this is internally called by
-    // spline_segment, then spline_vertex_index will be saved and restored.
-    spline_vertex_index = 0;
+    // spline_segment, then splineVertexCount will be saved and restored.
+    splineVertexCount = 0;
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -674,27 +674,27 @@ public class PGraphics extends PImage implements PConstants {
   protected void spline_vertex(float x, float y, boolean bezier) {
     // allocate space for the spline vertices
     // to improve processing applet load times, don't allocate until actual use
-    if (spline_vertex == null) {
-      spline_vertex = new float[SPLINE_VERTEX_ALLOC][VERTEX_FIELD_COUNT];
+    if (splineVertices == null) {
+      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
     }
 
     // if more than 128 points, shift everything back to the beginning
-    if (spline_vertex_index == SPLINE_VERTEX_ALLOC) {
-      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-3], 0,
-                       spline_vertex[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-2], 0,
-                       spline_vertex[1], 0, VERTEX_FIELD_COUNT);
-      spline_vertex_index = 3;
+    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 3], 0,
+                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 2], 0,
+                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
+      splineVertexCount = 3;
     }
 
     // 'flat' may be a misnomer here because it's actually just
     // calculating whether z is zero for all the spline points,
     // so that it knows whether to calculate all three params,
     // or just two for x and y.
-    //if (spline_vertices_flat) {
-    //if (z != 0) spline_vertices_flat = false;
+    //if (splineVertices_flat) {
+    //if (z != 0) splineVertices_flat = false;
     //}
-    float vertex[] = spline_vertex[spline_vertex_index];
+    float vertex[] = splineVertices[splineVertexCount];
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -714,22 +714,22 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SW] = strokeWeight;
     }
 
-    spline_vertex_index++;
+    splineVertexCount++;
 
     // draw a segment if there are enough points
-    if (spline_vertex_index > 3) {
+    if (splineVertexCount > 3) {
       if (bezier) {
-        if ((spline_vertex_index % 4) == 0) {
+        if ((splineVertexCount % 4) == 0) {
           if (!bezier_inited) bezier_init();
-          spline2_segment(spline_vertex_index-4,
-                          spline_vertex_index-4,
+          spline2_segment(splineVertexCount-4,
+                          splineVertexCount-4,
                           bezier_draw,
                           bezier_detail);
         }
       } else {  // catmull-rom curve (!bezier)
         if (!curve_inited) curve_init();
-        spline2_segment(spline_vertex_index-4,
-                        spline_vertex_index-3,
+        spline2_segment(splineVertexCount-4,
+                        splineVertexCount-3,
                         curve_draw,
                         curve_detail);
       }
@@ -2444,20 +2444,20 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void spline2_segment(int offset, int start,
                                float m[][], int segments) {
-    float x1 = spline_vertex[offset][MX];
-    float y1 = spline_vertex[offset][MY];
+    float x1 = splineVertices[offset][MX];
+    float y1 = splineVertices[offset][MY];
 
-    float x2 = spline_vertex[offset+1][MX];
-    float y2 = spline_vertex[offset+1][MY];
+    float x2 = splineVertices[offset+1][MX];
+    float y2 = splineVertices[offset+1][MY];
 
-    float x3 = spline_vertex[offset+2][MX];
-    float y3 = spline_vertex[offset+2][MY];
+    float x3 = splineVertices[offset+2][MX];
+    float y3 = splineVertices[offset+2][MY];
 
-    float x4 = spline_vertex[offset+3][MX];
-    float y4 = spline_vertex[offset+3][MY];
+    float x4 = splineVertices[offset+3][MX];
+    float y4 = splineVertices[offset+3][MY];
 
-    float x0 = spline_vertex[start][MX];
-    float y0 = spline_vertex[start][MY];
+    float x0 = splineVertices[start][MX];
+    float y0 = splineVertices[start][MY];
 
     float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
     float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
@@ -2467,39 +2467,39 @@ public class PGraphics extends PImage implements PConstants {
     float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
     float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
 
-    // vertex() will reset spline_vertex_index, so save it
-    int splineVertexSaved = spline_vertex_index;
+    // vertex() will reset splineVertexCount, so save it
+    int splineVertexSaved = splineVertexCount;
     vertex(x0, y0);
     for (int j = 0; j < segments; j++) {
       x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
       y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
       vertex(x0, y0);
     }
-    spline_vertex_index = splineVertexSaved;
+    splineVertexCount = splineVertexSaved;
   }
 
 
   protected void spline3_segment(int offset, int start,
                                float m[][], int segments) {
-    float x1 = spline_vertex[offset+0][MX];
-    float y1 = spline_vertex[offset+0][MY];
-    float z1 = spline_vertex[offset+0][MZ];
+    float x1 = splineVertices[offset+0][MX];
+    float y1 = splineVertices[offset+0][MY];
+    float z1 = splineVertices[offset+0][MZ];
 
-    float x2 = spline_vertex[offset+1][MX];
-    float y2 = spline_vertex[offset+1][MY];
-    float z2 = spline_vertex[offset+1][MZ];
+    float x2 = splineVertices[offset+1][MX];
+    float y2 = splineVertices[offset+1][MY];
+    float z2 = splineVertices[offset+1][MZ];
 
-    float x3 = spline_vertex[offset+2][MX];
-    float y3 = spline_vertex[offset+2][MY];
-    float z3 = spline_vertex[offset+2][MZ];
+    float x3 = splineVertices[offset+2][MX];
+    float y3 = splineVertices[offset+2][MY];
+    float z3 = splineVertices[offset+2][MZ];
 
-    float x4 = spline_vertex[offset+3][MX];
-    float y4 = spline_vertex[offset+3][MY];
-    float z4 = spline_vertex[offset+3][MZ];
+    float x4 = splineVertices[offset+3][MX];
+    float y4 = splineVertices[offset+3][MY];
+    float z4 = splineVertices[offset+3][MZ];
 
-    float x0 = spline_vertex[start][MX];
-    float y0 = spline_vertex[start][MY];
-    float z0 = spline_vertex[start][MZ];
+    float x0 = splineVertices[start][MX];
+    float y0 = splineVertices[start][MY];
+    float z0 = splineVertices[start][MZ];
 
     float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
     float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
@@ -2516,8 +2516,8 @@ public class PGraphics extends PImage implements PConstants {
     //unchangedZ = false;
     //dimensions = 3;
 
-    // vertex() will reset spline_vertex_index, so save it
-    int cvertexSaved = spline_vertex_index;
+    // vertex() will reset splineVertexCount, so save it
+    int cvertexSaved = splineVertexCount;
     vertex(x0, y0, z0);
     for (int j = 0; j < segments; j++) {
       x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
@@ -2525,7 +2525,7 @@ public class PGraphics extends PImage implements PConstants {
       z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
       vertex(x0, y0, z0);
     }
-    spline_vertex_index = cvertexSaved;
+    splineVertexCount = cvertexSaved;
   }
 
 
