@@ -998,6 +998,28 @@ public class PdeBase extends Frame implements ActionListener {
 		    Integer.parseInt(st.nextToken()));
   }
 
+    // return a default style, based on old conventions
+    static public SimpleAttributeSet getStyle() {
+
+    StyleConstants.setFontFamily(style, st.nextToken());
+
+    String s = st.nextToken();
+    StyleConstants.setBold(style, s.indexOf("bold") != -1);
+    StyleConstants.setItalic(style, s.indexOf("italic") != -1);
+
+    StyleConstants.setFontSize(style, Integer.parseInt(st.nextToken()));
+
+    s = st.nextToken();
+    if (s.indexOf("#") == 0) s = s.substring(1);
+    StyleConstants.setForeground(style, new Color(Integer.parseInt(s, 16)));
+
+    s = st.nextToken();
+    if (s.indexOf("#") == 0) s = s.substring(1);
+    StyleConstants.setBackground(style, new Color(Integer.parseInt(s, 16)));
+
+    return style;
+    }
+
   static public SimpleAttributeSet getStyle(String what, 
 					    SimpleAttributeSet otherwise) {
     String str = get("editor.program." + what + ".style");
