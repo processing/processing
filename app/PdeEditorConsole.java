@@ -140,6 +140,7 @@ public class PdeEditorConsole extends Component {
 
 
   public void update() {
+    System.out.println("PdeEditorConsole.update");
     Graphics g = this.getGraphics();
     if (g != null) paint(g);
   }
