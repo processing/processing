@@ -380,7 +380,10 @@ public class PdeBase extends Frame
     menu.add(serialMenu);
 
     Menu rendererMenu = new Menu("Renderer");
+#ifdef OPENGL
+    // opengl support has started, but remains as yet unfinished
     menu.add(rendererMenu);
+#endif
 
     normalItem = new CheckboxMenuItem("Normal");
     rendererMenu.add(normalItem);
@@ -838,7 +841,7 @@ public class PdeBase extends Frame
     }
 
     if (serialMenu.getItemCount() == 0) {
-      System.out.println("dimming serial menu");
+      //System.out.println("dimming serial menu");
       serialMenu.setEnabled(false);
     }
 
