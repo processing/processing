@@ -20,7 +20,9 @@ implements ActionListener
     //app.setProgramFile(args[0]);
     //}
 
-    app.frame.show();
+    // this is getting moved back inside the constructor
+    // because it was for pockyvision, which is going away
+    //app.frame.show();
   }
 
   public PdeApplication() {
@@ -58,8 +60,76 @@ implements ActionListener
     frame.setLayout(new BorderLayout());
     frame.add("Center", this);
     init();
-    Insets insets = frame.getInsets();
 
+    /*
+    // check for updates from the server, if enabled
+    if (getBoolean("update.enabled", false)) {
+      // open the update file to get the latest version
+      long lastUpdate = 0;
+      try {
+	DataInputStream dis = new DataInputStream(new FileInputStream("lib/version"));
+	lastUpdate = dis.readLong();
+      } catch (IOException e) { }
+
+      String baseUrl = get("update.url");
+      try {
+	URL url = new URL(baseUrl + "version");
+	URLConnection conn = url.openConnection();
+	//conn.connect();
+
+	//System.out.println("date of last update" + conn.getDate());
+	long newDate = conn.getDate();
+	if (newDate > lastUpdate) {
+	  System.out.println("new update available");
+
+	  DataOutputStream vos = 
+	    new DataOutputStream(new FileOutputStream("lib/version.update"));
+	  vos.writeLong(newDate);
+	  vos.flush();
+	  vos.close();
+
+	  url = new URL(baseUrl + "pde.jar");
+	  conn = url.openConnection();
+
+	  // move the old pde.jar file out of the way
+	  //File pdeJar = new File("lib/pde.jar");
+	  //pdeJar.renameTo("lib/pde.old.jar");
+
+	  // download the new pde.jar file
+	  FileOutputStream os = new FileOutputStream("lib/pde.jar.update");
+	  //Object object = conn.getContent();
+	  //System.out.println(object);
+	  InputStream is = conn.getInputStream();
+	  copyStream(is, os);
+	  os.close();
+
+	  // if everything copied ok, rename new/old files
+	  // this probably needs to be way more bulletproof
+	  File file = new File("lib/version");
+	  if (file.exists()) file.renameTo(new File("lib/version.old"));
+	  file = new File("lib/version.update");
+	  file.renameTo(new File("lib/version"));
+
+	  file = new File("lib/pde.jar");
+	  file.renameTo(new File("lib/pde.jar.old"));
+	  file = new File("lib/pde.jar.update");
+	  file.renameTo(new File("lib/pde.jar"));
+
+	  // restart or relaunch
+	  System.out.println("done copying new version, restart");
+	  System.exit(0);
+	}
+
+      } catch (IOException e1) {
+	e1.printStackTrace();
+
+	//} catch (MalformedURLException e2) {
+	//e2.printStackTrace();
+      }
+    }
+    */
+
+    Insets insets = frame.getInsets();
     Toolkit tk = Toolkit.getDefaultToolkit();
     Dimension screen = tk.getScreenSize();
     int frameX = getInteger("window.x", (screen.width - width) / 2);
@@ -76,8 +146,10 @@ implements ActionListener
     ((PdeEditor)environment).frame = frame;
 
     frame.pack();
-    //frame.show();
+    frame.show();  // added back in for pde
   }
+
+
 
 #ifdef RECORDER
   public void actionPerformed(ActionEvent event) {

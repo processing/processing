@@ -34,6 +34,8 @@ public class PdeRunner implements Runnable {
 
 
   public void start() {
+    run(); 
+    /*
     if (thread != null) {
       try { 
 	thread.stop(); 
@@ -42,6 +44,7 @@ public class PdeRunner implements Runnable {
     }
     thread = new Thread(this, "PdeRunner");
     thread.start();
+    */
   }
 
 
@@ -138,10 +141,12 @@ public class PdeRunner implements Runnable {
   public void stop() {
     if (engine != null) {
       engine.stop();
+      /*
       if (forceStop) {
 	thread.stop();
 	thread = null;
       }
+      */
       engine = null;
     }
   }
