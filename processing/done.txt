@@ -1,3 +1,36 @@
+0028
+X modified pde.properties slightly for console and header
+X need stdout in p5 window b/c mac has no stdout
+X   remove class 'PdeEditorOutput' and 'PdeEditorLabel'(?)
+X   added editor.console.lines to pde.properties
+X int() and float() now work for casting
+X draw mode needs to be better for workshops
+X   make size() work for draw() mode
+X     inside Engine, reach in and grab calls to 'size'
+X     if call is not using a constant number, then punt
+X   when exporting, needs to grab this size parameter as well
+o related classes
+X   resolved, just use inner classes for everything
+o   better way to do parent and g.rect stuff in related classes
+o     implement g. passed into any function called draw()
+o     also important for things like cos, sin, max etc
+o     but maybe once you're doing more advanced code, that stuff's ok
+o       or using inner classes is better b/c class stuff works
+o   related classes also need to implement pConstants
+X fixed annoying findSelection bug spew on startup
+X (fixed) 0.4f no longer allowed in the code
+X size() code no longer checks for resize() and other similar things
+X add char(), byte() to int/float stuff
+X put jre into 'java' folder, include win32comm
+X finish tweaks to folder layout in distribution ('java' subdir)
+X   move p5 stuff out of lib so that dir can be moved more easily
+X   maybe put bin/lib inside 'jre' folder and keep lib for p5
+X   for people that want the space, they could remove 'jre'
+X   will make much simpler to update
+X serial is probably broken in newer versions b/c of 1.3
+X   fixed, only win32comm was missing from dll dir
+
+
 0027
 X change editor.button_bgcolor -> editor.buttons.bgcolor
 X if no 0 before decimal place in a number it breaks
