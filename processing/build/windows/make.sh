@@ -144,7 +144,7 @@ fi
 
 # new regular version
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
-#CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;$QTJAVA"
+export CLASSPATH
 
 # make version with serial for the application
 echo Building bagel with serial, sonic, video and jdk13 support
