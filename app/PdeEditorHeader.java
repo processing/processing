@@ -30,36 +30,20 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
-public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
-  //static final String SKETCH_TITLER = "sketch";
-
-  //static Color primaryColor;
+public class PdeEditorHeader extends JComponent {
   static Color backgroundColor;
   static Color textColor[] = new Color[2];
-  //static Color unselectedColor;
 
   PdeEditor editor;
-  //PdeSketch sketch;
 
   int tabLeft[];
   int tabRight[];
-
-  //int sketchLeft;
-  //int sketchRight;
-  //int sketchTitleLeft;
-  //boolean sketchModified;
 
   Font font;
   FontMetrics metrics;
   int fontAscent;
 
-  //PdeSketch sketch;
-
-  //
-
   JMenu menu;
-
-  //boolean menuVisible;
   JPopupMenu popup;
 
   int menuLeft;
@@ -106,25 +90,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
         PdePreferences.getColor("header.text.selected.color");
       textColor[UNSELECTED] = 
         PdePreferences.getColor("header.text.unselected.color");
-
-      //primaryColor    = PdePreferences.getColor("header.fgcolor.primary");
-      //secondaryColor  = PdePreferences.getColor("header.fgcolor.secondary");
     }
-
-    /*
-    addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          //System.out.println("got mouse");
-          if ((sketchRight != 0) &&
-              (e.getX() > sketchLeft) && (e.getX() < sketchRight)) {
-            editor.skSaveAs(true);
-          }
-        }
-      });
-    */
-
-    //addMouseListener(this);
-    //addMouseMotionListener(this);
 
     addMouseListener(new MouseAdapter() { 
         public void mousePressed(MouseEvent e) {
@@ -135,10 +101,8 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
             popup.show(PdeEditorHeader.this, x, y);
 
           } else {
-            //for (int i = 0; i < sketch.codeCount; i++) {
             for (int i = 0; i < editor.sketch.codeCount; i++) {
               if ((x > tabLeft[i]) && (x < tabRight[i])) {
-                //setCurrent(i);
                 editor.sketch.setCurrent(i);
                 repaint();
               }
@@ -149,17 +113,8 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
   }
 
 
-  /*
-  public void reset() {
-    sketchLeft = 0;
-    repaint();
-  }
-  */
-
-
   public void paintComponent(Graphics screen) {
     if (screen == null) return;
-    //if (editor.sketchName == null) return;
 
     PdeSketch sketch = editor.sketch;
     if (sketch == null) return;  // ??
@@ -196,10 +151,12 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
       fontAscent = metrics.getAscent();
     }
 
+    //Graphics2D g2 = (Graphics2D) g;
+    //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+    //                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
     // set the background for the offscreen
     g.setColor(backgroundColor);
-    //System.out.println("bg = " + backgroundColor);
-    //g.setColor(Color.red);
     g.fillRect(0, 0, imageW, imageH);
 
     if ((tabLeft == null) ||
@@ -217,9 +174,12 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
 
       // if modified, add the li'l glyph next to the name
       String text = "  " + codeName + (code.modified ? " \u00A7" : "  ");
-      //System.out.println("code " + i + " " + text);
 
-      int textWidth = metrics.stringWidth(text);
+      //int textWidth = metrics.stringWidth(text);       
+      Graphics2D g2 = (Graphics2D) g;
+      int textWidth = (int)
+        font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
+        
       int pieceCount = 2 + (textWidth / PIECE_WIDTH);
       int pieceWidth = pieceCount * PIECE_WIDTH;
 
@@ -251,26 +211,6 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU], 
                 menuLeft, 0, null);
 
-    /*
-    sketchTitleLeft = PdePreferences.GUI_SMALL;
-    sketchLeft = sketchTitleLeft + 
-      metrics.stringWidth(SKETCH_TITLER) + PdePreferences.GUI_SMALL;
-    sketchRight = sketchLeft + metrics.stringWidth(editor.sketchName);
-    int modifiedLeft = sketchRight + PdePreferences.GUI_SMALL;
-
-    int baseline = (sizeH + fontAscent) / 2;
-
-    g.setColor(backgroundColor);
-    g.fillRect(0, 0, imageW, imageH);
-
-    g.setFont(font); // needs to be set each time
-    g.setColor(secondaryColor);
-    g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);
-    if (sketch.getModified()) g.drawString("\u00A7", modifiedLeft, baseline);
-
-    g.drawString(editor.sketchName, sketchLeft, baseline);
-    */
-
     screen.drawImage(offscreen, 0, 0, null);
   }
 
@@ -284,17 +224,6 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     repaint();
   }
 
-
-  /*
-    New [code,tab,source] file...  Cmd-shift-N
-    Rename
-    Delete
-    Hide
-    Unhide  >
-    Reset file list (not needed?)
-  */
-  //public JMenu rebuildMenu() {
-  //JMenuItem newItem;
 
   public void rebuildMenu() {
     if (menu != null) {
@@ -324,25 +253,10 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     item = new JMenuItem("New File");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
-          //System.out.println("TODO write code for New");
           editor.sketch.newCode();
         }
       });
     menu.add(item);
-
-    /*
-    if (newItem == null) {
-      newItem = PdeEditor.newJMenuItem("New", 'T');
-      newItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) { 
-            //System.out.println("TODO write code for New");
-            editor.sketch.newCode();
-          }
-        });
-    }
-    System.out.println("adding new");
-    menu.add(newItem);
-    */
 
     item = new JMenuItem("Rename");
     item.addActionListener(new ActionListener() {
@@ -379,7 +293,6 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     if (sketch != null) {
       for (int i = 0; i < sketch.hiddenCount; i++) {
         item = new JMenuItem(sketch.hidden[i].name);
-        //item.setActionCommand(hiddenFiles[i]);
         item.setActionCommand(sketch.hidden[i].name);
         item.addActionListener(unhideListener);
         unhide.add(item);
@@ -396,14 +309,11 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
 
       ActionListener jumpListener = new ActionListener() {
           public void actionPerformed(ActionEvent e) { 
-            //System.out.println("jump to " + e.getActionCommand());
-            //System.out.println("jump to " + e);
             editor.sketch.setCurrent(e.getActionCommand());
           }
         };
       for (int i = 0; i < sketch.codeCount; i++) {
         item = new JMenuItem(sketch.code[i].name);
-        //item.setActionCommand(files[i]);
         item.addActionListener(jumpListener);
         menu.add(item);
       }
@@ -412,32 +322,18 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
 
 
   public void deselectMenu() {
-    //menuVisible = false;   // ??
     repaint();
   }
-
-
-  /*
-  public void setCurrent(int which) {
-    current = which;
-
-    editor.sketch.setCurrent(which);
-
-    // set to the text for this file, and wipe out the undo buffer
-    editor.changeText(contents, true); 
-  }
-  */
-
 
   public Dimension getPreferredSize() {
     return getMinimumSize();
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, PdePreferences.GRID_SIZE);
+    return new Dimension(300, PdePreferences.GRID_SIZE - 1);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, PdePreferences.GRID_SIZE);
+    return new Dimension(3000, PdePreferences.GRID_SIZE - 1);
   }
 }
