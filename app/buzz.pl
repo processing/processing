@@ -124,7 +124,7 @@ foreach $arg (@ARGV) {
 		#print "creating dir $temp_dir$separator$dir\n";
 		mkdirs("$temp_dir$separator$dir", 0777) || die "$temp_dir$separator$dir $!";
 	    }
-	    opendir(DIR, $dir) || die $!;
+	    opendir(DIR, $dir) || die "$! for $dir";
 	    @dcontents = readdir(DIR);
 	    closedir(DIR);
 	    foreach $file (@dcontents) {
