@@ -5,6 +5,7 @@ REVISION=`head -c 4 ../../todo.txt`
 ./make.sh
 
 echo Creating P5 distribution for revision $REVISION...
+echo
 
 # remove any old boogers
 rm -rf processing
@@ -96,6 +97,7 @@ rm -rf processing/lib/export/CVS
 cp dist/Proce55ing.exe processing/
 cp dist/run.bat processing/
 cp dist/lib/pde_windows.properties processing/lib/
+cp dist/lib/comm.jar processing/lib/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
@@ -105,11 +107,21 @@ unix2dos processing/lib/pde.properties 2> /dev/null
 unix2dos processing/lib/pde_windows.properties 2> /dev/null
 
 # zip it all up for release
-echo Zipping and finishing...
+echo Packaging standard release...
+echo
 P5=processing-$REVISION
 mv processing $P5
 zip -rq $P5.zip $P5
 # nah, keep the new directory around
 #rm -rf $P5
+
+# zip up another for experts
+echo Packaging expert release...
+echo
+cp -r dist/serial $P5/
+rm -rf $P5/serial/CVS
+# remove enormous java runtime
+rm -rf $P5/java
+zip -rq $P5-expert.zip $P5
 
 echo Done.
