@@ -7,16 +7,40 @@ X does a[3] == Float.NaN work? (for testing with splitFloats)
 X   no, if NaN, then comparison will always return false
 X sort() functions for arrays of ints, floats, doubles, and Strings
 
+mid-response for: 
+
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=post;num=1050420270;quote=4;title=Post+reply;start=0
+
+[quote author=fdb link=board=Syntax;num=1050420270;start=0#4 date=04/18/03 at 03:34:36]Thanks. Is this something that will be changed in the future, or can I trust that those variables stay the same?
+
+Also, could you explain what all the m's do? Just a bunch of numbers is rather vague...[/quote]
+i think these will stay the same for a long time. maybe we'll have a function for getting them instead, 
+
+
+
 X fix wheel mouse handler so that it works under jdk 1.3
 X   no difference between 1.3 and 1.4 code
 _   add WheelHandler to cvs
 
 _ add casey to sourceforge with admin privileges as 'reas' 
 
+_ something about the second line of this turns things to mush
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051654054;start=0
+println("3"); 
+println("4"); 
+println("5"); 
+
+_ background of menus on winxp is white
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
+
+_ some flag to know whether applet is online or not
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+
 _ video
-_   checkin video code to cvs
+X   checkin video code to cvs
 X   video integration (need to work with dist.sh for it)
 X   how to get qtjava into the classpath on windows runner
+_   incorporate second set of code for file i/o
 
 mac
 _ modify classpath to use 1.4 for compiling
@@ -115,9 +139,8 @@ BAGEL / Graphics API Additions
    b _ hiding the cursor. noCursor(), cursor()
 
    b _ add keyCode to BApplet (quick addition)
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
    b _ perlin noise 1D. noise() 
 
    b _ images and pixel copying (api for this?)
@@ -149,6 +172,9 @@ http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=p
 
    b _ light(x, y, z, c1, c2, c3, TYPE)
    b _   also BLight with same constructor, and on() and off() fxn
+
+   2 _ drawMode() for MULTIPLY and ADD
+   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051208333
 
 
 BAGEL / Rendering
@@ -208,6 +234,11 @@ ca b _   create a simple generator for grayscale bdf fonts
 ca b _     document the change and make several of them
 ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
+   1 _ font support is overkill and sucks
+   1 _   need fast 2D text that's not affected by the transforms
+   1 _   also needs to look good, not squished from texture weirdness
+   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
+
    b _ circles and spheres
    b _   bresenham (flat) oval function
    b _   finish fill mode of flat circle function
@@ -229,7 +260,9 @@ bf b _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
 BAGEL / Details
 
+   b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
    b _ transparent gif images don't retain transparency (oy)
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
    b _ gaps in lines for pmouseX, mouseX
@@ -429,6 +462,8 @@ _   not clear how to kill the process.. does that work w/ 1.3?
 _ support 'classes' folder, through the use of a classloader
 _   could also be done by launching external java app
 _   all .jar files etc are added from this folder automatically
+_   'public class' thing to make things available to all sketches
+_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
 _ class unloading not happening in java mode
 _   need to add randomizer to even non-self gen'd classes
 _   or figure out how to unload old classes.. grr
@@ -440,27 +475,35 @@ _   compile entire sketchbook on startup, check for new files on compile?
 
 PDE / Details
 
-_ improve the console
-_   maybe it needs to be a textarea?
-_   printing of objects, esp when null, in jdk 14 seems to crash
-_   exception when trying to write to stdout
-_   can't copy text from console directly
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
-_ rename doesn't set focus to renamer area
-_ rename sketch 'can't rename' error (file being kept open)
-_   open sketch, make a change, save, run, rename -> error
-_ beautify() ignores colons for case statements
-_   need to tie this to the parser instead
-_ need to check if volume is read-only, notify and quit if it is
-_   people are trying to run off the disk image
-_   need to pay attention to when running from read-only drive
-_     reported by brandenberg
-_    "p5 will launch from the disk image, but will 
-_     not draw the sketch name bar doesn't appear"
-_ p5 becomes a memory hog (benelek and glen murphy)
-_   even without sketches open, perhaps not gc'ing properly
-_   objects probably not getting finalized
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
+b _ improve the console
+b _   clear console each time 'run' gets hit
+b _     don't actually clear, just advance by the number of lines visible
+b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+b _   maybe it needs to be a textarea?
+b _   printing of objects, esp when null, in jdk 14 seems to crash
+b _     this may have been fixed
+b _   exception when trying to write to stdout
+b _   may need horizontal scroller, or text wrap
+b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
+b _   can't copy text from console directly
+b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
+2 _   make console like director messagewindow.. 
+2 _     ability to type commands and try functions
+b _ rename doesn't set focus to renamer area
+b _ rename sketch 'can't rename' error (file being kept open)
+b _   open sketch, make a change, save, run, rename -> error
+b _ beautify() ignores colons for case statements
+b _   need to tie this to the parser instead
+b _ need to check if volume is read-only, notify and quit if it is
+b _   people are trying to run off the disk image
+b _   need to pay attention to when running from read-only drive
+b _     reported by brandenberg
+b _    "p5 will launch from the disk image, but will 
+b _     not draw the sketch name bar doesn't appear"
+b _ p5 becomes a memory hog (benelek and glen murphy)
+b _   even without sketches open, perhaps not gc'ing properly
+b _   objects probably not getting finalized
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
 _ save last-used serial to sketch.properties on quit
 _ size() has memory limitations (pitaru)
 _   catch OutOfMemoryError inside size() and let the user know
@@ -546,7 +589,11 @@ b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 2 _ dbn2p5 converter.. ooh!
 2 _ a better editor: 
 2 _   line numbers like bbedit
+2 _   command to comment-out the current selection
 2 _   syntax coloring
+2 _   split screen
+2 _   collapsable functions, or quick access to functions
+2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
 2 _   emacs indents and key commands
 2 _   http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/je/index.html
 2 _   want emacs-style editor that's faster loading than emacs

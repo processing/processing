@@ -54,19 +54,19 @@ else
 fi
 cd bagel
 
-MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
+MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar:/System/Library/Java/Extensions/QTJava.zip
 
 CLASSPATH=$MACOSX_CLASSPATH
 
 ### --- make version with serial for the application
-echo Building bagel with serial support
-perl make.pl SERIAL
-pwd
+echo Building bagel with serial, video, and audio support
+perl make.pl SERIAL VIDEO SONIC
+#pwd
 cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
-echo Building bagel for export
-perl make.pl
+echo Building bagel for export with audio
+perl make.pl SONIC
 cp classes/*.class ../build/macosx/work/lib/export/
 
 cd ..
