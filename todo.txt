@@ -35,6 +35,16 @@ X change NumberFormat to nf
 X use System.arraycopy for clear().. could be way fast
 X   test to see how much faster the new arraycopy version is
 X   err, it's slower. that sucks.
+X fixed bug with typography reported by creas
+X   alpha images were 0xAAAAAAAA b/c of javagl
+X images were broken with noSmooth
+
+X 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
+X several examples broken (note from creas) in bugs.txt
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
+X   drawing02, input09, input08, transform05, others?
 
 _ export to .pde file rather than java
 _   or at least link to that from the web page
@@ -67,7 +77,6 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ fix all the random line types to support alpha
 _ write code for line joins.. continuous lines should become polygon snake
 
-
 _ image of 256x256 doesn't draw the last line of pixels
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
 _ weird line in showing in the center of an image
@@ -89,11 +98,6 @@ _ versions of loadStream/loadBytes etc that use streams and/or urls
 _ environment locks up when error stream isn't for the class
 _   this happens when it's another thread (i.e. image fetcher)
 _   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
-
-_ several examples broken (note from creas) in bugs.txt
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
-_   drawing02, input09, input08, transform05, others?
-
 
 _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
@@ -357,9 +361,6 @@ PDE / Pre-preprocessor
 Currently using Oro for search and replace preprocessor.
 Future plans to use Javacup for preprocessor and Jikes for compiler.
 
-_ 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
 _ setup( ){} has an error, setup(){} does not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
 _   setup (200, 200) causes the default size to be used but setup(200, 200) works fine

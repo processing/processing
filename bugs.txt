@@ -1,3 +1,146 @@
+...............................................................
+
+*** SMOOTHING STRANGE ON SOME EDGES
+
+....
+
+
+// here is the same issue, more concise. 
+// one quad is fine, the other has one jagged edge:
+
+size(200, 200);
+noStroke();
+ 
+fill(102);
+// bottom line is not smooth
+quad(0, 0, 100, -20, 120, 100, 0, 120);
+ 
+fill(0);
+// quad draws fine
+quad(105, 10, 120, 60, 120, 150, 80, 200);
+
+
+...............................................................
+
+*** EDGES DON'T HIT ONE ANOTHER CORRECTLY
+
+....
+
+// smoothing changes the way sphere is rendered:
+
+size(200, 200);
+lights();
+noStroke();
+//noSmooth();
+translate(100, height/2, -50);
+sphere(100);
+
+.....
+
+i'm not sure how to classify, but look at 'typography00'. i think is the
+same issue as when drawing the cubes above. tangent polygons have
+lines between them.
+
+....
+
+
+// edges in cube rendering have gap when smooth is on:
+
+void setup()
+{
+  size(200, 200);
+  lights();
+  noStroke();
+}
+ 
+float angle;
+void loop()
+{
+  angle+=0.01;
+  translate(100, 100, 0);
+  rotateX(HALF_PI/2);
+  rotateY(angle);
+  box(80);
+}
+
+
+....
+
+
+ellipses are no longer begin stroked:
+
+size(200, 200);
+stroke(255);
+fill(0);
+ellipse(50, 50, 100, 100);
+rect(60, 60, 80, 80);
+
+
+....
+
+
+// smoothing around ellipse is inconsistent. 
+// in this example, a foreign circulating line is introduced
+
+void setup()
+{
+  size(200, 200);
+  background(102, 0, 0);
+}
+ 
+float a;
+ 
+void loop()
+{
+  a += 0.01;
+  translate(100, 100);
+  rotate(a);
+  ellipse(-50, -50, 100, 200);
+  //ellipse(-50, -50, 100, 100);
+}
+
+
+
+
+...............................................................
+
+FIXES
+
+.....
+
+in example 'image10', the imported .gif are smoothed. fine, but when,
+noSmooth() is called in setup, the images no longer display.
+
+.....
+
+you put contrain in the superclass and declared it final. 
+examples using contrain function will no longer compile.
+
+.....
+
+typography has troubles. look at 'typography03' for the clearest example.
+
+.....
+
+learning more about images. they no longer draw if noSmooth() is called.
+this also applies for fonts.
+
+size(200, 200);
+//noSmooth();
+BImage a;  // Declare variable "a" of type BImage
+a = loadImage("arch.jpg"); // Load the images into the program
+image(a, 0, 0); // Displays the image from point (0,0)
+
+.....
+
+wow! look at 'color01'. that's alot of smoothing goin' on.
+
+
+
+/ / / / / / / / / / / /
+
+
+
 4 of the examples stopped compiling (for the same reason) with their port to
 version 47/48
 
@@ -15,6 +158,7 @@ transform05
 
 
 / / / / / / / / / / / /
+
 
 also that pesky pmouseX, pmouseY seems to be behaving oddly again.
 it's skipping beats. try this:
