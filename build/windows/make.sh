@@ -5,8 +5,7 @@
 
 if test -d work
 then
-#  BUILD_PREPROC=false
-  BUILD_PREPROC=true
+  BUILD_PREPROC=false
 else
   echo Setting up directories to build P5...
   BUILD_PREPROC=true
