@@ -72,6 +72,15 @@ public class PdeEditorConsole extends Component {
 
     lineCount = PdeBase.getInteger("editor.console.lines", 6);
 
+    maxLineCount = 1000;
+    lines = new String[maxLineCount];
+    isError = new boolean[maxLineCount];
+    for (int i = 0; i < maxLineCount; i++) {
+      lines[i] = "";
+      isError[i] = false;
+    }
+    firstLine = 0;
+
     if (systemOut == null) {
       systemOut = System.out;
       systemErr = System.err;
@@ -105,18 +114,11 @@ public class PdeEditorConsole extends Component {
       consoleErr = 
 	new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
 
+      /*
       System.setOut(consoleOut);
       System.setErr(consoleErr);
+      */
     }
-
-    maxLineCount = 1000;
-    lines = new String[maxLineCount];
-    isError = new boolean[maxLineCount];
-    for (int i = 0; i < maxLineCount; i++) {
-      lines[i] = "";
-      isError[i] = false;
-    }
-    firstLine = 0;
 
     addMouseListener(new MouseAdapter() {
 	public void mousePressed(MouseEvent e) {
@@ -140,7 +142,7 @@ public class PdeEditorConsole extends Component {
 
 
   public void update() {
-    System.out.println("PdeEditorConsole.update");
+    //System.out.println("PdeEditorConsole.update");
     Graphics g = this.getGraphics();
     if (g != null) paint(g);
   }
@@ -150,6 +152,8 @@ public class PdeEditorConsole extends Component {
   }
 
   public void paint(Graphics screen) {
+    if (screen == null) return; 
+
     //systemOut.println("paint()");
     if (bgColor == null) {
 

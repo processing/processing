@@ -33,7 +33,7 @@ import java.util.*;
 
 //public class PdeEditorTextPane extends JPanel {
 public class PdeEditorTextPane extends JTextPane {
-  protected JTextPane textPane;
+  // MAYBE?  protected JTextPane textPane;
 
   // styled document that is the model for the textPane
   public HighLightedDocument document; // pdebase needs it for undo
@@ -65,7 +65,7 @@ public class PdeEditorTextPane extends JTextPane {
 
     //textPane = new JTextPane(document);
     setStyledDocument(document);
-    textPane = this;
+    // MAYBE?    textPane = this;
 
     //setDoubleBuffered(true);
 
@@ -110,7 +110,9 @@ public class PdeEditorTextPane extends JTextPane {
 
     // Start the thread that does the coloring
     colorer = new Colorer();
-    colorer.start();
+    if (PdeBase.getBoolean("editor.syntax_coloring", false)) {
+      colorer.start();
+    }
 
     // Set up the hash table that contains the styles.
     //initStyles();
