@@ -29,6 +29,11 @@ foreach $line (@applet) {
     last if ($line =~ /$insert/);
 }
 
+open(INTF, ">PMethods.java") || die $!;
+print INTF "package processing.core;\n\n\n\n";
+#print INTF "import java.io.*;\n\n";
+print INTF "// this file is auto-generated. no touchy-touchy.\n\n";
+print INTF "public interface PMethods {\n";
 
 $comments = 0;
 
@@ -45,8 +50,11 @@ while ($line = shift(@contents)) {
 
     $got_something = 0;  # so it's ugly, back off
     $got_static = 0;
+    $got_interface = 0;
+
     if ($line =~ /^\s*public ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
         $got_something = 1;
+	$got_interface = 1;
     } elsif ($line =~ /^\s*public final ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
         $got_something = 1;
     } elsif ($line =~ /^\s*static public ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
@@ -65,19 +73,33 @@ while ($line = shift(@contents)) {
             $returns = '';
         }
         print OUT "\n\n$line";
+
+	if ($got_interface == 1) {
+	    $iline = $line;
+	    $iline =~ s/ \{/\;/;
+	    print INTF "\n$iline";
+	}
+
         $decl .= $line;
         while (!($line =~ /\)/)) {
             $line = shift (@contents);
             $decl .= $line;
             print OUT $line;
+
+	    if ($got_interface == 1) {
+		$iline = $line;
+		$iline =~ s/ \{/\;/;
+		#$iline =~ s/\) \{/\)\;/;
+		print INTF $iline;
+	    }
         }
 
         $decl =~ /\s(\S+)\(/;
         $decl_name = $1;
 	if ($got_static == 1) {
-	    print OUT "   $returns PGraphics.${decl_name}(";
+	    print OUT "    $returns PGraphics.${decl_name}(";
 	} else {
-	    print OUT "   $returns g.${decl_name}(";
+	    print OUT "    $returns g.${decl_name}(";
 	}
 
         $decl =~ s/\s+/ /g; # smush onto a single line
@@ -101,8 +123,10 @@ while ($line = shift(@contents)) {
     }
 }
 print OUT "}\n";
+print INTF "}\n";
 
 close(OUT);
+close(INTF);
 
 $oldguy = join(' ', @applet);
 
