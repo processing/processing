@@ -14,7 +14,7 @@ X   no, in keeping with getting shit done
 X   BLUR - write simple blur
 X     how does photoshop handle this?
 X   BLUR - add gaussian blur
-_   email re: credit/attribution and descrepancy between algos
+X   email re: credit/attribution and descrepancy between algos
 X forgot to mention the line hack to get points working in 78
 X implemented PGraphicsGL.set(x, y, argb)
 X implement PGraphicsGL.set(x, y, PImage)
@@ -32,22 +32,25 @@ X clean up the javadoc so no more errors
 X change mbox to PFont.size? 
 o   make width() return values based on natural size?
 X   not a great idea.. plus java2d uses 1 pixel font for things
+X email simon re: lighting api
+X   things are actually more on track than expected
+
+X camera is swapping colors in gl (on mac?)
+X   in fact, all textures on mac were swapping colors
+_   test this on windows to see if fixed
 
 implemented in 79
 X make sure arc goes in the right direction that we want it to
 X   (make sure that PGraphics3 goes the same direction)
 
-_ email simon re: lighting api
-_   things are actually more on track than expected
 
-_ allow save(), saveFrame() et al to properly pass in absolute paths
-_   (so that it doesn't always save to the applet folder)
-_   could require that save() takes an absolute path?
+BETA
 
-_ printarr() of null array crashes without an error
-_ actually, errors from many crashes not coming through on the mac?
+PGraphics 
 
-createGraphics and placement issues
+_ remove PMethods as actual class... 
+
+size(200, 200, P3D) - createGraphics and placement issues 
 _ make pappletgl work back inside papplet
 _   and then size(300, 300, DEPTH) etc
 _   get rid of opengl renderer menu
@@ -75,6 +78,18 @@ _   why do mouse motion events go away in full screen mode
 _   or with a Window object
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
+
+_ add something to PApplet to have constants for the platform
+_   needed for error messages (winvdig?) and other misc
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+_ allow save(), saveFrame() et al to properly pass in absolute paths
+_   (so that it doesn't always save to the applet folder)
+_   could require that save() takes an absolute path?
+
+_ printarr() of null array crashes without an error
+_ actually, errors from many crashes not coming through on the mac?
 
 PApplet
 _ check for what else inside PApplet should be static
@@ -131,6 +146,7 @@ add simon's new 3d code as soon as he has gl working
 
 
 api questions
+_ should available() be waiting() or something like that instead?
 
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
 
