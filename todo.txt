@@ -1,100 +1,35 @@
-0052
-X identityMatrix and multiplyMatrix
-X   or resetMatrix and applyMatrix
-X projectX(x, y, z) instead of project()
-o   stores last xyz point as cached for projectY
-X   projectSize() should work the same way
-X   screenX instead of projectX
-X   modelX or objectX could do the amit style thing
-X     creas says object
-X better access to projX et al
-X   what's a better name? calcX? or write to an array?
-X   projectX, projectY, .. or projectedX ? 
-X   also projectSize should just be project()
-X smooth() and noSmooth()
-X possible dist() and constrain() functions
-X   reas: I like people making these themselves and then later 
-X         they can be added to their code libraries
-X join() like split
-X   also add additional item for NaN data
-X   add doubles and longs for genome stuff
-X numberFormat (formerly zeroPad)
-X   numberFormat(float num, int left, int right) 
-X     zero means any number of digits, don't pad
-X   numberFormat(int num, int left) for 27 -> 0027
-X camera work
-X   beginCamera, endCamera -> does glMatrixMode style swapping
-X   cameraMode(CUSTOM, PERSPECTIVE, ISOMETRIC)
-X   lookAt->lookat, frustum, perspective should be public too
-X splitints, et al.. have another version to specify what to use
-X   when the value gets a NumberFormatException.. ie.
-X   splitInts("blah blah blah", ' ', 0);
-X   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
-X remove groupings of NumberFormat
-X change NumberFormat to nf
-X use System.arraycopy for clear().. could be way fast
-X   test to see how much faster the new arraycopy version is
-X   err, it's slower. that sucks.
-X fixed bug with typography reported by creas
-X   alpha images were 0xAAAAAAAA b/c of javagl
-X images were broken with noSmooth
-X color is ugly for 'use external editor' with new color scheme
-X   now uses color for current line
-X re-enable SMOOTH_IMAGES
-X 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
-X several examples broken (note from creas) in bugs.txt
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
-X   drawing02, input09, input08, transform05, others?
-X if image doesn't exist, spews null pointer exception and freaks
-X   locks up environment/machine, have to restart
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
-X disable image cache (setUseCaches?)
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
-X add a note to revisions.txt that says "not for use as a reference"
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
-_ switched to jre 1.4.1_02
+0053
+
+_ smooth() is half-broken
+
+_ single pixel lines have no alpha and no z
+
+_ fix all the random line types to support alpha
+
+_ write code for line joins.. continuous lines should become polygon snake
+
+_ beautify() ignores colons for case statements
+
+_ rename doesn't set focus to renamer area
+
+_ add keyCode to BApplet
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 
 _ simage() is screwy.. 
 _   its invocation is broken (image_mode can't be two things at once)
 _   doesn't actually use image_mode for placement
 _   also doesn't support RGBA
 
-_ fix all the random line types to support alpha
-_ write code for line joins.. continuous lines should become polygon snake
-
-_ export to .pde file rather than java
-_   or at least link to that from the web page
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
-
-_ add manifest.mf to exported applets so that applications will work
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
-
-_ put screenshots into sketch folder
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
-
-_ text caret goes missing
-_   removing extra jre's, uninstalling java apps fixed it
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
-
 _ image of 256x256 doesn't draw the last line of pixels
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
 _ weird line in showing in the center of an image
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
 
-_ syntax coloring of built-in java objects.. i.e. String
-_   probably want to include everything that's in java.lang and maybe others
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
-
-_ light(x, y, z, c1, c2, c3, TYPE)
-_   also BLight with same constructor, and on() and off() fxn
-
-_ add keyCode to BApplet
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+_ text caret goes missing
+_   removing extra jre's, uninstalling java apps fixed it
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
 
 _ versions of loadStream/loadBytes etc that use streams and/or urls
 
@@ -174,6 +109,9 @@ BAGEL / Graphics API Additions
    b _   move math functions into utility library associated
    b _     with bagel, because those will be useful on other bagel platforms
    b _     pApplet will call BagelMath.whatever, so still looks like cos()
+
+   b _ light(x, y, z, c1, c2, c3, TYPE)
+   b _   also BLight with same constructor, and on() and off() fxn
 
 
 BAGEL / Rendering
@@ -375,6 +313,9 @@ _ compiler barfs on: float[] moo = new int[10];
 _   although no error comes through to p5 (benelek)
 _ switch to java cup (one day's work)
 _   subst Image -> BImage, Font -> BFont
+_ syntax coloring of built-in java objects.. i.e. String
+_   probably want to include everything that's in java.lang and maybe others
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
 
 
 PDE / Compiler
@@ -386,7 +327,7 @@ PDE / Compiler
 
 PDE / KJC Compiler
 most of these items can be removed if kjc is dropped
-
+o
    b _ when missing a closed brace, often has compiler error
    b _   Jordan J message in email and bugs list
    b _ can't used random() inside constructor.. (Glen Murphy)
@@ -407,7 +348,27 @@ most of these items can be removed if kjc is dropped
    b _     probably just remove it for now
 
 
+PDE / Export
+
+   b _ export to .pde file rather than java
+   b _   or at least link to that from the web page
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
+   b _ add manifest.mf to exported applets so that applications will work
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
+   b _ ability to export 'applications' (not just applets)
+   b _   lock feature for present mode (part of export to application?)
+   b _   application can still do serial (qt, other stuff?) 
+   b _   applet runs in browser, though applet on cbagel is everything..
+   b _   include main class info for executable jar file with jdk > 1.2
+   b _   not difficult to do, just some tweaking once applet export works
+   b _   wrapper that invokes the applet using a copy of the jre
+   b _   main() method needs to set layout manager if jexegen is to be used
+   b _     (msft vm defaults to null layout manager)
+   b _   also make sure pack() is happening
+
+
 PDE / Runtime (includes classloading)
+
 _ for 'java' mode, try run using external vm
 _   would need to get error output stream from app.. argh
 _   only allow under win/osx/linux
@@ -425,6 +386,7 @@ _   compile entire sketchbook on startup, check for new files on compile?
 
 
 PDE / Details
+
 _ improve the console
 _   maybe it needs to be a textarea?
 _   printing of objects, esp when null, in jdk 14 seems to crash
@@ -479,6 +441,9 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PDE / features
 
+b _ find/replace
+b _   ctrl-f for find, g for find next, h for next occurrence of selected
+b _   "look up in reference" function for selecting keywords
 b _ some notion of plugins for pde
 b _   color picker or other things written by folks
 b _   add all .jar files in lib/plugins on startup
@@ -486,23 +451,12 @@ b _ make some kind of internal color picker
 b _   could be a separate window that's always around if needed
 b _ highlight a word and jump to it inside the reference
 b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
-b _ find/replace
-b _   ctrl-f for find, g for find next, h for next occurrence of selected
-b _   "look up in reference" function for selecting keywords
 b _ may need to start putting properties somewhere besides lib
 b _   home directory  (or preferences folder under macos9)
 b _ will need doubles for genomics work. ugh.
 b _   this is just enable/disable float stuff
-b _ ability to export 'applications' (not just applets)
-b _   lock feature for present mode (part of export to application?)
-b _   application can still do serial (qt, other stuff?) 
-b _   applet runs in browser, though applet on cbagel is everything..
-b _   include main class info for executable jar file with jdk > 1.2
-b _   not difficult to do, just some tweaking once applet export works
-b _   wrapper that invokes the applet using a copy of the jre
-b _   main() method needs to set layout manager if jexegen is to be used
-b _     (msft vm defaults to null layout manager)
-b _   also make sure pack() is happening
+b _ put screenshots into sketch folder
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 b _ external editor -> add a command to launch
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
 b _ event to explorer to open 'parts' directory of project
