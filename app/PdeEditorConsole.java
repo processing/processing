@@ -122,11 +122,10 @@ public class PdeEditorConsole extends JScrollPane {
     // and size window accordingly
     FontMetrics metrics = this.getFontMetrics(font);
     int height = metrics.getAscent() + metrics.getDescent();
-    int lines = PdeBase.getInteger("editor.console.lines", 6);
-    int sizeFudge = 10; // unclear why this is necessary, but it is
-    Dimension prefDimension = 
-      new Dimension(1024, (height * lines) + sizeFudge);
-    setPreferredSize(prefDimension);
+    int lines = PdeBase.getInteger("editor.console.lines", 4);
+    int sizeFudge = 6; //10; // unclear why this is necessary, but it is
+    setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
+    setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
 
     if (systemOut == null) {
       systemOut = System.out;
@@ -166,6 +165,12 @@ public class PdeEditorConsole extends JScrollPane {
         System.setErr(consoleErr);
       }
     }
+
+    //for (int i = 0; i < lines; i++) {
+      //appendText("b\r\n", false);
+    //appendText("\n", false);
+    //appendText(System.getProperty("line.separator"), false);
+    //}
   }
 
 
@@ -219,7 +224,7 @@ public class PdeEditorConsole extends JScrollPane {
       consoleDoc.insertString(consoleDoc.getLength(), text, 
                               err ? errStyle : stdStyle);
 
-      // always move to the end of the text as it's added
+      // always move to the end of the text as it's added [fry]
       consoleTextPane.setCaretPosition(consoleDoc.getLength());
 
     } catch (Exception e) { }
