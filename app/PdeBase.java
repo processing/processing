@@ -46,7 +46,11 @@ import com.apple.mrj.*;
 #endif
 
 
-public class PdeBase extends Frame 
+#ifndef SWINGSUCKS
+public class PdeBase extends JFrame
+#else
+public class PdeBase extends Frame
+#endif
   implements ActionListener
 #ifdef MACOS
              , MRJAboutHandler
@@ -57,7 +61,7 @@ public class PdeBase extends Frame
   static Properties properties;
   static Properties keywords; // keyword -> reference html lookup
 
-  static Frame frame;  // now 'this'
+  //static Frame frame;  // now 'this'
   static String encoding;
   static Image icon;
 
@@ -167,11 +171,11 @@ public class PdeBase extends Frame
 
   public PdeBase() {
     super(WINDOW_TITLE);
-    frame = this;  // clean this up later
+    //frame = this;  // clean this up later
 
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
-      frame.setIconImage(icon);
+      this.setIconImage(icon);
     } catch (Exception e) { } // fail silently, no big whup
 
     windowListener = new WindowAdapter() {
@@ -179,7 +183,8 @@ public class PdeBase extends Frame
         handleQuit();
       }
     };
-    frame.addWindowListener(windowListener);
+    //frame.addWindowListener(windowListener);
+    this.addWindowListener(windowListener);
 
     properties = new Properties();
     try {
@@ -238,8 +243,13 @@ public class PdeBase extends Frame
     // build the editor object
 
     editor = new PdeEditor(this);
-    frame.setLayout(new BorderLayout());
-    frame.add("Center", editor);
+#ifdef SWINGSUCKS
+    this.setLayout(new BorderLayout());
+    this.add("Center", editor);
+#else
+    getContentPane().setLayout(new BorderLayout());
+    getContentPane().add("Center", editor);
+#endif
 
     MenuBar menubar = new MenuBar();
     Menu menu;
@@ -437,19 +447,24 @@ public class PdeBase extends Frame
     menubar.setHelpMenu(menu);
 
 
-    frame.setMenuBar(menubar);
+    // set all menus
 
-    Insets insets = frame.getInsets();
-    Toolkit tk = Toolkit.getDefaultToolkit();
-    Dimension screen = tk.getScreenSize();
+    this.setMenuBar(menubar);
 
-    frame.pack();  // maybe this should be before the setBounds call
+
+    // handle layout
+
+    //Insets insets = frame.getInsets();
+    //Toolkit tk = Toolkit.getDefaultToolkit();
+    //Dimension screen = tk.getScreenSize();
+
+    this.pack();  // maybe this should be before the setBounds call
 
     //editor.frame = frame;  // no longer really used
     editor.init();
     rebuildSketchbookMenu(sketchbookMenu);
     buildSerialMenu();
-    frame.show();  // added back in for pde
+    this.show();  // added back in for pde
   }
 
   /*
@@ -863,7 +878,7 @@ public class PdeBase extends Frame
 
     // only warn them if this is the first time
     if (problem && firstTime) {
-      JOptionPane.showMessageDialog(frame,
+      JOptionPane.showMessageDialog(this, //frame,
                                     "Serial port support not installed.\n" +
                                     "Check the readme for instructions\n" +
                                     "if you need to use the serial port.    ",
@@ -897,7 +912,7 @@ public class PdeBase extends Frame
   }
 
   public void handlePrefs() {
-    JOptionPane.showMessageDialog(frame,
+    JOptionPane.showMessageDialog(this, //frame,
                                   "Preferences are in the 'lib' folder\n" +
                                   "inside text files named pde.properties\n" +
                                   "and pde_" + platforms[platform] + 
@@ -1177,6 +1192,7 @@ public class PdeBase extends Frame
   // this could be pruned further
   // also a similar version inside PdeEditor 
   // (at least the binary portion)
+  /*
   static public String getFile(String filename) {
     if (filename.length() == 0) {
       return null;
@@ -1191,7 +1207,7 @@ public class PdeBase extends Frame
       stream = new FileInputStream(filename);
 
     } catch (Exception e1) { try {
-      url = frame.getClass().getResource(filename);
+      url = this.getClass().getResource(filename);
       stream = url.openStream();
 
     } catch (Exception e2) { try {
@@ -1231,6 +1247,7 @@ public class PdeBase extends Frame
       return null;
     }
   }
+  */
 
   /*
   static public boolean hasFullPrivileges() {
