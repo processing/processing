@@ -15,13 +15,15 @@ ABOUT REV 0048 - 7 january 2003
 
 [ windows ] 
 
-- the release is now split in two, using 'basic' and 'advanced' versions.
-  the basic release includes a working java vm, and is all set up and 
-  ready to go. the advanced version is for people who already have java
-  installed (and don't want to deal with the 20MB download), and know what 
-  they're doing enough that they can also install the serial port code by 
-  hand. instructions on installing the serial code are in the 'serial' 
-  folder inside the advanced release.
+- the release is now split in two, using 'standard' and 'advanced'
+  versions. the standard release includes a working java vm, and is
+  all set up and ready to go. the advanced version is for people who
+  already have java installed (and don't want to deal with the 20MB
+  download), and know what they're doing enough that they can also
+  install the serial port code by hand. instructions on installing the
+  serial code are in the 'serial' folder inside the advanced release.
+
+- wheel mouse works again
 
 - increased the default memory allocation to 64 MB. 
 
