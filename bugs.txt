@@ -1,0 +1,95 @@
+the rect's stroke color comes out black in this example, unless a line
+is drawn using line() beforehand. appears color of spolygon isn't
+getting set. haven't confirmed if this is in rev 10 or if its been fixed.
+
+SimpleSerial serial;
+int shootFor = 0;
+int value = 0;
+int counter = 0;
+int countMax = 400;
+
+void setup() {
+  size(400, 400);
+  colorMode(HSB, 255);
+  serial = new SimpleSerial("COM1", 9600);
+  background(0, 0, 255);
+}
+
+
+void loop() {
+  counter++;
+  if (counter > countMax)
+    counter = 0;
+
+  // if a new message has been received
+  if (serial.messageReceived) {
+    shootFor = serial.message[0];
+    value += (shootFor - value) / 4.0;
+    if (abs(shootFor - value) < 4) {
+      value = shootFor;
+    }
+
+    // change the background color based on the new value
+    //background(value, 255, 255);
+
+    // set messageReceived to false, and it'll be set
+    // back to true when a new message comes in
+    serial.messageReceived = false;
+  }
+  drawState();
+}
+
+
+void drawPainted() {
+  push();
+  pop();
+}
+
+
+void drawState() {
+  push();
+  println("Value: " + value);
+  translate(200, 200, 0);
+  //println("3");
+  rotate((float)(value / 100.0), 0, 0, 1);
+  //line(200, 0, 200, 400);
+  //scale(1.2f, 1.2f, 1.2f);
+  //colorMode(HSB, 255);
+  //stroke(30, 100, 255);
+  //fill(30, 100, 255);
+  stroke(30, 100, 255);
+  //line(10, 10, 100, 100);
+  //beginShape(LINES);
+  //vertex(0, 0);
+  //vertex(90, 99);
+  //endShape();
+  rect(10, 10, 100, 100);
+  //rect(200 - counter -5, -200, 200 - counter + 5, 200);
+  //rect(-200, 200 - counter -5, 200, 200 - counter + 5);
+
+//  beginShape(LINES);
+
+//  vertex(200, 0);
+//  vertex(200, 400);
+//  endShape();
+  pop();
+}
+
+public class shape {
+  int x;
+}
+
+
+----------------------------------------------------
+
+
+KjcEngine died on line 367 with this:
+(trying to stop the applet)
+void setup() {
+  size(300, 300);
+  colorScale(100);
+}
+
+void loop() {
+  bezierCurve(10, 10,  100, 50,  50, 100,  290, 290);
+}
