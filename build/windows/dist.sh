@@ -18,8 +18,8 @@ rm -rf processing/lib/CVS
 #rm -rf processing/lib/netscape/CVS
 #rm -rf processing/lib/netscape/javascript/CVS
 #rm -rf processing/fonts/CVS
-rm -rf processing/reference/CVS
-rm -rf processing/reference/images/CVS
+#rm -rf processing/reference/CVS
+#rm -rf processing/reference/images/CVS
 #rm -rf processing/sketchbook/CVS
 #rm -rf processing/sketchbook/default/CVS
 #rm -f  processing/sketchbook/default/.cvsignore
@@ -78,6 +78,14 @@ unix2dos processing/lib/preferences.txt 2> /dev/null
 unix2dos processing/lib/keywords.txt 2> /dev/null
 #unix2dos processing/lib/pde_windows.properties 2> /dev/null
 
+
+# something like the following might be better:
+# find / -name "*.mp3" -exec rm -f {}\;
+# and same for cvsignore, ~ files, .DS_Store
+find processing -name "*~" -exec rm -f {} ';'
+find processing -name ".DS_Store" -exec rm -f {} ';'
+find processing -name "._*" -exec rm -f {} ';'
+
 # zip it all up for release
 echo Packaging standard release...
 echo
@@ -101,7 +109,3 @@ zip -rq $P5-expert.zip $P5
 
 echo Done.
 
-
-# something like the following might be better:
-# find / -name "*.mp3" -exec rm -f {}\;
-# and same for cvsignore, ~ files, .DS_Store
