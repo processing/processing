@@ -1,6 +1,6 @@
 PROCESSING DEVELOPMENT ENVIRONMENT
 
-(c) 2001-03 Ben Fry and Casey Reas
+(c) 2001-04 Ben Fry and Casey Reas
 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
 
@@ -152,20 +152,11 @@ GOODIES & SEMI-HIDDEN FEATURES
 
 PLATFORMS
 
-the processing development environment runs best on:
+the processing development environment is tested most heavily on:
 
-1. windows 2000/XP
-2. mac os x
-3. linux
-4. mac os 9
-5. windows 95/98/ME
-
-our priority for how well the beast runs looks like:
-
-1. windows & mac os x (tied for first)
-3. mac os 9
-4. windows 95/98/ME (because we must)
-5. linux
+1. Mac OS X 10.3
+1. Windows XP
+3. Redhat Linux 9
 
 windows is the superior platform for running java applications. it's
 not because we like windows the best, (sorry to the zealots in all
@@ -175,12 +166,9 @@ previous efforts), but it's still a bit behind. we think os x will be
 a great bet for the future, and apple is putting all their feeble
 weight behind it, so hopefully it will evolve somewhere.
 
-developing the version for mac os 9 is a big headache, but we think
-lots of people still use the crusty operating system, so we're going
-to keep supporting it for the meantime. the guess is that a lot of
-schools are still using it in their labs, and since schools are a
-significant target for the environment, we gotta play along. in the
-short term, however, development for mac os 9 has been suspended.
+developing the version for mac os 9 was a big headache, we badly 
+wanted to support it, since so many people use it, but it had to be 
+discontinued for lack of time to work on it.
 
 windows 95/98/ME is a piece of crap, but since lots of people (are
 often forced to) use it, we'll try and support. early alpha versions
@@ -262,27 +250,6 @@ a fix someday.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-MAC OS 9
-
-we have temporarily suspended development for mac os 9, because we
-don't have time to fight with this dying os before beta. we hope to
-resume mac os 9 development before releasing the final 1.0 version.
-
-for releases earlier than 57:
-
-java applications on classic mac os are in a bad state, as apple has
-decided (rightfully so) to abandon further development of their java
-runtime under OS 9.
-
-serial works fairly well with my keyspan usb/serial adapter. thank god
-for patrick beard and jdirect.
-
-versions: we only test under Mac OS 9.2.2, all others.. who knows?
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
 WINDOWS
 
 win2k and winxp are used as the primary development platforms, so the
@@ -327,7 +294,7 @@ shown up with java 1.4.
 
 
 LINUX
-
+v
 the processing application is just a shell script, you can use this
 as a guide to getting p5 to run with your specific configuration,
 because who knows what sort of setup you have. this release was tested
