@@ -73,52 +73,82 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
 
       case KeyEvent.VK_UP:
 	char contents[] = tc.getText().toCharArray();
-	for (int i = 0; i < 20; i++) System.out.print((int)contents[i] + " ");
+
 	// figure out how far left to the newline
 	int howfar = 0;
+
+	// an improved version might use this..
+	// it worked for DOWN, but i'd mostly fixed UP already
+	//if (contents[position] == 10) position--;
+
 	int p = position;
-	//System.out.println(p);
-	while ((p > 0) && (contents[p] != 13) && (contents[p] != 10)) {
+	//System.out.println("position = " + p);
+	while ((p > 0) && (contents[p] != 10)) {
 	  p--; howfar++;
 	}
-	howfar--;
-	System.out.println("howfar = " + howfar);
 	// step over the newline
-	while ((p > 0) && ((contents[p] == 13) || (contents[p] == 10))) {
-	  p--; 
+	p--;
+	if (p <= 0) {
+	  tc.setCaretPosition(0);
+	  return;
 	}
+
+	//if (contents[position] == 10) {
+	if (contents[p] == 10) {
+	  //System.out.println("double newlines at current position");
+	  //}
+	  p--;
+	} else {
+	  howfar--;
+	}
+	//System.out.println("dist from left = " + howfar);
+
 	if (p == 0) return; // nothing above
-	// look for the next
+	//System.out.println("now backing up from char " + contents[p]);
+
+	// determine length of previous line
 	int howlong = 0;
-	while ((p > 0) && (contents[p] != 13) && (contents[p] != 10)) {
+	while ((p >= 0) && (contents[p] != 10)) {
 	  p--; howlong++;
 	}
-	System.out.println("next line is " + howlong);
-	tc.setCaretPosition(p + 1 + Math.min(howfar, howlong));
+	//System.out.println("moving to line of length " + howlong);
+
+	tc.setCaretPosition(p + Math.min(howfar, howlong) + 1);
+	//System.out.println();
 	break;
+
       case KeyEvent.VK_DOWN:
 	contents = tc.getText().toCharArray();
 	// figure out how far left to the newline
 	howfar = 0;
 	p = position;
-	while ((p > 0) && (contents[p] != 13) && (contents[p] != 10)) {
+	if (contents[p] == 10) {
+	  p--;
+	  position--;
+	}
+	while ((p > 0) && (contents[p] != 10)) {
 	  p--; howfar++;
 	}
+	//System.out.println("howfar = " + howfar);
 	// step forward and find the next newline
 	p = position;
+
+	// if at end of line, this is an eol, step over it
+	//if (contents[p] == 10) p++;
+
 	int last = contents.length - 1;
 	//System.out.println("howfar = " + howfar);
 	//int howlong = 0;
-	while ((p < last) && (contents[p] != 13) && (contents[p] != 10)) 
+	while ((p < last) && (contents[p] != 10)) 
 	  p++;
 	if (p == last) return; // nothing below
-	while ((p < last) && ((contents[p] == 13) || (contents[p] == 10)))
+	while ((p < last) && (contents[p] == 10))
 	  p++;
 	int newline = p;
 
 	// see if enough room on this line
 	while ((p < last) && (p < newline + howfar-1) &&
-	       (contents[p] != 13) && (contents[p] != 10)) p++;
+	       (contents[p] != 10)) p++;
 	tc.setCaretPosition(p);
 	break;
       }
