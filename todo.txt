@@ -36,6 +36,10 @@ can tell, is to Save As once, make at least one change, then Save.
 
 what happens if folder already exists on save as?
 
+_ examples need to be updated
+
+//
+
 _ add tool to hit 'next' to go through examples
 _   just make it "next file in folder" since examples are all over
 _   also need to copy examples locally
@@ -46,10 +50,6 @@ _ add tool to "Add custom html to sketch"
 _   that copies applet.html, 
 _   opens sketch folder, 
 _   and gives info about what to do next (how to edit)
-
-_ examples need to be updated
-
-//
 
 _ get an xml library in there
 _   nanoxml problems with manifest
