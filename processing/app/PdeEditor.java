@@ -192,12 +192,18 @@ public class PdeEditor extends JPanel {
 
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                textarea, consolePanel);
-                                       
+
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);
     // if window increases in size, give all of increase to textarea (top pane)
     splitPane.setResizeWeight(1D);
+
+    // the default size on windows is too small and kinda ugly
+    int dividerSize = PdeBase.getInteger("editor.divider.size", 0);
+    if (dividerSize != 0) {
+      splitPane.setDividerSize(dividerSize);
+    }
 
     rightPanel.add(splitPane, BorderLayout.CENTER);
 
@@ -400,6 +406,14 @@ public class PdeEditor extends JPanel {
 
       String what = path + File.separator + name + ".pde";
       //System.out.println(what);
+
+      if (windowX != -1) {
+        String dividerLocation = 
+          skprops.getProperty("editor.divider.location");
+        if (dividerLocation != null) {
+          splitPane.setDividerLocation(Integer.parseInt(dividerLocation));
+        }
+      }
 
       if (new File(what).exists()) {
         userName = user;
@@ -1740,6 +1754,8 @@ afterwards, some of these steps need a cleanup function
       skprops.put("user.name", userName);
 
       skprops.put("editor.external", externalEditor ? "true" : "false");
+      skprops.put("editor.divider.location", 
+                  String.valueOf(splitPane.getDividerLocation()));
 
       skprops.put("serial.port", PdeBase.get("serial.port", "unspecified"));
 
