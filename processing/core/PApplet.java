@@ -1939,6 +1939,7 @@ public class PApplet extends Applet
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // PERLIN NOISE
@@ -2319,7 +2320,7 @@ public class PApplet extends Applet
      }
      return img;
    }
-   System.err.println("loadImage(): bad targa image format");
+   die("loadImage(): bad targa image format");
    return null;
   }
 
@@ -2344,14 +2345,10 @@ public class PApplet extends Applet
       }
       return new PFont(input);
 
-      //} catch (IOException e) {
     } catch (Exception e) {
-      e.printStackTrace();
-      System.err.println("Could not load font " + filename);
-      System.err.println("Make sure that the font has been copied");
-      System.err.println("to the data folder of your sketch.");
-      System.err.println();
-      e.printStackTrace();
+      die("Could not load font " + filename + "\n" +
+          "Make sure that the font has been copied\n" +
+          "to the data folder of your sketch.", e);
     }
     return null;
   }
@@ -4270,42 +4267,212 @@ public class PApplet extends Applet
   // MAIN
 
 
+  private static class WorkerVar {
+    private Thread thread;
+    WorkerVar(Thread t) { thread = t; }
+    synchronized Thread get() { return thread; }
+    synchronized void clear() { thread = null; }
+  }
+
+  class Worker {
+    private Object value;
+    private WorkerVar workerVar;
+
+    protected synchronized Object getValue() {
+      return value;
+    }
+
+    private synchronized void setValue(Object x) {
+      value = x;
+    }
+
+    /**
+     * Compute the value to be returned by the <code>get</code> method.
+     */
+    //public abstract Object construct();
+            public Object construct() {
+          //while ((Thread.currentThread() == this) && !finished) {
+          try {
+            // is this what's causing all the trouble?
+            int anything = System.in.read();
+            if (anything == EXTERNAL_STOP) {
+              //System.out.println("********** STOPPING");
+
+              // adding this for 0073.. need to stop libraries
+              // when the stop button is hit.
+              PApplet.this.stop();
+
+              //System.out.println("********** REALLY");
+              finished = true;
+            }
+          } catch (IOException e) {
+            // not tested (needed?) but seems correct
+            //stop();
+            finished = true;
+            //thread = null;
+          }
+          try {
+            Thread.sleep(250);
+            //Thread.sleep(100);  // kick up latency for 0075?
+          } catch (InterruptedException e) { }
+          return null;
+        }
+
+    /**
+     * Called on the event dispatching thread (not on the worker thread)
+     * after the <code>construct</code> method has returned.
+     */
+    public void finished() {
+    }
+
+    /**
+     * A new method that interrupts the worker thread.  Call this method
+     * to force the worker to stop what it's doing.
+     */
+    public void interrupt() {
+        Thread t = workerVar.get();
+        if (t != null) {
+            t.interrupt();
+        }
+        workerVar.clear();
+    }
+
+    /**
+     * Return the value created by the <code>construct</code> method.
+     * Returns null if either the constructing thread or the current
+     * thread was interrupted before a value was produced.
+     *
+     * @return the value created by the <code>construct</code> method
+     */
+    public Object get() {
+        while (true) {
+            Thread t = workerVar.get();
+            if (t == null) {
+                return getValue();
+            }
+            try {
+                t.join();
+            }
+            catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // propagate
+                return null;
+            }
+        }
+    }
+
+
+    /**
+     * Start a thread that will call the <code>construct</code> method
+     * and then exit.
+     */
+    public Worker() {
+        final Runnable doFinished = new Runnable() {
+           public void run() { finished(); }
+        };
+
+        Runnable doConstruct = new Runnable() {
+            public void run() {
+                try {
+                    setValue(construct());
+                }
+                finally {
+                    workerVar.clear();
+                }
+
+                javax.swing.SwingUtilities.invokeLater(doFinished);
+            }
+        };
+
+        Thread t = new Thread(doConstruct);
+        workerVar = new WorkerVar(t);
+    }
+
+    /**
+     * Start the worker thread.
+     */
+    public void start() {
+        Thread t = workerVar.get();
+        if (t != null) {
+            t.start();
+        }
+    }
+  }
+
+
   public void setupExternal(Frame frame) {
     //externalRuntime = true;
 
+    /*
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          //while ((Thread.currentThread() == this) && !finished) {
+          try {
+            // is this what's causing all the trouble?
+            int anything = System.in.read();
+            if (anything == EXTERNAL_STOP) {
+              //System.out.println("********** STOPPING");
+
+              // adding this for 0073.. need to stop libraries
+              // when the stop button is hit.
+              PApplet.this.stop();
+
+              //System.out.println("********** REALLY");
+              finished = true;
+            }
+          } catch (IOException e) {
+            // not tested (needed?) but seems correct
+            //stop();
+            finished = true;
+            //thread = null;
+          }
+          try {
+            Thread.sleep(250);
+            //Thread.sleep(100);  // kick up latency for 0075?
+          } catch (InterruptedException e) { }
+        }
+      });
+    */
+
+    /*
     Thread ethread = new Thread() {  //new Runnable() {
         public void run() {
           // this fixes the "code folder hanging bug" (mostly)
           setPriority(Thread.MIN_PRIORITY);
+    */
+    final Worker worker = new Worker();
 
-          while ((Thread.currentThread() == this) && !finished) {
-            try {
-              // is this what's causing all the trouble?
-              int anything = System.in.read();
-              if (anything == EXTERNAL_STOP) {
-                //System.out.println("********** STOPPING");
+    /*
+    final SwingWorker worker = new SwingWorker() {
+        public Object construct() {
+          //while ((Thread.currentThread() == this) && !finished) {
+          try {
+            // is this what's causing all the trouble?
+            int anything = System.in.read();
+            if (anything == EXTERNAL_STOP) {
+              //System.out.println("********** STOPPING");
 
-                // adding this for 0073.. need to stop libraries
-                // when the stop button is hit.
-                PApplet.this.stop();
+              // adding this for 0073.. need to stop libraries
+              // when the stop button is hit.
+              PApplet.this.stop();
 
-                //System.out.println("********** REALLY");
-                finished = true;
-              }
-            } catch (IOException e) {
-              // not tested (needed?) but seems correct
-              //stop();
+              //System.out.println("********** REALLY");
               finished = true;
-              //thread = null;
             }
-            try {
-              Thread.sleep(250);
-              //Thread.sleep(100);  // kick up latency for 0075?
-            } catch (InterruptedException e) { }
+          } catch (IOException e) {
+            // not tested (needed?) but seems correct
+            //stop();
+            finished = true;
+            //thread = null;
           }
+          try {
+            Thread.sleep(250);
+            //Thread.sleep(100);  // kick up latency for 0075?
+          } catch (InterruptedException e) { }
+          return null;
         }
       };
-    ethread.start();
+    //ethread.start();
+    */
 
     frame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
