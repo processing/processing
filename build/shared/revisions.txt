@@ -25,6 +25,7 @@ bugs and creating tests for each of them.
 toxi has done several fixes and tweaks to the graphics engine, details
 listed below.
 
+
 [ new features (new bugs) ]
 
 - added more words to the syntax coloring
@@ -33,7 +34,9 @@ listed below.
 
 - added FileInputStream version of loadStream for locally running code
 
-- added screenGrab(String filename)
+- added screenGrab(String filename). this grabs an uncompressed tiff
+  image of the current screen, just like screenGrab(). if ".tif" isn't
+  in the filename, it will be added.
 
 - loadStream/loadBytes work with InputStreams and URLs
 
@@ -75,11 +78,16 @@ have missed a few.. some of these are reported multiple times..
 - imageMode issues have been ironed out
 
 - added print(char c) and println(char c) so that they don't just 
-  print numbers to the console
+  print numbers to the console [benelek]
 
-- fonts were taking up more memory than necessary (found by arielm)
+- fonts were taking up more memory than necessary [arielm]
 
 - added ceil/floor to syntax coloring
+
+- fix for points that were drawing invisible (extrusion example was
+  broken) [benelek]
+
+- fixed nagging ArrayIndexOutOfBoundsException on images [benelek]
 
 
 [ performance ]
