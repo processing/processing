@@ -1666,23 +1666,23 @@ public class PApplet extends Applet
   public PFont loadFont(String filename) {
     try {
       String lower = filename.toLowerCase();
-      InputStream input = null;
+      InputStream input = openStream(filename);
 
-      if (lower.endsWith(".vlw")) {
-        input = openStream(filename);
+      if (lower.endsWith(".vlw.gz")) {
+        input = new GZIPInputStream(input);
 
-      } else if (lower.endsWith(".vlw.gz")) {
-        input = new GZIPInputStream(openStream(filename));
-
-      } else {
-        throw new IOException("don't know what type of file that is");
+      } else if (!lower.endsWith(".vlw")) {
+        throw new IOException("I don't know how to load a font named " + 
+                              filename);
       }
       return new PFont(input);
 
-    } catch (IOException e) {
+      //} catch (IOException e) {
+    } catch (Exception e) {
       System.err.println("Could not load font " + filename);
       System.err.println("Make sure that the font has been copied");
       System.err.println("to the data folder of your sketch.");
+      System.err.println();
       e.printStackTrace();
     }
     return null;
@@ -1716,6 +1716,14 @@ public class PApplet extends Applet
     if (stream != null) return stream;
 
     try {
+      try {
+        String location = folder + File.separator + "data";
+        File file = new File(location, filename);
+        stream = new FileInputStream(file);
+        if (stream != null) return stream;
+
+      } catch (Exception e) { }  // ignored
+
       try {
         stream = new FileInputStream(new File("data", filename));
         if (stream != null) return stream;
