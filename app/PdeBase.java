@@ -1055,8 +1055,8 @@ public class PdeBase extends Frame implements ActionListener {
     String fontname = st.nextToken();
     String fontstyle = st.nextToken();
     return new Font(fontname, 
-		    (fonstyle.indexOf("bold") ? Font.BOLD : 0) | 
-		    (fonstyle.indexOf("italic") ? Font.ITALIC : 0),
+		    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) | 
+		    ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
 		    Integer.parseInt(st.nextToken()));
   }
 
