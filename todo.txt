@@ -171,8 +171,6 @@ sure if related. same for PATH and CLASSPATH.
 the trouble. 
 
 
-//
-
 _ get an xml library in there
 _   nanoxml problems with manifest
 
@@ -224,6 +222,9 @@ _   use canonicalPath to flag possible problems
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
+
+_ implement horizontal version of PdeEditorButtons
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
 
 
 ......................................................................
@@ -301,13 +302,6 @@ o     can java get the root directory for system/win32 etc?
 
 
 export stuff
-_ make multiple jar files thing work as an option
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
-_   applet default is one file, application default is multiple
-_   user in advanced mode can switch to the other
-_   buttons on side of sketch do default (last) behavior
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else? (nah, too messy)
 _ write export-to-application
 _   lock feature for present mode (part of export to application?)
 _   application can still do serial (qt, other stuff?) 
@@ -325,9 +319,13 @@ _     this will need to detect whether the user has their own main()
 _     or even BApplet.main(new String[] { getClass().getName() });
 _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
 _     main sticking point will be serial/qtjava in exports
-
-_ implement horizontal version of PdeEditorButtons
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else? (nah, too messy)
+_ make multiple jar files thing work as an option
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+_   applet default is one file, application default is multiple
+_   user in advanced mode can switch to the other
+_   buttons on side of sketch do default (last) behavior
 
 
 
