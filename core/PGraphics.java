@@ -53,10 +53,10 @@ public class PGraphics extends PImage
 
   // needs to happen before background() is called
   // and resize.. so it's gotta be outside
-  static boolean hints[] = new boolean[HINT_COUNT];
-  static {
+  boolean hints[] = new boolean[HINT_COUNT];
+  //static {
     //hints[NEW_GRAPHICS] = true;
-  }
+  //}
 
 
   // ........................................................
