@@ -71,6 +71,14 @@ X   if more than one class defined, forces it to run externally
 X     (basically any time it sees "class" in the code..
 X     may be subject to errors, but errs on side of just running ext)
 X   runs out of processing data folder
+X fix for toolbar being one pixel off breaks the windows version
+X   need to only do the fix on the mac.. ugh
+
+_ "use external editor" is broken
+_   throws exception on load()
+
+_ if a data file is in the sketch (not data) folder export breaks
+_   works fine in the editor, but on export gets a nullpointer ex
 
 _ macosx is using /Library instead of ~/Library.. get this fixed
 _   domain version wasn't in the stubs.. grr
@@ -89,6 +97,8 @@ _ basic sample audio playback needed for p5
 
 
 MESS TO SORT
+
+_ get an xml library in there
 
 _ what's up with int() -> toInt() conversion?
 
