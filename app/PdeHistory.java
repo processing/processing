@@ -4,9 +4,8 @@
   PdeHistory - handler for storing history information about a project
   Part of the Processing project - http://Proce55ing.net
 
-  Copyright (c) 2001-03 
-  Ben Fry, Massachusetts Institute of Technology and 
-  Casey Reas, Interaction Design Institute Ivrea
+  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,26 +43,16 @@ public class PdeHistory {
   static final String HISTORY_SEPARATOR = 
     "#################################################";
 
-  //boolean recordingHistory;
-  //JMenu historyMenu;
   JMenu menu;
 
+  // true if the sketch is read-only, 
+  // meaning that no history will be recorded
+  boolean readOnlySketch;
+
   File historyFile;
-  //OutputStream historyStream;
-  //PrintWriter historyWriter;
-  //String lastRecorded;
   String lastRecorded;
 
   ActionListener menuListener;
-
-  /*
-  ActionListener historyMenuListener = 
-    new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.retrieveHistory(e.getActionCommand());
-        }
-      };
-  */
 
 
   public PdeHistory(PdeEditor editor) {
@@ -82,7 +71,10 @@ public class PdeHistory {
   /**
    * Set the path for the current sketch
    */
-  public void setPath(String path) {
+  public void setPath(String path, boolean readOnlySketch) {
+    this.readOnlySketch = true;
+
+    if (readOnlySketch) return;
     historyFile = new File(path, "history.gz");
   }
 
@@ -103,6 +95,8 @@ public class PdeHistory {
    * mode is RUN, SAVE, AUTOSAVE, or BEAUTIFY
    */
   public void record(String program, int mode) {
+    if (readOnlySketch) return;
+
     if (!PdePreferences.getBoolean("history.recording")) return;
 
     if ((lastRecorded != null) &&

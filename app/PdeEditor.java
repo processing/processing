@@ -4,9 +4,8 @@
   PdeEditor - main editor panel for the processing ide
   Part of the Processing project - http://Proce55ing.net
 
-  Copyright (c) 2001-03 
-  Ben Fry, Massachusetts Institute of Technology and 
-  Casey Reas, Interaction Design Institute Ivrea
+  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -342,7 +341,6 @@ public class PdeEditor extends JFrame
           }
         }
       });
-
     // can this happen here?
     //restorePreferences();
   }
@@ -406,7 +404,7 @@ public class PdeEditor extends JFrame
     String sketchDir = PdePreferences.get("last.sketch.path");
 
     if (sketchName != null) {
-      if (new File(sketchDir + File.separator + sketchName).exists()) {
+      if (new File(sketchDir + File.separator + sketchName + ".pde").exists()) {
         skOpen(sketchDir, sketchName);
 
       } else {
@@ -1499,7 +1497,7 @@ public class PdeEditor extends JFrame
 
   public void checkModified2() {
     switch (checking) {
-    case SK_NEW: skNew2(); break;
+    case SK_NEW: skNew2(false); break;
     case SK_OPEN: skOpen2(openingPath, openingName); break;
     case DO_QUIT: doQuit2(); break;
     }
@@ -1521,53 +1519,56 @@ public class PdeEditor extends JFrame
    */
   protected void skNew2(boolean startup) {
     try {
-      File sketchDir = null;
-      String sketchName = null;
+      File newbieDir = null;
+      String newbieName = null;
 
       if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
+        // prompt for the filename and location for the new sketch
+
         FileDialog fd = new FileDialog(new Frame(), 
                                        "Create new sketch named", 
                                        FileDialog.SAVE);
         fd.setDirectory(PdePreferences.get("sketchbook.path"));
         fd.show();
 
-        String sketchParentDir = fd.getDirectory();
-        sketchName = fd.getFile();
-        if (sketchName == null) return;
+        String newbieParentDir = fd.getDirectory();
+        newbieName = fd.getFile();
+        if (newbieName == null) return;
 
-        sketchDir = new File(sketchParentDir, sketchName);
+        newbieDir = new File(newbieParentDir, newbieName);
 
       } else {
-        String sketchParentDir = PdePreferences.get("sketchbook.path");
+        // use a generic name like sketch_031008a, the date plus a char
+        String newbieParentDir = PdePreferences.get("sketchbook.path");
 
         int index = 0;
         SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
         String purty = formatter.format(new Date());
         do {
-          sketchName = "sketch_" + purty + ((char) ('a' + index));
-          sketchDir = new File(sketchParentDir, sketchName);
+          newbieName = "sketch_" + purty + ((char) ('a' + index));
+          newbieDir = new File(newbieParentDir, newbieName);
           index++;
-        } while (sketchDir.exists());
+        } while (newbieDir.exists());
       }
 
       // mkdir for new project name
-      sketchDir.mkdirs();
+      newbieDir.mkdirs();
 
       //new File(sketchDir, "data").mkdirs();
 
       // make empty pde file
-      File sketchFile = new File(sketchDir, sketchName + ".pde");
-      new FileOutputStream(sketchFile);
+      File newbieFile = new File(newbieDir, newbieName + ".pde");
+      new FileOutputStream(newbieFile);
 
 #ifdef MACOS
-      // thank you apple, for changing this
+      // thank you apple, for changing this @#$)(*
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
 
       // jdk13 on osx, or jdk11
       // though apparently still available for 1.4
       if ((PdeBase.platform == PdeBase.MACOS9) ||
           (PdeBase.platform == PdeBase.MACOSX)) {
-        MRJFileUtils.setFileTypeAndCreator(sketchFile,
+        MRJFileUtils.setFileTypeAndCreator(newbieFile,
                                            MRJOSType.kTypeTEXT,
                                            new MRJOSType("Pde1"));
       }
@@ -1577,12 +1578,10 @@ public class PdeEditor extends JFrame
       // actually, don't, that way can avoid too much extra mess
 
       // rebuild the menu here
-      //base.rebuildSketchbookMenu();
       sketchbook.rebuildMenu();
 
       // now open it up
-      //skOpen(sketchFile, sketchDir);
-      handleOpen(sketchName, sketchFile, sketchDir);
+      handleOpen(newbieName, newbieFile, newbieDir);
 
     } catch (IOException e) {
       // NEED TO DO SOME ERROR REPORTING HERE ***
@@ -1604,10 +1603,6 @@ public class PdeEditor extends JFrame
 
 
   /*
-  public void doOpen() {
-    checkModified(DO_OPEN);
-  }
-
   protected void doOpen2() {
     // at least set the default dir here to the sketchbook folder
 

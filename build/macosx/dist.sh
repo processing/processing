@@ -47,7 +47,8 @@ rm -rf processing/sketchbook/default/CVS
 rm -f  processing/sketchbook/default/.cvsignore
 
 # new style examples thing ala reas
-cd processing/sketchbook
+#cd processing/sketchbook
+cd processing/lib
 unzip -q examples.zip
 rm examples.zip
 cd ../..

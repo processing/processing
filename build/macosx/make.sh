@@ -31,7 +31,8 @@ else
   cp -r ../shared work
 
   echo Extracting examples...
-  cd work/sketchbook
+  #cd work/sketchbook
+  cd work/lib
   unzip -q examples.zip
   rm examples.zip
   cd ../..
