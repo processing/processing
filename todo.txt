@@ -228,6 +228,12 @@ X ask creas about src or dest in image functions
 X finish imaging api
 X modify make.sh to build processing.core
 
+040708 afternoon
+X lots of work on making packaged classes work
+X modify preproc to handle "void setup" -> "public void setup"
+o preproc bug: text(String.valueOf(i+1), left + i*20, top);
+o   unexpected token "String"
+
 _ casting working properly.. int() maps to toInt()? 
 _   what is performance hit for this thing?
 _ processing.app -> PdeBase, PdeEditor..
@@ -346,8 +352,6 @@ _   but also potential stop() for individual items
 
 
 BUGS / preproc
-_ preproc bug: text(String.valueOf(i+1), left + i*20, top);
-_   unexpected token "String"
 _ casting problems in the parser
 _   float u = float(x)/width; works.
 _   float u = (float(x)/width); doesn't work: "unexpected token: float".
