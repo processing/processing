@@ -103,12 +103,15 @@ X   appendText is disabled due to NullPointerEx on startup
 X empty the console when a new sketch is opened
 X   if console.auto_clear is set to true, will clear on run and open
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1086972918
+X maybe bring back the prompt option for "new sketch"
+X   sometimes nice just to have it create an unnamed sketch quickly
+X   shift-new will always prompt with filedialog
 
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
 _   this also needs to be checked when building the sketch menu 
 
-_ make export save to multiple files
+_ don't force everything into a single .jar on export
 
 _ what happens when the .pde file isn't named 
 _   the same as the enclosing folder?
@@ -125,10 +128,6 @@ _ ctrl-5 (at least on xp) is marking the current sketch as modified
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
 _ re-implement history
-
-_ maybe bring back the prompt option for "new sketch"
-_   sometimes nice just to have it create an unnamed sketch quickly
-_   shift-new will always prompt with filedialog
 
 
 now implemented for [url=http://processing.org/discourse/yabb/YaBB.cgi?board=Collaboration;action=display;num=1084285917]megabucket[/url].
