@@ -1,7 +1,22 @@
 0053
 X add smooth() noSmooth() to the keywords
+X image of 256x256 doesn't draw the last line of pixels
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
+X weird line in showing in the center of an image
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
 
-_ smooth() is half-broken
+_ smooth images drawing strangely (missing first line of pixels)
+_   also smoothed even if not distorted
+
+_ aliased and anti-aliased images don't line up
+_   text (text04) marching around strangely
+
+_ problems with u/v are likely to also be there for colors
+
+_ u/v should be affected by w for proper perspective
+
+_ sphere() and other polygons don't connect flush with one another
+
 
 _ single pixel lines have no alpha and no z
 
@@ -10,6 +25,9 @@ _ fix all the random line types to support alpha
 _ write code for line joins.. continuous lines should become polygon snake
 
 _ convex/concave polygons
+
+image(img, x, y) in CENTER_DIAMETER mode is actually center radius,
+because it uses 
 
 
 //// 
@@ -31,11 +49,6 @@ _ simage() is screwy..
 _   its invocation is broken (image_mode can't be two things at once)
 _   doesn't actually use image_mode for placement
 _   also doesn't support RGBA
-
-_ image of 256x256 doesn't draw the last line of pixels
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
-_ weird line in showing in the center of an image
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
 
 _ text caret goes missing
 _   removing extra jre's, uninstalling java apps fixed it
