@@ -158,7 +158,7 @@ public class PGraphics extends PImage
   // current 3D transformation matrix 
   int camera_mode;
   //int projection;  // none, perspective, or isometric
-  int dimensions;  // 0, 2 (affine 2d), 3 (perspective/isometric)
+  public int dimensions;  // 0, 2 (affine 2d), 3 (perspective/isometric)
 
   // perspective setup
   float fov;
@@ -3405,8 +3405,14 @@ public class PGraphics extends PImage
       x += hradius; y += vradius;
       break;
     case CORNERS:
-      hradius -= x; 
-      vradius -= y; 
+      //float w = (hradius - x);
+      //float h = (vradius - y);
+      //hradius = w / 2f;
+      //vradius = h / 2f;
+      hradius = (hradius - x) / 2f;
+      vradius = (vradius - y) / 2f;
+      x += hradius;
+      y += hradius;
       break;
     }
 
