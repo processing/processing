@@ -537,18 +537,18 @@ public class PdeEditor extends Panel {
   // -> keep this around for closing the external window
   public void doClose() {
     // grab window position
-    if (engine != null) {
+    //if (engine != null) {
+    try {
       if ((presentationWindow == null) || 
 	  (!presentationWindow.isVisible())) {
 	appletLocation = engine.window.getLocation();
       }
-
       // prone to bugs and doesn't work yet
       //      if ((presentationWindow != null) &&
       //	  (presentationWindow.isVisible())) {
       //	presentLocation = engine.window.getLocation();
       //      }
-    }
+    } catch (NullPointerException e) { }
 
     if (running) {
       //System.out.println("was running, will call doStop()");

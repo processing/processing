@@ -67,6 +67,8 @@ public class PdeBase implements ActionListener {
 
 
   static public void main(String args[]) {
+    //System.getProperties().list(System.out);
+    System.out.println(System.getProperty("java.class.path"));
     PdeBase app = new PdeBase();
   }
 
