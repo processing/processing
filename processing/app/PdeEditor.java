@@ -839,26 +839,33 @@ public class PdeEditor extends JPanel {
 
     public void run() {
       while (Thread.currentThread() == thread) {
-        if (runtime != null) {
+        if (runtime == null) {
+          stop();
+
+        } else {
           if (runtime.applet != null) {
-            //System.out.println(runtime.applet.finished);
-            buttons.running(!runtime.applet.finished);
-            //} else {
-            //System.out.println("still pooping");
+            if (runtime.applet.finished) {
+              stop();
+            }
+            //buttons.running(!runtime.applet.finished);
+
           } else if (runtime.process != null) {
-            buttons.running(true);  // ??
+            //buttons.running(true);  // ??
+
+          } else {
+            stop();
           }
-        }
+        } 
         try {
           Thread.sleep(250);
         } catch (InterruptedException e) { }
+        //System.out.println("still inside runner thread");
       }
     }
 
     public void stop() {
       buttons.running(false);
       thread = null;
-      //thread.stop();
     }
   }
 
@@ -1257,51 +1264,64 @@ public class PdeEditor extends JPanel {
       // nothing changes
       return;
     }
-    //doSave(); // save changes before renaming.. risky but oh well
-    String textareaContents = textarea.getText();
-    int textareaPosition = textarea.getCaretPosition();
 
     File newSketchDir = new File(sketchDir.getParent() +
                                  File.separator + newSketchName);
     File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
 
-    // make new dir
-    newSketchDir.mkdirs();
-    // copy the sketch file itself with new name
-    copyFile(sketchFile, newSketchFile);
+    //doSave(); // save changes before renaming.. risky but oh well
+    String textareaContents = textarea.getText();
+    int textareaPosition = textarea.getCaretPosition();
 
-    // copy everything from the old dir to the new one
-    copyDir(sketchDir, newSketchDir);
+    // if same name, but different case, just use renameTo
+    if (newSketchName.toLowerCase().
+        equals(sketchName.toLowerCase())) {
+      //System.out.println("using renameTo");
 
-    // remove the old sketch file from the new dir
-    new File(newSketchDir, sketchName + ".pde").delete();
+      boolean problem = (sketchDir.renameTo(newSketchDir) || 
+                         sketchFile.renameTo(newSketchFile));
+      if (problem) {
+        status.error("Error while trying to re-save the sketch.");
+      }
 
-    // remove the old dir (!)
-    if (renaming) {
-      // in case java is holding on to any files we want to delete
-      System.gc();
-      removeDir(sketchDir);
+    } else {
+      // make new dir
+      newSketchDir.mkdirs();
+      // copy the sketch file itself with new name
+      copyFile(sketchFile, newSketchFile);
+
+      // copy everything from the old dir to the new one
+      copyDir(sketchDir, newSketchDir);
+
+      // remove the old sketch file from the new dir
+      new File(newSketchDir, sketchName + ".pde").delete();
+
+      // remove the old dir (!)
+      if (renaming) {
+        // in case java is holding on to any files we want to delete
+        System.gc();
+        removeDir(sketchDir);
+      }
+
+      // (important!) has to be done before opening, 
+      // otherwise the new dir is set to sketchDir.. 
+      // remove .jar, .class, and .java files from the applet dir
+      File appletDir = new File(newSketchDir, "applet");
+      File oldjar = new File(appletDir, sketchName + ".jar");
+      if (oldjar.exists()) oldjar.delete();
+      File oldjava = new File(appletDir, sketchName + ".java");
+      if (oldjava.exists()) oldjava.delete();
+      File oldclass = new File(appletDir, sketchName + ".class");
+      if (oldclass.exists()) oldclass.delete();
     }
-    // (important!) has to be done before opening, 
-    // otherwise the new dir is set to sketchDir.. 
 
-    // remove .jar, .class, and .java files from the applet dir
-    File appletDir = new File(newSketchDir, "applet");
-    File oldjar = new File(appletDir, sketchName + ".jar");
-    if (oldjar.exists()) oldjar.delete();
-    File oldjava = new File(appletDir, sketchName + ".java");
-    if (oldjava.exists()) oldjava.delete();
-    File oldclass = new File(appletDir, sketchName + ".class");
-    if (oldclass.exists()) oldclass.delete();
-
+    // get the changes into the sketchbook menu
     base.rebuildSketchbookMenu();
 
     // open the new guy
     handleOpen(newSketchName, newSketchFile, newSketchDir);
 
     // update with the new junk and save that as the new code
-    //textarea.editorSetText(textareaContents);
-    //textarea.setText(textareaContents);
     changeText(textareaContents, true);
     textarea.setCaretPosition(textareaPosition);
     doSave();

@@ -13,10 +13,11 @@ X is this a p5 bug? or his bug?
 X   http://www.cs.uml.edu/~jzhou/previous/91.541/hw1_applet/my_cellular_automata_2.pde
 X new code from toxi for changes to how image api functions are laid out
 X runtime exceptions are killing the environment
-
-_ play button stays stuck on runtime exceptions
-
-_ rename bug is destroying files
+X play button stays stuck on runtime exceptions
+X   rewrote pieces of the code
+X   also the thread wasn't exiting properly, could cause slowdowns
+X rename bug is destroying files
+X   if saveas/rename names match, use renameTo
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065306548
 
 _ macosx open sketch folder problems.. spaces in filename problem?
@@ -28,7 +29,6 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 _ curvePoint not initializing
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065383874
-
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
