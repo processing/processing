@@ -20,6 +20,8 @@ X print(char) and println(char) didn't exist. whoops.
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055940673
 X added constructor in BImage that takes java.awt.Image
 X added FileInputStream version of loadStream for locally running code
+X transparent gif images don't retain transparency (oy)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
 
 other folks
 dm X patch to fix last line highlight bug in highlightLine()
@@ -250,8 +252,6 @@ BAGEL / Details
 bf b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
-ks b _ transparent gif images don't retain transparency (oy)
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
    b _ gaps in lines for pmouseX, mouseX
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
    b _ too many push() will silently stop the applet inside a loop
