@@ -129,6 +129,8 @@ export CLASSPATH
 
 perl preproc.pl
 ../build/windows/work/jikes -d . +D -target 1.1 *.java
+# use this from time to time to test 1.1 savviness
+#/cygdrive/c/msjdk-4.0/bin/jvc /d . *.java
 zip -rq ../build/windows/work/lib/core.jar processing
 
 #perl make.pl JIKES=../build/windows/work/jikes JDK13
