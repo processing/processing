@@ -186,7 +186,11 @@ o   PGraphics has none.. PApplet has fill/stroke
 X   actually not the case, only that wasn't calling decent superclass
 X set PImage.format as RGB by default? 
 X   this was problem with rendering an image from PGraphics on board
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1080671926;start=0
 
+040920 later
+X remove "loop" from special inserts on preproc
 
 _ need to resolve rotated text in SCREEN_SPACE
 _   SCREEN_SPACE is weird for text
