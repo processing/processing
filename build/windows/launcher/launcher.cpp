@@ -182,7 +182,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           //,
 
           // the first three %s args
-          local_jre_installed ? "java\\lib\\rt.jar;" : "", 
+          local_jre_installed ? "java\\lib\\rt.jar;java\\lib\\jaws.jar;" : "", 
           qtjava_path,
           env_classpath, 
 

@@ -18,7 +18,7 @@ else
   fi
 fi
 
-CLASSPATH=\"java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\antlr.jar\;lib\\oro.jar\;lib\\comm.jar\;lib\\RXTXcomm.jar\;${QT_JAVA_PATH}\"
+CLASSPATH=\"java\\lib\\rt.jar\;java\\lib\\jaws.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\antlr.jar\;lib\\oro.jar\;lib\\comm.jar\;lib\\RXTXcomm.jar\;${QT_JAVA_PATH}\"
 
 export CLASSPATH
 
