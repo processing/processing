@@ -78,8 +78,13 @@ chmod +x processing/jikes
 echo Creating tarball and finishing...
 P5=processing-$REVISION
 mv processing $P5
-tar cfz $P5.tgz $P5
+
+echo files to remove...
+cd $P5
+find . | grep .DS_Store
+
+#tar cfz $P5.tgz $P5
 # nah, keep the new directory around
 #rm -rf $P5
 
-echo Done.
+#echo Done.
