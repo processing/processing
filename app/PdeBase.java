@@ -58,9 +58,13 @@ public class PdeBase implements ActionListener {
       //System.out.println("osname is " + osname);
       if (osname.indexOf("Windows") != -1) {
 	platform = WINDOWS;
+
+      } else if (osname.equals("Linux")) {  // true for the ibm vm
+	platform = LINUX;
+
       } else {
+	platform = WINDOWS;  // probably safest
 	System.out.println("unhandled osname: " + osname);
-	System.exit(1);
       }
     }
   }
