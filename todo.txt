@@ -4,31 +4,29 @@ _ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
 _ should we use jdk 1.3 or msft vm?
 
 
+void loop() {
+  noStroke();
+  lights();
+  translate(58, 48, -50);
+  rotateY(0.5f);
+  box(40);
+}
+
+
 BAGEL / high
-a _ box is not filling properly
-a _   if fill(), need to draw several non-stroked planes
-a _   if stroke(), then draw single lines for each edge
-a _     do not duplicate edges for lines
-a _ also problem filling on beginShape() triangle stuff
+a _ better access to projX et al
+a _   what's a better name? calcX? or write to an array?
 
 
 BAGEL / high & time consuming
-a _ z coordinates are backwards from gl (at least from mazo)
-a _   how did this happen? what's the appropriate way to fix?
-a _   in gl, positive z goes into the screen 
-a _   may be able to do a scale(0, 0, -1) that doesn't affect dims
-a _     then when dims set to 3, will fix the z coords
-a _   this will also affect zbuffer ordering
 b _ alpha
 b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
 b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
+b _ implement clipping planes and clipping of objects
 
 
 BAGEL / medium
-a _ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
-a _   better solution for this (error while opening image)
-a _   and document how image loading works
 b _ area copying functions
 b _   copyPixel(x, y, to_x, to_y)
 b _   copyArea(x, y, w, h, to_x, to_y)
@@ -47,13 +45,14 @@ b _ anti-aliasing
 b _ rewrite line and stroke code, it's a buggy mess
 b _   lines become 2 pixels thick after a 3D transform 
 b _   better handling of single-pixel special case
+b _   box is not filling properly
+b _     problem is using single pixel, flat line with no z
 b _ illustrator exporting
 b _   version of Illustrator.java that uses bagel api
 b _   sorting of polygons/lines on simple painters algorithm
 b _   better lighting model to show darkness at various depths
 b _     maybe just ultra-high res bitmaps from gl
 b _   version of ProcessingApplet that replaces g. with ai. or pdf.
-
 _ picking
 _   ability to write data other than image into the buffer
 _   user can introduce new kinds of buffers at will (!)
@@ -93,15 +92,15 @@ _ live video editing, wanting things more procedural
 
 
 PDE / high
-a _ get rid of 'kill' button
+X get rid of 'kill' button
+X int version of min and abs
+
 a _ add frame to launched window
 a _   add maximize event catcher to make fullscreen
 a _   shift-click on play to go directly into this 'presentation mode'
-a _ introduce pImage, pFont, pGraphics, pConstants (pSound)
 a _ serial.messageReceived extra long crap in demo.pde (clean up?)
 a _ NullPointerException on startup in pde editor buttons
 a _   shows up on slower machines, probably images not loaded yet
-a _ int version of min and abs
 a _ draw mode needs to be better for workshops
 a _   make size() work for draw() mode
 a _     inside Engine, reach in and grab calls to 'size'
@@ -109,6 +108,7 @@ a _     if call is not using a constant number, then punt
 a _ lines being highlighted for errors are off
 a _ use a vm that won't destroy the screen like sun/ibm does
 a _   this means msft or newer version of jdk
+a _ introduce pImage, pFont, pGraphics, pConstants (pSound)
 
 
 PDE / high & time consuming
@@ -295,6 +295,7 @@ _   pixels[] is in ProcessingApplet
 _   check to see if get/set functions in applet actually work
 _   fix documentation appropriately
 _ image formats supported (gif and jpeg)
+_   if image doesn't load, just prints an error on console
 _ notes about running on win98 and that stupid startup exception
 _ make note in documentation about convex polygons
 
@@ -367,11 +368,25 @@ _ that each shape type works as expected
 _   what if one short or one too many vertices?
 _ transforms are affecting geometry
 _   i.e. are line and point working in 3D?
+_ why did i think that z was backwards from gl?
 
 
 0020
 o fix bugs from the 'bugs' file
 o   then remove the file from cvs
+o   if fill(), need to draw several non-stroked planes
+o   if stroke(), then draw single lines for each edge
+o     do not duplicate edges for lines
+o also problem filling on beginShape() triangle stuff
+X z coordinates are backwards from gl (at least from mazo)
+X   looked into it, this doesn't appear to be the case..
+X   how did this happen? what's the appropriate way to fix?
+X   in gl, positive z goes into the screen 
+X   may be able to do a scale(0, 0, -1) that doesn't affect dims
+X     then when dims set to 3, will fix the z coords
+X   this will also affect zbuffer ordering
+X if BagelImage doesn't load, then image() calls arrayindexoutofbounds
+X   better solution for this (error while opening image)
 
 
 (first semi-public release)

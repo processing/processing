@@ -684,6 +684,22 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public final int max(int a, int b) {
+    return (a > b) ? a : b;
+  }
+
+  public final int max(int a, int b, int c) {
+    return (a > b) ? ((a > c) ? a : c) : b;
+  }
+
+  public final int min(int a, int b) {
+    return (a < b) ? a : b;
+  }
+
+  public final int min(int a, int b, int c) {
+    return (a < b) ? ((a < c) ? a : c) : b;
+  }
+
   
   public final float sin(float angle) {
     return (float)Math.sin(angle);
