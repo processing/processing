@@ -118,12 +118,6 @@ public class PdeBase extends Frame
 
 
   static public void main(String args[]) {
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (Exception e) { 
-      e.printStackTrace();
-    }
-
     //System.getProperties().list(System.out);
     //System.out.println(System.getProperty("java.class.path"));
 
@@ -150,6 +144,20 @@ public class PdeBase extends Frame
         platform = WINDOWS;  // probably safest
         System.out.println("unhandled osname: " + osname);
       }
+    }
+
+    try {
+      //if (platform == LINUX) {
+        // linux is by default (motif?) even uglier than metal
+        // actually, i'm using native menus, so they're ugly and
+        // motif-looking. ick. need to fix this.
+        //System.out.println("setting to metal");
+      //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+      //} else {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        //}
+    } catch (Exception e) { 
+      e.printStackTrace();
     }
 
     //try {
@@ -214,11 +222,33 @@ public class PdeBase extends Frame
       }
       //properties.list(System.out);
 
-
     } catch (Exception e) {
       System.err.println("Error reading pde.properties");
       e.printStackTrace();
       //System.exit(1);
+    }
+
+    // check to see if quicktime for java is installed on windows
+    // since it's temporarily required for 0058
+    if (platform == WINDOWS) {
+      // location for 95/98/ME/XP
+      File qt1 = new File("C:\\WINDOWS\\system32\\QTJava.zip");
+      // location for win2k
+      File qt2 = new File("C:\\WINNT\\system32\\QTJava.zip");
+
+      if (!qt1.exists() && !qt2.exists()) {
+        final String message = 
+          "QuickTime for Java could not be found.\n" +
+          "Please download QuickTime from Apple at:\n" + 
+          "http://www.apple.com/quicktime/download\n" + 
+          "and use the 'Custom' install to make sure\n" +
+          "that QuickTime for Java is included.";
+
+        JOptionPane.showMessageDialog(this, message, 
+                                      "Could not find QuickTime for Java",
+                                      JOptionPane.WARNING_MESSAGE);
+        System.exit(1);
+      }
     }
 
 
