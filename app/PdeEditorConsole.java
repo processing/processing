@@ -121,36 +121,36 @@ public class PdeEditorConsole extends JScrollPane {
 
       // no text thing on macos
       boolean tod = ((PdeBase.platform != PdeBase.MACOSX) &&
-		     (PdeBase.platform != PdeBase.MACOS9));
+                     (PdeBase.platform != PdeBase.MACOS9));
 
       if (PdeBase.getBoolean("editor.console.out.enabled", tod)) {
-	String outFileName = 
-	  PdeBase.get("editor.console.out.file", "lib/stdout.txt");
-	try {
-	  stdoutFile = new FileOutputStream(outFileName);
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
+        String outFileName = 
+          PdeBase.get("editor.console.out.file", "lib/stdout.txt");
+        try {
+          stdoutFile = new FileOutputStream(outFileName);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
 
       if (PdeBase.getBoolean("editor.console.err.enabled", tod)) {
-	String errFileName = 
-	  PdeBase.get("editor.console.err.file", "lib/stderr.txt");
-	try {
-	  stderrFile = new FileOutputStream(errFileName);
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
+        String errFileName = 
+          PdeBase.get("editor.console.err.file", "lib/stderr.txt");
+        try {
+          stderrFile = new FileOutputStream(errFileName);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
 
       consoleOut = 
-	new PrintStream(new PdeEditorConsoleStream(this, false, stdoutFile));
+        new PrintStream(new PdeEditorConsoleStream(this, false, stdoutFile));
       consoleErr = 
-	new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
+        new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
 
       if (PdeBase.getBoolean("editor.console.enabled", true)) {
-	System.setOut(consoleOut);
-	System.setErr(consoleErr);
+        System.setOut(consoleOut);
+        System.setErr(consoleErr);
       }
     }
   }
@@ -160,8 +160,8 @@ public class PdeEditorConsole extends JScrollPane {
 
 //    synchronized (cerror) { // has to be an object...
       if (err != cerror) {
-	// advance the line because switching between err/out streams
-	// potentially, could check whether we're already on a new line
+        // advance the line because switching between err/out streams
+        // potentially, could check whether we're already on a new line
         message("", cerror, true);
   }
 
@@ -195,9 +195,9 @@ public class PdeEditorConsole extends JScrollPane {
     if (advance) {
       appendText("\n", err);
       if (err) {
-	systemErr.println();
+        systemErr.println();
       } else {
-	systemOut.println();
+        systemOut.println();
       }
     }
   }
@@ -235,7 +235,7 @@ class PdeEditorConsoleStream extends OutputStream {
   OutputStream echo;
 
   public PdeEditorConsoleStream(PdeEditorConsole parent, 
-				boolean err, OutputStream echo) {
+                                boolean err, OutputStream echo) {
     this.parent = parent;
     this.err = err;
     this.echo = echo;
@@ -249,11 +249,11 @@ class PdeEditorConsoleStream extends OutputStream {
     parent.write(b, 0, b.length, err);
     if (echo != null) {
       try {
-	echo.write(b); //, 0, b.length);
-	echo.flush();
+        echo.write(b); //, 0, b.length);
+        echo.flush();
       } catch (IOException e) {
-	e.printStackTrace();
-	echo = null;
+        e.printStackTrace();
+        echo = null;
       }
     }
   }
@@ -262,11 +262,11 @@ class PdeEditorConsoleStream extends OutputStream {
     parent.write(b, offset, length, err);
     if (echo != null) {
       try {
-	echo.write(b, offset, length);
-	echo.flush();
+        echo.write(b, offset, length);
+        echo.flush();
       } catch (IOException e) {
-	e.printStackTrace();
-	echo = null;
+        e.printStackTrace();
+        echo = null;
       }
     }
     /*
@@ -274,18 +274,18 @@ class PdeEditorConsoleStream extends OutputStream {
     if (length >= 1) {
       int lastchar = b[offset + length - 1];
       if (lastchar == '\r') {
-	length--;
+        length--;
       } else if (lastchar == '\n') {
-	if (length >= 2) {
-	  int secondtolastchar = b[offset + length - 2];
-	  if (secondtolastchar == '\r') {
-	    length -= 2;
-	  } else { 
-	    length--;
-	  }
-	} else {
-	  length--;
-	}
+        if (length >= 2) {
+          int secondtolastchar = b[offset + length - 2];
+          if (secondtolastchar == '\r') {
+            length -= 2;
+          } else { 
+            length--;
+          }
+        } else {
+          length--;
+        }
       }
       //if ((lastchar = '\r') || (lastchar == '\n')) length--;
     }
@@ -299,11 +299,11 @@ class PdeEditorConsoleStream extends OutputStream {
     parent.write(single, 0, 1, err);
     if (echo != null) {
       try {
-	echo.write(b);
-	echo.flush();
+        echo.write(b);
+        echo.flush();
       } catch (IOException e) {
-	e.printStackTrace();
-	echo = null;
+        e.printStackTrace();
+        echo = null;
       }
     }
     //parent.message(String.valueOf((char)b), err);

@@ -112,13 +112,13 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
     setLayout(null);
     status = new Label();
     status.setFont(PdeBase.getFont("editor.buttons.status.font",
-				     new Font("SansSerif", Font.PLAIN, 10)));
+                                     new Font("SansSerif", Font.PLAIN, 10)));
     status.setForeground(PdeBase.getColor("editor.buttons.status.color",
-					    Color.black));
+                                            Color.black));
     add(status);
 
     status.setBounds(-5, BUTTON_COUNT*BUTTON_HEIGHT, 
-		     BUTTON_WIDTH + 15, BUTTON_HEIGHT);
+                     BUTTON_WIDTH + 15, BUTTON_HEIGHT);
     status.setAlignment(Label.CENTER);
     
     addMouseListener(this);
@@ -142,28 +142,28 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
       state = new int[BUTTON_COUNT];
 
       for (int i = 0; i < BUTTON_COUNT; i++) {
-	inactive[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
-	Graphics g = inactive[i].getGraphics();
-	g.drawImage(buttons, -(i*BUTTON_WIDTH), -2*BUTTON_HEIGHT, null);
+        inactive[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
+        Graphics g = inactive[i].getGraphics();
+        g.drawImage(buttons, -(i*BUTTON_WIDTH), -2*BUTTON_HEIGHT, null);
 
-	rollover[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
-	g = rollover[i].getGraphics();
-	g.drawImage(buttons, -(i*BUTTON_WIDTH), -1*BUTTON_HEIGHT, null);
+        rollover[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
+        g = rollover[i].getGraphics();
+        g.drawImage(buttons, -(i*BUTTON_WIDTH), -1*BUTTON_HEIGHT, null);
 
-	active[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
-	g = active[i].getGraphics();
-	g.drawImage(buttons, -(i*BUTTON_WIDTH), -0*BUTTON_HEIGHT, null);
+        active[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);
+        g = active[i].getGraphics();
+        g.drawImage(buttons, -(i*BUTTON_WIDTH), -0*BUTTON_HEIGHT, null);
       }
 
       state = new int[buttonCount];
       stateImage = new Image[buttonCount];
       for (int i = 0; i < buttonCount; i++) {
-	setState(i, INACTIVE, false);
+        setState(i, INACTIVE, false);
       }
     }
     Dimension size = size();
     if ((offscreen == null) || 
-	(size.width != width) || (size.height != height)) {
+        (size.width != width) || (size.height != height)) {
       offscreen = createImage(size.width, size.height);
       width = size.width;
       height = size.height;
@@ -176,13 +176,13 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
 
       int offsetY = 0;
       for (int i = 0; i < buttonCount; i++) {
-	y1[i] = offsetY;
-	y2[i] = offsetY + BUTTON_HEIGHT;
-	offsetY = y2[i];
+        y1[i] = offsetY;
+        y2[i] = offsetY + BUTTON_HEIGHT;
+        offsetY = y2[i];
       }
 
       /*
-	// horizontal alignment
+        // horizontal alignment
       x1 = new int[buttonCount];
       x2 = new int[buttonCount];
 
@@ -192,12 +192,12 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
       int offsetX = 8;
       //for (int i = 0; i < 2; i++) {
       for (int i = 0; i < buttonCount; i++) {
-	//g.drawImage(stateImage[i], offsetX, offsetY, null);
-	x1[i] = offsetX;
-	x2[i] = offsetX + BUTTON_WIDTH;
-	offsetX += BUTTON_WIDTH + 4;
-	// extra space after play/stop/close
-	if (i == GAP_POSITION) offsetX += 8;  
+        //g.drawImage(stateImage[i], offsetX, offsetY, null);
+        x1[i] = offsetX;
+        x2[i] = offsetX + BUTTON_WIDTH;
+        offsetX += BUTTON_WIDTH + 4;
+        // extra space after play/stop/close
+        if (i == GAP_POSITION) offsetX += 8;  
       }
       */
 
@@ -205,10 +205,10 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
       // start from righthand side and move left
       offsetX = width - 8 - BUTTON_WIDTH;
       for (int i = buttonCount-1; i >= 2; --i) {
-	//g.drawImage(stateImage[i], offsetX, offsetY, null);
-	x1[i] = offsetX;
-	x2[i] = offsetX + BUTTON_WIDTH;
-	offsetX -= BUTTON_WIDTH + 4;
+        //g.drawImage(stateImage[i], offsetX, offsetY, null);
+        x1[i] = offsetX;
+        x2[i] = offsetX + BUTTON_WIDTH;
+        offsetX -= BUTTON_WIDTH + 4;
       }
       */
     }
@@ -257,20 +257,20 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
     //System.out.println(x + ", " + y);
     if (currentRollover != -1) {
       if ((y > y1[currentRollover]) && (x > x1) &&
-	  (y < y2[currentRollover]) && (x < x2)) {
+          (y < y2[currentRollover]) && (x < x2)) {
       //if ((x > x1[currentRollover]) && (y > y1) &&
       //  (x < x2[currentRollover]) && (y < y2)) {
-	//System.out.println("same");
-	///return true; // no change
-	return;
+        //System.out.println("same");
+        ///return true; // no change
+        return;
 
       } else {
-	//state[currentRollover] = INACTIVE_STATE;
-	//stateImage[currentRollover] = inactive[currentRollover];
-	setState(currentRollover, INACTIVE, true);
-	messageClear(title[currentRollover]);
-	currentRollover = -1;
-	//update();
+        //state[currentRollover] = INACTIVE_STATE;
+        //stateImage[currentRollover] = inactive[currentRollover];
+        setState(currentRollover, INACTIVE, true);
+        messageClear(title[currentRollover]);
+        currentRollover = -1;
+        //update();
       }
     }
     int sel = findSelection(x, y);
@@ -286,15 +286,15 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
     /*
     for (int i = 0; i < buttonCount; i++) {
       if ((x > x1[i]) && (y > y1) &&
-	  (x < x2[i]) && (y < y2)) {
-	//System.out.println(i);
-	if (state[i] != ACTIVE_STATE) {
-	  state[i] = ROLLOVER_STATE;
-	  stateImage[i] = rollover[i];
-	  currentRollover = i;
-	}
-	update();
-	return true;
+          (x < x2[i]) && (y < y2)) {
+        //System.out.println(i);
+        if (state[i] != ACTIVE_STATE) {
+          state[i] = ROLLOVER_STATE;
+          stateImage[i] = rollover[i];
+          currentRollover = i;
+        }
+        update();
+        return true;
       }
     }
     */
@@ -309,10 +309,10 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
 
     for (int i = 0; i < buttonCount; i++) {
       if ((x > x1) && (y > y1[i]) &&
-	  (x < x2) && (y < y2[i])) {
-	//if ((x > x1[i]) && (y > y1) &&
-	//(x < x2[i]) && (y < y2)) {
-	return i;
+          (x < x2) && (y < y2[i])) {
+        //if ((x > x1[i]) && (y > y1) &&
+        //(x < x2[i]) && (y < y2)) {
+        return i;
       }
     }
     return -1;
@@ -364,9 +364,9 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
 
     if (currentSelection == OPEN) {
       if (popup == null) {
-	//popup = new JPopupMenu();
-	popup = new PopupMenu();
-	add(popup);
+        //popup = new JPopupMenu();
+        popup = new PopupMenu();
+        add(popup);
       }
       //popup.addActionListener(this);
       editor.base.rebuildSketchbookMenu(popup);
@@ -406,9 +406,9 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
     case STOP: 
       setState(RUN, INACTIVE, true); 
       if (editor.presenting) {
-	editor.doClose();
+        editor.doClose();
       } else {
-	editor.doStop(); 
+        editor.doStop(); 
       }
       break;
       //case CLOSE: editor.doClose(); break;
@@ -416,7 +416,7 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
       //case OPEN:  editor.doOpen(); break;
       /*
       case OPEN:  
-	System.err.println("popup mouseup");
+        System.err.println("popup mouseup");
       //popup.setVisible(false);
       remove(popup);
       // kill the popup?

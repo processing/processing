@@ -55,7 +55,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     Frame frame = PdeBase.frame;
     Point parentLoc = frame.getLocation();
     Insets parentInsets = frame.getInsets();
-	
+
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
 

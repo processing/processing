@@ -209,7 +209,7 @@ public class PdeEditor extends JPanel {
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
-	(PdeBase.platform == PdeBase.MACOS9)) {
+        (PdeBase.platform == PdeBase.MACOS9)) {
       presentationWindow = new Frame();
 
       // mrj is still (with version 2.2.x) a piece of shit, 
@@ -220,8 +220,8 @@ public class PdeEditor extends JPanel {
       Insets insets = new Insets(21, 5, 5 + 20, 5);
 
       presentationWindow.setBounds(-insets.left, -insets.top, 
-				   screen.width + insets.left + insets.right, 
-				   screen.height + insets.top + insets.bottom);
+                                   screen.width + insets.left + insets.right, 
+                                   screen.height + insets.top + insets.bottom);
     } else {
       presentationWindow = new Frame();
       ((Frame)presentationWindow).setUndecorated(true);
@@ -231,24 +231,24 @@ public class PdeEditor extends JPanel {
     Label label = new Label("stop");
     //label.setBackground(Color.red);
     label.addMouseListener(new MouseAdapter() {
-	public void mousePressed(MouseEvent e) {
-	  //System.out.println("got stop");
-	  //doStop();
+        public void mousePressed(MouseEvent e) {
+          //System.out.println("got stop");
+          //doStop();
           setVisible(true);
-	  doClose();
+          doClose();
 
 #ifdef JDK13
-	  // move editor to front in case it was hidden
-	  PdeBase.frame.setState(Frame.NORMAL);
+          // move editor to front in case it was hidden
+          PdeBase.frame.setState(Frame.NORMAL);
 #endif
-	}});
+        }});
 
     //Dimension labelSize = label.getPreferredSize();
     Dimension labelSize = new Dimension(60, 20);
     presentationWindow.setLayout(null);
     presentationWindow.add(label);
     label.setBounds(5, screen.height - 5 - labelSize.height, 
-		    labelSize.width, labelSize.height);
+                    labelSize.width, labelSize.height);
 
     Color presentationBgColor = 
       PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
@@ -256,36 +256,36 @@ public class PdeEditor extends JPanel {
 
     // windowActivated doesn't seem to do much, so focus listener better
     presentationWindow.addFocusListener(new FocusAdapter() {
-	public void focusGained(FocusEvent e) {
-	  //System.out.println("presentationWindow focusGained: " + e);
+        public void focusGained(FocusEvent e) {
+          //System.out.println("presentationWindow focusGained: " + e);
             try {
               //System.out.println("moving applet window to front");
               pdeRuntime.window.toFront();
             } catch (Exception ex) { }
-	  }
+          }
       });
 
     textarea.addFocusListener(new FocusAdapter() {
-	public void focusGained(FocusEvent e) {
-	  //System.err.println("textarea focusGained: " + e);
-	  if (presenting == true) {
-	    try {
+        public void focusGained(FocusEvent e) {
+          //System.err.println("textarea focusGained: " + e);
+          if (presenting == true) {
+            try {
               presentationWindow.toFront();
-	    } catch (Exception ex) { }
-	  }
-	}
+            } catch (Exception ex) { }
+          }
+        }
       });
 
     this.addFocusListener(new FocusAdapter() {
       public void focusGained(FocusEvent e) {
         //System.out.println("PdeEditor focusGained: " + e);
-	  if (presenting == true) {
-	    try {
+          if (presenting == true) {
+            try {
             //System.out.println("moving presentation window to front");
               presentationWindow.toFront();
-	    } catch (Exception ex) { }
-	  }
-	}
+            } catch (Exception ex) { }
+          }
+        }
       });
     
     // if user clicks on background presentationWindow, restore applet window
@@ -294,33 +294,33 @@ public class PdeEditor extends JPanel {
       public void mouseClicked(MouseEvent e) {
         //System.out.println("mouseClicked: " + e.toString());
         try {
-	  //System.out.println("moving to front");
-	  pdeRuntime.window.toFront();
-	} catch (Exception ex) { }
+          //System.out.println("moving to front");
+          pdeRuntime.window.toFront();
+        } catch (Exception ex) { }
       }
       public void mousePressed(MouseEvent e)  {
         //System.out.println("mousePressed: " + e.toString());
         try {
-	  //System.out.println("moving to front");
-	  pdeRuntime.window.toFront();
-	} catch (Exception ex) { }
+          //System.out.println("moving to front");
+          pdeRuntime.window.toFront();
+        } catch (Exception ex) { }
       }
       public void mouseReleased(MouseEvent e)  {
         //System.out.println("mouseReleased: " + e.toString());
         try {
-	  //System.out.println("moving to front");
-	  pdeRuntime.window.toFront();
-	  } catch (Exception ex) { }
+          //System.out.println("moving to front");
+          pdeRuntime.window.toFront();
+          } catch (Exception ex) { }
       }
     });
 
 
     /*
     presentationWindow.addWindowListener(new WindowAdapter() {
-	public void windowActivated(WindowEvent e) {
-	  //System.out.println(e);
-	  //PdeEditorConsole.systemOut.println(e);
-	}
+        public void windowActivated(WindowEvent e) {
+          //System.out.println(e);
+          //PdeEditorConsole.systemOut.println(e);
+        }
       });
       *
 
@@ -328,25 +328,25 @@ public class PdeEditor extends JPanel {
     Document doc = textarea.document;
     //System.out.println(doc);
     doc.addDocumentListener(new DocumentListener() {
-	//editor.setSketchModified(true);
+        //editor.setSketchModified(true);
 
         public void insertUpdate(DocumentEvent e) {
-	  //displayEditInfo(e);
-	  //System.out.println(e);
-	  //if (!sketchModified) setSketchModified(true);
+          //displayEditInfo(e);
+          //System.out.println(e);
+          //if (!sketchModified) setSketchModified(true);
         }
         public void removeUpdate(DocumentEvent e) {
-	  //displayEditInfo(e);
-	  //System.out.println(e);
+          //displayEditInfo(e);
+          //System.out.println(e);
         }
         public void changedUpdate(DocumentEvent e) {
-	  //displayEditInfo(e);
-	  //System.out.println(e);
-	  //if (!sketchModified) setSketchModified(true);
+          //displayEditInfo(e);
+          //System.out.println(e);
+          //if (!sketchModified) setSketchModified(true);
         }
         private void displayEditInfo(DocumentEvent e) {
-	  //Document doc = (Document)e.getDocument();
-	  //System.out.println(e);
+          //Document doc = (Document)e.getDocument();
+          //System.out.println(e);
         }
       });
     */
@@ -362,15 +362,15 @@ public class PdeEditor extends JPanel {
     Properties skprops = new Properties();
     try {
       if (PdeBase.platform == PdeBase.MACOSX) {
-	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	//skprops.load(new FileInputStream(pkg + "sketch.properties"));
-	skprops.load(new FileInputStream("lib/sketch.properties"));
+        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+        //skprops.load(new FileInputStream(pkg + "sketch.properties"));
+        skprops.load(new FileInputStream("lib/sketch.properties"));
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
-	skprops.load(new FileInputStream("lib/sketch.properties"));
+        skprops.load(new FileInputStream("lib/sketch.properties"));
 
       } else {
-	skprops.load(getClass().getResource("sketch.properties").openStream());
+        skprops.load(getClass().getResource("sketch.properties").openStream());
       }
 
       windowX = Integer.parseInt(skprops.getProperty("window.x", "-1"));
@@ -387,8 +387,8 @@ public class PdeEditor extends JPanel {
       //  (screen.width == screenW) && (screen.height == screenH)) {
       //} else {
       if ((screen.width != screenW) || (screen.height != screenH)) {
-	// not valid for this machine, so invalidate sizing
-	windowX = -1;
+        // not valid for this machine, so invalidate sizing
+        windowX = -1;
       }
 
       String name = skprops.getProperty("sketch.name");
@@ -399,12 +399,12 @@ public class PdeEditor extends JPanel {
       //System.out.println(what);
 
       if (new File(what).exists()) {
-	userName = user;
-	skOpen(path, name);
+        userName = user;
+        skOpen(path, name);
 
       } else {
-	userName = "default";
-	skNew();
+        userName = "default";
+        skNew();
       }
 
       String serialPort = skprops.getProperty("serial.port");
@@ -459,7 +459,7 @@ public class PdeEditor extends JPanel {
     if (!base.recordingHistory) return;
     //if (historyLast.equals(program) && !externalEditor) return;
     if ((historyLast != null) &&
-	(historyLast.equals(program))) return;
+        (historyLast.equals(program))) return;
 
     String modeStr = null;
     switch (mode) {
@@ -474,30 +474,30 @@ public class PdeEditor extends JPanel {
       //PrintWriter historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
       ByteArrayOutputStream old = null;
       if (historyFile.exists()) {
-	InputStream oldStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(historyFile)));
-	old = new ByteArrayOutputStream();
+        InputStream oldStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(historyFile)));
+        old = new ByteArrayOutputStream();
 
-	int c = oldStream.read();
-	while (c != -1) {
-	  old.write(c);
-	  c = oldStream.read();
-	}
-	//return out.toByteArray();
-	oldStream.close();
+        int c = oldStream.read();
+        while (c != -1) {
+          old.write(c);
+          c = oldStream.read();
+        }
+        //return out.toByteArray();
+        oldStream.close();
       }
 
       OutputStream historyStream = 
-	new GZIPOutputStream(new FileOutputStream(historyFile));
+        new GZIPOutputStream(new FileOutputStream(historyFile));
       //byte[] buffer = new byte[16384];
       //int bytesRead;
       //while ((bytesRead = oldStream.read(buffer)) != -1) {
       //historyStream.write(buffer, 0, bytesRead);
       //}
       if (old != null) {
-	historyStream.write(old.toByteArray());
+        historyStream.write(old.toByteArray());
       }
       PrintWriter historyWriter = 
-	new PrintWriter(new OutputStreamWriter(historyStream));
+        new PrintWriter(new OutputStreamWriter(historyStream));
       //PrintWriter historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
 
       historyWriter.println();
@@ -516,7 +516,7 @@ public class PdeEditor extends JPanel {
       int minute = now.get(Calendar.MINUTE);
       int second = now.get(Calendar.SECOND);
       String parseDate = year + " " + month + " " + day + " " +
-	hour + " " + minute + " " + second;
+        hour + " " + minute + " " + second;
 
       String readableDate = now.getTime().toString();
 
@@ -527,7 +527,7 @@ public class PdeEditor extends JPanel {
       //String datestamp = date.toString();
 
       historyWriter.println(historyVersion + " " + modeStr + " - " + 
-			    parseDate + " - " + readableDate);
+                            parseDate + " - " + readableDate);
       historyWriter.println();
       historyWriter.println(program);
       historyWriter.flush();  // ??
@@ -564,40 +564,40 @@ public class PdeEditor extends JPanel {
       String historyList[] = new String[100];
 
       try {
-	boolean found = false;
-	while ((line = reader.readLine()) != null) {
-	  //System.out.println("->" + line);
-	  if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
-	    line = reader.readLine();
-	    if (line.indexOf(readableDate) != -1) {  // this is the one
-	      found = true;
-	      break;
-	    }
-	  }
-	}
-	if (found) {
-	  // read lines until the next separator
-	  line = reader.readLine(); // ignored
-	  //String sep = System.getProperty("line.separator");
-	  StringBuffer buffer = new StringBuffer();
-	  while ((line = reader.readLine()) != null) {
-	    if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
-	    //textarea.append(line + sep);
-	    //buffer.append(line + sep);  // JTextPane wants only \n going in
-	    buffer.append(line + "\n");
-	    //System.out.println("'" + line + "'");
-	  }
-	  //textarea.editorSetText(buffer.toString());
-	  changeText(buffer.toString(), true);
-	  historyLast = textarea.getText();
-	  setSketchModified(false);
+        boolean found = false;
+        while ((line = reader.readLine()) != null) {
+          //System.out.println("->" + line);
+          if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
+            line = reader.readLine();
+            if (line.indexOf(readableDate) != -1) {  // this is the one
+              found = true;
+              break;
+            }
+          }
+        }
+        if (found) {
+          // read lines until the next separator
+          line = reader.readLine(); // ignored
+          //String sep = System.getProperty("line.separator");
+          StringBuffer buffer = new StringBuffer();
+          while ((line = reader.readLine()) != null) {
+            if (line.equals(PdeEditor.HISTORY_SEPARATOR)) break;
+            //textarea.append(line + sep);
+            //buffer.append(line + sep);  // JTextPane wants only \n going in
+            buffer.append(line + "\n");
+            //System.out.println("'" + line + "'");
+          }
+          //textarea.editorSetText(buffer.toString());
+          changeText(buffer.toString(), true);
+          historyLast = textarea.getText();
+          setSketchModified(false);
 
-	} else {
-	  System.err.println("couldn't find history entry for " + 
-			     "'" + readableDate + "'");
-	}
+        } else {
+          System.err.println("couldn't find history entry for " + 
+                             "'" + readableDate + "'");
+        }
       } catch (IOException e) {
-	e.printStackTrace();
+        e.printStackTrace();
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -693,7 +693,10 @@ afterwards, some of these steps need a cleanup function
 
       // compile the program
       //
-      PdeCompiler compiler = new PdeCompiler(buildPath, className, this);
+      PdeCompiler compiler = 
+        ((PdeBase.platform == PdeBase.MACOS9) ? 
+         new PdeCompilerJavac(buildPath, className, this) :
+         new PdeCompiler(buildPath, className, this));
 
       // this will catch and parse errors during compilation
       messageStream = new PdeMessageStream(this, compiler);
@@ -747,7 +750,7 @@ afterwards, some of these steps need a cleanup function
       }
 
       cleanTempFiles(buildPath);
-    }	
+    }        
 
     //engine = null;
     //System.out.println("out of doRun()");
@@ -871,7 +874,7 @@ afterwards, some of these steps need a cleanup function
     /*
     while (status.response == 0) {
       System.out.println("waiting for a response " + 
-			 System.currentTimeMillis());
+                         System.currentTimeMillis());
       //try {
       //Thread.sleep(100);
       //} catch (InterruptedException e) { }
@@ -912,11 +915,11 @@ afterwards, some of these steps need a cleanup function
       SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
       String purty = formatter.format(new Date());
       do {
-	sketchName = "sketch_" + purty + ((char) ('a' + index));
-	//int index = (int) (Math.random() * 1000);
-	//sketchName = "sketch_" + pad3(index);
-	sketchDir = new File(sketchbookDir, sketchName);
-	index++;
+        sketchName = "sketch_" + purty + ((char) ('a' + index));
+        //int index = (int) (Math.random() * 1000);
+        //sketchName = "sketch_" + pad3(index);
+        sketchDir = new File(sketchbookDir, sketchName);
+        index++;
       } while (sketchDir.exists());
 
       // mkdir for new project name
@@ -930,9 +933,9 @@ afterwards, some of these steps need a cleanup function
 #ifdef MACOS
       /*
       if (PdeBase.platform == PdeBase.MACOS9) {
-	MRJFileUtils.setFileTypeAndCreator(sketchFile, 
-					   MRJOSType.kTypeTEXT,
-					   new MRJOSType("Pde1"));
+        MRJFileUtils.setFileTypeAndCreator(sketchFile, 
+                                           MRJOSType.kTypeTEXT,
+                                           new MRJOSType("Pde1"));
       }
       */
 #endif
@@ -1002,8 +1005,8 @@ afterwards, some of these steps need a cleanup function
 
   protected void doOpen2() {
     FileDialog fd = new FileDialog(new Frame(), 
-				   "Open a PDE program...", 
-				   FileDialog.LOAD);
+                                   "Open a PDE program...", 
+                                   FileDialog.LOAD);
     if (sketchFile != null) {
       fd.setDirectory(sketchFile.getPath());
     }
@@ -1021,7 +1024,7 @@ afterwards, some of these steps need a cleanup function
 
 
   protected void handleOpen(String isketchName, 
-			    File isketchFile, File isketchDir) {
+                            File isketchFile, File isketchDir) {
     if (!isketchFile.exists()) {
       status.error("no file named " + isketchName);
       return;
@@ -1031,68 +1034,68 @@ afterwards, some of these steps need a cleanup function
     //System.err.println(isketchFile);
     //System.err.println(isketchDir);
     //System.err.println("handleOpen " + isketchName + " " + 
-    //	       isketchFile + " " + isketchDir);
+    //               isketchFile + " " + isketchDir);
     //System.err.println("made it");
     try {
       //if (true) throw new IOException("blah");
       String program = null;
 
       if (isketchFile.length() != 0) {
-	FileInputStream input = new FileInputStream(isketchFile);
-	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-	StringBuffer buffer = new StringBuffer();
-	String line = null;
-	while ((line = reader.readLine()) != null) {
-	  buffer.append(line);
-	  buffer.append('\n');
-	}
-	program = buffer.toString();
-	//System.out.print(program);
-	//textarea.editorSetText(program);
-	changeText(program, true);
+        FileInputStream input = new FileInputStream(isketchFile);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        StringBuffer buffer = new StringBuffer();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+          buffer.append(line);
+          buffer.append('\n');
+        }
+        program = buffer.toString();
+        //System.out.print(program);
+        //textarea.editorSetText(program);
+        changeText(program, true);
 
-	//System.out.print(textarea.getText());
+        //System.out.print(textarea.getText());
 
-	/*
-	int length = (int) isketchFile.length();
-	if (length != 0) {
-	  byte data[] = new byte[length];
+        /*
+        int length = (int) isketchFile.length();
+        if (length != 0) {
+          byte data[] = new byte[length];
 
-	  int count = 0;
-	  while (count != length) {
-	    data[count++] = (byte) input.read();
-	  }
-	// set the last dir and file, so that they're
-	// the defaults when you try to save again
-	//lastDirectory = file.getCanonicalPath(); //directory;
-	//lastFile = file.getName(); //filename;
+          int count = 0;
+          while (count != length) {
+            data[count++] = (byte) input.read();
+          }
+        // set the last dir and file, so that they're
+        // the defaults when you try to save again
+        //lastDirectory = file.getCanonicalPath(); //directory;
+        //lastFile = file.getName(); //filename;
 
-	// once read all the bytes, convert it to the proper
-	// local encoding for this system.
-	//textarea.editorSetText(app.languageEncode(data));
-	// what the hell was i thinking when i wrote this code
-	//if (app.encoding == null)
-	  program = new String(data);
-	//textarea.editorSetText(new String(data));
-	//System.out.println(" loading program = " + new String(data));
-	//else 
-	//textarea.editorSetText(new String(data, app.encoding));
-	textarea.editorSetText(program);
-	*/
+        // once read all the bytes, convert it to the proper
+        // local encoding for this system.
+        //textarea.editorSetText(app.languageEncode(data));
+        // what the hell was i thinking when i wrote this code
+        //if (app.encoding == null)
+          program = new String(data);
+        //textarea.editorSetText(new String(data));
+        //System.out.println(" loading program = " + new String(data));
+        //else 
+        //textarea.editorSetText(new String(data, app.encoding));
+        textarea.editorSetText(program);
+        */
 
-	// may be needed because settext fires an event
-	//setSketchModified(false); 
+        // may be needed because settext fires an event
+        //setSketchModified(false); 
 
       } else {
-	//System.out.println("new guy, so setting empty");
-	// style info only gets set if there's text
-	//textarea.setText("");
-	//textarea.select(0, 0);
-	changeText("", true);
-	//textarea.editorSetText(" ");
-	// now set to now text. yay hack!
-	//textarea.editorSetText(""); // this doesn't work. oh well
-	//textarea.setCaretPosition(0); // next best thing
+        //System.out.println("new guy, so setting empty");
+        // style info only gets set if there's text
+        //textarea.setText("");
+        //textarea.select(0, 0);
+        changeText("", true);
+        //textarea.editorSetText(" ");
+        // now set to now text. yay hack!
+        //textarea.editorSetText(""); // this doesn't work. oh well
+        //textarea.setCaretPosition(0); // next best thing
       }
       //System.out.println("should be done opening");
       sketchName = isketchName;
@@ -1119,7 +1122,7 @@ afterwards, some of these steps need a cleanup function
 
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
-	
+        
     } catch (IOException e2) {
       e2.printStackTrace();
     }
@@ -1147,8 +1150,8 @@ afterwards, some of these steps need a cleanup function
 
     if (promptUser) {
       FileDialog fd = new FileDialog(new Frame(), 
-				     "Save PDE program as...", 
-				     FileDialog.SAVE);
+                                     "Save PDE program as...", 
+                                     FileDialog.SAVE);
       fd.setDirectory(directory);
       fd.setFile(filename);
       fd.show();
@@ -1156,9 +1159,9 @@ afterwards, some of these steps need a cleanup function
       directory = fd.getDirectory();
       filename = fd.getFile();
       if (filename == null) {
-	message(EMPTY);
-	buttons.clear();
-	return; // user cancelled
+        message(EMPTY);
+        buttons.clear();
+        return; // user cancelled
       }
     }
     makeHistory(s, SAVE);
@@ -1171,12 +1174,12 @@ afterwards, some of these steps need a cleanup function
       BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes())));
 
       PrintWriter writer = 
-	new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        new PrintWriter(new BufferedWriter(new FileWriter(file)));
 
       String line = null;
       while ((line = reader.readLine()) != null) {
-	//System.out.println("w '" + line + "'");
-	writer.println(line);
+        //System.out.println("w '" + line + "'");
+        writer.println(line);
       }
       writer.flush();
       writer.close();
@@ -1224,7 +1227,7 @@ afterwards, some of these steps need a cleanup function
     int textareaPosition = textarea.getCaretPosition();
 
     File newSketchDir = new File(sketchDir.getParent() +
-				 File.separator + newSketchName);
+                                 File.separator + newSketchName);
     File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
 
     // make new dir
@@ -1273,16 +1276,16 @@ afterwards, some of these steps need a cleanup function
   /*
   public void skDuplicateRename(boolean rename) {
     status.edit(rename ? "Rename to?" : "Duplicate title?", 
-		sketchName, rename);
+                sketchName, rename);
   }
 
   public void skDuplicateRename2(String newSketchName, boolean rename) {
     if (newSketchName.equals(sketchName)) {
       // explain to the user that they're lame
       //      System.err.println("what kind of a loser " + 
-      //			 (rename ? "renames the directory" :
-      //			  "creates a duplicate") + 
-      //			 " using the same name?");
+      //                         (rename ? "renames the directory" :
+      //                          "creates a duplicate") + 
+      //                         " using the same name?");
       return;
     }
     //System.out.println("rename to " + newname);
@@ -1290,7 +1293,7 @@ afterwards, some of these steps need a cleanup function
     // call skOpen2("sketchbook/default/example1", "example1");
     // which is sketchDir, sketchName
     File newSketchDir = new File(sketchDir.getParent() +
-				 File.separator + newSketchName);
+                                 File.separator + newSketchName);
     File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
     //System.out.println("new shite:");
     //System.out.println(newSketchName);
@@ -1301,9 +1304,9 @@ afterwards, some of these steps need a cleanup function
 
 
     //    System.out.println("move \"" + sketchFile.getPath() + "\" " +
-    //		       newSketchName + ".pde");
+    //                       newSketchName + ".pde");
     //    System.out.println("move \"" + sketchDir.getPath() + "\" " + 
-    //		       newSketchName);
+    //                       newSketchName);
 
     // make new dir
     newSketchDir.mkdirs();
@@ -1330,7 +1333,7 @@ afterwards, some of these steps need a cleanup function
     //if (sketchDir.renameTo(newSketchDir)) {
     //} else {
     //System.err.println("couldn't rename " + sketchDir + " to " + 
-    //		 newSketchDir);
+    //                 newSketchDir);
     //} 
   }
   */
@@ -1340,22 +1343,22 @@ afterwards, some of these steps need a cleanup function
       Runtime rt = Runtime.getRuntime();
       System.err.println("22");
       Process process = 
-	rt.exec("cmd /c move \"" + sketchFile.getPath() + "\" " +
-		newSketchName + ".pde");
+        rt.exec("cmd /c move \"" + sketchFile.getPath() + "\" " +
+                newSketchName + ".pde");
       System.err.println("1");
       InputStream errors = process.getErrorStream();
       System.err.println("33");
       while (errors.available() > 0) {
-	System.err.println("reading errors");
-	System.out.print((char)errors.read());
+        System.err.println("reading errors");
+        System.out.print((char)errors.read());
       }
       System.err.println("waiting for");
       try {
-	process.waitFor();
+        process.waitFor();
       } catch (InterruptedException e) { }
       System.err.println("done maybe");
       //Runtime.getRuntime().exec("move \"" + sketchDir.getPath() + "\" " + 
-      //			newSketchName);
+      //                        newSketchName);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1373,8 +1376,8 @@ afterwards, some of these steps need a cleanup function
     message("Exporting for the web...");
     String s = textarea.getText();
     FileDialog fd = new FileDialog(new Frame(), 
-				   "Create applet project named...", 
-				   FileDialog.SAVE);
+                                   "Create applet project named...", 
+                                   FileDialog.SAVE);
 
     String directory = sketchFile.getPath(); //lastDirectory;
     String project = sketchFile.getName(); //lastFile;
@@ -1399,7 +1402,7 @@ afterwards, some of these steps need a cleanup function
   }
 
   protected void handleExport(File appletDir, String exportSketchName, 
-			      File dataDir) {
+                              File dataDir) {
     try {
       String program = textarea.getText();
 
@@ -1447,15 +1450,15 @@ afterwards, some of these steps need a cleanup function
 
       int index = program.indexOf("size(");
       if (index != -1) {
-	try {
-	  String str = program.substring(index + 5);
-	  int comma = str.indexOf(',');
-	  int paren = str.indexOf(')');
-	  wide = Integer.parseInt(str.substring(0, comma).trim());
-	  high = Integer.parseInt(str.substring(comma+1, paren).trim());
-	} catch (Exception e) { 
-	  e.printStackTrace();
-	}
+        try {
+          String str = program.substring(index + 5);
+          int comma = str.indexOf(',');
+          int paren = str.indexOf(')');
+          wide = Integer.parseInt(str.substring(0, comma).trim());
+          high = Integer.parseInt(str.substring(comma+1, paren).trim());
+        } catch (Exception e) { 
+          e.printStackTrace();
+        }
       }
 
       File htmlOutputFile = new File(appletDir, "index.html");
@@ -1490,7 +1493,7 @@ afterwards, some of these steps need a cleanup function
       ps.println("</body>");
       ps.println("</html>");
 
-	   /*
+           /*
       ps.println("<HTML> <BODY BGCOLOR=\"white\">");
       ps.println();
       ps.println("<BR> <BR> <BR> <CENTER>");
@@ -1508,7 +1511,7 @@ afterwards, some of these steps need a cleanup function
       ps.println("</CENTER>");
 
       ps.println("</BODY> </HTML>");
-	   */
+           */
 
       ps.flush();
       ps.close();
@@ -1516,46 +1519,46 @@ afterwards, some of these steps need a cleanup function
 #ifdef MACOS
       /*
       if (PdeBase.platform == PdeBase.MACOS9) {
-	MRJFileUtils.setFileTypeAndCreator(sketchFile, 
-					   MRJOSType.kTypeTEXT,
-					   new MRJOSType("MSIE"));
+        MRJFileUtils.setFileTypeAndCreator(sketchFile, 
+                                           MRJOSType.kTypeTEXT,
+                                           new MRJOSType("MSIE"));
       }
       */
 #endif
 
       String exportDir = ("lib" + File.separator + 
-			  "export" + File.separator);
+                          "export" + File.separator);
       String bagelClasses[] = new File(exportDir).list();
 
       // create new .jar file
       FileOutputStream zipOutputFile = 
-	new FileOutputStream(new File(appletDir, exportSketchName + ".jar"));
-	//new FileOutputStream(new File(projectDir, projectName + ".jar"));
+        new FileOutputStream(new File(appletDir, exportSketchName + ".jar"));
+        //new FileOutputStream(new File(projectDir, projectName + ".jar"));
       ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
       ZipEntry entry;
 
       // add standard .class files to the jar
       for (int i = 0; i < bagelClasses.length; i++) {
-	if (!bagelClasses[i].endsWith(".class")) continue;
-	entry = new ZipEntry(bagelClasses[i]);
-	zos.putNextEntry(entry);
-	zos.write(grabFile(new File(exportDir + bagelClasses[i])));
-	zos.closeEntry();
+        if (!bagelClasses[i].endsWith(".class")) continue;
+        entry = new ZipEntry(bagelClasses[i]);
+        zos.putNextEntry(entry);
+        zos.write(grabFile(new File(exportDir + bagelClasses[i])));
+        zos.closeEntry();
       }
 
       // files to include
       //if (dataDir != null) {
       if ((dataDir != null) && (dataDir.exists())) {
-	String datafiles[] = dataDir.list();
-	for (int i = 0; i < datafiles.length; i++) {
-	  if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
-	    continue;
-	  }
-	  entry = new ZipEntry(datafiles[i]);
-	  zos.putNextEntry(entry);
-	  zos.write(grabFile(new File(dataDir, datafiles[i])));
-	  zos.closeEntry();
-	}
+        String datafiles[] = dataDir.list();
+        for (int i = 0; i < datafiles.length; i++) {
+          if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
+            continue;
+          }
+          entry = new ZipEntry(datafiles[i]);
+          zos.putNextEntry(entry);
+          zos.write(grabFile(new File(dataDir, datafiles[i])));
+          zos.closeEntry();
+        }
       }
 
       // add the project's .class to the jar
@@ -1570,17 +1573,17 @@ afterwards, some of these steps need a cleanup function
       // add any .class files from the applet dir, then delete them
       String classfiles[] = appletDir.list();
       for (int i = 0; i < classfiles.length; i++) {
-	if (classfiles[i].endsWith(".class")) {
-	  entry = new ZipEntry(classfiles[i]);
-	  zos.putNextEntry(entry);
-	  zos.write(grabFile(new File(appletDir, classfiles[i])));
-	  zos.closeEntry();
-	}
+        if (classfiles[i].endsWith(".class")) {
+          entry = new ZipEntry(classfiles[i]);
+          zos.putNextEntry(entry);
+          zos.write(grabFile(new File(appletDir, classfiles[i])));
+          zos.closeEntry();
+        }
       }
       for (int i = 0; i < classfiles.length; i++) {
-	if (classfiles[i].endsWith(".class")) {
-	  new File(appletDir, classfiles[i]).delete();  // not yet
-	}
+        if (classfiles[i].endsWith(".class")) {
+          new File(appletDir, classfiles[i]).delete();  // not yet
+        }
       }
 
       // close up the jar file
@@ -1618,11 +1621,11 @@ afterwards, some of these steps need a cleanup function
       int offsetY = 100;
       int index = 0;
       for (int y = 0; y < graphics.height; y++) {
-	for (int x = 0; x < graphics.width; x++) {
-	  g.setColor(new Color(graphics.pixels[index++]));
-	  g.drawLine(offsetX + x, offsetY + y,
-		     offsetX + x, offsetY + y);
-	}
+        for (int x = 0; x < graphics.width; x++) {
+          g.setColor(new Color(graphics.pixels[index++]));
+          g.drawLine(offsetX + x, offsetY + y,
+                     offsetX + x, offsetY + y);
+        }
       }
       g.dispose();
       g = null;
@@ -1648,23 +1651,23 @@ afterwards, some of these steps need a cleanup function
       String userPath = base.sketchbookPath + File.separator + userName;
       File userFolder = new File(userPath);
       if (userFolder.exists()) {  // huh?
-	String entries[] = new File(userPath).list();
-	if (entries != null) {
-	  for (int j = 0; j < entries.length; j++) {
-	    if ((entries[j].equals(".")) || 
-		(entries[j].equals(".."))) continue;
-	    File preyDir = new File(userPath, entries[j]);
-	    File prey = new File(preyDir, entries[j] + ".pde");
-	    if (prey.exists()) {
-	      if (prey.length() == 0) {
-		//System.out.println("remove: " + prey);
-		removeDir(preyDir);
-	      }
-	    } else {
-	      //System.out.println(prey + " doesn't exist.. weird");
-	    }
-	  }
-	}
+        String entries[] = new File(userPath).list();
+        if (entries != null) {
+          for (int j = 0; j < entries.length; j++) {
+            if ((entries[j].equals(".")) || 
+                (entries[j].equals(".."))) continue;
+            File preyDir = new File(userPath, entries[j]);
+            File prey = new File(preyDir, entries[j] + ".pde");
+            if (prey.exists()) {
+              if (prey.length() == 0) {
+                //System.out.println("remove: " + prey);
+                removeDir(preyDir);
+              }
+            } else {
+              //System.out.println(prey + " doesn't exist.. weird");
+            }
+          }
+        }
       }
     }
 
@@ -1673,25 +1676,25 @@ afterwards, some of these steps need a cleanup function
       FileOutputStream output = null;
 
       if (PdeBase.platform == PdeBase.MACOSX) {
-	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	//output = new FileOutputStream(pkg + "sketch.properties");
-	output = new FileOutputStream("lib/sketch.properties");
+        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+        //output = new FileOutputStream(pkg + "sketch.properties");
+        output = new FileOutputStream("lib/sketch.properties");
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
-	output = new FileOutputStream("lib/sketch.properties");
+        output = new FileOutputStream("lib/sketch.properties");
 
       } else { // win95/98/ME doesn't set cwd properly
-	URL url = getClass().getResource("buttons.gif");
-	String urlstr = url.getFile();
-	urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
-	  "sketch.properties";
+        URL url = getClass().getResource("buttons.gif");
+        String urlstr = url.getFile();
+        urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
+          "sketch.properties";
 #ifdef JDK13
-	// the ifdef is weird, but it's set for everything but 
-	// macos9, and this will never get hit 
-	output = new FileOutputStream(URLDecoder.decode(urlstr));
+        // the ifdef is weird, but it's set for everything but 
+        // macos9, and this will never get hit 
+        output = new FileOutputStream(URLDecoder.decode(urlstr));
 #else
-	System.err.println("bad error while writing sketch.properties");
-	System.err.println("you should never see this message");
+        System.err.println("bad error while writing sketch.properties");
+        System.err.println("you should never see this message");
 #endif
       }
 
@@ -1700,13 +1703,13 @@ afterwards, some of these steps need a cleanup function
       /*
       URL url = getClass().getResource("sketch.properties");
       if (url == null) {
-	//url = getClass().getResource(getClass().getName() + ".class");
-	url = getClass().getResource("buttons.gif");
-	String urlstr = url.toString();
-	//int lastSlash = urlstr.lastIndexOf("/");
-	urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1);
-	//System.out.println(urlstr);
-	url = new URL(urlstr + "sketch.properties");
+        //url = getClass().getResource(getClass().getName() + ".class");
+        url = getClass().getResource("buttons.gif");
+        String urlstr = url.toString();
+        //int lastSlash = urlstr.lastIndexOf("/");
+        urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1);
+        //System.out.println(urlstr);
+        url = new URL(urlstr + "sketch.properties");
       }
       //System.out.println(url);
       //System.exit(0);
@@ -1766,58 +1769,58 @@ afterwards, some of these steps need a cleanup function
     while (index != program.length) {
       int begin = index;
       while ((program[index] != '\n') &&
-	     (program[index] != '\r')) {
-	index++;
-	if (program.length == index)
-	  break;
+             (program[index] != '\r')) {
+        index++;
+        if (program.length == index)
+          break;
       }
       int end = index;
       if (index != program.length) {
-	if ((index+1 != program.length) &&
-	    // treat \r\n from windows as one line
-	    (program[index] == '\r') && 
-	    (program[index+1] == '\n')) {
-	  index += 2;
-	} else {
-	  index++;
-	}		
+        if ((index+1 != program.length) &&
+            // treat \r\n from windows as one line
+            (program[index] == '\r') && 
+            (program[index+1] == '\n')) {
+          index += 2;
+        } else {
+          index++;
+        }                
       } // otherwise don't increment
 
       String line = new String(program, begin, end-begin);
       line = line.trim();
-	    
+            
       if (line.length() == 0) {
-	if (!gotBlankLine) {
-	  // let first blank line through
-	  buffer.append('\n');
-	  gotBlankLine = true;
-	}
+        if (!gotBlankLine) {
+          // let first blank line through
+          buffer.append('\n');
+          gotBlankLine = true;
+        }
       } else {
-	//System.out.println(level);
-	int idx = -1;
-	String myline = line.substring(0);
-	while (myline.lastIndexOf('}') != idx) {
-	  idx = myline.indexOf('}');
-	  myline = myline.substring(idx+1);
-	  level--;
-	}
-	//for (int i = 0; i < level*2; i++) {
-	for (int i = 0; i < level; i++) {
-	  buffer.append(' ');
-	}
-	buffer.append(line);
-	buffer.append('\n');
-	//if (line.charAt(0) == '{') {
-	//level++;
-	//}
-	idx = -1;
-	myline = line.substring(0);
-	while (myline.lastIndexOf('{') != idx) {
-	  idx = myline.indexOf('{');
-	  myline = myline.substring(idx+1);
-	  level++;
-	}
-	gotBlankLine = false;
+        //System.out.println(level);
+        int idx = -1;
+        String myline = line.substring(0);
+        while (myline.lastIndexOf('}') != idx) {
+          idx = myline.indexOf('}');
+          myline = myline.substring(idx+1);
+          level--;
+        }
+        //for (int i = 0; i < level*2; i++) {
+        for (int i = 0; i < level; i++) {
+          buffer.append(' ');
+        }
+        buffer.append(line);
+        buffer.append('\n');
+        //if (line.charAt(0) == '{') {
+        //level++;
+        //}
+        idx = -1;
+        myline = line.substring(0);
+        while (myline.lastIndexOf('{') != idx) {
+          idx = myline.indexOf('{');
+          myline = myline.substring(idx+1);
+          level++;
+        }
+        gotBlankLine = false;
       }
     }
     //textarea.editorSetText(buffer.toString());
@@ -1883,24 +1886,24 @@ afterwards, some of these steps need a cleanup function
       //if ((s.charAt(i) == '\n') || (s.charAt(i) == '\r')) {
       boolean newline = false;
       if (s.charAt(i) == '\r') {
-	if ((i != len-1) && (s.charAt(i+1) == '\n')) {
-	  i++; //ii--;
-	}
-	lc++;
-	newline = true;
+        if ((i != len-1) && (s.charAt(i+1) == '\n')) {
+          i++; //ii--;
+        }
+        lc++;
+        newline = true;
       } else if (s.charAt(i) == '\n') {
-	lc++;
-	newline = true;
+        lc++;
+        newline = true;
       }
       if (newline) {
-	if (lc == lnum)
-	  //st = i+1;
-	  st = ii;
-	else if (lc == lnum+1) {
-	  //end = i;
-	  end = ii;
-	  break;
-	}
+        if (lc == lnum)
+          //st = i+1;
+          st = ii;
+        else if (lc == lnum+1) {
+          //end = i;
+          end = ii;
+          break;
+        }
       }
     }
     if (end == -1) end = len;
@@ -1990,7 +1993,7 @@ afterwards, some of these steps need a cleanup function
       byte[] buffer = new byte[4096];
       int bytesRead;
       while ((bytesRead = from.read(buffer)) != -1) {
-	to.write(buffer, 0, bytesRead);
+        to.write(buffer, 0, bytesRead);
       }
       to.flush();
       from.close(); // ??
@@ -2015,13 +2018,13 @@ afterwards, some of these steps need a cleanup function
       File source = new File(sourceDir, files[i]);
       File target = new File(targetDir, files[i]);
       if (source.isDirectory()) {
-	target.mkdirs();
-	copyDir(source, target);
+        target.mkdirs();
+        copyDir(source, target);
 #ifdef JDK13
-	target.setLastModified(source.lastModified());
+        target.setLastModified(source.lastModified());
 #endif
       } else {
-	copyFile(source, target);
+        copyFile(source, target);
       }
     }
   }

@@ -68,21 +68,21 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     if (primaryColor == null) {
       backgroundColor = PdeBase.getColor("editor.header.bgcolor", 
-					   new Color(51, 51, 51));
+                                         new Color(51, 51, 51));
       primaryColor = PdeBase.getColor("editor.header.fgcolor.primary", 
-					new Color(255, 255, 255));
+                                      new Color(255, 255, 255));
       secondaryColor = PdeBase.getColor("editor.header.fgcolor.secondary", 
-					new Color(153, 153, 153));
+                                        new Color(153, 153, 153));
     }
 
     addMouseListener(new MouseAdapter() {
-	public void mousePressed(MouseEvent e) {
-	  //System.out.println("got mouse");
-	  if ((sketchRight != 0) &&
-	      (e.getX() > sketchLeft) && (e.getX() < sketchRight)) {
-	    editor.skSaveAs(true);
-	  }
-	}
+        public void mousePressed(MouseEvent e) {
+          //System.out.println("got mouse");
+          if ((sketchRight != 0) &&
+              (e.getX() > sketchLeft) && (e.getX() < sketchRight)) {
+            editor.skSaveAs(true);
+          }
+        }
       });
   }
 
@@ -125,14 +125,14 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
       // component has been resized
 
       if ((size.width > imageW) || (size.height > imageH)) {
-	// nix the image and recreate, it's too small
-	offscreen = null;
+        // nix the image and recreate, it's too small
+        offscreen = null;
 
       } else {
-	// who cares, just resize
-	sizeW = size.width; 
-	sizeH = size.height;
-	userLeft = 0; // reset
+        // who cares, just resize
+        sizeW = size.width; 
+        sizeH = size.height;
+        userLeft = 0; // reset
       }
     }
 
@@ -148,7 +148,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     Graphics g = offscreen.getGraphics();
     if (font == null) {
       font = PdeBase.getFont("editor.header.font",
-			       new Font("SansSerif", Font.PLAIN, 12));
+                             new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
       fontAscent = metrics.getAscent();
