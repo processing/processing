@@ -249,7 +249,7 @@ public class PdeEditor extends JFrame
     pain.add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
-    // (that was wishful thinking, they still are, until we switch to jedit)
+    // (har har har.. that was wishful thinking)
     listener = new PdeEditorListener(this, textarea);
     textarea.pdeEditorListener = listener;
 
@@ -381,7 +381,7 @@ public class PdeEditor extends JFrame
     }
 
     if (windowPositionInvalid) {
-      System.out.println("using default size");
+      //System.out.println("using default size");
       int windowH = PdePreferences.getInteger("default.window.height");
       int windowW = PdePreferences.getInteger("default.window.width");
       setBounds((screen.width - windowW) / 2, 
@@ -445,16 +445,16 @@ public class PdeEditor extends JFrame
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
       // disable line highlight and turn off the caret when disabling
-      Color color = PdePreferences.getColor("editor.program.bgcolor.external");
+      Color color = PdePreferences.getColor("editor.external.bgcolor");
       painter.setBackground(color);
       painter.lineHighlight = false;
       textarea.setCaretVisible(false);
 
     } else {
-      Color color = PdePreferences.getColor("editor.program.bgcolor");
+      Color color = PdePreferences.getColor("editor.bgcolor");
       painter.setBackground(color);
       painter.lineHighlight = 
-        PdePreferences.getBoolean("editor.program.linehighlight");
+        PdePreferences.getBoolean("editor.linehighlight");
       textarea.setCaretVisible(true);
     }
 
@@ -475,7 +475,7 @@ public class PdeEditor extends JFrame
    * Called when the application is quitting.
    */
   public void storePreferences() {
-    System.out.println("storing preferences");
+    //System.out.println("storing preferences");
 
     // window location information
     Rectangle bounds = getBounds();
