@@ -1284,13 +1284,13 @@ public class PApplet extends Applet
   }
 
 
-  static Random internalRandom;
+  Random internalRandom;
 
   /**
    * Return a random number in the range [0, howbig)
    * (0 is inclusive, non-inclusive of howbig)
    */
-  static public final float random(float howbig) {
+  public final float random(float howbig) {
     // for some reason (rounding error?) Math.random() * 3
     // can sometimes return '3' (once in ~30 million tries)
     // so a check was added to avoid the inclusion of 'howbig'
@@ -1317,12 +1317,18 @@ public class PApplet extends Applet
    * meaning that random(5, 5) will return 5 (useful)
    * and random(7, 4) will return 7 (not useful.. better idea?)
    */
-  static public final float random(float howsmall, float howbig) {
+  public final float random(float howsmall, float howbig) {
     if (howsmall >= howbig) return howsmall;
     float diff = howbig - howsmall;
     return random(diff) + howsmall;
   }
 
+
+  public final void randomSeed(long what) {
+    // internal random number object
+    if (internalRandom == null) internalRandom = new Random();
+    internalRandom.setSeed(what);
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1364,6 +1370,8 @@ public class PApplet extends Applet
   float[] perlin_cosTable;
   float perlin[];
 
+  Random perlinRandom;
+
 
   public float noise(float x) {
     // is this legit? it's a dumb way to do it (but repair it later)
@@ -1376,16 +1384,19 @@ public class PApplet extends Applet
 
   public float noise(float x, float y, float z) {
     if (perlin == null) {
+      if (perlinRandom == null) {
+        perlinRandom = new Random();
+      }
       perlin = new float[PERLIN_SIZE + 1];
       for (int i = 0; i < PERLIN_SIZE + 1; i++) {
-        perlin[i] = (float)Math.random();
+        perlin[i] = perlinRandom.nextFloat(); //(float)Math.random();
       }
       // [toxi 031112] 
       // noise broke due to recent change of cos table in PGraphics
       // this will take care of it
-      perlin_cosTable=g.cosLUT;
-      perlin_TWOPI=perlin_PI=g.SINCOS_LENGTH;
-      perlin_PI>>=1;
+      perlin_cosTable = g.cosLUT;
+      perlin_TWOPI = perlin_PI = g.SINCOS_LENGTH;
+      perlin_PI >>= 1;
     }
 
     if (x<0) x=-x;
@@ -1459,6 +1470,10 @@ public class PApplet extends Applet
     if (falloff>0) perlin_amp_falloff=falloff;
   }
 
+  public void noiseSeed(long what) {
+    if (perlinRandom == null) perlinRandom = new Random();
+    perlinRandom.setSeed(what);
+  }
 
 
   //////////////////////////////////////////////////////////////
