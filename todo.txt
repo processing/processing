@@ -10,66 +10,31 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X blend() (or any other 'final' functions) is causing trouble
 X   when other people write methods of the same name
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1049249938
+X text caret goes missing
+o   removing extra jre's, uninstalling java apps fixed it
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
+
+_ probably time to send out another message about this release
+
+_ repair lines (even if slow)
+_   single pixel lines have no alpha and no z
+_   fix all the random line types to support alpha
 
 _ smooth images drawing strangely (missing first line of pixels)
 _   also smoothed even if not distorted
-
-_ aliased and anti-aliased images don't line up
-_   text (text04) marching around strangely
-
+_   aliased and anti-aliased images don't line up
+_     text (text04) marching around strangely
 _ problems with u/v are likely to also be there for colors
-
-_ u/v should be affected by w for proper perspective
+_   u/v should be affected by w for proper perspective
 
 _ sphere() and other polygons don't connect flush with one another
+_   could hack by making each slightly larger than necessary
 
-_ single pixel lines have no alpha and no z
+_ video integration (need to work with dist.sh for it)
 
-_ fix all the random line types to support alpha
+_ alpha sound integration
 
-_ write code for line joins.. continuous lines should become polygon snake
-
-_ convex/concave polygons
-
-image(img, x, y) in CENTER_DIAMETER mode is actually center radius,
-because it uses 
-
-
-//// 
-
-
-_ beautify() ignores colons for case statements
-_   need to tie this to the parser instead
-
-_ rename doesn't set focus to renamer area
-
-_ rename sketch 'can't rename' error (file being kept open)
-_   open sketch, make a change, save, run, rename -> error
-
-_ add keyCode to BApplet
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-
-_ simage() is screwy.. 
-_   its invocation is broken (image_mode can't be two things at once)
-_   doesn't actually use image_mode for placement
-_   also doesn't support RGBA
-
-_ text caret goes missing
-_   removing extra jre's, uninstalling java apps fixed it
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
-
-_ versions of loadStream/loadBytes etc that use streams and/or urls
-
-_ environment locks up when error stream isn't for the class
-_   this happens when it's another thread (i.e. image fetcher)
-_   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
-
-_ people like downloadable reference + net isn't cheap everywhere
-
-_ merge bboard groupings (syntax + programs)
-_   separate bboard and environment
 
 data things for my own work, but also generally useful
 _ numberFormat too much, use nf
@@ -92,7 +57,8 @@ _   other class also has concept for random access of lines
 _   by storing the line positions, can access without loading all
 _   into memory because some files will be too large
 _ does a[3] == Float.NaN work? (for testing with splitFloats)
-
+_ versions of loadStream/loadBytes etc that use streams and/or urls
+_ split to take strings (ie. for ", ")
 
 
 ////////////////////////////////////////////////////////////////////
@@ -110,18 +76,30 @@ BAGEL / Bugs
    b _ bezier is broken for > 4 points
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042201137
 
+   b _ image(img, x, y) in CENTER_DIAMETER is actually center radius
+   b _    should make sure that x, y just makes it proper size
+
+   b _ simage() is screwy.. 
+   b _   its invocation is broken (image_mode can't be two things at once)
+   b _   doesn't actually use image_mode for placement
+   b _   also doesn't support RGBA
+
 
 BAGEL / Graphics API Additions
 
    b _ hiding the cursor. noCursor(), cursor()
 
-   b _ images and pixel copying
+   b _ add keyCode to BApplet (quick addition)
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+
+   b _ perlin noise 1D. noise() 
+
+   b _ images and pixel copying (api for this?)
    b _   copyPixel(x, y, to_x, to_y)
    b _   copyArea(x, y, w, h, to_x, to_y)
    b _   copyImage(x, y, w, h,  to_x, to_y)
    b _   resize of bimage, make a copy of image?
-
-   b _ perlin noise 1D. noise() 
 
    b _ curves
    b _   curveMode(), curveMode to tweak the s parameter of catmullrom
@@ -148,8 +126,10 @@ BAGEL / Graphics API Additions
 BAGEL / Rendering
 
    b _ anti-aliasing. smooth(), noSmooth() 
+   b _   need to verify that this works consistently throughout
 
    b _ alpha. fill(r, g, b, a), stroke(r, g, b, a),
+   b _   need to verify that this works consistently throughout
 
    b _ shape.. non-homogenous colors for beginShape()
    b _   currently disabled b/c homogenousColors not set false for vertices
@@ -207,6 +187,8 @@ ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
    b _   setting accuracy of circles/sphere
 
    b _ opengl export / rendering mode
+   b _   currently implemented, but somewhat broken
+   b _   finish this once all the line code is done
 
 bf b _ illustrator export / rendering mode
 bf b _   also postscript or pdf export?
@@ -405,6 +387,9 @@ PDE / Export
 
 PDE / Runtime (includes classloading)
 
+_ environment locks up when error stream isn't for the class
+_   this happens when it's another thread (i.e. image fetcher)
+_   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
 _ focus not properly set in present mode
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
 _ for 'java' mode, try run using external vm
@@ -425,6 +410,11 @@ _   compile entire sketchbook on startup, check for new files on compile?
 
 PDE / Details
 
+_ rename doesn't set focus to renamer area
+_ rename sketch 'can't rename' error (file being kept open)
+_   open sketch, make a change, save, run, rename -> error
+_ beautify() ignores colons for case statements
+_   need to tie this to the parser instead
 _ improve the console
 _   maybe it needs to be a textarea?
 _   printing of objects, esp when null, in jdk 14 seems to crash
@@ -572,6 +562,8 @@ How the environment gets packed up, downloaded, and installed.
 
 
 DISTRIBUTION / General 
+
+b _ people like downloadable reference + net isn't cheap everywhere
 b _ need document icons  
 b _ beta release will include source code
 b _ write notes about running p5 on another platforms 
