@@ -15,6 +15,11 @@ else
   rm examples.zip
   cd ../..
 
+  cd work
+  unzip -q reference.zip
+  rm reference.zip
+  cd ..
+
   tar --extract --file=jre.tgz --ungzip --directory=work
 
   mkdir work/lib/export

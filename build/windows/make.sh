@@ -16,6 +16,12 @@ else
   rm examples.zip
   cd ../..
 
+  echo Extracting reference...
+  cd work
+  unzip -q reference.zip
+  rm reference.zip
+  cd ..
+
   echo Extracting big ass JRE...
   unzip -q -d work jre.zip
   # cygwin requires this because of unknown weirdness
