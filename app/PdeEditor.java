@@ -60,12 +60,12 @@ public class PdeEditor extends JFrame
     "                                                                     " +
     "                                                                     ";
 
-  static final int NEW  = 1;
-  static final int OPEN = 2;
-  static final int QUIT = 3;
+  static final int HANDLE_NEW  = 1;
+  static final int HANDLE_OPEN = 2;
+  static final int HANDLE_QUIT = 3;
   int checking;
-  String openingPath; 
-  String openingName;
+  String handleOpenPath; 
+  //String openingName;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -368,7 +368,8 @@ public class PdeEditor extends JFrame
 
     //if (sketchName != null) {
     if ((sketchPath != null) && (new File(sketchPath)).exists()) {
-      skOpen(new PdeSketch(sketchFile));
+      handleOpen(sketchPath);
+      //skOpen(new PdeSketch(sketchFile));
       //if (new File(sketchDir + File.separator + sketchName + ".pde").exists()) {
       //skOpen(sketchDir, sketchName);
 
@@ -376,7 +377,8 @@ public class PdeEditor extends JFrame
       //skNew2(true);
       //}
     } else {
-      skNew2(true);
+      //skNew2(true);
+      handleNew2(true);
     }
 
 
@@ -1020,7 +1022,8 @@ public class PdeEditor extends JFrame
 
     sketch.cleanup();
 
-    // toxi_030903: focus the PDE again after quitting presentation mode
+    // [toxi 030903]
+    // focus the PDE again after quitting presentation mode
     toFront();
   }
 
@@ -1033,83 +1036,65 @@ public class PdeEditor extends JFrame
   }
 
 
-  // check to see if there have been changes
-  // if so, prompt user whether or not to save first
-  // if the user cancels, return false to abort parent operation
+  /**
+   * Check to see if there have been changes. If so, prompt user 
+   * whether or not to save first. If the user cancels, just ignore.
+   * Otherwise, one of the other methods will handle calling 
+   * checkModified2() which will get on with business.
+   */
   protected void checkModified(int checking) {
-    checkModified(checking, null, null);
-  }
-
-  protected void checkModified(int checking, String path, String name) {
+    //checkModified(checking, null, null);
+    //}
+    //protected void checkModified(int checking, String path, String name) {
     this.checking = checking;
-    openingPath = path;
-    openingName = name;
+    //openingPath = path;
+    //openingName = name;
 
-    if (sketch.isModified()) {
-      String prompt = "Save changes to " + sketch.name + "?  ";
-
-      if (checking != HANDLE_QUIT) {
-        // if the user is not quitting, then use the nicer
-        // dialog that's actually inside the p5 window.
-        status.prompt(prompt);
-
-      } else {
-        // if the user selected quit, then this has to be done with
-        // a JOptionPane instead of internally in the editor. 
-        // TODO this is actually just a bug to be fixed.
-
-        // macosx java kills the app even though cancel might get hit
-        // so the cancel button is (temporarily) left off
-        // this may be treated differently in macosx java 1.4, 
-        // but 1.4 isn't currently stable enough to use.
-
-        // turns out windows has the same problem (sometimes)
-        // disable cancel for now until a fix can be found.
-
-        Object[] options = { "Yes", "No" };
-        int result = JOptionPane.showOptionDialog(this,
-                                                  prompt,
-                                                  "Quit",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE,
-                                                  null,
-                                                  options, 
-                                                  options[0]);  
-          /*
-      } else {
-        Object[] options = { "Yes", "No", "Cancel" };
-        result = JOptionPane.showOptionDialog(this,
-                                              prompt,
-                                              "Quit",
-                                              JOptionPane.YES_NO_CANCEL_OPTION,
-                                              JOptionPane.QUESTION_MESSAGE,
-                                              null,
-                                              options, 
-                                              options[2]);
-          */
-
-        if (result == JOptionPane.YES_OPTION) {
-          //System.out.println("yes");
-          //System.out.println("saving");
-          //doSave();
-          sketch.save();
-          //System.out.println("done saving");
-          checkModified2();
-
-        } else if (result == JOptionPane.NO_OPTION) {
-          //System.out.println("no");
-          checkModified2();  // though this may just quit
-
-        } else if (result == JOptionPane.CANCEL_OPTION) {
-          //System.out.println("cancel");
-          // does nothing
-        }
-      }
-
-    } else {
+    if (!sketch.isModified()) {
       checkModified2();
     }
-    //System.out.println("exiting checkmodified");
+
+    String prompt = "Save changes to " + sketch.name + "?  ";
+
+    if (checking != HANDLE_QUIT) {
+      // if the user is not quitting, then use the nicer
+      // dialog that's actually inside the p5 window.
+      status.prompt(prompt);
+
+    } else {
+      // if the user selected quit, then this has to be done with
+      // a JOptionPane instead of internally in the editor. 
+      // TODO this is actually just a bug to be fixed.
+
+      // macosx java kills the app even though cancel might get hit
+      // so the cancel button is (temporarily) left off
+      // this may be treated differently in macosx java 1.4, 
+      // but 1.4 isn't currently stable enough to use.
+
+      // turns out windows has the same problem (sometimes)
+      // disable cancel for now until a fix can be found.
+
+      Object[] options = { "Yes", "No" };
+      int result = JOptionPane.showOptionDialog(this,
+                                                prompt,
+                                                "Quit",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                options, 
+                                                options[0]);  
+
+      if (result == JOptionPane.YES_OPTION) {
+        sketch.save();
+        checkModified2();
+
+      } else if (result == JOptionPane.NO_OPTION) {
+        checkModified2();  // though this may just quit
+
+      } else if (result == JOptionPane.CANCEL_OPTION) {
+        // ignored
+      }
+    }
   }
 
 
@@ -1118,9 +1103,10 @@ public class PdeEditor extends JFrame
    */
   public void checkModified2() {
     switch (checking) {
-      case NEW:  handleNew2(false); break;
-      case OPEN: skOpen2(openingPath, openingName); break;
-      case QUIT: handleQuit2(); break;
+      case HANDLE_NEW:  handleNew2(false); break;
+        //case HANDLE_OPEN: skOpen2(openingPath, openingName); break;
+      case HANDLE_OPEN: handleOpen2(openingPath); break;
+      case HANDLE_QUIT: handleQuit2(); break;
     }
     checking = 0;
   }
@@ -1132,7 +1118,7 @@ public class PdeEditor extends JFrame
    */
   public void handleNew() {
     doStop();
-    checkModified(NEW);
+    checkModified(HANDLE_NEW);
   }
 
 
@@ -1157,16 +1143,39 @@ public class PdeEditor extends JFrame
   }
 
 
+  /**
+   * Need to determine what to open, happens when the 'open' button
+   * is hit or open is selected from the menu.
+   */
+  public void handleOpen() {
+    String path = sketchbook.handleOpen();
+    if (path != null) handleOpen(path);
+  }
+
+
+  /**
+   * Get ready to open something good.
+   */
+  public void handleOpen(String path) {
+    doStop();
+    handleOpenPath = path;
+    checkModified(HANDLE_OPEN);
+  }
+
+
+  /*
   public void skOpen(String path, String name) {
     doStop();
     checkModified(SK_OPEN, path, name);
   }
+
 
   protected void skOpen2(String path, String name) {
     File osketchFile = new File(path, name + ".pde");
     File osketchDir = new File(path);
     handleOpen2(name, osketchFile, osketchDir);
   }
+  */
 
 
   /*
@@ -1193,8 +1202,14 @@ public class PdeEditor extends JFrame
   */
 
 
+  protected void handleOpen2() {
+    sketch = new PdeSketch(handleOpenPath);
+    // i guess this just sets everything up properly?
+  }
+
+
   protected void handleOpen2(String isketchName, 
-                             File isketchFile, File isketchDir) {
+                           File isketchFile, File isketchDir) {
     if (!isketchFile.exists()) {
       status.error("no file named " + isketchName);
       return;
@@ -1428,7 +1443,7 @@ public class PdeEditor extends JFrame
     doClose();  
 
     //if (!checkModified()) return;
-    checkModified(QUIT);
+    checkModified(HANDLE_QUIT);
     //System.out.println("exiting doquit");
   }
 
