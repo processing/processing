@@ -146,11 +146,15 @@ public class PApplet extends Applet
   static public final int DEFAULT_HEIGHT = 100;
   public int width, height;
 
-  protected int libraryCount;
-  protected PLibrary libraries[];
-  protected boolean libraryCalls[][];
-  //int registeredCount[];
-  //PLibrary registered[][];
+  protected RegisteredMethods sizeMethods;
+  protected RegisteredMethods preMethods, drawMethods, postMethods;
+  protected RegisteredMethods mouseEventMethods, keyEventMethods;
+  protected RegisteredMethods disposeMethods;
+
+  //protected int libraryCount;
+  //protected PLibrary libraries[];
+  //protected boolean libraryCalls[][];
+  //int setupCount = 0;
 
   // this text isn't seen unless PApplet is used on its
   // own and someone takes advantage of leechErr.. not likely
@@ -224,8 +228,15 @@ public class PApplet extends Applet
     */
 
     // these need to be inited before setup
-    libraries = new PLibrary[10];
-    libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
+    //libraries = new PLibrary[10];
+    //libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
+    sizeMethods = new RegisteredMethods();
+    preMethods = new RegisteredMethods();
+    drawMethods = new RegisteredMethods();
+    postMethods = new RegisteredMethods();
+    mouseEventMethods = new RegisteredMethods();
+    keyEventMethods = new RegisteredMethods();
+    disposeMethods = new RegisteredMethods();
 
     /*
     // call the applet's setup method
@@ -282,15 +293,31 @@ public class PApplet extends Applet
   public void stop() {
     //finished = true;  // why did i comment this out?
 
-    if (thread != null) {
-      thread = null;
-    }
+    // don't run stop and disposers twice
+    if (thread == null) return;
 
+    //if (thread != null) {
+    thread = null;
+    //}
+
+    disposeMethods.handle();
+    /*
     for (int i = 0; i < libraryCount; i++) {
       if (libraryCalls[i][PLibrary.DISPOSE]) {
         libraries[i].dispose();  // endNet/endSerial etc
       }
     }
+
+    for (int i = 0; i < stopCount; i++) {
+      try {
+        System.err.println("stopping " + i);
+        stopMethods[i].invoke(stopObjects[i], new Object[] { });
+      } catch (Exception e) {
+        System.err.println("Couldn't stop " + stopObjects[i]);
+        e.printStackTrace();
+      }
+    }
+    */
   }
 
 
@@ -316,7 +343,7 @@ public class PApplet extends Applet
 
   // ------------------------------------------------------------
 
-
+  /*
   public void attach(PLibrary library) {
     if (libraryCount == libraries.length) {
       PLibrary temp[] = new PLibrary[libraryCount << 1];
@@ -365,6 +392,166 @@ public class PApplet extends Applet
       }
     }
   }
+  */
+
+
+  public class RegisteredMethods {
+    int count;
+    Object objects[];
+    Method methods[];
+
+
+    // convenience version for no args
+    public void handle() {
+      handle(new Object[] { });
+    }
+
+    public void handle(Object args[]) {
+      for (int i = 0; i < count; i++) {
+        try {
+          //System.out.println(objects[i] + " " + args);
+          methods[i].invoke(objects[i], args);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
+    public void add(Object object, Method method) {
+      if (objects == null) {
+        objects = new Object[5];
+        methods = new Method[5];
+      }
+      if (count == objects.length) {
+        Object otemp[] = new Object[count << 1];
+        System.arraycopy(objects, 0, otemp, 0, count);
+        objects = otemp;
+        Method mtemp[] = new Method[count << 1];
+        System.arraycopy(methods, 0, mtemp, 0, count);
+        methods = mtemp;
+      }
+      objects[count] = object;
+      methods[count] = method;
+      count++;
+    }
+  }
+
+
+  //public void registerSetup(Object o) {
+  //System.err.println("registerSetup not yet implemented");
+  //}
+
+  public void registerSize(Object o) {
+    Class args[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    registerWithArgs(preMethods, "size", o, args);
+  }
+
+  public void registerPre(Object o) {
+    registerNoArgs(preMethods, "pre", o);
+  }
+
+  public void registerDraw(Object o) {
+    registerNoArgs(drawMethods, "draw", o);
+  }
+
+  public void registerPost(Object o) {
+    registerNoArgs(postMethods, "post", o);
+  }
+
+  public void registerMouseEvent(Object o) {
+    Class args[] = new Class[] { MouseEvent.class };
+    registerWithArgs(mouseEventMethods, "mouseEvent", o, args);
+  }
+
+
+  public void registerKeyEvent(Object o) {
+    Class args[] = new Class[] { KeyEvent.class };
+    registerWithArgs(keyEventMethods, "keyEvent", o, args);
+  }
+
+  public void registerDispose(Object o) {
+    registerNoArgs(disposeMethods, "dispose", o);
+  }
+
+
+  protected void registerNoArgs(RegisteredMethods meth,
+                                String name, Object o) {
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod(name, new Class[] {});
+      meth.add(o, method);
+
+    } catch (Exception e) {
+      die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+  protected void registerWithArgs(RegisteredMethods meth,
+                                  String name, Object o, Class args[]) {
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod(name, args);
+      meth.add(o, method);
+
+    } catch (Exception e) {
+      die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+    /*
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod("mouseEvent",
+
+      mouseEventMethods.add(o, method);
+
+    } catch (Exception e) {
+      die("Could not register mouseEvent() for " + o, e);
+    }
+  }
+
+  public void registerSize(Object o) {
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod("size",
+                                  new Class[] { Integer.TYPE, Integer.TYPE });
+      sizeMethods.add(o, method);
+
+    } catch (Exception e) {
+      die("Could not register size() for " + o, e);
+    }
+  }
+
+
+  public void registerKeyEvent(Object o) {
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod("keyEvent",
+                                  new Class[] { KeyEvent.class });
+      keyEventMethods.add(o, method);
+
+    } catch (Exception e) {
+      die("Could not register mouseEvent() for " + o, e);
+    }
+  }
+    */
+
+  /*
+  protected void handleDispose() {
+    for (int i = 0; i < disposeMethods.count; i++) {
+      try {
+        //System.err.println("stopping " + i);
+        disposeMethods[i].handle(new Object[] { });
+        //diposeMethods[i].invoke(stopObjects[i], new Object[] { });
+      } catch (Exception e) {
+        System.err.println("Couldn't stop " + stopObjects[i]);
+        e.printStackTrace();
+      }
+    }
+  }
+  */
 
 
   // ------------------------------------------------------------
@@ -376,6 +563,8 @@ public class PApplet extends Applet
 
   public void draw() {
     //drawMethod = false;
+    finished = true;  // if no draw method, then...
+    //println("all done");
   }
 
 
@@ -429,11 +618,15 @@ public class PApplet extends Applet
     this.width = g.width;
     this.height = g.height;
 
+    Object args[] = new Object[] { new Integer(width), new Integer(height) };
+    sizeMethods.handle(args);
+    /*
     for (int i = 0; i < libraryCount; i++) {
       if (libraryCalls[i][PLibrary.SIZE]) {
         libraries[i].size(width, height);  // endNet/endSerial etc
       }
     }
+    */
 
     if (frame != null) {
       Insets insets = frame.getInsets();
@@ -581,9 +774,10 @@ public class PApplet extends Applet
               this.height = g.height;
 
             } else {
-              for (int i = 0; i < libraryCount; i++) {
-                if (libraryCalls[i][PLibrary.PRE]) libraries[i].pre();
-              }
+              preMethods.handle();
+              //for (int i = 0; i < libraryCount; i++) {
+              //  if (libraryCalls[i][PLibrary.PRE]) libraries[i].pre();
+              //}
               draw();
 
               // these are called *after* loop so that valid
@@ -595,9 +789,10 @@ public class PApplet extends Applet
               if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                         " 2b endFrame");
 
-              for (int i = 0; i < libraryCount; i++) {
-                if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
-              }
+              drawMethods.handle();
+              //for (int i = 0; i < libraryCount; i++) {
+              //if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
+              //}
             }
 
             g.endFrame();
@@ -621,9 +816,10 @@ public class PApplet extends Applet
             //if (THREAD_DEBUG) println("   3d out of wait");
             //frameCount++;
 
-            for (int i = 0; i < libraryCount; i++) {
-              if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
-            }
+            postMethods.handle();
+            //for (int i = 0; i < libraryCount; i++) {
+            //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
+            //}
           }
         }
         redraw = false;  // unset 'redraw' flag in case it was set
@@ -675,7 +871,7 @@ public class PApplet extends Applet
     }
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               " thread finished");
-    //stop();  // call to shutdown libs?
+    stop();  // call to shutdown libs?
   }
 
 
@@ -722,11 +918,14 @@ public class PApplet extends Applet
     mouseY = event.getY();
     mouseEvent = event;
 
+    mouseEventMethods.handle(new Object[] { event });
+    /*
     for (int i = 0; i < libraryCount; i++) {
       if (libraryCalls[i][PLibrary.MOUSE]) {
         libraries[i].mouse(event);  // endNet/endSerial etc
       }
     }
+    */
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
@@ -873,11 +1072,14 @@ public class PApplet extends Applet
     key = event.getKeyChar();
     keyCode = event.getKeyCode();
 
+    keyEventMethods.handle(new Object[] { event });
+    /*
     for (int i = 0; i < libraryCount; i++) {
       if (libraryCalls[i][PLibrary.KEY]) {
         libraries[i].key(event);  // endNet/endSerial etc
       }
     }
+    */
 
     switch (event.getID()) {
     case KeyEvent.KEY_PRESSED:
