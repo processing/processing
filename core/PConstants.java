@@ -136,29 +136,29 @@ public interface PConstants {
 
   // shape modes
 
-  static final int CORNER          = 0;
-  static final int CORNERS         = 1;
-  static final int CENTER_RADIUS   = 2;
-  static final int CENTER_DIAMETER = 3;
+  static final int CORNER        = 0;
+  static final int CORNERS       = 1;
+  static final int CENTER_RADIUS = 2;
+  static final int CENTER        = 3;  // former CENTER_DIAMETER
 
 
   // uv texture orientation modes
 
-  static final int NORMAL_SPACE = 0;  // 0..1
-  static final int IMAGE_SPACE  = 1;
+  static final int NORMAL_SPACE  = 0;  // 0..1
+  static final int IMAGE_SPACE   = 1;
 
 
   // text placement modes
 
-  static final int SCREEN_SPACE = 2;
-  static final int OBJECT_SPACE = 3;
+  static final int SCREEN_SPACE  = 2;
+  static final int OBJECT_SPACE  = 3;
 
 
   // text alignment modes
 
-  static final int ALIGN_LEFT   = 0;
-  static final int ALIGN_CENTER = 1;
-  static final int ALIGN_RIGHT  = 2;
+  static final int ALIGN_LEFT    = 0;
+  static final int ALIGN_CENTER  = 1;
+  static final int ALIGN_RIGHT   = 2;
 
 
   // stroke modes
