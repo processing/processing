@@ -45,6 +45,14 @@ X windows tabbedpane separator is too small
 X   added line to pde_windows.properties
 X store divider location to sketch.properties
 X about box that just shows the splash image
+X curves
+X   curveMode(), curveMode to tweak the s parameter of catmullrom
+X   setting accuracy of curve segments
+X     right now it's hardwired at 20, should be adjustable
+X   function to evaluate bezier or catmullrom points
+X     used heavily in genome valence, asked about on the bboard
+X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
+X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
 
 
 macosx
@@ -136,16 +144,6 @@ BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 _ runtime exceptions not coming through on either mac or windows
 _   when array wasn't large enough for curveMode, blank red line
-
-
-bf _ curves
-bf _   curveMode(), curveMode to tweak the s parameter of catmullrom
-bf _   setting accuracy of curve segments
-bf _     right now it's hardwired at 20, should be adjustable
-bf _   function to evaluate bezier or catmullrom points
-bf _     used heavily in genome valence, asked about on the bboard
-bf _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
-bf _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
 
 
 macosx
