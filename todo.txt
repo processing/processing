@@ -47,6 +47,12 @@ X when renaming a sketch, select the text in the field,
 X   so you can type the new name immediately. 
 X added 'rename' command
 X   also the default for clicking on the sketch's title
+o   option to rename when doing a 'save as' (remove old files)
+X remove .class files on save as [dimitre]
+X   remove .jar, .class, and .java files from the 'applet' dir
+When I am working in a project and I save it with another name, 
+all the old files are copyied to new directory, and some of the old 
+unused .class files and images remains inside new project JAR files. 
 
 bagel
 _ images don't load during setup()
@@ -60,11 +66,6 @@ _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
 _ set frame title of launched window to the name of the sketch
-_ option to rename when doing a 'save as' (remove old files)
-_ remove .class files on save as [dimitre]
-When I am working in a project and I save it with another name, 
-all the old files are copyied to new directory, and some of the old 
-unused .class files and images remains inside new project JAR files. 
 _ use date in the sketch name sketch_021104 
 _   with a _2 if needed or '021104a' '021104b' etc
 _   when using save as, allow to remove the old (numbered) sketch
