@@ -18,6 +18,7 @@ Michael McGuffin <mjmcguff@dgp.toronto.edu>
 Anthony Okolie <anthony@anthonyone.com>
 Luis Miguel P. <luismi@standbyclick.com>
 Daniel Evan Schwartz <design@roomn8.com>
+Enrico Trujillo <etrujill@unm.edu>
 Jeff Williams <jeffw@pinchy.org>
 Ian Wojtowicz <ian@woj.com>
 andres <moscoca@bigpond.com>
@@ -131,12 +132,21 @@ _ add hint for super smooth fonts
 _ add preferredsize to processingapplet
 X bug in Bagel.loadImage that made images not work in applets
 _ millis returns 0 (though getMillis() is fine)
+X catch exception inside polygon scanner (slower?)
 
+_ rewrite fill/stroke/etc to use same code
+_   doesn't need to be super fast, so the extra assigns no big deal
+
+_ WRITE CONVERTER FROM JAVA BAGEL -> CPP
+_   include #ifdefs for c stuff
+
+_ try with 1.4 frame buffer stuff to see if it's faster
+_   will 1.4 work on osx?
 _ it's really a pain to use external files in processing
 _   getStream sucks (zach rewrote)
 _   should be able to work for application or applets
 _   may want to use getResource() (to get things from .jar files)
-
+_ fix buzz.pl to not create ../../bagel 
 _ need to clamp colors (nothing > 255 or < 0)
 _ try using serial events from javacomm instead of just reading straight
 _ paren problems comes from overusing parens (too many closing)
