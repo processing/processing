@@ -4,6 +4,43 @@ X sketch.properties exception when closing on linux and mac
 X   urlstr was garbage because of windows-specific code
 X test build macos9 version with JDK13 flag turned off
 
+_ check splash screen and icons into cvs
+_ get icon in macos9/macosx/windows formats
+
+
+_ background() not working
+_ imageMode() is gone
+_ setPixel(i, j, #99CC00); 
+_   not working anymore Syntax error: unexpected token: CC00
+_ mouse coords coming from window when outside applet.. bad!
+void setup() { 
+  size(100,100); 
+} 
+void loop() {
+  fill(102);
+  rect(mouseX - 5, mouseY - 5, 10, 10);
+}
+
+triangle_strip, quad_strip are no filling without outlines
+> fill(204, 204, 0);
+> beginShape(TRIANGLE_STRIP);
+> vertex(30, 75);
+> vertex(40, 20);
+> vertex(50, 75);
+> vertex(60, 20);
+> vertex(70, 75);
+> vertex(80, 20);
+> vertex(90, 75);
+> endShape();
+
+_ box is not opaque
+> translate(58, 48, 0); 
+> rotateY(0.5);
+> box(40);
+
+_ size() not being called in setup is gonna cause lots of headaches
+
+
 dist directories contain only the files specific to that platform
 (those are the ones checked into cvs)
   when dist.sh is run:
