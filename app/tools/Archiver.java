@@ -24,11 +24,7 @@
 
 //package processing.app.tools;  // for 0071+
 
-//import java.awt.*;
-//import java.awt.event.*;
 import java.io.*;
-//import java.lang.reflect.*;
-//import java.net.*;
 import java.text.*;
 import java.util.*;
 import java.util.zip.*;
@@ -38,7 +34,7 @@ public class Archiver {
   PdeEditor editor;
 
   // someday these will be settable
-  boolean useDate = false;
+  boolean useDate = true; //false;
   int digits = 3;
 
   NumberFormat numberFormat;
@@ -65,26 +61,40 @@ public class Archiver {
     //System.out.println("par " + parent);
 
     File newbie = null;
+    String namely = null;
     int index = 0;
     do {
       if (useDate) {
 	String purty = dateFormat.format(new Date());
 	String stamp = purty + ((char) ('a' + index));
-	newbie = new File(parent, name + "-" + stamp + ".zip");
+	namely = name + "-" + stamp;
+	newbie = new File(parent, namely + ".zip");
 
       } else {
 	String diggie = numberFormat.format(index + 1);
-	newbie = new File(parent, name + "-" + diggie + ".zip");
+	namely = name + "-" + diggie;
+	newbie = new File(parent, namely + ".zip");
       }
+      index++;
     } while (newbie.exists());
 
-    //System.out.println(newbie);
-    FileOutputStream zipOutputFile = new FileOutputStream(newbie);
-    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+    try {
+      //System.out.println(newbie);
+      FileOutputStream zipOutputFile = new FileOutputStream(newbie);
+      ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
 
-    // close up the jar file
-    zos.flush();
-    zos.close();
+      // recursively fill the zip file
+      buildZip(location, name, zos);
+
+      // close up the jar file
+      zos.flush();
+      zos.close();
+
+      editor.message("Created archive " + newbie.getName() + ".");
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -100,10 +110,16 @@ public class Archiver {
         files[i] : (sofar + "/" + files[i]);
 
       if (sub.isDirectory()) {
+	// directories are empty entries and have / at the end
+	ZipEntry entry = new ZipEntry(nowfar + "/");
+	//System.out.println(entry);
+	zos.putNextEntry(entry);
+	zos.closeEntry();
 	buildZip(sub, nowfar, zos);
 
       } else {
 	ZipEntry entry = new ZipEntry(nowfar);
+	entry.setTime(sub.lastModified());
 	zos.putNextEntry(entry);
 	zos.write(PdeBase.grabFile(sub));
 	zos.closeEntry();
