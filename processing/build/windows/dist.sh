@@ -31,6 +31,12 @@ unzip -q examples.zip
 rm examples.zip
 cd ../..
 
+# new style reference
+cd processing
+unzip -q reference.zip
+rm reference.zip
+cd ..
+
 # add java (jre) files
 unzip -q -d processing jre.zip
 

@@ -33,6 +33,12 @@ unzip -q examples.zip
 rm examples.zip
 cd ../..
 
+# new style reference
+cd processing
+unzip -q reference.zip
+rm reference.zip
+cd ..
+
 # get package from the dist dir
 cp -r dist/Proce55ing.app processing/
 rm -rf processing/Proce55ing.app/CVS

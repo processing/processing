@@ -31,6 +31,11 @@ unzip -q examples.zip
 rm examples.zip
 cd ../..
 
+cd processing
+unzip -q reference.zip
+rm reference.zip
+cd ..
+
 # add java (jre) files
 #tar --extract --verbose --file=jre.tgz --ungzip --directory=processing
 tar --extract --file=jre.tgz --ungzip --directory=processing
