@@ -56,10 +56,14 @@
 		<string>1.3+</string>
 		<key>ClassPath</key>
 			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/oro.jar:lib/build</string>
+
+<!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
 		<key>Properties</key>
 		<dict>
 			<key>apple.laf.useScreenMenuBar</key>
 			<string>true</string>
+			<key>apple.awt.showGrowBox</key>
+			<string>false</string>
 			<key>com.apple.smallTabs</key>
 			<string>true</string>
 			<key>apple.awt.Antialiasing</key>
