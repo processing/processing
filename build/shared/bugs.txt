@@ -7,7 +7,49 @@ and since only a handful of things change between releases
 ..................................................................
 
 
-COMMON PROBLEMS (NOT BUGS)
+PROCESSING WON'T START! NOTHING HAPPENS WHEN I HIT "RUN"! 
+
+- on windows, processing probably won't work if you install it inside
+  a folder with non-ascii characters in its name. for instance, if the
+  name of your user folder uses japanese text, or it has an umlaut or
+  cedilla or anything else fancy, and processing is on the desktop, or
+  somewhere inside that folder, you're gonna have trouble. the fix is
+  to place processing inside the root level of your C:\ drive (or
+  whatever drive you use) and it'll be ok again. this will be fixed in
+  the future.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+
+- windows.. if you have lots of garbage in your CLASSPATH environment
+  variable, that might cause trouble starting up a sketch. you might
+  get "Couldn't find package xxx.xxx" errors. clean things up (avoid
+  spaces and quotes)
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302833;start=0
+
+- windows.. in general, perhaps avoid having spaces in the folder name
+  that contains processing. this is because of windows' awesome
+  hokiness and its not-as-distant-as-it-should-be ancestor DOS.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
+
+- windows.. if you're still having trouble, disable any overly
+  protective virus scanning software. it might be holding things up.
+
+- windows.. you might also try using run.bat to start processing. lots
+  of people seem to have a better time with this method.
+
+- on 50% of machines, there still seems to be a bug that causes the
+  application to hang completely when something that uses a library
+  (or a code folder) is run. symptom will be a non-responsive applet
+  that either never shows up, or shows up but never draws (perhaps
+  until you hit stop) or draws three frames and then dies. this will
+  only happen with applets that have a "coffee cup" icon in the
+  window (that's how you know it's running externally).
+
+
+..................................................................
+
+
+COMMON ISSUES (NOT BUGS)
 things that are often perceived as bugs, which means maybe they'll be
 changed in the future, but for now, they're not actually 'broken'.
 
@@ -31,8 +73,6 @@ changed in the future, but for now, they're not actually 'broken'.
 - 'export to application' remains unimplemented, though it's closer,
   and should be ready before beta.
 
-- 'preferences' will get better in a future release
-
 - on macosx, the error message:
   ## Component Manager: attempting to find symbols in a component
   alias of type (regR/carP/x!bt)
@@ -54,11 +94,22 @@ changed in the future, but for now, they're not actually 'broken'.
 
 QUICKTIME FOR JAVA / VIDEO PROBLEMS
 
-- quicktime for java is still required on windows. it's required on
-  macosx too, but it's installed there by default. the requirement
-  will be removed in a later release for people who don't want to use
-  video, but the fix is more difficult than anticipated, so it will
-  probably happen after the initial beta release. 
+- windows.. you must make sure that "QuickTime for Java" is
+  installed. 
+
+- windows.. in order for camera input to work, you'll need to install
+  a quicktime-compatible video digitizer (VDIG). we've had reasonable
+  luck with WINVDIG: http://www.vdig.com/WinVDIG/
+
+- windows.. sometimes a full uninstall/reinstall of quicktime will do
+  the trick. 
+
+- on windows, if you're having trouble with video examples crashing
+  processing or locking up your system, you should try placing the
+  processing folder into the root level of your C:\ drive, or at least
+  inside a set of folders that have no spaces in the name. we haven't
+  determined if this is a quicktime for java or processing bug yet,
+  but it's been a problem for lots of people.
 
 - on windows, if you can't install quicktime for java yourself, all
   you really need is a copy of QTJava.zip from the quicktime install,
@@ -68,34 +119,18 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
   to find out what it's set to (prolly something like C:\windows on
   windows xp/me/98 or c:\winnt on windows 2000).
 
-- on macosx 10.2.x (jaguar), quicktime for java was missing from the
-  initial release of quicktime 6.4 on the mac. an upgrade to quicktime
-  6.4 that includes qtjava is now available from software update. or
-  you can download it from versiontracker, since software update
-  doesn't show the update on some machines:
-  http://www.versiontracker.com/dyn/moreinfo/macosx/21302
-  you can also upgrade to panther (macosx 10.3) which doesn't have
-  this problem.
-
 - video sometimes likes to crash the application completely on
   windows. this seems to be due to problems with quicktime for java
   (since we shouldn't be able to write code that crashes using
   java.. heh right). so this is probably outside of our control.
 
-
-..................................................................
-
-
-NETWORKING API BUGS
-
-- net is fairly horked, you should probably just use the java networking 
-  api until we get a chance to fix it.
-
-- network examples haven't been updated for the latest api, so they
-  will likely break in releases 60 and higher.
-
-- net needs work, it's currently sending unicode, instead of ascii or
-  UTF-8, data. this can cause problems with other programs.
+- on macosx 10.2.x (jaguar, or jagwyre if you like black turtlenecks),
+  quicktime for java was missing from the initial release of quicktime
+  6.4 on the mac. an upgrade to quicktime 6.4 that includes qtjava is
+  now available from software update. or you can download it from:
+  http://www.versiontracker.com/dyn/moreinfo/macosx/21302 
+  you can also upgrade to maosx 10.3.x (panther) which doesn't have
+  this problem.
 
 
 ..................................................................
@@ -148,22 +183,9 @@ list, see the bboard for more, and inside ben's head for others.
   it draws (like a weird flat line at the end of a shape, or areas
   that are less than smooth).
 
-- on windows, if you hit 'run' and no display window comes up, it probably
-  means that you have processing inside a folder with non-ascii characters
-  in its name. for instance, if the name of your user folder uses japanese
-  text, or it has an umlaut or cedilla or anything else fancy, and processing 
-  is on the desktop, or somewhere inside that folder, you're gonna
-  have trouble. the fix is to place processing inside the root level of 
-  your C:\ drive (or whatever drive you use) and it'll be ok again.
-  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
-
 - jikes is ~9 megabytes in size, which is a bit obnoxious. it doesn't
   hurt anything but we plan to put it on a diet for a future release.
   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
-
-- sound doesn't always stop when the 'stop' button is hit (i.e. the
-  mixer example seems broken). for now, you have to first quit
-  processing to stop it. 
 
 - the horizontal scroller for the text area has some weirdness, this
   may not be fixed until after beta, depending on how bad it is.
