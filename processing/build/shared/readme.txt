@@ -6,24 +6,18 @@ PROCESSING DEVELOPMENT ENVIRONMENT
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-RELEASE NOTES & DEVELOPER SOAPBOX
-
-herein follows lots of random notes about the alpha releases of
-processing. more up-to-date details can be found in "revisions.txt"
-which has notes about individual releases.
+FREQUENTLY ASKED QUESTIONS, INFO ABOUT PLATFORMS, & DEVELOPER SOAPBOX
 
 'revisions.txt' contains more information about the specific updates
 and fixes in this release.
 
-you'll have to pardon the chatty detail in some spots, as this will
-also serve as a response to many of the 'frequently asked questions'
-that we have.  
+'bugs.txt' has up-to-the-second information about our favorite bugs.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-GETTING STARTED
+HOW DO I GETTING STARTED?
 
 double click the 'Processing' application, and select something from
 the examples menu: File -> Open -> Examples. hit the 'run' button
@@ -35,16 +29,11 @@ lather, rinse, repeat as necessary.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-THANKS TO...
+WHAT'S WITH THE VERSION NUMBERS? 
 
-thanks to the many people who have been helping us out. 
-it's huge. i'll get a nice long list of y'all in here soon.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-REVISIONS & ROADMAP
+this is not 1.0 software.. it's buggy and may kill people. that's part
+of why we make everyone sign up to download, so that we know that care
+enough to bother.
 
 at least until the final "1.0" version, we'll be using four digit
 numbers for the release. we're calling revision "0043" the first
@@ -72,20 +61,18 @@ of bugs. hopefully this is not a *long* ways off, but...
 
 I FOUND A BUG!
 
-a cultured software elite such as yourself should use the gentleman's
-term "issue."
+haven't we all?
 
-first, be sure to check under the notes for your specific platform to
-make sure it isn't a known issue or that there isn't a simple fix.
+NOTE! avoid the urge to just email us, especially sending mail to ben
+or casey directly. while you may prefer the privacy of an email, it's
+much quicker for you to ask the whole gang, who are super helpful. we
+also what we use to keep track of bugs, so we may just ask you to use
+the bboard anyway.
 
-note! avoid the urge to just email us at processing@media.mit.edu, 
-or sending mail to ben or casey directly. while you may prefer the
-privacy of an email, it's much quicker for you to ask the whole gang,
-who are super helpful. we also what we use to keep track of bugs, so
-we may just ask you to use the bboard anyway.
+first, read the bug.txt file to see if your problem is found there.
 
-ok where was i.. next, check the bboard to see if something related
-has been reported, or if there is already a workaround.
+next, check the bboard to see if something related has been reported,
+or if there is already a workaround.
 
 best method is to post to the bulletin board at:
 http://processing.org/discourse/
@@ -97,7 +84,7 @@ if you want to go straight to the bugs page, it's:
 http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 when reporting this "bug" please include information about
-1. the revision number (i.e. 0048)
+1. the revision number (i.e. 0070)
 2. what operating system you're using, on what kind of hardware
 3. a copy of your code--the smallest possible piece of code that will
    produce the error you're having trouble with. 
@@ -114,7 +101,7 @@ out what's going on. useful things when reporting:
 - we want the minimum amount of code that will still replicate the
   bug. the worst that can happen is we get a report that says
   "problem!" along with a three page program. sure, everyone likes a
-  puzzle, but simpler code will be a faster response. 
+  puzzle, but simpler code will receive a faster response. 
 
 - occasionally we may need you to pack up a copy of your sketchbook or
   something similar so that we can try and replicate the weirdness on
@@ -129,25 +116,6 @@ out what's going on. useful things when reporting:
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-GOODIES & SEMI-HIDDEN FEATURES
-
-- shift-click on the 'run' button to go straight to 'present' mode
-
-- for quick renaming, just click on the sketch title 
-
-- inside the 'lib' folder is a 'pde.properties' file, which contains a
-  handful of settings for your app and how it's set up. you can change
-  the coloring of things, or even change your sketchbook location
-  inside this file. a second file with a similar title but that
-  includes "windows" or "macosx" etc in the name is for tweaks
-  specific to your platform. for instance, we use the macosx-specific
-  properties file to set the font size a little differently than on
-  windows.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
 PLATFORMS
 
 the processing development environment is tested most heavily on:
@@ -156,25 +124,25 @@ the processing development environment is tested most heavily on:
 1. Windows XP
 3. Fedora Core (Linux)
 
-windows is the superior platform for running java applications. it's
-not because we like windows the best, (sorry to the zealots in all
-other corners of the machine space) but that's just how it is. the vm
-for mac os x is really quite good (especially when compared to apple's
-previous efforts), but it's still a bit behind. we think os x will be
-a great bet for the future, and apple is putting all their feeble
-weight behind it, so hopefully it will evolve somewhere.
+windows is by far the superior platform for running java
+applications. it's not because we like windows the best but that's
+just how it is. the vm for mac os x is really quite good (especially
+when compared to apple's previous efforts), but it's still clunky and
+behind. we think os x will be a great bet for the future, and apple is
+putting all their feeble weight behind it, hopefully it will evolve
+somewhere.
 
 developing the version for mac os 9 was a big headache, we badly 
 wanted to support it, since so many people use it, but it had to be 
 discontinued for lack of time to work on it.
 
 windows 95/98/ME is a piece of crap, but since lots of people (are
-often forced to) use it, we'll try and support. early alpha versions
-seem to be having trouble with 95/98/ME, but it'll run better in the
-future.
+often forced to) use it, we'll do our best to support it. early alpha
+versions seem to be having trouble with 95/98/ME, so if possible, we
+*strongly* recommend using Windows 2000 or XP. 
 
 for the linux version, you guys can support yourselves. if you're
-enough of a hacker weenie to get a linux box setup, you oughta know
+enough of a hacker weenie to get a linux box set up, you oughta know
 what's going on. for lack of time, we won't be testing extensively
 under linux, but would be really happy to hear about any bugs or
 issues you might run into. actually, we don't get happy that you're
@@ -250,8 +218,8 @@ a fix someday.
 
 WINDOWS
 
-win2k and winxp are used as the primary development platforms, so the
-release will likely work best on either platform.
+winxp is used as the primary development platforms, so the release
+will likely work best there.
 
 win95/98/me seem to have some trouble, but we think it's just with
 the .exe that we use, so that'll get fixed in the future. you can try
@@ -300,13 +268,6 @@ on a redhat 9 box, and sun's jre 1.4.2 is included with the
 download. replacing (or making a symlink to) the contents of the
 'java' folder will let you tie in a preferred jvm for your machine.
 
-jikes.. just as 58 was being released, we ran into a problem where
-jikes (the java compiler used by p5) couldn't be found by the
-application on linux. faced with the deadline, we decided to put up an
-error message saying it wasn't found. you should make sure jikes
-version 1.18 (we strongly recommend this specific version!) is
-installed on your machine and in your path.
-
 serial.. this release uses rxtx-2.1_6 (just like macosx). you may get
 error message spew to the console when starting the application saying
 "Permission denied" and "No permission to create lock file" and to
@@ -321,7 +282,7 @@ root will get rid of the errors (not a great solution).
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-WHAT IS SKETCHBOOK?
+WHAT IS THE SKETCHBOOK?
 
 we think most "integrated development environments" (microsoft visual
 studio, codewarrior, jbuilder) tend to be overkill for the type of
@@ -336,7 +297,6 @@ coding to be a lot more like sketching. the sketchbook and the
 
 
 WHY JAVA? OR WHY SUCH A JAVA-ESQUE LANGUAGE?
-
 
 We didn't set out to make the ultimate language for visual
 programming, we set out to make something that was:
@@ -363,12 +323,13 @@ should be easier.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-EXTERNAL FILES / FONTS / READING DATA FILES
-
+HOW DO I USE EXTERNAL FILES?
 
 if you want to use external files, like images or text files 
-or fonts, they should be placed in a folder called 'data' inside:
-sketchbook -> default -> SKETCH_NAME
+or fonts, they should be placed in a folder called 'data' inside your
+sketch folder. 
+
+
 
 starting with version 44, there are several functions that make
 dealing with data in files much easier (loadFile, loadStrings,
@@ -379,7 +340,6 @@ splitStrings, etc) so file i/o should be fun!
 
 
 WHY IS IT CALLED "PROCESSING"?
-
 
 at their core, computers are processing machines. they modify, move,
 and combine symbols at a low level to construct higher level
@@ -392,31 +352,44 @@ and the website presents fragments of projects and exposes the
 concepts behind finished software.
 
 "Proce55ing" is the spelling we originally used for the url. even 
-though it's a combination of numbers and letters, it is simply pronounced
-"processing." having acquired the processing.org domain name, we are no 
-longer using the name "Proce55ing". though we still use "p5" as a 
+though it's a combination of numbers and letters, it was simply
+pronounced "processing." casey and i saved our pennies and had a can
+drive so now we've acquired the processing.org domain name. as a
+result we are no longer using the name "Proce55ing". when we see it
+with the 55's it annoys us and we want to punch people in the face. or
+punch ourselves in the face for using it in the first place. actually,
+we don't care that much but we're trying to kill off the previous
+naming. however, to make it more confusing, we still use "p5" as a
 shortened version of the name. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-PROCESSING IS FREE TO DOWNLOAD / FREE TO USE
+HOW MUCH DOES PROCESSING COST?
 
 we think it's important to have Processing freely available, rather
 than selling it for a million dollars under some godawful yearly
 contract update scheme. to that end, we encourage people to distribute
 the word widely and refer them to the site: http://processing.org
 
-on most of our own projects, we usually list them as "Built with
-Processing" or something similar, with a link back to the site. of
-course this isn't a necessity, but it makes us happy when you do.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+DO WE HAVE TO CITE PROCESSING? CAN WE DISTRIBUTE OUR SKETCHES?
+
+we like it when people include a "built with processing" note with a
+link back to the site, since it helps create interest / brings in more
+people to the project. we don't/can't/shouldn't require it, but it
+makes us happy because the project is free and this is our way of
+getting advertising and generating interest.  
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-SOURCE CODE / OPEN SOURCE / GPL BLAH BLAH
+IS PROCESSING OPEN SOURCE?
 
 we plan for this project to be "open source", everyone's favorite
 phrase that means that you'll be able to get your grubby little mitts
@@ -434,26 +407,19 @@ people to share anyway).
 more information about the gnu public license can be found here:
 http://www.gnu.org/copyleft/gpl.html
 
-processing also includes other open projects, namely the oro matcher, 
-the kjc compiler, and the jedit syntax package. the oro tools are
-distributed under a bsd style license as part of the apache jakarta
-project, and the kjc compiler is part of the kopi suite of tools,
-which is released under the gpl. so in fact, if the final, publicly
-available version of processing still uses kjc, the code for
-processing will have to be released gpl. more about the oro tools is
-at: http://www.savarese.org/oro/ and the home for kopi/kjc is here:
-http://www.dms.at/kopi/
-
-kjc is being phased out in favor of the jikes compiler from ibm:
+processing also includes other open projects, namely the older version
+of the oro matcher (http://www.savarese.org/oro/), the jikes compiler,
+and the jedit syntax package. the oro tools are distributed under a
+bsd style license as part of the apache jakarta project, and jikes is
+covered by the ibm public license: 
 http://oss.software.ibm.com/developerworks/opensource/jikes/
-which is covered by the ibm public license.
 
 we're sorry that our source code isn't available just yet, we're
 cleaning and scrubbing it, it was a decision between getting the alpha
 out to people to try versus taking a few more weeks to clean up the
-project and deal with the technology licensing departments at mit and
-ivrea. these things are far more difficult and time consuming than
-they would appear.
+project and deal with the technology licensing departments at
+mit. these things are far more difficult and time consuming than
+they initially appeared.
 
 our plan is to have the code available with the first "beta" release,
 which will be the first release that is publicly available and

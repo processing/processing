@@ -196,38 +196,44 @@ X add "archive" option since history is gone
 040927 morning
 X change how library path is setup (make simpler)
 
+040927 afternoon
+X write revisions.txt and readme.txt
+X   update readme with notes from bboard about "built with processing"
+X   go through the board and move messages
+X a garbage filled classpath can cause trouble
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302833;start=0
+X processing won't start..
+X   people with non-ascii chars in the folder name 
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+X   other errors with spinning and not doing much
+X     run.bat often works fine
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
+X   or with spaces in the folder name, causes problems for serial
+X quicktime full uninstall/reinstall
+X installing winvdig
+X code folder problems - antivirus or firewall
+X add to "common problems"
+X   junk in the classpath can often cause trouble
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094871304
+X history is not implemented in this version
+
 _ macosx - check to see if new linemetrics stuff is working better
 
-
-README
-if you're having trouble with video examples crashing processing or locking up your system, you should try placing the processing folder into the root level of your C:\ drive, or at least inside a set of folders that have no spaces in the name. we haven't determined if this is a quicktime for java or processing bug yet, but it's been a problem for lots of people.
-_ write revisions.txt and readme.txt
-_   go through the board and move messages
-_ make the whole thing an html file?
-_ cut out some of the chatter
-_ a garbage filled classpath can cause trouble
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302833;start=0
-_ processing won't start..
-_   people with non-ascii chars in the folder name 
-_     at least try to catch this? is that possible?
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
-_   other errors with spinning and not doing much
-_     run.bat often works fine
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
-_   or with spaces in the folder name, causes problems for serial
-_ quicktime full uninstall/reinstall
-_ installing winvdig
-_ code folder problems - antivirus or firewall
-_ update readme with notes from bboard about "built with processing"
-_ add to "common problems"
-_   junk in the classpath can often cause trouble
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094871304
-_ history is not implemented in this version
 
 
 ......................................................................
 
+
+_ properly handle non-ascii chars in p5 folder name
+_   or at least warn the user to install somehwere else
+_ track down the cause of the processing.exe not starting bugs
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
+
+_ talk to creas about making html files for bugs, readme, revisions.
+_   or how they should relate to the 'faq'.. readme -> faq? 
 
 _ different name for 'lib' folder because of libraries folder
 
