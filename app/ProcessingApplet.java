@@ -810,6 +810,11 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public void scale(float sx, float sy) {
+    g.scale(sx, sy);
+  }
+
+
   public void scale(float x, float y, float z) {
     g.scale(x, y, z);
   }
