@@ -823,33 +823,51 @@ public class PdeEditor extends JPanel {
     openingName = name;
 
     if (sketchModified) {
-      String prompt = "Save changes to " + sketchName + "?";
+      String prompt = "Save changes to " + sketchName + "?  ";
 
       if (checking == DO_QUIT) {
-        Object[] options = { "Yes", "No", "Cancel" };
-        int value = 0;
 
-        value = JOptionPane.showOptionDialog(this,
-                                             prompt,
-                                             "Quit",
-                                             JOptionPane.YES_NO_CANCEL_OPTION,
-                                             JOptionPane.QUESTION_MESSAGE,
-                                             null,
-                                             options, 
-                                             options[2]);
+        int result = 0;
 
-        if (value == JOptionPane.YES_OPTION) {
+        if (PdeBase.platform == PdeBase.MACOSX) {
+          // macosx java kills the app even though cancel might get hit
+          // so the cancel button is (temporarily) left off
+          // this may be treated differently in macosx java 1.4, 
+          // but 1.4 isn't currently stable enough to use.
+          Object[] options = { "Yes", "No" };
+          result = JOptionPane.showOptionDialog(this,
+                                                prompt,
+                                                "Quit",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                options, 
+                                                options[0]);  // default to save
+
+        } else {
+          Object[] options = { "Yes", "No", "Cancel" };
+          result = JOptionPane.showOptionDialog(this,
+                                                prompt,
+                                                "Quit",
+                                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                options, 
+                                                options[2]);
+        }
+
+        if (result == JOptionPane.YES_OPTION) {
           //System.out.println("yes");
           //System.out.println("saving");
           doSave();
           //System.out.println("done saving");
           checkModified2();
 
-        } else if (value == JOptionPane.NO_OPTION) {
+        } else if (result == JOptionPane.NO_OPTION) {
           //System.out.println("no");
           checkModified2();  // though this may just quit
 
-        } else if (value == JOptionPane.CANCEL_OPTION) {
+        } else if (result == JOptionPane.CANCEL_OPTION) {
           //System.out.println("cancel");
           // does nothing
         }
