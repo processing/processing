@@ -32,32 +32,37 @@ X fix z coordinate, ndims not being set to 3
 X put bezierCurve and catmullRomCurve back in
 X examples - setting background using a full screen image
 X   uses System.arraycopy for speed
-_ update to newer version of kjc
-_   do better piping of output from kjc
+X update to newer version of kjc (1.5B)
+X move website to cvs
+X   make fake cvs user that creas and i can share passwd of
+X unwarped_image() is broken (making things slow for jseo)
+X   then fix in c++ version
 _ special case lines of thickness 1
+_   doing way too much work to draw thin lines
+_   using full 3D polygon fella for semi-obviously 1 pixel lines
 _ mac version for casey
 _   with serial for michael
-_ move website to cvs
-_   make fake cvs user that creas and i can share passwd of
 
+_ exporting applets that have custom name problems:
+_   if extends processingapplet, the name user types must be same
+_   gets confused about paths and puts boogers in weird places
+_   doesn't compile correctly (must first compile with play)
+_   doesn't include additional (private) classes
+
+_ technote: using transformPoint
+_ technote: using curves
 _ technote: making things faster
 _   noBackground() if you're covering everything
 _ class unloading not happening
 _   when doing an extends ProcessingApplet
 _   need to add randomizer to even non-self gen'd classes
 _   or figure out how to unload old classes.. grr
-_ doing way too much work to draw thin lines
-_   using full 3D polygon fella for semi-obviously 1 pixel lines
-
-_ unwarped_image() is broken (making things slow for james
-
 _ include stdout/stderr in the processing window
 _   option to toggle window on/off (not just in properties, but realtime)
 _   set # of lines in properties
 _ remove .java and .class files for compiled classes
 _ technote about bug in sun vm for freaking out
 _ technote about memory running out, using ms and mx
-_ add special cvs generic user
 
 _ apparent NullPointerException when things way offscreen
 _   i.e. glyphrot with scale set to 4
@@ -82,6 +87,8 @@ _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
 _     needs to be done inside cpp version too.. minimize amt of code
 
 for 0015
+_ talk to simon about error streams and kjc
+_    better piping of output from kjc
 _ make size() work for draw() mode
 _   inside KjcEngine, reach in and grab calls to 'size'
 _   if call is not using a constant number, then punt

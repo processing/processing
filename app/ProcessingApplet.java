@@ -87,6 +87,12 @@ public class ProcessingApplet extends Applet
   }
 
 
+  //public Dimension getPreferredSize() {
+  //println("getting pref'd size");
+  //return new Dimension(width, height);
+  //}
+
+
   // ------------------------------------------------------------
 
 
@@ -432,6 +438,10 @@ public class ProcessingApplet extends Applet
     System.out.print(what);
   }
 
+  public void print(Object what) {
+    System.out.print(what.toString());
+  }
+
   public void println(boolean what) {
     print(what); System.out.println();
   }
@@ -446,6 +456,10 @@ public class ProcessingApplet extends Applet
 
   public void println(String what) {
     print(what); System.out.println();
+  }
+
+  public void println(Object what) {
+    System.out.println(what.toString());
   }
 
   public void println() {
