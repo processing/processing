@@ -32,10 +32,7 @@ import java.awt.image.*;
 import java.io.*;
 
 
-public class PGraphics extends PImage
-  implements PMethods, PConstants {
-
-  // ........................................................
+public class PGraphics extends PImage implements PMethods, PConstants {
 
   /// width minus one (useful for many calculations)
   public int width1;
@@ -208,9 +205,9 @@ public class PGraphics extends PImage
   PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
 
-  PPolygon tpolygon;    // for calculating concave/convex
-  int TPOLYGON_MAX_VERTICES = 512;
-  int tpolygon_vertex_order[]; // = new int[MAX_VERTICES];
+  //PPolygon tpolygon;    // for calculating concave/convex
+  //int TPOLYGON_MAX_VERTICES = 512;
+  //int tpolygon_vertex_order[]; // = new int[MAX_VERTICES];
 
   // ........................................................
 
@@ -2910,6 +2907,31 @@ public class PGraphics extends PImage
       break;
     }
 
+    if (depth) {
+      if (fill) ellipse3_fill(x, y, hradius, vradius);
+      if (stroke) ellipse3_stroke(x, y, hradius, vradius);
+
+    } else {
+      if (fill) ellipse2_fill(x, y, hradius, vradius);
+      if (stroke) ellipse2_stroke(x, y, hradius, vradius);
+    }
+  }
+
+
+  protected void ellipse3_fill(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse3_stroke(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse2_fill(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse2_stroke(float x, float y, float h, float v) {
+  }
+
+  protected void ellipse_mess(float x, float y,
+                              float hradius, float vradius) {
     // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
     // now uses current scale factors to determine "real" transformed radius
 
@@ -4002,26 +4024,36 @@ public class PGraphics extends PImage
     int d = 1;
     while ((big /= 10) != 0) d++;  // cheap log()
 
-    System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                       PApplet.nfs(m01, d, 4) + " " +
-                       PApplet.nfs(m02, d, 4) + " " +
-                       PApplet.nfs(m03, d, 4));
+    if (depth) {
+      System.out.println(PApplet.nfs(m00, d, 4) + " " +
+                         PApplet.nfs(m01, d, 4) + " " +
+                         PApplet.nfs(m02, d, 4) + " " +
+                         PApplet.nfs(m03, d, 4));
 
-    System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                       PApplet.nfs(m11, d, 4) + " " +
-                       PApplet.nfs(m12, d, 4) + " " +
-                       PApplet.nfs(m13, d, 4));
+      System.out.println(PApplet.nfs(m10, d, 4) + " " +
+                         PApplet.nfs(m11, d, 4) + " " +
+                         PApplet.nfs(m12, d, 4) + " " +
+                         PApplet.nfs(m13, d, 4));
 
-    System.out.println(PApplet.nfs(m20, d, 4) + " " +
-                       PApplet.nfs(m21, d, 4) + " " +
-                       PApplet.nfs(m22, d, 4) + " " +
-                       PApplet.nfs(m23, d, 4));
+      System.out.println(PApplet.nfs(m20, d, 4) + " " +
+                         PApplet.nfs(m21, d, 4) + " " +
+                         PApplet.nfs(m22, d, 4) + " " +
+                         PApplet.nfs(m23, d, 4));
 
-    System.out.println(PApplet.nfs(m30, d, 4) + " " +
-                       PApplet.nfs(m31, d, 4) + " " +
-                       PApplet.nfs(m32, d, 4) + " " +
-                       PApplet.nfs(m33, d, 4));
+      System.out.println(PApplet.nfs(m30, d, 4) + " " +
+                         PApplet.nfs(m31, d, 4) + " " +
+                         PApplet.nfs(m32, d, 4) + " " +
+                         PApplet.nfs(m33, d, 4));
 
+    } else {  // 3x2 affine version
+      System.out.println(PApplet.nfs(m00, d, 4) + " " +
+                         PApplet.nfs(m01, d, 4) + " " +
+                         PApplet.nfs(m02, d, 4));
+
+      System.out.println(PApplet.nfs(m10, d, 4) + " " +
+                         PApplet.nfs(m11, d, 4) + " " +
+                         PApplet.nfs(m12, d, 4));
+    }
     System.out.println();
   }
 
@@ -4097,6 +4129,11 @@ public class PGraphics extends PImage
    * Print the current camera (or "perspective") matrix.
    */
   public void printCamera() {
+    if (!depth) {
+      System.out.println("No camera matrix when not in depth() mode.");
+      return;
+    }
+
     int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)),
                                          max(abs(p02), abs(p03))),
                                      max(max(abs(p10), abs(p11)),
@@ -4132,14 +4169,19 @@ public class PGraphics extends PImage
   }
 
 
-  // all the screenX/Y/Z and objectX/Y/Z functions return
-  // values based on there being a 3D scene. the assumption is
-  // that even if dimensions isn't necessarily 3, the only
-  // time you'll want to use these functions is when there
-  // has been a transformation, and they're not intended to be
-  // fast anyway, so it should be just fine that way.
+  public float screenX(float x, float y) {
+    return m00*x + m01*y + m02;
+  }
+
+
+  public float screenY(float x, float y) {
+    return m10*x + m11*y + m12;
+  }
+
 
   public float screenX(float x, float y, float z) {
+    if (!depth) return screenX(x, y);
+
     float ax = m00*x + m01*y + m02*z + m03;
     float ay = m10*x + m11*y + m12*z + m13;
     float az = m20*x + m21*y + m22*z + m23;
@@ -4154,6 +4196,8 @@ public class PGraphics extends PImage
 
 
   public float screenY(float x, float y, float z) {
+    if (!depth) return screenY(x, y);
+
     float ax = m00*x + m01*y + m02*z + m03;
     float ay = m10*x + m11*y + m12*z + m13;
     float az = m20*x + m21*y + m22*z + m23;
@@ -4168,6 +4212,8 @@ public class PGraphics extends PImage
 
 
   public float screenZ(float x, float y, float z) {
+    if (!depth) return 0;
+
     float ax = m00*x + m01*y + m02*z + m03;
     float ay = m10*x + m11*y + m12*z + m13;
     float az = m20*x + m21*y + m22*z + m23;
@@ -4182,6 +4228,8 @@ public class PGraphics extends PImage
 
 
   public float objectX(float x, float y, float z) {
+    if (!depth) return screenX(x, y);
+
     float ax = m00*x + m01*y + m02*z + m03;
     float aw = m30*x + m31*y + m32*z + m33;
     return (aw != 0) ? ax / aw : ax;
@@ -4189,6 +4237,8 @@ public class PGraphics extends PImage
 
 
   public float objectY(float x, float y, float z) {
+    if (!depth) return screenY(x, y);
+
     float ay = m10*x + m11*y + m12*z + m13;
     float aw = m30*x + m31*y + m32*z + m33;
     return (aw != 0) ? ay / aw : ay;
@@ -4196,6 +4246,8 @@ public class PGraphics extends PImage
 
 
   public float objectZ(float x, float y, float z) {
+    if (!depth) return 0;
+
     float az = m20*x + m21*y + m22*z + m23;
     float aw = m30*x + m31*y + m32*z + m33;
     return (aw != 0) ? az / aw : az;
