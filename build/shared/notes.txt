@@ -1,0 +1,508 @@
+ABOUT REV 0035
+
+- duplicate/rename replaced with save as
+
+- curves were broken (didn't draw anything)
+  now they're not (they draw things)
+
+- curve() now makes more sense and fits all four points provided
+
+- using translate() no longer makes lines turn black. ahem.
+
+- fixed status message color
+
+- added newline before program code when exporting .java files
+
+- removed NullPointerException on startup
+
+
+ABOUT REV 0034
+
+- fixed the problems with launching applets, implemented frame
+  around the applet being run, also implemented presentation mode
+
+- with any luck this one should be a little more stable than some
+  of these other ones in the 30s series that i keep releasing without
+  any sensible amount of quality control.
+
+
+ABOUT REV 0033
+
+- duplicate and rename now implemented, more (should be all) of 
+  the menus are actually functional. some are hacks (item to
+  launch proce55ing.net and the reference) but things should be
+  generally more consistent.
+
+
+ABOUT REV 0032
+
+- another major release that irons out issues of export and 
+  the toolbar. a button for a new project is included, and 
+  the toolbar items properly open/load/save entries to/from
+  the sketchbook. export should be working, as should external 
+  files accessed via getImage/getStream/etc. 
+
+
+ABOUT REV 0031
+
+- this is a major release, representing several victories. 
+  most important: sketchbook is finally in there. every piece 
+  of work is a 'sketch', a very lightweight project setup. 
+
+- export has not been tested and has a good bit of new code
+  so that may be problematic.
+
+- menubar with all available options--note that these relate to
+  sketchbook, and that the toolbar buttons may not work as well.
+  use menus/key commands where possible(!)
+
+- generally more application-like with prompts for the user
+  for saving changes when closing a sketch or quitting.
+  editor now keeps track of changes made. window positions and
+  the last sketch opened are saved.
+
+- concept of a user name associated with the app, right now
+  just set to 'default' but in beta will be able to change
+  the name for workshops and general use. 
+
+- current items in sketchbook (serial/dbn) aren't in correct format,
+  and won't work if you switch to them
+
+
+ABOUT REV 0030
+
+- fix bug where comments were being removed from exported files
+
+- new 'color' datatype, the following are now valid:
+  color c = color(23, 45, 99);
+  color c = #ff00cc;
+
+
+ABOUT REV 0029
+
+- actually updated pde.jar, export, pde.properties, BApplet.java 
+  in sketchbook, removed extra dbn.pde from lib (it's in sketchbk)
+
+- new api: triangle, quad (put rect back too)
+
+- keyPressed() and mousePressed() events
+
+- new functions: degrees(), radians() 
+
+- new color tidbits (though color still ints) final solution
+  for get/set pixel debate
+
+
+ABOUT REV 0028
+
+- serial port should work again (win32comm was missing)
+
+- modified pde.properties slightly for console and header
+
+- added output console the main interface
+
+- old-style c++ int(), float(), char(), byte() all work 
+  for casting of datatypes, instead of confusing c syntax
+
+- size now works in draw() mode
+
+- fixed annoying findSelection bug spew on startup
+
+- 0.4f now works, formerly wasn't allowed
+
+- lots of preprocessor tweaking for exceptional cases
+
+- jre now in its own subdirectory, separate from 'lib'
+
+
+ABOUT REV 0027
+
+- released on the floor of dis2002. welcome to london.
+
+- editor.buttons.bgcolor was having issues
+
+- plane is now quad, PLANE is now QUAD
+
+_ latest iteration of colors and buttons
+
+
+ABOUT REV 0026
+
+- fixed the situation where i'm a dork and forgot to 
+  actually update the pde.jar file, which had rendered the 
+  changes in rev 0025 irrelevant
+
+
+ABOUT REV 0025
+
+- 'rect' is now 'plane'
+
+- QUADS are now PLANES, QUAD_STRIP is PLANE_STRIP
+
+- curve() and bezier() now behave the same way
+
+- made all ui colors/fonts accessible from pde.properties
+
+- fixed long font names for the mac release
+
+
+ABOUT REV 0024
+
+- lighting was broken, but no longer
+
+- turned lights off by default
+
+
+ABOUT REV 0023
+
+- versions 21 through 23 dealt with getting the beast to work smoothly
+  for the numer workshop
+
+
+ABOUT REV 0020
+
+major release, significant, code-destroying changes
+
+- largeish handful of api changes (see docs for update)
+
+- naming of api for BagelImage and others changed to BImage
+
+- ProcessingApplet is now BApplet
+
+- doesn't work on the mac due to update problem
+
+- new user interface (not all features work yet)
+
+- no longer need to use 'f' with floats
+  in fact, don't ever use f with floats b/c you'll get an error
+
+
+ABOUT REV 0019
+
+noticeable changes:
+
+- many changes to names of functions in api
+
+- default background color is gray, size is 100x100
+
+internal changes:
+
+- single color function, colors properly clamped, MemoryImageSource
+  moved into ProcessingApplet
+
+- rect() now affected by transforms more properly
+
+- long list of other tidbits in cvs
+
+
+ABOUT REV 0018
+
+bug fix:
+
+- i broke fonts in the last release. now they work again. my own fault
+  for trying to improve things.
+
+feature: 
+
+- projectSize(x, y, z, width, height, depth) is like projectPoint()
+  but allows you to transform an object shape to screen space and puts
+  the size into g.projX, g.projY, g.projZ
+
+
+ABOUT REV 0017
+
+features and tweaks:
+
+- setFont() now takes a font size
+
+- exporting to applets is slightly less buggy
+
+- hopefully lines are only a single pixel thick when they should be,
+  in slightly more cases
+
+- added a 'hint' for smoothing of images and fonts. put
+  hint(SMOOTH_IMAGES) in your code to enable smoother text and images,
+  but at the risk of things running more slowly. use
+  unhint(SMOOTH_IMAGES) to disable.
+
+- millis is a variable that always contains the number of milliseconds
+  since your applet started as an int. before it was always zero. use
+  it wisely.
+
+- loadImage, loadFont, and getStream are behaving better
+
+- no longer the random exception in graphics that would cause your
+  programs to hang due to an ArrayIndexOutOfBoundsException. haven't
+  fixed the bug, but it's at least being caught and worked around.
+
+known issues:
+
+- if you're using 'extends ProcessingApplet' in your code, you'll have
+  to use that class name for anything that you export. otherwise incur
+  the wrath of a bunch of spew at the dos prompt.
+
+- consistently thin lines are still erratic and not under control
+
+- the line highlighted for any particular error is often a joke
+
+- lots of other things, too numerous to list that make me wonder if
+  this will ever be ready to go
+
+
+ABOUT REV 0016
+
+- disabled (by default) the sketchiness from the previous version. so
+  the commportinuse trouble is back, unless you re-enable the hack
+  in the pde.properties file and set 'play.external' to true
+
+- no actual code changes in this version, but just upped the rev
+  number to avoid confusion
+
+
+ABOUT REV 0015
+
+known issues:
+
+- this version of processing is even more sketchy than many other
+  ones. but maybe it fix two huge issues, so i'm releasing it
+  anyways with this caveat. just go back to 14 or another one if this
+  gives you too much trouble.
+
+
+features and tweaks:
+
+- includes a strange hack that fixes the CommPortInUseException that
+  had been so annoying, forcing you to restart processing to run your
+  apps. the downside is that the fix means that if there's an error in
+  your app, you have to check the console (the msdos prompt) for the
+  error line, because it won't get highlighted automatically
+
+- switch to the IBM's java virtual machine. it seems stabler than the
+  sun one, and sun's stinks because of that nasty screen flickering
+  bonanza that starts after you've been running processing for a bit.
+
+
+ABOUT REV 0014
+
+features and tweaks:
+
+- completely flat, unresized images are now significantly faster. this
+  affects any time that you use image(img, x, y) and you haven't yet
+  used translate/rotate/scale/etc. 
+
+- thin, one pixel lines are much much faster, provided you aren't
+  scaling them larger, by say scale(10) or something like that.
+
+- new version of java compiler (kjc) that hopefully sucks less.
+
+- bezierCurve() and catmullRomCurve() have reappeared
+
+
+bugs fixed:
+
+- way too many OutOfMemoryErrors and maybe that nasty flickery/jumpy
+  thing.
+
+- 3D calls to vertex() weren't making things 3D unless a translate or
+  a rotate was used
+
+
+known issues:
+
+- flickery/jumpy thing after the applet runs for a little while. this
+  is a bug in sun's java virtual machine (i can't actually program the
+  pyrotechnics you're seeing on your screen) but may have resurfaced
+  due to low memory conditions because run.bat was screwed up. so the
+  problem may be fixed. hopefully. maybe. hmm. 
+
+- i've tweaked a bunch of stuff in this release but haven't had a lot
+  of time to test. things look like they're doing much better. but as
+  is the case with any release, you can always go back to a previous
+  version if the new one gives you too much trouble.
+
+
+ABOUT REV 0013
+
+features and tweaks:
+
+- you can set the background color to be used when your applet is
+  in full screen mode. in lib/pde.properties change the line
+  fullscreen.bgcolor=#0080ff
+  to include whatever color you want. the syntax is the same as web
+  pages, although you aren't limited to the web palette.
+
+- screenGrab() functionality! get happy.
+  add screenGrab() at the end of your loop() function to produce
+  a series of numbered tiff-format images that can be imported 
+  into a video editing app. or call screenGrab() when the mouse is
+  pressed to take quick snapshots. 
+
+- colorcube applet is updated to the current release.
+  it is also now included in the sketchbook/examples directory.
+
+- for the technically inclined or curious, the source code for
+  ProcessingApplet is included in the sketchbook/standard directory.
+  it's not particularly pretty, since it's continually changing, but
+  can be useful if you're wondering about how things work.
+
+
+bugs fixed:
+
+- the fix for rev 12 wasn't actually included in rev 12. grr.
+  this implies 1) i'm an idiot, and 2) rev 11 and 12 are the same.
+
+- ellipse was drawing opposite the direction of the origin.
+
+- default program now actually works--replaced colorScale()
+
+- editor was selecting the wrong line for errors. 
+
+
+ABOUT REV 0012
+
+this was a simple fix for a big problem... programs that included
+'extends ProcessingApplet' didn't work and gave a cryptic error
+message. other than that, no new features.
+
+
+ABOUT REV 0011
+
+i've changed (broken) enough things in this new release that i'm
+writing down a list of changes. your programs may run a little funny
+in rev 11, but it's all for the better in the long run. let me know if
+you have trouble getting things to work. and of course, keep a copy of
+rev 9 around in case things go wrong.
+
+that said, rev 11 should be a much happier place to work. due to the
+harrassment of your classmates, i've completed (simple) font support,
+among other things.
+
+[for those who missed rev 10, it only existed for 15 minutes, because a
+bug was found as i was preparing to send it out.]
+
+
+
+FONTS are working. a simple example:
+
+void setup() {
+  size(300, 300);
+  setFont(loadFont("fonts/Univers76.vlw.gz"));
+  fill(200, 200, 00);
+  background(10, 70, 200);
+}
+
+void loop() {
+  rect(10, 10, 100, 100);
+  translate(mouseX, mouseY);
+  scale(20, 20);
+  text("I'm a little typeface short and stout", 0, 0);
+}
+
+the 0, 0 part at the end of 'text' is the x, y location to put it. 
+the scale(20, 20) means 20 point font (fonts are 1 pixel high). 
+(note that with the scale() in there, the x, y coords for text() will
+also be multiplied by 20x.)
+
+bunch of cheezy fonts are included in a 'fonts' directory. not
+sure if i'll include these in the future, but at least it's a start.
+
+
+
+IMAGES are working. a simple example:
+
+BagelImage b;
+
+void setup() {
+  size(300, 300);
+  fill(100);
+  b = loadImage("max_van_kleek.gif");
+}
+
+void loop() {
+  image(b, mouseX, mouseY);
+}
+
+this drags poor max around the screen with the mouse position. the
+image should be in the same directory as run.bat. jpeg images can be
+used too.
+
+
+
+RANDOM() functions, more random than ever
+
+// get a float between 0 and 40, or [0..40) for math weenies
+float a = random(40);
+
+// get a float between -1 and 1
+float b = random(-1, 1);
+
+// get an int between 0 and 9
+int c = (int) random(10);
+
+
+
+PIXELS... you want them
+
+pixels[] is an int array that contains all of the image data from the
+screen, in ARGB format (packed into ints). play away.
+
+if you don't know what that means and would like to use the pixel
+array directly, let me know.
+
+
+
+FIXED WIDTH FONTS
+
+make-your-own-fixed-width-fonts-in-photoshop are supported.
+but i'm not gonna bother documenting them unless someone asks.
+
+
+
+ALTERCATIONS
+
++ rect(x, y, width, height) instead of rect(x1, y1, x2, y2)
+
++ ellipse(x, y, width, height) instead of oval
+
++ box(size) instead of cube()
+
++ box(width, height, depth) instead of box(x1, y1, z1, x2, y2, z2)
+
++ sphere(size) stays the same
+
++ image() instead of imageRect()
+
++ translate(x, y) in addition to translate(x, y, z)
+
++ scale(size) and scale(x, y) in addition to scale(x, y, z)
+
++ rotate(angle) rotates by angle in 2D
+
++ rotateX, rotateY, rotateZ (angle) each rotate by angle 
+  around their respective axes
+
++ transform( .. 16 floats here .. ) if you think you're matrix math
+  genius and wanna play with your own transformations
+
+
+
+LESS ANNOYANCE
+
++ no longer write software backwards! new shapes being drawn actually
+replace older shapes, even when using flat, 2D surfaces. 
+
++ no need to use 'extends KjcProcessingApplet' anymore, just use
+'extends ProcessingApplet', and processing will figure out whether
+the 'Kjc' part is relevant or not.
+
+
+
+PROBABLY NEVER NOTICED
+
++ colorScale() no longer exists. use colorMode(RGB, ...)
+  instead, where ... is whatever you would've put inside colorScale()
+
++ included run95.bat for people who are using 95/98/ME. you can use
+  this .bat if run.bat opens a dos window and closes it quickly
+  without starting processing. just put processing at the base of your
+  c: drive in a folder called 'processing'.
