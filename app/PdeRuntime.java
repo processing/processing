@@ -44,10 +44,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         process = Runtime.getRuntime().exec(cmd + " " + className + 
                                             " " + className +
                                             " " + x1 + " " + y1);
-        new PdeMessageSiphon(process.getInputStream(), 
-                             process.getErrorStream(),
-                             this);
-
+        new PdeMessageSiphon(process.getInputStream(), this);
+        new PdeMessageSiphon(process.getErrorStream(), this);
       } else {
         Class c = Class.forName(className);
 

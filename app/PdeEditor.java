@@ -649,13 +649,13 @@ afterwards, some of these steps need a cleanup function
 
       // compile the program
       //
-      PdeCompiler compilerKjc = new PdeCompilerKjc(buildPath, className, this);
+      PdeCompiler compiler = new PdeCompiler(buildPath, className, this);
 
       // this will catch and parse errors during compilation
-      messageStream = new PdeMessageStream(this, compilerKjc);
+      messageStream = new PdeMessageStream(this, compiler);
       leechErr = new PrintStream(messageStream);
 
-      boolean result = compilerKjc.compileJava(leechErr);
+      boolean result = compiler.compileJava(leechErr);
 
       // if the compilation worked, run the applet
       //
@@ -1367,17 +1367,18 @@ afterwards, some of these steps need a cleanup function
       //
       PdePreprocessor preprocessorOro =
         new PdePreprocessorOro(program, appletDir.getPath());
+
       exportSketchName = 
         preprocessorOro.writeJava(exportSketchName, 
                                   base.normalItem.getState(), true);
-      PdeCompiler compilerKjc = 
-        new PdeCompilerKjc(appletDir.getPath(), exportSketchName, this);
+      PdeCompiler compiler = 
+        new PdeCompiler(appletDir.getPath(), exportSketchName, this);
 
       // this will catch and parse errors during compilation
-      messageStream = new PdeMessageStream(this, compilerKjc);
+      messageStream = new PdeMessageStream(this, compiler);
       leechErr = new PrintStream(messageStream);
 
-      if (!compilerKjc.compileJava(leechErr)) {
+      if (!compiler.compileJava(leechErr)) {
         //throw new Exception("error while compiling, couldn't export");
         // message() will already have error message in this case
         return;
