@@ -195,3 +195,15 @@ cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
 zip -0rq ../lib/pde.jar .
 
+# back to build/windows
+cd ../..
+
+
+### -- BUILD LIBRARIES ------------------------------------------------
+
+CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\work\\java\\lib\\rt.jar"
+
+cd ../../lib/serial
+
+../../build/windows/work/jikes +D -classpath "comm.jar;$CLASSPATH" -d . *.java 
+
