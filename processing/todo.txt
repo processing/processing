@@ -61,6 +61,8 @@ _   but how to determine *where* on object the hit occurs?
 
 
 BAGEL / lower
+_ fast(er?) version of bagel that just uses java graphics
+_   but leaves out many features
 _ line endcaps and line joins
 _ move math functions into utility library associated
 _   with bagel, because those will be useful on other bagel platforms
