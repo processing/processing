@@ -284,13 +284,14 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
             // KeyEvent.VK_SPACE);
             int c = event.getKeyChar();
 
-            /*if (c == KeyEvent.VK_ENTER) {  // accept the input
-              editor.handleSaveAs2(editField.getText());
-              unedit();
+            if (c == KeyEvent.VK_ENTER) {  // accept the input
+              String answer = editField.getText();
+              editor.sketch.nameCode(answer);
+              unedit(); 
               event.consume();
 
               // easier to test the affirmative case than the negative
-            } else*/ if ((c == KeyEvent.VK_BACK_SPACE) ||
+            } else if ((c == KeyEvent.VK_BACK_SPACE) ||
                        (c == KeyEvent.VK_DELETE) || 
                        (c == KeyEvent.VK_RIGHT) || 
                        (c == KeyEvent.VK_LEFT) || 
@@ -417,13 +418,12 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
       else if (mode == EDIT) unedit();
       editor.buttons.clear();
 
-      /*
     } else if (e.getSource() == okButton) {
       // answering to "save as..." question
       String answer = editField.getText();
-      editor.handleSaveAs2(answer);
+      //editor.handleSaveAs2(answer);
+      editor.sketch.nameCode(answer);
       unedit();
-      */
     }
   }
 }

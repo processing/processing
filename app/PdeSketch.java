@@ -199,6 +199,27 @@ public class PdeSketch {
       }
     }
 
+    // sort the entries at the top
+    sortCode();
+
+    // set the main file to be the current tab
+    //current = code[0];
+    setCurrent(0);
+  }
+
+  
+  protected void insertCode(PdeCode newCode) {
+    // add file to the code/codeCount list, resort the list
+    if (codeCount == code.length) {
+      PdeCode temp[] = new PdeCode[codeCount+1];
+      System.arraycopy(code, 0, temp, 0, codeCount);
+      code = temp;
+    }
+    code[codeCount++] = newCode;
+  }
+
+
+  protected void sortCode() {
     // cheap-ass sort of the rest of the files
     // it's a dumb, slow sort, but there shouldn't be more than ~5 files
     for (int i = 1; i < codeCount; i++) {
@@ -214,10 +235,188 @@ public class PdeSketch {
         code[i] = temp;
       }
     }
+  }
 
-    // set the main file to be the current tab
-    //current = code[0];
-    setCurrent(0);
+  boolean renamingCode;
+
+  /*
+  public void nameCode(String newName) {
+    if (renamingCode) {
+      renameCode2(newName);
+    } else {
+      newCode2(newName);
+    }
+  }
+  */
+
+  public void newCode() { 
+    //System.out.println("new code");
+    // ask for name of new file
+    // maybe just popup a text area?
+    renamingCode = false;
+    editor.status.edit("Name for new file:", "");
+  }
+
+
+  public void renameCode() {
+    // don't allow rename of the main code
+    if (current == code[0]) return;
+    // TODO maybe gray out the menu on setCurrent(0)
+
+    // ask for new name of file (internal to window)
+    // TODO maybe just popup a text area?
+    renamingCode = true;
+    editor.status.edit("New name for file:", current.name);
+  }
+
+
+  /**
+   * This is called upon return from entering a new file name.
+   * This code is almost identical for both the newCode and renameCode
+   * cases, so they're kept merged except for right in the middle 
+   * where they diverge.
+   */
+  public void nameCode(String newName) {
+    // if renaming to the same thing as before, just ignore
+    if (renamingCode && newName.equals(current.name)) {
+      // exit quietly for the 'rename' case.
+      // if it's a 'new' then an error will occur down below
+      return;
+    }
+
+    String newFilename = null;
+    int newFlavor = 0;
+
+    // add .pde to file if it has no extension
+    if (newName.endsWith(".pde")) {
+      newFilename = newName;
+      newName = newName.substring(0, newName.length() - 4);
+      newFlavor = PDE;
+
+    } else if (newName.endsWith(".java")) {
+      newFilename = newName;
+      newName = newName.substring(0, newName.length() - 5);
+      newFlavor = JAVA;
+
+    } else {
+      newFilename = newName + ".pde";
+      newFlavor = PDE;
+    }
+
+    // create the new file, new PdeCode object and load it
+    File newFile = new File(folder, newFilename);
+    if (newFile.exists()) {  // yay! users will try anything
+      PdeBase.showMessage("Nope",
+                          "A file named \"" + newFile + "\" already exists\n" +
+                          "in \"" + folder.getAbsolutePath() + "\"");
+      return;
+    }
+
+    if (renamingCode) {
+      if (!current.file.renameTo(newFile)) {
+        PdeBase.showWarning("Error",
+                            "Could not rename \"" + current.file.getName() + 
+                            "\" to \"" + newFile.getName() + "\"", null);
+        return;        
+      }
+      current.file = newFile;
+      current.name = newName;
+      current.flavor = newFlavor;
+
+    } else {  // creating a new file
+      try {
+        newFile.createNewFile();  // TODO returns a boolean
+      } catch (IOException e) {
+        PdeBase.showWarning("Error",
+                            "Could not create the file \"" + newFile + "\"\n" +
+                            "in \"" + folder.getAbsolutePath() + "\"", e);
+        return;
+      }
+      PdeCode newCode = new PdeCode(newName, newFile, newFlavor);
+      insertCode(newCode);
+    }
+
+    // sort the entries
+    sortCode();
+
+    // set the new guy as current
+    setCurrent(newName);
+
+    // update the tabs
+    editor.header.repaint();    
+  }
+
+
+  //public void renameCode2(String newName) {
+    // if 'ok' hit, then rename the feller
+
+  // update the tabs
+  //}
+
+
+  public void deleteCode() {
+    // don't allow delete of the main code
+    // TODO maybe gray out the menu on setCurrent(0)
+    if (current == code[0]) {
+      PdeBase.showMessage("Can't do that",
+                          "You cannot delete the main " + 
+                          ".pde file from a sketch\n");
+      return;
+    }
+
+    // confirm deletion with user, yes/no
+
+    // delete the file
+
+    // remove it from the internal list of files
+    // resort internal list of files
+
+    // set current tab to the one to the left
+
+    // update the tabs
+  }
+
+
+  // move things around in the array (as opposed to full reload)
+
+  // may need to call setCurrent() if the tab was the last one
+  // or maybe just call setCurrent(0) for good measure
+
+  // don't allow the user to hide the 0 tab (the main file)
+
+  public void hideCode() {
+    // don't allow hide of the main code
+    // maybe gray out the menu on setCurrent(0)
+  }
+
+
+  public void unhideCode(String what) {
+    //System.out.println("unhide " + e);
+    File from = null;
+    for (int i = 0; i < hiddenCount; i++) {
+      if (hidden[i].name.equals(what)) {
+        from = hidden[i].file;
+      }
+    }
+    if (from == null) {
+      System.err.println("could find " + what + " to unhide.");
+      return;
+    }
+
+    String filename = from.getName();
+    if (!filename.endsWith(".x")) {
+      System.err.println("error while trying to unhide a file");
+
+    } else if (!from.exists()) {
+      System.err.println("file no longer exists");
+
+    } else {
+      File to = new File(from.getPath(), 
+                         filename.substring(0, filename.length() - 2));
+      if (!from.renameTo(to)) {
+        System.err.println("problem while unhiding");
+      }
+    }
   }
 
 
@@ -405,6 +604,7 @@ public class PdeSketch {
     File sourceFile = new File(directory, filename);
 
     File destFile = null;
+    boolean addingCode = false;
 
     // if the file appears to be code related, drop it 
     // into the code folder, instead of the data folder
@@ -420,6 +620,7 @@ public class PdeSketch {
     } else if (filename.toLowerCase().endsWith(".pde") ||
                filename.toLowerCase().endsWith(".java")) {
       destFile = new File(this.folder, filename);
+      addingCode = true;
 
     } else {
       //File dataFolder = new File(this.folder, "data");
@@ -442,6 +643,26 @@ public class PdeSketch {
       PdeBase.showWarning("Error adding file",
                           "Could not add '" + filename + 
                           "' to the sketch.", e);
+    }
+
+    // make the tabs update after this guy is added
+    if (addingCode) {
+      String newName = destFile.getName();
+      int newFlavor = -1;
+      if (newName.toLowerCase().endsWith(".pde")) {
+        newName = newName.substring(0, newName.length() - 4);
+        newFlavor = PDE;
+      } else {
+        newName = newName.substring(0, newName.length() - 5);
+        newFlavor = JAVA;
+      }
+
+      // see also "nameCode" for identical situation
+      PdeCode newCode = new PdeCode(newName, destFile, newFlavor);
+      insertCode(newCode);
+      sortCode();
+      setCurrent(newName);
+      editor.header.repaint();
     }
   }
 
@@ -472,6 +693,19 @@ public class PdeSketch {
     editor.header.rebuild();
   }
 
+
+  /**
+   * Internal helper function to set the current tab
+   * based on a name (used by codeNew and codeRename).
+   */
+  protected void setCurrent(String findName) {
+    for (int i = 0; i < codeCount; i++) {
+      if (findName.equals(code[i].name)) {
+        setCurrent(i);
+        return;
+      }
+    }
+  }
 
 
   /**
@@ -1257,47 +1491,6 @@ public class PdeSketch {
       //return true;
     }
     return false;
-  }
-
-
-  // move things around in the array (as opposed to full reload)
-
-  // may need to call setCurrent() if the tab was the last one
-  // or maybe just call setCurrent(0) for good measure
-
-  // don't allow the user to hide the 0 tab (the main file)
-
-  public void hide(int which) {
-  }
-
-
-  public void unhide(String what) {
-    //System.out.println("unhide " + e);
-    File from = null;
-    for (int i = 0; i < hiddenCount; i++) {
-      if (hidden[i].name.equals(what)) {
-        from = hidden[i].file;
-      }
-    }
-    if (from == null) {
-      System.err.println("could find " + what + " to unhide.");
-      return;
-    }
-
-    String filename = from.getName();
-    if (!filename.endsWith(".x")) {
-      System.err.println("error while trying to unhide a file");
-
-    } else if (!from.exists()) {
-      System.err.println("file no longer exists");
-
-    } else {
-      File to = new File(from.getPath(), 
-                         filename.substring(0, filename.length() - 2));
-      if (!from.renameTo(to)) {
-        System.err.println("problem while unhiding");
-      }
-    }
   }
 
 
