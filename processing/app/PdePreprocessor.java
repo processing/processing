@@ -175,7 +175,9 @@ public class PdePreprocessor {
       stream.println("<?xml version=\"1.0\"?>");
       stream.println("<document>");
       OutputStreamWriter writer = new OutputStreamWriter(stream);
-      ((CommonAST)parserAST).xmlSerialize(writer);
+      if (parserAST != null) {
+        ((CommonAST)parserAST).xmlSerialize(writer);
+      }
       writer.flush();
       stream.println("</document>");
       writer.close();
