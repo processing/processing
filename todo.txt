@@ -44,6 +44,11 @@ _ "add library" menu item and submenu
 _   looks for subfolder called 'libraries' inside p5 folder
 _   libraries are determined by having a subfolder named 'library'
 
+_ import all libraries into classpath
+_   all libs found during sketchbook build + all libs in libraries
+_   this means sketchbook menu will need to be rebuilt after lib build
+_   append the user's classpath to the end of that
+
 _ add preference for showing library stuff
 _ make built-in libraries read-only
 _ libraries: static and non-static init for libs

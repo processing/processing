@@ -581,15 +581,15 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     //
 
-    menu.add(sketchbook.getAddLibraryMenu());
-
-    item = new JMenuItem("Import...");
+    item = new JMenuItem("Add File...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           sketch.addFile();
         }
       });
     menu.add(item);
+
+    menu.add(sketchbook.getAddLibraryMenu());
 
     item = new JMenuItem("Create font...");
     item.addActionListener(new ActionListener() {

@@ -28,9 +28,12 @@
 import processing.core.*;
 
 import java.io.*;
+
 import antlr.*;
 import antlr.collections.*;
 import antlr.collections.impl.*;
+
+import com.oroinc.text.regex.*;
 
 
 public class PdePreprocessor {
@@ -77,8 +80,10 @@ public class PdePreprocessor {
    * preprocesses a pde file and write out a java file
    * @return the classname of the exported Java
    */
-  public String write(String program, String buildPath, String name, 
-                      String extraImports[]) throws java.lang.Exception {
+  //public String write(String program, String buildPath, String name, 
+  //                  String extraImports[]) throws java.lang.Exception {
+  public String write(String program, String buildPath, String name) 
+    throws java.lang.Exception {
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
     if ((program.length() > 0) &&
@@ -122,6 +127,45 @@ public class PdePreprocessor {
         program = new String(p2, 0, index);
       }
     }
+
+    // if this guy has his own imports, need to remove them 
+    // just in case it's not an advanced mode sketch
+    PatternMatcher matcher = new Perl5Matcher();
+    PatternCompiler compiler = new Perl5Compiler();
+    //String mess = "^\\s*(import\\s*[\\w\\d_\\.]+\\s*\\;)";
+    //String mess = "^\\s*(import\\s*[\\w\\d\\_\\.]+\\s*\\;)";
+    String mess = "^\\s*(import\\s+\\S+\\s*;)";
+    java.util.Vector imports = new java.util.Vector();
+
+    Pattern pattern = null;
+    try {
+      pattern = compiler.compile(mess);
+    } catch (MalformedPatternException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    do {
+      PatternMatcherInput input = new PatternMatcherInput(program);
+      if (!matcher.contains(input, pattern)) break;
+
+      MatchResult result = matcher.getMatch();
+      String piece = result.group(1).toString();
+      int len = piece.length();
+
+      imports.add(piece);
+      int idx = program.indexOf(piece);
+      // just remove altogether?
+      program = program.substring(0, idx) + program.substring(idx + len);
+
+      System.out.println("removing " + piece);
+
+    } while (true);
+
+    String extraImports[] = new String[imports.size()];
+    imports.copyInto(extraImports);
+
+    //
 
     // do this after the program gets re-combobulated
     this.programReader = new StringReader(program);
@@ -236,9 +280,16 @@ public class PdePreprocessor {
     out.print("import processing.core.*; ");
 
     // emit emports that are needed for classes from the code folder
+    /*
     if (imports != null) {
       for (int i = 0; i < imports.length; i++) {
         out.print("import " + imports[i] + ".*; ");
+      }      
+    }
+    */
+    if (imports != null) {
+      for (int i = 0; i < imports.length; i++) {
+        out.print(imports[i]);
       }      
     }
 
