@@ -249,12 +249,14 @@ X move around notes about curve stuff
 040708 later
 X working on serial library
 
-040709 
+040709 daytime
 X fight with serial library on windows all afternoon
 X finish and test on macosx as well
 X remove chatter in PdeSketchbook re: filenamefilter
 X   COM1 19200 for phone
 X add "available" function to PSerial
+
+040709 evening
 
 _ error in System.err stream coming from running external
 _   dies after a while or goes weird
