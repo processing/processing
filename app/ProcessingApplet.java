@@ -7,18 +7,18 @@ import java.util.*;
 public class ProcessingApplet extends Applet 
   implements BagelConstants, Runnable, 
 	     MouseListener, MouseMotionListener, KeyListener {
-  Bagel g;
+  public Bagel g;
 
-  int mouseX, mouseY;
-  boolean mousePressed;
+  public int mouseX, mouseY;
+  public boolean mousePressed;
   boolean mousePressedBriefly;
 
-  int key;
-  boolean keyPressed;
+  public int key;
+  public boolean keyPressed;
   boolean keyPressedBriefly;
 
   boolean timing;
-  int millis;
+  public int millis;
   long actualMillis;
   long millisOffset;
   Calendar calendar;

@@ -83,7 +83,7 @@ public class PdeRunner implements Runnable {
 	throw new Exception("javac support not included");
 #endif
 
-      } else if (program.indexOf("// dbn") < 2) {
+      } else if (program.indexOf("// dbn") == 0) {
 #ifdef DBN
 	String pre = "set red 0; set green 1; set blue 2; " + 
 	  "set quicktime 0; set tiff 1; set illustrator 2; ";

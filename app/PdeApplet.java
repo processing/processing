@@ -79,7 +79,7 @@ public class PdeApplet extends Applet
       } 
       //add(hostess = new PdeEditor(this, program));
       PdeEditor editor = new PdeEditor(this, program);
-      if (beautify) editor.doBeautify(); 
+      //if (beautify) editor.doBeautify(); 
 
       setLayout(new BorderLayout());
       add("Center", editor);
