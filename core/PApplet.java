@@ -2205,6 +2205,11 @@ public class PApplet extends Applet
   // public functions for processing.core
 
 
+  public void setup(int width, int height, int format) {
+    g.setup(width, height, format);
+  }
+
+
   public void alpha(int alpha[]) {
     g.alpha(alpha);
   }
