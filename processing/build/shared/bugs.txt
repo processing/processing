@@ -59,9 +59,10 @@ the real deal, keeping us awake at night
   up. we're working on a fix.
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
-- macosx doesn't provide an option to 'cancel' when it so politely asks
+- the app doesn't provide an option to 'cancel' when it so politely asks
   if you want to "save changes before quitting?". this is because of
-  weirdness in apple's java that we're trying to straighten out.
+  java weirdness that we're trying to straighten out. the vm seems to
+  be force quitting itself, even if cancel is selected. 
 
 - lines with stroke weights that aren't 1 are probably broken.
 

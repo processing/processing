@@ -4,6 +4,42 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0064 - 29 september 2003
+
+this release fixes three bugs, any of which might be major for you, or
+in total may seem like nothing at all. they're all specific fixes for
+people that piped up about something 
+
+this is another mini-release like 61, 62, and 63. it's a suggested
+download, but not as huge as revision 60. 
+
+
+[ bug fixes ]
+
+- thick lines, which disappeared in rev 60, have returned triumphant
+  due to a nudge from ed.
+
+- fixed a bug on macosx, especially with safari, that caused the
+  environment to complain about an "unexpected char" when pasting code
+  copied from a safari web page. (reported by flight404 many moons
+  ago, but was causing me trouble today so i fixed it.. ah selfishness)
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055381110;start=0
+
+- removed the 'cancel' option from "save changes before quitting?" on
+  windows, since it seems to not always work, causing destruction of
+  code and sadness. specifically, it ate bijeoma's code:
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064865914;start=0
+
+
+[ additions ]
+
+- the font builder now sets a default filename when selecting a font,
+  since axel was annoyed that it didn't have a default.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0063 - 27 september 2003
 
 revision 63 includes some major new features and semi-major bug fixes,
