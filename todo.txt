@@ -1,6 +1,20 @@
 0044
 
+
+suggestions
+_ lock feature for present mode (part of export to application?)
+_ error messages with link to what's wrong
+_ moving sketchbook folder for lab environments
+_ lots of ui ideas from adrien in the bboard
+
 pde
+_ can't copy text from console directly
+_ file names with a space get "_ " instead of a space
+_ add option for running with external editor
+_   sets text area to not editable, changes color
+_   gets new text on each run.. calls handleOpen2 or whatever
+_   disables save.. save as ?
+_ set bg/fg color of text editing area
 _ don't popup offscreen if editor window is way left. 
 _   just make sure the x coord > 10 or so (if not presenting)
 _ don't throw exceptions for serial on startup if no serial available?
@@ -14,13 +28,20 @@ void loop()
 
 sketchbook
 _ organizing directories, save to other directories blows up
+_   for now, disallow the / or : characters
 
 readme
 _ mention shift-run for present mode
 _ size() and background() need regular nums, no vars
+_ click sketch title to rename
+
+release
+_ make versions available w/o fonts and jre
 
 windows
 _ use self-extractor and make sure no 8.3 filenames
+_ windows 95/98/ME seems to be broken
+_   ME seems to be very broken
 
 macos
 _ console scroller obscured by window resizer intruding
@@ -29,7 +50,7 @@ macosx
 _ include instructions for rxtx or the install itself
 _   just include the .pkg, since causing exceptions now
 _ use a .dmg to distribute 
-_ viewer window shows up in odd places
+o viewer window shows up in odd places
 _ arrow keys broken (but with shift they work..)
 _ escape key not quitting presentation mode
 _ apple-a for select all tries to quit
