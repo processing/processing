@@ -318,7 +318,7 @@ public class PdeEditorStatus extends Panel
     Graphics g = offscreen.getGraphics();
     if (font == null) {
       font = PdeBase.getFont("editor.status.font",
-			       new Font("SansSerif", Font.PLAIN, 10));
+			       new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
       ascent = metrics.getAscent();

@@ -43,7 +43,15 @@ public class PdeBase implements ActionListener {
 	
     } else {
       //System.out.println("unknown OS");
-      System.out.println(System.getProperty("os.name");
+      //System.out.println(System.getProperty("os.name"));
+      String osname = System.getProperty("os.name");
+      //System.out.println("osname is " + osname);
+      if (osname.indexOf("Windows") != -1) {
+	platform = WINDOWS;
+      } else {
+	System.out.println("unhandled osname: " + osname);
+	System.exit(1);
+      }
     }
   }
 
@@ -67,6 +75,9 @@ public class PdeBase implements ActionListener {
     try {
       //properties.load(new FileInputStream("lib/pde.properties"));
       properties.load(getClass().getResource("pde.properties").openStream());
+      String platformProps = "pde.properties_" + platforms[platform];
+      properties.load(getClass().getResource(platformProps).openStream());
+      //properties.list(System.out);
 
     } catch (Exception e) {
       System.err.println("Error reading pde.properties");
