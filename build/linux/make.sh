@@ -91,13 +91,10 @@ cd preprocessor
 
 # first build the default java goop
 java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.g
-java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.tree.g
 
 # now build the pde stuff that extends the java classes
 java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
     -glib java.g pde.g
-java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
-    -glib java.tree.g pde.tree.g
 
 cd ..
 
