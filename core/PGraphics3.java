@@ -184,8 +184,9 @@ public class PGraphics3 extends PGraphics {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics3(int iwidth, int iheight) {
-    resize(iwidth, iheight);
+  public PGraphics3(int iwidth, int iheight, PApplet parent) {
+    super(iwidth, iheight, parent);
+    //resize(iwidth, iheight);
   }
 
 
@@ -197,6 +198,8 @@ public class PGraphics3 extends PGraphics {
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
+    //System.out.println("PGraphics3 resize");
+
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -233,7 +236,8 @@ public class PGraphics3 extends PGraphics {
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
-    cameraMode(this.cameraMode);
+    //System.out.println("setting cameraMode to " + cameraMode);
+    if (this.cameraMode != CUSTOM) cameraMode(this.cameraMode);
   }
 
 
@@ -305,6 +309,8 @@ public class PGraphics3 extends PGraphics {
 
 
   public void defaults() {
+    //System.out.println("PGraphics3.defaults() top");
+
     super.defaults();
 
     cameraMode(PERSPECTIVE);
@@ -2272,7 +2278,8 @@ public class PGraphics3 extends PGraphics {
       endCamera();
     }
 
-    cameraMode = mode;  // this doesn't do much
+    cameraMode = mode;
+    //System.out.println("camera mode is now " + cameraMode);
   }
 
 

@@ -38,6 +38,8 @@ import javax.swing.undo.*;
 import com.apple.mrj.*;
 import com.ice.jni.registry.*;
 
+import processing.core.*;
+
 
 /**
  * Primary role of this class is for platform identification and
@@ -45,31 +47,40 @@ import com.ice.jni.registry.*;
  * files and images, etc) that comes from that.
  */
 public class PdeBase {
-  static final String VERSION = "0080 Alpha";
+  static final String VERSION = "0081 Alpha";
 
+  /**
+   * Path of filename opened on the command line,
+   * or via the MRJ open document handler.
+   */
   static String openedAtStartup;
-
-  //static ClassLoader loader;
 
   PdeEditor editor;
 
-  static final int WINDOWS = 1;
-  static final int MACOS9  = 2;
-  static final int MACOSX  = 3;
-  static final int LINUX   = 4;
-  static final int IRIX    = 5;
-  static final int UNKNOWN = 5;
-  static int platform;
-
-  static final String platforms[] = {
-    "", "windows", "macos9", "macosx", "linux", "irix"
-  };
-
 
   static public void main(String args[]) {
+
+    // make sure that this is running on java 1.4
+
+    if (PApplet.JDK_VERSION < 1.4) {
+      //System.err.println("no way man");
+      PdeBase.showError("Need to install Java 1.4",
+                        "This version of Processing requires    \n" +
+                        "Java 1.4 or later to run properly.\n" +
+                        "Please visit java.com to upgrade.", null);
+    }
+
+
+    // grab any opened file from the command line
+
     if (args.length == 1) {
       PdeBase.openedAtStartup = args[0];
     }
+
+
+    // register a temporary/early version of the mrj open document handler,
+    // because the event may be lost (sometimes, not always) by the time
+    // that PdeEditor is properly constructed.
 
     MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
         public void handleOpenFile(File file) {
@@ -88,36 +99,11 @@ public class PdeBase {
 
 
   public PdeBase() {
-    // figure out which operating system
-    // this has to be first, since editor needs to know
-
-    if (System.getProperty("mrj.version") != null) {  // running on a mac
-      platform = (System.getProperty("os.name").equals("Mac OS X")) ?
-        MACOSX : MACOS9;
-
-    } else {
-      String osname = System.getProperty("os.name");
-
-      if (osname.indexOf("Windows") != -1) {
-        platform = WINDOWS;
-
-      } else if (osname.equals("Linux")) {  // true for the ibm vm
-        platform = LINUX;
-
-      } else if (osname.equals("Irix")) {
-        platform = IRIX;
-
-      } else {
-        platform = UNKNOWN;
-        //System.out.println("unhandled osname: \"" + osname + "\"");
-      }
-    }
-
 
     // set the look and feel before opening the window
 
     try {
-      if (platform == LINUX) {
+      if (PdeBase.isLinux()) {
         // linux is by default (motif?) even uglier than metal
         // actually, i'm using native menus, so they're ugly and
         // motif-looking. ick. need to fix this.
@@ -141,10 +127,34 @@ public class PdeBase {
 
     // show the window
     editor.show();
+  }
 
 
-    // maybe?
-    //loader = new PdeClassLoader();
+  // .................................................................
+
+
+  /**
+   * returns true if the Processing is running on a Mac OS machine,
+   * specifically a Mac OS X machine because it doesn't un on OS 9 anymore.
+   */
+  static public boolean isMacOS() {
+    return PApplet.platform == PConstants.MACOSX;
+  }
+
+
+  /**
+   * returns true if running on windows.
+   */
+  static public boolean isWindows() {
+    return PApplet.platform == PConstants.WINDOWS;
+  }
+
+
+  /**
+   * true if running on linux.
+   */
+  static public boolean isLinux() {
+    return PApplet.platform == PConstants.LINUX;
   }
 
 
@@ -167,7 +177,7 @@ public class PdeBase {
     if (pref != null) {
       dataFolder = new File(pref);
 
-    } else if (platform == MACOSX) {
+    } else if (PdeBase.isMacOS()) {
       // carbon folder constants
       // http://developer.apple.com/documentation/Carbon/Reference
       //   /Folder_Manager/folder_manager_ref/constant_6.html#/
@@ -213,7 +223,7 @@ public class PdeBase {
                   "Error getting the Processing data folder.", e);
       }
 
-    } else if (platform == WINDOWS) {
+    } else if (PdeBase.isWindows()) {
       // looking for Documents and Settings/blah/Application Data/Processing
 
       // this is just based on the other documentation, and eyeballing
@@ -306,7 +316,7 @@ public class PdeBase {
   static public File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
 
-    if (platform == MACOSX) {
+    if (PdeBase.isMacOS()) {
       // looking for /Users/blah/Documents/Processing
 
       // carbon folder constants
@@ -340,7 +350,7 @@ public class PdeBase {
                   "Could not locate default sketch folder location.", e);
       }
 
-    } else if (platform == WINDOWS) {
+    } else if (isWindows()) {
       // looking for Documents and Settings/blah/My Documents/Processing
       // (though using a reg key since it's different on other platforms)
 
@@ -462,7 +472,7 @@ public class PdeBase {
   static public void openURL(String url) {
     //System.out.println("opening url " + url);
     try {
-      if (platform == WINDOWS) {
+      if (PdeBase.isWindows()) {
         // this is not guaranteed to work, because who knows if the
         // path will always be c:\progra~1 et al. also if the user has
         // a different browser set as their default (which would
@@ -491,7 +501,7 @@ public class PdeBase {
           Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
         }
 
-      } else if (platform == MACOSX) {
+      } else if (PdeBase.isMacOS()) {
         //com.apple.eio.FileManager.openURL(url);
 
         if (!url.startsWith("http://")) {
@@ -518,10 +528,10 @@ public class PdeBase {
         //System.out.println("trying to open " + url);
         com.apple.mrj.MRJFileUtils.openURL(url);
 
-      } else if (platform == MACOS9) {
-        com.apple.mrj.MRJFileUtils.openURL(url);
+        //} else if (platform == MACOS9) {
+        //com.apple.mrj.MRJFileUtils.openURL(url);
 
-      } else if (platform == LINUX) {
+      } else if (PdeBase.isLinux()) {
         // how's mozilla sound to ya, laddie?
         //Runtime.getRuntime().exec(new String[] { "mozilla", url });
         String browser = PdePreferences.get("browser");
@@ -548,7 +558,7 @@ public class PdeBase {
     try {
       String folder = file.getAbsolutePath();
 
-      if (platform == WINDOWS) {
+      if (PdeBase.isWindows()) {
         // doesn't work
         //Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
 
@@ -558,7 +568,7 @@ public class PdeBase {
         // not tested
         //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
 
-      } else if (platform == MACOSX) {
+      } else if (PdeBase.isMacOS()) {
         openURL(folder);  // handles char replacement, etc
 
       }

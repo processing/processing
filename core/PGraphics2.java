@@ -74,8 +74,9 @@ public class PGraphics2 extends PGraphics {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics2(int iwidth, int iheight) {
-    resize(iwidth, iheight);
+  public PGraphics2(int iwidth, int iheight, PApplet parent) {
+    super(iwidth, iheight, parent);
+    //resize(iwidth, iheight);
   }
 
 
@@ -1048,11 +1049,23 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  /**
+   * Update the pixels[] buffer to the PGraphics image.
+   * <P>
+   * Unlike in PImage, where updatePixels() only asks that the
+   * update happens, in PGraphics2, this will happen immediately.
+   */
   public void updatePixels() {
     updatePixels(0, 0, width, height);
   }
 
 
+  /**
+   * Update the pixels[] buffer to the PGraphics image.
+   * <P>
+   * Unlike in PImage, where updatePixels() only asks that the
+   * update happens, in PGraphics2, this will happen immediately.
+   */
   public void updatePixels(int x, int y, int c, int d) {
     ((BufferedImage) image).setRGB(x, y,
                                    (imageMode == CORNER) ? c : (c - x),

@@ -74,7 +74,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       // user.dir is folder containing P5 (and therefore jikes)
       // macosx needs the extra path info. linux doesn't like it, though
       // windows doesn't seem to care. write once, headache anywhere.
-      ((PdeBase.platform != PdeBase.MACOSX) ? "jikes" :
+      ((!PdeBase.isMacOS()) ? "jikes" :
        System.getProperty("user.dir") + File.separator + "jikes"),
 
       // this doesn't help much.. also java 1.4 seems to not support
@@ -359,7 +359,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   static public String calcBootClassPath() {
     if (bootClassPath == null) {
       String additional = "";
-      if (PdeBase.platform == PdeBase.MACOSX) {
+      if (PdeBase.isMacOS()) {
         additional =
           contentsToClassPath(new File("/System/Library/Java/Extensions/"));
       }

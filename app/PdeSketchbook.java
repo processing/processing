@@ -199,8 +199,7 @@ public class PdeSketchbook {
 
     // jdk13 on osx, or jdk11
     // though apparently still available for 1.4
-    if ((PdeBase.platform == PdeBase.MACOS9) ||
-        (PdeBase.platform == PdeBase.MACOSX)) {
+    if (PdeBase.isMacOS()) {
       MRJFileUtils.setFileTypeAndCreator(newbieFile,
                                          MRJOSType.kTypeTEXT,
                                          new MRJOSType("Pde1"));

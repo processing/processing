@@ -173,8 +173,14 @@ editor.wheelmouse.multiplier = 3
 # background color for full-screen presentation mode
 run.present.bgcolor = #666666
 
-# set true to just always run externally
-run.external = false
+# color of the stop button when running in present mode
+run.present.stop.color = #cccccc
+
+# index of the default display to use for present mode
+run.display = 1
+
+# set true to just always run externally (no longer exists)
+#run.external = false
 
 # set internally
 #run.window.bgcolor=
