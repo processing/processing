@@ -231,7 +231,9 @@ public class PdePreprocessor {
    */
   void writeHeader(PrintStream out, String imports[], 
                    String className) {
-    //out.print("package pootime;");
+
+    // must include processing.core
+    out.print("import processing.core.*; ");
 
     // emit emports that are needed for classes from the code folder
     if (imports != null) {
@@ -260,7 +262,7 @@ public class PdePreprocessor {
 
       if (programType == STATIC) {
         // now that size() and background() can go inside of draw()
-        out.print("void draw() {");
+        out.print("public void draw() {");
       }
     }
   }
