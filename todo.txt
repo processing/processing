@@ -97,6 +97,10 @@ X   though setting it differently hoses everything (clears everything)
 X setup (200, 200) causes the default size to be used 
 X be able to draw something inside setup (?)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+X no time to ask for "save changes" before quit
+X   PdeEditor, around line 910.. not blocking until input 
+X   read up on how to properly block for input in a java app
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061659700
 
 
 fixes because of dmose parser
@@ -196,9 +200,7 @@ X param(), online(), and status() functions
 
 
 HIGH (to be completed for 0060)
-_ no time to ask for "save changes" before quit
-_   PdeEditor, around line 910.. not blocking until input 
-_   read up on how to properly block for input in a java app
+
 _ do not delete sketch folder if empty sketch but non-empty data dir
 _   maybe needs to be a holding area for the current sketch
 _   this is how the read-only examples would be used
@@ -232,6 +234,12 @@ _ if size() not found in export/compile, ask the user
 _   need to use oro matcher when trying to grab the applet size (export?)
 _   size(myWidth, myHeight) -> set static var in BGraphics
 _     for the last size that was used, use as default for fill-in field
+_ better support for running locally
+_   code to read from properties file from param()
+_     for application mode or while inside the environment
+_     these properties will be written to html on export
+_   fix link, loadStrings, saveBytes code once that's fixed
+_   saveBytes not in proper dir is annoying
 
 dh b _ ability to export 'applications' (not just applets)
 dh b _   lock feature for present mode (part of export to application?)
@@ -249,13 +257,6 @@ bf b _   BApplet.main(new String[] { "flashcards3" });
 bf b _     or even BApplet.main(new String[] { getClass().getName() });
 bf b _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
 bf b _     main sticking point will be serial/qtjava in exports
-
-better support for running locally
-_ code to read from properties file from param()
-_   for application mode or while inside the environment
-_   these properties will be written to html on export
-_ fix link, loadStrings, saveBytes code once that's fixed
-_ saveBytes not in proper dir is annoying
 
 
 LOWER (post beta tweaks, non-structural)
@@ -315,6 +316,15 @@ _     build all releases from a clean cvs
 _   tries to make work/ without bagel serial existing and blows up
 _     b/c bagel checkout happens later
 _   all code needs to be buildable from scratch
+_ make PdeEditorStatus modal
+_   problem on quit (using JOptionPane as a band-aid)
+_   also a problem because user can use the ui while prompt is visible
+_   needs proper blocking, the way Dialog.show() does
+_   so that that status window can be used while quitting
+_   (currently cannot because it quits before getting response)
+_   tried to pop up a modal Dialog in exactly the same location
+_     but couldn't remove the decoration from the window (jvm bug?)
+_     because it just quit without finishing
 
 
 VOLUNTEER TASKS

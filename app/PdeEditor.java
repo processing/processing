@@ -821,40 +821,40 @@ public class PdeEditor extends JPanel {
     openingName = name;
 
     if (sketchModified) {
-      //System.out.println("sketch modified");
-      status.prompt("Save changes to " + sketchName + "?");
+      String prompt = "Save changes to " + sketchName + "?";
 
-      //System.out.println("showing dialog");
-      //Dialog dialog = new Dialog(base, "something", true);
-      //dialog.show();
+      if (checking == DO_QUIT) {
+        Object[] options = { "Yes", "No", "Cancel" };
+        int value = 0;
 
-      /*
-      Object[] options = {"Quit", "Cancel"}; // YES, NO
-      Object[] optionsModified = {"Save", "Don't save", "Cancel"}; // YES, NO, CANCEL
-      int value = 0;
+        value = JOptionPane.showOptionDialog(this,
+                                             prompt,
+                                             "Quit",
+                                             JOptionPane.YES_NO_CANCEL_OPTION,
+                                             JOptionPane.QUESTION_MESSAGE,
+                                             null,
+                                             options, 
+                                             options[2]);
 
-      value = JOptionPane.showOptionDialog(this,
-                                           "Save changes before quitting?",
-                                           "Quit",
-                                           JOptionPane.YES_NO_CANCEL_OPTION,
-                                           JOptionPane.QUESTION_MESSAGE,
-                                           null,
-                                           optionsModified,
-                                           optionsModified[1]);
-      */
-      //if (value == JOptionPane.YES_OPTION) {
+        if (value == JOptionPane.YES_OPTION) {
+          //System.out.println("yes");
+          //System.out.println("saving");
+          doSave();
+          //System.out.println("done saving");
+          checkModified2();
 
-      /*
-        // this is *not* the way to do it.. sleeps the wrong thread
-        // and jsut freezes the application.
-      while ((status.mode == PdeEditorStatus.EDIT) ||
-             (status.mode == PdeEditorStatus.PROMPT)) {
-        System.err.println("waiting for something useful");
-        try {
-          Thread.sleep(10);
-        } catch (InterruptedException e) { } 
+        } else if (value == JOptionPane.NO_OPTION) {
+          //System.out.println("no");
+          checkModified2();  // though this may just quit
+
+        } else if (value == JOptionPane.CANCEL_OPTION) {
+          //System.out.println("cancel");
+          // does nothing
+        }
+
+      } else {
+        status.prompt(prompt);
       }
-      */
 
     } else {
       checkModified2();
@@ -1210,9 +1210,7 @@ public class PdeEditor extends JPanel {
       //projectDir.mkdirs();
       appletDir.mkdirs();
 
-
       ///
-
 
       exportSketchName = 
         build(program, exportSketchName, appletDir.getPath(), true);
@@ -1464,13 +1462,14 @@ public class PdeEditor extends JPanel {
   }
 
   protected void doQuit2() {
-    System.out.println("doquit2");
+    //System.out.println("doquit2");
     //doStop();
 
     // clear out projects that are empty
     if (PdeBase.getBoolean("sketchbook.auto_clean", true)) {
       String userPath = base.sketchbookPath + File.separator + userName;
       File userFolder = new File(userPath);
+
       if (userFolder.exists()) {  // huh?
         String entries[] = new File(userPath).list();
         if (entries != null) {
@@ -1481,6 +1480,9 @@ public class PdeEditor extends JPanel {
             File prey = new File(preyDir, entries[j] + ".pde");
             if (prey.exists()) {
               if (prey.length() == 0) {
+                // this is a candidate for deletion, but make sure
+                // that the user hasn't added anything else to the folder
+
                 //System.out.println("remove: " + prey);
                 removeDir(preyDir);
               }
