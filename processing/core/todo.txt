@@ -20,6 +20,9 @@ X pmouseX is broken again
 X   remove pmouseX/Y altogether
 X   maintain things a bit different
 o   email the beta@ list to see how people are using pmouseX
+X changed PMovie.length to PMovie.duration
+X move around/simplify loadImage() inside PApplet 
+X working to add more die() statements inside PApplet
 
 opengl
 X why is the thing hanging until 'stop' is hit?
@@ -94,6 +97,7 @@ _   do we change to font(arial, 12) ?
 
 scripting
 _ document the use of "die" 
+_   can override the method to do your own handling
 _ on exceptions, use die to just kill the applet
 _ make the file i/o stuff work more cleanly
 _   if people want to use their own file i/o they can do that too
