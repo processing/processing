@@ -1,3 +1,11 @@
+0064
+X re-enable (bad) thick line code since it was completely shut off
+X set default filename for the font
+X line 6:1: unexpected char: 0xA0
+X clicking cancel on 'save changes' doesn't cancel, but still quits
+X   removed the cancel button
+
+
 0063
 X beautify menu became disabled when moved
 X BImage(int width, int height) constructor

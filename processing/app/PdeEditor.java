@@ -1833,7 +1833,21 @@ public class PdeEditor extends JPanel {
         gotBlankLine = false;
       }
     }
+
+    // save current (rough) selection point
+    int selectionEnd = textarea.getSelectionEnd();
+
+    // replace with new bootiful text
     changeText(buffer.toString(), false);
+
+    // make sure the caret would be past the end of the text
+    if (buffer.length() < selectionEnd - 1) {
+      selectionEnd = buffer.length() - 1;
+    }
+
+    // at least in the neighborhood
+    textarea.select(selectionEnd, selectionEnd);
+
     setSketchModified(true);
     buttons.clear();
   }
