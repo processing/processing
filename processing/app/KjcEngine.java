@@ -710,7 +710,7 @@ public class KjcEngine extends PdeEngine {
     //System.err.println("system err is working");
 
     messageMode = RUNNING;
-    Frame frame = editor.frame;
+    Frame frame = PdeBase.frame;
     Point parentLoc = frame.getLocation();
     Insets parentInsets = frame.getInsets();
     

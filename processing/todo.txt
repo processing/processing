@@ -1,26 +1,18 @@
 0049
-_ disappearing text caret on win2k
-_   works in 'insert' mode
-_ pmouseX and pmouseX should be colored with mouseX and mouseY
-_ weirdness with mac swiss-german keyboard on []{}|
-_ add url support for loadImage
-_ several examples broken (note from creas) in bugs.txt
-_ pmouseX problem reported by casey (in bugs.txt)
-_ ceil/floor
-_ framerate() and framerate(15)
+X add url support for loadImage
+X ceil/floor/round
+
 _ new set of examples
 _ new html for export
 _ new colors chosen by casey
 
-verify all these are gone
-b _ remove 'encoding' crap from PdeBase
-b _   only existed b/c of reading as bytes and not using jdk11 methods
-b _ cleanup program/inline_program crap.. take out scheme stuff
-b _ better readFile/loadImage inside PdeBase
-b _   temp array should be resizable inside readFile
-b _   might just use ByteArray streams
-b _   use getresource for loading image
-b _ remove Editor's frame instance, replace refs with PdeBase.frame
+_ disappearing text caret on win2k
+_   works in 'insert' mode
+_ pmouseX and pmouseX should be colored with mouseX and mouseY
+_ pmouseX problem reported by casey (in bugs.txt)
+_ weirdness with mac swiss-german keyboard on []{}|
+_ framerate() and framerate(15)
+_ several examples broken (note from creas) in bugs.txt
 
 
 ////////////////////////////////////////////////////////////////////
