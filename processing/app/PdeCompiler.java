@@ -183,6 +183,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     // discerning the imagery, consider how cows regurgitate their food
     // to digest it, and the fact that they have five stomaches.
     //
+    //System.out.println("throwing up " + exception);
     if (exception != null) throw exception; 
 
     // if the result isn't a known, expected value it means that something
@@ -229,6 +230,8 @@ public class PdeCompiler implements PdeMessageConsumer {
 
     // iterate through the project files to see who's causing the trouble
     for (int i = 0; i < sketch.codeCount; i++) {
+      if (sketch.code[i].preprocName == null) continue;
+
       partialTempPath = buildPathSubst + sketch.code[i].preprocName;
       partialStartIndex = s.indexOf(partialTempPath);
       if (partialStartIndex != -1) {
@@ -252,6 +255,21 @@ public class PdeCompiler implements PdeMessageConsumer {
       int lineNumber = Integer.parseInt(s1.substring(0, colon));
       //System.out.println("pde / line number: " + lineNumber);
 
+      if (fileIndex == 0) {  // main class, figure out which tab
+        for (int i = 1; i < sketch.codeCount; i++) {
+          if (sketch.code[i].flavor == PdeSketch.PDE) {
+            if (sketch.code[i].lineOffset < lineNumber) {
+              fileIndex = i;
+              //System.out.println("i'm thinkin file " + i);
+            }
+          }
+        }
+        if (fileIndex != 0) {  // if found another culprit
+          lineNumber -= sketch.code[fileIndex].lineOffset;
+          //System.out.println("i'm sayin line " + lineNumber);
+        }
+      }
+
       //String s2 = s1.substring(colon + 2);
       int err = s1.indexOf("Error:");
       if (err != -1) {
@@ -270,6 +288,7 @@ public class PdeCompiler implements PdeMessageConsumer {
         String description = s1.substring(err + "Error:".length());
         description = description.trim();
         //System.out.println("description = " + description);
+        //System.out.println("creating exception " + exception);
         exception = new PdeException(description, fileIndex, lineNumber-1, -1);
 
         // NOTE!! major change here, this exception will be queued

@@ -973,13 +973,129 @@ public class PdeSketch {
       externalRuntime = true;
     }
 
-    // first run preproc on the 'main' file, using the sugg class name
-    // then for code 1..count
-    //   if .java, write programs[i] to buildpath
-    //   if .pde, run preproc to buildpath
-    //     if no class def'd for the pde file, then complain
+
+    // 1. concatenate all .pde files to the 'main' pde
+    //    store line number for starting point of each code bit
+
+    StringBuffer bigCode = new StringBuffer(code[0].program);
+    int bigCount = countLines(code[0].program);
+
+    for (int i = 1; i < codeCount; i++) {
+      if (code[i].flavor == PDE) {
+        code[i].lineOffset = ++bigCount;
+        bigCode.append('\n');
+        bigCode.append(code[i].program);
+        bigCount += countLines(code[i].program);
+        code[i].preprocName = null;  // don't compile me
+      }
+    }
+
+
+    // 2. run preproc on that code using the sugg class name
+    //    to create a single .java file and write to buildpath
 
     String primaryClassName = null;
+
+    PdePreprocessor preprocessor = new PdePreprocessor();
+    try {
+      // if (i != 0) preproc will fail if a pde file is not 
+      // java mode, since that's required
+      String className = 
+        preprocessor.write(bigCode.toString(), buildPath,
+                           suggestedClassName, importPackageList);
+      if (className == null) {
+        throw new PdeException("Could not find main class");
+        // this situation might be perfectly fine, 
+        // (i.e. if the file is empty)
+        //System.out.println("No class found in " + code[i].name);
+        //System.out.println("(any code in that file will be ignored)");
+        //System.out.println();
+
+      } else {
+        code[0].preprocName = className + ".java";
+      }
+
+      // store this for the compiler and the runtime
+      primaryClassName = className;
+      //System.out.println("primary class " + primaryClassName);
+
+      // check if the 'main' file is in java mode
+      if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
+        externalRuntime = true; // we in advanced mode now, boy
+      }
+
+    } catch (antlr.RecognitionException re) {
+      // this even returns a column
+      int errorFile = 0;
+      int errorLine = re.getLine() - 1;
+      for (int i = 1; i < codeCount; i++) {
+        if ((code[i].flavor == PDE) && 
+            (code[i].lineOffset < errorLine)) {
+          errorFile = i;
+        }
+      }
+      errorLine -= code[errorFile].lineOffset;
+
+      throw new PdeException(re.getMessage(), errorFile,
+                             errorLine, re.getColumn());
+
+    } catch (antlr.TokenStreamRecognitionException tsre) {
+      // while this seems to store line and column internally,
+      // there doesn't seem to be a method to grab it.. 
+      // so instead it's done using a regexp
+      PatternMatcher matcher = new Perl5Matcher();
+      PatternCompiler compiler = new Perl5Compiler();
+      // line 3:1: unexpected char: 0xA0
+      String mess = "^line (\\d+):(\\d+):\\s";
+
+      Pattern pattern = null;
+      try {
+        pattern = compiler.compile(mess);
+      } catch (MalformedPatternException e) {
+        PdeBase.showWarning("Internal Problem",
+                            "An internal error occurred while trying\n" + 
+                            "to compile the sketch. Please report\n" +
+                            "this online at http://processing.org/bugs", e);
+      }
+
+      PatternMatcherInput input = 
+        new PatternMatcherInput(tsre.toString());
+      if (matcher.contains(input, pattern)) {
+        MatchResult result = matcher.getMatch();
+
+        int errorLine = Integer.parseInt(result.group(1).toString()) - 1;
+        int errorColumn = Integer.parseInt(result.group(2).toString());
+        int errorFile = 0;
+        for (int i = 1; i < codeCount; i++) {
+          if ((code[i].flavor == PDE) && 
+              (code[i].lineOffset < errorLine)) {
+            errorFile = i;
+          }
+        }
+        errorLine -= code[errorFile].lineOffset;
+
+        throw new PdeException(tsre.getMessage(), 
+                               errorFile, errorLine, errorColumn);
+
+      } else {
+        // this is bad, defaults to the main class.. hrm.
+        throw new PdeException(tsre.toString(), 0, -1, -1);
+      }
+
+    } catch (PdeException pe) {
+      // PdeExceptions are caught here and re-thrown, so that they don't 
+      // get lost in the more general "Exception" handler below. 
+      throw pe;
+
+    } catch (Exception ex) {
+      // TODO better method for handling this? 
+      System.err.println("Uncaught exception type:" + ex.getClass());
+      ex.printStackTrace();
+      throw new PdeException(ex.toString());
+    }
+
+
+    // 3. then loop over the code[] and save each .java file
 
     for (int i = 0; i < codeCount; i++) {
       if (code[i].flavor == JAVA) {
@@ -996,88 +1112,6 @@ public class PdeSketch {
                                  " to the build folder");
         }
         code[i].preprocName = filename;
-
-      } else if (code[i].flavor == PDE) {
-        PdePreprocessor preprocessor = new PdePreprocessor();
-        try {
-          // if (i != 0) preproc will fail if a pde file is not 
-          // java mode, since that's required
-          //System.out.println("build path is " + buildPath);
-          String className = 
-            preprocessor.write(code[i].program, buildPath,
-                               (i == 0) ? suggestedClassName : null, 
-                               importPackageList);
-          if (className == null) {
-            // this situation might be perfectly fine, 
-            // (i.e. if the file is empty)
-            System.out.println("No class found in " + code[i].name);
-            System.out.println("(any code in that file will be ignored)");
-            System.out.println();
-
-          } else {
-            code[i].preprocName = className + ".java";
-          }
-
-          if (i == 0) {
-            // store this for the compiler and the runtime
-            primaryClassName = className;
-            //System.out.println("primary class " + primaryClassName);
-
-            // check if the 'main' file is in java mode
-            if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
-              externalRuntime = true; // we in advanced mode now, boy
-            }
-          }
-
-        } catch (antlr.RecognitionException re) {
-          // this even returns a column
-          throw new PdeException(re.getMessage(), i,
-                                 re.getLine() - 1, re.getColumn());
-
-        } catch (antlr.TokenStreamRecognitionException tsre) {
-          // while this seems to store line and column internally,
-          // there doesn't seem to be a method to grab it.. 
-          // so instead it's done using a regexp
-          PatternMatcher matcher = new Perl5Matcher();
-          PatternCompiler compiler = new Perl5Compiler();
-          // line 3:1: unexpected char: 0xA0
-          String mess = "^line (\\d+):(\\d+):\\s";
-
-          Pattern pattern = null;
-          try {
-            pattern = compiler.compile(mess);
-          } catch (MalformedPatternException e) {
-            PdeBase.showWarning("Internal Problem",
-                                "An internal error occurred while trying\n" + 
-                                "to compile the sketch. Please report\n" +
-                                "this online at http://processing.org/bugs", e);
-          }
-
-          PatternMatcherInput input = 
-            new PatternMatcherInput(tsre.toString());
-          if (matcher.contains(input, pattern)) {
-            MatchResult result = matcher.getMatch();
-
-            int line = Integer.parseInt(result.group(1).toString());
-            int column = Integer.parseInt(result.group(2).toString());
-            throw new PdeException(tsre.getMessage(), i, line-1, column);
-
-          } else {
-            //throw new PdeException(tsre.toString());
-            throw new PdeException(tsre.toString(), i, -1, -1);
-          }
-
-        } catch (PdeException pe) {
-          // PdeExceptions are caught here and re-thrown, so that they don't 
-          // get lost in the more general "Exception" handler below. 
-          throw pe;
-          
-        } catch (Exception ex) {
-          // TODO better method for handling this? 
-          System.err.println("Uncaught exception type:" + ex.getClass());
-          ex.printStackTrace();
-          throw new PdeException(ex.toString());
-        }
       }
     }
 
@@ -1089,6 +1123,17 @@ public class PdeSketch {
     //System.out.println("success = " + success + " ... " + primaryClassName);
     return success ? primaryClassName : null;
   }
+
+
+  protected int countLines(String what) {
+    char c[] = what.toCharArray();
+    int count = 0;
+    for (int i = 0; i < c.length; i++) {
+      if (c[i] == '\n') count++;
+    }
+    return count;
+  }
+
 
   /**
    * Called by PdeEditor to handle someone having selected 'export'. 
