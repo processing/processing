@@ -154,6 +154,7 @@ zip -rq ../build/windows/work/lib/core.jar processing
 cd ..
 
 #################### TEMPORARY #####################
+# set to true to re-enable building the preprocessor
 if false
 then
 #################### TEMPORARY #####################
