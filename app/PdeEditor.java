@@ -26,7 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.text.*;
+//import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -65,6 +65,7 @@ public class PdeEditor extends JFrame
   static final int HANDLE_QUIT = 3;
   int checking;
   String handleOpenPath; 
+  //String handleSaveAsPath;
   //String openingName;
 
   PdeEditorButtons buttons;
@@ -81,14 +82,13 @@ public class PdeEditor extends JFrame
   // currently opened program
   PdeSketch sketch;
 
-  // used by PdeRuntime for placing the window
+  // runtime information and window placement
   Point appletLocation;
   Point presentLocation;
-
   Window presentationWindow;
+  RunButtonWatcher watcher;
+  PdeRuntime runtime;
 
-  //RunButtonWatcher watcher;
-  //PdeRuntime runtime;
   //boolean externalRuntime;
   //String externalPaths;
   //File externalCode;
@@ -472,7 +472,8 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          skNew();
+          //skNew();
+          handleNew();
         }
       });
     menu.add(item);
@@ -482,7 +483,7 @@ public class PdeEditor extends JFrame
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          doSave();
+          handleSave2();
         }
       });
     menu.add(saveMenuItem);
@@ -490,20 +491,10 @@ public class PdeEditor extends JFrame
     saveAsMenuItem = newJMenuItem("Save as...", 'S', true);
     saveAsMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          skSaveAs(false);
+          handleSaveAs();
         }
       });
     menu.add(saveAsMenuItem);
-
-    /*
-    item = new JMenuItem("Rename...");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          skSaveAs(true);
-        }
-      });
-    menu.add(item);
-    */
 
     item = newJMenuItem("Export", 'E');
     item.addActionListener(new ActionListener() {
@@ -953,7 +944,11 @@ public class PdeEditor extends JFrame
     }
 
     try {
-      sketch.run();
+      if (!sketch.handleRun()) return;
+
+      runtime = new PdeRuntime(sketch, this);
+      runtime.start(presenting ? presentLocation : appletLocation);
+      watcher = new RunButtonWatcher();
 
     } catch (PdeException e) {
       error(e);
@@ -961,7 +956,48 @@ public class PdeEditor extends JFrame
     } catch (Exception e) {
       e.printStackTrace();
     }
-    sketch.cleanup();
+    //sketch.cleanup();  // where does this go?
+  }
+
+
+  class RunButtonWatcher implements Runnable {
+    Thread thread;
+
+    public RunButtonWatcher() {
+      thread = new Thread(this);
+      thread.start();
+    }
+
+    public void run() {
+      while (Thread.currentThread() == thread) {
+        if (runtime == null) {
+          stop();
+
+        } else {
+          if (runtime.applet != null) {
+            if (runtime.applet.finished) {
+              stop();
+            }
+            //buttons.running(!runtime.applet.finished);
+
+          } else if (runtime.process != null) {
+            //buttons.running(true);  // ??
+
+          } else {
+            stop();
+          }
+        } 
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException e) { }
+        //System.out.println("still inside runner thread");
+      }
+    }
+
+    public void stop() {
+      buttons.running(false);
+      thread = null;
+    }
   }
 
 
@@ -1208,6 +1244,7 @@ public class PdeEditor extends JFrame
   }
 
 
+  /*
   protected void handleOpen2(String isketchName, 
                            File isketchFile, File isketchDir) {
     if (!isketchFile.exists()) {
@@ -1239,12 +1276,10 @@ public class PdeEditor extends JFrame
       sketch.directory = isketchDir;
       setSketchModified(false);
 
-      /*
-        // TODO re-enable history
-      history.setPath(sketchFile.getParent(), readOnlySketch());
-      history.rebuildMenu();
-      history.lastRecorded = program;
-      */
+      // TODO re-enable history
+      //history.setPath(sketchFile.getParent(), readOnlySketch());
+      //history.rebuildMenu();
+      //history.lastRecorded = program;
 
       header.reset();
 
@@ -1259,8 +1294,10 @@ public class PdeEditor extends JFrame
     }
     buttons.clear();
   }
+  */
 
 
+  /*
   public void doSave() {
     // true if lastfile not set, otherwise false, meaning no prompt
     //handleSave(lastFile == null);
@@ -1271,7 +1308,27 @@ public class PdeEditor extends JFrame
   public void doSaveAs() {
     handleSave(true);
   }
+  */
 
+  // there is no handleSave1 since there's never a need to prompt
+  public void handleSave2() {
+    message("Saving...");
+    try {
+      sketch.save();
+    } catch (Exception e) {
+      error(e);
+      //message("Error during export.");
+      //e.printStackTrace();
+    }
+    buttons.clear();      
+  }
+
+
+  //public void 
+  //sketch.saveAs();
+
+
+  /*
   protected void handleSave(boolean promptUser) {
     message("Saving file...");
     String s = textarea.getText();
@@ -1328,10 +1385,22 @@ public class PdeEditor extends JFrame
     }
     buttons.clear();
   }
+  */
 
 
-  public void skSaveAs(/*boolean rename*/) {
+  public void handleSaveAs() {
     doStop();
+
+    if (!PdePreferences.getBoolean("sketchbook.prompt")) {
+      status.edit("Save sketch as...", sketch.name);
+    } else {
+      handleSaveAs2(null);
+    }
+  }
+
+
+  /*
+  public void skSaveAs() {
 
     //this.renaming = rename;
     //if (rename) {
@@ -1340,7 +1409,93 @@ public class PdeEditor extends JFrame
     status.edit("Save sketch as...", sketchName);
     //}
   }
+  */
 
+
+  public void handleSaveAs2(String newSketchName) {
+    if (newSketchName.equals(sketch.name)) {
+      return;  // do nothing
+
+    } else if (newSketchName.equalsIgnoreCase(sketch.name)) {
+      // NEED TO GET THE ACTUAL SKETCH NAME FROM CODE[0] HERE
+
+      boolean problem = (sketchDir.renameTo(newSketchDir) || 
+                         sketchFile.renameTo(newSketchFile));
+      if (problem) {
+        status.error("Error while trying to re-save the sketch.");
+      }      
+
+    } else {
+      // setup new sketch object with new name
+    }
+
+    /*
+    File newSketchDir = new File(sketchDir.getParent() +
+                                 File.separator + newSketchName);
+    File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
+
+    //doSave(); // save changes before renaming.. risky but oh well
+    String textareaContents = textarea.getText();
+    int textareaPosition = textarea.getCaretPosition();
+
+    // if same name, but different case, just use renameTo
+    if (newSketchName.toLowerCase().
+        equals(sketchName.toLowerCase())) {
+      //System.out.println("using renameTo");
+
+      boolean problem = (sketchDir.renameTo(newSketchDir) || 
+                         sketchFile.renameTo(newSketchFile));
+      if (problem) {
+        status.error("Error while trying to re-save the sketch.");
+      }
+
+    } else {
+      // make new dir
+      newSketchDir.mkdirs();
+      // copy the sketch file itself with new name
+      PdeBase.copyFile(sketchFile, newSketchFile);
+
+      // copy everything from the old dir to the new one
+      PdeBase.copyDir(sketchDir, newSketchDir);
+
+      // remove the old sketch file from the new dir
+      new File(newSketchDir, sketchName + ".pde").delete();
+
+      // remove the old dir (!)
+      //if (renaming) {
+      // in case java is holding on to any files we want to delete
+        //System.gc();
+      //PdeBase.removeDir(sketchDir);
+      //}
+
+      // (important!) has to be done before opening, 
+      // otherwise the new dir is set to sketchDir.. 
+      // remove .jar, .class, and .java files from the applet dir
+      File appletDir = new File(newSketchDir, "applet");
+      File oldjar = new File(appletDir, sketchName + ".jar");
+      if (oldjar.exists()) oldjar.delete();
+      File oldjava = new File(appletDir, sketchName + ".java");
+      if (oldjava.exists()) oldjava.delete();
+      File oldclass = new File(appletDir, sketchName + ".class");
+      if (oldclass.exists()) oldclass.delete();
+    }
+
+    // get the changes into the sketchbook menu
+    //base.rebuildSketchbookMenu();
+    sketchbook.rebuildMenu();
+
+    // open the new guy
+    handleOpen2(newSketchName, newSketchFile, newSketchDir);
+
+    // update with the new junk and save that as the new code
+    changeText(textareaContents, true);
+    textarea.setCaretPosition(textareaPosition);
+    doSave();
+    */
+  }
+
+
+  /*
   public void skSaveAs2(String newSketchName) {
     if (newSketchName.equals(sketchName)) {
       // nothing changes
@@ -1409,6 +1564,7 @@ public class PdeEditor extends JFrame
     textarea.setCaretPosition(textareaPosition);
     doSave();
   }
+  */
 
 
   /**
@@ -1416,7 +1572,7 @@ public class PdeEditor extends JFrame
    * queues all the gui status stuff that comes along with it.
    */
   public void handleExport() {
-    editor.message("Exporting code...");
+    message("Exporting code...");
     try {
       if (sketch.export()) {
         message("Done exporting.");
@@ -1424,7 +1580,7 @@ public class PdeEditor extends JFrame
         // error message will already be visible
       }
     } catch (Exception e) {
-      editor.message("Error during export.");
+      message("Error during export.");
       e.printStackTrace();
     }
     buttons.clear();
@@ -1616,6 +1772,12 @@ public class PdeEditor extends JFrame
 
 
   // ...................................................................
+
+
+  public void error(Exception e) {
+    status.error(e.getMessage());
+    e.printStackTrace();
+  }
 
 
   public void error(PdeException e) {

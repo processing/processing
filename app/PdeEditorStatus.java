@@ -111,15 +111,12 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   public void error(String message) {
     mode = ERROR;
     this.message = message;
-    //update();
     repaint();
   }
 
 
 
   public void prompt(String message) {
-    //System.out.println("prompting...");
-
     mode = PROMPT;
     this.message = message;
 
@@ -129,190 +126,8 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     cancelButton.setVisible(true);
     yesButton.requestFocus();
 
-    //update();
     repaint();
-
-    /*
-    Point upperLeft = new Point(getLocation());
-    //Point lowerRight = new Point(upperLeft.x + getBounds().width,
-    //                           upperLeft.y + getBounds().height);
-    SwingUtilities.convertPointToScreen(upperLeft, this);
-
-    //Dialog dialog = new JDialog(editor.base, "none", true);
-    Dialog dialog = new Dialog(editor.base, "none", true);
-    //System.out.println(dialog.isDisplayable());
-    //System.out.println(dialog.isDisplayable());
-    dialog.setBounds(upperLeft.x, upperLeft.y, 
-                     getBounds().width, getBounds().height);
-
-    //System.out.println(dialog.isDisplayable());
-    //dialog.setModal(true);
-    //dialog.undecorated = true;
-    dialog.setUndecorated(true);
-
-    System.out.println("showing");
-
-    dialog.show();
-    System.out.println(dialog.isDisplayable());
-    */
-
-    /*
-    //System.out.println(pt);
-    System.out.println(Thread.currentThread());
-
-    promptThread = new Thread(this);
-    promptThread.start();
-    */
   }
-
-
-  /*
-  public void run() {
-    //while (Thread.currentThread() == promptThread) {
-    synchronized (promptThread) {
-    while (promptThread != null) {
-      if (response != 0) {
-        System.out.println("stopping prompt thread");
-        //promptThread.stop();
-        promptThread = null;
-        System.out.println("exiting prompt loop");
-        unprompt();
-        break;
-
-      } else {
-        try {
-          System.out.println("inside prompt thread " + 
-          System.currentTimeMillis());
-          Thread.sleep(10);
-        } catch (InterruptedException e) { }
-      }
-    }
-    System.out.println("exiting prompt thread");
-    }
-  }
-  */
-
-
-  /**
-   * Makes the Dialog visible. If the dialog and/or its owner
-   * are not yet displayable, both are made displayable.  The 
-   * dialog will be validated prior to being made visible.  
-   * If the dialog is already visible, this will bring the dialog 
-   * to the front.
-   * <p>
-   * If the dialog is modal and is not already visible, this call will
-   * not return until the dialog is hidden by calling <code>hide</code> or
-   * <code>dispose</code>. It is permissible to show modal dialogs from
-   * the event dispatching thread because the toolkit will ensure that
-   * another event pump runs while the one which invoked this method
-   * is blocked. 
-   * @see Component#hide
-   * @see Component#isDisplayable
-   * @see Component#validate
-   * @see java.awt.Dialog#isModal
-   */
-
-
-  /*
-  // Stores the app context on which event dispatch thread the dialog
-  // is being shown. Initialized in show(), used in hideAndDisposeHandler()
-  private AppContext showAppContext;
-  
-  private boolean keepBlocking = false;
-
-
-  public void show() {
-    //if (!isModal()) {
-    //conditionalShow();
-    //} else {
-
-    // Set this variable before calling conditionalShow(). That
-    // way, if the Dialog is hidden right after being shown, we
-    // won't mistakenly block this thread.
-    keepBlocking = true;
-
-    // Store the app context on which this dialog is being shown.
-    // Event dispatch thread of this app context will be sleeping until
-    // we wake it by any event from hideAndDisposeHandler().
-    showAppContext = AppContext.getAppContext();
-
-    //if (conditionalShow()) {
-      // We have two mechanisms for blocking: 1. If we're on the
-      // EventDispatchThread, start a new event pump. 2. If we're
-      // on any other thread, call wait() on the treelock.
-
-      // keep the KeyEvents from being dispatched
-      // until the focus has been transfered
-      long time = Toolkit.getEventQueue().getMostRecentEventTime();
-      Component predictedFocusOwner = getMostRecentFocusOwner();
-      KeyboardFocusManager.getCurrentKeyboardFocusManager().
-        enqueueKeyEvents(time, predictedFocusOwner); 
-
-      if (Toolkit.getEventQueue().isDispatchThread()) {
-        EventDispatchThread dispatchThread =
-          (EventDispatchThread)Thread.currentThread();
-        dispatchThread.pumpEventsForHierarchy(new Conditional() {
-            public boolean evaluate() {
-              return keepBlocking && windowClosingException == null;
-            }
-          }, this);
-      } else {
-        synchronized (getTreeLock()) {
-          while (keepBlocking && windowClosingException == null) {
-            try {
-              getTreeLock().wait();
-            } catch (InterruptedException e) {
-              break;
-            }
-          }
-        }
-      }
-      KeyboardFocusManager.getCurrentKeyboardFocusManager().
-        dequeueKeyEvents(time, predictedFocusOwner);
-      if (windowClosingException != null) {
-        windowClosingException.fillInStackTrace();
-        throw windowClosingException;
-      }
-      //}
-  }
-  //}
-
-  void interruptBlocking() {
-    hideAndDisposeHandler(); // this is what impl did
-
-    //if (modal) {
-    //disposeImpl();
-    //} else if (windowClosingException != null) {
-    //      windowClosingException.fillInStackTrace();
-    //      windowClosingException.printStackTrace();
-    //      windowClosingException = null;
-    //  }
-  }
-
-  final static class WakingRunnable implements Runnable {
-    public void run() {
-    }
-  }
-
-  private void hideAndDisposeHandler() {
-    if (keepBlocking) {
-      synchronized (getTreeLock()) {
-        keepBlocking = false;
-        
-        if (showAppContext != null) {
-          // Wake up event dispatch thread on which the dialog was 
-          // initially shown
-          SunToolkit.postEvent(showAppContext, 
-                               new PeerEvent(this, 
-                                             new WakingRunnable(), 
-                                             PeerEvent.PRIORITY_EVENT));
-        }
-        EventQueue.invokeLater(new WakingRunnable());
-        getTreeLock().notifyAll();
-      }
-    }
-  }   
-  */
 
 
   // prompt has been handled, re-hide the buttons
@@ -320,15 +135,13 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     yesButton.setVisible(false);
     noButton.setVisible(false);
     cancelButton.setVisible(false);
-    //promptThread = null;
     empty();
   }
 
 
-  public void edit(String message, String dflt /*, boolean rename*/) {
+  public void edit(String message, String dflt) {
     mode = EDIT;
     this.message = message;
-    //this.editRename = rename;
 
     response = 0;
     okButton.setVisible(true);
@@ -339,7 +152,6 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     editField.requestFocus();
 
     repaint(); 
-    //update();
   }
 
   public void unedit() {
@@ -588,33 +400,28 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == noButton) {
-      //System.out.println("clicked no");
-      //response = 2;
       // shut everything down, clear status, and return
       unprompt();
+      // don't need to save changes
       editor.checkModified2();
 
     } else if (e.getSource() == yesButton) {
-      //System.out.println("clicked yes");
-      //response = 1;
-      // shutdown/clear status, and call checkModified2
+      // answer was in response to "save changes?"
       unprompt();
-      editor.doSave();  // assuming that something is set? hmm
-      //System.out.println("calling checkmodified2");
+      editor.handleSave2();
       editor.checkModified2();
 
     } else if (e.getSource() == cancelButton) { 
+      // don't do anything, don't continue with checkModified2
       if (mode == PROMPT) unprompt();
-      if (mode == EDIT) unedit();
+      else if (mode == EDIT) unedit();
       editor.buttons.clear();
 
     } else if (e.getSource() == okButton) {
+      // answering to "save as..." question
       String answer = editField.getText();
-      editor.skSaveAs2(answer);
+      editor.handleSaveAs2(answer);
       unedit();
-
-    } else if (e.getSource() == editField) {
-      //System.out.println("editfield: " + e);
     }
   }
 }

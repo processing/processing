@@ -356,7 +356,8 @@ public class PdeSketch {
    *
    *    X. afterwards, some of these steps need a cleanup function
    */
-  public void run() throws PdeException {
+  //public void run() throws PdeException {
+  public boolean handleRun() throws PdeException {
     current.program = editor.getText();
 
     // TODO record history here
@@ -373,6 +374,12 @@ public class PdeSketch {
       // nuke previous files and settings, just get things loaded
       load();
     }
+
+    // in case there were any boogers left behind
+    // do this here instead of after exiting, since the exit
+    // can happen so many different ways.. and this will be
+    // better connected to the dataFolder stuff below.
+    cleanup();
 
     // copy contents of data dir into lib/build
     // TODO write a file sync procedure here.. if the files 
@@ -397,7 +404,7 @@ public class PdeSketch {
     // externalPaths is magically set by build()
 
     // if the compilation worked, run the applet
-    if (mainClassName != null) {
+//    if (mainClassName != null) {
 
       /*
       if (externalPaths == null) {
@@ -422,7 +429,7 @@ public class PdeSketch {
       */
 
       // create a runtime object
-      runtime = new PdeRuntime(this, editor); 
+//      runtime = new PdeRuntime(this, editor); 
 
       // if programType is ADVANCED
       //   or the code/ folder is not empty -> or just exists (simpler)
@@ -436,58 +443,18 @@ public class PdeSketch {
       //PdeMessageStream messageStream = new PdeMessageStream(runtime);
 
       // start the applet
-      runtime.start(presenting ? presentLocation : appletLocation); //,
+//      runtime.start(presenting ? presentLocation : appletLocation); //,
       //new PrintStream(messageStream));
 
       // spawn a thread to update PDE GUI state
-      watcher = new RunButtonWatcher();
+//      watcher = new RunButtonWatcher();
 
-    } else {
+//    } else {
       // [dmose] throw an exception here?
       // [fry] iirc the exception will have already been thrown
-      cleanup();
-    }
-  }
-
-
-  class RunButtonWatcher implements Runnable {
-    Thread thread;
-
-    public RunButtonWatcher() {
-      thread = new Thread(this);
-      thread.start();
-    }
-
-    public void run() {
-      while (Thread.currentThread() == thread) {
-        if (runtime == null) {
-          stop();
-
-        } else {
-          if (runtime.applet != null) {
-            if (runtime.applet.finished) {
-              stop();
-            }
-            //buttons.running(!runtime.applet.finished);
-
-          } else if (runtime.process != null) {
-            //buttons.running(true);  // ??
-
-          } else {
-            stop();
-          }
-        } 
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException e) { }
-        //System.out.println("still inside runner thread");
-      }
-    }
-
-    public void stop() {
-      buttons.running(false);
-      thread = null;
-    }
+//      cleanup();
+//    }
+    return (mainClassName != null);
   }
 
 
@@ -1082,6 +1049,14 @@ public class PdeSketch {
   public void hide(int which) {
   }
 
+
+  /**
+   * Returns the path to the sketch folder. 
+   * Used by PdeEditor.handleSaveAs()
+   */
+  //public String getPath() {
+  //return sketchFolder.getPath();
+  //}
 
   /**
    * Returns path to the main .pde file for this sketch.
