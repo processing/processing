@@ -1,3 +1,20 @@
+ABOUT REV 0043 - "ALPHA" - 2 august 2002
+
+- this is the official "alpha" release. released for all platforms
+  with a completed readme.txt
+
+
+ABOUT REV 0042 - 2 august 2002
+
+[ finishing up ]
+
+- fixed ArrayIndexOutOfBoundsException in texture use
+
+- added icon to replace the coffee cup
+
+- 'run' button now stays highlighted properly
+
+
 ABOUT REV 0041 - 1 august 2002
 
 [ big things ]
