@@ -147,10 +147,9 @@ X fix mouse/key events, make properly public for the package stuff
 X   The biggest problem was the key and mouse functions not working. 
 X   Input: Mouse_Functions
 X   Input: Keyboard_Functions
-
-....
-
-_ processing.net -> PClient, PServer
+X processing.net -> PClient, PServer
+X   write client/server implementations for new-style api
+X   basic test with old net server has things working fine
 
 _ api for file-based renderers
 _   need to work this out since it will affect other api changes
