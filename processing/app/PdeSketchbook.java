@@ -87,6 +87,10 @@ public class PdeSketchbook {
         sketchbookFolder.mkdirs();
       }
 
+      addSketches(sketchbookFolder);
+
+      // TODO add examples folder here too
+
       /*
       // files for the current user (for now, most likely 'default')
 
@@ -129,6 +133,8 @@ public class PdeSketchbook {
       }
       menu.addSeparator();
       */
+
+      /*
       if (addSketches(menu, userFolder, false)) {
         menu.addSeparator();
       }
@@ -137,6 +143,7 @@ public class PdeSketchbook {
         item.setEnabled(false);
         menu.add(item);
       }
+      */
 
       /*
       // doesn't seem that refresh is worthy of its own menu item
@@ -154,8 +161,8 @@ public class PdeSketchbook {
   }
 
 
-  protected boolean addSketches(Menu menu, File folder, 
-                                /*boolean allowUser,*/ boolean root) 
+  protected boolean addSketches(Menu menu, File folder) {
+                               // /*boolean allowUser,*/ boolean root) 
     throws IOException {
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
@@ -167,7 +174,7 @@ public class PdeSketchbook {
     boolean ifound = false;
 
     for (int i = 0; i < list.length; i++) {
-      if (list[i].equals(editor.userName) && root) continue;
+      //if (list[i].equals(editor.userName) && root) continue;
 
       if (list[i].equals(".") ||
           list[i].equals("..") ||
@@ -184,7 +191,7 @@ public class PdeSketchbook {
         Menu submenu = new Menu(list[i]);
         // needs to be separate var 
         // otherwise would set ifound to false
-        boolean found = addSketches(submenu, subfolder, false);
+        boolean found = addSketches(submenu, subfolder); //, false);
         if (found) {
           menu.add(submenu);
           ifound = true;

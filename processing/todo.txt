@@ -2,6 +2,8 @@
 X ifdef JDK14 around a piece of 1.4 specific window code
 X use mozilla for opening urls in linux, switched to more compatible exec()
 
+_ add examples stuff
+
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
 _ eliminate the requirement for a 'data' folder

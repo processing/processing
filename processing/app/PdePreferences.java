@@ -127,8 +127,8 @@ public class PdePreferences extends JComponent {
       */
 
     } catch (Exception e) {
-      showError(null, "Could not read default settings.\n" + 
-                "You'll need to reinstall Processing.", e);
+      PdeBase.showError(null, "Could not read default settings.\n" + 
+                        "You'll need to reinstall Processing.", e);
       System.exit(1);
       //System.err.println("Error reading default settings");
       //e.printStackTrace();
@@ -140,7 +140,7 @@ public class PdePreferences extends JComponent {
     String platformExtension = "." + PdeBase.platforms[PdeBase.platform];
     int extensionLength = platformExtension.length();
 
-    Enumeration e = properties.propertyNames();
+    Enumeration e = table.keys(); //properties.propertyNames();
     while (e.hasMoreElements()) {
       String key = (String) e.nextElement();
       if (key.endsWith(platformExtension)) {
@@ -150,7 +150,7 @@ public class PdePreferences extends JComponent {
 
         System.out.println("found platform specific prop \"" + 
                            actualKey + "\" \"" + value + "\"");
-        properties.put(actualKey, value);
+        table.put(actualKey, value);
         System.out.println("now set to " + table.get(actualKey));
       }
     }
@@ -428,10 +428,10 @@ public class PdePreferences extends JComponent {
       FileOutputStream output = new FileOutputStream(preferencesFile);
       PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
 
-      Enumeration enum = properties.propertyNames();
+      Enumeration enum = table.keys(); //properties.propertyNames();
       while (enum.hasMoreElements()) {
         String key = (String) e.nextElement();
-        writer.println(key + "=" + properties.get(key));
+        writer.println(key + "=" + ((String) table.get(key)));
       }
 
       writer.flush();
@@ -516,24 +516,27 @@ public class PdePreferences extends JComponent {
   //}
 
   static public String get(String attribute /*, String defaultValue */) {
+    return (String) table.get(attribute);
+    /*
     //String value = (properties != null) ?
     //properties.getProperty(attribute) : applet.getParameter(attribute);
     String value = properties.getProperty(attribute);
 
     return (value == null) ? 
       defaultValue : value;
+    */
   }
 
 
   static public void set(String attribute, String value) {
-    preferences.put(attribute, value);
+    //preferences.put(attribute, value);
+    table.put(attribute, value);
   }
 
 
-  static public boolean getBoolean(String attribute /*, boolean defaultValue*/) {
+  static public boolean getBoolean(String attribute) {
     String value = get(attribute, null);
-    return (value == null) ? defaultValue : 
-      (new Boolean(value)).booleanValue();
+    return (new Boolean(value)).booleanValue();
 
     /*
       supposedly not needed, because anything besides 'true'
@@ -556,6 +559,9 @@ public class PdePreferences extends JComponent {
 
 
   static public int getInteger(String attribute /*, int defaultValue*/) {
+    return Integer.parseInt(get(attribute));
+
+    /*
     String value = get(attribute, null);
     if (value == null) return defaultValue;
 
@@ -569,6 +575,7 @@ public class PdePreferences extends JComponent {
     //if (value == null) return defaultValue;
     //return (value == null) ? defaultValue : 
     //Integer.parseInt(value);
+    */
   }
 
 
@@ -592,10 +599,15 @@ public class PdePreferences extends JComponent {
   }
 
 
+  static public Color setColor(String attr, Color what) {
+    
+  }
+
+
   static public Font getFont(String which /*, Font otherwise*/) {
     //System.out.println("getting font '" + which + "'");
     String str = get(which);
-    if (str == null) return otherwise;  // ENABLE LATER
+    //if (str == null) return otherwise;  // ENABLE LATER
     StringTokenizer st = new StringTokenizer(str, ",");
     String fontname = st.nextToken();
     String fontstyle = st.nextToken();
@@ -607,7 +619,7 @@ public class PdePreferences extends JComponent {
 
 
   static public SyntaxStyle getStyle(String what /*, String dflt*/) {
-    String str = get("editor.program." + what + ".style", dflt);
+    String str = get("editor.program." + what + ".style"); //, dflt);
 
     StringTokenizer st = new StringTokenizer(str, ",");
 
