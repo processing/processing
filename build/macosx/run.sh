@@ -14,5 +14,5 @@ CLASSPATH=/System/Library/Java/Extensions/QTJava.zip:lib:lib/build:lib/pde.jar:l
 
 export CLASSPATH
 
-#cd work && java PdeBase
 cd work && /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Commands/java PdeBase
+#cd work && java PdeBase
