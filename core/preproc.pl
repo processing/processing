@@ -29,10 +29,10 @@ foreach $line (@applet) {
     last if ($line =~ /$insert/);
 }
 
-open(INTF, ">PMethods.java") || die $!;
-print INTF "package processing.core;\n\n\n\n";
-print INTF "// this file is auto-generated. no touchy-touchy.\n\n";
-print INTF "public interface PMethods {\n";
+#open(INTF, ">PMethods.java") || die $!;
+#print INTF "package processing.core;\n\n\n\n";
+#print INTF "// this file is auto-generated. no touchy-touchy.\n\n";
+#print INTF "public interface PMethods {\n";
 
 $comments = 0;
 
@@ -76,7 +76,7 @@ while ($line = shift(@contents)) {
 	if ($got_interface == 1) {
 	    $iline = $line;
 	    $iline =~ s/ \{/\;/;
-	    print INTF "\n$iline";
+#	    print INTF "\n$iline";
 	}
 
         $decl .= $line;
@@ -88,7 +88,7 @@ while ($line = shift(@contents)) {
 	    if ($got_interface == 1) {
 		$iline = $line;
 		$iline =~ s/ \{/\;/;
-		print INTF $iline;
+#		print INTF $iline;
 	    }
         }
 
@@ -121,10 +121,10 @@ while ($line = shift(@contents)) {
     }
 }
 print OUT "}\n";
-print INTF "}\n";
+#print INTF "}\n";
 
 close(OUT);
-close(INTF);
+#close(INTF);
 
 $oldguy = join(' ', @applet);
 
