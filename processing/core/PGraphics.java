@@ -406,11 +406,7 @@ public class PGraphics extends PImage
     // will only clear the zbuffer if dimensions is 3, meaning
     // that no initial clear will happen without this one.
     zbuffer = new float[pixelCount];
-    //for (int i = 0; i < pixelCount; i++) {
-    //zbuffer[i] = MAX_FLOAT;
-    //}
-
-    if (hints[NEW_GRAPHICS]) stencil = new int[pixelCount];
+    stencil = new int[pixelCount];
 
     // because of a java 1.1 bug.. unless pixels are registered as
     // opaque before their first run, the memimgsrc will flicker
@@ -428,33 +424,7 @@ public class PGraphics extends PImage
     line = new PLine(this);
 
     // moved from PGraphics constructor since not needed by opengl
-    if (hints[NEW_GRAPHICS]) {
-      //line = new PLine(this);
-      triangle = new PTriangle(this);
-
-      /*
-      // these are all done on beginFrame(), so not doing them here [fry]
-      // or they're already set to zero on init [fry]
-      // shapes
-      shape_index = 0;
-
-      // init vertices
-      vertex_count = 0;
-      vertex_start = 0;
-      vertex_end = 0;
-
-      // init lines
-      line = new PLine(this);
-      lines_count = 0;
-
-      // init triangles
-      triangle = new PTriangle(this);
-      triangleCount = 0;
-
-      // textures
-      texture_index = 0;
-      */
-    }
+    triangle = new PTriangle(this);
   }
 
 
@@ -474,6 +444,7 @@ public class PGraphics extends PImage
     shape = false;
     shapeKind = 0;
 
+    /*
     if (!hints[NEW_GRAPHICS]) {
       polygon  = new PPolygon(this);
       fpolygon = new PPolygon(this);
@@ -481,6 +452,7 @@ public class PGraphics extends PImage
       spolygon.vertexCount = 4;
       svertices = new float[2][];
     }
+    */
 
     textFont = null;
 
@@ -563,26 +535,24 @@ public class PGraphics extends PImage
     normalY = 0;
     normalZ = ONE;
 
-    if (hints[NEW_GRAPHICS]) {
-      // reset shapes
-      shape_index = 0;
+    // reset shapes
+    shape_index = 0;
 
-      // reset vertices
-      vertex_count = 0;
-      vertex_start = 0;
-      vertex_end = 0;
+    // reset vertices
+    vertex_count = 0;
+    vertex_start = 0;
+    vertex_end = 0;
 
-      // reset lines
-      lines_count = 0;
-      line.reset();
+    // reset lines
+    lines_count = 0;
+    line.reset();
 
-      // reset triangles
-      triangleCount = 0;
-      triangle.reset();
+    // reset triangles
+    triangleCount = 0;
+    triangle.reset();
 
-      // reset textures
-      texture_index = 0;
-    }
+    // reset textures
+    texture_index = 0;
   }
 
 
@@ -590,68 +560,63 @@ public class PGraphics extends PImage
    *  indicates a completed frame
    */
   public void endFrame() {
-    //if (PApplet.THREAD_DEBUG) System.out.println("  2 endFrame");
+    // no need to z order and render
+    // shapes were already rendered in endShape();
+    // (but can't return, since needs to update memimgsrc
+    if (z_order) {
 
-    if (hints[NEW_GRAPHICS]) {
+      // SORT TRIANGLES
+      //quick_sort_triangles();
 
-      // no need to z order and render
-      // shapes were already rendered in endShape();
-      // (but can't return, since needs to update memimgsrc
-      if (z_order) {
+      // SORT LINES
+      //quick_sort_triangles();
 
-        // SORT TRIANGLES
-        //quick_sort_triangles();
+      // RENDER TRIANGLES
+      for (int i = 0; i < triangleCount; i ++) {
+        //System.out.println("rendering triangle " + i);
 
-        // SORT LINES
-        //quick_sort_triangles();
+        float a[] = vertices[triangles[i][VA]];
+        float b[] = vertices[triangles[i][VB]];
+        float c[] = vertices[triangles[i][VC]];
+        int tex = triangles[i][TEX];
+        int index = triangles[i][TI];
 
-        // RENDER TRIANGLES
-        for (int i = 0; i < triangleCount; i ++) {
-          //System.out.println("rendering triangle " + i);
+        triangle.reset();
 
-          float a[] = vertices[triangles[i][VA]];
-          float b[] = vertices[triangles[i][VB]];
-          float c[] = vertices[triangles[i][VC]];
-          int tex = triangles[i][TEX];
-          int index = triangles[i][TI];
-
-          triangle.reset();
-
-          if (tex > -1 && textures[tex] != null) {
-            triangle.setTexture(textures[tex]);
-            triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
-          }
-
-          triangle.setIntensities(a[R], a[G], a[B], a[A],
-                                  b[R], b[G], b[B], b[A],
-                                  c[R], c[G], c[B], c[A]);
-
-          triangle.setVertices(a[X], a[Y], a[Z],
-                               b[X], b[Y], b[Z],
-                               c[X], c[Y], c[Z]);
-
-          triangle.setIndex(index);
-          triangle.render();
+        if (tex > -1 && textures[tex] != null) {
+          triangle.setTexture(textures[tex]);
+          triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
         }
 
-        // RENDER LINES
-        for (int i = 0; i < lines_count; i ++) {
-          float a[] = vertices[lines[i][PA]];
-          float b[] = vertices[lines[i][PB]];
-          int index = lines[i][LI];
+        triangle.setIntensities(a[R], a[G], a[B], a[A],
+                                b[R], b[G], b[B], b[A],
+                                c[R], c[G], c[B], c[A]);
 
-          line.reset();
+        triangle.setVertices(a[X], a[Y], a[Z],
+                             b[X], b[Y], b[Z],
+                             c[X], c[Y], c[Z]);
 
-          line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                              b[SR], b[SG], b[SB], b[SA]);
+        triangle.setIndex(index);
+        triangle.render();
+      }
 
-          line.setVertices(a[X], a[Y], a[Z],
-                           b[X], b[Y], b[Z]);
+      // RENDER LINES
+      for (int i = 0; i < lines_count; i ++) {
+        float a[] = vertices[lines[i][PA]];
+        float b[] = vertices[lines[i][PB]];
+        int index = lines[i][LI];
 
-          line.setIndex(index);
+        line.reset();
 
-          line.draw();
-        }
+        line.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                            b[SR], b[SG], b[SB], b[SA]);
+
+        line.setVertices(a[X], a[Y], a[Z],
+                         b[X], b[Y], b[Z]);
+
+        line.setIndex(index);
+
+        line.draw();
       }
     }
 
@@ -666,7 +631,7 @@ public class PGraphics extends PImage
 
 
   protected final float[] next_vertex() {
-    if (!hints[NEW_GRAPHICS]) return polygon.nextVertex();
+    //if (!hints[NEW_GRAPHICS]) return polygon.nextVertex();
 
     if (vertex_count == vertices.length) {
       float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
@@ -957,28 +922,29 @@ public class PGraphics extends PImage
     shape = true;
     shapeKind = kind;
 
-    if (hints[NEW_GRAPHICS]) {
-      shape_index = shape_index + 1;
-      if (shape_index == -1) {
-        shape_index = 0;
-      }
+    //if (hints[NEW_GRAPHICS]) {
+    shape_index = shape_index + 1;
+    if (shape_index == -1) {
+      shape_index = 0;
+    }
 
-      if (z_order == true) {
-        // continue with previous vertex, line and triangle count
-        // all shapes are rendered at endFrame();
-        vertex_start = vertex_count;
-        vertex_end = 0;
+    if (z_order == true) {
+      // continue with previous vertex, line and triangle count
+      // all shapes are rendered at endFrame();
+      vertex_start = vertex_count;
+      vertex_end = 0;
 
-      } else {
-        // reset vertex, line and triangle information
-        // every shape is rendered at endShape();
-        vertex_count = 0;
-        line.reset();
-        lines_count = 0;
-        triangle.reset();
-        triangleCount = 0;
-      }
+    } else {
+      // reset vertex, line and triangle information
+      // every shape is rendered at endShape();
+      vertex_count = 0;
+      line.reset();
+      lines_count = 0;
+      triangle.reset();
+      triangleCount = 0;
+    }
 
+    /*
     } else {  // OLD_GRAPHICS
       polygon.reset(0);
       fpolygon.reset(4);
@@ -988,6 +954,7 @@ public class PGraphics extends PImage
       //textureImage = null;
       polygon.interpUV = false;
     }
+    */
     textureImage = null;
 
     cvertexIndex = 0;
@@ -1010,15 +977,15 @@ public class PGraphics extends PImage
   public void texture(PImage image) {
     textureImage = image;
 
-    if (hints[NEW_GRAPHICS]) {
-      if (z_order == true) {
-        add_texture(image);
-      } else {
-        triangle.setTexture(image);
-      }
-    } else {  // OLD_GRAPHICS
-      polygon.texture(image);
+    //if (hints[NEW_GRAPHICS]) {
+    if (z_order == true) {
+      add_texture(image);
+    } else {
+      triangle.setTexture(image);
     }
+    //} else {  // OLD_GRAPHICS
+    //polygon.texture(image);
+    //}
   }
 
 
@@ -1042,29 +1009,30 @@ public class PGraphics extends PImage
    */
   //public void vertexTexture(float u, float v) {
   protected void vertex_texture(float u, float v) {
-    if (hints[NEW_GRAPHICS]) {
-      if (textureImage == null) {
-        message(PROBLEM, "gotta use texture() " +
-                "after beginShape() and before vertexTexture()");
-        return;
-      }
-      if (textureMode == IMAGE_SPACE) {
-        textureU = (u < textureImage.width) ? u : textureImage.width;
-        if (textureU < 0) textureU = 0;
-        textureV = (v < textureImage.height) ? v : textureImage.height;
-        if (textureV < 0) textureV = 0;
-        textureU = u / (float) textureImage.width;
-        textureV = v / (float) textureImage.height;
+    //if (hints[NEW_GRAPHICS]) {
+    if (textureImage == null) {
+      message(PROBLEM, "gotta use texture() " +
+              "after beginShape() and before vertexTexture()");
+      return;
+    }
+    if (textureMode == IMAGE_SPACE) {
+      textureU = (u < textureImage.width) ? u : textureImage.width;
+      if (textureU < 0) textureU = 0;
+      textureV = (v < textureImage.height) ? v : textureImage.height;
+      if (textureV < 0) textureV = 0;
+      textureU = u / (float) textureImage.width;
+      textureV = v / (float) textureImage.height;
 
-      } else {  // NORMAL_SPACE
-        textureU = u;
-        textureV = v;
-        if (textureU < 0) textureU = 0;
-        if (textureV < 0) textureV = 0;
-        if (textureU > ONE) textureU = ONE;
-        if (textureV > ONE) textureV = ONE;
-      }
+    } else {  // NORMAL_SPACE
+      textureU = u;
+      textureV = v;
+      if (textureU < 0) textureU = 0;
+      if (textureV < 0) textureV = 0;
+      if (textureU > ONE) textureU = ONE;
+      if (textureV > ONE) textureV = ONE;
+    }
 
+    /*
     } else {  // OLD_GRAPHICS
       if (textureImage == null) {
         message(PROBLEM, "gotta use texture() " +
@@ -1088,6 +1056,7 @@ public class PGraphics extends PImage
         textureV = v * polygon.theight;
       }
     }
+    */
   }
 
 
@@ -1099,21 +1068,22 @@ public class PGraphics extends PImage
   public void normal(float nx, float ny, float nz) {
     if (shape) {  // if inside shape
       if (!normalChanged) {
-        if (hints[NEW_GRAPHICS]) {
-          // set normals for vertices till now to the same thing
-          for (int i = vertex_start; i < vertex_end; i++) {
-            vertices[i][NX] = normalX;
-            vertices[i][NY] = normalY;
-            vertices[i][NZ] = normalZ;
-          }
+        //if (hints[NEW_GRAPHICS]) {
+        // set normals for vertices till now to the same thing
+        for (int i = vertex_start; i < vertex_end; i++) {
+          vertices[i][NX] = normalX;
+          vertices[i][NY] = normalY;
+          vertices[i][NZ] = normalZ;
+        }
 
-          // [vertex change]
-          for (int i = vertex_start; i < vertex_end; i++) {
-            vertices[i][NX] = normalX;
-            vertices[i][NY] = normalY;
-            vertices[i][NZ] = normalZ;
-          }
+        // [vertex change]
+        for (int i = vertex_start; i < vertex_end; i++) {
+          vertices[i][NX] = normalX;
+          vertices[i][NY] = normalY;
+          vertices[i][NZ] = normalZ;
+        }
 
+        /*
         } else {  // OLD_GRAPHICS
           // set normals for vertices till now to the same thing
           for (int i = 0; i < polygon.vertexCount; i++) {
@@ -1122,6 +1092,7 @@ public class PGraphics extends PImage
             polygon.vertices[i][NZ] = normalZ;
           }
         }
+        */
         normalChanged = true;
       }
     }
@@ -1374,7 +1345,7 @@ public class PGraphics extends PImage
   }
 
 
-  protected void endShape_newgraphics() {
+  public void endShape() {
     // clear the 'shape drawing' flag in case of early exit
     shape = false;
 
@@ -1884,6 +1855,7 @@ public class PGraphics extends PImage
   //////////////////////////////////////////////////////////////
 
 
+  /*
   public void endShape() {
     if (hints[NEW_GRAPHICS]) {
       endShape_newgraphics();
@@ -1917,16 +1889,6 @@ public class PGraphics extends PImage
         vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
         vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
       }
-
-      /*
-    } else if (cameraMode == ISOMETRIC) {
-      for (int i = 0; i < vertexCount; i++) {
-        float v[] = vertices[i];
-        v[X] =  v[MX] - v[MZ];
-        v[Y] = -v[MX]/2f + v[MY] - v[MZ]/2f;
-        v[Z] =  v[MZ];
-      }
-      */
 
     } else {  // dimension = 3 or camera mode is custom
       polygon.interpZ = true;
@@ -2247,13 +2209,12 @@ public class PGraphics extends PImage
     // to signify no shape being drawn
     //shapeKind = 0;
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
 
   // CONCAVE/CONVEX POLYGONS
-
-  // pile of shit hack from rocha that cost us piles of $$
 
 
   private boolean is_convex() {
@@ -2994,24 +2955,24 @@ public class PGraphics extends PImage
     }
 
     // broken in the new graphics engine
-    if (!hints[NEW_GRAPHICS]) {
-      if (stroke) {
-        if (strokeWeight == 1) {
-          thin_flat_line(x1, y1, x2, y1);
-          thin_flat_line(x2, y1, x2, y2);
-          thin_flat_line(x2, y2, x1, y2);
-          thin_flat_line(x1, y2, x1, y1);
+    //if (!hints[NEW_GRAPHICS]) {
+    // TODO this is the wrong place for the stroke to be drawn!
+    if (stroke) {
+      if (strokeWeight == 1) {
+        thin_flat_line(x1, y1, x2, y1);
+        thin_flat_line(x2, y1, x2, y2);
+        thin_flat_line(x2, y2, x1, y2);
+        thin_flat_line(x1, y2, x1, y1);
 
-        } else {
-          thick_flat_line(x1, y1, fillR, fillG, fillB, fillA,
-                          x2, y1, fillR, fillG, fillB, fillA);
-          thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
-                          x2, y2, fillR, fillG, fillB, fillA);
-          thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
-                          x1, y2, fillR, fillG, fillB, fillA);
-          thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
-                          x1, y1, fillR, fillG, fillB, fillA);
-        }
+      } else {
+        thick_flat_line(x1, y1, fillR, fillG, fillB, fillA,
+                        x2, y1, fillR, fillG, fillB, fillA);
+        thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
+                        x2, y2, fillR, fillG, fillB, fillA);
+        thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
+                        x1, y2, fillR, fillG, fillB, fillA);
+        thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
+                        x1, y1, fillR, fillG, fillB, fillA);
       }
     }
   }
@@ -3467,9 +3428,11 @@ public class PGraphics extends PImage
         val += inc;
       }
       // unnecessary extra point that spoiled triangulation [rocha]
+      /*
       if (!hints[NEW_GRAPHICS]) {
         vertex(x + cosLUT[0]*hradius, y + sinLUT[0]*vradius);
       }
+      */
       endShape();
     }
   }
@@ -3500,7 +3463,8 @@ public class PGraphics extends PImage
     float y1 = -h/2f; float y2 = h/2f;
     float z1 = -d/2f; float z2 = d/2f;
 
-    if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
+    triangle.setCulling(true);
 
     beginShape(QUADS);
 
@@ -3542,7 +3506,8 @@ public class PGraphics extends PImage
 
     endShape();
 
-    if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
+    triangle.setCulling(false);
   }
 
 
@@ -3616,7 +3581,8 @@ public class PGraphics extends PImage
     if (x!=0f && y!=0f && z!=0f) translate(x,y,z);
     scale(r);
 
-    if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
+    triangle.setCulling(true);
 
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
@@ -3659,8 +3625,8 @@ public class PGraphics extends PImage
     endShape();
     pop();
 
-    if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
-    //triangle.setCulling(false);
+    //if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
+    triangle.setCulling(false);
   }
 
 
@@ -4423,7 +4389,6 @@ public class PGraphics extends PImage
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    //modelMatrixIsIdentity = false;
 
     float r00 = m00*n00 + m01*n10 + m02*n20 + m03*n30;
     float r01 = m00*n01 + m01*n11 + m02*n21 + m03*n31;
@@ -4450,6 +4415,34 @@ public class PGraphics extends PImage
     m20 = r20; m21 = r21; m22 = r22; m23 = r23;
     m30 = r30; m31 = r31; m32 = r32; m33 = r33;
   }
+
+
+
+  /**
+   * Apply a 4x4 transformation matrix. Same as glMultMatrix().
+   */
+  // n20 is 0, n21 is 0, n22 is 1
+  /*
+  public void applyMatrix(float n00, float n01, float n02, 
+                          float n10, float n11, float n12) {
+
+    float r00 = m00*n00 + m01*n10;
+    float r01 = m00*n01 + m01*n11;
+    float r02 = m00*n02 + m01*n12 + m02;
+
+    float r10 = m10*n00 + m11*n10;
+    float r11 = m10*n01 + m11*n11;
+    float r12 = m10*n02 + m11*n12 + m12;
+
+    float r20 = m20*n00 + m21*n10;
+    float r21 = m20*n01 + m21*n11;
+    float r22 = m20*n02 + m21*n12 + m22;
+
+    m00 = r00; m01 = r01; m02 = r02; m03 = r03;
+    m10 = r10; m11 = r11; m12 = r12; m13 = r13;
+    m20 = r20; m21 = r21; m22 = r22; m23 = r23;
+  }
+  */
 
 
   /**

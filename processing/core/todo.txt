@@ -5,6 +5,10 @@ X added focusGained() and focusLost()
 _   add to preprocessor
 X lots of changes to internal naming of vars
 
+_ add TRIANGLE_FAN
+
+_ pmouseX is broken again
+
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code
 
