@@ -368,6 +368,9 @@ public class PdeSketchbook {
       e.printStackTrace();
     }
 
+    /*
+    // don't do this until it's finished
+    // libraries don't show up as proper sketches anyway
     try {
       if (PdePreferences.getBoolean("export.library")) {
         JMenu librariesMenu = new JMenu("Libraries");
@@ -377,7 +380,7 @@ public class PdeSketchbook {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
+    */
   }
 
 

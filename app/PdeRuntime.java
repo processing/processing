@@ -90,8 +90,7 @@ public class PdeRuntime implements PdeMessageConsumer {
            windowLocation.x + "," + windowLocation.y) :
           (PApplet.EXT_LOCATION + x1 + "," + y1);
 
-        System.out.println("library path is " + sketch.libraryPath);
-
+        //System.out.println("library path is " + sketch.libraryPath);
         String command[] = new String[] {
           //"cmd", "/c", "start", 
 

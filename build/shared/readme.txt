@@ -155,7 +155,7 @@ you tell us about them, so we can fix them.
 
 MAC OS X
 
-the most current release has only been tested on Mac OS X 10.2.6. 
+the most current release has only been tested on Mac OS X 10.3.5.
 your mileage may vary if you're running something else. actually, your
 mileage will vary no matter what, because who knows what this software
 is gonna do. you're playing with free, alpha software. get psyched!
@@ -167,29 +167,20 @@ the "Software Update" control panel. it can also be downloaded from
 http://www.apple.com/downloads/macosx/apple/ or from:
 http://www.apple.com/downloads/macosx/apple/java131.html
 for what it's worth, we don't test processing under mac os x 10.1 
-and we don't recommend it at all. 
+and we don't recommend it at all. nor do we particularly recommend
+10.2, if you can avoid it. and if you're running 10.4, processing is
+the least of your worries.
 
 mouse wheel support only works if you're using java 1.4. the latest
 version of java will be available via the software update control
 panel.
 
-(actually this paragraph is only relevant if you want to try java 1.4,
- since we wound up using 1.3 as the default for release 58)
-if you're having random troubles (exceptions being thrown, 
-screen painting weirdness, general confusion) you might want to 
-try running processing with java 1.3.1 instead of java 1.4. to do so, 
-right-click or control-click the processing application and select 
-"Show Package Contents". go to Contents -> Resources -> and then 
-open MRJApp.properties in a text editor. remove the # from this line:
-com.apple.mrj.application.JVMVersion=1.3.1
-and add a # in front of this line:
-com.apple.mrj.application.JVMVersion=1.3+
-
 serial port.. we use rxtx (version 2.1_6) to handle serial i/o, which
 is included with the processing release. unlike previous releases
 (anything before 57), it no longer requires separate installation. 
 however, if this is the first time you're using rxtx, you'll need to
-run serial_setup.command (double-click it and follow the instructions)
+make your way to the "libraries" folder, find "serial", and inside, 
+run macosx_setup.command (double-click it and follow the instructions)
 to make sure that things are properly set up (a few permissions
 need to be changed). if you're getting a "serial port is already in
 use by another application" it's possible that you haven't run this

@@ -117,6 +117,7 @@ CLASSPATH=../../build/macosx/work/lib/core.jar:$CLASSPATH
 echo Building serial library...
 cd ../../lib/serial
 ../../build/macosx/work/jikes +D -classpath "code/RXTXcomm.jar:../../build/macosx/work/lib/core.jar:$CLASSPATH" -d . *.java 
+rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
 mkdir -p ../../build/macosx/work/libraries/serial/library/
@@ -127,6 +128,7 @@ cp library/serial.jar ../../build/macosx/work/libraries/serial/library/
 echo Building net library...
 cd ../../lib/net
 ../../build/macosx/work/jikes +D -d . *.java 
+rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
 mkdir -p ../../build/macosx/work/libraries/net/library/
@@ -145,6 +147,7 @@ else
 fi
 cd ../../lib/video
 ../../build/macosx/work/jikes +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
+rm -f library/video.jar
 zip -r0q library/video.jar processing
 rm -rf processing
 mkdir -p ../../build/macosx/work/libraries/video/library/
