@@ -609,8 +609,7 @@ public class PFont implements PConstants {
         // boundary of a word
         float wordWidth = calcWidth(textBuffer, wordStart, index);
         if (runningX + wordWidth > boxX2) {
-          if ((runningX == boxX1) &&
-              (wordWidth > boxWidth)) {
+          if (runningX == boxX1) {
             // if this is the first word, and its width is
             // greater than the width of the text box,
             // then break the word where at the max width,
@@ -634,7 +633,7 @@ public class PFont implements PConstants {
             // because multiple spaces don't count for shit when they're
             // at the end of a line like this.
 
-            //index = wordStop + 1;  // back that ass up
+            index = wordStop;  // back that ass up
             while ((index < length) &&
                    (textBuffer[index] == ' ')) {
               index++;
