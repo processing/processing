@@ -1,28 +1,7 @@
 #!/bin/sh
 
 
-# move to base 'processing' directory
-#cd ../..
-
-
-### -- CHECK TO MAKE SURE BAGEL EXISTS -------------------------
-
-# make sure bagel exists, if not, check it out of cvs
-#if test -d bagel
-#then 
-#else
-#  echo Doing CVS checkout of bagel...
-#  cvs co bagel
-#  cd bagel
-#  cvs update -P
-#  cd ..
-#fi
-
-
 ### -- SETUP WORK DIR -------------------------------------------
-
-# back to where we came from
-#cd build/windows
 
 if test -d work
 then
@@ -61,29 +40,13 @@ else
   chmod +x client/*.dll
   cd ../../..
 
-#  mkdir work/lib/export
   mkdir work/lib/build
-  # this will copy cvs files intact, meaning that changes
-  # could be made and checked back in.. interesting
   mkdir work/classes
-
-  # no longer needed with megabucket
-  #cp dist/lib/pde_windows.properties work/lib/
-
-  # java application stubs
-  #cp dist/lib/mrj.jar work/lib/
 
   echo Compiling processing.exe
   cd launcher
   make && cp processing.exe ../work/
   cd ..
-
-  # get the serial stuff
-#  echo Copying serial support from processing.lib dir...
-#  cp ../../lib/serial/comm.jar work/lib/
-#  cp ../../lib/serial/javax.comm.properties work/lib/
-#  cp ../../lib/serial/win32com.dll work/
-#  chmod +x work/win32com.dll
 
   # get jikes and depedencies
   cp dist/jikes.exe work/
@@ -101,29 +64,7 @@ echo Building processing.core
 cd core
 rm -f processing/core/*.class
 
-# clear jikespath to avoid problems if it is defined elsewhere 
-#unset JIKESPATH
-
-#QT_JAVA_PATH="$WINDIR\\system32\\QTJava.zip"
-#if test -f "${QT_JAVA_PATH}"
-#then
-#  #echo "Found Quicktime at $QT_JAVA_PATH"
-#else 
-#  QT_JAVA_PATH="$WINDIR\\system\\QTJava.zip"
-#  if test -f "${QT_JAVA_PATH}"
-#    echo "could not find qtjava.zip in either"
-#    echo "${WINDIR}\\system32\\qtjava.zip or"
-#    echo "${WINDIR}\\system\\qtjava.zip"
-#    echo "quicktime for java must be installed before building."
-#    exit 1;
-#  then
-#    #echo "Found Quicktime at $QT_JAVA_PATH"
-#  else
-#  fi
-#fi
-
 # new regular version
-#CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar"
 export CLASSPATH
 
@@ -132,24 +73,6 @@ perl preproc.pl
 # use this from time to time to test 1.1 savviness
 #/cygdrive/c/msjdk-4.0/bin/jvc /d . *.java
 zip -rq ../build/windows/work/lib/core.jar processing
-
-#perl make.pl JIKES=../build/windows/work/jikes JDK13
-#cp classes/*.class ../build/windows/work/classes/
-
-#echo Building export classes for 1.1
-#rm -f classes/*.class
-#perl make.pl JIKES=../build/windows/work/jikes
-#cd classes
-#zip -0q ../../build/windows/work/lib/export11.jar *.class
-#cd ..
-
-#echo Building export classes for 1.3
-#rm -f classes/*.class
-#perl make.pl JIKES=../build/windows/work/jikes
-#cd classes
-#zip -0q ../../build/windows/work/lib/export13.jar *.class
-#cd ..
-
 
 
 # back to base processing dir
@@ -188,7 +111,6 @@ fi
 
 cd app
 
-#CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar"
 CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar"
 
 ../build/windows/work/jikes +D -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java

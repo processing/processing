@@ -96,26 +96,6 @@ X   errorMessage in PSerial/PClient/PServer are all using System.out
 X write handler for loop() error, warning user to rename loop to draw
 X   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6:29:11: Semantic Error: The method "void loop();" with default access cannot replace the accessible method "void loop();" with public access declared in type "processing.core.PApplet".
 
-hanging bug
-* it may be something to do with the editor consoles. try shutting off
-output to the console and see if it'll still crash.
-* most likely related to io streams to the external java process. when
-run via a disconnected process, using "cmd /c start java", the thing
-will never hang. in that instance, the process terminates almost
-immediately, and no i/o needs to happen (since it's a cmd prompt that
-never shows up). 
-* it could also be a graphics sync bug that just gets more testy
-because the environment, a second java process, is running at the same
-time. mis.newPixels() may hork since it's over in the applet's thread,
-and it might be calling repaint() or Toolkit.sync() to update the
-image on-screen. 
-* shows up on key presses.. not sure if this is because of the actual
-key press, or if it's because they're often accompanied by a println()
-* blank spaces in filenames/parent folder often cause trouble.. not
-sure if related. same for PATH and CLASSPATH.
-* some virus scanning software, particularly older NAV versions cause
-the trouble. 
-
 040925 
 X change how export.txt works
 X make p2 dist for amit
@@ -132,17 +112,18 @@ X   jsyn.jar not needed on export, netscape libs not needed on export
 o crap.. libraries need to be in packages for this to work
 o   but annoying: attach("simong.particlesystem.ParticleSystem") 
 X disable "export application"
+X font builder
+X   properly update the font on new selection
+X   update when smooth is sel/desel
+X   don't allow negative font sizes
 
-
+_ double-check library stuff to make sure they're using the new system
+_ add "archive" option since history is gone
 _ fix dist.sh for mac, pc, linux
 
 _ write better handler for compiler error:
 _   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63:1:70: Semantic Error: You need to modify your classpath, sourcepath, bootclasspath, and/or extdirs setup. Package "poo/shoe" could not be found in:
 
-_ static applets need to be able to resize themselves on 'play'
-_ figure out what to do with static apps exported as application
-_   needs to just hang there
-_ scripts (no graphics) will need to call exit() explicitly
 _ "create font" not working well with postscript font names
 _   need to remap the postscript name back to the java font name
 _   or keep a list of font objects, not just the names
@@ -200,6 +181,33 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
 _     something in that one about mouse position halting or not
+
+hanging bug
+* it may be something to do with the editor consoles. try shutting off
+output to the console and see if it'll still crash.
+* most likely related to io streams to the external java process. when
+run via a disconnected process, using "cmd /c start java", the thing
+will never hang. in that instance, the process terminates almost
+immediately, and no i/o needs to happen (since it's a cmd prompt that
+never shows up). 
+* it could also be a graphics sync bug that just gets more testy
+because the environment, a second java process, is running at the same
+time. mis.newPixels() may hork since it's over in the applet's thread,
+and it might be calling repaint() or Toolkit.sync() to update the
+image on-screen. 
+* shows up on key presses.. not sure if this is because of the actual
+key press, or if it's because they're often accompanied by a println()
+* blank spaces in filenames/parent folder often cause trouble.. not
+sure if related. same for PATH and CLASSPATH.
+* some virus scanning software, particularly older NAV versions cause
+the trouble. 
+
+
+static apps/scripts
+_ static applets need to be able to resize themselves on 'play'
+_ figure out what to do with static apps exported as application
+_   needs to just hang there
+_ scripts (w/ no graphics) will need to call exit() explicitly
 
 
 exporting libraries
@@ -294,11 +302,6 @@ _   maybe something that shows stack trace?
 _   with an 'email this' button? (include source code too?)
 _   also need a "prompt" dialog for asking filenames, etc
 _   implement and remove PdeEditorStatus stuff
-_ check into open-source paperwork for p5
-_ 
-
-
-..................................................................
 
 
 
