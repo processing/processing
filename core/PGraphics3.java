@@ -793,6 +793,15 @@ public class PGraphics3 extends PGraphics {
 
     if (fill) {
       switch (shape) {
+        case TRIANGLE_FAN:
+        {
+          stop = vertex_end - 1;
+          for (int i = vertex_start + 1; i < stop; i++) {
+            add_triangle(vertex_start, i, i+1);
+          }
+        }
+        break;
+
         case TRIANGLES:
         case TRIANGLE_STRIP:
         {
@@ -901,6 +910,7 @@ public class PGraphics3 extends PGraphics {
 
 
   protected final void add_triangle(int a, int b, int c) {
+    System.out.println("adding triangle " + triangleCount);
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
@@ -928,6 +938,8 @@ public class PGraphics3 extends PGraphics {
   protected void render_triangles() {
   //public void render_triangles() {
     //System.out.println("PGraphics3 render triangles");
+    System.out.println("rendering " + triangleCount + " triangles");
+
     for (int i = 0; i < triangleCount; i ++) {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
@@ -1482,7 +1494,13 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  protected void ellipseImpl(float x, float y, float hradius, float vradius) {
+  protected void ellipseImpl(float x1, float y1, float w, float h) {
+    float hradius = w / 2f;
+    float vradius = h / 2f;
+
+    float centerX = x1 + hradius;
+    float centerY = y1 + vradius;
+
     // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
     // now uses current scale factors to determine "real" transformed radius
 
@@ -1501,13 +1519,50 @@ public class PGraphics3 extends PGraphics {
     float inc = (float)SINCOS_LENGTH / cAccuracy;
 
     float val = 0;
+    /*
     beginShape(POLYGON);
     for (int i = 0; i < cAccuracy; i++) {
-      vertex(x + cosLUT[(int) val] * hradius,
-             y + sinLUT[(int) val] * vradius);
+      vertex(centerX + cosLUT[(int) val] * hradius,
+             centerY + sinLUT[(int) val] * vradius);
       val += inc;
     }
     endShape();
+    */
+
+    if (fill) {
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      beginShape(TRIANGLE_FAN);
+      vertex(centerX, centerY);
+      for (int i = 0; i < cAccuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * hradius,
+             centerY + sinLUT[0] * vradius);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      boolean savedFill = fill;
+      fill = false;
+
+      val = 0;
+      beginShape(LINE_LOOP);
+      for (int i = 0; i < cAccuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      endShape();
+
+      fill = savedFill;
+    }
   }
 
 
@@ -1517,10 +1572,13 @@ public class PGraphics3 extends PGraphics {
    * This is so that an arc can be drawn that crosses zero mark,
    * and the user will still collect $200.
    */
-  protected void arcImpl(float x, float y, float w, float h,
+  protected void arcImpl(float x1, float y1, float w, float h,
                          float start, float stop) {
     float hr = w / 2f;
     float vr = h / 2f;
+
+    float centerX = x1 + hr;
+    float centerY = y1 + vr;
 
     if (fill) {
       // shut off stroke for a minute
@@ -1531,16 +1589,16 @@ public class PGraphics3 extends PGraphics {
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
 
       beginShape(TRIANGLE_FAN);
-      vertex(x, y);
+      vertex(centerX, centerY);
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
-        vertex(x + cosLUT[ii] * hr,
-               y + sinLUT[ii] * vr);
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
       }
       // draw last point explicitly for accuracy
-      vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-             y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
       endShape();
 
       stroke = savedStroke;
@@ -1560,12 +1618,12 @@ public class PGraphics3 extends PGraphics {
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
-        vertex(x + cosLUT[ii] * hr,
-               y + sinLUT[ii] * vr);
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
       }
       // draw last point explicitly for accuracy
-      vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-             y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
       endShape();
 
       fill = savedFill;

@@ -455,6 +455,12 @@ public class PFont implements PConstants {
       parent.vertex(x1, y2, z, 0, height[glyph]);
       parent.vertex(x2, y2, z, width[glyph], height[glyph]);
       parent.vertex(x2, y1, z, width[glyph], 0);
+      /*
+      parent.vertex(x1, y1, z);
+      parent.vertex(x1, y2, z);
+      parent.vertex(x2, y2, z);
+      parent.vertex(x2, y1, z);
+      */
       parent.endShape();
 
       //parent.textureMode = savedTextureMode;
