@@ -42,6 +42,9 @@ ks X adaptive sizing of circle segmenting based on rendered size
 ks X   rather than requiring a fixed amount
 ks o   have a few settings cached
 ks X   fixed again for scale() issues
+ks X RGBA code for simage(), along with some speedups
+ks X faster version of _blend() function
+ks X MAX_LIGHTS instead of '10' sprinkled through the code
 
 
 ..................................................................
