@@ -40,6 +40,8 @@ else
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
   /sw/bin/cp -a dist/Processing.app work/
+  # cvs doesn't seem to want to honor the +x bit 
+  chmod +x work/Processing.app/Contents/MacOS/JavaApplicationStub
 
   # get jikes and depedencies
   echo Copying jikes...
@@ -92,7 +94,10 @@ fi
 
 echo Building the PDE...
 
-../build/macosx/work/jikes +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+# compile the code as java 1.3, so that the application will run and
+# show the user an error, rather than crapping out with some strange
+# "class not found" crap
+../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
@@ -106,29 +111,39 @@ cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
-CLASSPATH=../../build/macosx/work/lib/core.jar:$CLASSPATH
+
+PLATFORM=macosx
+
+
+CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
+JIKES=../build/$PLATFORM/work/jikes
+CORE=../build/$PLATFORM/work/lib/core.jar
+LIBRARIES=../build/$PLATFORM/work/libraries
+
+# move to processing/build 
+cd ..
 
 
 # SERIAL LIBRARY
 echo Building serial library...
-cd ../../lib/serial
-../../build/macosx/work/jikes -target 1.1 +D -classpath "code/RXTXcomm.jar:../../build/macosx/work/lib/core.jar:$CLASSPATH" -d . *.java 
+cd ../serial
+$JIKES -target 1.1 +D -classpath "code/RXTXcomm.jar:$CORE:$CLASSPATH" -d . *.java 
 rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
-mkdir -p ../../build/macosx/work/libraries/serial/library/
-cp library/serial.jar ../../build/macosx/work/libraries/serial/library/
+mkdir -p $LIBRARIES/serial/library/
+cp library/serial.jar $LIBRARIES/serial/library/
 
 
 # NET LIBRARY
 echo Building net library...
-cd ../../lib/net
-../../build/macosx/work/jikes -target 1.1 +D -d . *.java 
+cd ../net
+$JIKES -target 1.1 +D -d . *.java 
 rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
-mkdir -p ../../build/macosx/work/libraries/net/library/
-cp library/net.jar ../../build/macosx/work/libraries/net/library/
+mkdir -p $LIBRARIES/net/library/
+cp library/net.jar $LIBRARIES/net/library/
 
 
 # VIDEO LIBRARY
@@ -141,36 +156,41 @@ else
   echo "QuickTime for Java must be installed before building."
   exit 1;
 fi
-cd ../../lib/video
-../../build/macosx/work/jikes -target 1.1 +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
+cd ../video
+$JIKES -target 1.1 +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
 rm -f library/video.jar
 zip -r0q library/video.jar processing
 rm -rf processing
-mkdir -p ../../build/macosx/work/libraries/video/library/
-cp library/video.jar ../../build/macosx/work/libraries/video/library/
-
-
-# PARTICLES LIBRARY
-echo Build particles library...
-cd ../../lib/particles
-../../build/macosx/work/jikes -target 1.1 +D -d . *.java 
-rm -f library/particles.jar
-zip -r0q library/particles.jar simong
-rm -rf simong
-mkdir -p ../../build/macosx/work/libraries/particles/library/
-cp library/particles.jar ../../build/macosx/work/libraries/particles/library/
+mkdir -p $LIBRARIES/video/library/
+cp library/video.jar $LIBRARIES/video/library/
 
 
 # OPENGL LIBRARY
 echo Building OpenGL library...
-cd ../../lib/opengl
-../../build/macosx/work/jikes -target 1.1 +D -classpath "library/jogl.jar:$CLASSPATH" -d . *.java 
+cd ../opengl
+$JIKES -target 1.1 +D -classpath "library/jogl.jar:$CLASSPATH" -d . *.java 
 rm -f library/opengl.jar
 zip -r0q library/opengl.jar processing
 rm -rf processing
-mkdir -p ../../build/macosx/work/libraries/opengl/library/
-cp library/opengl.jar ../../build/macosx/work/libraries/opengl/library/
+mkdir -p $LIBRARIES/opengl/library/
+cp library/opengl.jar $LIBRARIES/opengl/library/
 
+
+CLASSPATH=../$CLASSPATH
+JIKES=../../build/$PLATFORM/work/jikes
+CORE=../../build/$PLATFORM/work/lib/core.jar
+LIBRARIES=../../build/$PLATFORM/work/libraries
+
+
+# PARTICLES LIBRARY
+echo Build particles library...
+cd ../lib/particles
+$JIKES -target 1.1 +D -d . *.java 
+rm -f library/particles.jar
+zip -r0q library/particles.jar simong
+rm -rf simong
+mkdir -p $LIBRARIES/particles/library/
+cp library/particles.jar $LIBRARIES/particles/library/
 
 echo
 echo Done.

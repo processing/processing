@@ -94,8 +94,7 @@ public class PdeEditorFind extends JFrame
     buttons.setLayout(new FlowLayout());
 
     // ordering is different on mac versus pc
-    if ((PdeBase.platform == PdeBase.MACOSX) ||
-        (PdeBase.platform == PdeBase.MACOS9)) {
+    if (PdeBase.isMacOS()) {
       buttons.add(replaceButton = new JButton("Replace"));
       buttons.add(replaceAllButton = new JButton("Replace All"));
       buttons.add(findButton = new JButton("Find"));
@@ -112,7 +111,8 @@ public class PdeEditorFind extends JFrame
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    //if (PdeBase.platform == PdeBase.MACOSX) {
+    if (PdeBase.isMacOS()) {
       buttons.setBorder(null);
     }
 

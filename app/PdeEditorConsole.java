@@ -145,7 +145,7 @@ public class PdeEditorConsole extends JScrollPane {
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    if (PdeBase.isMacOS()) {
       setBorder(null);
     }
   }

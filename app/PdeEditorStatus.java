@@ -239,7 +239,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)(
       // os9 seems to work if bg of component is set, but x still a bastard
-      if (PdeBase.platform == PdeBase.MACOSX) {
+      if (PdeBase.isMacOS()) {
         yesButton.setBackground(bgcolor[PROMPT]);
         noButton.setBackground(bgcolor[PROMPT]);
         cancelButton.setBackground(bgcolor[PROMPT]);

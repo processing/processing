@@ -7,6 +7,46 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0081 - who knows
+
+* major api changes in this release *
+
+we're nearing the end of our general f-ing with the api, but we've
+once again broken things. this time, we've moved around how renderers
+work. 
+
+- depth() is gone, and so is the renderer menu, in its place, we
+  have a new method for specifying how you want to render. e.g:
+
+  this allocates a 2D buffer to draw into, using the Java2D 
+  engine or the original 1.1-compliant engine depending on whether
+  or not you're using Java 1.3 or higher:
+  size(200, 200); 
+
+  this gets the original processing 2D renderer:
+  size(200, 200, P2D);
+
+  this provides the oroginal processing 3D renderer:
+  size(200, 200, P3D);
+
+  and this loads (drum roll) opengl:
+  size(200, 200, OPENGL);
+
+- gl.glXxxxXxx no longer works, because the base applet is just a 
+  regular PApplet, not a PAppletGL. this is a bummer but a small
+  price to pay for all the goodness that comes with the way that
+  the new size() function works. in order to get the gl object to 
+  draw to, use the following ugly piece of code. 
+  GL gl = ((PGraphicsGL) g).gl;
+  you may also want/need to add the following import statement 
+  (did you know we support imports? not sure if this was mentioned
+  back around 70 or whenever they were implemented)
+  import net.java.games.jogl.GL;
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0080 - 2 April 2005
 
 bug fix and api tweaking release... um yeah.

@@ -15,9 +15,11 @@ cp -r ../shared processing
 
 # add the libraries folder with source
 cp -r ../../lib processing/libraries
-
+cp -r ../../net ../../lib processing/libraries/
+cp -r ../../opengl ../../lib processing/libraries/
+cp -r ../../serial ../../lib processing/libraries/
 # doesn't work on linux, don't include it and confuse people
-rm -rf processing/libraries/video
+#cp -r ../../video ../../lib processing/libraries/
 
 # new style examples thing ala reas
 cd processing
