@@ -7,6 +7,12 @@ about to enjoy is extremely hot.
 ABOUT REV 0060 - 
 
 
+[ api changes ]
+
+- "No field named "SMOOTH_IMAGES" was found in type "Temporary_NNNN_NNNN".
+  SMOOTH_IMAGES is no longer needed, or supported.
+
+
 [ known bugs, pardon our dust ]
 
 - single pixel lines draw on top of everything. they have no alpha
