@@ -1,3 +1,27 @@
+0049
+X add http url support for loadImage and loadStream
+X ceil/floor/round
+X new set of examples
+X   remove old examples from cvs
+X pmouseX and pmouseX should be colored with mouseX and mouseY
+X new html for export
+X new colors chosen by casey (replace pde.properties and buttons.gif)
+/ disappearing text caret on win2k
+/   works in 'insert' mode
+X   just disabled it ever hiding.. we'll see if it fixes
+X flush() after every println()
+X   incremental printout 
+X uncovered bug with long line lengths in console
+/ pmouseX problem reported by casey (in bugs.txt)
+o images don't load during setup [reas] 
+X   //This is not a problem -- Casey
+X framerate() and framerate(15)
+X delay() should sleep the thread [glen murphy]
+X   it's sucking cpu and won't open a window until the delay is up
+X   also don't delay on the first time through
+X   add framerate to colored things list
+
+
 MISC (pruned from crusty todo list)
 
 X text editor? jedit's textarea class? hmm? hmm?  // Yeah for jedit! 
