@@ -38,7 +38,6 @@ import gnu.io.*;
 public class PdeRuntime implements PdeMessageConsumer {
 
   Process process;
-  //KjcApplet applet;
   BApplet applet;
   PdeException exception;
   Window window;
@@ -86,6 +85,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-cp",
           externalPaths,
           "BApplet",
+          "--location=" + x1 + "," + y1,
           className
         };
 
@@ -211,16 +211,48 @@ public class PdeRuntime implements PdeMessageConsumer {
         } else {
           Insets insets = window.getInsets();
           //System.out.println(insets);
+
+          int minW = PdeBase.getInteger("run.window.width.minimum", 120);
+          int minH = PdeBase.getInteger("run.window.height.minimum", 120);
+          int windowW = Math.max(applet.width, minW) + insets.left + insets.right;
+          int windowH = Math.max(applet.height, minH) + insets.top + insets.bottom;
+
+          if (x1 - windowW > 10) {  // if it fits to the left of the window
+            window.setBounds(x1 - windowW, y1, windowW, windowH);
+            //windowX = x1 - ww;
+            //windowY = y1;
+
+          } else { // if it fits inside the editor window
+            x1 = parentLoc.x + PdeEditor.GRID_SIZE * 2;  // 66
+            y1 = parentLoc.y + PdeEditor.GRID_SIZE * 2;  // 66
+
+            if ((x1 + windowW > screen.width - PdeEditor.GRID_SIZE) ||
+                (y1 + windowH > screen.height - PdeEditor.GRID_SIZE)) {
+              // otherwise center on screen
+              x1 = (screen.width - windowW) / 2;
+              y1 = (screen.height - windowH) / 2;
+            }
+            window.setBounds(x1, y1, windowW, windowH); //ww, wh);
+          }
+
+          /*
+          int x1 = parentLoc.x - 20;
+          int y1 = parentLoc.y;
+
+          Insets insets = window.getInsets();
+          //System.out.println(insets);
+
           int mw = PdeBase.getInteger("run.window.width.minimum", 120);
           int mh = PdeBase.getInteger("run.window.height.minimum", 120);
           int ww = Math.max(applet.width, mw) + insets.left + insets.right;
           int wh = Math.max(applet.height, mh) + insets.top + insets.bottom;
+
           if (x1 - ww > 10) {  // if it fits to the left of the window
             window.setBounds(x1 - ww, y1, ww, wh);
 
           } else { // if it fits inside the editor window
-            x1 = parentLoc.x + PdeEditor.GRID_SIZE * 2;
-            y1 = parentLoc.y + PdeEditor.GRID_SIZE * 2;
+            x1 = parentLoc.x + PdeEditor.GRID_SIZE * 2;  // 66
+            y1 = parentLoc.y + PdeEditor.GRID_SIZE * 2;  // 66
 
             if ((x1 + ww > screen.width - PdeEditor.GRID_SIZE) ||
                 (y1 + wh > screen.height - PdeEditor.GRID_SIZE)) {
@@ -230,6 +262,7 @@ public class PdeRuntime implements PdeMessageConsumer {
             }
             window.setBounds(x1, y1, ww, wh);
           }
+          */
 
           Color windowBgColor = 
             PdeBase.getColor("run.window.bgcolor", SystemColor.control); 
@@ -238,9 +271,10 @@ public class PdeRuntime implements PdeMessageConsumer {
           //window.setBackground(SystemColor.windowBorder);
           //window.setBackground(SystemColor.control);
 
-          applet.setBounds((ww - applet.width)/2, 
-                           insets.top + ((wh-insets.top-insets.bottom) -
-                                         applet.height)/2, ww, wh);
+          applet.setBounds((windowW - applet.width)/2, 
+                           insets.top + ((windowH - insets.top - insets.bottom) -
+                                         applet.height)/2, 
+                           windowW, windowH);
         }
 
         applet.setVisible(true);  // no effect
