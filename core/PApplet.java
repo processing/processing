@@ -3333,7 +3333,7 @@ public class PApplet extends Applet
 
   public final int color(int gray) {
     if (g == null) {
-      gray &= 0xff; // cut the bounds on this feller
+      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(gray);
@@ -3342,7 +3342,8 @@ public class PApplet extends Applet
 
   public final int color(float fgray) {
     if (g == null) {
-      int gray = ((int) fgray) & 0xff;
+      int gray = (int) fgray;
+      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(fgray);
@@ -3351,8 +3352,8 @@ public class PApplet extends Applet
 
   public final int color(int gray, int alpha) {
     if (g == null) {
-      gray &= 0xff; // cut the bounds on this feller
-      alpha &= 0xff;
+      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
+      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
       return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(gray, alpha);
@@ -3361,8 +3362,10 @@ public class PApplet extends Applet
 
   public final int color(float fgray, float falpha) {
     if (g == null) {
-      int gray = ((int) fgray) & 0xff;
-      int alpha = ((int) falpha) & 0xff;
+      int gray = (int) fgray;
+      int alpha = (int) falpha;
+      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
+      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(fgray, falpha);
@@ -3371,8 +3374,11 @@ public class PApplet extends Applet
 
   public final int color(int x, int y, int z) {
     if (g == null) {
-      return 0xff000000 | 
-        ((x & 0xff) << 16) | ((y & 0xff) << 8) | (z & 0xff);
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
+      return 0xff000000 | (x << 16) | (y << 8) | z;
     }
     return g.color(x, y, z);
   }
@@ -3380,8 +3386,11 @@ public class PApplet extends Applet
 
   public final int color(float x, float y, float z) {
     if (g == null) {
-      return 0xff000000 | 
-        (((int)x & 0xff) << 16) | (((int)y & 0xff) << 8) | ((int)z & 0xff);
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
+      return 0xff000000 | ((int)x << 16) | ((int)y << 8) | (int)z;
     }
     return g.color(x, y, z);
   }
@@ -3389,8 +3398,12 @@ public class PApplet extends Applet
 
   public final int color(int x, int y, int z, int a) {
     if (g == null) {
-      return ((a & 0xff) << 24) |
-        ((x & 0xff) << 16) | ((y & 0xff) << 8) | (z & 0xff);
+      if (a > 255) a = 255; else if (a < 0) a = 0;
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
+      return (a << 24) | (x << 16) | (y << 8) | z;
     }    
     return g.color(x, y, z, a);
   }
@@ -3398,8 +3411,12 @@ public class PApplet extends Applet
 
   public final int color(float x, float y, float z, float a) {
     if (g == null) {
-      return (((int)a & 0xff) << 24) |
-        (((int)x & 0xff) << 16) | (((int)y & 0xff) << 8) | ((int)z & 0xff);
+      if (a > 255) a = 255; else if (a < 0) a = 0;
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
+      return ((int)a << 24) | ((int)x << 16) | ((int)y << 8) | (int)z;
     }
     return g.color(x, y, z, a);
   }
