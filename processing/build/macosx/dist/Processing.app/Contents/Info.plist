@@ -18,5 +18,7 @@
 	<string>1.0a1</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleIdentifier</key> 
+	<string>org.processing.app</string>
 </dict>
 </plist>
