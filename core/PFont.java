@@ -268,7 +268,7 @@ public class PFont implements PConstants {
     os.writeInt(charCount);
     os.writeInt(8);       // numBits
     os.writeInt(mbox);    // formerly mboxX (was 64, now 48)
-    os.writeInt(mbox2);    // formerly mboxY (was 64, still 64)
+    os.writeInt(mbox2);   // formerly mboxY (was 64, still 64)
     os.writeInt(ascent);  // formerly baseHt (was ignored)
     os.writeInt(descent); // formerly struct padding for c version
 
