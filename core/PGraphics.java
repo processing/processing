@@ -5887,6 +5887,34 @@ public class PGraphics extends PImage implements PConstants {
   // they can write it themselves (not difficult)
 
 
+  public final int color(int gray) {
+    if ((color_mode == RGB) && (!color_scale)) {
+      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+    }
+    calc_color(gray);
+    return calci;
+  }
+
+  public final int color(float gray) {
+    calc_color(gray);
+    return calci;
+  }
+
+
+  public final int color(int gray, int alpha) {
+    if ((color_mode == RGB) && (!color_scale)) {
+      return (gray << 24) | (gray << 16) | (gray << 8) | gray;
+    }
+    calc_color(gray, alpha);
+    return calci;
+  }
+
+  public final int color(float gray, float alpha) {
+    calc_color(gray, alpha);
+    return calci;
+  }
+
+
   public final int color(int x, int y, int z) {
     if ((color_mode == RGB) && (!color_scale)) {
       return 0xff000000 | (x << 16) | (y << 8) | z;

@@ -7,6 +7,8 @@ X   was this the big one? a big one?
 040713
 X fixes to line and curve code
 
+_ moving p5 prefs on mac into documents? or inside sketchbook?
+
 _ terrible loadImage bug.. does it affect loadStrings?
 
 _ "save as" needs to update the editorheader
@@ -469,3 +471,29 @@ _   wrap up oro for simple matching
 _   (as alternative to the sun classes.. link to those in the docs)
 _ method for file handling, recursive walk-through a directory
 _   file i/o: file listing util that leaves out . and ..
+
+more random thoughts
+_ stroke picker
+_   just lineweight, so don't bother.. use constants palette instead
+_ font picker
+_   same thing, just quickly generates fonts on the fly and applies them
+_ need to look at matlab's visualization tools
+_ arcs, better 'color' object
+_ take everything in perl cookbook, and make easy to do with p5
+_ database access and reading large files are always hangups
+_ support capabilities of matlab's visualization tools
+_ charting/labeling primitives.. excel never quite does it
+_ botting engine
+_ difficulty of initial grab/analysis of data, that may take some time
+_   then needs to be stored and run on multiple times
+_ methods for picking colors.. how to color code, limit to 5? gradients..
+_ simple way to do tufte-style small multiples on an app
+_ function for reporting percent finished (or swing dialog)
+_ also for reporting the amount of time remaining
+_ loading/selecting a file (or folder), or from command line
+_ load large file as lattice (option of whether to keep in memory)
+_   how many rows/columns for headings
+_ walking through an entire directory, with a handler
+_   that throws out the . and .. items
+_   that knows about aliases (jdk13)
+_ overall contrast/color control (genomevalence for hulk)
