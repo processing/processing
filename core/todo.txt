@@ -2,6 +2,12 @@
 X bring back pmouseX/Y using a tricky method of storing separate
 X   values for inside draw() versus inside the event handler versions
 X   debug handling, and make firstMouse public
+X explicitly state depth()/nodepth()
+X   don't allocate zbuffer & stencil until depth() is called
+X arc with stroke only draws the arc shape itself
+X   may need a 'wedge' function to draw a stroke around the whole thing
+X only allocate stencil and zbuffer on first call to depth()
+X   this will require changes to PTriangle and PLine inside their loops
 
 covered in previous
 X before graphics engine change, attach jogl stuff
@@ -32,97 +38,94 @@ X add gzipInput and gzipOutput
 X light(x, y, z, c1, c2, c3, TYPE)
 X   also BLight with same constructor, and on() and off() fxn
 
-image stuff
-o could also do PImage2, which would need a getPixels() before messing w/ it
-o   bad idea, distinction not clear
-o even in java 1.1, could use regular java.awt.Image and require getPixels()
-o   -> 1.1 wouldn't help anything, because needs pixels to render, oops
-
 api changes
 X removed circle.. it's dumb when ellipse() is in there
 X   (it's not like we have square() in the api)
 X arcMode is gone.. just uses ellipseMode()
 X save tga and tif methods are static and public
 X imageMode(CORNER) and CORNERS are the only usable versions
+X alpha(PImage) is now called mask() instead
+X   already have an alpha() function that gets alpha bits
+X on start, mouseX is 0.. how to avoid?
+X   use firstMouse variable.. figure out naming
 
-_ alpha(PImage) is now called mask() instead?
-_   already have an alpha() function that gets alpha bits
-_ sphere x,y,z,r or box w,h,d.. need to make them consistent
-_ should we switch to curveVertex(1,2,3) (ala curveto)
-_   because some confusion with mixing types of curves
-
-_ the updatePixels() in PGraphics has to be overridden (from PImage)
-_   to make itself actually update on-screen
-_   actually, should be no different than the check_image function
-_ PGraphics2 and PGraphicsGL will need loadPixels() to be called
-_   in order to read pixels from the buffer
-_ loadPixels() and updatePixels() prolly should be shut off in opengl
-_   make people use get() instead to grab sub-images
-_   PGraphicsGL.copy() needs to be overridden.. use glDrawBitmap
-
+image stuff
+o could also do PImage2, which would need a getPixels() before messing w/ it
+o   bad idea, distinction not clear
+o even in java 1.1, could use regular java.awt.Image and require getPixels()
+o   -> 1.1 wouldn't help anything, because needs pixels to render, oops
+X the updatePixels() in PGraphics has to be overridden (from PImage)
+X   to make itself actually update on-screen
+X   actually, should be no different than the check_image function
+X PGraphics2 and PGraphicsGL will need loadPixels() to be called
+X   in order to read pixels from the buffer
+X loadPixels() and updatePixels() prolly should be shut off in opengl
+X   make people use get() instead to grab sub-images
+X   PGraphicsGL.copy() needs to be overridden.. use glDrawBitmap
 o loadImage() needs to handle 1.1 vs 1.3 loading
 o   set image.format to be BUFFERED? no.. just use RGBA always
 o have a flag to always use the cache, i.e. with BufferedImage
 o   turn that off when someone modifies it (nope, no need to)
 X PImage.getPixels(), updatePixels(), updatePixels(x, y, w, h), 
 o   PImage.setPixels(int another[]);
+X imageMode(CENTER) is weird for copy() and updatePixels()
+X   perhaps copy() and get() ignore imageMode and use xywh or x1y1x2y2?
+X   or disallow imageMode(CENTER) altogether?
+o in java 1.3, getPixels() can call getRGB() via reflection
+o   cache.getClass().getName().equals("BufferedImage")
+X readPixels/writePixels?
+X   has to happen, since this is so fundamental to gl as well
+X loadImage in 1.3 leaves pixels[] null (not in 1.1)
+X   1.3 plus gl is a problem, since conflicting caches
+X   gl has no need for a bufferedimage tho
+X     so maybe checks to see if the cache is a BufferedImage
+X     if it is, calls getPixels to set the int array
+X     then replaces cache with glimageache
+X     pappletgl loadimage could take care of this instead
+X       calls super.loadImage(), if cache != null, proceed..
+X       this is prolly a mess
+X PImage.getPixels() and PImage.getPixels(x, y, w, h) ->
+X   (the xywh version still allocates the entire array, but only updates those)
+X   only needed for java2d
+X   not (necessarily) needed when loading images,
+X     but definitely needed when setting pixels on PGraphics
+X PImage.updatePixels() and PImage.updatePixels(x, y, w, h)
+X   (this is actually just setModified)
+X   in opengl, marks all or some as modified
+X     so next time it's drawn, the texture is updated PGraphicsGL.image()
+X   in java2d, updates the BufferedImage on next draw
+X can't use regular getPixels() on PGraphics, because its image isn't 'cache'
+X   also, the cache may be used to draw the whole surface as a gl texture (?)
+X   not a problem for the main PGraphics, but for any others created to draw on
 
-readPixels/writePixels?
-has to happen, since this is so fundamental to gl as well
-loadImage in 1.3 leaves pixels[] null (not in 1.1)
-  1.3 plus gl is a problem, since conflicting caches
-  gl has no need for a bufferedimage tho
-    so maybe checks to see if the cache is a BufferedImage
-    if it is, calls getPixels to set the int array
-    then replaces cache with glimageache
-    pappletgl loadimage could take care of this instead
-      calls super.loadImage(), if cache != null, proceed..
-      this is prolly a mess
-PImage.getPixels() and PImage.getPixels(x, y, w, h) ->
-  (the xywh version still allocates the entire array, but only updates those)
-  only needed for java2d
-  not (necessarily) needed when loading images,
-    but definitely needed when setting pixels on PGraphics
-PImage.updatePixels() and PImage.updatePixels(x, y, w, h)
-  (this is actually just setModified)
-  in opengl, marks all or some as modified
-    so next time it's drawn, the texture is updated PGraphicsGL.image()
-  in java2d, updates the BufferedImage on next draw
-can't use regular getPixels() on PGraphics, because its image isn't 'cache'
-  also, the cache may be used to draw the whole surface as a gl texture (?)
-  not a problem for the main PGraphics, but for any others created to draw on
-
-_ imageMode(CENTER) is weird for copy() and updatePixels()
-_   perhaps copy() and get() ignore imageMode and use xywh or x1y1x2y2?
-_   or disallow imageMode(CENTER) altogether?
-
-_ in java 1.3, getPixels() can call getRGB() via reflection
-_   cache.getClass().getName().equals("BufferedImage")
-
-_ beginShape() 
-_   don't allow you to draw stroked items unless stroke() is called
-_   don't allow beginShape() if shape is already set
-_     (otherwise will cause some very strange errors)
-
-_ PFont.list() to return string list of all the available fonts
-_   textFont with a named font can use the renderer/os font
-_   for postscript, can grab the real font
-_   -> altho problem here is that really the fonts just need a name
-_      since needs to render to screen as well
-
-_ get regular graphics engine working again
-_   smooth is no longer working
-_   ellipses aren't handled
-
-_ default to single byte input from serial port
-_   and add serial.setBuffer() for message length as alternative
-_   or serial.setDelimiter() to fire message on delim
+api todos
+_ sphere x,y,z,r or box w,h,d.. need to make them consistent
+_ look at curve functions more closely
+_   should we switch to curveVertex(1,2,3) (ala curveto)
+_   because some confusion with mixing types of curves
 
 _ move textMode and textSpace back out of PFont
 _   use die() to fail in font situations
 _   can't, just use a RuntimeException
 
+_ get regular graphics engine working again
+_   smooth is no longer working
+_   ellipses aren't handled
+
+_ get frame recording working
+_ also have a simple way to hook in triangle leeches to PGraphics3
+
+_ default to single byte input from serial port
+_   and add serial.setBuffer() for message length as alternative
+_   or serial.setDelimiter() to fire message on delim
+
 _ die() may need to throw a RuntimeException
+
+_ textFont with a named font can use the renderer/os font
+_   PFont.list() to return string list of all the available fonts
+_   for postscript, can grab the real font
+_   -> altho problem here is that really the fonts just need a name
+_      since needs to render to screen as well
 
 _ make light() functions actually do something in PGraphicsGL
 _   make lights half do something in PGraphics3 too
@@ -130,12 +133,16 @@ _   make lights half do something in PGraphics3 too
 _ bring in materials for opengl as well?
 _   don't include a class, just make it similar to the light functions
 
+//
+
+_ remove SCREEN_SPACE altogether? 
+
 _ be consistent about getXxx() methods
 
-_ on start, mouseX is 0.. how to avoid?
-_   use firstMouse variable.. figure out naming
-
-//
+_ beginShape() 
+_   don't allow you to draw stroked items unless stroke() is called
+_   don't allow beginShape() if shape is already set
+_     (otherwise will cause some very strange errors)
 
 _ basic sample audio playback needed for p5
 _   make separate java 1.1 and java 1.3 classes
@@ -148,12 +155,6 @@ _ image loading bug is huge
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
-
-_ arc with stroke only draws the arc shape itself
-_   may need a 'wedge' function to draw a stroke around the whole thing
-
-_ explicitly state depth()/nodepth()
-_   don't allocate zbuffer & stencil until depth() is called
 
 _ image(String name) and textFont(String name)
 _   do we change to font(arial, 12) ?
@@ -236,14 +237,15 @@ _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 
 postscript
-_ keep hints about type of geometry used to reconstruct
-_   no special class, just uses public vars from PGraphics
-_ how to hook into curve rendering so that curve segments are drawn
-_   maybe lines are rendered and sorted, 
-_   but they point to an original version of the curve geometry 
-_   that can be re-rendered 
-_   also integrate catmull-rom -> bezier inverse matrices
-_   even with the general catmull-rom, to render via ai beziers
+X pushing all intelligence down into class that implements PMethods
+o keep hints about type of geometry used to reconstruct
+o   no special class, just uses public vars from PGraphics
+o how to hook into curve rendering so that curve segments are drawn
+o   maybe lines are rendered and sorted, 
+o   but they point to an original version of the curve geometry 
+o   that can be re-rendered 
+o   also integrate catmull-rom -> bezier inverse matrices
+o   even with the general catmull-rom, to render via ai beziers
 
 random tasks
 _ someone to figure out a good model for adaptive sizing of circles
@@ -267,9 +269,6 @@ _   probably a hack that draws the "last" point differently
 _ fishwick bug with text() and shapes
 _   ellipses no longer completed when g.dimensions = 2 or 3,
 _   or not even drawn.. what a mess.
-
-_ only allocate stencil and zbuffer on first call to depth()
-_   this will require changes to PTriangle and PLine inside their loops
 
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code

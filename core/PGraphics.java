@@ -447,15 +447,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void normal(float nx, float ny, float nz) {
-    // not supported in 2D
+    throw new RuntimeException("normal() can only be used with depth()");
   }
 
   public void textureMode(int mode) {
-    // not supported in 2D
+    throw new RuntimeException("textureMode() can only be used with depth()");
   }
 
   public void texture(PImage image) {
-    // not supported in 2D
+    throw new RuntimeException("texture() can only be used with depth()");
   }
 
 
@@ -597,16 +597,21 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void vertex(float x, float y, float u, float v) {
-    // not supported in 2D
+  public void vertex(float x, float y, float z) {
+    throw new RuntimeException("vertex(x, y, z) can only be used with " +
+                               "depth(), use vertex(x, y) instead.");
   }
 
-  public void vertex(float x, float y, float z) {
-    // not supported in 2D
+
+  public void vertex(float x, float y, float u, float v) {
+    throw new RuntimeException("vertex() with u, v coordinates " +
+                               "can only be used with depth()");
   }
+
 
   public void vertex(float x, float y, float z, float u, float v) {
-    // not supported in 2D
+    throw new RuntimeException("vertex() with u, v coordinates " +
+                               "can only be used with depth()");
   }
 
 
@@ -657,7 +662,8 @@ public class PGraphics extends PImage implements PConstants {
    * See notes with the bezier() function.
    */
   public void bezierVertex(float x, float y, float z) {
-    // not supported in 2D
+    throw new RuntimeException("bezierVertex(x, y, z) can only be used with " +
+                               "depth(), use bezierVertex(x, y) instead.");
   }
 
 
@@ -665,6 +671,7 @@ public class PGraphics extends PImage implements PConstants {
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y) {
+    //throw new RuntimeException("curveVertex() temporarily disabled");
     // TODO get matrix setup happening
   }
 
@@ -673,7 +680,8 @@ public class PGraphics extends PImage implements PConstants {
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y, float z) {
-    // not supported in 2D
+    throw new RuntimeException("curveVertex(x, y, z) can only be used with " +
+                               "depth(), use curveVertex(x, y) instead.");
   }
 
 
@@ -747,7 +755,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void point(float x, float y, float z) {
-    // not supported in 2D
+    throw new RuntimeException("point(x, y, z) can only be used with " +
+                               "depth(), use point(x, y) instead.");
   }
 
 
@@ -758,7 +767,8 @@ public class PGraphics extends PImage implements PConstants {
 
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
-    // not supported in 2D
+    throw new RuntimeException("line(x1, y1, z1, x2, y2, z2) " +
+                               "can only be used with depth()");
   }
 
 
@@ -915,18 +925,23 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void box(float size) {
+    throw new RuntimeException("box() can only be used with depth()");
   }
 
   public void box(float w, float h, float d) {
+    throw new RuntimeException("box() can only be used with depth()");
   }
 
   public void sphereDetail(int res) {
+    throw new RuntimeException("sphereDetail() can only be used with depth()");
   }
 
   public void sphere(float r) {
+    throw new RuntimeException("sphere() can only be used with depth()");
   }
 
   public void sphere(float x, float y, float z, float r) {
+    throw new RuntimeException("sphere() can only be used with depth()");
   }
 
 
@@ -1046,7 +1061,8 @@ public class PGraphics extends PImage implements PConstants {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    // not implemented in 2D
+    throw new RuntimeException("bezier() with z coordinates " +
+                               "can only be used with depth()");
   }
 
 
@@ -1191,12 +1207,8 @@ public class PGraphics extends PImage implements PConstants {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    beginShape(LINE_STRIP);
-    curveVertex(x1, y1, z1);
-    curveVertex(x2, y2, z2);
-    curveVertex(x3, y3, z3);
-    curveVertex(x4, y4, z4);
-    endShape();
+    throw new RuntimeException("curve() with z coordinates " +
+                               "can only be used with depth()");
   }
 
 
@@ -1570,7 +1582,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void translate(float tx, float ty, float tz) {
-    // not supported in 2D
+    throw new RuntimeException("translate() with a z coordinate " +
+                               "can only be used with depth()");
   }
 
 
@@ -1596,20 +1609,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void rotateX(float angle) {
-    // not supported in 2D
+    throw new RuntimeException("rotateX() can only be used with depth()");
   }
 
   public void rotateY(float angle) {
-    // not supported in 2D
+    throw new RuntimeException("rotateX() can only be used with depth()");
   }
 
   public void rotateZ(float angle) {
-    // not supported in 2D
+    throw new RuntimeException("rotateX() can only be used with depth()");
   }
 
 
   public void rotate(float angle, float vx, float vy, float vz) {
-    // not supported in 2D
+    throw new RuntimeException("rotate(angle, x, y, z) " +
+                               "can only be used with depth()");
   }
 
 
@@ -1630,7 +1644,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void scale(float x, float y, float z) {
-    // not supported in 2D
+    throw new RuntimeException("scale() with a z coordinate " +
+                               "can only be used with depth()");
   }
 
 
@@ -1700,7 +1715,8 @@ public class PGraphics extends PImage implements PConstants {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    // not supported in 2D
+    throw new RuntimeException("applyMatrix() with a 4x4 matrix " +
+                               "can only be used with depth()");
   }
 
 
@@ -1743,32 +1759,40 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void cameraMode(int mode) {
+    throw new RuntimeException("cameraMode() can only be used with depth()");
   }
 
   public void beginCamera() {
+    throw new RuntimeException("beginCamera() can only be used with depth()");
   }
 
   public void endCamera() {
+    throw new RuntimeException("endCamera() can only be used with depth()");
   }
 
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
+    throw new RuntimeException("ortho() can only be used with depth()");
   }
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
+    throw new RuntimeException("perspective() can only be used with depth()");
   }
 
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
+    throw new RuntimeException("frustum() can only be used with depth()");
   }
 
   public void lookat(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
+    throw new RuntimeException("lookat() can only be used with depth()");
   }
 
   public void printCamera() {
+    throw new RuntimeException("printCamera() can only be used with depth()");
   }
 
 
@@ -1789,27 +1813,29 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public float screenX(float x, float y, float z) {
-    return 0;
+    throw new RuntimeException("screenX(x, y, z) can only be used " +
+                               "with depth(), use screenX(x, y) instead");
   }
 
   public float screenY(float x, float y, float z) {
-    return 0;
+    throw new RuntimeException("screenY(x, y, z) can only be used " +
+                               "with depth(), use screenY(x, y) instead");
   }
 
   public float screenZ(float x, float y, float z) {
-    return 0;
+    throw new RuntimeException("screenZ() can only be used with depth()");
   }
 
   public float objectX(float x, float y, float z) {
-    return 0;
+    throw new RuntimeException("objectX() can only be used with depth()");
   }
 
   public float objectY(float x, float y, float z) {
-    return 0;
+    throw new RuntimeException("objectY() can only be used with depth()");
   }
 
   public float objectZ(float x, float y, float z) {
-    return 0;
+    throw new RuntimeException("objectZ() can only be used with depth()");
   }
 
 
@@ -1820,31 +1846,44 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void lights() {
+    throw new RuntimeException("lights() can only be used with depth()");
   }
 
   public void noLights() {
+    throw new RuntimeException("noLights() can only be used with depth()");
   }
 
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
+    throw new RuntimeException("light() can only be used with depth()");
   }
 
   public void lightEnable(int num) {
+    throw new RuntimeException("lightEnable() can only be used with depth()");
   }
 
   public void lightDisable(int num) {
+    throw new RuntimeException("lightDisable() can only be used with depth()");
   }
 
   public void lightPosition(int num, float x, float y, float z) {
+    throw new RuntimeException("lightPosition() " +
+                               "can only be used with depth()");
   }
 
   public void lightAmbient(int num, float x, float y, float z) {
+    throw new RuntimeException("lightAmbient() " +
+                               "can only be used with depth()");
   }
 
   public void lightDiffuse(int num, float x, float y, float z) {
+    throw new RuntimeException("lightDiffuse() " +
+                               "can only be used with depth()");
   }
 
   public void lightSpecular(int num, float x, float y, float z) {
+    throw new RuntimeException("lightSpecular() " +
+                               "can only be used with depth()");
   }
 
 
