@@ -86,6 +86,10 @@ X should image(img, x, y, alpha) work instead of using fill?
 X   write tint() command
 X   or maybe another word for fill/stroke.. apply? colorize?
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1050323800
+X circles and spheres
+X   bresenham (flat) oval function
+X   finish fill mode of flat circle function
+o   setting accuracy of circles/sphere
 
 
 fixes because of dmose parser
@@ -132,6 +136,13 @@ ks X escape key not quitting presentation mode
 ks X   no events seem to be coming through at all
 
 
+from carlos' contract, but implemented by fry
+ca o get font things sewn up 
+ca o  create a simple generator for grayscale bdf fonts
+ca o     document the change and make several of them
+ca o   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
+
 api changes in progress -> COLORING FOR ALL THESE
 _ textureImage() -> texture()
 _ textureMode() IMAGE_SPACE or NORMAL_SPACE
@@ -168,6 +179,7 @@ _   ALIGN_XXXX becuase LEFT already used for keys
 
 
 ..................................................................
+
 
 
 API
@@ -691,21 +703,11 @@ ca b _     clipping issues here.. but also something in scan converter
 ca b X     not clipping areas from offscreen
 ca b _       huge geometry slows things way down
 
-ca b _ get font things sewn up 
-ca b X  create a simple generator for grayscale bdf fonts
-ca b _     document the change and make several of them
-ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
-
 bf b _ font support is overkill and sucks
 bf b _   need fast 2D text that's not affected by the transforms
 bf b _   also needs to look good, not squished from texture weirdness
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
 
-ks b _ circles and spheres
-ks b _   bresenham (flat) oval function
-ks b _   finish fill mode of flat circle function
-ks b _   stroked version of sphere is just a circle (?)
-ks b _   setting accuracy of circles/sphere
    1 _ toxi ellipses don't adapt for larger sizes
 
 
@@ -717,6 +719,7 @@ BAGEL / Serial
 
 BAGEL / Details
 
+   1 _ what is the stroked version of a sphere? a circle?
    1 _ non-homogenous coloring for curve vertices
    1 _   properly interpolate
    1 _ too many push() will silently stop the applet inside a loop
