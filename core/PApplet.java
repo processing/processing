@@ -4259,7 +4259,7 @@ public class PApplet extends Applet
   }
 
 
-  public void vertex(float x, float y, float z,  
+  public void vertex(float x, float y, float z,
                      float u, float v) {
      g.vertex(x, y, z, u, v);
   }
@@ -4305,7 +4305,7 @@ public class PApplet extends Applet
   }
 
 
-  public void line(float x1, float y1, float z1, 
+  public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
      g.line(x1, y1, z1, x2, y2, z2);
   }
@@ -4380,7 +4380,7 @@ public class PApplet extends Applet
   }
 
 
-  public void bezier(float x1, float y1, 
+  public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
@@ -4423,7 +4423,7 @@ public class PApplet extends Applet
   }
 
 
-  public void curve(float x1, float y1, 
+  public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
@@ -4444,25 +4444,25 @@ public class PApplet extends Applet
   }
 
 
-  public void image(PImage image, 
+  public void image(PImage image,
                     float x1, float y1, float x2, float y2) {
      g.image(image, x1, y1, x2, y2);
   }
 
 
-  public void image(PImage image, 
+  public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
      g.image(image, x1, y1, x2, y2, u1, v1, u2, v2);
   }
 
 
-  public void cache(PImage image) { 
+  public void cache(PImage image) {
      g.cache(image);
   }
 
 
-  public void cache(PImage images[]) { 
+  public void cache(PImage images[]) {
      g.cache(images);
   }
 
@@ -4625,7 +4625,7 @@ public class PApplet extends Applet
   }
 
 
-  public void ortho(float left, float right, 
+  public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
      g.ortho(left, right, bottom, top, near, far);
@@ -4723,13 +4723,13 @@ public class PApplet extends Applet
   }
 
 
-  public void colorMode(int icolorMode, 
+  public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ) {
      g.colorMode(icolorMode, maxX, maxY, maxZ);
   }
 
 
-  public void colorMode(int icolorMode, 
+  public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ, float maxA) {
      g.colorMode(icolorMode, maxX, maxY, maxZ, maxA);
   }

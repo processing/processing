@@ -4,7 +4,7 @@
   PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-04 Massachusetts Institute of Technology 
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
   (Except where noted that the author is not Ben Fry)
 
   This library is free software; you can redistribute it and/or
@@ -17,9 +17,9 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General 
-  Public License along with this library; if not, write to the 
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 */
 
@@ -32,7 +32,7 @@ import java.awt.image.*;
 import java.io.*;
 
 
-public class PGraphics extends PImage 
+public class PGraphics extends PImage
   implements PMethods, PConstants {
 
   // ........................................................
@@ -63,13 +63,13 @@ public class PGraphics extends PImage
 
   // underscored_names are used for private functions or variables
 
-  // internal values.. i.e. the var set by colorMode() 
+  // internal values.. i.e. the var set by colorMode()
   // becomes color_mode
   // if it's a one-word feller like 'fill' or 'stroke'
   // then an underscore is placed in front: _fill
 
   int color_mode;
-  // color_scale is for *internal* scaling, true if colorMode(1) 
+  // color_scale is for *internal* scaling, true if colorMode(1)
   // since that's what's easiest for the internal stuff..
   boolean color_scale;
   boolean color_rgb255;
@@ -101,7 +101,7 @@ public class PGraphics extends PImage
 
   float strokeWeight;
   int strokeJoin;
-  int strokeMiter;  
+  int strokeMiter;
 
   // background color
   boolean _background;
@@ -138,11 +138,11 @@ public class PGraphics extends PImage
 
   // ........................................................
 
-  /** 
+  /**
    * Model transformation of the form m[row][column],
    * which is a "column vector" (as opposed to "row vector") matrix.
    */
-  float m00, m01, m02, m03;  
+  float m00, m01, m02, m03;
   float m10, m11, m12, m13;
   float m20, m21, m22, m23;
   float m30, m31, m32, m33;
@@ -155,7 +155,7 @@ public class PGraphics extends PImage
 
   // ........................................................
 
-  // current 3D transformation matrix 
+  // current 3D transformation matrix
   int camera_mode;
   //int projection;  // none, perspective, or isometric
   public int dimensions;  // 0, 2 (affine 2d), 3 (perspective/isometric)
@@ -182,7 +182,7 @@ public class PGraphics extends PImage
   // ........................................................
 
   // OLD_GRAPHICS
-  
+
   PPolygon polygon;     // general polygon to use for shape
   PPolygon fpolygon;    // used to fill polys for tri or quad strips
   PPolygon spolygon;    // stroke/line polygon
@@ -195,7 +195,7 @@ public class PGraphics extends PImage
   // ........................................................
 
   // NEW_GRAPHICS
-  
+
   int shape_index;
 
   // vertices
@@ -245,7 +245,7 @@ public class PGraphics extends PImage
   static final int DEFAULT_TEXTURES = 3;
   PImage textures[] = new PImage[DEFAULT_TEXTURES];
   int texture_index;
-  
+
 
   // ........................................................
 
@@ -270,11 +270,11 @@ public class PGraphics extends PImage
   // ........................................................
 
   // precalculate sin/cos lookup tables [toxi]
-  // circle resolution is determined from the actual used radii 
-  // passed to ellipse() method. this will automatically take any 
+  // circle resolution is determined from the actual used radii
+  // passed to ellipse() method. this will automatically take any
   // scale transformations into account too
 
-  // [toxi 031031] 
+  // [toxi 031031]
   // changed table's precision to 0.5 degree steps
   // introduced new vars for more flexible code
   static final float sinLUT[], cosLUT[];
@@ -298,7 +298,7 @@ public class PGraphics extends PImage
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  int sphere_detail = 0; 
+  int sphere_detail = 0;
   float sphereX[], sphereY[], sphereZ[];
 
   int text_mode;
@@ -314,7 +314,7 @@ public class PGraphics extends PImage
 
   /**
    * Constructor for the PGraphics object.
-   * This prototype only exists because of annoying 
+   * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
   public PGraphics() { }
@@ -322,8 +322,8 @@ public class PGraphics extends PImage
 
   /**
    * Constructor for the PGraphics object. Use this to ensure that
-   * the defaults get set properly. In a subclass, use this(w, h) 
-   * as the first line of a subclass' constructor to properly set 
+   * the defaults get set properly. In a subclass, use this(w, h)
+   * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
    *
    * @param  iwidth   viewport width
@@ -404,7 +404,7 @@ public class PGraphics extends PImage
     line = new PLine(this);
 
     // moved from PGraphics constructor since not needed by opengl
-    if (hints[NEW_GRAPHICS]) {  
+    if (hints[NEW_GRAPHICS]) {
       //line = new PLine(this);
       triangle = new PTriangle(this);
 
@@ -438,7 +438,7 @@ public class PGraphics extends PImage
    *  set engine's default values
    */
   public void defaults() {
-    //frameCount = 0; 
+    //frameCount = 0;
     //depthTest = true;
     colorMode(RGB, TFF);
     fill(TFF);
@@ -457,7 +457,7 @@ public class PGraphics extends PImage
       spolygon.vertexCount = 4;
       svertices = new float[2][];
     }
-    
+
     text_font = null;
 
     // better to leave this turned off by default
@@ -734,7 +734,7 @@ public class PGraphics extends PImage
 
   /**
    * lighting calculation of final colour.
-   * for now, ip is being done in screen space (transformed), 
+   * for now, ip is being done in screen space (transformed),
    * because the normals are also being transformed
    *
    * @param  r        red component of object's colour
@@ -751,7 +751,7 @@ public class PGraphics extends PImage
    */
   private void calc_lighting(float r, float g, float b,
                              float ix, float iy, float iz,
-                             float nx, float ny, float nz, 
+                             float nx, float ny, float nz,
                              float target[], int toffset) {
     //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
 
@@ -769,7 +769,7 @@ public class PGraphics extends PImage
 
     // get direction based on inverse of perspective(?) matrix
     //screenToWorld.getDirection(x + 0.5, y + 0.5, d);
-    
+
     /*
       // q in screen space
       double qs[] = new double[4];
@@ -809,7 +809,7 @@ public class PGraphics extends PImage
     // Direction of light i from ip, Li = L[i].position - ip
     //Vector3 Li = new Vector3();
 
-    // Radiance of a light source, a color 
+    // Radiance of a light source, a color
     //RgbColor Ii = new RgbColor();
 
     // The halfway vector
@@ -865,7 +865,7 @@ public class PGraphics extends PImage
           //N_dot_Hi_e = pow(N_dot_Hi / Hi.getLength(), e);
           // since e == 1 for now, this can be simplified
           //float n_dot_hi_e = pow(n_dot_hi / sqrt(hix*hix + hiy*hiy + hiz*hiz), e);
-          float n_dot_hi_e = n_dot_hi / 
+          float n_dot_hi_e = n_dot_hi /
           sqrt(hix*hix + hiy*hiy + hiz*hiz);
           specular_r += lights[i].r * n_dot_hi_e;
           specular_g += lights[i].g * n_dot_hi_e;
@@ -882,16 +882,16 @@ public class PGraphics extends PImage
     //I.g = (kdr * Cmat.g * diffuse_g) + (ksr * specular_g);
     //I.b = (kdr * Cmat.b * diffuse_b) + (ksr * specular_b);
 
-    //System.out.println(r + " " + g + " " + b + "  " + 
+    //System.out.println(r + " " + g + " " + b + "  " +
     //               diffuse_r + " " + diffuse_g + " " + diffuse_b);
 
     // TODO ** this sucks! **
     //System.out.println(lights[0].r + " " + lights[0].g + " " +
     //               lights[0].b);
 
-    target[toffset+0] = lightR[0] + (r * diffuse_r); 
-    target[toffset+1] = lightG[0] + (g * diffuse_g); 
-    target[toffset+2] = lightB[0] + (b * diffuse_b); 
+    target[toffset+0] = lightR[0] + (r * diffuse_r);
+    target[toffset+1] = lightG[0] + (g * diffuse_g);
+    target[toffset+2] = lightB[0] + (b * diffuse_b);
 
     if (target[toffset+0] > ONE) target[toffset+0] = ONE;
     if (target[toffset+1] > ONE) target[toffset+1] = ONE;
@@ -932,7 +932,7 @@ public class PGraphics extends PImage
   public void beginShape(int kind) {
     shape = true;
     shapeKind = kind;
-    
+
     if (hints[NEW_GRAPHICS]) {
       shape_index = shape_index + 1;
       if (shape_index == -1) {
@@ -1020,7 +1020,7 @@ public class PGraphics extends PImage
   protected void vertex_texture(float u, float v) {
     if (hints[NEW_GRAPHICS]) {
       if (textureImage == null) {
-        message(PROBLEM, "gotta use texture() " + 
+        message(PROBLEM, "gotta use texture() " +
                 "after beginShape() and before vertexTexture()");
         return;
       }
@@ -1039,11 +1039,11 @@ public class PGraphics extends PImage
         if (textureV < 0) textureV = 0;
         if (textureU > ONE) textureU = ONE;
         if (textureV > ONE) textureV = ONE;
-      }   
+      }
 
     } else {  // OLD_GRAPHICS
       if (textureImage == null) {
-        message(PROBLEM, "gotta use texture() " + 
+        message(PROBLEM, "gotta use texture() " +
                 "after beginShape() and before vertex()");
         return;
       }
@@ -1061,7 +1061,7 @@ public class PGraphics extends PImage
         if (textureV > ONE) textureV = ONE;
 
         textureU = u * polygon.twidth;
-        textureV = v * polygon.theight; 
+        textureV = v * polygon.theight;
       }
     }
   }
@@ -1069,7 +1069,7 @@ public class PGraphics extends PImage
 
   /**
    * sets the current normal.. may apply to vertices if inside
-   * a beginShape, or to whatever else if outside 
+   * a beginShape, or to whatever else if outside
    */
   //public void vertexNormal(float nx, float ny, float nz) {
   public void normal(float nx, float ny, float nz) {
@@ -1131,7 +1131,7 @@ public class PGraphics extends PImage
   }
 
 
-  public void vertex(float x, float y, float z,  
+  public void vertex(float x, float y, float z,
                      float u, float v) {
     //if (polygon.redundantVertex(x, y, z)) return;
     //cvertexIndex = 0;
@@ -1146,7 +1146,7 @@ public class PGraphics extends PImage
     if (polygon.redundantVertex(x, y, z)) return;
 
     // user called vertex(), so that invalidates anything queued
-    // up for curve vertices. if this is internally called by 
+    // up for curve vertices. if this is internally called by
     // spline_segment, then cvertexIndex will be saved and restored.
     cvertexIndex = 0;
 
@@ -1177,7 +1177,7 @@ public class PGraphics extends PImage
 
     if (normalChanged) {
       vertex[NX] = normalX;
-      vertex[NY] = normalY; 
+      vertex[NY] = normalY;
       vertex[NZ] = normalZ;
     }
   }
@@ -1186,16 +1186,16 @@ public class PGraphics extends PImage
   private void curve_vertex(float x, float y, float z, boolean bezier) {
     // if more than 128 points, shift everything back to the beginning
     if (cvertexIndex == CVERTEX_ALLOC) {
-      System.arraycopy(cvertex[CVERTEX_ALLOC-3], 0, 
+      System.arraycopy(cvertex[CVERTEX_ALLOC-3], 0,
                        cvertex[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(cvertex[CVERTEX_ALLOC-2], 0, 
+      System.arraycopy(cvertex[CVERTEX_ALLOC-2], 0,
                        cvertex[1], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(cvertex[CVERTEX_ALLOC-1], 0, 
+      System.arraycopy(cvertex[CVERTEX_ALLOC-1], 0,
                        cvertex[2], 0, VERTEX_FIELD_COUNT);
       cvertexIndex = 3;
     }
     // add the vertex here
-    // cvertexIndex and cvertexCount are reset to zero 
+    // cvertexIndex and cvertexCount are reset to zero
     // when regular vertex() is called, so store it
 //    int savedIndex = cvertexIndex + 1;
     //System.out.println(cvertexIndex);
@@ -1236,7 +1236,7 @@ public class PGraphics extends PImage
 
     if (normalChanged) {
       vertex[NX] = normalX;
-      vertex[NY] = normalY; 
+      vertex[NY] = normalY;
       vertex[NZ] = normalZ;
     }
 
@@ -1250,33 +1250,33 @@ public class PGraphics extends PImage
           if (!bezier_inited) bezier_init();
 
           if (cverticesFlat) {
-            spline_segment(cvertex[cvertexIndex-4][MX], 
-                           cvertex[cvertexIndex-4][MY], 
-                           cvertex[cvertexIndex-3][MX], 
-                           cvertex[cvertexIndex-3][MY], 
-                           cvertex[cvertexIndex-2][MX], 
-                           cvertex[cvertexIndex-2][MY], 
-                           cvertex[cvertexIndex-1][MX], 
+            spline_segment(cvertex[cvertexIndex-4][MX],
+                           cvertex[cvertexIndex-4][MY],
+                           cvertex[cvertexIndex-3][MX],
+                           cvertex[cvertexIndex-3][MY],
+                           cvertex[cvertexIndex-2][MX],
+                           cvertex[cvertexIndex-2][MY],
+                           cvertex[cvertexIndex-1][MX],
                            cvertex[cvertexIndex-1][MY],
-                           cvertex[cvertexIndex-4][MX], 
-                           cvertex[cvertexIndex-4][MY], 
+                           cvertex[cvertexIndex-4][MX],
+                           cvertex[cvertexIndex-4][MY],
                            bezier_draw, bezier_detail);
           } else {
-            spline_segment(cvertex[cvertexIndex-4][MX], 
-                           cvertex[cvertexIndex-4][MY], 
-                           cvertex[cvertexIndex-4][MZ], 
-                           cvertex[cvertexIndex-3][MX], 
-                           cvertex[cvertexIndex-3][MY], 
-                           cvertex[cvertexIndex-3][MZ], 
-                           cvertex[cvertexIndex-2][MX], 
-                           cvertex[cvertexIndex-2][MY], 
-                           cvertex[cvertexIndex-2][MZ], 
-                           cvertex[cvertexIndex-1][MX], 
+            spline_segment(cvertex[cvertexIndex-4][MX],
+                           cvertex[cvertexIndex-4][MY],
+                           cvertex[cvertexIndex-4][MZ],
+                           cvertex[cvertexIndex-3][MX],
+                           cvertex[cvertexIndex-3][MY],
+                           cvertex[cvertexIndex-3][MZ],
+                           cvertex[cvertexIndex-2][MX],
+                           cvertex[cvertexIndex-2][MY],
+                           cvertex[cvertexIndex-2][MZ],
+                           cvertex[cvertexIndex-1][MX],
                            cvertex[cvertexIndex-1][MY],
-                           cvertex[cvertexIndex-1][MZ], 
-                           cvertex[cvertexIndex-4][MX], 
-                           cvertex[cvertexIndex-4][MY], 
-                           cvertex[cvertexIndex-4][MZ], 
+                           cvertex[cvertexIndex-1][MZ],
+                           cvertex[cvertexIndex-4][MX],
+                           cvertex[cvertexIndex-4][MY],
+                           cvertex[cvertexIndex-4][MZ],
                            bezier_draw, bezier_detail);
           }
         }
@@ -1284,39 +1284,39 @@ public class PGraphics extends PImage
         if (!curve_inited) curve_init();
 
         if (cverticesFlat) {
-          spline_segment(cvertex[cvertexIndex-4][MX], 
-                         cvertex[cvertexIndex-4][MY], 
-                         cvertex[cvertexIndex-3][MX], 
-                         cvertex[cvertexIndex-3][MY], 
-                         cvertex[cvertexIndex-2][MX], 
-                         cvertex[cvertexIndex-2][MY], 
-                         cvertex[cvertexIndex-1][MX], 
+          spline_segment(cvertex[cvertexIndex-4][MX],
+                         cvertex[cvertexIndex-4][MY],
+                         cvertex[cvertexIndex-3][MX],
+                         cvertex[cvertexIndex-3][MY],
+                         cvertex[cvertexIndex-2][MX],
+                         cvertex[cvertexIndex-2][MY],
+                         cvertex[cvertexIndex-1][MX],
                          cvertex[cvertexIndex-1][MY],
-                         cvertex[cvertexIndex-3][MX], 
-                         cvertex[cvertexIndex-3][MY], 
+                         cvertex[cvertexIndex-3][MX],
+                         cvertex[cvertexIndex-3][MY],
                          curve_draw, curve_detail);
         } else {
-          spline_segment(cvertex[cvertexIndex-4][MX], 
-                         cvertex[cvertexIndex-4][MY], 
-                         cvertex[cvertexIndex-4][MZ], 
-                         cvertex[cvertexIndex-3][MX], 
-                         cvertex[cvertexIndex-3][MY], 
-                         cvertex[cvertexIndex-3][MZ], 
-                         cvertex[cvertexIndex-2][MX], 
-                         cvertex[cvertexIndex-2][MY], 
-                         cvertex[cvertexIndex-2][MZ], 
-                         cvertex[cvertexIndex-1][MX], 
+          spline_segment(cvertex[cvertexIndex-4][MX],
+                         cvertex[cvertexIndex-4][MY],
+                         cvertex[cvertexIndex-4][MZ],
+                         cvertex[cvertexIndex-3][MX],
+                         cvertex[cvertexIndex-3][MY],
+                         cvertex[cvertexIndex-3][MZ],
+                         cvertex[cvertexIndex-2][MX],
+                         cvertex[cvertexIndex-2][MY],
+                         cvertex[cvertexIndex-2][MZ],
+                         cvertex[cvertexIndex-1][MX],
                          cvertex[cvertexIndex-1][MY],
                          cvertex[cvertexIndex-1][MZ],
                          cvertex[cvertexIndex-3][MX],
-                         cvertex[cvertexIndex-3][MY], 
-                         cvertex[cvertexIndex-3][MZ], 
+                         cvertex[cvertexIndex-3][MY],
+                         cvertex[cvertexIndex-3][MZ],
                          curve_draw, curve_detail);
         }
       }
     }
     // spline_segment() calls vertex(), which clears cvertexIndex
-//    cvertexIndex = savedIndex; 
+//    cvertexIndex = savedIndex;
     //cvertexIndex++;
   }
 
@@ -1754,7 +1754,7 @@ public class PGraphics extends PImage
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0.0f;
     for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
-      area += (vertices[q][X] * vertices[p][Y] - 
+      area += (vertices[q][X] * vertices[p][Y] -
                vertices[p][X] * vertices[q][Y]);
     }
 
@@ -1863,13 +1863,13 @@ public class PGraphics extends PImage
 
   //////////////////////////////////////////////////////////////
 
-  
+
   public void endShape() {
     if (hints[NEW_GRAPHICS]) {
       endShape_newgraphics();
       return;
     }
-    // could initialize unchangedZ if false, 
+    // could initialize unchangedZ if false,
     //   model matrix is not identity
     // same with homoegenousColors and !lighting
 
@@ -2039,7 +2039,7 @@ public class PGraphics extends PImage
     // RENDER SHAPES
 
     int increment;
-        
+
     // test for concave-convex
     if (shapeKind == POLYGON)  {
       shapeKind = is_convex() ? CONVEX_POLYGON : CONCAVE_POLYGON;
@@ -2047,18 +2047,18 @@ public class PGraphics extends PImage
 
     switch (shapeKind) {
     case POINTS:
-      if ((dimensions == 0) && unchangedZ && 
+      if ((dimensions == 0) && unchangedZ &&
           (strokeWeight == ONE) && !lighting) {
         if (!strokeChanged) {
           for (int i = 0; i < vertexCount; i++) {
-            thin_point((int) vertices[i][X], (int) vertices[i][Y], 
+            thin_point((int) vertices[i][X], (int) vertices[i][Y],
                        0, stroke);
           }
         } else {
           for (int i = 0; i < vertexCount; i++) {
             thin_point((int) vertices[i][X], (int) vertices[i][Y],
-                       0, float_color(vertices[i][SR], 
-                                      vertices[i][SG], 
+                       0, float_color(vertices[i][SR],
+                                      vertices[i][SG],
                                       vertices[i][SB]));
           }
           //strokei = strokeiSaved;
@@ -2075,11 +2075,11 @@ public class PGraphics extends PImage
           // then re-calculate the color at this vertex
           if ((i == 0) || lighting || strokeChanged) {
             // push calculated color into 'f' (this way, f is always valid)
-            calc_lighting(v[SR], v[SG], v[SB], 
+            calc_lighting(v[SR], v[SG], v[SB],
                        v[X],  v[Y],  v[Z],
                        v[NX], v[NY], v[NZ],  f, R);
           }
-          // uses [SA], since stroke alpha isn't moved into [A] the 
+          // uses [SA], since stroke alpha isn't moved into [A] the
           // way that [SR] goes to [R] etc on the calc_lighting call
           // (there's no sense in copying it to [A], except consistency
           // in the code.. but why the extra slowness?)
@@ -2100,7 +2100,7 @@ public class PGraphics extends PImage
         vertexCount++; // since it had already been read above
 
         v1[X] = v0[X]; v1[Y] = v0[Y]; v1[Z] = v0[Z];
-        v1[SR] = v0[SR]; v1[SG] = v0[SG]; 
+        v1[SR] = v0[SR]; v1[SG] = v0[SG];
         v1[SB] = v0[SB]; v1[SA] = v0[SA];
       }
 
@@ -2142,7 +2142,7 @@ public class PGraphics extends PImage
         } else {
           draw_lines(vertices, vertexCount-1, 1, 1, 3);
         }
-        // then draw from vertex (n) to (n+2) 
+        // then draw from vertex (n) to (n+2)
         // incrementing n using the same as above
         draw_lines(vertices, vertexCount-2, 2, increment, 0);
         // changed this to vertexCount-2, because it seemed
@@ -2182,7 +2182,7 @@ public class PGraphics extends PImage
         } else {  // skip every few for quads
           draw_lines(vertices, vertexCount, 1, 1, 4);
         }
-        // then draw from vertex (n) to (n+3) 
+        // then draw from vertex (n) to (n+3)
         // incrementing n by the same increment as above
         draw_lines(vertices, vertexCount-2, 3, increment, 0);
       }
@@ -2202,7 +2202,7 @@ public class PGraphics extends PImage
 
       if (_stroke) {
         draw_lines(vertices, vertexCount-1, 1, 1, 0);
-        // draw the last line connecting back 
+        // draw the last line connecting back
         // to the first point in poly
         svertices[0] = vertices[vertexCount-1];
         svertices[1] = vertices[0];
@@ -2281,7 +2281,7 @@ public class PGraphics extends PImage
     float vertices[][] = polygon.vertices;
 
     if (tpolygon == null) {
-      // allocate on first use, rather than slowing 
+      // allocate on first use, rather than slowing
       // the startup of the class.
       tpolygon = new PPolygon(this);
       tpolygon_vertex_order = new int[TPOLYGON_MAX_VERTICES];
@@ -2303,7 +2303,7 @@ public class PGraphics extends PImage
     // addapted from code by john w. ratcliff (jratcliff@verant.com)
 
     // 1 - first we check if the polygon goes CW or CCW
-    // CW-CCW ordering adapted from code by 
+    // CW-CCW ordering adapted from code by
     //        Joseph O'Rourke orourke@cs.smith.edu
     // 1A - we start by finding the lowest-right most vertex
 
@@ -2354,7 +2354,7 @@ public class PGraphics extends PImage
     else
       ccw = false;  // CW
 
-    // 1C - then we sort the vertices so they 
+    // 1C - then we sort the vertices so they
     // are always in a counterclockwise order
     int j = 0;
     if (!ccw) {
@@ -2391,7 +2391,7 @@ public class PGraphics extends PImage
 
       // triangle A B C
       float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
-    
+
       Ax =  -vertices[tpolygon_vertex_order[u]][X];
       Ay =   vertices[tpolygon_vertex_order[u]][Y];
       Bx =  -vertices[tpolygon_vertex_order[v]][X];
@@ -2484,7 +2484,7 @@ public class PGraphics extends PImage
   // RENDERING
 
 
-  // expects properly clipped coords, hence does 
+  // expects properly clipped coords, hence does
   // NOT check if x/y are in bounds [toxi]
   private void thin_pointAt(int x, int y, float z, int color) {
     int index = y*width+x; // offset values are pre-calced in constructor
@@ -2499,8 +2499,8 @@ public class PGraphics extends PImage
     zbuffer[offset] = z;
   }
 
-  // points are inherently flat, but always tangent 
-  // to the screen surface. the z is only so that things 
+  // points are inherently flat, but always tangent
+  // to the screen surface. the z is only so that things
   // get scaled properly if the pt is way in back
   private void thick_point(float x, float y, float z, // note floats
                            float r, float g, float b, float a) {
@@ -2517,7 +2517,7 @@ public class PGraphics extends PImage
     svertex[R] = r;
     svertex[G] = g;
     svertex[B] = b;
-    svertex[A] = a; 
+    svertex[A] = a;
 
     svertex = spolygon.vertices[1];
     svertex[X] = x + strokeWidth2;
@@ -2543,7 +2543,7 @@ public class PGraphics extends PImage
     int nx1,ny1,nx2,ny2;
 
     // get the "dips" for the points to clip
-    int code1 = thin_flat_lineClipCode(x1, y1); 
+    int code1 = thin_flat_lineClipCode(x1, y1);
     int code2 = thin_flat_lineClipCode(x2, y2);
 
     if ((code1 & code2)!=0) {
@@ -2598,9 +2598,9 @@ public class PGraphics extends PImage
       // special case: vertical line
       if (ny1>ny2) { int ty=ny1; ny1=ny2; ny2=ty; }
       int offset=ny1*width+nx1;
-      for(int j=ny1; j<=ny2; j++) { 
-        thin_pointAtIndex(offset,0,stroke); 
-        offset+=width; 
+      for(int j=ny1; j<=ny2; j++) {
+        thin_pointAtIndex(offset,0,stroke);
+        offset+=width;
       }
       return;
     } else if (ny1==ny2) {
@@ -2619,11 +2619,11 @@ public class PGraphics extends PImage
         return;
       }
       longLen+=ny1;
-      for (int j=0x8000+(nx1<<16);ny1>=longLen;--ny1) {        
+      for (int j=0x8000+(nx1<<16);ny1>=longLen;--ny1) {
         thin_pointAt(j>>16, ny1, 0, stroke);
         j-=decInc;
       }
-      return;        
+      return;
     } else if (longLen>0) {
       longLen+=nx1;
       for (int j=0x8000+(ny1<<16);nx1<=longLen;++nx1) {
@@ -2644,7 +2644,7 @@ public class PGraphics extends PImage
             (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
   }
 
-  private float thin_flat_lineSlope(float x1, float y1, 
+  private float thin_flat_lineSlope(float x1, float y1,
                                     float x2, float y2, int border) {
     switch (border) {
     case 4: {
@@ -2664,10 +2664,10 @@ public class PGraphics extends PImage
   }
 
 
-  private boolean flat_line_retribution(float x1, float y1, 
+  private boolean flat_line_retribution(float x1, float y1,
                                         float x2, float y2,
                                         float r1, float g1, float b1) {
-    // assume that if it is/isn't big in one dir, then the 
+    // assume that if it is/isn't big in one dir, then the
     // other doesn't matter, cuz that's a weird case
     float lwidth  = m00*strokeWeight + m01*strokeWeight;
     //float lheight = m10*strokeWeight + m11*strokeWeight;
@@ -2676,7 +2676,7 @@ public class PGraphics extends PImage
       //if (abs(lwidth) < 1.5f) {
       //System.out.println("flat line retribution " + r1 + " " + g1 + " " + b1);
       int strokeSaved = stroke;
-      stroke = float_color(r1, g1, b1); 
+      stroke = float_color(r1, g1, b1);
       thin_flat_line((int)x1, (int)y1, (int)x2, (int)y2);
       stroke = strokeSaved;
       return true;
@@ -2685,14 +2685,14 @@ public class PGraphics extends PImage
   }
 
 
-  private void thick_flat_line(float ox1, float oy1, 
+  private void thick_flat_line(float ox1, float oy1,
                                float r1, float g1, float b1, float a1,
-                               float ox2, float oy2, 
+                               float ox2, float oy2,
                                float r2, float g2, float b2, float a2) {
     spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
     spolygon.interpZ = false;
 
-    if (!spolygon.interpRGBA && 
+    if (!spolygon.interpRGBA &&
         flat_line_retribution(ox1, oy1, ox2, oy2, r1, g1, b1)) {
       return;
     }
@@ -2748,11 +2748,11 @@ public class PGraphics extends PImage
 
 
   // OPT version without z coords can save 8 multiplies and some other
-  private void spatial_line(float x1, float y1, 
-                            float r1, float g1, float b1, 
-                            float x2, float y2, 
+  private void spatial_line(float x1, float y1,
+                            float r1, float g1, float b1,
+                            float x2, float y2,
                             float r2, float g2, float b2) {
-    spatial_line(x1, y1, 0, r1, g1, b1, 
+    spatial_line(x1, y1, 0, r1, g1, b1,
                  x2, y2, 0, r2, g2, b2);
   }
 
@@ -2761,11 +2761,11 @@ public class PGraphics extends PImage
   // and the colors have been calculated
 
   private void spatial_line(float x1, float y1, float z1,
-                            float r1, float g1, float b1, 
-                            float x2, float y2, float z2, 
+                            float r1, float g1, float b1,
+                            float x2, float y2, float z2,
                             float r2, float g2, float b2) {
     spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2);
-    if (!spolygon.interpRGBA && 
+    if (!spolygon.interpRGBA &&
         flat_line_retribution(x1, y1, x2, y2, r1, g1, b1)) {
       return;
     }
@@ -2829,7 +2829,7 @@ public class PGraphics extends PImage
   // max is what to count to
   // offset is offset to the 'next' vertex
   // increment is how much to increment in the loop
-  private void draw_lines(float vertices[][], int max, 
+  private void draw_lines(float vertices[][], int max,
                           int offset, int increment, int skip) {
 
     if (strokeWeight < 2) {
@@ -2860,17 +2860,17 @@ public class PGraphics extends PImage
 
           for (int i = 0; i < max; i += increment) {
             if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-            thin_flat_line((int) vertices[i][X], 
-                           (int) vertices[i][Y], 
-                           (int) vertices[i+offset][X], 
+            thin_flat_line((int) vertices[i][X],
+                           (int) vertices[i][Y],
+                           (int) vertices[i+offset][X],
                            (int) vertices[i+offset][Y]);
           }
-        } else { 
+        } else {
           for (int i = 0; i < max; i += increment) {
             if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
             float v1[] = vertices[i];
             float v2[] = vertices[i+offset];
-            thick_flat_line(v1[X], v1[Y],  v1[SR], v1[SG], v1[SB], v1[SA], 
+            thick_flat_line(v1[X], v1[Y],  v1[SR], v1[SG], v1[SB], v1[SA],
                             v2[X], v2[Y],  v2[SR], v2[SG], v2[SB], v2[SA]);
           }
         }
@@ -2879,7 +2879,7 @@ public class PGraphics extends PImage
           if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
           float v1[] = vertices[i];
           float v2[] = vertices[i+offset];
-          spatial_line(v1[X],  v1[Y],  v1[Z],  v1[SR], v1[SG], v1[SB], 
+          spatial_line(v1[X],  v1[Y],  v1[Z],  v1[SR], v1[SG], v1[SB],
                        v2[X],  v2[Y],  v2[Z],  v2[SR], v2[SG], v2[SB]);
         }
       }
@@ -2895,16 +2895,16 @@ public class PGraphics extends PImage
 
   private void thin_point(int x, int y, float z, int color) {
     // necessary? [fry] yes! [toxi]
-    if (x<0 || x>width1 || y<0 || y>height1) return; 
+    if (x<0 || x>width1 || y<0 || y>height1) return;
 
     int index = y*width + x;
     if ((color & 0xff000000) == 0xff000000) {  // opaque
-      pixels[index] = color; 
+      pixels[index] = color;
 
     } else {  // transparent
       // couldn't seem to get this working correctly
 
-      //pixels[index] = _blend(pixels[index], 
+      //pixels[index] = _blend(pixels[index],
       //                     color & 0xffffff, (color >> 24) & 0xff);
 
       // a1 is how much of the orig pixel
@@ -2920,15 +2920,15 @@ public class PGraphics extends PImage
 
       pixels[index] =  0xff000000 | (r << 8) | g | b;
 
-      //pixels[index] = _blend(pixels[index], 
+      //pixels[index] = _blend(pixels[index],
       //                     color & 0xffffff, (color >> 24) & 0xff);
       /*
-      pixels[index] = 0xff000000 | 
-        ((((a1 * ((pixels[index] >> 16) & 0xff) + 
+      pixels[index] = 0xff000000 |
+        ((((a1 * ((pixels[index] >> 16) & 0xff) +
             a2 * ((color         >> 16) & 0xff)) & 0xff00) << 24) << 8) |
-        (((a1 * ((pixels[index] >>  8) & 0xff) + 
+        (((a1 * ((pixels[index] >>  8) & 0xff) +
            a2 * ((color         >>  8) & 0xff)) & 0xff00) << 16) |
-        (((a1 * ( pixels[index]        & 0xff) + 
+        (((a1 * ( pixels[index]        & 0xff) +
            a2 * ( color                & 0xff)) >> 8));
       */
     }
@@ -2939,8 +2939,8 @@ public class PGraphics extends PImage
   // optimized because it's used so much
   private void flat_rect(int x1, int y1, int x2, int y2) {
     //System.out.println("flat quad");
-    if (y2 < y1) { 
-      int temp = y1; y1 = y2; y2 = temp; 
+    if (y2 < y1) {
+      int temp = y1; y1 = y2; y2 = temp;
     }
     if (x2 < x1) {
       int temp = x1; x1 = x2; x2 = temp;
@@ -2951,7 +2951,7 @@ public class PGraphics extends PImage
 
     if (_fill) {
       int fx1 = x1;
-      int fy1 = y1; 
+      int fy1 = y1;
       int fx2 = x2;
       int fy2 = y2;
 
@@ -2961,8 +2961,8 @@ public class PGraphics extends PImage
       if (fx2 > width) fx2 = width;
       if (fy1 < 0) fy1 = 0;
       if (fy2 > height) fy2 = height;
-      
-      // [toxi 031223] 
+
+      // [toxi 031223]
       // on avg. 20-25% faster fill routine using System.arraycopy()
       int ww = fx2 - fx1;
       int hh = fy2 - fy1;
@@ -2990,7 +2990,7 @@ public class PGraphics extends PImage
                           x2, y1, fillR, fillG, fillB, fillA);
           thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
                           x2, y2, fillR, fillG, fillB, fillA);
-          thick_flat_line(x2, y2, fillR, fillG, fillB, fillA, 
+          thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
                           x1, y2, fillR, fillG, fillB, fillA);
           thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
                           x1, y1, fillR, fillG, fillB, fillA);
@@ -3021,8 +3021,8 @@ public class PGraphics extends PImage
    *
    * Circle quadrants break down like so:
    *              |
-   *        \ NNW | NNE /  
-   *          \   |   / 
+   *        \ NNW | NNE /
+   *          \   |   /
    *       WNW  \ | /  ENE
    *     -------------------
    *       WSW  / | \  ESE
@@ -3056,9 +3056,9 @@ public class PGraphics extends PImage
   }
 
   /**
-   * Heavily adapted version of the above algorithm that handles 
-   * filling the ellipse. Works by drawing from the center and 
-   * outwards to the points themselves. Has to be done this way 
+   * Heavily adapted version of the above algorithm that handles
+   * filling the ellipse. Works by drawing from the center and
+   * outwards to the points themselves. Has to be done this way
    * because the values for the points are changed halfway through
    * the function, making it impossible to just store a series of
    * left and right edges to be drawn more quickly.
@@ -3107,7 +3107,7 @@ public class PGraphics extends PImage
   // unfortunately this can't handle fill and stroke simultaneously,
   // because the fill will later replace some of the stroke points
 
-  private final void flat_ellipse_symmetry(int centerX, int centerY, 
+  private final void flat_ellipse_symmetry(int centerX, int centerY,
                                            int ellipseX, int ellipseY,
                                            boolean filling) {
     if (filling) {
@@ -3125,7 +3125,7 @@ public class PGraphics extends PImage
 
 
   /**
-   * Bresenham-style ellipse drawing function, adapted from a posting to 
+   * Bresenham-style ellipse drawing function, adapted from a posting to
    * comp.graphics.algortihms.
    *
    * This function is included because the quality is so much better,
@@ -3137,7 +3137,7 @@ public class PGraphics extends PImage
    * @param a horizontal radius
    * @param b vertical radius
    */
-  private void flat_ellipse_internal(int centerX, int centerY, 
+  private void flat_ellipse_internal(int centerX, int centerY,
                                      int a, int b, boolean filling) {
     int x, y, a2, b2, s, t;
 
@@ -3182,7 +3182,7 @@ public class PGraphics extends PImage
 
   /**
    * Image drawn in flat "screen space", with no scaling or warping.
-   * this is so common that a special routine is included for it, 
+   * this is so common that a special routine is included for it,
    * because the alternative is much slower.
    *
    * @param  image  image to be drawn
@@ -3205,7 +3205,7 @@ public class PGraphics extends PImage
 
     // don't draw if completely offscreen
     // (without this check, ArrayIndexOutOfBoundsException)
-    if ((sx1 > width1) || (sx2 < 0) || 
+    if ((sx1 > width1) || (sx2 < 0) ||
         (sy1 > height1) || (sy2 < 0)) return;
 
     if (sx1 < 0) {  // off left edge
@@ -3233,9 +3233,9 @@ public class PGraphics extends PImage
         int tx = 0;
 
         for (int x = sx1; x < sx2; x++) {
-          pixels[target + x] = 
-            _blend(pixels[target + x], 
-                   image.pixels[source + tx], 
+          pixels[target + x] =
+            _blend(pixels[target + x],
+                   image.pixels[source + tx],
                    image.pixels[source + tx++] >>> 24);
         }
         source += image.width;
@@ -3246,9 +3246,9 @@ public class PGraphics extends PImage
         int tx = 0;
 
         for (int x = sx1; x < sx2; x++) {
-          pixels[target + x] = 
-            _blend(pixels[target + x], 
-                   fill, 
+          pixels[target + x] =
+            _blend(pixels[target + x],
+                   fill,
                    image.pixels[source + tx++]);
         }
         source += image.width;
@@ -3299,7 +3299,7 @@ public class PGraphics extends PImage
   }
 
 
-  public void line(float x1, float y1, float z1, 
+  public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
     beginShape(LINES);
     vertex(x1, y1, z1);
@@ -3342,17 +3342,17 @@ public class PGraphics extends PImage
   public void rect(float x1, float y1, float x2, float y2) {
     float hradius, vradius;
     switch (rect_mode) {
-    case CORNERS: 
+    case CORNERS:
       break;
-    case CORNER: 
-      x2 += x1; y2 += y1; 
+    case CORNER:
+      x2 += x1; y2 += y1;
       break;
-    case CENTER_RADIUS: 
-      hradius = x2; 
+    case CENTER_RADIUS:
+      hradius = x2;
       vradius = y2;
-      x2 = x1 + hradius; 
+      x2 = x1 + hradius;
       y2 = y1 + vradius;
-      x1 -= hradius; 
+      x1 -= hradius;
       y1 -= vradius;
       break;
     case CENTER:
@@ -3377,7 +3377,7 @@ public class PGraphics extends PImage
       vertex(x1, y2);
       endShape();
     }
-  } 
+  }
 
 
   public void ellipseMode(int mode) {
@@ -3388,13 +3388,13 @@ public class PGraphics extends PImage
   // adaptive ellipse accuracy contributed by toxi
   public void ellipse(float x, float y, float hradius, float vradius) {
     switch (ellipse_mode) {
-    case CENTER_RADIUS: 
+    case CENTER_RADIUS:
       break;
     case CENTER:
       hradius /= 2f; vradius /= 2f;
       break;
     case CORNER:
-      hradius /= 2f; vradius /= 2f; 
+      hradius /= 2f; vradius /= 2f;
       x += hradius; y += vradius;
       break;
     case CORNERS:
@@ -3424,22 +3424,22 @@ public class PGraphics extends PImage
 
     int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
 
-    boolean plain = 
-      !lighting && !smooth && (strokeWeight == 1) && 
+    boolean plain =
+      !lighting && !smooth && (strokeWeight == 1) &&
       !fill_alpha && !stroke_alpha;
 
-    boolean flat = (dimensions == 0) || 
+    boolean flat = (dimensions == 0) ||
       ((dimensions == 2) && (m00 == m11) && (m00 == 1));
 
     if (plain && flat) {
       if (hradius == vradius) {
-        //if ((dimensions == 0) && 
+        //if ((dimensions == 0) &&
         //!lighting && !smooth && (hradius == vradius)) {
         flat_circle((int)x, (int)y, (int)hradius);
         //if (_fill) flat_circle_fill((int)x, (int)y, (int)hradius);
         //if (_stroke) flat_circle_stroke((int)x, (int)y, (int)hradius);
 
-        //} else if (((dimensions == 0) || ((dimensions == 2) && 
+        //} else if (((dimensions == 0) || ((dimensions == 2) &&
         //                     (m00 == m11) && (m00 == 1))) &&
         //     !lighting && !smooth) {
       } else {
@@ -3491,7 +3491,7 @@ public class PGraphics extends PImage
     float z1 = -d/2f; float z2 = d/2f;
 
     if (hints[NEW_GRAPHICS]) triangle.setCulling(true);
-    
+
     beginShape(QUADS);
 
     // front
@@ -3530,7 +3530,7 @@ public class PGraphics extends PImage
     vertex(x2, y2, z2);
     vertex(x1, y2, z2);
 
-    endShape(); 
+    endShape();
 
     if (hints[NEW_GRAPHICS]) triangle.setCulling(false);
   }
@@ -3538,7 +3538,7 @@ public class PGraphics extends PImage
 
   // [toxi031031] used by the new sphere code below
   // precompute vertices along unit sphere with new detail setting
-  
+
   public void sphereDetail(int res) {
     if (res<3) res=3; // force a minimum res
     if (res != sphere_detail) {
@@ -3586,10 +3586,10 @@ public class PGraphics extends PImage
   // sphere is a series of concentric circles who radii vary
   // along the shape, based on, er.. cos or something
 
-  // [toxi031031] new sphere code. removed all multiplies with 
+  // [toxi031031] new sphere code. removed all multiplies with
   // radius, as scale() will take care of that anyway
 
-  // [toxi031223] updated sphere code (removed modulos) 
+  // [toxi031223] updated sphere code (removed modulos)
   // and introduced sphereAt(x,y,z,r)
   // to avoid additional translate()'s on the user/sketch side
   public void sphere(float r) {
@@ -3660,20 +3660,20 @@ public class PGraphics extends PImage
   // CURVES
 
 
-  /** 
+  /**
    * Evalutes quadratic bezier at point t for points a, b, c, d.
    * t varies between 0 and 1, and a and d are the on curve points,
    * b and c are the control points. this can be done once with the
-   * x coordinates and a second time with the y coordinates to get 
+   * x coordinates and a second time with the y coordinates to get
    * the location of a bezier curve at t.
    *
    * for instance, to convert the following example:<code>
-   * stroke(255, 102, 0); 
-   * line(85, 20, 10, 10); 
-   * line(90, 90, 15, 80); 
-   * stroke(0, 0, 0); 
-   * bezier(85, 20, 10, 10, 90, 90, 15, 80); 
-   * 
+   * stroke(255, 102, 0);
+   * line(85, 20, 10, 10);
+   * line(90, 90, 15, 80);
+   * stroke(0, 0, 0);
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   *
    * // draw it in gray, using 10 steps instead of the default 20
    * // this is a slower way to do it, but useful if you need
    * // to do things with the coordinates at each step
@@ -3683,7 +3683,7 @@ public class PGraphics extends PImage
    *   float t = i / 10.0f;
    *   float x = bezier(85, 10, 90, 15, t);
    *   float y = bezier(20, 10, 90, 80, t);
-   *   vertex(x, y); 
+   *   vertex(x, y);
    * }
    * endShape();</code>
    */
@@ -3708,16 +3708,16 @@ public class PGraphics extends PImage
                              float t) {
     float t1 = 1.0f - t;
 
-    return (a *  3 * t*t + 
-            b *  3 * t * (2 - 3*t) + 
+    return (a *  3 * t*t +
+            b *  3 * t * (2 - 3*t) +
             c *  3 * (3*t*t - 4*t + 1) +
             d * -3 * t1*t1);
   }
 
 
   /**
-   * Draw a bezier curve. The first and last points are 
-   * the on-curve points. The middle two are the 'control' points, 
+   * Draw a bezier curve. The first and last points are
+   * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
    *
    * Identical to typing:
@@ -3741,21 +3741,21 @@ public class PGraphics extends PImage
    * Note that x4/y4 are being pulled from the previous
    * curveto and used again.
    *
-   * The solution here may be a bit more verbose than Postscript, 
-   * but in general, decisions opted for maximum flexibility, 
-   * since these beginShape() commands are intended as a bit lower-level. 
-   * Rather than having many types of curveto (curve to corner, 
-   * and several others described in the Postscript and Illustrator specs) 
-   * let someone else implement a nice moveto/lineto/curveto library on top. 
+   * The solution here may be a bit more verbose than Postscript,
+   * but in general, decisions opted for maximum flexibility,
+   * since these beginShape() commands are intended as a bit lower-level.
+   * Rather than having many types of curveto (curve to corner,
+   * and several others described in the Postscript and Illustrator specs)
+   * let someone else implement a nice moveto/lineto/curveto library on top.
    * In fact, it's tempting that we may put one in there ourselves.
    *
    * Another method for bezier (though not implemented this way)
    * 1. first start with a call to vertex()
    * 2. every three calls to bezierVertex produce a new segment
    * This option seemed no good because of the confusion of mixing
-   * vertex and bezierVertex calls. 
+   * vertex and bezierVertex calls.
    */
-  public void bezier(float x1, float y1, 
+  public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
@@ -3785,7 +3785,7 @@ public class PGraphics extends PImage
   private boolean bezier_inited = false;
   private int bezier_detail = 20; //BEZIER_DETAIL;
   // msjvm complained when bezier_basis was final
-  private float bezier_basis[][] = {  
+  private float bezier_basis[][] = {
     { -1,  3, -3,  1},
     {  3, -6,  3,  0},
     { -3,  3,  0,  0},
@@ -3846,15 +3846,15 @@ public class PGraphics extends PImage
   }
 
 
-  /** 
+  /**
    * Set the number of segments to use when drawing a Catmull-Rom
    * curve, and setting the s parameter, which defines how tightly
    * the curve fits to each vertex. Catmull-Rom curves are actually
    * a subset of this curve type where the s is set to zero.
-   * 
-   * (This function is not optimized, since it's not expected to 
-   * be called all that often. there are many juicy and obvious 
-   * opimizations in here, but it's probably better to keep the 
+   *
+   * (This function is not optimized, since it's not expected to
+   * be called all that often. there are many juicy and obvious
+   * opimizations in here, but it's probably better to keep the
    * code more readable)
    */
   private void curve_mode(int segments, float s) {
@@ -3865,8 +3865,8 @@ public class PGraphics extends PImage
     if (curve_basis == null) {
       // allocate these when used, to save startup time
       curve_basis = new float[4][4];
-      curve_forward = new float[4][4]; 
-      curve_draw = new float[4][4]; 
+      curve_forward = new float[4][4];
+      curve_draw = new float[4][4];
       curve_inited = true;
     }
 
@@ -3892,14 +3892,14 @@ public class PGraphics extends PImage
 
   /**
    * Get a location along a catmull-rom curve segment.
-   * 
+   *
    * @param t Value between zero and one for how far along the segment
    */
   public float curvePoint(float a, float b, float c, float d,
                           float t) {
     if (!curve_inited) curve_init();
 
-    float tt = t * t; 
+    float tt = t * t;
     float ttt = t * tt;
     float m[][] = curve_basis;
 
@@ -3929,11 +3929,11 @@ public class PGraphics extends PImage
    * curveVertex(x4, y4);
    * endShape();
    *
-   * As of 0070, this function no longer doubles the first and 
-   * last points. The curves are a bit more boring, but it's more 
+   * As of 0070, this function no longer doubles the first and
+   * last points. The curves are a bit more boring, but it's more
    * mathematically correct, and properly mirrored in curvePoint().
    */
-  public void curve(float x1, float y1, 
+  public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
@@ -3964,11 +3964,11 @@ public class PGraphics extends PImage
 
 
   /**
-   * Setup forward-differencing matrix to be used for speedy 
-   * curve rendering. It's based on using a specific number 
+   * Setup forward-differencing matrix to be used for speedy
+   * curve rendering. It's based on using a specific number
    * of curve segments and just doing incremental adds for each
    * vertex of the segment, rather than running the mathematically
-   * expensive cubic equation. 
+   * expensive cubic equation.
    * @param segments number of curve segments to use when drawing
    */
   private void setup_spline_forward(int segments, float fwd[][]) {
@@ -3986,7 +3986,7 @@ public class PGraphics extends PImage
   // internal matrix multiplication routine used by the spline code
   // should these go to 4 instead of 3?
   //void mult_curve_matrix(float m[4][4], float g[4][3], float mg[4][3]);
-  private void mult_spline_matrix(float m[][], float g[][], 
+  private void mult_spline_matrix(float m[][], float g[][],
                                   float mg[][], int dimensions) {
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < dimensions; j++) {
@@ -4003,10 +4003,10 @@ public class PGraphics extends PImage
   }
 
 
-  /** 
-   * Draw a segment of spline (bezier or catmull-rom curve) 
-   * using the matrix m, which is the basis matrix already 
-   * multiplied with the forward differencing matrix. 
+  /**
+   * Draw a segment of spline (bezier or catmull-rom curve)
+   * using the matrix m, which is the basis matrix already
+   * multiplied with the forward differencing matrix.
    *
    * the x0, y0, z0 points are the point that's being used as
    * the start, and also as the accumulator. for bezier curves,
@@ -4014,7 +4014,7 @@ public class PGraphics extends PImage
    * for catmull-rom curves, the first control point (x2, y2, z2)
    * is the first drawn point, and is accumulated to.
    */
-  private void spline_segment(float x1, float y1, float x2, float y2, 
+  private void spline_segment(float x1, float y1, float x2, float y2,
                               float x3, float y3, float x4, float y4,
                               float x0, float y0, float m[][], int segments) {
 
@@ -4038,9 +4038,9 @@ public class PGraphics extends PImage
   }
 
 
-  private void spline_segment(float x1, float y1, float z1, 
+  private void spline_segment(float x1, float y1, float z1,
                               float x2, float y2, float z2,
-                              float x3, float y3, float z3, 
+                              float x3, float y3, float z3,
                               float x4, float y4, float z4,
                               float x0, float y0, float z0,
                               float m[][], int segments) {
@@ -4082,41 +4082,41 @@ public class PGraphics extends PImage
   public void image(PImage image, float x1, float y1) {
     if ((dimensions == 0) && !lighting && !_tint &&
         (image_mode != CENTER_RADIUS)) {
-      // if drawing a flat image with no warping, 
+      // if drawing a flat image with no warping,
       // use faster routine to draw direct to the screen
       flat_image(image, (int)x1, (int)y1);
 
     } else {
-      image(image, x1, y1, image.width, image.height, 
+      image(image, x1, y1, image.width, image.height,
             0, 0, image.width, image.height);
     }
   }
 
 
-  public void image(PImage image, 
+  public void image(PImage image,
                     float x1, float y1, float x2, float y2) {
     image(image, x1, y1, x2, y2, 0, 0, image.width, image.height);
   }
 
 
-  public void image(PImage image, 
+  public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
     switch (image_mode) {
-    case CORNERS: 
+    case CORNERS:
       break;
-    case CORNER: 
-      x2 += x1; y2 += y1; 
+    case CORNER:
+      x2 += x1; y2 += y1;
       break;
     case CENTER:
       x2 /= 2f;
       y2 /= 2f;
     case CENTER_RADIUS:
-      float hr = x2; 
+      float hr = x2;
       float vr = y2;
-      x2 = x1 + hr; 
+      x2 = x1 + hr;
       y2 = y1 + vr;
-      x1 -= hr; 
+      x1 -= hr;
       y1 -= vr;
       break;
     }
@@ -4166,18 +4166,18 @@ public class PGraphics extends PImage
 
 
   /**
-   * Used by OpenGL implementations of PGraphics, so that images, 
+   * Used by OpenGL implementations of PGraphics, so that images,
    * or textures, can be loaded into texture memory.
    */
-  public void cache(PImage image) { 
+  public void cache(PImage image) {
     // keep the lower } on a separate line b/c of preproc
   }
 
-  public void cache(PImage images[]) { 
+  public void cache(PImage images[]) {
     // keep the lower } on a separate line b/c of preproc
   }
 
-  protected void cache(PImage image, int index) { 
+  protected void cache(PImage image, int index) {
     // keep the lower } on a separate line b/c of preproc
   }
 
@@ -4197,7 +4197,8 @@ public class PGraphics extends PImage
     if (text_space != SCREEN_SPACE) {
       text_font.resetSize();
     } else {
-      text_font.size(text_font.iwidth);
+      //text_font.size(text_font.iwidth);
+      text_font.size(text_font.mbox);
     }
     text_font.resetLeading();
   }
@@ -4212,7 +4213,8 @@ public class PGraphics extends PImage
       text_font.size(size);
     } else {
       System.err.println("Cannot set size of SCREEN_SPACE fonts");
-      text_font.size(text_font.iwidth);
+      //text_font.size(text_font.iwidth);
+      text_font.size(text_font.mbox);
     }
     text_font.resetLeading();
   }
@@ -4245,7 +4247,8 @@ public class PGraphics extends PImage
     text_space = space;
 
     if ((space == SCREEN_SPACE) && (text_font != null)) {
-      text_font.size(text_font.iwidth);
+      //text_font.size(text_font.iwidth);
+      text_font.size(text_font.mbox);
       text_font.resetLeading();
     }
   }
@@ -4264,7 +4267,7 @@ public class PGraphics extends PImage
       x -= text_font.width(c) / 2f;
 
     } else if (text_mode == ALIGN_RIGHT) {
-      x -= text_font.width(c); 
+      x -= text_font.width(c);
     }
     text_font.text(c, x, y, z, this);
   }
@@ -4283,7 +4286,7 @@ public class PGraphics extends PImage
       x -= text_font.width(s) / 2f;
 
     } else if (text_mode == ALIGN_RIGHT) {
-      x -= text_font.width(s); 
+      x -= text_font.width(s);
     }
     text_font.text(s, x, y, z, this);
   }
@@ -4302,9 +4305,10 @@ public class PGraphics extends PImage
       x -= text_font.width(s) / 2f;
 
     } else if (text_mode == ALIGN_RIGHT) {
-      x -= text_font.width(s); 
+      x -= text_font.width(s);
     }
-    text_font.text(s, x, y, z, this);
+    //text_font.text(s, x, y, z, this);
+    text_font.text(s, x, y, z, w, h, this);
   }
 
 
@@ -4325,10 +4329,10 @@ public class PGraphics extends PImage
   }
 
   /**
-   * This does a basic number formatting, to avoid the 
+   * This does a basic number formatting, to avoid the
    * generally ugly appearance of printing floats.
    * Users who want more control should use their own nfs() cmmand,
-   * or if they want the long, ugly version of float, 
+   * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
    */
   public void text(float num, float x, float y, float z) {
@@ -4379,7 +4383,7 @@ public class PGraphics extends PImage
 
 
   /**
-   * Load identity as the transform/model matrix. 
+   * Load identity as the transform/model matrix.
    * Same as glLoadIdentity().
    */
   public void resetMatrix() {
@@ -4431,35 +4435,35 @@ public class PGraphics extends PImage
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)), 
+    int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)),
                                          max(abs(m02), abs(m03))),
-                                     max(max(abs(m10), abs(m11)), 
+                                     max(max(abs(m10), abs(m11)),
                                          max(abs(m12), abs(m13)))),
-                                 max(max(max(abs(m20), abs(m21)), 
+                                 max(max(max(abs(m20), abs(m21)),
                                          max(abs(m22), abs(m23))),
-                                     max(max(abs(m30), abs(m31)), 
+                                     max(max(abs(m30), abs(m31)),
                                          max(abs(m32), abs(m33))))));
     int d = 1;
     while ((big /= 10) != 0) d++;  // cheap log()
 
-    System.out.println(PApplet.nfs(m00, d, 4) + " " + 
-                       PApplet.nfs(m01, d, 4) + " " + 
-                       PApplet.nfs(m02, d, 4) + " " + 
+    System.out.println(PApplet.nfs(m00, d, 4) + " " +
+                       PApplet.nfs(m01, d, 4) + " " +
+                       PApplet.nfs(m02, d, 4) + " " +
                        PApplet.nfs(m03, d, 4));
 
-    System.out.println(PApplet.nfs(m10, d, 4) + " " + 
-                       PApplet.nfs(m11, d, 4) + " " + 
-                       PApplet.nfs(m12, d, 4) + " " + 
+    System.out.println(PApplet.nfs(m10, d, 4) + " " +
+                       PApplet.nfs(m11, d, 4) + " " +
+                       PApplet.nfs(m12, d, 4) + " " +
                        PApplet.nfs(m13, d, 4));
 
-    System.out.println(PApplet.nfs(m20, d, 4) + " " + 
-                       PApplet.nfs(m21, d, 4) + " " + 
-                       PApplet.nfs(m22, d, 4) + " " + 
+    System.out.println(PApplet.nfs(m20, d, 4) + " " +
+                       PApplet.nfs(m21, d, 4) + " " +
+                       PApplet.nfs(m22, d, 4) + " " +
                        PApplet.nfs(m23, d, 4));
 
-    System.out.println(PApplet.nfs(m30, d, 4) + " " + 
-                       PApplet.nfs(m31, d, 4) + " " + 
-                       PApplet.nfs(m32, d, 4) + " " + 
+    System.out.println(PApplet.nfs(m30, d, 4) + " " +
+                       PApplet.nfs(m31, d, 4) + " " +
+                       PApplet.nfs(m32, d, 4) + " " +
                        PApplet.nfs(m33, d, 4));
 
     System.out.println();
@@ -4473,10 +4477,10 @@ public class PGraphics extends PImage
 
 
   /**
-   * Set matrix mode to the camera matrix 
+   * Set matrix mode to the camera matrix
    * (instead of the current transformation matrix).
-   * This means applyMatrix, resetMatrix etc 
-   * will affect the camera. You'll need to call 
+   * This means applyMatrix, resetMatrix etc
+   * will affect the camera. You'll need to call
    * resetMatrix() if you want to completely change
    * the camera's settings.
    */
@@ -4512,7 +4516,7 @@ public class PGraphics extends PImage
     p00 = m00; p01 = m01; p02 = m02; p03 = m03;
     p10 = m10; p11 = m11; p12 = m12; p13 = m13;
     p20 = m20; p21 = m21; p22 = m22; p23 = m23;
-    p30 = m30; p31 = m31; p32 = m32; p33 = m33;    
+    p30 = m30; p31 = m31; p32 = m32; p33 = m33;
     resetMatrix();
   }
 
@@ -4520,35 +4524,35 @@ public class PGraphics extends PImage
    * Print the current camera (or "perspective") matrix.
    */
   public void printCamera() {
-    int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)), 
+    int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)),
                                          max(abs(p02), abs(p03))),
-                                     max(max(abs(p10), abs(p11)), 
+                                     max(max(abs(p10), abs(p11)),
                                          max(abs(p12), abs(p13)))),
-                                 max(max(max(abs(p20), abs(p21)), 
+                                 max(max(max(abs(p20), abs(p21)),
                                          max(abs(p22), abs(p23))),
-                                     max(max(abs(p30), abs(p31)), 
+                                     max(max(abs(p30), abs(p31)),
                                          max(abs(p32), abs(p33))))));
     int d = 1;
     while ((big /= 10) != 0) d++;  // cheap log()
 
-    System.out.println(PApplet.nfs(p00, d, 4) + " " + 
-                       PApplet.nfs(p01, d, 4) + " " + 
-                       PApplet.nfs(p02, d, 4) + " " + 
+    System.out.println(PApplet.nfs(p00, d, 4) + " " +
+                       PApplet.nfs(p01, d, 4) + " " +
+                       PApplet.nfs(p02, d, 4) + " " +
                        PApplet.nfs(p03, d, 4));
 
-    System.out.println(PApplet.nfs(p10, d, 4) + " " + 
-                       PApplet.nfs(p11, d, 4) + " " + 
-                       PApplet.nfs(p12, d, 4) + " " + 
+    System.out.println(PApplet.nfs(p10, d, 4) + " " +
+                       PApplet.nfs(p11, d, 4) + " " +
+                       PApplet.nfs(p12, d, 4) + " " +
                        PApplet.nfs(p13, d, 4));
 
-    System.out.println(PApplet.nfs(p20, d, 4) + " " + 
-                       PApplet.nfs(p21, d, 4) + " " + 
-                       PApplet.nfs(p22, d, 4) + " " + 
+    System.out.println(PApplet.nfs(p20, d, 4) + " " +
+                       PApplet.nfs(p21, d, 4) + " " +
+                       PApplet.nfs(p22, d, 4) + " " +
                        PApplet.nfs(p23, d, 4));
 
-    System.out.println(PApplet.nfs(p30, d, 4) + " " + 
-                       PApplet.nfs(p31, d, 4) + " " + 
-                       PApplet.nfs(p32, d, 4) + " " + 
+    System.out.println(PApplet.nfs(p30, d, 4) + " " +
+                       PApplet.nfs(p31, d, 4) + " " +
+                       PApplet.nfs(p32, d, 4) + " " +
                        PApplet.nfs(p33, d, 4));
 
     System.out.println();
@@ -4634,7 +4638,7 @@ public class PGraphics extends PImage
   /**
    * Same as gluOrtho(). Implementation based on Mesa's matrix.c
    */
-  public void ortho(float left, float right, 
+  public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     float x =  2.0f / (right - left);
@@ -4647,16 +4651,16 @@ public class PGraphics extends PImage
 
     applyMatrix(x, 0, 0, tx,
                 0, y, 0, ty,
-                0, 0, z, tz, 
+                0, 0, z, tz,
                 0, 0, 0, 1);
   }
 
 
-  /** 
+  /**
    * Same as gluPerspective(). Implementation based on Mesa's glu.c
    */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    //System.out.println("perspective: " + fovy + " " + aspect + " " + 
+    //System.out.println("perspective: " + fovy + " " + aspect + " " +
     //               zNear + " " + zFar);
     float ymax = zNear * tan(fovy * PI / 360.0f);
     float ymin = -ymax;
@@ -4668,13 +4672,13 @@ public class PGraphics extends PImage
   }
 
 
-  /** 
-   * Same as glFrustum(). Implementation based on the explanation 
+  /**
+   * Same as glFrustum(). Implementation based on the explanation
    * in the OpenGL reference book.
    */
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
-    //System.out.println("frustum: " + left + " " + right + "  " + 
+    //System.out.println("frustum: " + left + " " + right + "  " +
     //               bottom + " " + top + "  " + znear + " " + zfar);
     applyMatrix((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
                 0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
@@ -4683,7 +4687,7 @@ public class PGraphics extends PImage
   }
 
 
-  /** 
+  /**
    * Same as gluLookat(). Implementation based on Mesa's glu.c
    */
   public void lookat(float eyeX, float eyeY, float eyeZ,
@@ -4712,7 +4716,7 @@ public class PGraphics extends PImage
     y1 = -z0*x2 + z2*x0;
     y2 =  z0*x1 - z1*x0;
 
-    mag = sqrt(x0*x0 + x1*x1 + x2*x2); 
+    mag = sqrt(x0*x0 + x1*x1 + x2*x2);
     if (mag != 0) {
       x0 /= mag;
       x1 /= mag;
@@ -4726,7 +4730,7 @@ public class PGraphics extends PImage
       y2 /= mag;
     }
 
-    applyMatrix(x0, x1, x2, 0,  
+    applyMatrix(x0, x1, x2, 0,
                 y0, y1, y2, 0,
                 z0, z1, z2, 0,
                 0,  0,  0,  1);
@@ -4785,12 +4789,12 @@ public class PGraphics extends PImage
     dimensions = 3;
     float c = cos(angle);
     float s = sin(angle);
-    applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);   
+    applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
   }
 
 
   /**
-   * Two dimensional rotation. Same as rotateZ (this is identical 
+   * Two dimensional rotation. Same as rotateZ (this is identical
    * to a 3D rotation along the z-axis) but included for clarity --
    * it'd be weird for people drawing 2D graphics to be using rotateZ.
    * And they might kick our a-- for the confusion.
@@ -4803,8 +4807,8 @@ public class PGraphics extends PImage
   /**
    * Rotate in the XY plane by an angle.
    *
-   * Note that this doesn't internally set the number of 
-   * dimensions to three, since rotateZ() is the same as a 
+   * Note that this doesn't internally set the number of
+   * dimensions to three, since rotateZ() is the same as a
    * 2D rotate in the XY plane.
    */
   public void rotateZ(float angle) {
@@ -4818,7 +4822,7 @@ public class PGraphics extends PImage
 
   /**
    * Rotate around an arbitrary vector, similar to glRotate(),
-   * except that it takes radians (instead of degrees) by default, 
+   * except that it takes radians (instead of degrees) by default,
    * unless angleMode is set to RADIANS.
    */
   public void rotate(float angle, float v0, float v1, float v2) {
@@ -4836,13 +4840,13 @@ public class PGraphics extends PImage
 
     applyMatrix((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
                 (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
-                (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0, 
+                (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
                 0, 0, 0, 1);
   }
 
 
   /**
-   * This will scale in all three dimensions, but not set the 
+   * This will scale in all three dimensions, but not set the
    * dimensions higher than two, in case this is still 2D mode.
    */
   public void scale(float s) {
@@ -4856,13 +4860,13 @@ public class PGraphics extends PImage
     //}
 
     // figure out whether 2D or 3D matrix
-    //scale(xyz, xyz, xyz); 
+    //scale(xyz, xyz, xyz);
   }
 
 
   public void scale(float sx, float sy) {
     if (dimensions == 0) dimensions = 2;
-    applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);    
+    applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
@@ -4900,17 +4904,17 @@ public class PGraphics extends PImage
   }
 
 
-  // note that this doesn't set the alpha color max.. 
+  // note that this doesn't set the alpha color max..
   // so colorMode(RGB, 255, 255, 255) would retain the previous max alpha
-  // could be a problem when colorMode(HSB, 360, 100, 100); 
+  // could be a problem when colorMode(HSB, 360, 100, 100);
 
-  public void colorMode(int icolorMode, 
+  public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ) {
     colorMode(icolorMode, maxX, maxY, maxZ, colorMaxA); //maxX); //ONE);
   }
 
 
-  public void colorMode(int icolorMode, 
+  public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ, float maxA) {
     color_mode = icolorMode;
 
@@ -4920,13 +4924,13 @@ public class PGraphics extends PImage
     colorMaxA = maxA;
 
     // if color max values are all 1, then no need to scale
-    color_scale = ((maxA != ONE) || (maxX != maxY) || 
+    color_scale = ((maxA != ONE) || (maxX != maxY) ||
                    (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
     // red() green() etc functions
-    color_rgb255 = (color_mode == RGB) && 
-      (colorMaxA == 255) && (colorMaxX == 255) && 
+    color_rgb255 = (color_mode == RGB) &&
+      (colorMaxA == 255) && (colorMaxX == 255) &&
       (colorMaxY == 255) && (colorMaxZ == 255);
   }
 
@@ -4947,14 +4951,14 @@ public class PGraphics extends PImage
     if (alpha < 0) alpha = 0;
 
     calcR = color_scale ? (gray / colorMaxX) : gray;
-    calcG = calcR; 
+    calcG = calcR;
     calcB = calcR;
     calcA = color_scale ? (alpha / colorMaxA) : alpha;
 
     calcRi = (int)(calcR*255); calcGi = (int)(calcG*255);
     calcBi = (int)(calcB*255); calcAi = (int)(calcA*255);
     calci = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
-    calc_alpha = (calcAi != 255);    
+    calc_alpha = (calcAi != 255);
   }
 
 
@@ -5023,10 +5027,10 @@ public class PGraphics extends PImage
 
   /**
    * unpacks AARRGGBB color for direct use with calc_color.
-   * handled here with its own function since this is independent 
+   * handled here with its own function since this is independent
    * of the color mode.
-   * 
-   * strangely the old version of this code ignored the alpha 
+   *
+   * strangely the old version of this code ignored the alpha
    * value. not sure if that was a bug or what.
    *
    * (note: no need for bounds check since it's a 32 bit number)
@@ -5047,15 +5051,15 @@ public class PGraphics extends PImage
 
   protected void calc_tint() {
     _tint = true;
-    tintR = calcR; 
-    tintG = calcG; 
-    tintB = calcB; 
+    tintR = calcR;
+    tintG = calcG;
+    tintB = calcB;
     tintA = calcA;
-    tintRi = calcRi; 
-    tintGi = calcGi; 
-    tintBi = calcBi; 
+    tintRi = calcRi;
+    tintGi = calcGi;
+    tintBi = calcBi;
     tintAi = calcAi;
-    tint = calci; 
+    tint = calci;
     tint_alpha = calc_alpha;
   }
 
@@ -5063,15 +5067,15 @@ public class PGraphics extends PImage
   protected void calc_fill() {
     _fill = true;
     fillChanged = true;
-    fillR = calcR; 
-    fillG = calcG; 
-    fillB = calcB; 
+    fillR = calcR;
+    fillG = calcG;
+    fillB = calcB;
     fillA = calcA;
-    fillRi = calcRi; 
-    fillGi = calcGi; 
-    fillBi = calcBi; 
+    fillRi = calcRi;
+    fillGi = calcGi;
+    fillBi = calcBi;
     fillAi = calcAi;
-    fill = calci; 
+    fill = calci;
     fill_alpha = calc_alpha;
   }
 
@@ -5079,28 +5083,28 @@ public class PGraphics extends PImage
   protected void calc_stroke() {
     _stroke = true;
     strokeChanged = true;
-    strokeR = calcR; 
-    strokeG = calcG; 
-    strokeB = calcB; 
+    strokeR = calcR;
+    strokeG = calcG;
+    strokeB = calcB;
     strokeA = calcA;
-    strokeRi = calcRi; 
-    strokeGi = calcGi; 
-    strokeBi = calcBi; 
+    strokeRi = calcRi;
+    strokeGi = calcGi;
+    strokeBi = calcBi;
     strokeAi = calcAi;
-    stroke = calci; 
+    stroke = calci;
     stroke_alpha = calc_alpha;
   }
 
 
   protected void calc_background() {
     _background = true;
-    backR = calcR; 
-    backG = calcG; 
-    backB = calcB; 
-    backRi = calcRi; 
-    backGi = calcGi; 
-    backBi = calcBi; 
-    background = calci; 
+    backR = calcR;
+    backG = calcG;
+    backB = calcB;
+    backRi = calcRi;
+    backGi = calcGi;
+    backBi = calcBi;
+    background = calci;
   }
 
 
@@ -5117,7 +5121,7 @@ public class PGraphics extends PImage
   // only danger is that someone would try to set the color to a
   // zero alpha.. which would be kooky but not unlikely
   // (i.e. if it were in a loop) so in addition to checking the high
-  // bit, check to see if the value is at least just below the 
+  // bit, check to see if the value is at least just below the
   // colorMaxX (i.e. 0..255). can't just check the latter since
   // if the high bit is > 0x80 then the int value for rgb will be
   // negative. yay for no unsigned types in java!
@@ -5287,7 +5291,7 @@ public class PGraphics extends PImage
 
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
-      System.err.println("background image must be the same size " + 
+      System.err.println("background image must be the same size " +
                          "as your application");
       return;
     }
@@ -5309,10 +5313,10 @@ public class PGraphics extends PImage
 
 
   /**
-   * Clears pixel and z-buffer. If dimensions not set to 3, 
+   * Clears pixel and z-buffer. If dimensions not set to 3,
    * then the zbuffer doesn't get cleared. Some values might be
    * zero, but since it's <= when comparing zbuffer (because of
-   * 2D drawing) that's no problem. Saves a lotta time to not 
+   * 2D drawing) that's no problem. Saves a lotta time to not
    * reset the zbuffer if it's not used.
    *
    * Actually had to punt on that optimization because it was
@@ -5372,7 +5376,7 @@ public class PGraphics extends PImage
 
   // HINTS
 
-  // for the most part, hints are temporary api quirks, 
+  // for the most part, hints are temporary api quirks,
   // for which a proper api hasn't been properly worked out.
   // for instance SMOOTH_IMAGES existed because smooth()
   // wasn't yet implemented, but it will soon go away.
@@ -5422,7 +5426,7 @@ public class PGraphics extends PImage
   // PIXELS
 
   // these functions are really slow, but easy to use
-  // if folks are advanced enough to want something faster, 
+  // if folks are advanced enough to want something faster,
   // they can write it themselves (not difficult)
 
 
@@ -5488,7 +5492,7 @@ public class PGraphics extends PImage
       if (z > 255) z = 255; else if (z < 0) z = 0;
 
       return (a << 24) | (x << 16) | (y << 8) | z;
-    } 
+    }
     calc_color(x, y, z, a);
     return calci;
   }
@@ -5526,7 +5530,7 @@ public class PGraphics extends PImage
 
   public final float hue(int what) {
     if (what != cacheHsbKey) {
-      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff, 
+      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
@@ -5535,7 +5539,7 @@ public class PGraphics extends PImage
 
   public final float saturation(int what) {
     if (what != cacheHsbKey) {
-      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff, 
+      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
@@ -5544,7 +5548,7 @@ public class PGraphics extends PImage
 
   public final float brightness(int what) {
     if (what != cacheHsbKey) {
-      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff, 
+      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
@@ -5556,7 +5560,7 @@ public class PGraphics extends PImage
 
 
   static private final int float_color(float r, float g, float b) {
-    return (0xff000000 | 
+    return (0xff000000 |
             ((int) (255.0f * r)) << 16 |
             ((int) (255.0f * g)) << 8 |
             ((int) (255.0f * b)));
@@ -5585,7 +5589,7 @@ public class PGraphics extends PImage
 
   // these have been made private so as not to conflict
   // with the versions found in PApplet when fxn importing happens
-  // also might be faster that way. hmm. 
+  // also might be faster that way. hmm.
 
 
   private final float mag(float a, float b) {
