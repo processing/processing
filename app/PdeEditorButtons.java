@@ -4,7 +4,9 @@
   PdeEditorButtons - run/stop/etc buttons for the ide
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004 Ben Fry and the Processing project.
+
+  The original rendition of this code was written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -54,6 +56,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   static final int ACTIVE   = 2;
 
   PdeEditor editor;
+  boolean disableRun;
   //Label status;
 
   Image offscreen;
@@ -242,10 +245,12 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     }
     int sel = findSelection(x, y);
     if (sel == -1) return;
-    
+
     if (state[sel] != ACTIVE) {
-      setState(sel, ROLLOVER, true);
-      currentRollover = sel;
+      if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
+        setState(sel, ROLLOVER, true);
+        currentRollover = sel;
+      }
     }
   }
 
@@ -318,7 +323,9 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     if (sel == -1) return;
     currentRollover = -1;
     currentSelection = sel;
-    setState(sel, ACTIVE, true);
+    if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
+      setState(sel, ACTIVE, true);
+    }
 
     if (currentSelection == OPEN) {
       if (popup == null) {
@@ -337,14 +344,30 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   public void mouseReleased(MouseEvent e) {
     switch (currentSelection) {
-      case RUN:    editor.handleRun(e.isShiftDown()); break;
-      case STOP:   setState(RUN, INACTIVE, true); editor.handleStop(); break;
+      case RUN:    
+        if (!disableRun) {
+          editor.handleRun(e.isShiftDown()); 
+        }
+        break;
+
+      case STOP:   
+        if (!disableRun) {
+          setState(RUN, INACTIVE, true); 
+          editor.handleStop(); 
+        }
+        break;
+
       case OPEN:   setState(OPEN, INACTIVE, true); break;
       case NEW:    editor.handleNew(e.isShiftDown()); break;
       case SAVE:   editor.handleSave(); break;
       case EXPORT: editor.handleExport(); break;
     }
     currentSelection = -1;
+  }
+
+
+  public void disableRun(boolean what) {
+    disableRun = what;
   }
 
 
