@@ -66,7 +66,7 @@ public class PdeEditor extends Panel {
     // set bgcolor of buttons here, b/c also used for empty component
     buttons = new PdeEditorButtons(this);
     Color buttonBgColor = 
-      PdeBase.getColor("editor.buttons.bgcolor", new Color(153, 0, 0));
+      PdeBase.getColor("editor.buttons.bgcolor", new Color(0x99, 0x99, 0x99));
     buttons.setBackground(buttonBgColor);
     leftPanel.add("North", buttons);
     Label dummy = new Label();
