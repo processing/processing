@@ -53,6 +53,12 @@ ABOUT REV 0044
 
 [ bug fixes ]
 
+- arrow keys now work in a hokey way under macosx. this is better than
+  not working at all, but still not great. it's also not really my bug
+  fix, but a workaround for apple's bug.
+
+- editor window can now be resized to one's content under osx
+
 - sketch windows won't pop up offscreen anymore.. and if a sketch
   window is too large, it will simply center on-screen.
 
@@ -61,6 +67,8 @@ ABOUT REV 0044
   sketches, which caused the app to blow up.
 
 - console window doesn't die as it approaches 1000 lines of text
+
+- default font size for the editor under macosx is smaller
 
 
 ABOUT REV 0043 - "ALPHA" - 2 august 2002
