@@ -27,7 +27,7 @@ _ should the default be 100x100
 _ maybe stop/kill button should only be a stop btn
 
 
-for 0014
+0014
 X fix z coordinate, ndims not being set to 3 
 X put bezierCurve and catmullRomCurve back in
 X examples - setting background using a full screen image
@@ -37,18 +37,21 @@ X move website to cvs
 X   make fake cvs user that creas and i can share passwd of
 X unwarped_image() is broken (making things slow for jseo)
 X   then fix in c++ version
-_ special case lines of thickness 1
-_   doing way too much work to draw thin lines
-_   using full 3D polygon fella for semi-obviously 1 pixel lines
+X special case lines of thickness 1
+X   doing way too much work to draw thin lines
+X   using full 3D polygon fella for semi-obviously 1 pixel lines
+X may have fixed OutOfMemoryError problems
+X   run.bat had included -ms256m -mx256m
+
 _ mac version for casey
 _   with serial for michael
+_ flickery jumpy thing with canvas.. sun jvm bug
 
 _ exporting applets that have custom name problems:
 _   if extends processingapplet, the name user types must be same
 _   gets confused about paths and puts boogers in weird places
 _   doesn't compile correctly (must first compile with play)
 _   doesn't include additional (private) classes
-
 _ technote: using transformPoint
 _ technote: using curves
 _ technote: making things faster
@@ -63,9 +66,9 @@ _   set # of lines in properties
 _ remove .java and .class files for compiled classes
 _ technote about bug in sun vm for freaking out
 _ technote about memory running out, using ms and mx
-
 _ apparent NullPointerException when things way offscreen
 _   i.e. glyphrot with scale set to 4
+_   or at least that things get ridiculously slow
 _ Compiler.disable() message is weird and doesn't always work
 _ exceptions cause play to never un-highlight
 _ weird exception crap/messages.. erroneous shite
@@ -80,7 +83,6 @@ _ look into maxx programming
 _ live video editing, wanting things more procedural
 _ illustrator exporting
 _   version of Illustrator.java that uses bagel api
-
 _ finish color function inside applet
 _   do by simplifying stroke/fill/background inside bagel
 _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
