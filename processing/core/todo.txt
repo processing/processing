@@ -204,6 +204,12 @@ X beginCamera() no longer sets an identity matrix
 X make savePath() and createPath() accessible to the outside world
 X   useful for libraries saving files etc.
 
+
+............................................................
+
+
+0071 or later (but high priority)
+
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
@@ -234,12 +240,6 @@ _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
 _   version of BApplet that replaces g. with ai. or pdf.
-
-
-............................................................
-
-
-0071 or later (but high priority)
 
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
