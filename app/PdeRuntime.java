@@ -58,9 +58,9 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     this.leechErr = leechErr;
 
-    Frame frame = PdeBase.frame;
-    Point parentLoc = frame.getLocation();
-    Insets parentInsets = frame.getInsets();
+    //Frame frame = PdeBase.frame;
+    Point parentLoc = editor.base.getLocation(); //frame.getLocation();
+    Insets parentInsets = editor.base.getInsets(); //frame.getInsets();
 
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
