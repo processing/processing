@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BLibrary - interface for classes that plug into bagel
+  PLibrary - interface for classes that plug into bagel
   Part of the Processing project - http://Proce55ing.net
 
   Copyright (c) 2001-03
@@ -25,7 +25,10 @@
 */
 
 
-public interface BLibrary {
+package processing.core;
+
+
+public interface PLibrary {
 
   // called when the applet is stopped
   public void stop();
@@ -34,7 +37,7 @@ public interface BLibrary {
 
 
 /*
-public void libraryEvent(BLibrary who, Object data) {
+public void libraryEvent(PLibrary who, Object data) {
   //if (who instanceof BVideo) {
   if (who.signature() == Sonia.SIGNATURE) {
     BImage frame = (BImage)data;
