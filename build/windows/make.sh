@@ -130,14 +130,24 @@ echo Building PDE for JDK 1.4
 
 cd app
 
-# new javax.comm location
-CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
+cd preprocessor
 
-perl ../bagel/buzz.pl "jikes +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJDK13 -dJDK14 *.java jeditsyntax/*.java
+# first build the default java goop
+java -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool java.g
+java -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool java.tree.g 
+
+# now build the pde stuff that extends the java classes
+java -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+    -glib java.g pde.g
+java -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+    -glib java.tree.g pde.tree.g
+cd ..
+
+CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\\kjc.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
+
+perl ../bagel/buzz.pl "jikes +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJDK13 -dJDK14 *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
-zip -0q ../lib/pde.jar *.class
+zip -0rq ../lib/pde.jar .
 
-# back to 'build' dir
-cd ../../..

@@ -61,6 +61,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           "%s\\lib\\pde.jar;"
           "%s\\lib\\kjc.jar;"
           "%s\\lib\\oro.jar;"
+	  "%s\\lib\\antlr.jar;"
           "%s\\lib\\comm.jar;"
           "C:\\WINNT\\system32\\QTJava.zip;"
           "C:\\WINDOWS\\system32\\QTJava.zip;"
@@ -68,7 +69,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           localJreInstalled ? "java\\lib\\rt.jar;" : "", 
           envClasspath ? envClasspath : "",
           envClasspath ? ";" : "",
-          loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
+          loaddir, loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
