@@ -17,8 +17,28 @@ o     also important for things like cos, sin, max etc
 o     but maybe once you're doing more advanced code, that stuff's ok
 o       or using inner classes is better b/c class stuff works
 o   related classes also need to implement pConstants
+X fixed annoying findSelection bug spew on startup
+X (fixed) 0.4f no longer allowed in the code
 
+_ fold simpleserial into BApplet
+_   sprint an sprintln functions
+_   make i/o work just like mouse (event driven, with dflt behavior)
+_   need to have function to enable it in setup
+_ modify to allow for the 'build' directory on lib
+_ finish tweaks to folder layout in distribution ('java' subdir)
+_   move p5 stuff out of lib so that dir can be moved more easily
+_   maybe put bin/lib inside 'jre' folder and keep lib for p5
+_   for people that want the space, they could remove 'jre'
+_   will make much simpler to update
+_ serial is probably broken in newer versions b/c of 1.3
+
+_ make a new 'dist' function for building
 _ make scrollbar for console
+
+
+JAVA BUGS
+_ cursor disappears in textarea and doesn't reappear until re-entry
+_   windows: jre 1.3.1_03 through 1.4.0_01
 
 
 UNSORTED
