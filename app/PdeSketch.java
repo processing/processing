@@ -23,6 +23,8 @@
 */
 
 public class PdeSketch {
+  static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
+
   // name of sketch, which is the name of main file 
   // (without .pde or .java extension)
   String name;  
@@ -251,11 +253,49 @@ public class PdeSketch {
 
 
   /**
+   * Cleanup temporary files used during a build/run.
+   */
+  protected void cleanup() {
+    // if the java runtime is holding onto any files in the build dir, we
+    // won't be able to delete them, so we need to force a gc here
+    //
+    System.gc();
+
+    // note that we can't remove the builddir itself, otherwise
+    // the next time we start up, internal runs using PdeRuntime won't
+    // work because the build dir won't exist at startup, so the classloader
+    // will ignore the fact that that dir is in the CLASSPATH in run.sh
+    //
+    File dirObject = new File(TEMP_BUILD_PATH);
+    PdeBase.removeDescendants(dirObject);
+  }
+
+
+  /**
+   * Preprocess, Compile, and Run the current code.
    * This is not Runnable.run(), but a handler for the run() command.
    *
-   * run externally if a code folder exists, 
-   * or if more than one file is in the project
+   * There are three main parts to this process:
    *
+   *   (0. if not java, then use another 'engine'.. i.e. python)
+   *
+   *    1. do the p5 language preprocessing
+   *       this creates a working .java file in a specific location
+   *       better yet, just takes a chunk of java code and returns a 
+   *       new/better string editor can take care of saving this to a 
+   *       file location
+   *
+   *    2. compile the code from that location
+   *       catching errors along the way
+   *       placing it in a ready classpath, or .. ?
+   *
+   *    3. run the code 
+   *       needs to communicate location for window 
+   *       and maybe setup presentation space as well
+   *       run externally if a code folder exists, 
+   *       or if more than one file is in the project
+   *
+   *    X. afterwards, some of these steps need a cleanup function
    */
   public void run() throws PdeException {
     current.program = textarea.getText();
