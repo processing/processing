@@ -29,7 +29,7 @@ echo Creating P5 distribution for revision $REVISION...
 # remove any old boogers
 rm -rf processing 
 rm -rf Processing*
-#rm -rf processing-*
+rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
@@ -67,19 +67,16 @@ cp -a dist/Processing.app processing/
 chmod +x processing/Processing.app/Contents/MacOS/JavaApplicationStub
 
 # put jar files into the resource dir, leave the rest in lib
-RES=processing/Processing.app/Contents/Resources/Java/
+RES=processing/Processing.app/Contents/Resources/Java
 mkdir -p $RES
 mv processing/lib/*.jar $RES/
-mv $RES/core.jar processing/lib/
 
 # directories used by the app
 mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar $RES/
-cp work/lib/core.jar $RES/
-#cp -r work/lib/export processing/lib/
-#rm -rf processing/lib/export/CVS
+cp work/lib/core.jar processing/lib/
 
 # get platform-specific goodies from the dist dir
 #cp `which jikes` processing
