@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import javax.swing.*;
+import javax.swing.text.*;
 
 
 // might be nice to have option to save this to a file
@@ -10,50 +12,21 @@ import java.io.*;
 // while watching just System.out
 // or just write directly to systemOut or systemErr
 
-public class PdeEditorConsole extends Component {
+public class PdeEditorConsole extends JScrollPane {
   PdeEditor editor;
 
+  StyledDocument consoleDoc;
+  MutableAttributeSet stdStyle;
+  MutableAttributeSet errStyle;
+
+/* for potential cross platform whitespace munging  
   static final byte CR  = (byte)'\r';
   static final byte LF  = (byte)'\n';
   static final byte TAB = (byte)'\t';
   static final int TAB_SIZE = 2;
-  //static byte tabchunk[] = new byte[TAB_SIZE];
-  //static {
-  //for (int i = 0; i < TAB_SIZE; i++) {
-  //  tabchunk[i] = ' ';
-  //}
-  //}
+*/
 
-  int lineCount;
-  int maxLineCount;
-  String lines[];
-  boolean isError[];
-  int firstLine;
-  int scrollOffset;
-
-  byte cline[] = new byte[4096];
-  //byte clength;
-  int clength;
   boolean cerror;
-
-  Color bgColor;
-  Color fgColorErr;
-  Color fgColorOut;
-  Color scrollEnabledColor;
-  Color scrollDisabledColor;
-
-  int scrollLeft, scrollRight;
-  int scrollUpTop, scrollUpBottom;
-  int scrollDownTop, scrollDownBottom;
-
-  Font font;
-  FontMetrics metrics;
-  int ascent;
-  int leading;
-
-  Image offscreen;
-  int sizeW, sizeH;
-  int imageW, imageH;
 
   static final int HINSET = 6;
   static final int VINSET = 6;
@@ -71,22 +44,55 @@ public class PdeEditorConsole extends Component {
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
 
-    lineCount = PdeBase.getInteger("editor.console.lines", 6);
+    JTextPane consoleTextPane = new JTextPane();
+    consoleTextPane.setEditable(false);
+    consoleDoc = consoleTextPane.getStyledDocument();
+        
+    // necessary?
+    MutableAttributeSet standard = new SimpleAttributeSet();
+    StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
+    consoleDoc.setParagraphAttributes(0, 0, standard, true);
+    
+    // build styles for different types of console output
+    Color bgColor = PdeBase.getColor("editor.console.bgcolor", 
+                      new Color(26, 26, 26));
+    Color fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
+                         new Color(153, 153, 153));
+    Color fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
+                         new Color(204, 51, 0));
+    Font font = PdeBase.getFont("editor.console.font", 
+                  new Font("Monospaced", Font.PLAIN, 11));
+                         
+    stdStyle = new SimpleAttributeSet();
+    StyleConstants.setForeground(stdStyle, fgColorOut);
+    StyleConstants.setBackground(stdStyle, bgColor);
+    StyleConstants.setFontSize(stdStyle, font.getSize());
+    StyleConstants.setFontFamily(stdStyle, font.getFamily());
+    StyleConstants.setBold(stdStyle, font.isBold());
+    StyleConstants.setItalic(stdStyle, font.isItalic());
+    
+    errStyle = new SimpleAttributeSet();
+    StyleConstants.setForeground(errStyle, fgColorErr);
+    StyleConstants.setBackground(errStyle, bgColor);
+    StyleConstants.setFontSize(errStyle, font.getSize());
+    StyleConstants.setFontFamily(errStyle, font.getFamily());
+    StyleConstants.setBold(errStyle, font.isBold());
+    StyleConstants.setItalic(errStyle, font.isItalic());
 
-    maxLineCount = 1000;
-    lines = new String[maxLineCount];
-    isError = new boolean[maxLineCount];
-    for (int i = 0; i < maxLineCount; i++) {
-      lines[i] = "";
-      isError[i] = false;
-    }
-    firstLine = 0;
+    consoleTextPane.setBackground(bgColor);
+        
+    // add the jtextpane to this scrollpane
+    this.setViewportView(consoleTextPane);
+
+    // todo: don't think this does anything
+    //XXX the initial size should be from properties file
+    this.setPreferredSize(new Dimension(200, 50));
 
     if (systemOut == null) {
       systemOut = System.out;
       systemErr = System.err;
 
-      // not text thing on macos
+      // no text thing on macos
       boolean tod = ((PdeBase.platform != PdeBase.MACOSX) &&
 		     (PdeBase.platform != PdeBase.MACOS9));
 
@@ -120,191 +126,27 @@ public class PdeEditorConsole extends Component {
 	System.setErr(consoleErr);
       }
     }
-
-    addMouseListener(new MouseAdapter() {
-	public void mousePressed(MouseEvent e) {
-	  int x = e.getX(); 
-	  int y = e.getY();
-	  if (!((x > scrollLeft) && (x < scrollRight)))
-	    return;
-
-	  if ((y > scrollUpTop) && (y < scrollUpBottom)) {
-	    scrollOffset -= lineCount;
-	    update();
-
-	  } else if ((y > scrollDownTop) && (y < scrollDownBottom)) {
-	    scrollOffset += lineCount;
-	    if (scrollOffset > 0) scrollOffset = 0;
-	    update();
-	  }
-	}
-      });
   }
 
-
-  public void update() {
-    //System.out.println("PdeEditorConsole.update");
-    Graphics g = this.getGraphics();
-    if (g != null) paint(g);
-  }
-
-  public void update(Graphics g) {
-    paint(g);
-  }
-
-  public void paint(Graphics screen) {
-    if (screen == null) return; 
-
-    //systemOut.println("paint()");
-    if (bgColor == null) {
-
-      bgColor = PdeBase.getColor("editor.console.bgcolor", 
-				 new Color(26, 26, 26));
-      fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
-				    new Color(153, 153, 153));
-      fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
-				    new Color(204, 51, 0));
-      scrollEnabledColor = 
-	PdeBase.getColor("editor.console.scrollbox.color.enabled", 
-			 new Color(51, 51, 51));
-      scrollDisabledColor = 
-	PdeBase.getColor("editor.console.scrollbox.color.disabled", 
-			 new Color(35, 35, 35));
-      screen.setFont(font);
-      metrics = screen.getFontMetrics();
-      ascent = metrics.getAscent();
-      leading = ascent + metrics.getDescent();
-      //System.out.println(ascent + " " + leading);
-    }
-
-    Dimension size = getSize();
-    if ((size.width != sizeW) || (size.height != sizeH)) {
-      // component has been resized
-
-      if ((size.width > imageW) || (size.height > imageH)) {
-	// nix the image and recreate, it's too small
-	offscreen = null;
-
-      } else {
-	// who cares, just resize
-	sizeW = size.width; 
-	sizeH = size.height;
-	//setButtonBounds();
-      }
-    }
-    //systemErr.println("size h, w = " + sizeW + " " + sizeH);
-
-    if (offscreen == null) {
-      sizeW = size.width;
-      sizeH = size.height;
-      //setButtonBounds();
-      imageW = sizeW;
-      imageH = sizeH;
-      offscreen = createImage(imageW, imageH);
-    }
-
-    if (offscreen == null) return;
-    Graphics g = offscreen.getGraphics();
-    /*
-      if (font == null) {
-      font = PdeBase.getFont("editor.console.font", 
-      new Font("Monospaced", Font.PLAIN, 11));
-      //font = new Font("SansSerif", Font.PLAIN, 10);
-      g.setFont(font);
-      metrics = g.getFontMetrics();
-      ascent = metrics.getAscent();
-      }
-    */
-    g.setFont(font);
-
-    g.setColor(bgColor);
-    g.fillRect(0, 0, imageW, imageH);
-
-    for (int i = 0; i < lineCount; i++) {
-      //int ii = (firstLine + i) + scrollOffset;
-      int ii = (firstLine + i + 1) + scrollOffset;
-      while (ii < 0) ii += maxLineCount;
-      if (ii >= maxLineCount) ii = ii % maxLineCount;
-
-      g.setColor(isError[ii] ? fgColorErr : fgColorOut);
-      //System.out.println(leading);
-      g.drawString(lines[ii], HINSET, VINSET + ascent + i*ascent);
-    }
-
-    final int SCROLL_INSET = 4;
-    final int SCROLL_SIZE = 12;
-
-    scrollRight = sizeW - SCROLL_INSET;
-    scrollLeft = scrollRight - SCROLL_SIZE;
-
-    scrollUpTop = SCROLL_INSET;
-    scrollUpBottom = scrollUpTop + SCROLL_SIZE;
-
-    scrollDownBottom = sizeH - SCROLL_INSET;
-    if ((PdeBase.platform == PdeBase.MACOSX) || 
-	(PdeBase.platform == PdeBase.MACOS9)) {
-      scrollDownBottom -= 16;  // because size boxes intrude
-    }
-    scrollDownTop = scrollDownBottom - SCROLL_SIZE;
-
-    g.setColor(scrollEnabledColor);
-    g.fillRect(scrollLeft, scrollUpTop, SCROLL_SIZE, SCROLL_SIZE);
-    g.setColor((scrollOffset != 0) ? 
-	       scrollEnabledColor : scrollDisabledColor);
-    g.fillRect(scrollLeft, scrollDownTop, SCROLL_SIZE, SCROLL_SIZE);
-
-    screen.drawImage(offscreen, 0, 0, null);
-  }
 
   public void write(byte b[], int offset, int length, boolean err) {
-    synchronized (cline) {
-      if ((clength > 0) && (err != cerror)) {
+
+//    synchronized (cerror) { // has to be an object...
+      if (err != cerror) {
 	// advance the line because switching between err/out streams
-	message(new String(cline, 0, clength), cerror, true);
-	clength = 0;
-      }
-      int last = offset+length - 1;
-      // starting a new line, so set its output type to out or err
-      if (clength == 0) cerror = err;
-      for (int i = offset; i <= last; i++) {
-	if (b[i] == CR) {  // mac CR or win CRLF
-	  if ((i != last) && (b[i+1] == LF)) {
-	    // if windows CRLF, skip the LF too
-	    i++;
-	  }
-	  message(new String(cline, 0, clength), cerror, true);
-	  clength = 0;
-
-	} else if (b[i] == LF) {  // unix LF only
-	  message(new String(cline, 0, clength), cerror, true);
-	  clength = 0;
-
-	} else if (b[i] == TAB) {
-	  if (clength + TAB_SIZE > cline.length) {
-	    byte temp[] = new byte[clength * 2];
-	    System.arraycopy(cline, 0, temp, 0, clength);
-	    cline = temp;
-	  }
-	  for (int m = 0; m < TAB_SIZE; m++) {
-	    cline[clength++] = ' ';
-	  }
-
-	} else {
-	  //systemOut.println(clength + " " + cline.length + " " + ((char) b[i]));
-	  if (cline.length == clength) {
-	    //systemOut.println("expanding to " + (clength*2));
-	    byte temp[] = new byte[clength * 2];
-	    System.arraycopy(cline, 0, temp, 0, clength);
-	    cline = temp;
-	  }
-	  cline[clength++] = b[i];
-	}
-      }
-      if (clength != 0) {
-	message(new String(cline, 0, clength), cerror, false);
-      }
-    }
+	// potentially, could check whether we're already on a new line
+        message("", cerror, true);
   }
+
+      // we could do some cross platform CR/LF mangling here before outputting
+      
+      // add text to output document
+      message(new String(b, offset, length), err, false);
+      // set last error state
+      cerror = err;
+//    }
+  }
+
 
   public void message(String what, boolean err, boolean advance) {
     // under osx, suppress the spew about the serial port
@@ -314,61 +156,47 @@ public class PdeEditorConsole extends Component {
       if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
     }
 
-    int currentLine = (firstLine + lineCount) % maxLineCount;
-    lines[currentLine] = what;
-    isError[currentLine] = err;
+    // to console display
+    appendText(what, err);
+    
+    if (err) {
+      systemErr.print(what);
+    } else {
+      systemOut.print(what);
+    }
 
     if (advance) {
-      firstLine = (firstLine + 1) % maxLineCount;
-      //systemOut.println((err ? "ERR: " : "OUT: ") + what);
+      appendText("\n", err);
       if (err) {
-	systemErr.println(what);
+	systemErr.println();
       } else {
-	systemOut.println(what);
+	systemOut.println();
       }
-      scrollOffset = 0;
-      // added so for continual update of lines
-      currentLine = (firstLine + lineCount) % maxLineCount;
-      lines[currentLine] = "";  // make sure it's clear
     }
-    update();
   }
 
-  public Dimension getPreferredSize() {
-    //systemOut.println("pref'd sizde");
-    if (font == null) {
-      font = PdeBase.getFont("editor.console.font", 
-			     new Font("Monospaced", Font.PLAIN, 11));
-      //font = new Font("SansSerif", Font.PLAIN, 10);
-      //g.setFont(font);
-      //metrics = g.getFontMetrics();
-      metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
-      ascent = metrics.getAscent();
+  private void appendText(String text, boolean err)
+  {
+    try {
+      consoleDoc.insertString(consoleDoc.getLength(), text, err ? errStyle : stdStyle);
+    }
+    catch(Exception e) {}
     }
 
-    //if (ascent == 0) {
-      // no useful font information yet
-      //System.out.println("PdeEditorConsole: setting size w/o metrics");
-    //return new Dimension(300, 84);
-    //} else {
-      //System.out.println("PdeEditorConsole: got metrics, setting size" + 
-      //		 new Dimension(300 + HINSET*2, 
-      //			       leading*lineCount + VINSET*2));
-    return new Dimension(300 + HINSET*2, 
-			 ascent*lineCount + VINSET*2);
-    //}
+  public Dimension getPreferredSize() {
+    return getMinimumSize();
   }
 
   public Dimension getMinimumSize() {
-    return getPreferredSize();
+    return new Dimension(600, PdeEditor.GRID_SIZE * 3);
   }
 
   public Dimension getMaximumSize() {
-    Dimension pref = getPreferredSize();
-    return new Dimension(3000, pref.width);
-  }
+    return new Dimension(3000, PdeEditor.GRID_SIZE * 3);    
 }
 
+  
+}
 
 class PdeEditorConsoleStream extends OutputStream {
   PdeEditorConsole parent;
