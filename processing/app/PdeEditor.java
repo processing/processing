@@ -711,6 +711,8 @@ public class PdeEditor extends JPanel {
     //System.out.println("RUNNING");
     buttons.run();
 
+    for (int i = 0; i < 10; i++) System.out.println();
+
     if (externalEditor) {
       // history gets screwed by the open..
       String historySaved = historyLast;
