@@ -19,8 +19,7 @@ X   instead, not compressed, since font builder being used
 X     will be compressed into the .jar anyways
 X open button stays stuck if no sketch is selected from popup
 X open applet folder after exporting sketch
-
-_ switch back to red instead of yellow for errors. whups.
+X switch back to red instead of yellow for errors. whups.
 
 
 assigned to dan haskovec, completed by fry
