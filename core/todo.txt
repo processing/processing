@@ -15,6 +15,7 @@ X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
 _ remove need to use depth() at the beginning
 _ and cameraMode(PERSPECTIVE) on each frame
 _ reverse y coordinates
+_ minimum texture size may be 64x64
 
 _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _ implement fullscreen().. this takes over the screen as best it can
