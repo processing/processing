@@ -49,11 +49,19 @@ o   already added a while back
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
 o sphere code needs only front face polygon 
 o   all triangles must be counter-clockwise (front-facing)
+X do applets know when they're stopped? stop? dispose?
+X   would be good to set a param in p5 so that the thread dies
+X   if people have other threads they've spawned, impossible to stop
 
 
 MEGABUCKET (api)
-_ add color(gray) and color(gray, alpha)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074180764
+_ color issues
+_   add color(gray) and color(gray, alpha)
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074180764
+_   doesn't work when outside a function:
+_     color bg_color = color(255,0,0);
+_   colorMode broken for red() green() etc
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 _ api to properly sense when applet has focus
@@ -62,19 +70,17 @@ _   code now in zipdecode, maybe just list this as a standard thing?
 _ include in the docs: don't override stop()
 _   or handle this some more intelligent way, super.stop() is needed.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ include a lerp()? is there one in flash?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
 _ acos/asin/etc? 
-_ doesn't work when outside a function:
-_   color bg_color = color(255,0,0);
-_ colorMode broken for red() green() etc
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
 _ angleMode(DEGREES) and angleMode(RADIANS)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
 _ decide on whether to use PTools
 _   i.e. move math functions into utility library
+_   check what other functions require PGraphics to exist but shouldn't
 _ look at BGraphics to see if setting an 'applet' could be used
 _   then other than that, if no applet set, no connection to PApplet
 _ new/old graphics, explicitly stating 2d/3d, huh?
@@ -87,31 +93,8 @@ _   append/unappend (no push/pop), shift/unshift,
 _   slice, splice, reverse, concat, split
 _ more blend() modes? (the five listed on the thread below?)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
+_ update() mode needs to be hacked in (?)
 
-
-_ mkoser wish list
-_   filled polygons working with smooth()
-_   z-clipping
-
-
-............................................................
-
-
-0071 or later
-
-
-BUGS / graphics
-
-_ fix param() to use a sketch.properties file when run as an app
-_   make this also be used in generating the html file
-_ fix link() to handle relative URLs
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
-_ add a method BApplet.setPath() or something like that
-_   use it to repair saveBytes, saveStrings, etc
-_   put screenshots into their sketch folder
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
-_ put SecurityException things around file i/o for applets
-_   rather than checking online(), since applets might be signed
 
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
@@ -126,15 +109,15 @@ _   colorMode(CMYK)
 _     just does 1-r/1-g/1-b inside 
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
-_ some way to properly quit sketch when stopped
-_   if people have other threads they've spawned, impossible to stop
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
-_ update() mode needs to be hacked in
 
-_ screenGrab() at the end of a draw mode program is problematic
-_   app might exit before the file has finished writing to disk
-_   need to block other activity inside screenGrab until finished
+............................................................
 
+
+0071 or later
+
+_ mkoser wish list
+_   filled polygons working with smooth()
+_   z-clipping
 
 
 ////////////////////////////////////////////////////////////////////
@@ -147,7 +130,7 @@ A hybrid of OpenGL (3D Graphics) and some aspects of Postscript (Fill, Stroke)
 The graphics library was formerly called Bagel, which is an internal name.
 
 
-CORE / Key/Mouse Events
+CORE / PApplet
 
    b _ keypressed hanging on applets with a code folder
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
@@ -160,7 +143,7 @@ CORE / Key/Mouse Events
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
 
 
-CORE / Image
+CORE / PImage
 
    b _ dynamically load code for png and others on loadImage/saveFrame?
    b _ updated png encoder
@@ -178,9 +161,14 @@ CORE / Image
    b _ BImage.smooth() ?
    b _ alpha not set on saveFrame, so can't be used in photoshop as a layer
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
+   b _ expose function to write tiff header in PImage (advanced)
+   b _   helps with writing enormous images
+   1 _ loadImage must be used inside or after setup
+   1 _   either document this and/or provide a better error message
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
 
 
-BAGEL / Rendering
+CORE / PGraphics
 
    b _ lines
    b _   last vertex on LINE_LOOP fades out
@@ -216,6 +204,9 @@ BAGEL / Rendering
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
    b _ weird problem with drawing/filling squares
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
+   1 _ alpha of zero still draws boogers on screen
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
 
    1 _ ellipse problems
    1 _   weird ellipse bug with an alpha line in same image
@@ -265,17 +256,23 @@ BAGEL / Rendering
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
 
 
-CORE / PApplet runner
-
-   b _ ed's thread re: fullscreen strategies
-   b _   could add a new BApplet that uses BufferStrategy?
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
-
-
 CORE / Details
 
+   1 _ add a method BApplet.setPath() or something like that
+   1 _   use it to repair saveBytes, saveStrings, etc
+   1 _   put screenshots into their sketch folder
+   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+   1 _ fix param() to use a sketch.properties file when run as an app
+   1 _   make this also be used in generating the html file
+   1 _ fix link() to handle relative URLs
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
+   1 _ put SecurityException things around file i/o for applets
+   1 _   rather than checking online(), since applets might be signed
    1 _ saveFrame() to a folder horks things up if a mkdirs() is required
-   1 _   on macosx, this makes things hang; on windows it just complains
+   1 _   on macosx, this makes things hang; on windows it complains
+   1 _ saveFrame() at the end of a draw mode program is problematic
+   1 _   app might exit before the file has finished writing to disk
+   1 _   need to block other activity inside screenGrab until finished
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
    1 _ problems with defining fill(255) vs fill(0xff808080)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
@@ -294,9 +291,13 @@ CORE / Details
    1 _ catch security exceptions around applet i/o calls
    1 _   not just for saving files, but provide better error msgs when
    1 _     attempting to download from another server
-   1 _ alpha of zero still draws boogers on screen
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
+
+
+CORE / main()
+
+   b _ ed's thread re: fullscreen strategies
+   b _   could add a new BApplet that uses BufferStrategy?
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
 
 
 CORE / Documentation
@@ -306,7 +307,7 @@ CORE / Documentation
    1 _   note that applet is itself a Component
 
 
-CODE / Mac OS X
+CORE / Mac OS X
 
    b _ still some weirdness with thread flickering on the mac
    b _   and frenetic display updates on the pc
@@ -319,7 +320,7 @@ CODE / Mac OS X
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
 
 
-CORE / Fonts
+CORE / PFont
 
    b _ embed all available chars from a font, so japanese, etc works
    1 _ sbit font support
@@ -333,11 +334,11 @@ CORE / Fonts
 CORE / New Graphics
 What the hell do we do with this code?
 
-     _ stroke not set on flat_rect
-     _ when drawing fonts w/ sami's code, left edge has problem
-     _   8-bit (alpha) textures not blending 
-     _ near-plane clipping currently disabled for triangles, enabled for lines
-     _   (but culling offscreen triangles works.. but may have been
-     _   commented out by carlos)
-     _ hint(NEW_GRAPHICS) needs to be called before allocate()
-     _   otherwise stencil buffer and 'triangle' object are null on first run
+   1 _ stroke not set on flat_rect
+   1 _ when drawing fonts w/ sami's code, left edge has problem
+   1 _   8-bit (alpha) textures not blending 
+   1 _ near-plane clipping currently disabled for triangles, enabled for lines
+   1 _   (but culling offscreen triangles works.. but may have been
+   1 _   commented out by carlos)
+   1 _ hint(NEW_GRAPHICS) needs to be called before allocate()
+   1 _   otherwise stencil buffer and 'triangle' object are null on first run
