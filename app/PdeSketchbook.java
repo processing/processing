@@ -65,6 +65,9 @@ public class PdeSketchbook {
   static File librariesFolder;
   static String librariesPath;
 
+  // maps imported packages to their library folder
+  static Hashtable importToLibraryTable = new Hashtable();
+
   // classpath for all known libraries for p5
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
@@ -525,10 +528,19 @@ public class PdeSketchbook {
           continue;
         }
 
+        // get the path for all .jar files in this code folder
+        String libraryClassPath = 
+          PdeCompiler.contentsToClassPath(exported);
         // grab all jars and classes from this folder, 
         // and append them to the library classpath
-        librariesClassPath += File.pathSeparatorChar + 
-          PdeCompiler.contentsToClassPath(exported);
+        librariesClassPath += 
+          File.pathSeparatorChar + libraryClassPath;
+        // need to associate each import with a library folder
+        String packages[] = 
+          PdeCompiler.packageListFromClassPath(libraryClassPath);
+        for (int k = 0; k < packages.length; k++) {
+          importToLibraryTable.put(packages[k], exported);
+        }
 
         JMenuItem item = new JMenuItem(list[i]);
         item.addActionListener(listener);

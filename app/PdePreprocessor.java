@@ -43,6 +43,11 @@ public class PdePreprocessor {
   static final int JDK14 = 2;
 
   static String defaultImports[][] = new String[3][];
+
+  // these ones have the .* at the end, since a class name
+  // might be at the end instead of .* whcih would make trouble
+  // other classes using this can lop of the . and anything after
+  // it to produce a package name consistently.
   String extraImports[];
 
   static final int STATIC = 0;  // formerly BEGINNER
@@ -134,9 +139,8 @@ public class PdePreprocessor {
     // just in case it's not an advanced mode sketch
     PatternMatcher matcher = new Perl5Matcher();
     PatternCompiler compiler = new Perl5Compiler();
-    //String mess = "^\\s*(import\\s*[\\w\\d_\\.]+\\s*\\;)";
-    //String mess = "^\\s*(import\\s*[\\w\\d\\_\\.]+\\s*\\;)";
-    String mess = "^\\s*(import\\s+\\S+\\s*;)";
+    //String mess = "^\\s*(import\\s+\\S+\\s*;)";
+    String mess = "^\\s*(import\\s+)(\\S+)(\\s*;)";
     java.util.Vector imports = new java.util.Vector();
 
     Pattern pattern = null;
@@ -152,10 +156,14 @@ public class PdePreprocessor {
       if (!matcher.contains(input, pattern)) break;
 
       MatchResult result = matcher.getMatch();
-      String piece = result.group(1).toString();
+      String piece1 = result.group(1).toString();
+      String piece2 = result.group(2).toString();  // the package name
+      String piece3 = result.group(3).toString();
+      String piece = piece1 + piece2 + piece3;
       int len = piece.length();
 
-      imports.add(piece);
+      //imports.add(piece);
+      imports.add(piece2); 
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
@@ -241,7 +249,8 @@ public class PdePreprocessor {
     File streamFile = new File(buildPath, name + ".java");
     PrintStream stream = new PrintStream(new FileOutputStream(streamFile));
 
-    writeHeader(stream, extraImports, name);
+    //writeHeader(stream, extraImports, name);
+    writeHeader(stream, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
@@ -277,25 +286,24 @@ public class PdePreprocessor {
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
    */
-  void writeHeader(PrintStream out, String imports[], 
-                   String className) {
+  void writeHeader(PrintStream out, String className) {
 
     // must include processing.core
     out.print("import processing.core.*; ");
 
     // emit emports that are needed for classes from the code folder
-    /*
-    if (imports != null) {
-      for (int i = 0; i < imports.length; i++) {
-        out.print("import " + imports[i] + ".*; ");
-      }      
+    if (extraImports != null) {
+      for (int i = 0; i < extraImports.length; i++) {
+        out.print("import " + extraImports[i] + "; ");
+      }
     }
-    */
+    /*
     if (imports != null) {
       for (int i = 0; i < imports.length; i++) {
         out.print(imports[i]);
       }      
     }
+    */
 
     // emit standard imports (read from pde.properties)
     // for each language level that's being used.
