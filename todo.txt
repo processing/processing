@@ -14,30 +14,7 @@ Roy Macarthur <roy@mcarthur.com>
 Fabrice Clérot <fabrice.clerot@francetelecom.com>
 
 
-where is?
-_ audio output (play wav, au, aiff(?), mp3)
-
-
-advanced
-_ adding lights
-_   control of position/color of default lights
-_ controlling camera movements
-_ multmatrix/identity
-_ constants besides PI, TWO_PI
-_ min/max with 3 parameters
-_ if (a) ? 3 : 4
-_ formatting printf-style things
-_ audio input
-_ audio synthesis
-_ just saying 'millis' in processingapplet, instead of getMillis()
-_ keyPressed, keyReleased, mousePressed, mouseReleased
-
-
-for the book
-_ alpha, anti-aliasing
-
-
-open
+QUESTIONS
 _ is day, month, year overkill inside processingapplet?
 _ PImage, PFont or how to name?
 _ loadImage or getImage?
@@ -45,10 +22,18 @@ _ bezierVertex/catmullRomVertex poorly named (based on algo used)
 _   instead curveVertex/fitCurveVertex/etc.
 _ circle/square functions
 
-_ add java.* to top of processingapplet default base class used by kjc
-
 
 for 0010
+_ font support
+_   loadImage/loadFont or getImage/getFont?
+_   text(char c), text(string s)
+_   current acu fonts are broken
+_   write code to bind/convert java fonts
+_ image support
+_   image() and 2D/2D affine versions of it
+_ min() seems funny/unavailable
+_ screenGrab() code (single frame to tif) 
+_ add java.* to top of processingapplet default base class used by kjc
 _ z=0 shit, 2D stuff needs to draw over z=0 plane
 _   new objects draw behind old objects with noBackground()
 _ no stroke should show up on image()
@@ -68,20 +53,11 @@ _   documentation says 'mouseDown' even though it's 'mousePressed'
 _   when images aren't found on disk
 _   image formats supported (gif and jpeg)
 _   notes about running on win98 and that stupid startup exception
+_   make note in documentation about convex polygons
 _ fix color cube applet 
 _   make it run in current version of processing
 _   fix background from showing up black
-_ crappy way of determining if inside a class--ignores comments
-_ option to enable/disable frame on running applets
-_ compiling .java files leaves the .class files next to the .java
-_   make sure all the dirs in sketchbook added to classpath on startup
-_   if new dir added, must restart processing (this is acceptable)
-_ ability to include other code from sketchbook directory
-_   compile entire sketchbook on startup, then check for new files on compile?
-_ when applet window is too large to fit, center and put in back
-_ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
-_   better solution for this (error while opening image)
-_   and document how image loading works
+_ fix crappy way of determining if inside a class--ignores comments
 _ post new macintosh version
 _   with serial port support
 X make acu fonts work again
@@ -94,9 +70,33 @@ X rect now uses x, y, width, height instead of x1, y1, x2, y2
 X circle has been replaced with ellipse (uses xywh)
 X box takes diameter, or width, height, depth [NOT IN CPP]
 X sphere is the same as box [NOT IN CPP]
+X got rid of colorscale and using colormode for all instead
+X   make changes in documentation
+X 'ellipse' instead of 'oval'?
+X   make note in documentation
+X catmullrom is broken 
+X   write documentation for new curve functions
+o make note in docs about removal of LINE from LINES
+X setting origins
+X   should shapes draw from center or from upper left?
+X   should ovals use radius or diameter?
+X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
+X nice to have a random number generator between -1..1 
+X   as well as an integer random; instead of just 0..1
+X show creas how to get access to cvs
 
 
 for 0011
+_ option to enable/disable frame on running applets
+_ compiling .java files leaves the .class files next to the .java
+_   make sure all the dirs in sketchbook added to classpath on startup
+_   if new dir added, must restart processing (this is acceptable)
+_ ability to include other code from sketchbook directory
+_   compile entire sketchbook on startup, then check for new files on compile?
+_ when applet window is too large to fit, center and put in back
+_ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
+_   better solution for this (error while opening image)
+_   and document how image loading works
 _ keys don't work, even when overriding keyTyped etc.
 _ include stdout/stderr in the processing window
 _   stderr in red color
@@ -115,9 +115,13 @@ _   if not processing applet, look for a main(), no main give an error
 _ give warning when compiling w/o kjcprocessingapplet
 
 
+PROCESSING - NECESSITIES FOR BOOK
+_ audio output (play wav, au, aiff(?), mp3)
+_ alpha, anti-aliasing
+
+
 PROCESSING - HIGH
 _ make images work again
-_ write code to bind with java fonts
 _ bug in paren balancing
 _ shift-click on play for 'presentation mode'
 _   does full screen and hides editor window
@@ -145,7 +149,7 @@ _ lines become 2 pixels thick after a 3D transform
 _ kill button (without stop) doesn't clear play
 _ image grabbing code (write to tiff)
 _ build a linux/x86 release
-_ per-vertex shading doesn't work
+_ per-vertex coloring doesn't work
 _ the lights prolly shouldn't follow objects around
 _ work on courseware applet code signing
 _ why is z going negative, seems weird
@@ -167,62 +171,34 @@ _ write example applets in processing
 _ courseware system 
 _   uploading pieces when finished - scrapbook/sketchbook model?
 _   download new versions of pde.jar from main machine
-_ some kind of text
 _ quicktime exporter or image sequence export
-_ nice to have a random number generator between -1..1 
-_   as well as an integer random; instead of just 0..1
-_ show creas how to get access to cvs
 _ how to use ssh identity file to maintain auth for brancusi
 
 
 BAGEL
-X got rid of colorscale and using colormode for all instead
-_   make changes in documentation
-X 'ellipse' instead of 'oval'?
-_   make note in documentation
-X catmullrom is broken 
-_   write documentation for new curve functions
-
 _ where do the 'error line is 9' messages come from?
 _   these are runtime errors inside bagel code, how to trap?
 _ get web documentation back into cvs
 _ have to get rid of static i/o stuff before porting to c
 _   may also need to get rid of floating point constants
-_ current acu fonts are broken
 _ area copying function: copy(x1, y1, w, h,  xto, yto);
-
 _ should math functions be moved in?
 _   this could help porting, and sanity in processingapplet
 _   io functions might be treated similarly
-
-_ loadImage/loadFont or getImage/getFont?
-_ text(char c), text(string s)
-_ image() and 2D/2D affine versions of it
-_ min() seems funny/unavailable
 _ some method of moving between 
 _   center oriented: x, y, radius (3D style)
 _   and 2D style: x1, y1, x2, y2
 _   or x, y, diameter
-_ make note in docs about removal of LINE from LINES
 _ build in second matrix type: 2d affine
 _ add convex polygon type
-_ make note in documentation about convex polygons
-
 _ sketch in antialiasing functions
 _ how does color depth work on ipaq? 4-4-4? 5-6-5?
-
 _ font usage/substition solution
 _   java freetype? jni freetype to build texmap fonts?
 _   look at flash file format? (does it have kerning?)
-
-_ screen grabbing code
 _ simpler bitmap fonts w/o smoothing, just 2D
 _ alpha blending (easier)
 _ antialiasing
-_ setting origins
-_   should shapes draw from center or from upper left?
-_   should ovals use radius or diameter?
-_   should shapes use x1, y1 - x2, y2 or x, y, w, h?
 
 
 BAGEL - SHOULD
@@ -238,6 +214,21 @@ _   currently disabled b/c homogenousColors not set false for vertices
 _   and code not written for curve vertices
 _ better lockout inside beginShape() to keep other things from happening
 _ when stroke in use, stroke letters (currently stroke doesn't affect
+
+
+DOCS / ADVANCED
+_ adding lights
+_   control of position/color of default lights
+_ controlling camera movements
+_ multmatrix/identity
+_ constants besides PI, TWO_PI
+_ min/max with 3 parameters
+_ if (a) ? 3 : 4
+_ formatting printf-style things
+_ audio input
+_ audio synthesis
+_ just saying 'millis' in processingapplet, instead of getMillis()
+_ keyPressed, keyReleased, mousePressed, mouseReleased
 
 
 BUG WATCH 
