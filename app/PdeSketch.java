@@ -267,6 +267,7 @@ public class PdeSketch {
 
   /**
    * This is called upon return from entering a new file name.
+   * (that is, from either newCode or renameCode after the prompt)
    * This code is almost identical for both the newCode and renameCode
    * cases, so they're kept merged except for right in the middle 
    * where they diverge.

@@ -702,6 +702,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.cut();
+          sketch.setModified();
         }
       });
     menu.add(item);
@@ -718,6 +719,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.paste();
+          sketch.setModified();
         }
       });
     menu.add(item);
@@ -1096,15 +1098,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * checkModified2() which will get on with business.
    */
   protected void checkModified(int checkModifiedMode) {
-    //checkModified(checkModifiedMode, null, null);
-    //}
-    //protected void checkModified(int checkModifiedMode, String path, String name) {
     this.checkModifiedMode = checkModifiedMode;
-    //openingPath = path;
-    //openingName = name;
 
-    //if (!sketch.isModified()) {
-    //if (sketch.modified) checkModified2();
     if (!sketch.modified) {
       checkModified2();
       return;
