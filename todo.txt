@@ -1,17 +1,18 @@
 0031
 X lib/pde.properties should be read using getResource
 X   otherwise path issues cause trouble (likely under win98)
+X take state information out of Header
+X cleanup lastFile/lastDirectory
+X save (just) last program run in sketch.properties
 
-in the morning
-_ take state information out of Header
-_ cleanup lastFile/lastDirectory
+_ userName not getting set before sketchbook menu is built
+_ add 'refresh list' item to the sketchbook menu
 _ renaming projects
 _ sketch: sketch-000 is dumb
 _ make sure compiling into build directory
 _   remove everything from build when starting a new build
 _   and once compiled there, read all classes for export
 _ implement popup menu
-_ save (just) last program run in sketch.properties
 _ move structure of app/application dirs around a bit
 
 _ saving to gzipped 'versions' file
