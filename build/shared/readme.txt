@@ -158,11 +158,20 @@ things need to go in a folder called 'data' inside sketchbook/default
 
 SERIAL PORT
 
+>>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+
 the serial port is a useful way to hook things up to hardware
 devices of your own devising. 
 
+on macos9, works fairly well with my keyspan usb/serial adapter. thank
+god for patrick beard and jdirect.
 
->>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+on macosx, need rxtx to be installed (dmg included with p5 download),
+follow their bizarre instructions. on my machine, i'm using a keyspan
+28X dual port adapter, and the selection i use on the serial port menu
+reads "/dev/cu.USA28X21P1.1". your mileage may vary.
+
+linux.. haven't tested but you'll need rxtx and elbow grease.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
