@@ -417,12 +417,18 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
   public void run() {
     if (inactive == null) return;
     clear();
-    setState(0, ACTIVE, true);
+    //setState(0, ACTIVE, true);
+    setState(RUN, ACTIVE, true);
+  }
+
+  public void running(boolean yesno) {
+    setState(RUN, yesno ? ACTIVE : INACTIVE, true);
   }
 
   public void clearRun() {
     if (inactive == null) return;
-    setState(0, INACTIVE, true);
+    //setState(0, INACTIVE, true);
+    setState(RUN, INACTIVE, true);
   }
 
   /*
