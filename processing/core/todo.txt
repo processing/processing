@@ -103,6 +103,9 @@ _ sphere x,y,z,r or box w,h,d.. need to make them consistent
 _ look at curve functions more closely
 _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
+_ how to force PGraphics() instead of PGraphics2()
+
+_ implement PGraphics2.curveVertex()
 
 _ move textMode and textSpace back out of PFont
 _   use die() to fail in font situations
