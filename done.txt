@@ -1,3 +1,33 @@
+MISC (pruned from crusty todo list)
+
+X text editor? jedit's textarea class? hmm? hmm?  // Yeah for jedit! 
+X document imageMode, planeMode, ellipseMode
+X 'rot' example not working in release 18
+X make note in documentation about getting access to pixel array
+X   pixels[] is in ProcessingApplet
+X build a linux/x86 release
+X fix buzz.pl to not create ../../bagel 
+X how to use ssh identity file to maintain auth for brancusi
+X write dist.bat for releases
+X   don't forget to update 'export' dir with processing releases
+X   write code for automatic macintosh releases
+X just saying 'millis' in processingapplet, instead of getMillis()
+X keyPressed, keyReleased, mousePressed, mouseReleased
+X bug in paren balancing
+X   paren problems comes from overusing parens (too many closing)
+X   image[first[i], 0, 0) hitting last paren causes jump to top
+X beautify is broken // I think this is fixed
+X sketch: sketch-000 is dumb  
+X   // Just number successively 0001, 0002 like a digital camera
+X color won't set for fonts //This works
+o 'image' is too generic a variable to have inside BApplet
+o   check for others that shouldn't be used (pixels? width? height?)
+o   or have a way to syntax color them
+o put processing/bagel into sourceforge cvs FOR BETA
+o   probably after kjc/engine stuff restructured
+o bring cbagel up to par
+
+
 0048
 
 macosx
@@ -17,6 +47,8 @@ pde
 X re-enable wheel mouse
 X   just uses #ifdef for JDK14
 o   System.getProperty("java.version") -> "1.4.1_01"
+X text editor - color coding is the big issue
+X use syntax coloring to highlight BApplet's class variables and functions
 
 windows
 X remove built-in jre (!)

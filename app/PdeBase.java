@@ -413,7 +413,7 @@ public class PdeBase extends Frame implements ActionListener {
 
     frame.pack();  // maybe this should be before the setBounds call
 
-    editor.frame = frame;  // no longer really used
+    //editor.frame = frame;  // no longer really used
     editor.init();
     rebuildSketchbookMenu(sketchbookMenu);
     buildSerialMenu();
