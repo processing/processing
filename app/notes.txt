@@ -1,0 +1,185 @@
+ABOUT REV 0013
+
+features and tweaks:
+
+- you can set the background color to be used when your applet is
+  in full screen mode. in lib/pde.properties change the line
+  fullscreen.bgcolor=#0080ff
+  to include whatever color you want. the syntax is the same as web
+  pages, although you aren't limited to the web palette.
+
+- screenGrab() functionality! get happy.
+  add screenGrab() at the end of your loop() function to produce
+  a series of numbered tiff-format images that can be imported 
+  into a video editing app. or call screenGrab() when the mouse is
+  pressed to take quick snapshots. 
+
+- colorcube applet is updated to the current release.
+  it is also now included in the sketchbook/examples directory.
+
+- for the technically inclined or curious, the source code for
+  ProcessingApplet is included in the sketchbook/standard directory.
+  it's not particularly pretty, since it's continually changing, but
+  can be useful if you're wondering about how things work.
+
+
+bugs fixed:
+
+- the fix for rev 12 wasn't actually included in rev 12. grr.
+  this implies 1) i'm an idiot, and 2) rev 11 and 12 are the same.
+
+- ellipse was drawing opposite the direction of the origin.
+
+- default program now actually works--replaced colorScale()
+
+- editor was selecting the wrong line for errors. 
+
+
+ABOUT REV 0012
+
+this was a simple fix for a big problem... programs that included
+'extends ProcessingApplet' didn't work and gave a cryptic error
+message. other than that, no new features.
+
+
+ABOUT REV 0011
+
+i've changed (broken) enough things in this new release that i'm
+writing down a list of changes. your programs may run a little funny
+in rev 11, but it's all for the better in the long run. let me know if
+you have trouble getting things to work. and of course, keep a copy of
+rev 9 around in case things go wrong.
+
+that said, rev 11 should be a much happier place to work. due to the
+harrassment of your classmates, i've completed (simple) font support,
+among other things.
+
+[for those who missed rev 10, it only existed for 15 minutes, because a
+bug was found as i was preparing to send it out.]
+
+
+
+FONTS are working. a simple example:
+
+void setup() {
+  size(300, 300);
+  setFont(loadFont("fonts/Univers76.vlw.gz"));
+  fill(200, 200, 00);
+  background(10, 70, 200);
+}
+
+void loop() {
+  rect(10, 10, 100, 100);
+  translate(mouseX, mouseY);
+  scale(20, 20);
+  text("I'm a little typeface short and stout", 0, 0);
+}
+
+the 0, 0 part at the end of 'text' is the x, y location to put it. 
+the scale(20, 20) means 20 point font (fonts are 1 pixel high). 
+(note that with the scale() in there, the x, y coords for text() will
+also be multiplied by 20x.)
+
+bunch of cheezy fonts are included in a 'fonts' directory. not
+sure if i'll include these in the future, but at least it's a start.
+
+
+
+IMAGES are working. a simple example:
+
+BagelImage b;
+
+void setup() {
+  size(300, 300);
+  fill(100);
+  b = loadImage("max_van_kleek.gif");
+}
+
+void loop() {
+  image(b, mouseX, mouseY);
+}
+
+this drags poor max around the screen with the mouse position. the
+image should be in the same directory as run.bat. jpeg images can be
+used too.
+
+
+
+RANDOM() functions, more random than ever
+
+// get a float between 0 and 40, or [0..40) for math weenies
+float a = random(40);
+
+// get a float between -1 and 1
+float b = random(-1, 1);
+
+// get an int between 0 and 9
+int c = (int) random(10);
+
+
+
+PIXELS... you want them
+
+pixels[] is an int array that contains all of the image data from the
+screen, in ARGB format (packed into ints). play away.
+
+if you don't know what that means and would like to use the pixel
+array directly, let me know.
+
+
+
+FIXED WIDTH FONTS
+
+make-your-own-fixed-width-fonts-in-photoshop are supported.
+but i'm not gonna bother documenting them unless someone asks.
+
+
+
+ALTERCATIONS
+
++ rect(x, y, width, height) instead of rect(x1, y1, x2, y2)
+
++ ellipse(x, y, width, height) instead of oval
+
++ box(size) instead of cube()
+
++ box(width, height, depth) instead of box(x1, y1, z1, x2, y2, z2)
+
++ sphere(size) stays the same
+
++ image() instead of imageRect()
+
++ translate(x, y) in addition to translate(x, y, z)
+
++ scale(size) and scale(x, y) in addition to scale(x, y, z)
+
++ rotate(angle) rotates by angle in 2D
+
++ rotateX, rotateY, rotateZ (angle) each rotate by angle 
+  around their respective axes
+
++ transform( .. 16 floats here .. ) if you think you're matrix math
+  genius and wanna play with your own transformations
+
+
+
+LESS ANNOYANCE
+
++ no longer write software backwards! new shapes being drawn actually
+replace older shapes, even when using flat, 2D surfaces. 
+
++ no need to use 'extends KjcProcessingApplet' anymore, just use
+'extends ProcessingApplet', and processing will figure out whether
+the 'Kjc' part is relevant or not.
+
+
+
+PROBABLY NEVER NOTICED
+
++ colorScale() no longer exists. use colorMode(RGB, ...)
+  instead, where ... is whatever you would've put inside colorScale()
+
++ included run95.bat for people who are using 95/98/ME. you can use
+  this .bat if run.bat opens a dos window and closes it quickly
+  without starting processing. just put processing at the base of your
+  c: drive in a folder called 'processing'.

@@ -40,17 +40,15 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     setLayout(new BorderLayout());
 
     Color bgColor = 
-      PdeApplet.getColor("bg_color", new Color(51, 102, 153));
-    Color bgStippleColor = 
-      PdeApplet.getColor("bg_stipple_color", null);
+      PdeApplet.getColor("editor.bgcolor", new Color(51, 102, 153));
     Color tickColor = 
-      PdeApplet.getColor("tick_color", new Color(204, 204, 204));
+      PdeApplet.getColor("editor.tick_color", new Color(204, 204, 204));
     Color gutterBgColor =
-      PdeApplet.getColor("gutter_bg_color", new Color(0, 51, 102));
+      PdeApplet.getColor("editor.gutter_bgcolor", new Color(0, 51, 102));
     Color buttonBgColor = 
-      PdeApplet.getColor("button_bg_color", new Color(153, 153, 153));
+      PdeApplet.getColor("editor.button_bgcolor", new Color(153, 153, 153));
     Color statusBgColor = 
-      PdeApplet.getColor("status_bg_color", new Color(204, 204, 204));
+      PdeApplet.getColor("editor.status_bgcolor", new Color(204, 204, 204));
 
     //int gwidth = PdeApplet.getInteger("graphics_width", 101);
     //int gheight = PdeApplet.getInteger("graphics_height", 101);
@@ -740,7 +738,9 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 	fullScreenWindow = new Window(new Frame());
 	fullScreenWindow.setBounds(0, 0, screen.width, screen.height);
       }
-      fullScreenWindow.setBackground(new Color(102, 102, 102));
+      Color fullScreenBgColor = 
+	PdeApplet.getColor("fullscreen.bgcolor", new Color(102, 102, 102));
+      fullScreenWindow.setBackground(fullScreenBgColor);
 
       /*
       fullScreenWindow.addWindowListener(new WindowAdapter() {
