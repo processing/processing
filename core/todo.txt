@@ -1,5 +1,9 @@
 0072 core
 X make m00, m01 etc public
+X hack to make loadImage() work 
+X   cache settings are ignored, may be slow as hell
+
+_ loadImage() is mostly broken
 
 _ go through and figure out what stuff to make public
 

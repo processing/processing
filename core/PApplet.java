@@ -1812,6 +1812,7 @@ public class PApplet extends Applet
   // IMAGE I/O
 
 
+  /*
   private Image gimmeImage(URL url, boolean force) {
     Toolkit tk = Toolkit.getDefaultToolkit();
 
@@ -1863,6 +1864,7 @@ public class PApplet extends Applet
       return null;
     }
   }
+  */
 
   public PImage loadImage(String filename) {
     if (filename.toLowerCase().endsWith(".tga")) {
@@ -1876,6 +1878,7 @@ public class PApplet extends Applet
     Image awtimage = null;
     //String randomizer = "?" + nf((int) (random()*10000), 4);
 
+    /*
     if (filename.startsWith("http://")) {
       try {
         URL url = new URL(filename);
@@ -1907,6 +1910,10 @@ public class PApplet extends Applet
         }
       }
     }
+    */
+
+    awtimage = Toolkit.getDefaultToolkit().createImage(loadBytes(filename));
+
     if (awtimage == null) {
       System.err.println("could not load image " + filename);
       return null;
@@ -4165,7 +4172,7 @@ public class PApplet extends Applet
   }
 
 
-  public void copy(int sx1, int sy1, int sx2, int sy2, 
+  public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
      g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
@@ -4192,13 +4199,13 @@ public class PApplet extends Applet
   }
 
 
-  public void blend(int sx1, int sy1, int sx2, int sy2, 
+  public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
