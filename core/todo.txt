@@ -139,12 +139,12 @@ X   casey: i wan't able to get binary() to work at all:
 o Typography: Helix won't compile 
 o   works fine, just needs BFont -> PFont
 X standalone 'alpha' function for PImage (static methods for alpha fxns)
+X Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
+X   turns out bounds checking wasn't working properly on colors
 
 The biggest problem was the key and mouse functions not working. For example:
 Input: Mouse_Functions
 Input: Keyboard_Functions
-
-Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
 
 ....
 
@@ -279,6 +279,8 @@ CORE / PGraphics
    b _     lines become 2 pixels thick after a 3D transform 
    b _     better handling of single-pixel special case
    b _       flat_line_retribution is a hack, can go away
+   b _ lines are conflicting with type in 2D
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094174791;start=0
    b _ mgorbet stroke transparency problem
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
    b _   make sure line() commands don't try to have a fill
