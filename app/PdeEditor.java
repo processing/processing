@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
@@ -51,7 +52,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
-  static final String EMPTY = 
+  static final String EMPTY =
     "                                                                     " +
     "                                                                     " +
     "                                                                     ";
@@ -60,7 +61,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   static final int HANDLE_OPEN = 2;
   static final int HANDLE_QUIT = 3;
   int checkModifiedMode;
-  String handleOpenPath; 
+  String handleOpenPath;
   boolean handleNewShift;
   boolean handleNewLibrary;
   //String handleSaveAsPath;
@@ -96,7 +97,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   JMenuItem saveAsMenuItem;
   //JMenuItem beautifyMenuItem;
 
-  // 
+  //
 
   boolean running;
   boolean presenting;
@@ -107,7 +108,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   protected RedoAction redoAction;
   static public UndoManager undo = new UndoManager(); // editor needs this guy
 
-  // 
+  //
 
   //PdeHistory history;  // TODO re-enable history
   PdeSketchbook sketchbook;
@@ -152,7 +153,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
     // what platform has their help menu way on the right?
-    //if ((PdeBase.platform == PdeBase.WINDOWS) || 
+    //if ((PdeBase.platform == PdeBase.WINDOWS) ||
     //menubar.add(Box.createHorizontalGlue());
     menubar.add(buildHelpMenu());
 
@@ -177,6 +178,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
+    textarea.setHorizontalOffset(4);
+    //textarea.setBorder(new EmptyBorder(0, 20, 0, 0));
+    //textarea.setBackground(Color.white);
+
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
     //System.out.println(consolePanel.getInsets());
@@ -197,7 +202,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     // if window increases in size, give all of increase to textarea (top pane)
     splitPane.setResizeWeight(1D);
 
-    // to fix ugliness.. normally macosx java 1.3 puts an 
+    // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
     if (PdeBase.platform == PdeBase.MACOSX) {
       splitPane.setBorder(null);
@@ -227,26 +232,26 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         (PdeBase.platform == PdeBase.MACOS9)) {
       presentationWindow = new Frame();
 
-      // mrj is still (with version 2.2.x) a piece of shit, 
+      // mrj is still (with version 2.2.x) a piece of shit,
       // and doesn't return valid insets for frames
       //presentationWindow.pack(); // make a peer so insets are valid
       //Insets insets = presentationWindow.getInsets();
       // the extra +20 is because the resize boxes intrude
       Insets insets = new Insets(21, 5, 5 + 20, 5);
 
-      presentationWindow.setBounds(-insets.left, -insets.top, 
-                                   screen.width + insets.left + insets.right, 
+      presentationWindow.setBounds(-insets.left, -insets.top,
+                                   screen.width + insets.left + insets.right,
                                    screen.height + insets.top + insets.bottom);
     } else {
       presentationWindow = new Frame();
       //((Frame)presentationWindow).setUndecorated(true);
       try {
-        Method undecoratedMethod = 
+        Method undecoratedMethod =
           Frame.class.getMethod("setUndecorated",
                                 new Class[] { Boolean.TYPE });
-        undecoratedMethod.invoke(presentationWindow, 
+        undecoratedMethod.invoke(presentationWindow,
                                  new Object[] { Boolean.TRUE });
-      } catch (Exception e) { } 
+      } catch (Exception e) { }
       //} catch (NoSuchMethodException e) { }
       //} catch (NoSuchMethodError e) { }
 
@@ -263,10 +268,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     Dimension labelSize = new Dimension(60, 20);
     presentationWindow.setLayout(null);
     presentationWindow.add(label);
-    label.setBounds(5, screen.height - 5 - labelSize.height, 
+    label.setBounds(5, screen.height - 5 - labelSize.height,
                     labelSize.width, labelSize.height);
 
-    Color presentationBgColor = 
+    Color presentationBgColor =
       PdePreferences.getColor("run.present.bgcolor");
     presentationWindow.setBackground(presentationBgColor);
 
@@ -323,7 +328,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   /**
    * Post-constructor setup for the editor area. Loads the last
    * sketch that was used (if any), and restores other Editor settings.
-   * The complement to "storePreferences", this is called when the 
+   * The complement to "storePreferences", this is called when the
    * application is first launched.
    */
   public void restorePreferences() {
@@ -349,16 +354,16 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       //System.out.println("using default size");
       int windowH = PdePreferences.getInteger("default.window.height");
       int windowW = PdePreferences.getInteger("default.window.width");
-      setBounds((screen.width - windowW) / 2, 
+      setBounds((screen.width - windowW) / 2,
                 (screen.height - windowH) / 2,
                 windowW, windowH);
       // this will be invalid as well, so grab the new value
-      PdePreferences.setInteger("last.divider.location", 
+      PdePreferences.setInteger("last.divider.location",
                                 splitPane.getDividerLocation());
     } else {
-      setBounds(PdePreferences.getInteger("last.window.x"), 
-                PdePreferences.getInteger("last.window.y"), 
-                PdePreferences.getInteger("last.window.width"), 
+      setBounds(PdePreferences.getInteger("last.window.x"),
+                PdePreferences.getInteger("last.window.y"),
+                PdePreferences.getInteger("last.window.width"),
                 PdePreferences.getInteger("last.window.height"));
     }
 
@@ -391,13 +396,13 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Read and apply new values from the preferences, either because 
+   * Read and apply new values from the preferences, either because
    * the app is just starting up, or the user just finished messing
    * with things in the Preferences window.
    */
   public void applyPreferences() {
 
-    // apply the setting for 'use external editor' 
+    // apply the setting for 'use external editor'
     boolean external = PdePreferences.getBoolean("editor.external");
 
     textarea.setEditable(!external);
@@ -416,7 +421,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     } else {
       Color color = PdePreferences.getColor("editor.bgcolor");
       painter.setBackground(color);
-      painter.lineHighlight = 
+      painter.lineHighlight =
         PdePreferences.getBoolean("editor.linehighlight");
       textarea.setCaretVisible(true);
     }
@@ -453,7 +458,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     PdePreferences.set("last.sketch.path", sketch.getMainFilePath());
 
     // location for the console/editor area divider
-    int location = splitPane.getDividerLocation();    
+    int location = splitPane.getDividerLocation();
     PdePreferences.setInteger("last.divider.location", location);
   }
 
@@ -545,7 +550,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
           handleExportApp();
         }
       });
-    menu.add(exportAppItem); 
+    menu.add(exportAppItem);
 
     menu.addSeparator();
 
@@ -565,7 +570,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handlePrefs();
-          } 
+          }
         });
       menu.add(item);
 
@@ -575,7 +580,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleQuit();
-          } 
+          }
         });
       menu.add(item);
     }
@@ -624,7 +629,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     menu.add(sketchbook.getImportMenu());
 
-    if ((PdeBase.platform == PdeBase.WINDOWS) || 
+    if ((PdeBase.platform == PdeBase.WINDOWS) ||
         (PdeBase.platform == PdeBase.MACOSX)) {
       // no way to do an 'open in file browser' on other platforms
       // since there isn't any sort of standard
@@ -686,7 +691,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Environment");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL(System.getProperty("user.dir") + File.separator + 
+          PdeBase.openURL(System.getProperty("user.dir") + File.separator +
                           "reference" + File.separator + "environment" +
                           File.separator + "index.html");
         }
@@ -696,15 +701,15 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL(System.getProperty("user.dir") + File.separator + 
+          PdeBase.openURL(System.getProperty("user.dir") + File.separator +
                           "reference" + File.separator + "index.html");
         }
       });
     menu.add(item);
-    
+
     item = newJMenuItem("Find in Reference", 'F', true);
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           if (textarea.isSelectionActive()) {
             String text = textarea.getSelectedText();
             if (text.length() == 0) {
@@ -749,7 +754,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   public JMenu buildEditMenu() {
     JMenu menu = new JMenu("Edit");
-    JMenuItem item; 
+    JMenuItem item;
 
     undoItem = newJMenuItem("Undo", 'Z');
     undoItem.addActionListener(undoAction = new UndoAction());
@@ -761,7 +766,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     menu.addSeparator();
 
-    // TODO "cut" and "copy" should really only be enabled 
+    // TODO "cut" and "copy" should really only be enabled
     // if some text is currently selected
     item = newJMenuItem("Cut", 'X');
     item.addActionListener(new ActionListener() {
@@ -810,7 +815,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = newJMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          // TODO find next should only be enabled after a 
+          // TODO find next should only be enabled after a
           // search has actually taken place
           find.find(true);
         }
@@ -822,8 +827,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Convenience method for the antidote to overthought 
-   * swing api mess for setting accelerators. 
+   * Convenience method for the antidote to overthought
+   * swing api mess for setting accelerators.
    */
   static public JMenuItem newJMenuItem(String title, char what) {
     return newJMenuItem(title, what, false);
@@ -831,12 +836,12 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * A software engineer, somewhere, needs to have his abstraction 
+   * A software engineer, somewhere, needs to have his abstraction
    * taken away. I hear they jail people in third world countries for
    * writing the sort of crappy api that would require a four line
-   * helpher function to *set the command key* for a menu item. 
+   * helpher function to *set the command key* for a menu item.
    */
-  static public JMenuItem newJMenuItem(String title, 
+  static public JMenuItem newJMenuItem(String title,
                                        char what, boolean shift) {
     JMenuItem menuItem = new JMenuItem(title);
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -887,8 +892,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         undoItem.setEnabled(false);
         putValue(Action.NAME, "Undo");
       }
-    }      
-  }    
+    }
+  }
 
 
   class RedoAction extends AbstractAction {
@@ -919,13 +924,13 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         putValue(Action.NAME, "Redo");
       }
     }
-  }    
+  }
 
 
   // ...................................................................
 
 
-  // interfaces for MRJ Handlers, but naming is fine 
+  // interfaces for MRJ Handlers, but naming is fine
   // so used internally for everything else
 
   public void handleAbout() {
@@ -940,7 +945,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
           /*
             // does nothing..
           Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                               RenderingHints.VALUE_ANTIALIAS_OFF);
           */
 
@@ -990,8 +995,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Called by PdeEditorHeader when the tab is changed 
-   * (or a new set of files are opened). 
+   * Called by PdeEditorHeader when the tab is changed
+   * (or a new set of files are opened).
    * @param discardUndo true if undo info to this point should be ignored
    */
   public void setText(String what, boolean discardUndo) {
@@ -1012,7 +1017,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     // do this for the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
 
-    // clear the console on each run, unless the user doesn't want to 
+    // clear the console on each run, unless the user doesn't want to
     //if (PdeBase.getBoolean("console.auto_clear", true)) {
     //if (PdePreferences.getBoolean("console.auto_clear", true)) {
     if (PdePreferences.getBoolean("console.auto_clear")) {
@@ -1021,7 +1026,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     presenting = present;
     if (presenting) {
-      // wipe everything out with a bulbous screen-covering window 
+      // wipe everything out with a bulbous screen-covering window
       presentationWindow.show();
       presentationWindow.toFront();
     }
@@ -1070,7 +1075,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
           } else {
             stop();
           }
-        } 
+        }
         try {
           Thread.sleep(250);
         } catch (InterruptedException e) { }
@@ -1120,7 +1125,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     } else {
       try {
-        // the window will also be null the process was running 
+        // the window will also be null the process was running
         // externally. so don't even try setting if window is null
         // since PdeRuntime will set the appletLocation when an
         // external process is in use.
@@ -1150,9 +1155,9 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Check to see if there have been changes. If so, prompt user 
+   * Check to see if there have been changes. If so, prompt user
    * whether or not to save first. If the user cancels, just ignore.
-   * Otherwise, one of the other methods will handle calling 
+   * Otherwise, one of the other methods will handle calling
    * checkModified2() which will get on with business.
    */
   protected void checkModified(int checkModifiedMode) {
@@ -1172,12 +1177,12 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     } else {
       // if the user selected quit, then this has to be done with
-      // a JOptionPane instead of internally in the editor. 
+      // a JOptionPane instead of internally in the editor.
       // TODO this is actually just a bug to be fixed.
 
       // macosx java kills the app even though cancel might get hit
       // so the cancel button is (temporarily) left off
-      // this may be treated differently in macosx java 1.4, 
+      // this may be treated differently in macosx java 1.4,
       // but 1.4 isn't currently stable enough to use.
 
       // turns out windows has the same problem (sometimes)
@@ -1190,11 +1195,11 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
                                                 JOptionPane.YES_NO_OPTION,
                                                 JOptionPane.QUESTION_MESSAGE,
                                                 null,
-                                                options, 
-                                                options[0]);  
+                                                options,
+                                                options[0]);
 
       if (result == JOptionPane.YES_OPTION) {
-        handleSave(); 
+        handleSave();
         checkModified2();
 
       } else if (result == JOptionPane.NO_OPTION) {
@@ -1237,7 +1242,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   /**
    * User selected "New Library", this will act just like handleNew
-   * but internally set a flag that the new guy is a library, 
+   * but internally set a flag that the new guy is a library,
    * meaning that a "library" subfolder will be added.
    */
   public void handleNewLibrary() {
@@ -1255,7 +1260,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    */
   protected void handleNew2(boolean startup) {
     try {
-      String pdePath = 
+      String pdePath =
         sketchbook.handleNew(startup, handleNewShift, handleNewLibrary);
       if (pdePath != null) handleOpen2(pdePath);
 
@@ -1292,7 +1297,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    */
   protected void handleOpen2(String path) {
     try {
-      // check to make sure that this .pde file is 
+      // check to make sure that this .pde file is
       // in a folder of the same name
       File file = new File(path);
       File parentFile = new File(file.getParent());
@@ -1308,7 +1313,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         // no beef with this guy
 
       } else if (altFile.exists()) {
-        // user selected a .java from the same sketch, 
+        // user selected a .java from the same sketch,
         // but open the .pde instead
         path = altFile.getAbsolutePath();
         //System.out.println("found alt file in same folder");
@@ -1320,11 +1325,11 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         return;
 
       } else {
-        String properParent = 
+        String properParent =
           file.getName().substring(0, file.getName().length() - 4);
 
         Object[] options = { "OK", "Cancel" };
-        String prompt = 
+        String prompt =
           "The file \"" + file.getName() + "\" needs to be inside\n" +
           "a sketch folder named \"" + properParent + "\".\n" +
           "Create this folder, move the file, and continue?";
@@ -1335,8 +1340,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
                                                   JOptionPane.YES_NO_OPTION,
                                                   JOptionPane.QUESTION_MESSAGE,
                                                   null,
-                                                  options, 
-                                                  options[0]);  
+                                                  options,
+                                                  options[0]);
 
         if (result == JOptionPane.YES_OPTION) {
           // create properly named folder
@@ -1397,12 +1402,12 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       // show the error as a message in the window
       error(e);
 
-      // zero out the current action, 
+      // zero out the current action,
       // so that checkModified2 will just do nothing
       checkModifiedMode = 0;
       // this is used when another operation calls a save
     }
-    buttons.clear();      
+    buttons.clear();
   }
 
 
@@ -1429,7 +1434,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   /**
    * Handles calling the export() function on sketch, and
    * queues all the gui status stuff that comes along with it.
-   * 
+   *
    * Made synchronized to (hopefully) avoid problems of people
    * hitting export twice, quickly, and horking things up.
    */
@@ -1437,7 +1442,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     String what = sketch.isLibrary() ? "Applet" : "Library";
     message("Exporting " + what + "...");
     try {
-      boolean success = sketch.isLibrary() ? 
+      boolean success = sketch.isLibrary() ?
         sketch.exportLibrary() : sketch.exportApplet();
       if (success) {
         message("Done exporting.");
@@ -1468,16 +1473,16 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   }
 
 
-  /** 
+  /**
    * Quit, but first ask user if it's ok. Also store preferences
-   * to disk just in case they want to quit. Final exit() happens 
+   * to disk just in case they want to quit. Final exit() happens
    * in PdeEditor since it has the callback from PdeEditorStatus.
    */
   public void handleQuit() {
     // stop isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
     //doStop();
-    doClose();  
+    doClose();
 
     //if (!checkModified()) return;
     checkModified(HANDLE_QUIT);
@@ -1507,7 +1512,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   //    these can't extend beyond a line, so that works well
   //    (this will save from "http://blahblah" showing up as a comment)
   // 4. remove from // to the end of a line everywhere
-  // 5. run through remaining text to do indents 
+  // 5. run through remaining text to do indents
   //    using hokey brace-counting algorithm
   // 6. also add indents for switch statements
   //    case blah: { }  (colons at end of line isn't a good way)
@@ -1538,17 +1543,17 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       if (index != program.length) {
         if ((index+1 != program.length) &&
             // treat \r\n from windows as one line
-            (program[index] == '\r') && 
+            (program[index] == '\r') &&
             (program[index+1] == '\n')) {
           index += 2;
         } else {
           index++;
-        }                
+        }
       } // otherwise don't increment
 
       String line = new String(program, begin, end-begin);
       line = line.trim();
-            
+
       if (line.length() == 0) {
         if (!gotBlankLine) {
           // let first blank line through
@@ -1567,7 +1572,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         //for (int i = 0; i < level*2; i++) {
         // TODO i've since forgotten how i made this work (maybe it's even
         //      a bug) but for now, level is incrementing/decrementing in
-        //      steps of two. in the interest of getting a release out, 
+        //      steps of two. in the interest of getting a release out,
         //      i'm just gonna roll with that since this function will prolly
         //      be replaced entirely and there are other things to worry about.
         for (int i = 0; i < tabSize * level / 2; i++) {
@@ -1672,7 +1677,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   public void error(PdeException e) {
     if (e.file >= 0) sketch.setCurrent(e.file);
-    if (e.line >= 0) highlightLine(e.line); 
+    if (e.line >= 0) highlightLine(e.line);
 
     status.error(e.getMessage());
     buttons.clearRun();
@@ -1693,7 +1698,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   }
 
 
-  /*  
+  /*
   public void messageClear(String msg) {
     status.unnotice(msg);
   }
@@ -1705,7 +1710,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   /**
    * Returns the edit popup menu.
-   */  
+   */
   class TextAreaPopup extends JPopupMenu {
     //protected ReferenceKeys referenceItems = new ReferenceKeys();
     String currentDir = System.getProperty("user.dir");
@@ -1728,25 +1733,25 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
       copyItem = new JMenuItem("Copy");
       copyItem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    textarea.copy();
-	  }
+          public void actionPerformed(ActionEvent e) {
+            textarea.copy();
+          }
         });
       this.add(copyItem);
 
       item = new JMenuItem("Paste");
       item.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    textarea.paste();
-	  }
+          public void actionPerformed(ActionEvent e) {
+            textarea.paste();
+          }
         });
       this.add(item);
 
       item = new JMenuItem("Select All");
       item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  textarea.selectAll();
-	}
+        public void actionPerformed(ActionEvent e) {
+          textarea.selectAll();
+        }
       });
       this.add(item);
 
@@ -1754,9 +1759,9 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
       referenceItem = new JMenuItem("Find in Reference");
       referenceItem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(ActionEvent e) {
             PdeBase.showReference(referenceFile);
-	  }
+          }
         });
       this.add(referenceItem);
     }
