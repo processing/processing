@@ -1,12 +1,9 @@
 0059
+X write p5 language spec
 
 
 ..................................................................
 
-_ Integer.parseInt / Integer.toString / String.valueOf..
-_   need a better syntax for this stuff
-_   int(something), float(somthing), String(something) ?
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
 
 lotsa video issues
 _ just locks up after running examples, then does the 'can't delete' thing
@@ -165,7 +162,6 @@ bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=articl
 random todos (low priority.. just notes to self)
 bf _ history.. add my diffs sketch
 bf _ look into eclipse ide a little more
-bf _ write p5 language spec
 bf _ actionscript has nice hastables.. as does perl/python
 bf _   would be nice to get better implementation in there
 
@@ -433,6 +429,7 @@ dm b _     works for all data types that support valueOf
 dm b _     i.e. valueOf(Object) returns null or Object.toString() 
 dm b _   int("1234") -> Integer.parseInt("1234")
 dm b _   float("1234.35") -> (new Float("1234.35").floatValue())
+dm b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
 dm b _ subst Image -> BImage, Font -> BFont
 dm b _   this should be optional until we get the naming down
 dm b _ foreach implementation, ala java 1.5 spec
@@ -659,7 +656,6 @@ not necessary for 1.0 release
 2 _ editor features asked for on the bboard
 2 _   line numbers like bbedit
 2 _   command to comment-out the current selection
-2 _   syntax coloring
 2 _   split screen
 2 _   collapsable functions, or quick access to functions
 2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
@@ -738,6 +734,7 @@ DISTRIBUTION / General
 b _ need more comprehensive list of 'known bugs'
 b _  need to purge 55 spelling from lots of things
 b _   window title code, name of .exe and .app files
+b _ need more comprehensive list of ' known suggestions'
 b _ people like downloadable reference + net isn't cheap everywhere
 b _ beta release will include source code
 b _ write notes about running p5 on another platforms 
@@ -766,6 +763,10 @@ b _   jre icon not appearing in the systray
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
 
 
+DISTRIBUTION / Linux
+b _ splash screen
+
+
 DISTRIBUTION / Mac OS X
 
 1 _ set file type/creator for .pde files of examples
@@ -785,16 +786,4 @@ _ reference launching
 _ control/right-click for edit area context menu
 _ make sure editor window is front so that error line highlights
 _ is video working (qtjava in path) on macos9?
-
-
-DISTRIBUTION / Linux
-b _ doesn't work on rh9.. update the jvm
-b _ splash screen
-b _ test serial with ibm vm and all
-b _ look for jdk 1.4 to use instead of 1.3
-b _   make sure javacomm gets in there
-b _ test it a little more to make sure it works (cygwin x sucks)
-
-
-
 

@@ -18,6 +18,11 @@ X   grab rxtx for linux and include with distribution
 X make sure a copy of jikes is included
 X test rxtx on linux with sun vm
 X   make notes about rxtx in readme.txt
+X doesn't work on rh9.. update the jvm
+o test serial with ibm vm and all
+X look for jdk 1.4 to use instead of 1.3
+X   make sure javacomm gets in there
+X test it a little more to make sure it works (cygwin x sucks)
 
 
 0057
