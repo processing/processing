@@ -19,21 +19,15 @@ o don't exit p5 if platform is unknown
 o "save as" needs to update the editorheader
 X   couldn't replicate this
 X MAJOR: make .pde files embed themselves into the main class
-
-_ openStream returning 'null' really horked up the letters applet
-_   no System.out was coming through
-_   System.err was getting cut off before finishing
-
-_ "paste" isn't setting the "modified" bit for PdeEditor
-_   i.e. cut -> new file -> paste doesn't mark any as changed
+o readUntil() should do the proper thing if the data is not available
+o   i.e. either return null, or block until it's available? -> ret null
+X "paste" isn't setting the "modified" bit for PdeEditor
+X   i.e. cut -> new file -> paste doesn't mark any as changed
 
 _ processing.net -> PClient, PServer
 
 _ change font api to not use leading() as a way to reset the leading
 _ don't change the size of a font when in screen space mode
-
-_ readUntil() should do the proper thing if the data is not available
-_   i.e. either return null, or block until it's available? -> ret null
 
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
@@ -131,6 +125,9 @@ _ threading issues on casey's laptop
 _ odd error in System.err stream coming from running external
 _   dies after a while or goes weird
 _   make sure exceptions with .class work
+_ openStream returning 'null' really horked up the letters applet
+_   no System.out was coming through
+_   System.err was getting cut off before finishing
 
 
 0071 or later
