@@ -1,12 +1,5 @@
-0079 pde
-X add ctrl-o to the open menu
-X implement horizontal version of PdeEditorButtons
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
-X add line numbers
-X add extra space to bottom on osx
+0080 pde
 
-
-...
 
 _ include /** */ comments into the html page
 
