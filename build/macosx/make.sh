@@ -75,13 +75,13 @@ else
   chmod +x work/jikes
 
   # build classes/grammar for preprocessor
-  echo Building antlr grammar code...
-  cd ../../app/preprocessor
-  # first build the default java goop
-  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
-  # now build the pde stuff that extends the java classes
-  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
-  cd ../../build/macosx
+#  echo Building antlr grammar code...
+#  cd ../../app/preprocessor
+#  # first build the default java goop
+#  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
+#  # now build the pde stuff that extends the java classes
+#  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
+#  cd ../../build/macosx
 
   #echo
 fi
@@ -122,6 +122,19 @@ cd app
 # but for now, the parser is only built when the work dir 
 # is created, to speed the build process.
 
+if test -f preprocessor/expandedpde.g
+then
+echo
+else
+cd preprocessor
+  # build classes/grammar for preprocessor
+  echo Building antlr grammar code...
+  # first build the default java goop
+  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
+  # now build the pde stuff that extends the java classes
+  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
+  cd ..
+fi
 
 
 ### -- BUILD PDE ------------------------------------------------
