@@ -1,11 +1,14 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdePreprocessor - default ANTLR-generated parser
-  Part of the Processing project - http://Proce55ing.net
+  PdePreprocessor - wrapper for default ANTLR-generated parser
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
+
+  ANTLR-generated parser and several supporting classes written 
+  by Dan Mosedale via funding from the Interaction Institute IVREA.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,46 +30,23 @@ import antlr.*;
 import antlr.collections.*;
 import antlr.collections.impl.*;
 
+
 public class PdePreprocessor {
 
-  static final String applet_imports[] = {
-    "java.applet", "java.awt", "java.awt.image", "java.awt.event",
-    "java.io", "java.net", "java.text", "java.util", "java.util.zip",
-    "netscape.javascript"
-  };
+  static final int JDK11 = 0;
+  static final int JDK13 = 1;
+  static final int JDK14 = 2;
 
-  static final String application_imports[] = {
-    "java.applet", "java.awt", "java.awt.image", "java.awt.event",
-    "java.io", "java.net", "java.text", "java.util", "java.util.zip",
-    "netscape.javascript",
-#ifndef RXTX
-    "javax.comm",
-#else
-    "gnu.io",
-#endif
+  static String defaultImports[][] = new String[3][];
 
-    // if jdk14 defined, jdk13 will be as well
-#ifdef JDK13
-    "javax.sound.midi", "javax.sound.midi.spi",
-    "javax.sound.sampled", "javax.sound.sampled.spi",
-#endif
-
-#ifdef JDK14
-    "javax.xml.parsers", "javax.xml.transform", 
-    "javax.xml.transform.dom", "javax.xml.transform.sax",
-    "javax.xml.transform.stream", "org.xml.sax",
-    "org.xml.sax.ext", "org.xml.sax.helpers"
-#endif
-  };
-
-  static final int BEGINNER     = 0;  // "static" according to the docs
-  static final int INTERMEDIATE = 1;  // "active" 
-  static final int ADVANCED     = 2;  // "java" 
+  static final int STATIC = 0;  // formerly BEGINNER
+  static final int ACTIVE = 1;  // formerly INTERMEDIATE
+  static final int JAVA   = 2;  // formerly ADVANCED
   static int programType = -1;
 
-  String tempClass;
-  String tempFilename;
-  String tempClassFilename;
+  //String tempClass;
+  //String tempFilename;
+  //String tempClassFilename;
 
   Reader programReader;
   String buildPath;
@@ -74,28 +54,34 @@ public class PdePreprocessor {
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
 
-  //boolean usingExternal; // use an external process to display the applet?
 
-  public PdePreprocessor(String program, String buildPath) {
-    this.programReader = new StringReader(program);
-    this.buildPath = buildPath;
-
-    //usingExternal = PdePreferences.getBoolean("run.external"); //, false);
+  /**
+   * These may change in-between (if the prefs panel adds this option)
+   * so grab them here on construction.
+   */
+  public PdePreprocessor() { 
+    defaultImports[JDK11] = PdePreferences.get("compiler.imports.jdk11");
+    defaultImports[JDK13] = PdePreferences.get("compiler.imports.jdk13");
+    defaultImports[JDK14] = PdePreferences.get("compiler.imports.jdk14");
   }
+
 
   /**
    * Used by PdeEmitter.dumpHiddenTokens()
    */
   public static TokenStreamCopyingHiddenTokenFilter filter;
 
+
   /**
    * preprocesses a pde file and write out a java file
    *
    * @return the classname of the exported Java
    */
-  public String writeJava(String name, String imports[],
-                          /*boolean extendsNormal,*/
-                          boolean exporting) throws java.lang.Exception {
+  public String write(String program, String buildPath,
+                      String name, String imports[],
+                      int javaVersion) throws java.lang.Exception {
+    this.programReader = new StringReader(program);
+    this.buildPath = buildPath;
 
     // create a lexer with the stream reader, and tell it to handle 
     // hidden tokens (eg whitespace, comments) since we want to pass these
@@ -148,7 +134,7 @@ public class PdePreprocessor {
 
     // if this is an advanced program, the classname is already defined.
     //
-    if ( programType == ADVANCED ) {
+    if (programType == JAVA) {
       name = getFirstClassName(parserAST);
     }
 
@@ -158,7 +144,7 @@ public class PdePreprocessor {
     PrintStream stream = new PrintStream(
       new FileOutputStream(buildPath + File.separator + name + ".java"));
 
-    writeHeader(stream, imports, /*extendsNormal,*/ exporting, name);
+    writeHeader(stream, imports, javaVersion, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
@@ -194,19 +180,27 @@ public class PdePreprocessor {
    * @param name                Name of the class being created.
    */
   void writeHeader(PrintStream out, String imports[], 
-                   boolean exporting, String name) {
+                   int javaVersion, String className) {
 
     // emit emports that are needed for classes from the code folder
-    // 
     if (imports != null) {
       for (int i = 0; i < imports.length; i++) {
         out.print("import " + imports[i] + ".*; ");
       }      
     }
 
+    // emit standard imports (read from pde.properties)
+    // for each language level that's being used.
+    for (int i = 0; i < javaVersion; i++) {
+      for (int j = 0; j < defaultImports[i].length; j++) {
+        out.print("import " + defaultImports[i][j] + ".*; ");        
+      }
+    }
+
+    /*
     // Spew out a semi-standard set of java imports.
     // 
-    // Prior to 68, these were only done when not int ADVANCED mode, 
+    // Prior to 68, these were only done when not in JAVA mode, 
     // but these won't hurt, and may be helpful in cases where the user 
     // can't be bothered to add imports to the top of their classes.
     //
@@ -219,11 +213,12 @@ public class PdePreprocessor {
         out.print("import " + applet_imports[i] + ".*; ");
       }
     }
+    */
 
-    if (programType < ADVANCED) {
-      out.print("public class " + name + " extends BApplet {");
+    if (programType < JAVA) {
+      out.print("public class " + className + " extends BApplet {");
 
-      if (programType == BEGINNER) {
+      if (programType == STATIC) {
         // XXXdmose need to actually deal with size / background info here
         String sizeInfo = "";
         String backgroundInfo = "";
@@ -241,12 +236,12 @@ public class PdePreprocessor {
    */
   void writeFooter(PrintStream out) {
 
-    if (programType == BEGINNER) {
+    if (programType == STATIC) {
       // close off draw() definition
       out.print("}");
     }
 
-    if (programType < ADVANCED) {
+    if (programType < JAVA) {
       // close off the class definition
       out.print("}");
     }
