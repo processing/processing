@@ -23,6 +23,7 @@ o   email the beta@ list to see how people are using pmouseX
 X changed PMovie.length to PMovie.duration
 X move around/simplify loadImage() inside PApplet 
 X working to add more die() statements inside PApplet
+o can ALPHA fonts work using the other replace modes?
 
 fixed in previous releases
 X text stuff
@@ -53,34 +54,39 @@ X bring back renderer menu
 X   reading/saving pref for opengl renderer
 X remove cameraMode(PERSPECTIVE) on each frame
 X   why is the first one failing?
-
-_ basic sample audio playback needed for p5
-_   make separate java 1.1 and java 1.3 classes
-
+X still threading issues with running opengl 
+X   threading really horks up dual processor machine.. 
+X   first run hangs until quit 
+X   though doesn't seem to replicate when p5 is restarted
+X make sure background() gets called at least once with opengl
+X   otherwise screen never actually updates
 X beginFrame() around setup()
 X   draw mode stuff happens inside setup.. 
 o   or maybe need to get better at size() inside of draw() ? 
-_   make this consistent with the regular PApplet
-_     otherwise things are going to be weird/difficult for debugging
-
-_ threading horks up dual processor machine.. 
-
-_ make sure background() gets called at least once with opengl
-_   otherwise screen never actually updates
-_ depth() shouldn't be needed for opengl unless actually 3D
-_   right now the camera doesn't get set up unless you call depth()
+X   make this consistent with the regular PApplet
+X     otherwise things are going to be weird/difficult for debugging
 
 _ when running externally, applets don't always get placed properly
+_   if size is never set, then doesn't always layout
 _   problem is in gl and in core, and is inconsistent
 _   move more logic for layout into PApplet.. maybe a static method?
 _   this way can avoid duplicating / breaking things
 
-_ still threading issues with running opengl 
-_   first run hangs until quit 
-_   though doesn't seem to replicate when p5 is restarted
+_ depth() shouldn't be needed for opengl unless actually 3D
+_   right now the camera doesn't get set up unless you call depth()
 
-_ should image i/o and sound i/o be moved into PImage and PSound?
-_   how to load external encoders/decoders
+_ how to handle full screen (opengl especially) or no screen (for scripts)
+_ implement fullsize().. this takes over the screen as best it can
+_   or should it be more like present mode?
+_   that if applet is 500x500, centers on a 800x600 window
+_   though how do you get the screen size? 
+_     screen.width and screen.height? 
+
+_ resolve ARGB versus RGBA versus just A issues for fonts
+_   make sure that current scenario works identically on mac
+_   if so, just switch the image code to expect alpha in the high bits
+_   fonts probably need to be RGBA, not ALPHA style images
+_   there's nothing really ALPHA about them?
 
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
@@ -93,26 +99,24 @@ _ what should the update image function be called?
 _ get loop, noLoop, redraw, and framerate all working in opengl
 _   needs custom animator thread..
 
+_ basic sample audio playback needed for p5
+_   make separate java 1.1 and java 1.3 classes
+
 _ be consistent about getXxx() methods
 
-_ how to handle full screen (opengl especially) or no screen (for scripts)
 
-_ add gzipInput and gzipOutput
+//
+
+0076
 
 _ image loading bug is huge
 
-_ can ALPHA fonts work using the other replace modes?
-_ resolve ARGB versus RGBA versus just A issues for fonts
-_   make sure that current scenario works identically on mac
-_   if so, just switch the image code to expect alpha in the high bits
-_   fonts probably need to be RGBA, not ALPHA style images
-_   there's nothing really ALPHA about them?
+_ add gzipInput and gzipOutput
 
-_ implement fullsize().. this takes over the screen as best it can
-_   or should it be more like present mode?
-_   that if applet is 500x500, centers on a 800x600 window
-_   though how do you get the screen size? 
-_     screen.width and screen.height? 
+_ should image i/o and sound i/o be moved into PImage and PSound?
+_   how to load external encoders/decoders
+
+
 _ image(String name) and textFont(String name)
 _   do we change to font(arial, 12) ?
 
