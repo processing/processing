@@ -1090,7 +1090,7 @@ public class PdeBase extends Frame
       editor.addDataFile();
 
     } else if (command.equals("Create font...")) {
-      new PdeFontBuilder(editor.sketchDir);
+      new PdeFontBuilder(new File(editor.sketchDir, "data"));
 
     } else if (command.equals("Show sketch folder")) {
       openFolder(editor.sketchDir);
