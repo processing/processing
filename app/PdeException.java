@@ -22,13 +22,4 @@ public class PdeException extends Exception {
     return msg;
     //return (dot == -1) ? msg : msg.substring(dot+1);
   }
-
-#ifndef PLAYER
-#ifdef DBN
-  public PdeException(String message, DbnToken token) {
-    super(message + ", token: " + token.toString());
-  }
-#endif
-#endif
 }
-

@@ -56,7 +56,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
       primaryColor = PdeBase.getColor("editor.header.fgcolor.primary", 
 					new Color(255, 255, 255));
       secondaryColor = PdeBase.getColor("editor.header.fgcolor.secondary", 
-					  new Color(153, 153, 153));
+					new Color(153, 153, 153));
     }
   }
 
@@ -135,13 +135,15 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
+    boolean boringUser = user.equals("default");
+
     g.setColor(secondaryColor);
     g.drawString(PROJECT_TITLER, projectTitleLeft, baseline);
-    g.drawString(USER_TITLER, userTitleLeft, baseline);
+    if (!boringUser) g.drawString(USER_TITLER, userTitleLeft, baseline);
 
     g.setColor(primaryColor);
     g.drawString(project, projectLeft, baseline);
-    g.drawString(user, userLeft, baseline);
+    if (!boringUser) g.drawString(user, userLeft, baseline);
 
     //g.setColor(fgColor[mode]);
     //g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + fontAscent) / 2);
