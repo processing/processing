@@ -78,10 +78,6 @@ public class PdeEditor extends JFrame
   JEditTextArea textarea;
 
   // currently opened program
-  //String sketchName; // name of the file (w/o pde if a sketch)
-  //File sketchFile;   // the .pde file itself
-  //File sketchDir;    // if a sketchbook project, the parent dir
-  //boolean sketchModified;
   PdeSketch sketch;
 
   Point appletLocation; //= new Point(0, 0);
@@ -108,9 +104,6 @@ public class PdeEditor extends JFrame
   boolean presenting;
   boolean renaming;
 
-  //PdeBase base;
-
-  //PrintStream leechErr;
   PdeMessageStream messageStream;
 
   // location for lib/build, contents for which will be emptied
@@ -158,15 +151,11 @@ public class PdeEditor extends JFrame
 
 
     // add listener to handle window close box hit event
-
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           handleQuit();
         }
       });
-    //frame.addWindowListener(windowListener);
-    //this.addWindowListener(windowListener);
-
 
     PdeKeywords keywords = new PdeKeywords();
     history = new PdeHistory(this);
@@ -186,21 +175,6 @@ public class PdeEditor extends JFrame
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
 
-    /*
-    Panel leftPanel = new Panel();
-    leftPanel.setLayout(new BorderLayout());
-
-    // set bgcolor of buttons here, b/c also used for empty component
-    buttons = new PdeEditorButtons(this);
-    Color buttonBgColor = PdePreferences.getColor("editor.buttons.bgcolor");
-    buttons.setBackground(buttonBgColor);
-    leftPanel.add("North", buttons);
-    Label dummy = new Label();
-    dummy.setBackground(buttonBgColor);
-    leftPanel.add("Center", dummy);
-
-    pain.add("West", leftPanel);
-    */
     buttons = new PdeEditorButtons(this);
     pain.add("West", buttons);
 
@@ -210,7 +184,6 @@ public class PdeEditor extends JFrame
     header = new PdeEditorHeader(this);
     rightPanel.add(header, BorderLayout.NORTH);
 
-    //textarea = new JEditTextArea();
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
@@ -285,16 +258,8 @@ public class PdeEditor extends JFrame
     Label label = new Label("stop");
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
-          //System.out.println("got stop");
-          //doStop();
           setVisible(true);
           doClose();
-
-          //#ifdef JDK13
-          // move editor to front in case it was hidden
-          //PdeBase.frame.setState(Frame.NORMAL);
-          //base.setState(Frame.NORMAL);
-          //#endif
         }});
 
     Dimension labelSize = new Dimension(60, 20);
@@ -343,8 +308,6 @@ public class PdeEditor extends JFrame
           }
         }
       });
-    // can this happen here?
-    //restorePreferences();
   }
 
 
@@ -496,7 +459,7 @@ public class PdeEditor extends JFrame
     // last sketch that was in use
     //PdePreferences.set("last.sketch.name", sketchName);
     //PdePreferences.set("last.sketch.name", sketch.name);
-    PdePreferences.set("last.sketch.path", sketch.getPath());
+    PdePreferences.set("last.sketch.path", sketch.getMainFilePath());
 
     // location for the console/editor area divider
     int location = splitPane.getDividerLocation();    
@@ -671,9 +634,6 @@ public class PdeEditor extends JFrame
     }
 
     history.attachMenu(menu);
-
-    //menu.addActionListener(this);
-    //menubar.add(menu);  // add the sketch menu
     return menu;
   }
 
@@ -741,8 +701,6 @@ public class PdeEditor extends JFrame
         });
     }
 
-    //menu.addActionListener(this);
-    //menubar.setHelpMenu(menu);
     return menu;
   }
 
@@ -761,7 +719,7 @@ public class PdeEditor extends JFrame
 
     menu.addSeparator();
 
-    // "cut" and "copy" should really only be enabled 
+    // TODO "cut" and "copy" should really only be enabled 
     // if some text is currently selected
     item = newMenuItem("Cut", 'X');
     item.addActionListener(new ActionListener() {
@@ -808,7 +766,6 @@ public class PdeEditor extends JFrame
     item = newMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //find();
           if (find == null) { 
             find = new PdeEditorFind(PdeEditor.this);
           } else {
@@ -821,45 +778,22 @@ public class PdeEditor extends JFrame
     item = newMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //findNext();
           if (find != null) find.find();
         }
       });
     menu.add(item);
 
-    /*
-    item = newMenuItem("Find in Reference", 'F', true);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
-          if (textarea.isSelectionActive()) {
-            String text = textarea.getSelectedText();
-            if (text.length() == 0) {
-              message("First select a word to find in the reference.");
-
-            } else {
-              String referenceFile = PdeKeywords.getReference(text);
-              if (referenceFile == null) {
-                message("No reference available for \"" + text + "\"");
-              } else {
-                PdeBase.showReference(referenceFile);
-              }
-            }
-          }
-        }
-      });
-    menu.add(item);
-    */
-
     return menu;
   }
 
-
-  // antidote for overthought swing api mess for setting accelerators
 
   static public JMenuItem newMenuItem(String title, char what) {
     return newMenuItem(title, what, false);
   }
 
+  /**
+   * Antidote for overthought swing api mess for setting accelerators.
+   */
   static public JMenuItem newMenuItem(String title, char what, boolean shift) {
     JMenuItem menuItem = new JMenuItem(title);
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | (shift ? ActionEvent.SHIFT_MASK : 0)));
@@ -1002,7 +936,6 @@ public class PdeEditor extends JFrame
    */
   public void handleQuit() {
     // check to see if the person actually wants to quit
-    //editor.doQuit();
     doQuit();
   }
 
@@ -1010,7 +943,11 @@ public class PdeEditor extends JFrame
   // ...................................................................
 
 
-  protected void changeText(String what, boolean emptyUndo) {
+  /**
+   * Called by PdeEditorHeader when the tab is changed 
+   * (or a new set of files are opened)
+   */
+  public void changeText(String what, boolean emptyUndo) {
     textarea.setText(what);
 
     // TODO need to wipe out the undo state here
@@ -1051,21 +988,8 @@ public class PdeEditor extends JFrame
     //
     String imports[] = null;
     if (externalCode != null) {
-      //String includePaths = PdeCompiler.includeFolder(externalCode);
-      //imports = PdeCompiler.magicImports(includePaths);
       imports = PdeCompiler.magicImports(externalPaths);
-      /*
-      StringBuffer buffer = new StringBuffer();
-      for (int i = 0; i < imports.length; i++) {
-        buffer.append("import ");
-        buffer.append(imports[i]);
-        buffer.append(".*; ");
-      }
-      */
-      //buffer.append(program);
-      //program = buffer.toString();
     }
-    //System.out.println("imports is " + imports);
 
     PdePreprocessor preprocessor = null;
     preprocessor = new PdePreprocessor(program, buildPath);
@@ -1119,22 +1043,13 @@ public class PdeEditor extends JFrame
     //
     PdeCompiler compiler = 
       new PdeCompiler(buildPath, className, externalCode, this);
-    // macos9 now officially broken.. see PdeCompilerJavac
-    //PdeCompiler compiler = 
-    //  ((PdeBase.platform == PdeBase.MACOS9) ? 
-    //   new PdeCompilerJavac(buildPath, className, this) :
-    //   new PdeCompiler(buildPath, className, this));
 
     // run the compiler, and funnel errors to the leechErr
     // which is a wrapped around 
     // (this will catch and parse errors during compilation
     // the messageStream will call message() for 'compiler')
     messageStream = new PdeMessageStream(compiler);
-    //PrintStream leechErr = new PrintStream(messageStream);
-    //boolean result = compiler.compileJava(leechErr);
-    //return compiler.compileJava(leechErr);
-    boolean success = 
-      compiler.compileJava(new PrintStream(messageStream));
+    boolean success = compiler.compile(new PrintStream(messageStream));
 
     return success ? className : null;
   }
@@ -1155,7 +1070,6 @@ public class PdeEditor extends JFrame
    *
    *    2. compile the code from that location
    *       catching errors along the way
-   *       currently done with kjc, but would be nice to use jikes
    *       placing it in a ready classpath, or .. ?
    *
    *    3. run the code 
@@ -1177,6 +1091,8 @@ public class PdeEditor extends JFrame
 
     for (int i = 0; i < 10; i++) System.out.println();
 
+    // if an external editor is being used, need to grab the
+    // latest version of the code from the file.
     if (PdePreferences.getBoolean("editor.external")) {
       // history gets screwed by the open..
       String historySaved = history.lastRecorded;
@@ -1192,18 +1108,11 @@ public class PdeEditor extends JFrame
       if (presenting) {
         presentationWindow.show();
         presentationWindow.toFront();
-        //doRun(true);
       }
 
       String program = textarea.getText();
-      //makeHistory(program, RUN);
       history.record(program, PdeHistory.RUN);
 
-      //if (PdeBase.platform == PdeBase.MACOSX) {
-      //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-      //buildPath = pkg + "build";
-      //}
-      //buildPath = "lib" + File.separator + "build";
       tempBuildPath = "lib" + File.separator + "build";
 
       File buildDir = new File(tempBuildPath);
@@ -1211,14 +1120,12 @@ public class PdeEditor extends JFrame
         buildDir.mkdirs();
       }
 
-      String dataPath = sketchFile.getParent() + File.separator + "data";
-
-      //if (dataPath != null) {
-      File dataDir = new File(dataPath);
-      if (dataDir.exists()) {
-        PdeBase.copyDir(dataDir, buildDir);
-      }
+      sketch.updateDataDirectory(buildDir);
+      //File dataDir = new File(dataPath);
+      //if (dataDir.exists()) {
+      //PdeBase.copyDir(dataDir, buildDir);
       //}
+
       int numero1 = (int) (Math.random() * 10000);
       int numero2 = (int) (Math.random() * 10000);
       String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
@@ -1684,16 +1591,6 @@ public class PdeEditor extends JFrame
   }
 
 
-  /**
-   * Returns true if this is a read-only sketch. Used for the 
-   * examples directory, or when sketches are loaded from read-only
-   * volumes or folders without appropraite permissions.
-   */
-  public boolean readOnlySketch() {
-    return false;
-  }
-
-
   public void doSave() {
     // true if lastfile not set, otherwise false, meaning no prompt
     //handleSave(lastFile == null);
@@ -1992,32 +1889,9 @@ public class PdeEditor extends JFrame
       ps.flush();
       ps.close();
 
-#ifdef MACOS
-      // this chunk left disabled, because safari doesn't actually
-      // set the type/creator of html files it makes
-
-      // however, for macos9, this should be re-enabled
-      // (but it's not here since macos9 isn't supported for beta)
-
-      /*
-      // thank you apple, for changing this *@#$*&
-      //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
-
-      // jdk13 on osx, or jdk11
-      // though apparently still available for 1.4
-      if ((PdeBase.platform == PdeBase.MACOS9) ||
-          (PdeBase.platform == PdeBase.MACOSX)) {
-        MRJFileUtils.setFileTypeAndCreator(sketchFile, 
-                                           MRJOSType.kTypeTEXT,
-                                           new MRJOSType("MSIE"));
-      }
-      */
-#endif
-
       // create new .jar file
       FileOutputStream zipOutputFile = 
         new FileOutputStream(new File(appletDir, exportSketchName + ".jar"));
-        //new FileOutputStream(new File(projectDir, projectName + ".jar"));
       ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
       ZipEntry entry;
 
@@ -2430,15 +2304,11 @@ public class PdeEditor extends JFrame
     String currentDir = System.getProperty("user.dir");
     String referenceFile = null;
 
-    //static JEditTextArea parent;
-
     JMenuItem cutItem, copyItem;
     JMenuItem referenceItem;
 
 
-    public TextAreaPopup(/*JEditTextArea parent*/) {
-      //this.parent = parent;
-
+    public TextAreaPopup() {
       JMenuItem item;
 
       cutItem = new JMenuItem("Cut");
@@ -2483,29 +2353,6 @@ public class PdeEditor extends JFrame
         });
       this.add(referenceItem);
     }
-
-    /*
-    // enables/disables "Reference Lookup" option
-    public void setReferenceLookup(String file)
-    {
-      if (file != null) {
-        this.getComponent(5).setEnabled(true);
-        referenceFile = file;
-      }
-      else {
-        this.getComponent(5).setEnabled(false);
-      }
-    }
-    */
-
-    /*
-    public void showReferenceFile()
-    {
-      PdeBase.openURL(currentDir + File.separator + 
-                      "reference" + File.separator + 
-                      referenceFile + ".html");
-    }
-    */
 
     // if no text is selected, disable copy and cut menu items
     public void show(Component component, int x, int y) {
