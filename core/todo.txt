@@ -24,6 +24,14 @@ X changed PMovie.length to PMovie.duration
 X move around/simplify loadImage() inside PApplet 
 X working to add more die() statements inside PApplet
 
+fixed in previous releases
+X text stuff
+X   text() with alignment doesn't work for multiple lines
+X   don't change the size of a font when in screen space mode
+X   patch rotated text (from visualclusto) into bfont
+X   what sort of api? textSpace(ROTATED) ?
+X   rotated text has a bug for when it goes offscreen
+
 opengl
 X why is the thing hanging until 'stop' is hit?
 X   what happens when stop is hit that sets it free?
@@ -48,14 +56,14 @@ X   why is the first one failing?
 
 _ basic sample audio playback needed for p5
 _   make separate java 1.1 and java 1.3 classes
-_   once debugged, merge these back together and use reflection
-_     (unless it's a messy disaster)
 
 X beginFrame() around setup()
 X   draw mode stuff happens inside setup.. 
 o   or maybe need to get better at size() inside of draw() ? 
 _   make this consistent with the regular PApplet
 _     otherwise things are going to be weird/difficult for debugging
+
+_ threading horks up dual processor machine.. 
 
 _ make sure background() gets called at least once with opengl
 _   otherwise screen never actually updates
@@ -71,6 +79,9 @@ _ still threading issues with running opengl
 _   first run hangs until quit 
 _   though doesn't seem to replicate when p5 is restarted
 
+_ should image i/o and sound i/o be moved into PImage and PSound?
+_   how to load external encoders/decoders
+
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
 _ fix endian ordering issues so that things work properly
@@ -83,6 +94,12 @@ _ get loop, noLoop, redraw, and framerate all working in opengl
 _   needs custom animator thread..
 
 _ be consistent about getXxx() methods
+
+_ how to handle full screen (opengl especially) or no screen (for scripts)
+
+_ add gzipInput and gzipOutput
+
+_ image loading bug is huge
 
 _ can ALPHA fonts work using the other replace modes?
 _ resolve ARGB versus RGBA versus just A issues for fonts
@@ -122,7 +139,8 @@ _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _   too abstract, just have draw() call exit by default
 _   so if nothing inside draw, just quits
 
-opengl documentation
+documentation
+_ must call depth() for 3D applications
 _ lights cannot be enabled/disabled throughout 
 _   lighting will be based on what's left at endFrame()
 _ images should be a power of 2, or call modified()
@@ -135,10 +153,11 @@ _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
-_ don't allocate zbuffer & stencil until depth() is called
+
+_ explicitly state depth()/nodepth()
+_   don't allocate zbuffer & stencil until depth() is called
 
 _ massive graphics engine changes
-_   explicitly state depth()/nodepth()
 _   move to new graphics engine
 _     test with rgb cube, shut off smoothing
 _   make sure line artifacts are because of smoothing
@@ -165,10 +184,6 @@ _   perhaps something gets corrected?
 
 _ arc with stroke only draws the arc shape itself
 _   may need a 'wedge' function to draw a stroke around the whole thing
-
-_ how to handle full screen (opengl especially) or no screen (for scripts)
-
-_ image loading bug is huge
 
 _ need timer in as part of the api
 _   or at least include an example that uses it
@@ -446,6 +461,13 @@ CORE / PGraphics
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
 
+CORE / Sound
+
+   1 _ merge PSound and PSound2 via reflection?
+   1 _   once debugged, merge these back together and use reflection
+   1 _     (unless it's a messy disaster)
+
+
 CORE / Details
 
    1 _ framerate(30) is still flickery and jumpy..
@@ -508,13 +530,6 @@ CORE / Mac OS X
 
 
 CORE / PFont
-
-   1 _ text() with alignment doesn't work for multiple lines
-   1 _ don't change the size of a font when in screen space mode
-   1 _ patch rotated text (from visualclusto) into bfont
-   1 _   what sort of api? textSpace(ROTATED) ?
-   1 _   rotated text has a bug for when it goes offscreen
-
 
 
 CORE / New Graphics
