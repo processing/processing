@@ -281,15 +281,34 @@ public class PdeBase extends Frame
           "http://www.apple.com/quicktime/download\n" + 
           "and use the 'Custom' install to make sure\n" +
           "that QuickTime for Java is included.\n" +
-          "If it's already installed, try reinstalling.";
+          "If it's already installed, try reinstalling\n" + 
+          "or read bugs.txt for other possible remedies.";
 
         JOptionPane.showMessageDialog(this, message, 
                                       "Could not find QuickTime for Java",
                                       JOptionPane.WARNING_MESSAGE);
         System.exit(1);  // can't run without quicktime
       }
-    }
 
+    } else if (platform == MACOSX) {
+      try {
+        Class c = Class.forName("quicktime.std.StdQTConstants");
+
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+
+        final String message = 
+          "Could not load QuickTime for Java. This probably means\n" +
+          "that you've installed QuickTime 6.4, in which Apple has\n" +
+          "neglected to include QuickTime for Java. More information\n" +
+          "and a (temporary) fix can be found in bugs.txt.";
+
+        JOptionPane.showMessageDialog(this, message, 
+                                      "This headache's for you, big Steve",
+                                      JOptionPane.WARNING_MESSAGE);
+        System.exit(1);  // can't run without quicktime
+      }
+    }
 
     // read in the keywords for the reference
 
