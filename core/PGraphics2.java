@@ -158,7 +158,8 @@ public class PGraphics2 extends PGraphics {
 
     case LINE_STRIP:
     case LINE_LOOP:
-      if (vertexCount == 1) {
+      if (gpath == null) {
+        //if (vertexCount == 1) {
         gpath = new GeneralPath();
         gpath.moveTo(x, y);
       } else {
@@ -274,7 +275,8 @@ public class PGraphics2 extends PGraphics {
     case POLYGON:
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
-      if (vertexCount == 1) {
+      //if (vertexCount == 1) {
+      if (gpath == null) {
         //System.out.println("starting poly path " + x + " " + y);
         gpath = new GeneralPath();
         gpath.moveTo(x, y);
@@ -311,7 +313,9 @@ public class PGraphics2 extends PGraphics {
     case POLYGON:
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
-      if (splineVertexCount == 1) {
+      //if (splineVertexCount == 1) {
+      if (gpath == null) {
+        gpath = new GeneralPath();
         gpath.moveTo(x, y);
 
       } else if (splineVertexCount >= 4) {
@@ -331,6 +335,17 @@ public class PGraphics2 extends PGraphics {
     throw new RuntimeException("curveVertex() not yet implemented");
   }
 
+
+  public void beginShape(int kind) {
+    super.beginShape(kind);
+
+    // set gpath to null, because when mixing curves and straight
+    // lines, vertexCount will be set back to zero, so vertexCount == 1
+    // is no longer a good indicator of whether the shape is new.
+    // this way, just check to see if gpath is null, and if it isn't
+    // then just use it to continue the shape.
+    gpath = null;
+  }
 
   public void endShape() {
     //System.out.println("endShape");
