@@ -210,33 +210,39 @@ public class PdeEditor extends Panel {
   }
   */
 
-  /*
-  public void handleNew() {
+
+  public void skNew() {
     try {
       // does all the plumbing to create a new project
       // then calls handleOpen to load it up
 
-      File sketchDir = new File("sketchbook", header.user);
-      int index = 0;
-      File newguy = null;
-      while (new File(sketchDir, SKETCH_PREFIX_NAME + pad4(index)).exists()) {
-	index++;
-      }
-      String path = new File(sketchDir, 
-			     SKETCH_PREFIX_NAME + 
-			     pad4(index)).getCanonicalPath();
+      File sketchbookDir = new File("sketchbook", header.user);
+      File sketchDir = null;
+      String sketchName = null;
+System.out.println("1");
+      do {
+	int index = (int) (Math.random() * 1000);
+	sketchName = "sketch-" + pad3(index);
+	sketchDir = new File(sketchbookDir, sketchName);
+      } while (sketchDir.exists());
+System.out.println("2");
+
       // mkdir for new project name
-      File newDir = new File(path);
-      newDir.mkdirs();
+      sketchDir.mkdirs();
+      new File(sketchDir, "data").mkdirs();
+      new File(sketchDir, "build").mkdirs();
+System.out.println("3");
+
+      // make empty pde file
+      File sketchFile = new File(sketchDir, sketchName + ".pde");
+      new FileOutputStream(sketchFile);
 
       // make 'data' 'applet' dirs inside that
       // actually, don't, that way can avoid too much extra mess
 
-      // make empty pde file
-      new FileOutputStream(new File(newDir, CODE_FILENAME));
-
       // now open it up
-      handleOpen(path);
+      //skOpen(sketchFile, sketchDir);
+      handleOpen(sketchFile, sketchDir);
 
     } catch (IOException e) {
       // NEED TO DO SOME ERROR REPORTING HERE ***
@@ -244,22 +250,26 @@ public class PdeEditor extends Panel {
     }
   }
 
+  static String pad3(int what) {
+    if (what < 10) return "000" + what;
+    else if (what < 100) return "00" + what;
+    else return String.valueOf(what);
+  }
+
+  /*
   static String pad4(int what) {
     if (what < 10) return "000" + what;
     else if (what < 100) return "00" + what;
     else if (what < 1000) return "0" + what;
     else return String.valueOf(what);
   }
-
-
-  public void handleOpen(String path) {
-    System.out.println("gonna open " + path);
-  }
   */
 
-
-  public void sketchbookOpen(String path) {
-    System.out.println("PdeEditor.sketchBookOpen: " + path);
+  public void skOpen(String path, String name) {
+    //header.isProject = true;
+    //header.project = name;
+    handleOpen(new File(path + File.separator + name, name + ".pde"), 
+	       new File(path));
   }
 
 
@@ -270,14 +280,22 @@ public class PdeEditor extends Panel {
     fd.setDirectory(lastDirectory);
     //fd.setFile(lastFile);
     fd.show();
-	
+
     String directory = fd.getDirectory();
     String filename = fd.getFile();
     if (filename == null) {
       buttons.clear();
       return; // user cancelled
     }
-    File file = new File(directory, filename);
+
+    //header.isProject = false;
+    //header.project = filename;
+    handleOpen(new File(directory, filename), null);
+  }
+
+
+  protected void handleOpen(File file, File projectDir) {
+    //File file = new File(directory, filename);
 
     try {
       FileInputStream input = new FileInputStream(file);
@@ -290,8 +308,8 @@ public class PdeEditor extends Panel {
       }
       // set the last dir and file, so that they're
       // the defaults when you try to save again
-      lastDirectory = directory;
-      lastFile = filename;
+      lastDirectory = file.getCanonicalPath(); //directory;
+      lastFile = file.getName(); //filename;
 
       // once read all the bytes, convert it to the proper
       // local encoding for this system.
@@ -301,6 +319,8 @@ public class PdeEditor extends Panel {
       textarea.setText(new String(data));
       //else 
       //textarea.setText(new String(data, app.encoding));
+
+      header.setProject(file.getName(), projectDir);
 
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
@@ -321,13 +341,14 @@ public class PdeEditor extends Panel {
     handleSave(true);
   }
 
-  public void handleSave(boolean promptUser) {
+  protected void handleSave(boolean promptUser) {
     message("Saving file...");
     String s = textarea.getText();
 
     String directory = lastDirectory;
     String filename = lastFile;
 
+System.out.println("1");
     if (promptUser) {
       FileDialog fd = new FileDialog(new Frame(), 
 				     "Save PDE program as...", 
@@ -345,13 +366,14 @@ public class PdeEditor extends Panel {
       }
     }
     File file = new File(directory, filename);
+System.out.println("2");
 
     try {
       FileWriter writer = new FileWriter(file);
       writer.write(s);
       writer.flush();
       writer.close();
-
+System.out.println("3");
       lastDirectory = directory;
       lastFile = filename;
       message("Done saving " + filename + ".");
@@ -364,6 +386,17 @@ public class PdeEditor extends Panel {
     buttons.clear();
   }
 
+
+  public void skDuplicate() {
+    System.err.println("sketch duplicate not yet implemented");
+  }
+
+
+  public void skExport() {
+    File appletDir = new File(header.projectDir, "applet");
+    handleExport(appletDir, header.project, 
+		 new File(header.projectDir, "data"));
+  }
 
   public void doExport() {
     message("Exporting to applet...");
@@ -387,27 +420,39 @@ public class PdeEditor extends Panel {
       return;
     }
 
+    handleExport(new File(directory), projectName, null);
+  }
+
+  protected void handleExport(File appletDir, String projectName, 
+			      File dataDir) {
     try {
       String program = textarea.getText();
 
       // create the project directory
       KjcEngine engine = new KjcEngine(program, this);
-      File projectDir = new File(directory, projectName);
-      projectDir.mkdirs();
+      //File projectDir = new File(appletDir, projectName);
+      //projectDir.mkdirs();
+      appletDir.mkdirs();
 
-      engine.writeJava(projectName, false);
-      if (!engine.compileJava()) return;
-      // message() should already hava a message in this case
+      // projectName will be updated with actual class name
+      projectName = engine.writeJava(projectName, false);
+      if (!engine.compileJava()) {
+	//throw new Exception("error while compiling, couldn't export");
+	// message() will already have error message in this case
+	return;
+      }
 
       // copy .java to project dir
       String javaName = projectName + ".java";
-      copyFile(new File(javaName), new File(projectDir, javaName));
+      //copyFile(new File(javaName), new File(projectDir, javaName));
+      copyFile(new File(javaName), new File(appletDir, javaName));
 
       // remove temporary .java and .class files
       //engine.cleanup();
 
-      int wide = 320;
-      int high = 240;
+      int wide = BApplet.DEFAULT_WIDTH;
+      int high = BApplet.DEFAULT_HEIGHT;
+
       int index = program.indexOf("size(");
       if (index != -1) {
 	try {
@@ -421,7 +466,8 @@ public class PdeEditor extends Panel {
 	}
       }
 
-      File htmlOutputFile = new File(projectDir, "index.html");
+      //File htmlOutputFile = new File(projectDir, "index.html");
+      File htmlOutputFile = new File(appletDir, "index.html");
       FileOutputStream fos = new FileOutputStream(htmlOutputFile);
       PrintStream ps = new PrintStream(fos);
       ps.println("<HTML> <BODY BGCOLOR=\"white\">");
@@ -450,7 +496,8 @@ public class PdeEditor extends Panel {
 
       // create new .jar file
       FileOutputStream zipOutputFile = 
-	new FileOutputStream(new File(projectDir, projectName + ".jar"));
+	new FileOutputStream(new File(appletDir, projectName + ".jar"));
+	//new FileOutputStream(new File(projectDir, projectName + ".jar"));
       ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
       ZipEntry entry;
 
@@ -461,6 +508,20 @@ public class PdeEditor extends Panel {
 	zos.putNextEntry(entry);
 	zos.write(grabFile(new File(exportDir + bagelClasses[i])));
 	zos.closeEntry();
+      }
+
+      // files to include
+      if (dataDir != null) {
+	String datafiles[] = dataDir.list();
+	for (int i = 0; i < datafiles.length; i++) {
+	  if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
+	    continue;
+	  }
+	  entry = new ZipEntry(datafiles[i]);
+	  zos.putNextEntry(entry);
+	  zos.write(grabFile(new File(dataDir, datafiles[i])));
+	  zos.closeEntry();
+	}
       }
 
       // add the project's .class to the jar
@@ -483,33 +544,6 @@ public class PdeEditor extends Panel {
       e.printStackTrace();
     }
     buttons.clear();
-  }
-
-  static protected byte[] grabFile(File file) throws IOException {
-    int size = (int) file.length();
-    FileInputStream input = new FileInputStream(file);
-    byte buffer[] = new byte[size];
-    int offset = 0;
-    int bytesRead;
-    while ((bytesRead = input.read(buffer, offset, size-offset)) != -1) {
-      offset += bytesRead;
-      if (bytesRead == 0) break;
-    }
-    return buffer;
-  }
-
-  static protected void copyFile(File afile, File bfile) {
-    try {
-      FileInputStream from = new FileInputStream(afile);
-      FileOutputStream to = new FileOutputStream(bfile);
-      byte[] buffer = new byte[4096];
-      int bytesRead;
-      while ((bytesRead = from.read(buffer)) != -1) {
-	to.write(buffer, 0, bytesRead);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
 
@@ -790,6 +824,37 @@ public class PdeEditor extends Panel {
     //if (status.getText().equals(msg)) status.setText(EMPTY);
     //System.out.println("PdeEditor.messageClear " + msg);
     status.unnotice(msg);
+  }
+
+
+  // utility functions
+
+
+  static protected byte[] grabFile(File file) throws IOException {
+    int size = (int) file.length();
+    FileInputStream input = new FileInputStream(file);
+    byte buffer[] = new byte[size];
+    int offset = 0;
+    int bytesRead;
+    while ((bytesRead = input.read(buffer, offset, size-offset)) != -1) {
+      offset += bytesRead;
+      if (bytesRead == 0) break;
+    }
+    return buffer;
+  }
+
+  static protected void copyFile(File afile, File bfile) {
+    try {
+      FileInputStream from = new FileInputStream(afile);
+      FileOutputStream to = new FileOutputStream(bfile);
+      byte[] buffer = new byte[4096];
+      int bytesRead;
+      while ((bytesRead = from.read(buffer)) != -1) {
+	to.write(buffer, 0, bytesRead);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
 
