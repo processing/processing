@@ -3,7 +3,35 @@ X modify classpath to use 1.4 for compiling
 X   modify make.sh to include JDK14 flag
 X video: get qtjava stuff working, modify make.sh to include paths
 X   also run.sh, the classpath on Proce55ing.app
+X ceil/floor weren't colored properly
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054886439
+X String wasn't colored, so added parts of java.lang
+X BFont was allocating too much memory for fonts (found by arielm)
+X modified all scripts to unpack the new reference
+X simage() has been enabled again 
+X   https://sourceforge.net/tracker/index.php?func=detail&aid=750867&group_id=63445&atid=504000
+X image_mode has been ironed out
+X   https://sourceforge.net/tracker/index.php?func=detail&aid=750886&group_id=63445&atid=504000
+X reference not being unzipped
+X   fix scripts for dist / make
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054222236
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054886548
 
+bf b _ try installing with rxtx package on another machine
+
+bf b _ if sketchbook.dir is set, makes new sketchbook folder
+bf b _   reads sketchbook properly from other folder
+bf b _   but creates a new folder for new sketches to go into
+
+bf b _ tweak video to get it working
+bf b _   beginVideo(int, int, int) not found
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
+
+bf b _ net not closing, dispose() not getting called
+bf b _   make sure dispose() gets called? that way people can override?
+bf b _   or add another function for people to override?
+bf b _   netEvent doesn't seem to be working in server mode
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
 
 bf b _ add keyCode to BApplet (quick addition)
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
@@ -22,43 +50,6 @@ GRAPHICS LIBRARY
 
 A hybrid of OpenGL (3D Graphics) and some aspects of Postscript (Fill, Stroke)
 The graphics library is called Bagel, which is an internal name.
-
-
-BAGEL / Bugs
-
-   b _ bezier is broken for > 4 points
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042201137
-
-   b _ image(img, x, y) in CENTER_DIAMETER is actually center radius
-   b _    should make sure that x, y just makes it proper size
-
-   b _ simage() is screwy.. 
-   b _   its invocation is broken (image_mode can't be two things at once)
-   b _   doesn't actually use image_mode for placement
-   b _   also doesn't support RGBA
-
-   b _ smooth images drawing strangely (missing first line of pixels)
-   b _   also smoothed even if not distorted
-   b _   aliased and anti-aliased images don't line up
-   b _     text (text04) marching around strangely
-   b _ problems with u/v are likely to also be there for colors
-   b _   u/v should be affected by w for proper perspective
-   b _ nonsmooth frame around circle gets drawn 8x away
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050451728
-   b _ texture weirdness at 90 degree angles
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
-   b _ sphere() and other polygons don't connect flush with one another
-   b _   could hack by making each slightly larger than necessary
-
-   b _ repair lines (even if slow)
-   b _   single pixel lines have no alpha and no z
-   b _   fix all the random line types to support alpha
-
-   b _ anti-aliasing. smooth(), noSmooth() 
-   b _   need to verify that this works consistently throughout
-
-   b _ alpha. fill(r, g, b, a), stroke(r, g, b, a),
-   b _   need to verify that this works consistently throughout
 
 
 BAGEL / Graphics API Additions
