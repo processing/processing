@@ -210,9 +210,13 @@ public class PdeBase {
           "\\Explorer\\Shell Folders";
         RegistryKey localKey = topKey.openSubKey(localKeyPath);
         String appDataPath = localKey.getStringValue("AppData");
-        System.out.println("app data path is " + appDataPath);
-        System.exit(0);
+        //System.out.println("app data path is " + appDataPath);
+        //System.exit(0);
+        topKey.closeKey();  // necessary?
+        localKey.closeKey();
+
         return new File(appDataPath, "Processing");
+
       } catch (Exception e) {
         showError("Problem getting data folder",
                   "Error getting the Processing data folder.", e);
@@ -276,6 +280,23 @@ public class PdeBase {
       // Value Type: REG_SZ
       // Value Data: path
 
+      try {
+        RegistryKey topKey = Registry.HKEY_CURRENT_USER;
+
+        String localKeyPath =
+          "Software\\Microsoft\\Windows\\CurrentVersion" +
+          "\\Explorer\\Shell Folders";
+        RegistryKey localKey = topKey.openSubKey(localKeyPath);
+        String personalPath = localKey.getStringValue("Personal");
+        topKey.closeKey();  // necessary?
+        localKey.closeKey();
+
+        return new File(personalPath, "Processing");
+
+      } catch (Exception e) {
+        showError("Problem getting documents folder",
+                  "Error getting the Processing sketchbook folder.", e);
+      }
     }
 
     return null;
