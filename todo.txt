@@ -48,6 +48,49 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X weird comments bug (// on last line causes oro trouble)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
 
+
+-> BImage/BGraphics -> BLayer/Pixels ?
+
+- In the config file, the sketchbook path works if you use forward
+slashes, but not if you use unescaped backslashes.
+- The web page for ellipse (reference/ellipse_.html) talks about
+rectangles in the parameter list instead of ellipses.
+
+- If you name a class the same name as the sketch project, you get an
+error about contained classes with duplicate names when you try to
+export for web.
+
+
+ed
+quality of compiler errors + multiple errors
+additional class files.. .java or .pde
+* find/replace
+
+j
+documenting how the environment works / is set up
+
+amit
+* find/replace
+println speed improvements
+'debug' that shows a variable (rather than many many println)
+tabs for multiple files
+
+zach
+setting breakpoints / stepping through
+useful as understanding for how program works
+tracing like director
+
+schoenerwissen
+tracing variables
+bspace object
+7 day search on discourse board
+
+_ bezier error, goes up at the end
+_   but when using bezierMode, doesn't draw the first vertex
+size(300,200);
+bezier(0,100,width/3,100,2*width/3,100,3*width/3,100); 
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063240719
+
 api changes in progress -> COLORING FOR ALL THESE
 _ color(x, y, z) has become swatch(x, y, z) 
 _   because of conflicts with the new parser
@@ -61,7 +104,11 @@ _ setFont -> textFont(font) or textFont(font, size)
 _ textSize(size), textLeading(leading)
 _ BFont.charWidth, BFont.stringWidth -> BFont.width()
 _ BFont.drawChar, BFont.drawString -> BFont.text()
+_ bezierMode -> bezierSegments
+_ curveMode -> curveSegments, curveTightness
 
+_ add note to tga spec
+_   http://organicbit.com/closecombat/formats/tga.html
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
 _ update() mode should be finished before beta
@@ -75,7 +122,11 @@ _   if background was set before the resize
 _   and the background is not an image (or should it just stretch?)
 
 _ windows fresh checkout still has problems
-
+_ colorMode is defaulting to 255, 255, 255, 1.. oops
+_   though setting it differently hoses everything (clears everything)
+_ screenGrab() shouldn't allocate a new pixel buffer
+_   just write things out directly
+_ need to change all the copyrights over to mit
 
 ..
 .. the big stuff:
@@ -94,8 +145,8 @@ API NAMING
 
 
 NEW PARSER
-dm _ unexpected token 'void' in letters sketch.. 
-dm _   being parsed as static mode app
+dm X unexpected token 'void' in letters sketch.. 
+dm X   being parsed as static mode app
 dm _ extra parens confusing things (toxi message)
 
 
@@ -120,6 +171,27 @@ _   and try to re-download them
 
 ..
 
+_ QTJAVA path and CLASSPATH are weird if java not first installed
+_   or just get set improperly, reinstalling quicktime doesn't help
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
+
+_ non-ascii filenames seem to be causing trouble
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+
+_ net problems
+_   when you stop the client, it freezes 
+_     until you quit the processing running the server
+_   The server starts and stops fine.
+
+_ do not delete sketch folder if empty sketch but non-empty data dir
+_   maybe needs to be a holding area for the current sketch
+_   this is how the read-only examples would be used
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062875454;start=0
+
+_ resize() name is bad because it overrides component..
+_   resize is maybe goofy, so just size() for all?
+
+_ ide: type-ahead/teaching functions -> how useful for learning?
 
 _ toxi image code (!) 
 _   need background(BImage) and scaling, copy area, etc.
@@ -312,9 +384,6 @@ bf   _   set examples somehow read-only
 dh 1 _ 'save as' from examples puts into examples dir.. :(
 dh 1 _   make it default to the user's sketch dir
 bf   _ sketchbook.dir not properly read or written
-bf   _   do not delete sketch folder if empty sketch but non-empty data dir
-bf   _     maybe needs to be a holding area for the current sketch
-bf   _     this is how the read-only examples would be used
 dh b _ may need to start putting properties somewhere besides lib
 dh b _   home directory  (or preferences folder under macos9)
 dh b _ put screenshots into sketch folder
