@@ -81,7 +81,8 @@ else
   chmod +x work/win32com.dll
 
   # get jikes and depedencies
-  gunzip < dist/jikes.gz > work/jikes.exe
+  #gunzip < dist/jikes.gz > work/jikes.exe
+  cp dist/jikes.exe work/
   chmod +x work/jikes.exe
 fi
 
@@ -99,22 +100,40 @@ cd bagel
 # clear jikespath to avoid problems if it is defined elsewhere 
 unset JIKESPATH
 
-if test -d /cygdrive/c/WINNT
-then
+#if test -d /cygdrive/c/WINNT
+#then
   # Windows 2000 or NT
-  QT_JAVA_PATH="C:\\WINNT\\system32\\QTJava.zip"
-else
+#  QT_JAVA_PATH="C:\\WINNT\\system32\\QTJava.zip"
+#else
   # Windows 95, 98, ME and XP (does it really run on 95?)
-  QT_JAVA_PATH="C:\\WINDOWS\\system32\\QTJava.zip"
+#  QT_JAVA_PATH="C:\\WINDOWS\\system32\\QTJava.zip"
+#fi
+
+# remove quotes from around QTJAVA env var so it can be used
+QT_JAVA_PATH=`perl -e '$qt = $ENV{'QTJAVA'}; $qt =~ s/\"//g; print $qt'`;
+# (ok so i don't know awk or sed or whatever i shoulda used for that..)
+
+if test -f "${QT_JAVA_PATH}"
+then
+else
+  echo "QTJAVA environment variable is set to:"
+  echo $QTJAVA
+  echo "but that file doesn't seem to exist."
+  echo "y'all need to fix that before you can compile."
+  exit;
 fi
 
 # new regular version
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
+#CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;$QTJAVA"
 
 # make version with serial for the application
 echo Building bagel with serial, sonic, video and jdk13 support
 perl make.pl SERIAL SONIC VIDEO JDK13
 cp classes/*.class ../build/windows/work/classes/
+
+# still debating on whether to include jdk118 classes..
+#CLASSPATH="..\\bagel\\jdk118.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 
 # make simpler version for applet exporting, only 1.1 functions
 echo Building bagel for export with sonic support
