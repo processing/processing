@@ -7,7 +7,7 @@ o SystemColor doesn't differentiate between menu background and top
 o   probably fixed in swing, but we're using java.awt.Menu
 o   test by rewriting with java.awt.Menu
 X beautify is ignoring the setting for number of spaces on tabs
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083708360;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096294561;start=0
 X clean up PdeTokenMarker, probably just alphabetize
 X saving issues (all the same bug, as it turns out)
 X   save changes to null

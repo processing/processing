@@ -1,7 +1,256 @@
-this file is a list of changes between each release. this is not a
-general reference of how to use processing, because the information
-for older releases will be super crusty. caution: the beverage you're
-about to enjoy is extremely hot.
+caution: the beverage you're about to enjoy is extremely hot. this
+file is a list of changes between each release. this is not a general
+reference of how to use processing, because the information for older
+releases will be super crusty. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0070 - 28 September 2004
+
+YOUR CODE WILL ALMOST CERTAINLY BREAK IN THIS RELEASE, READ THE
+"MAJOR CHANGES" SECTION TO SEE HOW TO FIX IT. this is one of the most
+major releases to date in terms of things that have been changed,
+fixed, or revised. however, we've tried to make all the api and setup
+changes that we'll need to before beta so that we only massively break
+your code once.
+
+
+major changes: (things that break your code) 
+
+- if you have a program that uses "void draw()" to draw a static
+  image, you need to add the line "noLoop()" to setup or to the first
+  line of the draw method itself.
+
+- for any programs that use "void loop()" you need to change its name
+  to "void draw()". 
+
+- BImage, BFont, BGraphics, etc are all PImage, PFont, PGraphics.
+  you'll need to rename them in your program.
+
+- mouse and key events are now properly queued, meaning that functions
+  like mousePressed() and keyPressed() will be called at the *end* of
+  your draw() method. this means that you can "draw" inside of those
+  methods, just note that it'll happen after all other drawing.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
+
+- CENTER_DIAMETER has become CENTER
+
+- replicate() in PImage is now called copy(). other changes in PImage
+  as well, see the ref: http://processing.org/reference/PImage.html
+
+- curveSegments and bezierSegments are now called curveDetail and 
+  bezierDetail.
+
+- net, serial, and video are completely different. see the libraries
+  reference: http://processing.org/reference/libraries/index.html
+  their examples have also been updated.
+
+- quicktime is no longer required to be installed on windows
+
+- history has been (temporarily?) removed. in the meantime under the
+  "Tools" menu is an option named "Archive Sketch" which will zip up
+  the contents of the current sketch folder into a numbered archive.
+  the numbers will automatically increment yoursketch-001.zip,
+  yoursketch-002.zip etc.
+
+- key events for things like arrow and whatnot should use 'keyCode'
+  instead of 'key'. so 
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304533;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304779;start=0
+
+
+additions: 
+
+- hex(), binary(), unhex(), and unbinary() functions to make your
+  geeky debugging sessions that much happier. 
+  color c = #ffcc00;
+  println(hex(c));
+
+- support for text in a box: text(String text, x, y, width, height);
+
+- operators for int(), string(), char(), and other basic types.
+  String s = "10.2";
+  float f = float(s);
+  making it simpler to do conversions between types.
+
+- these operators also work on arrays:
+  String s[] = { "10.2", "3.2" };
+  float f[] = float(s);
+
+- looping can be turned on/off via loop() and noLoop(). the default is
+  that loop() is in use. there's also a redraw() function that you can
+  use in noLoop() mode which lets you redraw the screen once (i.e. if
+  you want to update after a mouse event)
+
+- multiple files! you can create new tabs that store separate classes
+  and pieces of code. how happy. however, the tabs are only separators
+  for your code.. the code is all still added to the main class (the
+  first tab) the same way as if the code had appeared all jammed into
+  that first file. 
+
+- for advanced users, additional tabs can be java files, which, unlike
+  the tabs described above, will *not* be embedded into the main
+  applet class. to create  a java file, include ".java" at the end of
+  the new file's name when creating the new tab. also note, however,
+  that the java files will not go through the preprocessor, meaning
+  that 0.1 will have to be 0.1f if it's a float, and some other
+  tidbits like that.
+
+- the "examples" folder for sketches is read-only. "save as" of an
+  example won't save it inside the examples folder.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096295037;start=0
+
+- read-only sketches (i.e. from a CDROM) are now handled properly.
+
+- you can save sketches anywhere you want. and there's a preferences
+  dialog that lets you set the location of your sketchbook. that
+  annoying "sketchbook/default" thing is no more. in preferences, 
+  you can also set whether processing should ask your for the file
+  location & name for each new sketch, or if you just want the old
+  behavior (automatically created sketch named sketch_yymmdd).
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096295141;start=0
+
+- holding down 'shift' and hitting the 'new' button will do the
+  opposite behavior for "new sketch" (i.e. if "prompt for sketch name"
+  is selected in preferences, it won't prompt, and vice versa).
+
+- preferences and sketchbook are now stored in: 
+  macosx: /Users / yourusername / Documents / Processing
+  windows: Documents and Settings / yourusername / My Documents / Processing
+  linux: home directory -> .processing 
+  you can change the sketchbook location, but this folder will
+  continue to be used to store preferences.txt and other files that
+  may be needed in the future.
+
+- a default template can be used for exporting applets. copy
+  applet.html from processing's "lib" folder to your sketch's folder,
+  and modify it to your heart's content. each time you re-export, your
+  html file will be used instead of the standard one.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297644;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297669;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297787;start=0
+
+- javascript support is now handled by saying
+  "Import Library -> javascript"
+
+- for advanced users, what was formerly called 'bagel' is now in
+  package processing.core. we'll refer to this as "core", and the
+  files can be found in lib/core.jar of the processing folder. no more
+  pde.jar and separate extraction methods for 1.1 code and 1.3 code to
+  be used with other IDEs.
+
+
+minor additions:
+
+- tweaked up the menus. the "Tools" menu will be user-expandable in a
+  future release. 
+
+- added some better error messages for common compiler errors.
+
+- sketches with a large 'data' folder will run better
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096300630;start=0
+
+- added a preference for auto-cleaning the sketchbook.
+
+- the console is emptied each time a new sketch is opened.
+
+- PImage.filter(GRAYSCALE) will make an image grayscale. 
+  PImage.filter(BLACK_WHITE) does something else fascinating.
+
+- hint(NO_DEPTH_TEST) will disable the zbuffer (unhint will re-enable)
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303102;start=0
+
+- printarr() works like println() for arrays.. it just prints out a
+  long list of the array contents.
+
+- added a lerp() function
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030;start=0
+
+- added angleMode(DEGREES) and angleMode(RADIANS)
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303599;start=0
+
+- noiseSeed and randomSeed help make random() less random.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304206;start=0
+
+- added a boolean variable called 'focused' that is set to true when
+  your applet has focus. use this to tell the user "click inside the
+  applet" or whatever.
+
+- saveFrame no longer dies when it includes folder names. it also
+  saves to the sketch folder.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303714;start=0
+
+- inputFile() returns a File object after prompting the
+  user. outputFile does the same after asking "save as..."
+
+- for those dismayed by things flying into the camera.. we regret that
+  this release still does not properly implement clipping planes. in
+  the meantime, an option has been added to avoid some of the mess. 
+  it's incomplete and doesn't always work, but adding
+  hint(NO_FLYING_POO) to your code might improve the situation. 
+
+- savePath(String filename) returns the full path name for a file to
+  be saved relative to the sketch directory. createPath(File dir) will
+  create all necessary subfolders in a long path. 
+
+
+bug fixes:
+
+- PGraphics will now properly draw as an image
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304847;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1080671926;start=0
+
+- tab key should be working again
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096304457;start=0
+
+- fixed several bugs with things like color(), red(), etc. color() now
+  works outside functions, but assumes that you mean rgb/255. 
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303467;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303540;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303568;start=0
+
+- fixed some oddness with lines fading out
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303365;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303406;start=0
+
+- net is completely rewritten and now works properly.
+
+- fixed bug in polygon filling
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303189;start=0
+
+- tweaks to make video less of a headache
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302179;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302509;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302580;start=0
+
+- lots of fixes to "Create Font".. plus better multi-language support 
+  for non-ascii characters (i.e. Japanese) 
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303772;start=0
+
+- fixes to random()
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302935;start=0
+
+- fixed some nasty find/replace bugs
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297457;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297524;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297575;start=0
+
+- sketchbook is now sorted properly
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297115;start=0
+
+- beautify now pays attention to your tab settings
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096294561;start=0
+
+- re-adding a file to the data file no longer destroys it
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096294854;start=0
+
+- fixed a goofy compiler OutOfMemoryError when no return on the last line
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096297246;start=0
+
+- fixed compiler error messages to not get jammed onto a single line
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -187,2174 +436,5 @@ for the next two months while ben finishes his dissertation.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0067 - 28 october 2003
-
-another bug fix release. high importance for people using 'java' 
-mode, or external libraries (like amit's jsyn stuff), or of medium
-importance for everyone else.
-
-
-[ bug fixes ]
-
-- set the correct version number for the about dialog. also added code
-  to prevent the wrong release number from being used on a release.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
-
-- fixed IllegalArgumentException when using run.bat or run-expert.bat
-  martin gomez was kind enough to track down the cause of this bug.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132725
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132753
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135344;start=0
-
-- updated to a new version of jikes, the compiler that's used behind
-  the scenes. fixes a couple issues where code wouldn't compile.
-
-- save/saveFrame was super-slow, especially on macosx, where times for
-  a 640x480 image could easily approach a full minute. things have
-  been sped up way more better. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135103;start=0
-
-- size not properly detected during export when "size()" was the first
-  thing in a program. now fixed.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067217366;start=0
-
-
-[ bug fixes for java mode ]
-
-- native libraries (.dll, .jnilib, or .so files) can be dropped
-  into the 'code' folder of your sketch. this didn't work in the past,
-  but is now much simpler. 
-
-- println() wasn't working properly from java mode classes, and
-  sometimes caused applications to die. no more.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067218548;start=0
-
-- you no longer need to have java installed (i.e. the expert version)
-  to use java mode. so the following entry has been removed from
-  bugs.txt: "java mode in rev 63 and higher only works if you have
-  java available in your path--meaning that you've installed it
-  yourself under windows or linux, or this will always be the case 
-  for macosx."
-
-- fixed a problem with multiple jar files
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067359364;start=0
-
-
-[ changes ]
-
-- apple has updated quicktime for java on the mac for 6.4
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
-
-- on compiler errors, instead of the message saying "send to
-  bugs@proce55ing.net" instead it asks to use the discourse section of
-  the site, and automatically opens that page in a web browser.
-
-- netscape.javascript is now included in the lib/ folder. seems that
-  not all jvm distributions include it, so just easier to include our
-  own copy. 
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0066 - 19 october 2003
-
-several important bug fixes in this release, strongly recommended. 
-lots of things have been repaired, though this release hasn't been
-heavily tested, which might necessitate a 67 sometime later this week.
-
-
-[ bug fixes ]
-
-- smooth() no longer smooshes the last line of objects.
-
-- stroke on smoothed polygons was drawing at 8x. no more.
-
-- runtime exceptions no longer lock up the environment. also fixed
-  situation that was making the play button stick.
-
-- files from the 'code' folder are now packaged with applets on export.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066586882;start=0
-
-- re-capitalizing the name of a file on macosx or windows would
-  formerly destroy your sketch. this has been fixed.
-   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066495952;start=0
-   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066497131;start=0
-
-- circles/ellipses do a better job of handling alpha
-
-- tweaks to the font builder for better updating/better stability
-
-- curvePoint didn't work when used without curve(), fixed.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499669;start=0
-
-- double semicolons bug in preproc, fixed by dan the preproc man
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499812;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066498153;start=0
-
-- placement of new items in the history menu was incorrect
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066501376;start=0
-
-- fixed bug with "open sketch folder" on macosx
-
-- fixed bug with help->reference and "find in reference" on macosx
-
-- dimmed 'replace' button after 'find' to disallow double-replacing. 
-
-- added notes about quicktime 6.4 problems on the mac to bugs.txt
-
-- modification to ignore dotfiles on export, i.e. so that .DS_Store
-  files aren't included in your .jar with an exported applet.
-
-
-[ changes ] 
-
-- netscape.javascript is now included in the default imports, no
-  longer any need to put JSObject et al. into your 'code' folder if
-  you're using javascript/java integration.
-
-- many changes to the BImage api by toxi
-
-- macosx is disabled from running until qtjava is properly
-  installed. see bugs.txt for info.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0065 - 30 september 2003
-
-one major bug fix that repairs nastiness in drawing text that showed
-up starting with rev 60. and some other tiny tidbits.
-
-
-[ bug fixes ] 
-
-- fonts have been return to their previous state, fixing some real
-  ugliness that appeared starting with release 60.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064722202
-
-- beautify does a better job of retaining the caret position, rather
-  than jumping back to the beginning of your code. it's not perfect
-  yet, but perfection will happen post-beta.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
-
-
-[ additions ] 
-
-- hint(DISABLE_TEXT_SMOOTH) has been added at arielm's request. the
-  previous hint SMOOTH_IMAGES is now always enabled for text, 
-
-- the about box now includes the current release number
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0064 - 29 september 2003
-
-this release fixes three bugs, any of which might be major for you, or
-in total may seem like nothing at all. they're all specific fixes for
-people that piped up about something 
-
-this is another mini-release like 61, 62, and 63. it's a suggested
-download, but not as huge as revision 60. 
-
-
-[ bug fixes ]
-
-- thick lines, which disappeared in rev 60, have returned triumphant
-  due to a nudge from ed.
-
-- fixed a bug on macosx, especially with safari, that caused the
-  environment to complain about an "unexpected char" when pasting code
-  copied from a safari web page. (reported by flight404 many moons
-  ago, but was causing me trouble today so i fixed it.. ah selfishness)
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055381110;start=0
-
-- removed the 'cancel' option from "save changes before quitting?" on
-  windows, since it seems to not always work, causing destruction of
-  code and sadness. specifically, it ate bijeoma's code:
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064865914;start=0
-
-
-[ additions ]
-
-- the font builder now sets a default filename when selecting a font,
-  since axel was annoyed that it didn't have a default.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0063 - 27 september 2003
-
-revision 63 includes some major new features and semi-major bug fixes,
-however it has not been tested very thoroughly. 
-
-like 61 and 62, this is a suggested download (for people who have at
-least revision 60). if you're running a version older than 60, then
-this version is strongly recommended.
-
-if you used a version of processing older than 60, and have not yet
-tried revision 60 or later, then you should read the section of
-revisions.txt that talks about all of the many changes that happened
-in revision 60.
-
-
-[ additions ]
-
-- this release is the first to add the ability to load external .class
-  and .jar files to your projects. it is also the first revision to
-  support the full 'java' mode as described in the documentation. in
-  order to use this mode, you'll need to have java somewhere in your
-  path. this will change in future releases.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055355089
-
-- when using 'add files' and selecting a .class, .jar, or shared
-  library file, the files will be copied to the 'code' folder for
-  inclusion in your sketch, instead of the 'data' folder.
-
-
-[ bug fixes ] 
-
-- on windows 2000, some applets were running very very slowly half 
-  the time. arielm spent hours tracking down the problem caused by a
-  single one line change, so win2k users (and i) have him to thank.
-
-- fixed problem where the serial port menu on windows was always
-  dimmed, unless processing was started using the .bat files. so
-  serial port should work again.
-
-- beautify menu was broken (it did nothing) and has been repaired.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064678231;start=0
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0062 - 24 september 2003
-
-this release primarily introduces new features. it is the third
-release in three days, as i'm pushing to get features out and
-available rather than getting held up in a long release like some of
-the others have been. this pace of releases will not continue, and is
-only happening while i have time to work on the environment.
-
-releases 61 and 62 are suggested downloads, since they fix minor bugs
-or add features, as opposed to a more strongly recommended update like
-revision 60.
-
-people who haven't used 60 yet should refer to its release notes for
-changes that you'll need to make to your programs in order to work in
-releases 60 and later.
-
-
-[ changes & additions ] 
-
-- "add files" menu command as a simpler way to add files to your
-  sketch folder than navigating through the explorer.
-
-- a built-in font creator has been added, available from the sketch
-  menu. this tool will allow you to create your own fonts, and add
-  them directly to your sketch. you can also use 'add files' to add
-  fonts from the 'fonts' folder. however, the fonts folder will be
-  removed in a future release. 
-
-- no more digging for sketches.. "show sketch folder" opens up the
-  folder of the current sketch using the finder on the mac or the
-  windows explorer on windows. 
-
-- after exporting a sketch, automatically open the applet folder that
-  was just created.
-
-- some modification to the menu layouts, i.e. "clear history" is now
-  part of the history menu itself.
-
-- switched back to a more red color for errors in the console. 
-  the yellow was an accident. but again, it's editable in 'lib' ->
-  pde.properties if you liked the yellow or want something else.
-
-
-[ bug fixes ] 
-
-- finally found the problem with showing reference on macosx and fixed
-  it. this had eluded me for a while since it was working ok on my own
-  machine, but thanks to timothy mohn for harrassing me into fixing it.
-
-
-[ known problems ]
-
-- have been moved to the 'bugs.txt' file. check there for the status
-  of your favorite bug/feature.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0061 - 23 september 2003
-
-this is a brief addendum release to revision 60, that fixes a few
-small things. if you've downloaded 60, this isn't necessarily a
-"must-have", but it fixes a few quirks that showed up in the final
-stages of rev 60.
-
-if you used a previous version of processing, and haven't yet tried
-60, then please read its release notes, as many things have changed.
-
-
-[ bug fixes ]
-
-- fixed a handful of examples that were broken in rev 60.
-
-- modifications to the sound code that prevented it from running with
-  the microsoft java 1.1 vm.
-
-- removed "width 200 high 200" message that showed up during export.
-
-- fixed IllegalAccessError that showed up in applets that had inner
-  classes, when run inside the ancient microsoft java vm. 
-
-- brightened the red color used for error messages in the console,
-  since some found it hard to read. also note that you can always set
-  this color yourself by editing the pde.properties file that is found
-  inside the 'lib' folder.
-
-- fixed saveFrame() to allow for just "blah.tif", as was stated in
-  this document for rev 60.
-
-- removing .DS_Store files from the windows release
-
-
-[ additions ] 
-
-- if no reference is found for "found in reference", p5 provides a
-  message rather than doing nothing.
-
-
-[ known problems ]
-
-- a complete list of known problems can be found in the revisions.txt
-  entry for release 60.
-
-- a lot of println() commands will make the environment really slow or
-  even lock up completely. it's because the console can't keep
-  up. we're working on a fix.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
-
-
-
-[ common problems, not actually bugs ]
-
-- names of sketches cannot start with a number, or have spaces
-  inside. this is mostly because of a restriction on the naming of
-  java classes. i suppose if lots of people find this upsetting, we
-  could add some extra code to unhinge the resulting class name from
-  the sketch name, but it adds complexity, and complexity == bugs. :)
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0060 - 22 september 2003
-
-IMPORTANT NOTE! ACHTUNG!
-YOUR OLD CODE WILL PROBABLY BE BROKEN WITH THIS RELEASE.
-
-read the section on api changes very carefully, because a few
-functions have been renamed, and the behavior of background() has
-changed completely. almost all programs will have to be updated.
-
-but the happy part is that there are many many new features, and this
-change to the behavior of background() means lots of positive things.
-
-we decided to make as many of these naming changes as possible all at
-once, so that you only have to really mess with your code a single
-time. as casey put it, it's better to remove the band-aid quickly.
-
-if you're confused, all the examples have been updated for this
-release to use the new function names and background methods. a quick
-glance through them should help clear things up.
-
-
-[ api changes -- read carefully, avoid headaches ]
-
-- noBackground() no longer exists, so remove it from your code.
-
-- background() actually clears the screen immediately, rather than
-  simply setting a color. this means that you should use background()
-  a the beginning of loop(), if you want your applications to behave
-  similar to the way they used to.
-
-- hint(SMOOTH_IMAGES) no longer exists, and is simply the default.
-  just remove it from your code. if you get an error saying:
-  "No field named "SMOOTH_IMAGES" was found in type "Temporary_NNNN_NNNN".
-  you should remove the line "hint(SMOOTH_IMAGES);" from your program.
-  SMOOTH_IMAGES is no longer needed and has been removed.
-
-- fill() no longer colors images. if you want to color images, use
-  tint(), which is just like its cousins fill and stroke. like its
-  cousins, there's also noTint(), his (her?) contrarian twin.
-
-- getPixel() -> get() and setPixel() -> set()
-
-- get() and set() work directly on BImage objects.
-
-- get(int x, int y, int width, int height) copies a section of pixels
-  and puts them in a BImage. (based on code from toxi)
-
-- screenGrab() -> saveFrame()
-  saveFrame() will save a sequence of numbered tiff images
-  saveFrame("blah.tif") will save the current frame as blah.tif
-  saveFrame("blah-####.tif") will save a sequence of images
-    as blah-0000.tif, blah-0001.tif, etc.
-  saveFrame("blah.tga") will save the current frame as targa.
-  saveFrame("blah-####.tga") is up to you to figure out.
-
-- strokeWidth() -> strokeWeight()
-
-- bezier(a, b, c, d, t) -> bezierPoint(a, b, c, d, t);
-  curve(a, b, c, d, t) -> curvePoint(a, b, c, d, t);
-
-- vertexTexture(u, v) has been rolled into vertex(), so:
-  vertex(x, y); vertexTexture(u, v); -> vertex(x, y, u, v);
-  vertex(x, y, z); vertexTexture(u, v); -> vertex(x, y, z, u, v);
-
-- vertexNormal() -> normal()
-
-- font.stringWidth(String s) -> font.width(String s)
-  font.charWidth(char c) -> font.width(char c)
-
-- removed control key 'F' for 'reference', gave it to 'find'. 
-  also set cmd-shift-f as 'find in reference'.
-
-
-[ additions ] 
-
-- good god, an implementation of find & replace, which means we've
-  caught up to 1984.
-
-- BImage.save(String filename) has been implemented. the filename
-  should be something and a .tif or .tga at the end to determine how
-  the file should be saved.
-
-- background(BImage image); has been implemented, so your background
-  can automatically be replaced with an image. note that the image
-  must be the same size as your drawing area.
-
-- BImage.copy() returns a copy of an image. better yet, 
-  BImage.copy(int width, int height) returns a copy of an image, but
-  resized to that specific size. (code contributed by toxi)
-
-- online() returns a true or false for whether an applet is online or
-  not. (or really, whether it's running in a proper applet viewer)
-
-- status(String text) shows a string in a browser's status bar, or
-  sends it to the console in an application. (this replaces
-  Applet.showStatus if you're familiar with that)
-
-- bezierTangent() now implemented, but curveTangent() is unfinished.
-
-- param(String p) reads params from your html code for your applet.
-
-- text(float something, float x, float y) and 
-  text(int something, float x, float y) have been implemented.
-  just because their syntax is otherwise cumbersome.
-
-- textMode(ALIGN_LEFT), textMode(ALIGN_CENTER), textMode(ALIGN_RIGHT)
-  are implemented, and do what you might expect them to.
-
-- clean and pretty two dimensional circles and ellipses have been
-  implemented. this will speed and beautify your 2D elliptical needs.
-
-- added several error messages to provide more useful feedback about
-  misuse of font api functions or common problems.
-
-- added an error message (instead of failing silently) for when
-  noCursor() is attempted in an exported applet.
-
-- BImage.blendMode() has been added, thanks to toxi. details and
-  examples are forthcoming. 
-
-- it is now possible to draw inside of setup(). 
-
-- you are no longer restricted to using numbers (rather than
-  variables) for size() and background().
-
-- BGraphics now subclasses BImage. if you don't know what that means,
-  don't worry about it. just trust me.
-
-
-[ bug fixes ]
-
-- fixed significant CLASSPATH and quicktime for java problems. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184794;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184892;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064185169;start=0
-
-- properly asks for "save changes?" before quitting the application. 
-  this had disappeared and it was scary.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165653;start=0
-
-- sketch folder is no longer deleted if the sketch is empty but
-  something was placed in the data folder.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064160655;start=0
-
-- "present" mode repairs contributed by toxi (thankyouthankyouthankyou)
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166151;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166198;start=0
-
-- new preprocessor from dan mosedale that fixes a myriad of strange
-  errors with code that was completely proper but misunderstood.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165730;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165923;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166659;start=0
-
-- perlin noise now works, also thanks to toxi.
-
-- single pixel lines finally have alpha and z values. thick lines are
-  coming soon. (code from ivrea-funded carlos)
-
-- color() with alpha now works properly
-
-- repaired the function formerly known as screenGrab() so that it is
-  far less likely to run out of memory the way it did before. in
-  general, if you can get the thing on screen, you should be able to
-  save it to disk with the new implementation.
-
-- fixed bug where bezier curves weren't quite straight because of an
-  internal rounding error. also fixed another related bug.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166242;start=0
-
-- no more gaps when using pmouseX and pmouseY. this caused a problem
-  for the continous_lines example since they weren't, err, continuous.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166777;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
-
-- fixed bug where the 'open' button would get stuck if no sketch was
-  selected for opening.
-
-- fixed a bug where the caret would show up even though processing
-  processing's window was not active.
-
-- removed ugly white borders around gui elements that show up on
-  macosx (workaround for a bug in apple's java 1.3 implementation).
-
-- removed an extra push() and pop() in the text(), which may speed
-  things up a bit.
-
-- we've silenced the "couldn't delete..." messages
-
-
-[ known problems, pardon our dust ]
-
-- macosx doesn't provide an option to 'cancel' when it so politely asks
-  if you want to "save changes before quitting?". this is because of
-  weirdness in apple's java that we're trying to straighten out.
-
-- lines with stroke weights that aren't 1 are probably broken.
-
-- single pixel lines still have some problems with drawing over things.
-
-- the size of exported applets has jumped in this release. this will
-  get smaller again in a future release. we're in the middle of
-  transitioning between two different sets of rendering/graphics code.
-
-- clipping planes are not yet implemented. meaning that objects may
-  sometimes fly into the camera and turn upside down or do other tricks.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
-
-- concave polygons still don't work, meaning that lots of irregular
-  polygons won't draw properly.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062469819;start=0
-
-- jikes is ~9 megabytes in size, which is a bit obnoxious. it doesn't
-  hurt anything but we plan to put it on a diet for a future release.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
-
-- curveTangent() is not yet implemented. contributions welcome.
-
-- strokeMiter() and strokeJoin() exist but are not implemented.
-
-- textures warp in strange ways due to perspective problems.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
-
-- smooth() is not completely implemented. there will be quirks in how
-  it draws (like a weird flat line at the end of a shape, or areas
-  that are less than smooth).
-
-- on windows, processing can't be run from a folder that has non-ascii
-  characters in its name. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
-
-- video examples sometimes crash the whole environment on windows
-
-- net needs work, it's currently sending unicode, instead of ascii or
-  UTF-8, data. this can cause problems with other programs.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0059 - 31 august 2003
-
-this is mostly a bug fix release. expect multiple releases in the next
-few days as we head towards beta.
-
-
-[ bug fixes ]
-
-- no more "Class not found" errors when trying to use an exported
-  applet. fixed a supernasty bug that made applets incompatible with
-  older versions of java, like the one that everyone uses with
-  internet explorer (microsoft's java vm). 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376081
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376340
-
-- this rev does a better job of finding quicktime for java than the
-  last release. quicktime for java search path is not as fragile as it
-  was, instead is uses the environment variable QTJAVA, which is set 
-  by the quicktime for java installer, should point to a valid
-  QTJava.zip. if not, you'll get an error message asking you to
-  install/reinstall quicktime.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376278
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376309
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376378
-
-- fixed a hair-pulling bugger where spaces and underscores became a
-  mess when trying to save or rename a sketch.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376240
-
-- fonts no longer get goofy if imageMode() has been used
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062376464
-
-
-[ additions ] 
-
-- beginSerial(String port) and beginSerial(String port, int rate)
-  since these are used far more commonly than setting the parity and
-  stop bits. from the suggetsions board:
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1061595591
-
-
-[ known issues / bugs / if only i had time... ] 
-
-- "find in reference" and the reference menu items don't seem to be
-  working on some machines. if we can figure out why it works on some
-  machines and not on others, we'd like to repair this before beta.
-
-- quicktime for java is still required on windows. it's required on
-  macosx too, but it's installed there by default. the requirement
-  will be removed in a later release for people who don't want to use
-  video, but the fix is more difficult than anticipated, so it will
-  probably happen after the initial beta release.
-
-- run.bat hasn't been given love for a while and may not work. at the
-  very least, you'll need to modify it to find your copy of quicktime
-  for java. 
-
-- expect lots of 'cannot delete somefilename...' messages in red that
-  appear when you hit play or stop. these are mostly cosmetic, and
-  will be cleaned up in a future release.
-
-- 'export to application' remains unimplemented, though it's closer,
-  and should be ready before beta.
-
-- sound doesn't always stop when the 'stop' button is hit (i.e. the
-  mixer example seems broken). for now, you have to first quit
-  processing to stop it. 
-
-- 'preferences' will get better in a future release
-
-- the noise() functions were added, but don't yet work, they'll be
-  fixed soon.
-
-- presentation mode is flickery and unusable, this will be fixed soon.
-
-- the horizontal scroller for the text area has some weirdness, this
-  may not be fixed until after beta, depending on how bad it is.
-
-- using screenGrab() or saveBytes() or some of those things will cause
-  trouble inside applets. we'll try to do better error trapping soon
-  so that your applet doesn't crash when this happens. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0058 - *also* 5 august 2003
-
-a handful of fixes because of late-breaking problems with 57. argh!
-
-see the revision 57 release notes for the more useful stuff that's
-changed, since it was released the same day.
-
-
-[ windows ] 
-
-- check to see if quicktime for java is installed, if it isn't, then
-  warn the user that it needs to happen.
-
-- moved back to java 1.4.1 so that sound and video work better.
-
-
-[ macosx ]
-
-- replaced jikes with a version that doesn't require 'fink' to be
-  installed.
-
-- use java 1.3.1 as the default, instead of java 1.4. seems that 1.4
-  is just not ready for prime time.
-
-
-[ linux ]
-
-- brought linux java vm up to 1.4.2
-
-- checks to see if jikes is in the PATH, warns if not. this is
-  temporary, since jikes isn't properly found.
-
-- testing and notes for new rxtx serial support
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0057 - 5 august 2003
-
-
-[ additions ]
-
-- an all-new compiler (jikes) has been wired in by dan mosedale. this
-  is super exciting, because of all the compiler trouble we've had in
-  the past. thanks to ivrea for providing funding for dan.
-
-- a scrolling, selectable console has been implemented by dan
-  haskovec, another of our ivrea-funded hackers.
-
-- context menu cut/copy/paste (right-click in the text area) also
-  implemented by dan h.
-
-- saveBytes and saveStrings now implemented (and documented in the
-  reference)
-
-- curveMode(int segments) and bezierMode(int segments) now
-  implemented. these control the number of line segments used to draw
-  a curve. the default has always been 20, but you now have the option
-  to set it higher or lower. 
-
-- there's also curveMode(int segments, float squishy) determines the
-  squishiness when drawing catmull-rom curves. normally this is set to
-  zero, but setting different values will produce more bubbley curves
-  that don't necessarily connect all the points. 
-
-- a new function has been added to calculate points along a bezier
-  curve, rather than just drawing it. so for the old function:
-  bezier(x1, y1, x2, y2, x3, y3, x4, y4); 
-  if you wanted to draw 10 segments along it:
-
-  beginShape(LINE_STRIP);
-  for (int i = 0; i <= 10; i++) {
-    float t = i / 10.0;  // t should go from 0..1 along the curve
-    float x = bezier(x1, x2, x3, x4, t);  // get the x coordinate
-    float y = bezier(y1, y2, y3, y4, t);  // get the y coordinate
-    vertex(x, y);
-  }
-  endShape();
-
-  this was also asked for/inquired about in the following bboard posts:
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989
-
-  the same syntax also works for curve() in addition to bezier().  
-
-- functions have been added to set the cursor, based on code
-  contributed by amit pitaru (thanks amit!) usage is in the reference.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
-
-
-[ updates ] 
-
-- 'export' now exports and links the .pde file instead of the .java
-  file, and links that from the web page that is produced
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
-
-- sound actually stops when the 'stop' button is hit.
-
-- video, net, and sound all work more than once, no longer requiring
-  you to quit processing to run a video/net/sound example again.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
-
-- syntax and examples for video have been sorted out.
-
-- modified millis() to always return useful values
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635
-
-- last-used serial port is saved when quitting the environment
-
-- changed more things from "Proce55ing" to "Processing", since the
-  other naming was confusing lots of people. let us know if there are
-  parts we've missed.
-
-
-[ bug fixes ]
-
-- long bezier curves are finally fixed
-
-- got rid of a semi-frequent ArrayIndexOutOfBoundsException when
-  smooth() was enabled and images were involved
-
-
-[ known issues / bugs ] 
-
-- 'export to application' remains unimplemented, though it's closer,
-  and should be ready in 58 or 59.
-
-- 'preferences' will get better in a future release
-
-- the noise() functions were added, but don't yet work, they'll be
-  fixed for 58.
-
-- macosx hangs randomly, though not consistently enough to figure out
-  what's going on.
-
-- on some machines, presentation mode seems to have become unusable,
-  this will be fixed in 58.
-
-- the horizontal scroller for the text area has some weirdness, this
-  may not be fixed until after beta, depending on how bad it is.
-
-- using screenGrab() or saveBytes() or some of those things will cause
-  trouble inside applets. in 58, we'll try to do better error trapping
-  so that your applet doesn't crash when this happens. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
-
-
-[ windows ] 
-
-- windows uses java 1.4.2. in general, this is better, except for 
-  problems with generating some kinds of audio. if you're having audio
-  trouble, then install java 1.4.1, and remove the 'java' folder from
-  the processing distribution to use it.
-
-- differences between the 'expert' and normal releases for windows
-  have been minimized significantly. as long as you have a jvm
-  installed (1.4 strongly preferred), you may as well use the expert
-  version. 
-
-- serial port has been improved, and requires no additional
-  installation steps, even for the 'exper't release.
-
-- slightly better processing.exe for windows
-
-- background of menus is no longer white, apparently it was a jvm
-  problem, and it's fixed in 1.4.2.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
-
-
-[ mac os x ]
-
-- macosx updated to use java 1.4. similar to the pc, this is better
-  but not always. if you're having trouble, check the instructions in
-  readme.txt to see switch it back to 1.3 (which was the default for
-  the previous release)
-
-- reference loading and opening the p5 site finally works
-
-- fixed the menus to make them more mac-like. added help menu, removed
-  the extra 'quit' menu from 'file', etc. 
-
-- the serial port has been ironed out, and requires no longer requires
-  additional installation, although you do need to double-click the
-  serial_setup.command script to set up some permissions (unless
-  you've installed rxtx 2.1_6 already.. if you don't know what that
-  means, run the script). more information in readme.txt. thanks to
-  tom igoe for input and heckling to get this to work.
-
-
-[ mac os 9 ]
-
-- macos9 support is in the freezer until after beta. we still want to
-  support macos9, but it was taking too much of our time as we're on a
-  strict september deadline for the beta release.
-
-
-[ phew ]
-
-- that's a lotta stuff
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-ABOUT REV 0056 - 3 july 2003
-
-[ shouting outwards ]
-
-this isn't everybody, but thanks much to the folks who helped on the
-*software* side of this release:
-
-hernando and casey have completed an additional 15 examples covering
-topics of video, network, and tangible.  
-
-this is the first release with pre-testers (benelek and mkoser)
-checking things out before we accidentally push out a bad
-release. also timothy mohn handling the macos9 and macosx packaging
-process.
-
-arielm, the bagel papa poule, has been catalogging the graphics engine
-bugs and creating tests for each of them. this has helped get more bug
-fixes into the graphics engine, more quickly.
-
-toxi has done several fixes and tweaks to the graphics engine, details
-listed below.
-
-
-[ new features (new bugs) ]
-
-- added more words to the syntax coloring
-
-- added a constructor for BImage that takes a java.awt.Image
-
-- added FileInputStream version of loadStream for locally running code
-
-- added screenGrab(String filename). this grabs an uncompressed tiff
-  image of the current screen, just like screenGrab(). if ".tif" isn't
-  in the filename, it will be added.
-
-- loadStream/loadBytes work with InputStreams and URLs
-
-- get current stroke/fill/background color with:
-  color f = fill();
-  color s = stroke();
-  color b = background();
-
-- handling of up/down/left/right and control/shift/alt keys, e.g.
-
-  void keyPressed()  
-  { 
-    if (key == UP) { 
-      println("up"); 
- 
-    } else if (key == DOWN) { 
-      println("down") { 
- 
-    } else { 
-      println("around"); 
-    } 
-  } 
-
-- link(String urlname) now implemented as a simpler way to get to URLs
-
-
-[ bug fixes ]
-
-most of these were reported by folks on the bboard. thank you all!
-the people who notified us of the bug are in [brackets] though we may
-have missed a few.. some of these are reported multiple times..
-
-- transparent gif images now draw properly.. no more workarounds!
-  [reported by several people]
-
-- reference now properly unpacks, rather than sitting in the folder
-  like a dumb zip file. oops. [mkoser, benelek]
-
-- imageMode issues have been ironed out
-
-- added print(char c) and println(char c) so that they don't just 
-  print numbers to the console [benelek]
-
-- fonts were taking up more memory than necessary [arielm]
-
-- added ceil/floor to syntax coloring
-
-- added net stuff to syntax coloring
-
-- fix for points that were drawing invisible (extrusion example was
-  broken) [benelek]
-
-- fixed nagging ArrayIndexOutOfBoundsException on images [benelek]
-
-
-[ performance ]
-
-- fast 'flat' image drawing has been enabled again and debugged
-
-- fast image drawing then rewritten and debugged again (by toxi)
-
-- last line highlights properly on error (fix by danm)
-
-- code for much faster lines and points (by toxi)
-
-- adaptive circle segment sizing (by toxi)
-
-
-[ still broken ]
-
-- video and net stuff is still having trouble. this had been priority
-  for this release, but has been taking longer than hoped, and we had
-  so many fixes that we wanted to push the current rev out.
-
-
-ABOUT REV 0055 - 27 may 2003
-
-WARNING! THIS RELEASE IS LESS TESTED THAN SOME OTHERS, AND INCLUDES
-LOTS OF NEW CODE, SO IT'S POSSIBLE THAT THINGS COULD BE VERY BROKEN. 
-if you run into trouble, as with any release, just let us know about
-the bug on the bboard, and use the previous one that worked for you
-(i.e. go back to 54) it's all about 'alpha'.
-
-
-[ big changes ]
-
-perhaps very exciting, this is the first release to include explicit
-support for audio, video, and network. perhaps more exciting is that
-this code was developed by developers other than me. 
-
-net and video code was contributed by hernando barragan of ivrea
-http://people.interaction-ivrea.it/h.barragan
-everyone say "thanks hernando!"
-
-the audio code is by carlos rocha, a hired gun whose 
-employment was made possible by the generous support of ivrea. 
-yay carlos! yay ivrea!
-
-more about these guys can be seen at: http://proce55ing.net/info.html
-
-
-[ status of audio, video, net ]
-
-- audio should be java 1.1 compliant, meaning that it works inside
-  applets and on each of the platforms. audio should be working
-  reasonably well, and has been tested by carlos a good bit.
-
-- similarly, the net code should be just ducky.
-
-- video input and reading movie files is done through quicktime for
-  java, which means that you have to 1) be using windows or macos, and
-  2) have the durn thing installed. video is a little bumpy (you may
-  find it broken or unusable), which we're ironing out. but the
-  problems have been showing up inconsistently, so we preferred to get
-  the release out so that y'all can start playing with the other new
-  features.
-
-
-[ new features! new bugs! ]
-
-- sort functions for arrays of ints, floats, doubles or Strings
-
-// here's how it works for floats:
-float a[] = { 3.4, 3.6, 2, 0, 7.1 };
-sort(a);
-for (int i = 0; i < a.length; i++) {
-  println(a[i]);
-}
-
-- added wheel mouse support for osx, when running java 1.4. 
-  NOTE! we don't actually recommend using java 1.4 under macosx, as it
-  seems to be much less stable than 1.3, and appears to introduce some
-  weird inconsistencies when running p5. (this also fixes a bug where
-  using a 1.3 vm with the windows expert version would fukker the
-  environment).
-
-
-ABOUT REV 0054 - 11 april 2003
-
-[ ok, so 53 was a bit of a dog ]
-
-- fixed problem with web colors being broken
-
-- turned off error message spew
-
-
-ABOUT REV 0053 - 4 april 2003
-
-[ major bug fixes ]
-
-- finally found and fixed the 'disappearing caret' bug that some
-  people were having on windows. text editor is much more usable.
-
-- fixes to non-smoothed images, no longer makes a weird line in the
-  center of some images, or leaves out a line of pixels at the end.
-
-- lots of fixes to anti-aliasing, though it's still not anywhere near
-  perfect. still suffers most of the problems mentioned below.
-
-
-[ small tweaks ]
-
-- color(r, g, b, a) now works, also color c = #RRGGBBAA (like web
-  colors, but with alpha at the end)
-
-
-[ known bugs ]
-
-- alpha is a little weird (mostly doesn't work) on lines. it won't
-  work on single pixel lines unless smooth() is turned on. 
-
-- smooth() is still imperfect. you may find some jagged edges. text
-  marches in a funny way (i.e. typography04). shapes don't always
-  properly overlap (i.e. you can see triangles on spheres)
-
-- images with smooth() enabled are coming out a little garbled
-
-- concave polygons don't draw properly
-
-- lots of other exciting things just waiting to be found out!
-
-
-ABOUT REV 0052 - 5 march 2003
-
-[ feature additions ] 
-
-- alpha/transparency is partially working.. there are still problems
-  (see 'known bugs' section below) but it's in there.
-
-- smooth() and noSmooth() are partially implemented. they've got
-  several bugs that we know about but might be fun to play with. we
-  know of most of the bugs so we hope to get to them soon.
-
-- fill color can be set for images. IMPORTANT: to get just the image,
-  be sure to set the fill to white.
-
-- images no longer cache by default IMPORTANT: if you *want* images to
-  cache, you should use loadImage("filename.jpg", false). the second
-  parameter is whether or not images should be 'forced' to load fresh.
-
-- get the on-screen locations of an xyz point using:
-  float sx = screenX(x, y, z); 
-  float sy = screenY(x, y, z); 
-  float sz = screenZ(x, y, z);
-
-- get the object-space coordinates (how the object is affected by
-  translate and rotate etc) using:
-  float ox = objectX(x, y, z); 
-  float oy = objectY(x, y, z); 
-  float oz = objectZ(x, y, z);
-
-- constrain() is now part of the api
-
-- format numbers with nf().. syntax: nf(int num, int digits)
-  to make '27' into '0027' -> String formatted = nf(27, 4);
-
-- also for numbers with decimals.. nf(float num, int left, int right)
-  to make 27.3 into '027.3000' -> String formatted = nf(27.3, 3, 4);
-  or use zero if you don't care the number of digits:
-  i.e. make 27.3 into "27.3000" -> String fmt = nf(27.3, 0, 4);
-
-- camera functions now work. the following is the code for the
-  perspective camera (sorry no more docs, you can check opengl
-  references for more info until we get caught up)
-  beginCamera();
-  cameraMode(CUSTOM);
-  perspective(fov, aspect, nearDist, farDist);
-  lookat(eyeX, eyeY, eyeDist, eyeX, eyeY, 0, 0, 1, 0);
-  endCamera();
-  there's also ortho(left, right, bottom, top, near, far) to give you
-  an orthographic projection.. frustum() is another useful function in
-  this class. these work like their opengl equivalents, but without
-  docs are for advanced users only.
-
-- more matrix math.. applyMatrix() takes 16 floats which get
-  multiplied by the current transformation matrix. resetMatrix()
-  resets the transformation matrix to identity. 
-
-- switched to jre 1.4.1_02 from 1.4.1_01
-
-
-[ bug fixes ]
-
-- some programs that used 'color' didn't work, now they do.
-
-- fixed other broken examples.
-
-- missing images should no longer lock up the environment. on windows,
-  they used to throw an exception and lock everything up.
-
-- color for 'use external editor' works with new scheme.
-
-- numberFormat() had a bug where commas would show up. oops.
-
-
-[ known bugs ]
-
-- still can't figure out the 'caret disappearing' bug.
-
-- alpha is a little weird (doesn't always work) on lines. it won't
-  work on single pixel lines unless smooth() is turned on. 
-
-- smooth() is still imperfect. you may find some jagged edges. text
-  marches in a funny way (i.e. typography04). shapes don't always
-  properly overlap.
-
-- random freezes under windows, after running a few time. every 20th
-  or every 100th time the app just freaks out. use ctrl-alt-del to
-  kill the java runtime and restart your app. this will slowly be
-  ironed out. 
-
-
-ABOUT REV 0051 - 31 january 2003
-
-enables key presses in the editor when 'alt' or 'option' is pressed. 
-there was a problem with the mac german keyboards, and probably
-others, where folks couldn't type { and } (alt-8 and alt-9) and were
-instead doing lots of copying and pasting. released because this was a
-major bug for some, and it needed to happen before a workshop.
-
-
-ABOUT REV 0050 - 27 january 2003
-
-released a little sooner than hoped, to fix a single showstopper bug
-first discovered by josh nimoy. two sets of quotes were left out of
-the export-to-web code, which web pages that didn't work.
-
-
-ABOUT REV 0049 - 26 january 2003
-
-a release of p5 to honor the national tv advertising holiday
-known as the super bowl in the united states.
-
-
-[ feature additions ] 
-
-- lots of new examples (some may have issues, see 'known bugs' below)
-
-- code with beauty and grace: new coloring for syntax and the editor,
-  fancied up to work more like the p5 site itself. 
-
-- loadImage and loadStream now support http:// URLs (thanks to glen
-  for pointing out the omission
-
-- framerate() is a function that always returns the current frame rate
-  as a float. 
-
-- framrate(float num) sets the framerate to a specific number. it can
-  be used inside setup() or even inside loop(). framerate(0) ressets
-  back to the maximum possible framerate.
-
-- new math functions: ceil, floor, and round all work on floats.
-
-
-[ bug fixes ] 
-
-- attempt has been made to fix the disappearing caret bug. i haven't
-  been able to reproduce this on my win2k machine, so i don't know if
-  it's fixed.. you'll have to let me know.
-
-- pmouseX and pmouseY are now colored like their siblings mouseX and
-  mouseY (thanks benelek)
-
-- pmouseX and pmouseY now get set the very first time mouseX and
-  mouseY are set, which might help remove some "if (firstTime)" code
-  in a couple of projects.
-
-- fixing the print() weirdness uncovered a bug with long lines in the
-  console. 
-
-
-[ between bug and feature ] 
-
-- nicer looking default html for exporting. that old stuff was
-  embarrassing. we had hoped it would be too embarrassing for anyone
-  to use, but we were wrong. so we've improved the default.
-
-- print() now shows things on the console, even without a println().
-  thanks to mike davis and others for pointing this out.
-
-- delay() should no longer slurp up cpu time and make your machine
-  flip out. also, it doesn't run on the first time through loop(),
-  making things a little smoother. (thanks to glen murphy for the
-  report)
-
-
-[ known bugs ]
-
-- some examples seem to be broken, this will be ironed out for 0050
-
-- a couple tweaks with the syntax of 'color' statements are needed,
-  this is related to the above
-
-
-ABOUT REV 0048 - 7 january 2003
-
-[ mac os ]
-
-- this release includes a bit of tweaking to the fonts that are used by
-  default so that they look nicer on the mac. also, anti-aliasing is
-  turned *off* by default (thanks to franklin_mint for the tip), which 
-  is a little more appropriate for coding. if you want to re-enable it, 
-  check out pde.properties inside 'lib'.
-
-- tried java 1.4 dp8 but it *does not work*, at least not very well,
-  with processing. assertion failures or outright crashes. blech. 
-  hopefully apple will get this cleaned up and finished soon, because
-  it's already running fine under 1.4 on windows.
-
-[ windows ] 
-
-- the release is now split in two, using 'standard' and 'advanced'
-  versions. the standard release includes a working java vm, and is
-  all set up and ready to go. the advanced version is for people who
-  already have java installed (and don't want to deal with the 20MB
-  download), and know what they're doing enough that they can also
-  install the serial port code by hand. instructions on installing the
-  serial code are in the 'serial' folder inside the advanced release.
-
-- wheel mouse works again
-
-- increased the default memory allocation to 64 MB. 
-
-
-ABOUT REV 0047 - 5 january 2003
-
-[ happy new year ]
-
-- hopefully january 2003 will be a good month for p5, as i have
-  a short bit of time to work on it and there was a beautiful little
-  ibook under the p5 xmas tree to help me with the mac releases. 
-  i hope to get a few revisions out this month so i can get back 
-  my 'real' work.
-
-[ features ] 
-
-- the text editor has once again been replaced. the new one is fancier
-  and less buggy. most obvious thing to note is text coloring. 
-  the editor is based on the jedit 'syntax' package. jedit is an
-  amazing and feature heavy java-based text editor with an online
-  community the size of an organized religion as compared to our
-  little p5 cult. see http://www.jedit.org for worship times.
-
-- sketchbook can now be more recursive (folders within folders) than
-  it used to be. for those inclined to playing with fire (you're using
-  alpha software, so this must be you) you can set the root of your
-  sketchbook directory to something besides "sketchbook" inside the
-  Proce55ing folder. details in the 'readme' doc.
-
-[ bug fixes ]
-
-- a strange crashing after a few weeks of use on the macosx has been
-  fixed. it got upset as soon as a .DS_Store file made its way into
-  the sketchbook directory. i'd get upset too since those little
-  buggers get pooped all over the place as soon as a mac connects to
-  anything, but instead some code was written to ignore them. i'm
-  trying to learn to ignore them myself. thanks to fdb, brendanberg,
-  jes and perhaps others who notified of this one. 
-
-- the undo forever problem has (hopefully) been squashed. in 0046,
-  one could undo until the text area went empty, or the previous
-  project loaded. if one were to hit undo quickly enough, they might
-  have noticed the clock on their wall moving backwards.
-
-
-ABOUT REV 0046 - 20 november 2002
-
-[ major release, new features ]
-
-- now uses a fancy, swing-based text area. things should behave 
-  much better for most platforms, particularly on the mac. 
-
-- undo/redo, cut/copy/paste/select all are all supported.
-
-- added 'rename' function, because 'save as' leaves behind
-  too many boogers sometimes. this is now the default when clicking
-  on the sketch title, instead of 'save as'.
-
-- better error messages for serial port--actul notification if
-  the port is unavailable or not properly installed.
-
-- javax.sound is imported by default, so when running inside the
-  editor, it's possible to use these classes to play audio files 
-  and control midi devices. doesn't work for exporting to applet.
-
-- on windows, sun's xml classes are included as part of the imports,
-  so at least from inside the editor, it's possible to use the built
-  in xml support from jdk 1.4.
-
-- support for 3D curves in the graphics api. this means new versions
-  of curve(), bezier(), curveVertex() and bezierVertex().
-
-- sketch tweaks: naming for sketches is no longer random, but uses the
-  date. also, during a run, the window is now named after the current
-  sketch.
-
-
-[ bug fixes ]
-
-- mouse: pmouseX and pmouseY behave more like people expect 
-  (they're set at the end of loop() instead of whenever there is 
-  new mouse movement)
-
-- macosx: the status bar now resizes with the rest of the 
-  window.. this was a workaround for some apple java weirdness.
-
-- fixed more of the issues that cause the random freezes when
-  hitting play
-
-- textarea shouldn't spew so many exceptions anymore
-
-- rectangles were drawn one pixel too large
-
-
-[ a few of the known issues ]
-
-- this release is not available for mac os 9. there were problems
-  just before release, and there was no point in holding up the 
-  more important platforms for another week.
-
-- download size for windows is getting enormous. in the future will
-  switch to having people download and install java 1.4 separately.
-
-- mouse wheel only works on windows, because jdk 1.4 
-  is required for mouse wheel, and osx is behind the times.
-
-- it's possible to undo past where it's truly possible, so if you
-  undo too many times, your program might disappear. just redo. 
-
-
-ABOUT REV 0045 - 20 october 2002
-
-[ internal release only ]
-
-- major tweak to fix some of the random freezing and crashing that
-  occurred when hitting the 'run' button.
-
-- changes to sketch menu: no more CVS and .cvsignore entries and
-  sketches are only added if they have the correct structure
-
-- shape mode TWO_CORNERS is now called CORNERS
-
-
-ABOUT REV 0044 - 2 september 2002
-
-[ features ] 
-
-- can now use an external program to edit, such as bbedit on the pc or
-  emacs on unix. select 'use exteral editor' and the textarea will
-  become un-editable. you can then edit with your favorite text
-  editor, and the code will be updated in the window each time you hit
-  the 'run' button.
-
-- added ability to set foreground and background colors of the
-  editor. editor.program.fgcolor and editor.program.bgcolor can be set
-  to your favorite color in pde.properties. also the the background
-  color indicating 'external editor' is in use can be set via
-  editor.program.bgcolor.external.
-
-- more file i/o and data processing capabilities, see changes under
-  api additions
-
-- 'beautify' is now enabled, though it may eat all your code in the
-  process. if it does, just go back to the previous version by using
-  the history menu, and get to the proce55ing website and let us know
-  the change of events.
-
-[ api additions ]
-
-- String[] loadStrings(String filename) 
-  returns the lines of a file as entries in an array of strings
-
-- byte[] loadBytes(String filename) 
-  retrieves a file's contents and places them into a byte array for
-  easy processing
-
-- String[] splitStrings(String what) 
-  String[] splitStrings(String what, char splitChar) 
-  splits a String into several smaller strings wherever there's a
-  space. ie. splitStrings("quick brown fox") becomes an array with
-  elements "quick", "brown" and "fox". the 'splitChar' is optional,
-  you can have the line broken up by tabs (if you use '\t') or any
-  other character.
-
-- int[] splitInts(String what)
-  int[] splitInts(String what, char splitChar)
-  same as above, but parses the line as integers
-
-- float[] splitFloats(String what)
-  float[] splitFloats(String what, char splitChar)
-  you can imagine what this one does
-
-[ api changes ]
-
-- getStream is now loadStream
-
-[ bug fixes ]
-
-- arrow keys now work in a hokey way under macosx. this is better than
-  not working at all, but still not great. it's also not really my bug
-  fix, but a workaround for apple's bug.
-
-- editor window can now be resized to one's content under osx
-
-- sketch windows won't pop up offscreen anymore.. and if a sketch
-  window is too large, it will simply center on-screen.
-
-- names with underscores and other illegal characters weren't being
-  restrained. this allowed / and : to be used when renaming/saving
-  sketches, which caused the app to blow up.
-
-- console window doesn't die as it approaches 1000 lines of text
-
-- default font size for the editor under macosx is smaller
-
-
-ABOUT REV 0043 - "ALPHA" - 2 august 2002
-
-- this is the official "alpha" release. released for all platforms
-  with a completed readme.txt
-
-
-ABOUT REV 0042 - 2 august 2002
-
-[ finishing up ]
-
-- fixed ArrayIndexOutOfBoundsException in texture use
-
-- added icon to replace the coffee cup
-
-- 'run' button now stays highlighted properly
-
-
-ABOUT REV 0041 - 1 august 2002
-
-[ big things ]
-
-- handling of mouse/key events smoothed out and much improved
-
-- added a (wimpy) scrollbar for the console
-
-- fixed problems with #ffcc00 colors
-
-- export was failing with no 'data' dir
-
-- background() now works for applets in draw() mode
-
-- fixed imageMode() with 2d images
-
-- cursor no longer hides in the editor window (hacked around this sun
-  java vm bug)
-
-- linux and windows now have their own stdout.txt and stderr.txt
-  like the mac, so that stuff is echoed out for easier cut/paste
-
-
-ABOUT REV 0040 - 1 august 2002
-
-[ oops ]
-
-- fixed a bug that prevented 39 from running at all. argh.
-
-
-ABOUT REV 0039 - 31 july 2002
-
-[ you feel yourself getting very sleepy ]
-
-- repaired run/present modes.. now much smoother. use ESC to quit out
-  of present mode (or stop & close window when in regular mode).
-
-- fixed links to reference and web site from file menu. works on the
-  mac now, and maybe even linux.
-
-- build 'release' version of Proce55ing.exe that doesn't scare casey
-  and need MFC42.DLL
-
-- tested serial for windows, macos, macosx.. serial working really
-  well for windows
-
-- removed 'edit' menu because it's worthless
-
-- fixed run.bat for windows
-
-- many tidbits of testing on multiple platforms
-
-
-ABOUT REV 0038 - 30 july 2002
-
-[ the excitement doesn't stop ]
-
-- fancy new packaging for all platforms... all four platforms now have
-  double-clickable applications, with icons and everything. macos9
-  even has a splash screen. linux doesn't have an icon because icons
-  only slow unix people down. would like to have splash screen on
-  other platforms but probably no time to implement before alpha.
-
-- lots of work in getting macosx and macos9 versions cleaner, stabler,
-  and prettier. os9 is still super slow (at least on my poopy
-  powerbook) but it runs. 
-
-- serial port code now working (well) under windows
-
-- examples are now included in the sketchbook
-
-
-ABOUT REV 0037 - 27 july 2002
-
-[ a few great things ] 
-
-- 'history' now implemented, jump back to old versions of your app
-
-- now saves applet window position between runs
-
-- no exception when size() not called!
-
-[ that go great together ]
-
-- slightly different technique for substituting f's 
-
-- comment mangler codec no long mangling so badly
-
-- console converts tabs in stdout/stderr to spaces for indent
-
-- line numbers for errors now slightly more correct
-
-- linefeed weirdness in code base
-
-- the data dir can now have subfolders
-
-- more new make.sh/dist.sh goodness
-
-- wrote to everyone who had signed up for the alpha
-
-- still receiving bounced mail
-
-
-ABOUT REV 0036 - 27 july 2002
-
-significant hacking coming into deadline for alpha release
-
-[ features and additions ]
-
-- first rev off the press with the more semi-automated build
-  system. should be much easier to build all four platforms
-  more-or-less simultaneously.
-
-- folded serial into BApplet, though it's not fixed
-
-- built macos9 version
-
-[ bug fixes and tweaks ]
-
-- fixed exception when quitting on linux and mac
-
-- fixed height and background of buttons in the status area (macosx)
-
-- introduced os-specific properties files
-
-- fixed setPixel(i, j, #99cc00)
-
-- mouse no longer being funny when outside a 100x100 box in 
-  120x120 window
-
-
-ABOUT REV 0035 - 23 july 2002
-
-- duplicate/rename replaced with save as
-
-- curves were broken (didn't draw anything)
-  now they're not (they draw things)
-
-- curve() now makes more sense and fits all four points provided
-
-- using translate() no longer makes lines turn black. ahem.
-
-- fixed status message color
-
-- added newline before program code when exporting .java files
-
-- removed NullPointerException on startup
-
-
-ABOUT REV 0034 - 22 july 2002
-
-- fixed the problems with launching applets, implemented frame
-  around the applet being run, also implemented presentation mode
-
-- with any luck this one should be a little more stable than some
-  of these other ones in the 30s series that i keep releasing without
-  any sensible amount of quality control.
-
-
-ABOUT REV 0033 - 8 july 2002
-
-- duplicate and rename now implemented, more (should be all) of 
-  the menus are actually functional. some are hacks (item to
-  launch proce55ing.net and the reference) but things should be
-  generally more consistent.
-
-
-ABOUT REV 0032 - 7 july 2002
-
-- another major release that irons out issues of export and 
-  the toolbar. a button for a new project is included, and 
-  the toolbar items properly open/load/save entries to/from
-  the sketchbook. export should be working, as should external 
-  files accessed via getImage/getStream/etc. 
-
-
-ABOUT REV 0031 - 5 july 2002
-
-- this is a major release, representing several victories. 
-  most important: sketchbook is finally in there. every piece 
-  of work is a 'sketch', a very lightweight project setup. 
-
-- export has not been tested and has a good bit of new code
-  so that may be problematic.
-
-- menubar with all available options--note that these relate to
-  sketchbook, and that the toolbar buttons may not work as well.
-  use menus/key commands where possible(!)
-
-- generally more application-like with prompts for the user
-  for saving changes when closing a sketch or quitting.
-  editor now keeps track of changes made. window positions and
-  the last sketch opened are saved.
-
-- concept of a user name associated with the app, right now
-  just set to 'default' but in beta will be able to change
-  the name for workshops and general use. 
-
-- current items in sketchbook (serial/dbn) aren't in correct format,
-  and won't work if you switch to them
-
-
-ABOUT REV 0030 - 2 july 2002
-
-- fix bug where comments were being removed from exported files
-
-- new 'color' datatype, the following are now valid:
-  color c = color(23, 45, 99);
-  color c = #ff00cc;
-
-
-ABOUT REV 0029 - 1 july 2002
-
-- actually updated pde.jar, export, pde.properties, BApplet.java 
-  in sketchbook, removed extra dbn.pde from lib (it's in sketchbk)
-
-- new api: triangle, quad (put rect back too)
-
-- keyPressed() and mousePressed() events
-
-- new functions: degrees(), radians() 
-
-- new color tidbits (though color still ints) final solution
-  for get/set pixel debate
-
-
-ABOUT REV 0028 - 1 july 2002
-
-- serial port should work again (win32comm was missing)
-
-- modified pde.properties slightly for console and header
-
-- added output console the main interface
-
-- old-style c++ int(), float(), char(), byte() all work 
-  for casting of datatypes, instead of confusing c syntax
-
-- size now works in draw() mode
-
-- fixed annoying findSelection bug spew on startup
-
-- 0.4f now works, formerly wasn't allowed
-
-- lots of preprocessor tweaking for exceptional cases
-
-- jre now in its own subdirectory, separate from 'lib'
-
-
-ABOUT REV 0027 - 7 june 2002
-
-- released on the floor of dis2002. welcome to london.
-
-- editor.buttons.bgcolor was having issues
-
-- plane is now quad, PLANE is now QUAD
-
-_ latest iteration of colors and buttons
-
-
-ABOUT REV 0026 - 7 june 2002
-
-- fixed the situation where i'm a dork and forgot to 
-  actually update the pde.jar file, which had rendered the 
-  changes in rev 0025 irrelevant
-
-
-ABOUT REV 0025 - 6 june 2002
-
-- 'rect' is now 'plane'
-
-- QUADS are now PLANES, QUAD_STRIP is PLANE_STRIP
-
-- curve() and bezier() now behave the same way
-
-- made all ui colors/fonts accessible from pde.properties
-
-- fixed long font names for the mac release
-
-
-ABOUT REV 0024 - 22 april 2002 afternoon
-
-- lighting was broken, but no longer
-
-- turned lights off by default
-
-
-ABOUT REV 0023 - 22 april 2002 3am
-
-- versions 21 through 23 dealt with getting the beast to work smoothly
-  for the numer workshop
-
-
-ABOUT REV 0020
-
-major release, significant, code-destroying changes
-
-- largeish handful of api changes (see docs for update)
-
-- naming of api for BagelImage and others changed to BImage
-
-- ProcessingApplet is now BApplet
-
-- doesn't work on the mac due to update problem
-
-- new user interface (not all features work yet)
-
-- no longer need to use 'f' with floats
-  in fact, don't ever use f with floats b/c you'll get an error
-
-
-ABOUT REV 0019 - 25 february 2002
-
-noticeable changes:
-
-- many changes to names of functions in api
-
-- default background color is gray, size is 100x100
-
-internal changes:
-
-- single color function, colors properly clamped, MemoryImageSource
-  moved into ProcessingApplet
-
-- rect() now affected by transforms more properly
-
-- long list of other tidbits in cvs
-
-
-ABOUT REV 0018 - 11 february 2002
-
-bug fix:
-
-- i broke fonts in the last release. now they work again. my own fault
-  for trying to improve things.
-
-feature: 
-
-- projectSize(x, y, z, width, height, depth) is like projectPoint()
-  but allows you to transform an object shape to screen space and puts
-  the size into g.projX, g.projY, g.projZ
-
-
-ABOUT REV 0017 - 23 january 2002
-
-features and tweaks:
-
-- setFont() now takes a font size
-
-- exporting to applets is slightly less buggy
-
-- hopefully lines are only a single pixel thick when they should be,
-  in slightly more cases
-
-- added a 'hint' for smoothing of images and fonts. put
-  hint(SMOOTH_IMAGES) in your code to enable smoother text and images,
-  but at the risk of things running more slowly. use
-  unhint(SMOOTH_IMAGES) to disable.
-
-- millis is a variable that always contains the number of milliseconds
-  since your applet started as an int. before it was always zero. use
-  it wisely.
-
-- loadImage, loadFont, and getStream are behaving better
-
-- no longer the random exception in graphics that would cause your
-  programs to hang due to an ArrayIndexOutOfBoundsException. haven't
-  fixed the bug, but it's at least being caught and worked around.
-
-known issues:
-
-- if you're using 'extends ProcessingApplet' in your code, you'll have
-  to use that class name for anything that you export. otherwise incur
-  the wrath of a bunch of spew at the dos prompt.
-
-- consistently thin lines are still erratic and not under control
-
-- the line highlighted for any particular error is often a joke
-
-- lots of other things, too numerous to list that make me wonder if
-  this will ever be ready to go
-
-
-ABOUT REV 0016 - 20 january 2002
-
-- disabled (by default) the sketchiness from the previous version. so
-  the commportinuse trouble is back, unless you re-enable the hack
-  in the pde.properties file and set 'play.external' to true
-
-- no actual code changes in this version, but just upped the rev
-  number to avoid confusion
-
-
-ABOUT REV 0015 - 11 december 2001
-
-known issues:
-
-- this version of processing is even more sketchy than many other
-  ones. but maybe it fix two huge issues, so i'm releasing it
-  anyways with this caveat. just go back to 14 or another one if this
-  gives you too much trouble.
-
-
-features and tweaks:
-
-- includes a strange hack that fixes the CommPortInUseException that
-  had been so annoying, forcing you to restart processing to run your
-  apps. the downside is that the fix means that if there's an error in
-  your app, you have to check the console (the msdos prompt) for the
-  error line, because it won't get highlighted automatically
-
-- switch to the IBM's java virtual machine. it seems stabler than the
-  sun one, and sun's stinks because of that nasty screen flickering
-  bonanza that starts after you've been running processing for a bit.
-
-
-ABOUT REV 0014 - 10 december 2001
-
-features and tweaks:
-
-- completely flat, unresized images are now significantly faster. this
-  affects any time that you use image(img, x, y) and you haven't yet
-  used translate/rotate/scale/etc. 
-
-- thin, one pixel lines are much much faster, provided you aren't
-  scaling them larger, by say scale(10) or something like that.
-
-- new version of java compiler (kjc) that hopefully sucks less.
-
-- bezierCurve() and catmullRomCurve() have reappeared
-
-
-bugs fixed:
-
-- way too many OutOfMemoryErrors and maybe that nasty flickery/jumpy
-  thing.
-
-- 3D calls to vertex() weren't making things 3D unless a translate or
-  a rotate was used
-
-
-known issues:
-
-- flickery/jumpy thing after the applet runs for a little while. this
-  is a bug in sun's java virtual machine (i can't actually program the
-  pyrotechnics you're seeing on your screen) but may have resurfaced
-  due to low memory conditions because run.bat was screwed up. so the
-  problem may be fixed. hopefully. maybe. hmm. 
-
-- i've tweaked a bunch of stuff in this release but haven't had a lot
-  of time to test. things look like they're doing much better. but as
-  is the case with any release, you can always go back to a previous
-  version if the new one gives you too much trouble.
-
-
-ABOUT REV 0013
-
-features and tweaks:
-
-- you can set the background color to be used when your applet is
-  in full screen mode. in lib/pde.properties change the line
-  fullscreen.bgcolor=#0080ff
-  to include whatever color you want. the syntax is the same as web
-  pages, although you aren't limited to the web palette.
-
-- screenGrab() functionality! get happy.
-  add screenGrab() at the end of your loop() function to produce
-  a series of numbered tiff-format images that can be imported 
-  into a video editing app. or call screenGrab() when the mouse is
-  pressed to take quick snapshots. 
-
-- colorcube applet is updated to the current release.
-  it is also now included in the sketchbook/examples directory.
-
-- for the technically inclined or curious, the source code for
-  ProcessingApplet is included in the sketchbook/standard directory.
-  it's not particularly pretty, since it's continually changing, but
-  can be useful if you're wondering about how things work.
-
-
-bugs fixed:
-
-- the fix for rev 12 wasn't actually included in rev 12. grr.
-  this implies 1) i'm an idiot, and 2) rev 11 and 12 are the same.
-
-- ellipse was drawing opposite the direction of the origin.
-
-- default program now actually works--replaced colorScale()
-
-- editor was selecting the wrong line for errors. 
-
-
-ABOUT REV 0012 - 29 november 2001
-
-this was a simple fix for a big problem... programs that included
-'extends ProcessingApplet' didn't work and gave a cryptic error
-message. other than that, no new features.
-
-
-ABOUT REV 0011 - 28 november 2001
-
-i've changed (broken) enough things in this new release that i'm
-writing down a list of changes. your programs may run a little funny
-in rev 11, but it's all for the better in the long run. let me know if
-you have trouble getting things to work. and of course, keep a copy of
-rev 9 around in case things go wrong.
-
-that said, rev 11 should be a much happier place to work. due to the
-harrassment of your classmates, i've completed (simple) font support,
-among other things.
-
-[for those who missed rev 10, it only existed for 15 minutes, because a
-bug was found as i was preparing to send it out.]
-
-
-
-FONTS are working. a simple example:
-
-void setup() {
-  size(300, 300);
-  setFont(loadFont("fonts/Univers76.vlw.gz"));
-  fill(200, 200, 00);
-  background(10, 70, 200);
-}
-
-void loop() {
-  rect(10, 10, 100, 100);
-  translate(mouseX, mouseY);
-  scale(20, 20);
-  text("I'm a little typeface short and stout", 0, 0);
-}
-
-the 0, 0 part at the end of 'text' is the x, y location to put it. 
-the scale(20, 20) means 20 point font (fonts are 1 pixel high). 
-(note that with the scale() in there, the x, y coords for text() will
-also be multiplied by 20x.)
-
-bunch of cheezy fonts are included in a 'fonts' directory. not
-sure if i'll include these in the future, but at least it's a start.
-
-
-
-IMAGES are working. a simple example:
-
-BagelImage b;
-
-void setup() {
-  size(300, 300);
-  fill(100);
-  b = loadImage("max_van_kleek.gif");
-}
-
-void loop() {
-  image(b, mouseX, mouseY);
-}
-
-this drags poor max around the screen with the mouse position. the
-image should be in the same directory as run.bat. jpeg images can be
-used too.
-
-
-
-RANDOM() functions, more random than ever
-
-// get a float between 0 and 40, or [0..40) for math weenies
-float a = random(40);
-
-// get a float between -1 and 1
-float b = random(-1, 1);
-
-// get an int between 0 and 9
-int c = (int) random(10);
-
-
-
-PIXELS... you want them
-
-pixels[] is an int array that contains all of the image data from the
-screen, in ARGB format (packed into ints). play away.
-
-if you don't know what that means and would like to use the pixel
-array directly, let me know.
-
-
-
-FIXED WIDTH FONTS
-
-make-your-own-fixed-width-fonts-in-photoshop are supported.
-but i'm not gonna bother documenting them unless someone asks.
-
-
-
-ALTERCATIONS
-
-+ rect(x, y, width, height) instead of rect(x1, y1, x2, y2)
-
-+ ellipse(x, y, width, height) instead of oval
-
-+ box(size) instead of cube()
-
-+ box(width, height, depth) instead of box(x1, y1, z1, x2, y2, z2)
-
-+ sphere(size) stays the same
-
-+ image() instead of imageRect()
-
-+ translate(x, y) in addition to translate(x, y, z)
-
-+ scale(size) and scale(x, y) in addition to scale(x, y, z)
-
-+ rotate(angle) rotates by angle in 2D
-
-+ rotateX, rotateY, rotateZ (angle) each rotate by angle 
-  around their respective axes
-
-+ transform( .. 16 floats here .. ) if you think you're matrix math
-  genius and wanna play with your own transformations
-
-
-
-LESS ANNOYANCE
-
-+ no longer write software backwards! new shapes being drawn actually
-replace older shapes, even when using flat, 2D surfaces. 
-
-+ no need to use 'extends KjcProcessingApplet' anymore, just use
-'extends ProcessingApplet', and processing will figure out whether
-the 'Kjc' part is relevant or not.
-
-
-
-PROBABLY NEVER NOTICED
-
-+ colorScale() no longer exists. use colorMode(RGB, ...)
-  instead, where ... is whatever you would've put inside colorScale()
-
-+ included run95.bat for people who are using 95/98/ME. you can use
-  this .bat if run.bat opens a dos window and closes it quickly
-  without starting processing. just put processing at the base of your
-  c: drive in a folder called 'processing'.
+in spite of their historical feel good campiness, i've removed the
+notes from earlier releases because this file was getting out of hand. 
