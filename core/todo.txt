@@ -75,6 +75,9 @@ _   this way can avoid duplicating / breaking things
 _ depth() shouldn't be needed for opengl unless actually 3D
 _   right now the camera doesn't get set up unless you call depth()
 
+_ don't show applet frame until first frame
+_   but don't do it if it's a subclass, ie opengl..
+
 _ how to handle full screen (opengl especially) or no screen (for scripts)
 _ implement fullsize().. this takes over the screen as best it can
 _   or should it be more like present mode?

@@ -478,7 +478,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     lightSpecularB = new float[MAX_LIGHTS];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
-    // otherwise just hose the user if it's custom
+    // will just be ignored if CUSTOM, the user's hosed anyways
     if (depth) cameraMode(this.cameraMode);
   }
 
@@ -545,6 +545,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     textFont = null;
     //text_mode    = ALIGN_LEFT;
     //text_space   = OBJECT_SPACE;
+
+    noDepth();  // actually has effect of calling depth() on opengl
   }
 
 
