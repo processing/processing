@@ -30,6 +30,9 @@ o if additional tab is "public" class.. then make external?
 X   this seems too dangerous
 X make font builder vertically resizable
 X   200 pt font hoses things / hides buttons
+X bring back "rename" ?
+X   rename is now enabled on the first tab
+X   'delete' is disabled on the first tab (what would you do after delete?)
 
 sketchbook/prefs location
 X read from registry key to get the proper name for these folders
@@ -93,6 +96,8 @@ X   focusGained/focusLost was added..
 o if a data file is in the sketch (not data) folder export breaks
 o   works fine in the editor, but on export gets a nullpointer ex
 X   no way around this, because needs to be able to read from local dir
+X if saving a read-only sketch, default to sketchbook folder
+X   (before was prompting to save inside the same folder.. annoying)
 
 building libraries - not gonna build libs in p5 ide for 1.0
 o compiling - main file is a .java not a .pde
@@ -197,7 +202,6 @@ _   set both versions to require java 1.4
 _   change the Info.plist inside macosx
 _   and add something to PdeBase to make sure that it's in 1.4
 
-_ bring back "rename" ?
 _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
@@ -225,6 +229,9 @@ _ mouse wheel broken in the text editor? (windows jdk 1.5?)
 
 _ implement horizontal version of PdeEditorButtons
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
+
+_ transparently convert spaces to underscores 
+_   underscoring everything is kinda nasty
 
 
 ......................................................................
