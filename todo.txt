@@ -1,67 +1,15 @@
-0056
-X modify classpath to use 1.4 for compiling
-X   modify make.sh to include JDK14 flag
-X video: get qtjava stuff working, modify make.sh to include paths
-X   also run.sh, the classpath on Proce55ing.app
-X ceil/floor weren't colored properly
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054886439
-X String wasn't colored, so added parts of java.lang
-X BFont was allocating too much memory for fonts (found by arielm)
-X modified all scripts to unpack the new reference
-X simage() has been enabled again 
-X   https://sourceforge.net/tracker/index.php?func=detail&aid=750867&group_id=63445&atid=504000
-X image_mode has been ironed out
-X   https://sourceforge.net/tracker/index.php?func=detail&aid=750886&group_id=63445&atid=504000
-X reference not being unzipped
-X   fix scripts for dist / make
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054222236
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054886548
-X print(char) and println(char) didn't exist. whoops.
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055940673
-X added constructor in BImage that takes java.awt.Image
-X added FileInputStream version of loadStream for locally running code
-X transparent gif images don't retain transparency (oy)
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
-X screenGrab(filename), not just screenGrab()
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1056481749
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1056558368;start=0
-X versions of loadStream/loadBytes etc that use streams and/or urls
-X getting current fill color and stroke color
-X   stroke(), fill(), background()
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
-X add keyCode to BApplet (quick addition)
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
-
-other folks
-dm X patch to fix last line highlight bug in highlightLine()
-cr X new function for linking to external web page
-ks X BGraphics patch for faster lines and points
-ks X adaptive sizing of circle segmenting based on rendered size
-ks X   rather than requiring a fixed amount
-ks o   have a few settings cached
-ks X   fixed again for scale() issues
-ks X RGBA code for simage(), along with some speedups
-ks X faster version of _blend() function
-ks X MAX_LIGHTS instead of '10' sprinkled through the code
-
-after 0056rc1
-bf X patched up ellipse code because adaptive sizing not working properly
-bf X   added more segments to the adaptive sizing algo
-bf X   reported by benelek
-bf X fixed bug in BPolyogn.scanline for textures walking out of bounds
-bf X   reported by benelek
-bf X point() wasn't getting a proper alpha value for drawing
-bf X   reported by benelek
-bf X add .tif extension when screenGrab() filename doesn't include it
-bf X   reported by benelek
-bf X add beginNet, endNet, net weren't colored
-bf X   reported by benelek
-hb X patch for server makes netEvent messages
+0057
 
 
 ..................................................................
 
+bf b _ curves
+bf b _   curveMode(), curveMode to tweak the s parameter of catmullrom
+bf b _   setting accuracy of curve segments
+bf b _     right now it's hardwired at 20, should be adjustable
+bf b _   function to evaluate bezier or catmullrom points
+bf b _     used heavily in genome valence, asked about on the bboard
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
 
 bf b _ perlin noise 1D. noise() 
 
@@ -131,14 +79,6 @@ ks b _   copyImage(x, y, w, h,  to_x, to_y)
 ks b _   resize of bimage, make a copy of image?
 ks b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
 ks b _ getPixel() and other fxns for BImage
-
-   b _ curves
-   b _   curveMode(), curveMode to tweak the s parameter of catmullrom
-   b _   setting accuracy of curve segments
-   b _     right now it's hardwired at 20, should be adjustable
-   b _   function to evaluate bezier or catmullrom points
-   b _     used heavily in genome valence, asked about on the bboard
-   b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
 
 ks b _ background(BImage)
 ks b _   also creating background image inside setup()
