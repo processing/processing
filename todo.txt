@@ -220,18 +220,26 @@ X modify image functions to use imageMode
 X lots more work on make.sh for both mac and pc
 X further tweaking of the new class structure
 X trying to get the build scripts wrapped up/working
+X remove more (all?) ifdefs from code base
+
+040708 morning / early afternoon
+X more work on ifdef removal / build scripts
+X ask creas about src or dest in image functions
+X finish imaging api
+X modify make.sh to build processing.core
 
 _ casting working properly.. int() maps to toInt()? 
 _   what is performance hit for this thing?
-_ modify make.sh to build processing.core
 _ processing.app -> PdeBase, PdeEditor..
 _ processing.serial -> PSerial, [PUsb]
 _ processing.video -> PMovie (file), PCamera (capture)
 _ processing.net -> PClient, PServer
 _ rewrite video, net, serial libraries to be separate
 
-_ remove more (all?) ifdefs from code base
-_ ask creas about src or dest in image functions
+_ expand/subset for array operations (floats, ints, Strings)
+_   see if reflection will allow expand for all class types
+_   append/unappend (no push/pop), shift/unshift, 
+_   slice, splice, reverse, concat, split
 
 not necessarily before release
 _ check into open-source paperwork for p5

@@ -170,7 +170,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           "%s\\lib;"
           "%s\\lib\\build;"
           "%s\\lib\\pde.jar;"
-          "%s\\lib\\kjc.jar;"
+          "%s\\lib\\core.jar;"
+          "%s\\lib\\mrj.jar;"
           "%s\\lib\\oro.jar;"
           "%s\\lib\\antlr.jar;",
 

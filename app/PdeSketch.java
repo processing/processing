@@ -1354,11 +1354,15 @@ public class PdeSketch {
     }
 
     // add the appropriate bagel to the classpath
+    /*
     String jdkVersion = PdePreferences.get("compiler.jdk_version");
     String bagelJar = "lib/export11.jar";  // default
     if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
       bagelJar = "lib/export13.jar";
     }
+    */
+    String bagelJar = "lib/core.jar";
+
     //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
     //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
     packClassPathIntoZipFile(bagelJar, zos);
