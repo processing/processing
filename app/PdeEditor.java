@@ -410,10 +410,10 @@ public class PdeEditor extends JFrame
         skOpen(sketchDir, sketchName);
 
       } else {
-        skNew();
+        skNew2(true);
       }
     } else {
-      skNew();
+      skNew2(true);
     }
 
 
@@ -1498,11 +1498,9 @@ public class PdeEditor extends JFrame
   }
 
   public void checkModified2() {
-    //System.out.println("checkmodified2");
     switch (checking) {
     case SK_NEW: skNew2(); break;
     case SK_OPEN: skOpen2(openingPath, openingName); break;
-      //case DO_OPEN: doOpen2(); break;
     case DO_QUIT: doQuit2(); break;
     }
     checking = 0;
@@ -1515,17 +1513,20 @@ public class PdeEditor extends JFrame
     checkModified(SK_NEW);
   }
 
-  protected void skNew2() {
-    try {
-      // does all the plumbing to create a new project
-      // then calls handleOpen to load it up
 
+  /**
+   * Does all the plumbing to create a new project
+   * then calls handleOpen to load it up.
+   * @param startup true if the app is starting (auto-create a sketch)
+   */
+  protected void skNew2(boolean startup) {
+    try {
       File sketchDir = null;
       String sketchName = null;
 
-      if (PdePreferences.getBoolean("sketchbook.prompt")) {
+      if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
         FileDialog fd = new FileDialog(new Frame(), 
-                                       "Save new sketch as:", 
+                                       "Create new sketch named", 
                                        FileDialog.SAVE);
         fd.setDirectory(PdePreferences.get("sketchbook.path"));
         fd.show();
@@ -1661,11 +1662,8 @@ public class PdeEditor extends JFrame
       sketchDir = isketchDir;
       setSketchModified(false);
 
-      //historyFile = new File(sketchFile.getParent(), "history.gz");
-      history.setPath(sketchFile.getParent());
-      //base.rebuildHistoryMenu(historyFile.getPath());
+      history.setPath(sketchFile.getParent(), readOnlySketch());
       history.rebuildMenu();
-      //historyLast = program;
       history.lastRecorded = program;
 
       header.reset();
@@ -1680,6 +1678,16 @@ public class PdeEditor extends JFrame
       e2.printStackTrace();
     }
     buttons.clear();
+  }
+
+
+  /**
+   * Returns true if this is a read-only sketch. Used for the 
+   * examples directory, or when sketches are loaded from read-only
+   * volumes or folders without appropraite permissions.
+   */
+  public boolean readOnlySketch() {
+    return false;
   }
 
 
