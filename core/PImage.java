@@ -75,7 +75,7 @@ public class PImage implements PConstants, Cloneable {
   boolean smooth = false;
 
   // for gl subclass / hardware accel
-  int cacheIndex;
+  public int cacheIndex;
 
   // private fields
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
@@ -104,7 +104,8 @@ public class PImage implements PConstants, Cloneable {
    * alpha is zero, it will be transparent.
    */
   public PImage(int width, int height) {
-    this(new int[width * height], width, height, RGBA);
+    setup(width, height, RGBA);
+    //this(new int[width * height], width, height, RGBA);
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
     // fry: i'm opting for the full transparent image, which is how
@@ -120,6 +121,18 @@ public class PImage implements PConstants, Cloneable {
     this.pixels = pixels;
     this.width = width;
     this.height = height;
+    this.format = format;
+    this.cacheIndex = -1;
+  }
+
+
+  /**
+   * Function to be used by subclasses to setup their own bidness.
+   */
+  public void setup(int width, int height, int format) {
+    this.width = width;
+    this.height = height;
+    this.pixels = new int[width*height];
     this.format = format;
     this.cacheIndex = -1;
   }
