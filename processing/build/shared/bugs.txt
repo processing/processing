@@ -18,6 +18,13 @@ changed in the future, but for now, they're not actually 'broken'.
   could add some extra code to unhinge the resulting class name from
   the sketch name, but it adds complexity, and complexity == bugs. :)
 
+- if you're exporting as applet, variables that are 'final int' need
+  to be 'static final int'. otherwise they'll have trouble with a java
+  1.1-only machine: (i.e. running microsoft's java on windows). you
+  should also avoid using "final" variables *inside* of methods, since
+  those aren't supported by microsoft's vm (and that's the one most
+  widely installed).
+
 - 'export to application' remains unimplemented, though it's closer,
   and should be ready before beta.
 
@@ -27,7 +34,7 @@ changed in the future, but for now, they're not actually 'broken'.
 ..................................................................
 
 
-QUICKTIME FOR JAVA PROBLEMS
+QUICKTIME FOR JAVA / VIDEO PROBLEMS
 
 - quicktime for java is still required on windows. it's required on
   macosx too, but it's installed there by default. the requirement
@@ -43,22 +50,9 @@ QUICKTIME FOR JAVA PROBLEMS
   to find out what it's set to (prolly something like C:\windows on
   windows xp/me/98 or c:\winnt on windows 2000).
 
-- quicktime for java is missing from quicktime 6.4 on the mac. this is
-  the version of quicktime that was released with the windows version
-  of itunes and all that other bunk. it's apple's fault, unfortunately:
-  http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
-  you can download a reinstaller for quicktime 6.3 if the upgrade is
-  making you sad and has just broken all your applets:
-  http://docs.info.apple.com/article.html?artnum=120255
-  the discovery and diagnosis of this particular headache comes from
-  Jerronimo: http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
-
-- for the mac, a workaround for the 6.4 bug if you don't actually 
-  need to use video, is to put a copy of QTJava.zip into
-  /System/Library/Java/Extensions, which is where it's normally
-  installed (you'll have to use 'sudo' to move it in there). 
-  this will pacify Processing and at least allow you to run programs
-  until apple has released a fix.
+- quicktime for java was missing from the initial release of quicktime
+  6.4 on the mac. an upgrade to quicktime 6.4 that includes qtjava is
+  now available from software update.
 
 
 ..................................................................
@@ -164,3 +158,8 @@ these are things that are out of our control
 - "create font" crashes sometimes on windows, bringing down the whole
   environment. this seems to be a jdk bug, because it's not a java
   exception, but a full crash.
+
+- video sometimes likes to crash the application completely on
+  windows. this seems to be due to problems with quicktime for java
+  (since we shouldn't be able to write code that crashes using
+  java.. heh right). so this is probably outside of our control.
