@@ -1145,9 +1145,9 @@ public class PdeSketch {
     for (int i = 0; i < imports.length; i++) {
       // remove things up to the last dot
       String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
-      System.out.println("found package " + entry);
+      //System.out.println("found package " + entry);
       Object libFolder = PdeSketchbook.importToLibraryTable.get(entry);
-      System.out.println("  found lib folder " + libFolder);
+      //System.out.println("  found lib folder " + libFolder);
       importedLibraries.add(libFolder);
     }
 
@@ -1441,6 +1441,48 @@ public class PdeSketch {
     if (codeFolder.exists()) {
       String includes = PdeCompiler.contentsToClassPath(codeFolder);
       packClassPathIntoZipFile(includes, zos);
+    }
+
+    // add contents of 'library' folders to the jar file
+    // if a file called 'export.txt' is in there, it contains
+    // a list of the files that should be exported. 
+    // otherwise, all files are exported.
+    Enumeration enum = importedLibraries.elements();
+    while (enum.hasMoreElements()) {
+      // in the list is a File object that points the 
+      // library sketch's "library" folder
+      File libraryFolder = (File)enum.nextElement();
+      //System.out.println("exporting files from " + libFolder);
+      File exportSettings = new File(libraryFolder, "export.txt");
+      String exportList[]; // = null;
+      if (exportSettings.exists()) {
+        exportList = PApplet.loadStrings(exportSettings);
+      } else {
+        exportList = libraryFolder.list();
+      }
+      for (int i = 0; i < exportList.length; i++) {
+        if (exportList[i].equals(".") || 
+            exportList[i].equals("..")) continue;
+
+        exportList[i] = PApplet.trim(exportList[i]);
+        if (exportList[i].equals("")) continue;
+
+        File exportFile = new File(libraryFolder, exportList[i]);
+        if (!exportFile.exists()) {
+          System.err.println("File " + exportList[i] + " does not exist");
+
+        } else if (exportFile.isDirectory()) {
+          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+
+        } else if (exportFile.getName().toLowerCase().endsWith(".zip") || 
+                   exportFile.getName().toLowerCase().endsWith(".jar")) {
+          packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
+
+        } else {  // just copy the file over.. prolly a .dll or something
+          PdeBase.copyFile(exportFile, 
+                           new File(appletDir, exportFile.getName()));
+        }
+      }
     }
 
     // add the appropriate bagel to the classpath
