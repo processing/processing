@@ -1,9 +1,10 @@
-PROCE55ING D3VEL()PM3NT 3N\/1RONM3NT 
+PROCE55ING D3VEL()PM3NT 3N\/1RONM3NT
 
-alpha release (revision XXXX)
+RELEASE 0043 "ALPHA"
+2 AUGUST 2002
 
-
->>>>>>>>>> THIS DOCUMENT IS IN PROGRESS FOR ALPHA <<<<<<<<<<<<
+(c) 2002, 2001 Massachusetts Institute of Technology 
+and Interaction Design Institute Ivrea
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -19,19 +20,25 @@ response to many of the 'frequently asked questions' that we have.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-SUMMARY
+GETTING STARTED
 
-+ if you find issues (some call them 'bugs'), 
+double click the 'Proce55ing' application, and select something from
+the examples menu: File -> Open -> Examples. hit the 'run' button
+(which looks like the play button on a vcr or tape deck). 
+
+lather, rinse, repeat as necessary.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 REVISIONS & ROADMAP
 
+
 at least until the final "1.0" version, we'll be using four digit
-numbers for the release. we're calling revision "XXXX" (this one)
-alpha, which for us means "first publicly consumable app that can be
-used by early adopters". 
+numbers for the release. we're calling revision "0043" (this one)
+alpha, which for us means "first publicly consumable app that can 
+be used by early adopters". 
 
 there will be a few more numbered releases leading up to a beta
 release. beta means that all the features are in, but not all the bugs
@@ -39,9 +46,9 @@ are out. there are several known issues with the alpha release (thin
 lines, lack of alpha transparency, etc) that will need to be sorted
 out for beta.
 
-a few more numbered releases will follow, leading up to 1.0, a version
-that we can actually proud of and that has a minimum number of
-bugs. hopefully this is not a *long* ways off, but...
+additional numbered releases will follow, leading up to 1.0, a 
+version that we can actually proud of and that has a minimum number 
+of bugs. hopefully this is not a *long* ways off, but...
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -49,17 +56,22 @@ bugs. hopefully this is not a *long* ways off, but...
 
 I FOUND A BUG!
 
-what operating system, what revision
+we prefer to call them "issues."
 
-include release number, platform, 
-and a copy of the code, preferably the folder from the sketchbook (see
-sketchbook/default/SKETCHNAME) if there are images or other data being
-used.
+you can either post to the bulletin board at:
+http://www.proce55ing.net/discourse/
+or send email to bugs@proce55ing.net. the bboard is probably the
+better way to go, because more people will be watching it. the email
+goes straight to the developers, but their schedules are erratic and
+it could be anywhere from two minutes to two weeks before you receive
+a response.
 
-check out stdout.txt and stderr.txt in 'lib'
-
-
->>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+when reporting this "bug" please include information about
+1. the revision number (i.e. 0043)
+2. what operating system you're using, on what kind of hardware
+3. a copy of your code
+4. details of the error, which may be the last few lines from 
+   the files stdout.txt or stderr.txt from the 'lib' folder. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -134,18 +146,25 @@ java applications on classic mac os are in a bad state, as apple has
 decided (rightfully so) to abandon further development of their java
 runtime.
 
-SPEED: this version runs very slowly. the first time you hit the 'run'
+speed: this version runs very slowly. the first time you hit the 'run'
 button, it might take a while to bring up the actual
 program. hopefully after that, things will improve.
 
-VERSIONS: this version has only been tested under Mac OS 9.2.2. 
+versions: this version has only been tested under Mac OS 9.2.2. 
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 WHAT IS SKETCHBOOK?
 
->>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+we think most "integrated development environments" (microsoft visual
+studio, codewarrior, jbuilder) tend to be overkill for the type of
+audience we're targeting with Proce55ing. for this reason, we've
+introduced the 'sketchbook' which is a more lightweight way to
+organize projects. as trained designers, we'd like the process of
+coding to be a lot more like sketching. the sketchbook and the
+'history' menu under 'sketch', are attempts in that direction.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -154,9 +173,9 @@ WHAT IS SKETCHBOOK?
 EXTERNAL FILES / FONTS / READING DATA FILES
 
 
-things need to go in a folder called 'data' inside sketchbook/default
-
->>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+if you want to use external files, like images or text files 
+or fonts, they should be placed in a folder called 'data' inside:
+sketchbook -> default -> SKETCH_NAME
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -164,10 +183,11 @@ things need to go in a folder called 'data' inside sketchbook/default
 
 SERIAL PORT
 
->>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
-
 the serial port is a useful way to hook things up to hardware
-devices of your own devising. 
+devices of your own devising. the reference describes the specifics 
+of how to use the serial port.
+
+the windows version works well, much better than in previous releases.
 
 on macos9, works fairly well with my keyspan usb/serial adapter. thank
 god for patrick beard and jdirect.
@@ -203,11 +223,14 @@ SOURCE CODE / OPEN SOURCE / GPL BLAH BLAH
 we plan for this project to be "open source", that trendy moniker
 which means that you'll be able to look at all the code that's behind
 the processing development environment and the graphics engine used in
-tandem with it. 
+tandem with it. we can't promise, since we're still working on getting
+the licensing taken care of with our employers, but we think this
+should likely happen soon.
 
-the export libraries will probably be LGPL, which means they can be
-used as a library and included in your project without you having to
-open up your code (though we encourage people to share anyway). 
+the export libraries (also known as 'bagel') will probably be LGPL,
+which means they can be used as a library and included in your project
+without you having to open up your code (though we encourage people to
+share anyway). 
 
 more information about the gnu public license can be found here:
 http://www.gnu.org/copyleft/gpl.html
@@ -225,5 +248,5 @@ we're sorry that the source code isn't available just yet, we're
 cleaning and scrubbing it, it was a decision between getting the alpha
 out to people to try versus taking a few more weeks to clean up the
 project and deal with the technology licensing departments at mit and
-ivrea. these things are more difficult and time consuming than they
-would appear.
+ivrea. these things are far more difficult and time consuming than
+they would appear.
