@@ -4,8 +4,8 @@
   PdeSketchbook - handles sketchbook mechanics for the sketch menu
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry 
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -247,6 +247,24 @@ public class PdeSketchbook {
     if (!folder.isDirectory()) return false;
 
     String list[] = folder.list();
+    // alphabetize list, since it's not always alpha order
+    // use cheapie bubble-style sort which should be fine
+    // since not a tone of files, and things will mostly be sorted
+    // or may be completely sorted already by the os
+    for (int i = 0; i < list.length; i++) {
+      int who = i;
+      for (int j = i+1; j < list.length; j++) {
+        if (list[j].compareTo(list[who]) < 0) {
+          who = j;  // this guy is earlier in the alphabet
+        }
+      }
+      if (who != i) {  // swap with someone if changes made
+        String temp = list[who];
+        list[who] = list[i];
+        list[i] = temp;
+      }
+    }
+
     //SketchbookMenuListener listener = 
     //new SketchbookMenuListener(folder.getAbsolutePath());
 
