@@ -47,6 +47,9 @@ chmod a+x processing/serial_setup.command
 cp ../../bagel/serial/RXTXcomm.jar processing/lib/
 cp ../../bagel/serial/libSerial.jnilib processing/
 
+# get ds_store file (!)
+cp dist/DS_Store processing/.DS_Store
+
 # get package from the dist dir
 cp -r dist/Processing.app processing/
 rm -rf processing/Processing.app/CVS
