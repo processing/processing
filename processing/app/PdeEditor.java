@@ -1235,6 +1235,8 @@ public class PdeEditor extends JFrame
     try {
       sketch.save();
       message("Done Saving.");
+      // rebuild sketch menu in case a save-as was forced
+      sketchbook.rebuildMenu();
 
     } catch (Exception e) {
       // show the error as a message in the window
