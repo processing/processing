@@ -1,43 +1,48 @@
-0058
-X update the readme.. had missed some spots
-
-windows
-X check to see if qtjava is installed
-X   put up warning msg and quit if it's not
-X move back to 1.4.1 vm (what's the latest?)
-
-macosx
-X switch version of jikes to use non-fink
-X switch to java 1.3.1
-
-linux
-X make mention that linux is i386
-X bring linux up to 1.4
-X   though still compiling for 1.3, until detection fixed
-X   grab rxtx for linux and include with distribution
-X make sure a copy of jikes is included
-X test rxtx on linux with sun vm
-X   make notes about rxtx in readme.txt
+0059
 
 
 ..................................................................
 
 
-0059
 
-_ better 1.3/1.4 support.. properly detect vm
-_   use when deciding which classes to import
-_ see if mods to PdeCompiler work on windows
+
+lotsa video issues
+_ just locks up after running examples, then does the 'can't delete' thing
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
 _ first row of video pixels are black
 _   casey says it may only be his camera
 _ video.pixels don't seem to have high bytes set
 _   so fill(video.pixels[blah]) doesn't work
 _   test against 'pixels' example
+_ qtjava search path is too fragile
+_   use %WINDIR%\System32\qtjava.zip and %QTJAVA% (may have spaces)
+_   or even the system %CLASSPATH%
+_   maybe just ask user to select the file directly
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
+
+_ p5 not working in msjvm (prolly non-1.1 code)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
+
+_ jedittextarea caret blinks even w/o focus
+_   may have been my own hack breaking it
+
+_ imageMode() shouldn't affect fonts
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
+_ another odd NullPointerException -> or just a "couldn't delete" problem
+_  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060341518
+
+_ reference key list isn't in dist (at least on osx)
+_ switch to swing menus
+_   the other menus really look like hell on linux
+_ better 1.3/1.4 support.. properly detect vm
+_   use when deciding which classes to import
+_ see if mods to PdeCompiler work on windows
 _ some flag to know whether applet is online or not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 _   fix link, loadStrings, saveBytes code once that's fixed
 _ set a better ctrl-key for reference (anything but 'F')
 _   probably need to use mac or pc specific keys?
+_ interested in devel: Leonhard Rathner <leonhard@rathner.com>
 
 _ catch security exceptions around applet i/o calls
 _   not just for saving files, but provide better error msgs when
@@ -54,6 +59,7 @@ java.security.AccessControlException: access denied (java.io.FilePermission scre
  at BApplet.nextFrame(BApplet.java:298) 
  at BApplet.run(BApplet.java:256) 
  at java.lang.Thread.run(Unknown Source) 
+
 _ perlin noise is broken
 _ java vm could be removed from cvs
 _   in favor of requiring a specific jvm, and using registry to find
@@ -82,7 +88,7 @@ bf b o   what's with the 2 blank lines on startup?
 
 
 macosx
-_ random lockups seem common
+_ random lockups seem common in 1.4
 _ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing
 _   was missing the error about a package being gone
