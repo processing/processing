@@ -1,8 +1,8 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditor - main editor panel for the processing ide
-  Part of the Processing project - http://Proce55ing.net
+  PdeEditor - main editor panel for the processing development environment
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -83,8 +83,9 @@ public class PdeEditor extends JFrame
   // currently opened program
   PdeSketch sketch;
 
-  Point appletLocation; //= new Point(0, 0);
-  Point presentLocation; // = new Point(0, 0);
+  // used by PdeRuntime for placing the window
+  Point appletLocation;
+  Point presentLocation;
 
   Window presentationWindow;
 
@@ -98,24 +99,16 @@ public class PdeEditor extends JFrame
   JMenuItem saveAsMenuItem;
   JMenuItem beautifyMenuItem;
 
-  //JMenu exportMenu;
-
   // 
 
   boolean running;
   boolean presenting;
-  boolean renaming;
+  //boolean renaming;
 
-  PdeMessageStream messageStream;
-
-  // location for lib/build, contents for which will be emptied
-  //String tempBuildPath;
-
-  //static final String TEMP_CLASS = "Temporary";
+  //PdeMessageStream messageStream;
 
   // undo fellers
   JMenuItem undoItem, redoItem;
-
   protected UndoAction undoAction;
   protected RedoAction redoAction;
   static public UndoManager undo = new UndoManager(); // editor needs this guy
@@ -500,6 +493,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(saveAsMenuItem);
 
+    /*
     item = new JMenuItem("Rename...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -507,6 +501,7 @@ public class PdeEditor extends JFrame
         }
       });
     menu.add(item);
+    */
 
     item = newJMenuItem("Export", 'E');
     item.addActionListener(new ActionListener() {
@@ -949,13 +944,13 @@ public class PdeEditor extends JFrame
 
   /**
    * Called by PdeEditorHeader when the tab is changed 
-   * (or a new set of files are opened)
+   * (or a new set of files are opened). 
+   * @param discardUndo true if undo info to this point should be ignored
    */
-  public void changeText(String what, boolean emptyUndo) {
+  public void setText(String what, boolean discardUndo) {
     textarea.setText(what);
 
-    // TODO need to wipe out the undo state here
-    if (emptyUndo) undo.discardAllEdits();
+    if (discardUndo) undo.discardAllEdits();
 
     textarea.select(0, 0);    // move to the beginning of the document
     textarea.requestFocus();  // get the caret blinking
@@ -1035,9 +1030,7 @@ public class PdeEditor extends JFrame
       } catch (NullPointerException e) { }
     }
 
-    if (running) {
-      doStop();
-    }
+    if (running) doStop();
 
     try {
       if (runtime != null) {
@@ -1077,10 +1070,15 @@ public class PdeEditor extends JFrame
     if (sketch.isModified()) {
       String prompt = "Save changes to " + sketch.name + "?  ";
 
-      // if the user selected quit, then this has to be done with
-      // a JOptionPane instead of internally in the editor
-      if (checking == DO_QUIT) {
-        int result = 0;
+      if (checking != DO_QUIT) {
+        // if the user is not quitting, then use the nicer
+        // dialog that's actually inside the p5 window.
+        status.prompt(prompt);
+
+      } else {
+        // if the user selected quit, then this has to be done with
+        // a JOptionPane instead of internally in the editor. 
+        // TODO this is actually just a bug to be fixed.
 
         // macosx java kills the app even though cancel might get hit
         // so the cancel button is (temporarily) left off
@@ -1091,15 +1089,14 @@ public class PdeEditor extends JFrame
         // disable cancel for now until a fix can be found.
 
         Object[] options = { "Yes", "No" };
-        result = JOptionPane.showOptionDialog(this,
-                                              prompt,
-                                              "Quit",
-                                              JOptionPane.YES_NO_OPTION,
-                                              JOptionPane.QUESTION_MESSAGE,
-                                              null,
-                                              options, 
-                                              options[0]);  // default to save
-
+        int result = JOptionPane.showOptionDialog(this,
+                                                  prompt,
+                                                  "Quit",
+                                                  JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE,
+                                                  null,
+                                                  options, 
+                                                  options[0]);  
           /*
       } else {
         Object[] options = { "Yes", "No", "Cancel" };
@@ -1129,9 +1126,6 @@ public class PdeEditor extends JFrame
           //System.out.println("cancel");
           // does nothing
         }
-
-      } else {  // not quitting
-        status.prompt(prompt);
       }
 
     } else {
@@ -1396,12 +1390,12 @@ public class PdeEditor extends JFrame
   public void skSaveAs(boolean rename) {
     doStop();
 
-    this.renaming = rename;
-    if (rename) {
-      status.edit("Rename sketch to...", sketchName);
-    } else {
-      status.edit("Save sketch as...", sketchName);
-    }
+    //this.renaming = rename;
+    //if (rename) {
+    //status.edit("Rename sketch to...", sketchName);
+    //} else {
+    status.edit("Save sketch as...", sketchName);
+    //}
   }
 
   public void skSaveAs2(String newSketchName) {
@@ -1442,11 +1436,11 @@ public class PdeEditor extends JFrame
       new File(newSketchDir, sketchName + ".pde").delete();
 
       // remove the old dir (!)
-      if (renaming) {
-        // in case java is holding on to any files we want to delete
-        System.gc();
-        PdeBase.removeDir(sketchDir);
-      }
+      //if (renaming) {
+      // in case java is holding on to any files we want to delete
+        //System.gc();
+      //PdeBase.removeDir(sketchDir);
+      //}
 
       // (important!) has to be done before opening, 
       // otherwise the new dir is set to sketchDir.. 
@@ -1571,7 +1565,7 @@ public class PdeEditor extends JFrame
     int selectionEnd = textarea.getSelectionEnd();
 
     // replace with new bootiful text
-    changeText(buffer.toString(), false);
+    setText(buffer.toString(), false);
 
     // make sure the caret would be past the end of the text
     if (buffer.length() < selectionEnd - 1) {
@@ -1648,21 +1642,25 @@ public class PdeEditor extends JFrame
   }
 
 
+  /*
   public void finished() {
     running = false;
     buttons.clearRun();
     message("Done.");
   }
+  */
 
 
   public void message(String msg) {
     status.notice(msg);
   }
-  
-  
+
+
+  /*  
   public void messageClear(String msg) {
     status.unnotice(msg);
   }
+  */
 
 
   // ...................................................................
