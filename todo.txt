@@ -1,7 +1,18 @@
 0080 pde
+X include /** */ comments into the html page
+
+fixed in rev 79
+X can't scroll the PdeEditorConsole downwards at all on osx
+
+purged
+o refresh sketchbook menu upon returning to the app from elsewhere?
+o   this would need to track whether coming just from an ext runtime
+o make "get quicktime libs" function
+o   can java get the root directory for system/win32 etc?
 
 
-_ include /** */ comments into the html page
+_ put processing.exe into cvs so that make et al aren't required
+_   add 'make' to list of things that should be installed
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
@@ -19,12 +30,8 @@ _   uses internal pretty much only when single class, etc
 _ the runtime environment requires java 1.4
 _   make sure this is known and tested for properly
 
-_ can't scroll the PdeEditorConsole downwards at all on osx
-
-
-_ if a .pde isn't contained in a properly named folder
-_   offer to rename the parent folder, rather than placing in a new folder
-_ some type of sketch archive format for posting examples?
+_ some type of sketch archive format for posting examples
+_   would be nice to open a sketch directly from a zip file
 
 
 create a new sketch
@@ -53,17 +60,6 @@ what happens if folder already exists on save as?
 _ examples need to be updated
 
 //
-
-_ add tool to hit 'next' to go through examples
-_   just make it "next file in folder" since examples are all over
-_   also need to copy examples locally
-_ add tool for running in jview
-_   only available after export (or when an applet dir exists)
-_   warn user that applet html will be over-written
-_ add tool to "Add custom html to sketch"
-_   that copies applet.html, 
-_   opens sketch folder, 
-_   and gives info about what to do next (how to edit)
 
 check these errors to see if they still exist
 _ odd error in System.err stream coming from running external
@@ -94,20 +90,10 @@ _   set both versions to require java 1.4
 _   change the Info.plist inside macosx
 _   and add something to PdeBase to make sure that it's in 1.4
 
-_ may need a progress bar for "save as"
-_   or just the file copy function in general
-_   since it may take a long time (i.e. 1000s of screen grabs)
-
-_ scanning sketchbook folder may be extremely slow 
-_   not sure why this would be the case
-
 _ subfolders in the 'data' directory don't work
 
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-
-_ "save as" shouldn't show save as dialog for sketches 
-_   unless that's the current mode that's being used
 
 _ "new midlet" option.. keeping things open for midlet projects
 
@@ -118,9 +104,6 @@ _   use canonicalPath to flag possible problems
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
-
-_ transparently convert spaces to underscores (?)
-_   underscoring everything is kinda nasty
 
 
 ......................................................................
@@ -202,22 +185,36 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 
-_ support for editor plugins
-_   make dynamically loaded plugins and "tools" menu
-_     break out beautify as its own plugin
-_   make beautify plugin "Auto Format"
-_     //for (int i = 0; i < 10; i++) {
-_     } catch (IOException e) { }
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
-_     need to ignore comments.. but not those inside quotes.. oog
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-_     ignores colons for case statements
-_     need to tie this to the parser instead
-_   do a better job of maintaining cursor during beautify 
-_   only beautify a particular section of code
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-o   make "get quicktime libs" function
-o     can java get the root directory for system/win32 etc?
+editor tools menu
+_ make dynamically loaded plugins and "tools" menu
+_   break out beautify as its own plugin
+_ make beautify plugin "Auto Format"
+_   //for (int i = 0; i < 10; i++) {
+_   } catch (IOException e) { }
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
+_   need to ignore comments.. but not those inside quotes.. oog
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+_   ignores colons for case statements
+_   need to tie this to the parser instead
+_ do a better job of maintaining cursor during beautify 
+_ only beautify a particular section of code
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+_ color picker or other things written by folks
+_   add all .jar files in lib/plugins on startup
+_ make some kind of internal color picker
+_   could be a separate window that's always around if needed
+_ external editor -> add a command to launch
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+_ add tool to hit 'next' to go through examples
+_   just make it "next file in folder" since examples are all over
+_   also need to copy examples locally
+_ add tool for running in jview
+_   only available after export (or when an applet dir exists)
+_   warn user that applet html will be over-written
+_ add tool to "Add custom html to sketch"
+_   that copies applet.html, 
+_   opens sketch folder, 
+_   and gives info about what to do next (how to edit)
 
 
 export stuff
@@ -348,6 +345,21 @@ PDE / Details
    1 _ drag & drop implementation to add files to sketch
 
 
+PDE / Save, Save As, Sketchbook
+
+   1 _ transparently convert spaces to underscores (?)
+   1 _   underscoring everything is kinda nasty
+   1 _ if a .pde isn't contained in a properly named folder
+   1 _   offer to rename the parent folder, rather than placing in a new folder
+   1 _ may need a progress bar for "save as"
+   1 _   or just the file copy function in general
+   1 _   since it may take a long time (i.e. 1000s of screen grabs)
+   1 _ "save as" shouldn't show save as dialog for sketches 
+   1 _   unless that's the current mode that's being used
+   1 _ scanning sketchbook folder may be extremely slow 
+   1 _   not sure why this would be the case
+
+
 PDE / Compiler
 
    1 _ warn about writing non-1.1 code. 
@@ -380,20 +392,8 @@ PDE / Font Builder
    1 _   show a progress/status bar while it's happening?
    1 _   (would be useful to at least tell user that system not locked up)
    1 _ font builder chopping off parts of letters
+   1 _   this may be fixed?
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
-
-
-PDE / Features
-
-   b _ some notion of plugins for pde
-   b _   color picker or other things written by folks
-   b _   add all .jar files in lib/plugins on startup
-   b _ make some kind of internal color picker
-   b _   could be a separate window that's always around if needed
-   1 _ external editor -> add a command to launch
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
-     _ refresh sketchbook menu upon returning to the app from elsewhere?
-     _   this would need to track whether coming just from an ext runtime
 
 
 PDE / Console

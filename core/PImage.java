@@ -34,6 +34,8 @@ import java.io.*;
 
 
 /**
+ * image class developed by toxi and fry.
+ *
  * <PRE>[fry 0407XX]
  * - get() on RGB images sets the high bits to opaque
  * - modification of naming for functions
@@ -109,6 +111,12 @@ public class PImage implements PConstants, Cloneable {
   static final int PREC_MAXVAL = PRECISIONF-1;
   static final int PREC_ALPHA_SHIFT = 24-PRECISIONB;
   static final int PREC_RED_SHIFT = 16-PRECISIONB;
+
+  // internal kernel stuff for the gaussian blur filter
+  int blurRadius;
+  int blurKernelSize;
+  int[] blurKernel;
+  int[][] blurMult;
 
 
   //////////////////////////////////////////////////////////////
@@ -361,15 +369,37 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Returns a "color" type (a packed 32 bit int with the color.
+   * Returns an ARGB "color" type (a packed 32 bit int with the color.
+   * If the coordinate is outside the image, zero is returned
+   * (black, but completely transparent).
+   * <P>
    * If the image is in RGB format (i.e. on a PVideo object),
-   * the value will get its high bits set, because of the likely
-   * case that they haven't been already.
+   * the value will get its high bits set, just to avoid cases where
+   * they haven't been set already.
+   * <P>
+   * If the image is in ALPHA format, this returns a white color
+   * that has its alpha value set.
+   * <P>
+   * This function is included primarily for beginners. It is quite
+   * slow because it has to check to see if the x, y that was provided
+   * is inside the bounds, and then has to check to see what image
+   * type it is. If you want things to be more efficient, access the
+   * pixels[] array directly.
    */
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
-    return (format == RGB) ?
-      (pixels[y*width + x] | 0xff000000) : pixels[y*width + x];
+
+    switch (format) {
+      case RGB:
+        return pixels[y*width + x] | 0xff000000;
+
+      case ARGB:
+        return pixels[y*width + x];
+
+      case ALPHA:
+        return (pixels[y*width + x] << 24) | 0xffffff;
+    }
+    return 0;
   }
 
 
@@ -423,9 +453,102 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  /**
+   * Silently ignores if the coordinate is outside the image.
+   */
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
+  }
+
+
+  /*
+  // properly debugged version from copy()
+  // in case the below one doesn't work
+
+  public void set(int dx, int dy, PImage src) {
+    // source
+    int sx = 0;
+    int sy = 0;
+    int sw = src.width;
+    int sh = src.height;
+
+    // target
+    int tx = dx; // < 0 ? 0 : x;
+    int ty = dy; // < 0 ? 0 : y;
+    int tw = width;
+    int th = height;
+
+    if (tx < 0) {  // say if target x were -3
+      sx -= tx;    // source x -(-3) (or add 3)
+      sw += tx;    // source width -3
+      tw += tx;    // target width -3
+      tx = 0;      // target x is zero (upper corner)
+    }
+    if (ty < 0) {
+      sy -= ty;
+      sh += ty;
+      th += ty;
+      ty = 0;
+    }
+    if (tx + tw > width) {
+      int extra = (tx + tw) - width;
+      sw -= extra;
+      tw -= extra;
+    }
+    if (ty + th > height) {
+      int extra = (ty + th) - height;
+      sh -= extra;
+      sw -= extra;
+    }
+
+    for (int row = sy; row < sy + sh; row++) {
+      System.arraycopy(src.pixels, row*src.width + sx,
+                       pixels, (dy+row)*width + tx, sw);
+    }
+  }
+  */
+
+
+  public void set(int x1, int y1, PImage image) {
+    int x2 = x1 + image.width;
+    int y2 = y1 + image.height;
+
+    // off to the top and/or left
+    if ((x2 < 0) || (y2 < 0)) return;
+
+    int ix1 = 0;
+    int iy1 = 0;
+    int ix2 = image.width;
+    int iy2 = image.height;
+
+    if (x1 < 0) {  // off left edge
+      ix1 += -x1;
+      x1 = 0;
+    }
+    if (y1 < 0) {  // off top edge
+      iy1 += - y1;
+      y1 = 0;
+    }
+    if (x2 >= width) {  // off right edge
+      ix2 -= x2 - width;
+      x2 = width;
+    }
+    if (y2 >= height) {  // off bottom edge
+      iy2 -= y2 - height;
+      y2 = height;
+    }
+
+    int src = iy1*image.width + ix1;
+    int dest = y1*width + x1;
+    int len = x2 - x1;
+
+    for (int y = y1; y < y2; y++) {
+      //for (int x = x1; x < x2; x++) {
+      System.arraycopy(image.pixels, src, pixels, dest, len);
+      src += len;
+      dest += len;
+    }
   }
 
 
@@ -436,39 +559,28 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Set alpha channel for an image.
+   * Set alpha channel for an image. Black colors in the source
+   * image will make the destination image completely transparent,
+   * and white will make things fully opaque. Gray values will
+   * be in-between steps.
+   * <P>
+   * Strictly speaking the "blue" value from the source image is
+   * used as the alpha color. For a fully grayscale image, this
+   * is correct, but for a color image it's not 100% accurate.
+   * For a more accurate conversion, first use filter(GRAY)
+   * which will make the image into a "correct" grayscake by
+   * performing a proper luminance-based conversion.
    */
   public void mask(int alpha[]) {
-    mask(this, alpha);
-  }
-
-
-  /**
-   * Set alpha channel for an image.
-   */
-  static public void mask(PImage image, int alpha[]) {
     // don't execute if mask image is different size
-    if (alpha.length != image.pixels.length) {
+    if (alpha.length != pixels.length) {
       throw new RuntimeException("The PImage used with mask() must be " +
                                  "the same size as the applet.");
     }
-    for (int i = 0; i < image.pixels.length; i++) {
-      image.pixels[i] =
-        ((alpha[i] & 0xff) << 24) |
-        (image.pixels[i] & 0xffffff);
+    for (int i = 0; i < pixels.length; i++) {
+      pixels[i] = ((alpha[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
     }
-    /*
-    if (highbits) {  // grab alpha from the high 8 bits (ARGB style)
-      for (int i = 0; i < pixels.length; i++) {
-        pixels[i] = pixels[i] & 0xffffff | (alpha[i] & 0xff000000);
-      }
-    } else {  // alpha is in the low bits (ALPHA style)
-      for (int i = 0; i < pixels.length; i++) {
-        pixels[i] = pixels[i] & 0xffffff | ((alpha[i] & 0xff) << 24);
-      }
-    }
-    */
-    image.format = ARGB;
+    format = ARGB;
   }
 
 
@@ -480,20 +592,14 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  static public void mask(PImage image, PImage alpha) {
-    mask(image, alpha.pixels);
-  }
-
-
   /**
    * Method to apply a variety of basic filters to this image.
    * <P>
    * <UL>
    * <LI>filter(BLUR) provides a basic blur.
-   * <LI>filter(GRAY) converts the image to grayscale.
+   * <LI>filter(GRAY) converts the image to grayscale based on luminance.
    * <LI>filter(INVERT) will invert the color components in the image.
-   * <LI>filter(RGB) set all the high bits in the image to opaque
-   * and sets the format to RGB.
+   * <LI>filter(OPAQUE) set all the high bits in the image to opaque
    * <LI>filter(THRESHOLD) converts the image to black and white.
    * </UL>
    */
@@ -503,6 +609,8 @@ public class PImage implements PConstants, Cloneable {
       case BLUR:
         // TODO write basic low-pass filter blur here
         // what does photoshop do on the edges with this guy?
+        // better yet.. why bother? just use gaussian with radius 1
+        filter(BLUR, 1);
         break;
 
       case GRAY:
@@ -551,7 +659,7 @@ public class PImage implements PConstants, Cloneable {
    * These filters all take a parameter.
    * <P>
    * <UL>
-   * <LI>filter(BLUR, float radius) performas a gaussian blur of the
+   * <LI>filter(BLUR, int radius) performs a gaussian blur of the
    * specified radius.
    * <LI>filter(POSTERIZE, int levels) will posterize the image to
    * between 2 and 255 levels.
@@ -563,7 +671,7 @@ public class PImage implements PConstants, Cloneable {
     switch (kind) {
 
       case BLUR:
-        // TODO write gaussian blur
+        blur(param);
         break;
 
       case GRAY:
@@ -573,6 +681,10 @@ public class PImage implements PConstants, Cloneable {
       case INVERT:
         throw new RuntimeException("Use filter(INVERT) instead of " +
                                    "filter(INVERT, param)");
+
+      case OPAQUE:
+        throw new RuntimeException("Use filter(OPAQUE) instead of " +
+                                   "filter(OPAQUE, param)");
 
       case POSTERIZE:
         int levels = (int)param;
@@ -609,12 +721,116 @@ public class PImage implements PConstants, Cloneable {
             ((max < thresh) ? 0x000000 : 0xffffff);
         }
         break;
-
-      case RGB:
-        throw new RuntimeException("Use filter(RGB) instead of " +
-                                   "filter(RGB, param)");
     }
     updatePixels();  // mark as modified
+  }
+
+
+  protected void blur(float r) {
+    // adjustment to make this algorithm
+    // similar to photoshop's gaussian blur settings
+    int radius = (int) (r * 3.5f);
+    radius = (radius < 1) ? 1 : ((radius < 248) ? radius : 248);
+    //radius = min(Math.max(1, radius), 248);
+    if (blurRadius != radius) {
+      // it's actually a little silly to cache this stuff
+      // when all the cost is gonna come from allocating 2x the
+      // image size in r1[] and r2[] et al.
+
+      blurRadius = radius;
+      blurKernelSize = 1 + radius*2;
+      blurKernel = new int[blurKernelSize]; //1 + radius*2];
+      blurMult = new int[blurKernelSize][256]; //new int[1+radius*2][256];
+
+      int sum = 0;
+      for (int i = 1; i < radius; i++) {
+        int radiusi = radius - i;
+        blurKernel[radius+i] = blurKernel[radiusi] = radiusi * radiusi;
+        sum += blurKernel[radiusi] + blurKernel[radiusi];
+        for (int j = 0; j < 256; j++) {
+          blurMult[radius+i][j] = blurMult[radiusi][j] = blurKernel[radiusi]*j;
+        }
+      }
+      blurKernel[radius] = radius * radius;
+      sum += blurKernel[radius];
+      for (int j = 0; j < 256; j++) {
+        blurMult[radius][j] = blurKernel[radius]*j;
+      }
+    }
+
+    //void blur(BImage img,int x, int y,int w,int h){
+    int sum, cr, cg, cb, k;
+    int pixel, read, ri, xl, yl, ym, riw;
+    //int[] pix=img.pixels;
+    //int iw=img.width;
+
+    int wh = width * height;
+    int r1[] = new int[wh];
+    int g1[] = new int[wh];
+    int b1[] = new int[wh];
+
+    for (int i = 0; i < wh; i++) {
+      ri = pixels[i];
+      r1[i] = (ri & 0xff0000) >> 16;
+      g1[i] = (ri & 0x00ff00) >> 8;
+      b1[i] = (ri & 0x0000ff);
+    }
+
+    int r2[] = new int[wh];
+    int g2[] = new int[wh];
+    int b2[] = new int[wh];
+
+    int x = 0; //Math.max(0, x);
+    int y = 0; //Math.max(0, y);
+    int w = width; // x + w - Math.max(0, (x+w)-width);
+    int h = height; //y + h - Math.max(0, (y+h)-height);
+    int yi = y*width;
+
+    for (yl = y; yl < h; yl++) {
+      for (xl = x; xl < w; xl++) {
+        cb = cg = cr = sum = 0;
+        ri = xl - blurRadius;
+        for (int i = 0; i < blurKernelSize; i++) {
+          read = ri + i;
+          if ((read >= x) && (read < w)) {
+            read += yi;
+            cr += blurMult[i][r1[read]];
+            cg += blurMult[i][g1[read]];
+            cb += blurMult[i][b1[read]];
+            sum += blurKernel[i];
+          }
+        }
+        ri = yi + xl;
+        r2[ri] = cr / sum;
+        g2[ri] = cg / sum;
+        b2[ri] = cb / sum;
+      }
+      yi += width;
+    }
+    yi = y * width;
+
+    for (yl = y; yl < h; yl++) {
+      ym = yl - blurRadius;
+      riw = ym * width;
+      for (xl = x; xl < w; xl++) {
+        cb = cg = cr = sum = 0;
+        ri = ym;
+        read = xl + riw;
+
+        for (int i = 0; i < blurKernelSize; i++) {
+          if ((ri < h) && (ri >= y)) {
+            cr += blurMult[i][r2[read]];
+            cg += blurMult[i][g2[read]];
+            cb += blurMult[i][b2[read]];
+            sum += blurKernel[i];
+          }
+          ri++;
+          read += width;
+        }
+        pixels[xl+yi] = 0xff000000 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
+      }
+      yi += width;
+    }
   }
 
 
@@ -622,49 +838,6 @@ public class PImage implements PConstants, Cloneable {
   //////////////////////////////////////////////////////////////
 
   // REPLICATING & BLENDING (AREAS) OF PIXELS
-
-
-  public void copy(PImage src, int dx, int dy) {
-    // source
-    int sx = 0;
-    int sy = 0;
-    int sw = src.width;
-    int sh = src.height;
-
-    // target
-    int tx = dx; // < 0 ? 0 : x;
-    int ty = dy; // < 0 ? 0 : y;
-    int tw = width;
-    int th = height;
-
-    if (tx < 0) {  // say if target x were -3
-      sx -= tx;    // source x -(-3) (or add 3)
-      sw += tx;    // source width -3
-      tw += tx;    // target width -3
-      tx = 0;      // target x is zero (upper corner)
-    }
-    if (ty < 0) {
-      sy -= ty;
-      sh += ty;
-      th += ty;
-      ty = 0;
-    }
-    if (tx + tw > width) {
-      int extra = (tx + tw) - width;
-      sw -= extra;
-      tw -= extra;
-    }
-    if (ty + th > height) {
-      int extra = (ty + th) - height;
-      sh -= extra;
-      sw -= extra;
-    }
-
-    for (int row = sy; row < sy + sh; row++) {
-      System.arraycopy(src.pixels, row*src.width + sx,
-                       pixels, (dy+row)*width + tx, sw);
-    }
-  }
 
 
   /**
@@ -852,10 +1025,10 @@ public class PImage implements PConstants, Cloneable {
    * 'mode' determines the blending mode used in the process.
    */
   private void blit_resize(PImage img,
-                             int srcX1, int srcY1, int srcX2, int srcY2,
-                             int[] destPixels, int screenW, int screenH,
-                             int destX1, int destY1, int destX2, int destY2,
-                             int mode) {
+                           int srcX1, int srcY1, int srcX2, int srcY2,
+                           int[] destPixels, int screenW, int screenH,
+                           int destX1, int destY1, int destX2, int destY2,
+                           int mode) {
     if (srcX1 < 0) srcX1 = 0;
     if (srcY1 < 0) srcY1 = 0;
     if (srcX2 >= img.width) srcX2 = img.width - 1;
@@ -1248,7 +1421,7 @@ public class PImage implements PConstants, Cloneable {
   };
 
 
-  static public boolean saveHeaderTIF(OutputStream output,
+  static public boolean saveHeaderTIFF(OutputStream output,
                                       int width, int height) {
     try {
       byte tiff[] = new byte[768];
@@ -1275,10 +1448,10 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  static public boolean saveTIF(OutputStream output, int pixels[],
-                                int width, int height) {
+  static public boolean saveTIFF(OutputStream output, int pixels[],
+                                 int width, int height) {
     try {
-      if (!saveHeaderTIF(output, width, height)) {
+      if (!saveHeaderTIFF(output, width, height)) {
         return false;
       }
       for (int i = 0; i < pixels.length; i++) {
@@ -1359,7 +1532,7 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  public void save(String filename) {
+  public void save(String filename) {  // ignore
     try {
       OutputStream os = null;
 
@@ -1374,7 +1547,7 @@ public class PImage implements PConstants, Cloneable {
           filename += ".tif";
         }
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        saveTIF(os, pixels, width, height);
+        saveTIFF(os, pixels, width, height);
       }
       os.flush();
       os.close();

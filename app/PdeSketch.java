@@ -1495,13 +1495,52 @@ public class PdeSketch {
         }
       }  // else no size() command found
 
-      // handle this in editor instead, rare or nonexistant
-      //} catch (MalformedPatternException e) {
-      //PdeBase.showWarning("Internal Problem",
-      //                    "An internal error occurred while trying\n" +
-      //                    "to export the sketch. Please report this.", e);
-      //return false;
-      //}
+      /*
+      // try to get / ** blah * / stuff
+      // the plus gets / ***** and **** / if that's what they used
+      matcher = new Perl5Matcher();
+      compiler = new Perl5Compiler();
+      String description = "";
+      //pattern = compiler.compile("\\/\\*\\*+(.*)\\*\\/");
+      pattern = compiler.compile("\\/\\*\\*+(.+)");
+      //pattern = compiler.compile("\\/\\*\\*+(.*)\\*+\\/");
+      System.out.println("this compiled");
+      input = new PatternMatcherInput(" " + code[0].program);
+      if (matcher.contains(input, pattern)) {
+        MatchResult result = matcher.getMatch();
+        System.out.println("contains " + result.group(0));
+        String stuff = result.group(1).toString();
+        String lines[] = PApplet.split(stuff, '\n');
+        PApplet.printarr(lines);
+      }
+      */
+      StringBuffer dbuffer = new StringBuffer();
+      String lines[] = PApplet.split(code[0].program, '\n');
+      for (int i = 0; i < lines.length; i++) {
+        if (lines[i].trim().startsWith("/**")) {  // this is our comment
+          // some smartass put the whole thing on the same line
+          //if (lines[j].indexOf("*/") != -1) break;
+
+          for (int j = i+1; j < lines.length; j++) {
+            if (lines[j].trim().endsWith("*/")) {
+              // remove the */ from the end, and any extra *s
+              // in case there's also content on this line
+              // nah, don't bother.. make them use the three lines
+              break;
+            }
+
+            int offset = 0;
+            while ((offset < lines[j].length()) &&
+                    ((lines[j].charAt(offset) == '*') ||
+                     (lines[j].charAt(offset) == ' '))) {
+              offset++;
+            }
+            // insert the return into the html to help w/ line breaks
+            dbuffer.append(lines[j].substring(offset) + "\n");
+          }
+        }
+      }
+      String description = dbuffer.toString();
 
       StringBuffer sources = new StringBuffer();
       for (int i = 0; i < codeCount; i++) {
@@ -1514,6 +1553,7 @@ public class PdeSketch {
       PrintStream ps = new PrintStream(fos);
 
       // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+      // and now @@description@@
 
       InputStream is = null;
       // if there is an applet.html file in the sketch folder, use that
@@ -1550,6 +1590,10 @@ public class PdeSketch {
           while ((index = sb.indexOf("@@height@@")) != -1) {
             sb.replace(index, index + "@@height@@".length(),
                        String.valueOf(high));
+          }
+          while ((index = sb.indexOf("@@description@@")) != -1) {
+            sb.replace(index, index + "@@description@@".length(),
+                       description);
           }
           line = sb.toString();
         }

@@ -1,45 +1,88 @@
 0080 core
+X PApplet.saveFrame() is saving to sketch folder, PApplet.save() is not
+X   PApplet.save() will save to the applet folder, 
+X   but PImage.save() or PGraphics.save() will save only to the current
+X   working directory, usually the Processing folder.
+X removed static version of mask() from PImage
+X   no more PImage.mask(theImage, maskImage)
+X   just use theImage.mask(maskImage)
+X PImage.filter() 
+X   maybe use quasimondo's gaussian blur code?
+X     http://incubator.quasimondo.com/processing/gaussian_blur_1.php
+o   filter() on subsections? yes, in keeping with rest of api
+X   no, in keeping with getting shit done
+X   BLUR - write simple blur
+X     how does photoshop handle this?
+X   BLUR - add gaussian blur
+_   email re: credit/attribution and descrepancy between algos
+X forgot to mention the line hack to get points working in 78
+X implemented PGraphicsGL.set(x, y, argb)
+X implement PGraphicsGL.set(x, y, PImage)
+X blend, copy, filter all implemented for opengl
+X copy(Pimage, x, y) has become set(x, y, PImage)
+X textMode -> textAlign
+X   ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT -> LEFT, CENTER, RIGHT
+X textSpace -> textMode
+X   NORMAL_SPACE -> NORMALIZED, OBJECT_SPACE -> OBJECT
+X text in a box is broken (at least for PGraphics2)
+o   check to see if it's a rounding error with width()
+o   get text rect working again (seems to be in infinite loop)
+X   nope, was just that the space width wasn't being scaled up properly
+X clean up the javadoc so no more errors
+X change mbox to PFont.size? 
+o   make width() return values based on natural size?
+X   not a great idea.. plus java2d uses 1 pixel font for things
 
-_ size() doing a setBounds() is really bad
-_   because it means things can't be embedded properly
+implemented in 79
+X make sure arc goes in the right direction that we want it to
+X   (make sure that PGraphics3 goes the same direction)
+
+_ email simon re: lighting api
+_   things are actually more on track than expected
+
+_ allow save(), saveFrame() et al to properly pass in absolute paths
+_   (so that it doesn't always save to the applet folder)
+_   could require that save() takes an absolute path?
 
 _ printarr() of null array crashes without an error
 _ actually, errors from many crashes not coming through on the mac?
-
-_ proper full screen code for present mode
-_   why do mouse motion events go away in full screen mode
-_   or with a Window object
 
 createGraphics and placement issues
 _ make pappletgl work back inside papplet
 _   and then size(300, 300, DEPTH) etc
 _   get rid of opengl renderer menu
-_   othersise hint() to use the p5 renderer instead of java2d
+o   otherwise hint() to use the p5 renderer instead of java2d
 _ applet placement is screwy
-_ how to force PGraphics() instead of PGraphics2()
+X how to force PGraphics() instead of PGraphics2()
+_   size(300, 200, P2D);
+_ size() doing a setBounds() is really bad
+_   because it means things can't be embedded properly
 o applets on osx (and windows) sometimes show up 20 pixels off the top 
-
-_ saveFrame() is saving to sketch folder, save() is not
-
-bezier/catmull rom curves
-_ non-homogenous coloring for curve vertices
-_ implement curveTangent
+X how to shut off rendering to screen when illustrator in use? 
+X   need size(30000, 20000) for illustrator, problem in papplet
+_   size(30000, 20000, ILLUSTRATOR)
+o implement fullsize().. this takes over the screen as best it can
+_   size(screen.width, screen.height, OPENGL);
+o call present() from inside the code?
+o   that if applet is 500x500, centers on a 800x600 window
+X   no, that's nasty... use --present to launch in present window
+X though how do you get the screen size? 
+X   screen.width and screen.height? - yes
+_ write java 1.3 code for full screen version of PApplet
+_   this might be used for presentation mode
+_ proper full screen code for present mode
+_   why do mouse motion events go away in full screen mode
+_   or with a Window object
+_ fix the flicker in java2d mode
+X   is it because the lock was taken off (g) in PApplet?
 
 PApplet
 _ check for what else inside PApplet should be static
-
-PFont
-_ text in a box is broken (at least for PGraphics2)
-o   get text rect working again (seems to be in infinite loop)
-
-PGraphics
-_ fix-up the curve_init() and the rest to use matrices
-_   and not have ugly names (i.e. just g.curveDetail is good)
+_   maybe catch RuntimeExceptions in the called sub-functions
+_   that way more stuff can be static w/o losing useful error handling
+_   (emitting errors when closest to source.. i.e. w/ the filename)
 
 PGraphics2
-_ why is java2d so flickery?
-X   is it because the lock was taken off (g) in PApplet?
-_   test to see whether it's still happening
 _ textSpace(SCREEN_SPACE) needs to be faster
 _   need flat image implementation that takes no transforms
 _   along with 90, 180 and 270 versions of it as well
@@ -58,10 +101,10 @@ g2.setPaint(gradient);
 g2.draw(gp);
 
 PGraphics3
+_ fix bezierVertex() for newer api
+_ error message saying that strokeCap and strokeJoin don't work
 _ tint() honoring alpha but not colored tint
 _   check with the a_Displaying example and tint(255, 0, 0, 100);
-_ make sure arc goes in the right direction that we want it to
-_   (make sure that PGraphics3 goes the same direction)
 _ Stroking a rect() leaves the upper right pixel off.
 _   also, points not working in opengl (carlos line truncation?)
 void setup() {
@@ -72,11 +115,10 @@ void draw() {
   stroke(255);
   point(60, 30);
 }
-_ error message saying that strokeCap and strokeJoin don't work
 
 PGraphicsGL
-_ implement copy() and blend()
-_ background color seems to be wrong?
+_ check once lighting actually works
+_   background color seems to be wrong?
 
 . . . . . 
 
@@ -92,16 +134,7 @@ api questions
 
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
 
-_ BLUR - write simple blur
-_   how does photoshop handle this?
-_ BLUR - add gaussian blur
-
 _ remove SCREEN_SPACE altogether? 
-_ PImage.filter() 
-_   maybe use quasimondo's gaussian blur code?
-_     http://incubator.quasimondo.com/processing/gaussian_blur_1.php
-o   filter() on subsections? yes, in keeping with rest of api
-X   no, in keeping with getting shit done
 
 _ might be able to do a typed expand()
 public Object growArray(Object array, int size) {
@@ -117,20 +150,12 @@ _   but don't put commas into the zero-padded version
 _   make nf/nfs/nfp not so weird
 _ image(String name) and textFont(String name)
 _   do we change to font(arial, 12) ?
-_ how to shut off rendering to screen when illustrator in use? 
-_   need size(30000, 20000) for illustrator, problem in papplet
 _ be consistent about getXxx() methods
 _   just use the variable names.. don't do overkill on fillR et al
 _   or just what functions are actually made public
 _   is fillRi needed? it's pretty goofy..
 _ how to handle full screen (opengl especially) or no screen (for scripts)
-_ implement fullsize().. this takes over the screen as best it can
-_   or should it be more like present mode?
-_   that if applet is 500x500, centers on a 800x600 window
-_   though how do you get the screen size? 
-_     screen.width and screen.height? - yes
-_   write java 1.3 code for full screen version of PApplet
-_     this might be used for presentation mode
+
 _ go through and see what functions (no pixel ops?) frame recorders should have
 _ expose api to launch files, folders, URLs
 _   use with/in place of link()
@@ -376,7 +401,6 @@ CORE / PImage
    b _ get loadImage() to work properly with data folder
    b _   should probably use the code from loadStream
    b _   and the url stuff should be an alternate method altogether
-   b _ BImage.smooth() ?
    b _ alpha not set on saveFrame, so can't be used in photoshop as a layer
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
    b _ expose function to write tiff header in PImage (advanced)
@@ -452,6 +476,12 @@ CORE / PGraphics
    1 _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
    1 _   will return 127, instead of 128.
 
+   1 _ curves
+   1 _   non-homogenous coloring for curve vertices
+   1 _   implement curveTangent
+   1 _   fix-up the curve_init() and the rest to use matrices
+   1 _     and not have ugly names (i.e. just g.curveDetail is good)
+
    1 _ ellipse problems
    1 _   weird ellipse bug with an alpha line in same image
    1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
@@ -500,10 +530,6 @@ CORE / PGraphics
 
    1 _ add option to sort triangles back to front so alpha works
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
-
-   1 _ colorMode(CMYK)
-   1 _   just does 1-r/1-g/1-b inside 
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
 
 CORE / Sound

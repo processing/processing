@@ -1,47 +1,58 @@
-BAGEL / Future
+future things that we'd like to do but may never get to
 
-   2 _ sbit font support
-   2 _   both reading and building sbit fonts
-   2 _ materials and shading
-   2 _ camera object for moving scene
-   2 _ cartesian/polar conversion
-   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
-   2 _   thread includes code for the 2D case
-   2 _ alter strokeWidth in LINE_STRIP
-   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053795842;start=0
-   2 _ keypressed is not persistent
-   2 _   key repeat in os vs. how java handles it
-   2 _   search java faq for info about getting around it
-   2 _ drawMode() for MULTIPLY and ADD
-   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051208333
-   2 _ nicer/simpler api for moving the camera around
-   2 _ better api for fonts
-   2 _ fixed fonts are screwed, should only work at screen resolution
-   2 _   getStream for the filename doesn't work for directories
-   2 _     getfont("fonts/blah.fbf") refers to blah.raw, but that
-   2 _     also needs to be searched for in the fonts/ dir..
-   2 _ try with 1.4 frame buffer stuff to see if it's faster
-   2 _ write shearing function
-   2 _ optimize rotation functions
-   2 _ update/noUpdate() could also be done to force explicit updates only
-   2 _   for ui-type applications that don't need to continually redraw
-   2 _   instead use void update() as a function like loop and draw
-   2 _   third mode for interactive apps that have to be queried
-   2 _   shouldn't do so much work (redrawing in loop) if waiting for input
-   2 _     mode for when no full animation taking place
-   2 _     otherwise machine is continually maxed out while app is running
-   2 _ way to screen grab at higher resolution
-   2 _   method for rendering at higher res and then scaling down
-   2 _   (even if this causes signficant performance hit)
-   2 _ look at GLUT for other needed shapes
-   2 _ export to static flash-based graphics
-   2 _ build in second matrix type: 2d affine
-   2 _ write code for reading uncompressed b/w tiff images
-   2 _   incorporate for fixed width fonts
-   2 _ fast(er?) version of bagel that just uses java graphics
-   2 _   but leaves out many features
-   2 _ setting a fill color when drawing an image should affect the image
-   2 _   or maybe image.setColor or setTone to mix a specific color in
+
+2 _ colorMode(CMYK)
+2 _   just does 1-r/1-g/1-b inside 
+2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
+
+
+CORE / Fonts
+
+2 _ textTracking()
+2 _ sbit font support
+2 _   both reading and building sbit fonts
+
+
+2 _ materials and shading
+2 _ nice, usable camera object 
+2 _ cartesian/polar conversion
+2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
+2 _   thread includes code for the 2D case
+2 _ alter strokeWidth in LINE_STRIP
+2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053795842;start=0
+2 _ keypressed is not persistent
+2 _   key repeat in os vs. how java handles it
+2 _   search java faq for info about getting around it
+2 _ drawMode() for MULTIPLY and ADD
+2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051208333
+2 _ nicer/simpler api for moving the camera around
+2 _ better api for fonts
+2 _ fixed fonts are screwed, should only work at screen resolution
+2 _   getStream for the filename doesn't work for directories
+2 _     getfont("fonts/blah.fbf") refers to blah.raw, but that
+2 _     also needs to be searched for in the fonts/ dir..
+2 _ try with 1.4 frame buffer stuff to see if it's faster
+2 _ write shearing function
+2 _ optimize rotation functions
+2 _ update/noUpdate() could also be done to force explicit updates only
+2 _   for ui-type applications that don't need to continually redraw
+2 _   instead use void update() as a function like loop and draw
+2 _   third mode for interactive apps that have to be queried
+2 _   shouldn't do so much work (redrawing in loop) if waiting for input
+2 _     mode for when no full animation taking place
+2 _     otherwise machine is continually maxed out while app is running
+2 _ way to screen grab at higher resolution
+2 _   method for rendering at higher res and then scaling down
+2 _   (even if this causes signficant performance hit)
+2 _ look at GLUT for other needed shapes
+2 _ export to static flash-based graphics
+2 _ build in second matrix type: 2d affine
+2 _ write code for reading uncompressed b/w tiff images
+2 _   incorporate for fixed width fonts
+2 _ fast(er?) version of bagel that just uses java graphics
+2 _   but leaves out many features
+2 _ setting a fill color when drawing an image should affect the image
+2 _   or maybe image.setColor or setTone to mix a specific color in
 
 
 
@@ -55,7 +66,6 @@ not necessary for 1.0 release
 2 _   would this help casey with the examples?
 2 _ type-ahead/teaching functions
 2 _   very useful for learning to program
-2 _ font support is overkill and sucks
 2 _ editor features asked for on the bboard
 2 _   line numbers like bbedit
 2 _   command to comment-out the current selection
@@ -123,39 +133,39 @@ PDE / Pre-preprocessor & Compiler
 Currently using Oro for search and replace preprocessor,
 but Dan Mosedale is moving us to ANTLR
 
-   2 _ for int i for 0 to b.length
-   2 _ for i from 0 upto b.length
-   2 _ actionscript has nice hastables.. as does perl/python
-   2 _   would be nice to get better implementation in there
+2 _ for int i for 0 to b.length
+2 _ for i from 0 upto b.length
+2 _ actionscript has nice hastables.. as does perl/python
+2 _   would be nice to get better implementation in there
 
-   2 _ additional data conversions to avoid this syntax:
-   2 _   Integer.toString(), Integer.parseInt()
-   2 _   works like class casting: int(23.4) same as ((int) 23.4) 
-   2 _   String(1234) -> translates to String.valueOf(1234);
-   2 _     works for all data types that support valueOf
-   2 _     i.e. valueOf(Object) returns null or Object.toString() 
-   2 _   int("1234") -> Integer.parseInt("1234")
-   2 _   float("1234.35") -> (new Float("1234.35").floatValue())
-   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
+2 _ additional data conversions to avoid this syntax:
+2 _   Integer.toString(), Integer.parseInt()
+2 _   works like class casting: int(23.4) same as ((int) 23.4) 
+2 _   String(1234) -> translates to String.valueOf(1234);
+2 _     works for all data types that support valueOf
+2 _     i.e. valueOf(Object) returns null or Object.toString() 
+2 _   int("1234") -> Integer.parseInt("1234")
+2 _   float("1234.35") -> (new Float("1234.35").floatValue())
+2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
 
-   2 _ (blah, blah, blah) = split(blah, "\t")
-   2 _   'like php's "explode" function'
-   2 _   http://www.php.net/manual/en/function.explode.php 
-   2 _   example 2 is the more interesting one... 
-   2 _     list($user, $pass, $uid, $gid, $gecos..) = explode(":", $data);
-   2 _   also see the inverse of that: 
-   2 _   http://www.php.net/manual/en/function.implode.php
+2 _ (blah, blah, blah) = split(blah, "\t")
+2 _   'like php's "explode" function'
+2 _   http://www.php.net/manual/en/function.explode.php 
+2 _   example 2 is the more interesting one... 
+2 _     list($user, $pass, $uid, $gid, $gecos..) = explode(":", $data);
+2 _   also see the inverse of that: 
+2 _   http://www.php.net/manual/en/function.implode.php
 
-   2 _ foreach implementation, ala java 1.5 spec
-   2 _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html
-   2 _   for (String s : c) { ... }
-   2 _   or example for sum of int array:
-   2 _   int sum = 0; for (int e : a) { sum += e; }
-   2 _ for (int i = 0; i < 10; i++) -> for (int i < 10) (?)
-   2 _    what's a better method for this?
+2 _ foreach implementation, ala java 1.5 spec
+2 _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html
+2 _   for (String s : c) { ... }
+2 _   or example for sum of int array:
+2 _   int sum = 0; for (int e : a) { sum += e; }
+2 _ for (int i = 0; i < 10; i++) -> for (int i < 10) (?)
+2 _    what's a better method for this?
 
-   2 _ check through all the examples to look for other themes
+2 _ check through all the examples to look for other themes
 
-   2 _ contextual syntax highlighting based on grammar
-   2 _   everything that's in java.lang plus more is too much for keywords
-   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
+2 _ contextual syntax highlighting based on grammar
+2 _   everything that's in java.lang plus more is too much for keywords
+2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
