@@ -1195,8 +1195,9 @@ public class PdeEditor extends Panel {
       from.close(); // ??
       to.close(); // ??
 
+#ifdef JDK13
       bfile.setLastModified(afile.lastModified());  // jdk13 required
-
+#endif
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1215,7 +1216,9 @@ public class PdeEditor extends Panel {
       if (source.isDirectory()) {
 	target.mkdirs();
 	copyDir(source, target);
+#ifdef JDK13
 	target.setLastModified(source.lastModified());
+#endif
       } else {
 	copyFile(source, target);
       }
