@@ -75,6 +75,7 @@ X   runs out of processing data folder
 _ macosx is using /Library instead of ~/Library.. get this fixed
 _   domain version wasn't in the stubs.. grr
 _   or maybe it's an int or something?
+_   just use reflection to call the function instead
 
 _ preproc: making all functions public that have no specifier
 _   this will make draw() etc all much easier
