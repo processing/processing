@@ -172,7 +172,9 @@ public class PdeEditorStatus extends Panel
 
   public void update() {
     Graphics g = this.getGraphics();
-    setBackground(bgcolor[mode]);
+    try {
+      setBackground(bgcolor[mode]);
+    } catch (NullPointerException e) { } // if not ready yet
     if (g != null) paint(g);
   }
 
@@ -189,15 +191,13 @@ public class PdeEditorStatus extends Panel
       okButton = new Button(PROMPT_OK);
 
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)( 
-      /*
-      if ((PdeBase.platform == PdeBase.MACOSX) ||
-	  (PdeBase.platform == PdeBase.MACOS9)) {
+      // os9 seems to work if bg of component is set, but x still a bastard
+      if (PdeBase.platform == PdeBase.MACOSX) {
 	yesButton.setBackground(bgcolor[PROMPT]);
 	noButton.setBackground(bgcolor[PROMPT]);
 	cancelButton.setBackground(bgcolor[PROMPT]);
 	okButton.setBackground(bgcolor[PROMPT]);
       }
-      */
       setLayout(null);
 
       yesButton.addActionListener(this);
