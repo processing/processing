@@ -83,13 +83,12 @@ public interface PConstants {
 
   // filter/convert types
 
-  static final int BLUR      = 12;
-  //static final int EDGES     = 15;  // removed
-  static final int GRAY      = 11;
+  static final int BLUR      = 11;
+  static final int GRAY      = 12;
   static final int INVERT    = 13;
-  static final int POSTERIZE = 14;
-  static final int THRESHOLD = 10;
-  // RGB is also a filter option
+  static final int OPAQUE    = 14;
+  static final int POSTERIZE = 15;
+  static final int THRESHOLD = 16;
 
 
   // blend mode keyword definitions
@@ -171,27 +170,18 @@ public interface PConstants {
 
   // uv texture orientation modes
 
-  static final int NORMAL_SPACE  = 0;  // 0..1
-  static final int IMAGE_SPACE   = 1;
-
-
-  // hrmm, can i avoid these?
-
-  //static final int DEFAULT_SIZE = Float.NaN;
-  //static final int DEFAULT_LEADING = Float.NaN;
+  static final int NORMALIZED   = 1; //_SPACE  = 0;  // 0..1
+  static final int IMAGE   = 2;
 
 
   // text placement modes
 
-  static final int SCREEN_SPACE  = 2;
-  static final int OBJECT_SPACE  = 3;
+  //static final int SCREEN  = 4;  // var SCREEN exists elsewhere
+  static final int OBJECT  = 3;
 
 
   // text alignment modes
-
-  static final int ALIGN_LEFT    = 0;
-  static final int ALIGN_CENTER  = 1;
-  static final int ALIGN_RIGHT   = 2;
+  // are inherited from LEFT, CENTER, RIGHT
 
 
   // stroke modes

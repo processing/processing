@@ -11,27 +11,30 @@ HOW TO BUILD PROCESSING ON YOUR FAVORITE PLATFORM
    linux users can hop ahead to step 2.
 
 ** of the packages, begin with the defaults, and add:
-cvs - used for version control
-gzip - probably installed by default, just make sure
-perl - use this version, activestate or other distros have trouble
-tar, unzip, zip - for created archives
-textutils - i think this is included in the defaults, but make sure
 
-** these aren't required initially, but useful:
-openssh (command line ssh client)
-nano (handy/simple text editor) 
++ gcc-mingw - used to build processing.exe
+  (this will also pull in gcc-core)
 
-** and be sure to select the option for 'unix line endings'.
++ cvs - used for version control
 
-** other notes
++ perl - use this version, activestate or other distros have trouble
+  
++ unzip, zip - for dealing with archives
 
-the installer is sometimes a little flakey, so it may take more than
-one try to get everything in there. you can also run the installer
-again to add new applications, so you might try just installing the
-base stuff, and then come back to install the other bits. 
++ included in the defaults, but make sure:
+  coreutils (or textutils), gzip, tar
 
-it's also useful to run the installer (grab a new one from the site,
-since it changes) every few months to keep things fresh.
++ not required but useful: 
+  openssh - command line ssh client
+  nano - handy/simple text editor
+
+** and be sure to leave the option selected for 'unix line endings' 
+
+the cygwin installer is sometimes a little flakey, so it may take more 
+than one try to get everything in there. in fact, it's often best to
+run the installer once, and let it install all its defaults, then run 
+it again, and select the items above. it's also useful to run the 
+installer every few months to keep things fresh.
 
 
 2. GRAB THE CODE FROM SOURCEFORGE

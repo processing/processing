@@ -81,37 +81,51 @@ public class PGraphics extends PImage implements PConstants {
   /** True if colorMode(RGB, 255) */
   boolean colorRgb255;
 
-  /** True if tint() is enabled, read-only */
+  // ........................................................
+
+  /** true if tint() is enabled (read-only) */
   public boolean tint;
 
-  /** Tint that was last set, read-only */
+  /** tint that was last set (read-only) */
   public int tintColor;
 
-  /** True if the tint has an alpha value */
   boolean tintAlpha;
+  float tintR, tintG, tintB, tintA;
+  int tintRi, tintGi, tintBi, tintAi;
 
-  public float tintR, tintG, tintB, tintA;
-  public int tintRi, tintGi, tintBi, tintAi;
+  // ........................................................
 
-  // fill color
+  /** true if fill() is enabled, (read-only) */
   public boolean fill;
-  public int fillColor;
-  public boolean fillAlpha;
-  public float fillR, fillG, fillB, fillA;
-  public int fillRi, fillGi, fillBi, fillAi;
 
-  // stroke color
+  /** fill that was last set (read-only) */
+  public int fillColor;
+
+  boolean fillAlpha;
+  float fillR, fillG, fillB, fillA;
+  int fillRi, fillGi, fillBi, fillAi;
+
+  // ........................................................
+
+  /** true if stroke() is enabled, (read-only) */
   public boolean stroke;
-  boolean strokeAlpha;
-  public float strokeR, strokeG, strokeB, strokeA;
-  public int strokeRi, strokeGi, strokeBi, strokeAi;
+
+  /** stroke that was last set (read-only) */
   public int strokeColor;
 
-  //public boolean background;
-  /** Last background color that was set */
+  boolean strokeAlpha;
+  float strokeR, strokeG, strokeB, strokeA;
+  int strokeRi, strokeGi, strokeBi, strokeAi;
+
+  // ........................................................
+
+  /** Last background color that was set, zero if an image */
   public int backgroundColor;
-  public float backgroundR, backgroundG, backgroundB;
-  public int backgroundRi, backgroundGi, backgroundBi;
+
+  float backgroundR, backgroundG, backgroundB;
+  int backgroundRi, backgroundGi, backgroundBi;
+
+  // ........................................................
 
   // internal color for setting/calculating
   float calcR, calcG, calcB, calcA;
@@ -124,24 +138,15 @@ public class PGraphics extends PImage implements PConstants {
   /** Result of the last conversion to HSB */
   float cacheHsbValue[] = new float[3]; // inits to zero
 
-  /** True if depth() is enabled, read-only */
-  //public boolean depth;
+  // ........................................................
 
-  /**
-   * Internal values for enabling/disabling 2D or 0D optimizations.
-   * These are normally turned on, but will be shut off for OpenGL.
-   * Also, users may want to disable them if they're causing trouble.
-   */
-  //public boolean optimize0 = true;
-  //public boolean optimize2 = true;
-
-  /** Set by strokeWeight(), read-only */
+  /** Last value set by strokeWeight() (read-only) */
   public float strokeWeight;
 
-  /** Set by strokeJoin(), read-only */
+  /** Set by strokeJoin() (read-only) */
   public int strokeJoin;
 
-  /** Set by strokeCap(), read-only */
+  /** Set by strokeCap() (read-only) */
   public int strokeCap;
 
   // ........................................................
@@ -220,8 +225,6 @@ public class PGraphics extends PImage implements PConstants {
   static final int DEFAULT_SPLINE_VERTICES = 128;
   protected float splineVertices[][];
   protected int splineVertexCount;
-  //boolean spline_vertices_flat;
-
 
   // ........................................................
 
@@ -246,20 +249,27 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-
   // ........................................................
 
-
+  /** The current rect mode (read-only) */
   public int rectMode;
-  public int ellipseMode;
-  //public int arcMode;
 
-  //int text_mode;
-  //int text_space;
+  /** The current ellipse mode (read-only) */
+  public int ellipseMode;
+
+  /** The current text font (read-only) */
   public PFont textFont;
-  public int textMode; // alignment
-  public int textSpace;
+
+  /** The current text align (read-only) */
+  public int textAlign;
+
+  /** The current text mode (read-only) */
+  public int textMode;
+
+  /** The current text size (read-only) */
   public float textSize;
+
+  /** The current text leading (read-only) */
   public float textLeading;
 
 
@@ -402,10 +412,8 @@ public class PGraphics extends PImage implements PConstants {
     textFont = null;
     textSize = 12;
     textLeading = 14;
-    textMode = ALIGN_LEFT;
-    textSpace = OBJECT_SPACE;
-    //text_mode    = ALIGN_LEFT;
-    //text_space   = OBJECT_SPACE;
+    textAlign = LEFT;
+    textMode = OBJECT;
   }
 
 
@@ -1461,19 +1469,24 @@ public class PGraphics extends PImage implements PConstants {
   // TEXT/FONTS
 
 
+  /**
+   * Useful function to set the font and size at the same time.
+   */
   public void textFont(PFont which, float size) {
     textFont(which);
     textSize(size);
   }
 
 
+  /**
+   * Sets the current font. The font's size will be the "natural"
+   * size of this font (the size that was set when using "Create Font").
+   * The leading will also be reset.
+   */
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-
-      if (textSpace == SCREEN_SPACE) {
-        textSize(textFont.mbox);
-      }
+      textSize(textFont.size);
 
     } else {
       throw new RuntimeException("a null PFont was passed to textFont()");
@@ -1486,10 +1499,10 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void textSize(float size) {
     if (textFont != null) {
-      if ((textSpace == SCREEN_SPACE) &&
-          (size != textFont.mbox)) {
+      if ((textMode == SCREEN) &&
+          (size != textFont.size)) {
           throw new RuntimeException("can't use textSize() with " +
-                                     "textSpace(SCREEN_SPACE)");
+                                     "textMode(SCREEN)");
       }
       textSize = size;
       textLeading = textSize *
@@ -1502,12 +1515,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  //protected void textLeadingReset() {
-  //textLeading = textSize *
-  //  ((textFont.ascent() + textFont.descent()) * 1.275f);
-  //}
-
-
+  /**
+   * Set the text leading to a specific value.
+   */
   public void textLeading(float leading) {
     textLeading = leading;
     /*
@@ -1521,31 +1531,23 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void textMode(int mode) {
-    textMode = mode;
-    /*
-    if (textFont != null) {
-      textFont.align(mode);
-
-    } else {
-      throw new RuntimeException("use textFont() before textMode()");
-    }
-    */
+  public void textAlign(int align) {
+    textAlign = align;
   }
 
 
-  public void textSpace(int space) {
+  public void textMode(int space) {
     if (textFont != null) {
-      textSpace = space;
+      textMode = space;
 
       // reset the font to its natural size
       // (helps with width calculations and all that)
-      if (textSpace == SCREEN_SPACE) {
-        textSize(textFont.mbox);
+      if (textMode == SCREEN) {
+        textSize(textFont.size);
       }
 
     } else {
-      throw new RuntimeException("use textFont() before textSpace()");
+      throw new RuntimeException("use textFont() before textMode()");
     }
   }
 
@@ -1596,9 +1598,9 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(char c, float x, float y) {
     if (textFont != null) {
-      if (textSpace == SCREEN_SPACE) loadPixels();
+      if (textMode == SCREEN) loadPixels();
       textFont.text(c, x, y, this);
-      if (textSpace == SCREEN_SPACE) updatePixels();
+      if (textMode == SCREEN) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -1612,17 +1614,17 @@ public class PGraphics extends PImage implements PConstants {
    * ignored.
    */
   public void text(char c, float x, float y, float z) {
-    if ((z != 0) && (textSpace == SCREEN_SPACE)) {
-      String msg = "textSpace(SCREEN_SPACE) cannot have a z coordinate";
+    if ((z != 0) && (textMode == SCREEN)) {
+      String msg = "textMode(SCREEN) cannot have a z coordinate";
       throw new RuntimeException(msg);
     }
 
     // this just has to pass through.. if z is not zero when
     // drawing to non-depth(), the PFont will have to throw an error.
     if (textFont != null) {
-      if (textSpace == SCREEN_SPACE) loadPixels();
+      if (textMode == SCREEN) loadPixels();
       textFont.text(c, x, y, z, this);
-      if (textSpace == SCREEN_SPACE) updatePixels();
+      if (textMode == SCREEN) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -1634,9 +1636,9 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(String s, float x, float y) {
     if (textFont != null) {
-      if (textSpace == SCREEN_SPACE) loadPixels();
+      if (textMode == SCREEN) loadPixels();
       textFont.text(s, x, y, this);
-      if (textSpace == SCREEN_SPACE) updatePixels();
+      if (textMode == SCREEN) updatePixels();
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
@@ -1644,17 +1646,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(String s, float x, float y, float z) {
-    if ((z != 0) && (textSpace == SCREEN_SPACE)) {
-      String msg = "textSpace(SCREEN_SPACE) cannot have a z coordinate";
+    if ((z != 0) && (textMode == SCREEN)) {
+      String msg = "textMode(SCREEN) cannot have a z coordinate";
       throw new RuntimeException(msg);
     }
 
     // this just has to pass through.. if z is not zero when
     // drawing to non-depth(), the PFont will have to throw an error.
     if (textFont != null) {
-      if (textSpace == SCREEN_SPACE) loadPixels();
+      if (textMode == SCREEN) loadPixels();
       textFont.text(s, x, y, z, this);
-      if (textSpace == SCREEN_SPACE) updatePixels();
+      if (textMode == SCREEN) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -1706,9 +1708,9 @@ public class PGraphics extends PImage implements PConstants {
       if (y2 < y1) {
         float temp = y1; y1 = y2; y2 = temp;
       }
-      if (textSpace == SCREEN_SPACE) loadPixels();
+      if (textMode == SCREEN) loadPixels();
       textFont.text(s, x1, y1, x2, y2, this);
-      if (textSpace == SCREEN_SPACE) updatePixels();
+      if (textMode == SCREEN) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
@@ -2512,6 +2514,9 @@ public class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("background images should be RGB or ARGB");
     }
 
+    // zero this out since it's an image
+    backgroundColor = 0;
+
     // blit image to the screen
     System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
   }
@@ -2696,77 +2701,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /*
-  public final static int _blend(int p1, int p2, int a2) {
-    // scale alpha by alpha of incoming pixel
-    a2 = (a2 * (p2 >>> 24)) >> 8;
-
-    int a1 = a2 ^ 0xff;
-    int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
-    int g = (a1 * ((p1 >>  8) & 0xff) + a2 * ((p2 >>  8) & 0xff)) & 0xff00;
-    int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
-
-    return 0xff000000 | (r << 8) | g | b;
-  }
-  */
-
-
-  //////////////////////////////////////////////////////////////
-
-  // MATH
-
-  // these are *only* the functions used internally
-  // the real math functions are inside PApplet
-
-  // these have been made private so as not to conflict
-  // with the versions found in PApplet when fxn importing happens
-  // also might be faster that way. hmm.
-
-
-  //private final float mag(float a, float b) {
-  //return (float)Math.sqrt(a*a + b*b);
-  //}
-
-  //private final float mag(float a, float b, float c) {
-  //return (float)Math.sqrt(a*a + b*b + c*c);
-  //}
-
-  //private final float max(float a, float b) {
-  //return (a > b) ? a : b;
-  //}
-
-  //private final float max(float a, float b, float c) {
-  //return Math.max(a, Math.max(b, c));
-  //}
-
-  //private final float sq(float a) {
-  //return a*a;
-  //}
-
-  //private final float sqrt(float a) {
-  //return (float)Math.sqrt(a);
-  //}
-
-  //private final float abs(float a) {
-  //return (a < 0) ? -a : a;
-  //}
-
-  //private final float sin(float angle) {
-  //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-  //return (float)Math.sin(angle);
-  //}
-
-  //private final float cos(float angle) {
-  //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-  //return (float)Math.cos(angle);
-  //}
-
-  //private final float tan(float angle) {
-  //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-  //return (float)Math.tan(angle);
-  //}
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -2789,26 +2723,26 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  //class Shape extends Path {
-  //}
-
 
   //////////////////////////////////////////////////////////////
 
 
   /**
-   * Cannot be used on PGraphics, use get(0, 0, width, height) first,
-   * and then mask() the image that's returned. The problem is that the
-   * results are too complicated across different implementations,
-   * and this implementation represents only a minimal speedup versus
-   * the amount of confusion it creates.
+   * Use with caution on PGraphics. This should not be used with
+   * the base PGraphics that's tied to a PApplet, but it can be used
+   * with user-created PGraphics objects that are drawn to the screen.
    */
   public void mask(int alpha[]) {  // ignore
-    throw new RuntimeException("mask() cannot be used on PGraphics");
+    super.mask(alpha);
   }
 
 
+  /**
+   * Use with caution on PGraphics. This should not be used with
+   * the base PGraphics that's tied to a PApplet, but it can be used
+   * with user-created PGraphics objects that are drawn to the screen.
+   */
   public void mask(PImage alpha) {  // ignore
-    throw new RuntimeException("mask() cannot be used on PGraphics");
+    super.mask(alpha);
   }
 }
