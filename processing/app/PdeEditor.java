@@ -577,7 +577,7 @@ public class PdeEditor extends JFrame
       });
     menu.addSeparator();
 
-    item = new JMenuItem("Add file...");
+    item = new JMenuItem("Import...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           sketch.addFile();
