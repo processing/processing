@@ -72,17 +72,18 @@ public class PdeCode {
     // TODO re-enable history
     //history.record(s, PdeHistory.SAVE);
 
-    try {
+    //try {
       //System.out.println("saving to " + file);
       //System.out.println("stuff to save: " + program);
       //System.out.println("-------");
-      PdeBase.saveFile(program, file);
-
-    } catch (Exception e) {
-      PdeBase.showWarning("Error saving file",
-                          "Could not save " + file + "\n" +
-                          "because of an error.", e);
-    }
+    PdeBase.saveFile(program, file);
     modified = false;
+
+    //} catch (Exception e) {
+    //PdeBase.showWarning("Error saving file",
+    //                    "Could not save '" + file.getName() + "'\n" +
+    //                    "to '" + file.getParent() + "'\n" +
+    //                    "because of an error.", e);
+    //}
   }
 }

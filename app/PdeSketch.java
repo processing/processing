@@ -275,10 +275,10 @@ public class PdeSketch {
     // if so, need to first do a "save as".
     if (isReadOnly()) {
       PdeBase.showMessage("Sketch is read-only",
-                          "You can't save changes to this sketch\n" +
-                          "in the place it's currently located.\n" +
-                          "You'll have to save it to another location.");
-      saveAs();
+                          "Some files are marked \"read-only\", so you'll\n" +
+                          "need to re-save this sketch to another location.");
+      // if the user cancels, give up on the save()
+      if (!saveAs()) return;
     }
 
     for (int i = 0; i < codeCount; i++) {
@@ -1221,12 +1221,22 @@ public class PdeSketch {
    * volumes or folders without appropraite permissions.
    */
   public boolean isReadOnly() {
+    //System.out.println("checking read only: " + folder.canWrite());
     if (folder.getAbsolutePath().startsWith(PdeSketchbook.examplesPath)) {
       return true;
 
-    } else if (!folder.canWrite()) {  // is this ok for directories?
-      System.err.println("read only directory...");
-      return true;
+      // this doesn't work on directories
+    //} else if (!folder.canWrite()) {  // is this ok for directories?
+      //System.err.println("read only directory...");
+    } else {
+      // check to see if each modified code file can be written to
+      for (int i = 0; i < codeCount; i++) {
+        if (code[i].modified && !code[i].file.canWrite()) {
+          //System.err.println("found a read-only file " + code[i].file);
+          return true;
+        }
+      }
+      //return true;
     }
     return false;
   }
