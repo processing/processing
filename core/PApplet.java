@@ -2019,7 +2019,7 @@ public class PApplet extends Applet
 
   // ------------------------------------------------------------
 
-  // public functions from bagel
+  // public functions for processing.core
 
 
   public void alpha(int alpha[]) {
@@ -2037,7 +2037,7 @@ public class PApplet extends Applet
   }
 
 
-   public void toGrayscale() {
+  public void toGrayscale() {
     g.toGrayscale();
   }
 
@@ -2057,29 +2057,19 @@ public class PApplet extends Applet
   }
 
 
-  public void set(int x, int y, PImage image) {
-    g.set(x, y, image);
-  }
-
-
-  public void copy(int sx, int sy, int dx, int dy) {
-    g.copy(sx, sy, dx, dy);
-  }
-
-
-  public void copy(PImage src, int sx, int sy, int dx, int dy) {
-    g.copy(src, sx, sy, dx, dy);
+  public void copy(PImage src, int dx, int dy) {
+    g.copy(src, dx, dy);
   }
 
 
   public void copy(int sx1, int sy1, int sx2, int sy2, 
-                        int dx1, int dy1, int dx2, int dy2) {
+                   int dx1, int dy1, int dx2, int dy2) {
     g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
 
   public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
-                        int dx1, int dy1, int dx2, int dy2) {
+                   int dx1, int dy1, int dx2, int dy2) {
     g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
@@ -2113,6 +2103,21 @@ public class PApplet extends Applet
 
   public void save(String filename) {
     g.save(filename);
+  }
+
+
+  public void smooth() {
+    g.smooth();
+  }
+
+
+  public void noSmooth() {
+    g.noSmooth();
+  }
+
+
+  public void imageMode(int mode) {
+    g.imageMode(mode);
   }
 
 
@@ -2388,11 +2393,6 @@ public class PApplet extends Applet
 
   public PImage loadImage(String filename, boolean force) {
    return g.loadImage(filename, force);
-  }
-
-
-  public void imageMode(int mode) {
-    g.imageMode(mode);
   }
 
 
@@ -2819,16 +2819,6 @@ public class PApplet extends Applet
 
   public void noLights() {
     g.noLights();
-  }
-
-
-  public void smooth() {
-    g.smooth();
-  }
-
-
-  public void noSmooth() {
-    g.noSmooth();
   }
 
 

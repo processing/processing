@@ -296,7 +296,6 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
 
-  int image_mode   = CORNER;
   int rect_mode    = CORNER;
   int ellipse_mode = CORNER;
 
@@ -3195,7 +3194,7 @@ public class PGraphics extends PImage implements PConstants {
     int ix2 = image.width;
     int iy2 = image.height;
 
-    if (image_mode == CENTER_DIAMETER) {
+    if (image_mode == CENTER) {
       sx1 -= image.width / 2;
       sy1 -= image.height / 2;
     }
@@ -3355,7 +3354,7 @@ public class PGraphics extends PImage implements PConstants {
       x1 -= hradius; 
       y1 -= vradius;
       break;
-    case CENTER_DIAMETER:
+    case CENTER:
       hradius = x2 / 2.0f;
       vradius = y2 / 2.0f;
       x2 = x1 + hradius;
@@ -3390,7 +3389,7 @@ public class PGraphics extends PImage implements PConstants {
     switch (ellipse_mode) {
     case CENTER_RADIUS: 
       break;
-    case CENTER_DIAMETER:
+    case CENTER:
       hradius /= 2f; vradius /= 2f;
       break;
     case CORNER:
@@ -4273,10 +4272,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void imageMode(int mode) {
-    image_mode = mode;
-  }
-
   public void image(PImage image, float x1, float y1) {
     if ((dimensions == 0) && !lighting && !_tint &&
         (image_mode != CENTER_RADIUS)) {
@@ -4306,7 +4301,7 @@ public class PGraphics extends PImage implements PConstants {
     case CORNER: 
       x2 += x1; y2 += y1; 
       break;
-    case CENTER_DIAMETER:
+    case CENTER:
       x2 /= 2f;
       y2 /= 2f;
     case CENTER_RADIUS:
@@ -5442,20 +5437,6 @@ public class PGraphics extends PImage implements PConstants {
 
   public void noLights() {
     lighting = false;
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-  // SMOOTHING (ANTIALIASING)
-
-
-  public void smooth() {
-    smooth = true;
-  }
-
-  public void noSmooth() {
-    smooth = false;
   }
 
 
