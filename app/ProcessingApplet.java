@@ -509,23 +509,10 @@ public class ProcessingApplet extends Applet
 
   // math stuff for convenience
 
-  
-  public final float sin(float angle) {
-    return (float)Math.sin(angle);
-  }
 
-  public final float cos(float angle) {
-    return (float)Math.cos(angle);
+  public final float abs(float n) {
+    return (n < 0) ? -n : n;
   }
-
-  public final float tan(float angle) {
-    return (float)Math.tan(angle);
-  }
-
-  public final float atan2(float a, float b) {
-    return (float)Math.atan2(a, b);
-  }
-
 
   public final float sq(float a) {
     return a*a;
@@ -537,10 +524,6 @@ public class ProcessingApplet extends Applet
 
   public final float pow(float a, float b) {
     return (float)Math.pow(a, b);
-  }
-
-  public final float abs(float n) {
-    return (n < 0) ? -n : n;
   }
 
 
@@ -561,8 +544,48 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public final float random() {
-    return (float)Math.random();
+  
+  public final float sin(float angle) {
+    return (float)Math.sin(angle);
+  }
+
+  public final float cos(float angle) {
+    return (float)Math.cos(angle);
+  }
+
+  public final float tan(float angle) {
+    return (float)Math.tan(angle);
+  }
+
+  public final float atan2(float a, float b) {
+    return (float)Math.atan2(a, b);
+  }
+
+
+  //public final float randomf() {
+  //return ((float)Math.random() - 0.5f)*2.0f;
+  //}
+
+  //public final float randomuf() {
+  //return (float)Math.random();
+  //}
+
+  public final float random(float howbig) {
+    return (float)Math.random() * howbig;
+  }
+
+  public final float random(float howsmall, float howbig) {
+    float diff = howbig - howsmall;
+    return howsmall + (float)Math.random() * diff;
+  }
+
+  public final int random(int howbig) {
+    return (int) (Math.random() * (double)howbig);
+  }
+
+  public final int random(int howsmall, int howbig) {
+    double diff = howbig - howsmall;
+    return howsmall + (int) (Math.random() * diff);
   }
 
 
