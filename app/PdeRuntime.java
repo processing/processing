@@ -62,8 +62,7 @@ public class PdeRuntime implements PdeMessageConsumer {
   }
 
 
-  public void start(Point windowLocation, 
-                    PrintStream leechErr) throws PdeException {
+  public void start(Point windowLocation) throws PdeException {
 
     this.leechErr = new PrintStream(new PdeMessageStream(this));
 
