@@ -405,7 +405,23 @@ public class PdeBase extends Frame
 
     menu.addSeparator();
 
-    item = new MenuItem("Find in Reference");
+    item = new MenuItem("Find...", new MenuShortcut('F'));
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.find();
+        }
+      });
+    menu.add(item);
+
+    item = new MenuItem("Find Next", new MenuShortcut('G'));
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.findNext();
+        }
+      });
+    menu.add(item);
+
+    item = new MenuItem("Find in Reference", new MenuShortcut('F', true));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
           if (editor.textarea.isSelectionActive()) {
@@ -502,7 +518,7 @@ public class PdeBase extends Frame
 
     menu = new Menu("Help");
     menu.add(new MenuItem("Help"));
-    menu.add(new MenuItem("Reference", new MenuShortcut('F')));
+    menu.add(new MenuItem("Reference"));
     menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
 
     // macosx already has its own about menu
