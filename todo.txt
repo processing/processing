@@ -7,6 +7,11 @@ X     get source and build on osx (or is it shipped by default?)
 X     make sure that fink is not in the path when building
 X     what are the args to configure a release version?
 X   update linux version of jikes
+X look for size() method to determine default size of applet
+X   (same as applet exporter function)
+o when using core graphics, don't show applet frame until first frame
+o   (in opengl, open frame early, make sure this isn't inhibited)
+X   probably can't do this, since don't know at runtime if it's gl
 
 create a new sketch
 create a new tab named "a"
@@ -30,11 +35,6 @@ the only way to make File>Save As actually save new files, as far as i
 can tell, is to Save As once, make at least one change, then Save. 
 
 what happens if folder already exists on save as?
-
-_ look for size() method to determine default size of applet
-_   (same as applet exporter function)
-_ when using core graphics, don't show applet frame until first frame
-_   (in opengl, open frame early, make sure this isn't inhibited)
 
 _ add tool to hit 'next' to go through examples
 _   just make it "next file in folder" since examples are all over

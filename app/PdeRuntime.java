@@ -29,6 +29,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
 
+import com.oroinc.text.regex.*;
+
 
 public class PdeRuntime implements PdeMessageConsumer {
 
@@ -71,6 +73,52 @@ public class PdeRuntime implements PdeMessageConsumer {
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
 
+    // try to figure out the size of the applet from the code
+
+    int initialWidth = PApplet.DEFAULT_WIDTH;
+    int initialHeight = PApplet.DEFAULT_HEIGHT;
+
+    try {
+      PatternMatcher matcher = new Perl5Matcher();
+      PatternCompiler compiler = new Perl5Compiler();
+
+      // this matches against any uses of the size() function,
+      // whether they contain numbers of variables or whatever.
+      // this way, no warning is shown if size() isn't actually
+      // used in the applet, which is the case especially for
+      // beginners that are cutting/pasting from the reference.
+      String sizing =
+        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
+      Pattern pattern = compiler.compile(sizing);
+
+      // adds a space at the beginning, in case size() is the very
+      // first thing in the program (very common), since the regexp
+      // needs to check for things in front of it.
+      PatternMatcherInput input =
+        new PatternMatcherInput(" " + sketch.code[0].program);
+      if (matcher.contains(input, pattern)) {
+        MatchResult result = matcher.getMatch();
+        try {
+          initialWidth = Integer.parseInt(result.group(1).toString());
+          initialHeight = Integer.parseInt(result.group(2).toString());
+
+        } catch (NumberFormatException e) {
+          /*
+            // found a reference to size, but it didn't
+            // seem to contain numbers
+            final String message =
+            "The size of this applet could not automatically be\n" +
+            "determined from your code. You'll have to edit the\n" +
+            "HTML file to set the size of the applet.";
+
+            PdeBase.showWarning("Could not find applet size", message, null);
+          */
+        }
+      }  // else no size() command found
+    } catch (Exception e) {
+      e.printStackTrace(); // later fail silently
+    }
+
     try {
       if (sketch.externalRuntime) {
         // if there was a saved location (this guy has been run more than
@@ -104,6 +152,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           sketch.classPath + PdeSketchbook.librariesClassPath,
           "processing.core.PApplet",
           location,
+          PApplet.EXT_SIZE + initialWidth + "," + initialHeight,
           PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
           sketch.mainClassName
         };
@@ -181,21 +230,37 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         window.setLayout(null);
         if (editor.presenting) {
+          /*
           window.setBounds((screen.width - applet.width) / 2,
                            (screen.height - applet.height) / 2,
                            applet.width, applet.height);
           applet.setBounds(0, 0, applet.width, applet.height);
+          */
+          window.setBounds((screen.width - initialWidth) / 2,
+                           (screen.height - initialHeight) / 2,
+                           initialWidth, initialHeight);
+          applet.setBounds(0, 0, initialWidth, initialHeight);
 
         } else {
           Insets insets = window.getInsets();
           //System.out.println(insets);
 
+          if ((applet.width != 0) &&
+              (applet.height != 0) &&
+              (applet.width != PApplet.DEFAULT_WIDTH) &&
+              (applet.height != PApplet.DEFAULT_HEIGHT)) {
+            initialWidth = applet.width;
+            initialHeight = applet.height;
+          }
+
           int minW = PdePreferences.getInteger("run.window.width.minimum");
           int minH = PdePreferences.getInteger("run.window.height.minimum");
           int windowW =
-            Math.max(applet.width, minW) + insets.left + insets.right;
+            Math.max(initialWidth, minW) + insets.left + insets.right;
+            //Math.max(applet.width, minW) + insets.left + insets.right;
           int windowH =
-            Math.max(applet.height, minH) + insets.top + insets.bottom;
+            Math.max(initialHeight, minH) + insets.top + insets.bottom;
+            //Math.max(applet.height, minH) + insets.top + insets.bottom;
 
           if (x1 - windowW > 10) {  // if it fits to the left of the window
             window.setBounds(x1 - windowW, y1, windowW, windowH);
@@ -218,10 +283,17 @@ public class PdeRuntime implements PdeMessageConsumer {
           Color windowBgColor = PdePreferences.getColor("run.window.bgcolor");
           window.setBackground(windowBgColor);
 
+          /*
           applet.setBounds((windowW - applet.width)/2,
                            insets.top + ((windowH -
                                           insets.top - insets.bottom) -
                                          applet.height)/2,
+                           windowW, windowH);
+          */
+          applet.setBounds((windowW - initialWidth)/2,
+                           insets.top + ((windowH -
+                                          insets.top - insets.bottom) -
+                                         initialHeight)/2,
                            windowW, windowH);
         }
 
