@@ -125,6 +125,10 @@ X hex(), binary(), unhex(), unbinary()
 040725 
 X fix array functions not returning a value
 
+040726 
+X noiseSeed and randomSeed
+
+
 _ processing.net -> PClient, PServer
 
 _ api for file-based renderers
