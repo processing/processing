@@ -43,7 +43,7 @@ import com.apple.mrj.*;
  * files and images, etc) that comes from that.
  */
 public class PdeBase {
-  static final String VERSION = "007X Alpha";
+  static final String VERSION = "0070 Alpha";
 
   PdeEditor editor;
 

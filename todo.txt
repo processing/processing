@@ -120,46 +120,21 @@ the trouble.
 X change how export.txt works
 X make p2 dist for amit
 
-_ remove fonts from distribution
+040926 first
+X add javascript libs to cvs distribution
+X netscape.javascript not properly working in 1.4
+X   include 'netscape.javascript' as a library to be added
+X     but don't export it.. ugh..
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096226670;start=0
+X remove fonts from distribution
+X be able to link against, but not export, certain parts of lib
+X   jsyn.jar not needed on export, netscape libs not needed on export
+o crap.. libraries need to be in packages for this to work
+o   but annoying: attach("simong.particlesystem.ParticleSystem") 
+X disable "export application"
+
+
 _ fix dist.sh for mac, pc, linux
-
-_ be able to link against, but not export, certain parts of lib
-_   jsyn.jar not needed on export, netscape libs not needed on export
-_ netscape.javascript not properly working in 1.4
-_   include 'netscape.javascript' as a library to be added
-_     but don't export it.. ugh..
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
-
-library stuff
-_ compiling - main file is a .java not a .pde
-_   also where no root .pde file with the same name.. (i.e. video)
-_ crap.. libraries need to be in packages for this to work
-_   but annoying: attach("simong.particlesystem.ParticleSystem") 
-_ record imports from java files as well
-_ ignore imports from java.* or maybe just things pde's classpath
-_ after export of library, rebuild "import library" menu
-_ should library be called extension?
-
-_ keypressed hanging on applets with a code folder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
-_ problems running external vm/vm is hanging
-_   seems to be happening because of virus scanning software (norton)
-_   may need to launch the applet (using 'start') 
-_     and talk over a socket instead
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
-_     something in that one about mouse position halting or not
-
-export stuff
-_ make multiple jar files thing work as an option
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
-_   applet default is one file, application default is multiple
-_   user in advanced mode can switch to the other
-_   buttons on side of sketch do default (last) behavior
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else? (nah, too messy)
-
 
 _ write better handler for compiler error:
 _   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63:1:70: Semantic Error: You need to modify your classpath, sourcepath, bootclasspath, and/or extdirs setup. Package "poo/shoe" could not be found in:
@@ -172,31 +147,8 @@ _ "create font" not working well with postscript font names
 _   need to remap the postscript name back to the java font name
 _   or keep a list of font objects, not just the names
 _     since already have the list, can use deriveFont
+
 _ tabs on macosx are stinking.. need to use line metrics class
-
-_ exception in setup() on external app doesn't kill run button 
-_   also doesn't kill external vm
-_ make preferences a modal dialog
-
-_ package processing.app for PdeBase, PdeEditor..
-
-_ support for editor plugins
-_   make dynamically loaded plugins and "tools" menu
-_     break out beautify as its own plugin
-_   make beautify plugin "Auto Format"
-_     //for (int i = 0; i < 10; i++) {
-_     } catch (IOException e) { }
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
-_     need to ignore comments.. but not those inside quotes.. oog
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-_     ignores colons for case statements
-_     need to tie this to the parser instead
-_   do a better job of maintaining cursor during beautify 
-_   only beautify a particular section of code
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-o   make "get quicktime libs" function
-o     can java get the root directory for system/win32 etc?
-
 _ macosx.. use better font metrics to get width for tab names
 
 _ implement new version of history
@@ -212,13 +164,6 @@ _   zlib file becoming corrupt (not flushed after close?)
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
 _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
-
-_ write a threading example
-_   or handle this some more intelligent way, super.stop() is needed.
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
-
-_ redo preferences panel to use proper swing layout etc
 
 
 README
@@ -237,9 +182,32 @@ _ quicktime full uninstall/reinstall
 _   installing winvdig
 _ code folder problems - antivirus or firewall
 _ update readme with notes from bboard about "built with processing"
+_ add to "common problems"
+_   junk in the classpath can often cause trouble
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094871304
 
 
 ......................................................................
+
+
+_ keypressed hanging on applets with a code folder
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
+_ problems running external vm/vm is hanging
+_   seems to be happening because of virus scanning software (norton)
+_   may need to launch the applet (using 'start') 
+_     and talk over a socket instead
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
+_     something in that one about mouse position halting or not
+
+
+exporting libraries
+_ compiling - main file is a .java not a .pde
+_   also where no root .pde file with the same name.. (i.e. video)
+_ record imports from java files as well
+_ ignore imports from java.* or maybe just things pde's classpath
+_ after export of library, rebuild "import library" menu
 
 
 really nasty bugs (fix in 0070 if possible)
@@ -250,6 +218,47 @@ _   make sure exceptions with .class work
 _ openStream returning 'null' really horked up the letters applet
 _   no System.out was coming through
 _   System.err was getting cut off before finishing
+
+
+_ support for editor plugins
+_   make dynamically loaded plugins and "tools" menu
+_     break out beautify as its own plugin
+_   make beautify plugin "Auto Format"
+_     //for (int i = 0; i < 10; i++) {
+_     } catch (IOException e) { }
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
+_     need to ignore comments.. but not those inside quotes.. oog
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+_     ignores colons for case statements
+_     need to tie this to the parser instead
+_   do a better job of maintaining cursor during beautify 
+_   only beautify a particular section of code
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+o   make "get quicktime libs" function
+o     can java get the root directory for system/win32 etc?
+
+
+_ write a threading example
+_   or handle this some more intelligent way, super.stop() is needed.
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
+
+
+export stuff
+_ make multiple jar files thing work as an option
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+_   applet default is one file, application default is multiple
+_   user in advanced mode can switch to the other
+_   buttons on side of sketch do default (last) behavior
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else? (nah, too messy)
+
+
+_ redo preferences panel to use proper swing layout etc
+_ exception in setup() on external app doesn't kill run button 
+_   also doesn't kill external vm
+_ make preferences a modal dialog
+_ package processing.app for PdeBase, PdeEditor..
 
 
 0071 or later
