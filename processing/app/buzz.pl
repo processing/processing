@@ -20,7 +20,8 @@ if ($ENV{'WINDIR'} ne '') {
     $path_separator = ';';
 # need path to mkdir for win32, because 'mkdir' defaults to the
 # crappy dos version.. need to use cygwin instead
-    $mkdir_path = 'd:\\cygwin\\bin\\mkdir';
+    #$mkdir_path = 'd:\\cygwin\\bin\\mkdir';
+    $mkdir_path = 'mkdir';
     $platform = 'windows';
 } else {
     $separator = '/';
@@ -152,7 +153,7 @@ foreach $file (@file_list) {
     &read_positive;
 
     #printf "try to make $temp_dir$separator$file\n";
-    open(OUTPUT, ">$temp_dir$separator$file") || die $!;
+    open(OUTPUT, ">$temp_dir$separator$file") || die "$! ($temp_dir$separator$file)";
     print OUTPUT reverse(@new_contents);
     close(OUTPUT);
     unshift(@new_file_list, "$temp_dir$separator$file");
@@ -255,7 +256,12 @@ sub read_negative {
 sub mkdirs {
     my $d = @_[0];
     #print "making dir $d\n";
-    $d =~ s/\\/\//g; # make backslashes into fwd slashes
-    my $result = `$mkdir_path -p $d`;
+
+    if ($platform ne 'windows') {
+	$d =~ s/\\/\//g; # make backslashes into fwd slashes
+	my $result = `$mkdir_path -p $d`;
+    } else {
+	print $result = `$mkdir_path $d`;
+    }
     return 1;
 }
