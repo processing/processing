@@ -22,6 +22,31 @@ public class PdeBase implements ActionListener {
 
   static final String WINDOW_TITLE = "Proce55ing";
 
+  // the platforms
+  static final int WINDOWS = 0;
+  static final int MACOS9  = 1;
+  static final int MACOSX  = 2;
+  static final int LINUX   = 3;
+  static int platform;
+
+  static final String platforms[] = {
+    "windows", "macos9", "macosx", "linux"
+  };
+
+  static {
+    if (System.getProperty("mrj.version") != null) {  // running on a mac
+      //System.out.println(UIManager.getSystemLookAndFeelClassName());
+      //System.out.println(System.getProperty("mrj.version"));
+      //System.out.println(System.getProperty("os.name"));
+      platform = (System.getProperty("os.name").equals("Mac OS X")) ?
+	MACOSX : MACOS9;
+	
+    } else {
+      //System.out.println("unknown OS");
+      System.out.println(System.getProperty("os.name");
+    }
+  }
+
 
   static public void main(String args[]) {
     PdeBase app = new PdeBase();
