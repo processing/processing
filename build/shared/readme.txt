@@ -1,6 +1,6 @@
 PROCESSING DEVELOPMENT ENVIRONMENT
 
-(c) 2001-04 Ben Fry and Casey Reas
+(c) 2001-05 Ben Fry and Casey Reas
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -9,7 +9,7 @@ PROCESSING DEVELOPMENT ENVIRONMENT
 FREQUENTLY ASKED QUESTIONS, INFO ABOUT PLATFORMS, & DEVELOPER SOAPBOX
 
 'revisions.txt' contains more information about the specific updates
-and fixes in this release.
+and fixes in this and recent releases.
 
 'bugs.txt' has up-to-the-second information about our favorite bugs.
 
@@ -32,8 +32,9 @@ lather, rinse, repeat as necessary.
 WHAT'S WITH THE VERSION NUMBERS? 
 
 this is not 1.0 software.. it's buggy and may kill people. that's part
-of why we make everyone sign up to download, so that we know that care
-enough to bother.
+of why we make everyone sign up to download, so that we know that you 
+care enough to bother and have more of an inkling of what you're 
+getting into.
 
 at least until the final "1.0" version, we'll be using four digit
 numbers for the release. we're calling revision "0043" the first
@@ -65,17 +66,20 @@ haven't we all?
 
 NOTE! avoid the urge to just email us, especially sending mail to ben
 or casey directly. while you may prefer the privacy of an email, it's
-much quicker for you to ask the whole gang, who are super helpful. we
-also what we use to keep track of bugs, so we may just ask you to use
-the bboard anyway.
+much quicker for you to ask the whole gang, who are super helpful. 
+visit the discussion board to report: http://processing.org/discourse/
 
-first, read the bug.txt file to see if your problem is found there.
+it's also what we use to keep track of bugs, so if you email us, we'll 
+just ask you to use the bboard anyway.
+
+first, read the bugs.txt file to see if your problem is found there.
+
+second, check this file to see if it's mentioned. a simple search for
+keywords in this file might turn up something.
 
 next, check the bboard to see if something related has been reported,
 or if there is already a workaround.
 
-best method is to post to the bulletin board at:
-http://processing.org/discourse/
 we prefer for you to use the bboard for bugs, since:
 - we like to use the bboard as a way to track bugs and get feedback
 - casey and ben can't always respond quickly to email 
@@ -103,9 +107,9 @@ out what's going on. useful things when reporting:
   "problem!" along with a three page program. sure, everyone likes a
   puzzle, but simpler code will receive a faster response. 
 
-- occasionally we may need you to pack up a copy of your sketchbook or
-  something similar so that we can try and replicate the weirdness on
-  our own machine. rest assured, we have no interest in messing with
+- occasionally we may need you to pack up a copy of your sketch folder 
+  or something similar so that we can try and replicate the weirdness 
+  on our own machine. rest assured, we have no interest in messing with
   your fancy creations or stealing your ideas. the p5 team is a pair
   of straight-laced boys who hail from the midwestern u.s. who were
   brought up better than that. and as we often lack enough time to
@@ -266,15 +270,17 @@ on a redhat 9 box, and sun's jre 1.4.2 is included with the
 download. replacing (or making a symlink to) the contents of the
 'java' folder will let you tie in a preferred jvm for your machine.
 
-serial.. this release uses rxtx-2.1_6 (just like macosx). you may get
-error message spew to the console when starting the application saying
-"Permission denied" and "No permission to create lock file" and to
-read "INSTALL". this is because you need to add yourself to either the
-uucp or lock group so that processing can write to /var/lock so it
-doesn't get in a fight with other applications talking on the serial
-port. supposedly, adding yourself to one of these groups will work
-(didn't for me, but i'm a little clueless) or running processing as
-root will get rid of the errors (not a great solution). 
+serial.. this release uses rxtx-2.1_6 (just like macosx). if you're 
+having trouble getting things to run, i.e. the port menu stays grayed 
+out or you get error message spew to the console when starting the 
+application saying "Permission denied" and "No permission to create 
+lock file" and to read "INSTALL". this is because you need to add 
+yourself to either the uucp or lock group so that processing can write
+to /var/lock so it doesn't get in a fight with other applications 
+talking on the serial port. supposedly, adding yourself to one of 
+these groups will work (didn't for me, but i'm a little clueless) 
+or running processing as root will often get rid of the errors 
+(obviously not a great solution). 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
