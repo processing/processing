@@ -65,9 +65,6 @@ _   problem is in gl and in core, and is inconsistent
 _   move more logic for layout into PApplet.. maybe a static method?
 _   this way can avoid duplicating / breaking things
 
-_ add prompt() method to Camera and Serial
-_   allows user to select default input device
-
 _ still threading issues with running opengl 
 _   first run hangs until quit 
 _   though doesn't seem to replicate when p5 is restarted
@@ -158,11 +155,6 @@ _   but they point to an original version of the curve geometry
 _   that can be re-rendered 
 _   also integrate catmull-rom -> bezier inverse matrices
 _   even with the general catmull-rom, to render via ai beziers
-
-libraries
-_ libraries could handle a series of events..
-_   i.e. a 'completion' event, or 'new data' event
-_   these could be registered on obejcts in a general way
 
 random tasks
 _ someone to figure out a good model for adaptive sizing of circles
