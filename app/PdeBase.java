@@ -59,43 +59,26 @@ public class PdeBase extends JFrame implements ActionListener
   static Properties keywords; // keyword -> reference html lookup
 
   //static Frame frame;  // now 'this'
-  static String encoding;
+  //static String encoding;
   static Image icon;
 
   // indicator that this is the first time this feller has used p5
-  static boolean firstTime;
+  //static boolean firstTime;
 
-  boolean errorState;
+  //boolean errorState;
   PdeEditor editor;
 
   //WindowAdapter windowListener;
 
-  Menu sketchbookMenu;
-  File sketchbookFolder;
-  String sketchbookPath;
-
-  boolean recordingHistory;
-  Menu historyMenu;
-  ActionListener historyMenuListener = 
-    new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.retrieveHistory(e.getActionCommand());
-        }
-      };
-
   //Menu serialMenu;
-  MenuItem undoItem, redoItem;
-  MenuItem saveMenuItem;
-  MenuItem saveAsMenuItem;
-  MenuItem beautifyMenuItem;
+  JMenuItem saveMenuItem;
+  JMenuItem saveAsMenuItem;
+  JMenuItem beautifyMenuItem;
   //CheckboxMenuItem externalEditorItem;
 
   //Menu renderMenu;
   //CheckboxMenuItem normalItem, openglItem;
   //MenuItem illustratorItem;
-
-
-  static final String WINDOW_TITLE = "Processing";
 
   // the platforms
   static final int WINDOWS = 1;
@@ -188,7 +171,7 @@ public class PdeBase extends JFrame implements ActionListener
 
     // load in preferences (last sketch used, window placement, etc)
 
-    prefs = new PdePreferences();
+    preferences = new PdePreferences();
 
 
     // read in the keywords for the reference
@@ -223,152 +206,17 @@ public class PdeBase extends JFrame implements ActionListener
 
     // build the editor object
 
-    editor = new PdeEditor(this);
-    getContentPane().setLayout(new BorderLayout());
-    getContentPane().add("Center", editor);
+    //editor = new PdeEditor(this);
+    //getContentPane().setLayout(new BorderLayout());
+    //getContentPane().add("Center", editor);
 
 
-    // setup menu bar
-
-    MenuBar menubar = new MenuBar();
-    Menu menu;
-    MenuItem item;
-
-
-    // file menu
-
-    menu = new Menu("File");
-    menu.add(new MenuItem("New", new MenuShortcut('N')));
-    sketchbookMenu = new Menu("Open");
-    menu.add(sketchbookMenu);
-    saveMenuItem = new MenuItem("Save", new MenuShortcut('S'));
-    saveAsMenuItem = new MenuItem("Save as...", new MenuShortcut('S', true));
-    menu.add(saveMenuItem);
-    menu.add(saveAsMenuItem);
-    menu.add(new MenuItem("Rename..."));
-    menu.addSeparator();
-
-    menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
-    item = new MenuItem("Export Application", new MenuShortcut('E', true));
-    item.setEnabled(false);
-    menu.add(item);
-
-    if (platform != MACOSX) {
-      menu.add(new MenuItem("Preferences"));
-      menu.addSeparator();
-      menu.add(new MenuItem("Quit", new MenuShortcut('Q')));
-
-    } else {
 #ifdef MACOS
       // #@$*(@#$ apple.. always gotta think different
       MRJApplicationUtils.registerAboutHandler(this);
       MRJApplicationUtils.registerPrefsHandler(this);
       MRJApplicationUtils.registerQuitHandler(this);
 #endif
-    }
-    menu.addActionListener(this);
-    menubar.add(menu);
-
-
-    // edit menu
-    menubar.add(editor.buildEditMenu());
-
-
-    // sketch menu
-
-    menu = new Menu("Sketch");
-    menu.add(new MenuItem("Run", new MenuShortcut('R')));
-    menu.add(new MenuItem("Present", new MenuShortcut('R', true)));
-    menu.add(new MenuItem("Stop", new MenuShortcut('T')));
-    menu.addSeparator();
-
-    menu.add(new MenuItem("Add file..."));
-    menu.add(new MenuItem("Create font..."));
-
-    if ((platform == WINDOWS) || (platform == MACOSX)) {
-      // no way to do an 'open in file browser' on other platforms
-      // since there isn't any sort of standard
-      menu.add(new MenuItem("Show sketch folder"));
-    }
-
-    recordingHistory = PdePreferences.getBoolean("history.recording", true);
-    if (recordingHistory) {
-      historyMenu = new Menu("History");
-      menu.add(historyMenu);
-    }
-
-    //menu.addSeparator();
-
-    //menu.addSeparator();
-    //serialMenu = new Menu("Serial Port");
-    //menu.add(serialMenu);
-
-    /*
-    Menu rendererMenu = new Menu("Renderer");
-#ifdef OPENGL
-    // opengl support has started, but remains as yet unfinished
-    menu.add(rendererMenu);
-#endif
-
-    normalItem = new CheckboxMenuItem("Normal");
-    rendererMenu.add(normalItem);
-    normalItem.setState(true);
-    normalItem.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          openglItem.setState(false);
-          normalItem.setState(true);
-        }
-      });
-
-    openglItem = new CheckboxMenuItem("OpenGL");
-    rendererMenu.add(openglItem);
-    openglItem.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          openglItem.setState(true);
-          normalItem.setState(false);
-        }
-      });
-    */
-
-    /*
-    externalEditorItem = new CheckboxMenuItem("Use External Editor");
-    externalEditorItem.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        //System.out.println(e);
-        if (e.getStateChange() == ItemEvent.SELECTED) {
-          editor.setExternalEditor(true);
-        } else {
-          editor.setExternalEditor(false);
-        }
-      }
-    });
-    menu.add(externalEditorItem);
-    */
-
-    menu.addActionListener(this);
-    menubar.add(menu);  // add the sketch menu
-
-
-    // help menu
-
-    menu = new Menu("Help");
-    menu.add(new MenuItem("Help"));
-    menu.add(new MenuItem("Reference"));
-    menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
-
-    // macosx already has its own about menu
-    if (platform != MACOSX) {
-      menu.addSeparator();
-      menu.add(new MenuItem("About Processing"));
-    }
-    menu.addActionListener(this);
-    menubar.setHelpMenu(menu);
-
-
-    // set all menus
-
-    this.setMenuBar(menubar);
-
 
     // load preferences and finish up
 
@@ -381,19 +229,6 @@ public class PdeBase extends JFrame implements ActionListener
     editor.restorePreferences();
 
     show();
-  }
-
-
-  // antidote for overthought swing api mess for setting accelerators
-
-  static public JMenuItem newMenuItem(String title, char what) {
-    return newMenuItem(title, what, false);
-  }
-
-  static public JMenuItem newMenuItem(String title, char what, boolean shift) {
-    JMenuItem menuItem = new JMenuItem(title);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | (shift ? ActionEvent.SHIFT_MASK : 0)));
-    return menuItem;
   }
 
 
@@ -590,101 +425,6 @@ public class PdeBase extends JFrame implements ActionListener
       }
     }
     return ifound;
-  }
-
-
-  /*
-  class HistoryMenuListener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      editor.selectHistory(e.getActionCommand);
-    }
-  }
-  */
-
-  public void rebuildHistoryMenu(String path) {
-    rebuildHistoryMenu(historyMenu, path);
-  }
-
-  public void rebuildHistoryMenu(Menu menu, String path) {
-    if (!recordingHistory) return;
-
-    menu.removeAll();
-
-    File hfile = new File(path);
-    if (!hfile.exists()) return;  // no history yet
-
-    MenuItem item = new MenuItem("Clear History");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (!editor.historyFile.delete()) {
-            System.err.println("couldn't erase history");
-          }
-          rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
-        }
-      });
-    menu.add(item);
-    menu.addSeparator();
-
-    try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(path))));
-      String line = null;
-
-      int historyCount = 0;
-      String historyList[] = new String[100];
-
-      try {
-        while ((line = reader.readLine()) != null) {
-        //while (line = reader.readLine()) {
-        //while (true) { line = reader.readLine();
-          //if (line == null) continue;
-          //System.out.println("line: " + line);
-          if (line.equals(PdeEditor.HISTORY_SEPARATOR)) {
-            // next line is the good stuff
-            line = reader.readLine();
-            int version = 
-              Integer.parseInt(line.substring(0, line.indexOf(' ')));
-            if (version == 1) {
-              String whysub = line.substring(2);  // after "1 "
-              String why = whysub.substring(0, whysub.indexOf(" -"));
-              //System.out.println("'" + why + "'");
-
-              String readable = line.substring(line.lastIndexOf("-") + 2);
-              if (historyList.length == historyCount) {
-                String temp[] = new String[historyCount*2];
-                System.arraycopy(historyList, 0, temp, 0, historyCount);
-                historyList = temp;
-              }
-              historyList[historyCount++] = why + " - " + readable;
-
-            } // otherwise don't know what to do
-          }
-        }
-        //System.out.println(line);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-      // add the items to the menu in reverse order
-      /*
-      ActionListener historyMenuListener = 
-        new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              editor.retrieveHistory(e.getActionCommand());
-            }
-          };
-      */
-
-      for (int i = historyCount-1; i >= 0; --i) {
-        MenuItem mi = new MenuItem(historyList[i]);
-        mi.addActionListener(historyMenuListener);
-        menu.add(mi);
-      }
-
-      reader.close();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
 
