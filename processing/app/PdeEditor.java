@@ -461,7 +461,7 @@ public class PdeEditor extends JPanel {
       //JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
       MenuItem menuItem = new MenuItem(modeStr + " - " + readableDate);
       menuItem.addActionListener(base.historyMenuListener);
-      base.historyMenu.insert(menuItem, 0);
+      base.historyMenu.insert(menuItem, 2);
 
       historyWriter.flush();
       historyWriter.close();
