@@ -1514,6 +1514,12 @@ public class PdeEditor extends JPanel {
       ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
       ZipEntry entry;
 
+      File codeFolder = new File(sketchDir, "code");
+      if (codeFolder.exists()) {
+        String includes = PdeCompiler.includeFolder(codeFolder);
+        PdeCompiler.magicExports(includes, zos);
+      }
+
       // add standard .class files to the jar
       // these are the bagel classes found in export
       // they are a jdk11-only version of bagel
@@ -1533,9 +1539,11 @@ public class PdeEditor extends JPanel {
       if ((dataDir != null) && (dataDir.exists())) {
         String datafiles[] = dataDir.list();
         for (int i = 0; i < datafiles.length; i++) {
-          if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
-            continue;
-          }
+          // don't export hidden files, this handles, . .. .DS_Store
+          if (datafiles[i].charAt(0) == '.') continue;
+          //if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
+          //continue;
+          //}
           entry = new ZipEntry(datafiles[i]);
           zos.putNextEntry(entry);
           zos.write(grabFile(new File(dataDir, datafiles[i])));

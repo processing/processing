@@ -45,15 +45,17 @@ X   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C2
 X   "Type quicktime.std.stdQTConstants was not found"
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
 X   http://docs.info.apple.com/article.html?artnum=120255
+X ignore dotfiles on export, both from code and data folder
+X   no more .DS_Store or other similar files
+X included code is not packaged in the outgoing jar file on export
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066586882;start=0
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
 
-_ included code is not packaged in the outgoing jar file on export
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
-
 
 ................
+
 
 // Rect is not getting it's stroke color set
 
