@@ -1,0 +1,7 @@
+#!/bin/sh
+sudo mkdir /var/spool/uucp
+sudo chmod 775 /var/spool/uucp
+sudo niutil -destroyval / /groups/uucp users `sudo id -p | grep 'login' | sed 's/login.//'`
+sudo niutil -appendprop / /groups/uucp users `sudo id -p | grep 'login' | sed 's/login.//'`
+
+
