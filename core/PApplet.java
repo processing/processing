@@ -2601,9 +2601,173 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  static final public boolean toBoolean(char what) {
+    return ((what == 't') || (what == 'T') || (what == '1'));
+  }
+
+  static final public boolean toBoolean(int what) {  // this will cover byte
+    return (what != 0);
+  }
+
+  static final public boolean toBoolean(float what) {
+    return (what != 0);
+  }
+
+  static final public boolean toBoolean(String what) {
+    return new Boolean(what).booleanValue();
+  }
+
+  //
+
+  static final public boolean[] toBoolean(char what[]) {
+    boolean outgoing[] = new boolean[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] =
+        ((what[i] == 't') || (what[i] == 'T') || (what[i] == '1'));
+    }
+    return outgoing;
+  }
+
+  static final public boolean[] toBoolean(byte what[]) {
+    boolean outgoing[] = new boolean[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (what[i] != 0);
+    }
+    return outgoing;
+  }
+
+  static final public boolean[] toBoolean(float what[]) {
+    boolean outgoing[] = new boolean[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (what[i] != 0);
+    }
+    return outgoing;
+  }
+
+  static final public boolean[] toBoolean(String what[]) {
+    boolean outgoing[] = new boolean[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = new Boolean(what[i]).booleanValue();
+    }
+    return outgoing;
+  }
+
+  // 
+
+  static final public byte toByte(boolean what) {
+    return what ? (byte)1 : 0;
+  }
+
+  static final public byte toByte(char what) {
+    return (byte) what;
+  }
+
+  static final public byte toByte(int what) {
+    return (byte) what;
+  }
+
+  static final public byte toByte(float what) {  // nonsensical
+    return (byte) what;
+  }
+
+  static final public byte[] toByte(String what) {  // note: array[]
+    return what.getBytes();
+  }
+
+  //
+
+  static final public byte[] toByte(boolean what[]) {
+    byte outgoing[] = new byte[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = what[i] ? (byte)1 : 0;
+    }
+    return outgoing;
+  }
+
+  static final public byte[] toByte(char what[]) {
+    byte outgoing[] = new byte[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (byte) what[i];
+    }
+    return outgoing;
+  }
+
+  static final public byte[] toByte(int what[]) {
+    byte outgoing[] = new byte[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (byte) what[i];
+    }
+    return outgoing;
+  }
+
+  static final public byte[] toByte(float what[]) {  // nonsensical
+    byte outgoing[] = new byte[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (byte) what[i];
+    }
+    return outgoing;
+  }
+
+  static final public byte[][] toByte(String what[]) {  // note: array[][]
+    byte outgoing[][] = new byte[what.length][];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = what[i].getBytes();
+    }
+    return outgoing;
+  }
+
+  //
+
+  static final public char toChar(boolean what) {  // 0/1 or T/F ?
+    return what ? '1' : '0';
+  }
+
+  static final public char toChar(int what) {
+    return (char) what;
+  }
+
+  static final public char toChar(float what) {  // nonsensical
+    return (char) what;
+  }
+
+  static final public char[] toChar(String what) {  // note: array[]
+    return what.toCharArray();
+  }
+
+  //
+
   static final public int toInt(boolean what) {
     return what ? 1 : 0;
   }
+
+  static final public int toInt(byte what) {
+    return what;
+  }
+
+  static final public int toInt(char what) {
+    return what;
+  }
+
+  static final public int toInt(float what) {
+    return (int) what;
+  }
+
+  static final public int toInt(String what) {
+    try {
+      return Integer.parseInt(what);
+    } catch (NumberFormatException e) { }
+    return 0;
+  }
+
+  static final public int toInt(String what, int otherwise) {
+    try {
+      return Integer.parseInt(what);
+    } catch (NumberFormatException e) { }
+    
+    return otherwise;
+  }
+
+  //
 
   static final public int[] toInt(boolean what[]) {
     int list[] = new int[what.length];
@@ -2611,10 +2775,6 @@ public class PApplet extends Applet
       list[i] = what[i] ? 1 : 0;
     }
     return list;
-  }
-
-  static final public int toInt(byte what) {
-    return what;
   }
 
   static final public int[] toInt(byte what[]) {
@@ -2625,10 +2785,6 @@ public class PApplet extends Applet
     return list;
   }
 
-  static final public int toInt(char what) {
-    return what;
-  }
-
   static final public int[] toInt(char what[]) {
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -2637,39 +2793,12 @@ public class PApplet extends Applet
     return list;
   }
 
-  static final public int toInt(float what) {
-    return (int) what;
-  }
-
   static public int[] toInt(float what[]) {
     int inties[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       inties[i] = (int)what[i];
     }
     return inties;
-  }
-
-
-  /**
-   * Wrapper for tedious Integer.parseInt function
-   */
-  static public int toInt(String what) {
-    try {
-      return Integer.parseInt(what);
-    } catch (NumberFormatException e) { }
-    return 0;
-  }
-
-
-  /**
-   * Wrapper for tedious Integer.parseInt function
-   */
-  static public int toInt(String what, int otherwise) {
-    try {
-      return Integer.parseInt(what);
-    } catch (NumberFormatException e) { }
-    
-    return otherwise;
   }
 
 
@@ -2709,9 +2838,21 @@ public class PApplet extends Applet
     return output;
   }
 
+  //
+
+  //
+
+  static final public String toString(boolean what) {
+    return what ? "true" : "false";
+  }
+
 
   // ...........................................................
 
+
+  static final public float toFloat(boolean what) {
+    return what ? 1 : 0;
+  }
 
   /**
    * Wrapper for tedious new Float(string).floatValue().
@@ -2780,6 +2921,9 @@ public class PApplet extends Applet
     }
     return output;
   }
+
+
+  // ...........................................................
 
 
   /**

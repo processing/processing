@@ -23,6 +23,8 @@ o readUntil() should do the proper thing if the data is not available
 o   i.e. either return null, or block until it's available? -> ret null
 X "paste" isn't setting the "modified" bit for PdeEditor
 X   i.e. cut -> new file -> paste doesn't mark any as changed
+X "include all chars" and all the bugs it represents
+X working on datatype conversions
 
 _ System.out isn't being heard from P* classes
 _   errors inside those classes also causing weirdness
