@@ -414,7 +414,7 @@ public class PdeEditor extends JPanel {
       if(serialPort != null) {
         PdeBase.properties.put("serial.port", serialPort);
       }
-      
+
       boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
       setExternalEditor(ee);
 
@@ -1504,32 +1504,16 @@ afterwards, some of these steps need a cleanup function
       ps.println("</body>");
       ps.println("</html>");
 
-           /*
-      ps.println("<HTML> <BODY BGCOLOR=\"white\">");
-      ps.println();
-      ps.println("<BR> <BR> <BR> <CENTER>");
-
-      ps.println();
-      ps.print("<APPLET CODE=\"" + exportSketchName + "\" ARCHIVE=\"");
-      ps.print(exportSketchName + ".jar");
-      ps.println("\" WIDTH=" + wide + " HEIGHT=" + high + ">");
-      ps.println("</APPLET>");
-      ps.println();
-
-      ps.println("<A HREF=\"" + exportSketchName + ".java\">source code</A>");
-      ps.println();
-
-      ps.println("</CENTER>");
-
-      ps.println("</BODY> </HTML>");
-           */
-
       ps.flush();
       ps.close();
 
 #ifdef MACOS
       // this chunk left disabled, because safari doesn't actually
       // set the type/creator of html files it makes
+
+      // however, for macos9, this should be re-enabled
+      // (but it's not here since macos9 isn't supported for beta)
+
       /*
       // thank you apple, for changing this
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
@@ -1774,11 +1758,6 @@ afterwards, some of these steps need a cleanup function
     String prog = textarea.getText();
     makeHistory(prog, BEAUTIFY);
 
-    //if ((prog.charAt(0) == '#') || (prog.charAt(0) == ';')) {
-    //message("Only DBN code can be made beautiful.");
-    //buttons.clear();
-    //return;
-    //}
     char program[] = prog.toCharArray();
     StringBuffer buffer = new StringBuffer();
     boolean gotBlankLine = false;

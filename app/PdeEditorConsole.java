@@ -38,21 +38,13 @@ import javax.swing.text.*;
 public class PdeEditorConsole extends JScrollPane {
   PdeEditor editor;
 
+  JTextPane consoleTextPane;
   StyledDocument consoleDoc;
+
   MutableAttributeSet stdStyle;
   MutableAttributeSet errStyle;
 
-/* for potential cross platform whitespace munging  
-  static final byte CR  = (byte)'\r';
-  static final byte LF  = (byte)'\n';
-  static final byte TAB = (byte)'\t';
-  static final int TAB_SIZE = 2;
-*/
-
   boolean cerror;
-
-  //static final int HINSET = 6;
-  //static final int VINSET = 6;
 
   static PrintStream systemOut;
   static PrintStream systemErr;
@@ -67,7 +59,7 @@ public class PdeEditorConsole extends JScrollPane {
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
 
-    JTextPane consoleTextPane = new JTextPane();
+    consoleTextPane = new JTextPane();
     consoleTextPane.setEditable(false);
     consoleDoc = consoleTextPane.getStyledDocument();
 
@@ -75,16 +67,16 @@ public class PdeEditorConsole extends JScrollPane {
     MutableAttributeSet standard = new SimpleAttributeSet();
     StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
     consoleDoc.setParagraphAttributes(0, 0, standard, true);
-    
+
     // build styles for different types of console output
     Color bgColor = PdeBase.getColor("editor.console.bgcolor", 
-                      new Color(26, 26, 26));
+                                     new Color(26, 26, 26));
     Color fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
-                         new Color(153, 153, 153));
+                                        new Color(153, 153, 153));
     Color fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
-                         new Color(204, 51, 0));
+                                        new Color(204, 51, 0));
     Font font = PdeBase.getFont("editor.console.font", 
-                  new Font("Monospaced", Font.PLAIN, 11));
+                                new Font("Monospaced", Font.PLAIN, 11));
 
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);
@@ -93,7 +85,7 @@ public class PdeEditorConsole extends JScrollPane {
     StyleConstants.setFontFamily(stdStyle, font.getFamily());
     StyleConstants.setBold(stdStyle, font.isBold());
     StyleConstants.setItalic(stdStyle, font.isItalic());
-    
+
     errStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(errStyle, fgColorErr);
     StyleConstants.setBackground(errStyle, bgColor);
@@ -103,23 +95,25 @@ public class PdeEditorConsole extends JScrollPane {
     StyleConstants.setItalic(errStyle, font.isItalic());
 
     consoleTextPane.setBackground(bgColor);
-        
+
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
 
-    // calculate height of a line of text in pixels and size window accordingly
+    // calculate height of a line of text in pixels 
+    // and size window accordingly
     FontMetrics metrics = this.getFontMetrics(font);
     int height = metrics.getAscent() + metrics.getDescent();
     int lines = PdeBase.getInteger("editor.console.lines", 6);
     int sizeFudge = 10; // unclear why this is necessary, but it is
-    Dimension prefDimension = new Dimension(1024, (height * lines) + sizeFudge);
+    Dimension prefDimension = 
+      new Dimension(1024, (height * lines) + sizeFudge);
     setPreferredSize(prefDimension);
 
     if (systemOut == null) {
       systemOut = System.out;
       systemErr = System.err;
 
-      // no text thing on macos
+      // macos9/macosx do this by default, disable for those platforms
       boolean tod = ((PdeBase.platform != PdeBase.MACOSX) &&
                      (PdeBase.platform != PdeBase.MACOS9));
 
@@ -157,27 +151,25 @@ public class PdeEditorConsole extends JScrollPane {
 
 
   public void write(byte b[], int offset, int length, boolean err) {
+    if (err != cerror) {
+      // advance the line because switching between err/out streams
+      // potentially, could check whether we're already on a new line
+      message("", cerror, true);
+    }
 
-//    synchronized (cerror) { // has to be an object...
-      if (err != cerror) {
-        // advance the line because switching between err/out streams
-        // potentially, could check whether we're already on a new line
-        message("", cerror, true);
-  }
+    // we could do some cross platform CR/LF mangling here before outputting
 
-      // we could do some cross platform CR/LF mangling here before outputting
-      
-      // add text to output document
-      message(new String(b, offset, length), err, false);
-      // set last error state
-      cerror = err;
-//    }
+    // add text to output document
+    message(new String(b, offset, length), err, false);
+    // set last error state
+    cerror = err;
   }
 
 
   public void message(String what, boolean err, boolean advance) {
     // under osx, suppress the spew about the serial port
     // to avoid an error every time someone loads their app
+    // (the error is dealt with in PdeBase with a message dialog)
     if (PdeBase.platform == PdeBase.MACOSX) {
       if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
       if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
@@ -185,7 +177,7 @@ public class PdeEditorConsole extends JScrollPane {
 
     // to console display
     appendText(what, err);
-    
+
     if (err) {
       systemErr.print(what);
     } else {
@@ -202,31 +194,19 @@ public class PdeEditorConsole extends JScrollPane {
     }
   }
 
-  private void appendText(String text, boolean err)
-  {
+
+  private void appendText(String text, boolean err) {
     try {
-      consoleDoc.insertString(consoleDoc.getLength(), text, err ? errStyle : stdStyle);
-    }
-    catch(Exception e) {}
-    }
+      consoleDoc.insertString(consoleDoc.getLength(), text, 
+                              err ? errStyle : stdStyle);
 
-/*
-// no longer needed because setPreferredSize is used
+      // always move to the end of the text as it's added
+      consoleTextPane.setCaretPosition(consoleDoc.getLength());
 
-  public Dimension getPreferredSize() {
-    return getMinimumSize();
+    } catch (Exception e) { }
   }
-
-  public Dimension getMinimumSize() {
-    return new Dimension(600, PdeEditor.GRID_SIZE * 3);
-  }
-
-  public Dimension getMaximumSize() {
-    return new Dimension(3000, PdeEditor.GRID_SIZE * 3);    
 }
-*/
-  
-}
+
 
 class PdeEditorConsoleStream extends OutputStream {
   PdeEditorConsole parent;
@@ -269,29 +249,6 @@ class PdeEditorConsoleStream extends OutputStream {
         echo = null;
       }
     }
-    /*
-    //System.out.println("leech2:");
-    if (length >= 1) {
-      int lastchar = b[offset + length - 1];
-      if (lastchar == '\r') {
-        length--;
-      } else if (lastchar == '\n') {
-        if (length >= 2) {
-          int secondtolastchar = b[offset + length - 2];
-          if (secondtolastchar == '\r') {
-            length -= 2;
-          } else { 
-            length--;
-          }
-        } else {
-          length--;
-        }
-      }
-      //if ((lastchar = '\r') || (lastchar == '\n')) length--;
-    }
-    //if (b[offset + length - 1] == '\r'
-    parent.message("2: " + length + " " + new String(b, offset, length), err);
-    */
   }
 
   public void write(int b) {
@@ -306,6 +263,5 @@ class PdeEditorConsoleStream extends OutputStream {
         echo = null;
       }
     }
-    //parent.message(String.valueOf((char)b), err);
   }
 }

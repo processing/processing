@@ -188,8 +188,8 @@ our priority for how well the beast runs looks like:
 5. linux
 
 windows is the superior platform for running java applications. it's
-not because we like windows the best, so sorry to the zealots in all
-other corners of the machine space, but that's just how it is. the vm
+not because we like windows the best, (sorry to the zealots in all
+other corners of the machine space) but that's just how it is. the vm
 for mac os x is really quite good (especially when compared to apple's
 previous efforts), but it's still a bit behind. we think os x will be
 a great bet for the future, and apple is putting all their feeble
@@ -199,7 +199,8 @@ developing the version for mac os 9 is a big headache, but we think
 lots of people still use the crusty operating system, so we're going
 to keep supporting it for the meantime. the guess is that a lot of
 schools are still using it in their labs, and since schools are a
-significant target for the environment, we gotta play along.
+significant target for the environment, we gotta play along. in the
+short term, however, development for mac os 9 has been suspended.
 
 windows 95/98/ME is a piece of crap, but since lots of people (are
 often forced to) use it, we'll try and support. early alpha versions
@@ -220,11 +221,7 @@ you tell us about them, so we can fix them.
 
 MAC OS X
 
-note that this release does *NOT* work under java 1.4. the most recent 
-version of 1.4 we tested is DP8, which was still too buggy and unstable 
-to run p5.
-
-the most current release has only been tested on Mac OS X 10.2.3. 
+the most current release has only been tested on Mac OS X 10.2.6. 
 your mileage may vary if you're running something else. actually, your
 mileage will vary no matter what, because who knows what this software
 is gonna do. you're playing with free, alpha software. get psyched!
@@ -235,23 +232,24 @@ Update 1", the latter of which is available as a free update from the
 "Software Update" control panel. it can also be downloaded from
 http://www.apple.com/downloads/macosx/apple/ or from:
 http://www.apple.com/downloads/macosx/apple/java131.html
+for what it's worth, we don't test processing under mac os x 10.1 and
+we don't recommend it at all. 
 
-text area & mouse wheel.. in order to get the text area working in a
-reasonable fashion, we had to switch to using swing text components
-because of bugs in apple's java implementation. phooey on apple. the
-editor in this release should behave much better, but mouse wheel
-support is disabled until apple finishes an implementation of java
-1.4. if this makes you sad, email steve jobs and tell him to make the
-java team quit patting themselves on the back and get to work on
-finishing 1.4.
+mouse wheel support only works if you're using java 1.4. the latest
+version of java will be available via the software update control
+panel.
 
-we're currently playing with the developer preview releases of 1.4,
-but haven't done anything too fancy with it yet.
+if you're having random troubles (exceptions being thrown, 
+screen painting weirdness, general confusion) you might want to 
+try running processing with java 1.3.1 instead. to do so, 
+right-click or control-click the processing application and select 
+"Show Package Contents". go to Contents -> Resources -> and then 
+edit MRJApp.properties, to include the following line:
+com.apple.mrj.application.JVMVersion=1.3.1
 
-"Caught java.lang.UnsatisfiedLinkError" on startup.. in order to 
-use the serial port under macosx, you'll need to install RXTX, 
-the serial port driver. this is for more advanced users, and the 
-package is included with the p5 download. it includes its own
+in order to use the serial port under macosx, you'll need to install
+RXTX, the serial port driver. this is for more advanced users, and 
+the package is included with the p5 download. it includes its own
 instructions, check inside the 'serial' folder for details. 
 
 naming of sketches.. on other platforms, you aren't allowed to type
@@ -274,19 +272,15 @@ apple's bugs.
 
 MAC OS 9
 
+we have temporarily suspended development for mac os 9, because we
+don't have time to fight with this dying os before beta. we hope to
+resume mac os 9 development before releasing the final 1.0 version.
+
 java applications on classic mac os are in a bad state, as apple has
 decided (rightfully so) to abandon further development of their java
 runtime under OS 9.
 
-the most recent release (revision 46), does not run under Mac OS 9. 
-this is due to a few issues that were found just before release, and
-i didn't want to hold up the release on the other platforms.
-
-speed: this version runs very slowly. the first time you hit the 'run'
-button, it might take a while to bring up the actual
-program. hopefully after that, things will improve.
-
-versions: this version has only been tested under Mac OS 9.2.2. 
+versions: we only test under Mac OS 9.2.2, all others.. who knows?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -307,11 +301,7 @@ to go. the advanced version is for people who already have java
 installed (and don't want to deal with the 20MB download), and know 
 what they're doing enough that they can also install the serial port 
 code by hand. instructions on installing the serial code are in the 
-'serial' folder inside the advanced release.
-
-in the most recent release, we've removed the java 1.4 runtime, so 
-the download is far smaller, however you need to install java before
-processing will work. visit http://java.sun.com/getjava to download.
+'serial' folder inside the 'expert' release.
 
 out of memory? try adjusting the parameters in the file 'run.bat' and
 use that to run instead of Processing.exe. short instructions can be

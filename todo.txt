@@ -25,6 +25,14 @@ X get proper tab comments into source files
 X   http://www.jwz.org/doc/tabs-vs-spaces.html
 X get proper licensing info into source files
 X fix bezier curve issues (p. 56 in illustrator spec)
+X pde_keywords.properties isn't getting copied into work/lib
+X set 'present' key command to cmd-shift-r so that p can be used for print
+X add chmod -R +x to reference after unzipping on windows
+X horizontal scroller has enormous range
+X   horizontal scroller has slightly less enormous range
+X   turned off weirdo scrolling
+X dim serial port menu when not available
+
 
 macosx
 X had to disable MRJFileUtils stuff on osx at last minute before 53
@@ -46,8 +54,16 @@ Info.plist, setting JVMVersion
 * 1.3* - use any version of JDK 1.3.x. Do not use JDK 1.4 even if it's dflt.
 * 1.3+ - use the latest JDK version from JDK 1.3 onward, up to default JDK. 
 * 1.4+ - use JDK 1.4 or later, even if an earlier JDK is the default. 
+o and then edit Info.plist to include the following lines:
+o <key>JVMVersion</key> <string>1.3.1</string>
 X control-click (right-click?) for macosx doesn't show popup
 X   in jedittextarea.. so added isPopupTrigger to events as well
+X take a look at sourceforge bugs
+X dataInputStream, setUseCaches on the url to false
+X   URLConnection.setUseCaches(false)
+o   parent.obj.close() on the url
+b X set file type/creator for .pde files.. TEXTPde1
+
 
 dh X save last-used serial to sketch.properties on quit
 dh X rename sketch 'can't rename' error (file being kept open)
@@ -55,6 +71,20 @@ dh X   open sketch, make a change, save, run, rename -> error
 dh X context menu cut/copy/paste
 dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
 dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800
+dh X "look up in reference" function for selecting keywords
+
+dh b _ improve the console
+dh b _   clear console each time 'run' gets hit
+dh b _     don't actually clear, just advance by the number of lines visible
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+dh b _   maybe it needs to be a textarea?
+dh b _   printing of objects, esp when null, in jdk 14 seems to crash
+dh b _     this may have been fixed
+dh b o   exception when trying to write to stdout
+dh b _   may need horizontal scroller, or text wrap
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
+dh b _   can't copy text from console directly
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
 
 
 ..................................................................
@@ -62,11 +92,53 @@ dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;a
 
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
-bf _ horizontal scroller on the mac has enormous range
-bf _ make a note about macosx problems with 1.4
-bf _   currently the only fix is to switch to java 1.3
 
-_ horizontal scroller 
+macosx
+b _ change Proce55ing.app to Processing.app
+b _   should cvs be changed or just do this as a renaming step?
+b _ make a note about macosx problems with 1.4
+b _   currently the only fix is to switch to java 1.3
+b _ double-check to see if wheel mouse is working
+b _ macosx quit handler takes over ctrl-q
+b _   so file->quit doesn't get called on close
+b _   so sketch.properties doesn't get saved
+b _ handlers for basic events
+b _   MRJAboutHandler (just show splash screen)
+b _     image for 'about processing'
+b _   MRJPrefsHandler (open pde.properties in a text editor)
+b _   MRJQuitHandler (confirm quit, may need to be in another thread)
+b _   MRJOpenApplicationHandler and MRJOpenDocumentHandler
+b _     especially the open document fella
+b _     under osx, app won't get doc unless app already launched
+b _ build gl4java for java 1.4
+b _ rxtx is a problem in general.. how to improve installation
+b _   report of a problem with the rxtx installer being bad
+b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
+b _ remove 'quit' from file menu (osx only)
+b _ Event.consume() doesn't work on entry fields 
+b _   manifests itself in sketch naming, can't be constrained
+b _   may not be the case under swing?
+b _ escape key not quitting presentation mode
+b _   no events seem to be coming through at all
+b _ splash screen 
+b _ select all (apple-a) on azerty keyboard is quitting the app
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
+b _ would be nice to have macosx packaged up as a single .app file
+
+_ why is the end of text messages under osx getting chopped?
+
+_ why doesn't processing.app work anymore
+
+_ mac 1.4 crashes when attempting to stop applets (pcho definitely)
+_   locking up on my machine after hitting stop
+_   is this only a problem when run from run.sh?
+
+_ examples should be read-only
+_   stored in a separate folder from the sketchbook
+
+_ move reference lookup code up into PdeBase
+_   remove ReferenceKeys class, make it an inner class
+_   add reference lookup option to the edit menu
 
 _ error message dialog?
 _   maybe something that shows stack trace 
@@ -85,10 +157,17 @@ _     will need to be done for gl4java as well
 linux
 _ bring linux up to 1.4
 _   grab rxtx for linux and include with distribution
-_ pde_keywords.properties isn't getting copied into work/lib
 
+buzz.pl
+opt-in/opt-out #ifdef setup
+rather than forcing people to use buzz.pl to compile. could pick
+features that are opt-out, like net, that would have comments:
+//#ifdef NET
+//#endif
+meaning that it would normally get compiled without any trouble
+or similarly, could have other sections commented out that are opt-in,
+that use #ifdefs to be enabled.`
 
-bf _ take a look at sourceforge bugs
 
 thesis / acg
 
@@ -102,6 +181,7 @@ bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Softwa
 bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
 
 bf _ make bagel more usable as standalone
+bf _   #ifdef to remove client and server code as well
 bf _   breakout BGraphics (have its own BImage)
 bf _   breakout BApplet into BComponent ? (fix out-of-bounds mouse)
 bf _   possible use of BUtils ?
@@ -113,6 +193,10 @@ bf _   exports pixels or a BImage or does MemoryImageSource itself
 bf _   move math functions into utility library associated
 bf _     with bagel, because those will be useful on other bagel platforms
 bf _     pApplet will call BagelMath.whatever, so still looks like cos()
+bf _ break out BSerial as separate object like BVideo
+bf _   include rxtx and the rest of that setup in subfolder
+bf _   BSerial.flush and BSerial.available in object
+
 bf _ need to resolve issues between rendering screen/file
 bf _   illustrator-based rendering needs to work for ars projects
 bf _   screen may be 400x400 pixels, but file be 36x36"
@@ -153,8 +237,9 @@ bf _ history
 bf X   post something on the bboard about it
 bf _   oooh.. combine in app to show diffs
 
+X console: scroll to most current line, or scroll as changing
+
 _ console -> should be using JEditTextArea not TextPane
-_   scroll to most current line, or scroll as changing
 _   set decent fonts (probably same as editor above), looks bad on mac
 _   remove the border around the edge
 _   what's with the 2 blank lines on startup?
@@ -337,8 +422,6 @@ bf b _   or buffers of specific length with a sync byte
 
 BAGEL / Serial
 
-   b _ break out BSerial as separate object like BVideo
-   b _ BSerial.flush and BSerial.available
    b _ basic usb support?
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
 
@@ -601,29 +684,15 @@ if you dream it, you can do it.
 
 dh b _ find/replace
 dh b _   ctrl-f for find, g for find next, h for next occurrence of selected
-dh b _   "look up in reference" function for selecting keywords
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
 
 
 PDE / Details
 
-dh b _ improve the console
-dh b _   clear console each time 'run' gets hit
-dh b _     don't actually clear, just advance by the number of lines visible
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-dh b _   maybe it needs to be a textarea?
-dh b _   printing of objects, esp when null, in jdk 14 seems to crash
-dh b _     this may have been fixed
-dh b _   exception when trying to write to stdout
-dh b _   may need horizontal scroller, or text wrap
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
-dh b _   can't copy text from console directly
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
 dh b _ p5 becomes a memory hog (benelek and glen murphy)
 dh b _   even without sketches open, perhaps not gc'ing properly
 dh b _   objects probably not getting finalized
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
-
 dh 1 _ beautify() ignores colons for case statements
 dh 1 _   need to tie this to the parser instead
 dh 1 _ background of menus on winxp is white
@@ -631,12 +700,12 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 dh 1 _   SystemColor doesn't differentiate between menu background and top
 dh 1 _   probably fixed in swing, but we're using java.awt.Menu
 dh 1 _   test by rewriting with java.awt.Menu
-dh 1 _ need to check if volume is read-only, notify and quit if it is
-dh 1 _   people are trying to run off the disk image
-dh 1 _   need to pay attention to when running from read-only drive
-dh 1 _     reported by brandenberg
-dh 1 _    "p5 will launch from the disk image, but will 
-dh 1 _     not draw the sketch name bar doesn't appear"
+dh b _ need to check if volume is read-only, notify and quit if it is
+dh b _   people are trying to run off the disk image
+dh b _   need to pay attention to when running from read-only drive
+dh b _     reported by brandenberg
+dh b _    "p5 will launch from the disk image, but will 
+dh b _     not draw the sketch name bar doesn't appear"
 dh 1 _ size() has memory limitations (pitaru)
 dh 1 _   catch OutOfMemoryError inside size() and let the user know
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
@@ -669,6 +738,12 @@ dh 1 _   and back over the menu, the text-area cursor type remains.
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
 dh 1 _ scroll bar has some painting weirdness with jedit textarea
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
+
+   1 _ dim edit menus as appropriate during selection/no selection/etc
+   1 _ do objects need to be swing components to draw properly?
+   1 _   macosx has update weirdness for non JComponent items
+   1 _ switch to newer syntax package from jedit cvs
+   1 _   is enormous horizontal scroller issue fixed properly
 
 
 danh couldn't replicate on win2k, but test under osx and others
@@ -801,33 +876,9 @@ b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 
 
 DISTRIBUTION / Mac OS X
-b _ double-check to see if wheel mouse is working
-b _ handlers for basic events
-b _   MRJAboutHandler (just show splash screen)
-b _     image for 'about processing'
-b _   MRJPrefsHandler (open pde.properties in a text editor)
-b _   MRJQuitHandler (confirm quit, may need to be in another thread)
-b _   MRJOpenApplicationHandler and MRJOpenDocumentHandler
-b _     especially the open document fella
-b _     under osx, app won't get doc unless app already launched
-b _ dataInputStream, setUseCaches on the url to false
-b _   URLConnection.setUseCaches(false)
-b _   parent.obj.close() on the url
-b X set file type/creator for .pde files.. TEXTPde1
 
-b _ build gl4java for java 1.4
-b _ rxtx is a problem in general.. how to improve installation
-b _ report of a problem with the rxtx installer being bad
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
-b _ remove 'quit' from file menu (osx only)
-b _ Event.consume() doesn't work on entry fields 
-b _   manifests itself in sketch naming, can't be constrained
-b _   may not be the case under swing?
-b _ escape key not quitting presentation mode
-b _   no events seem to be coming through at all
-b _ splash screen 
-b _ select all (apple-a) on azerty keyboard is quitting the app
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
+1 _ set file type/creator for .pde files of examples
+
 
 
 DISTRIBUTION / Mac OS 9

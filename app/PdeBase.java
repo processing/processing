@@ -39,6 +39,8 @@ import javax.swing.undo.*;
 
 public class PdeBase extends Frame implements ActionListener {
   static Properties properties;
+  static Properties keywords; // keyword -> reference html lookup
+
   static Frame frame;  // now 'this'
   static String encoding;
   static Image icon;
@@ -175,7 +177,7 @@ public class PdeBase extends Frame implements ActionListener {
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
       frame.setIconImage(icon);
-    } catch (Exception e) { } // fail silently
+    } catch (Exception e) { } // fail silently, no big whup
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -213,40 +215,33 @@ public class PdeBase extends Frame implements ActionListener {
       }
       //properties.list(System.out);
 
+
     } catch (Exception e) {
       System.err.println("Error reading pde.properties");
       e.printStackTrace();
       //System.exit(1);
     }
-    //    int width = getInteger("window.width", 600);
-    //    int height = getInteger("window.height", 350);
 
-    /*
-    encoding = get("encoding");
-    boolean beautify = false; 
-    boolean convertSemicolons = false;
-    String program = get("program"); 
-    if (program != null) { 
-    //program = getFile(program);
-    } else {
-      program = get("inline_program");
-      convertSemicolons = true;
-    } 
-    if (program != null) {
-      // don't beautify if it's java code
-      if (program.indexOf("extends PdePlayer") == -1) {
-        // don't convert ; to \n if scheme  
-        if (program.charAt(0) != ';') {  
-          if (convertSemicolons) {
-            program = program.replace(';', '\n'); 
-          }
-          // not scheme, but don't beautify if it's python 
-          if (program.charAt(0) != '#') 
-            beautify = true; 
-        }  
-      }
-    } 
-    */
+
+    // read in the keywords for the reference
+
+    final String KEYWORDS = "pde_keywords.properties";
+    keywords = new Properties();
+    try {
+      // this probably won't work on macos9
+      // seems to work on macosx java 1.4, though i don't think
+      // it worked on java 1.3 for macosx (see implementation above)
+      keywords.load(getClass().getResource(KEYWORDS).openStream());
+      
+    } catch (Exception e) {
+      System.err.println("Error loading keywords, " + 
+                         "reference lookup will be unavailable");
+      System.err.println(e.toString());
+      e.printStackTrace();
+    }
+
+
+    // build the editor object
 
     editor = new PdeEditor(this);
     frame.setLayout(new BorderLayout());
@@ -259,17 +254,12 @@ public class PdeBase extends Frame implements ActionListener {
     menu = new Menu("File");
     menu.add(new MenuItem("New", new MenuShortcut('N')));
     sketchbookMenu = new Menu("Open");
-    //rebuildSketchbookMenu(openMenu);
     menu.add(sketchbookMenu);
     saveMenuItem = new MenuItem("Save", new MenuShortcut('S'));
     saveAsMenuItem = new MenuItem("Save as...", new MenuShortcut('S', true));
     menu.add(saveMenuItem);
     menu.add(saveAsMenuItem);
     menu.add(new MenuItem("Rename..."));
-    //menu.add(new MenuItem("Save", new MenuShortcut('S')));
-    //menu.add(new MenuItem("Save as...", new MenuShortcut('S', true)));
-    //menu.add(new MenuItem("Rename", new MenuShortcut('S', true)));
-    //menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
     menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
     item = new MenuItem("Export Application", new MenuShortcut('E', true));
     item.setEnabled(false);
@@ -331,6 +321,20 @@ public class PdeBase extends Frame implements ActionListener {
       });
     menu.add(item);
 
+    menu.addSeparator();
+
+    item = new MenuItem("Find in Reference");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          if (editor.textarea.isSelectionActive()) {
+            String text = editor.textarea.getSelectedText();
+            String referenceFile = (String) keywords.get(text);
+            showReference(referenceFile);
+          }
+        }
+      });
+    menu.add(item);
+
     menubar.add(menu);
 
     Document document = editor.textarea.getDocument();
@@ -338,7 +342,7 @@ public class PdeBase extends Frame implements ActionListener {
 
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Run", new MenuShortcut('R')));
-    menu.add(new MenuItem("Present", new MenuShortcut('P')));
+    menu.add(new MenuItem("Present", new MenuShortcut('R', true)));
     menu.add(new MenuItem("Stop", new MenuShortcut('T')));
     menu.addSeparator();
 
@@ -809,26 +813,31 @@ public class PdeBase extends Frame implements ActionListener {
       e.printStackTrace();
     }
 
+    if (serialMenu.getItemCount() == 0) {
+      //System.out.println("dimming serial menu");
+      serialMenu.setEnabled(false);
+    }
+
     // macosx fails on its own when trying to load the library
     // so need to explicitly try here.. not sure if this is the 
     // correct lib, but it's at least one that's loaded inside
     // the javacomm solaris stuff, which is the .jar that's included
     // with the osx release (and rxtx takes over)
     if (platform == MACOSX) {
-        try {
-            System.loadLibrary("SolarisSerialParallel");
-        } catch (UnsatisfiedLinkError e) {
-            //e.printStackTrace();
-            problem = true;
-        }
+      try {
+        System.loadLibrary("SolarisSerialParallel");
+      } catch (UnsatisfiedLinkError e) {
+        //e.printStackTrace();
+        problem = true;
+      }
     }
 
     // only warn them if this is the first time
     if (problem && firstTime) {
       JOptionPane.showMessageDialog(frame,
                                     "Serial port support not installed.\n" +
-                                    "Check the readme for instructions if you " +
-                                    "need to use the serial port.   ",
+                                    "Check the readme for instructions\n" +
+                                    "if you need to use the serial port.    ",
                                     "Serial Port Warning",
                                     JOptionPane.WARNING_MESSAGE);
     }
@@ -906,6 +915,14 @@ public class PdeBase extends Frame implements ActionListener {
   }
 
 
+  static public void showReference(String referenceFile) {
+    String currentDir = System.getProperty("user.dir");
+    openURL(currentDir + File.separator + 
+            "reference" + File.separator + 
+            referenceFile + ".html");
+  }
+
+
   static public void openURL(String url) { 
     try {
       if (platform == WINDOWS) {
@@ -915,7 +932,7 @@ public class PdeBase extends Frame implements ActionListener {
         // include me) it'd be annoying to be dropped into ie.
         //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
 
-	// this uses a shell execute to launch the .html file
+	// the following uses a shell execute to launch the .html file
         // note that under cygwin, the .html files have to be chmodded +x
         // after they're unpacked from the zip file. i don't know why,
         // and don't understand what this does in terms of windows 
@@ -929,7 +946,7 @@ public class PdeBase extends Frame implements ActionListener {
       } else if (platform == MACOSX) {
         //com.apple.eio.FileManager.openURL(url);
         if (!url.startsWith("http://")) url = "file://" + url;
-        System.out.println("trying to open " + url);
+        //System.out.println("trying to open " + url);
         com.apple.mrj.MRJFileUtils.openURL(url);
 
       } else if (platform == MACOS9) {
