@@ -39,7 +39,6 @@ import javax.swing.text.*;
 import com.apple.mrj.*;
 #endif
 
-//public class PdeEditor extends Panel {
 public class PdeEditor extends JPanel {
 
   static final String DEFAULT_PROGRAM = "// type program here\n";
@@ -72,8 +71,7 @@ public class PdeEditor extends JPanel {
   PdeEditorHeader header;
   PdeEditorStatus status;
   PdeEditorConsole console;
-  
-  // new swing jpanel/console
+
   JSplitPane splitPane;
   JPanel consolePanel;
 
@@ -100,7 +98,6 @@ public class PdeEditor extends JPanel {
   Point appletLocation; //= new Point(0, 0);
   Point presentLocation; // = new Point(0, 0);
 
-  //Frame frame;
   Window presentationWindow;
 
   RunButtonWatcher watcher;
@@ -123,9 +120,6 @@ public class PdeEditor extends JPanel {
   static final String TEMP_CLASS = "Temporary";
 
 
-    // hack while fixing layout issues
-    //Component pain;
-
   public PdeEditor(PdeBase base) {
     this.base = base;
 
@@ -146,32 +140,6 @@ public class PdeEditor extends JPanel {
 
     add("West", leftPanel);
 
-
-/* pre-swing version
-    Panel rightPanel = new Panel();
-    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-
-    header = new PdeEditorHeader(this);
-    rightPanel.add("North", header);
-
-    textarea = new JEditTextArea();
-    textarea.setTokenMarker(new PdeTokenMarker());
-
-    rightPanel.add("Center", textarea);
-
-    Panel statusPanel = new Panel();
-    statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
-
-    status = new PdeEditorStatus(this);
-    statusPanel.add("Center", status);
-
-    console = new PdeEditorConsole(this);
-    statusPanel.add("South", console);
-
-    rightPanel.add("South", statusPanel);
-*/
-    // swing version from danh
-    
     JPanel rightPanel = new JPanel();
     rightPanel.setLayout(new BorderLayout());
 
@@ -322,43 +290,6 @@ public class PdeEditor extends JPanel {
           } catch (Exception ex) { }
       }
     });
-
-
-    /*
-    presentationWindow.addWindowListener(new WindowAdapter() {
-        public void windowActivated(WindowEvent e) {
-          //System.out.println(e);
-          //PdeEditorConsole.systemOut.println(e);
-        }
-      });
-      *
-
-    /*
-    Document doc = textarea.document;
-    //System.out.println(doc);
-    doc.addDocumentListener(new DocumentListener() {
-        //editor.setSketchModified(true);
-
-        public void insertUpdate(DocumentEvent e) {
-          //displayEditInfo(e);
-          //System.out.println(e);
-          //if (!sketchModified) setSketchModified(true);
-        }
-        public void removeUpdate(DocumentEvent e) {
-          //displayEditInfo(e);
-          //System.out.println(e);
-        }
-        public void changedUpdate(DocumentEvent e) {
-          //displayEditInfo(e);
-          //System.out.println(e);
-          //if (!sketchModified) setSketchModified(true);
-        }
-        private void displayEditInfo(DocumentEvent e) {
-          //Document doc = (Document)e.getDocument();
-          //System.out.println(e);
-        }
-      });
-    */
   }
 
 
@@ -392,11 +323,8 @@ public class PdeEditor extends JPanel {
       int screenW = Integer.parseInt(skprops.getProperty("screen.w", "-1"));
       int screenH = Integer.parseInt(skprops.getProperty("screen.h", "-1"));
 
-      //if ((windowX != -1) &&
-      //  (screen.width == screenW) && (screen.height == screenH)) {
-      //} else {
       if ((screen.width != screenW) || (screen.height != screenH)) {
-        // not valid for this machine, so invalidate sizing
+        // probably not valid for this machine, so invalidate sizing
         windowX = -1;
       }
 
@@ -405,7 +333,6 @@ public class PdeEditor extends JPanel {
       String user = skprops.getProperty("user.name");
 
       String what = path + File.separator + name + ".pde";
-      //System.out.println(what);
 
       if (windowX != -1) {
         String dividerLocation = 
@@ -485,10 +412,8 @@ public class PdeEditor extends JPanel {
     case AUTOSAVE: modeStr = "autosave"; break;
     case BEAUTIFY: modeStr = "beautify"; break;
     }
-    //String modeStr = (mode == RUN) ? "run" : ((mode == SAVE) ? "save" : "autosave");
 
     try {
-      //PrintWriter historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
       ByteArrayOutputStream old = null;
       if (historyFile.exists()) {
         InputStream oldStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(historyFile)));
@@ -505,17 +430,12 @@ public class PdeEditor extends JPanel {
 
       OutputStream historyStream = 
         new GZIPOutputStream(new FileOutputStream(historyFile));
-      //byte[] buffer = new byte[16384];
-      //int bytesRead;
-      //while ((bytesRead = oldStream.read(buffer)) != -1) {
-      //historyStream.write(buffer, 0, bytesRead);
-      //}
+
       if (old != null) {
         historyStream.write(old.toByteArray());
       }
       PrintWriter historyWriter = 
         new PrintWriter(new OutputStreamWriter(historyStream));
-      //PrintWriter historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
 
       historyWriter.println();
       historyWriter.println(HISTORY_SEPARATOR);
@@ -1046,15 +966,8 @@ afterwards, some of these steps need a cleanup function
       status.error("no file named " + isketchName);
       return;
     }
-    //System.err.println("i'm here!");
-    //System.err.println(isketchName);
-    //System.err.println(isketchFile);
-    //System.err.println(isketchDir);
-    //System.err.println("handleOpen " + isketchName + " " + 
-    //               isketchFile + " " + isketchDir);
-    //System.err.println("made it");
+
     try {
-      //if (true) throw new IOException("blah");
       String program = null;
 
       if (isketchFile.length() != 0) {
@@ -1067,54 +980,12 @@ afterwards, some of these steps need a cleanup function
           buffer.append('\n');
         }
         program = buffer.toString();
-        //System.out.print(program);
-        //textarea.editorSetText(program);
         changeText(program, true);
 
-        //System.out.print(textarea.getText());
-
-        /*
-        int length = (int) isketchFile.length();
-        if (length != 0) {
-          byte data[] = new byte[length];
-
-          int count = 0;
-          while (count != length) {
-            data[count++] = (byte) input.read();
-          }
-        // set the last dir and file, so that they're
-        // the defaults when you try to save again
-        //lastDirectory = file.getCanonicalPath(); //directory;
-        //lastFile = file.getName(); //filename;
-
-        // once read all the bytes, convert it to the proper
-        // local encoding for this system.
-        //textarea.editorSetText(app.languageEncode(data));
-        // what the hell was i thinking when i wrote this code
-        //if (app.encoding == null)
-          program = new String(data);
-        //textarea.editorSetText(new String(data));
-        //System.out.println(" loading program = " + new String(data));
-        //else 
-        //textarea.editorSetText(new String(data, app.encoding));
-        textarea.editorSetText(program);
-        */
-
-        // may be needed because settext fires an event
-        //setSketchModified(false); 
-
       } else {
-        //System.out.println("new guy, so setting empty");
-        // style info only gets set if there's text
-        //textarea.setText("");
-        //textarea.select(0, 0);
         changeText("", true);
-        //textarea.editorSetText(" ");
-        // now set to now text. yay hack!
-        //textarea.editorSetText(""); // this doesn't work. oh well
-        //textarea.setCaretPosition(0); // next best thing
       }
-      //System.out.println("should be done opening");
+
       sketchName = isketchName;
       sketchFile = isketchFile;
       sketchDir = isketchDir;
@@ -1122,16 +993,8 @@ afterwards, some of these steps need a cleanup function
 
       historyFile = new File(sketchFile.getParent(), "history.gz");
       base.rebuildHistoryMenu(historyFile.getPath());
-
-      //if (historyFile.exists()) {
-      //int vlength = (int) historyFile.length();
-      //historyWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(historyFile.getPath(), true))));
-      //historyWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(historyFile.getPath(), true)));
       historyLast = program;
-      //System.out.println("history is at " + historyFile.getPath());
-      //}
 
-      //header.setProject(file.getName(), projectDir);
       header.reset();
 
       presentLocation = null;
