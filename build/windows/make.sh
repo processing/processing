@@ -208,7 +208,7 @@ cd ../../lib/serial
 ../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
 zip -r0q serial.jar processing
 rm -rf processing
-cp serial.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\rxtx_work\\code"
+cp serial.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\rxtx_work\\code"
 
 
 QTJAVA="$WINDIR\\system32\\QTJava.zip"
@@ -225,6 +225,6 @@ cd ../../lib/video
 ../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
 zip -r0q video.jar processing
 rm -rf processing
-cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\new_camera_action\\code"
-cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\movie_action\\code"
+cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\new_camera_action\\code"
+cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\movie_action\\code"
 
