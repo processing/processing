@@ -6,7 +6,7 @@
 if test -d work
 then
 else
-  echo Setting up directories to build P5 on windows...
+  echo Setting up directories to build P5 under Mac OS X
   mkdir work
 #  unzip -q -d work jre.zip
   cp -r ../shared/lib work/
@@ -28,14 +28,21 @@ fi
 cd ../..
 
 
-#PLATFORM_CLASSPATH=java/lib/rt.jar:java/lib/ext/comm.jar
-
-
 ### -- BUILD BAGEL ----------------------------------------------
 cd ..
+# make sure bagel exists, if not, check it out of cvs
+if test -d bagel
+then 
+else
+  echo Doing CVS checkout of bagel...
+  cvs co bagel
+  cd bagel
+  cvs update -P
+  cd ..
+fi
 cd bagel
 
-MACOSX_CLASSPATH=poo
+MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
 
 CLASSPATH=$MACOSX_CLASSPATH
 
@@ -59,9 +66,9 @@ echo Building PDE for JDK 1.3
 
 CLASSPATH=build/macosx/work/classes:build/macosx/work/lib/kjc.jar:build/macosx/work/lib/oro.jar:$MACOSX_CLASSPATH
 
-perl buzz.pl "jikes +D -classpath $CLASSPATH -d build/windows/work/classes" -dJDK13 *.java kjc/*.java 
+perl buzz.pl "jikes +D -classpath $CLASSPATH -d build/macosx/work/classes" -dJDK13 *.java
 
-cd build/windows/work/classes
+cd build/macosx/work/classes
 rm -f ../lib/pde.jar
 zip -0q ../lib/pde.jar *.class
 cd ../..
