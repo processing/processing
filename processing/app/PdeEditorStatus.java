@@ -369,12 +369,16 @@ public class PdeEditorStatus extends Panel
 
 
   public Dimension getPreferredSize() {
+    return getMinimumSize();
+  }
+
+  public Dimension getMinimumSize() {
     return new Dimension(300, PdeEditor.GRID_SIZE);
   }
 
-    public Dimension getMinimumSize() {
-	return getPreferredSize();
-    }
+  public Dimension getMaximumSize() {
+    return new Dimension(3000, PdeEditor.GRID_SIZE);    
+  }
 
 
   public void actionPerformed(ActionEvent e) {
