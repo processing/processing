@@ -82,11 +82,18 @@ public class PdeCompiler implements PdeMessageConsumer{
     // we need to replace any platform-specific separator characters before
     // attemping to compare
     //
-    String fullTempFilename = buildPath.replace(File.separatorChar, '/') 
+    String partialTempPath = buildPath.replace(File.separatorChar, '/') 
       + "/" + className + ".java";
 
-    if (s.indexOf(fullTempFilename) == 0) {
-      String s1 = s.substring(fullTempFilename.length() + 1);
+    // if the partial temp path appears in the error message...
+    //
+    int partialStartIndex = s.indexOf(partialTempPath);
+    if (partialStartIndex != -1) {
+
+      // skip past the path and parse the int after the first colon
+      //
+      String s1 = s.substring(partialStartIndex + partialTempPath.length()
+                              + 1);
       int colon = s1.indexOf(':');
       int lineNumber = Integer.parseInt(s1.substring(0, colon));
       //System.out.println("pde / line number: " + lineNumber);
