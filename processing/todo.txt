@@ -2,7 +2,21 @@
 X is it possible to get rid of KjcApplet
 X   better 'newMessage' trigger with the printstream
 X   notify dmose about changes
-
+o lots of small bugs in graphics engine to be fixed
+o   ArrayIndexOutOfBoundsException is prolly the worst
+o   these will be moot with new code from sami/carlos
+X remove lexer dir from cvs
+X write proper build instructions for bagel
+X   email about bagel doesn't have proper build instructions
+X   need to install cygwin, set CLASSPATH to build
+X   specific version of jikes (currently)
+X make mac version require head/tail from fink ? 
+X   test to see if /sw/bin/head exists, if so use it
+X get dmose's new launcher running
+X   cleanup cvs bunk
+X   modify build/dist to use processing.exe
+X upgrade windows to jre 1.4.2
+X ask on bboard about macosx 1.3 vs 1.4 experiences
 
 dh X save last-used serial to sketch.properties on quit
 dh X rename sketch 'can't rename' error (file being kept open)
@@ -12,41 +26,77 @@ dh X   open sketch, make a change, save, run, rename -> error
 ..................................................................
 
 
-bf _ make mac version require head/tail from fink ? 
-bf _   test to see if /sw/bin/head exists, if so use it
+
+_ try installing serial adapter with p5
+_   tom igoe is using rxtx 2.1.6, patch that into p5
+_   libs from 2.1.6 download for osx seem to work
+_     write script to handle installation, etc.
+_     (maybe do this from inside p5?) 
+_     will need to be done for gl4java as well
+
+bf _ pde_keywords.properties isn't getting copied into work/lib
+
+
+mac stuff
 bf _ set nice background for disk image on macosx
-bf _ lots of small bugs in graphics engine to be fixed
-bf _   ArrayIndexOutOfBoundsException is prolly the worst
+
+bf _ bring linux up to 1.4
+
+language stuff
+bf _ actionscript has nice hastables.. as does perl/python
+bf _   would be nice to get better implementation in there
+
+bf _ write p5 language spec
+
 bf _ make bagel more usable as standalone
 bf _   breakout BGraphics (have its own BImage)
 bf _   breakout BApplet into BComponent ? (fix out-of-bounds mouse)
 bf _   possible use of BUtils ?
 bf _   write documentation on general use
 bf _     along with how to download from sourceforge (anonpass is blank)
-bf _ write p5 language spec
-bf _ remove lexer dir from cvs
+
+bf _ need to resolve issues between rendering screen/file
+bf _   illustrator-based rendering needs to work for ars projects
+bf _   screen may be 400x400 pixels, but file be 36x36"
+
 bf _ horizontal scroller on the mac has enormous range
-bf _ pde_keywords.properties isn't getting copied into work/lib
+bf _ make a note about macosx problems with 1.4
+bf _   currently the only fix is to switch to java 1.3
+
+bf _ look into macos9 version of javac
 
 bf _ need note about setting classpath on platforms when using expert
 bf _ jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 
-bf _ history
-bf _   do people even use it
-bf _   oooh.. combine in app to show diffs
+
+licensing
+bf _ about box 
+bf _   bring up information about gpl, lgpl, and ibmpl
+bf _   check in licenses/dist stuff for jikes etc
+bf _   who has the copyright?
+bf _ jedit syntax is under mit license
+bf _   http://www.opensource.org/licenses/mit-license.php
+bf _   although jedit is under gpl, if we switch to its syntax pkg
+bf _     more info about use is in package.html
+bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
+bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
 
 bf _ get proper tab comments into source files
+bf _   http://www.jwz.org/doc/tabs-vs-spaces.html
+
 bf _ get proper licensing info into source files
+bf _ make sure all linefeeds are consistent (unix)
 bf _ write notes about p5 code spec
+
+bf _ history
+bf X   post something on the bboard about it
+bf _   oooh.. combine in app to show diffs
 
 _ console -> should be using JEditTextArea not TextPane
 _   scroll to most current line, or scroll as changing
 _   set decent fonts (probably same as editor above), looks bad on mac
 _   remove the border around the edge
 _   what's with the 2 blank lines on startup?
-
-ks b _ background(BImage)
-ks b _   also creating background image inside setup()
 
 bf b _ make bagel usable on its own as a drawing surface
 bf b _   needs to be used as a component, without applet 
@@ -61,10 +111,6 @@ bf b _   currently implemented, but somewhat broken
 bf b _   finish this once all the line code is done
 
 bf _ look into eclipse ide a little more
-bf _ platform parity issues
-bf _   bring linux up to 1.4
-bf _   ask on bboard about macosx 1.3 vs 1.4 experiences
-bf _   upgrade windows to 1.4.2
 
 bf _ too many frames drawn before window visible - especially on mac
 
@@ -113,6 +159,11 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 bf b _ cartesian/polar conversion
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
 bf b _   thread includes code for the 2D case
+
+ks b _ background(BImage)
+ks b _   also creating background image inside setup()
+
+_ save console output to a file?
 
 
 ////////////////////////////////////////////////////////////////////
