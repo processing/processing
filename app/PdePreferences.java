@@ -93,7 +93,7 @@ public class PdePreferences extends JComponent {
 
   JCheckBox newSketchPromptBox;
   JTextField sketchbookLocationField;
-  JCheckbox externalEditorBox;
+  JCheckBox externalEditorBox;
 
 
   // data model
@@ -177,8 +177,8 @@ public class PdePreferences extends JComponent {
 
     // setup frame for the prefs
 
-    //frame = new JFrame("Preferences");
-    frame = new JDialog("Preferences");
+    frame = new JFrame("Preferences");
+    //frame = new JDialog("Preferences");
     frame.setResizable(false);
 
     Container pain = this;
@@ -315,7 +315,7 @@ public class PdePreferences extends JComponent {
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           apply();
-          hideFrame();
+          disposeFrame();
         }
       });
     pain.add(button);
@@ -327,7 +327,7 @@ public class PdePreferences extends JComponent {
     button = new JButton(PROMPT_CANCEL);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          hideFrame();
+          disposeFrame();
         }
       });
     pain.add(button);
@@ -353,11 +353,13 @@ public class PdePreferences extends JComponent {
 
     //
 
+    /*
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           frame.hide();
         }
       });
+    */
   }
 
 
@@ -369,8 +371,9 @@ public class PdePreferences extends JComponent {
   }
 
 
-  public void hideFrame() {
-    frame.hide();
+  public void disposeFrame() {
+    frame.hide()
+    //frame.dispose();
   }
 
 
@@ -547,6 +550,12 @@ public class PdePreferences extends JComponent {
       defaultValue : value;
   }
 
+
+  static public void set(String attribute, String value) {
+    preferences.put(attribute, value);
+  }
+
+
   static public boolean getBoolean(String attribute /*, boolean defaultValue*/) {
     String value = get(attribute, null);
     return (value == null) ? defaultValue : 
@@ -566,6 +575,12 @@ public class PdePreferences extends JComponent {
     */
   }
 
+
+  static public boolean setBoolean(String attribute, boolean value) {
+    set(attribute, value ? "true" : "false");
+  }
+
+
   static public int getInteger(String attribute /*, int defaultValue*/) {
     String value = get(attribute, null);
     if (value == null) return defaultValue;
@@ -580,6 +595,11 @@ public class PdePreferences extends JComponent {
     //if (value == null) return defaultValue;
     //return (value == null) ? defaultValue : 
     //Integer.parseInt(value);
+  }
+
+
+  static public void setInteger(String key, int value) {
+    set(key, String.valueOf(value));
   }
 
 
