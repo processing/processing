@@ -87,7 +87,7 @@ cd ..
 
 #################### TEMPORARY #####################
 # set to true to re-enable building the preprocessor
-if false
+if true
 then
 #################### TEMPORARY #####################
 
@@ -139,7 +139,7 @@ CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\w
 # SERIAL LIBRARY
 echo Build serial library...
 cd ../../lib/serial
-../../build/windows/work/jikes +D -classpath "code\\RXTXcomm.jar;$CLASSPATH" -d . *.java 
+../../build/windows/work/jikes -target 1.1 +D -classpath "code\\RXTXcomm.jar;$CLASSPATH" -d . *.java 
 rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
@@ -150,7 +150,7 @@ cp library/serial.jar ../../build/windows/work/libraries/serial/library/
 # NET LIBRARY
 echo Build net library...
 cd ../../lib/net
-../../build/windows/work/jikes +D -d . *.java 
+../../build/windows/work/jikes -target 1.1 +D -d . *.java 
 rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
@@ -171,7 +171,7 @@ else
   exit 1;
 fi
 cd ../../lib/video
-../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
+../../build/windows/work/jikes -target 1.1 +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
 rm -f library/video.jar
 zip -r0q library/video.jar processing
 rm -rf processing
@@ -182,7 +182,7 @@ cp library/video.jar ../../build/windows/work/libraries/video/library/
 # PARTICLES LIBRARY
 echo Build particles library...
 cd ../../lib/particles
-../../build/windows/work/jikes +D -d . *.java 
+../../build/windows/work/jikes -target 1.1 +D -d . *.java 
 rm -f library/particles.jar
 zip -r0q library/particles.jar simong
 rm -rf simong

@@ -1,13 +1,6 @@
-0072 pde
-X error message when an import isn't available
-o particle examples c & d don't have their extra files
-o let's not call it 'expert', let's just say w/o java
-X new thread-safer version of the PdeEditorConsole
-X add build for particles lib
-X fix a bug where 'code' folder was no longer working
-X   code folder had been completely disabled
-X some error messages (i.e. DLL missing) not propogating up
-X   change PdeRuntime to pass all messages, parse later
+0073 pde
+X fix for the hanging bug (!?)
+X properly build libraries with java 1.1 so they can be exported
 
 //
 

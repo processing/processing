@@ -1,13 +1,10 @@
-0072 core
-X make m00, m01 etc public
-X hack to make loadImage() work 
-X   cache settings are ignored, may be slow as hell
-X make hints[] no longer static
-X   they weren't properly resetting
+0073 core
+X tweak to fonts to use TEXT_ANTIALIAS because of macosx @#$(*&
+X loadImage() is broken on some machines
+X   hacked for a fix in 72, but need to better coordinate with openStream()
+
 
 _ image("blah.jpg"); 
-_ loadImage() is broken on some machines
-_   hacked for a fix in 72, but need to better coordinate with openStream()
 
 _ uv coords > 1 shouldn't clamp, they should just repeat ala opengl
 _   actually i think opengl has a setting for it

@@ -166,10 +166,10 @@ public class PGraphics extends PImage
   float eyeDist, nearDist, farDist;
   float aspect;
 
-  float p00, p01, p02, p03; // projection matrix
-  float p10, p11, p12, p13;
-  float p20, p21, p22, p23;
-  float p30, p31, p32, p33;
+  public float p00, p01, p02, p03; // projection matrix
+  public float p10, p11, p12, p13;
+  public float p20, p21, p22, p23;
+  public float p30, p31, p32, p33;
 
   // ........................................................
 
