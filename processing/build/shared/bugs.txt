@@ -37,6 +37,16 @@ PROCESSING WON'T START! NOTHING HAPPENS WHEN I HIT "RUN"!
 - windows.. you might also try using run.bat to start processing. lots
   of people seem to have a better time with this method.
 
+- any platform.. errors inside code that is outside of setup() or
+  loop(), for instance this code:
+  PFont font = loadFont("blah.vlw");
+  void setup {
+    // something fancy
+  }
+  may just hang/freeze processing if "blah.vlw" is not in the "data"
+  folder. in general, a better practice is to use loadFont() (and
+  loadImage and the rest) inside of a function like setup().
+
 - on 50% of machines, there still seems to be a bug that causes the
   application to hang completely when something that uses a library
   (or a code folder) is run. symptom will be a non-responsive applet

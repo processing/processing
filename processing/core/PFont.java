@@ -524,8 +524,13 @@ public class PFont implements PConstants {
 
 
   /**
-   * Draw text in a text both that is constrained to a
-   * particular width and height
+   * Draw text in a box that is constrained to a
+   * particular width and height. 
+   *
+   * Note that the x,y coords of the start of the box 
+   * will align with the *ascent* of the text, 
+   * not the baseline, as is the case for the other 
+   * text() functions.
    */
   public void text(String str, float x, float y, float z,
                    float w, float h, PGraphics parent) {
