@@ -63,7 +63,8 @@ else
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
-  cp -dpR dist/Processing.app work/
+  #cp -dpR dist/Processing.app work/
+  cp -R dist/Processing.app work/
   #cd work/Processing.app
   #find . -name "CVS" -depth -exec rm {} \;
   #cd ../..

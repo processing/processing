@@ -149,10 +149,10 @@ public class PdePreferences extends JComponent {
         String actualKey = key.substring(0, key.length() - extensionLength);
         String value = get(key);
 
-        System.out.println("found platform specific prop \"" + 
-                           actualKey + "\" \"" + value + "\"");
+        //System.out.println("found platform specific prop \"" + 
+        //                 actualKey + "\" \"" + value + "\"");
         table.put(actualKey, value);
-        System.out.println("now set to " + table.get(actualKey));
+        //System.out.println("now set to " + table.get(actualKey));
       }
     }
 
@@ -164,19 +164,13 @@ public class PdePreferences extends JComponent {
 
     // next load user preferences file
 
-    String home = System.getProperty("user.home");
+    File home = new File(System.getProperty("user.home"));
     preferencesFile = new File(home, ".processing");
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
-
-      // set default sketchbook path to the user's home folder
-      // with 'sketchbook' as a subdirectory of that
-      File sketchbookDir = new File(home, "sketchbook");
-      set("sketchbook.path", sketchbookDir.getAbsolutePath());
-
-      //firstTime = true;
-      save();  // will save the defaults out to the file
+      // saves the defaults out to the file
+      save();  
 
     } else {
       // load the previous preferences file
@@ -415,13 +409,16 @@ public class PdePreferences extends JComponent {
     //table = new Hashtable();
     String line = null;
     while ((line = reader.readLine()) != null) {
-      if (line.charAt(0) == '#') continue;
+      if ((line.length() == 0) ||
+          (line.charAt(0) == '#')) continue;
 
       // this won't properly handle = signs being in the text
       int equals = line.indexOf('=');
-      String key = line.substring(0, equals).trim();
-      String value = line.substring(equals + 1).trim();
-      table.put(key, value);
+      if (equals != -1) {
+        String key = line.substring(0, equals).trim();
+        String value = line.substring(equals + 1).trim();
+        table.put(key, value);
+      }
     }
     reader.close();
   }
@@ -630,7 +627,7 @@ public class PdePreferences extends JComponent {
 
 
   static public SyntaxStyle getStyle(String what /*, String dflt*/) {
-    String str = get("editor.program." + what + ".style"); //, dflt);
+    String str = get("editor." + what + ".style"); //, dflt);
 
     StringTokenizer st = new StringTokenizer(str, ",");
 

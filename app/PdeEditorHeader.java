@@ -27,8 +27,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+import javax.swing.*;
 
-public class PdeEditorHeader extends Panel {
+
+public class PdeEditorHeader extends JPanel {
   static final String SKETCH_TITLER = "sketch";
 
   static Color primaryColor;
@@ -75,10 +77,12 @@ public class PdeEditorHeader extends Panel {
   public void reset() {
     sketchLeft = 0;
     //userLeft = 0;
-    update();
+    //update();
+    repaint();
   }
 
 
+  /*
   public void update() {
     paint(this.getGraphics());
   }
@@ -86,8 +90,10 @@ public class PdeEditorHeader extends Panel {
   public void update(Graphics g) {
     paint(g);
   }
+  */
 
-  public void paint(Graphics screen) {
+
+  public void paintComponent(Graphics screen) {
     if (screen == null) return;
     if (editor.sketchName == null) return;
 
