@@ -178,8 +178,8 @@ public class PdeBase extends Frame implements ActionListener {
       e.printStackTrace();
       //System.exit(1);
     }
-    int width = getInteger("window.width", 600);
-    int height = getInteger("window.height", 350);
+    //    int width = getInteger("window.width", 600);
+    //    int height = getInteger("window.height", 350);
 
     /*
     encoding = get("encoding");
@@ -330,12 +330,15 @@ public class PdeBase extends Frame implements ActionListener {
     Dimension screen = tk.getScreenSize();
 
     // THESE CAN BE REMOVED TO SOME EXTENT
+    /*
     int frameX = getInteger("window.x", (screen.width - width) / 2);
     int frameY = getInteger("window.y", (screen.height - height) / 2);
 
     frame.setBounds(frameX, frameY, 
 		    width + insets.left + insets.right, 
 		    height + insets.top + insets.bottom);
+    */
+
     //frame.reshape(50, 50, width + insets.left + insets.right, 
     //	  height + insets.top + insets.bottom);
 
