@@ -1,4 +1,7 @@
 0050
+X fix quotes missing in the export html
+
+0051
 X go through the bboard and make sure everything up to date here
 X   see if moved topics need to be deleted as well
 X     (log in from another machine as guest)
@@ -332,6 +335,10 @@ b _   fairly quick--just use code from dbn
 
 
 PDE / low
+_ menu weirdness (benelek)
+_   when u've got a menu open, move a cursor over the text area
+_   and back over the menu, the text-area cursor type remains. 
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
 _ scroll bar has some painting weirdness with jedit textarea
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
 _ method of collapsing history for useful versions

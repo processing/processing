@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0049 - 26 JANUARY 2003
+RELEASE 0050 - 27 JANUARY 2003
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
