@@ -30,22 +30,27 @@ import java.io.*;
 //import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
 
 
 public class PdeFontBuilder extends JFrame {
   File targetFolder;
 
-  //JComboBox fontSelector;
   JList fontSelector;
   JComboBox styleSelector;
   JTextField sizeSelector;
+  JTextArea sample;
+  JButton okButton;
+
+  Font font;
+
+  String list[];
+  int selection = -1;
 
   static final String styles[] = {
     "Plain", "Bold", "Italic", "Bold Italic" 
   };
-
-  String fontName;
 
 
   // font.deriveFont(float size)
@@ -60,27 +65,27 @@ public class PdeFontBuilder extends JFrame {
 
     String labelText = 
       "Use this tool to create bitmap fonts for your program.\n" +
-      "Select a font and size, and click 'OK' to generate a font\n" + 
-      "and add it to the data folder of the current sketch.\n" +
-      "The recommended size for 3D applications is 48 points.";
+      "Select a font and size, and click 'OK' to generate the font.\n" + 
+      "It will be added to the data folder of the current sketch.";
 
     //JLabel label = new JLabel(labelText);
     JTextArea textarea = new JTextArea(labelText);
+    textarea.setBorder(new EmptyBorder(10, 20, 10, 20));
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
     //pain.add(label);
 
-    JPanel panel = new JPanel();
+    //JPanel panel = new JPanel();
     //panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
+    /*
+      // save this as an alternative implementation
     GraphicsEnvironment ge = 
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
     String families[] = ge.getAvailableFontFamilyNames();
-
-    // don't care about families starting with . or #
-    // also ignore dialog, dialoginput, monospaced, serif, sansserif
+    */
 
     /*
     for (int i = 0; i < fonts.length; i++) {
@@ -91,10 +96,46 @@ public class PdeFontBuilder extends JFrame {
     }
     */
 
+    // don't care about families starting with . or #
+    // also ignore dialog, dialoginput, monospaced, serif, sansserif
+
     //fontSelector = new JComboBox();
-    fontSelector = new JList(families); 
+    String flist[] = Toolkit.getDefaultToolkit().getFontList();
+    int index = 0;
+    for (int i = 0; i < flist.length; i++) {
+      if ((flist[i].indexOf('.') == 0) || (flist[i].indexOf('#') == 0) ||
+          (flist[i].equals("Dialog")) || (flist[i].equals("DialogInput")) ||
+          (flist[i].equals("Serif")) || (flist[i].equals("SansSerif")) ||
+          (flist[i].equals("Monospaced"))) continue;
+      if (i != index) flist[index++] = flist[i];
+    }
+    list = new String[index];
+    System.arraycopy(flist, 0, list, 0, index);
+
+    fontSelector = new JList(list); //families); 
+    fontSelector.addListSelectionListener(new ListSelectionListener() {
+        public void valueChanged(ListSelectionEvent e) {
+          //System.out.println(e.getFirstIndex());
+          selection = e.getFirstIndex();
+          okButton.setEnabled(true);
+
+          int fontsize = 0;
+          try {
+            fontsize = Integer.parseInt(sizeSelector.getText().trim());
+            System.out.println("'" + sizeSelector.getText() + "'");
+          } catch (NumberFormatException e2) { }
+
+          if (fontsize != 0) {
+            font = new Font(list[selection], Font.PLAIN, fontsize);
+            System.out.println("setting font to " + font);
+            sample.setFont(font);
+          }
+        }
+      });
+
+    fontSelector.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     JScrollPane fontScroller = new JScrollPane(fontSelector);
-    panel.add(fontScroller);
+    pain.add(fontScroller);
     //fontSelector.setFont(new Font("SansSerif", Font.PLAIN, 10));
     /*
     fontSelector.addActionListener(new ActionListener() {
@@ -103,7 +144,10 @@ public class PdeFontBuilder extends JFrame {
         }
       });
     */
-    //String list[] = Toolkit.getDefaultToolkit().getFontList();
+
+    sample = new JTextArea("The quick brown fox blah blah.");
+    pain.add(sample);
+
     //for (int i = 0; i < list.length; i++) {
     /*
     for (int i = 0; i < families.length; i++) {
@@ -113,6 +157,7 @@ public class PdeFontBuilder extends JFrame {
     panel.add(fontSelector);
     */
 
+    /*
     styleSelector = new JComboBox();
     for (int i = 0; i < styles.length; i++) {
       styleSelector.addItem(styles[i]);
@@ -130,20 +175,66 @@ public class PdeFontBuilder extends JFrame {
         }
       });
     panel.add(styleSelector);
+    */
 
-    sizeSelector = new JTextField("48");
+    JPanel panel = new JPanel();
+    panel.add(new JLabel("Size:"));
+    sizeSelector = new JTextField("48 ");
     panel.add(sizeSelector);
+    JLabel rec = new JLabel("(Recommended size for 3D use is 48 points)");
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      rec.setFont(new Font("Dialog", Font.PLAIN, 10));
+    }
+    panel.add(rec);
 
     pain.add(panel);
 
     JPanel buttons = new JPanel();
     JButton cancelButton = new JButton("Cancel");
-    JButton okButton = new JButton("OK");
+    cancelButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          hide();
+        }
+      });
+    okButton = new JButton("OK");
+    okButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          build();
+        }
+      });
+    okButton.setEnabled(false);
+
     buttons.add(cancelButton);
     buttons.add(okButton);
     pain.add(buttons);
 
+    getRootPane().setDefaultButton(okButton);
+
+    setResizable(false);
     pack();
+
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension size = getSize();
+
+    setLocation((screen.width - size.width) / 2,
+                (screen.height - size.height) / 2);
     show();
+  }
+
+
+  public void build() {
+    int fontsize = 0;
+    try {
+      fontsize = Integer.parseInt(sizeSelector.getText());
+    } catch (NumberFormatException e) { }
+
+    if (fontsize <= 0) {
+      JOptionPane.showMessageDialog(this, "Bad font size, try again.",
+                                    "Badness", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+
+    font = new Font(list[selection], Font.PLAIN, fontsize);
+    hide();
   }
 }
