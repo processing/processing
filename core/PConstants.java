@@ -189,17 +189,15 @@ public interface PConstants {
 
   // stroke modes
 
-  static final int SQUARE_ENDCAP    = 1 << 0;
-  static final int ROUND_ENDCAP     = 1 << 1;
-  static final int PROJECTED_ENDCAP = 1 << 2;
-  static final int STROKE_CAP_MASK  =
-    SQUARE_ENDCAP | ROUND_ENDCAP | PROJECTED_ENDCAP;
+  static final int SQUARE    = 1 << 0;
+  static final int ROUND     = 1 << 1;
+  static final int PROJECTED = 1 << 2;
+  static final int CAP_MASK = SQUARE | ROUND | PROJECTED;
 
-  static final int MITERED_JOIN     = 1 << 3;
-  static final int ROUND_JOIN       = 1 << 4;
-  static final int BEVELED_JOIN     = 1 << 5;
-  static final int STROKE_JOIN_MASK =
-    MITERED_JOIN | ROUND_JOIN | BEVELED_JOIN;
+  static final int MITERED     = 1 << 3;
+  static final int ROUND       = 1 << 4;
+  static final int BEVELED     = 1 << 5;
+  static final int JOIN_MASK = MITERED | ROUND | BEVELED;
 
 
   // lighting
