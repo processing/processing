@@ -205,14 +205,19 @@ public class PdeBase {
 
       } else if (platform == LINUX) {
         // how's mozilla sound to ya, laddie?
-        Runtime.getRuntime().exec(new String[] { "mozilla", url });
+        //Runtime.getRuntime().exec(new String[] { "mozilla", url });
+        String browser = PdePreferences.get("browser");
+        Runtime.getRuntime().exec(new String[] { browser, url });
 
       } else {
         System.err.println("unspecified platform");
       }
 
     } catch (IOException e) {
-      e.printStackTrace();
+      PdeBase.showWarning("Could not open URL",
+                          "An error occurred while trying to open\n" + url, e);
+                          
+      //e.printStackTrace();
     }
   }
 
