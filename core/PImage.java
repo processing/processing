@@ -106,6 +106,9 @@ public class PImage implements PConstants, Cloneable {
   static final int PREC_RED_SHIFT = 16-PRECISIONB;
 
 
+  //////////////////////////////////////////////////////////////
+
+
   /**
    * Create an empty image object, set its format to RGB.
    * The pixel array is not allocated.
@@ -179,6 +182,40 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+
+  /**
+   * mode is one of CORNERS, CORNER, CENTER
+   */
+  public void imageMode(int mode) {
+    imageMode = mode;
+  }
+
+
+  /**
+   * If true in PImage, use bilinear interpolation for copy()
+   * operations. When inherited by PGraphics, also controls shapes.
+   */
+  public void smooth() {
+    smooth = true;
+  }
+
+
+  /**
+   * Disable smoothing. See smooth().
+   */
+  public void noSmooth() {
+    smooth = false;
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
+
+
   public void modified() {
     mx1 = 0;
     my1 = 0;
@@ -214,109 +251,6 @@ public class PImage implements PConstants, Cloneable {
     my1 = -Integer.MAX_VALUE;
     mx2 = Integer.MAX_VALUE;
     my2 = Integer.MAX_VALUE;
-  }
-
-
-  /**
-   * Set alpha channel for an image.
-   */
-  public void alpha(int alpha[]) {
-    alpha(this, alpha);
-  }
-
-  /**
-   * Set alpha channel for an image.
-   */
-  static public void alpha(PImage image, int alpha[]) {
-    // don't execute if mask image is different size
-    if (alpha.length != image.pixels.length) {
-      System.err.println("alpha(): the mask image must be the same size");
-      return;
-    }
-    for (int i = 0; i < image.pixels.length; i++) {
-      image.pixels[i] =
-        ((alpha[i] & 0xff) << 24) |
-        (image.pixels[i] & 0xffffff);
-    }
-    /*
-    if (highbits) {  // grab alpha from the high 8 bits (ARGB style)
-      for (int i = 0; i < pixels.length; i++) {
-        pixels[i] = pixels[i] & 0xffffff | (alpha[i] & 0xff000000);
-      }
-    } else {  // alpha is in the low bits (ALPHA style)
-      for (int i = 0; i < pixels.length; i++) {
-        pixels[i] = pixels[i] & 0xffffff | ((alpha[i] & 0xff) << 24);
-      }
-    }
-    */
-    image.format = ARGB;
-  }
-
-
-  /**
-   * Set alpha channel for an image using another image as the source.
-   */
-  public void alpha(PImage alpha) {
-    alpha(alpha.pixels);
-  }
-
-  static public void alpha(PImage image, PImage alpha) {
-    alpha(image, alpha.pixels);
-  }
-
-
-  /**
-
-   */
-  // FIND_EDGES (no params) .. high pass filter
-  // BLUR (no params)
-  // GAUSSIAN_BLUR (one param)
-  // BLACK_WHITE? (param for midpoint)
-  // GRAYSCALE
-  // POSTERIZE (int num of levels)
-  public void filter(int kind) {
-    switch (kind) {
-
-      case BLACK_WHITE:
-        filter(BLACK_WHITE, 0.5f);
-        break;
-
-      case GRAYSCALE:
-        // Converts RGB image data into grayscale using
-        // weighted RGB components, and keeps alpha channel intact.
-        // [toxi 040115]
-        for (int i = 0; i < pixels.length; i++) {
-          int col = pixels[i];
-          // luminance = 0.3*red + 0.59*green + 0.11*blue
-          // 0.30 * 256 =  77
-          // 0.59 * 256 = 151
-          // 0.11 * 256 =  28
-          int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
-          pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
-        }
-        break;
-    }
-  }
-
-
-  public void filter(int kind, float param) {
-    switch (kind) {
-
-      case BLACK_WHITE:  // greater than or equal to the threshold
-        int thresh = (int) (param * 255);
-        for (int i = 0; i < pixels.length; i++) {
-          int max = Math.max((pixels[i] & RED_MASK) >> 16,
-                             Math.max((pixels[i] & GREEN_MASK) >> 8,
-                                      (pixels[i] & BLUE_MASK)));
-          pixels[i] = (pixels[i] & ALPHA_MASK) |
-            ((max < thresh) ? 0x000000 : 0xffffff);
-        }
-        break;
-
-      case GRAYSCALE:
-        filter(GRAYSCALE);
-        break;
-    }
   }
 
 
@@ -375,6 +309,19 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  /**
+   * Convenience method to avoid an extra cast,
+   * and the exception handling.
+   */
+  public PImage get() {
+    try {
+      return (PImage) clone();
+    } catch (CloneNotSupportedException e) {
+      return null;
+    }
+  }
+
+
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
@@ -384,38 +331,116 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
 
+  // ALPHA CHANNEL
+
+
+  /**
+   * Set alpha channel for an image.
+   */
+  public void alpha(int alpha[]) {
+    alpha(this, alpha);
+  }
+
+  /**
+   * Set alpha channel for an image.
+   */
+  static public void alpha(PImage image, int alpha[]) {
+    // don't execute if mask image is different size
+    if (alpha.length != image.pixels.length) {
+      System.err.println("alpha(): the mask image must be the same size");
+      return;
+    }
+    for (int i = 0; i < image.pixels.length; i++) {
+      image.pixels[i] =
+        ((alpha[i] & 0xff) << 24) |
+        (image.pixels[i] & 0xffffff);
+    }
+    /*
+    if (highbits) {  // grab alpha from the high 8 bits (ARGB style)
+      for (int i = 0; i < pixels.length; i++) {
+        pixels[i] = pixels[i] & 0xffffff | (alpha[i] & 0xff000000);
+      }
+    } else {  // alpha is in the low bits (ALPHA style)
+      for (int i = 0; i < pixels.length; i++) {
+        pixels[i] = pixels[i] & 0xffffff | ((alpha[i] & 0xff) << 24);
+      }
+    }
+    */
+    image.format = ARGB;
+  }
+
+
+  /**
+   * Set alpha channel for an image using another image as the source.
+   */
+  public void alpha(PImage alpha) {
+    alpha(alpha.pixels);
+  }
+
+  static public void alpha(PImage image, PImage alpha) {
+    alpha(image, alpha.pixels);
+  }
+
+
+  /**
+   * Options to filter an image in place.
+   */
+  // FIND_EDGES (no params) .. high pass filter
+  // BLUR (no params)
+  // GAUSSIAN_BLUR (one param)
+  // BLACK_WHITE? (param for midpoint)
+  // GRAYSCALE
+  // POSTERIZE (int num of levels)
+  public void filter(int kind) {
+    switch (kind) {
+
+      case BLACK_WHITE:
+        filter(BLACK_WHITE, 0.5f);
+        break;
+
+      case GRAYSCALE:
+        // Converts RGB image data into grayscale using
+        // weighted RGB components, and keeps alpha channel intact.
+        // [toxi 040115]
+        for (int i = 0; i < pixels.length; i++) {
+          int col = pixels[i];
+          // luminance = 0.3*red + 0.59*green + 0.11*blue
+          // 0.30 * 256 =  77
+          // 0.59 * 256 = 151
+          // 0.11 * 256 =  28
+          int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
+          pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
+        }
+        break;
+    }
+  }
+
+
+  public void filter(int kind, float param) {
+    switch (kind) {
+
+      case BLACK_WHITE:  // greater than or equal to the threshold
+        int thresh = (int) (param * 255);
+        for (int i = 0; i < pixels.length; i++) {
+          int max = Math.max((pixels[i] & RED_MASK) >> 16,
+                             Math.max((pixels[i] & GREEN_MASK) >> 8,
+                                      (pixels[i] & BLUE_MASK)));
+          pixels[i] = (pixels[i] & ALPHA_MASK) |
+            ((max < thresh) ? 0x000000 : 0xffffff);
+        }
+        break;
+
+      case GRAYSCALE:
+        filter(GRAYSCALE);
+        break;
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // REPLICATING & BLENDING (AREAS) OF PIXELS
-
-
-  /**
-   * Copies a pixel from place to another (in the same image)
-   * this function is excluded from using any blend modes because
-   * it always replaces/overwrites the target pixel value.
-   */
-  /*
-  public void copy(int sx, int sy, int dx, int dy) {
-    // In PGraphics, should this copy the zbuffer and stencil too?
-    if ((sx >= 0) && (sx < width) && (dx >= 0) && (dx < width) &&
-        (sy >= 0) && (sy < height) && (dy >= 0) && (dy < height)) {
-      pixels[dy * width + dx] = pixels[sy * width + sx];
-    }
-  }
-  */
-
-
-  /**
-   * Copies a pixel from place to another (in different images)
-   * this function is excluded from using any blend modes
-   * it always replaces/overwrites the target pixel value
-   */
-  /*
-  public void copy(PImage src, int sx, int sy, int dx, int dy) {
-    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
-        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
-      pixels[dy * width + dx] = src.pixels[sy * src.width + sx];
-    }
-  }
-  */
 
 
   public void copy(PImage src, int dx, int dy) {
@@ -474,7 +499,8 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Copies area of one image into another PImage object.
    */
-  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     if (imageMode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1; sy2 += sy1;
@@ -515,22 +541,27 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Copies and blends 1 pixel with MODE to pixel in another image
+   * Copies and blends 1 pixel with MODE to pixel in this image.
    */
-  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
-    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
-        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
-      pixels[dy * width + dx] =
-        blend(pixels[dy * width + dx],
-              src.pixels[sy * src.width + sx], mode);
-    }
-  }
-
   public void blend(int sx, int sy, int dx, int dy, int mode) {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < height)) {
       pixels[dy * width + dx] =
         blend(pixels[dy * width + dx], pixels[sy * width + sx], mode);
+    }
+  }
+
+
+  /**
+   * Copies and blends 1 pixel with MODE to pixel in another image
+   */
+  public void blend(PImage src,
+                    int sx, int sy, int dx, int dy, int mode) {
+    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
+        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
+      pixels[dy * width + dx] =
+        blend(pixels[dy * width + dx],
+              src.pixels[sy * src.width + sx], mode);
     }
   }
 
@@ -547,7 +578,8 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Copies area of one image into another PImage object
    */
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void blend(PImage src,
+                    int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (imageMode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1; sy2 += sy1;
@@ -613,19 +645,6 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Convenience method to avoid an extra cast,
-   * and the exception handling.
-   */
-  public PImage get() {
-    try {
-      return (PImage) clone();
-    } catch (CloneNotSupportedException e) {
-      return null;
-    }
-  }
-
-
-  /**
    * Duplicate an image, returns new PImage object.
    * The pixels[] array for the new object will be unique
    * and recopied from the source image.
@@ -643,32 +662,6 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  /**
-   * Duplicate an image, returns new object
-   */
-  /*
-  public PImage duplicate() {
-    PImage c = new PImage(new int[pixels.length], width, height, format);
-    System.arraycopy(pixels, 0, c.pixels, 0, pixels.length);
-    return c;
-  }
-  */
-
-  /**
-   * Duplicate and resize image
-   */
-  /*
-  public PImage duplicate(int newWidth, int newHeight) {
-    PImage dupe = new PImage(new int[newWidth * newHeight],
-                             newWidth, newHeight, format);
-
-    dupe.copy(this, 0, 0, width - 1, height - 1,
-              0, 0, newWidth - 1, newHeight - 1);
-
-    return dupe;
-  }
-  */
-
 
   //////////////////////////////////////////////////////////////
 
@@ -678,10 +671,10 @@ public class PImage implements PConstants, Cloneable {
    * 'mode' determines the blending mode used in the process.
    */
   private void blit_resize(PImage img,
-                           int srcX1, int srcY1, int srcX2, int srcY2,
-                           int[] destPixels, int screenW, int screenH,
-                           int destX1, int destY1, int destX2, int destY2,
-                           int mode) {
+                             int srcX1, int srcY1, int srcX2, int srcY2,
+                             int[] destPixels, int screenW, int screenH,
+                             int destX1, int destY1, int destX2, int destY2,
+                             int mode) {
     if (srcX1 < 0) srcX1 = 0;
     if (srcY1 < 0) srcY1 = 0;
     if (srcX2 >= img.width) srcX2 = img.width - 1;
@@ -1073,35 +1066,52 @@ public class PImage implements PConstants, Cloneable {
     1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
   };
 
-  static public void saveHeaderTIF(OutputStream output,
-                                   int width, int height) throws IOException {
-    byte tiff[] = new byte[768];
-    System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
 
-    tiff[30] = (byte) ((width >> 8) & 0xff);
-    tiff[31] = (byte) ((width) & 0xff);
-    tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
-    tiff[43] = tiff[103] = (byte) ((height) & 0xff);
+  static public boolean saveHeaderTIF(OutputStream output,
+                                      int width, int height) {
+    try {
+      byte tiff[] = new byte[768];
+      System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
 
-    int count = width*height*3;
-    tiff[114] = (byte) ((count >> 24) & 0xff);
-    tiff[115] = (byte) ((count >> 16) & 0xff);
-    tiff[116] = (byte) ((count >> 8) & 0xff);
-    tiff[117] = (byte) ((count) & 0xff);
+      tiff[30] = (byte) ((width >> 8) & 0xff);
+      tiff[31] = (byte) ((width) & 0xff);
+      tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
+      tiff[43] = tiff[103] = (byte) ((height) & 0xff);
 
-    output.write(tiff);
+      int count = width*height*3;
+      tiff[114] = (byte) ((count >> 24) & 0xff);
+      tiff[115] = (byte) ((count >> 16) & 0xff);
+      tiff[116] = (byte) ((count >> 8) & 0xff);
+      tiff[117] = (byte) ((count) & 0xff);
+
+      output.write(tiff);
+      return true;
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
 
-  static public void saveTIF(OutputStream output, int pixels[],
-                             int width, int height) throws IOException {
-    saveHeaderTIF(output, width, height);
-    for (int i = 0; i < pixels.length; i++) {
-      output.write((pixels[i] >> 16) & 0xff);
-      output.write((pixels[i] >> 8) & 0xff);
-      output.write(pixels[i] & 0xff);
+  static public boolean saveTIF(OutputStream output, int pixels[],
+                                int width, int height) {
+    try {
+      if (!saveHeaderTIF(output, width, height)) {
+        return false;
+      }
+      for (int i = 0; i < pixels.length; i++) {
+        output.write((pixels[i] >> 16) & 0xff);
+        output.write((pixels[i] >> 8) & 0xff);
+        output.write(pixels[i] & 0xff);
+      }
+      output.flush();
+      return true;
+
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    output.flush();
+    return false;
   }
 
 
@@ -1115,40 +1125,55 @@ public class PImage implements PConstants, Cloneable {
    *
    * tga spec: http://organicbit.com/closecombat/formats/tga.html
    */
-  static void saveHeaderTGA(OutputStream output,
-                            int width, int height) throws IOException {
-    byte header[] = new byte[18];
+  static public boolean saveHeaderTGA(OutputStream output,
+                                      int width, int height) {
+    try {
+      byte header[] = new byte[18];
 
-    // set header info
-    header[2]  = 0x02;
-    header[12] = (byte) (width & 0xff);
-    header[13] = (byte) (width >> 8);
-    header[14] = (byte) (height & 0xff);
-    header[15] = (byte) (height >> 8);
-    header[16] = 32; // bits per pixel
-    header[17] = 8;  // bits per colour component
+      // set header info
+      header[2]  = 0x02;
+      header[12] = (byte) (width & 0xff);
+      header[13] = (byte) (width >> 8);
+      header[14] = (byte) (height & 0xff);
+      header[15] = (byte) (height >> 8);
+      header[16] = 32; // bits per pixel
+      header[17] = 8;  // bits per colour component
 
-    output.write(header);
+      output.write(header);
+      return true;
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
 
-  static public void saveTGA(OutputStream output, int pixels[],
-                             int width, int height) throws IOException {
-    saveHeaderTGA(output, width, height);
-
-    int index = (height-1) * width;
-
-    for (int y = height-1; y >= 0; y--) {
-      for (int x = 0; x < width; x++) {
-        int col = pixels[index + x];
-        output.write(col       & 0xff);
-        output.write(col >> 8  & 0xff);
-        output.write(col >> 16 & 0xff);
-        output.write(col >>> 24 & 0xff);
+  static public boolean saveTGA(OutputStream output, int pixels[],
+                                int width, int height) {
+    try {
+      if (!saveHeaderTGA(output, width, height)) {
+        return false;
       }
-      index -= width;
+
+      int index = (height-1) * width;
+
+      for (int y = height-1; y >= 0; y--) {
+        for (int x = 0; x < width; x++) {
+          int col = pixels[index + x];
+          output.write(col       & 0xff);
+          output.write(col >> 8  & 0xff);
+          output.write(col >> 16 & 0xff);
+          output.write(col >>> 24 & 0xff);
+        }
+        index -= width;
+      }
+      output.flush();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
     }
-    output.flush();
   }
 
 
@@ -1175,29 +1200,6 @@ public class PImage implements PConstants, Cloneable {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // INHERITED BY PGRAPHICS
-
-
-  public void smooth() {
-    smooth = true;
-  }
-
-  public void noSmooth() {
-    smooth = false;
-  }
-
-
-  /**
-   * mode is one of CORNERS, CORNER, CENTER
-   */
-  public void imageMode(int mode) {
-    imageMode = mode;
   }
 }
 

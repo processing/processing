@@ -531,7 +531,7 @@ public class PGraphics2 extends PGraphics {
       x1 -= image.width /2f;
       y1 -= image.height / 2f;
     }
-    check_image_cache();
+    check_image_cache(image);
     graphics.drawImage((Image) image.cache,
                        (int)x1, (int)y1, (int)x2, (int)y2,
                        (int)u1, (int)v1, (int)u2, (int)v2,
@@ -539,24 +539,24 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  protected void check_image_cache(PImage what) {
-    if (image.cache == null) {
-      cache = new BufferedImage(image.width, image.height,
+  protected void check_image_cache(PImage who) {
+    if (who.cache == null) {
+      cache = new BufferedImage(who.width, who.height,
                                 BufferedImage.TYPE_INT_ARGB);
-      image.modified();  // mark the whole thing for update
+      who.modified();  // mark the whole thing for update
     }
 
-    if (image.modified) {
+    if (who.modified) {
       // update the sub-portion of the image as necessary
-      BufferedImage bi = (BufferedImage) image.cache;
+      BufferedImage bi = (BufferedImage) who.cache;
 
-      bi.setRGB(image.mx1, image.my1,
-                image.mx2 - image.mx1 + 1,
-                image.my2 - image.my1 + 1,
-                image.pixels,
-                image.my1*image.width + image.mx1,  // offset for copy
-                image.width);  // scan size
-      image.resetModified();
+      bi.setRGB(who.mx1, who.my1,
+                who.mx2 - who.mx1 + 1,
+                who.my2 - who.my1 + 1,
+                who.pixels,
+                who.my1*who.width + who.mx1,  // offset for copy
+                who.width);  // scan size
+      who.resetModified();
     }
   }
 
@@ -626,8 +626,8 @@ public class PGraphics2 extends PGraphics {
 
   public void push() {
     if (transformCount == transformStack.length) {
-      die("push() cannot use push more than " +
-          transformStack.length + " times");
+      throw new RuntimeException("push() cannot use push more than " +
+                                 transformStack.length + " times");
     }
     transformStack[transformCount] = graphics.getTransform();
     transformCount++;
@@ -636,7 +636,7 @@ public class PGraphics2 extends PGraphics {
 
   public void pop() {
     if (transformCount == 0) {
-      die("missing a pop() to go with that push()");
+      throw new RuntimeException("missing a pop() to go with that push()");
     }
     transformCount--;
     graphics.setTransform(transformStack[transformCount]);
@@ -650,7 +650,7 @@ public class PGraphics2 extends PGraphics {
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    graphics.transform(new AffineTransform(n00, n10, n01, n11, n02, n22));
+    graphics.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
   }
 
 
@@ -759,18 +759,18 @@ public class PGraphics2 extends PGraphics {
 
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
-      die("background image must be the same size " +
-          "as your application");
+      throw new RuntimeException("background image must be " +
+                                 "the same size as your application");
     }
     if ((image.format != RGB) && (image.format != ARGB)) {
-      die("background images should be RGB or ARGB");
+      throw new RuntimeException("background images should be RGB or ARGB");
     }
 
     // make sure it's been properly updated
     check_image_cache(image);
 
     // blit image to the screen
-    graphics.drawImage((BufferedImage) image.cache, 0, 0);
+    graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
   }
 
 
@@ -811,13 +811,14 @@ public class PGraphics2 extends PGraphics {
 
 
   public int get(int x, int y) {
-    ((BufferedImage) image).getRGB(x, y);
+    return ((BufferedImage) image).getRGB(x, y);
   }
 
 
   public PImage get(int x, int y, int w, int h) {
     PImage output = new PImage(w, h);
     ((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, width);
+    return output;
   }
 
 
@@ -881,7 +882,7 @@ public class PGraphics2 extends PGraphics {
     if (pixels == null) {
       pixels = new int[width * height];
     }
-    image.getRGB(0, 0, width, height, pixels, 0, width);
+    ((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
     return new PImage(pixels, width, height, RGB);
   }
 

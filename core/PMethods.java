@@ -6,7 +6,33 @@ package processing.core;
 
 public interface PMethods {
 
+  public void imageMode(int mode);
+
+  public void smooth();
+
+  public void noSmooth();
+
+  //
+
   public void modified();
+
+  public void modified(int x, int y);
+
+  public void modified(int x1, int y1, int x2, int y2);
+
+  public void resetModified();  // <<<<< MORE CONSISTENT NAME NEEDED
+
+  //
+
+  public int get(int x, int y);
+
+  public PImage get(int x, int y, int w, int h);
+
+  public PImage get();
+
+  public void set(int x, int y, int c);
+
+  //
 
   public void alpha(int alpha[]);
 
@@ -16,45 +42,58 @@ public interface PMethods {
 
   public void filter(int kind, float param);
 
-  public int get(int x, int y);
-
-  public PImage get(int x, int y, int w, int h);
-
-  public void set(int x, int y, int c);
-
   public void copy(PImage src, int dx, int dy);
 
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2);
 
-  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2);
 
-  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode);
-
   public void blend(int sx, int sy, int dx, int dy, int mode);
+
+  public void blend(PImage src,
+                    int sx, int sy, int dx, int dy, int mode);
 
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode);
 
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void blend(PImage src,
+                    int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode);
 
-  public PImage get();
+  //
+
+  // WOULD LIKE A NICER NAME
+  static public boolean saveHeaderTIF(OutputStream output,
+                                      int width, int height);
+
+  static public boolean saveTIF(OutputStream output, int pixels[],
+                                int width, int height);
+
+  // WOULD LIKE A NICER NAME
+  static public boolean saveHeaderTGA(OutputStream output,
+                                      int width, int height);
+
+  static public boolean saveTGA(OutputStream output, int pixels[],
+                                int width, int height);
 
   public void save(String filename);
 
-  public void smooth();
-
-  public void noSmooth();
-
-  public void imageMode(int mode);
-
-  public void defaults();
+  //
 
   public void beginFrame();
 
   public void endFrame();
+
+  public void defaults();
+
+  public void hint(int which);
+
+  public void unhint(int which);
+
+  //
 
   public void beginShape();
 
@@ -85,6 +124,8 @@ public interface PMethods {
 
   public void endShape();
 
+  //
+
   public void point(float x, float y);
 
   public void point(float x, float y, float z);
@@ -104,18 +145,11 @@ public interface PMethods {
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4);
 
-  public void image(PImage image, float x1, float y1);
+  public void circle(float x, float y, float radius);
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2);
+  public void ellipseMode(int mode);
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
-                    float u1, float v1, float u2, float v2);
-
-  public void cache(PImage image);
-
-  public void cache(PImage images[]);
+  public void ellipse(float x, float y, float hradius, float vradius);
 
   public void arcMode(int mode);
 
@@ -125,11 +159,34 @@ public interface PMethods {
   public void arc(float start, float stop,
                   float x, float y, float hr, float vr);
 
-  public void ellipseMode(int mode);
+  //
 
-  public void ellipse(float x, float y, float hradius, float vradius);
+  public void box(float size);
 
-  public void circle(float x, float y, float radius);
+  public void box(float w, float h, float d);
+
+  public void sphereDetail(int res);
+
+  public void sphere(float r);
+
+  public void sphere(float x, float y, float z, float r);
+
+  //
+
+  public void image(PImage image, float x1, float y1);
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2);
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    float u1, float v1, float u2, float v2);
+
+  //public void cache(PImage image);
+
+  //public void cache(PImage images[]);
+
+  //
 
   public float bezierPoint(float a, float b, float c, float d,
                            float t);
@@ -169,15 +226,7 @@ public interface PMethods {
                     float x3, float y3, float z3,
                     float x4, float y4, float z4);
 
-  public void box(float size);
-
-  public void box(float w, float h, float d);
-
-  public void sphereDetail(int res);
-
-  public void sphere(float r);
-
-  public void sphere(float x, float y, float z, float r);
+  //
 
   public void textFont(PFont which);
 
@@ -210,6 +259,8 @@ public interface PMethods {
   public void text(float num, float x, float y);
 
   public void text(float num, float x, float y, float z);
+
+  //
 
   public void angleMode(int mode);
 
@@ -244,15 +295,17 @@ public interface PMethods {
 
   public void resetMatrix();
 
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12);
+
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33);
 
-  public void applyMatrix(float n00, float n01, float n02,
-                          float n10, float n11, float n12);
-
   public void printMatrix();
+
+  //
 
   public void cameraMode(int mode);
 
@@ -275,6 +328,8 @@ public interface PMethods {
 
   public void printCamera();
 
+  //
+
   public float screenX(float x, float y);
 
   public float screenY(float x, float y);
@@ -290,6 +345,29 @@ public interface PMethods {
   public float objectY(float x, float y, float z);
 
   public float objectZ(float x, float y, float z);
+
+  //
+
+  public void lights();
+
+  public void noLights();
+
+  public void light(int num, float x, float y, float z,
+                    float red, float green, float blue);
+
+  public void lightEnable(int num);
+
+  public void lightDisable(int num);
+
+  public void lightPosition(int num, float x, float y, float z);
+
+  public void lightAmbient(int num, float x, float y, float z);
+
+  public void lightDiffuse(int num, float x, float y, float z);
+
+  public void lightSpecular(int num, float x, float y, float z);
+
+  //
 
   public void colorMode(int mode);
 
@@ -352,31 +430,4 @@ public interface PMethods {
   public void background(PImage image);
 
   public void clear();
-
-  public void depth();
-
-  public void noDepth();
-
-  public void lights();
-
-  public void noLights();
-
-  public void light(int num, float x, float y, float z,
-                    float red, float green, float blue);
-
-  public void lightEnable(int num);
-
-  public void lightDisable(int num);
-
-  public void lightPosition(int num, float x, float y, float z);
-
-  public void lightAmbient(int num, float x, float y, float z);
-
-  public void lightDiffuse(int num, float x, float y, float z);
-
-  public void lightSpecular(int num, float x, float y, float z);
-
-  public void hint(int which);
-
-  public void unhint(int which);
 }

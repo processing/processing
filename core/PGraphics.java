@@ -937,6 +937,7 @@ public class PGraphics extends PImage implements PConstants {
                                float r1, float g1, float b1, float a1,
                                float ox2, float oy2,
                                float r2, float g2, float b2, float a2) {
+    /*
     spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
     spolygon.interpZ = false;
 
@@ -987,6 +988,7 @@ public class PGraphics extends PImage implements PConstants {
     svertex[A] = a2;
 
     spolygon.render();
+    */
   }
 
 
@@ -996,6 +998,7 @@ public class PGraphics extends PImage implements PConstants {
                                   float r1, float g1, float b1,
                                   float x2, float y2, float z2,
                                   float r2, float g2, float b2) {
+    /*
     spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2);
     spolygon.interpZ = true;
 
@@ -1048,6 +1051,7 @@ public class PGraphics extends PImage implements PConstants {
     svertex[B] = b2;
 
     spolygon.render();
+    */
   }
 
 
@@ -3274,11 +3278,11 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
-      die("background image must be the same size " +
-          "as your application");
+      throw new RuntimeException("background image must be " +
+                                 "the same size as your application");
     }
     if ((image.format != RGB) && (image.format != ARGB)) {
-      die("background images should be RGB or ARGB");
+      throw new RuntimeException("background images should be RGB or ARGB");
     }
 
     // blit image to the screen

@@ -26,9 +26,9 @@
 package processing.core;
 
 //import java.applet.*;
-//import java.awt.*;
+import java.awt.*;
 //import java.awt.event.*;
-//import java.awt.image.*;
+import java.awt.image.*;
 //import java.io.*;
 
 public class PGraphics3 extends PGraphics {
@@ -94,7 +94,7 @@ public class PGraphics3 extends PGraphics {
   protected int vertex_start;
 
   // i think vertex_end is actually the last vertex in the current shape
-  // and is separate from vertex_count for occasions where drawing happens
+  // and is separate from vertexCount for occasions where drawing happens
   // on endFrame with all the triangles being depth sorted
   protected int vertex_end;
 
@@ -123,6 +123,9 @@ public class PGraphics3 extends PGraphics {
   PTriangle triangle; // used for rendering
   public int triangles[][] = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
   public int triangleCount;   // total number of triangles
+
+  // cheap picking someday
+  int shape_index;
 
   // ........................................................
 
@@ -172,6 +175,20 @@ public class PGraphics3 extends PGraphics {
    * java compilers, and should not be used.
    */
   public PGraphics3() { }
+
+
+  /**
+   * Constructor for the PGraphics3 object. Use this to ensure that
+   * the defaults get set properly. In a subclass, use this(w, h)
+   * as the first line of a subclass' constructor to properly set
+   * the internal fields and defaults.
+   *
+   * @param iwidth  viewport width
+   * @param iheight viewport height
+   */
+  public PGraphics3(int iwidth, int iheight) {
+    resize(iwidth, iheight);
+  }
 
 
   /**
@@ -307,16 +324,21 @@ public class PGraphics3 extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
 
+    shape_index = shape_index + 1;
+    if (shape_index == -1) {
+      shape_index = 0;
+    }
+
     if (hints[DEPTH_SORT]) {
       // continue with previous vertex, line and triangle count
       // all shapes are rendered at endFrame();
-      vertex_start = vertex_count;
+      vertex_start = vertexCount;
       vertex_end = 0;
 
     } else {
       // reset vertex, line and triangle information
       // every shape is rendered at endShape();
-      vertex_count = 0;
+      vertexCount = 0;
       if (line != null) line.reset();  // necessary?
       lineCount = 0;
       pathCount = 0;
@@ -325,12 +347,7 @@ public class PGraphics3 extends PGraphics {
     }
     textureImage = null;
 
-    spline_vertex_index = 0;
-    spline_vertices_flat = true;
-
-    //strokeChanged = false;
-    //fillChanged = false;
-    //normalChanged = false;
+    splineVertexCount = 0;
   }
 
 
@@ -358,20 +375,20 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void setup_vertex(float x, float y, float z) {
-    if (vertex_count == vertices.length) {
-      float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertex_count);
+    if (vertexCount == vertices.length) {
+      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
       message(CHATTER, "allocating more vertices " + vertices.length);
     }
-    float vertex[] = vertices[vertex_count++];
+    float vertex[] = vertices[vertexCount++];
 
     //if (polygon.redundantVertex(x, y, z)) return;
 
     // user called vertex(), so that invalidates anything queued
     // up for curve vertices. if this is internally called by
-    // spline_segment, then spline_vertex_index will be saved and restored.
-    spline_vertex_index = 0;
+    // spline_segment, then splineVertexCount will be saved and restored.
+    splineVertexCount = 0;
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -439,19 +456,19 @@ public class PGraphics3 extends PGraphics {
   protected void spline_vertex(float x, float y, float z, boolean bezier) {
     // allocate space for the spline vertices
     // to improve processing applet load times, don't allocate until actual use
-    if (spline_vertex == null) {
-      spline_vertex = new float[SPLINE_VERTEX_ALLOC][VERTEX_FIELD_COUNT];
+    if (splineVertices == null) {
+      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
     }
 
     // if more than 128 points, shift everything back to the beginning
-    if (spline_vertex_index == SPLINE_VERTEX_ALLOC) {
-      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-3], 0,
-                       spline_vertex[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-2], 0,
-                       spline_vertex[1], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(spline_vertex[SPLINE_VERTEX_ALLOC-1], 0,
-                       spline_vertex[2], 0, VERTEX_FIELD_COUNT);
-      spline_vertex_index = 3;
+    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-3], 0,
+                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-2], 0,
+                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-1], 0,
+                       splineVertices[2], 0, VERTEX_FIELD_COUNT);
+      splineVertexCount = 3;
     }
 
     // 'flat' may be a misnomer here because it's actually just
@@ -461,7 +478,7 @@ public class PGraphics3 extends PGraphics {
     //if (spline_vertices_flat) {
     //if (z != 0) spline_vertices_flat = false;
     //}
-    float vertex[] = spline_vertex[spline_vertex_index];
+    float vertex[] = splineVertices[splineVertexCount];
 
     vertex[MX] = x;
     vertex[MY] = y;
@@ -494,22 +511,22 @@ public class PGraphics3 extends PGraphics {
     vertex[NZ] = normalZ;
     //}
 
-    spline_vertex_index++;
+    splineVertexCount++;
 
     // draw a segment if there are enough points
-    if (spline_vertex_index > 3) {
+    if (splineVertexCount > 3) {
       if (bezier) {
-        if ((spline_vertex_index % 4) == 0) {
+        if ((splineVertexCount % 4) == 0) {
           if (!bezier_inited) bezier_init();
-          spline3_segment(spline_vertex_index-4,
-                          spline_vertex_index-4,
+          spline3_segment(splineVertexCount-4,
+                          splineVertexCount-4,
                           bezier_draw,
                           bezier_detail);
         }
       } else {  // catmull-rom curve (!bezier)
         if (!curve_inited) curve_init();
-        spline3_segment(spline_vertex_index-4,
-                        spline_vertex_index-3,
+        spline3_segment(splineVertexCount-4,
+                        splineVertexCount-3,
                         curve_draw,
                         curve_detail);
       }
@@ -603,11 +620,11 @@ public class PGraphics3 extends PGraphics {
 
 
   public void endShape() {
-    vertex_end = vertex_count;
+    vertex_end = vertexCount;
 
     // don't try to draw if there are no vertices
     // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-    if (vertex_count == 0) {
+    if (vertexCount == 0) {
       shape = 0;
       return;
     }
@@ -783,7 +800,7 @@ public class PGraphics3 extends PGraphics {
         case QUADS:
         case QUAD_STRIP:
         {
-          stop = vertex_count-3;
+          stop = vertexCount-3;
           increment = (shape == QUADS) ? 4 : 2;
 
           for (int i = vertex_start; i < stop; i += increment) {
@@ -809,21 +826,13 @@ public class PGraphics3 extends PGraphics {
     // ------------------------------------------------------------------
     // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (X, Y, Z)
 
-    if (depth) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float vertex[] = vertices[i];
+    for (int i = vertex_start; i < vertex_end; i++) {
+      float vertex[] = vertices[i];
 
-        vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
-        vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
-        vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
-        vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
-      }
-    } else {
-      // if no depth in use, then the points can be transformed simpler
-      for (int i = vertex_start; i < vertex_end; i++) {
-        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
-        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
-      }
+      vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
+      vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
+      vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
+      vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
     }
 
 
@@ -1184,24 +1193,21 @@ public class PGraphics3 extends PGraphics {
     // ------------------------------------------------------------------
     // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
 
-    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3)) {
-    if (depth) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float vx[] = vertices[i];
+    for (int i = vertex_start; i < vertex_end; i++) {
+      float vx[] = vertices[i];
 
-        float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
-        float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
-        float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
-        float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
+      float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
+      float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
+      float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
+      float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
 
-        if (ow != 0) {
-          ox /= ow; oy /= ow; oz /= ow;
-        }
-
-        vx[X] = width * (ONE + ox) / 2.0f;
-        vx[Y] = height * (ONE + oy) / 2.0f;
-        vx[Z] = (oz + ONE) / 2.0f;
+      if (ow != 0) {
+        ox /= ow; oy /= ow; oz /= ow;
       }
+
+      vx[X] = width * (ONE + ox) / 2.0f;
+      vx[Y] = height * (ONE + oy) / 2.0f;
+      vx[Z] = (oz + ONE) / 2.0f;
     }
   }
 
@@ -1397,7 +1403,7 @@ public class PGraphics3 extends PGraphics {
     if (weight < 1.5f) {
       int xx = (int) ((x1 + x2) / 2f);
       int yy = (int) ((y1 + y2) / 2f);
-      point0(xx, yy, z, color);
+      //point0(xx, yy, z, color);
       zbuffer[yy*width + xx] = screenZ(x, y, z);
       //stencil?
 
@@ -1633,21 +1639,11 @@ public class PGraphics3 extends PGraphics {
 
 
   public void translate(float tx, float ty) {
-    if (!depth) {
-      m03 += tx*m00 + ty*m01 + m02;
-      m13 += tx*m10 + ty*m11 + m12;
-      m23 += tx*m20 + ty*m21 + m22;
-      m33 += tx*m30 + ty*m31 + m32;
-
-    } else {
-      translate(tx, ty, 0);
-    }
+    translate(tx, ty, 0);
   }
 
 
   public void translate(float tx, float ty, float tz) {
-    //dimensions = 3;
-
     m03 += tx*m00 + ty*m01 + tz*m02;
     m13 += tx*m10 + ty*m11 + tz*m12;
     m23 += tx*m20 + ty*m21 + tz*m22;
@@ -1731,44 +1727,19 @@ public class PGraphics3 extends PGraphics {
    * dimensions higher than two, in case this is still 2D mode.
    */
   public void scale(float s) {
-    //if (dimensions == 3) {
     applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
-    //if (dimensions < 2) dimensions = 2;
-
-    //} else {
-    //dimensions = 2;
-    //applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
-    //}
-
-    // figure out whether 2D or 3D matrix
-    //scale(xyz, xyz, xyz);
   }
 
 
   public void scale(float sx, float sy) {
-    //if (dimensions == 0) dimensions = 2;
     applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
-  // OPTIMIZE: same as above
   public void scale(float x, float y, float z) {
-    //modelMatrixIsIdentity = false;
-    //dimensions = 3;
     applyMatrix(x, 0, 0, 0,  0, y, 0, 0,  0, 0, z, 0,  0, 0, 0, 1);
   }
 
-
-  /*
-  public void transform(float n00, float n01, float n02, float n03,
-                        float n10, float n11, float n12, float n13,
-                        float n20, float n21, float n22, float n23,
-                        float n30, float n31, float n32, float n33) {
-    //dimensions = 3;
-    applyMatrix(n00, n01, n02, n03,  n10, n11, n12, n13,
-                n20, n21, n22, n23,  n30, n31, n32, n33);
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -2103,18 +2074,16 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenX(float x, float y) {
-    return m00*x + m01*y + m02;
+    return screenX(x, y, 0);
   }
 
 
   public float screenY(float x, float y) {
-    return m10*x + m11*y + m12;
+    return screenY(x, y, 0);
   }
 
 
   public float screenX(float x, float y, float z) {
-    if (!depth) return screenX(x, y);
-
     float ax = m00*x + m01*y + m02*z + m03;
     float ay = m10*x + m11*y + m12*z + m13;
     float az = m20*x + m21*y + m22*z + m23;
@@ -2129,8 +2098,6 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenY(float x, float y, float z) {
-    if (!depth) return screenY(x, y);
-
     float ax = m00*x + m01*y + m02*z + m03;
     float ay = m10*x + m11*y + m12*z + m13;
     float az = m20*x + m21*y + m22*z + m23;
@@ -2145,8 +2112,6 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenZ(float x, float y, float z) {
-    if (!depth) return 0;
-
     float ax = m00*x + m01*y + m02*z + m03;
     float ay = m10*x + m11*y + m12*z + m13;
     float az = m20*x + m21*y + m22*z + m23;
@@ -2161,8 +2126,6 @@ public class PGraphics3 extends PGraphics {
 
 
   public float objectX(float x, float y, float z) {
-    if (!depth) return screenX(x, y);
-
     float ax = m00*x + m01*y + m02*z + m03;
     float aw = m30*x + m31*y + m32*z + m33;
     return (aw != 0) ? ax / aw : ax;
@@ -2170,8 +2133,6 @@ public class PGraphics3 extends PGraphics {
 
 
   public float objectY(float x, float y, float z) {
-    if (!depth) return screenY(x, y);
-
     float ay = m10*x + m11*y + m12*z + m13;
     float aw = m30*x + m31*y + m32*z + m33;
     return (aw != 0) ? ay / aw : ay;
@@ -2179,8 +2140,6 @@ public class PGraphics3 extends PGraphics {
 
 
   public float objectZ(float x, float y, float z) {
-    if (!depth) return 0;
-
     float az = m20*x + m21*y + m22*z + m23;
     float aw = m30*x + m31*y + m32*z + m33;
     return (aw != 0) ? az / aw : az;
@@ -2297,4 +2256,55 @@ public class PGraphics3 extends PGraphics {
     lightSpecularG[num] = calcG;
     lightSpecularB[num] = calcB;
   }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATH
+
+
+  private final float mag(float a, float b) {
+    return (float)Math.sqrt(a*a + b*b);
+  }
+
+  private final float mag(float a, float b, float c) {
+    return (float)Math.sqrt(a*a + b*b + c*c);
+  }
+
+  private final float max(float a, float b) {
+    return (a > b) ? a : b;
+  }
+
+  private final float max(float a, float b, float c) {
+    return Math.max(a, Math.max(b, c));
+  }
+
+  private final float sq(float a) {
+    return a*a;
+  }
+
+  private final float sqrt(float a) {
+    return (float)Math.sqrt(a);
+  }
+
+  private final float abs(float a) {
+    return (a < 0) ? -a : a;
+  }
+
+  private final float sin(float angle) {
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    return (float)Math.sin(angle);
+  }
+
+  private final float cos(float angle) {
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    return (float)Math.cos(angle);
+  }
+
+  private final float tan(float angle) {
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    return (float)Math.tan(angle);
+  }
 }
+
