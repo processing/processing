@@ -21,6 +21,8 @@ X move left/center/right aligning into the font class
 X   otherwise text with alignment has problems with returns
 X could PFont2 be done entirely with reflection?
 X   that way other font types can properly extend PFont
+o font char widths from orator were not fixed width
+o   may just need to regenerate. if not, widths may be set wrong.
 
 _ depth testing of lines vs text is problematic
 _   use depth()/noDepth() to handle depth test
@@ -46,7 +48,8 @@ _   it could be placed at the end of the file
 _ simple way to just use java text in p5 applets? 
 _   the current text support is just so hokey
 
-_ need to try jogl to make sure no further changes
+_ before graphics engine change, attach jogl stuff
+_   need to try jogl to make sure no further changes
 _   and the illustrator stuff
 _ 404 error because first searches applet directory on zipdecode
 _ image(String name) and textFont(String name)
@@ -55,7 +58,6 @@ _   do we change to font(arial, 12) ?
 _ write PApplet2, a full screen version of PApplet
 _   this might be used for presentation mode
 
-_ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
 _   move to new graphics engine
