@@ -21,6 +21,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -100,15 +101,25 @@ public class PdeFontBuilder extends JFrame {
     // don't care about families starting with . or #
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
+#ifdef JDK13
+    // getFontList is deprecated in 1.4, so this has to be used
+    GraphicsEnvironment ge = 
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+    //Font fonts[] = ge.getAllFonts();
+    String flist[] = ge.getAvailableFontFamilyNames();
+#else
     //fontSelector = new JComboBox();
     String flist[] = Toolkit.getDefaultToolkit().getFontList();
+#endif
+
     int index = 0;
     for (int i = 0; i < flist.length; i++) {
       if ((flist[i].indexOf('.') == 0) || (flist[i].indexOf('#') == 0) ||
           (flist[i].equals("Dialog")) || (flist[i].equals("DialogInput")) ||
           (flist[i].equals("Serif")) || (flist[i].equals("SansSerif")) ||
           (flist[i].equals("Monospaced"))) continue;
-      if (i != index) flist[index++] = flist[i];
+      flist[index++] = flist[i];
     }
     list = new String[index];
     System.arraycopy(flist, 0, list, 0, index);
@@ -146,7 +157,17 @@ public class PdeFontBuilder extends JFrame {
       });
     */
 
-    sample = new JTextArea("The quick brown fox blah blah.");
+    sample = new JTextArea("The quick brown fox blah blah.") {
+        public void paintComponent(Graphics g) {
+          Graphics2D g2 = (Graphics2D) g;
+          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                              true ? 
+                              RenderingHints.VALUE_ANTIALIAS_ON :
+                              RenderingHints.VALUE_ANTIALIAS_OFF);
+          super.paintComponent(g);
+        }
+      };
+
     pain.add(sample);
 
     //for (int i = 0; i < list.length; i++) {

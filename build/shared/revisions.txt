@@ -4,24 +4,32 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
-ABOUT REV 0062 - 
+ABOUT REV 0062 - 24 september 2003
 
-this release primarily introduces new features.
+this release primarily introduces new features. it is the third
+release in three days, as i'm pushing to get features out and
+available rather than getting held up in a long release like some of
+the others have been. this pace of releases will not continue, and is
+only happening while i have time to work on the environment.
 
 
 [ changes & additions ] 
 
-- all the formerly included fonts have been removed, in favor of a
-  built-in font creator, available from the sketch menu. the font
-  creator will allow you to create your own fonts, and add them
-  directly to your sketch.
-
 - "add files" menu command as a simpler way to add files to your
   sketch folder than navigating through the explorer.
+
+- a built-in font creator has been added, available from the sketch
+  menu. this tool will allow you to create your own fonts, and add
+  them directly to your sketch. you can also use 'add files' to add
+  fonts from the 'fonts' folder. however, the fonts folder will be
+  removed in a future release. 
 
 - no more digging for sketches.. "show sketch folder" opens up the
   folder of the current sketch using the finder on the mac or the
   windows explorer on windows. 
+
+- after exporting a sketch, automatically open the applet folder that
+  was just created.
 
 - some modification to the menu layouts, i.e. "clear history" is now
   part of the history menu itself.
@@ -32,6 +40,12 @@ this release primarily introduces new features.
 - finally found the problem with showing reference on macosx and fixed
   it. this had eluded me for a while since it was working ok on my own
   machine, but thanks to timothy mohn for harrassing me into fixing it.
+
+
+[ known problems ]
+
+- have been moved to the 'bugs.txt' file. check there for the status
+  of your favorite bug/feature.
 
 
 ABOUT REV 0061 - 23 september 2003
