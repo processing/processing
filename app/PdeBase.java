@@ -294,14 +294,26 @@ public class PdeBase extends Frame
     final String KEYWORDS = "pde_keywords.properties";
     keywords = new Properties();
     try {
-      // this probably won't work on macos9
-      // seems to work on macosx java 1.4, though i don't think
-      // it worked on java 1.3 for macosx (see implementation above)
-      keywords.load(getClass().getResource(KEYWORDS).openStream());
-      
+      if ((PdeBase.platform == PdeBase.MACOSX) || 
+          (PdeBase.platform == PdeBase.MACOS9)) {
+        // macos doesn't seem to think that files in the lib folder
+        // are part of the resources, unlike windows or linux.
+        // actually, this is only the case when running as a .app, 
+        // since it works fine from run.sh, but not Processing.app
+        keywords.load(new FileInputStream("lib/" + KEYWORDS));
+
+      } else {  // other, more reasonable operating systems
+        keywords.load(getClass().getResource(KEYWORDS).openStream());
+      }
+
     } catch (Exception e) {
-      System.err.println("Error loading keywords, " + 
-                         "reference lookup will be unavailable");
+      String message = 
+        "An error occurred while loading the keywords,\n" + 
+        "\"Find in reference\" will not be available.";
+      JOptionPane.showMessageDialog(this, message, 
+                                    "Problem loading keywords",
+                                    JOptionPane.WARNING_MESSAGE);
+
       System.err.println(e.toString());
       e.printStackTrace();
     }
@@ -1004,7 +1016,6 @@ public class PdeBase extends Frame
                                     JOptionPane.WARNING_MESSAGE);
     }
   }
-
 
   // interfaces for MRJ Handlers, but naming is fine 
   // so used internally for everything else
