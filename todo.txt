@@ -260,11 +260,11 @@ X add "available" function to PSerial
 X working on video library, get camera working again
 X getCameras() or getPorts() or list() ?
 X make sure it's possible to use multiple cameras
+X figure out how polling works
+X   is it possible to check if new frames are available?
+X   properly synchronize() the pixels
+X   may need to always copy to a new array? (or does it already?)
 
-_ figure out how polling works
-_   is it possible to check if new frames are available?
-_   properly synchronize() the pixels
-_   may need to always copy to a new array? (or does it already?)
 _ provide a useful error message when winvdig not installed (for capture)
 _   also be able to set one in particular
 
