@@ -242,6 +242,9 @@ X rename compiler.* to preproc.*
 X OutOfMemoryError still showing up when no CR at end of app
 
 040708 evening
+X curve/bezierSegments -> curveDetail
+X remove doubling on curve()
+X move around notes about curve stuff
 
 _ get export working again
 _   make multiple jar files thing work.. blech
