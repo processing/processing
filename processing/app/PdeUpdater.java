@@ -102,6 +102,8 @@ public class PdeUpdater {
 	    e.printStackTrace();
 	  }
 	*/
+	// mac mrj is not smart enough to exit the applicaiton here
+	System.exit(0);
 
       } catch (IOException e1) {
 	e1.printStackTrace();
