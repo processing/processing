@@ -104,14 +104,24 @@ CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/Syste
 export CLASSPATH
 
 ### --- make version with all the goodies for the application
-echo Building bagel with serial, video, audio, and jdk13 support
-perl make.pl JIKES=../build/macosx/work/jikes SERIAL RXTX VIDEO SONIC JDK13
-cp classes/*.class ../build/macosx/work/classes/
+#echo Building bagel with serial, video, audio, and jdk13 support
+#perl make.pl JIKES=../build/macosx/work/jikes SERIAL RXTX VIDEO SONIC JDK13
+#cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
-echo Building bagel for export with audio
-perl make.pl JIKES=../build/macosx/work/jikes SONIC
-cp classes/*.class ../build/macosx/work/lib/export/
+#echo Building bagel for export with audio
+#perl make.pl JIKES=../build/macosx/work/jikes SONIC
+#cp classes/*.class ../build/macosx/work/lib/export/
+
+echo Building export classes for 1.1
+rm -rf classes && mkdir classes
+perl make.pl JIKES=../build/macosx/work/jikes
+cd classes && zip -r0q ../build/macosx/work/lib/export11.jar && cd ..
+
+echo Building export classes for 1.3
+rm -rf classes && mkdir classes
+perl make.pl JIKES=../build/macosx/work/jikes
+cd classes && zip -r0q ../build/macosx/work/lib/export13.jar && cd ..
 
 cd ..
 cd app

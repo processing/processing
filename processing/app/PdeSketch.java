@@ -29,7 +29,6 @@ Export to:  [ Applet (for the web)   + ]    [  OK  ]
 [ ] OK to overwrite HTML file   <-- only visible if there is one there
                                     remembers previous setting as a pref
 
-
 > Advanced
 
   Version: [ Java 1.1   + ]
@@ -77,9 +76,14 @@ Export to:   [ Library       + ]    [  OK  ]
  */
 
 public class PdeSketch {
+  // name of sketch, which is the name of main file 
+  // (without .pde or .java extension)
+  String name;  
+
+  // 
   String path;  // path to 'main' file for this sketch
 
-  String name;
+  // the sketch folder
   File directory;
 
   static final int PDE = 0;
@@ -102,6 +106,7 @@ public class PdeSketch {
     System.out.println("main file is " + mainFile);
 
     main = mainFile.getName();
+    System.out.println("main file is " + main);
     /*
     if (main.endsWith(".pde")) {
       main = main.substring(0, main.length() - 4);
@@ -121,7 +126,7 @@ public class PdeSketch {
   /**
    * Build the list of files. 
    *
-   * Generally his is only done once, rather than
+   * Generally this is only done once, rather than
    * each time a change is made, because otherwise it gets to be 
    * a nightmare to keep track of what files went where, because 
    * not all the data will be saved to disk.
@@ -210,7 +215,7 @@ public class PdeSketch {
           who = j;  // this guy is earlier in the alphabet
         }
       }
-      if (who != i) {  // swap with someone
+      if (who != i) {  // swap with someone if changes made
         PdeCode temp = code[who];
         code[who] = code[i];
         code[i] = temp;
@@ -220,7 +225,7 @@ public class PdeSketch {
 
 
   /**
-   * Change the file currently being edited. 
+   * Change what file is currently being edited. 
    * 1. store the String for the text of the current file.
    * 2. retrieve the String for the text of the new file.
    * 3. change the text that's visible in the text area
@@ -242,6 +247,7 @@ public class PdeSketch {
     // and i'll personally make a note of the change
     //current = which;
   }
+
 
 
   /**
@@ -387,10 +393,13 @@ public class PdeSketch {
   */
 
 
-  // in an advanced program, the returned classname could be different,
-  // which is why the className is set based on the return value.
-  // @return null if compilation failed, className if not
-  //
+  /**
+   * Build all the code for this sketch.
+   *
+   * In an advanced program, the returned classname could be different,
+   * which is why the className is set based on the return value.
+   * @return null if compilation failed, className if not
+   */
   protected String build(String buildPath, String suggestedClassName)
     throws PdeException, Exception {
 
@@ -480,6 +489,356 @@ public class PdeSketch {
     boolean success = compiler.compile(new PrintStream(messageStream));
 
     return success ? className : null;
+  }
+
+
+  public void exportApplet(boolean replaceHtml) {
+    //File appletDir, String exportSketchName, File dataDir) {
+    try {
+      String program = textarea.getText();
+
+      // create the project directory
+      // pass null for datapath because the files shouldn't be 
+      // copied to the build dir.. that's only for the temp stuff
+      File appletDir = new File(directory, "applet");
+
+      boolean writeHtml = true;
+      if (appletDir.exists()) {
+        File htmlFile = new new File(appletDir, "index.html");
+        if (htmlFile.exists() && !replaceHtml) {
+          writeHtml = false;
+        }
+      } else {
+        appletDir.mkdirs();
+      }
+
+      // build the sketch 
+      String foundName = build(name, appletDir.getPath());
+
+      // (already reported) error during export, exit this function
+      if (foundName == null) {
+        buttons.clear();
+        return;
+      }
+
+      // if name != exportSketchName, then that's weirdness
+      // BUG unfortunately, that can also be a bug in the preproc :(
+      if (!name.equals(foundName)) {
+        PdeBase.showWarning("Error during export", 
+                            "Sketch name is " + name + " but the sketch\n" +
+                            "name in the code was " + foundName);
+        return;
+      }
+
+      if (writeHtml) {
+        int wide = BApplet.DEFAULT_WIDTH;
+        int high = BApplet.DEFAULT_HEIGHT;
+
+        try {
+          PatternMatcher matcher = new Perl5Matcher();
+          PatternCompiler compiler = new Perl5Compiler();
+
+          // this matches against any uses of the size() function, 
+          // whether they contain numbers of variables or whatever. 
+          // this way, no warning is shown if size() isn't actually 
+          // used in the applet, which is the case especially for 
+          // beginners that are cutting/pasting from the reference.
+          String sizing = 
+            "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
+          Pattern pattern = compiler.compile(sizing);
+
+          // adds a space at the beginning, in case size() is the very 
+          // first thing in the program (very common), since the regexp 
+          // needs to check for things in front of it.
+          PatternMatcherInput input = new PatternMatcherInput(" " + program);
+          if (matcher.contains(input, pattern)) {
+            MatchResult result = matcher.getMatch();
+            try {
+              wide = Integer.parseInt(result.group(1).toString());
+              high = Integer.parseInt(result.group(2).toString());
+
+            } catch (NumberFormatException e) {
+              // found a reference to size, but it didn't 
+              // seem to contain numbers
+              final String message = 
+                "The size of this applet could not automatically be\n" +
+                "determined from your code. You'll have to edit the\n" + 
+                "HTML file to set the size of the applet.";
+
+              PdeBase.showWarning("Could not find applet size", message, null);
+            }
+          }  // else no size() command found
+
+        } catch (MalformedPatternException e) {
+          PdeBase.showWarning("Internal Problem",
+                              "An internal error occurred while trying\n" + 
+                              "to export the sketch. Please report this.", e);
+        }
+
+        StringBuffer sources = new StringBuffer();
+        for (int i = 0; i < codeCount; i++) {
+          sources.append("<a href=\'" + code[i].file.getName() + "\">" + 
+                         code[i].name + "</a> ");
+        }
+
+        File htmlOutputFile = new File(appletDir, "index.html");
+        FileOutputStream fos = new FileOutputStream(htmlOutputFile);
+        PrintStream ps = new PrintStream(fos);
+
+        // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+
+        InputStream is = PdeBase.getStream("applet.html");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+          if (line.indexOf("@@") != -1) {
+            StringBuffer sb = new StringBuffer(line);
+            int index = 0;
+            while ((index = sb.indexOf("@@sketch@@")) != -1) {
+              sb.replace(index, index + "@@sketch@@".length(), 
+                         name);
+            }
+            while ((index = sb.indexOf("@@source@@")) != -1) {
+              sb.replace(index, index + "@@source@@".length(), 
+                         sources.toString());
+            }
+            while ((index = sb.indexOf("@@archive@@")) != -1) {
+              sb.replace(index, index + "@@archive@@".length(), 
+                         name + ".jar");
+            }
+            while ((index = sb.indexOf("@@width@@")) != -1) {
+              sb.replace(index, index + "@@width@@".length(), 
+                         String.valueOf(wide));
+            }
+            while ((index = sb.indexOf("@@height@@")) != -1) {
+              sb.replace(index, index + "@@height@@".length(), 
+                         String.valueOf(wide));
+            }
+            line = sb.toString();
+          }
+          ps.println(line);
+        }
+
+        reader.close();
+
+        ps.flush();
+        ps.close();
+      }
+
+      // copy the source files to the target, since we like
+      // to encourage people to share their code
+      for (int i = 0; i < codeCount; i++) {
+        PdeBase.copyFile(code[i].file, 
+                         new File(appletDir, code[i].file.getName()));
+      }
+
+      // create new .jar file
+      FileOutputStream zipOutputFile = 
+        new FileOutputStream(new File(appletDir, name + ".jar"));
+      ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+      ZipEntry entry;
+
+      // add the contents of the code folder to the jar
+      // unpacks all jar files 
+      File codeFolder = new File(sketchDir, "code");
+      if (codeFolder.exists()) {
+        String includes = PdeCompiler.contentsToClassPath(codeFolder);
+        packClassPathIntoZipFile(includes, zos);
+      }
+
+      // add the appropriate bagel to the classpath
+      String jdkVersionStr = PdePreferences.get("compiler.jdk_version");
+      String bagelJar = "lib/export11.jar";  // default
+      if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
+        bagelJar = "lib/export13.jar";
+      }
+      //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
+      //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
+      packClassPathIntoZipFile(bagelJar);
+      
+      /*
+      // add the contents of lib/export to the jar file
+      // these are the jdk11-only bagel classes
+      String exportDir = ("lib" + File.separator + 
+                          "export" + File.separator);
+      String bagelClasses[] = new File(exportDir).list();
+
+      for (int i = 0; i < bagelClasses.length; i++) {
+        if (!bagelClasses[i].endsWith(".class")) continue;
+        entry = new ZipEntry(bagelClasses[i]);
+        zos.putNextEntry(entry);
+        zos.write(PdeBase.grabFile(new File(exportDir + bagelClasses[i])));
+        zos.closeEntry();
+      }
+      */
+
+      // files to include from data directory
+      if ((dataDir != null) && (dataDir.exists())) {
+        String datafiles[] = dataDir.list();
+        for (int i = 0; i < datafiles.length; i++) {
+          // don't export hidden files, this handles, . .. .DS_Store
+          if (datafiles[i].charAt(0) == '.') continue;
+          //if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
+          //continue;
+          //}
+          entry = new ZipEntry(datafiles[i]);
+          zos.putNextEntry(entry);
+          zos.write(PdeBase.grabFile(new File(dataDir, datafiles[i])));
+          zos.closeEntry();
+        }
+      }
+
+      // add the project's .class to the jar
+      // actually, these should grab everything from the build directory
+      // since there may be some inner classes
+      // (add any .class files from the applet dir, then delete them)
+      String classfiles[] = appletDir.list();
+      for (int i = 0; i < classfiles.length; i++) {
+        if (classfiles[i].endsWith(".class")) {
+          entry = new ZipEntry(classfiles[i]);
+          zos.putNextEntry(entry);
+          zos.write(PdeBase.grabFile(new File(appletDir, classfiles[i])));
+          zos.closeEntry();
+        }
+      }
+
+      // remove the .class files from the applet folder. if they're not 
+      // removed, the msjvm will complain about an illegal access error, 
+      // since the classes are outside the jar file.
+      for (int i = 0; i < classfiles.length; i++) {
+        if (classfiles[i].endsWith(".class")) {
+          File deadguy = new File(appletDir, classfiles[i]);
+          if (!deadguy.delete()) {
+            System.err.println(classfiles[i] + 
+                               " could not be deleted from the applet folder.");
+            System.err.println("You'll need to remove it by hand.");
+          }
+        }
+      }
+
+      // close up the jar file
+      zos.flush();
+      zos.close();
+
+      // make a copy of the .pde file to post on the web
+      FileOutputStream sketchOutput = 
+        new FileOutputStream(new File(appletDir, name + ".pde"));
+      PrintWriter sketchWriter = 
+        new PrintWriter(new OutputStreamWriter(sketchOutput));
+      sketchWriter.print(program);
+      sketchWriter.flush();
+      sketchWriter.close();
+
+      message("Done exporting.");
+      PdeBase.openFolder(appletDir);
+
+    } catch (Exception e) {
+      message("Error during export.");
+      e.printStackTrace();
+    }
+    buttons.clear();
+  }
+
+
+  /**
+   * Slurps up .class files from a colon (or semicolon on windows) 
+   * separated list of paths and adds them to a ZipOutputStream.
+   */
+  static public void packClassPathIntoZipFile(String path, ZipOutputStream zos) 
+  throws IOException {
+    String pieces[] = 
+      BApplet.splitStrings(path, File.pathSeparatorChar);
+
+    for (int i = 0; i < pieces.length; i++) {
+      if (pieces[i].length() == 0) continue;
+      //System.out.println("checking piece " + pieces[i]);
+
+      // is it a jar file or directory?
+      if (pieces[i].toLowerCase().endsWith(".jar") || 
+          pieces[i].toLowerCase().endsWith(".zip")) {
+        try {
+          ZipFile file = new ZipFile(pieces[i]);
+          Enumeration entries = file.entries();
+          while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            if (entry.isDirectory()) {
+              // actually 'continue's for all dir entries
+
+            } else {
+              String name = entry.getName();
+              // ignore contents of the META-INF folders
+              if (name.indexOf("META-INF") == 0) continue;
+              ZipEntry entree = new ZipEntry(name);
+
+              zos.putNextEntry(entree);
+              byte buffer[] = new byte[(int) entry.getSize()];
+              InputStream is = file.getInputStream(entry);
+
+              int offset = 0;
+              int remaining = buffer.length; 
+              while (remaining > 0) {
+                int count = is.read(buffer, offset, remaining);
+                offset += count;
+                remaining -= count;
+              }
+
+              zos.write(buffer);
+              zos.flush();
+              zos.closeEntry();
+            }
+          }
+        } catch (IOException e) {
+          System.err.println("Error in file " + pieces[i]);
+          e.printStackTrace();
+        }
+      } else {  // not a .jar or .zip, prolly a directory
+        File dir = new File(pieces[i]);
+        // but must be a dir, since it's one of several paths
+        // just need to check if it exists
+        if (dir.exists()) {
+          packClassPathIntoZipFileRecursive(dir, null, zos);
+        }
+      }
+    }
+  }
+
+
+  /**
+   * Continue the process of magical exporting. This function
+   * can be called recursively to walk through folders looking
+   * for more goodies that will be added to the ZipOutputStream.
+   */
+  static public void packClassPathIntoZipFileRecursive(File dir, String sofar, 
+                                           ZipOutputStream zos) 
+  throws IOException {
+
+    String files[] = dir.list();
+    for (int i = 0; i < files.length; i++) {
+      //if (files[i].equals(".") || files[i].equals("..")) continue;
+      // ignore . .. and .DS_Store
+      if (files[i].charAt(0) == '.') continue;
+
+      File sub = new File(dir, files[i]);
+      String nowfar = (sofar == null) ? 
+        files[i] : (sofar + "/" + files[i]);
+
+      if (sub.isDirectory()) {
+        packClassPathIntoZipFileRecursive(sub, nowfar, zos);
+
+      } else {
+        // don't add .jar and .zip files, since they only work
+        // inside the root, and they're unpacked
+        if (!files[i].toLowerCase().endsWith(".jar") &&
+            !files[i].toLowerCase().endsWith(".zip") &&
+            files[i].charAt(0) != '.') {
+          ZipEntry entry = new ZipEntry(nowfar);
+          zos.putNextEntry(entry);
+          zos.write(PdeBase.grabFile(sub));
+          zos.closeEntry();
+        }
+      }
+    }
   }
 
 
