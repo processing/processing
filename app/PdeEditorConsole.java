@@ -45,6 +45,9 @@ public class PdeEditorConsole extends JScrollPane {
 
   boolean cerror;
 
+  //int maxCharCount;
+  int maxLineCount;
+
   static PrintStream systemOut;
   static PrintStream systemErr;
 
@@ -192,13 +195,41 @@ public class PdeEditorConsole extends JScrollPane {
 
   private void appendText(String text, boolean err) {
     try {
+      // check how many lines have been used so far
+      // if too many, shave off a few lines from the beginning
+      Element element = consoleDoc.getDefaultRootElement();
+      int lineCount = element.getElementCount();
+      int overage = lineCount - maxLineCount;
+      if (overage > 0) {
+        // if 1200 lines, and 1000 lines is max, 
+        // find the position of the end of the 200th line
+        Element lineElement = element.getElement(overage);
+        int endOffset = lineElement.getEndOffset();
+        // remove to the end of the 200th line
+        consoleDoc.remove(0, endOffset);
+      }
+
+      // add the text to the end of the console, 
       consoleDoc.insertString(consoleDoc.getLength(), text, 
                               err ? errStyle : stdStyle);
 
-      // always move to the end of the text as it's added [fry]
+      // always move to the end of the text as it's added
       consoleTextPane.setCaretPosition(consoleDoc.getLength());
 
-    } catch (Exception e) { }
+    } catch (BadLocationException e) { 
+      // ignore the error otherwise this will cause an infinite loop
+      // maybe not a good idea in the long run?
+    }
+  }
+
+
+  public void clear() {
+    try {
+      consoleDoc.remove(0, consoleDoc.getLength());
+    } catch (BadLocationException e) { 
+      // ignore the error otherwise this will cause an infinite loop
+      // maybe not a good idea in the long run?
+    }
   }
 }
 
