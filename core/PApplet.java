@@ -532,9 +532,9 @@ public class PApplet extends Applet
       setBounds((winW - width)/2,
                 insets.top + ((winH - insets.top - insets.bottom) - height)/2,
                 winW, winH);
-    } else {
+    //} else {
       //System.out.println("frame was null");
-      setBounds(0, 0, width, height);
+      //setBounds(0, 0, width, height);
     }
   }
 

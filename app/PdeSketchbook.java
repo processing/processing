@@ -343,7 +343,8 @@ public class PdeSketchbook {
     // rebuild the popup menu
     menu.removeAll();
 
-    item = new JMenuItem("Open...");
+    //item = new JMenuItem("Open...");
+    item = PdeEditor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.handleOpen(null);

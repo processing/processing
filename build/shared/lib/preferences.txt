@@ -116,15 +116,15 @@ editor.eolmarkers.color=#99991A
 editor.invalid=false
 editor.invalid.style=#7E7E00,bold
 
-buttons.bgcolor      = #999988
-buttons.status.font  = SansSerif,plain,10
-buttons.status.color = #333322
+buttons.bgcolor      = #66665A
+buttons.status.font  = SansSerif,plain,12
+buttons.status.color = #FFFFFF
 
 # settings for the tabs at the top
 # actual tab images are stored in the lib/ folder
-header.bgcolor               = #4C4C3E
-header.text.selected.color   = #ffffff
-header.text.unselected.color = #999988
+header.bgcolor               = #999988
+header.text.selected.color   = #1A1A00
+header.text.unselected.color = #ffffff
 header.text.font             = SansSerif,plain,12
 
 console                  = true
@@ -146,7 +146,7 @@ console.auto_clear = true
 console.length = 500
 
 status.notice.fgcolor = #ffffff
-status.notice.bgcolor = #666666
+status.notice.bgcolor = #bbbbaa
 status.error.fgcolor  = #ffffff
 status.error.bgcolor  = #662000
 status.prompt.fgcolor = #000000
@@ -239,3 +239,9 @@ preproc.imports.jdk14 = javax.xml.parsers,javax.xml.transform,javax.xml.transfor
 
 # set the browser to be used on linux
 browser.linux = mozilla
+
+# coloring for the editor line number status bar at the bottom of the screen
+linestatus.bgcolor = #66665a
+linestatus.font	   = SansSerif,plain,10
+linestatus.color   = #ffffff
+linestatus.height  = 20

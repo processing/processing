@@ -172,7 +172,8 @@ public class PdeEditorHeader extends JComponent {
     hideItem.setEnabled(sketch.current != sketch.code[0]);
 
     //int x = 0; //PdePreferences.GUI_SMALL;
-    int x = (PdeBase.platform == PdeBase.MACOSX) ? 0 : 1;
+    //int x = (PdeBase.platform == PdeBase.MACOSX) ? 0 : 1;
+    int x = 6; // offset from left edge of the component
     for (int i = 0; i < sketch.codeCount; i++) {
       PdeCode code = sketch.code[i];
 
