@@ -1003,7 +1003,12 @@ public class PdeSketch {
       //importPackageList = PdeCompiler.packageListFromClassPath(classPath);
       libraryPath = codeFolder.getAbsolutePath();
     } else {
-      externalRuntime = (codeCount > 1);  // may still be set true later
+      // check to see if multiple files that include a .java file
+      externalRuntime = false;
+      for (int i = 0; i < codeCount; i++) {
+        if (code[i].flavor == JAVA) externalRuntime = true;
+      }
+      //externalRuntime = (codeCount > 1);  // may still be set true later
       //importPackageList = null;
       libraryPath = "";
     }

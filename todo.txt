@@ -6,6 +6,33 @@ X   uppercase being capitalized before lowercase
 X   need to mix case.. use toLowerCase before compare
 X add a little gap on editor frame at the left
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1097363967;start=0
+X add to readme or bugs.. 
+X   menus that are too long just get clipped on the screen
+X     can't be fixed because it's a java/os issue
+X   also strange menu behavior for popups, especially on osx we can't fix
+o if applet.html is present, open that in the editor too.
+o   or do we make people use dreamweaver?
+o   nixed by casey, we're not dreamweaver
+X macosx not exporting core.jar 
+X   the jar is buried Contents/Resources/Java
+_   verify that this is working
+X don't enable externalRuntime with multiple code files that are pde
+X   no longer separate classes
+X remove "file" from "new file".. maybe just "new tab"?
+X   not really separate files, so that could be trouble.
+
+_ add file of a .pde or .java file should update the tabs bar
+_   and prolly not really complain if it's in the same folder
+
+_ "save as" not properly updating the tab header
+
+_ also include the name of the previous sketch for "save as"
+
+_ allow to use doubles on casting -- particularly for Math.cos() et al
+
+//
+
+_ ctrl-tab to switch between tabs
 
 _ make notes about preproc
 _   subclasses need to use "public void keyPressed" not "void keyPressed"
@@ -34,28 +61,6 @@ _   but when uploaded to a unix server causes a serious problem
 _   use canonicalPath to flag possible problems
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
-_ macosx not exporting core.jar 
-_   the jar is buried Contents/Resources/Java
-
-_ add file of a .pde or .java file should update the tabs bar
-_   and prolly not really complain if it's in the same folder
-
-_ add to readme or bugs.. 
-_   menus that are too long just get clipped on the screen
-_     can't be fixed because it's a java/os issue
-_   also strange menu behavior for popups, especially on osx we can't fix
-
-_ don't enable externalRuntime with multiple code files that are pde
-_   no longer separate classes
-
-_ remove "file" from "new file".. maybe just "new tab"?
-_   not really separate files, so that could be trouble.
-
-_ "save as" not properly updating the tab header
-_ also include the name of the previous sketch for "save as"
-
-_ allow to use doubles on casting -- particularly for Math.cos() et al
-
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
 
 _ dim "rename" when the main tab is selected (since user needs to "save as")
@@ -66,9 +71,6 @@ _   200 pt font hoses things / hides buttons
 _ save caret position when switching tabs
 
 _ add mnemonics for menus (alt-f to open 'file')
-
-_ if applet.html is present, open that in the editor too.
-_   or do we make people use dreamweaver?
 
 _ if additional tab is "public" class.. then make external?
 

@@ -830,7 +830,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * Convenience method for the antidote to overthought
    * swing api mess for setting accelerators.
    */
-  static public JMenuItem newJMenuItem(String title, char what) {
+  static public JMenuItem newJMenuItem(String title, int what) {
     return newJMenuItem(title, what, false);
   }
 
@@ -842,7 +842,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * helpher function to *set the command key* for a menu item.
    */
   static public JMenuItem newJMenuItem(String title,
-                                       char what, boolean shift) {
+                                       int what, boolean shift) {
     JMenuItem menuItem = new JMenuItem(title);
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     if (shift) modifiers |= ActionEvent.SHIFT_MASK;
