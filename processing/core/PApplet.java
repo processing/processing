@@ -209,46 +209,19 @@ public class PApplet extends Applet
           Component.class.getMethod("setFocusTraversalKeysEnabled",
                                     new Class[] { Boolean.TYPE });
         defocus.invoke(this, new Object[] { Boolean.FALSE });
-      //} else {
-        //System.out.println(jdkVersion);
       }
     } catch (Exception e) { }  // oh well
 
     millisOffset = System.currentTimeMillis();
 
     finished = false; // just for clarity
-    //drawn = false;
-    //firstFrame = true;
 
     // this will be cleared by loop() if it is not overridden
-    //drawMethod = true;
-    //loopMethod = true;
     looping = true;
     redraw = true;  // draw this guy once
     firstMouse = true;
 
-    /*
-    // call setup for changed params
-    try {
-      setup();
-    } catch (NullPointerException e) {
-      //e.printStackTrace();
-      // this is probably because someone didn't call size() first
-      size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-      setup();
-    }
-
-    // do actual setup calls
-    if (g == null) {
-      // if programmer hasn't added a special graphics
-      // object, then setup a standard one
-      size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    }
-    */
-
     // these need to be inited before setup
-    //libraries = new PLibrary[10];
-    //libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
     sizeMethods = new RegisteredMethods();
     preMethods = new RegisteredMethods();
     drawMethods = new RegisteredMethods();
@@ -256,16 +229,6 @@ public class PApplet extends Applet
     mouseEventMethods = new RegisteredMethods();
     keyEventMethods = new RegisteredMethods();
     disposeMethods = new RegisteredMethods();
-
-    /*
-    // call the applet's setup method
-    setup();
-
-    // these are the same things as get run inside a call to size()
-    this.pixels = g.pixels;
-    this.width = g.width;
-    this.height = g.height;
-    */
 
     try {
       getAppletContext();
@@ -294,6 +257,10 @@ public class PApplet extends Applet
   }
 
 
+  public void depth() {
+  }
+
+
   /**
    * Called via the first call to PApplet.paint(),
    * because PAppletGL needs to have a usable screen
@@ -314,29 +281,9 @@ public class PApplet extends Applet
 
     // don't run stop and disposers twice
     if (thread == null) return;
-
-    //if (thread != null) {
     thread = null;
-    //}
 
     disposeMethods.handle();
-    /*
-    for (int i = 0; i < libraryCount; i++) {
-      if (libraryCalls[i][PLibrary.DISPOSE]) {
-        libraries[i].dispose();  // endNet/endSerial etc
-      }
-    }
-
-    for (int i = 0; i < stopCount; i++) {
-      try {
-        System.err.println("stopping " + i);
-        stopMethods[i].invoke(stopObjects[i], new Object[] { });
-      } catch (Exception e) {
-        System.err.println("Couldn't stop " + stopObjects[i]);
-        e.printStackTrace();
-      }
-    }
-    */
   }
 
 
@@ -361,57 +308,6 @@ public class PApplet extends Applet
 
 
   // ------------------------------------------------------------
-
-  /*
-  public void attach(PLibrary library) {
-    if (libraryCount == libraries.length) {
-      PLibrary temp[] = new PLibrary[libraryCount << 1];
-      System.arraycopy(libraries, 0, temp, 0, libraryCount);
-      libraries = temp;
-      boolean ctemp[][] = new boolean[libraryCount << 1][];
-      System.arraycopy(libraryCalls, 0, ctemp, 0, libraryCount);
-      libraryCalls = ctemp;
-    }
-    libraries[libraryCount] = library;
-    libraryCalls[libraryCount] = new boolean[PLibrary.CALL_COUNT];
-    libraryCount++;
-
-    library.setup(this);
-  }
-
-
-  public void attach(String libraryName) {
-    try {
-      Class c = Class.forName(libraryName);
-      PLibrary library = (PLibrary) c.newInstance();
-      library.setup(this);
-
-    } catch (ClassNotFoundException e) {
-      System.err.println("Could not find library \"" + libraryName + "\"");
-      System.err.println("Make sure it's in the libraries folder, ");
-      System.err.println("or exported somewhere inside the sketchbook,");
-      System.err.println("or inside the \"code\" folder of this sketch.");
-
-    } catch (IllegalAccessException e) {
-      System.err.println("Could not load library \"" + libraryName + "\"");
-      e.printStackTrace();
-
-    } catch (InstantiationException e) {
-      System.err.println("Could not load library \"" + libraryName + "\"");
-      e.printStackTrace();
-    }
-  }
-
-
-  public void registerCall(PLibrary library, int call) {
-    for (int i = 0; i < libraryCount; i++) {
-      if (libraries[i] == library) {
-        //println("registering call # " + call + " to " + library);
-        libraryCalls[i][call] = true;
-      }
-    }
-  }
-  */
 
 
   public class RegisteredMethods {
@@ -455,10 +351,6 @@ public class PApplet extends Applet
     }
   }
 
-
-  //public void registerSetup(Object o) {
-  //System.err.println("registerSetup not yet implemented");
-  //}
 
   public void registerSize(Object o) {
     Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
@@ -519,60 +411,6 @@ public class PApplet extends Applet
   }
 
 
-    /*
-    Class c = o.getClass();
-    try {
-      Method method = c.getMethod("mouseEvent",
-
-      mouseEventMethods.add(o, method);
-
-    } catch (Exception e) {
-      die("Could not register mouseEvent() for " + o, e);
-    }
-  }
-
-  public void registerSize(Object o) {
-    Class c = o.getClass();
-    try {
-      Method method = c.getMethod("size",
-                                  new Class[] { Integer.TYPE, Integer.TYPE });
-      sizeMethods.add(o, method);
-
-    } catch (Exception e) {
-      die("Could not register size() for " + o, e);
-    }
-  }
-
-
-  public void registerKeyEvent(Object o) {
-    Class c = o.getClass();
-    try {
-      Method method = c.getMethod("keyEvent",
-                                  new Class[] { KeyEvent.class });
-      keyEventMethods.add(o, method);
-
-    } catch (Exception e) {
-      die("Could not register mouseEvent() for " + o, e);
-    }
-  }
-    */
-
-  /*
-  protected void handleDispose() {
-    for (int i = 0; i < disposeMethods.count; i++) {
-      try {
-        //System.err.println("stopping " + i);
-        disposeMethods[i].handle(new Object[] { });
-        //diposeMethods[i].invoke(stopObjects[i], new Object[] { });
-      } catch (Exception e) {
-        System.err.println("Couldn't stop " + stopObjects[i]);
-        e.printStackTrace();
-      }
-    }
-  }
-  */
-
-
   // ------------------------------------------------------------
 
 
@@ -581,9 +419,7 @@ public class PApplet extends Applet
 
 
   public void draw() {
-    //drawMethod = false;
     finished = true;  // if no draw method, then...
-    //println("all done");
   }
 
 
@@ -596,20 +432,16 @@ public class PApplet extends Applet
     }
   }
 
+
   public void loop() {
-    //println("loop 1");
     if (!looping) {
-      //println("loop 2");
       looping = true;
       if (thread != null) {
-        //println("loop 3");
-        //println(Thread.currentThread().getName());
-        //println("loop wakeup");
         thread.interrupt();  // wake from sleep
-        //println("loop 4");
       }
     }
   }
+
 
   public void noLoop() {
     if (looping) {
@@ -640,13 +472,6 @@ public class PApplet extends Applet
     Object methodArgs[] =
       new Object[] { new Integer(width), new Integer(height) };
     sizeMethods.handle(methodArgs);
-    /*
-    for (int i = 0; i < libraryCount; i++) {
-      if (libraryCalls[i][PLibrary.SIZE]) {
-        libraries[i].size(width, height);  // endNet/endSerial etc
-      }
-    }
-    */
 
     if (frame != null) {
       Insets insets = frame.getInsets();
@@ -664,27 +489,8 @@ public class PApplet extends Applet
     } else {
       setBounds(0, 0, width, height);
     }
-
-    // set this here, and if not inside browser, getDocumentBase()
-    // will fail with a NullPointerException, and cause applet to
-    // be set to null. might be a better way to deal with that, but..
-    //g.applet = this;
   }
 
-
-  //boolean updated = false;
-
-  /*
-  public void update() {
-    if (firstFrame) firstFrame = false;
-
-    if (THREAD_DEBUG) println("   3a update() internal " + firstFrame);
-    repaint();
-    if (THREAD_DEBUG) println("   3b update() internal " + firstFrame);
-    getToolkit().sync();  // force repaint now (proper method)
-    if (THREAD_DEBUG) println("   3c update() internal " + firstFrame);
-  }
-  */
 
   public void update(Graphics screen) {
     //System.out.println("PApplet.update()");
@@ -4901,11 +4707,6 @@ v              PApplet.this.stop();
 
   public void endShape() {
      g.endShape();
-  }
-
-
-  public void render_lines() {
-     g.render_lines();
   }
 
 
