@@ -45,6 +45,21 @@ bf b _ cartesian/polar conversion
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
 
 
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+KEY
+
+bf  ben fry (http://acg.media.mit.edu/people/fry)
+cr  casey reas (http://www.groupc.net)
+ca  carlos andres rocha 
+hb  hernando barragan (http://www.people.interaction-ivrea.it/b.barragan)
+dh  dan haskovec
+dm  dan mosedale
+ks  karsten schmitt (http://www.toxi.co.uk)
+ap  amit pitaru (http://www.pitaru.net)
+
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -58,15 +73,15 @@ The graphics library is called Bagel, which is an internal name.
 
 BAGEL / Graphics API Additions
 
-   b _ hiding the cursor. noCursor(), cursor()
+ap b _ hiding the cursor. noCursor(), cursor()/cursor(ARROW), cursor(HAND), cursor(CROSS), cursor(image_file)
 
-   b _ images and pixel copying (api for this?)
-   b _   copyPixel(x, y, to_x, to_y)
-   b _   copyArea(x, y, w, h, to_x, to_y)
-   b _   copyImage(x, y, w, h,  to_x, to_y)
-   b _   resize of bimage, make a copy of image?
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
-   b _ getPixel() and other fxns for BImage
+ks b _ images and pixel copying (api for this?)
+ks b _   copyPixel(x, y, to_x, to_y)
+ks b _   copyArea(x, y, w, h, to_x, to_y)
+ks b _   copyImage(x, y, w, h,  to_x, to_y)
+ks b _   resize of bimage, make a copy of image?
+ks b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
+ks b _ getPixel() and other fxns for BImage
 
    b _ curves
    b _   curveMode(), curveMode to tweak the s parameter of catmullrom
@@ -76,8 +91,8 @@ BAGEL / Graphics API Additions
    b _     used heavily in genome valence, asked about on the bboard
    b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
 
-   b _ background(BImage)
-   b _   also creating background image inside setup()
+ks b _ background(BImage)
+ks b _   also creating background image inside setup()
 
 bf b _ make bagel usable on its own as a drawing surface
 bf b _   needs to be used as a component, without applet 
@@ -152,11 +167,11 @@ ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
    b _   also needs to look good, not squished from texture weirdness
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
 
-   b _ circles and spheres
-   b _   bresenham (flat) oval function
-   b _   finish fill mode of flat circle function
-   b _   stroked version of sphere is just a circle (?)
-   b _   setting accuracy of circles/sphere
+ks b _ circles and spheres
+ks b _   bresenham (flat) oval function
+ks b _   finish fill mode of flat circle function
+ks b _   stroked version of sphere is just a circle (?)
+ks b _   setting accuracy of circles/sphere
 
    b _ opengl export / rendering mode
    b _   currently implemented, but somewhat broken
@@ -205,7 +220,7 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 bf b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
-   b _ transparent gif images don't retain transparency (oy)
+ks b _ transparent gif images don't retain transparency (oy)
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
    b _ gaps in lines for pmouseX, mouseX
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
@@ -711,3 +726,47 @@ b _ test serial with ibm vm and all
 b _ look for jdk 1.4 to use instead of 1.3
 b _   make sure javacomm gets in there
 b _ test it a little more to make sure it works (cygwin x sucks)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
