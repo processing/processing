@@ -856,8 +856,8 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void setFont(BagelFont which) {
-    g.setFont(which);
+  public void setFont(BagelFont which, float size) {
+    g.setFont(which, size);
   }
 
 
