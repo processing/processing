@@ -425,7 +425,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     listener.applyPreferences();
 
     // in case moved to a new location
-    sketchbook.rebuildMenu();
+    sketchbook.rebuildMenus();
   }
 
 
@@ -502,6 +502,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     menu.add(item);
     */
 
+    /*
     item = newJMenuItem("Open", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -509,9 +510,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         }
       });
     menu.add(item);
-
     menu.add(sketchbook.rebuildMenu());
     menu.add(sketchbook.getExamplesMenu());
+    */
+    menu.add(sketchbook.getOpenMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -620,7 +622,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       });
     menu.add(item);
 
-    menu.add(sketchbook.getAddLibraryMenu());
+    menu.add(sketchbook.getImportMenu());
 
     if ((PdeBase.platform == PdeBase.WINDOWS) || 
         (PdeBase.platform == PdeBase.MACOSX)) {
@@ -1119,7 +1121,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       } catch (NullPointerException e) { }
     }
 
-    if (running) doStop();
+    //if (running) doStop();
+    doStop();  // need to stop if runtime error
 
     try {
       if (runtime != null) {
@@ -1378,7 +1381,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         message(EMPTY);
       }
       // rebuild sketch menu in case a save-as was forced
-      sketchbook.rebuildMenu();
+      sketchbook.rebuildMenus();
 
     } catch (Exception e) {
       // show the error as a message in the window
@@ -1400,7 +1403,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     try {
       if (sketch.saveAs()) {
         message("Done Saving.");
-        sketchbook.rebuildMenu();
+        sketchbook.rebuildMenus();
       } else {
         message("Save Cancelled.");
       }
