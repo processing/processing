@@ -590,7 +590,8 @@ public class PdeEditor extends JFrame
       item = new JMenuItem("Show sketch folder");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openFolder(sketchDir);
+          //PdeBase.openFolder(sketchDir);
+          PdeBase.openFolder(sketch.sketchFolder);
         }
       });
       menu.add(item);
@@ -937,7 +938,9 @@ public class PdeEditor extends JFrame
     for (int i = 0; i < 10; i++) System.out.println();
 
     // clear the console on each run, unless the user doesn't want to 
-    if (PdeBase.getBoolean("console.auto_clear", true)) {
+    //if (PdeBase.getBoolean("console.auto_clear", true)) {
+    //if (PdePreferences.getBoolean("console.auto_clear", true)) {
+    if (PdePreferences.getBoolean("console.auto_clear")) {
       console.clear();
     }
 
@@ -1145,8 +1148,7 @@ public class PdeEditor extends JFrame
   public void checkModified2() {
     switch (checking) {
       case HANDLE_NEW:  handleNew2(false); break;
-        //case HANDLE_OPEN: skOpen2(openingPath, openingName); break;
-      case HANDLE_OPEN: handleOpen2(openingPath); break;
+      case HANDLE_OPEN: handleOpen2(); break;
       case HANDLE_QUIT: handleQuit2(); break;
     }
     checking = 0;
@@ -1170,8 +1172,8 @@ public class PdeEditor extends JFrame
    */
   protected void handleNew2(boolean startup) {
     try {
-      PdeSketch newSketch = sketchbook.handleNew(startup);
-      if (newSketch != null) handleOpen2(newSketch);
+      String pdePath = sketchbook.handleNew(startup);
+      if (pdePath != null) handleOpen2(pdePath);
 
     } catch (IOException e) {
       // not sure why this would happen, but since there's no way to
@@ -1201,6 +1203,25 @@ public class PdeEditor extends JFrame
     doStop();
     handleOpenPath = path;
     checkModified(HANDLE_OPEN);
+  }
+
+
+  protected void handleOpen2(String path) {
+    try {
+      sketch = new PdeSketch(path);
+    } catch (Exception e) {
+      error(e);
+    }
+  }
+
+
+  protected void handleOpen2() {
+    try {
+      sketch = new PdeSketch(handleOpenPath);
+      // i guess this just sets everything up properly?
+    } catch (Exception e) {
+      error(e);
+    }
   }
 
 
@@ -1241,12 +1262,6 @@ public class PdeEditor extends JFrame
     handleOpen2(filename, new File(directory, filename), null);
   }
   */
-
-
-  protected void handleOpen2() {
-    sketch = new PdeSketch(handleOpenPath);
-    // i guess this just sets everything up properly?
-  }
 
 
   /*
@@ -1423,16 +1438,21 @@ public class PdeEditor extends JFrame
 
     } else if (newSketchName.equalsIgnoreCase(sketch.name)) {
       // NEED TO GET THE ACTUAL SKETCH NAME FROM CODE[0] HERE
+      
+      // TODO UNFINISHED
 
+      /*
       boolean problem = (sketchDir.renameTo(newSketchDir) || 
                          sketchFile.renameTo(newSketchFile));
       if (problem) {
         status.error("Error while trying to re-save the sketch.");
       }      
+      */
 
     } else {
       // setup new sketch object with new name
     }
+  }
 
     /*
     File newSketchDir = new File(sketchDir.getParent() +
@@ -1497,7 +1517,6 @@ public class PdeEditor extends JFrame
     textarea.setCaretPosition(textareaPosition);
     doSave();
     */
-  }
 
 
   /*
@@ -1720,7 +1739,8 @@ public class PdeEditor extends JFrame
     // at least in the neighborhood
     textarea.select(selectionEnd, selectionEnd);
 
-    setSketchModified(true);
+    //setSketchModified(true);
+    sketch.setCurrentModified(true);
     buttons.clear();
   }
 

@@ -235,8 +235,8 @@ public class PdePreprocessor {
     String jdkVersionStr = PdePreferences.get("compiler.jdk_version");
 
     int jdkVersion = JDK11;  // default
-    if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13 };
-    if (jdkVersionStr.equals("1.4")) { jdkVersion = JDK14 };
+    if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13; };
+    if (jdkVersionStr.equals("1.4")) { jdkVersion = JDK14; };
 
     for (int i = 0; i < jdkVersion; i++) {
       for (int j = 0; j < defaultImports[i].length; j++) {
