@@ -94,6 +94,10 @@ X use date in the sketch name sketch_021104
 X   with a _2 if needed or '021104a' '021104b' etc
 X   when using save as, allow to remove the old (numbered) sketch
 X better default size than 300x300 when starting up first time
+X bug report from the site
+resizing the editor window in Mac OS X leaves the status bar in
+place. The result is an editor window with a grey bar layered on top,
+obscuring the editable text. 
 
 
 FINISH for 46
@@ -105,10 +109,6 @@ _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
 
 macosx
-_ bug report from the site
-resizing the editor window in Mac OS X leaves the status bar in
-place. The result is an editor window with a grey bar layered on top,
-obscuring the editable text. 
 _ update dist script for new layout
 _   put mac rxtx inside the p5 folder (hide it?)
 _     include more strongly worded message about rxtx
