@@ -53,8 +53,8 @@ public class PdeEditorStatus extends Panel
   static final String PROMPT_OK      = "Ok";
   static final String NO_MESSAGE     = "";
 
-  static final int BUTTON_WIDTH  = 66;
-  static final int BUTTON_HEIGHT = 24; //20;
+  static final int BUTTON_WIDTH  = 70; //66;
+  static final int BUTTON_HEIGHT = 24;
 
   PdeEditor editor;
 
