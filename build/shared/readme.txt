@@ -289,6 +289,30 @@ implementation, so it may just work.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+WHY IS IT CALLED "PROCE55ING"?
+
+"Proce55ing" is a combination of numbers and letters but is simply
+pronounced "processing." 
+
+at their core, computers are processing machines. they modify, move,
+and combine symbols at a low level to construct higher level
+representations. Proce55ing allows people to control these actions and
+representations through writing their own programs. The spelling
+"Proce55ing" makes reference to the encoding that is necessary for
+transferring ideas into a machine readable form. 
+
+the project also focuses on the "process" of creation rather than end
+results. the design of the software supports and encourages sketching
+and the website presents fragments of projects and exposes the
+concepts behind finished software.
+
+honestly, had the URL "www.processing.net" been available, the project
+would have been called "Processing" and not "Proce55ing." 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCE55ING IS FREE TO DOWNLOAD / FREE TO USE
 
 we think it's important to have processing freely available, rather

@@ -1,15 +1,53 @@
-0045
+0045 (non-release)
 X no more CVS and .cvsignore entries in sketchbook menu
 X only put things in the menu if in proper structure
 X TWO_CORNERS -> CORNERS
 X major: fix error message stream mid-compile
 X   ClassCastException on startup (or not found?)
+X added naming question from faq to the readme.txt
 
+bagel
+_ images don't load during setup()
+_ finish fill mode of flat circle function
+_ 'image' is too generic a variable to have inside BApplet
+_   check for others that shouldn't be used (pixels? width? height?)
+_ these boxes overlap but shouldn't:
+int thick = 36;
+size(200, 200);
+background(0);
+noStroke();
+fill(153, 163, 0.0);
+rect(80, 0, thick, height/2);
+fill(102, 112, 0.0);
+rect(100, height/2, thick, height/2);
+
+pde
+_ need examples to work for submenus (casey's got too many)
+_ "color.jpg" or "int.jpg" causes trouble
+_ locking up on run (under win2k? others?) 
+_   rare but present, every 100th time or so
+_ subst Image -> BImage, Font -> BFont
+_ better message for PortInUseException (full explanation)
+_ split KjcEngine into three parts
+_ move build directory to root in cvs (on server)
+_   and update scripts accordingly
+_ When renaming a sketch, select the text in the field, 
+    so you can type the new name immediately. 
+
+windows
+_ windows 95/98/ME seems to be broken
+_   ME seems to be very broken
+
+macosx 
+_ put mac rxtx inside the p5 folder (hide it?)
 _ bug report from the site
 resizing the editor window in Mac OS X leaves the status bar in
 place. The result is an editor window with a grey bar layered on top,
 obscuring the editable text. 
-
+_ escape key not quitting presentation mode
+_   no events seem to be coming through at all
+_ Event.consume() doesn't work on entry fields 
+_   manifests itself in sketch naming, can't be constrained
 _ long list from frederik (fdb)
 * Select All (Apple-A) closes the application (Ctrl-Q) on Azerty-keyboards 
 * Add an Edit menu containing Undo/Redo/Cut/Copy/Paste/Select
@@ -18,8 +56,6 @@ _ long list from frederik (fdb)
   save? yes/no", change it to "Document Has been modified -- Save
   changes? Save/Cancel/Don't Save". Look at Aqua Human Interface
   guidelines (http://developer.apple.com/ue/switch/windows.html, tip 9) 
-* When renaming a sketch, select the text in the field, so you can
-  type the new name immediately. 
 * Pressing the tab key moves to the bottom of the text area.  
 * If the cursor is at the last character of the last line of the text
   area, moving the cursor up or down using the arrow keys throws the
@@ -45,42 +81,6 @@ _ long list from frederik (fdb)
   line to the end of the following line. It doesn't extend the
   selection when pressed twice. It also selects the line under the
   current line. 
-
-_ split KjcEngine into three parts
-_ move build directory to root in cvs
-_   and update scripts accordingly
-
-bagel
-_ images don't load during setup()
-_ need to finish fill mode of flat circle function
-_ 'image' is too generic a variable to have inside BApplet
-_   check for others that shouldn't be used
-_ these boxes overlap but shouldn't:
-int thick = 36;
-size(200, 200);
-background(0);
-noStroke();
-
-fill(153, 163, 0.0);
-rect(80, 0, thick, height/2);
-fill(102, 112, 0.0);
-rect(100, height/2, thick, height/2);
-
-pde
-_ need examples to work for submenus (casey's got too many)
-_ "color.jpg" or "int.jpg" causes trouble
-_ locking up on run (under win2k? others?) 
-_   rare but present, every 100th time or so
-
-windows
-_ windows 95/98/ME seems to be broken
-_   ME seems to be very broken
-
-macosx 
-_ escape key not quitting presentation mode
-_   no events seem to be coming through at all
-_ Event.consume() doesn't work on entry fields 
-_   manifests itself in sketch naming, can't be constrained
 
 suggestions
 _ make versions available w/o fonts and jre
@@ -120,6 +120,48 @@ lights - not much happening
 camera - wait for someone to implement
 fonts - api should be improved as part of additions and rewrite
 does a[3] == Float.NaN work?
+
+
+//FILE
+New Open (works like standard open for most programs and pops up window)
+Open Recent
+Save
+Save as
+Export
+-----
+Proce55ing.net
+Reference
+-----
+Quit
+
+//CONTROL (this is the terminology of Flash for these items)
+Run
+Present
+Stop
+-----
+Step Forward (farway future)
+Step Backware (faraway future)
+
+//CODE or Program
+History
+Clear History
+Beautify
+Use External Editor
+-----
+Serial Port
+
+//SKETCHES or SKETCHBOOK
+(Default items in a list)
+Examples >
+
+The "open" button on the toolbar then becomes an "open sketch" button and it acts just as is
+currently does.
+
+there could also be a menu:
+
+ENVIRONMENT
+Serial Port
+Use External Editor
 
 
 ////////////////////////////////////////////////////////////////////
