@@ -66,6 +66,26 @@ X getPixel/setPixel -> get/set..
 X   get(x, y, w, h) is nice but no set(x,y,w,h)
 X   though set(x,y,w,h) could be nice
 X   and copy() to copy a section of pixels
+X BImage.save()
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
+X resize should call background again to set color
+X   if background was set before the resize
+X   and the background is not an image (or should it just stretch?)
+X     no need for image, since it has to be same size
+X     and is only explicitly drawn when background() is called
+X BGraphics subclasses BImage
+X   inherits all image manipulation and image use methods
+X background(BImage)
+X   also creating background image inside setup()
+X images drawn from center don't work for simage()
+X   currently calling slower image routine
+o make zbuffer available instead of g.zbuffer
+o shape.. non-homogenous colors for beginShape()
+o   currently disabled b/c homogenousColors not set false for vertices
+X should image(img, x, y, alpha) work instead of using fill?
+X   write tint() command
+X   or maybe another word for fill/stroke.. apply? colorize?
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1050323800
 
 
 fixes because of dmose parser
@@ -93,6 +113,13 @@ dm _ extra parens confusing things (toxi message)
 code from the madman
 ks X perlin noise is broken
 ks X targa export for images
+ks X images and pixel copying (api for this?)
+ks X   copyPixel(x, y, to_x, to_y)
+ks X   copyArea(x, y, w, h, to_x, to_y)
+ks X   copyImage(x, y, w, h,  to_x, to_y)
+ks X   resize of bimage, make a copy of image?
+ks X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
+ks X getPixel() and other fxns for BImage
 
 
 assigned to dan haskovec, but instead completed by toxi
@@ -142,39 +169,21 @@ _ screenGrab -> saveFrame
 
 
 API
+_ implement text(int something) and text(float something)
+_   and perhaps others?
+_ textMode alignments -> or is it textAlign() ?
+_   so that textMode can be FLAT/SCREEN or SPATIAL
+_ need bezierTangent() code
 _ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
-_ screenGrab() -> saveImage()
-_   BImage.save()
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
 _ param() function 
 _   also include code to read from properties file
 _   for application mode or while inside the environment
 _   these properties will be written to html on export
-_ implement text(int something) and text(float something)
-_   and perhaps others?
-_ BGraphics, BVideo both subclass BImage
-_   inherits all image manipulation and image use methods
-_ BImage/BGraphics -> BLayer/Pixels ?
 _ some flag to know whether applet is online or not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 _   fix link, loadStrings, saveBytes code once that's fixed
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
-_ update() mode should be finished before beta
-_ textMode alignments -> or is it textAlign() ?
-_   so that textMode can be FLAT/SCREEN or SPATIAL
-_ need bezierTangent() code
-_ resize should call background again to set color
-_   if background was set before the resize
-_   and the background is not an image (or should it just stretch?)
-
-
-INTERNAL
-_ add constants for building NET, move stuff around in bagel dir
-_ internal naming of _fill, image_mode, textureOrientation
-_   these all need to jive better with one another
-_   ie. perhaps just 'fill', so that it can be used for a get
-_ look at ken perlin renderer code
 
 
 HIGH
@@ -288,6 +297,14 @@ _ if (loop == false) and (draw == false) then provide an error
 _   so user knows that one or the other is needed
 
 
+INTERNAL
+_ add constants for building NET, move stuff around in bagel dir
+_ internal naming of _fill, image_mode, textureOrientation
+_   these all need to jive better with one another
+_   ie. perhaps just 'fill', so that it can be used for a get
+_ look at ken perlin renderer code
+
+
 NEW GRAPHICS
 _ stroke not set on flat_rect
 _ when drawing fonts w/ sami's code, left edge has problem
@@ -335,7 +352,6 @@ leonhard@rathner.com
 FRY PILE
 
 
-
 sketchbook 
 bf   _ if sketchbook.dir is set, makes new sketchbook folder
 bf   _   reads sketchbook properly from other folder
@@ -364,6 +380,8 @@ _   casey says it may only be his camera
 _ video.pixels don't seem to have high bytes set
 _   so fill(video.pixels[blah]) doesn't work
 _   test against 'pixels' example
+_ make BVideo subclass BImage
+_   make sure the high bits are getting set as opaque
 
 
 additional console fixes
@@ -389,6 +407,7 @@ b _ Contents/Resources/Java can take jnilib files
 
 linux
 _ can't find jikes, so users have to put it in their PATH
+_   dmose may have fixed this
 _ doesn't seem interested in quitting properly (?)
 _ switch to swing menus, because motif widgets are nasty
 
@@ -420,6 +439,13 @@ bf _   currently implemented, but somewhat broken
 bf _   finish this once all the line code is done
 bf _ make possible to use buzz.pl to create versions w/ stuff removed
 bf _ build gl4java for java 1.4
+bf _ read table/csv formatted data into a matrix
+bf _   pseudo-database format version of this that stores indexes to file
+bf _     rather than loading the whole thing at once
+bf _ more advanced splitting of files into rows/cols uses another class
+bf _   other class also has concept for random access of lines
+bf _   by storing the line positions, can access without loading all
+bf _   into memory because some files will be too large
 
 
 licensing
@@ -504,6 +530,10 @@ _ 7 day search on discourse board
 
 
 api work
+
+_ merge BImage/BGraphics into BLayer/Pixels ?
+_ update() mode should be finished before beta
+
 _ for int i for 0 to b.length
 _ for i from 0 upto b.length
 
@@ -543,7 +573,9 @@ _ write tiff (or other) header for image stream
 ..................................................................
 
 
-additional pde files
+// notes on an implementation of a 'shape' class..
+// as long as using an additional pde file...
+
 ..to still maintain rect() instead of g.rect()
 ..and the rest of the p5 features
 
@@ -607,30 +639,11 @@ The graphics library is called Bagel, which is an internal name.
 
 BAGEL / Graphics API Additions
 
-ks b _ background(BImage)
-ks b _   also creating background image inside setup()
-
-ks b _ images and pixel copying (api for this?)
-ks b _   copyPixel(x, y, to_x, to_y)
-ks b _   copyArea(x, y, w, h, to_x, to_y)
-ks b _   copyImage(x, y, w, h,  to_x, to_y)
-ks b _   resize of bimage, make a copy of image?
-ks b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
-ks b _ getPixel() and other fxns for BImage
-
 bf b _ light(x, y, z, c1, c2, c3, TYPE)
 bf b _   also BLight with same constructor, and on() and off() fxn
 
-   b _ should image(img, x, y, alpha) work instead of using fill?
-   b _   or maybe another word for fill/stroke.. apply? colorize?
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1050323800
-
 
 BAGEL / Rendering
-
-   b _ shape.. non-homogenous colors for beginShape()
-   b _   currently disabled b/c homogenousColors not set false for vertices
-   b _   and code not written for curve vertices
 
    b _ picking
    b _   what is the API for picking?
@@ -638,8 +651,6 @@ BAGEL / Rendering
    b _   user can introduce new kinds of buffers at will (!)
    b _   lists of names of objects, or the 'line number' buffer
    b _   but how to determine *where* on object the hit occurs
-
-   1 _ toxi ellipses don't adapt for larger sizes
 
 ca b _ lines
 ca b X   rewrite line and stroke code, it's a buggy mess
@@ -657,7 +668,6 @@ ca b X     bug re: 3d depth sorting on lines
 ca b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
 ca b _
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
-
 ca b _     translate(58, 48, 0); 
 ca b _     rotateY(0.5);
 ca b _     box(40);
@@ -682,16 +692,17 @@ ca b X  create a simple generator for grayscale bdf fonts
 ca b _     document the change and make several of them
 ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
-   b _ font support is overkill and sucks
-   b _   need fast 2D text that's not affected by the transforms
-   b _   also needs to look good, not squished from texture weirdness
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
+bf b _ font support is overkill and sucks
+bf b _   need fast 2D text that's not affected by the transforms
+bf b _   also needs to look good, not squished from texture weirdness
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
 
 ks b _ circles and spheres
 ks b _   bresenham (flat) oval function
 ks b _   finish fill mode of flat circle function
 ks b _   stroked version of sphere is just a circle (?)
 ks b _   setting accuracy of circles/sphere
+   1 _ toxi ellipses don't adapt for larger sizes
 
 bf 1 _ illustrator export / rendering mode
 bf 1 _   also postscript or pdf export?
@@ -702,17 +713,6 @@ bf 1 _     maybe just ultra-high res bitmaps from gl
 bf 1 _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
 
-BAGEL / Data API
-
-bf b _ read table/csv formatted data into a matrix
-bf b _   pseudo-database format version of this that stores indexes to file
-bf b _     rather than loading the whole thing at once
-bf b _ more advanced splitting of files into rows/cols uses another class
-bf b _   other class also has concept for random access of lines
-bf b _   by storing the line positions, can access without loading all
-bf b _   into memory because some files will be too large
-
-
 BAGEL / Serial
 
    b _ basic usb support?
@@ -721,18 +721,16 @@ BAGEL / Serial
 
 BAGEL / Details
 
-bf b _ make zbuffer available instead of g.zbuffer
-
-   b _ too many push() will silently stop the applet inside a loop
-   b _   test winding polygons in different directions
-   b _   test lighting to see how it compares with gl
-   b _   better lockout inside beginShape() to keep other things from happening
-   b _   is quad strip broken or not behaving as expected?
-   b _     may be correct, it worked for nik
-   b _ images drawn from center don't work for simage()
-   b _   currently calling slower image routine
-   b _ inside draw() mode, delay() does nothing
-   b _   delay might be a good way to signal drawing to the screen/updating
+   1 _ non-homogenous coloring for curve vertices
+   1 _   properly interpolate
+   1 _ too many push() will silently stop the applet inside a loop
+   1 _ test winding polygons in different directions
+   1 _ test lighting to see how it compares with gl
+   1 _ better lockout inside beginShape() to keep other things from happening
+   1 _ is quad strip broken or not behaving as expected?
+   1 _   may be correct, it worked for nik
+   1 _ inside draw() mode, delay() does nothing
+   1 _   delay might be a good way to signal drawing to the screen/updating
 
 
 BAGEL / Future
