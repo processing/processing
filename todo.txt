@@ -15,7 +15,6 @@ o   or do we make people use dreamweaver?
 o   nixed by casey, we're not dreamweaver
 X macosx not exporting core.jar 
 X   the jar is buried Contents/Resources/Java
-_   verify that this is working
 X don't enable externalRuntime with multiple code files that are pde
 X   no longer separate classes
 X remove "file" from "new file".. maybe just "new tab"?
@@ -28,6 +27,12 @@ X   "save as" not properly updating the tab header
 X   also include the name of the previous sketch for "save as"
 X   prevent folks from saving a sketch inside its own folder
 X     will cause bizarro recursive folder action
+X remove grow box from applet frame
+
+macosx
+_ verify that export is working from processing.app
+_ check into ryan's macosx java bug.. 
+_   see why coords are going negative
 
 _ allow to use doubles on casting -- particularly for Math.cos() et al
 
@@ -42,11 +47,6 @@ _ round() is not colored
 
 _ add serial.last() to api
 _   also bring back serial event via reflection
-
-_ check into ryan's macosx java bug.. 
-_   see why coords are going negative
-
-_ remove grow box from applet frame on macosx
 
 _ "save as" shouldn't show save as dialog for sketches 
 _   unless that's the current mode that's being used

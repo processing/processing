@@ -4011,6 +4011,7 @@ public class PApplet extends Applet
       }
 
       Frame frame = new Frame();
+      frame.setResizable(false);  // remove the grow box
       frame.pack();  // get insets. get more.
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
