@@ -1,3 +1,26 @@
+ABOUT REV 0041 - 1 august 2002
+
+[ big things ]
+
+- handling of mouse/key events smoothed out and much improved
+
+- added a (wimpy) scrollbar for the console
+
+- fixed problems with #ffcc00 colors
+
+- export was failing with no 'data' dir
+
+- background() now works for applets in draw() mode
+
+- fixed imageMode() with 2d images
+
+- cursor no longer hides in the editor window (hacked around this sun
+  java vm bug)
+
+- linux and windows now have their own stdout.txt and stderr.txt
+  like the mac, so that stuff is echoed out for easier cut/paste
+
+
 ABOUT REV 0040 - 1 august 2002
 
 [ oops ]
