@@ -499,13 +499,8 @@ public class PdeSketch {
   /**
    * Sets the modified value for the code in the frontmost tab.
    */
-  //public void setCurrentModified(boolean what) {
-  //public void setModified(boolean what) {
   public void setModified() {
-    //System.out.println("setting modified for " + current.program);
-    //modified = true;
     current.modified = true;
-    //editor.header.repaint();
     calcModified();
   }
 
@@ -520,18 +515,6 @@ public class PdeSketch {
     }
     editor.header.repaint();
   }
-
-  /**
-   * Return true if any of the items are modified.
-   */
-  /*
-  public boolean isModified() {
-    for (int i = 0; i < codeCount; i++) {
-      if (code[i].modified) return true;
-    }
-    return false;
-  }
-  */
 
 
   /**

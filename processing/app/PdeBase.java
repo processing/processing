@@ -52,6 +52,7 @@ public class PdeBase {
   static final int MACOSX  = 3;
   static final int LINUX   = 4;
   static final int IRIX    = 5;
+  static final int UNKNOWN = 5;
   static int platform;
 
   static final String platforms[] = {
@@ -86,8 +87,8 @@ public class PdeBase {
         platform = IRIX;
 
       } else {
-        platform = WINDOWS;  // probably safest
-        System.out.println("unhandled osname: \"" + osname + "\"");
+        platform = UNKNOWN;
+        //System.out.println("unhandled osname: \"" + osname + "\"");
       }
     }
 
