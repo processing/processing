@@ -113,6 +113,8 @@ public class PFont implements PConstants {
     // this will make new fonts downward compatible
     mbox2 = is.readInt();
 
+    //System.out.println("boxes " + mbox + " " + mbox2);
+
     //int mboxX   = is.readInt();  // not used, just fontsize (48)
     //int mboxY   = is.readInt();  // also just fontsize (48)
 
@@ -132,6 +134,10 @@ public class PFont implements PConstants {
     iheight = (int)
       Math.pow(2, Math.ceil(Math.log(mboxY) / Math.log(2)));
     */
+
+    // double-check to make sure that mbox2 is a power of 2
+    // there was a bug in the old font generator that broke this
+    mbox2 = (int) Math.pow(2, Math.ceil(Math.log(mbox2) / Math.log(2)));
     // size for the texture is stored in the font
     iwidth = iheight = mbox2;
 
