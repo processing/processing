@@ -22,6 +22,60 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+/*
+
+Export to:  [ Applet (for the web)   + ]    [  OK  ]
+
+[ ] OK to overwrite HTML file   <-- only visible if there is one there
+                                    remembers previous setting as a pref
+
+
+> Advanced
+
+  Version: [ Java 1.1   + ]
+
+  Using a version of Java other than 1.1 will require
+  your Windows users to install the Java Plug-In, 
+  and your Macintosh users to be running OS X.
+
+
+
+
+Export to:    [ Application   + ]    [  OK  ]
+
+> Advanced
+
+  Platform: [ Mac OS X   + ]     <-- defaults to your current platform
+              Windows
+              jar file
+
+  Exports the application as a double-clickable .app package, 
+  compatible with Mac OS X. 
+
+  Exports the application as a double-clickable .exe 
+  and a handful of supporting files. 
+
+  A jar file can be used on any platform that has Java
+  installed. Simply doube-click the jar to run the application. 
+  It is the simplest (but ugliest) method for exporting. 
+
+
+  Version: [ Java 1.3   + ]
+
+  Java 1.3 is the recommended setting for exporting
+  applications. Applications will run on any Windows or
+  Unix machine that has java installed, and on Mac OS X.
+
+
+
+Export to:   [ Library       + ]    [  OK  ]
+
+> Advanced   
+  
+  (no settings here?)
+
+ */
+
 public class Sketch {
   String name; 
   File directory;
@@ -325,11 +379,11 @@ public class Sketch {
       externalCode = null;
     }
 
-    PdePreprocessor preprocessor = null;
-    preprocessor = new PdePreprocessor(program, buildPath);
+    PdePreprocessor preprocessor = new PdePreprocessor();
     try {
       className = 
-        preprocessor.writeJava(className, imports, false);
+        preprocessor.write(program, buildPath,
+                           className, imports, false);
 
     } catch (antlr.RecognitionException re) {
       // this even returns a column
