@@ -1,3 +1,41 @@
+0067
+X it's possible to write non-1.1 code, even syntax
+X   would -source 1.1 help this? -> nope
+X fixed IllegalArgumentException for people using run.bat and run-expert.bat
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132725
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132753
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135344;start=0
+X save/saveFrame was super-slow.. wasn't buffering the outputstream
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135103;start=0
+X don't forget to change the revision number on release
+X   wrote script to force me to fix them
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
+X apple has update qtjava for quicktime 6.4, thank god
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
+X size not properly detected when "size()" was the first thing
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067217366;start=0
+X nasty but where System.out was being piped to System.err
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067218548;start=0
+X   println() and System.out.println() from external classes has trouble
+X     println() / print() not always flushing until after app quits
+X change "send to bugs@proce55ing.net" to a longer popup dialog
+X   open the discourse board in another window, ask to post the code
+X set PATH to include java (!)
+X   external classes currently require expert release
+X   code written for linux, test it
+X   code written for windows, rebuild the exe and test it
+X update the release of jikes that's used
+X   updated for macosx
+X   compile new version for linux
+X   compile new version for windows
+X netscape/javascript had to be included for linux and for expert
+X   add it to the cvs and the build scripts
+X   also needs to be included for 1.4 on the mac
+X   probably a good idea to include on all
+X multiple jar export is broken
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067307030;start=0
+
+
 0066
 X BImage.replicate for straight 1:1 copy, blend() for blended version
 X   remove the blendMode function because it's confusing 

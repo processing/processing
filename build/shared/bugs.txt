@@ -18,12 +18,15 @@ changed in the future, but for now, they're not actually 'broken'.
   could add some extra code to unhinge the resulting class name from
   the sketch name, but it adds complexity, and complexity == bugs. :)
 
-- if you're exporting as applet, variables that are 'final int' need
-  to be 'static final int'. otherwise they'll have trouble with a java
+- if you get a "ClassCastException" when trying to run your code in a
+  browser, you're probably trying to run non-java 1.1 code. this 
+  means any classes that didn't exist in java 1.1. or, if if you're
+  exporting as applet, variables that are 'final int' need to be
+  'static final int'. otherwise they'll have trouble with a java
   1.1-only machine: (i.e. running microsoft's java on windows). you
-  should also avoid using "final" variables *inside* of methods, since
-  those aren't supported by microsoft's vm (and that's the one most
-  widely installed).
+  should also avoid using "final" variables *inside* of methods, 
+  since those aren't supported by microsoft's vm (and that's the 
+  one most widely installed).
 
 - 'export to application' remains unimplemented, though it's closer,
   and should be ready before beta.
@@ -58,9 +61,14 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
   to find out what it's set to (prolly something like C:\windows on
   windows xp/me/98 or c:\winnt on windows 2000).
 
-- quicktime for java was missing from the initial release of quicktime
-  6.4 on the mac. an upgrade to quicktime 6.4 that includes qtjava is
-  now available from software update.
+- on macosx 10.2.x (jaguar), quicktime for java was missing from the
+  initial release of quicktime 6.4 on the mac. an upgrade to quicktime
+  6.4 that includes qtjava is now available from software update. or
+  you can download it from versiontracker, since software update
+  doesn't show the update on some machines:
+  http://www.versiontracker.com/dyn/moreinfo/macosx/21302
+  you can also upgrade to panther (macosx 10.3) which doesn't have
+  this problem.
 
 
 ..................................................................
@@ -125,8 +133,10 @@ list, see the bboard for more, and inside ben's head for others.
   that are less than smooth).
 
 - on windows, processing can't be run from a folder that has non-ascii
-  characters in its name. 
+  characters in its name. for instance, a folder named with japanese
+  characters or one with umlauts or accents:
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 
 - video examples sometimes crash the whole environment on windows
 
