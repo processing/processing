@@ -29,11 +29,11 @@ import java.awt.event.*;
 
 /**
  * A series of messages can be registered via PApplet.registerCall().
- * For instance parent.registerCall(PRE) inside of the setup method 
+ * For instance parent.registerCall(PRE) inside of the setup method
  * will make sure that this library is informed each time beginFrame
- * has just been called yet no drawing has taken place (would you like 
+ * has just been called yet no drawing has taken place (would you like
  * to take over the camera, eh?)
- * 
+ *
  * An assumption for library writers is that they're fairly
  * technically savvy and familiar with Java. The primary target
  * audience for Procesing is less technical, so libraries are
@@ -63,34 +63,34 @@ public interface PLibrary {
   public void size(int w, int h);
 
   /**
-   * Called just after beginFrame() but before anything is 
+   * Called just after beginFrame() but before anything is
    * drawn in the user's draw() method.
    */
   public void pre();
 
-  /** 
+  /**
    * Called before endFrame() but after all other drawing.
    */
-  public void draw(); 
+  public void draw();
 
   /**
    * Called betwee endFrame() and the next beginFrame()
-   * so that things can be post-processed based on the final, 
+   * so that things can be post-processed based on the final,
    * fully rendered, image.
    */
   public void post();
 
   /**
    * If registered, this will be called when a mouse event has occurred.
-   * Use event.getID() to see whether it's MouseEvent.MOUSE_CLICKED or 
-   * something else exciting. 
+   * Use event.getID() to see whether it's MouseEvent.MOUSE_CLICKED or
+   * something else exciting.
    */
   public void mouse(MouseEvent event);
 
   /**
    * A key event has occurred, use event.getID() to see whether it's
    * KeyEvent.KEY_PRESSED or whatever.
-   */ 
+   */
   public void key(KeyEvent e);
 
   /**
@@ -103,5 +103,4 @@ public interface PLibrary {
    * its thread and associated resources.
    */
   public void dispose();
-  //public void stop();
 }
