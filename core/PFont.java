@@ -473,6 +473,7 @@ public class PFont implements PConstants {
       float savedTintG = parent.tintG;
       float savedTintB = parent.tintB;
       float savedTintA = parent.tintA;
+      boolean savedTintAlpha = parent.tintAlpha;
 
       parent.tint = true;
       parent.tintColor = parent.fillColor;
@@ -480,6 +481,7 @@ public class PFont implements PConstants {
       parent.tintG = parent.fillG;
       parent.tintB = parent.fillB;
       parent.tintA = parent.fillA;
+      parent.tintAlpha = parent.fillAlpha;
 
       parent.imageImpl(images[glyph],
                        x1, y1, x2, y2, //x2-x1, y2-y1,
@@ -491,6 +493,7 @@ public class PFont implements PConstants {
       parent.tintG = savedTintG;
       parent.tintB = savedTintB;
       parent.tintA = savedTintA;
+      parent.tintAlpha = savedTintAlpha;
 
       /*
       // this code was moved here (instead of using parent.image)
