@@ -1,10 +1,20 @@
-processing todo list // last updated 17 september 2001
+iprocessing todo list // last updated 17 september 2001
 (most up-to-date version of this file is in processing cvs)
 
 
+for 0008
+_ stop required before kill for applets that use serial
+_ option to enable/disable frame
+_ new objects draw behind old objects with noBackground()
+_ enable/disable full screen leaves windows in back
+_   (may just require two toFront() calls)
+_ breaks on every 2nd run when using serial apps (or others?)
+_   try calling gc on stop as well
+
+
 PROCESSING - HIGH
+_ export doesn't work properly for stuff included from scrapbook
 _ processing applet: fill white, stroke black
-_ bk(n), fill(n), stroke(n) should be consistent with tuples
 _ write dist.bat for releases
 _   don't forget to update 'export' dir with processing releases
 _ remove duplicates: LINE/LINES etc
@@ -15,7 +25,7 @@ _ when using draw() instead of loop()
 _   applet needs to notify runner that it has terminated
 _ multiple types of KjcEngine (so that simplest model is available)
 _ post new macintosh version
-
+_   write code for automatic macintosh releases
 
 PROCESSING - MEDIUM
 _ compile from the sketchbook if there are changes
@@ -52,7 +62,6 @@ _ courseware system
 _   uploading pieces when finished - scrapbook/sketchbook model?
 _   download new versions of pde.jar from main machine
 _ some kind of text
-_ setup imrf linux machine?
 _ quicktime exporter or image sequence export
 _ nice to have a random number generator between -1..1 
 _   as well as an integer random; instead of just 0..1
@@ -101,6 +110,18 @@ _ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
 ---------------------------------------------
 
 
+0007
+X serial bugs
+X   ability to control sleep time from simple
+X   message[] not buffer[]
+X   synchronize
+X   signed byte crap is confusing, make into chars
+X bk(n), fill(n), stroke(n) should be consistent with tuples
+X make notes in serial docs
+X   processing app needs to start first
+X   currently a bug requiring stop the close before starting
+
+
 0006
 X get serial i/o code working in processing
 X   how to kill serial when applet stopped
@@ -119,3 +140,4 @@ X put debugging stuff back into Kjc (i disabled some stuff)
 
 0001
 X convert documentation to html
+o setup imrf linux machine?
