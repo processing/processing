@@ -4,7 +4,7 @@
   PSound - java 1.1 audio loader and player
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry and Casey Reas
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,13 +28,12 @@ import java.io.*;
 import java.lang.reflect.*;
 import sun.audio.*;
 
-// add check for reflection in host applet for sound completion
-// also needs to register for stop events with applet
-
 
 /**
  * This is the crappy 8 khz mono ulaw version that's compatible
  * with Java 1.1 and 1.2. For Java 1.3 and higher, PSound2 is used.
+ * <P>
+ * This code currently does not work, but PSound2 sort of does.
  */
 public class PSound {
   // supposedly this is actually 8012.8210513 according to spec
@@ -58,42 +57,16 @@ public class PSound {
   public PSound(PApplet parent, InputStream input) {
     this.parent = parent;
 
-    /*
+    parent.registerDispose(this);
+
     try {
-
-    } catch (Exception e) {
-      error("<init>", e);
-    }
-    */
-
-      parent.registerDispose(this);
-
-      try {
-        soundEventMethod =
-          parent.getClass().getMethod("soundEvent",
+      soundEventMethod =
+        parent.getClass().getMethod("soundEvent",
                                       new Class[] { PSound.class });
 
-        // if we're here, then it means that there's a method for it
-        /*
-        clip.addLineListener(new LineListener() {
-            public void update(LineEvent event) {
-              if (event.getType() == LineEvent.Type.STOP) {
-                try {
-                  soundEventMethod.invoke(parent,
-                                          new Object[] { PSound.this });
-                } catch (Exception e) {
-                  System.err.println("error, disabling soundEvent()");
-                  e.printStackTrace();
-                  soundEventMethod = null;
-                }
-              }
-            }
-          });
-        */
-
-      } catch (Exception e) {
-        // no such method, or an error.. which is fine, just ignore
-      }
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
   }
 
 

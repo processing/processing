@@ -1,6 +1,18 @@
 0082 pde
+X shut off text anti-aliasing in the about box
+X implemented ryan alexander's grow box design
 
-monday evening
+_ make a linux version of this release
+
+_ saved window positions.. if displays has changed, becomes a problem
+_   record the display that it was on?
+_   make sure that the applet is within the bounds of the current display?
+_   (from 0, 0 to width, height)
+
+_ make note that changing screen config requires restart of processing
+_   static { checkScreens(); }
+_   static void PApplet.checkScreens() { } 
+_   to run explicitly later
 
 _ when centering applet on-screen, needs to check for multiple screens
 _   this is both for PApplet and PdeRuntime
@@ -13,13 +25,19 @@ _   if it's working, make it all reflection-based in PApplet
 _ first pass on full screen
 _   exceptions in full screen mode will quit the app completely
 _   (can't keep window open because things are hosed)
+_   default is that full screen app doesn't cover multiple displays
+_     this is fine since opengl can't usually go across both
+_     but include an example for how to use full in gl 
+_     (use toolkit.getscreensize)
+
+_ move everything to packages, and start auto-javadoc
+_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 MUST BE COMPLETE FOR BETA
-
 
 non-coding tasks (for beta)
 _ new bboard? archive the old one, remove bugs sections
@@ -34,15 +52,13 @@ _   nope, libraries can handle that themselves,
 _     and queue events by registering for draw or whatever they'd like
 _   lib could call queueEvent with the args
 _   then call them inside post()
+_ scrubbing all the code to include proper license and copyright info
 
 _ update checker (can be turned off in prefs)
 _   send unique id, and information about person's java vm/platform
 _   using timezone would be an interesting method for tracking location
 
 _ border weirdness in PdeEditor panels on windows
-
-_ move everything to packages, and start auto-javadoc
-_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
@@ -96,6 +112,9 @@ saving a project over an already existing project does not get rid of the .pde f
 NOT NECESSARY BEFORE BETA
 
 _ split Preferences and PreferencesFrame ?
+
+_ lock the minimum size for the main processing editor frame
+_   if it's made too small, stuff from the bottom disappears
 
 _ properly handle ENTER, Ctrl-W and ESC on all dialogs
 _   there must be a proper "swing" way of doing this that doesn't
