@@ -576,7 +576,9 @@ java.lang.NullPointerException
 
         } catch (Exception e) {
           //System.out.println("SystemOutSiphon: i just died in your arms tonight");
-          e.printStackTrace();
+          // on mac os x, this will spew a "Bad File Descriptor" ex
+          // each time an external app is shut down.
+          //e.printStackTrace();
           thread = null;
           //System.out.println("");
         }
