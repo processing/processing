@@ -1,40 +1,36 @@
 0070 pde
+o don't allow editing of multiple files in this release
+o   but support multiple java/pde files through the 'add file' option
+o check in licenses/dist stuff for jikes etc
+o who has the copyright? (mit does)
+o SystemColor doesn't differentiate between menu background and top
+o   probably fixed in swing, but we're using java.awt.Menu
+o   test by rewriting with java.awt.Menu
+X beautify is ignoring the setting for number of spaces on tabs
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083708360;start=0
+X clean up PdeTokenMarker, probably just alphabetize
+
+
+_ NullPointerException when alt is pressed
+_   might be something to do with the applet frame being an awt not swing
+_   event first goes to the applet listener, needs to consume the event
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
 
 _ processing won't start..
 _   people with non-ascii chars in the folder name 
 _     at least try to catch this?
-_   even with spaces in the folder name
-_     causes problems for serial
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+_   or with spaces in the folder name, causes problems for serial
 
-_ problems with hanging video when not in the root of the c drive
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084464062;start=0
-
-_ casting problems in the parser
-_   float u = float(x)/width; works.
-_   float u = (float(x)/width); doesn't work: "unexpected token: float".
-_   float u = (x/float(width)); works! 
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084011098;start=0
-
-_ beautify is ignoring the setting for number of spaces on tabs
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083708360;start=0
-
-_ fix code for changing the sketch folder
-_   'new sketch' goes into the wrong folder
-_   but saving and all that works properly
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184449;start=0
-
-
-farming things out - if i could get p5 sf cvs up and working..
-_ someone to fix the 'find' bug
-
-more bugs to note
+notes for release
 _ quicktime full uninstall/reinstall
 _ code folder problems
 _ find bug
 _   hm, lots of other things that are on here..
-
-_ history files getting mangled
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981
+_ update readme with notes from bboard about "built with processing"
 
 _ find() hangs on replacing "println" with "//println"
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076740626
@@ -53,13 +49,15 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 _ launcher.cpp broke serial.. see versions in processing.notcvs
 
-_ update readme with notes from bboard about "built with processing"
-
 _ include 'netscape.javascript' as a library to be added
 _   but don't export it.. ugh..
 
 
 SKETCHBOOK
+_ fix code for changing the sketch folder
+_   'new sketch' goes into the wrong folder
+_   but saving and all that works properly
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184449;start=0
 _ sort sketch names in the open menu
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
 _ sketch.properties should go into user.home
@@ -74,8 +72,6 @@ _   use System.getProperty("user.home");
 _   remove the 'default' for sketchbook
 _   bring this up on bboard and get votes
 _   win2k: my documents, macosx: ~/Documents, linux: ~/sketchbook
-o don't allow editing of multiple files in this release
-o   but support multiple java/pde files through the 'add file' option
 _ open mode
 _   on application open, override 'open' mode
 _   and just open an empty sketch in the sketchbook folder
@@ -113,8 +109,16 @@ _   an OutOfMemoryError ensues
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 _ jikes errors have no newlines because it's a buffered reader
 _   and the newlines are removed when read
+
+
+BUGS / preproc
 _ preproc bug: text(String.valueOf(i+1), left + i*20, top);
 _   unexpected token "String"
+_ casting problems in the parser
+_   float u = float(x)/width; works.
+_   float u = (float(x)/width); doesn't work: "unexpected token: float".
+_   float u = (x/float(width)); works! 
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084011098;start=0
 
 
 BUGS / Windows
@@ -205,8 +209,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 licensing
 _ about box 
 _   bring up information about gpl, lgpl, and ibmpl
-_   check in licenses/dist stuff for jikes etc
-_   who has the copyright?
 _ jedit syntax is under mit license
 _   http://www.opensource.org/licenses/mit-license.php
 _   although jedit is under gpl, if we switch to its syntax pkg
@@ -223,21 +225,16 @@ _ need curveTangent() code
 
 
 LOWER (post beta tweaks, non-structural)
-_ Ctrl-Z will undo, but the window will not scroll to where the 
-_   "undoing" is happening. This can lead the user to assume that
-_   actually nothing is happening and overundo. 
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
-_ figure out how to cancel 'save changes' on macosx and windows
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
+1 _ Ctrl-Z will undo, but the window will not scroll to where the 
+1 _   "undoing" is happening. This can lead the user to assume that
+1 _   actually nothing is happening and overundo. 
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+1 _ figure out how to cancel 'save changes' on macosx and windows
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
 _ error if you try to hit export twice on a sketch
 _   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
 _   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
-_ clean up PdeTokenMarker, probably just alphabetize
 _ remove .DS_Store boogers, especially from win/linux distributions
-_ NullPointerException when alt is pressed
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
 _ check what other functions require BGraphics to exist but shouldn't
 _ color has to be called inside or after setup
 _ loadImage must be used inside or after setup
@@ -246,10 +243,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;
 _ include a note that 'applet' folder will get emptied/rewritten
 _   or rename the old applet folder to something else?
 _ don't allow apostrophe (i.e. casey's_cells) when naming sketch!
-_ non-ascii filenames seem to be causing trouble
-_   maybe provide a message stating this when p5 is run?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 _ need to change all the copyrights over to mit "except where noted"
 X when exporting applet, line numbers will be off.. 
 _   when not exporting with new preproc code, imports all on same line
@@ -335,9 +328,6 @@ PDE / Details
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
    1 _ rename doesn't set focus to renamer area
    1 _   under windows, immediately typing after rename doesn't select it
-   1 _ SystemColor doesn't differentiate between menu background and top
-   1 _   probably fixed in swing, but we're using java.awt.Menu
-   1 _   test by rewriting with java.awt.Menu
 
    1 _ some method to store a description of a sketch in its comments
    1 _   then embed that into the html page
