@@ -1,33 +1,119 @@
 0059
 X write p5 language spec
+X beginSerial(String port) and beginSerial(String port, int rate)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1061595591;start=0
+X optimize color() when in colorMode(RGB, 255) to just pack the int
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1062072434;start=0
+
+
+_ reference key list isn't in dist (at least on osx)
+
+_ imageMode() shouldn't affect fonts
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
+
+_ replacing spaces with underscores.. 
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062103523;start=0
+_   patch keyTyped event instead of keyPressed
+_   remove reference in readme about macosx problem w/ it
+
+_ qtjava search path is too fragile
+_   use %WINDIR%\System32\qtjava.zip and %QTJAVA%
+_   or even the system %CLASSPATH%
+_   maybe just ask user to select the file directly
+_   may have spaces, so should also fix those
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
+_   QTJAVA seems to be showing up in %WINDIR%\System not just system32
+_   modify make.sh for windows to use $QTJAVA instead of guessing
+_     and complain about non-installation if it ain't there
+
+_ p5 not working in msjvm (prolly non-1.1 code)
+_   build and hack in new jikes for all platforms
+_   add "-target 1.1" when exporting to applet (or always?)
+o   might be java.awt.Cursor in BConstants
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
 
 
 ..................................................................
 
-FRY PILE
 
+0060
+bf b _ BApplet.main(new String[] { "flashcards3" });
+bf b _   or even BApplet.main(new String[] { getClass().getName() });
+bf b _   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+dh b _ ability to export 'applications' (not just applets)
+dh b _   lock feature for present mode (part of export to application?)
+dh b _   application can still do serial (qt, other stuff?) 
+dh b _   applet runs in browser, though applet on cbagel is everything..
+dh b _   include main class info for executable jar file with jdk > 1.2
+dh b _   not difficult to do, just some tweaking once applet export works
+dh b _   wrapper that invokes the applet using a copy of the jre
+dh b _   main() method needs to set layout manager if jexegen is to be used
+dh b _     (msft vm defaults to null layout manager)
+dh b _   also make sure pack() is happening
+dh b _   add manifest.mf to exported applets so that applications will work
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
 
-_ building windows from scratch 
-_   tries to make work/ without bagel serial existing and blows up
-_     b/c bagel checkout happens later
-_   all code needs to be buildable from scratch
+_ font.stringWidth -> font.width(char c) or width(String s) 
 
-_ modify build instructions for the many changes
-_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
-
-_ developers who may be interested in p5 helping: 
-gerritt@cloudyreason.com
-kyle@kylerode.com
-
-_ replacing spaces with underscores.. 
-_   patch keyTyped event instead of keyPressed
-_   remove reference in readme about macosx problem w/ it
+_ implement text(int something) and text(float something)
+_   and perhaps others?
 
 _ only allow one pmouseX update outside of loop
 _   to avoid jumping lines (drawing -> continuous_lines)
 
-_ implement text(int something) and text(float something)
-_   and perhaps others?
+_ NullPointerException when alt is pressed
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+
+_ issue: loadImage must be used inside or after setup
+_   either document this and/or provide a better error message
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+
+_ change the naming of the two versions of calc_color
+
+_ add constants for building NET, move stuff around in bagel dir
+
+
+..................................................................
+
+
+FRY PILE
+
+_ another odd NullPointerException -> or just a "couldn't delete" problem
+_  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060341518
+
+_ what 'known issues' can be fixed before beta
+_    variables for size/background in draw() mode?
+_    make sure these are noted in the documentation as well
+
+rotateRight(), rotateLeft(), flipHorizontal().. etc
+for an actual 'transformations' object
+
+_ sketchbook location not properly read or written
+_ do not delete sketch folder if empty sketch but non-empty data dir
+_   maybe needs to be a holding area for the current sketch
+_     this is how the read-only examples would be used
+
+
+_ for int i for 0 to b.length
+_ for i from 0 upto b.length
+_ saveBytes not in proper dir is annoying
+_ write tiff (or other) header for image stream
+
+_ modify build instructions for the many changes
+_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+
+_ building windows from scratch 
+_   this is a useful developer task before release
+_     build all releases from a clean cvs
+_   tries to make work/ without bagel serial existing and blows up
+_     b/c bagel checkout happens later
+_   all code needs to be buildable from scratch
+
+_ developers who may be interested in p5 helping: 
+sdlpci@cis.rit.edu
+gerritt@cloudyreason.com
+kyle@kylerode.com
 
 _ go through examples to see if there's other annoying syntax
 
@@ -36,17 +122,6 @@ _   super slow with a huge sketch
 
 _ winamp/audio getting starved or crackly while applets running
 _   thread priority too high? or something weird
-
-_ BApplet.main(new String[] { "flashcards3" });
-_   or even BApplet.main(new String[] { getClass().getName() });
-_   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
-
-_ textrect(String text, x, y, width, height)  // based on rectMode
-_   textMode() for align left, center, right (no justify.. har!)
-
-_ font.stringWidth -> font.width(char c) or width(String s) 
-
-_ image(BImage, x, y, float scale)
 
 _ don't cache stuff from loadStrings
 _   mac java vm won't give up old version of file
@@ -63,26 +138,7 @@ _   casey says it may only be his camera
 _ video.pixels don't seem to have high bytes set
 _   so fill(video.pixels[blah]) doesn't work
 _   test against 'pixels' example
-_ qtjava search path is too fragile
-_   use %WINDIR%\System32\qtjava.zip and %QTJAVA% (may have spaces)
-_   or even the system %CLASSPATH%
-_   maybe just ask user to select the file directly
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060295867;start=0
 
-_ p5 not working in msjvm (prolly non-1.1 code)
-_   might be java.awt.Cursor in BConstants
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060792938
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060976690
-
-_ jedittextarea caret blinks even w/o focus
-_   may have been my own hack breaking it
-
-_ imageMode() shouldn't affect fonts
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
-_ another odd NullPointerException -> or just a "couldn't delete" problem
-_  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060341518
-
-_ reference key list isn't in dist (at least on osx)
 _ switch to swing menus
 _   the other menus really look like hell on linux
 _ better 1.3/1.4 support.. properly detect vm
@@ -138,6 +194,10 @@ bf b o   remove the border around the edge
 bf b o   what's with the 2 blank lines on startup?
 
 
+windows
+_ can windows have multiple jre installed and use any of them?
+
+
 macosx
 _ random lockups seem common in 1.4
 _ test more to see if runtime exceptions are coming through
@@ -153,10 +213,10 @@ _     so instead trap for keyTyped events
 _ set nice background for disk image on macosx
 _ Contents/Resources/Java can take jnilib files
 
-_ can windows have multiple jre installed and use any of them?
 
 linux
 _ doesn't seem interested in quitting properly
+
 
 thesis / acg
 bf _ make bagel more usable as standalone
@@ -193,7 +253,7 @@ bf _   win2k: my documents, macosx: ~/Documents,
 bf _   macos9: hd:Users?, linux: ~/sketchbook
 bf _ move examples to folder that goes w/ p5 app
 bf _   set examples somehow read-only
-
+bf _ make possible to use buzz.pl to create versions w/ stuff removed
 
 licensing
 bf _ about box 
@@ -208,11 +268,51 @@ bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/j
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
 
 
+api that i want
+_ image(BImage, x, y, float scale) (found in illustrator stuff)
+_ textrect(String text, x, y, width, height)  // based on rectMode
+_   textMode() for align left, center, right (no justify.. har!)
+_ file i/o: file listing util that leaves out . and ..
+
+
 random todos (low priority.. just notes to self)
 bf _ history.. add my diffs sketch
 bf _ look into eclipse ide a little more
 bf _ actionscript has nice hastables.. as does perl/python
 bf _   would be nice to get better implementation in there
+
+
+..................................................................
+
+
+api work
+
+_ vertex(x, y, u, v) and vertex(x, y, z, u, v)
+
+_ don't cast color()
+_   since more important for color(v1, v2, v3) to work
+
+_ screenGrab() -> saveImage()
+_   BImage.save()
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
+
+ugly but no ideas yet
+_ getPixel/setPixel -> get/set.. 
+_   get(x, y, w, h) is nice but no set(x,y,w,h)
+_   though set(x,y,w,h) could be nice
+_   and copy() to copy a section of pixels
+_ serialWrite -> sprint ? 
+_ noSmooth
+_ noFill()
+_ rectMode means rectPlacement
+_   becomes a problem when strokeMode and strokeWidth are mixed
+_ beginRect() beginLineLoop() et al. ?
+
+_ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
+
+_ begin/end.. beginSerial/endSerial -> 
+_   openSerial/closeSerial ?
+_   startSerial/stopSerial
 
 
 ////////////////////////////////////////////////////////////////////
@@ -591,22 +691,6 @@ dh b _ ability to include other code from sketchbook directory
 dh b _   compile entire sketchbook on startup, check for new files on compile?
 
 
-PDE / Export
-
-dh b _ add manifest.mf to exported applets so that applications will work
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
-dh b _ ability to export 'applications' (not just applets)
-dh b _   lock feature for present mode (part of export to application?)
-dh b _   application can still do serial (qt, other stuff?) 
-dh b _   applet runs in browser, though applet on cbagel is everything..
-dh b _   include main class info for executable jar file with jdk > 1.2
-dh b _   not difficult to do, just some tweaking once applet export works
-dh b _   wrapper that invokes the applet using a copy of the jre
-dh b _   main() method needs to set layout manager if jexegen is to be used
-dh b _     (msft vm defaults to null layout manager)
-dh b _   also make sure pack() is happening
-
-
 PDE / Editor
 if you dream it, you can do it.
 
@@ -674,6 +758,8 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
    1 _ dim edit menus as appropriate during selection/no selection/etc
    1 _ switch to newer syntax package from jedit cvs
    1 _   is enormous horizontal scroller issue fixed properly
+   1 _ jedittextarea caret blinks even w/o focus
+   1 _   may have been my own hack breaking it
 
 
 danh couldn't replicate on win2k, but test under osx and others
@@ -687,7 +773,6 @@ dh b _   color picker or other things written by folks
 dh b _   add all .jar files in lib/plugins on startup
 dh b _ make some kind of internal color picker
 dh b _   could be a separate window that's always around if needed
-dh b _ highlight a word and jump to it inside the reference
 dh b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
 dh b _ may need to start putting properties somewhere besides lib
 dh b _   home directory  (or preferences folder under macos9)
@@ -700,6 +785,9 @@ dh b _   better just to go directly to the sketch's folder
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
 dh b _ expose access to oro api, perhaps as a plugin
 dh b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
+
+   1 _ make a preference panel to set pde.properties stuff
+   1 _ open button stays stuck if no sketch is selected from popup
 
 
 PDE / see you next year
@@ -779,9 +867,6 @@ How the environment gets packed up, downloaded, and installed.
 
 
 DISTRIBUTION / General 
-
-1 _ make a preference panel to set pde.properties stuff
-1 _ open button stays stuck if no sketch is selected from popup
 
 b _ need more comprehensive list of 'known bugs'
 b _  need to purge 55 spelling from lots of things
