@@ -97,30 +97,32 @@ public class PApplet extends Applet
   // current frame number (could this be used to replace firstFrame?)
   public int frame;
 
-  boolean finished;
+  // true if the feller has spun down
+  public boolean finished;
+
   boolean drawn;
   Thread thread;
 
-  Exception exception; // the last exception thrown
+  public Exception exception; // the last exception thrown
 
-  static final int DEFAULT_WIDTH = 100;
-  static final int DEFAULT_HEIGHT = 100;
-  int width, height;
+  static public final int DEFAULT_WIDTH = 100;
+  static public final int DEFAULT_HEIGHT = 100;
+  public int width, height;
 
   int libraryCount;
   PLibrary libraries[]; 
 
   // this text isn't seen unless PApplet is used on its
   // own and someone takes advantage of leechErr.. not likely
-  static final String LEECH_WAKEUP = "Error while running applet.";
-  PrintStream leechErr;
+  static public final String LEECH_WAKEUP = "Error while running applet.";
+  public PrintStream leechErr;
 
   // message to send if attached as an external vm
-  static final String EXTERNAL_FLAG = "--external=";
-  static final char EXTERNAL_EXACT_LOCATION = 'e';
-  static final char EXTERNAL_STOP = 's';
-  static final String EXTERNAL_QUIT = "__QUIT__";
-  static final String EXTERNAL_MOVE = "__MOVE__";
+  static public final String EXTERNAL_FLAG = "--external=";
+  static public final char EXTERNAL_EXACT_LOCATION = 'e';
+  static public final char EXTERNAL_STOP = 's';
+  static public final String EXTERNAL_QUIT = "__QUIT__";
+  static public final String EXTERNAL_MOVE = "__MOVE__";
   boolean externalRuntime;
 
 

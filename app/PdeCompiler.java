@@ -23,6 +23,8 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import processing.core.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -365,7 +367,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   static public String[] makeImportsFromClassPath(String path) {
     Hashtable table = new Hashtable();
     String pieces[] = 
-      BApplet.split(path, File.pathSeparatorChar);
+      PApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       //System.out.println("checking piece '" + pieces[i] + "'");

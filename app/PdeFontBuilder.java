@@ -22,6 +22,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import processing.core.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -368,7 +369,7 @@ public class PdeFontBuilder extends JFrame {
 
     try {
       font = new Font(list[selection], Font.PLAIN, fontsize);
-      BFont f = new BFont(font, smooth);
+      PFont2 f = new PFont2(font, smooth);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();
