@@ -7,22 +7,46 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0078
+ABOUT REV 0078 - 30 March 2005
 
-bug fixes: 
+this release includes a large number of fixes for the 2D graphics engine. 
+nothing has changed in the processing 3D engine (what you get when you 
+call depth()), however the OpenGL renderer now supports loadPixels(), 
+updatePixels(), saveFrame(), get(), and pmouseX/Y.
 
-- lines of text were getting mashed together both horizontally and
-  vertically. the font stuff was moved around a lot in 0077 and so
-  this made a mess of things.
+around the corner are big fixes to 3D when simon finishes the new 
+lighting model. he's moving through it pretty quickly so we hope to have
+it in a release shortly.
 
-- backwards rectangles and ellipses are now drawn properly. (i.e. 
-  rectangles where (x2 < x1) or (y2 < y1), or ellipses with a 
-  negative width or height).
 
-- same thing for backwards images, note that an image drawn backwards
-  won't actually flip the image or anything nutty like that.
+major things still not solved since last release:
+
+- still lots of threading/flickering strangeness
+
+- applet not being placed properly inside its window
+
+- things sometims not starting up (gives a cryptic error in the console)
+
+- text inside a rect is slightly broken
+
+- you can't do per-vertex coloring of lines in 2D
+
+- everything else not covered here that was broken in 77...
+
 
 api changes:
+
+- fun things: some of the filter() stuff in PImage now works:
+  + filter(GRAY) will convert a PImage to grayscale. 
+  + filter(INVERT) will invert an image
+  + filter(POSTERIZE, int levels) will posterize to that many levels
+  + filter(THRESHOLD) or filter(THRESHOLD, float midpoint)
+    will give you a black and white image, with optionally settable
+    midpoint (a value from 0 to 1)
+  + coming soon is filter(BLUR) and filter(BLUR, float radius)...
+
+- strokeCap/strokeJoin constants for MITERED is now MITER, BEVELED is BEVEL, 
+  and PROJECTED is now PROJECT.
 
 - as of 0077, font.width() works differently. it returns the width of
   a one point font, not the font at its current size. the font api
@@ -42,6 +66,60 @@ api changes:
   instead of using PFont.width() or PFont.ascent() to get the size of
   text, you should use textWidth() or textAscent() in PGraphics/PApplet
   which will return values based on what was set in textSize().
+
+- bezierVertex has changed. instead of four calls to bezierVertex, 
+  you should instead use:
+  vertex(x1, y1);
+  bezierVertex(x2, y2, x3, y3, x4, y4);
+  this helps iron out some inconsistencies that you get with the wrong
+  number of bezierVertex coords. it also prevents you from having to 
+  double up the final coordinate to draw the next segment.
+
+- got rid of CONCAVE_POLYGON and CONVEX_POLYGON since they never really
+  came into full use.
+
+
+bug fixes: 
+
+- curveVertex works again.
+
+- lines of text were getting mashed together both horizontally and
+  vertically. the font stuff was moved around a lot in 0077 and so
+  this made a mess of things.
+
+- backwards rectangles and ellipses are now drawn properly. (i.e. 
+  rectangles where (x2 < x1) or (y2 < y1), or ellipses with a 
+  negative width or height).
+
+- same thing for backwards images, note that an image drawn backwards
+  won't actually flip the image or anything nutty like that.
+
+- the file open dialog on macosx now lets you open files ending 
+  with all caps .PDE instead of .pde
+
+- imageMode() was broken
+
+- loadPixels, updatePixels, save, and saveFrame were totally broken 
+  and now they work in both the Java2D and OpenGL renderers.
+
+- patched in the latest version of jogl to hopefully fix some of the
+  overly chatty error messages.
+
+- SCREEN_SPACE text is working again
+
+- tint() is now working properly, except that it ignores colors (but
+  accepts alpha) with PGraphics3 (processing renderer with depth())
+
+- arc was broken and inconsistent, now fixed.
+
+- several bug fixes inside Camera and Movie.
+
+- PImage.get() had a bug where it wouldn't properly read data as
+  you neared or crossed any of the edges of the image.
+
+- bug in the gl renderer that had images drawing the wrong size/shape.
+
+- default strokeCap and strokeJoin now set.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -14,41 +14,121 @@ X loadPixels throwing NPEs
 X fixes to SCREEN_SPACE text not being sized properly
 X loadPixels()/updatePixels() on screen space text (ouch)
 X get SCREEN_SPACE text working again
+X patch in newer jogl.. too many BSODs
+X saveFrame seems to be broken
+X   fixed for PGraphics2
+X   fixed for PGraphicsGL
+X   also implemented loadPixels/updatePixels for gl
+X fix tint() with color and alpha for PGraphics2
+X alpha() colors are inverted (white is opaque.. doesn't make sense)
+X   should we swap this around? no - this is how photoshop works
+X fix arc
+X get() is back
+X set camera.modified so that it draws properly
+X it's annoying not having a copy() function inside PImage
+X   formerly get() with no params
+o   clone throws an exception
+o   PImage constructor that takes itself?
+o   PImage copy = new PImage(another);
+X got rid of CONCAVE_POLYGON and CONVEX_POLYGON
+X hack for points to work in opengl, but still not working broadly
+X work on filter() functions
+X   POSTERIZE - find simple code that does it?
+X     there must be a straightforward optimized version of it
+o   EDGES - find edges in casey's example is differen than photoshop
+o     which version do people want with their stuff
+X     edges filter removed
+X several fixes to Movie and Camera to work with the new gfx model
+X PImage.get(x, y, w, h) had a bug when things went off the edge
+X set defaults for strokeCap and strokeJoin
+X get() and gl images were broken for screen sizes less than full size
+X fix arcs, were badly broken between java2d and pgraphics
+X look at curve functions more closely
+X   should we switch to curveVertex(1,2,3) (ala curveto)
+X   because some confusion with mixing types of curves
+o   make sure we don't want curveVertices(1,2,3,u,v)
+o   also make test cases so that java2d and java11 behave the same
+X implement PGraphics2.curveVertex()
+X updatePixels() not setting PApplet.pixels
+X   make loadPixels in PGraphics ignored, and put it in PApplet
+X made loadStrings() and openStream(File) static again
+X test loadPixels()/updatePixels()/saveFrame() on the pc
+X   better, just assume that they need the endian swap
+X fixed draw mode apps for opengl
+X   (gl was missing a beginFrame)
+X pmouseX, pmouseY are not working in OpenGL mode
+X   (as they are working in Processing mode)
 
-_ why is java2d so flickery?
-X   is it because the lock was taken off (g) in PApplet?
-_   test to see whether it's still happening
+o screenX/Y aren't properly working for 2D points against a 3D matrix
+o   (ryan alexander rounding bug)
+o   Just to clarify, it works completely correctly with rounding
+o   screenX/Y and also using the 3 arg version of translate - 
+o   ie translate(hw,hh,0) instead of just translate(hw,hh). 
+X   no longer an issue because moving to 2D and 3D modes
+o PImage: remove the static versions of manipulators?
+o   probably not, because they're inherited by PApplet
+o   i.e. mask(image, themask); 
+X   no PImage needed b/c PGraphics is a PImage
+o colorMode(GRAY) to avoid stroke(0) causing trouble? 
+o   or maybe get rid of stroke(0)? hrm
 
-_ saveFrame seems to be broken (PGraphics2 and PGraphicsGL?)
+_ printarr() of null array crashes without an error
+_ actually, errors from many crashes not coming through on the mac?
+
+createGraphics and placement issues
+_ make pappletgl work back inside papplet
+_   and then size(300, 300, DEPTH) etc
+_   get rid of opengl renderer menu
+_   othersise hint() to use the p5 renderer instead of java2d
+_ applet placement is screwy
+_ how to force PGraphics() instead of PGraphics2()
+o applets on osx (and windows) sometimes show up 20 pixels off the top 
+
+_ saveFrame() is saving to sketch folder, save() is not
+
+bezier/catmull rom curves
+_ non-homogenous coloring for curve vertices
+_ implement curveTangent
 
 PApplet
-_ updatePixels() not setting PApplet.pixels
-_   make loadPixels in PGraphics ignored, and put it in PApplet
-X made loadStrings() and openStream(File) static again
-_   fix other stuff that's supposed to be static
+_ check for what else inside PApplet should be static
 
+PFont
 _ text in a box is broken (at least for PGraphics2)
 o   get text rect working again (seems to be in infinite loop)
 
-_ patch in newer jogl.. too many BSODs
+PGraphics
+_ fix-up the curve_init() and the rest to use matrices
+_   and not have ugly names (i.e. just g.curveDetail is good)
 
 PGraphics2
-_ In this example, tint() is working fine with OpenGL, 
-_   but not working with the Processing renderer.
-size(200, 200);
-PImage a;  // Declare variable "a" of type PImage
-a = loadImage("arch.jpg"); // Load the images into the program
-image(a, 0, 0); // Displays the image from point (0,0)
-tint(255, 0, 0, 100);
-image(a, width/2, 0, a.width/2, a.height/2); 
+_ why is java2d so flickery?
+X   is it because the lock was taken off (g) in PApplet?
+_   test to see whether it's still happening
+_ textSpace(SCREEN_SPACE) needs to be faster
+_   need flat image implementation that takes no transforms
+_   along with 90, 180 and 270 versions of it as well
+_   tie to glDrawPixels.. how to clear matrix properly for that?
+_ gradient-painted lines
+Color c = new Color(0x00FFFF00, true);
+GradientPaint gradient = 
+  new GradientPaint(0,0,Color.red,100,100,c);
+GeneralPath gp = new GeneralPath();
+gp.moveTo(10, 10);
+gp.lineTo(100, 90);
+gp.lineTo(20, 50);
+gp.closePath();
+Graphics2D g2 = ((PGraphics2)g).g2;
+g2.setPaint(gradient);
+g2.draw(gp);
 
-PAppletGL
-_ are draw mode apps now fixed in gl?
-_   (gl was missing a beginFrame)
-_ pmouseX, pmouseY are not working in OpenGL mode
-_   (as they are working in Processing mode)
+PGraphics3
+_ tint() honoring alpha but not colored tint
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_ make sure arc goes in the right direction that we want it to
+_   (make sure that PGraphics3 goes the same direction)
 _ Stroking a rect() leaves the upper right pixel off.
-_ points not working in opengl (carlos line truncation?)
+_   also, points not working in opengl (carlos line truncation?)
 void setup() {
   size(200, 200);
   background(0);
@@ -57,35 +137,37 @@ void draw() {
   stroke(255);
   point(60, 30);
 }
+_ error message saying that strokeCap and strokeJoin don't work
+
+PGraphicsGL
+_ implement copy() and blend()
+_ background color seems to be wrong?
 
 . . . . . 
 
-0079+ core
+add simon's new 3d code as soon as he has gl working
+  and make a release based on that
+
+0079 java 1.1 graphics comes back
+
+0080 export to application
+
 
 api questions
-_ alpha() colors are inverted (white is opaque.. doesn't make sense)
-_   should we swap this around? also get rid of static version?
-_ colorMode(GRAY) to avoid stroke(0) causing trouble? 
-_   or maybe get rid of stroke(0)? hrm
+
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
-_ look at curve functions more closely
-_   should we switch to curveVertex(1,2,3) (ala curveto)
-_   because some confusion with mixing types of curves
-_ really need to take a look at the curve/vertex code
-_   make sure we don't want curveVertices(1,2,3,u,v)
-_   also make test cases so that java2d and java11 behave the same
-_ make pappletgl work back inside papplet
-_   and then size(300, 300, DEPTH) etc
-_   get rid of opengl renderer menu
-_   othersise hint() to use the p5 renderer instead of java2d
-_ how to force PGraphics() instead of PGraphics2()
-_ write filter() functions
+
+_ BLUR - write simple blur
+_   how does photoshop handle this?
+_ BLUR - add gaussian blur
+
 _ remove SCREEN_SPACE altogether? 
 _ PImage.filter() 
-_   maybe use quasimonod's gaussian blur code?
+_   maybe use quasimondo's gaussian blur code?
 _     http://incubator.quasimondo.com/processing/gaussian_blur_1.php
-_   filter() on subsections? yes, in keeping with rest of api
-_ PImage: remove the static versions of manipulators?
+o   filter() on subsections? yes, in keeping with rest of api
+X   no, in keeping with getting shit done
+
 _ might be able to do a typed expand()
 public Object growArray(Object array, int size) {
     Class type = array.getClass().getComponentType();
@@ -103,6 +185,7 @@ _   do we change to font(arial, 12) ?
 _ how to shut off rendering to screen when illustrator in use? 
 _   need size(30000, 20000) for illustrator, problem in papplet
 _ be consistent about getXxx() methods
+_   just use the variable names.. don't do overkill on fillR et al
 _   or just what functions are actually made public
 _   is fillRi needed? it's pretty goofy..
 _ how to handle full screen (opengl especially) or no screen (for scripts)
@@ -110,10 +193,20 @@ _ implement fullsize().. this takes over the screen as best it can
 _   or should it be more like present mode?
 _   that if applet is 500x500, centers on a 800x600 window
 _   though how do you get the screen size? 
-_     screen.width and screen.height? 
+_     screen.width and screen.height? - yes
+_   write java 1.3 code for full screen version of PApplet
+_     this might be used for presentation mode
+_ go through and see what functions (no pixel ops?) frame recorders should have
+_ expose api to launch files, folders, URLs
+_   use with/in place of link()
 
-_ particles lib requires depth() (but shouldn't)
-_   fix for 78 since not sure when simon's new version is happening
+_ PPolygon no longer in use and PLine is a mess
+
+video lib
+_ grabbing sub-devices from camera in the lib (via list() or whatever)
+_   actually, need to use numbered indices (multiple w/ same name)
+_     list should be: "0 - Logitech QuickCam (Blah)"
+_     and then use the indices (or the str i guess) to choose
 
 _ something really bad happened with println() in this release
 _   perhaps only without a code folder and/or running in java2d mode?
@@ -132,20 +225,10 @@ _      since needs to render to screen as well
 
 _ rewrite library/howto.txt for to get rid of old interface
 
-_ closing window w/o first hitting stop() causes freak out
-_   opengl gives an OutOfMemoryError
-_   java2d just goes into a lock
-_   could also be code that's in an infinite loop (i.e. text error) 
-_     which then causes a full lock
-
-_ stop() not working very well
-_   doesn't seem to actually be stopping things
+_ also have a simple way to hook in triangle leeches to PGraphics3
+_   this exists, but needs to be documented, or have accessors
 
 _ sphere() and box() should set normals and take textures
-
-- applets on osx (and windows) sometimes show up 20 pixels off the top 
-
-_ implement PGraphics2.curveVertex()
 
 _ fix tint() for PGraphics3 (what could be wrong?)
 _   maybe not setting fill color when drawing textures
@@ -163,9 +246,6 @@ _   is not as expected
 _ lighting totally sucks (both PGraphics3 and PGraphicsGL)
 _ bring in materials for opengl as well?
 _   don't include a class, just make it similar to the light functions
-
-_ also have a simple way to hook in triangle leeches to PGraphics3
-_   this exists, but needs to be documented, or have accessors
 
 _ get PGraphics.java engine working again
 
@@ -185,6 +265,7 @@ _ image loading bug is huge
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
+_ also threaded images
 
 _ 404 error because first searches applet directory on zipdecode
 
@@ -281,12 +362,6 @@ _   just have a "thin_flat_line" option in opengl code
 
 _ go through and figure out what stuff to make public
 
-_ screenX/Y aren't properly working for 2D points against a 3D matrix
-_   (ryan alexander rounding bug)
-_   Just to clarify, it works completely correctly with rounding
-_   screenX/Y and also using the 3 arg version of translate - 
-_   ie translate(hw,hh,0) instead of just translate(hw,hh). 
-
 text issues
 _ text() with \n is semi-broken
 _ font encoding issues
@@ -327,9 +402,6 @@ _ named colors.. have a method for a full color lookup table
 _   addcolor("blah blah blah", colornum);
 _   fill("blah blah blah");
 _   maybe this is bad practice--too slow, should use variables
-
-_ write java 1.3 code for full screen version of PApplet
-_   this might be used for presentation mode
 
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
@@ -523,8 +595,6 @@ CORE / Details
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891;start=2
    1 _ what is the stroked version of a sphere? a circle?
-   1 _ non-homogenous coloring for curve vertices
-   1 _   properly interpolate
    1 _ too many push() will silently stop the applet inside a loop
    1 _ test winding polygons in different directions
    1 _ test lighting to see how it compares with gl

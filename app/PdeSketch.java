@@ -1278,6 +1278,20 @@ public class PdeSketch {
 
       importedLibraries.add(libFolder);
       libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+
+      /*
+      String list[] = libFolder.list();
+      if (list != null) {
+        for (int j = 0; j < list.length; j++) {
+          // this might have a dll/jnilib/so packed,
+          // so add it to the library path
+          if (list[j].toLowerCase().endsWith(".jar")) {
+            libraryPath += File.pathSeparator +
+              libFolder.getAbsolutePath() + File.separator + list[j];
+          }
+        }
+      }
+      */
     }
 
 

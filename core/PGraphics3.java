@@ -778,8 +778,8 @@ public class PGraphics3 extends PGraphics {
         break;
 
         case POLYGON:
-        case CONCAVE_POLYGON:
-        case CONVEX_POLYGON:
+          //case CONCAVE_POLYGON:
+          //case CONVEX_POLYGON:
         {
           // store index of first vertex
           int first = lineCount;
@@ -853,8 +853,8 @@ public class PGraphics3 extends PGraphics {
         break;
 
         case POLYGON:
-        case CONCAVE_POLYGON:
-        case CONVEX_POLYGON:
+          //case CONCAVE_POLYGON:
+          //case CONVEX_POLYGON:
         {
           triangulate_polygon();
         }
@@ -1463,8 +1463,16 @@ public class PGraphics3 extends PGraphics {
 
 
   public void point(float x, float y, float z) {
+    /*
     beginShape(POINTS);
     vertex(x, y, z);
+    endShape();
+    */
+
+    // hacked workaround for carlos line bug
+    beginShape(LINES);
+    vertex(x, y, z);
+    vertex(x + EPSILON, y + EPSILON, z);
     endShape();
   }
 

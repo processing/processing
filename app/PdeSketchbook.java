@@ -279,7 +279,7 @@ public class PdeSketchbook {
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           //System.out.println("check filter on " + dir + " " + name);
-          return name.endsWith(".pde");
+          return name.toLowerCase().endsWith(".pde");
         }
       });
 
