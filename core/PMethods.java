@@ -38,7 +38,7 @@ public interface PMethods {
   public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode);
 
-  public PImage copy();
+  public PImage get();
 
   public void save(String filename);
 
