@@ -1,9 +1,4 @@
-0072 core
-X make m00, m01 etc public
-X hack to make loadImage() work 
-X   cache settings are ignored, may be slow as hell
-X make hints[] no longer static
-X   they weren't properly resetting
+0073
 
 _ image("blah.jpg"); 
 _ loadImage() is broken on some machines
