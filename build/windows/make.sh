@@ -210,7 +210,8 @@ cd ../../lib/serial
 ../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
 zip -r0q serial.jar processing
 rm -rf processing
-#cp serial.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\rxtx_work\\code"
+mkdir -p ../../build/windows/work/libraries/serial/library/
+cp serial.jar ../../build/windows/work/libraries/serial/library/
 
 
 # NET LIBRARY
@@ -218,6 +219,8 @@ cd ../../lib/net
 ../../build/windows/work/jikes +D -d . *.java 
 zip -r0q net.jar processing
 rm -rf processing
+mkdir -p ../../build/windows/work/libraries/net/library/
+cp net.jar ../../build/windows/work/libraries/net/library/
 
 
 # VIDEO LIBRARY
@@ -235,5 +238,5 @@ cd ../../lib/video
 ../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
 zip -r0q video.jar processing
 rm -rf processing
-#cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\new_camera_action\\code"
-#cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\movie_action\\code"
+mkdir -p ../../build/windows/work/libraries/video/library/
+cp video.jar ../../build/windows/work/libraries/video/library/

@@ -39,15 +39,13 @@ X   not able to write "preferences.txt" on the first run
 040903
 X examples should be in a submenu of open
 
-_ System.out isn't being heard from P* classes
-_   errors inside those classes also causing weirdness
-_   this might be a broader running as external app problem
-_   errorMessage in PSerial/PClient/PServer are all using System.out
+040905
+_ "add library" menu item and submenu
+_   looks for subfolder called 'libraries' inside p5 folder
+_   libraries are determined by having a subfolder named 'library'
 
 _ add preference for showing library stuff
 _ make built-in libraries read-only
-_ "add library" menu item and submenu
-_   looks for subfolder called 'library' inside sketches
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
@@ -70,27 +68,29 @@ _     or rename the old applet folder to something else? (nah, too messy)
 _   don't force everything into a single .jar on export
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
 
+_ package processing.app for PdeBase, PdeEditor..
+
+_ System.out isn't being heard from P* classes
+_   errors inside those classes also causing weirdness
+_   this might be a broader running as external app problem
+_   errorMessage in PSerial/PClient/PServer are all using System.out
+
 _ support for editor plugins
-_   make beautify plugin ("autoformat"?)
 _   make dynamically loaded plugins and "tools" menu
 _     break out beautify as its own plugin
-
-   1 _ beautify
-   1 _   //for (int i = 0; i < 10; i++) {
-   1 _   } catch (IOException e) { }
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
-   1 _   need to ignore comments.. but not those inside quotes.. oog
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-   1 _   ignores colons for case statements
-   1 _   need to tie this to the parser instead
-   1 _ do a better job of maintaining cursor during beautify 
-   1 _ only beautify a particular section of code
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-
-_ make "get quicktime libs" function
-_   can java get the root directory for system/win32 etc?
-
-_ processing.app -> PdeBase, PdeEditor..
+_   make "get quicktime libs" function
+_     can java get the root directory for system/win32 etc?
+_   make beautify plugin ("autoformat"?)
+_     //for (int i = 0; i < 10; i++) {
+_     } catch (IOException e) { }
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
+_     need to ignore comments.. but not those inside quotes.. oog
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+_     ignores colons for case statements
+_     need to tie this to the parser instead
+_   do a better job of maintaining cursor during beautify 
+_   only beautify a particular section of code
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
@@ -111,8 +111,11 @@ _   or handle this some more intelligent way, super.stop() is needed.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 
+_ redo preferences panel to use proper swing layout etc
+
 
 README
+_ make the whole thing an html file?
 _ cut out some of the chatter
 _ processing won't start..
 _   people with non-ascii chars in the folder name 
