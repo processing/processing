@@ -5,8 +5,10 @@ X fixed one bug in PdeRuntime error message stuff
 X   was this the big one? a big one?
 
 _ moving p5 prefs on mac into documents? or inside sketchbook?
+_   Documents -> Processing -> preferences.txt
+_   do the same for windows, with sketchbook as a subfolder
 
-_ terrible loadImage bug.. does it affect loadStrings?
+_ don't exit p5 if platform is unknown
 
 _ "save as" needs to update the editorheader
 

@@ -23,8 +23,8 @@ X launcher.cpp broke serial.. see versions in processing.notcvs
 X rewrite bagel code.. 
 X   for this release, because it will break things along with the lib stuff
 X   switch to PImage, PApplet, etc
-X bug in BImage.smooth() when resizing an image
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077669847
+o bug in BImage.smooth() when resizing an image
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077669847
 X shut off the automatic gunzipping of streams, keep for fonts
 X fix for duplicated points in polygons that foiled the tesselator
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077819175
@@ -53,7 +53,15 @@ X pass in args[] from main
 X angleMode(DEGREES) and angleMode(RADIANS)
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
 X fixes to line and curve code
-
+X api to properly sense when applet has focus
+X   add a 'focused' variable to the applet
+X   code now in zipdecode, maybe just list this as a standard thing?
+X do applets know when they're stopped? stop? dispose?
+X   would be good to set a param in p5 so that the thread dies
+X   if people have other threads they've spawned, impossible to stop
+X saveFrame() to a folder horks things up if a mkdirs() is required
+X   on macosx, this makes things hang; on windows it complains
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752;start=0
 
 cleaning up
 X make bagel more usable as standalone
@@ -76,33 +84,39 @@ o   already added a while back
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
 o sphere code needs only front face polygon 
 o   all triangles must be counter-clockwise (front-facing)
-X do applets know when they're stopped? stop? dispose?
-X   would be good to set a param in p5 so that the thread dies
-X   if people have other threads they've spawned, impossible to stop
-X api to properly sense when applet has focus
-X   add a 'focused' variable to the applet
-X   code now in zipdecode, maybe just list this as a standard thing?
+X fix loadImage to be inside PApplet
 
 
-MEGABUCKET (api)
-_ light(x, y, z, c1, c2, c3, TYPE)
-_   also BLight with same constructor, and on() and off() fxn
-_ figure out how to handle cached images, multiple images
-_   MediaTracker blocking is prolly making jar download really slow
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
+_ new graphics: test with rgb cube, shut off smoothing
+_   make sure line artifacts are because of smoothing
+
+
+
+megabucket
 _ decide on whether to use PTools
 _   i.e. move math functions into utility library
 _   check what other functions require PGraphics to exist but shouldn't
 _   look at BGraphics to see if setting an 'applet' could be used
 _     then other than that, if no applet set, no connection to PApplet
+
+high priority for beta 
+_ light(x, y, z, c1, c2, c3, TYPE)
+_   also BLight with same constructor, and on() and off() fxn
+_ figure out how to handle cached images, multiple images
+_   MediaTracker blocking is prolly making jar download really slow
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
+
 _ new/old graphics, explicitly stating 2d/3d, huh?
 _   what to do about anti-aliasing.. oversample 2x?
-_ expand/subset for array operations (floats, ints, Strings)
+_ array operations: byte, char, int, float, String, Object
+_   expand/contract
+_   append/unappend.. (no push/pop) add/remove put/unput
+_   shift/unshift
+_   slice, splice
+_   reverse, concat, split
 _   expand() on Object[] is worthless.. fix it with reflection?
 _     also, should it be named resize() instead?
-_   see if reflection will allow expand for all class types
-_   append/unappend (no push/pop), shift/unshift, 
-_   slice, splice, reverse, concat, split
+_     see if reflection will allow expand for all class types
 
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
@@ -175,15 +189,29 @@ CORE / PImage
    1 _   either document this and/or provide a better error message
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
 
-   1 _ more blend() modes (the five listed on the thread below?)
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
-   1 _   (this list ok'd by casey for inclusion into the api)
-   1 _   DIFFERENCE: C = abs(A-B);
-   1 _   MULTIPLY: C = (A * B ) / 255
-   1 _   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
-   1 _   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-   1 _   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-   1 _   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
+   b _ more blend() modes (the five listed on the thread below?)
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
+   b _   figure out what the modes should actually be: 
+   b _     photoshop: normal, dissolve; darken, multiply, color burn, 
+   b _                linear burn; lighten, screen, color dodge, linear
+   b _                dodge; overlay, soft light, hard light, vivid light, 
+   b _                linear light, pin light, hard mix; difference, 
+   b _                exclusion; hue, saturation, color, luminosity
+   b _     illustrator: normal; darken, multiply, color burn; lighten,
+   b _                  screen, color dodge; overlay, soft light, hard light; 
+   b _                  difference, exclusion; hue, sat, color, luminosity
+   b _     director: Copy, Transparent, Reverse, Ghost, Not copy, 
+   b _               Not transparent, Not reverse, Not ghost, Matte, Mask;
+   b _               (below seems more useful:
+   b _               Blend, Add pin, Add, Subtract pin, Background transparent,
+   b _               Lightest, Subtract, Darkest, Lighten, Darken
+   b _     flash: 
+   b _   DIFFERENCE: C = abs(A-B);
+   b _   MULTIPLY: C = (A * B ) / 255
+   b _   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
+   b _   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+   b _   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+   b _   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
 
 
 CORE / PGraphics
@@ -288,8 +316,6 @@ CORE / Details
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
    1 _ put SecurityException things around file i/o for applets
    1 _   rather than checking online(), since applets might be signed
-   1 _ saveFrame() to a folder horks things up if a mkdirs() is required
-   1 _   on macosx, this makes things hang; on windows it complains
    1 _ saveFrame() at the end of a draw mode program is problematic
    1 _   app might exit before the file has finished writing to disk
    1 _   need to block other activity inside screenGrab until finished

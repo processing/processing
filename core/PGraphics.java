@@ -30,11 +30,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
-import java.net.*;
 
 
-public class PGraphics extends PImage implements PConstants {
-  public Applet applet;  // not comfortable with this being static
+public class PGraphics extends PImage 
+  implements PMethods, PConstants {
 
   // ........................................................
 
@@ -120,6 +119,8 @@ public class PGraphics extends PImage implements PConstants {
   int cacheHsbKey;
   /** Result of the last conversion to hsb */
   float cacheHsbValue[] = new float[3]; // inits to zero
+
+  boolean depth;
 
   // lighting
   static final int MAX_LIGHTS = 10;
@@ -644,7 +645,7 @@ public class PGraphics extends PImage implements PConstants {
   // MEMORY HANDLING (NEW_GRAPHICS)
 
 
-  public final float[] nextVertex() {
+  protected final float[] next_vertex() {
     if (!hints[NEW_GRAPHICS]) return polygon.nextVertex();
 
     if (vertex_count == vertices.length) {
@@ -658,7 +659,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public final void addTexture(PImage image) {
+  protected final void add_texture(PImage image) {
 
     if (texture_index == textures.length - 1) {
       PImage temp[] = new PImage[texture_index<<1];
@@ -677,7 +678,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public final void addLine(int a, int b) {
+  protected final void add_line(int a, int b) {
 
     if (lines_count == lines.length) {
       int temp[][] = new int[lines_count<<1][LINE_FIELD_COUNT];
@@ -704,7 +705,7 @@ public class PGraphics extends PImage implements PConstants {
     return;
   }
 
-  public final void addTriangle(int a, int b, int c) {
+  protected final void add_triangle(int a, int b, int c) {
 
     if (triangles_count == triangles.length) {
       int temp[][] = new int[triangles_count<<1][TRIANGLE_FIELD_COUNT];
@@ -991,7 +992,7 @@ public class PGraphics extends PImage implements PConstants {
 
     if (hints[NEW_GRAPHICS]) {
       if (z_order == true) {
-        addTexture(image);
+        add_texture(image);
       } else {
         triangle.setTexture(image);
       }
@@ -1113,7 +1114,7 @@ public class PGraphics extends PImage implements PConstants {
   public void vertex(float x, float y) {
     //if (polygon.redundantVertex(x, y, 0)) return;
     //cvertexIndex = 0;
-    setup_vertex(nextVertex(), x, y, 0);
+    setup_vertex(next_vertex(), x, y, 0);
   }
 
 
@@ -1121,7 +1122,7 @@ public class PGraphics extends PImage implements PConstants {
     //if (polygon.redundantVertex(x, y, 0)) return;
     //cvertexIndex = 0;
     vertex_texture(u, v);
-    setup_vertex(nextVertex(), x, y, 0);
+    setup_vertex(next_vertex(), x, y, 0);
   }
 
 
@@ -1130,7 +1131,7 @@ public class PGraphics extends PImage implements PConstants {
     //cvertexIndex = 0;
     unchangedZ = false;
     dimensions = 3;
-    setup_vertex(nextVertex(), x, y, z);
+    setup_vertex(next_vertex(), x, y, z);
   }
 
 
@@ -1141,7 +1142,7 @@ public class PGraphics extends PImage implements PConstants {
     vertex_texture(u, v);
     unchangedZ = false;
     dimensions = 3;
-    setup_vertex(nextVertex(), x, y, z);
+    setup_vertex(next_vertex(), x, y, z);
   }
 
 
@@ -1383,7 +1384,7 @@ public class PGraphics extends PImage implements PConstants {
         {
           stop = vertex_end;
           for (int i = vertex_start; i < stop; i++) {
-            addLine(i,i);
+            add_line(i,i);
           }
         }
         break;
@@ -1398,11 +1399,11 @@ public class PGraphics extends PImage implements PConstants {
           increment = (shapeKind == LINES) ? 2 : 1;
 
           for (int i = vertex_start; i < stop; i+=increment) {
-            addLine(i,i+1);
+            add_line(i,i+1);
           }
 
           if (shapeKind == LINE_LOOP) {
-            addLine(stop,lines[first][PA]);
+            add_line(stop,lines[first][PA]);
           }
         }
         break;
@@ -1415,7 +1416,7 @@ public class PGraphics extends PImage implements PConstants {
 
           for (int i = vertex_start; i < stop; i++) {
             counter = i - vertex_start;
-            addLine(i,i+1);
+            add_line(i,i+1);
             if ((shapeKind == TRIANGLES) && (counter%3 == 1)) {
               i++;
             }
@@ -1426,7 +1427,7 @@ public class PGraphics extends PImage implements PConstants {
           increment = (shapeKind == TRIANGLE_STRIP) ? 1 : 3;
 
           for (int i = vertex_start; i < stop; i+=increment) {
-            addLine(i,i+2);
+            add_line(i,i+2);
           }
         }
         break;
@@ -1439,7 +1440,7 @@ public class PGraphics extends PImage implements PConstants {
 
           for (int i = vertex_start; i < stop; i++) {
             counter = i - vertex_start;
-            addLine(i,i+1);
+            add_line(i,i+1);
             if ((shapeKind == QUADS) && (counter%4 == 2)) {
               i++;
             }
@@ -1450,7 +1451,7 @@ public class PGraphics extends PImage implements PConstants {
           increment = (shapeKind == QUAD_STRIP) ? 2 : 4;
 
           for (int i=vertex_start; i < stop; i+=increment) {
-            addLine(i,i+3);
+            add_line(i,i+3);
           }
         }
         break;
@@ -1464,10 +1465,10 @@ public class PGraphics extends PImage implements PConstants {
           stop = vertex_end - 1;
 
           for (int i=vertex_start; i < stop; i++) {
-            addLine(i,i+1);
+            add_line(i,i+1);
           }
           // draw the last line connecting back to the first point in poly
-          addLine(stop,lines[first][PA]);
+          add_line(stop,lines[first][PA]);
         }
         break;
       }
@@ -1484,7 +1485,7 @@ public class PGraphics extends PImage implements PConstants {
           stop = vertex_end - 2;
           increment = (shapeKind == TRIANGLES) ? 3 : 1;
           for (int i = vertex_start; i < stop; i += increment) {
-            addTriangle(i, i+1, i+2);
+            add_triangle(i, i+1, i+2);
           }
         }
         break;
@@ -1497,9 +1498,9 @@ public class PGraphics extends PImage implements PConstants {
 
           for (int i = vertex_start; i < stop; i += increment) {
             // first triangle
-            addTriangle(i, i+1, i+2);
+            add_triangle(i, i+1, i+2);
             // second triangle
-            addTriangle(i, i+2, i+3);
+            add_triangle(i, i+2, i+3);
           }
         }
         break;
@@ -1846,7 +1847,7 @@ public class PGraphics extends PImage implements PConstants {
         a = vertex_order[u]; b = vertex_order[v]; c = vertex_order[w];
 
         // create triangle
-        addTriangle(a, b, c);
+        add_triangle(a, b, c);
 
         m++;
 
@@ -4073,263 +4074,7 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // IMAGES
-
-
-  private Image gimmeImage(URL url, boolean force) {
-    Toolkit tk = Toolkit.getDefaultToolkit();
-
-    URLConnection conn = null;
-    try {
-      //conn = new URLConnection(url);
-      conn = url.openConnection();
-
-      // i don't think this does anything, 
-      // but just set the fella for good measure
-      conn.setUseCaches(false);
-      // also had a note from zach about parent.obj.close() on url
-      // but that doesn't seem to be needed anymore...
-
-      // throws an exception if it doesn't exist
-      conn.connect();
-
-      if (!force) {
-        // how do you close the bastard?
-        conn = null;
-        // close connection and just use regular method
-        return tk.getImage(url);
-      }
-
-      // slurp contents of that stream
-      InputStream stream = conn.getInputStream();
-
-      BufferedInputStream bis = new BufferedInputStream(stream);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-      try {
-        int c = bis.read();
-        while (c != -1) {
-          out.write(c);
-          c = bis.read();
-        }
-      } catch (IOException e) {
-        return null;
-      }
-      bis.close();  // will this help?
-      //byte bytes[] = out.toByteArray();
-
-      // build an image out of it
-      //return tk.createImage(bytes);
-      return tk.createImage(out.toByteArray());
-
-    } catch (Exception e) {  // null pointer or i/o ex
-      //System.err.println("error loading image: " + url);
-      return null;
-    }
-  }
-
-  public PImage loadImage(String filename) {
-    if (filename.toLowerCase().endsWith(".tga")) {
-      return loadTargaImage(filename);
-    }
-    return loadImage(filename, true);
-  }
-
-  // returns null if no image of that name is found
-  public PImage loadImage(String filename, boolean force) {
-    Image awtimage = null;
-    //String randomizer = "?" + nf((int) (random()*10000), 4);
-
-    if (filename.startsWith("http://")) {
-      try {
-        URL url = new URL(filename);
-        awtimage = gimmeImage(url, force);
-
-      } catch (MalformedURLException e) { 
-        System.err.println("error loading image from " + filename);
-        e.printStackTrace();
-        return null;
-      }
-
-    } else {
-      //System.out.println(getClass().getName());
-      //System.out.println(getClass().getResource(filename));
-      awtimage = gimmeImage(getClass().getResource(filename), force);
-      if (awtimage == null) {
-        awtimage = 
-          gimmeImage(getClass().getResource("data/" + filename), force);
-      }
-      /*
-        boolean insideBrowser = true;
-        try {
-        applet.getAppletContext();
-        } catch (NullPointerException e) {
-        insideBrowser = false;
-        force = false;  // the ?2394 trick won't work
-        }
-
-        System.out.println("get dat way");
-        URL url = force ? 
-        getClass().getResource(filename);
-        try {
-        url.openConnection();
-        } catch (Exception e) {
-        System.out.println("unhappy");
-        e.printStackTrace();
-        }
-         //awtimage = tk.getImage();
-        System.out.println("got url");
-        awtimage = tk.getImage(url);
-
-        if (awtimage == null) {
-        System.out.println("get dis way");
-        awtimage = tk.getImage(getClass().getResource("data/" + filename));
-        }
-      */
-    }
-    if (awtimage == null) {
-      System.err.println("could not load image " + filename);
-      return null;
-    }
-
-    Component component = applet;
-    if (component == null) {
-      component = new Frame();
-      ((Frame)component).pack();
-      // now we have a peer! yay!
-    }
-
-    MediaTracker tracker = new MediaTracker(component);
-    tracker.addImage(awtimage, 0);
-    try {
-      tracker.waitForAll();
-    } catch (InterruptedException e) { 
-      e.printStackTrace();
-    }
-
-    int jwidth = awtimage.getWidth(null);
-    int jheight = awtimage.getHeight(null);
-
-    int jpixels[] = new int[jwidth*jheight];
-    PixelGrabber pg = 
-      new PixelGrabber(awtimage, 0, 0, jwidth, jheight, jpixels, 0, jwidth);
-    try {
-      pg.grabPixels();
-    } catch (InterruptedException e) { 
-      e.printStackTrace();
-    }
-
-    //int format = RGB;
-    if (filename.toLowerCase().endsWith(".gif")) {
-      // if it's a .gif image, test to see if it has transparency
-      for (int i = 0; i < jpixels.length; i++) {
-        // since transparency is often at corners, hopefully this
-        // will find a non-transparent pixel quickly and exit
-        if ((jpixels[i] & 0xff000000) != 0xff000000) {
-          return new PImage(jpixels, jwidth, jheight, RGBA);
-          //format = RGBA;
-          //break;
-        }
-      }
-    }
-    return new PImage(jpixels, jwidth, jheight, RGB);
-  }
-
-
-  /*
-  public PImage loadImage(String file) { 
-    try { 
-      byte[] imgarray=loadBytes(file); 
-      java.awt.Image awtimage = 
-        Toolkit.getDefaultToolkit().createImage(imgarray); 
-      MediaTracker tracker = new MediaTracker(this); 
-      tracker.addImage(awtimage, 0); 
-      try { 
-        tracker.waitForAll(); 
-      } catch (InterruptedException e) { 
-        e.printStackTrace(); 
-      } 
-  
-      int w = awtimage.getWidth(null); 
-      int h = awtimage.getHeight(null); 
-      int[] pix = new int[w*h]; 
-  
-      PixelGrabber pg = new PixelGrabber(awtimage, 0, 0, w, h, pix, 0, w); 
-  
-      try { 
-        pg.grabPixels(); 
-      } catch (InterruptedException e) { 
-        e.printStackTrace(); 
-      } 
-  
-      PImage img=new PImage(pix,w,h,RGB); 
-  
-      if (file.toLowerCase().endsWith(".gif")) { 
-        for (int i = 0; i < pix.length; i++) { 
-          if ((pix[i] & 0xff000000) != 0xff000000) { 
-            img.format=RGBA; 
-            break; 
-          } 
-        } 
-      } 
-      return img; 
-    } 
-    catch(Exception e) { 
-      return null; 
-    } 
-  } 
-   */
-
-
-  // [toxi 040304] Targa bitmap loader for 24/32bit RGB(A) 
-
-  // [fry] this could be optimized to not use loadBytes
-  // which would help out memory situations with large images
-
-  protected PImage loadTargaImage(String filename) {
-    // load image file as byte array 
-    byte[] buffer = loadBytes(filename); 
-  
-   // check if it's a TGA and has 8bits/colour channel 
-   if (buffer[2] == 2 && buffer[17] == 8) { 
-     // get image dimensions 
-     //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]); 
-     int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
-     //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]); 
-     int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
-     // check if image has alpha 
-     boolean hasAlpha=(buffer[16] == 32); 
-  
-     // setup new image object 
-     PImage img = new PImage(w,h); 
-     img.format = (hasAlpha ? RGBA : RGB); 
-  
-     // targa's are written upside down, so we need to parse it in reverse 
-     int index = (h-1) * w; 
-     // actual bitmap data starts at byte 18 
-     int offset = 18; 
-  
-     // read out line by line 
-     for (int y = h-1; y >= 0; y--) { 
-       for (int x = 0; x < w; x++) { 
-         img.pixels[index + x] = 
-           ((buffer[offset++] & 0xff)) | 
-           ((buffer[offset++] & 0xff) << 8) | 
-           ((buffer[offset++] & 0xff) << 16) | 
-           (hasAlpha ? ((buffer[offset++] & 0xff) << 24) : 0xff000000);
-           
-         //b2i(buffer[offset++]) | b2i(buffer[offset++])<<8 | b2i(buffer[offset++])<<16; 
-         // set alpha based on alpha data or revert to 100% (if there's only a 24bit image) 
-         //if (hasAlpha) img.pixels[index + x]|=b2i(buffer[offset++])<<24; 
-         //else img.pixels[index + x] |= 0xff000000; 
-       } 
-       index -= w; 
-     }
-     return img; 
-   } 
-   System.err.println("loadImage(): bad targa image format"); 
-   return null; 
-  }
+  // IMAGE
 
 
   public void image(PImage image, float x1, float y1) {
@@ -4422,34 +4167,23 @@ public class PGraphics extends PImage implements PConstants {
    * Used by OpenGL implementations of PGraphics, so that images, 
    * or textures, can be loaded into texture memory.
    */
-  public void cache(PImage image) {
+  public void cache(PImage image) { 
+    // keep the lower } on a separate line b/c of preproc
   }
 
-  public void cache(PImage images[]) {    
+  public void cache(PImage images[]) { 
+    // keep the lower } on a separate line b/c of preproc
   }
 
-  protected void cache(PImage image, int index) {
+  protected void cache(PImage image, int index) { 
+    // keep the lower } on a separate line b/c of preproc
   }
+
 
 
   //////////////////////////////////////////////////////////////
 
   // TEXT/FONTS
-
-
-  public PFont loadFont(String name) {
-    try {
-      PFont font = new PFont(name, this);
-      return font;
-
-    } catch (IOException e) {
-      System.err.println("Could not load font " + name);
-      System.err.println("Make sure that the font has been copied");
-      System.err.println("to the data folder of your sketch.");
-      e.printStackTrace();
-    }
-    return null;
-  }
 
 
   public void textFont(PFont which) {
@@ -4581,9 +4315,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
-  // MATRIX MATH
+  // TRANSFORMATION MATRIX
 
 
   public void push() {
@@ -4710,7 +4445,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
+
+  // CAMERA METHODS
 
 
   public void beginCamera() {
@@ -4850,7 +4588,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
+
+  // CAMERA TRANSFORMATIONS
 
 
   // based on mesa, matrix.c
@@ -4954,7 +4695,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
+
+  // MATRIX TRANSFORMATIONS
 
 
   public void angleMode(int mode) {
@@ -5094,6 +4838,7 @@ public class PGraphics extends PImage implements PConstants {
     applyMatrix(n00, n01, n02, n03,  n10, n11, n12, n13,
                 n20, n21, n22, n23,  n30, n31, n32, n33);
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -5253,19 +4998,6 @@ public class PGraphics extends PImage implements PConstants {
     calcG = (float)calcGi / 255.0f;
     calcB = (float)calcBi / 255.0f;
     calc_alpha = (calcAi != 255);
-
-    /*
-    calci = rgb;
-    calcRi = (rgb >> 16) & 0xff;
-    calcGi = (rgb >> 8) & 0xff;
-    calcBi = rgb & 0xff;
-    calcAi = 255;
-    calcR = (float)calcRi / 255.0f;
-    calcG = (float)calcGi / 255.0f;
-    calcB = (float)calcBi / 255.0f;
-    calcA = 1;
-    calc_alpha = false;
-    */
   }
 
 
@@ -5563,9 +5295,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
-  // LIGHTS
+  // DEPTH and LIGHTS
+
+
+  public void depth() {
+    depth = true;
+  }
+
+  public void noDepth() {
+    depth = false;
+  }
 
 
   public void lights() {
@@ -5575,6 +5317,7 @@ public class PGraphics extends PImage implements PConstants {
   public void noLights() {
     lighting = false;
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -5599,12 +5342,13 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // MESSAGES / ERRORS / LOGGING
 
 
-  public void message(int level, String message) {
+  public void message(int level, String message) {  // ignore
     switch (level) {
     case CHATTER:
       //System.err.println("bagel chatter: " + message);
@@ -5618,351 +5362,11 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  public void message(int level, String message, Exception e) {
+  public void message(int level, String message, Exception e) {  // ignore
     message(level, message);
     e.printStackTrace();
   }
 
-
-  //////////////////////////////////////////////////////////////
-
-  // FILE I/O
-
-
-  public InputStream openStream(String filename) throws IOException {
-    InputStream stream = null;
-
-    if (filename.startsWith("http://")) {
-      try {
-        URL url = new URL(filename);
-        stream = url.openStream();
-        return stream;
-
-      } catch (MalformedURLException e) { 
-        e.printStackTrace();
-        return null;
-      }
-    }
-
-    stream = getClass().getResourceAsStream(filename);
-    if (stream != null) return stream;
-
-    stream = getClass().getResourceAsStream("data/" + filename);
-    if (stream != null) return stream;
-
-    try {
-      try {
-        stream = new FileInputStream(new File("data", filename));
-        if (stream != null) return stream;
-      } catch (IOException e2) { }
-
-      try {
-        stream = new FileInputStream(filename);
-        if (stream != null) return stream;
-      } catch (IOException e1) { }
-
-    } catch (SecurityException se) { }  // online, whups
-
-    if (stream == null) {
-      throw new IOException("openStream() could not open " + filename);
-    }
-    return null;  // #$(*@ compiler
-  }
-
-
-  public byte[] loadBytes(String filename) {
-    try {
-      return loadBytes(openStream(filename));
-
-    } catch (IOException e) {
-      System.err.println("problem loading bytes from " + filename);
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  static public byte[] loadBytes(InputStream input) {
-    try {
-      BufferedInputStream bis = new BufferedInputStream(input);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-      int c = bis.read();
-      while (c != -1) {
-        out.write(c);
-        c = bis.read();
-      }
-      return out.toByteArray();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-
-  public String[] loadStrings(String filename) {
-    try {
-      return loadStrings(openStream(filename));
-
-    } catch (IOException e) {
-      System.err.println("problem loading strings from " + filename);
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  static public String[] loadStrings(InputStream input) {
-    try {
-      BufferedReader reader = 
-        new BufferedReader(new InputStreamReader(input));
-
-      String lines[] = new String[100];
-      int lineCount = 0;
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (lineCount == lines.length) {
-          String temp[] = new String[lineCount << 1];
-          System.arraycopy(lines, 0, temp, 0, lineCount);
-          lines = temp;
-        }
-        lines[lineCount++] = line;
-      }
-      reader.close();
-
-      if (lineCount == lines.length) {
-        return lines;
-      }
-
-      // resize array to appropraite amount for these lines
-      String output[] = new String[lineCount];
-      System.arraycopy(lines, 0, output, 0, lineCount);
-      return output;
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-
-  public void saveBytes(String filename, byte buffer[]) {
-    try {
-      FileOutputStream fos = new FileOutputStream(filename);
-      saveBytes(fos, buffer);
-      fos.close();
-
-    } catch (IOException e) {
-      System.err.println("error saving bytes to " + filename);
-      e.printStackTrace();
-    }
-  }
-
-  public void saveBytes(OutputStream output, byte buffer[]) {
-    try {
-      //BufferedOutputStream bos = new BufferedOutputStream(output);
-      output.write(buffer);
-      output.flush();
-
-    } catch (IOException e) {
-      System.err.println("error while saving bytes");
-      e.printStackTrace();
-    }
-  }
-
-
-  public void saveStrings(String filename, String strings[]) {
-    try {
-      FileOutputStream fos = new FileOutputStream(filename);
-      saveStrings(fos, strings);
-      fos.close();
-
-    } catch (IOException e) {
-      System.err.println("error while saving strings");
-      e.printStackTrace();
-    }
-  }
-
-  public void saveStrings(OutputStream output, String strings[]) {
-    //try {
-    PrintWriter writer = 
-      new PrintWriter(new OutputStreamWriter(output));
-    for (int i = 0; i < strings.length; i++) {
-      writer.println(strings[i]);
-    }
-    writer.flush();
-    //} catch (IOException e) {
-    //System.err.println("error while saving strings");
-    //e.printStackTrace();
-    //}
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-  // SORT
-
-  int sort_mode;
-
-  static final int STRINGS = 0;
-  static final int INTS = 1;
-  static final int FLOATS = 2;
-  static final int DOUBLES = 3;
-
-  String sort_strings[];
-  int sort_ints[];
-  float sort_floats[];
-  double sort_doubles[];
-  Object sort_objects[];
-
-
-  /**
-   * Sort an array of String objects.
-   */
-  public void sort(String what[]) {
-    sort(what, what.length, null);
-  }
-
-  /**
-   * Sort an array of String objects, along with a generic
-   * array of type Object. 
-   *
-   * String names[] = { "orange", "black", "red" };
-   * Object colors[] = { Color.orange, Color.black, Color.red };
-   * sort(names, colors);
-   * 
-   * result is 'names' alphabetically sorted
-   * and the colors[] array sorted along with it.
-   */
-  public void sort(String what[], Object objects[]) {
-    sort(what, what.length, objects);
-  }
-
-  public void sort(int what[]) {
-    sort(what, what.length, null);
-  }
-
-  public void sort(int what[], Object objects[]) {
-    sort(what, what.length, objects);
-  }
-
-  public void sort(float what[]) {
-    sort(what, what.length, null);
-  }
-
-  public void sort(float what[], Object objects[]) {
-    sort(what, what.length, objects);
-  }
-
-  public void sort(double what[]) {
-    sort(what, what.length, null);
-  }
-
-  public void sort(double what[], Object objects[]) {
-    sort(what, what.length, objects);
-  }
-
-
-  public void sort(String what[], int count, Object objects[]) {
-    if (count == 0) return;
-    sort_mode = STRINGS;
-    sort_strings = what;
-    sort_objects = objects;
-    sort_internal(0, count-1);
-  }
-
-  public void sort(int what[], int count, Object objects[]) {
-    if (count == 0) return;
-    sort_mode = INTS;
-    sort_ints = what;
-    sort_objects = objects;
-    sort_internal(0, count-1);
-  }
-
-  public void sort(float what[], int count, Object objects[]) {
-    if (count == 0) return;
-    sort_mode = FLOATS;
-    sort_floats = what;
-    sort_objects = objects;
-    sort_internal(0, count-1);
-  }
-
-  public void sort(double what[], int count, Object objects[]) {
-    if (count == 0) return;
-    sort_mode = DOUBLES;
-    sort_doubles = what;
-    sort_objects = objects;
-    sort_internal(0, count-1);
-  }
-
-
-  protected void sort_internal(int i, int j) {
-    int pivotIndex = (i+j)/2;
-    sort_swap(pivotIndex, j);
-    int k = sort_partition(i-1, j);
-    sort_swap(k, j);
-    if ((k-i) > 1) sort_internal(i, k-1);
-    if ((j-k) > 1) sort_internal(k+1, j);
-  }
-
-
-  protected int sort_partition(int left, int right) {
-    int pivot = right;
-    do {
-      while (sort_compare(++left, pivot) < 0) { }
-      while ((right != 0) && (sort_compare(--right, pivot) > 0)) { }
-      sort_swap(left, right);
-    } while (left < right);
-    sort_swap(left, right);
-    return left;
-  }
-
-
-  protected void sort_swap(int a, int b) {
-    switch (sort_mode) {
-    case STRINGS:
-      String stemp = sort_strings[a];
-      sort_strings[a] = sort_strings[b];
-      sort_strings[b] = stemp;
-      break;
-    case INTS:
-      int itemp = sort_ints[a];
-      sort_ints[a] = sort_ints[b];
-      sort_ints[b] = itemp;
-      break;
-    case FLOATS:
-      float ftemp = sort_floats[a];
-      sort_floats[a] = sort_floats[b];
-      sort_floats[b] = ftemp;
-      break;
-    case DOUBLES:
-      double dtemp = sort_doubles[a];
-      sort_doubles[a] = sort_doubles[b];
-      sort_doubles[b] = dtemp;
-      break;
-    }
-    if (sort_objects != null) {
-      Object otemp = sort_objects[a];
-      sort_objects[a] = sort_objects[b];
-      sort_objects[b] = otemp;
-    }
-  }
-
-  protected int sort_compare(int a, int b) {
-    switch (sort_mode) {
-    case STRINGS:    
-      return sort_strings[a].compareTo(sort_strings[b]);
-    case INTS:
-      if (sort_ints[a] < sort_ints[b]) return -1;
-      return (sort_ints[a] == sort_ints[b]) ? 0 : 1;
-    case FLOATS:
-      if (sort_floats[a] < sort_floats[b]) return -1;
-      return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
-    case DOUBLES:
-      if (sort_doubles[a] < sort_doubles[b]) return -1;
-      return (sort_doubles[a] == sort_doubles[b]) ? 0 : 1;
-    }
-    return 0;
-  }
 
 
   //////////////////////////////////////////////////////////////

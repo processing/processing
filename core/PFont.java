@@ -27,7 +27,6 @@ package processing.core;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
 
 
 // value[] could be used to build a char to byte mapping table
@@ -124,7 +123,8 @@ public class PFont implements PConstants {
 
 
   // can this throw an exception instead? 
-  public PFont(String filename, PGraphics parent) throws IOException {
+  /*
+  public PFont(String filename, PApplet parent) throws IOException {
     //this.parent = parent;
     //this.valid = false;
 
@@ -141,7 +141,16 @@ public class PFont implements PConstants {
     cached = false;
     size();
   }
+  */
 
+
+  /*
+  public PFont(InputStream input) throws IOException {
+    read(input);
+    //cached = false;
+    //size();
+  }
+  */
 
   public void write(OutputStream output) throws IOException {
     DataOutputStream os = new DataOutputStream(output);
@@ -179,7 +188,8 @@ public class PFont implements PConstants {
 
 
   //private void load_vlw_font(String filename) throws IOException {
-  public void read(InputStream input) throws IOException {
+  //public void read(InputStream input) throws IOException {
+  public PFont(InputStream input) throws IOException {
     DataInputStream is = new DataInputStream(input);
 
     charCount   = is.readInt();
@@ -257,6 +267,8 @@ public class PFont implements PConstants {
       }
       //System.out.println();
     }
+    cached = false;
+    size();
   }
 
 

@@ -136,7 +136,7 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Function to be used by subclasses to setup their own bidness.
    */
-  public void setup(int width, int height, int format) {
+  public void setup(int width, int height, int format) {  // ignore
     this.width = width;
     this.height = height;
     this.pixels = new int[width*height];
@@ -200,19 +200,6 @@ public class PImage implements PConstants, Cloneable {
    */
   public void alpha(PImage alpha) {
     alpha(alpha.pixels);
-  }
-
-
-  public int blendColor(int c1, int c2, int mode) {
-    switch (mode) {
-    case BLEND:    return blend_multiply(c1, c2);
-    case ADD:      return blend_add_pin(c1, c2);
-    case SUBTRACT: return blend_sub_pin(c1, c2);
-    case LIGHTEST: return blend_lightest(c1, c2);
-    case DARKEST:  return blend_darkest(c1, c2);
-    case REPLACE:  return c2;
-    }
-    return 0;
   }
 
 
@@ -449,6 +436,23 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+
+  /**
+   * Blend a two colors based on a particular mode.
+   */
+  static public int blend(int c1, int c2, int mode) {
+    switch (mode) {
+    case BLEND:    return blend_multiply(c1, c2);
+    case ADD:      return blend_add_pin(c1, c2);
+    case SUBTRACT: return blend_sub_pin(c1, c2);
+    case LIGHTEST: return blend_lightest(c1, c2);
+    case DARKEST:  return blend_darkest(c1, c2);
+    case REPLACE:  return c2;
+    }
+    return 0;
+  }
+
+
   /** 
    * Copies and blends 1 pixel with MODE to pixel in another image
    */
@@ -456,8 +460,8 @@ public class PImage implements PConstants, Cloneable {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
       pixels[dy * width + dx] = 
-        blendColor(pixels[dy * width + dx], 
-                   src.pixels[sy * src.width + sx], mode);
+        blend(pixels[dy * width + dx], 
+              src.pixels[sy * src.width + sx], mode);
     }
   }
 
@@ -465,7 +469,7 @@ public class PImage implements PConstants, Cloneable {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < height)) {
       pixels[dy * width + dx] = 
-        blendColor(pixels[dy * width + dx], pixels[sy * width + sx], mode);
+        blend(pixels[dy * width + dx], pixels[sy * width + sx], mode);
     }
   }
 
@@ -515,7 +519,7 @@ public class PImage implements PConstants, Cloneable {
    * The pixels[] array for the new object will be unique
    * and recopied from the source image.
    */
-  public Object clone() throws CloneNotSupportedException {
+  public Object clone() throws CloneNotSupportedException {  // ignore
     PImage c = (PImage) super.clone();
 
     // super.clone() will only copy the reference to the pixels
