@@ -125,7 +125,7 @@ public class PdePreprocessor {
     PdeRecognizer parser = new PdeRecognizer(filter);
 
     // XXXdmose comments and stuff
-    parser.setASTNodeClass("antlr.CommonASTWithHiddenTokens");
+    parser.setASTNodeClass("antlr.ExtendedCommonASTWithHiddenTokens");
 
     // start parsing at the compilationUnit non-terminal
     //
