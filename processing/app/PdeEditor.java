@@ -1363,7 +1363,7 @@ afterwards, some of these steps need a cleanup function
       ps.println("      <td>&nbsp;</td>");
       ps.println("    </tr>");
       ps.println("    <tr>");
-      ps.println("      <td><a href=\"" + exportSketchName + ".java\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\">Source code</font></a></td>");
+      ps.println("      <td><a href=\"" + exportSketchName + ".pde\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\">Source code</font></a></td>");
       ps.println("    </tr>");
       ps.println("    <tr>");
       ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://Proce55ing.net\">Processing</a></font></td>");
@@ -1398,10 +1398,6 @@ afterwards, some of these steps need a cleanup function
       */
 #endif
 
-      String exportDir = ("lib" + File.separator + 
-                          "export" + File.separator);
-      String bagelClasses[] = new File(exportDir).list();
-
       // create new .jar file
       FileOutputStream zipOutputFile = 
         new FileOutputStream(new File(appletDir, exportSketchName + ".jar"));
@@ -1410,6 +1406,12 @@ afterwards, some of these steps need a cleanup function
       ZipEntry entry;
 
       // add standard .class files to the jar
+      // these are the bagel classes found in export
+      // they are a jdk11-only version of bagel
+      String exportDir = ("lib" + File.separator + 
+                          "export" + File.separator);
+      String bagelClasses[] = new File(exportDir).list();
+
       for (int i = 0; i < bagelClasses.length; i++) {
         if (!bagelClasses[i].endsWith(".class")) continue;
         entry = new ZipEntry(bagelClasses[i]);
@@ -1418,8 +1420,7 @@ afterwards, some of these steps need a cleanup function
         zos.closeEntry();
       }
 
-      // files to include
-      //if (dataDir != null) {
+      // files to include from data directory
       if ((dataDir != null) && (dataDir.exists())) {
         String datafiles[] = dataDir.list();
         for (int i = 0; i < datafiles.length; i++) {
@@ -1436,13 +1437,7 @@ afterwards, some of these steps need a cleanup function
       // add the project's .class to the jar
       // actually, these should grab everything from the build directory
       // since there may be some inner classes
-      /*
-      entry = new ZipEntry(exportSketchName + ".class");
-      zos.putNextEntry(entry);
-      zos.write(grabFile(new File("lib", exportSketchName + ".class")));
-      zos.closeEntry();
-      */
-      // add any .class files from the applet dir, then delete them
+      // (add any .class files from the applet dir, then delete them)
       String classfiles[] = appletDir.list();
       for (int i = 0; i < classfiles.length; i++) {
         if (classfiles[i].endsWith(".class")) {
@@ -1461,9 +1456,15 @@ afterwards, some of these steps need a cleanup function
       // close up the jar file
       zos.flush();
       zos.close();
-      //zipOutputFile.close();
 
-      //ex_engine.cleanup();  // no! buildPath is applet!
+      // make a copy of the .pde file to post on the web
+      FileOutputStream sketchOutput = 
+        new FileOutputStream(new File(appletDir, exportSketchName + ".pde"));
+      PrintWriter sketchWriter = 
+        new PrintWriter(new OutputStreamWriter(sketchOutput));
+      sketchWriter.print(program);
+      sketchWriter.flush();
+      sketchWriter.close();
 
       message("Done exporting.");
 
@@ -1847,13 +1848,6 @@ afterwards, some of these steps need a cleanup function
     return buffer;
   }
 
-  /*
-  static {
-    String a = "D:\\fry\\processing\\app\\PdeBase.java";
-    String b = "D:\\fry\\processing\\app\\PdeBase.maybe.java";
-    copyFile(new File(a), new File(b));
-  }
-  */
 
   static protected void copyFile(File afile, File bfile) {
     try {
