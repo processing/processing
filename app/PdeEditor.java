@@ -84,7 +84,8 @@ public class PdeEditor extends Panel {
 
   PdeBase base;
 
-  // hack until i have a better text editor
+    // hack while fixing layout issues
+    Component pain;
 
   public PdeEditor(PdeBase base) {
     this.base = base;
@@ -106,8 +107,10 @@ public class PdeEditor extends Panel {
 
     add("West", leftPanel);
 
+    //Panel rightPanel = new Panel();
     Panel rightPanel = new Panel();
-    rightPanel.setLayout(new BorderLayout());
+    //rightPanel.setLayout(new BorderLayout());
+    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 
     header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
@@ -134,18 +137,39 @@ public class PdeEditor extends Panel {
     rightPanel.add("Center", scroller);
     //rightPanel.add("Center", textarea);
 
+    /*
     Panel statusPanel = new Panel();
-    statusPanel.setLayout(new BorderLayout());
+    //statusPanel.setLayout(new BorderLayout());
+    statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
+    //statusPanel.setLayout(new FlowLayout(FlowLayout.VERTICAL));
     status = new PdeEditorStatus(this);
-    statusPanel.add("North", status);
+    statusPanel.add("Center", status);
     console = new PdeEditorConsole(this);
-    //statusPanel.add("South", console);
-    statusPanel.add("Center", console);
+    statusPanel.add("South", console);
     rightPanel.add("South", statusPanel);
+    */
+
+    status = new PdeEditorStatus(this);
+    rightPanel.add(status);
+    console = new PdeEditorConsole(this);
+    rightPanel.add(console);
+
+    /*
+    //pain = statusPanel;
+    textarea.addComponentListener(new ComponentAdapter() {
+	public void componentResized(ComponentEvent e) {
+	    //System.out.println("textarea: " + e);
+	    System.out.println("attempting to force layout");
+	    //PdeBase.frame.doLayout();
+	    pain.doLayout();
+	}
+      });
+    */
 
     add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
+    // (that was wishful thinking, they still are, until we switch to jedit)
     PdeEditorListener listener = new PdeEditorListener(this);
     textarea.addKeyListener(listener);
     //textarea.addFocusListener(listener);

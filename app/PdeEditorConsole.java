@@ -339,6 +339,10 @@ public class PdeEditorConsole extends Component {
 			 ascent*lineCount + VINSET*2);
     //}
   }
+
+    public Dimension getMinimumSize() {
+	return getPreferredSize();
+    }
 }
 
 
