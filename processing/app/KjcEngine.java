@@ -462,8 +462,11 @@ public class KjcEngine extends PdeEngine {
   //}
 
   boolean newMessage;
+  int messageLineCount;
 
   public void message(String s) {
+    //System.out.println(messageMode + " " + "msg: " + s);
+
     if (messageMode == COMPILING) {
       //System.out.println("leech2: " + new String(b, offset, length));
       //String s = new String(b, offset, length);
@@ -503,9 +506,13 @@ public class KjcEngine extends PdeEngine {
 	exception = new PdeException(s);  // type of java ex
 	//System.out.println("setting ex type to " + s);
 	newMessage = false;
+	messageLineCount = 0;
+
       } else {
+	messageLineCount++;
+
 	int index = s.indexOf(tempFilename);
-	//System.out.println("> " + s);
+	//System.out.println("> " + index + " " + s);
 	if (index != -1) {
 	  int len = tempFilename.length();
 	  String lineNumberStr = s.substring(index + len + 1);
@@ -519,6 +526,7 @@ public class KjcEngine extends PdeEngine {
 	  } catch (NumberFormatException e) {  
 	    e.printStackTrace();
 	  }
+
 	} else if ((index = s.indexOf(tempClass)) != -1) {
 	  // code to check for:
 	  // at Temporary_484_3845.loop(Compiled Code)
@@ -541,6 +549,17 @@ public class KjcEngine extends PdeEngine {
 	  // because pootie() (re)sets the exception title
 	  // and throws it, but then the line number gets set 
 	  // because of the line that comes after
+
+	} else if (messageLineCount > 5) {
+	  // this means the class name may not be mentioned 
+	  // in the stack trace.. this is just a general purpose
+	  // error, but needs to make it through anyway.
+	  // so if five lines have gone past, might as well signal
+
+	  //System.out.println("signalling");
+	  messageLineCount = -100;
+	  exception = new PdeException(exception.getMessage());
+	  editor.error(exception);
 	}
 	//System.out.println("got it " + s);
       }
@@ -591,7 +610,7 @@ public class KjcEngine extends PdeEngine {
 
 
   // part of PdeEngine
-  public void start(Point windowLocation) throws PdeException {  
+  public void start(Point windowLocation) throws PdeException {
     int numero1 = (int) (Math.random() * 10000);
     int numero2 = (int) (Math.random() * 10000);
     tempClass = TEMP_CLASS + "_" + numero1 + "_" + numero2;
@@ -599,9 +618,6 @@ public class KjcEngine extends PdeEngine {
     writeJava(tempClass, true);
     //System.err.println("KjcEngine wrote java");
     //System.out.println("thread active count is " + Thread.activeCount());
-
-
-    //System.out.println("starting");
 
     /*
     if (!success) {
@@ -617,7 +633,11 @@ public class KjcEngine extends PdeEngine {
     //System.setErr(PdeEditorConsole.systemErr);
     boolean result = compileJava();
     //System.setErr(PdeEditorConsole.consoleErr);
-    if (!result) return;
+    if (!result) {
+      //System.out.println("couldn't compile");
+      return;
+    }
+
       //System.err.println("compiling failed.. was error caught? ");
       //System.err.println(exception);
     //if (!success) return;
@@ -636,9 +656,10 @@ public class KjcEngine extends PdeEngine {
 
     try {
       if (PdeBase.getBoolean("play.external", false)) {
-	String cmd = PdeBase.get("play.externalCommand");
-	process = Runtime.getRuntime().exec(/*"cmd /c " +*/ 
-					    cmd + " " + tempClass + 
+	String cmd = PdeBase.get("play.external.command");
+	// "cmd /c " +   not helpful?
+	process = Runtime.getRuntime().exec(cmd + " " + tempClass + 
+					    " " + tempClass +
 					    " " + x1 + " " + y1);
 	new KjcMessageSiphon(process.getInputStream(), 
 			     process.getErrorStream(), leechErr);
@@ -649,7 +670,12 @@ public class KjcEngine extends PdeEngine {
 	//Class c = loader.loadClass(tempClass);
 	Class c = Class.forName(tempClass);
 
+	//try {
 	applet = (KjcApplet) c.newInstance();
+	//} catch (Exception e) {
+	//  e.printStackTrace();
+	//}
+	//System.out.println(c + " " + applet);
 	//((KjcApplet)applet).errStream = leechErr;
 	applet.setEngine(this);
 	// has to be before init
