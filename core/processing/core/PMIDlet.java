@@ -58,7 +58,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     
     public static final int CORNER          = 0;
     public static final int CORNERS         = 1;
-    public static final int CENTER_DIAMETER = 2;
+    public static final int CENTER          = 2;
     public static final int CENTER_RADIUS   = 3;
     
     public static final int POINTS          = 0;
@@ -308,7 +308,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
             random = new Random();
         }
         int min = Math.min(value1, value2);
-        int range = Math.abs(value2 - value1);
+        int range = Math.abs(value2 - value1) + 1;
         
         return min + Math.abs((random.nextInt() % range));
     }
