@@ -4546,8 +4546,8 @@ public class PApplet extends Applet
   }
 
 
-  public void text(String s, float x, float y, float z, float w, float h) {
-     g.text(s, x, y, z, w, h);
+  public void text(String s, float x1, float y1, float z, float x2, float y2) {
+     g.text(s, x1, y1, z, x2, y2);
   }
 
 
