@@ -323,7 +323,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     if (currentSelection == OPEN) {
       if (popup == null) {
         //popup = new JPopupMenu();
-        popup = editor.sketchbook.getPopup();
+        popup = editor.sketchbook.getPopupMenu();
         add(popup);
       }
       //editor.sketchbook.rebuildPopup(popup);
@@ -337,12 +337,12 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   public void mouseReleased(MouseEvent e) {
     switch (currentSelection) {
-      case RUN:    editor.doRun(e.isShiftDown()); break;
+      case RUN:    editor.handleRun(e.isShiftDown()); break;
       case STOP:   setState(RUN, INACTIVE, true); editor.handleStop(); break;
       case OPEN:   setState(OPEN, INACTIVE, true); break;
-      case NEW:    editor.skNew(); break;
-      case SAVE:   editor.doSave(); break;
-      case EXPORT: editor.skExport(); break;
+      case NEW:    editor.handleNew(); break;
+      case SAVE:   editor.handleSave2(); break;
+      case EXPORT: editor.handleExport(); break;
     }
     currentSelection = -1;
   }

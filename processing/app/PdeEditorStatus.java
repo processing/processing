@@ -285,7 +285,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
             int c = event.getKeyChar();
 
             if (c == KeyEvent.VK_ENTER) {  // accept the input
-              editor.skSaveAs2(editField.getText());
+              editor.handleSaveAs2(editField.getText());
               unedit();
               event.consume();
 

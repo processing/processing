@@ -132,7 +132,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
           int y = e.getY();
 
           if ((x > menuLeft) && (x < menuRight)) {
-            popup.show(this, x, y);
+            popup.show(PdeEditorHeader.this, x, y);
 
           } else {
             for (int i = 0; i < sketch.codeCount; i++) {
@@ -224,7 +224,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
       tabRight[i] = x;
       int textLeft = contentLeft + (pieceWidth - textWidth) / 2;
 
-      g.setColor(textColor[STATUS]);
+      g.setColor(textColor[state]);
       int baseline = (sizeH + fontAscent) / 2;
       //g.drawString(sketch.code[i].name, textLeft, baseline);
       g.drawString(text, textLeft, baseline);
@@ -271,9 +271,11 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     Unhide  >
     Reset file list (not needed?)
   */
-  public JMenu rebuildMenu() {
+  //public JMenu rebuildMenu() {
+  public void rebuildMenu() {
     if (menu != null) {
       menu.removeAll();
+
     } else {
       menu = new JMenu();
       popup = menu.getPopupMenu();
@@ -327,29 +329,17 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
 
     JMenu unhide = new JMenu("Unhide");
     ActionListener unhideListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
-          //System.out.println("unhide " + e);
-          File from = (File) e.getActionCommand();
-          String filename = from.getName();
-          if (!filename.endsWith(".x")) {
-            System.err.println("error while trying to unhide a file");
-          } else if (!filename.exists()) {
-            System.err.println("file no longer exists");
-          } else {
-            File to = new File(from.getPath(), 
-                               filename.substring(0, filename.length() - 2));
-            if (!from.renameTo(to)) {
-              System.err.println("problem while unhiding");
-            }
-          }
+        public void actionPerformed(ActionEvent e) {
+          sketch.unhide((String) (e.getActionCommand()));
           rebuildMenu();
         }
       };
-    for (int i = 0; i < hiddenCount; i++) {
-      item = new JMenuItem(hiddenNames[i]);
-      item.setActionCommand(hiddenFiles[i]);
+    for (int i = 0; i < sketch.hiddenCount; i++) {
+      item = new JMenuItem(sketch.hidden[i].name);
+      //item.setActionCommand(hiddenFiles[i]);
+      item.setActionCommand(sketch.hidden[i].name);
       item.addActionListener(unhideListener);
-      hidden.add(item);
+      unhide.add(item);
     }
     menu.add(unhide);
 
@@ -371,7 +361,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
 
 
   public void deselectMenu() {
-    menuVisible = false; 
+    //menuVisible = false;   // ??
     repaint();
   }
 
