@@ -68,15 +68,26 @@ o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
 
-_ fix make.sh and dist.sh for all platforms to include new export setup
 
+_ international: convert unicode chars to \uXXXX in the preproc
+
+_ fix command keys for menus (broken since switching to swing)
+
+_ fix make.sh and dist.sh for all platforms to include new export setup
 _ re-implement history (disabled for 68)
-_ sync files into lib/build rather than copying everything new
 
 _ history: "archive this version" 
 _   makes a numbered archive of the current sketch as a zip file
 _   checks to see if there are other versions in the current folder
 _   or maybe just increments the numbers at the end of the sketch name
+
+VOLUNTEER
+_ fix export to recursively copy contents of build folder
+_   currently only copies top-level classes and contents of data folder
+_ sync files into lib/build rather than copying everything new
+_   check file existence and modification dates to know which to copy
+_   and which files to delete if some have been removed
+_   this also means that the file copying has to set mod dates (JDK13)
 
 when creating a new file, suggest untitled.pde
 they can put a .java or .pde extension on the file
@@ -87,10 +98,6 @@ code coming from toxi
 _ sphereDetail() function + reference
 _ optimized the flat_rect() function for solid colours (20% faster)
 _ noise() is (partially) broken in v67
-
-_ international: convert unicode chars to \uXXXX in the preproc
-
-_ fix command keys for menus (broken since switching to swing)
 
 _ option for having multiple files open
 X   need ui for tabs from casey
