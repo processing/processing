@@ -4,9 +4,8 @@
   PdeBase - base class for the main processing application
   Part of the Processing project - http://Proce55ing.net
 
-  Copyright (c) 2001-03 
-  Ben Fry, Massachusetts Institute of Technology and 
-  Casey Reas, Interaction Design Institute Ivrea
+  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
