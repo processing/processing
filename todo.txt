@@ -8,6 +8,120 @@ X   strokeWeight != 1 then shouldn't use flat_rect or flat_ellipse
 X   alpha didn't work either b/c some pixels seem to draw more than once
 X fixed bug where font wouldn't create if data dir exists
 X font builder: changes to font selection don't always update properly
+X more toxi image fixes to make things more stable/idiot-proof
+X is this a p5 bug? or his bug?
+X   http://www.cs.uml.edu/~jzhou/previous/91.541/hw1_applet/my_cellular_automata_2.pde
+X new code from toxi for changes to how image api functions are laid out
+X runtime exceptions are killing the environment
+
+_ play button stays stuck on runtime exceptions
+
+_ rename bug is destroying files
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065306548
+
+_ macosx open sketch folder problems.. spaces in filename problem?
+_   also seems to be problem for reference?
+
+_ placement in the history menu of new items doesn't work
+_   the clear history thing gets in the way
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065493721
+
+_ curvePoint not initializing
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065383874
+
+
+_ new html code for eolas patent case
+_   move html to external file in the lib folder
+
+_ include JSObject with p5's pde.jar
+_   files are in jaws.jar: JSObject, JSException and JSUtil
+
+_ included code is not packaged in the outgoing jar file on export
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
+_   JSObject should be included with p5
+
+_ after hitting replace, dim the replace button
+_   otherwise it causes another replace to happen
+
+_ semicolons bug in preproc
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066012865;start=0
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066073171;start=0
+
+................
+
+// Rect is not getting it's stroke color set
+
+void setup() {
+size(400, 400);
+//fill(255, 153); // This line fixes the issue
+}
+
+void loop() {
+//translate(0, 0, 0); //This line makes lines disappear
+background(0);
+strokeWeight(10.0);
+stroke(0, 102, 153, 153);
+line(0, 0, mouseX, mouseY);
+line(width, height, width-mouseX, height-mouseX);
+rect(mouseX, mouseY, 200, 200);
+}
+
+................
+
+
+there's also a strange bug with smooth() and ellipse:
+// Funny bug with smooth and ellipse
+// put mouse in upper-left to see the issue
+
+void setup() {
+size(400, 400);
+smooth();
+}
+
+void loop() {
+background(102);
+ellipse(mouseX, mouseY, 20, 20);
+}
+
+................
+
+
+0067
+_ BImage.smooth() ?
+_ mouse wheel not working on macosx, need to dynamically load 1.4 code
+_ simong interested in helping
+
+_ dll and jnilib files have to be in the p5 folder (confirmed by amit)
+_   there should be other places that they work.. 
+_   could even copy the dll to the p5 folder from the code folder
+
+_ text(String.valueOf(i+1), left + i*20, top);
+_   unexpected token "String"
+
+_ it's possible to write non-1.1 code, even syntax
+_   would -source 1.1 help this? 
+_  'final int' needs to be 'static final int' in 1.1
+
+post-beta
+_ get rid of 'data' folder if not used?
+_   auto-create code and data folder when doing the 'add files to sketch..'
+
+
+lotsa video issues
+_ split classes to BVideo and BMovie ? 
+_ things will freeze if winvdig not installed
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
+_ video hanging without a camera installed
+_ just locks up after running examples, then does the 'can't delete' thing
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
+_ first row of video pixels are black
+_   casey says it may only be his camera
+_ video.pixels don't seem to have high bytes set
+_   so fill(video.pixels[blah]) doesn't work
+_   test against 'pixels' example
+_ make BVideo subclass BImage
+_   make sure the high bits are getting set as opaque
+
 
 _ problems for beautify:
 _   //for (int i = 0; i < 10; i++) {
@@ -95,22 +209,11 @@ dh b _ put screenshots into sketch folder
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 
 
-lotsa video issues
-_ just locks up after running examples, then does the 'can't delete' thing
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
-_ first row of video pixels are black
-_   casey says it may only be his camera
-_ video.pixels don't seem to have high bytes set
-_   so fill(video.pixels[blah]) doesn't work
-_   test against 'pixels' example
-_ make BVideo subclass BImage
-_   make sure the high bits are getting set as opaque
-
-
 console
 dh b _ clear console each time 'run' gets hit
 dh b _   don't actually clear, just advance by the number of lines visible
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
 dh b _   can't copy text from console directly (winxp and macosx)
 bf 1 _ console -> should be using JEditTextArea not TextPane
 bf b _ set decent fonts (probably same as editor above), looks bad on mac
@@ -618,6 +721,8 @@ dh 1 _ rename doesn't set focus to renamer area
    1 _ dim edit menus as appropriate during selection/no selection/etc
    1 _ switch to newer syntax package from jedit cvs
    1 _   is enormous horizontal scroller issue fixed properly
+   1 _ for title-clicking of sketch name, change to a btn
+   1 _   or somehow mark what it's going to do, rather than just doing it
 
 
 PDE / Features
