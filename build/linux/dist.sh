@@ -12,25 +12,22 @@ rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
-rm -rf processing/CVS
-rm -rf processing/lib/CVS
-
-rm -rf processing/reference/CVS
-rm -rf processing/reference/images/CVS
-rm -rf processing/sketchbook/CVS
-rm -rf processing/sketchbook/default/CVS
-rm -f  processing/sketchbook/default/.cvsignore
+cp -r ../../lib processing/libraries
 
 # new style examples thing ala reas
-cd processing/sketchbook
+cd processing
 unzip -q examples.zip
 rm examples.zip
-cd ../..
+cd ..
 
 cd processing
 unzip -q reference.zip
 rm reference.zip
 cd ..
+
+# clean out the cvs entries
+find processing -name "CVS" -exec rm -rf {} ';'
+#find processing -name "CVS" -exec echo {} ';'
 
 # add java (jre) files
 #tar --extract --verbose --file=jre.tgz --ungzip --directory=processing
@@ -55,6 +52,9 @@ dos2unix processing/revisions.txt 2> /dev/null
 dos2unix processing/lib/pde.properties 2> /dev/null
 
 # remove boogers
+#find processing -name "*~" -exec echo {} ';'
+#find processing -name ".DS_Store" -exec echo {} ';'
+#find processing -name "._*" -exec echo {} ';'
 find processing -name "*~" -exec rm -f {} ';'
 find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
@@ -64,7 +64,7 @@ echo Creating tarball and finishing...
 P5=processing-$REVISION
 mv processing $P5
 
-#tar cfz $P5.tgz $P5
+tar cfz $P5.tgz $P5
 # nah, keep the new directory around
 #rm -rf $P5
 
