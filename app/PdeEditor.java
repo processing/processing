@@ -673,7 +673,6 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     JMenuItem item;
 
     item = new JMenuItem("Environment");
-    /* item.setEnabled(false); */
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           PdeBase.openURL(System.getProperty("user.dir") + File.separator + 

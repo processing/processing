@@ -195,14 +195,48 @@ cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
-#CLASSPATH=../../build/macosx/work/lib/core.jar
+CLASSPATH=../../build/macosx/work/lib/core.jar:$CLASSPATH
 
-#pwd
+
+# SERIAL LIBRARY
+echo Building serial library...
 cd ../../lib/serial
 ../../build/macosx/work/jikes +D -classpath "RXTXcomm.jar:../../build/macosx/work/lib/core.jar:$CLASSPATH" -d . *.java 
-#../../build/windows/work/jikes +D -classpath "comm.jar;$CLASSPATH" -d . *.java 
 zip -r0q serial.jar processing
 rm -rf processing
+mkdir -p ../../build/macosx/work/libraries/serial/library/
+cp serial.jar ../../build/macosx/work/libraries/serial/library/
 
 
+# NET LIBRARY
+echo Building net library...
+cd ../../lib/net
+../../build/macosx/work/jikes +D -d . *.java 
+zip -r0q net.jar processing
+rm -rf processing
+mkdir -p ../../build/macosx/work/libraries/net/library/
+cp net.jar ../../build/macosx/work/libraries/net/library/
+
+
+# VIDEO LIBRARY
+echo Building video library...
+QTJAVA=/System/Library/Java/Extensions/QTJava.zip
+if test -f "${QTJAVA}"
+then
+  echo "Found Quicktime at $QTJAVA"
+else 
+  echo "could not find qtjava.zip in"
+  echo "${WINDIR}\\system32\\qtjava.zip"
+  echo "quicktime for java must be installed before building."
+  exit 1;
+fi
+cd ../../lib/video
+../../build/macosx/work/jikes +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
+zip -r0q video.jar processing
+rm -rf processing
+mkdir -p ../../build/macosx/work/libraries/video/library/
+cp video.jar ../../build/macosx/work/libraries/video/library/
+
+
+echo
 echo Done.

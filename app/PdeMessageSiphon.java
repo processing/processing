@@ -82,8 +82,10 @@ class PdeMessageSiphon implements Runnable {
       // on linux, a "bad file descriptor" message comes up when
       // closing an applet that's being run externally.
       // use this to cause that to fail silently since not important
-      if ((PdeBase.platform != PdeBase.LINUX) || 
-          (e.getMessage().indexOf("Bad file descriptor") == -1)) {
+      //String mess = e.getMessage();
+      //if ((PdeBase.platform != PdeBase.LINUX) || 
+      //(e.getMessage().indexOf("Bad file descriptor") == -1)) {
+      if (e.getMessage().indexOf("Bad file descriptor") == -1) {
         System.err.println("PdeMessageSiphon err " + e);
         e.printStackTrace();
         thread = null;
