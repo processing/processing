@@ -96,8 +96,6 @@ public class PdePreprocessor {
   public String writeJava(String name, boolean extendsNormal,
                           boolean exporting) throws java.lang.Exception {
 
-    String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
-
     // create a lexer with the stream reader, and tell it to handle 
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
@@ -138,28 +136,37 @@ public class PdePreprocessor {
       System.err.println("exception: " + e);
     }
 
-    System.err.println("programType = " + programType);
-
-    // get ready to traverse the AST
+    // set up the AST for traversal by PdeEmitter
     //
     ASTFactory factory = new ASTFactory();
     AST parserAST = parser.getAST();
     AST rootNode = factory.create(ROOT_ID, "AST ROOT");
     rootNode.setFirstChild(parserAST);
 
+    // unclear if this actually works, but it's worth a shot
+    //
     ((CommonAST)parserAST).setVerboseStringConversion(
       true, parser.getTokenNames());
+
+    // if this is an advanced program, the classname is already defined.
+    //
+    if ( programType == ADVANCED ) {
+      name = getFirstClassName(parserAST);
+    }
 
     // output the code
     //
     PdeEmitter emitter = new PdeEmitter();
     PrintStream stream = new PrintStream(
-      new FileOutputStream(buildPath + File.separator + "MyDemo.java"));
+      new FileOutputStream(buildPath + File.separator + name + ".java"));
+
+    writeHeader(stream, extendsNormal, exporting, name);
+
     emitter.setOut(stream);
     // XXXdmose should try block encompass more?
     emitter.print(rootNode);
 
-    // XXXdmose more comment: force the newly printed 
+    writeFooter(stream);
     stream.close();
 
     final boolean debug = true;
@@ -179,6 +186,61 @@ public class PdePreprocessor {
       writer.close();
     }
 
-    return "MyDemo" ;
+    return name;
   }
+
+  /**
+   * Write any required header material (eg imports, class decl stuff)
+   * 
+   * @param out                 PrintStream to write it to.
+   * @param extendsNormal       Extending the normal renderer?
+   * @param exporting           Is this being exported from PDE?
+   * @param name                Name of the class being created.
+   */
+  void writeHeader(PrintStream out, boolean extendsNormal, boolean exporting,
+                   String name) {
+
+    if (programType < ADVANCED) {
+
+      String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+
+      // spew out a bunch of java imports 
+      //
+      if (!exporting) {  // if running in environment, or exporting an app
+        for (int i = 0; i < application_imports.length; i++) {
+          out.print("import " + application_imports[i] + ".*; ");
+        }
+      } else {  // exporting an applet
+        for (int i = 0; i < applet_imports.length; i++) {
+          out.print("import " + applet_imports[i] + ".*; ");
+        }
+      }
+
+      out.print("public class " + name + " extends " +
+                extendsWhat + " {");
+    }
+  }
+
+  /**
+   * Write any necessary closing text.
+   * 
+   * @param out         PrintStream to write it to.
+   */
+  void writeFooter(PrintStream out) {
+    if (programType < ADVANCED) {
+      // close off the class definition
+      out.print("}");
+    }
+  }
+
+  /**
+   * Find the first CLASS_DEF node in the tree, and return the name of the
+   * class in question.
+   */
+  String getFirstClassName(AST ast) {
+
+    // XXXdmose actually do the find
+    return "MyDemo";
+  }
+
 }
