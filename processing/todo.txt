@@ -18,7 +18,7 @@ X   modify build/dist to use processing.exe
 X upgrade windows to jre 1.4.2
 X ask on bboard about macosx 1.3 vs 1.4 experiences
 X modified millis() to always update
-X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635;start=
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635;start=
 X decision to pull macos9 support
 X   look into macos9 version of javac
 X get proper tab comments into source files
@@ -213,6 +213,7 @@ X   macosx has update weirdness for non JComponent items
 X     actually it's weirdness *with* JComponent items
 X   http://java.sun.com/docs/books/tutorial/uiswing/painting/overview.html
 X   probably why end of text messages under osx getting chopped?
+X fix compression artifacts on about.jpg
 
 
 ..................................................................
@@ -221,16 +222,20 @@ X   probably why end of text messages under osx getting chopped?
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
-_ write readme.txt and revisions.txt
-_   windows: audio is broken, use jdk 1.4.1 if you need audio
-_   preferences will get better in a future release
-_   export to application is not yet implemented
-_   catch security exceptions around applet i/o calls
+X write readme.txt and revisions.txt
+X   windows: audio is broken, use jdk 1.4.1 if you need audio
+X   preferences will get better in a future release
+X   export to application is not yet implemented
+X   catch security exceptions around applet i/o calls
+X   serial on macosx
+X     run serial.command (modify dist to chmod +x)
+X     otherwise it will complain that the port is in use by another app
+X   write notes in readme about using serial on osx (may need to restart)
 
 
 macosx
-_ test to make sure that serial is working
-_   make .command file to set serial permissions
+X test to make sure that serial is working
+X   make .command file to set serial permissions
 
 
 windows
@@ -251,14 +256,21 @@ _ test rxtx on linux with sun vm
 
 0058
 
-
 _ see if mods to PdeCompiler work on windows
-
+_ first row of video pixels are black
+_   casey says it may only be his camera
 _ video.pixels don't seem to have high bytes set
 _   so fill(video.pixels[blah]) doesn't work
 _   test against 'pixels' example
+_ some flag to know whether applet is online or not
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+_   fix link, loadStrings, saveBytes code once that's fixed
+_ set a better ctrl-key for reference (anything but 'F')
+_   probably need to use mac or pc specific keys?
 
 _ catch security exceptions around applet i/o calls
+_   not just for saving files, but provide better error msgs when
+_     attempting to download from another server
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
 java.security.AccessControlException: access denied (java.io.FilePermission screen-0000.tif read) 
  at java.security.AccessControlContext.checkPermission(Unknown Source) 
@@ -299,6 +311,7 @@ bf b o   what's with the 2 blank lines on startup?
 
 
 macosx
+_ random lockups seem common
 _ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing
 _   was missing the error about a package being gone
@@ -338,9 +351,6 @@ bf _   screen may be 400x400 pixels, but file be 36x36"
 bf _ opengl export / rendering mode
 bf _   currently implemented, but somewhat broken
 bf _   finish this once all the line code is done
-bf _ some flag to know whether applet is online or not
-bf _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
-bf _   fix link, loadStrings, saveBytes code once that's fixed
 bf _ if sketchbook.dir is set, makes new sketchbook folder
 bf _   reads sketchbook properly from other folder
 bf _   but creates a new folder for new sketches to go into
