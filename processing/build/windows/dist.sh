@@ -71,13 +71,6 @@ chmod +x processing/ICE_JNIRegistry.dll
 # get platform-specific goodies from the dist dir
 cp launcher/processing.exe processing/
 cp dist/run.bat processing/
-#cp dist/lib/pde_windows.properties processing/lib/
-
-# get serial stuff from the bagel dir
-#cp ../../bagel/serial/comm.jar processing/lib/
-#cp ../../bagel/serial/javax.comm.properties processing/lib/
-#cp ../../bagel/serial/win32com.dll processing/
-#chmod +x processing/win32com.dll
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
@@ -85,6 +78,9 @@ unix2dos processing/readme.txt 2> /dev/null
 unix2dos processing/revisions.txt 2> /dev/null
 unix2dos processing/lib/preferences.txt 2> /dev/null
 unix2dos processing/lib/keywords.txt 2> /dev/null
+rm processing/*.bak
+rm processing/lib/*.bak
+
 
 # remove boogers
 find processing -name "*~" -exec rm -f {} ';'
