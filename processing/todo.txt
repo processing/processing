@@ -1,7 +1,7 @@
 0030
 _ kjc issues
 _   convert color -> int
-_   comments are removed from exported files
+X   comments are removed from exported files
 _   modify to allow for the 'build' directory on lib
 _ make a new 'dist' function for building
 
@@ -11,7 +11,10 @@ _ fold simpleserial into BApplet
 _   sprint an sprintln functions
 _   make i/o work just like mouse (event driven, with dflt behavior)
 _   need to have function to enable it in setup
-_ make scrollbar for console
+_ console work
+_   make scrollbar for console
+_   convert tabs to 8 spaces
+_   line wrapping (but save info for resize? noo..)
 
 
 JAVA BUGS
