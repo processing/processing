@@ -101,25 +101,17 @@ obscuring the editable text.
 X fix default fonts, font size on mac
 X fix lots of annoying crap about highlighting lines on errors
 X re-enable console, add synchronized (hrmph)
-
-
-FINISH for 46
-
-macosx
-_ update dist script for new layout
+X added extra code for testing to for serial under osx
+X   also suppressed error text in console for exception-less fail
+X couldn't quit p5 when installed into a dir with spaces
+X   properties were saved to a urlencoded place, %20 was causing trouble
+X update dist script for new layout
 X   put mac rxtx inside the p5 folder (hide it?)
 X     include more strongly worded message about rxtx
-_ escape key not quitting presentation mode
-_   no events seem to be coming through at all
-
-macos9
-X update build/dist scripts to work with new layout
-_ check to see if swing is working properly
-_ add swing.jar to dist (?)
-
-linux 
-_ update build and dist scripts for new layout
-_ generate new rev
+X macos9: update build/dist scripts to work with new layout
+X macos9: add swing.jar to dist (?)
+X linux: update build and dist scripts for new layout
+X linux: generate new rev
 
 
 LATER RELEASES
@@ -170,10 +162,17 @@ _   jre icon not appearing in the systray
 macosx
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
+_ escape key not quitting presentation mode
+_   no events seem to be coming through at all
+
+macos9
+_ check to see if swing is working properly
+_ get new release out, remove 1.3 specific stuff from textpane
 
 linux
 _ look for jdk 1.4 to use instead of 1.3
 _   make sure javacomm gets in there
+_ test it a little more to make sure it works (cygwin x sucks)
 
 
 FURTHER AHEAD
