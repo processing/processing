@@ -4974,14 +4974,13 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   // DEPTH
 
 
-  /** semi-placeholder */
   public void depth() {
     depth = true;
     //dimensions = 3;
     cameraMode(PERSPECTIVE);
   }
 
-  /** semi-placeholder */
+
   public void noDepth() {
     depth = false;
     //dimensions = 0;
