@@ -61,15 +61,12 @@ find processing -name "CVS" -exec rm -rf {} ';'
 cp dist/DS_Store processing/.DS_Store
 
 # get package from the dist dir
-cp -r dist/Processing.app processing/
-rm -rf processing/Processing.app/CVS
-rm -rf processing/Processing.app/Contents/CVS
-rm -rf processing/Processing.app/Contents/MacOS/CVS
-rm -rf processing/Processing.app/Contents/Resources/CVS
-rm -rf processing/Processing.app/Contents/Resources/Java/CVS
+cp -a dist/Processing.app processing/
+chmod +x processing/Processing.app/Contents/MacOS/JavaApplicationStub
 
 # put jar files into the resource dir, leave the rest in lib
 RES=processing/Processing.app/Contents/Resources/Java/
+mkdir -p $RES
 mv processing/lib/*.jar $RES/
 
 # directories used by the app
@@ -101,6 +98,7 @@ chmod a+x processing/jikes
 find processing -name "*~" -exec rm -f {} ';'
 #find processing -name ".DS_Store" -exec rm -f {} ';'  # one is legit
 find processing -name "._*" -exec rm -f {} ';'
+find processing -name "CVS" -exec rm -rf {} ';'
 
 # zip it all up for release
 mv processing "Processing $REVISION"
