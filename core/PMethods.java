@@ -154,7 +154,7 @@ public interface PMethods {
                     int u1, int v1, int u2, int v2);
 
   //protected void imageImpl(PImage image,
-  //               float x, float y, float w, float h,
+  //               float x1, float y1, float x2, float y2,
   //               int u1, int v1, int u2, int v2);
 
   //

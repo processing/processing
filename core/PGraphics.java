@@ -1403,7 +1403,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void imageImpl(PImage image,
-                           float x, float y, float w, float h,
+                           float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
     // TODO blit an image to the screen
   }
@@ -1590,6 +1590,15 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Draw text in a box that is constrained to a particular size.
+   * The current rectMode() determines what the coordinates mean
+   * (whether x1/y1/x2/y2 or x/y/w/h).
+   *
+   * Note that the x,y coords of the start of the box
+   * will align with the *ascent* of the text, not the baseline,
+   * as is the case for the other text() functions.
+   */
   public void text(String s, float x1, float y1, float x2, float y2) {
     if (textFont != null) {
       float hradius, vradius;
