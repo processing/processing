@@ -1357,8 +1357,11 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   /**
    * Handles calling the export() function on sketch, and
    * queues all the gui status stuff that comes along with it.
+   * 
+   * Made synchronized to (hopefully) avoid problems of people
+   * hitting export twice, quickly, and horking things up.
    */
-  public void handleExport() {
+  synchronized public void handleExport() {
     message("Exporting code...");
     try {
       if (sketch.export()) {
