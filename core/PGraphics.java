@@ -61,25 +61,25 @@ public class PGraphics extends PImage implements PConstants {
   // underscored_names are used for private functions or variables
 
   /** The current colorMode */
-  public int colorMode;
+  public int colorMode; // = RGB;
 
   /** Max value for red (or hue) set by colorMode */
-  public float colorModeX;
+  public float colorModeX; // = 255;
 
   /** Max value for green (or saturation) set by colorMode */
-  public float colorModeY;
+  public float colorModeY; // = 255;
 
   /** Max value for blue (or value) set by colorMode */
-  public float colorModeZ;
+  public float colorModeZ; // = 255;
 
   /** Max value for alpha set by colorMode */
-  public float colorModeA;
+  public float colorModeA; // = 255;
 
   /** True if colors are not in the range 0..1 */
-  boolean colorScale;
+  boolean colorScale; // = true;
 
   /** True if colorMode(RGB, 255) */
-  boolean colorRgb255;
+  boolean colorRgb255; // = true;
 
   // ........................................................
 

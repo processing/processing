@@ -4,10 +4,11 @@ X additional note about screen sizes and displays
 X sto instead of stop in present mode
 X appears that opengl libraries weren't correctly added in 81?
 
-_ why does diffuse just mirror fill()?
-X   just removed it
+_ fix bezierVertex() for newer api
 
 tweaking up simong light code
+_ why does diffuse just mirror fill()?
+X   just removed it
 _ remove/rename postSetup() stuff from PGraphics/PApplet
 _ what's up with resetLights?
 _ angleMode stuff is kinda overkill
@@ -79,7 +80,6 @@ _   that way more stuff can be static w/o losing useful error handling
 _   (emitting errors when closest to source.. i.e. w/ the filename)
 
 PGraphics3
-_ fix bezierVertex() for newer api
 _ error message saying that strokeCap and strokeJoin don't work
 _ PPolygon no longer in use and PLine is a mess
 _ also have a simple way to hook in triangle leeches to PGraphics3
