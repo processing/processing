@@ -1,3 +1,37 @@
+0039
+X left PdeBase out of the run.bat in windows.. piss me.
+X need comprehensive set of tests for 'f' substitution scenarios
+X    here is the test code to see if it's fixed
+X much reworking for run/present modes
+X   run/present modes are getting confused
+X   [esc] to exit presentation mode
+X remove 'edit' menu because it's worthless
+X build 'release' version of app that doesn't need MFC42D.DLL
+X check on linefeeds and other errors with bbs on web site
+X serial
+X   some method for getting list of serial ports
+X     pde menu item for listing serial ports available
+o     could just println them to the console
+X   import javax.comm stuff as standard in kjc (but not export)
+X can't get fonts to load - tested working ok 
+X   bagel complaint: could not load font Univerx76.vlw.gz
+X   why the x? what's going on?
+X try using serial on macosx
+X   works, but about as well as the windows version used to
+X try using serial on macos9..
+X   works well! shockingly well
+X os9: apple control keys register as edit events in buffer
+X   use Toolkit.getShortcutKeymask() to figure out what's up
+X   -> seems to have fixed itself (?)
+X test presentation mode for window sizing status on macos
+X serial port code needs to be implemented
+X   something that docks better to java serial api
+X implement menuitem to load ref and to launch p5.net
+X   MRJFileUtils.openURL(String url) throws IOException
+X   also, ref should go to index page, not environment
+X check to see if lines for error messages are off in macos
+
+
 0039 BUGS WITH CODE
 
 // font problems
@@ -669,4 +703,3 @@ o setup imrf linux machine?
 DISCARD
 o get proce55ing.net, make that the target launch site
 o write a dbn compatability mode (forever() instead of loop() ?)
-

@@ -43,7 +43,7 @@ public class PdeBase implements ActionListener {
   static int platform;
 
   static final String platforms[] = {
-    "windows", "macos9", "macosx", "linux"
+    "", "windows", "macos9", "macosx", "linux"
   };
 
 
@@ -121,7 +121,7 @@ public class PdeBase implements ActionListener {
     } catch (Exception e) {
       System.err.println("Error reading pde.properties");
       e.printStackTrace();
-      System.exit(1);
+      //System.exit(1);
     }
     int width = getInteger("window.width", 600);
     int height = getInteger("window.height", 350);
