@@ -23,9 +23,13 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
+
+import javax.swing.*;
 
 
 public class PdeHistory {
@@ -45,14 +49,14 @@ public class PdeHistory {
   //PrintWriter historyWriter;
   String historyLast;
 
-
-
+  /*
   ActionListener historyMenuListener = 
     new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.retrieveHistory(e.getActionCommand());
         }
       };
+  */
 
 
   public PdeHistory(PdeEditor editor) {
@@ -62,7 +66,7 @@ public class PdeHistory {
 
   public void attachMenu(JMenu menu) {
     if (PdePreferences.getBoolean("history.recording")) {
-      historyMenu = new Menu("History");
+      historyMenu = new JMenu("History");
       menu.add(historyMenu);
     }
   }

@@ -51,6 +51,9 @@ public class PdeEditor extends JFrame
   // yeah
   static final String WINDOW_TITLE = "Processing";
 
+  // p5 icon for the window
+  Image icon;
+
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
@@ -120,8 +123,15 @@ public class PdeEditor extends JFrame
   protected RedoAction redoAction;
   static public UndoManager undo = new UndoManager(); // editor needs this guy
 
+  // 
 
-  public PdeEditor(PdeBase base) {
+  PdeHistory history;
+  PdeSketchbook sketchbook;
+  PdePreferences preferences;
+  static Properties keywords; // keyword -> reference html lookup
+
+
+  public PdeEditor() {  //PdeBase base) {
     //this.base = base;
 
 #ifdef MACOS
@@ -134,7 +144,8 @@ public class PdeEditor extends JFrame
     // set the window icon
 
     try {
-      icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
+      //icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
+      icon = PdeBase.getImage("icon.gif");
       setIconImage(icon);
     } catch (Exception e) { } // fail silently, no big whup
 
@@ -152,12 +163,13 @@ public class PdeEditor extends JFrame
 
     history = new PdeHistory(this);
     sketchbook = new PdeSketchbook(this);
+    preferences = new PdePreferences();
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(buildFileMenu());
     menubar.add(buildEditMenu());
     menubar.setHelpMenu(buildHelpMenu());
-    setMenuBar(menubar);
+    setJMenuBar(menubar);
 
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
@@ -340,8 +352,8 @@ public class PdeEditor extends JFrame
     if (PdePreferences.get("last.screen.height") != null) {
       // if screen size has changed, the window coordinates no longer
       // make sense, so don't use them unless they're identical
-      int screenW = getInteger("last.screen.width");
-      int screenH = getInteger("last.screen.height");
+      int screenW = PdePreferences.getInteger("last.screen.width");
+      int screenH = PdePreferences.getInteger("last.screen.height");
 
       if ((screen.width != screenW) || (screen.height != screenH)) {
         windowPositionInvalid = true;
@@ -390,7 +402,7 @@ public class PdeEditor extends JFrame
 
     // read the preferences that are settable in the preferences window
 
-    applyPreferences()
+    applyPreferences();
   }
 
 
@@ -401,7 +413,7 @@ public class PdeEditor extends JFrame
   public void applyPreferences() {
     // apply the setting for 'use external editor' 
 
-    boolean external = getBoolean("editor.external");
+    boolean external = PdePreferences.getBoolean("editor.external");
 
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
@@ -411,14 +423,16 @@ public class PdeEditor extends JFrame
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
       // disable line highlight and turn off the caret when disabling
-      Color bg = PdePreferences.getColor("editor.program.bgcolor.external");
-      painter.setBackground(bg);
+      Color color = PdePreferences.getColor("editor.program.bgcolor.external");
+      painter.setBackground(color);
       painter.lineHighlight = false;
       textarea.setCaretVisible(false);
 
     } else {
-      painter.setBackground(PdePreferences.getColor("editor.program.bgcolor")); //, Color.white));
-      painter.lineHighlight = PdePreferences.getBoolean("editor.program.linehighlight");
+      Color color = PdePreferences.getColor("editor.program.bgcolor");
+      painter.setBackground(color);
+      painter.lineHighlight = 
+        PdePreferences.getBoolean("editor.program.linehighlight");
       textarea.setCaretVisible(true);
     }
 
@@ -430,7 +444,8 @@ public class PdeEditor extends JFrame
 
     // in case moved to a new location
 
-    rebuildSketchbookMenu(sketchbookMenu);
+    //rebuildSketchbookMenu(sketchbookMenu);
+    sketchbook.rebuildMenu();
   }
 
 
@@ -447,8 +462,8 @@ public class PdeEditor extends JFrame
     PdePreferences.setInteger("last.window.height", bounds.height);
 
     // last sketch that was in use
-    PdePreferences.put("last.sketch.name", sketchName);
-    PdePreference.put("last.sketch.path", sketchDir.getAbsolutePath());
+    PdePreferences.set("last.sketch.name", sketchName);
+    PdePreferences.set("last.sketch.path", sketchDir.getAbsolutePath());
 
     // location for the console/editor area divider
     int location = splitPane.getDividerLocation();    
@@ -461,7 +476,7 @@ public class PdeEditor extends JFrame
 
   protected JMenu buildFileMenu() {
     JMenuItem item;
-    JMenu menu = new Menu("File");
+    JMenu menu = new JMenu("File");
 
     item = newMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
@@ -471,8 +486,9 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    sketchbookMenu = new Menu("Open");
-    menu.add(sketchbookMenu);
+    //sketchbookMenu = new JMenu("Open");
+    //menu.add(sketchbookMenu);
+    menu.add(sketchbook.rebuildMenu());
 
     saveMenuItem = newMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -490,7 +506,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(saveAsMenuItem);
 
-    item = new MenuItem("Rename...");
+    item = new JMenuItem("Rename...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           skSaveAs(true);
@@ -559,7 +575,7 @@ public class PdeEditor extends JFrame
 
   protected JMenu buildSketchMenu() {
     JMenuItem item;
-    JMenu menu = new Menu("Sketch");
+    JMenu menu = new JMenu("Sketch");
 
     item = newMenuItem("Run", 'R');
     item.addActionListener(new ActionListener() {
@@ -589,7 +605,7 @@ public class PdeEditor extends JFrame
       });
     menu.addSeparator();
 
-    item = newMenuItem("Add file...");
+    item = new JMenuItem("Add file...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           addFile();
@@ -597,7 +613,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Create font...");
+    item = new JMenuItem("Create font...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           new PdeFontBuilder(new File(sketchDir, "data"));
@@ -605,7 +621,8 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    if ((platform == WINDOWS) || (platform == MACOSX)) {
+    if ((PdeBase.platform == PdeBase.WINDOWS) || 
+        (PdeBase.platform == PdeBase.MACOSX)) {
       // no way to do an 'open in file browser' on other platforms
       // since there isn't any sort of standard
       item = new JMenuItem("Show sketch folder");
@@ -626,7 +643,8 @@ public class PdeEditor extends JFrame
 
 
   protected JMenu buildHelpMenu() {
-    JMenu menu = new Menu("Help");
+    JMenu menu = new JMenu("Help");
+    JMenuItem item;
 
     item = new JMenuItem("Help");
     item.addActionListener(new ActionListener() {
@@ -642,8 +660,8 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          openURL(System.getProperty("user.dir") + File.separator + 
-                  "reference" + File.separator + "index.html");
+          PdeBase.openURL(System.getProperty("user.dir") + File.separator + 
+                          "reference" + File.separator + "index.html");
         }
       });
     menu.add(item);
@@ -651,13 +669,13 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Proce55ing.net", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          openURL("http://Proce55ing.net/");
+          PdeBase.openURL("http://Proce55ing.net/");
         }
       });
     menu.add(item);
 
     // macosx already has its own about menu
-    if (platform != MACOSX) {
+    if (PdeBase.platform != PdeBase.MACOSX) {
       menu.addSeparator();
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
@@ -756,17 +774,19 @@ public class PdeEditor extends JFrame
               message("First select a word to find in the reference.");
 
             } else {
-              String referenceFile = (String) keywords.get(text);
+              String referenceFile = (String) PdeBase.keywords.get(text);
               if (referenceFile == null) {
                 message("No reference available for \"" + text + "\"");
               } else {
-                showReference(referenceFile);
+                PdeBase.showReference(referenceFile);
               }
             }
           }
         }
       });
     menu.add(item);
+
+    return menu;
   }
 
 
@@ -882,7 +902,7 @@ public class PdeEditor extends JFrame
 
           g.setFont(new Font("SansSerif", Font.PLAIN, 11));
           g.setColor(Color.white);
-          g.drawString(VERSION, 50, 30);
+          g.drawString(PdeBase.VERSION, 50, 30);
         }
       };
     window.addMouseListener(new MouseAdapter() {
@@ -907,7 +927,7 @@ public class PdeEditor extends JFrame
     applyPreferences();
 
     // next have editor do its thing
-    editor.appyPreferences();
+    //editor.appyPreferences();
   }
 
 
@@ -924,7 +944,8 @@ public class PdeEditor extends JFrame
     PdePreferences.save();
 
     // check to see if the person actually wants to quit
-    editor.doQuit();
+    //editor.doQuit();
+    doQuit();
   }
 
 
@@ -2348,6 +2369,32 @@ public class PdeEditor extends JFrame
   
   public void messageClear(String msg) {
     status.unnotice(msg);
+  }
+
+
+  // cleanup temp files
+  //
+  //static protected void cleanTempFiles(String buildPath) {
+  //static protected void cleanTempFiles() {
+  protected void cleanTempFiles() {
+    if (tempBuildPath == null) return;
+
+    // if the java runtime is holding onto any files in the build dir, we
+    // won't be able to delete them, so we need to force a gc here
+    //
+    System.gc();
+
+    //File dirObject = new File(buildPath);
+    File dirObject = new File(tempBuildPath);
+
+    // note that we can't remove the builddir itself, otherwise
+    // the next time we start up, internal runs using PdeRuntime won't
+    // work because the build dir won't exist at startup, so the classloader
+    // will ignore the fact that that dir is in the CLASSPATH in run.sh
+    //
+    if (dirObject.exists()) {
+      removeDescendants(dirObject);
+    }
   }
 }
 
