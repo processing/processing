@@ -362,7 +362,7 @@ SOUND / Bagel Standard Extension by Carlos
 PDE - PROCESSING DEVELOPMENT ENVIRONMENT
 
 Currently using Oro for search and replace preprocessor.
-Future plans to use Javacup for preprocessor and Jikes for compiler.
+Future plans to use Java CUP for preprocessor and Jikes for compiler.
 
 
 PDE / general 
@@ -998,9 +998,14 @@ Run
 Present
 Stop
 -----
+<<<<<<< todo.txt
+Step Forward (farway future)
+Step Backward (faraway future)
+=======
 Step Forward  (farway future)
 Step Backward (faraway future)
 
+>>>>>>> 1.195
 
 // Sketch
 History
