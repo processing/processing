@@ -9,13 +9,68 @@ releases will be super crusty.
 
 ABOUT REV 0071 
 
-api changes
+bug fix release, clears up several things with text and other tidbits 
+found by all y'all beta testers. if this is your first release 
+since 68 or 69, you should read about the changes made in rev 70.
+
+
+BUG FIXES
+
+- suppress "bad file descriptor" error on mac os x
+
+- properly alphabetize the sketch menu (ignore upper/lower case)
+
+- fixed export on macosx
+
+- multiple tabs no longer causes things to run in another java vm.
+  (unless the other tabs are for .java files)
+
+- dim 'rename' on the first tab, since it cannot be renamed.
+
+- "save as" now properly updates the tabs
+
+- don't let people "save as" a sketch inside itself.
+
+- removed the resize box for applets (since they can't be resized anyway)
+
+- cursor() functions are now usable (public) again
+
+- pre, post & draw now work with libraries
+
+
+CHANGES
+
+- the 'key' variable has been made into a char, so that things like 
+  println(key) makes more sense (and in keeping with java's getKeyChar)
+
+- added a little gap to the left of the editor frame
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1097363967;start=0
+
+- changed "new file" to "new tab" for clarity
+
+- "add file" of a .pde or .java file already inside the sketch folder
+  no longer produces an error, it just updates the tabs.
+
+- "save as" defaults to the current sketch location and name
+
+- text(x, y, w, h) now uses the current rectMode() for placement. 
+
+- align left, center, and right are now properly implemented for text().
+
+- PFont2 has been merged back into PFont. java 1.2+ specific features 
+  that had been sequestered to PFont2 are now handled through reflection.
+
+
+CHANGES I FORGOT TO MENTION FOR REV 70
 
 - 'online' is now a boolean instead of a function that returns a
   boolean. this was actually in 0070 but i forgot to mention it
 
 - also from 70, people who used triangle_count, it's now called
   triangleCount.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 ABOUT REV 0070 - MEGABUCKET - 29 September 2004
