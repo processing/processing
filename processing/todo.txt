@@ -72,6 +72,11 @@ X     (basically any time it sees "class" in the code..
 X     may be subject to errors, but errs on side of just running ext)
 X   runs out of processing data folder
 
+_ use screen manager to run present mode properly
+_   set both versions to require java 1.4
+_   change the Info.plist inside macosx
+_   and add something to PdeBase to make sure that it's in 1.4
+
 _ bring back "rename" ?
 
 _ may need a progress bar for "save as"
