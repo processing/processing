@@ -298,7 +298,7 @@ public class PdeRuntime implements PdeMessageConsumer {
       // this handles errors that happen inside setup()
 
       // mod by fry for removal of KjcEngine
-      //newMessage = true;
+      applet.finished = true;
       leechErr.println(BApplet.LEECH_WAKEUP);
       e.printStackTrace(this.leechErr);
     }
