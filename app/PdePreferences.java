@@ -151,6 +151,7 @@ public class PdePreferences extends JComponent {
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
+      getProcessingHome().mkdirs();
       save();  
 
     } else {
