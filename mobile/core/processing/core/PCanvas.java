@@ -678,6 +678,47 @@ public class PCanvas extends Canvas {
                 value3 = value3 * 255 / colorMaxZ;
             } else {
                 //// convert from HSB to RGB
+                int y = (value2 << PMIDlet.FP_PRECISION) / colorMaxY;
+                int z = (value3 << PMIDlet.FP_PRECISION) / colorMaxZ;
+
+                int h = value1 * 6 / colorMaxX % 6;     
+                
+                int f = (value1 << PMIDlet.FP_PRECISION) * 6 / colorMaxX - (h << PMIDlet.FP_PRECISION);
+                int p = midlet.mul(z, PMIDlet.ONE - y);
+                int q = midlet.mul(z, PMIDlet.ONE - midlet.mul(y, f));
+                int t = midlet.mul(z, PMIDlet.ONE - midlet.mul(y, PMIDlet.ONE - f));
+                switch (h) {
+                    case 0:
+                        value1 = (z * 255) >> PMIDlet.FP_PRECISION;
+                        value2 = (t * 255) >> PMIDlet.FP_PRECISION;
+                        value3 = (p * 255) >> PMIDlet.FP_PRECISION;
+                        break;
+                    case 1:
+                        value1 = (q * 255) >> PMIDlet.FP_PRECISION;
+                        value2 = (z * 255) >> PMIDlet.FP_PRECISION;
+                        value3 = (p * 255) >> PMIDlet.FP_PRECISION;
+                        break;
+                    case 2:
+                        value1 = (p * 255) >> PMIDlet.FP_PRECISION;
+                        value2 = (z * 255) >> PMIDlet.FP_PRECISION;
+                        value3 = (t * 255) >> PMIDlet.FP_PRECISION;
+                        break;
+                    case 3:
+                        value1 = (p * 255) >> PMIDlet.FP_PRECISION;
+                        value2 = (q * 255) >> PMIDlet.FP_PRECISION;
+                        value3 = (z * 255) >> PMIDlet.FP_PRECISION;
+                        break;
+                    case 4:
+                        value1 = (t * 255) >> PMIDlet.FP_PRECISION;
+                        value2 = (p * 255) >> PMIDlet.FP_PRECISION;
+                        value3 = (z * 255) >> PMIDlet.FP_PRECISION;
+                        break;
+                    case 5:
+                        value1 = (z * 255) >> PMIDlet.FP_PRECISION;
+                        value2 = (p * 255) >> PMIDlet.FP_PRECISION;
+                        value3 = (q * 255) >> PMIDlet.FP_PRECISION;
+                        break;
+                }
             }
         }
         if (alpha != 255) {
