@@ -331,89 +331,98 @@ public class PdeEditorStatus extends Panel
 #endif
       editField.addActionListener(this);
 
-      if (PdeBase.platform != PdeBase.MACOSX) {
-        editField.addKeyListener(new KeyAdapter() {
-            protected void noop() { }
+      //if (PdeBase.platform != PdeBase.MACOSX) {
+      editField.addKeyListener(new KeyAdapter() {
+          // no-op implemented because of a jikes bug
+          //protected void noop() { }
 
-            public void keyPressed(KeyEvent event) {
-              //System.out.println("got event " + event + "  " + KeyEvent.VK_SPACE);
-              int c = event.getKeyChar();
-              int code = event.getKeyCode();
-            
-              if (code == KeyEvent.VK_ENTER) {
-                // accept the input
-                //editor.skDuplicateRename2(editField.getText(), editRename);
-                editor.skSaveAs2(editField.getText());
-                unedit();
+          //public void keyPressed(KeyEvent event) {
+          //System.out.println("pressed " + event + "  " + KeyEvent.VK_SPACE);
+          //}
+
+          // use keyTyped to catch when the feller is actually
+          // added to the text field. with keyTyped, as opposed to 
+          // keyPressed, the keyCode will be zero, even if it's 
+          // enter or backspace or whatever, so the keychar should
+          // be used instead. grr.
+          public void keyTyped(KeyEvent event) {
+            //System.out.println("got event " + event + "  " + 
+            // KeyEvent.VK_SPACE);
+            int c = event.getKeyChar();
+
+            if (c == KeyEvent.VK_ENTER) {  // accept the input
+              editor.skSaveAs2(editField.getText());
+              unedit();
+              event.consume();
+
+              // easier to test the affirmative case than the negative
+            } else if ((c == KeyEvent.VK_BACK_SPACE) ||
+                       (c == KeyEvent.VK_DELETE) || 
+                       (c == KeyEvent.VK_RIGHT) || 
+                       (c == KeyEvent.VK_LEFT) || 
+                       (c == KeyEvent.VK_UP) || 
+                       (c == KeyEvent.VK_DOWN) || 
+                       (c == KeyEvent.VK_HOME) || 
+                       (c == KeyEvent.VK_END) || 
+                       (c == KeyEvent.VK_SHIFT)) {
+              //System.out.println("nothing to see here");
+              //noop();
+
+            } else if (c == KeyEvent.VK_ESCAPE) {
+              unedit();
+              editor.buttons.clear();
+              event.consume();
+
+            } else if (c == KeyEvent.VK_SPACE) {
+              //System.out.println("got a space");
+              // if a space, insert an underscore
+              //editField.insert("_", editField.getCaretPosition());
+              /* tried to play nice and see where it got me
+                 editField.dispatchEvent(new KeyEvent(editField, 
+                 KeyEvent.KEY_PRESSED,
+                 System.currentTimeMillis(),
+                 0, 45, '_'));
+              */
+              //System.out.println("start/end = " + 
+              //                 editField.getSelectionStart() + " " +
+              //                 editField.getSelectionEnd());
+              String t = editField.getText();
+              //int p = editField.getCaretPosition();
+              //editField.setText(t.substring(0, p) + "_" + t.substring(p));
+              //editField.setCaretPosition(p+1);
+              int start = editField.getSelectionStart();
+              int end = editField.getSelectionEnd();
+              editField.setText(t.substring(0, start) + "_" +
+                                t.substring(end));
+              editField.setCaretPosition(start+1);
+              //System.out.println("consuming event");
+              event.consume();
+
+            } else if ((c == '_') ||
+                       ((c >= 'A') && (c <= 'Z')) ||
+                       ((c >= 'a') && (c <= 'z'))) {
+              // everything fine, catches upper and lower
+              //noop();
+
+            } else if ((c >= '0') && (c <= '9')) {
+              // getCaretPosition == 0 means that it's the first char
+              // and the field is empty.
+              // getSelectionStart means that it *will be* the first
+              // char, because the selection is about to be replaced
+              // with whatever is typed.
+              if ((editField.getCaretPosition() == 0) ||
+                  (editField.getSelectionStart() == 0)) {
+                // number not allowed as first digit
+                //System.out.println("bad number bad");
                 event.consume();
-
-              } else if ((code == KeyEvent.VK_BACK_SPACE) ||
-                         (code == KeyEvent.VK_DELETE) || 
-                         (code == KeyEvent.VK_RIGHT) || 
-                         (code == KeyEvent.VK_LEFT) || 
-                         (code == KeyEvent.VK_UP) || 
-                         (code == KeyEvent.VK_DOWN) || 
-                         (code == KeyEvent.VK_HOME) || 
-                         (code == KeyEvent.VK_END) || 
-                         (code == KeyEvent.VK_SHIFT)) {
-                //System.out.println("nothing to see here");
-                noop();
-
-              } else if (code == KeyEvent.VK_ESCAPE) {
-                unedit();
-                editor.buttons.clear();
-                event.consume();
-
-                //} else if (c == ' ') {
-              } else if (code == KeyEvent.VK_SPACE) {
-                //System.out.println("got a space");
-                // if a space, insert an underscore
-                //editField.insert("_", editField.getCaretPosition());
-                /* tried to play nice and see where it got me
-                   editField.dispatchEvent(new KeyEvent(editField, 
-                   KeyEvent.KEY_PRESSED,
-                   System.currentTimeMillis(),
-                   0, 45, '_'));
-                */
-                //System.out.println("start/end = " + 
-                //                 editField.getSelectionStart() + " " +
-                //                 editField.getSelectionEnd());
-                String t = editField.getText();
-                //int p = editField.getCaretPosition();
-                //editField.setText(t.substring(0, p) + "_" + t.substring(p));
-                //editField.setCaretPosition(p+1);
-                int start = editField.getSelectionStart();
-                int end = editField.getSelectionEnd();
-                editField.setText(t.substring(0, start) + "_" +
-                                  t.substring(end));
-                editField.setCaretPosition(start+1);
-                //System.out.println("consuming event");
-                event.consume();
-
-              } else if (c == '_') {
-                noop();
-                // everything fine
-
-              } else if (((code >= 'A') && (code <= 'Z')) &&
-                         (((c >= 'A') && (c <= 'Z')) ||
-                          ((c >= 'a') && (c <= 'z')))) {
-                // everything fine, catches upper and lower
-                noop();
-
-              } else if ((c >= '0') && (c <= '9')) {
-                if (editField.getCaretPosition() == 0) {
-                  // number not allowed as first digit
-                  //System.out.println("bad number bad");
-                  event.consume();
-                }
-              } else {
-                event.consume();
-                //System.out.println("code is " + code + "  char = " + c);
               }
+            } else {
+              event.consume();
               //System.out.println("code is " + code + "  char = " + c);
             }
-          });
-      }
+            //System.out.println("code is " + code + "  char = " + c);
+          }
+        });
       add(editField);
       editField.setVisible(false);
     }
@@ -474,7 +483,8 @@ public class PdeEditorStatus extends Panel
 
     } else if (e.getSource() == okButton) {
       String answer = editField.getText();
-
+      /*
+        // no longer necessary, better key trapping via keyTyped()
       if (PdeBase.platform == PdeBase.MACOSX) {
         char unscrubbed[] = editField.getText().toCharArray();
         for (int i = 0; i < unscrubbed.length; i++) {
@@ -486,6 +496,7 @@ public class PdeEditorStatus extends Panel
         }
         answer = new String(unscrubbed);
       }
+      */
       editor.skSaveAs2(answer);
       //editor.skDuplicateRename2(editField.getText(), editRename);
       unedit();
