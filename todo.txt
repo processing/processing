@@ -12,6 +12,8 @@ _ repair lines (even if slow)
 _   single pixel lines have no alpha and no z
 _   fix all the random line types to support alpha
 
+_ had to disable MRJFileUtils stuff on osx at last minute before 53
+
 _ smooth images drawing strangely (missing first line of pixels)
 _   also smoothed even if not distorted
 _   aliased and anti-aliased images don't line up

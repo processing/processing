@@ -874,11 +874,13 @@ public class PdeBase extends Frame implements ActionListener {
 
       } else if ((platform == MACOS9) || (platform == MACOSX)) {
 #ifdef MACOS
+	/*
 	try {
 	  com.apple.mrj.MRJFileUtils.openURL("http://Proce55ing.net");
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}
+	*/
 #endif
 
       } else if (platform == LINUX) {
@@ -903,11 +905,13 @@ public class PdeBase extends Frame implements ActionListener {
 
       } else if ((platform == MACOSX) || (platform == MACOS9)) {
 #ifdef MACOS
+	/*
 	try {
 	  com.apple.mrj.MRJFileUtils.openURL("reference/index.html");
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}
+	*/
 #endif
 
       } else if (platform == LINUX) {
