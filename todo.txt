@@ -11,6 +11,17 @@ X   remove 'public' from beginner listener event handlers
 X   trying to make eventlistener work
 X   comm.jar has to be in classpath for kjc (interesting)
 X   fixed launcher.exe because of problems in classpath
+X how to make double-clickable version for osx
+X   might be as simple as combined jar with manifest and symlink
+X   jar doesn't like opening pde.properties b/c getClass fails
+X app title comes up as PdeBase
+X   -Xdock:name property or 
+X   com.apple.mrj.application.apple.menu.about.name (gulp)
+X -XDock:icon (lowercase dock?) to set icon, or
+X   .icns file in the Contents/Resources of the bundle
+X   check tn on java runtime properties for macosx
+X need fxns to test platform and java version
+
 
 a _ this code is not performing correctly
 BImage b;  // declare variable "b" of type BImage
@@ -65,38 +76,29 @@ a _   or maybe just background of the awt object it sits on
 a _ use type/creator Pde1
 a _ crashes when people click on help in top bar (same in DBN) [macos9]
 a _ use osx utilities to setfileinfo for .jar files etc
-a _ get macutils to build under cygwin. argh.
-a _   get to build under macosx?
+a _ try to build macutils under osx
 
 macosx
-a _ how to make double-clickable version for osx
-a _   might be as simple as combined jar with manifest and symlink
-a _   jar doesn't like opening pde.properties b/c getClass fails
-a _ app title comes up as PdeBase
-a _   -Xdock:name property or 
-a _   com.apple.mrj.application.apple.menu.about.name (gulp)
 a _ handlers for basic events
 a _   MRJAboutHandler (just show splash screen)
 a _   MRJPrefsHandler (open pde.properties in a text editor)
 a _   MRJQuitHandler (confirm quit, may need to be in another thread)
 a _ remove 'quit' from file menu
 a _ requires java 1.3.1 update 1
-a _ -XDock:icon (lowercase dock?) to set icon, or
-a _   .icns file in the Contents/Resources of the bundle
-a _   check tn on java runtime properties for macosx
 
 macos
 a _ MRJOpenApplicationHandler and MRJOpenDocumentHandler
 a _   especially the open document fella
 a _   under osx, app won't get doc unless app already launched
 a _ implement menuitem to load ref and to launch p5.net
-a _   need fxns to test platform and java version
+a _   MRJFileUtils.openURL(String url) throws IOException
 a _ dataInputStream, setUseCaches on the url to false
 a _   URLConnection.setUseCaches(false)
 a _   parent.obj.close() on the url
 a _ serial port code needs to be implemented
 a _   something that docks better to java serial api
 a _ check to see if lines for error messages are off
+a _ set file type/creator for .pde files.. TEXTPde1
 
 release
 a _ small script to remove CVS directories from a tree

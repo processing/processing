@@ -92,9 +92,11 @@ public class PdeBase implements ActionListener {
       //System.err.println("userdir = " + System.getProperty("user.dir"));
 
       if (PdeBase.platform == PdeBase.MACOSX) {
-	String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	properties.load(new FileInputStream(pkg + "pde.properties"));
-	properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
+	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	//properties.load(new FileInputStream(pkg + "pde.properties"));
+	//properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
+	properties.load(new FileInputStream("lib/pde.properties"));
+	properties.load(new FileInputStream("lib/pde.properties_macosx"));
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
 	properties.load(new FileInputStream("lib/pde.properties"));
@@ -635,8 +637,9 @@ public class PdeBase implements ActionListener {
     Toolkit tk = Toolkit.getDefaultToolkit();
 
     if (PdeBase.platform == PdeBase.MACOSX) {
-      String pkg = "Proce55ing.app/Contents/Resources/Java/";
-      image = tk.getImage(pkg + name);
+      //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+      //image = tk.getImage(pkg + name);
+      image = tk.getImage("lib/" + name);
     } else if (PdeBase.platform == PdeBase.MACOS9) {
       image = tk.getImage("lib/" + name);
     } else {
