@@ -372,7 +372,7 @@ public class PdeEditorStatus extends Panel
       unedit();
 
     } else if (e.getSource() == editField) {
-      System.out.println("editfield: " + e);
+      //System.out.println("editfield: " + e);
     }
   }
 }
