@@ -4,6 +4,53 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0063 - 27 september 2003
+
+revision 63 includes some major new features and semi-major bug fixes,
+however it has not been tested very thoroughly. 
+
+like 61 and 62, this is a suggested download (for people who have at
+least revision 60). if you're running a version older than 60, then
+this version is strongly recommended.
+
+if you used a version of processing older than 60, and have not yet
+tried revision 60 or later, then you should read the section of
+revisions.txt that talks about all of the many changes that happened
+in revision 60.
+
+
+[ additions ]
+
+- this release is the first to add the ability to load external .class
+  and .jar files to your projects. it is also the first revision to
+  support the full 'java' mode as described in the documentation. in
+  order to use this mode, you'll need to have java somewhere in your
+  path. this will change in future releases.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055355089
+
+- when using 'add files' and selecting a .class, .jar, or shared
+  library file, the files will be copied to the 'code' folder for
+  inclusion in your sketch, instead of the 'data' folder.
+
+
+[ bug fixes ] 
+
+- on windows 2000, some applets were running very very slowly half 
+  the time. arielm spent hours tracking down the problem caused by a
+  single one line change, so win2k users (and i) have him to thank.
+
+- fixed problem where the serial port menu on windows was always
+  dimmed, unless processing was started using the .bat files. so
+  serial port should work again.
+
+- beautify menu was broken (it did nothing) and has been repaired.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064678231;start=0
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0062 - 24 september 2003
 
 this release primarily introduces new features. it is the third
@@ -58,6 +105,9 @@ releases 60 and later.
 
 - have been moved to the 'bugs.txt' file. check there for the status
   of your favorite bug/feature.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 ABOUT REV 0061 - 23 september 2003
