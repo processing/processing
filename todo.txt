@@ -44,9 +44,14 @@ properly set, then you won't be able to run.
 
 
 0060
+
+_ only allow one pmouseX update outside of loop
+_   to avoid jumping lines (drawing -> continuous_lines)
+
 bf b _ BApplet.main(new String[] { "flashcards3" });
 bf b _   or even BApplet.main(new String[] { getClass().getName() });
 bf b _   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+bf b _   main sticking point will be serial/qtjava in exports
 dh b _ ability to export 'applications' (not just applets)
 dh b _   lock feature for present mode (part of export to application?)
 dh b _   application can still do serial (qt, other stuff?) 
@@ -60,33 +65,37 @@ dh b _   also make sure pack() is happening
 dh b _   add manifest.mf to exported applets so that applications will work
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
 
-_ remove .DS_Store boogers, especially from windows distribution
-
-_ only allow one pmouseX update outside of loop
-_   to avoid jumping lines (drawing -> continuous_lines)
-
-_ internal naming of _fill, image_mode, textureOrientation
-_   these all need to jive better with one another
-_   ie. perhaps just 'fill', so that it can be used for a get
 
 _ reference key list isn't in dist (?)
 _   help->reference and find in reference don't work on osx
 
-_ font.stringWidth -> font.width(char c) or width(String s) 
-
 _ implement text(int something) and text(float something)
 _   and perhaps others?
+_ font.stringWidth -> font.width(char c) or width(String s) 
 
-_ NullPointerException when alt is pressed
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_ modify how size() works
+_   allow size() to be called multiple times
+_   only works once in applet
+_   if size() not found in export/compile, ask the user
 
-_ issue: loadImage must be used inside or after setup
+_ modify background() to actually clear the screen
+
+_ color has to be called inside or after setup
+_ loadImage must be used inside or after setup
 _   either document this and/or provide a better error message
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
 
-_ change the naming of the two versions of calc_color
+cosmetic
+_ remove .DS_Store boogers, especially from win/linux distributions
+_ NullPointerException when alt is pressed
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
 
+internal structural stuff
 _ add constants for building NET, move stuff around in bagel dir
+_ change the naming of the two versions of calc_color
+_ internal naming of _fill, image_mode, textureOrientation
+_   these all need to jive better with one another
+_   ie. perhaps just 'fill', so that it can be used for a get
 
 
 ..................................................................
