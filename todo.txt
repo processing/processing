@@ -24,6 +24,7 @@ b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
 b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 b _ implement clipping planes and clipping of objects
+_ clipping [may be needed for current genome browser project]
 
 
 BAGEL / medium
@@ -38,6 +39,7 @@ b _   or at least that things get ridiculously slow
 b _   clipping issues here.. but also something in scan converter
 b _   not clipping areas from offscreen
 b _     huge geometry slows things way down
+_ stroked version of sphere is just a circle
 
 
 BAGEL / medium & time consuming
@@ -61,6 +63,10 @@ _   but how to determine *where* on object the hit occurs?
 
 
 BAGEL / lower
+_ fixed fonts are screwed, should only work at screen resolution
+_   getStream for the filename doesn't work for directories
+_     getfont("fonts/blah.fbf") refers to blah.raw, but that
+_     also needs to be searched for in the fonts/ dir..
 _ fast(er?) version of bagel that just uses java graphics
 _   but leaves out many features
 _ line endcaps and line joins
@@ -111,6 +117,7 @@ a _ lines being highlighted for errors are off
 a _ use a vm that won't destroy the screen like sun/ibm does
 a _   this means msft or newer version of jdk
 a _ introduce pImage, pFont, pGraphics, pConstants (pSound)
+a _ importing images doesn't work
 
 
 PDE / high & time consuming
