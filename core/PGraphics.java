@@ -425,7 +425,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     resize(iwidth, iheight);
 
     // init color/stroke/fill
-    defaults();
+    //defaults();
 
     // clear geometry for loading later
     //circleX = null;  // so that bagel knows to init these
