@@ -1,3 +1,13 @@
+ABOUT REV 0016
+
+- disabled (by default) the sketchiness from the previous version. so
+  the commportinuse trouble is back, unless you re-enable the hack
+  in the pde.properties file and set 'play.external' to true
+
+- no actual code changes in this version, but just upped the rev
+  number to avoid confusion
+
+
 ABOUT REV 0015
 
 known issues:
