@@ -4495,6 +4495,21 @@ v              PApplet.this.stop();
   // public functions for processing.core
 
 
+  public void imageMode(int mode) {
+     g.imageMode(mode);
+  }
+
+
+  public void smooth() {
+     g.smooth();
+  }
+
+
+  public void noSmooth() {
+     g.noSmooth();
+  }
+
+
   public void modified() {
      g.modified();
   }
@@ -4512,6 +4527,26 @@ v              PApplet.this.stop();
 
   public void resetModified() {
      g.resetModified();
+  }
+
+
+  public int get(int x, int y) {
+    return g.get(x, y);
+  }
+
+
+  public PImage get(int x, int y, int w, int h) {
+    return g.get(x, y, w, h);
+  }
+
+
+  public PImage get() {
+    return g.get();
+  }
+
+
+  public void set(int x, int y, int c) {
+     g.set(x, y, c);
   }
 
 
@@ -4545,21 +4580,6 @@ v              PApplet.this.stop();
   }
 
 
-  public int get(int x, int y) {
-    return g.get(x, y);
-  }
-
-
-  public PImage get(int x, int y, int w, int h) {
-    return g.get(x, y, w, h);
-  }
-
-
-  public void set(int x, int y, int c) {
-     g.set(x, y, c);
-  }
-
-
   public void copy(PImage src, int dx, int dy) {
      g.copy(src, dx, dy);
   }
@@ -4571,7 +4591,8 @@ v              PApplet.this.stop();
   }
 
 
-  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
      g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
@@ -4582,13 +4603,14 @@ v              PApplet.this.stop();
   }
 
 
-  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
-     g.blend(src, sx, sy, dx, dy, mode);
+  public void blend(int sx, int sy, int dx, int dy, int mode) {
+     g.blend(sx, sy, dx, dy, mode);
   }
 
 
-  public void blend(int sx, int sy, int dx, int dy, int mode) {
-     g.blend(sx, sy, dx, dy, mode);
+  public void blend(PImage src,
+                    int sx, int sy, int dx, int dy, int mode) {
+     g.blend(src, sx, sy, dx, dy, mode);
   }
 
 
@@ -4598,52 +4620,39 @@ v              PApplet.this.stop();
   }
 
 
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void blend(PImage src,
+                    int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
-  public PImage get() {
-    return g.get();
+  static public boolean saveHeaderTIF(OutputStream output,
+                                      int width, int height) {
+    return PGraphics.saveHeaderTIF(output, width, height);
   }
 
 
-  static public void saveHeaderTIF(OutputStream output,
-                                   int width, int height) throws IOException {
-     PGraphics.saveHeaderTIF(output, width, height);
+  static public boolean saveTIF(OutputStream output, int pixels[],
+                                int width, int height) {
+    return PGraphics.saveTIF(output, pixels, width, height);
   }
 
 
-  static public void saveTIF(OutputStream output, int pixels[],
-                             int width, int height) throws IOException {
-     PGraphics.saveTIF(output, pixels, width, height);
+  static public boolean saveHeaderTGA(OutputStream output,
+                                      int width, int height) {
+    return PGraphics.saveHeaderTGA(output, width, height);
   }
 
 
-  static public void saveTGA(OutputStream output, int pixels[],
-                             int width, int height) throws IOException {
-     PGraphics.saveTGA(output, pixels, width, height);
+  static public boolean saveTGA(OutputStream output, int pixels[],
+                                int width, int height) {
+    return PGraphics.saveTGA(output, pixels, width, height);
   }
 
 
   public void save(String filename) {
      g.save(filename);
-  }
-
-
-  public void smooth() {
-     g.smooth();
-  }
-
-
-  public void noSmooth() {
-     g.noSmooth();
-  }
-
-
-  public void imageMode(int mode) {
-     g.imageMode(mode);
   }
 
 
@@ -4725,6 +4734,71 @@ v              PApplet.this.stop();
 
   public void endShape() {
      g.endShape();
+  }
+
+
+  public void point(float x, float y) {
+     g.point(x, y);
+  }
+
+
+  public void point(float x, float y, float z) {
+     g.point(x, y, z);
+  }
+
+
+  public void line(float x1, float y1, float x2, float y2) {
+     g.line(x1, y1, x2, y2);
+  }
+
+
+  public void line(float x1, float y1, float z1,
+                   float x2, float y2, float z2) {
+     g.line(x1, y1, z1, x2, y2, z2);
+  }
+
+
+  public void triangle(float x1, float y1, float x2, float y2,
+                       float x3, float y3) {
+     g.triangle(x1, y1, x2, y2, x3, y3);
+  }
+
+
+  public void rect(float x1, float y1, float x2, float y2) {
+     g.rect(x1, y1, x2, y2);
+  }
+
+
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
+  public void circle(float x, float y, float radius) {
+     g.circle(x, y, radius);
+  }
+
+
+  public void ellipseMode(int mode) {
+     g.ellipseMode(mode);
+  }
+
+
+  public void ellipse(float x, float y, float hradius, float vradius) {
+     g.ellipse(x, y, hradius, vradius);
+  }
+
+
+  public void arc(float start, float stop,
+                  float x, float y, float radius) {
+     g.arc(start, stop, x, y, radius);
+  }
+
+
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr) {
+     g.arc(start, stop, x, y, hr, vr);
   }
 
 
