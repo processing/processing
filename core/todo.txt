@@ -15,8 +15,16 @@ opengl
 X why is the thing hanging until 'stop' is hit?
 X   what happens when stop is hit that sets it free?
 X   (at what point does it start working properly?)
+X cache needs to also make things a power of 2
+X   if images are already a power of 2, then needn't re-alloc
+X cacheIndex needs to be set to -1 when the image is modified
+X   or maybe have a modified() function?
 X debug why certain spots are having errors (see 'problem here' notes)
 X   INVALID_OPERATION after drawing lines for cube
+X fix noLoop bug
+X remove errors when drawing textures
+
+_ fix the usual nasty texture bug found in every acu app
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
@@ -28,10 +36,6 @@ _   why is the first one failing?
 / reverse y coordinates
 _ minimum texture size may be 64x64
 _   might need to enforce it as a minimum
-X cache needs to also make things a power of 2
-X   if images are already a power of 2, then needn't re-alloc
-X cacheIndex needs to be set to -1 when the image is modified
-X   or maybe have a modified() function?
 
 _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _ implement fullscreen().. this takes over the screen as best it can
