@@ -33,6 +33,7 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+import javax.swing.filechooser.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
@@ -68,6 +69,7 @@ public class PdePreferences extends JComponent {
   static final String PROMPT_NO      = "No";
   static final String PROMPT_CANCEL  = "Cancel";
   static final String PROMPT_OK      = "OK";
+  static final String PROMPT_BROWSE  = "Browse";
 
   // mac needs it to be 70, windows needs 66, linux needs 76
 
@@ -195,11 +197,11 @@ public class PdePreferences extends JComponent {
 
     // [ ] Prompt for name and folder when creating new sketch
 
-    newSketchPromptBox = 
-      new JCheckBox("Prompt for name when creating a new sketch");
-    pain.add(newSketchPromptBox);
-    d = newSketchPromptBox.getPreferredSize();
-    newSketchPromptBox.setBounds(left, top, d.width, d.height);
+    sketchPromptBox = 
+      new JCheckBox("Prompt for name when opening or creating a sketch");
+    pain.add(sketchPromptBox);
+    d = sketchPromptBox.getPreferredSize();
+    sketchPromptBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + BETWEEN;
 
@@ -214,7 +216,25 @@ public class PdePreferences extends JComponent {
     pain.add(sketchbookLocationField);
     d2 = sketchbookLocationField.getPreferredSize();
 
-    button = new JButton("Browse");
+    button = new JButton(PROMPT_BROWSE);
+    button.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          JFileChooser fc = new JFileChooser();
+          fc.setFile(sketchbookLocationField.getText());
+          fc.setFileSectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+          int returned = fc.showOpenDialog(new JDialog());
+          if (returned == JFileChooser.APPROVE_OPTION) {
+            try {
+              File file = fc.getSelectedFile();
+              sketchbookLocationField.setText(file.getCanonicalPath());
+
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      });
     pain.add(button);
     d3 = button.getPreferredSize();
 
@@ -360,11 +380,11 @@ public class PdePreferences extends JComponent {
   public void showFrame() {
     // reset all settings to their actual status
 
-    newSketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
+    sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
 
     sketchbookLocation.setText(get("sketchbook.path"));
 
-    newSketchPromptBox.setSelected(getBoolean("editor.external"));
+    externalEditorBox.setSelected(getBoolean("editor.external"));
 
     frame.show();
   }
