@@ -379,7 +379,7 @@ public class PGraphics3 extends PGraphics {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
-      message(CHATTER, "allocating more vertices " + vertices.length);
+      //message(CHATTER, "allocating more vertices " + vertices.length);
     }
     float vertex[] = vertices[vertexCount++];
 
@@ -433,9 +433,11 @@ public class PGraphics3 extends PGraphics {
    */
   protected void texture_vertex(float u, float v) {
     if (textureImage == null) {
-      message(PROBLEM, "gotta use texture() " +
-              "after beginShape() and before vertex()");
-      return;
+      throw new RuntimeException("need to set an image with texture() " +
+                                 "before using u and v coordinates");
+      //message(PROBLEM, "gotta use texture() " +
+      //      "after beginShape() and before vertex()");
+      //return;
     }
     if (textureMode == IMAGE_SPACE) {
       u /= (float) textureImage.width;
@@ -608,7 +610,7 @@ public class PGraphics3 extends PGraphics {
       PImage temp[] = new PImage[texture_index<<1];
       System.arraycopy(textures, 0, temp, 0, texture_index);
       textures = temp;
-      message(CHATTER, "allocating more textures " + textures.length);
+      //message(CHATTER, "allocating more textures " + textures.length);
     }
 
     if (textures[0] != null) {  // wHY?
@@ -878,7 +880,7 @@ public class PGraphics3 extends PGraphics {
       int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
       System.arraycopy(lines, 0, temp, 0, lineCount);
       lines = temp;
-      message(CHATTER, "allocating more lines " + lines.length);
+      //message(CHATTER, "allocating more lines " + lines.length);
     }
     lines[lineCount][VERTEX1] = a;
     lines[lineCount][VERTEX2] = b;
@@ -898,7 +900,7 @@ public class PGraphics3 extends PGraphics {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
       triangles = temp;
-      message(CHATTER, "allocating more triangles " + triangles.length);
+      //message(CHATTER, "allocating more triangles " + triangles.length);
     }
     triangles[triangleCount][VERTEX1] = a;
     triangles[triangleCount][VERTEX2] = b;
@@ -1801,8 +1803,9 @@ public class PGraphics3 extends PGraphics {
 
   public void push() {
     if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
-      message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
-      return;
+      throw new RuntimeException("too many calls to push()");
+      //message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
+      //return;
     }
     float mat[] = matrixStack[matrixStackDepth];
     mat[ 0] = m00; mat[ 1] = m01; mat[ 2] = m02; mat[ 3] = m03;
@@ -1815,8 +1818,10 @@ public class PGraphics3 extends PGraphics {
 
   public void pop() {
     if (matrixStackDepth == 0) {
-      message(COMPLAINT, "matrix stack underflow, to many popmatrix");
-      return;
+      throw new RuntimeException("too many calls to pop() " +
+                                 "(and not enough to push)");
+      //message(COMPLAINT, "matrix stack underflow, to many popmatrix");
+      //return;
     }
     matrixStackDepth--;
     float mat[] = matrixStack[matrixStackDepth];
