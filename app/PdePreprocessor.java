@@ -335,6 +335,7 @@ public class PdePreprocessor {
 
     if (programType == STATIC) {
       // close off draw() definition
+      out.print("noLoop(); ");
       out.print("}");
     }
 
