@@ -169,7 +169,7 @@ public class PCanvas extends Canvas {
                 y = Math.min(y, height);
                 height = Math.abs(y - temp);
                 break;
-            case PMIDlet.CENTER_DIAMETER:
+            case PMIDlet.CENTER:
                 x -= width / 2;
                 y -= height / 2;
                 break;
@@ -185,7 +185,7 @@ public class PCanvas extends Canvas {
     }
     
     public void rectMode(int MODE) {
-        if ((MODE >= PMIDlet.CORNER) && (MODE <= PMIDlet.CENTER_DIAMETER)) {
+        if ((MODE >= PMIDlet.CORNER) && (MODE <= PMIDlet.CENTER)) {
             rectMode = MODE;
         }
     }
@@ -201,7 +201,7 @@ public class PCanvas extends Canvas {
                 y = Math.min(y, height);
                 height = Math.abs(y - temp);
                 break;
-            case PMIDlet.CENTER_DIAMETER:
+            case PMIDlet.CENTER:
                 x -= width / 2;
                 y -= height / 2;
                 break;
