@@ -47,7 +47,8 @@ _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
-_ get syntax coloring debugged?
+_ better default size than 300x300 when starting up first time
+
 _ set frame title of launched window to the name of the sketch
 _ when renaming a sketch, select the text in the field, 
     so you can type the new name immediately. 
@@ -64,7 +65,8 @@ all the old files are copyied to new directory, and some of the old
 unused .class files and images remains inside new project JAR files. 
 _ seems that file i/o may be picking up lots of extra \r 
 _   perhaps when doing setText, it's goobering things up
-_ better default size than 300x300 when starting up first time
+
+_ get syntax coloring debugged?
 _ serial port
 _   better message for PortInUseException (full explanation)
 _   better message for when serial port code not available/not installed
