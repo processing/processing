@@ -213,12 +213,30 @@ public class PdeEditor extends Panel {
       // full screen window needs to have method to stop
       // for now, click on small 'stop' text in lower-lefthand corner
       // will a label catch mouse events?
+      //Label label = new Label("stop");
       Label label = new Label("stop");
+      //label.setBackground(Color.red);
+      label.addMouseListener(new MouseAdapter() {
+	  public void mousePressed(MouseEvent e) {
+	    //System.out.println("got stop");
+	    doStop();
+
+#ifdef JDK13
+	    // move editor to front in case it was hidden
+	    frame.setState(Frame.NORMAL);
+#endif
+	    //frame.hide();
+	    //frame.show();
+	  }
+	});
+	  
+      //Dimension labelSize = label.getPreferredSize();
+      Dimension labelSize = new Dimension(60, 20);
       presentationWindow.setLayout(null);
       presentationWindow.add(label);
-      Dimension labelSize = label.getPreferredSize();
       label.setBounds(5, screen.height - 5 - labelSize.height, 
 		      labelSize.width, labelSize.height);
+      //System.out.println(labelSize + "  " + label.getBounds());
 
       Color presentationBgColor = 
 	PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
@@ -232,11 +250,17 @@ public class PdeEditor extends Panel {
 	}
       );
       */
+
+      // windowActivated doesn't seem to do much, so focus listener better
       presentationWindow.addFocusListener(new FocusAdapter() {
 	  public void focusGained(FocusEvent e) {
-	    //System.out.println("activated");
-	    /*PdeApplication.*/ 
+	    //System.out.println("pwindow activated");
+	    // editor doesn't necessarily have to be on top
+	    //presentationWindow.toBack();
 	    if (frame != null) frame.toFront();
+	    try {
+	      ((KjcEngine)(runner.engine)).window.toFront();
+	    } catch (Exception ex) { }
 	  }
 	}
       );
@@ -285,6 +309,12 @@ public class PdeEditor extends Panel {
   //#endif
 
   public void doStop() {
+    if (presenting) {
+      presenting = false; // to avoid endless recursion
+      doClose();
+      presentationWindow.hide();
+    }
+
     //#ifdef RECORDER
     //    if (!running) return;
     //#endif
@@ -292,15 +322,16 @@ public class PdeEditor extends Panel {
     buttons.clear();
     running = false;
 
-    if (presenting) {
-      presentationWindow.hide();
-      presenting = false;
-    }
+    //if (presenting) {
+    //presentationWindow.hide();
+    //presenting = false;
+    //}
   }
 
 
   // this is the former 'kill' function
   // may just roll this in with the other code
+  // -> keep this around for closing the external window
   public void doClose() {
     if (running) {
       //System.out.println("was running, will call doStop()");
