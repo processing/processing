@@ -1461,6 +1461,24 @@ public class PdeEditor extends JPanel {
     //System.out.println("exiting doquit");
   }
 
+  protected int calcFolderSize(File folder) {
+    int size = 0;
+
+    //System.out.println("calcFolderSize " + folder);
+    String files[] = folder.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || (files[i].equals("..")) ||
+          files[i].equals(".DS_Store")) continue;
+      File fella = new File(folder, files[i]);
+      if (fella.isDirectory()) {
+        size += calcFolderSize(fella);
+      } else {
+        size += (int) fella.length();
+      }
+    }
+    return size;
+  }
+
   protected void doQuit2() {
     //System.out.println("doquit2");
     //doStop();
@@ -1470,25 +1488,44 @@ public class PdeEditor extends JPanel {
       String userPath = base.sketchbookPath + File.separator + userName;
       File userFolder = new File(userPath);
 
+      //System.out.println("auto cleaning");
       if (userFolder.exists()) {  // huh?
         String entries[] = new File(userPath).list();
         if (entries != null) {
           for (int j = 0; j < entries.length; j++) {
+            //System.out.println(entries[j] + " " + entries.length);
+
             if ((entries[j].equals(".")) || 
                 (entries[j].equals(".."))) continue;
-            File preyDir = new File(userPath, entries[j]);
-            File prey = new File(preyDir, entries[j] + ".pde");
-            if (prey.exists()) {
-              if (prey.length() == 0) {
+
+            File prey = new File(userPath, entries[j]);
+            File pde = new File(prey, entries[j] + ".pde");
+
+            // make sure this is actually a sketch folder with a .pde,
+            // not a .DS_Store file or another random user folder
+
+            if (pde.exists()) {
+              if (calcFolderSize(prey) == 0) {
+                //System.out.println("i want to remove " + prey);
+                removeDir(prey);
+                //} else {
+                //System.out.println("not removign because size is " + 
+                //                 calcFolderSize(prey));
+              }
+            }
+
+            //File prey = new File(preyDir, entries[j] + ".pde");
+            //if (prey.exists()) {
+            //if (prey.length() == 0) {
                 // this is a candidate for deletion, but make sure
                 // that the user hasn't added anything else to the folder
 
                 //System.out.println("remove: " + prey);
-                removeDir(preyDir);
-              }
-            } else {
+            //  removeDir(preyDir);
+            //}
+            //} else {
               //System.out.println(prey + " doesn't exist.. weird");
-            }
+            //}
           }
         }
       }
