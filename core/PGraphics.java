@@ -146,6 +146,8 @@ public class PGraphics extends PImage implements PConstants {
   float m20, m21, m22, m23;
   float m30, m31, m32, m33;
 
+  int angle_mode;
+
   static final int MATRIX_STACK_DEPTH = 32;
   float matrixStack[][] = new float[MATRIX_STACK_DEPTH][16];
   int matrixStackDepth;
@@ -231,7 +233,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // texture images
 
-  int texture_mode = IMAGE_SPACE;
+  int texture_mode;
   float textureU, textureV;
   float normalX, normalY, normalZ;
 
@@ -290,18 +292,18 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
 
-  int rect_mode    = CORNER;
-  int ellipse_mode = CENTER;
+  int rect_mode;
+  int ellipse_mode;
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
   int sphere_detail = 0; 
   float sphereX[], sphereY[], sphereZ[];
 
-  int text_mode = ALIGN_LEFT;
-  int text_space = OBJECT_SPACE;
+  int text_mode;
+  int text_space;
   PFont text_font;
-  boolean drawing_text = false;
+  boolean drawing_text = false;  // used by PFont
 
 
   //////////////////////////////////////////////////////////////
@@ -484,6 +486,13 @@ public class PGraphics extends PImage implements PConstants {
     lightR[1] = ONE;
     lightG[1] = ONE;
     lightB[1] = ONE;
+
+    texture_mode = IMAGE_SPACE;
+    rect_mode    = CORNER;
+    ellipse_mode = CENTER;
+    angle_mode   = RADIANS;
+    text_mode    = ALIGN_LEFT;
+    text_space   = OBJECT_SPACE;
 
     for (int i = 2; i < MAX_LIGHTS; i++) {
       lightKind[i] = DISABLED;
@@ -1344,7 +1353,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void endShape_newgraphics() {
+  protected void endShape_newgraphics() {
     // clear the 'shape drawing' flag in case of early exit
     shape = false;
 
@@ -1655,20 +1664,20 @@ public class PGraphics extends PImage implements PConstants {
     if ((camera_mode == PERSPECTIVE) && (dimensions == 3)) {
 
       for (int i = vertex_start; i < vertex_end; i++) {
-        float vertex[] = vertices[i];
+        float vx[] = vertices[i];
 
-        float ox = p00*vertex[VX] + p01*vertex[VY] + p02*vertex[VZ] + p03*vertex[VW];
-        float oy = p10*vertex[VX] + p11*vertex[VY] + p12*vertex[VZ] + p13*vertex[VW];
-        float oz = p20*vertex[VX] + p21*vertex[VY] + p22*vertex[VZ] + p23*vertex[VW];
-        float ow = p30*vertex[VX] + p31*vertex[VY] + p32*vertex[VZ] + p33*vertex[VW];
+        float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
+        float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
+        float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
+        float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
 
         if (ow != 0) {
           ox /= ow; oy /= ow; oz /= ow;
         }
 
-        vertex[X] = width * (ONE + ox) / 2.0f;
-        vertex[Y] = height * (ONE + oy) / 2.0f;
-        vertex[Z] = (oz + ONE) / 2.0f;
+        vx[X] = width * (ONE + ox) / 2.0f;
+        vx[Y] = height * (ONE + oy) / 2.0f;
+        vx[Z] = (oz + ONE) / 2.0f;
       }
     }
 
@@ -1748,7 +1757,8 @@ public class PGraphics extends PImage implements PConstants {
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0.0f;
     for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
-      area += vertices[q][X] * vertices[p][Y] - vertices[p][X] * vertices[q][Y];
+      area += (vertices[q][X] * vertices[p][Y] - 
+               vertices[p][X] * vertices[q][Y]);
     }
 
     // then we sort the vertices so they are always in a counterclockwise order
@@ -1852,10 +1862,6 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
   }
-
-
-  //private void sortTriangles() {
-  //}
 
 
   //////////////////////////////////////////////////////////////
@@ -2039,7 +2045,7 @@ public class PGraphics extends PImage implements PConstants {
         
     // test for concave-convex
     if (shapeKind == POLYGON)  {
-      shapeKind = isConvex() ? CONVEX_POLYGON : CONCAVE_POLYGON;
+      shapeKind = is_convex() ? CONVEX_POLYGON : CONCAVE_POLYGON;
     }
 
     switch (shapeKind) {
@@ -2193,7 +2199,7 @@ public class PGraphics extends PImage implements PConstants {
         // the polygon, then smoothing can be temporarily disabled.
         boolean smoov = smooth;
         if (_stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = false;
-        concaveRender();
+        concave_render();
         if (_stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = smoov;
       }
 
@@ -2234,7 +2240,7 @@ public class PGraphics extends PImage implements PConstants {
   // pile of shit hack from rocha that cost us piles of $$
 
 
-  private boolean isConvex() {
+  private boolean is_convex() {
     float v[][] = polygon.vertices;
     int n = polygon.vertexCount;
     int j,k;
@@ -2270,7 +2276,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   // triangulate the current polygon
-  private void concaveRender() {
+  private void concave_render() {
     // WARNING: code is not in optimum form
     // local initiations of some variables are made to
     // keep the code modular and easy to integrate
@@ -3186,7 +3192,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param  sx1    x coordinate of upper-lefthand corner in screen space
    * @param  sy1    y coordinate of upper-lefthand corner in screen space
    */
-  public void flat_image(PImage image, int sx1, int sy1) {
+  protected void flat_image(PImage image, int sx1, int sy1) {
     int ix1 = 0;
     int iy1 = 0;
     int ix2 = image.width;
@@ -4412,6 +4418,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Used by OpenGL implementations of PGraphics, so that images, 
+   * or textures, can be loaded into texture memory.
+   */
   public void cache(PImage image) {
   }
 
@@ -4552,6 +4562,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * See three-dimensional version of the same function, below.
+   */
   public void text(float num, float x, float y) {
     text(PApplet.nfs(num, 0, 3), x, y, 0);
   }
@@ -4559,10 +4572,12 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * This does a basic number formatting, to avoid the 
    * generally ugly appearance of printing floats.
-   * Users who want more control should use their own nfs() cmmand.
+   * Users who want more control should use their own nfs() cmmand,
+   * or if they want the long, ugly version of float, 
+   * use String.valueOf() to convert the float to a String first.
    */
   public void text(float num, float x, float y, float z) {
-    text(PApplet.nfs(num, 0, 3), x, y, z);
+    text(PApplet.nf(num, 0, 3), x, y, z);
   }
 
 
@@ -4607,6 +4622,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Load identity as the transform/model matrix. 
+   * Same as glLoadIdentity().
+   */
   public void resetMatrix() {
     dimensions = 0;
     m00 = 1; m01 = 0; m02 = 0; m03 = 0;
@@ -4616,6 +4635,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Apply a 4x4 transformation matrix. Same as glMultMatrix().
+   */
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -4649,27 +4671,42 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Print the current model (or "transformation") matrix.
+   */
   public void printMatrix() {
-    int big = (int) max(max(max(max(abs(m00), abs(m01)), max(abs(m02), abs(m03))),
-                            max(max(abs(m10), abs(m11)), max(abs(m12), abs(m13)))),
-                        max(max(max(abs(m20), abs(m21)), max(abs(m22), abs(m23))),
-                            max(max(abs(m30), abs(m31)), max(abs(m32), abs(m33)))));
+    int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)), 
+                                         max(abs(m02), abs(m03))),
+                                     max(max(abs(m10), abs(m11)), 
+                                         max(abs(m12), abs(m13)))),
+                                 max(max(max(abs(m20), abs(m21)), 
+                                         max(abs(m22), abs(m23))),
+                                     max(max(abs(m30), abs(m31)), 
+                                         max(abs(m32), abs(m33))))));
     int d = 1;
-    while ((big /= 10) != 0) d++;
+    while ((big /= 10) != 0) d++;  // cheap log()
 
-    PApplet.println(PApplet.nfs(m00, d, 4) + " " + PApplet.nfs(m01, d, 4) + " " + 
-                    PApplet.nfs(m02, d, 4) + " " + PApplet.nfs(m03, d, 4));
+    System.out.println(PApplet.nfs(m00, d, 4) + " " + 
+                       PApplet.nfs(m01, d, 4) + " " + 
+                       PApplet.nfs(m02, d, 4) + " " + 
+                       PApplet.nfs(m03, d, 4));
 
-    PApplet.println(PApplet.nfs(m10, d, 4) + " " + PApplet.nfs(m11, d, 4) + " " + 
-                    PApplet.nfs(m12, d, 4) + " " + PApplet.nfs(m13, d, 4));
+    System.out.println(PApplet.nfs(m10, d, 4) + " " + 
+                       PApplet.nfs(m11, d, 4) + " " + 
+                       PApplet.nfs(m12, d, 4) + " " + 
+                       PApplet.nfs(m13, d, 4));
 
-    PApplet.println(PApplet.nfs(m20, d, 4) + " " + PApplet.nfs(m21, d, 4) + " " + 
-                    PApplet.nfs(m22, d, 4) + " " + PApplet.nfs(m23, d, 4));
+    System.out.println(PApplet.nfs(m20, d, 4) + " " + 
+                       PApplet.nfs(m21, d, 4) + " " + 
+                       PApplet.nfs(m22, d, 4) + " " + 
+                       PApplet.nfs(m23, d, 4));
 
-    PApplet.println(PApplet.nfs(m30, d, 4) + " " + PApplet.nfs(m31, d, 4) + " " + 
-                    PApplet.nfs(m32, d, 4) + " " + PApplet.nfs(m33, d, 4));
+    System.out.println(PApplet.nfs(m30, d, 4) + " " + 
+                       PApplet.nfs(m31, d, 4) + " " + 
+                       PApplet.nfs(m32, d, 4) + " " + 
+                       PApplet.nfs(m33, d, 4));
 
-    PApplet.println();
+    System.out.println();
   }
 
 
@@ -4704,28 +4741,42 @@ public class PGraphics extends PImage implements PConstants {
     resetMatrix();
   }
 
-
+  /**
+   * Print the current camera (or "perspective") matrix.
+   */
   public void printCamera() {
-    int big = (int) max(max(max(max(abs(p00), abs(p01)), max(abs(p02), abs(p03))),
-                            max(max(abs(p10), abs(p11)), max(abs(p12), abs(p13)))),
-                        max(max(max(abs(p20), abs(p21)), max(abs(p22), abs(p23))),
-                            max(max(abs(p30), abs(p31)), max(abs(p32), abs(p33)))));
+    int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)), 
+                                         max(abs(p02), abs(p03))),
+                                     max(max(abs(p10), abs(p11)), 
+                                         max(abs(p12), abs(p13)))),
+                                 max(max(max(abs(p20), abs(p21)), 
+                                         max(abs(p22), abs(p23))),
+                                     max(max(abs(p30), abs(p31)), 
+                                         max(abs(p32), abs(p33))))));
     int d = 1;
-    while ((big /= 10) != 0) d++;
+    while ((big /= 10) != 0) d++;  // cheap log()
 
-    PApplet.println(PApplet.nfs(p00, d, 4) + " " + PApplet.nfs(p01, d, 4) + " " + 
-                    PApplet.nfs(p02, d, 4) + " " + PApplet.nfs(p03, d, 4));
+    System.out.println(PApplet.nfs(p00, d, 4) + " " + 
+                       PApplet.nfs(p01, d, 4) + " " + 
+                       PApplet.nfs(p02, d, 4) + " " + 
+                       PApplet.nfs(p03, d, 4));
 
-    PApplet.println(PApplet.nfs(p10, d, 4) + " " + PApplet.nfs(p11, d, 4) + " " + 
-                    PApplet.nfs(p12, d, 4) + " " + PApplet.nfs(p13, d, 4));
+    System.out.println(PApplet.nfs(p10, d, 4) + " " + 
+                       PApplet.nfs(p11, d, 4) + " " + 
+                       PApplet.nfs(p12, d, 4) + " " + 
+                       PApplet.nfs(p13, d, 4));
 
-    PApplet.println(PApplet.nfs(p20, d, 4) + " " + PApplet.nfs(p21, d, 4) + " " + 
-                    PApplet.nfs(p22, d, 4) + " " + PApplet.nfs(p23, d, 4));
+    System.out.println(PApplet.nfs(p20, d, 4) + " " + 
+                       PApplet.nfs(p21, d, 4) + " " + 
+                       PApplet.nfs(p22, d, 4) + " " + 
+                       PApplet.nfs(p23, d, 4));
 
-    PApplet.println(PApplet.nfs(p30, d, 4) + " " + PApplet.nfs(p31, d, 4) + " " + 
-                    PApplet.nfs(p32, d, 4) + " " + PApplet.nfs(p33, d, 4));
+    System.out.println(PApplet.nfs(p30, d, 4) + " " + 
+                       PApplet.nfs(p31, d, 4) + " " + 
+                       PApplet.nfs(p32, d, 4) + " " + 
+                       PApplet.nfs(p33, d, 4));
 
-    PApplet.println();
+    System.out.println();
   }
 
 
@@ -4821,7 +4872,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // based on mesa, glu.c
+  /** 
+   * Same as gluPerspective(). Implementation based on Mesa's glu.c
+   */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     //System.out.println("perspective: " + fovy + " " + aspect + " " + 
     //               zNear + " " + zFar);
@@ -4835,7 +4888,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // implemented based on gl ref book
+  /** 
+   * Same as glFrustum(). Implementation based on the explanation 
+   * in the OpenGL reference book.
+   */
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
     //System.out.println("frustum: " + left + " " + right + "  " + 
@@ -4847,7 +4903,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // based on mesa, glu.c
+  /** 
+   * Same as gluLookat(). Implementation based on Mesa's glu.c
+   */
   public void lookat(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
@@ -4899,6 +4957,11 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  public void angleMode(int mode) {
+    angle_mode = mode;
+  }
+
+
   public void translate(float tx, float ty) {
     if (dimensions == 3) {
       translate(tx, ty, 0);
@@ -4928,7 +4991,6 @@ public class PGraphics extends PImage implements PConstants {
   //     putting the multMatrix code here and removing uneccessary terms
 
   public void rotateX(float angle) {
-    //rotate(angle, 1, 0, 0);
     dimensions = 3;
     float c = cos(angle);
     float s = sin(angle);
@@ -4937,7 +4999,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void rotateY(float angle) {
-    //rotate(angle, 0, 1, 0);
     dimensions = 3;
     float c = cos(angle);
     float s = sin(angle);
@@ -4945,12 +5006,24 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // two dimensional rotation is the same as rotating along the z-axis
+  /**
+   * Two dimensional rotation. Same as rotateZ (this is identical 
+   * to a 3D rotation along the z-axis) but included for clarity --
+   * it'd be weird for people drawing 2D graphics to be using rotateZ.
+   * And they might kick our a-- for the confusion.
+   */
   public void rotate(float angle) {
     rotateZ(angle);
   }
 
-  // note that this doesn't make things 3D
+
+  /**
+   * Rotate in the XY plane by an angle.
+   *
+   * Note that this doesn't internally set the number of 
+   * dimensions to three, since rotateZ() is the same as a 
+   * 2D rotate in the XY plane.
+   */
   public void rotateZ(float angle) {
     //rotate(angle, 0, 0, 1);
     if (dimensions == 0) dimensions = 2;  // otherwise already 2 or higher
@@ -4960,10 +5033,15 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // should be in radians (i think), instead of degrees (gl uses degrees)
-  // based on 15-463 code, but similar to opengl ref p.443
-
+  /**
+   * Rotate around an arbitrary vector, similar to glRotate(),
+   * except that it takes radians (instead of degrees) by default, 
+   * unless angleMode is set to RADIANS.
+   */
   public void rotate(float angle, float v0, float v1, float v2) {
+    // should be in radians (i think), instead of degrees (gl uses degrees)
+    // based on 15-463 code, but similar to opengl ref p.443
+
     //modelMatrixIsIdentity = false;
     dimensions = 3;
 
@@ -5379,7 +5457,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void stroke(float gray) {
-    //System.out.println("stroke " + gray);
     calc_color(gray);
     calc_stroke();
   }
@@ -6067,16 +6144,18 @@ public class PGraphics extends PImage implements PConstants {
     return (a < 0) ? -a : a;
   }
 
-
   private final float sin(float angle) {
+    if (angle_mode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   private final float cos(float angle) {
+    if (angle_mode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   private final float tan(float angle) {
+    if (angle_mode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 }
