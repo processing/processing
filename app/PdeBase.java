@@ -721,7 +721,7 @@ public class PdeBase extends Frame implements ActionListener {
       while (portList.hasMoreElements()) {
 	CommPortIdentifier portId = 
 	  (CommPortIdentifier) portList.nextElement();
-
+	
 	if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 	  //if (portId.getName().equals(port)) {
 	  String name = portId.getName();
@@ -732,6 +732,15 @@ public class PdeBase extends Frame implements ActionListener {
 	  serialMenu.add(mi);
 	}
       }
+    } catch (UnsatisfiedLinkError e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(frame,
+				    "Serial port support not installed. " +
+				    "Check the readme for instructions if you " +
+				    "need to use the serial port",
+				    "Serial Port Warning",
+				    JOptionPane.WARNING_MESSAGE);
+
     } catch (Exception e) {
       System.out.println("exception building serial menu");
       e.printStackTrace();
