@@ -103,8 +103,7 @@ public class PdeEditor extends JPanel {
   String externalPaths;
   File externalCode;
 
-  static final int GRID_SIZE  = 33;
-  static final int INSET_SIZE = 5;
+  //static final int INSET_SIZE = 5;
 
   boolean running;
   boolean presenting;
@@ -690,12 +689,12 @@ public class PdeEditor extends JPanel {
 
       String dataPath = sketchFile.getParent() + File.separator + "data";
 
-      if (dataPath != null) {
-        File dataDir = new File(dataPath);
-        if (dataDir.exists()) {
-          PdeEditor.copyDir(dataDir, buildDir);
-        }
+      //if (dataPath != null) {
+      File dataDir = new File(dataPath);
+      if (dataDir.exists()) {
+        PdeEditor.copyDir(dataDir, buildDir);
       }
+      //}
       int numero1 = (int) (Math.random() * 10000);
       int numero2 = (int) (Math.random() * 10000);
       String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
@@ -991,26 +990,39 @@ public class PdeEditor extends JPanel {
       // does all the plumbing to create a new project
       // then calls handleOpen to load it up
 
-      //File sketchbookDir = new File("sketchbook", userName);
-      File sketchbookDir = PdePreferences.get("sketchbook.path");
       File sketchDir = null;
       String sketchName = null;
 
-      int index = 0;
-      //Calendar now = Calendar.getInstance();
-      SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-      String purty = formatter.format(new Date());
-      do {
-        sketchName = "sketch_" + purty + ((char) ('a' + index));
-        //int index = (int) (Math.random() * 1000);
-        //sketchName = "sketch_" + pad3(index);
-        sketchDir = new File(sketchbookDir, sketchName);
-        index++;
-      } while (sketchDir.exists());
+      if (PdePreferences.getBoolean("sketchbook.prompt")) {
+        FileDialog fd = new FileDialog(new Frame(), 
+                                       "Save new sketch as:", 
+                                       FileDialog.SAVE);
+        fd.setDirectory(PdePreferences.get("sketchbook.location"));
+        fd.show();
+
+        String sketchParentDir = fd.getDirectory();
+        sketchName = fd.getFile();
+        if (sketchName == null) return;
+
+        sketchDir = new File(sketchParentDir, sketchName);
+
+      } else {
+        String sketchParentDir = PdePreferences.get("sketchbook.location");
+
+        int index = 0;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+        String purty = formatter.format(new Date());
+        do {
+          sketchName = "sketch_" + purty + ((char) ('a' + index));
+          sketchDir = new File(sketchParentDir, sketchName);
+          index++;
+        } while (sketchDir.exists());
+      }
 
       // mkdir for new project name
       sketchDir.mkdirs();
-      new File(sketchDir, "data").mkdirs();
+
+      //new File(sketchDir, "data").mkdirs();
 
       // make empty pde file
       File sketchFile = new File(sketchDir, sketchName + ".pde");
@@ -1064,6 +1076,8 @@ public class PdeEditor extends JPanel {
   }
 
   protected void doOpen2() {
+    // at least set the default dir here to the sketchbook folder
+
     FileDialog fd = new FileDialog(new Frame(), 
                                    "Open a PDE program...", 
                                    FileDialog.LOAD);
@@ -1287,6 +1301,7 @@ public class PdeEditor extends JPanel {
     handleExport(appletDir, sketchName, new File(sketchDir, "data"));
   }
 
+  /*
   public void doExport() {
     message("Exporting for the web...");
     String s = textarea.getText();
@@ -1315,6 +1330,7 @@ public class PdeEditor extends JPanel {
     }
     handleExport(new File(directory), project, null);
   }
+  */
 
   protected void handleExport(File appletDir, String exportSketchName, 
                               File dataDir) {
