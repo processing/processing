@@ -172,13 +172,22 @@ public class PImage implements PConstants, Cloneable {
    * Set alpha channel for an image.
    */
   public void alpha(int alpha[]) {
+    alpha(this, alpha);
+  }
+
+  /**
+   * Set alpha channel for an image.
+   */
+  static public void alpha(PImage image, int alpha[]) {
     // don't execute if mask image is different size
-    if (alpha.length != pixels.length) {
+    if (alpha.length != image.pixels.length) {
       System.err.println("alpha(): the mask image must be the same size");
       return;
     }
-    for (int i = 0; i < pixels.length; i++) {
-      pixels[i] = pixels[i] & 0xffffff | ((alpha[i] & 0xff) << 24);
+    for (int i = 0; i < image.pixels.length; i++) {
+      image.pixels[i] = 
+        ((alpha[i] & 0xff) << 24) |
+        (image.pixels[i] & 0xffffff);
     }
     /*
     if (highbits) {  // grab alpha from the high 8 bits (RGBA style)
@@ -191,7 +200,7 @@ public class PImage implements PConstants, Cloneable {
       }
     }
     */
-    format = RGBA;
+    image.format = RGBA;
   }
 
 
@@ -200,6 +209,10 @@ public class PImage implements PConstants, Cloneable {
    */
   public void alpha(PImage alpha) {
     alpha(alpha.pixels);
+  }
+
+  static public void alpha(PImage image, PImage alpha) {
+    alpha(image, alpha.pixels);
   }
 
 
