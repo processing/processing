@@ -53,7 +53,7 @@ X make built-in libraries read-only
 X several menu changes as discussed with casey 
 X   (capitalization, export/export app, tools)
 X add preference for showing library stuff
-_ figure out why user libraries not being added
+X figure out why user libraries not being added
 _ in lib mode, show internal libraries as part of the 'open' menu 
 _ make a note that p5 has to be restarted for libs
 _ after export of library, rebuild "import library" menu
