@@ -27,6 +27,15 @@ public class PdeEditor extends Panel {
   PdeEditorConsole console;
   TextArea textarea;
 
+  // currently opened program
+  String userName;   // user currently logged in
+  String sketchName; // name of the file (w/o pde if a sketch)
+  File sketchFile;   // the .pde file itself
+  File sketchDir;    // if a sketchbook project, the parent dir
+
+  //String lastDirectory;
+  //String lastFile;
+
   PdeRunner runner;
 
   Frame frame;
@@ -35,13 +44,10 @@ public class PdeEditor extends Panel {
   static final int GRID_SIZE  = 33;
   static final int INSET_SIZE = 5;
 
-  String lastDirectory;
-  String lastFile;
-
   boolean playing;
 
 
-  public PdeEditor(/*PdeBase app,*/ String program) {
+  public PdeEditor(/*PdeBase app,*/ /*String program*/) {
     //this.app = app;
 
     setLayout(new BorderLayout());
@@ -64,12 +70,15 @@ public class PdeEditor extends Panel {
     Panel rightPanel = new Panel();
     rightPanel.setLayout(new BorderLayout());
 
-    header = new PdeEditorHeader(this, "untitled", "default");
+    //header = new PdeEditorHeader(this, "untitled", "default");
+    //userName = "default";
+    header = new PdeEditorHeader(this /*, "", userName*/);
+    // need to open a file or hit new right away
     rightPanel.add("North", header);
 
-    if (program == null) program = DEFAULT_PROGRAM;
+    //if (program == null) program = DEFAULT_PROGRAM;
     textarea = 
-      new TextArea(program, 
+      new TextArea("", //program, 
 		   PdeBase.getInteger("editor.program.rows", 20),
 		   PdeBase.getInteger("editor.program.columns", 60),
 		   TextArea.SCROLLBARS_VERTICAL_ONLY);
@@ -96,6 +105,29 @@ public class PdeEditor extends Panel {
     }
 
     runner = new PdeRunner(this);
+
+
+    // load the last program that was in use
+
+    Properties skprops = new Properties();
+    try {
+      skprops.load(getClass().getResource("sketch.properties").openStream());
+      String sketch = (String) skprops.get("sketch.name");
+      String path = (String) skprops.get("sketch.directory");
+      String user = (String) skprops.get("user.name");
+      if (new File(path + File.separator + name + 
+		   File.separator + name + ".pde").exists()) {
+	userName = user;
+	skOpen(path, name);
+
+      } else {
+	skNew();
+      }
+
+    } catch (Exception e) { 
+      // doesn't exist, not available, make my own
+      skNew();
+    }
   }
 
 
@@ -216,22 +248,20 @@ public class PdeEditor extends Panel {
       // does all the plumbing to create a new project
       // then calls handleOpen to load it up
 
-      File sketchbookDir = new File("sketchbook", header.user);
+      File sketchbookDir = new File("sketchbook", userName); //header.user);
       File sketchDir = null;
       String sketchName = null;
-System.out.println("1");
+
       do {
 	int index = (int) (Math.random() * 1000);
 	sketchName = "sketch-" + pad3(index);
 	sketchDir = new File(sketchbookDir, sketchName);
       } while (sketchDir.exists());
-System.out.println("2");
 
       // mkdir for new project name
       sketchDir.mkdirs();
       new File(sketchDir, "data").mkdirs();
       new File(sketchDir, "build").mkdirs();
-System.out.println("3");
 
       // make empty pde file
       File sketchFile = new File(sketchDir, sketchName + ".pde");
@@ -268,7 +298,8 @@ System.out.println("3");
   public void skOpen(String path, String name) {
     //header.isProject = true;
     //header.project = name;
-    handleOpen(new File(path + File.separator + name, name + ".pde"), 
+    handleOpen(name, 
+	       new File(path + File.separator + name, name + ".pde"), 
 	       new File(path));
   }
 
@@ -277,8 +308,9 @@ System.out.println("3");
     FileDialog fd = new FileDialog(new Frame(), 
 				   "Open a PDE program...", 
 				   FileDialog.LOAD);
-    fd.setDirectory(lastDirectory);
-    //fd.setFile(lastFile);
+    if (sketchFile != null) {
+      fd.setDirectory(sketchFile.getPath());
+    }
     fd.show();
 
     String directory = fd.getDirectory();
@@ -288,17 +320,14 @@ System.out.println("3");
       return; // user cancelled
     }
 
-    //header.isProject = false;
-    //header.project = filename;
-    handleOpen(new File(directory, filename), null);
+    handleOpen(filename, new File(directory, filename), null);
   }
 
 
-  protected void handleOpen(File file, File projectDir) {
-    //File file = new File(directory, filename);
-
+  protected void handleOpen(String isketchName, 
+			    File isketchFile, File isketchDir) {
     try {
-      FileInputStream input = new FileInputStream(file);
+      FileInputStream input = new FileInputStream(isketchFile);
       int length = (int) file.length();
       byte data[] = new byte[length];
 
@@ -308,8 +337,8 @@ System.out.println("3");
       }
       // set the last dir and file, so that they're
       // the defaults when you try to save again
-      lastDirectory = file.getCanonicalPath(); //directory;
-      lastFile = file.getName(); //filename;
+      //lastDirectory = file.getCanonicalPath(); //directory;
+      //lastFile = file.getName(); //filename;
 
       // once read all the bytes, convert it to the proper
       // local encoding for this system.
@@ -320,7 +349,8 @@ System.out.println("3");
       //else 
       //textarea.setText(new String(data, app.encoding));
 
-      header.setProject(file.getName(), projectDir);
+      //header.setProject(file.getName(), projectDir);
+      header.reset();
 
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
@@ -582,6 +612,10 @@ System.out.println("3");
 
 
   public void doQuit() {
+    // write sketch.properties
+    URL url = getClass().getResource("sketch.properties");
+    System.out.println(url);
+
     System.exit(0);
   }
 

@@ -1,4 +1,6 @@
 0031
+X lib/pde.properties should be read using getResource
+X   otherwise path issues cause trouble (likely under win98)
 
 in the morning
 _ take state information out of Header
@@ -8,11 +10,7 @@ _ sketch: sketch-000 is dumb
 _ make sure compiling into build directory
 _ implement popup menu
 _ save (just) last program run in sketch.properties
-
-_ background(), fill(), stroke() using color datatype
-_   check 0xff high bits to see if it's an int gray value or a color
-_ fix curve()/bezier()
-_   also make curve() work as 6 point with doubled endpoints
+_ move structure of app/application dirs around a bit
 
 pdebase simple
 _ remove 'encoding' crap from PdeBase
@@ -22,15 +20,24 @@ _ better readFile/loadImage inside PdeBase
 _   temp array should be resizable inside readFile
 _   use getresource for loading image
 
+play
+a _ add frame to launched window
+a X   add maximize event catcher to make fullscreen
+a o     doesn't work, because of screen sizing stupidity
+a _   shift-click on play to go directly into this 'presentation mode'
+a _ make all windows 120x120?
+a _   default program should be large, 300x200 or so
+a _   what if it's smaller? boundary of color 51, 51, 51 around it
+
+bagel-related
+_ background(), fill(), stroke() using color datatype
+_   check 0xff high bits to see if it's an int gray value or a color
+_ fix curve()/bezier()
+_   also make curve() work as 6 point with doubled endpoints
 _ noClear -- implement with noBackground
 _   need to set bg color even if updated
 _ update/noUpdate() could also be done to force explicit updates only
-_ make all windows 120x120?
-_   default program should be large, 300x200 or so
-_   what if it's smaller? boundary of color 51, 51, 51 around it
-_ beautify is slightly broken
-_ need to update PdeKeyListener for new ui.. 
-_   remove open, add d for duplicate, r for rename, others ?
+_   for ui-type applications that don't need to continually redraw
 
 ui
 a _ 'open' button is a switch-to button
@@ -50,38 +57,23 @@ a _   saves screen size, so if screen size changed, window pos reset
 a _   if it doesn't exist, starts with a new project
 a _     for a new project, name it untitled-0001 or as appropriate
 a _       so that previous projects aren't written over
+a _ need to update PdeKeyListener for new ui.. 
+a _   remove open, add d for duplicate, r for rename, others ?
+a _ verify save when
+a _   closing p5 window
+a _   moving to other sketch
+_ project name is changed by clicking on the name and typing
+_ user name is changed by clicking and typing
+_   after user hits 'enter', checks to see if user exists
+_     if not, pops up message asking if they want to change
+_       message goes in same spot as error/status label (turns yellow?)
+_     if user says 'no', then 
 
 users
 a _ if default user, don't show the 'user' string in pde window
 a _ item in pde.properties to set the name of the current user
 _ menu option to change username/login
 _   if new user, offer to rename 'default' if it contains things
-
-file structure for export
-a _ exporting to applet/.jar file
-a _   need to set project name for files
-a _   include other .class files built besides the main one
-a _     compile into 'classes' folder
-a _   include referenced image and font files (can't do if numbered)
-
-included files
-a _   'data' directory for all media
-a _   make included media part of the .jar file 
-a _   it's really a pain to use external files in processing
-a _     getStream sucks (zach rewrote)
-a _     should be able to work for application or applets
-a _     may want to use getResource() (to get things from .jar files)
-
-compiling
-a _   remove .java and .class files for compiled classes
-a _     (just clean up the boogers afterwards)
-a _   compiling .java files leaves the .class files next to the .java
-a _     make sure all the dirs in sketchbook added to classpath on startup
-a _     if new dir added, must restart processing (this is acceptable)
-
-running
-a _   ability to include other code from sketchbook directory
-a _     compile entire sketchbook on startup, check for new files on compile?
 
 export
 a _   exporting applets that have custom name problems:
@@ -97,11 +89,49 @@ a _       if extends ProcessingApplet [more compatible]
 a _   make sure export is compiling first
 a _     right now have to hit play and then hit export (?)
 a _   include main class info for executable jar file with jdk > 1.2
+a _ file structure for export
+a _   need to set project name for files
+a _   include other .class files built besides the main one
+a _     compile into 'classes' folder
+a _   include referenced image and font files (can't do if numbered)
+a _ difference between exporting an applet and an application
+a _   application can still do serial (qt, other stuff?) 
+a _   applet runs in browser, though applet on cbagel is everything..
 
-a _ verify save when
-a _   closing p5 window
-a _   moving to other sketch
+included files
+a _   'data' directory for all media
+a _   make included media part of the .jar file 
+a _   it's really a pain to use external files in processing
+a _     getStream sucks (zach rewrote)
+a _     should be able to work for application or applets
+a _     may want to use getResource() (to get things from .jar files)
 
+compiling
+a _   remove .java and .class files for compiled classes
+a _     (just clean up the boogers afterwards)
+a _   compiling .java files leaves the .class files next to the .java
+a _     make sure all the dirs in sketchbook added to classpath on startup
+a _     if new dir added, must restart processing (this is acceptable)
+a _ kjc is really frustrating about some of its error/warning msgs
+a _   erroneous errors from kjc regarding 'var not inited'
+a _     is there any way to disable this message?
+a _   talk to simon about error streams and kjc
+a _     better piping of output from kjc
+a _     modify kjc to take a PrintWriter, instead of current hacks
+a _   might be able to set default values for vars using perl5subst
+
+running
+a _   ability to include other code from sketchbook directory
+a _     compile entire sketchbook on startup, check for new files on compile?
+
+is this true?
+a _ lines being highlighted for errors are off
+a _   test this on other platforms as well
+a _ importing images doesn't work (?)
+a _ Compiler.disable() message is weird and doesn't always work
+a _   probably just remove it for now
+
+other mess
 _ modify to allow for the 'build' directory in lib
 _ make a new 'dist' function for building
 _ exceptions in draw() apps aren't caught
@@ -145,12 +175,6 @@ _ check out flash for its text editor
 _ write function to swap different names for Proce55ing
 _   use for window title
 _   simple app that does swapping of letters as an animation
-_ project name is changed by clicking on the name and typing
-_ user name is changed by clicking and typing
-_   after user hits 'enter', checks to see if user exists
-_     if not, pops up message asking if they want to change
-_       message goes in same spot as error/status label (turns yellow?)
-_     if user says 'no', then 
 
 
 BUILDING P5
@@ -293,8 +317,13 @@ _   but how to determine *where* on object the hit occurs?
 
 
 BAGEL / lower
+_ support for moving the camera around
+_ try using jgl inside processing
+_ illustrator, postscript or pdf export?
+_ export to static flash-based graphics
 _ function to evaluate bezier or catmullrom points
 _   used heavily in genome valence
+_ curveMode to tweak the s parameter of catmullrom
 _ why is every other pixel missing from mouse events?
 _ fixed fonts are screwed, should only work at screen resolution
 _   getStream for the filename doesn't work for directories
@@ -333,26 +362,6 @@ _ live video editing, wanting things more procedural
 
 
 PDE / high
-a _ add frame to launched window
-a X   add maximize event catcher to make fullscreen
-a o     doesn't work, because of screen sizing stupidity
-a _   shift-click on play to go directly into this 'presentation mode'
-a _ lines being highlighted for errors are off
-a _   test this on other platforms as well
-a _ importing images doesn't work
-a _ Compiler.disable() message is weird and doesn't always work
-a _   probably just remove it for now
-a _ kjc is really frustrating about some of its error/warning msgs
-a _   erroneous errors from kjc regarding 'var not inited'
-a _     is there any way to disable this message?
-a _   talk to simon about error streams and kjc
-a _     better piping of output from kjc
-a _     modify kjc to take a PrintWriter, instead of current hacks
-a _   might be able to set default values for vars using perl5subst
-a _ lib/pde.properties should be read using getResource
-a _   otherwise path issues cause trouble (likely under win98)
-a _ check logs to see where we're getting traffic from
-
 b _ serial.messageReceived extra long crap in demo.pde (clean up?)
 b _   improve simpleserial and clean up a bit
 b _   document a bit more regarding its use
@@ -375,9 +384,9 @@ b _   or figure out how to unload old classes.. grr
 
 
 PDE / medium
-b _ include stdout/stderr in the processing window
-b _   option to toggle window on/off (not just in properties, but realtime)
-b _   set # of lines in properties
+b _ check logs to see where we're getting traffic from
+b _ event to explorer to open 'parts' directory of project
+b _ option to toggle console on/off (not just in properties, but realtime)
 b _ work on editor buttons
 b _   play button not really working
 b _     never un-highlights, especially with exceptions
@@ -393,6 +402,12 @@ b _   write code to bind/convert java fonts
 b _     best would be freetype or jdk 1.3/1.4
 b _   java freetype? jni freetype to build texmap fonts?
 b _   look at flash file format? (does it have kerning?)
+b _ example: multi-user server app (shared whiteboard)
+b _ example: basic network app
+b _ work out getStream
+b _ file i/o utility classes
+b _   read as set of lines, read as cells in grid, read num sequence
+b _   then methods for writing all of the same
 
 
 PDE / macos
@@ -408,7 +423,7 @@ a _   if os9, this is a no-brainer.. for osx may take a little time
 
 
 PDE / low
-_ support for moving the camera around
+_ beautify is slightly broken
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
