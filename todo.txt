@@ -1,11 +1,15 @@
 0036
+X fixed a NullPointerException on startup 
+X   when sketch.properties didn't exist, shouldn't print error
+X fix status standard message color text color
+X mousePressed() not working, also mouseReleased
+X   also has to be public void mousePressed() for kjc
+X background(), fill(), stroke() using color datatype
+X   check 0xff high bits to see if it's an int gray value or a color
 
 
 bagel
-a _ mousePressed() not working, also mouseReleased
-a _   also has to be public void mousePressed() for kjc
-a _ background(), fill(), stroke() using color datatype
-a _   check 0xff high bits to see if it's an int gray value or a color
+
 a _ fix curve()/bezier()
 a _   also make curve() work as 6 point with doubled endpoints
 a _ translate is disabling color
@@ -25,13 +29,19 @@ a _ how to make double-clickable version for osx
 a _ crashes when people click on help in top bar (same in DBN) [macos9]
 a _ dataInputStream, setUseCaches on the url to false
 a _   URLConnection.setUseCaches(false)
-a _ parent.obj.close() on the url
+a _   parent.obj.close() on the url
 a _ serial port code needs to be implemented
 a _   something that docks better to java serial api
 a _ need double-clickable application version for the mac
 a _   if os9, this is a no-brainer.. for osx may take a little time
 a _ lines being highlighted for errors are off (?)
 a _   test this on other platforms as well
+
+windows
+_ figure out how to do do simple .exe with icons
+_   also file association for .pde files
+_   use launcher code from sun jre
+_   needs to be built from command line
 
 ui
 a _ saving to gzipped 'versions' file
@@ -57,6 +67,7 @@ a _ class unloading not happening
 a _   when doing an extends ProcessingApplet
 a _   need to add randomizer to even non-self gen'd classes
 a _   or figure out how to unload old classes.. grr
+a _ copying files from 'data' dir is not recursive
 
 cvs / release
 a _ write message to people who signed up for p5 alpha
@@ -202,6 +213,7 @@ _     swap in 'color' as an int
 _     color c = #67aa78
 _   keyDown(), mouseDown(), lastMouseX, lastMouseY
 _   degrees(), radians()
+_ fill, background, stroke all with int version for packed rgb
 
 
 ////////////////////////////////////////////////////////////////////
