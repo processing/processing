@@ -97,23 +97,23 @@ public class PdeEditorStatus extends Panel
 
     if (bgcolor == null) {
       bgcolor = new Color[4];
-      bgcolor[0] = PdeBase.getColor("editor.status.notice.bgcolor",
-                                    new Color(102, 102, 102));
-      bgcolor[1] = PdeBase.getColor("editor.status.error.bgcolor",
-                                    new Color(102, 26, 0));
-      bgcolor[2] = PdeBase.getColor("editor.status.prompt.bgcolor",
-                                    new Color(204, 153, 0));
-      bgcolor[3] = PdeBase.getColor("editor.status.prompt.bgcolor",
-                                    new Color(204, 153, 0));
+      bgcolor[0] = PdePreferences.getColor("editor.status.notice.bgcolor",
+                                           new Color(102, 102, 102));
+      bgcolor[1] = PdePreferences.getColor("editor.status.error.bgcolor",
+                                           new Color(102, 26, 0));
+      bgcolor[2] = PdePreferences.getColor("editor.status.prompt.bgcolor",
+                                           new Color(204, 153, 0));
+      bgcolor[3] = PdePreferences.getColor("editor.status.prompt.bgcolor",
+                                           new Color(204, 153, 0));
       fgcolor = new Color[4];
-      fgcolor[0] = PdeBase.getColor("editor.status.notice.fgcolor",
-                                    new Color(255, 255, 255));
-      fgcolor[1] = PdeBase.getColor("editor.status.error.fgcolor",
-                                    new Color(255, 255, 255));
-      fgcolor[2] = PdeBase.getColor("editor.status.prompt.fgcolor",
-                                    new Color(0, 0, 0));
-      fgcolor[3] = PdeBase.getColor("editor.status.prompt.fgcolor",
-                                    new Color(0, 0, 0));
+      fgcolor[0] = PdePreferences.getColor("editor.status.notice.fgcolor",
+                                           new Color(255, 255, 255));
+      fgcolor[1] = PdePreferences.getColor("editor.status.error.fgcolor",
+                                           new Color(255, 255, 255));
+      fgcolor[2] = PdePreferences.getColor("editor.status.prompt.fgcolor",
+                                           new Color(0, 0, 0));
+      fgcolor[3] = PdePreferences.getColor("editor.status.prompt.fgcolor",
+                                           new Color(0, 0, 0));
     }
   }
 
@@ -428,7 +428,7 @@ public class PdeEditorStatus extends Panel
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdeBase.getFont("editor.status.font",
+      font = PdePreferences.getFont("editor.status.font",
                              new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();

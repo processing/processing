@@ -67,12 +67,12 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     this.editor = eddie; // weird name for listener
 
     if (primaryColor == null) {
-      backgroundColor = PdeBase.getColor("editor.header.bgcolor", 
-                                         new Color(51, 51, 51));
-      primaryColor = PdeBase.getColor("editor.header.fgcolor.primary", 
-                                      new Color(255, 255, 255));
-      secondaryColor = PdeBase.getColor("editor.header.fgcolor.secondary", 
-                                        new Color(153, 153, 153));
+      backgroundColor = PdePreferences.getColor("editor.header.bgcolor", 
+                                                new Color(51, 51, 51));
+      primaryColor = PdePreferences.getColor("editor.header.fgcolor.primary", 
+                                             new Color(255, 255, 255));
+      secondaryColor = PdePreferences.getColor("editor.header.fgcolor.secondary", 
+                                               new Color(153, 153, 153));
     }
 
     addMouseListener(new MouseAdapter() {
@@ -147,8 +147,8 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdeBase.getFont("editor.header.font",
-                             new Font("SansSerif", Font.PLAIN, 12));
+      font = PdePreferences.getFont("editor.header.font",
+                                    new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
       fontAscent = metrics.getAscent();

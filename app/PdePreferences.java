@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdePreferences - controls user preferences
+  PdePreferences - controls user preferences and environment settings
   Part of the Processing project - http://Proce55ing.net
 
   Copyright (c) 2001-03 
@@ -67,51 +67,78 @@ public class PdePreferences extends JComponent {
   JFrame frame;
   int wide, high;
 
-  JCheckBox newSketchPrompt;
-  JTextField sketchbookLocation;
+  JCheckBox newSketchPromptBox;
+  JTextField sketchbookLocationField;
+  JCheckbox externalEditorBox;
 
 
   // data model
 
-  Properties properties;
+  static Properties properties;  // needs to be accessible everywhere
+  static Hashtable defaults;
+
+  File preferencesFile;
+  boolean firstTime;  // first time this feller has been run
 
 
   public PdePreferences() {
 
-    // load preferences
+    /*
+    switch (PdeBase.platform) {
+    case PdeBase.WINDOWS:
+      // the larger divider on windows is ugly with the little arrows
+      // this makes it large enough to see (mouse changes) and use, 
+      // but keeps it from being annoyingly obtrusive
+      defaults.put("editor.divider.size", "2");
+      break;
+
+    case PdeBase.MACOSX:
+      // the usual 12 point from other platforms is too big on osx
+      // monospaced on java 1.3 was monaco, but on 1.4 it has changed
+      // to courier, which actually matches other platforms better.
+      // (and removes the 12 point being too large issue)
+      // and monaco is nicer on macosx, so use that explicitly
+      defaults.put("editor.program.font", "Monaco,plain,10");
+      defaults.put("editor.console.font", "Monaco,plain,10");
+      break;
+    }
+    */
+
+
+    // getting started
 
     properties = new Properties();
-    try {
-      //properties.load(new FileInputStream("lib/pde.properties"));
-      //#URL where = getClass().getResource("PdeBase.class");
-      //System.err.println(where);
-      //System.getProperties().list(System.err);
-      //System.err.println("userdir = " + System.getProperty("user.dir"));
 
-      if (PdeBase.platform == PdeBase.MACOSX) {
-        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-        //properties.load(new FileInputStream(pkg + "pde.properties"));
-        //properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
-        properties.load(new FileInputStream("lib/pde.properties"));
-        properties.load(new FileInputStream("lib/pde_macosx.properties"));
 
-      } else if (PdeBase.platform == PdeBase.MACOS9) {
-        properties.load(new FileInputStream("lib/pde.properties"));
-        properties.load(new FileInputStream("lib/pde_macos9.properties"));
+    // load user preferences file
 
-      } else {  
-        // under win95, current dir not set properly
-        // so using a relative url like "lib/" won't work
-        properties.load(getClass().getResource("pde.properties").openStream());
-        String platformProps = "pde_" + platforms[platform] + ".properties";
-        properties.load(getClass().getResource(platformProps).openStream());
+    String home = System.getProperty("user.home");
+    preferencesFile = new File(home, ".processing");
+
+
+    if (!preferencesFile.exists()) {
+      // create a new preferences file if none exists
+
+      String platformFilename = 
+        "pde_" + PdeBase.platforms[PdeBase.platform] + ".properties";
+
+      try {
+        if ((PdeBase.platform == PdeBase.MACOSX) ||
+            (PdeBase.platform == PdeBase.MACOS9)) {
+          properties.load(new FileInputStream("lib/pde.properties"));
+          properties.load(new FileInputStream("lib/" + platformFilename));
+
+        } else {  
+          // under win95, current dir not set properly
+          // so using a relative url like "lib/" won't work
+          properties.load(getClass().getResource("pde.properties").openStream());
+          properties.load(getClass().getResource(platformFilename).openStream());
+        }
+
+      } catch (Exception e) {
+        System.err.println("Error reading pde.properties");
+        e.printStackTrace();
       }
-      //properties.list(System.out);
-
-    } catch (Exception e) {
-      System.err.println("Error reading pde.properties");
-      e.printStackTrace();
-      //System.exit(1);
     }
 
 
@@ -137,11 +164,11 @@ public class PdePreferences extends JComponent {
 
     // [ ] Prompt for name and folder when creating new sketch
 
-    newSketchPrompt = 
+    newSketchPromptBox = 
       new JCheckBox("Prompt for name when creating a new sketch");
-    pain.add(newSketchPrompt);
-    d = newSketchPrompt.getPreferredSize();
-    newSketchPrompt.setBounds(left, top, d.width, d.height);
+    pain.add(newSketchPromptBox);
+    d = newSketchPromptBox.getPreferredSize();
+    newSketchPromptBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + BETWEEN;
 
@@ -152,9 +179,9 @@ public class PdePreferences extends JComponent {
     pain.add(label);
     d = label.getPreferredSize();
 
-    sketchbookLocation = new JTextField(18);
-    pain.add(sketchbookLocation);
-    d2 = sketchbookLocation.getPreferredSize();
+    sketchbookLocationField = new JTextField(18);
+    pain.add(sketchbookLocationField);
+    d2 = sketchbookLocationField.getPreferredSize();
 
     button = new JButton("Browse");
     pain.add(button);
@@ -192,7 +219,7 @@ public class PdePreferences extends JComponent {
       combo.setEnabled(false);
 
     } else {
-      String defaultName = PdeBase.get("serial.port", "unspecified");
+      String defaultName = PdePreferences.get("serial.port", "unspecified");
       combo.setSelectedItem(defaultName);
     }
 
@@ -208,6 +235,13 @@ public class PdePreferences extends JComponent {
 
 
     // [ ] Use external editor
+
+    externalEditorBox = new JCheckBox("Use external editor");
+    pain.add(externalEditorBox);
+    d = newSketchPromptBox.getPreferredSize();
+    newSketchPromptBox.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + BETWEEN;
 
 
     // 
@@ -247,10 +281,9 @@ public class PdePreferences extends JComponent {
 
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          handleQuit();
+          frame.hide();
         }
       });
-    //frame.show();
   }
 
 
@@ -259,10 +292,16 @@ public class PdePreferences extends JComponent {
   }
 
 
-  // open the last-used sketch, etc
+  // change settings based on what was chosen in the prefs
+
   public void apply() {
+    //if (external editor checked) {
+      editor.setExternalEditor(true);
+      //}
   }
 
+
+  // open the last-used sketch, etc
 
   public void init() {
     // load the last program that was in use
@@ -324,7 +363,7 @@ public class PdePreferences extends JComponent {
 
       String serialPort = skprops.getProperty("serial.port");
       if (serialPort != null) {
-        PdeBase.properties.put("serial.port", serialPort);
+        properties.put("serial.port", serialPort);
       }
 
       boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
@@ -336,7 +375,7 @@ public class PdePreferences extends JComponent {
       //e.printStackTrace();
 
       // indicator that this is the first time this feller has used p5
-      PdeBase.firstTime = true;
+      firstTime = true;
 
       // even if folder for 'default' user doesn't exist, or
       // sketchbook itself is missing, mkdirs() will make it happy
@@ -348,8 +387,8 @@ public class PdePreferences extends JComponent {
 
     if (windowX == -1) {
       //System.out.println("using defaults for window size");
-      windowW = PdeBase.getInteger("window.width", 500);
-      windowH = PdeBase.getInteger("window.height", 500);
+      windowW = PdePreferences.getInteger("window.width", 500);
+      windowH = PdePreferences.getInteger("window.height", 500);
       windowX = (screen.width - windowW) / 2;
       windowY = (screen.height - windowH) / 2;
     }
@@ -376,6 +415,163 @@ public class PdePreferences extends JComponent {
 
   public Dimension getPreferredSize() {
     return new Dimension(wide, high);
+  }
+
+
+  public void save() {
+    try {
+      FileOutputStream output = null;
+
+      if (PdeBase.platform == PdeBase.MACOSX) {
+        //String pkg = "Proce55ing.app/Contents/Resources/Java/";
+        //output = new FileOutputStream(pkg + "sketch.properties");
+        output = new FileOutputStream("lib/sketch.properties");
+
+      } else if (PdeBase.platform == PdeBase.MACOS9) {
+        output = new FileOutputStream("lib/sketch.properties");
+
+      } else { // win95/98/ME doesn't set cwd properly
+        URL url = getClass().getResource("buttons.gif");
+        String urlstr = url.getFile();
+        urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
+          "sketch.properties";
+#ifdef JDK13
+        // the ifdef is weird, but it's set for everything but 
+        // macos9, and this will never get hit 
+        output = new FileOutputStream(URLDecoder.decode(urlstr));
+#else
+        System.err.println("bad error while writing sketch.properties");
+        System.err.println("you should never see this message");
+#endif
+      }
+
+      Properties skprops = new Properties();
+
+      //Rectangle window = PdeBase.frame.getBounds();
+      Rectangle window = base.getBounds();
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+      skprops.put("window.x", String.valueOf(window.x));
+      skprops.put("window.y", String.valueOf(window.y));
+      skprops.put("window.w", String.valueOf(window.width));
+      skprops.put("window.h", String.valueOf(window.height));
+
+      skprops.put("screen.w", String.valueOf(screen.width));
+      skprops.put("screen.h", String.valueOf(screen.height));
+
+      skprops.put("sketch.name", sketchName);
+      skprops.put("sketch.directory", sketchDir.getCanonicalPath());
+      skprops.put("user.name", userName);
+
+      skprops.put("editor.external", externalEditor ? "true" : "false");
+      skprops.put("editor.divider.location", 
+                  String.valueOf(splitPane.getDividerLocation()));
+
+      //skprops.put("serial.port", PdePreferences.get("serial.port", "unspecified"));
+
+      skprops.save(output, "auto-generated by pde, please don't touch");
+
+    } catch (IOException e) {
+      System.err.println("doQuit: error saving properties");
+      e.printStackTrace();
+    }
+}
+
+  // all the information from pde.properties
+
+  //static public String get(String attribute) {
+  //return get(attribute, null);
+  //}
+
+  static public String get(String attribute /*, String defaultValue */) {
+    //String value = (properties != null) ?
+    //properties.getProperty(attribute) : applet.getParameter(attribute);
+    String value = properties.getProperty(attribute);
+
+    return (value == null) ? 
+      defaultValue : value;
+  }
+
+  static public boolean getBoolean(String attribute /*, boolean defaultValue*/) {
+    String value = get(attribute, null);
+    return (value == null) ? defaultValue : 
+      (new Boolean(value)).booleanValue();
+
+    /*
+      supposedly not needed, because anything besides 'true'
+      (ignoring case) will just be false.. so if malformed -> false
+    if (value == null) return defaultValue;
+
+    try {
+      return (new Boolean(value)).booleanValue();
+    } catch (NumberFormatException e) {
+      System.err.println("expecting an integer: " + attribute + " = " + value);
+    }
+    return defaultValue;
+    */
+  }
+
+  static public int getInteger(String attribute /*, int defaultValue*/) {
+    String value = get(attribute, null);
+    if (value == null) return defaultValue;
+
+    try {
+      return Integer.parseInt(value);
+    } catch (NumberFormatException e) { 
+      // ignored will just fall through to returning the default
+      System.err.println("expecting an integer: " + attribute + " = " + value);
+    }
+    return defaultValue;
+    //if (value == null) return defaultValue;
+    //return (value == null) ? defaultValue : 
+    //Integer.parseInt(value);
+  }
+
+
+  static public Color getColor(String name /*, Color otherwise*/) {
+    Color parsed = null;
+    String s = get(name, null);
+    if ((s != null) && (s.indexOf("#") == 0)) {
+      try {
+        int v = Integer.parseInt(s.substring(1), 16);
+        parsed = new Color(v);
+      } catch (Exception e) {
+      }
+    }
+    if (parsed == null) return otherwise;
+    return parsed;
+  }
+
+
+  static public Font getFont(String which /*, Font otherwise*/) {
+    //System.out.println("getting font '" + which + "'");
+    String str = get(which);
+    if (str == null) return otherwise;  // ENABLE LATER
+    StringTokenizer st = new StringTokenizer(str, ",");
+    String fontname = st.nextToken();
+    String fontstyle = st.nextToken();
+    return new Font(fontname, 
+                    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) | 
+                    ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
+                    Integer.parseInt(st.nextToken()));
+  }
+
+
+  static public SyntaxStyle getStyle(String what /*, String dflt*/) {
+    String str = get("editor.program." + what + ".style", dflt);
+
+    StringTokenizer st = new StringTokenizer(str, ",");
+
+    String s = st.nextToken();
+    if (s.indexOf("#") == 0) s = s.substring(1);
+    Color color = new Color(Integer.parseInt(s, 16));
+
+    s = st.nextToken();
+    boolean bold = (s.indexOf("bold") != -1);
+    boolean italic = (s.indexOf("italic") != -1);
+    //System.out.println(str + " " + bold + " " + italic);
+
+    return new SyntaxStyle(color, italic, bold);
   }
 
 

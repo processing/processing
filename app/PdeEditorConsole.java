@@ -59,26 +59,7 @@ public class PdeEditorConsole extends JScrollPane {
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
 
-    consoleTextPane = new JTextPane(); /* {
-        // this does nothing for macosx
-        public void paintComponent(Graphics g) {
-          //System.out.println("paiting");
-#ifdef JDK13
-          if (PdeBase.platform == PdeBase.MACOSX) {
-            if (PdeBase.getBoolean("editor.console.antialias", 
-                                   false) == false) {
-              Graphics2D g2 = (Graphics2D) g; 
-              //System.out.println("disabling");
-              g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-                                  RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-              g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                                  RenderingHints.VALUE_ANTIALIAS_OFF);
-            }
-          }
-#endif
-          super.paintComponent(g);
-        }
-        };*/
+    consoleTextPane = new JTextPane();
     consoleTextPane.setEditable(false);
     consoleDoc = consoleTextPane.getStyledDocument();
 
@@ -88,14 +69,14 @@ public class PdeEditorConsole extends JScrollPane {
     consoleDoc.setParagraphAttributes(0, 0, standard, true);
 
     // build styles for different types of console output
-    Color bgColor = PdeBase.getColor("editor.console.bgcolor", 
-                                     new Color(0x1A, 0x1A, 0x00));
-    Color fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
-                                        new Color(0xcc, 0xcc, 0xbb));
-    Color fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
-                                        new Color(0xff, 0x30, 0x00));
-    Font font = PdeBase.getFont("editor.console.font", 
-                                new Font("Monospaced", Font.PLAIN, 11));
+    Color bgColor = PdePreferences.getColor("editor.console.bgcolor", 
+                                            new Color(0x1A, 0x1A, 0x00));
+    Color fgColorOut = PdePreferences.getColor("editor.console.fgcolor.output", 
+                                               new Color(0xcc, 0xcc, 0xbb));
+    Color fgColorErr = PdePreferences.getColor("editor.console.fgcolor.error", 
+                                               new Color(0xff, 0x30, 0x00));
+    Font font = PdePreferences.getFont("editor.console.font", 
+                                       new Font("Monospaced", Font.PLAIN, 11));
 
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);
@@ -122,7 +103,7 @@ public class PdeEditorConsole extends JScrollPane {
     // and size window accordingly
     FontMetrics metrics = this.getFontMetrics(font);
     int height = metrics.getAscent() + metrics.getDescent();
-    int lines = PdeBase.getInteger("editor.console.lines", 4);
+    int lines = PdePreferences.getInteger("editor.console.lines", 4);
     int sizeFudge = 6; //10; // unclear why this is necessary, but it is
     setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
     setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
@@ -135,9 +116,9 @@ public class PdeEditorConsole extends JScrollPane {
       boolean tod = ((PdeBase.platform != PdeBase.MACOSX) &&
                      (PdeBase.platform != PdeBase.MACOS9));
 
-      if (PdeBase.getBoolean("editor.console.out.enabled", tod)) {
+      if (PdePreferences.getBoolean("editor.console.out.enabled", tod)) {
         String outFileName = 
-          PdeBase.get("editor.console.out.file", "lib/stdout.txt");
+          PdePreferences.get("editor.console.out.file", "lib/stdout.txt");
         try {
           stdoutFile = new FileOutputStream(outFileName);
         } catch (IOException e) {
@@ -145,9 +126,9 @@ public class PdeEditorConsole extends JScrollPane {
         }
       }
 
-      if (PdeBase.getBoolean("editor.console.err.enabled", tod)) {
+      if (PdePreferences.getBoolean("editor.console.err.enabled", tod)) {
         String errFileName = 
-          PdeBase.get("editor.console.err.file", "lib/stderr.txt");
+          PdePreferences.get("editor.console.err.file", "lib/stderr.txt");
         try {
           stderrFile = new FileOutputStream(errFileName);
         } catch (IOException e) {
@@ -160,7 +141,7 @@ public class PdeEditorConsole extends JScrollPane {
       consoleErr = 
         new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
 
-      if (PdeBase.getBoolean("editor.console.enabled", true)) {
+      if (PdePreferences.getBoolean("editor.console.enabled", true)) {
         System.setOut(consoleOut);
         System.setErr(consoleErr);
       }

@@ -37,9 +37,10 @@ public class PdePreprocessorOro extends PdePreprocessor {
   }
 
   // writes .java file into buildPath
-  public String writeJava(String name, boolean extendsNormal,
+  public String writeJava(String name, /*boolean extendsNormal,*/
                           boolean exporting) {
-    String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+    //String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+    String extendsWhat = "BApplet";
 
     try {
       /*int*/ programType = BEGINNER;
@@ -49,7 +50,7 @@ public class PdePreprocessorOro extends PdePreprocessor {
 
       // insert 'f' for all floats
       // shouldn't substitute f's for: "Univers76.vlw.gz";
-      if (PdeBase.getBoolean("compiler.substitute_f", true)) {
+      if (PdePreferences.getBoolean("compiler.substitute_f", true)) {
         /*
           a = 0.2 * 3
           (3.)
@@ -76,14 +77,14 @@ public class PdePreprocessorOro extends PdePreprocessor {
       }
 
       // allow int(3.75) instead of just (int)3.75
-      if (PdeBase.getBoolean("compiler.enhanced_casting", true)) {
+      if (PdePreferences.getBoolean("compiler.enhanced_casting", true)) {
         program = substipoot(program, "([^A-Za-z0-9_])byte\\((.*)\\)", "$1(byte)($2)");
         program = substipoot(program, "([^A-Za-z0-9_])char\\((.*)\\)", "$1(char)($2)");
         program = substipoot(program, "([^A-Za-z0-9_])int\\((.*)\\)", "$1(int)($2)");
         program = substipoot(program, "([^A-Za-z0-9_])float\\((.*)\\)", "$1(float)($2)");
       }
 
-      if (PdeBase.getBoolean("compiler.color_datatype", true)) {
+      if (PdePreferences.getBoolean("compiler.color_datatype", true)) {
         // so that regexp works correctly in this strange edge case
         if (program.indexOf("color") == 0) program = " " + program;
         // swap 'color' with 'int' when used as a datatype
@@ -100,7 +101,7 @@ public class PdePreprocessorOro extends PdePreprocessor {
         //program = substipoot(program, "([^A-Za-z0-9_])color\\((.*)\\)", "$1(int)($2)");
       }
 
-      if (PdeBase.getBoolean("compiler.inline_web_colors", true)) {
+      if (PdePreferences.getBoolean("compiler.inline_web_colors", true)) {
         // convert "= #cc9988" into "= 0xffcc9988"
         //program = substipoot(program, "(=\\s*)\\#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])", "$1 0xff$2$3$4");
         //program = substipoot(program, "#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([;\\s])", "0xff$1$2$3$4");
