@@ -64,14 +64,14 @@ public class PTriangle implements PConstants
   private float[] z_array;
 
   // U,V coordinates
-  private float[]   u_array;
-  private float[]   v_array;
+  private float[] u_array;
+  private float[] v_array;
 
   // Vertex Intensity
-  private float[]   r_array;
-  private float[]   g_array;
-  private float[]   b_array;
-  private float[]   a_array;
+  private float[] r_array;
+  private float[] g_array;
+  private float[] b_array;
+  private float[] a_array;
 
   // vertex offsets
   private int o0;

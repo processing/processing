@@ -102,7 +102,11 @@ find processing -name "*~" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
 find processing -name "CVS" -exec rm -rf {} ';'
 
-stuff -f sitx processing-$REVISION
+mv processing/Processing.app "processing/Processing $SHORT_REVISION.app"
+mv processing processing-$REVISION
+
+# don't have deluxe on my laptop right now
+#stuff -f sitx processing-$REVISION
 
 # zip it all up for release
 #NICE_FOLDER="Processing $SHORT_REVISION"

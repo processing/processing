@@ -10,6 +10,18 @@ X only allocate stencil and zbuffer on first call to depth()
 X   this will require changes to PTriangle and PLine inside their loops
 X try running javadoc
 X die() may need to throw a RuntimeException
+o call filter() to convert RGB/RGBA/ALPHA/GRAY
+o   cuz the cache is gonna be bad going rgb to rgba
+X   don't bother, people can re-create the image or set cache null
+X fix font coloring in PGraphics2
+X fix tint() for PGraphics2
+X get text working again
+X   partially the problem is with ALPHA images
+X     how should they be stored internally
+X   also colored text, requires tint() to work properly
+X move textMode and textSpace back out of PFont
+X   use die() to fail in font situations
+X   can't, just use a RuntimeException
 
 covered in previous
 X before graphics engine change, attach jogl stuff
@@ -40,6 +52,8 @@ X add gzipInput and gzipOutput
 X light(x, y, z, c1, c2, c3, TYPE)
 X   also BLight with same constructor, and on() and off() fxn
 X make sure applet is stopping in draw mode
+X loadImage() is broken on some machines
+X   hacked for a fix in 72, but need to better coordinate with openStream()
 
 api changes
 X removed circle.. it's dumb when ellipse() is in there
@@ -111,30 +125,23 @@ X   set initial size using --size=
 X color channels seem to be swapped on windows in image example
 X   check on the mac to see what it looks like
 
-_ call filter() to convert RGB/RGBA/ALPHA/GRAY
-_   cuz the cache is gonna be bad going rgb to rgba
-
-X fix font coloring in PGraphics2
-_ fix tint() for PGraphics2
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   maybe not setting fill color when drawing images?
-
-_ get text working again
-X   partially the problem is with ALPHA images
-X     how should they be stored internally
-X   also colored text, requires tint() to work properly
-X move textMode and textSpace back out of PFont
-X   use die() to fail in font situations
-X   can't, just use a RuntimeException
-
-_ default to single byte input from serial port
-_   and add serial.setBuffer() for message length as alternative
-_   or serial.setDelimiter() to fire message on delim
+X default to single byte input from serial port
+X   and add serial.setBuffer() for message length as alternative
+X   or serial.setDelimiter() to fire message on delim
+X     named it bufferUntil();
 
 
 //
 
+0078 or later
+
+- applets on osx sometimes show up 20 pixels off the top 
+
 _ implement PGraphics2.curveVertex()
+
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
 
 _ make Graphics2 et al load dynamically using reflection
 _   can this be done with g2 and if exception just falls back to g1?
@@ -146,8 +153,11 @@ _ look at curve functions more closely
 _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
+_ write filter() functions
+_ remove SCREEN_SPACE altogether? 
 
 _ also have a simple way to hook in triangle leeches to PGraphics3
+_   this exists, but needs to be documented, or have accessors
 
 _ get PGraphics.java engine working again
 
@@ -156,9 +166,9 @@ _ lighting totally sucks (both PGraphics3 and PGraphicsGL)
 _ bring in materials for opengl as well?
 _   don't include a class, just make it similar to the light functions
 
-_ remove SCREEN_SPACE altogether? 
-
 _ be consistent about getXxx() methods
+_   or just what functions are actually made public
+_   is fillRi needed? it's pretty goofy..
 
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
@@ -179,8 +189,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 _ image(String name) and textFont(String name)
 _   do we change to font(arial, 12) ?
-_ loadImage() is broken on some machines
-_   hacked for a fix in 72, but need to better coordinate with openStream()
 _ 404 error because first searches applet directory on zipdecode
 
 _ how to handle full screen (opengl especially) or no screen (for scripts)
@@ -197,8 +205,6 @@ _   -> altho problem here is that really the fonts just need a name
 _      since needs to render to screen as well
 
 //
-
-0078
 
 _ when running externally, applets don't always get placed properly
 _   if size is never set, then doesn't always layout
