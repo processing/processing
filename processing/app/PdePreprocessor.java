@@ -164,7 +164,7 @@ public class PdePreprocessor {
     writeFooter(stream);
     stream.close();
 
-    final boolean debug = true;
+    final boolean debug = false; //true;
 
     // if we're debugging, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
