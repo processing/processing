@@ -1428,10 +1428,10 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
-  //static public void println(Object what[]) {
-  //for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-  //System.out.flush();
-  //}
+  static public void printarr(Object what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
 
 
 
@@ -2185,6 +2185,13 @@ public class PApplet extends Applet
       try {
         String location = folder + File.separator + "data";
         File file = new File(location, filename);
+        stream = new FileInputStream(file);
+        if (stream != null) return stream;
+
+      } catch (Exception e) { }  // ignored
+
+      try {
+        File file = new File(folder, filename);
         stream = new FileInputStream(file);
         if (stream != null) return stream;
 
