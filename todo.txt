@@ -72,6 +72,25 @@ X     (basically any time it sees "class" in the code..
 X     may be subject to errors, but errs on side of just running ext)
 X   runs out of processing data folder
 
+_ macosx is using /Library instead of ~/Library.. get this fixed
+_   domain version wasn't in the stubs.. grr
+_   or maybe it's an int or something?
+
+_ preproc: making all functions public that have no specifier
+_   this will make draw() etc all much easier
+_   as well as the library events
+_   focusGained/focusLost was added.. 
+
+_ basic sample audio playback needed for p5
+
+
+//
+
+
+MESS TO SORT
+
+_ what's up with int() -> toInt() conversion?
+
 _ use screen manager to run present mode properly
 _   set both versions to require java 1.4
 _   change the Info.plist inside macosx
@@ -85,30 +104,6 @@ _   since it may take a long time (i.e. 1000s of screen grabs)
 
 _ scanning sketchbook folder may be extremely slow 
 _   not sure why this would be the case
-
-_ preproc: making all functions public that have no specifier
-_   this will make draw() etc all much easier
-_   as well as the library events
-_   focusGained/focusLost was added.. 
-
-_ basic sample audio playback needed for p5
-
-_ what's up with int() -> toInt() conversion?
-
-
-//
-
-
-PROBLEMS FOR NEW USERS (workshop)
-_ making it easier to draw shapes
-_ missing semicolons - better error message
-_ "unexpected token void" -> "You're mixing dynamic and static mode"
-_ forgetting the quotes around strings
-_ separate reference for /dev version
-_ angleMode(DEGREES) -> mistyped keywords, caps being wrong
-
-
-MESS TO SORT
 
 _ subfolders in the 'data' directory don't work
 
@@ -151,6 +146,21 @@ _ save caret position when switching tabs
 _ add mnemonics for menus (alt-f to open 'file')
 
 _ if additional tab is "public" class.. then make external?
+
+
+......................................................................
+
+
+PROBLEMS FOR NEW USERS (workshop)
+_ making it easier to draw shapes
+_ missing semicolons - better error message
+_ "unexpected token void" -> "You're mixing dynamic and static mode"
+_ forgetting the quotes around strings
+_ separate reference for /dev version
+_ angleMode(DEGREES) -> mistyped keywords, caps being wrong
+
+more
+_ keypressed should maybe throw an error
 
 
 ......................................................................
