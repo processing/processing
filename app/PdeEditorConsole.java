@@ -236,8 +236,8 @@ public class PdeEditorConsole extends Component {
 
     scrollDownBottom = sizeH - SCROLL_INSET;
     if ((PdeBase.platform == PdeBase.MACOSX) || 
-	(PdeBase.platform != PdeBase.MACOS9)) {
-      scrollDownBottom -= 20;  // because size boxes intrude
+	(PdeBase.platform == PdeBase.MACOS9)) {
+      scrollDownBottom -= 16;  // because size boxes intrude
     }
     scrollDownTop = scrollDownBottom - SCROLL_SIZE;
 
