@@ -228,28 +228,39 @@ X ask creas about src or dest in image functions
 X finish imaging api
 X modify make.sh to build processing.core
 
-040708 afternoon
+040708 afternoon / early evening
 X lots of work on making packaged classes work
 X modify preproc to handle "void setup" -> "public void setup"
 o preproc bug: text(String.valueOf(i+1), left + i*20, top);
 o   unexpected token "String"
+X make more things public (i.e. pixels)
+X get casting working properly.. int() maps to toInt()? 
+X   what is performance hit for this thing?
+X remove substitute_image/font
+X remove String casting
+X rename compiler.* to preproc.*
+X OutOfMemoryError still showing up when no CR at end of app
 
-OutOfMemoryError still showing up when no CR at end of app
+040708 evening
 
-_ casting working properly.. int() maps to toInt()? 
-_   what is performance hit for this thing?
+_ get export working again
+_   make multiple jar files thing work.. blech
+
 _ processing.app -> PdeBase, PdeEditor..
 _ processing.serial -> PSerial, [PUsb]
 _ processing.video -> PMovie (file), PCamera (capture)
 _ processing.net -> PClient, PServer
 _ rewrite video, net, serial libraries to be separate
 
+
+......................................................................
+
+NOT REQUIRED FOR NEXT RELEASE
+
 _ expand/subset for array operations (floats, ints, Strings)
 _   see if reflection will allow expand for all class types
 _   append/unappend (no push/pop), shift/unshift, 
 _   slice, splice, reverse, concat, split
-
-not necessarily before release
 _ check into open-source paperwork for p5
 _ prefs need to have a default
 _   otherwise old prefs and new p5 will cause trouble
@@ -465,6 +476,10 @@ _ need curveTangent() code
 
 
 ..................................................................
+
+
+TABLED FOR LATER (qasey's quagmires)
+_ completeness of toInt/toFloat/toBoolean etc in preproc and PApplet
 
 
 LOWER (post beta tweaks, non-structural)
