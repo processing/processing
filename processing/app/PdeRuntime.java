@@ -49,57 +49,24 @@ public class PdeRuntime implements PdeMessageConsumer {
   Process process;
   OutputStream processOutput;
   boolean externalRuntime;
-  String codeFolderPath;
-  String externalPaths;
+  //String codeFolderPath;
+  //String externalPaths;
+  String libraryPath;
+  String classPath;
 
 
   public PdeRuntime(PdeEditor editor, String className,
                     boolean externalRuntime, 
-                    String codeFolderPath, String externalPaths) {
+                    String classPath, String libraryPath) {
+                    //String codeFolderPath, String externalPaths) {
     this.editor = editor;
     this.className = className;
 
     this.externalRuntime = externalRuntime;
-    this.codeFolderPath = codeFolderPath;
-    this.externalPaths = externalPaths;
-  }
-
-
-  class SystemOutSiphon implements Runnable {
-    InputStream input;
-    Thread thread;
-
-
-    public SystemOutSiphon(InputStream input) {
-      this.input = input;
-
-      thread = new Thread(this);
-      thread.start();
-    }
-
-    public void run() {
-      byte boofer[] = new byte[1024];
-
-      try {
-        while (true) {
-          //int count = input.available();
-          //int offset = 0; 
-          int count = input.read(boofer, 0, boofer.length);
-          if (count == -1) break;
-          System.out.print(new String(boofer, 0, count));
-        }
-
-        /*
-        int c;
-        while ((c = input.read()) != -1) {
-          System.out.print((char) c);
-        }
-        */
-      } catch (Exception e) { 
-        System.err.println("SystemOutSiphon error " + e);
-        e.printStackTrace();
-      }
-    }
+    this.classPath = classPath;
+    this.libraryPath = libraryPath;
+    //this.codeFolderPath = codeFolderPath;
+    //this.externalPaths = externalPaths;
   }
 
 
@@ -118,9 +85,9 @@ public class PdeRuntime implements PdeMessageConsumer {
       if (externalRuntime) {
         String command[] = new String[] { 
           "java",
-          "-Djava.library.path=" + codeFolderPath,
+          "-Djava.library.path=" + libraryPath,
           "-cp",
-          externalPaths,
+          classPath,
           "BApplet",
           BApplet.EXTERNAL_FLAG + ((windowLocation != null) ? 
                                    ("e" + 
@@ -477,6 +444,44 @@ public class PdeRuntime implements PdeMessageConsumer {
         //System.err.print(s);
       } 
       //System.out.println("got it " + s);
+    }
+  }
+
+
+  class SystemOutSiphon implements Runnable {
+    InputStream input;
+    Thread thread;
+
+
+    public SystemOutSiphon(InputStream input) {
+      this.input = input;
+
+      thread = new Thread(this);
+      thread.start();
+    }
+
+    public void run() {
+      byte boofer[] = new byte[1024];
+
+      try {
+        while (true) {
+          //int count = input.available();
+          //int offset = 0; 
+          int count = input.read(boofer, 0, boofer.length);
+          if (count == -1) break;
+          System.out.print(new String(boofer, 0, count));
+        }
+
+        /*
+        int c;
+        while ((c = input.read()) != -1) {
+          System.out.print((char) c);
+        }
+        */
+      } catch (Exception e) { 
+        System.err.println("SystemOutSiphon error " + e);
+        e.printStackTrace();
+      }
     }
   }
 }
