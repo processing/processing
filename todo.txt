@@ -15,6 +15,10 @@ _   all code needs to be buildable from scratch
 _ modify build instructions for the many changes
 _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 
+_ developers who may be interested in p5 helping: 
+gerritt@cloudyreason.com
+kyle@kylerode.com
+
 _ replacing spaces with underscores.. 
 _   patch keyTyped event instead of keyPressed
 _   remove reference in readme about macosx problem w/ it
