@@ -146,7 +146,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         applet.leechErr = leechErr;
 
         // has to be before init
-        applet.serialProperties(PdeBase.properties);
+        applet.serialProperties(PdePreferences.properties);
         applet.init();
         if (applet.exception != null) {
           if (applet.exception instanceof PortInUseException) {
@@ -257,8 +257,8 @@ public class PdeRuntime implements PdeMessageConsumer {
           Insets insets = window.getInsets();
           //System.out.println(insets);
 
-          int minW = PdeBase.getInteger("run.window.width.minimum", 120);
-          int minH = PdeBase.getInteger("run.window.height.minimum", 120);
+          int minW = PdePreferences.getInteger("run.window.width.minimum", 120);
+          int minH = PdePreferences.getInteger("run.window.height.minimum", 120);
           int windowW = Math.max(applet.width, minW) + insets.left + insets.right;
           int windowH = Math.max(applet.height, minH) + insets.top + insets.bottom;
 
@@ -280,37 +280,8 @@ public class PdeRuntime implements PdeMessageConsumer {
             window.setBounds(x1, y1, windowW, windowH); //ww, wh);
           }
 
-          /*
-          int x1 = parentLoc.x - 20;
-          int y1 = parentLoc.y;
-
-          Insets insets = window.getInsets();
-          //System.out.println(insets);
-
-          int mw = PdeBase.getInteger("run.window.width.minimum", 120);
-          int mh = PdeBase.getInteger("run.window.height.minimum", 120);
-          int ww = Math.max(applet.width, mw) + insets.left + insets.right;
-          int wh = Math.max(applet.height, mh) + insets.top + insets.bottom;
-
-          if (x1 - ww > 10) {  // if it fits to the left of the window
-            window.setBounds(x1 - ww, y1, ww, wh);
-
-          } else { // if it fits inside the editor window
-            x1 = parentLoc.x + PdeEditor.GRID_SIZE * 2;  // 66
-            y1 = parentLoc.y + PdeEditor.GRID_SIZE * 2;  // 66
-
-            if ((x1 + ww > screen.width - PdeEditor.GRID_SIZE) ||
-                (y1 + wh > screen.height - PdeEditor.GRID_SIZE)) {
-              // otherwise center on screen
-              x1 = (screen.width - ww) / 2;
-              y1 = (screen.height - wh) / 2;
-            }
-            window.setBounds(x1, y1, ww, wh);
-          }
-          */
-
           Color windowBgColor = 
-            PdeBase.getColor("run.window.bgcolor", SystemColor.control); 
+            PdePreferences.getColor("run.window.bgcolor", SystemColor.control); 
           //new Color(102, 102, 102));
           window.setBackground(windowBgColor);
           //window.setBackground(SystemColor.windowBorder);
