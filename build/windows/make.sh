@@ -33,10 +33,10 @@ else
   # in case one of those little mac poopers show up
 
   echo Extracting examples...
-  cd work/sketchbook
+  cd work
   unzip -q examples.zip
   rm examples.zip
-  cd ../..
+  cd ..
 
   echo Extracting reference...
   cd work
@@ -59,9 +59,6 @@ else
   chmod +x *.exe *.dll 
   chmod +x client/*.dll
   cd ../../..
-  #chmod -R +x work/java/bin/*.exe
-  #chmod +x work/java/bin/*.dll
-  #chmod +x work/java/bin/client/*.dll
 
   mkdir work/lib/export
   mkdir work/lib/build
@@ -69,7 +66,9 @@ else
   # could be made and checked back in.. interesting
   mkdir work/classes
 
+  # no longer needed with super-release
   #cp dist/lib/pde_windows.properties work/lib/
+  
   echo Compiling processing.exe
   cd launcher
   make && cp processing.exe ../work/
@@ -148,18 +147,35 @@ CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\
 export CLASSPATH
 
 # make version with serial for the application
-echo Building bagel with serial, sonic, video, net and jdk13 support
-perl make.pl JIKES=../build/windows/work/jikes SERIAL SONIC NETWORK VIDEO JDK13
+#echo Building bagel with serial, sonic, video, net and jdk13 support
+#perl make.pl JIKES=../build/windows/work/jikes SERIAL SONIC NETWORK VIDEO JDK13
+perl make.pl JIKES=../build/windows/work/jikes JDK13
 cp classes/*.class ../build/windows/work/classes/
 
 # still debating on whether to include jdk118 classes..
 #CLASSPATH="..\\bagel\\jdk118.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
 
 # make simpler version for applet exporting, only 1.1 functions
-echo Building bagel for export with sonic and net support
-perl make.pl JIKES=../build/windows/work/jikes SONIC NETWORK
-cp classes/*.class ../build/windows/work/lib/export/
+#echo Building bagel for export with sonic and net support
+#perl make.pl JIKES=../build/windows/work/jikes SONIC NETWORK
+#cp classes/*.class ../build/windows/work/lib/export/
 
+
+echo Building export classes for 1.1
+rm -f classes/*.class
+perl make.pl JIKES=../build/windows/work/jikes
+cd classes
+zip -0q ../../build/windows/work/lib/export11.jar *.class
+cd ..
+
+echo Building export classes for 1.3
+rm -f classes/*.class
+perl make.pl JIKES=../build/windows/work/jikes
+cd classes
+zip -0q ../../build/windows/work/lib/export13.jar *.class
+cd ..
+
+# back to processing base dir
 cd ..
 
 
@@ -168,7 +184,6 @@ cd ..
 echo Building PDE for JDK 1.4
 
 cd app
-
 cd preprocessor
 
 # first build the default java goop
