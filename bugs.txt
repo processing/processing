@@ -1,3 +1,51 @@
+_ can't used random() inside constructor.. (Glen Murphy)
+_   maybe related to problems loading images in constructors
+_   check output from file that's created.. seems to fail silently(?)
+
+While I've used random() in other projects often without fail, if I uncomment the 'float r = random(50);', the applet window fails to appear, with no error messages. 
+
+(this code is a mutilated version of working code, just to show the error). 
+int WIDTH = 500; 
+int HEIGHT = 500; 
+int NUMMINES = 6; 
+Mine mine[] = new Mine[NUMMINES]; 
+class Mine { 
+  int NUMSPOKES = 12; 
+  float x, y, size; 
+  Spoke spoke[] = new Spoke[NUMSPOKES]; 
+  Mine(float xIn, float yIn, float sizeIn) { 
+    x = xIn; 
+    y = yIn; 
+    size = sizeIn; 
+    for(int i = 0; i < NUMSPOKES; i++) { 
+ //float r = random(50); 
+ spoke[i] = new Spoke(size+i, i*5, i); 
+ } 
+    } 
+  } 
+
+class Spoke { 
+  float dist, dir, dirVel; 
+  Spoke(float distIn, float dirIn, float dirVelIn) { 
+    } 
+  } 
+
+void setup() { 
+  size(500,500); 
+  ellipseMode(CENTER_DIAMETER); 
+   
+  for(int i = 0; i < NUMMINES; i++) { 
+    mine[i] = new Mine(random(0,WIDTH), random(0,HEIGHT), random(10,30)); 
+    } 
+  } 
+  
+void loop() { 
+  } 
+
+
+........................................................................
+
+
 From mike@lightcycle.org Wed Nov 27 09:48:09 2002
 Date: Tue, 26 Nov 2002 22:26:35 -0800
 From:  <mike@lightcycle.org>
@@ -15,7 +63,7 @@ differant.
 Thanks,
 Mike Davis
 
-------------------------------------------------------------
+
 
 int n = 8;
 swimmer[] s;
@@ -165,3 +213,26 @@ class swimmer
     pop();
   }
 }
+
+
+........................................................................
+
+
+bug in comments 
+
+rev: 0046, w2k
+
+sometimes (never when creating a new sketch, only when an old one has been loaded), if I try to add a comment to identify the end of a method class, ie like 
+ 
+void Sample () 
+{ 
+  <basic code here> 
+} // end of Sample handler 
+ 
+P5 return me an unexpected 'handler' token error! 
+And when I change this comment to  
+} /* end of Sample handler */ 
+everything comes back to normal?! 
+ 
+This don't happen everytimes.. but once it started, the error stay there!  
+Just try it in your next sketchbook, add some comments at the end of your methods, and see what happen 

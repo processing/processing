@@ -118,7 +118,8 @@ public class PdeEditor extends Panel {
 
     //textarea = new PdeEditorTextPane();
     textarea = new JEditTextArea();
-    textarea.setTokenMarker(new JavaTokenMarker());
+    //textarea.setTokenMarker(new JavaTokenMarker());
+    textarea.setTokenMarker(new PdeTokenMarker());
 
     /*  PREVIOUS.. uses PdeEditorTextPane
     JScrollPane scroller = new JScrollPane();
