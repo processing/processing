@@ -15,6 +15,16 @@ X   checkin video code to cvs
 X   video integration (need to work with dist.sh for it)
 X   how to get qtjava into the classpath on windows runner
 X   incorporate second set of code for file i/o
+o video capture tested and running on macos9, macosx, windows
+o video file reading tested and running on macos9, macosx, windows
+o net code tested with client/server examples
+o sound code tested and running on macos9, macosx, windows
+X constrain() still in the motion04 sketch
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050131287
+X why is every other pixel missing from mouse events?
+X   make a note about mouse movement skipping two pixels on windows
+X     need to set mouse properties for higher precision
+X we actually recommend using java version 1.3 on the mac
 
 _ linux version doesn't work on rh9.. update the jvm
 
@@ -25,12 +35,6 @@ _ kill video, net, etc on closing applet
 _ some flag to know whether applet is online or not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 
-waiting
-_ video capture tested and running on macos9, macosx, windows
-_ video file reading tested and running on macos9, macosx, windows
-_ net code tested with client/server examples
-_ sound code tested and running on macos9, macosx, windows
-
 mac
 _ modify classpath to use 1.4 for compiling
 _   modify make.sh to include JDK14 flag
@@ -39,12 +43,6 @@ _ video: get qtjava stuff working, modify make.sh to include paths
 _   also run.sh, the classpath on Proce55ing.app
 _ had to disable MRJFileUtils stuff on osx at last minute before 53
 _   seems that file names changed between 1.3 and 1.4
-
-creas
-_ constrain() still in the motion04 sketch
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050131287
-_ make a note about mouse movement skipping two pixels on windows
-_   need to set mouse properties for higher precision
 
 _ need more comprehensive list of 'known bugs'
 
@@ -270,7 +268,6 @@ BAGEL / Details
    b _ draw mode issues.. size and background must be int/float constants
    b _   might be a better 'mode' for bagel so bkg and size cmds work
    b _   rather than app being enclosed in beginFrame/endFrame loop
-   b _ why is every other pixel missing from mouse events?
    b _ images drawn from center don't work for simage()
    b _   currently calling slower image routine
 
