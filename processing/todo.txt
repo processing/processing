@@ -40,17 +40,28 @@ X   not able to write "preferences.txt" on the first run
 X examples should be in a submenu of open
 
 040905
-_ "add library" menu item and submenu
-_   looks for subfolder called 'libraries' inside p5 folder
-_   libraries are determined by having a subfolder named 'library'
+X "add library" menu item and submenu
+X   looks for subfolder called 'libraries' inside p5 folder
+X   libraries are determined by having a subfolder named 'library'
+X String in apache classes and java.lang
+X   maybe ignore classes not inside the p5 libs dir?
+o   need to be able to select between which to include
+o   auto-resolve by saying java.* wins, others ask
+X make built-in libraries read-only
 
+040912 
+X several menu changes as discussed with casey 
+X   (capitalization, export/export app, tools)
+X add preference for showing library stuff
+_ figure out why user libraries not being added
+_ show internal libraries as part of the 'open' menu (in lib mode)
+_ after export of library, rebuild "import library" menu
 _ import all libraries into classpath
 _   all libs found during sketchbook build + all libs in libraries
 _   this means sketchbook menu will need to be rebuilt after lib build
 _   append the user's classpath to the end of that
 
-_ add preference for showing library stuff
-_ make built-in libraries read-only
+
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
@@ -61,17 +72,15 @@ _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ where do libraries for distribution go?
 _   libraries subfolder of p5
-_ String in apache classes and java.lang
-_   maybe ignore classes not inside the p5 libs dir?
-o   need to be able to select between which to include
-o   auto-resolve by saying java.* wins, others ask
 
 _ get export working again
-_   make multiple jar files thing work.. blech
+_   make multiple jar files thing work as an option
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+_     applet default is one file, application default is multiple
+_     user in advanced mode can switch to the other
+_     buttons on side of sketch do default (last) behavior
 _   include a note that 'applet' folder will get emptied/rewritten
 _     or rename the old applet folder to something else? (nah, too messy)
-_   don't force everything into a single .jar on export
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
 
 _ package processing.app for PdeBase, PdeEditor..
 
@@ -83,9 +92,7 @@ _   errorMessage in PSerial/PClient/PServer are all using System.out
 _ support for editor plugins
 _   make dynamically loaded plugins and "tools" menu
 _     break out beautify as its own plugin
-_   make "get quicktime libs" function
-_     can java get the root directory for system/win32 etc?
-_   make beautify plugin ("autoformat"?)
+_   make beautify plugin "Auto Format"
 _     //for (int i = 0; i < 10; i++) {
 _     } catch (IOException e) { }
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
@@ -96,6 +103,8 @@ _     need to tie this to the parser instead
 _   do a better job of maintaining cursor during beautify 
 _   only beautify a particular section of code
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+o   make "get quicktime libs" function
+o     can java get the root directory for system/win32 etc?
 
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
