@@ -1,0 +1,82 @@
+ENV
+_ env. toggle for showing a function name each time its hit
+_ env. toggle for showing line numbers within a function
+_   i'm here messages, tie in with breakpoints for debugger
+_   lightweight debugger, doesn't slow down, runs in back
+_ env. toggle to show attr/value for some var in simple way
+_ comments as debugging descriptors, output to console, shown in context
+_ comments as naming for shapes drawn after it,
+_   or some other model of naming based on inserted text with "" or // or #
+_   could fit nicely with printf-style statements and comments
+_   comments would contain descriptions //!blah for printing and formatting
+_ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+
+
+PROCESSING - HIGH  (finish these sunday, before class)
+_ kill button (without stop) doesn't clear play
+_ running out of memory, presumably b/c applets not being cleared
+_   figure out why threads aren't actually dying
+_   disassociate processing applet with a window on stop?
+_   possible to maintain bagel, but kill applet?
+_   or copy bagel's image, and kill that too?
+_ put debugging stuff back into Kjc (i disabled some stuff) 
+_ make tab key work
+_   include auto-indent?
+_ convert documentation to html
+_ what happens if size() not called inside setup() ?
+_ when using draw() instead of loop()
+_   applet needs to notify runner that it has terminated
+_ image grabbing code (write to tiff)
+_ multiple types of KjcEngine (so that simplest model is available)
+_ tweak updater a little bit so it's more likely to work
+_   use numbered versioning? 
+_ anti-aliasing
+_ alpha
+
+
+PROCESSING - MEDIUM
+_ per-vertex shading doesn't work
+_ the lights prolly shouldn't follow objects around
+_ work on courseware applet code signing
+_ why is z going negative, seems weird
+_   maybe view needs to go from -100 to 100 with zero at screen plane
+_ code to save a project to the main machine
+_   setting up 'project' directories
+_ delayUntil would be nice to have
+_   but at some point there has to be a cutoff
+_   have a library of useful code that people can add to programs
+_   otherwise things are too simple, and env is a crutch
+_ courseware menu
+_   list of 'people' and 'projects'; refresh 
+_   based on local dir named 'projects' or 'sketchbook'?
+_ copyPixel(x, y, to_x, to_y)
+_ copyArea(x, y, w, h, to_x, to_y)
+_ copyImage(image, x, y, w, h,  to_x, to_y)
+_ lesson plans (easier to translate)
+_ write example applets in processing
+_ courseware system 
+_   uploading pieces when finished - scrapbook/sketchbook model?
+_   download new versions of pde.jar from main machine
+_ some kind of text
+_ setup imrf linux machine?
+_ quicktime exporter or image sequence export
+_ nice to have a random number generator between -1..1 
+_   as well as an integer random; instead of just 0..1
+_ show creas how to get access to cvs
+_ how to use ssh identity file to maintain auth for brancusi
+
+
+PROCESSING - LOWER
+_ move math functions into utility library associated
+_   with bagel, because those will be useful on other bagel platforms
+_ perlin noise function
+_ give updater feedback (progress dialog, error msg)
+_ get proce55ing.net, make that the target launch site
+_ make some kind of internal color picker
+_   could be a separate window that's always around if needed
+_ write a dbn compatability mode (forever() instead of loop() ?)
+_ save window x, y, width, height to pde.properties on exit
+_ bagelpublic.pl: open ProcessingApplet, rewrite after special token
+_ look at glut for other needed shapes
+_ make PdeEditorButtons wait until mouseup to change
+_   (currently doesn't feel as good as it could)
