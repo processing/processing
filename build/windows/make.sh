@@ -21,6 +21,13 @@ else
   echo Extracting reference...
   cd work
   unzip -q reference.zip
+
+  # necessary for launching reference from shell/command prompt
+  # which is done internally to view reference
+  cd reference
+  chmod -R +x *.html
+  cd ..
+
   rm reference.zip
   cd ..
 
