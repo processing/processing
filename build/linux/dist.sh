@@ -59,13 +59,14 @@ rm -rf processing/lib/export/CVS
 #cp dist/run.bat processing/
 #cp dist/run95.bat processing/
 cp work/Proce55ing processing/
-cp dist/lib/pde.properties_linux processing/lib/
+cp dist/lib/pde_linux.properties processing/lib/
 
 # make sure notes.txt is unix LFs
 # the 2> is because the app is a little chatty
-dos2unix processing/notes.txt 2> /dev/null
+dos2unix processing/readme.txt 2> /dev/null
+dos2unix processing/revisions.txt 2> /dev/null
 dos2unix processing/lib/pde.properties 2> /dev/null
-dos2unix processing/lib/pde.properties_windows 2> /dev/null
+dos2unix processing/lib/pde_linux.properties 2> /dev/null
 
 # zip it all up for release
 echo Creating tarball and finishing...
