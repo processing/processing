@@ -1,3 +1,21 @@
+ABOUT REV 0035
+
+- duplicate/rename replaced with save as
+
+- curves were broken (didn't draw anything)
+  now they're not (they draw things)
+
+- curve() now makes more sense and fits all four points provided
+
+- using translate() no longer makes lines turn black. ahem.
+
+- fixed status message color
+
+- added newline before program code when exporting .java files
+
+- removed NullPointerException on startup
+
+
 ABOUT REV 0034
 
 - fixed the problems with launching applets, implemented frame
