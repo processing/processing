@@ -59,6 +59,10 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 X add a note to revisions.txt that says "not for use as a reference"
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
 
+_ simage() is screwy.. 
+_   its invocation is broken (image_mode can't be two things at once)
+_   doesn't actually use image_mode for placement
+_   also doesn't support RGBA
 
 _ fix all the random line types to support alpha
 _ write code for line joins.. continuous lines should become polygon snake
