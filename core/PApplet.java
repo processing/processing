@@ -4846,12 +4846,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void sphere(float x, float y, float z, float r) {
-    if (recorder != null) recorder.sphere(x, y, z, r);
-    g.sphere(x, y, z, r);
-  }
-
-
   public float bezierPoint(float a, float b, float c, float d, float t) {
     return g.bezierPoint(a, b, c, d, t);
   }
