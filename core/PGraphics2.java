@@ -460,14 +460,52 @@ public class PGraphics2 extends PGraphics {
       break;
 
     case QUADS:
+      if ((vertexCount % 4) == 0) {
+        quad(vertices[vertexCount - 4][MX],
+             vertices[vertexCount - 4][MY],
+             vertices[vertexCount - 3][MX],
+             vertices[vertexCount - 3][MY],
+             vertices[vertexCount - 2][MX],
+             vertices[vertexCount - 2][MY],
+             x, y);
+      }
       break;
 
     case QUAD_STRIP:
+      // 0---2---4
+      // |   |   |
+      // 1---3---5
+      if (vertexCount == 4) {
+        // note difference in winding order:
+        quad(vertices[0][MX], vertices[0][MY],
+             vertices[2][MX], vertices[2][MY],
+             x, y,
+             vertices[1][MX], vertices[1][MY]);
+
+      } else if (vertexCount > 4) {
+        path = new GeneralPath();
+        // when vertexCount == 5, draw an un-closed triangle
+        // for indices 2, 4, 5, 3
+        path.moveTo(vertices[vertexCount - 3][MX],
+                    vertices[vertexCount - 3][MY]);
+        path.lineTo(vertices[vertexCount - 1][MX],
+                    vertices[vertexCount - 1][MY]);
+        path.lineTo(x, y);
+        path.lineTo(vertices[vertexCount - 2][MX],
+                    vertices[vertexCount - 2][MY]);
+        draw_shape(path);
+      }
       break;
 
     case POLYGON:
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
+      if (vertexCount == 1) {
+        path = new GeneralPath();
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
       break;
     }
   }
