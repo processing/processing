@@ -18,11 +18,10 @@ X numberFormat (formerly zeroPad)
 X   numberFormat(float num, int left, int right) 
 X     zero means any number of digits, don't pad
 X   numberFormat(int num, int left) for 27 -> 0027
-
-_ camera work
-_   beginCamera, endCamera -> does glMatrixMode style swapping
-_   cameraMode(CUSTOM, PERSPECTIVE, ISOMETRIC)
-_   lookAt->lookat, frustum, perspective should be public too
+X camera work
+X   beginCamera, endCamera -> does glMatrixMode style swapping
+X   cameraMode(CUSTOM, PERSPECTIVE, ISOMETRIC)
+X   lookAt->lookat, frustum, perspective should be public too
 
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
@@ -31,8 +30,6 @@ _ more advanced splitting of files into rows/cols uses another class
 _   other class also has concept for random access of lines
 _   by storing the line positions, can access without loading all
 _   into memory because some files will be too large
-
-
 
 _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
@@ -44,8 +41,16 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 _ several examples broken (note from creas) in bugs.txt
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
 
+_ setup( ){} has an error, setup(){} does not
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
+
 _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
+
+_ running p5 on another platform (bsd)
+_   /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
+_   need to use the 1.3 vm, and get a fake platform name
+_   otherwise, goes looking for lib/pde_.properties or something
 
 
 ////////////////////////////////////////////////////////////////////
