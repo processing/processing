@@ -64,6 +64,7 @@ echo Building processing.core...
 CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
 export CLASSPATH
 
+perl preproc.pl
 ../build/macosx/work/jikes -d . +D -target 1.1 *.java
 zip -r0q ../build/macosx/work/lib/core.jar processing
 
@@ -74,18 +75,8 @@ cd ../app
 
 ### -- BUILD PARSER ---------------------------------------------
 
-# add code here later to conditionally build the parser. 
-# but for now, the parser is only built when the work dir 
-# is created, to speed the build process.
-
-#echo Removing preproc code so it will regenerate
-#rm preprocessor/expandedpde.g
-
 if $BUILD_PREPROC
-#if test -f preprocessor/expandedpde.g
 then
-  echo
-else
   cd preprocessor
   # build classes/grammar for preprocessor
   echo Building antlr grammar code...

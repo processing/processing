@@ -171,7 +171,7 @@ public class PGraphics3 extends PGraphics {
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
-  public PGraphics2() { }
+  public PGraphics3() { }
 
 
   /**
