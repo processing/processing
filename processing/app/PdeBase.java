@@ -78,7 +78,7 @@ public class PdeBase implements ActionListener {
     } 
     */
 
-    editor = new PdeEditor(/*this,*/ /*program*/);
+    editor = new PdeEditor(this);
     frame.setLayout(new BorderLayout());
     frame.add("Center", editor);
 
@@ -92,9 +92,13 @@ public class PdeBase implements ActionListener {
     //rebuildSketchbookMenu(openMenu);
     menu.add(sketchbookMenu);
     menu.add(new MenuItem("Save", new MenuShortcut('S')));
+    menu.add(new MenuItem("Rename", new MenuShortcut('S', true)));
     menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
     menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
-    menu.add(new MenuItem("Export Application", new MenuShortcut('E', true)));
+    item = new MenuItem("Export Application", new MenuShortcut('E', true));
+    item.setEnabled(false);
+    menu.add(item);
+    //menu.add(new MenuItem("Export Application", new MenuShortcut('E', true)));
     menu.addSeparator();
     menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
     menu.add(new MenuItem("Reference", new MenuShortcut('F')));
@@ -183,13 +187,19 @@ public class PdeBase implements ActionListener {
       //} else {
       //editor.sketchbookOpen(path + File.separator + e.getActionCommand());
       //}
+      //System.out.println("got action in skbkmenulistener " + e);
       String name = e.getActionCommand();
-      editor.skOpen(path, name);
-      //editor.skOpen(path, name); // + File.separator + name + 
+      //System.out.println("calling editor.skOpen on " + path + " " + name);
+      //editor.skOpen(path, name);
+      editor.skOpen(path + File.separator + name, name);
       //File.separator + name + ".pde");
     }
   }
 
+
+  public void rebuildSketchbookMenu() {
+    rebuildSketchbookMenu(sketchbookMenu);
+  }
 
   public void rebuildSketchbookMenu(Menu menu) {
     menu.removeAll();
@@ -294,24 +304,29 @@ public class PdeBase implements ActionListener {
     } else if (command.equals("Save")) {
       editor.doSave();
 
-    } else if (command.equals("Duplicate")) {
-      editor.skDuplicate();
+    } else if (command.equals("Rename")) {
+      editor.skDuplicateRename(true);
 
-    } else if (command.equals("Export")) {
+    } else if (command.equals("Duplicate")) {
+      editor.skDuplicateRename(false);
+
+    } else if (command.equals("Export to Web")) {
       editor.skExport();
 
     } else if (command.equals("Proce55ing.net")) {
-      // same thing here with runtime
-
-    } else if (command.equals("Reference")) {
-      /*
       try {
-	// need to get the stream from here
-	Runtime.getRuntime().exec("cmd /c d:\\fry\\processing\\app\\application\\reference\\Transform.html");
+	Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore http://Proce55ing.net");
+	//Runtime.getRuntime().exec("start http://Proce55ing.net");
       } catch (IOException e) {
 	e.printStackTrace();
       }
-      */
+
+    } else if (command.equals("Reference")) {
+      try {
+	Runtime.getRuntime().exec("cmd /c reference\\environment.html");
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
 
     } else if (command.equals("Quit")) {
       editor.doQuit();
@@ -319,15 +334,16 @@ public class PdeBase implements ActionListener {
 
 
     } else if (command.equals("Run")) {
-      editor.doRun();
+      editor.doRun(false);
 
     } else if (command.equals("Present")) {
-      //editor.doPresent();
+      editor.doPresent();
 
     } else if (command.equals("Stop")) {    
       editor.doStop();
 
     } else if (command.equals("Refresh")) {    
+      //System.err.println("got refresh");
       rebuildSketchbookMenu(sketchbookMenu);      
     }
     //if (command.equals("Save QuickTime movie...")) {

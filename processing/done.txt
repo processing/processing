@@ -1,3 +1,115 @@
+0032
+already finished
+X need to update PdeKeyListener for new ui.. 
+X   remove open, add d for duplicate, r for rename, others ?
+X 'open' button is a switch-to button
+X   pops up list of everything in the sketchbook
+o   first item is 'new sketch', followed by delimeter
+X   next is list of subdirs other than current user, then delim
+X   the rest are the items in the current user's folder
+X need 'new' button on the toolbar (or first sketch menuitem?)
+o   the zero looking one might be good (instead of export)
+o   export could be three circles in a row, overlapping
+X everything is a project.. what about short snippets of code?
+X   this version won't be able to access everything from scrapbook
+X   (that requires a more robust class loader)
+X sketch.properties contains the last program run
+X   also the window positions, etc
+X   saves screen size, so if screen size changed, window pos reset
+X   if it doesn't exist, starts with a new project
+X     for a new project, name it untitled-0001 or as appropriate
+X       so that previous projects aren't written over
+X verify save when
+X   closing p5 window
+X   moving to other sketch
+X NullPointerException on startup in pde editor buttons
+X   shows up on slower machines, probably images not loaded yet
+X use a vm that won't destroy the screen like sun/ibm does
+X   this means msft or newer version of jdk
+X if default user, don't show the 'user' string in pde window
+X item in pde.properties to set the name of the current user
+X exporting
+X   exporting applets that have custom name problems:
+X     if extends processingapplet, the name user types must be same
+X     gets confused about paths and puts boogers in weird places
+X     doesn't compile correctly (must first compile with play)
+X     doesn't include additional (private) classes
+X   when exporting 'name of folder for export...'
+X     default name should be from public class <xxxx>
+X     because otherwise errors are happening
+X     or name from user only determines folder name
+X       if extends ProcessingApplet [more compatible]
+X   make sure export is compiling first
+X     right now have to hit play and then hit export (?)
+X file structure for export
+X   need to set project name for files
+X   include other .class files built besides the main one
+X     compile into 'classes' folder
+X   include referenced image and font files (can't do if numbered)
+X make close() work to kill applet in kjc
+X save window x, y, width, height to pde.properties on exit
+X stderr in red color
+X 'data' directory for all media
+X   make included media part of the .jar file 
+X   it's really a pain to use external files in processing
+X     getStream sucks (zach rewrote)
+X     should be able to work for application or applets
+X     may want to use getResource() (to get things from .jar files)
+X remove .java and .class files for compiled classes
+X   (just clean up the boogers afterwards)
+X compiling .java files leaves the .class files next to the .java
+X   make sure all the dirs in sketchbook added to classpath on startup
+o   if new dir added, must restart processing (this is acceptable)
+X importing images doesn't work (?)
+0032a
+X put 'modified' indicator in the darker color
+X fix bug with opening sketches from the menu (grr)
+X need to check if file.exists() when opening
+X   otherwise the exception doesn't get caught and app hangs
+X switch to using a 'build' directory in lib for everything
+X   lib\build can be added to the classpath at startup
+X   cleanout build directory on each run (delete .class/.java)
+X   temporary until classloader issues worked out
+X implement popup menu
+0032b
+X add 'new' button (and complete ui)
+X make toolbars work with sk
+X make 'data' dir work with build
+X   empty contents and change bagel to use getResource
+X   also use getResource("data" + )
+X make export work again
+0032c
+X getData -> gets contents of stream, puts into byte array
+X remove everything from build when starting a new build
+X   (don't do this until it's clear that it's working well!)
+
+
+0031
+X lib/pde.properties should be read using getResource
+X   otherwise path issues cause trouble (likely under win98)
+X take state information out of Header
+X cleanup lastFile/lastDirectory
+X save (just) last program run in sketch.properties
+X coloring of error, message, etc changed in pde.properties
+X finish save changes stuff
+X editorlistener shouldn't track menu commands as changes to file
+X   ctrl keys bksp/del/enter/return/tab then space on up
+X   indicator for changes?
+X   need to implement code for whether changes have been made
+X   check for key events in textarea or something
+X     if key events, compare contents against the existing file
+X userName not getting set before sketchbook menu is built
+X add 'refresh list' item to the sketchbook menu
+X ability to set directory for compiling in kjcengine
+X make sure compiling into build directory
+X   and once compiled there, read all classes for export
+X write class loader or figure out how to change classpath
+X   might be able to load classes using forInstance on each file
+X   using byte array version of constructor
+X you should be able to create methods in drawing mode
+X   this shouldn't work, make void draw() {} to allow
+
+
 0030
 X attempt to fold serial into bapplet, but mostly fail
 X   convert color -> int

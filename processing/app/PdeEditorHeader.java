@@ -135,6 +135,9 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     sketchLeft = sketchTitleLeft + 
       metrics.stringWidth(SKETCH_TITLER) + PdeEditor.INSET_SIZE;
 
+    int modifiedLeft = sketchLeft + 
+      metrics.stringWidth(editor.sketchName) + PdeEditor.INSET_SIZE;
+
     //sketch = editor.sketchName;
     //if (sketch == null) sketch = "";
     //}
@@ -157,15 +160,16 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     g.setColor(secondaryColor);
     g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);
+    if (sketchModified) g.drawString("\u00A7", modifiedLeft, baseline);
     if (!boringUser) g.drawString(USER_TITLER, userTitleLeft, baseline);
 
     g.setColor(primaryColor);
     //g.drawString(sketch, sketchLeft, baseline);
     //String additional = sketchModified ? " \u2020" : "";
     //String additional = sketchModified ? " \u00A4" : "";
-    String additional = sketchModified ? "  \u00A7" : "";
     //String additional = sketchModified ? " \u2022" : "";
-    g.drawString(editor.sketchName + additional, sketchLeft, baseline);
+    g.drawString(editor.sketchName, sketchLeft, baseline);
+
     //if (!boringUser) g.drawString(user, userLeft, baseline);
     if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
 
