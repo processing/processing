@@ -58,7 +58,6 @@ else
   cd work/java/bin/
   chmod -R +x *.exe *.dll
   cd ../../..
-  pwd
   #chmod -R +x work/java/bin/*.exe
   #chmod +x work/java/bin/*.dll
   #chmod +x work/java/bin/client/*.dll
