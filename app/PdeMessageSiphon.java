@@ -2,10 +2,10 @@
 
 /*
   PdeMessageSiphon - slurps up messages from compiler
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Earlier portions of this code are Copyright (c) 2001-04 MIT
+  Other parts are Copyright (c) 2004 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,73 +32,45 @@ class PdeMessageSiphon implements Runnable {
 
 
   public PdeMessageSiphon(InputStream stream, PdeMessageConsumer consumer) {
-    // we use a BufferedReader in order to be able to read a line
-    // at a time
-    //
     this.streamReader = new BufferedReader(new InputStreamReader(stream));
     this.consumer = consumer;
 
     thread = new Thread(this);
     // don't set priority too low, otherwise exceptions won't
-    // bubble up in time (i.e. compile errors)
+    // bubble up in time (i.e. compile errors have a weird delay)
     //thread.setPriority(Thread.MIN_PRIORITY);
     thread.start();
   }
 
 
   public void run() {    
-    //while (Thread.currentThread() == thread) {
-    //System.err.print("p");
-    //System.err.println(streamReader);
-    String currentLine;
-
     try {
       // process data until we hit EOF; this will happily block
       // (effectively sleeping the thread) until new data comes in.
-      // when the program is finally done, 
+      // when the program is finally done, null will come through.
       //
+      String currentLine;
       while ((currentLine = streamReader.readLine()) != null) {
-        //currentLine = streamReader.readLine();
-        //if (currentLine != null) {
         consumer.message(currentLine);
-        //System.out.println("siphon wait");
       }
-      /*
-        if (currentLine == null) {
-        System.out.println("PdeMessageSiphon: out");
-        thread = null; 
-        }
-      */
       thread = null;
-      //System.err.println("PMS: " + currentLine);
-      //}
 
     } catch (NullPointerException npe) {
-      // ignore this guy, since it's prolly just shutting down
-      //npe.printStackTrace();
+      // Fairly common exception during shutdown
       thread = null;
 
     } catch (Exception e) { 
-      // on linux, a "bad file descriptor" message comes up when
-      // closing an applet that's being run externally.
-      // use this to cause that to fail silently since not important
-      //String mess = e.getMessage();
-      //if ((PdeBase.platform != PdeBase.LINUX) || 
-      //(e.getMessage().indexOf("Bad file descriptor") == -1)) {
-      if (e.getMessage().indexOf("Bad file descriptor") == -1) {
-        System.err.println("PdeMessageSiphon err " + e);
+      // On Linux and sometimes on Mac OS X, a "bad file descriptor" 
+      // message comes up when closing an applet that's run externally.
+      // That message just gets supressed here..
+      String mess = e.getMessage();
+      if ((mess != null) && 
+          (mess.indexOf("Bad file descriptor") != -1)) {
+        //if (e.getMessage().indexOf("Bad file descriptor") == -1) {
+        //System.err.println("PdeMessageSiphon err " + e);
         e.printStackTrace();
-        thread = null;
       }
+      thread = null;
     }
-
-    /*
-      //Thread.yield();
-      try {
-      Thread.sleep(100);
-      } catch (InterruptedException e) { }
-    */
-    //System.out.println("PdeMessageSiphon: out");
   }
-  //System.err.println("siphon thread exiting");
 }
