@@ -10,37 +10,47 @@ X   probably wasn't using textFont() properly
 X now that it's actually a key, should it be a char? (what's keyChar?)
 X   that way println(c) would work a little better..
 X libraryCalls() not properly working for pre, post, or draw()
+o image(myg, x, y) doesn't work but image(myg, x, y, w, h) does
+o   (image kind prolly not set right and so image() gets pissy)
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655
+
+_ depth testing of lines vs text is problematic
+_   use depth()/noDepth() to handle depth test
 
 _ y2 position of rectangles not same as y2 position of lines
 
 text fixes
 X make text rect use rectMode for placement
 X if a word (no spaces) is too long to fit, insert a 'space'
+X move left/center/right aligning into the font class
+X   otherwise text with alignment has problems with returns
 
-_ need to resolve rotated text in SCREEN_SPACE
-_   SCREEN_SPACE is weird for text
+text issues
+_ need to resolve SCREEN_SPACE vs OBJECT_SPACE
+_   how does rotated text work?
+_     PFont.rotate(180) rotate(PI)
 _   does the font or PApplet control the size? (the font, ala java)
-_   without setting the font, the values come out weird rotated text
-_     get rotated text into the screen space stuff
-_ move left/center/right aligning into the font class
-_   otherwise text with alignment has problems with returns
+_   without setting the font, SCREEN_SPACE comes out weird
+_   move SCREEN_SPACE into ScreenFont() class?
+_     probably not, casey thinks screen space text is prolly more useful
+_     that way can clear up some of the general confusion in the code
+
+text wish list
+_ look into fixing the texture mapping to not squash fonts
+_   NEW_GRAPHICS totally smashes everything
 _ could PFont2 be done entirely with reflection?
 _   that way other font types can properly extend PFont
-_ move SCREEN_SPACE into ScreenFont() class?
-_   probably not, casey thinks screen space text is prolly more useful
-_   that way can clear up some of the general confusion in the code
-_   also handle things like rotation
 _ not having kerning really blows
 _   could this be pulled from the OpenType font stuff? 
 _   it could be placed at the end of the file
 _ simple way to just use java text in p5 applets? 
 _   the current text support is just so hokey
-_ look into fixing the texture mapping to not squash fonts
-_   NEW_GRAPHICS totally smashes everything
+
 _ need to try jogl to make sure no further changes
 _   and the illustrator stuff
 _ 404 error because first searches applet directory on zipdecode
 _ image(String name) and textFont(String name)
+_   do we change to font(arial, 12) ?
 
 _ write PApplet2, a full screen version of PApplet
 _   this might be used for presentation mode
@@ -80,9 +90,6 @@ _   z-clipping
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 
-_ image(myg, x, y) doesn't work but image(myg, x, y, w, h) does
-_   (image kind prolly not set right and so image() gets pissy)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////

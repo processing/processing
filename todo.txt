@@ -418,6 +418,8 @@ PDE / Features
    b _   could be a separate window that's always around if needed
    1 _ external editor -> add a command to launch
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+     _ refresh sketchbook menu upon returning to the app from elsewhere?
+     _   this would need to track whether coming just from an ext runtime
 
 
 PDE / Console
