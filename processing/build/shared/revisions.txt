@@ -12,6 +12,14 @@ available rather than getting held up in a long release like some of
 the others have been. this pace of releases will not continue, and is
 only happening while i have time to work on the environment.
 
+releases 61 and 62 are suggested downloads, since they fix minor bugs
+or add features, as opposed to a more strongly recommended update like
+revision 60.
+
+people who haven't used 60 yet should refer to its release notes for
+changes that you'll need to make to your programs in order to work in
+releases 60 and later.
+
 
 [ changes & additions ] 
 
@@ -33,6 +41,10 @@ only happening while i have time to work on the environment.
 
 - some modification to the menu layouts, i.e. "clear history" is now
   part of the history menu itself.
+
+- switched back to a more red color for errors in the console. 
+  the yellow was an accident. but again, it's editable in 'lib' ->
+  pde.properties if you liked the yellow or want something else.
 
 
 [ bug fixes ] 
