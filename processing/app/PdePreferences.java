@@ -88,6 +88,9 @@ public class PdePreferences extends JComponent {
   JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
 
+  // the calling editor, so updates can be applied
+  PdeEditor editor;
+
 
   // data model
 
@@ -353,16 +356,18 @@ public class PdePreferences extends JComponent {
   }
 
 
-  // .................................................................
-
-
   public Dimension getPreferredSize() {
     return new Dimension(wide, high);
   }
 
 
+  // .................................................................
+
+
   public void disposeFrame() {
     frame.hide();
+    editor.applyPreferences();
+    editor.show();
     //frame.dispose();
   }
 
@@ -374,24 +379,21 @@ public class PdePreferences extends JComponent {
     // put each of the settings into the table
 
     //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
-
     set("sketchbook.path", sketchbookLocationField.getText());
-
     setBoolean("export.library", exportLibraryBox.isSelected());
-
     setBoolean("editor.external", externalEditorBox.isSelected());
   }
 
 
-  public void showFrame() {
-    // reset all settings to their actual status
+  public void showFrame(PdeEditor editor) {
+    // hide the editor window so it can't be messed with
+    this.editor = editor;
+    editor.hide();
 
+    // set all settings entry boxes to their actual status
     //sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
-
     sketchbookLocationField.setText(get("sketchbook.path"));
-
     exportLibraryBox.setSelected(getBoolean("export.library"));
-
     externalEditorBox.setSelected(getBoolean("editor.external"));
 
     frame.show();
