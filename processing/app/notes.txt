@@ -1,3 +1,16 @@
+ABOUT REV 0025
+
+- 'rect' is now 'plane'
+
+- QUADS are now PLANES, QUAD_STRIP is PLANE_STRIP
+
+- curve() and bezier() now behave the same way
+
+- made all ui colors/fonts accessible from pde.properties
+
+- fixed long font names for the mac release
+
+
 ABOUT REV 0024
 
 - lighting was broken, but no longer
