@@ -2,7 +2,7 @@
 # DO NOT MODIFY THIS FILE, OR DELETE SETTINGS FROM THIS FILE
 
 # These are the default preferences. They will be copied 
-# to your home folder into a file called .processing, 
+# to your home folder into a file called "Processing Preferences.txt"
 # where you can make changes for your machine.
 
 # You'll have problems running Processing if you incorrectly 

@@ -40,12 +40,12 @@ import javax.swing.undo.*;
 /*
   need to bring all the prefs into here
   PdeEditor with its sketch.properties
-  and PdeBase with pde.properties
+  and PdeBase with preferences.txt
 
   on first run:
   processing.properties is created in user.home
   it contains the contents of 
-  pde.properties + pde_platform.properties
+  preferences.txt + pde_platform.properties
   and then begins writing additional sketch.properties stuff
 
   this class no longer uses the Properties class, since 
@@ -111,7 +111,7 @@ public class PdePreferences extends JComponent {
     // important was deleted from the user prefs
 
     try {
-      load(PdeBase.getStream("pde.properties"));
+      load(PdeBase.getStream("preferences.txt"));
 
     } catch (Exception e) {
       PdeBase.showError(null, "Could not read default settings.\n" + 
@@ -282,7 +282,7 @@ public class PdePreferences extends JComponent {
       "More preferences can be edited directly\n" + 
       "in the file " + preferencesFile.getAbsolutePath();
       //"More preferences are in the 'lib' folder inside text files\n" +
-      //"named pde.properties and pde_" + 
+      //"named preferences.txt and pde_" + 
       //PdeBase.platforms[PdeBase.platform] + ".properties";
 
     JTextArea textarea = new JTextArea(blather);
@@ -452,7 +452,7 @@ public class PdePreferences extends JComponent {
 
       if ((PdeBase.platform == PdeBase.MACOSX) ||
           (PdeBase.platform == PdeBase.MACOS9)) {
-        output = new FileOutputStream("lib/pde.properties");
+        output = new FileOutputStream("lib/preferences.txt");
 
       } else { // win95/98/ME doesn't set cwd properly
         URL url = getClass().getResource("buttons.gif");
@@ -496,7 +496,7 @@ public class PdePreferences extends JComponent {
       // save() is deprecated, and didn't properly
       // throw exceptions when it wasn't working
       skprops.store(output, "Settings for processing. " + 
-                    "See lib/pde.properties for defaults.");
+                    "See lib/preferences.txt for defaults.");
 
       // need to close the stream.. didn't do this before
       skprops.close();
@@ -512,7 +512,7 @@ public class PdePreferences extends JComponent {
   // .................................................................
 
 
-  // all the information from pde.properties
+  // all the information from preferences.txt
 
   //static public String get(String attribute) {
   //return get(attribute, null);

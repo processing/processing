@@ -70,6 +70,9 @@ else
   # no longer needed with megabucket
   #cp dist/lib/pde_windows.properties work/lib/
 
+  # java application stubs
+  #cp dist/lib/mrj.jar work/lib/
+
   echo Compiling processing.exe
   cd launcher
   make && cp processing.exe ../work/
@@ -121,11 +124,12 @@ rm -f processing/core/*.class
 
 # new regular version
 #CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar;${QT_JAVA_PATH}"
-CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar
+CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar"
 export CLASSPATH
 
+perl preproc.pl
 ../build/windows/work/jikes -d . +D -target 1.1 *.java
-zip -r0q ../../build/windows/work/lib/core.jar processing
+zip -rq ../build/windows/work/lib/core.jar processing
 
 #perl make.pl JIKES=../build/windows/work/jikes JDK13
 #cp classes/*.class ../build/windows/work/classes/
@@ -150,8 +154,8 @@ zip -r0q ../../build/windows/work/lib/core.jar processing
 cd ..
 
 #################### TEMPORARY #####################
-if false
-then
+#if false
+#then
 #################### TEMPORARY #####################
 
 ### -- BUILD PREPROC ---------------------------------------------
@@ -173,7 +177,7 @@ cd app/preprocessor
 cd ../..
 
 #################### TEMPORARY #####################
-fi
+#fi
 #################### TEMPORARY #####################
 
 
@@ -181,9 +185,11 @@ fi
 
 cd app
 
-CLASSPATH="..\\build\\windows\\work\\classes;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar"
+#CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\lib\\comm.jar"
+CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\java\\lib\\rt.jar"
 
-perl ../bagel/buzz.pl "../build/windows/work/jikes +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJDK13 -dJDK14 *.java jeditsyntax/*.java preprocessor/*.java
+#perl ../bagel/buzz.pl "../build/windows/work/jikes +D -classpath \"$CLASSPATH\" -d \"..\\build\\windows\\work/classes\"" -dJDK13 -dJDK14 *.java jeditsyntax/*.java preprocessor/*.java
+../build/windows/work/jikes +D -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
