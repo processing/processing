@@ -6,7 +6,7 @@ then
   # old 4 char version.. osx only uses the two chars
   #REVISION=`head -c 4 ../../todo.txt`
   # a more useful version of head than what's included with osx
-  #REVISION=`head -c 4 ../../todo.txt | tail -c 2`
+  SHORT_REVISION=`head -c 4 ../../todo.txt | tail -c 2`
   REVISION=`head -c 4 ../../todo.txt`
 else
   # can't get four bytes of head (osx doesn't support -c)
@@ -102,9 +102,18 @@ find processing -name "CVS" -exec rm -rf {} ';'
 
 # zip it all up for release
 #mv processing "Processing $REVISION"
-mv processing "processing-$REVISION"
+#mv processing "processing-$REVISION"
+NICE_FOLDER="Processing $SHORT_REVISION"
+DMG_NAME="processing-$REVISION"
+mv processing "$NICE_FOLDER"
 
 #stuff -f sitx processing-$REVISION
+#WHERE=`pwd`
+chmod +x mkdmg
+#./mkdmg $WHERE/processing-$REVISION
+#./mkdmg processing-$REVISION
+./mkdmg "$NICE_FOLDER" "Processing"
+mv "$NICE_FOLDER.dmg" "$DMG_NAME.dmg"
 
 # if there is a command line tool to make a dmg from this dir.. hmm
 
