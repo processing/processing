@@ -1,10 +1,10 @@
-0050
-X fix quotes missing in the export html
-
 0051
 X go through the bboard and make sure everything up to date here
 X   see if moved topics need to be deleted as well
 X     (log in from another machine as guest)
+_ add keyCode to BApplet
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 
 _ weirdness with mac swiss-german keyboard on []{}|
 _ several examples broken (note from creas) in bugs.txt
@@ -66,7 +66,9 @@ b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 b _ box is not opaque
 b X   problem is that lines are drawn second
 b X   one pixel lines have no z value.. argh
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+b _   bug re: 3d depth sorting on lines
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
 b   translate(58, 48, 0); 
 b   rotateY(0.5);
 b   box(40);
@@ -272,6 +274,8 @@ b _   also make sure pack() is happening
 
 
 PDE / medium
+b _ external editor -> add a command to launch
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
 b _ sketches can't be named starting with numbers (D.YOO)
 b _   either provide an error message or explanation for this
 b _   or allow the sketch name to be separte from the class/folder names
@@ -490,6 +494,9 @@ b _ test serial with ibm vm and all
 b _ look for jdk 1.4 to use instead of 1.3
 b _   make sure javacomm gets in there
 b _ test it a little more to make sure it works (cygwin x sucks)
+
+
+////////////////////////////////////////////////////////////////////
 
 
 DOCS
