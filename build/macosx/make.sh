@@ -69,6 +69,7 @@ cd bagel
 MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar:/System/Library/Java/Extensions/QTJava.zip
 
 CLASSPATH=$MACOSX_CLASSPATH
+export CLASSPATH
 
 ### --- make version with all the goodies for the application
 echo Building bagel with serial, video, and audio support
