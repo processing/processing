@@ -1225,69 +1225,17 @@ public class PdeEditor extends JPanel {
       // create the project directory
       // pass null for datapath because the files shouldn't be 
       // copied to the build dir.. that's only for the temp stuff
-
-      //File projectDir = new File(appletDir, projectName);
-      //projectDir.mkdirs();
       appletDir.mkdirs();
 
-      ///
-
+      // build the sketch 
       exportSketchName = 
         build(program, exportSketchName, appletDir.getPath(), true);
 
+      // (already reported) error during export, exit this function
       if (exportSketchName == null) {
         buttons.clear();
         return;
       }
-
-      /*
-      // preprocess the program
-      //
-      PdePreprocessor preprocessor = null;
-      if (PdeBase.getBoolean("preprocessor.antlr", true)) {
-        preprocessor = new PdePreprocessor(program, 
-                                           appletDir.getPath());
-        try { 
-          exportSketchName = 
-            preprocessor.writeJava(exportSketchName, 
-                                   base.normalItem.getState(),
-                                   true);
-        } catch (Exception ex) {
-          // if there was an issue (including unrecoverable parse errors)
-          // try falling back to the old preprocessor
-          preprocessor = 
-            new PdePreprocessorOro(program, appletDir.getPath());
-          exportSketchName = 
-            preprocessor.writeJava(exportSketchName, 
-                                   base.normalItem.getState(),
-                                   true);
-        }
-      } else {  // use old preproc
-        preprocessor = 
-          new PdePreprocessorOro(program, appletDir.getPath());
-
-        exportSketchName = 
-          preprocessor.writeJava(exportSketchName, 
-                                 base.normalItem.getState(), true);
-      }
-
-      PdeCompiler compiler = 
-        new PdeCompiler(appletDir.getPath(), exportSketchName, this);
-
-      // this will catch and parse errors during compilation
-      messageStream = new PdeMessageStream(compiler);
-      PrintStream leechErr = new PrintStream(messageStream);
-
-      if (!compiler.compileJava(leechErr)) {
-        //throw new Exception("error while compiling, couldn't export");
-        // message() will already have error message in this case
-        return;
-      }
-      */
-
-
-      ///
-
 
       int wide = BApplet.DEFAULT_WIDTH;
       int high = BApplet.DEFAULT_HEIGHT;
@@ -1461,9 +1409,18 @@ public class PdeEditor extends JPanel {
           zos.closeEntry();
         }
       }
+
+      // remove the .class files from the applet folder. if they're not 
+      // removed, the msjvm will complain about an illegal access error, 
+      // since the classes are outside the jar file.
       for (int i = 0; i < classfiles.length; i++) {
         if (classfiles[i].endsWith(".class")) {
-          new File(appletDir, classfiles[i]).delete();  // not yet
+          File deadguy = new File(appletDir, classfiles[i]);
+          if (!deadguy.delete()) {
+            System.err.println(classfiles[i] + 
+                               " could not be deleted from the applet folder.");
+            System.err.println("You'll need to remove it by hand.");
+          }
         }
       }
 
@@ -1868,6 +1825,8 @@ public class PdeEditor extends JPanel {
       offset += bytesRead;
       if (bytesRead == 0) break;
     }
+    input.close();  // weren't properly being closed
+    input = null;
     return buffer;
   }
 
