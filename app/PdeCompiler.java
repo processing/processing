@@ -385,7 +385,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
-      //System.out.println("checking piece " + pieces[i]);
+      System.out.println("checking piece " + pieces[i]);
 
       // is it a jar file or directory?
       if (pieces[i].toLowerCase().endsWith(".jar") || 

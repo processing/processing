@@ -20,20 +20,21 @@ X   println() and System.out.println() from external classes has trouble
 X     println() / print() not always flushing until after app quits
 X change "send to bugs@proce55ing.net" to a longer popup dialog
 X   open the discourse board in another window, ask to post the code
-
 X set PATH to include java (!)
 X   external classes currently require expert release
 X   code written for linux, test it
-_   code written for windows, rebuild the exe and test it
-_ update the release of jikes that's used
+X   code written for windows, rebuild the exe and test it
+X update the release of jikes that's used
 X   updated for macosx
 X   compile new version for linux
-_   compile new version for windows
+X   compile new version for windows
+X netscape/javascript had to be included for linux and for expert
+X   add it to the cvs and the build scripts
+X   also needs to be included for 1.4 on the mac
+X   probably a good idea to include on all
 
-_ netscape/javascript had to be included for linux and for expert
-_   add it to the cvs and the build scripts
-_   also needs to be included for 1.4 on the mac
-_   probably a good idea to include on all
+_ multiple jar export is broken
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067307030;start=0
 
 
 0068
@@ -708,6 +709,8 @@ dh 1 _ rename doesn't set focus to renamer area
    1 _   //for (int i = 0; i < 10; i++) {
    1 _   } catch (IOException e) { }
    1 _   need to ignore comments.. but not those inside quotes.. oog
+   1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+
    1 _ add ESC to font builder, and find
    1 _ font builder should open back up with the same selection
    1 _   maybe just hide it, just like find
