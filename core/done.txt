@@ -1,3 +1,12 @@
+0082 core
+X make jdkVersion, jdkVersionName, platform, platformName variables
+X additional note about screen sizes and displays
+X sto instead of stop in present mode
+X appears that opengl libraries weren't correctly added in 81?
+X requestFocus() now called on gl canvas
+X basic lights now work by default
+
+
 0081 core
 X background(PImage) now works in opengl
 X when running externally, applets don't always get placed properly

@@ -1,3 +1,18 @@
+0082 pde
+X shut off text anti-aliasing in the about box
+X implemented ryan alexander's grow box design
+o when centering applet on-screen, needs to check for multiple screens
+o   this is both for PApplet and PdeRuntime
+o   PApplet screen size constant is no good
+X   nope, because centers on default screen
+o revisions.txt et al aren't properly having LFs converted
+X   false alarm, was only on rev 69
+X set default window height to 600 so that it appears properly
+X   windows version was smashing it at the bottom when new prefs
+X don't allow saved window position to be outside the current display
+X change to how keywords are loaded
+
+
 0081 pde
 X need to make sure people add the OPENGL lib if using opengl mode
 X   throws an error message
