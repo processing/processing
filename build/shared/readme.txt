@@ -249,10 +249,17 @@ com.apple.mrj.application.JVMVersion=1.3.1
 and add a # in front of this line:
 com.apple.mrj.application.JVMVersion=1.3+
 
-in order to use the serial port under macosx, you'll need to install
-RXTX, the serial port driver. this is for more advanced users, and 
-the package is included with the p5 download. it includes its own
-instructions, check inside the 'serial' folder for details. 
+serial port.. we use rxtx (version 2.1_6) to handle serial i/o, which
+is included with the processing release. unlike previous releases
+(anything before 57), it no longer requires separate installation. 
+however, if this is the first time you're using rxtx, you'll need to
+run serial_setup.command (double-click it and follow the instructions)
+to make sure that things are properly set up (a few permissions
+need to be changed). if you're getting a "serial port is already in
+use by another application" it's possible that you haven't run this
+script. you may also need to reboot after running the script. on my
+machine, i installed the keyspan driver for my usb-serial converter,
+ran the script, and then rebooted in order for things to work. 
 
 naming of sketches.. on other platforms, you aren't allowed to type
 characters besides letters, numbers, and underscores for the names of
