@@ -68,7 +68,7 @@ import java.awt.image.*;
 import java.io.*;
 
 
-public class PGraphics extends PImage implements PMethods, PConstants {
+public class PGraphics extends PImage implements PConstants {
 
   /// width minus one (useful for many calculations)
   public int width1;

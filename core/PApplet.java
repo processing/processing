@@ -64,11 +64,30 @@ public class PApplet extends Applet
 
   public int mouseX, mouseY;
 
-  //public int pmouseX, pmouseY;
-  // used to set pmouseX/Y to mouseX/Y the first time
-  // mouseX/Y are used, otherwise pmouseX/Y would always
-  // be zero making a big jump. yech.
-  //boolean firstMouseEvent;
+  public int pmouseX, pmouseY;
+
+  /**
+   * previous mouseX/Y for the draw loop, separated out because this is
+   * separate from the pmouseX/Y when inside the mouse event handlers.
+   */
+  protected int dmouseX, dmouseY;
+
+  /**
+   * pmouseX/Y for the event handlers (mousePressed(), mouseDragged() etc)
+   * these are different because mouse events are queued to the end of
+   * draw, so the previous position has to be updated on each event,
+   * as opposed to the pmouseX/Y that's used inside draw, which is expected
+   * to be updated once per trip through draw().
+   */
+  protected int emouseX, emouseY;
+
+  /**
+   * used to set pmouseX/Y to mouseX/Y the first time mouseX/Y are used,
+   * otherwise pmouseX/Y are always zero, causing a nasty jump. just using
+   * (frameCount == 0) won't work since mouseXxxxx() may not be called
+   * until a couple frames into things.
+   */
+  boolean firstMouse;
 
   public boolean mousePressed;
   public MouseEvent mouseEvent;
@@ -206,7 +225,7 @@ public class PApplet extends Applet
     //loopMethod = true;
     looping = true;
     redraw = true;  // draw this guy once
-    //firstMouseEvent = true;
+    firstMouse = true;
 
     /*
     // call setup for changed params
@@ -777,9 +796,10 @@ public class PApplet extends Applet
 
             } else {
               preMethods.handle();
-              //for (int i = 0; i < libraryCount; i++) {
-              //  if (libraryCalls[i][PLibrary.PRE]) libraries[i].pre();
-              //}
+
+              pmouseX = dmouseX;
+              pmouseY = dmouseY;
+
               draw();
 
               // these are called *after* loop so that valid
@@ -787,6 +807,10 @@ public class PApplet extends Applet
               // be before, since a call to background() would wipe
               // out anything that had been drawn so far.
               dequeueMouseEvents();
+              // dmouseX/Y is updated only once per frame
+              dmouseX = mouseX;
+              dmouseY = mouseY;
+
               dequeueKeyEvents();
               if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                         " 2b endFrame");
@@ -913,8 +937,8 @@ public class PApplet extends Applet
    * overloaded to do something more useful.
    */
   protected void handleMouseEvent(MouseEvent event) {
-    //pmouseX = mouseX;
-    //pmouseY = mouseY;
+    pmouseX = emouseX;
+    pmouseY = emouseY;
 
     mouseX = event.getX();
     mouseY = event.getY();
@@ -931,11 +955,11 @@ public class PApplet extends Applet
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
-    //if (firstMouseEvent) {
-      //pmouseX = mouseX;
-      //pmouseY = mouseY;
-      //firstMouseEvent = false;
-    //}
+    if (firstMouse) {
+      pmouseX = mouseX;
+      pmouseY = mouseY;
+      firstMouse = false;
+    }
 
     switch (event.getID()) {
     case MouseEvent.MOUSE_PRESSED:
@@ -956,6 +980,8 @@ public class PApplet extends Applet
       mouseMoved();
       break;
     }
+    emouseX = mouseX;
+    emouseY = mouseY;
   }
 
 
