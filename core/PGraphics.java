@@ -239,6 +239,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   public float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   int vertex_count; // total number of vertices
   int vertex_start; // pos of first vertex of current shape in vertices array
+  // i think vertex_end is actually the last vertex in the current shape
+  // and is separate from vertex_count for occasions where drawing happens
+  // on endFrame with all the triangles being depth sorted
   int vertex_end;   // total number of vertex in current shape
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
@@ -249,6 +252,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   PLine line;  // used for drawing
   public int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
   public int lineCount;
+
+  public int pathCount;
+  public int pathOffset[] = new int[64];
+  public int pathLength[] = new int[64];
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
@@ -367,8 +374,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
    *
-   * @param  iwidth   viewport width
-   * @param  iheight  viewport height
+   * @param iwidth  viewport width
+   * @param iheight viewport height
    */
   public PGraphics(int iwidth, int iheight) {
     resize(iwidth, iheight);
@@ -422,18 +429,18 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     pixelCount = width * height;
     pixels = new int[pixelCount];
 
-    // because of a java 1.1 bug.. unless pixels are registered as
+    // because of a java 1.1 bug, pixels must be registered as
     // opaque before their first run, the memimgsrc will flicker
     // and run very slowly.
     for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
 
-    // setup MemoryImageSource
     cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
     mis = new MemoryImageSource(width, height, pixels, 0, width);
-    mis.setFullBufferUpdates(true); // does this help ipaq?
+    mis.setFullBufferUpdates(true);
     mis.setAnimated(true);
     image = Toolkit.getDefaultToolkit().createImage(mis);
 
+    // TODO don't allocate these until depth() is called
     zbuffer = new float[pixelCount];
     stencil = new int[pixelCount];
 
@@ -484,11 +491,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     light(1, cameraEyeX, cameraEyeY, cameraEyeDist, 255, 255, 255);
 
-    textureMode = IMAGE_SPACE;
-    rectMode    = CORNER;
-    ellipseMode = CENTER;
-    arcMode     = CENTER;
-    angleMode   = RADIANS;
+    textureMode(IMAGE_SPACE);
+    rectMode(CORNER);
+    ellipseMode(CENTER);
+    arcMode(CENTER);
+    angleMode(RADIANS);
 
     // no current font
     textFont = null;
@@ -914,16 +921,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     int stop = 0;
     int counter = 0;
 
-    // make lines for both stroke triangles
-    // and antialiased triangles
-    //boolean check = stroke; // || smooth;
-
-    // quick fix [rocha]
-    // antialiasing fonts with lines causes some artifacts
-    //if (textureImage != null && textureImage.format == ALPHA) {
-    //check = false;
-    //}
-
     if (stroke) {
       switch (shape) {
 
@@ -931,7 +928,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         {
           stop = vertex_end;
           for (int i = vertex_start; i < stop; i++) {
-            add_line(i,i);
+            add_path();  // total overkill for points
+            add_line(i, i);
           }
         }
         break;
@@ -942,63 +940,107 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         {
           // store index of first vertex
           int first = lineCount;
-          stop = vertex_end-1;
+          stop = vertex_end - 1;
           increment = (shape == LINES) ? 2 : 1;
 
+          // for LINE_STRIP and LINE_LOOP, make this all one path
+          if (shape != LINES) add_path();
+
           for (int i = vertex_start; i < stop; i+=increment) {
-            add_line(i,i+1);
+            // for LINES, make a new path for each segment
+            if (shape == LINES) add_path();
+            add_line(i, i+1);
           }
 
+          // for LINE_LOOP, close the loop with a final segment
           if (shape == LINE_LOOP) {
-            add_line(stop,lines[first][PA]);
+            add_line(stop, lines[first][VERTEX1]);
           }
         }
         break;
 
         case TRIANGLES:
+        {
+          for (int i = vertex_start; i < vertex_end; i += 3) {
+            add_path();
+            counter = i - vertex_start;
+            add_line(i+0, i+1);
+            add_line(i+1, i+2);
+            add_line(i+2, i+0);
+          }
+        }
+        break;
+
         case TRIANGLE_STRIP:
         {
           // first draw all vertices as a line strip
           stop = vertex_end-1;
 
+          add_path();
           for (int i = vertex_start; i < stop; i++) {
             counter = i - vertex_start;
             add_line(i,i+1);
-            if ((shape == TRIANGLES) && (counter%3 == 1)) {
-              i++;
-            }
           }
 
           // then draw from vertex (n) to (n+2)
           stop = vertex_end-2;
-          increment = (shape == TRIANGLE_STRIP) ? 1 : 3;
-
-          for (int i = vertex_start; i < stop; i+=increment) {
+          for (int i = vertex_start; i < stop; i++) {
+            add_path();
             add_line(i,i+2);
           }
         }
         break;
 
+        case TRIANGLE_FAN:
+        {
+          // this just draws a series of line segments
+          // from the center to each exterior point
+          for (int i = vertex_start + 1; i < vertex_end; i++) {
+            add_path();
+            add_line(vertex_start, i);
+          }
+
+          // then a single line loop around the outside.
+          add_path();
+          for (int i = vertex_start + 1; i < vertex_end-1; i++) {
+            add_line(i, i+1);
+          }
+          // closing the loop
+          add_line(vertex_end-1, vertex_start + 1);
+        }
+        break;
+
         case QUADS:
+        {
+          for (int i = vertex_start; i < vertex_end; i += 4) {
+            add_path();
+            counter = i - vertex_start;
+            add_line(i+0, i+1);
+            add_line(i+1, i+2);
+            add_line(i+2, i+3);
+            add_line(i+3, i+0);
+          }
+        }
+        break;
+
         case QUAD_STRIP:
         {
           // first draw all vertices as a line strip
           stop = vertex_end - 1;
 
+          add_path();
           for (int i = vertex_start; i < stop; i++) {
             counter = i - vertex_start;
-            add_line(i,i+1);
-            if ((shape == QUADS) && (counter%4 == 2)) {
-              i++;
-            }
+            add_line(i, i+1);
           }
 
           // then draw from vertex (n) to (n+3)
           stop = vertex_end-2;
-          increment = (shape == QUAD_STRIP) ? 2 : 4;
+          increment = 2;
 
-          for (int i=vertex_start; i < stop; i+=increment) {
-            add_line(i,i+3);
+          add_path();
+          for (int i = vertex_start; i < stop; i += increment) {
+            add_line(i, i+3);
           }
         }
         break;
@@ -1011,15 +1053,17 @@ public class PGraphics extends PImage implements PMethods, PConstants {
           int first = lineCount;
           stop = vertex_end - 1;
 
-          for (int i=vertex_start; i < stop; i++) {
-            add_line(i,i+1);
+          add_path();
+          for (int i = vertex_start; i < stop; i++) {
+            add_line(i, i+1);
           }
           // draw the last line connecting back to the first point in poly
-          add_line(stop,lines[first][PA]);
+          add_line(stop, lines[first][VERTEX1]);
         }
         break;
       }
     }
+
 
     // ------------------------------------------------------------------
     // CREATE TRIANGLES
@@ -1061,6 +1105,37 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         break;
       }
     }
+
+
+    // ------------------------------------------------------------------
+    // TRANSFORM / LIGHT / CLIP
+
+    light_and_transform();
+
+
+    // ------------------------------------------------------------------
+    // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
+
+    // if true, the shapes will be rendered on endFrame
+    if (hints[DEPTH_SORT]) {
+      shape = 0;
+      return;
+    }
+
+    if (fill) render_triangles();
+    if (stroke) render_lines();
+
+    shape = 0;
+  }
+
+
+  /**
+   * This method handles the transformation, lighting, and clipping
+   * operations for the shapes. Broken out as a separate function
+   * so that other renderers can override. For instance, with OpenGL,
+   * this section is all handled on the graphics card.
+   */
+  protected void light_and_transform() {
 
     // ------------------------------------------------------------------
     // 2D POINTS FROM MODEL (MX, MY, MZ) DIRECTLY TO VIEW SPACE (X, Y, Z)
@@ -1218,74 +1293,21 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         vx[Z] = (oz + ONE) / 2.0f;
       }
     }
+  }
 
-    // ------------------------------------------------------------------
-    // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
 
-    // if true, the shapes will be rendered on endFrame
-    if (hints[DEPTH_SORT]) {
-      shape = 0;
-      return;
+  protected final void add_path() {
+    if (pathCount == pathOffset.length) {
+      int temp1[] = new int[pathCount << 1];
+      System.arraycopy(pathOffset, 0, temp1, 0, pathCount);
+      pathOffset = temp1;
+      int temp2[] = new int[pathCount << 1];
+      System.arraycopy(pathLength, 0, temp2, 0, pathCount);
+      pathLength = temp2;
     }
-
-    if (fill) render_triangles();
-    if (stroke) render_lines();
-
-    /*
-    // render all triangles in current shape
-    if (fill) {
-      for (int i = 0; i < triangleCount; i ++) {
-        float a[] = vertices[triangles[i][VA]];
-        float b[] = vertices[triangles[i][VB]];
-        float c[] = vertices[triangles[i][VC]];
-        int index = triangles[i][TI];
-
-        if (textureImage != null) {
-          triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
-        }
-
-        triangle.setIntensities(a[R], a[G], a[B], a[A],
-                                b[R], b[G], b[B], b[A],
-                                c[R], c[G], c[B], c[A]);
-
-        triangle.setVertices(a[X], a[Y], a[Z],
-                             b[X], b[Y], b[Z],
-                             c[X], c[Y], c[Z]);
-
-        triangle.setIndex(index);
-
-        triangle.render();
-      }
-    }
-
-    // ------------------------------------------------------------------
-    // DRAW POINTS, LINES AND SHAPE STROKES
-
-    // draw all lines in current shape
-    if (stroke) {
-
-      for (int i = 0; i < lineCount; i ++) {
-        float a[] = vertices[lines[i][PA]];
-        float b[] = vertices[lines[i][PB]];
-        int index = lines[i][LI];
-
-        line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                            b[SR], b[SG], b[SB], b[SA]);
-
-        line.setVertices( a[X], a[Y], a[Z],
-                          b[X], b[Y], b[Z]);
-
-        line.setIndex(index);
-
-        line.draw();
-        //System.out.println("shoudla drawn");
-      }
-    }
-    */
-
-    //System.out.println("leaving endShape");
-    //shapeKind = 0;
-    shape = 0;
+    pathOffset[pathCount] = lineCount;
+    pathLength[pathCount] = 0;
+    pathCount++;
   }
 
 
@@ -1296,12 +1318,15 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       lines = temp;
       message(CHATTER, "allocating more lines " + lines.length);
     }
-    lines[lineCount][PA] = a;
-    lines[lineCount][PB] = b;
-    lines[lineCount][LI] = -1;
+    lines[lineCount][VERTEX1] = a;
+    lines[lineCount][VERTEX2] = b;
+    lines[lineCount][INDEX] = -1;
 
-    lines[lineCount][SM] = strokeCap | strokeJoin;
+    lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
     lineCount++;
+
+    // mark this piece as being part of the current path
+    pathLength[pathCount-1]++;
   }
 
 
@@ -1312,17 +1337,17 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       triangles = temp;
       message(CHATTER, "allocating more triangles " + triangles.length);
     }
-    triangles[triangleCount][VA] = a;
-    triangles[triangleCount][VB] = b;
-    triangles[triangleCount][VC] = c;
+    triangles[triangleCount][VERTEX1] = a;
+    triangles[triangleCount][VERTEX2] = b;
+    triangles[triangleCount][VERTEX3] = c;
 
     if (textureImage == null) {
-      triangles[triangleCount][TEX] = -1;
+      triangles[triangleCount][TEXTURE_INDEX] = -1;
     } else {
-      triangles[triangleCount][TEX] = texture_index;
+      triangles[triangleCount][TEXTURE_INDEX] = texture_index;
     }
 
-    triangles[triangleCount][TI] = shape_index;
+    triangles[triangleCount][INDEX] = shape_index;
     triangleCount++;
   }
 
@@ -1332,11 +1357,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   protected void render_triangles() {
     for (int i = 0; i < triangleCount; i ++) {
-      float a[] = vertices[triangles[i][VA]];
-      float b[] = vertices[triangles[i][VB]];
-      float c[] = vertices[triangles[i][VC]];
-      int tex = triangles[i][TEX];
-      int index = triangles[i][TI];
+      float a[] = vertices[triangles[i][VERTEX1]];
+      float b[] = vertices[triangles[i][VERTEX2]];
+      float c[] = vertices[triangles[i][VERTEX3]];
+      int tex = triangles[i][TEXTURE_INDEX];
+      int index = triangles[i][INDEX];
 
       triangle.reset();
 
@@ -1364,9 +1389,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   public void render_lines() {
     for (int i = 0; i < lineCount; i ++) {
-      float a[] = vertices[lines[i][PA]];
-      float b[] = vertices[lines[i][PB]];
-      int index = lines[i][LI];
+      float a[] = vertices[lines[i][VERTEX1]];
+      float b[] = vertices[lines[i][VERTEX2]];
+      int index = lines[i][INDEX];
 
       line.reset();
 
@@ -4764,12 +4789,16 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * Simpler macro for setting up a diffuse light at a position.
    * Turns on a diffuse light with the color passed in,
    * and sets that light's ambient and specular components to zero.
+   *
+   * (The variables are named red, green, blue instead of r, g, b
+   * because otherwise the compiler gets stuck on g.light() inside
+   * the auto-generated section of PApplet)
    */
   public void light(int num, float x, float y, float z,
-                    float r, float g, float b) {
+                    float red, float green, float blue) {
     lightPosition(num, x, y, z);
     lightAmbient(num, 0, 0, 0);
-    lightDiffuse(num, r, g, b);
+    lightDiffuse(num, red, green, blue);
     lightSpecular(num, 0, 0, 0);
     lightEnable(num);
   }

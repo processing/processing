@@ -150,6 +150,7 @@ public interface PConstants {
 
   static final int TRIANGLES       = (1 << 6) | 0;
   static final int TRIANGLE_STRIP  = (1 << 6) | 1;
+  static final int TRIANGLE_FAN    = (1 << 6) | 2;
 
   static final int QUADS           = (1 << 7) | 0;
   static final int QUAD_STRIP      = (1 << 7) | 1;
@@ -319,22 +320,17 @@ public interface PConstants {
 
   static final int VERTEX_FIELD_COUNT = 24;
 
-  // line  fields
 
-  static final int LI = 0; // shape index
-  static final int PA = 1; // point A
-  static final int PB = 2; // point B
-  static final int SM = 3; // stroke mode
+  // line & triangle fields (note how these overlap)
 
-  static final int LINE_FIELD_COUNT = 4;
+  static final int INDEX = 0;          // shape index
+  static final int VERTEX1 = 1;
+  static final int VERTEX2 = 2;
+  static final int VERTEX3 = 3;        // (triangles only)
+  static final int TEXTURE_INDEX = 4;  // (triangles only)
+  static final int STROKE_MODE = 3;    // (lines only)
+  static final int STROKE_WEIGHT = 4;  // (lines only)
 
-  // triangle  fields
-
-  static final int TI = 0;    // shape index
-  static final int VA = 1;    // point A
-  static final int VB = 2;    // point B
-  static final int VC = 3;    // point C
-  static final int TEX = 4;   // texture index
-
+  static final int LINE_FIELD_COUNT = 5;
   static final int TRIANGLE_FIELD_COUNT = 5;
 }
