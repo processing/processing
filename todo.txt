@@ -16,6 +16,8 @@ X   import javax.comm stuff as standard in kjc (but not export)
 X can't get fonts to load - tested working ok 
 X   bagel complaint: could not load font Univerx76.vlw.gz
 X   why the x? what's going on?
+X try using serial on macosx
+X   works, but about as well as the windows version used to
 
 
 pde
@@ -35,7 +37,6 @@ a _ set file type/creator for .pde files.. TEXTPde1
 a _ try using serial
 
 macosx
-a _ try using serial
 a _ test presentation mode for window sizing status
 
 macos
