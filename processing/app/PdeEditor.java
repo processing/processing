@@ -1030,7 +1030,7 @@ public class PdeEditor extends JFrame
       throw new PdeException(re.getMessage(), 
                              re.getLine() - 1, re.getColumn());
 
-    } catch (antlr.TokenStreamRecognitionException tsre) {
+    } catch (antlr.okenStreamRecognitionException tsre) {
       // while this seems to store line and column internally,
       // there doesn't seem to be a method to grab it.. 
       // so instead it's done using a regexp
@@ -1118,17 +1118,26 @@ public class PdeEditor extends JFrame
     //System.out.println("RUNNING");
     buttons.run();
 
+    // spew some blank lines so it's clear what's new on the console
     for (int i = 0; i < 10; i++) System.out.println();
 
     presenting = present;
-    try {
-      if (presenting) {
-        // wipe everything out with a bulbous screen-covering window 
-        presentationWindow.show();
-        presentationWindow.toFront();
-      }
+    if (presenting) {
+      // wipe everything out with a bulbous screen-covering window 
+      presentationWindow.show();
+      presentationWindow.toFront();
+    }
 
+    try {
       sketch.run();
+
+    } catch (PdeException e) {
+      error(e);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
       /*
       String program = textarea.getText();
@@ -1242,48 +1251,6 @@ public class PdeEditor extends JFrame
     //System.out.println("out of doRun()");
     // required so that key events go to the panel and <key> works
     //graphics.requestFocus();  // removed for pde    
-  }
-
-
-  class RunButtonWatcher implements Runnable {
-    Thread thread;
-
-    public RunButtonWatcher() {
-      thread = new Thread(this);
-      thread.start();
-    }
-
-    public void run() {
-      while (Thread.currentThread() == thread) {
-        if (runtime == null) {
-          stop();
-
-        } else {
-          if (runtime.applet != null) {
-            if (runtime.applet.finished) {
-              stop();
-            }
-            //buttons.running(!runtime.applet.finished);
-
-          } else if (runtime.process != null) {
-            //buttons.running(true);  // ??
-
-          } else {
-            stop();
-          }
-        } 
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException e) { }
-        //System.out.println("still inside runner thread");
-      }
-    }
-
-    public void stop() {
-      buttons.running(false);
-      thread = null;
-    }
-  }
 
 
   public void handleStop() {  // called by menu or buttons
@@ -1295,6 +1262,9 @@ public class PdeEditor extends JFrame
   }
 
 
+  /**
+   * Stop the applet but don't kill its window.
+   */
   public void doStop() {
     if (runtime != null) runtime.stop();
     if (watcher != null) watcher.stop();
@@ -1311,9 +1281,10 @@ public class PdeEditor extends JFrame
   }
 
 
-  // this is the former 'kill' function
-  // may just roll this in with the other code
-  // -> keep this around for closing the external window
+  /**
+   * Stop the applet and kill its window. When running in presentation
+   * mode, this will always be called instead of doStop().
+   */
   public void doClose() {
     //System.out.println("doclose1");
     if (presenting) {
@@ -1666,7 +1637,7 @@ public class PdeEditor extends JFrame
     try {
       //System.out.println("handleSave: results of getText");
       //System.out.print(s);
-
+ 
       BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes())));
 
       PrintWriter writer = 
