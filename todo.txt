@@ -42,6 +42,8 @@ _ moving sketchbook folder for lab environments
 _ lots of ui ideas from adrien in the bboard
 
 pde
+_ locking up on run (under win2k? others?) 
+_   rare but present, every 100th time or so
 _ can't copy text from console directly
 _ file names with a space get "_ " instead of a space
 _ add option for running with external editor
