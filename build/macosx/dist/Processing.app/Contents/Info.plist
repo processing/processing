@@ -22,6 +22,30 @@
 	<string>processing.icns</string>
 	<key>CFBundleIdentifier</key> 
 	<string>org.processing.app</string>
+        <key>CFBundleDocumentTypes</key>
+        <array>
+            <dict>
+                <key>CFBundleTypeExtensions</key>
+                <array>
+                    <string>pde</string>
+                    <string>java</string>
+                </array>
+                <key>CFBundleTypeIconFile</key>
+                <string>pde.icns</string>
+      	        <key>CFBundleTypeName</key>
+        	<string>Processing Source File</string>
+                <key>CFBundleTypeMIMETypes</key>
+                <array>
+                    <string>text/plain</string>
+                </array>
+                <key>CFBundleTypeOSTypes</key>
+                <array>
+                    <string>TEXT</string>
+                </array>
+                <key>CFBundleTypeRole</key>
+                <string>Editor</string>
+            </dict>
+        </array>
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>

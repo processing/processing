@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -44,12 +44,12 @@ import javax.swing.undo.*;
 
   on first run:
   processing.properties is created in user.home
-  it contains the contents of 
+  it contains the contents of
   preferences.txt + pde_platform.properties
   and then begins writing additional sketch.properties stuff
 
-  this class no longer uses the Properties class, since 
-  properties files are iso8859-1, which is highly likely to 
+  this class no longer uses the Properties class, since
+  properties files are iso8859-1, which is highly likely to
   be a problem when trying to save sketch folders and locations
  */
 public class PdePreferences extends JComponent {
@@ -114,7 +114,7 @@ public class PdePreferences extends JComponent {
       load(PdeBase.getStream("preferences.txt"));
 
     } catch (Exception e) {
-      PdeBase.showError(null, "Could not read default settings.\n" + 
+      PdeBase.showError(null, "Could not read default settings.\n" +
                         "You'll need to reinstall Processing.", e);
     }
 
@@ -146,12 +146,12 @@ public class PdePreferences extends JComponent {
     //File home = new File(System.getProperty("user.home"));
     //File processingHome = new File(home, "Processing");
     //preferencesFile = new File(home, PREFS_FILE);
-    preferencesFile = PdeBase.getProcessingHome(PREFS_FILE);
+    preferencesFile = PdeBase.getProcessingDataFile(PREFS_FILE);
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
-      save();  
+      save();
 
     } else {
       // load the previous preferences file
@@ -160,7 +160,7 @@ public class PdePreferences extends JComponent {
         load(new FileInputStream(preferencesFile));
 
       } catch (Exception ex) {
-        PdeBase.showError("Error reading preferences", 
+        PdeBase.showError("Error reading preferences",
                           "Error reading the preferences file. " +
                           "Please delete (or move)\n" +
                           preferencesFile.getAbsolutePath() +
@@ -192,7 +192,7 @@ public class PdePreferences extends JComponent {
 
     // [ ] Prompt for name and folder when creating new sketch
 
-    sketchPromptBox = 
+    sketchPromptBox =
       new JCheckBox("Prompt for name when opening or creating a sketch");
     pain.add(sketchPromptBox);
     d = sketchPromptBox.getPreferredSize();
@@ -211,7 +211,7 @@ public class PdePreferences extends JComponent {
     top += d.height + GUI_BETWEEN;
 
 
-    // Sketchbook location: 
+    // Sketchbook location:
     // [...............................]  [ Browse ]
 
     label = new JLabel("Sketchbook location:");
@@ -243,14 +243,14 @@ public class PdePreferences extends JComponent {
 
     // take max height of all components to vertically align em
     vmax = Math.max(d.height, d2.height);
-    //label.setBounds(left, top + (vmax-d.height)/2, 
+    //label.setBounds(left, top + (vmax-d.height)/2,
     //              d.width, d.height);
 
     //h = left + d.width + GUI_BETWEEN;
-    sketchbookLocationField.setBounds(left, top + (vmax-d.height)/2, 
+    sketchbookLocationField.setBounds(left, top + (vmax-d.height)/2,
                                       d.width, d.height);
     h = left + d.width + GUI_SMALL; //GUI_BETWEEN;
-    button.setBounds(h, top + (vmax-d2.height)/2, 
+    button.setBounds(h, top + (vmax-d2.height)/2,
                      d2.width, d2.height);
 
     right = Math.max(right, h + d2.width + GUI_BIG);
@@ -259,7 +259,7 @@ public class PdePreferences extends JComponent {
 
     // [ ] Enable export to "Library"
 
-    exportLibraryBox = new JCheckBox("Enable advanced \"Library\" features" + 
+    exportLibraryBox = new JCheckBox("Enable advanced \"Library\" features" +
                                      " (requires restart)");
     exportLibraryBox.setEnabled(false);
     pain.add(exportLibraryBox);
@@ -282,11 +282,11 @@ public class PdePreferences extends JComponent {
     // More preferences are in the ...
 
     /*
-    String blather = 
-      "More preferences can be edited directly\n" + 
+    String blather =
+      "More preferences can be edited directly\n" +
       "in the file " + preferencesFile.getAbsolutePath();
       //"More preferences are in the 'lib' folder inside text files\n" +
-      //"named preferences.txt and pde_" + 
+      //"named preferences.txt and pde_" +
       //PdeBase.platforms[PdeBase.platform] + ".properties";
 
     JTextArea textarea = new JTextArea(blather);
@@ -314,7 +314,7 @@ public class PdePreferences extends JComponent {
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
 
-    right = Math.max(right, left + d.width + GUI_BETWEEN + 
+    right = Math.max(right, left + d.width + GUI_BETWEEN +
                      BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
 
     button = new JButton(PROMPT_OK);
@@ -424,7 +424,7 @@ public class PdePreferences extends JComponent {
 
 
   public void load(InputStream input) throws IOException {
-    BufferedReader reader = 
+    BufferedReader reader =
       new BufferedReader(new InputStreamReader(input));
 
     //table = new Hashtable();
@@ -499,7 +499,7 @@ public class PdePreferences extends JComponent {
       skprops.put("last.sketch.directory", sketchDir.getAbsolutePath());
       //skprops.put("user.name", userName);
 
-      skprops.put("last.divider.location", 
+      skprops.put("last.divider.location",
                   String.valueOf(splitPane.getDividerLocation()));
 
       //
@@ -510,7 +510,7 @@ public class PdePreferences extends JComponent {
 
       // save() is deprecated, and didn't properly
       // throw exceptions when it wasn't working
-      skprops.store(output, "Settings for processing. " + 
+      skprops.store(output, "Settings for processing. " +
                     "See lib/preferences.txt for defaults.");
 
       // need to close the stream.. didn't do this before
@@ -540,7 +540,7 @@ public class PdePreferences extends JComponent {
     //properties.getProperty(attribute) : applet.getParameter(attribute);
     String value = properties.getProperty(attribute);
 
-    return (value == null) ? 
+    return (value == null) ?
       defaultValue : value;
     */
   }
@@ -585,13 +585,13 @@ public class PdePreferences extends JComponent {
 
     try {
       return Integer.parseInt(value);
-    } catch (NumberFormatException e) { 
+    } catch (NumberFormatException e) {
       // ignored will just fall through to returning the default
       System.err.println("expecting an integer: " + attribute + " = " + value);
     }
     return defaultValue;
     //if (value == null) return defaultValue;
-    //return (value == null) ? defaultValue : 
+    //return (value == null) ? defaultValue :
     //Integer.parseInt(value);
     */
   }
@@ -622,7 +622,7 @@ public class PdePreferences extends JComponent {
     String r = Integer.toHexString(what.getRed());
     String g = Integer.toHexString(what.getGreen());
     String b = Integer.toHexString(what.getBlue());
-    set(attr, "#" + r.substring(r.length() - 2) + 
+    set(attr, "#" + r.substring(r.length() - 2) +
         g.substring(g.length() - 2) + b.substring(b.length() - 2));
   }
 
@@ -634,8 +634,8 @@ public class PdePreferences extends JComponent {
     StringTokenizer st = new StringTokenizer(str, ",");
     String fontname = st.nextToken();
     String fontstyle = st.nextToken();
-    return new Font(fontname, 
-                    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) | 
+    return new Font(fontname,
+                    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) |
                     ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
                     Integer.parseInt(st.nextToken()));
   }
@@ -682,11 +682,11 @@ public class PdePreferences extends JComponent {
     }
 
     vmax = Math.max(d.height, d2.height);
-    label.setBounds(left, top + (vmax-d.height)/2, 
+    label.setBounds(left, top + (vmax-d.height)/2,
                     d.width, d.height);
     h = left + d.width + BETWEEN;
-    combo.setBounds(h, top + (vmax-d2.height)/2, 
-                    d2.width, d2.height);    
+    combo.setBounds(h, top + (vmax-d2.height)/2,
+                    d2.width, d2.height);
     right = Math.max(right, h + d2.width + BIG);
     top += vmax + BETWEEN;
     */
@@ -705,7 +705,7 @@ public class PdePreferences extends JComponent {
     //boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
     //editor.setExternalEditor(ee);
 
-    ///} catch (Exception e) { 
+    ///} catch (Exception e) {
       // this exception doesn't matter, it's just the normal course of things
       // the app reaches here when no sketch.properties file exists
       //e.printStackTrace();

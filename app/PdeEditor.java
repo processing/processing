@@ -42,7 +42,8 @@ import com.apple.mrj.*;
 
 
 public class PdeEditor extends JFrame
-implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
+  implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler,
+             MRJOpenDocumentHandler //, MRJOpenApplicationHandler
 {
   // yeah
   static final String WINDOW_TITLE = "Processing";
@@ -120,13 +121,15 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   public PdeEditor() {
     super(WINDOW_TITLE + " - " + PdeBase.VERSION);
-    // this is needed by just about everything else
-    preferences = new PdePreferences();
 
     // #@$*(@#$ apple.. always gotta think different
     MRJApplicationUtils.registerAboutHandler(this);
     MRJApplicationUtils.registerPrefsHandler(this);
     MRJApplicationUtils.registerQuitHandler(this);
+    MRJApplicationUtils.registerOpenDocumentHandler(this);
+
+    // this is needed by just about everything else
+    preferences = new PdePreferences();
 
     // set the window icon
     try {
@@ -368,18 +371,23 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     }
 
 
-    // last sketch that was in use
+    // last sketch that was in use, or used to launch the app
 
-    //String sketchName = PdePreferences.get("last.sketch.name");
-    String sketchPath = PdePreferences.get("last.sketch.path");
-    //PdeSketch sketchTemp = new PdeSketch(sketchPath);
-
-    if ((sketchPath != null) && (new File(sketchPath)).exists()) {
-      // don't check modified because nothing is open yet
-      handleOpen2(sketchPath);
+    if (PdeBase.openedAtStartup != null) {
+      handleOpen2(PdeBase.openedAtStartup);
 
     } else {
-      handleNew2(true);
+      //String sketchName = PdePreferences.get("last.sketch.name");
+      String sketchPath = PdePreferences.get("last.sketch.path");
+      //PdeSketch sketchTemp = new PdeSketch(sketchPath);
+
+      if ((sketchPath != null) && (new File(sketchPath)).exists()) {
+        // don't check modified because nothing is open yet
+        handleOpen2(sketchPath);
+
+      } else {
+        handleNew2(true);
+      }
     }
 
 
@@ -1031,19 +1039,25 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       presentationWindow.toFront();
     }
 
-    try {
-      if (!sketch.handleRun()) return;
+    final SwingWorker worker = new SwingWorker() {
+        public Object construct() {
+          try {
+            if (!sketch.handleRun()) return null;
 
-      runtime = new PdeRuntime(sketch, this);
-      runtime.start(presenting ? presentLocation : appletLocation);
-      watcher = new RunButtonWatcher();
+            runtime = new PdeRuntime(sketch, PdeEditor.this);
+            runtime.start(presenting ? presentLocation : appletLocation);
+            watcher = new RunButtonWatcher();
 
-    } catch (PdeException e) {
-      error(e);
+          } catch (PdeException e) {
+            error(e);
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          return null;  // needn't return anything
+        }
+      };
+    worker.start();
     //sketch.cleanup();  // where does this go?
   }
 
@@ -1272,6 +1286,16 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
                         "An error occurred while creating\n" +
                         "a new sketch. Processing must now quit.", e);
     }
+  }
+
+
+  /**
+   * This is the implementation of the MRJ open document event,
+   * and the Windows XP open document will be routed through this too.
+   */
+  public void handleOpenFile(File file) {
+    //System.out.println("handling open file: " + file);
+    handleOpen(file.getAbsolutePath());
   }
 
 
