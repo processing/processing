@@ -4,8 +4,8 @@
   PdeCompiler - default compiler class that connects to jikes
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03 
-  Ben Fry, Massachusetts Institute of Technology and 
+  Copyright (c) 2001-03
+  Ben Fry, Massachusetts Institute of Technology and
   Casey Reas, Interaction Design Institute Ivrea
 
   This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -31,9 +31,9 @@ import java.util.zip.*;
 import javax.swing.*;
 
 public class PdeCompiler implements PdeMessageConsumer {
-  static final String BUGS_URL = 
+  static final String BUGS_URL =
     "http://processing.org/bugs/";
-  static final String SUPER_BADNESS = 
+  static final String SUPER_BADNESS =
     "Compiler error, please submit this code to " + BUGS_URL;
 
   PdeSketch sketch;
@@ -46,7 +46,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   //PdeEditor editor;
 
   /*
-  public PdeCompiler(String buildPath, String className, 
+  public PdeCompiler(String buildPath, String className,
                      File includeFolder, PdeEditor editor) {
     this.buildPath = buildPath;
     this.includeFolder = includeFolder;
@@ -61,12 +61,12 @@ public class PdeCompiler implements PdeMessageConsumer {
   public PdeCompiler() { }  // consider this a warning, you werkin soon.
 
 
-  public boolean compile(PdeSketch sketch, String buildPath) 
+  public boolean compile(PdeSketch sketch, String buildPath)
     throws PdeException {
 
     this.sketch = sketch;
     this.buildPath = buildPath;
-    
+
     // the pms object isn't used for anything but storage
     PdeMessageStream pms = new PdeMessageStream(this);
 
@@ -80,7 +80,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       // this doesn't help much.. also java 1.4 seems to not support
       // -source 1.1 for javac, and jikes seems to also have dropped it.
       // for versions of jikes that don't complain, "final int" inside
-      // a function doesn't throw an error, so it could just be a 
+      // a function doesn't throw an error, so it could just be a
       // ms jvm error that this sort of thing doesn't work. blech.
       //"-source",
       //"1.1",
@@ -120,16 +120,17 @@ public class PdeCompiler implements PdeMessageConsumer {
     System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
     // append each of the files to the command string
     for (int i = 0; i < preprocCount; i++) {
-      command[baseCommand.length + i] = 
+      command[baseCommand.length + i] =
         buildPath + File.separator + preprocNames[i];
     }
+    //PApplet.printarr(command);
 
     /*
     String command[] = new String[baseCommand.length + sketch.codeCount];
     System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
     // append each of the files to the command string
     for (int i = 0; i < sketch.codeCount; i++) {
-      command[baseCommand.length + i] = 
+      command[baseCommand.length + i] =
         buildPath + File.separator + sketch.code[i].preprocName;
     }
     */
@@ -142,15 +143,15 @@ public class PdeCompiler implements PdeMessageConsumer {
     secondErrorFound = false;
 
     int result = 0; // pre-initialized to quiet a bogus warning from jikes
-    try { 
-      // execute the compiler, and create threads to deal 
+    try {
+      // execute the compiler, and create threads to deal
       // with the input and error streams
       //
       Process process = Runtime.getRuntime().exec(command);
       new PdeMessageSiphon(process.getInputStream(), this);
       new PdeMessageSiphon(process.getErrorStream(), this);
 
-      // wait for the process to finish.  if interrupted 
+      // wait for the process to finish.  if interrupted
       // before waitFor returns, continue waiting
       //
       boolean compiling = true;
@@ -184,7 +185,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     // to digest it, and the fact that they have five stomaches.
     //
     //System.out.println("throwing up " + exception);
-    if (exception != null) throw exception; 
+    if (exception != null) throw exception;
 
     // if the result isn't a known, expected value it means that something
     // is fairly wrong, one possibility is that jikes has crashed.
@@ -205,20 +206,20 @@ public class PdeCompiler implements PdeMessageConsumer {
   boolean secondErrorFound;
 
   /**
-   * Part of the PdeMessageConsumer interface, this is called 
-   * whenever a piece (usually a line) of error message is spewed 
+   * Part of the PdeMessageConsumer interface, this is called
+   * whenever a piece (usually a line) of error message is spewed
    * out from the compiler. The errors are parsed for their contents
    * and line number, which is then reported back to PdeEditor.
    */
   public void message(String s) {
-    // This receives messages as full lines, so a newline needs 
+    // This receives messages as full lines, so a newline needs
     // to be added as they're printed to the console.
     System.err.println(s);
 
     // ignore cautions
     if (s.indexOf("Caution") != -1) return;
 
-    // jikes always uses a forward slash character as its separator, 
+    // jikes always uses a forward slash character as its separator,
     // so replace any platform-specific separator characters before
     // attemping to compare
     //
@@ -249,7 +250,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       // skip past the path and parse the int after the first colon
       //
-      String s1 = s.substring(partialStartIndex + 
+      String s1 = s.substring(partialStartIndex +
                               partialTempPath.length() + 1);
       int colon = s1.indexOf(':');
       int lineNumber = Integer.parseInt(s1.substring(0, colon));
@@ -287,14 +288,14 @@ public class PdeCompiler implements PdeMessageConsumer {
         //err += "error:".length();
         String description = s1.substring(err + "Error:".length());
         description = description.trim();
-        
+
         String hasLoop = "The method \"void loop();\" with default access";
         if (description.indexOf(hasLoop) != -1) {
-          description = 
+          description =
             "Rename loop() to draw() in Processing 0070 and higher";
         }
 
-        String constructorProblem = 
+        String constructorProblem =
           "No applicable overload was found for a constructor of type";
         if (description.indexOf(constructorProblem) != -1) {
           //"simong.particles.ParticleSystem". Perhaps you wanted the overloaded version "ParticleSystem();" instead?
@@ -313,17 +314,17 @@ public class PdeCompiler implements PdeMessageConsumer {
         if (description.indexOf(classpathProblem) != -1) {
           if (description.indexOf("quicktime/std") != -1) {
             // special case for the quicktime libraries
-            description = 
+            description =
               "To run sketches that use the Processing video library, " +
               "you must first install QuickTime for Java.";
 
           } else {
             int nextSentence = description.indexOf(". Package") + 2;
-            description = 
-              description.substring(nextSentence, description.indexOf(':')) + 
+            description =
+              description.substring(nextSentence, description.indexOf(':')) +
               " the code folder or in any libraries.";
           }
-        }        
+        }
 
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);
@@ -341,9 +342,9 @@ public class PdeCompiler implements PdeMessageConsumer {
       // this isn't the start of an error line, so don't attempt to parse
       // a line number out of it.
 
-      // if the second error hasn't been discovered yet, these lines 
-      // are probably associated with the first error message, 
-      // which is already in the status bar, and are likely to be 
+      // if the second error hasn't been discovered yet, these lines
+      // are probably associated with the first error message,
+      // which is already in the status bar, and are likely to be
       // of interest to the user, so spit them to the console.
       //
       if (!secondErrorFound) {
@@ -359,7 +360,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     if (bootClassPath == null) {
       String additional = "";
       if (PdeBase.platform == PdeBase.MACOSX) {
-        additional = 
+        additional =
           contentsToClassPath(new File("/System/Library/Java/Extensions/"));
       }
       bootClassPath =  System.getProperty("sun.boot.class.path") + additional;
@@ -368,16 +369,16 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
-  /// 
+  ///
 
 
   /**
-   * Return the path for a folder, with appended paths to 
+   * Return the path for a folder, with appended paths to
    * any .jar or .zip files inside that folder.
    * This will prepend a colon (or whatever the path separator is)
    * so that it can be directly appended to another path string.
    *
-   * This will always add the root folder as well, and doesn't bother 
+   * This will always add the root folder as well, and doesn't bother
    * checking to see if there are any .class files in the folder or
    * within a subfolder.
    */
@@ -407,7 +408,7 @@ public class PdeCompiler implements PdeMessageConsumer {
           abuffer.append(list[i]);
         }
       }
-    } catch (IOException e) { 
+    } catch (IOException e) {
       e.printStackTrace();  // this would be odd
     }
     //System.out.println("included path is " + abuffer.toString());
@@ -426,14 +427,14 @@ public class PdeCompiler implements PdeMessageConsumer {
    */
   static public String[] packageListFromClassPath(String path) {
     Hashtable table = new Hashtable();
-    String pieces[] = 
+    String pieces[] =
       PApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       //System.out.println("checking piece '" + pieces[i] + "'");
       if (pieces[i].length() == 0) continue;
 
-      if (pieces[i].toLowerCase().endsWith(".jar") || 
+      if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
         packageListFromZip(pieces[i], table);
 
@@ -441,8 +442,8 @@ public class PdeCompiler implements PdeMessageConsumer {
         File dir = new File(pieces[i]);
         if (dir.exists() && dir.isDirectory()) {
           packageListFromFolder(dir, null, table);
-          //importCount = magicImportsRecursive(dir, null, 
-          //                                  table); 
+          //importCount = magicImportsRecursive(dir, null,
+          //                                  table);
                                               //imports, importCount);
         }
       }
@@ -455,6 +456,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       output[index++] = ((String) e.nextElement()).replace('/', '.');
     }
     //System.arraycopy(imports, 0, output, 0, importCount);
+    //PApplet.printarr(output);
     return output;
   }
 
@@ -471,7 +473,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
           if (name.endsWith(".class")) {
             int slash = name.lastIndexOf('/');
-            if (slash == -1) continue; 
+            if (slash == -1) continue;
 
             String pname = name.substring(0, slash);
             if (table.get(pname) == null) {
@@ -489,13 +491,13 @@ public class PdeCompiler implements PdeMessageConsumer {
 
   /**
    * Make list of package names by traversing a directory hierarchy.
-   * Each time a class is found in a folder, add its containing set 
-   * of folders to the package list. If another folder is found, 
+   * Each time a class is found in a folder, add its containing set
+   * of folders to the package list. If another folder is found,
    * walk down into that folder and continue.
    */
-  static private void packageListFromFolder(File dir, String sofar, 
+  static private void packageListFromFolder(File dir, String sofar,
                                             Hashtable table) {
-                                          //String imports[], 
+                                          //String imports[],
                                           //int importCount) {
     //System.err.println("checking dir '" + dir + "'");
     boolean foundClass = false;
@@ -506,12 +508,12 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       File sub = new File(dir, files[i]);
       if (sub.isDirectory()) {
-        String nowfar = 
+        String nowfar =
           (sofar == null) ? files[i] : (sofar + "." + files[i]);
         packageListFromFolder(sub, nowfar, table);
         //System.out.println(nowfar);
         //imports[importCount++] = nowfar;
-        //importCount = magicImportsRecursive(sub, nowfar, 
+        //importCount = magicImportsRecursive(sub, nowfar,
         //                                  imports, importCount);
       } else if (!foundClass) {  // if no classes found in this folder yet
         if (files[i].endsWith(".class")) {
@@ -525,9 +527,9 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
   /*
-  static public int magicImportsRecursive(File dir, String sofar, 
+  static public int magicImportsRecursive(File dir, String sofar,
                                           Hashtable table) {
-                                          //String imports[], 
+                                          //String imports[],
                                           //int importCount) {
     System.err.println("checking dir '" + dir + "'");
     String files[] = dir.list();
@@ -536,12 +538,12 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       File sub = new File(dir, files[i]);
       if (sub.isDirectory()) {
-        String nowfar = (sofar == null) ? 
+        String nowfar = (sofar == null) ?
           files[i] : (sofar + "." + files[i]);
         //System.out.println(nowfar);
         imports[importCount++] = nowfar;
 
-        importCount = magicImportsRecursive(sub, nowfar, 
+        importCount = magicImportsRecursive(sub, nowfar,
                                             imports, importCount);
       }
     }

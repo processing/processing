@@ -24,9 +24,10 @@
 
 
 public class PdeException extends Exception {
-  int file = -1;
-  int line = -1;
-  int column = -1;
+  public int file = -1;
+  public int line = -1;
+  public int column = -1;
+  public boolean hideStackTrace;
 
   public PdeException() { }
 
@@ -52,7 +53,14 @@ public class PdeException extends Exception {
     this.column = column;
   }
 
-  // make static so that super() can call it
+
+  /**
+   * Nix the java.lang crap out of an exception message 
+   * because it scares the children.
+   *
+   * This function must be static to be used with super() 
+   * in each of the constructors above.
+   */
   static public final String massage(String msg) {
     if (msg.indexOf("java.lang.") == 0) {
       //int dot = msg.lastIndexOf('.');
@@ -60,5 +68,12 @@ public class PdeException extends Exception {
     }
     return msg;
     //return (dot == -1) ? msg : msg.substring(dot+1);
+  }
+
+
+  public void printStackTrace() {
+    if (!hideStackTrace) {
+      super.printStackTrace();
+    }
   }
 }

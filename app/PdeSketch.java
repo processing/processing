@@ -1007,7 +1007,7 @@ public class PdeSketch {
   protected String build(String buildPath, String suggestedClassName)
     throws PdeException {
 
-    //String importPackageList[] = null;
+    String codeFolderPackages[] = null;
 
     String javaClassPath = System.getProperty("java.class.path");
     // remove quotes if any.. this is an annoying thing on windows
@@ -1025,10 +1025,28 @@ public class PdeSketch {
     //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
-      classPath += File.pathSeparator +
-        PdeCompiler.contentsToClassPath(codeFolder);
-      //importPackageList = PdeCompiler.packageListFromClassPath(classPath);
+
+      //classPath += File.pathSeparator +
+      //PdeCompiler.contentsToClassPath(codeFolder);
+      classPath =
+        PdeCompiler.contentsToClassPath(codeFolder) +
+        File.pathSeparator + classPath;
+
+      //codeFolderPackages = PdeCompiler.packageListFromClassPath(classPath);
+      //codeFolderPackages = PdeCompiler.packageListFromClassPath(codeFolder);
       libraryPath = codeFolder.getAbsolutePath();
+
+      // get a list of .jar files in the "code" folder
+      // (class files in subfolders should also be picked up)
+      String codeFolderClassPath =
+        PdeCompiler.contentsToClassPath(codeFolder);
+      // get list of packages found in those jars
+      codeFolderPackages =
+        PdeCompiler.packageListFromClassPath(codeFolderClassPath);
+      //PApplet.println(libraryPath);
+      //PApplet.println("packages:");
+      //PApplet.printarr(codeFolderPackages);
+
     } else {
       // check to see if multiple files that include a .java file
       externalRuntime = false;
@@ -1036,7 +1054,7 @@ public class PdeSketch {
         if (code[i].flavor == JAVA) externalRuntime = true;
       }
       //externalRuntime = (codeCount > 1);  // may still be set true later
-      //importPackageList = null;
+      //codeFolderPackages = null;
       libraryPath = "";
     }
 
@@ -1074,10 +1092,10 @@ public class PdeSketch {
       // if (i != 0) preproc will fail if a pde file is not
       // java mode, since that's required
       String className =
+      //  preprocessor.write(bigCode.toString(), buildPath,
+      //                   suggestedClassName);
         preprocessor.write(bigCode.toString(), buildPath,
-                           suggestedClassName);
-      //preprocessor.write(bigCode.toString(), buildPath,
-      //                   suggestedClassName, importPackageList);
+                           suggestedClassName, codeFolderPackages);
       if (className == null) {
         throw new PdeException("Could not find main class");
         // this situation might be perfectly fine,
@@ -1179,10 +1197,10 @@ public class PdeSketch {
       String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
       //System.out.println("found package " + entry);
       File libFolder = (File) PdeSketchbook.importToLibraryTable.get(entry);
-      //System.out.println("  found lib folder " + libFolder);
+
       if (libFolder == null) {
-        throw new PdeException("Could not find library for " + entry);
-        //return null;
+        //throw new PdeException("Could not find library for " + entry);
+        continue;
       }
 
       importedLibraries.add(libFolder);

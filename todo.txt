@@ -4,6 +4,14 @@ o particle examples c & d don't have their extra files
 o let's not call it 'expert', let's just say w/o java
 X new thread-safer version of the PdeEditorConsole
 X add build for particles lib
+X fix a bug where 'code' folder was no longer working
+X   code folder had been completely disabled
+X some error messages (i.e. DLL missing) not propogating up
+X   change PdeRuntime to pass all messages, parse later
+
+//
+
+MESS TO SORT
 
 _ make sure that the preproc stuff gets built once
 _   especially straight out of cvs
@@ -14,9 +22,6 @@ _   zip, unzip, jikes, etc
 macosx
 _ resize box intrudes on the scroller for the console area
 _ horizontal scroller is always present
-
-
-//
 
 _ creating sketchbook / lab situations
 _   test to see if it's possible to write to "My Documents"
@@ -378,6 +383,9 @@ BUGS / Preprocessor
    1 _   but right now there's a hack to add a CR in PdePreprocessor
    1 _ return (int(5.5)) causes an error
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083624993;start=0
+   1 _ random, single slash in the code doesn't throw an error
+   1 _   (just gets removed by the preprocessor)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1099371066;start=0
 
 
 PDE / Font Builder
