@@ -23,12 +23,11 @@ X   add framerate to colored things list
 
 
 0050
-_ weirdness with mac swiss-german keyboard on []{}|
-_ several examples broken (note from creas) in bugs.txt
-
 _ go through the bboard and make sure everything up to date here
 _   see if moved topics need to be deleted as well
 _     (log in from another machine as guest)
+_ weirdness with mac swiss-german keyboard on []{}|
+_ several examples broken (note from creas) in bugs.txt
 
 
 ////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0048 - 7 JANUARY 2003
+RELEASE 0049 - 26 JANUARY 2003
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -138,14 +138,16 @@ keep, but some of the larger ones that we know about:
   kill the java runtime and restart your app. this will slowly be
   ironed out. 
 
-- there is a report of the blinking text caret disappearing on
-  windows xp.. hasn't been verified just yet.. 
+- some examples seem to be broken, this will be ironed out for 0050
+
+- a couple tweaks with the syntax of 'color' statements are needed,
+  this is related to the above
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-GENERAL NOTES / COMMON MISTAKES
+GENERAL NOTES / COMMON ISSUES
 
 - size() must use numbers, not variables. this is because of how
   the size command is interpreted by proce55ing. 
