@@ -112,6 +112,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           //, "2>", "C:\\net2.txt"
         };
         //PApplet.printarr(command);
+        //PApplet.println(PApplet.join(command, " "));
 
         //for (int i = 0; i < command.length; i++) {
         //  System.out.println(i + " = " + command[i]);
