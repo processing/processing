@@ -61,7 +61,8 @@ else
   #cp ../../bagel/opengl/libGL4JavaJauGljJNI13.jnilib work/
 
   # to have a copy of this guy around for messing with
-  cp -a dist/Processing.app work/
+  #cp -a dist/Processing.app work/   # #@$(* bsd switches
+  cp -dpR dist/Processing.app work/
   #cd work/Processing.app
   #find . -name "CVS" -depth -exec rm {} \;
   #cd ../..
@@ -71,7 +72,15 @@ else
   cp dist/jikes work/
   chmod +x work/jikes
 
-  echo
+  # build classes/grammar for preprocessor
+  cd preprocessor
+  # first build the default java goop
+  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
+  # now build the pde stuff that extends the java classes
+  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
+  cd ..
+
+  #echo
 fi
 
 
@@ -114,6 +123,7 @@ cd app
 
 
 # disabled these guys temporarily
+# instead doing it once, when the 'work' dir is built
 #cd preprocessor
 # first build the default java goop
 #java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
