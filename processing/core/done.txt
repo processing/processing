@@ -1,3 +1,11 @@
+0072 core
+X make m00, m01 etc public
+X hack to make loadImage() work 
+X   cache settings are ignored, may be slow as hell
+X make hints[] no longer static
+X   they weren't properly resetting
+
+
 0071 core
 X properly swap alpha values when lines need to be rendered backwards
 X make cursor() commands public
