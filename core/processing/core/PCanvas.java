@@ -343,51 +343,51 @@ public class PCanvas extends Canvas {
                     //// insertion sort of edges from top-left to bottom right
                     Vector edges = new Vector();
                     int edgeCount = 0;
-                    Edge e1, e2;
+                    int[] e1, e2;
                     int i, j;
                     int yMin = Integer.MAX_VALUE;
                     int yMax = Integer.MIN_VALUE;
                     for (i = startIndex; i <= endIndex; i += 2) {
-                        e1 = new Edge();
+                        e1 = new int[EDGE_ARRAY_SIZE];
                         if (i == startIndex) {
                             //// handle connecting line between start and endpoints
                             if (vertex[startIndex + 1] < vertex[endIndex + 1]) {
-                                e1.x1 = vertex[startIndex];
-                                e1.y1 = vertex[startIndex + 1];
-                                e1.x2 = vertex[endIndex];
-                                e1.y2 = vertex[endIndex + 1];
+                                e1[EDGE_X1] = vertex[startIndex];
+                                e1[EDGE_Y1] = vertex[startIndex + 1];
+                                e1[EDGE_X2] = vertex[endIndex];
+                                e1[EDGE_Y2] = vertex[endIndex + 1];
                             } else {
-                                e1.x1 = vertex[endIndex];
-                                e1.y1 = vertex[endIndex + 1];
-                                e1.x2 = vertex[startIndex];
-                                e1.y2 = vertex[startIndex + 1];
+                                e1[EDGE_X1] = vertex[endIndex];
+                                e1[EDGE_Y1] = vertex[endIndex + 1];
+                                e1[EDGE_X2] = vertex[startIndex];
+                                e1[EDGE_Y2] = vertex[startIndex + 1];
                             }                            
                         } else if (vertex[i - 1] < vertex[i + 1]) {
-                            e1.x1 = vertex[i - 2];
-                            e1.y1 = vertex[i - 1];
-                            e1.x2 = vertex[i];
-                            e1.y2 = vertex[i + 1];
+                            e1[EDGE_X1] = vertex[i - 2];
+                            e1[EDGE_Y1] = vertex[i - 1];
+                            e1[EDGE_X2] = vertex[i];
+                            e1[EDGE_Y2] = vertex[i + 1];
                         } else {
-                            e1.x1 = vertex[i];
-                            e1.y1 = vertex[i + 1];
-                            e1.x2 = vertex[i - 2];
-                            e1.y2 = vertex[i - 1];
+                            e1[EDGE_X1] = vertex[i];
+                            e1[EDGE_Y1] = vertex[i + 1];
+                            e1[EDGE_X2] = vertex[i - 2];
+                            e1[EDGE_Y2] = vertex[i - 1];
                         }                            
-                        e1.x = e1.x1;
-                        e1.dx = e1.x2 - e1.x1;
-                        e1.dy = e1.y2 - e1.y1;
+                        e1[EDGE_X] = e1[EDGE_X1];
+                        e1[EDGE_DX] = e1[EDGE_X2] - e1[EDGE_X1];
+                        e1[EDGE_DY] = e1[EDGE_Y2] - e1[EDGE_Y1];
                         
-                        yMin = Math.min(e1.y1, yMin);
-                        yMax = Math.max(e1.y2, yMax);
+                        yMin = Math.min(e1[EDGE_Y1], yMin);
+                        yMax = Math.max(e1[EDGE_Y2], yMax);
                         
                         for (j = 0; j < edgeCount; j++) {
-                            e2 = (Edge) edges.elementAt(j);
-                            if (e1.y1 < e2.y1) {
+                            e2 = (int[]) edges.elementAt(j);
+                            if (e1[EDGE_Y1] < e2[EDGE_Y1]) {
                                 edges.insertElementAt(e1, j);
                                 e1 = null;
                                 break;
-                            } else if (e1.y1 == e2.y1) {
-                                if (e1.x1 < e2.x1) {
+                            } else if (e1[EDGE_Y1] == e2[EDGE_Y1]) {
+                                if (e1[EDGE_X1] < e2[EDGE_X1]) {
                                     edges.insertElementAt(e1, j);
                                     e1 = null;
                                     break;
@@ -406,25 +406,25 @@ public class PCanvas extends Canvas {
                     for (int y = yMin; y <= yMax; y++) {
                         //// update currently active edges
                         for (i = activeCount - 1; i >= 0; i--) {
-                            e1 = (Edge) active.elementAt(i);
-                            if (e1.y2 <= y) {
+                            e1 = (int[]) active.elementAt(i);
+                            if (e1[EDGE_Y2] <= y) {
                                 //// remove edges not intersecting current scan line
                                 active.removeElementAt(i);
                                 activeCount--;
                             } else {
                                 //// update x coordinate
-                                e1.x = (y - e1.y1) * e1.dx / e1.dy + e1.x1;
+                                e1[EDGE_X] = (y - e1[EDGE_Y1]) * e1[EDGE_DX] / e1[EDGE_DY] + e1[EDGE_X1];
                             }
                         }
                         
                         //// re-sort active edge list
                         Vector newActive = new Vector();
                         for (i = 0; i < activeCount; i++) {
-                            e1 = (Edge) active.elementAt(i);
+                            e1 = (int[]) active.elementAt(i);
                             
                             for (j = 0; j < i; j++) {
-                                e2 = (Edge) newActive.elementAt(j);
-                                if (e1.x < e2.x) {
+                                e2 = (int[]) newActive.elementAt(j);
+                                if (e1[EDGE_X] < e2[EDGE_X]) {
                                     newActive.insertElementAt(e1, j);
                                     e1 = null;
                                     break;
@@ -438,11 +438,11 @@ public class PCanvas extends Canvas {
                         
                         //// insertion sort any new intersecting edges into active list
                         for (i = 0; i < edgeCount; i++) {
-                            e1 = (Edge) edges.elementAt(i);
-                            if (e1.y1 == y) {
+                            e1 = (int[]) edges.elementAt(i);
+                            if (e1[EDGE_Y1] == y) {
                                 for (j = 0; j < activeCount; j++) {
-                                    e2 = (Edge) active.elementAt(j);
-                                    if (e1.x < e2.x) {
+                                    e2 = (int[]) active.elementAt(j);
+                                    if (e1[EDGE_X] < e2[EDGE_X]) {
                                         active.insertElementAt(e1, j);
                                         e1 = null;
                                         break;
@@ -464,15 +464,16 @@ public class PCanvas extends Canvas {
                         }
                         //// draw line segments between pairs of edges
                         for (i = 1; i < activeCount; i += 2) {
-                            e1 = (Edge) active.elementAt(i - 1);
-                            e2 = (Edge) active.elementAt(i);
+                            e1 = (int[]) active.elementAt(i - 1);
+                            e2 = (int[]) active.elementAt(i);
                             
-                            bufferg.drawLine(e1.x, y, e2.x, y);
+                            bufferg.drawLine(e1[EDGE_X], y, e2[EDGE_X], y);
                         }
                     }
                 }
             }
             if (stroke) {
+                bufferg.setColor(strokeColor);
                 for (int i = startIndex + 2; i <= endIndex; i += 2) {
                     line(vertex[i - 2], vertex[i - 1], vertex[i], vertex[i + 1]);
                 }
@@ -604,6 +605,7 @@ public class PCanvas extends Canvas {
     }
     
     public void text(String data, int x, int y) {
+        bufferg.setColor(0);
         bufferg.drawString(data, x, y, textMode);
     }
     
@@ -621,8 +623,12 @@ public class PCanvas extends Canvas {
         }
     }
     
-    private static class Edge {
-        public int x1, y1, x2, y2;
-        public int x, dx, dy;
-    }
+    private static final int EDGE_X             = 0;
+    private static final int EDGE_DX            = 1;
+    private static final int EDGE_DY            = 2;
+    private static final int EDGE_X1            = 3;
+    private static final int EDGE_Y1            = 4;
+    private static final int EDGE_X2            = 5;
+    private static final int EDGE_Y2            = 6;
+    private static final int EDGE_ARRAY_SIZE    = 7;
 }
