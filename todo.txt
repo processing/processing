@@ -278,138 +278,39 @@ X PVideo fix time api to take time in seconds
 X processing.video -> PMovie (file), PCamera (capture)
 X processing.serial -> PSerial, [PUsb]
 
-other stuff
+other stuff / cleaning up
 X don't allow apostrophe (i.e. casey's_cells) when naming sketch!
 X when exporting applet, line numbers will be off.. 
 o   when not exporting with new preproc code, imports all on same line
 o   make preproc keep track of how many lines were added
+X rewrite video, net, serial libraries to be separate
+X move the mac to java 1.4
+X   1.4 is being used externally, and wheel mouse would be nice
+X   not doing currently, lots of strange repaint bugs
+X     all fixable for sure, but no point before beta since low priority
+X macosx.. random lockups seem common in 1.4
+o completeness of toInt/toFloat/toBoolean etc in preproc and PApplet
+X error if you try to hit export twice on a sketch (just make synch'd)
+X   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
+X   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
+o ctrl-5 (at least on xp) is marking the current sketch as modified
+X   just removed the ctrl-5 option since not really needed
+o rotateRight(), rotateLeft(), flipHorizontal().. etc
+o   for an actual 'transformations' object
+o should BSpace be included?
+X better 1.3/1.4 support.. properly detect vm
+X   use when deciding which classes to import
+o network/shared_canvas, network/value has old code
+o change run.bat, run-expert.bat to use 128m
+o ability to include other .java and .pde code from sketchbook folder
+o   'add files' for .java or .pde pulls into the folder
 
-_ things will freeze if winvdig not installed (todo over in core)
-_   video hanging without a camera installed
-_   provide a useful error message when winvdig not installed (for capture)
-_     also be able to set one in particular
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
+_ make additional .pde files embed themselves into the main class
 
-_ error in System.err stream coming from running external
-_   dies after a while or goes weird
-
-_ save as needs to update the editorheader
-_ String in apache classes and java.lang
-_   need to be able to select between which to include
-_   auto-resolve by saying java.* wins, others ask
-
-_ "add library" working
-
-_ get export working again
-_   make multiple jar files thing work.. blech
-
-_ processing.app -> PdeBase, PdeEditor..
 _ processing.net -> PClient, PServer
-_ rewrite video, net, serial libraries to be separate
 
-_ expand/subset for array operations (floats, ints, Strings)
-_   see if reflection will allow expand for all class types
-_   append/unappend (no push/pop), shift/unshift, 
-_   slice, splice, reverse, concat, split
+_ "save as" needs to update the editorheader
 
-
-......................................................................
-
-NOT REQUIRED FOR NEXT RELEASE
-
-_ check into open-source paperwork for p5
-_ prefs need to have a default
-_   otherwise old prefs and new p5 will cause trouble
-_ api for file-based renderers
-_   size(0, 0) and then ai.size(10000, 20000)
-_   saveFrame(PRenderer) or saveFrame("name", PRenderer)
-_ make dynamically loaded plugins and "tools" menu
-_   break out beautify as its own plugin
-_ write export-to-application
-_ write export-to-library
-_   need to be able to produce the serial, video, etc libs
-_   see if sonia project can compile
-_ implement horizontal version of PdeEditorButtons
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
-o   is PdeEditorHeader one pixel too tall?
-
-medium
-_ menu option for Renderer > to "Core" or "OpenGL"
-_   on export, uses this setting to determine if jogl is added to project
-_ add a lighting object
-_   fix lighting.. look at simon's changes
-_ netscape.javascript not properly working in 1.4
-_   include 'netscape.javascript' as a library to be added
-_     but don't export it.. ugh..
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
-
-lower
-_ add a "make archive" option
-_   doesn't rename sketch, just names zip file sketch + time stamp
-_ properly open .pde files opened from explorer/finder
-_ shut off jit errors.. make sure exceptions with .class work
-_ add mkdmg script to macosx build process
-_   could significantly speed things up
-
-later discussion
-_ new/old graphics, explicitly stating 2d/3d, huh?
-_   what to do about anti-aliasing.. oversample 2x?
-
-waiting
-_ don't force everything into a single .jar on export
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
-_ need showError/Message/Warning design from casey
-_   then implement new design (with exception trace)
-
-_ running present mode with a bug in the program hoses things
-_   make sure the program compiles before starting present mode
-_ make some fancy extendo things because the tabs get too big
-
-_ javadoc "advanced" reference by beta
-_   and then finalizing it towards 1.0
-
-major bugs
-_ texture mapping bugs in graphics engine
-
-1 _ examples/libraries: 
-1 _   arcball, joystick, particles (from multip)
-1 _   other phyics (collisions)
-1 _   java3d classes for vec3f and matrix
-1 _ quicktime exporter or image sequence export
-1 _   fairly quick--just use experimental code from dbn
-
-2 _ comments -> embedding in applet text? (ala javadoc)
-2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076967353
-2 _   would this help casey with the examples?
-2 _ physics library
-2 _   look at the 'havoc' physics library
-2 _ materials and shading
-2 _ camera object for moving scene
-
-_ NullPointerException when alt is pressed
-_   might be something to do with the applet frame being an awt not swing
-_   event first goes to the applet listener, needs to consume the event
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
-
-notes for release
-_ processing won't start..
-_   people with non-ascii chars in the folder name 
-_     at least try to catch this?
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
-_   or with spaces in the folder name, causes problems for serial
-_ quicktime full uninstall/reinstall
-_ code folder problems
-_ hm, lots of other bugs from this list..
-_ update readme with notes from bboard about "built with processing"
-
-_ run java mode when large 'data' folder is in use
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
-
-
-LIBRARIES
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
 _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
@@ -420,6 +321,82 @@ _   this would avoid having to patch BApplet
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
+_ where do libraries for distribution go?
+_   libraries subfolder of p5? or inside examples?
+_ String in apache classes and java.lang
+_   maybe ignore classes not inside the p5 libs dir?
+_   need to be able to select between which to include
+_   auto-resolve by saying java.* wins, others ask
+
+_ get export working again
+_   make multiple jar files thing work.. blech
+_   include a note that 'applet' folder will get emptied/rewritten
+_     or rename the old applet folder to something else? (nah, too many)
+_   don't force everything into a single .jar on export
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+
+_ support for editor plugins
+_   make beautify plugin ("autoformat"?)
+_   make "get quicktime libs" function
+_     can java get the root directory for system/win32 etc?
+_   make dynamically loaded plugins and "tools" menu
+_     break out beautify as its own plugin
+
+_ processing.app -> PdeBase, PdeEditor..
+
+_ api for file-based renderers
+_   size(0, 0) and then ai.size(10000, 20000)
+_   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+
+
+README
+_ cut out some of the chatter
+_ processing won't start..
+_   people with non-ascii chars in the folder name 
+_     at least try to catch this?
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+_   or with spaces in the folder name, causes problems for serial
+_ quicktime full uninstall/reinstall
+_   installing winvdig
+_ code folder problems - antivirus or firewall
+_ update readme with notes from bboard about "built with processing"
+
+
+BUGS (not sure if these are in next release or not)
+_ threading issues on casey's laptop
+_ odd error in System.err stream coming from running external
+_   dies after a while or goes weird
+_   make sure exceptions with .class work
+
+
+......................................................................
+
+
+NOT REQUIRED FOR NEXT RELEASE
+
+_ prefs need to have a default
+_   otherwise old prefs and new p5 will cause trouble
+_ write export-to-application
+_ write export-to-library
+_   need to be able to produce the serial, video, etc libs
+_   see if sonia project can compile
+_ implement horizontal version of PdeEditorButtons
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
+o   is PdeEditorHeader one pixel too tall?
+_ menu option for Renderer > to "Core" or "OpenGL"
+_   on export, uses this setting to determine if jogl is added to project
+_ netscape.javascript not properly working in 1.4
+_   include 'netscape.javascript' as a library to be added
+_     but don't export it.. ugh..
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
+_ add a "make archive" option
+_   doesn't rename sketch, just names zip file sketch + time stamp
+_ need showError/Message/Warning design from casey
+_   then implement new design (with exception trace)
+_ check into open-source paperwork for p5
+_ run java mode when large 'data' folder is in use
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
 
 
 BUGS / preproc
@@ -436,6 +413,12 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 
 BUGS / Windows
+_ NullPointerException when alt is pressed
+_   might be something to do with the applet frame being an awt not swing
+_   event first goes to the applet listener, needs to consume the event
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
 _   CLASSPATH figured out what to do with quotes, but not PATH
@@ -447,7 +430,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078714442;start=0
 _     something in that one about mouse position halting or not
-_ ctrl-5 (at least on xp) is marking the current sketch as modified
 
 
 BUGS / Linux
@@ -463,23 +445,6 @@ _ make new TextAreaDefaults class for the console
 _ figure out how to color lines for errors and non (since not syntax)
 _ set decent fonts (probably same as editor above), looks bad on mac
 
-
-MEDIUM
-_ network/shared_canvas, network/value has old code
-_ write script to remove .DS_Store and CVS folders from dist
-_   # remove DS_Store files
-_   sudo find . -name ".DS_Store" -depth -exec rm {} \;
-_ change run.bat, run-expert.bat to use 128m
-_ ability to include other .java and .pde code from sketchbook folder
-_   'add files' for .java or .pde pulls into the folder
-_ better 1.3/1.4 support.. properly detect vm
-_   use when deciding which classes to import
-_ better support for running locally
-_   code to read from properties file from param()
-_     for application mode or while inside the environment
-_     these properties will be written to html on export
-_   fix link, loadStrings, saveBytes code once that's fixed
-_   saveBytes not in proper dir is annoying
 _ multi-line errors a mess in jikes
 _   maybe a dropdown list thing, with the first just shown?
 
@@ -536,10 +501,6 @@ _ need curveTangent() code
 ..................................................................
 
 
-TABLED FOR LATER (qasey's quagmires)
-_ completeness of toInt/toFloat/toBoolean etc in preproc and PApplet
-
-
 LOWER (post beta tweaks, non-structural)
 1 _ Ctrl-Z will undo, but the window will not scroll to where the 
 1 _   "undoing" is happening. This can lead the user to assume that
@@ -547,17 +508,13 @@ LOWER (post beta tweaks, non-structural)
 1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
 1 _ figure out how to cancel 'save changes' on macosx and windows
 1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
-_ error if you try to hit export twice on a sketch
-_   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.java:1:625:7:2: Semantic Error: Unable to write file
-_   "C:/ProgramFiles/proce55ing/processing-0060/sketchbook/default/double_export_tesuble_export_test.class"."
-_ remove .DS_Store boogers, especially from win/linux distributions
 _ check what other functions require BGraphics to exist but shouldn't
 _ color has to be called inside or after setup
+
 _ loadImage must be used inside or after setup
 _   either document this and/or provide a better error message
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else?
+
 b _ need to change all the copyrights over to mit "except where noted"
 _ fix the problem causing all the "couldn't delete" messages
 _ class naming from dan
@@ -589,6 +546,8 @@ PDE - Processing Development Environment
 
 
 PDE / Details
+
+   1 _ properly open .pde files opened from explorer/finder
 
    1 _ implement page setup and print
    1 _   pretty printing of code in project
@@ -688,8 +647,11 @@ PDE / Details
    1 _ make export put a timestamp in the html code (hidden or visible)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
 
+   b _ running present mode with a bug in the program hoses things
+   b _   make sure the program compiles before starting present mode
    1 _ processing.exe: problem if expert version is run, and no java installed
    1 _   call the person a genius and tell them to install java
+   1 _ make some fancy extendo things because the tabs get too big
 
 
 PDE / Compiler
@@ -732,8 +694,15 @@ How the environment gets packed up, downloaded, and installed.
 
 
 DISTRIBUTION / General 
+b _ dist.sh needs to auto-remove .DS_Store boogers
+b _ write script to remove .DS_Store and CVS folders from dist
+b _   # remove DS_Store files
+b _   sudo find . -name ".DS_Store" -depth -exec rm {} \;
 b _ need more comprehensive list of 'known bugs'
 b _ need more comprehensive list of 'known suggestions'
+b _ javadoc "advanced" reference by beta
+b _   and then finalizing it towards 1.0
+b _   document hint() commands for advanced reference
 b _ beta release will include source code
 b _ write notes about running p5 on another platforms 
 b _   this was some feedback from running on bsd:
@@ -770,12 +739,9 @@ b _ splash screen
 
 
 DISTRIBUTION / Mac OS X
-1 _ move the mac to java 1.4
-1 _   1.4 is being used externally, and wheel mouse would be nice
-1 _   not doing currently, lots of strange repaint bugs
-1 _     all fixable for sure, but no point before beta since low priority
+b _ add mkdmg script to macosx build process
+b _   could significantly speed things up
 b _ set nice background for disk image on macosx
-1 _ random lockups seem common in 1.4
 1 _ test more to see if runtime exceptions are coming through
 1 _ track down error in PdeCompiler for message parsing
 1 _   was missing the error about a package being gone
@@ -854,23 +820,15 @@ _ quicksort should probably just be made into 'sort' class
 _   it's the only one ever used
 _   can this be done using an inner class?
 
-_ should BSpace be included?
 _ go through examples to see if there's other annoying syntax
-
-_ for int i for 0 to b.length
-_ for i from 0 upto b.length
 
 additions that i want
 _ image(BImage, x, y, float scale) (found in illustrator stuff)
 _ textrect(String text, x, y, width, height)  // based on rectMode
 _   textMode() for align left, center, right (no justify.. har!)
 _ file i/o: file listing util that leaves out . and ..
-_ rotateRight(), rotateLeft(), flipHorizontal().. etc
-_   for an actual 'transformations' object
 _ write tiff (or other) header for image stream
 _   make a class/library for this guy
-_ actionscript has nice hastables.. as does perl/python
-_   would be nice to get better implementation in there
 
 
 ..................................................................
@@ -912,3 +870,26 @@ shape(ShapeInterface o) {
   o.graphics(this.g);  // has to be a method, since intf
   o.draw();
 }
+
+
+FRY WISH LIST
+_ arcball
+_ joystick
+_ particles (from multip?)
+_ phyics & collisions
+_   look at the 'havoc' physics library
+_ java3d classes for vec3f and matrix
+_ quicktime exporter or image sequence export
+_   fairly quick--just use experimental code from dbn
+_ more advanced splitting of files into rows/cols uses another class
+_   other class also has concept for random access of lines
+_   by storing the line positions, can access without loading all
+_   into memory because some files will be too large
+_   read table/csv formatted data into a matrix
+_     pseudo-database format version of this that stores indexes to file
+_       rather than loading the whole thing at once
+_ history.. add my diffs sketch (as a plug-in)
+_   could just include a compiled version of the diff app, ala jikes
+_ something about using regexps in p5
+_   wrap up oro for simple matching
+_   (as alternative to the sun classes.. link to those in the docs)
