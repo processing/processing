@@ -218,6 +218,15 @@ public class PdePreprocessor {
 
       out.print("public class " + name + " extends " +
                 extendsWhat + " {");
+
+      if (programType == BEGINNER) {
+        // XXXdmose need to actually deal with size / background info here
+        String sizeInfo = "";
+        String backgroundInfo = "";
+
+        out.print("void setup() { " + sizeInfo + backgroundInfo + "} " 
+                  + "void draw() {");
+      }
     }
   }
 
@@ -227,6 +236,12 @@ public class PdePreprocessor {
    * @param out         PrintStream to write it to.
    */
   void writeFooter(PrintStream out) {
+
+    if (programType == BEGINNER) {
+      // close off draw() definition
+      out.print("}");
+    }
+
     if (programType < ADVANCED) {
       // close off the class definition
       out.print("}");
