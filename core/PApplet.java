@@ -1215,7 +1215,7 @@ public class PApplet extends Applet
   /**
    * Set the cursor type
    */
-  void cursor(int _cursor_type) {
+  public void cursor(int _cursor_type) {
     //if (cursor_visible && _cursor_type != cursor_type) {
     setCursor(Cursor.getPredefinedCursor(_cursor_type));
     //}
@@ -1229,7 +1229,7 @@ public class PApplet extends Applet
    * Only works with JDK 1.2 and later.
    * Currently seems to be broken on Java 1.4 for Mac OS X
    */
-  void cursor(PImage image, int hotspotX, int hotspotY) {
+  public void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
     if (jdkVersion < 1.2) {
       System.err.println("cursor() error: Java 1.2 or higher is " + 
@@ -1278,7 +1278,7 @@ public class PApplet extends Applet
    * Show the cursor after noCursor() was called.
    * Notice that the program remembers the last set cursor type
    */
-  void cursor() {
+  public void cursor() {
     // maybe should always set here? seems dangerous, since
     // it's likely that java will set the cursor to something
     // else on its own, and the applet will be stuck b/c bagel
@@ -1294,7 +1294,7 @@ public class PApplet extends Applet
    * Hide the cursor by creating a transparent image
    * and using it as a custom cursor.
    */
-  void noCursor() {
+  public void noCursor() {
     if (!cursor_visible) return;  // don't hide if already hidden.
 
     if (invisible_cursor == null) {
