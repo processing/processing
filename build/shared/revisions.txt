@@ -1,3 +1,12 @@
+ABOUT REV 0051 - 31 january 2003
+
+enables key presses in the editor when 'alt' or 'option' is pressed. 
+there was a problem with the mac german keyboards, and probably
+others, where folks couldn't type { and } (alt-8 and alt-9) and were
+instead doing lots of copying and pasting. released because this was a
+major bug for some, and it needed to happen before a workshop.
+
+
 ABOUT REV 0050 - 27 january 2003
 
 released a little sooner than hoped, to fix a single showstopper bug
