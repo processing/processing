@@ -241,10 +241,13 @@ X remove String casting
 X rename compiler.* to preproc.*
 X OutOfMemoryError still showing up when no CR at end of app
 
-040708 evening
+040708 evening before dinner
 X curve/bezierSegments -> curveDetail
 X remove doubling on curve()
 X move around notes about curve stuff
+
+040708 later
+X working on serial library
 
 _ get export working again
 _   make multiple jar files thing work.. blech
