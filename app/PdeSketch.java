@@ -168,6 +168,7 @@ public class PdeSketch {
                       JAVA);
       }      
     }
+    //System.out.println("code count 2 is " + codeCount);
 
     // remove any entries that didn't load properly
     int index = 0;
@@ -183,18 +184,23 @@ public class PdeSketch {
         index++;
       }
     }
+    //System.out.println("code count 3 is " + codeCount);
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
+    //System.out.println("looking for " + mainFilename);
     for (int i = 1; i < codeCount; i++) {
       if (code[i].file.getName().equals(mainFilename)) {
-        System.out.println("found main code at slot " + i);
+        //System.out.println("found main code at slot " + i);
         PdeCode temp = code[0];
         code[0] = code[i];
         code[i] = temp;
         break;
       }
     }
+
+    // set the main file to be the current tab
+    current = code[0];
 
     // cheap-ass sort of the rest of the files
     // it's a dumb, slow sort, but there shouldn't be more than ~5 files

@@ -578,6 +578,7 @@ public class PdePreferences extends JComponent {
   static public Color getColor(String name /*, Color otherwise*/) {
     Color parsed = null;
     String s = get(name); //, null);
+    //System.out.println(name + " = " + s);
     if ((s != null) && (s.indexOf("#") == 0)) {
       try {
         int v = Integer.parseInt(s.substring(1), 16);

@@ -685,6 +685,7 @@ public class PdeEditor extends JFrame
             handleAbout();
           }
         });
+      menu.add(item);
     }
 
     return menu;
@@ -1237,6 +1238,7 @@ public class PdeEditor extends JFrame
   protected void handleOpen2(String path) {
     try {
       sketch = new PdeSketch(this, path);
+      header.rebuild();
     } catch (Exception e) {
       error(e);
     }

@@ -41,6 +41,12 @@ public class PdeCode {
     this.name = name;
     this.file = file;
     this.flavor = flavor;
+
+    try {
+      load();
+    } catch (IOException e) {
+      System.err.println("error while loading code " + name);
+    }
   }
 
 
