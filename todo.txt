@@ -1,40 +1,35 @@
-ENV
-_ env. toggle for showing a function name each time its hit
-_ env. toggle for showing line numbers within a function
-_   i'm here messages, tie in with breakpoints for debugger
-_   lightweight debugger, doesn't slow down, runs in back
-_ env. toggle to show attr/value for some var in simple way
-_ comments as debugging descriptors, output to console, shown in context
-_ comments as naming for shapes drawn after it,
-_   or some other model of naming based on inserted text with "" or // or #
-_   could fit nicely with printf-style statements and comments
-_   comments would contain descriptions //!blah for printing and formatting
-_ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+processing todo list // last updated 13 september 2001
+(most up-to-date version of this file is in processing cvs)
 
 
-PROCESSING - HIGH  (finish these sunday, before class)
-_ kill button (without stop) doesn't clear play
+PROCESSING - HIGH
+_ get serial i/o code working in processing
+_   how to kill serial when applet stopped
+_     finalizer prolly not getting called
 _ running out of memory, presumably b/c applets not being cleared
+_   happens inside init() of applet (at new Bagel())
 _   figure out why threads aren't actually dying
 _   disassociate processing applet with a window on stop?
 _   possible to maintain bagel, but kill applet?
 _   or copy bagel's image, and kill that too?
-_ put debugging stuff back into Kjc (i disabled some stuff) 
 _ make tab key work
 _   include auto-indent?
-_ convert documentation to html
 _ what happens if size() not called inside setup() ?
 _ when using draw() instead of loop()
 _   applet needs to notify runner that it has terminated
-_ image grabbing code (write to tiff)
 _ multiple types of KjcEngine (so that simplest model is available)
-_ tweak updater a little bit so it's more likely to work
-_   use numbered versioning? 
-_ anti-aliasing
-_ alpha
+_ post new macintosh version
 
 
 PROCESSING - MEDIUM
+_ curves not properly implemented as part of shape architecture 
+_ beginShape(POINTS) is not working, no marks are appearing 
+_ beginShape(LINE_LOOP) is not looping around 
+_ lines become 2 pixels thick after a 3D transform 
+_ stroked POLYGON should emulate a LINE_LOOP
+_ kill button (without stop) doesn't clear play
+_ image grabbing code (write to tiff)
+_ build a linux/x86 release
 _ per-vertex shading doesn't work
 _ the lights prolly shouldn't follow objects around
 _ work on courseware applet code signing
@@ -66,7 +61,14 @@ _ show creas how to get access to cvs
 _ how to use ssh identity file to maintain auth for brancusi
 
 
+PROCESSING - FEATURES
+_ anti-aliasing
+_ alpha
+
+
 PROCESSING - LOWER
+_ tweak updater a little bit so it's more likely to work
+_   use numbered versioning? 
 _ move math functions into utility library associated
 _   with bagel, because those will be useful on other bagel platforms
 _ perlin noise function
@@ -80,3 +82,23 @@ _ bagelpublic.pl: open ProcessingApplet, rewrite after special token
 _ look at glut for other needed shapes
 _ make PdeEditorButtons wait until mouseup to change
 _   (currently doesn't feel as good as it could)
+_ licensing issues with kjc (before public release)
+
+
+ENV
+_ env. toggle for showing a function name each time its hit
+_ env. toggle for showing line numbers within a function
+_   i'm here messages, tie in with breakpoints for debugger
+_   lightweight debugger, doesn't slow down, runs in back
+_ env. toggle to show attr/value for some var in simple way
+_ comments as debugging descriptors, output to console, shown in context
+_ comments as naming for shapes drawn after it,
+_   or some other model of naming based on inserted text with "" or // or #
+_   could fit nicely with printf-style statements and comments
+_   comments would contain descriptions //!blah for printing and formatting
+_ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+
+
+COMPLETED
+X put debugging stuff back into Kjc (i disabled some stuff) 
+X convert documentation to html
