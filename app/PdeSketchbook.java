@@ -294,7 +294,6 @@ public class PdeSketchbook {
     popup.removeAll();
 
     try {
-      //JMenuItem item = PdeEditor.newJMenuItem("Open...");
       JMenuItem item = new JMenuItem("Open...");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -305,17 +304,24 @@ public class PdeSketchbook {
       popup.addSeparator();
 
       // identical to below
-      addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
-      popup.addSeparator();
-      addSketches(popup, examplesFolder);
+      boolean sketches = 
+        addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
+      if (sketches) popup.addSeparator();
+      JMenu examples = new JMenu("Examples");
+      addSketches(examples, examplesFolder);
+      popup.add(examples);
 
       // disable error messages while loading
       builtOnce = true;
 
-      // identical to above
-      addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
-      menu.addSeparator();
-      addSketches(menu, examplesFolder);
+      // (mostly) identical to above
+      if (sketches) {
+        addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+        menu.addSeparator();
+      }
+      examples = new JMenu("Examples");
+      addSketches(examples, examplesFolder);
+      menu.add(examples);
 
     } catch (IOException e) {
       PdeBase.showWarning("Problem while building sketchbook menu",
