@@ -592,6 +592,8 @@ public class PdeEditor extends JPanel {
           throw new PdeException(ae.getMessage(), 
                                  ae.getLine() - 1, ae.getColumn());
 
+        } catch (PdeException pe) {
+          throw pe;
         } catch (Exception ex) {
           System.err.println("Uncaught exception type:" + ex.getClass());
           ex.printStackTrace();
