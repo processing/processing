@@ -1657,8 +1657,9 @@ public class PApplet extends Applet
     }
 
     //File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
-    save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
+    //save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
     //save("screen-" + nf(frame, 4) + ".tif");
+    save("screen-" + nf(frameCount, 4) + ".tif");
   }
 
 
