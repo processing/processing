@@ -296,6 +296,14 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * For subclasses where the pixels[] buffer isn't set by default,
+   * this should copy all data into the pixels[] array
+   */
+  public void loadPixels() {
+  }
+
+
+  /**
    * Mark all pixels as needing update.
    */
   public void updatePixels() {
@@ -405,6 +413,7 @@ public class PImage implements PConstants, Cloneable {
    * Convenience method to avoid an extra cast,
    * and the exception handling.
    */
+  /*
   public PImage get() {
     try {
       return (PImage) clone();
@@ -412,6 +421,7 @@ public class PImage implements PConstants, Cloneable {
       return null;
     }
   }
+  */
 
 
   public void set(int x, int y, int c) {
