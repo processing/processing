@@ -119,14 +119,7 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X windows fresh checkout from cvs still has problems
 X   major changes to build scripts for far easier building under windows
 X added error messages for noCursor in jdk11
-
-
-carlos line code for single pixel lines
-ca X single pixel lines have z and alpha
-bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165816;start=0
-bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165995;start=0
-bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166034;start=0
-bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167337;start=0
+X boost memory size of processing.exe to 128 megs, instead of 64
 
 
 fixes because of dmose parser
@@ -183,6 +176,14 @@ ca o     document the change and make several of them
 ca o   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 
+carlos line code for single pixel lines
+ca X single pixel lines have z and alpha
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165816;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165995;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166034;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167337;start=0
+
+
 api changes in progress -> COLORING FOR ALL THESE
 X textureImage() -> texture()
 X textureMode() IMAGE_SPACE or NORMAL_SPACE
@@ -200,7 +201,7 @@ X BFont.drawChar, BFont.drawString -> BFont.text()
 X removed fill(), stroke(), background() with no args
 X   (used to return current)
 X getPixel/setPixel -> get/set
-X addition of copy(), duplicate(), alpha(), and blendMode()
+X addition of copy(), replicate(), alpha(), and blendMode()
 X   all the imaging modes that go with those guys
 X tint() colors images, not fill()
 X shearX and shearY removed
@@ -244,6 +245,8 @@ o   only recompile if asked or if changes
 _ modify build instructions for the many changes
 _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
 _   usually need to remove the 'work' dir
+_   modify macosx to use jikes from p5
+_   in general, things are way simpler on the pc
 _ better 1.3/1.4 support.. properly detect vm
 _   use when deciding which classes to import
 _ if size() not found in export/compile, ask the user
