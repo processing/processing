@@ -1,5 +1,11 @@
 0070 pde
 
+_ processing won't start..
+_   people with non-ascii chars in the folder name 
+_     at least try to catch this?
+_   even with spaces in the folder name
+_     causes problems for serial
+
 _ problems with hanging video when not in the root of the c drive
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084464062;start=0
 
@@ -267,7 +273,6 @@ _     because it just quit without finishing
 _ macosx handleQuit forces termination (at least on 1.3)
 _   figure out how to prevent it, and add the 'cancel' button back
 _ drag & drop implementation to add files to sketch
-_ do a better job of maintaining cursor during beautify 
 
 
 
@@ -346,18 +351,22 @@ PDE / Details
    1 _   maybe something that shows stack trace 
    1 _   with an 'email this' button? (include source code too?)
    1 _ dim edit menus as appropriate during selection/no selection/etc
-   1 _ switch to newer syntax package from jedit cvs
+   1 _ switch to newer revision of jedit?
    1 _   is enormous horizontal scroller issue fixed properly
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
    1 _ for title-clicking of sketch name, change to a btn
    1 _   or somehow mark what it's going to do, rather than just doing it
 
    1 _ beautify
    1 _   //for (int i = 0; i < 10; i++) {
    1 _   } catch (IOException e) { }
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
    1 _   need to ignore comments.. but not those inside quotes.. oog
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
    1 _   ignores colons for case statements
    1 _   need to tie this to the parser instead
+   1 _ do a better job of maintaining cursor during beautify 
+
 
    1 _ find/replace
    1 _   add support for hitting 'ESC'
