@@ -35,4 +35,4 @@ export CLASSPATH
 
 #cd work && ./java/bin/java -Xint PdeBase
 cd work && ./java/bin/java PdeBase
-
+#cd work && /cygdrive/c/jdk-1.3.1_11/bin/java PdeBase

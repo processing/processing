@@ -226,4 +226,5 @@ cd ../../lib/video
 zip -r0q video.jar processing
 rm -rf processing
 cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\new_camera_action\\code"
+cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\movie_action\\code"
 
