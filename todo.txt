@@ -66,6 +66,14 @@ X   append the user's classpath to the end of that
 040913 afternoon
 X "Processing" folder not properly created on new install
 
+040920
+X add noLoop() to static mode apps
+
+_ static applets need to be able to resize themselves on 'play'
+_ figure out what to do with static apps exported as application
+_   needs to just hang there
+
+
 _ add all imported libs to hash table of jars
 
 _ something calling 
