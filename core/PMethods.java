@@ -70,7 +70,7 @@ public interface PMethods {
 
   public void vertex(float x, float y, float z);
 
-  public void vertex(float x, float y, float z,  
+  public void vertex(float x, float y, float z,
                      float u, float v);
 
   public void bezierVertex(float x, float y);
@@ -89,7 +89,7 @@ public interface PMethods {
 
   public void line(float x1, float y1, float x2, float y2);
 
-  public void line(float x1, float y1, float z1, 
+  public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2);
 
   public void triangle(float x1, float y1, float x2, float y2,
@@ -122,7 +122,7 @@ public interface PMethods {
   public float bezierTangent(float a, float b, float c, float d,
                              float t);
 
-  public void bezier(float x1, float y1, 
+  public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4);
@@ -144,7 +144,7 @@ public interface PMethods {
   public float curveTangent(float a, float b, float c, float d,
                             float t);
 
-  public void curve(float x1, float y1, 
+  public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4);
@@ -156,16 +156,16 @@ public interface PMethods {
 
   public void image(PImage image, float x1, float y1);
 
-  public void image(PImage image, 
+  public void image(PImage image,
                     float x1, float y1, float x2, float y2);
 
-  public void image(PImage image, 
+  public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2);
 
-  public void cache(PImage image); 
+  public void cache(PImage image);
 
-  public void cache(PImage images[]); 
+  public void cache(PImage images[]);
 
   public void textFont(PFont which);
 
@@ -232,7 +232,7 @@ public interface PMethods {
 
   public float objectZ(float x, float y, float z);
 
-  public void ortho(float left, float right, 
+  public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far);
 
@@ -276,10 +276,10 @@ public interface PMethods {
 
   public void colorMode(int icolorMode, float max);
 
-  public void colorMode(int icolorMode, 
+  public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ);
 
-  public void colorMode(int icolorMode, 
+  public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ, float maxA);
 
   public void noTint();

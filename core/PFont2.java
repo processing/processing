@@ -118,6 +118,10 @@ public class PFont2 extends PFont {
     g.setFont(font);
     FontMetrics metrics = g.getFontMetrics();
 
+    ascent = metrics.getAscent();
+    descent = metrics.getDescent();
+    //System.out.println("descent found was " + descent);
+
     int maxWidthHeight = 0;
     int index = 0;
     for (int i = 0; i < charCount; i++) {
@@ -208,7 +212,7 @@ public class PFont2 extends PFont {
     charCount = index;
 
     // size for image/texture is next power of 2 over largest char
-    mbox = (int) 
+    mbox2 = (int) 
       Math.pow(2, Math.ceil(Math.log(maxWidthHeight) / Math.log(2)));
     //System.out.println("mbox is " + mbox);
     //System.out.println("found " + charCount + " chars
