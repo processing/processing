@@ -78,14 +78,13 @@ X   just use reflection to call the function instead
 X "use external editor" is broken
 X   throws exception on load()
 X make preproc only build once (across osx, windows, linux)
+X preproc: making all functions public that have no specifier
+X   this will make draw() etc all much easier
+X   as well as the library events
+X   focusGained/focusLost was added.. 
 
 _ if a data file is in the sketch (not data) folder export breaks
 _   works fine in the editor, but on export gets a nullpointer ex
-
-_ preproc: making all functions public that have no specifier
-_   this will make draw() etc all much easier
-_   as well as the library events
-_   focusGained/focusLost was added.. 
 
 _ basic sample audio playback needed for p5
 
