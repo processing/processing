@@ -1,4 +1,4 @@
-0068
+0069
 X ifdef JDK14 around a piece of 1.4 specific window code
 X use mozilla for opening urls in linux, switched to more compatible exec()
 o note in the docs: can't use transforms inside beginShape()
@@ -9,17 +9,8 @@ X moved 'find in reference' to the help menu
 X eliminate the requirement for a 'data' folder
 X   only create 'data' folder when it's needed/used
 X   auto-create code and data folder via 'add files to sketch..'
-X option to disable smoothing on font creator
-X font builder should update when the size for the font is changed
-X   (so long as the size itself is valid)
-X font builder bug, was cutting off parts of letters
-X major applet freezing error fixed with external
-X   printStackTrace wasn't being called for runtime errors if no leechErr
 X may need to start putting properties somewhere besides lib
 X   home directory  (or preferences folder under macos9)
-X create font doesn't support umlauts
-X   fix up font code to generate unicode chars, at least for iso8859-1 charset
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
 X punt on the expert release? at least until beta? 
 X   nope, can't will annoy people and won't save enough time
 X clean up the fonts in the 
@@ -37,51 +28,8 @@ X   seems to be a mac-specific problem (probably because of monaco)
 X removed kjc classes
 X addition to pde.properties to list the imports for various jdk versions
 X set jdk version for export inside pde.properties
-X international: convert unicode chars to \uXXXX in the preproc
-X   if this causes trouble, change the preference for lib/pde.properties
-X   compiler.substitute_unicode = false
 X option to set what browser is in use
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074106123;start=0
-X implement concave/convex polygons
-X   code from carlos that was patched into old graphics
-
-toxi
-X sphereDetail() function + reference
-X optimized the flat_rect() function for solid colours (20% faster)
-X noise() is (partially) broken in v67
-
-goodbye macos9
-X posted to message board about it going away
-o leftover todos
-o   set file type for jar and html files on export
-o     (not done on osx, safari doesn't set for html files)
-o     why is bbedit the type for the other files? make simpletext
-o untested/likely broken
-o   reference launching
-o   control/right-click for edit area context menu
-o   make sure editor window is front so that error line highlights
-o   is video working (qtjava in path) on macos9?
-
-already done in a prev release, but not checked off
-X subst Image -> BImage, Font -> BFont
-X   this should be optional until we get the naming down
-X   note that this was already done pre-67
-o allow import blahblah.blah.blah to get passed through
-o   and included with the imports list.
-X clear console each time 'run' gets hit
-X   don't actually clear, just advance by the number of lines visible
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1065732731
-X can't copy text from console directly (winxp and macosx)
-
-nixed
-o basic usb support?
-o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
-o try ariel's Thread.yield() suggestion
-o set default framerate of 24? 30? 2x that?
-
-
-_ notify toxi when i know how soon before i'm going to release 68
 
 _ put SecurityException things around file i/o for applets
 _   rather than checking online(), since applets might be signed
@@ -249,9 +197,6 @@ void toGrayscale() {
 
 
 BUGS / PDE
-_ find/replace hangs when recapitalizing things
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1072994196;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074602643
 _ if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError ensues
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
@@ -616,9 +561,6 @@ ca b _     translate(58, 48, 0);
 ca b _     rotateY(0.5);
 ca b _     box(40);
 
-ca b X concave/complex polygon
-ca b _   eventually POLYGON auto-detects convex/concave polygon
-ca b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 ca b X clipping objects (clipping planes?)
 ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
 ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0

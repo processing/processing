@@ -2,7 +2,7 @@
 
 /*
   PdeEditorFind - find/replace window for processing
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -40,6 +40,9 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   JButton replaceAllButton; 
   JButton findButton;
 
+  JCheckBox ignoreCaseBox;
+  boolean ignoreCase;
+
   boolean found;
 
 
@@ -71,13 +74,28 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     replaceLabel.setBounds(BIG, BIG + d2.height + SMALL + yoff,
 			   d1.width, d1.height);
 
+    ignoreCase = true;
+    ignoreCaseBox = new JCheckBox("Ignore Case");
+    ignoreCaseBox.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          ignoreCase = ignoreCaseBox.isSelected();
+        }
+      });
+    ignoreCaseBox.setSelected(ignoreCase);
+    pain.add(ignoreCaseBox);
+
+    //
+
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout());
+
+    // ordering is different on mac versus pc
     if ((PdeBase.platform == PdeBase.MACOSX) || 
 	(PdeBase.platform == PdeBase.MACOS9)) {
       buttons.add(replaceButton = new JButton("Replace"));
       buttons.add(replaceAllButton = new JButton("Replace All"));
       buttons.add(findButton = new JButton("Find"));
+
     } else {
       buttons.add(findButton = new JButton("Find"));
       buttons.add(replaceButton = new JButton("Replace"));
@@ -91,15 +109,23 @@ public class PdeEditorFind extends JFrame implements ActionListener {
       buttons.setBorder(null);
     }
 
-    //System.out.println(buttons.getPreferredSize());
     Dimension d3 = buttons.getPreferredSize();
-    buttons.setBounds(BIG, BIG + d2.height*2 + SMALL + BIG, 
+    //buttons.setBounds(BIG, BIG + d2.height*2 + SMALL + BIG, 
+    buttons.setBounds(BIG, BIG + d2.height*3 + SMALL*2 + BIG, 
 		      d3.width, d3.height);
+
+    //
 
     findField.setBounds(BIG + d1.width + SMALL, BIG, 
 			d3.width - (d1.width + SMALL), d2.height);
     replaceField.setBounds(BIG + d1.width + SMALL, BIG + d2.height + SMALL, 
 			   d3.width - (d1.width + SMALL), d2.height);
+
+    ignoreCaseBox.setBounds(BIG + d1.width + SMALL, 
+                            BIG + d2.height*2 + SMALL*2,
+                            d3.width, d2.height);
+
+    //
 
     replaceButton.addActionListener(this);
     replaceAllButton.addActionListener(this);
@@ -117,11 +143,12 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
     int wide = d3.width + BIG*2;
-    int high = BIG + d2.height*2 + SMALL + BIG*3 + d3.height;
+    Rectangle butt = buttons.getBounds();  // how big is your butt?
+    int high = butt.y + butt.height + BIG*2;
 
     setBounds((screen.width - wide) / 2,
 	      (screen.height - high) / 2, wide, high);
-    //show();  // done byte PdeEditor instead
+    show();
   }
 
 
@@ -156,8 +183,10 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
     String text = editor.textarea.getText();
 
+    if (ignoreCase) {
     search = search.toLowerCase();
-    text = text.toLowerCase();  // ignore case
+      text = text.toLowerCase();
+    }
 
     //int selectionStart = editor.textarea.getSelectionStart();
     int selectionEnd = editor.textarea.getSelectionEnd();
@@ -182,8 +211,17 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   // replacement text field
 
   public void replace() {
-    //System.out.println("replace " + found);
     if (!found) return;  // don't replace if nothing found
+
+    // check to see if the document has wrapped around
+    // otherwise this will cause an infinite loop
+    String sel = editor.textarea.getSelectedText();
+    if (sel.equals(replaceField.getText())) {
+      found = false; 
+      replaceButton.setEnabled(false);
+      return;
+    }
+
     editor.textarea.setSelectedText(replaceField.getText());
     editor.setSketchModified(true);
 
