@@ -227,6 +227,10 @@ public class PApplet extends Applet
     }
     */
 
+    // these need to be inited before setup
+    libraries = new PLibrary[10];
+    libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
+
     // call the applet's setup method
     setup();
 
@@ -234,9 +238,6 @@ public class PApplet extends Applet
     this.pixels = g.pixels;
     this.width = g.width;
     this.height = g.height;
-
-    libraries = new PLibrary[10];
-    libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
 
     try {
       getAppletContext();
@@ -310,6 +311,8 @@ public class PApplet extends Applet
     libraries[libraryCount] = library;
     libraryCalls[libraryCount] = new boolean[PLibrary.CALL_COUNT];
     libraryCount++;
+
+    library.setup(this);
   }
 
 
@@ -339,6 +342,7 @@ public class PApplet extends Applet
   public void registerCall(PLibrary library, int call) {
     for (int i = 0; i < libraryCount; i++) {
       if (libraries[i] == library) {
+        //println("registering call # " + call + " to " + library);
         libraryCalls[i][call] = true;
       }
     }
