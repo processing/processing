@@ -226,6 +226,34 @@ dh X   may need horizontal scroller, or text wrap
 dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
 
 
+dm X separate compiler from other kjc-specific code
+dm X   change writeJava/start functions to be combined in kjc
+dm X   but the rest inside PdeEditor that takes care of launching/placing
+
+dm o another kjc bug
+dm o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1048025370;start=0
+dm o when missing a closed brace, often has compiler error
+dm o   Jordan J message in email and bugs list
+dm o can't used random() inside constructor.. (Glen Murphy)
+dm o   maybe related to problems loading images in constructors
+dm o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039411135
+dm o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038807934
+dm o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1029289775
+dm o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1047649496;start=0
+dm o kjc is really frustrating about some of its error/warning msgs
+dm o   erroneous errors from kjc regarding 'var not inited'
+dm o     is there any way to disable this message?
+dm o   talk to simon about error streams and kjc
+dm o     better piping of output from kjc
+dm o     modify kjc to take a PrintWriter, instead of current hacks
+dm o   might be able to set default values for vars using perl5subst
+dm o   Compiler.disable() message is weird and doesn't always work
+dm o     probably just remove it for now
+dm X see if newer javac forces a System.exit() or if it can be avoided
+dm X wire-in jikes as another compiler
+dm X   write handlers for jikes-style of error messages
+
+
 post-0057c1
 X deal with spaces in user.dir (!) 
 X   affects reference, and prolly compiling too
