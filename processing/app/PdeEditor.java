@@ -76,7 +76,7 @@ public class PdeEditor extends JPanel {
   boolean externalEditor;
 
   // currently opened program
-  String userName;   // user currently logged in
+  //String userName;   // user currently logged in
   String sketchName; // name of the file (w/o pde if a sketch)
   File sketchFile;   // the .pde file itself
   File sketchDir;    // if a sketchbook project, the parent dir
@@ -131,8 +131,7 @@ public class PdeEditor extends JPanel {
 
     // set bgcolor of buttons here, b/c also used for empty component
     buttons = new PdeEditorButtons(this);
-    Color buttonBgColor = 
-      PdeBase.getColor("editor.buttons.bgcolor", new Color(0x99, 0x99, 0x99));
+    Color buttonBgColor = PdePreferences.getColor("editor.buttons.bgcolor");
     buttons.setBackground(buttonBgColor);
     leftPanel.add("North", buttons);
     Label dummy = new Label();
@@ -176,7 +175,7 @@ public class PdeEditor extends JPanel {
     }
 
     // the default size on windows is too small and kinda ugly
-    int dividerSize = PdeBase.getInteger("editor.divider.size", 0);
+    int dividerSize = PdePreferences.getInteger("editor.divider.size");
     if (dividerSize != 0) {
       splitPane.setDividerSize(dividerSize);
     }
@@ -235,7 +234,7 @@ public class PdeEditor extends JPanel {
                     labelSize.width, labelSize.height);
 
     Color presentationBgColor = 
-      PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
+      PdePreferences.getColor("run.present.bgcolor");
     presentationWindow.setBackground(presentationBgColor);
 
     textarea.addFocusListener(new FocusAdapter() {
@@ -454,7 +453,7 @@ public class PdeEditor extends JPanel {
     throws PdeException, Exception {
 
     // true if this should extend BApplet instead of BAppletGL
-    boolean extendsNormal = base.normalItem.getState();
+    //boolean extendsNormal = base.normalItem.getState();
 
     externalRuntime = false;
     externalPaths = null;
@@ -489,69 +488,47 @@ public class PdeEditor extends JPanel {
     //System.out.println("imports is " + imports);
 
     PdePreprocessor preprocessor = null;
-    if (PdeBase.getBoolean("preprocessor.antlr", true)) {
-      preprocessor = new PdePreprocessor(program, buildPath);
-      try {
-        className = 
-          preprocessor.writeJava(className, imports, 
-                                 extendsNormal, false);
-
-      } catch (antlr.RecognitionException re) {
-        // this even returns a column
-        throw new PdeException(re.getMessage(), 
-                               re.getLine() - 1, re.getColumn());
-
-      } catch (antlr.TokenStreamRecognitionException tsre) {
-        // while this seems to store line and column internally,
-        // there doesn't seem to be a method to grab it.. 
-        // so instead it's done using a regexp
-
-        //try {
-        PatternMatcher matcher = new Perl5Matcher();
-        PatternCompiler compiler = new Perl5Compiler();
-        // line 3:1: unexpected char: 0xA0
-        String mess = "^line (\\d+):(\\d+):\\s";
-        Pattern pattern = compiler.compile(mess);
-
-        PatternMatcherInput input = 
-          new PatternMatcherInput(tsre.toString());
-        if (matcher.contains(input, pattern)) {
-          MatchResult result = matcher.getMatch();
-          //try {
-          int line = Integer.parseInt(result.group(1).toString());
-          int column = Integer.parseInt(result.group(2).toString());
-          throw new PdeException(tsre.getMessage(), line-1, column);
-
-          //} catch (NumberFormatException e) {
-          //}
-        } else {
-          //System.out.println("didn't match input");
-          throw new PdeException(tsre.toString());
-        }
-
-          /*
-            } catch (MalformedPatternException mpe){
-            mpe.printStackTrace();
-            
-            } catch (Exception e) {  // not understood
-            e.printStackTrace();
-            throw new PdeException(tsre.toString());
-            }
-          */
-
-      } catch (PdeException pe) {
-        throw pe;
-
-      } catch (Exception ex) {
-        System.err.println("Uncaught exception type:" + ex.getClass());
-        ex.printStackTrace();
-        throw new PdeException(ex.toString());
-      }
-    } else {  // use the old oro processor (yech)
-      preprocessor = new PdePreprocessorOro(program, buildPath);
+    preprocessor = new PdePreprocessor(program, buildPath);
+    try {
       className = 
-        preprocessor.writeJava(className, imports, 
-                               extendsNormal, false);
+        preprocessor.writeJava(className, imports, false);
+
+    } catch (antlr.RecognitionException re) {
+      // this even returns a column
+      throw new PdeException(re.getMessage(), 
+                             re.getLine() - 1, re.getColumn());
+
+    } catch (antlr.TokenStreamRecognitionException tsre) {
+      // while this seems to store line and column internally,
+      // there doesn't seem to be a method to grab it.. 
+      // so instead it's done using a regexp
+
+      PatternMatcher matcher = new Perl5Matcher();
+      PatternCompiler compiler = new Perl5Compiler();
+      // line 3:1: unexpected char: 0xA0
+      String mess = "^line (\\d+):(\\d+):\\s";
+      Pattern pattern = compiler.compile(mess);
+
+      PatternMatcherInput input = 
+        new PatternMatcherInput(tsre.toString());
+      if (matcher.contains(input, pattern)) {
+        MatchResult result = matcher.getMatch();
+
+        int line = Integer.parseInt(result.group(1).toString());
+        int column = Integer.parseInt(result.group(2).toString());
+        throw new PdeException(tsre.getMessage(), line-1, column);
+
+      } else {
+        throw new PdeException(tsre.toString());
+      }
+
+    } catch (PdeException pe) {
+      throw pe;
+
+    } catch (Exception ex) {
+      System.err.println("Uncaught exception type:" + ex.getClass());
+      ex.printStackTrace();
+      throw new PdeException(ex.toString());
     }
 
     if (PdePreprocessor.programType == PdePreprocessor.ADVANCED) {
@@ -954,7 +931,8 @@ public class PdeEditor extends JPanel {
       // does all the plumbing to create a new project
       // then calls handleOpen to load it up
 
-      File sketchbookDir = new File("sketchbook", userName); //header.user);
+      //File sketchbookDir = new File("sketchbook", userName);
+      File sketchbookDir = PdePreferences.get("sketchbook.path");
       File sketchDir = null;
       String sketchName = null;
 
@@ -973,7 +951,6 @@ public class PdeEditor extends JPanel {
       // mkdir for new project name
       sketchDir.mkdirs();
       new File(sketchDir, "data").mkdirs();
-      //new File(sketchDir, "build").mkdirs();
 
       // make empty pde file
       File sketchFile = new File(sketchDir, sketchName + ".pde");
@@ -1584,7 +1561,7 @@ public class PdeEditor extends JPanel {
     //doStop();
 
     // clear out projects that are empty
-    if (PdeBase.getBoolean("sketchbook.auto_clean", true)) {
+    if (PdePreferences.getBoolean("sketchbook.auto_clean", true)) {
       String userPath = base.sketchbookPath + File.separator + userName;
       File userFolder = new File(userPath);
 
@@ -1631,6 +1608,7 @@ public class PdeEditor extends JPanel {
       }
     }
 
+    PdePreferences.save();
     // write sketch.properties
     try {
       FileOutputStream output = null;
@@ -1680,7 +1658,7 @@ public class PdeEditor extends JPanel {
       skprops.put("editor.divider.location", 
                   String.valueOf(splitPane.getDividerLocation()));
 
-      skprops.put("serial.port", PdeBase.get("serial.port", "unspecified"));
+      //skprops.put("serial.port", PdePreferences.get("serial.port", "unspecified"));
 
       skprops.save(output, "auto-generated by pde, please don't touch");
 
@@ -1809,13 +1787,13 @@ public class PdeEditor extends JPanel {
     // disable line highlight and turn off the caret when disabling
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
-      painter.setBackground(PdeBase.getColor("editor.program.bgcolor.external", new Color(204, 204, 204)));
+      painter.setBackground(PdePreferences.getColor("editor.program.bgcolor.external", new Color(204, 204, 204)));
       painter.lineHighlight = false;
       textarea.setCaretVisible(false);
 
     } else {
-      painter.setBackground(PdeBase.getColor("editor.program.bgcolor", Color.white));
-      painter.lineHighlight = PdeBase.getBoolean("editor.program.linehighlight.enabled", true);
+      painter.setBackground(PdePreferences.getColor("editor.program.bgcolor", Color.white));
+      painter.lineHighlight = PdePreferences.getBoolean("editor.program.linehighlight.enabled", true);
       textarea.setCaretVisible(true);
     }
   }
@@ -2033,7 +2011,7 @@ public class PdeEditor extends JPanel {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-        if (!PdeBase.getBoolean("editor.save_build_files", false)) {
+        if (!PdePreferences.getBoolean("editor.save_build_files", false)) {
           if (!dead.delete()) {
             // temporarily disabled
             //System.err.println("couldn't delete " + dead);

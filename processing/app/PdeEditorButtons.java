@@ -111,10 +111,10 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
 
     setLayout(null);
     status = new Label();
-    status.setFont(PdeBase.getFont("editor.buttons.status.font",
-                                     new Font("SansSerif", Font.PLAIN, 10)));
-    status.setForeground(PdeBase.getColor("editor.buttons.status.color",
-                                            Color.black));
+    status.setFont(PdePreferences.getFont("editor.buttons.status.font",
+                                          new Font("SansSerif", Font.PLAIN, 10)));
+    status.setForeground(PdePreferences.getColor("editor.buttons.status.color",
+                                                 Color.black));
     add(status);
 
     status.setBounds(-5, BUTTON_COUNT*BUTTON_HEIGHT, 

@@ -40,6 +40,11 @@ import com.apple.mrj.*;
 #endif
 
 
+/**
+ * Primary role of this class is for platform identification and
+ * general interaction with the system (launching URLs, loading 
+ * files and images, etc) that comes from that.
+ */
 #ifndef SWINGSUCKS
 public class PdeBase extends JFrame
 #else
@@ -71,7 +76,7 @@ public class PdeBase extends Frame
   boolean errorState;
   PdeEditor editor;
 
-  WindowAdapter windowListener;
+  //WindowAdapter windowListener;
 
   Menu sketchbookMenu;
   File sketchbookFolder;
@@ -94,10 +99,9 @@ public class PdeBase extends Frame
   //CheckboxMenuItem externalEditorItem;
 
   //Menu renderMenu;
-  CheckboxMenuItem normalItem, openglItem;
+  //CheckboxMenuItem normalItem, openglItem;
   //MenuItem illustratorItem;
 
-  
 
   static final String WINDOW_TITLE = "Processing";
 
@@ -116,58 +120,7 @@ public class PdeBase extends Frame
 
   static public void main(String args[]) {
     //System.getProperties().list(System.out);
-    //System.out.println(System.getProperty("java.class.path"));
-
-    // should be static though the mac is acting sketchy
-    if (System.getProperty("mrj.version") != null) {  // running on a mac
-      //System.out.println(UIManager.getSystemLookAndFeelClassName());
-      //System.out.println(System.getProperty("mrj.version"));
-      //System.out.println(System.getProperty("os.name"));
-      platform = (System.getProperty("os.name").equals("Mac OS X")) ?
-        MACOSX : MACOS9;
-
-    } else {
-      //System.out.println("unknown OS");
-      //System.out.println(System.getProperty("os.name"));
-      String osname = System.getProperty("os.name");
-      //System.out.println("osname is " + osname);
-      if (osname.indexOf("Windows") != -1) {
-        platform = WINDOWS;
-
-      } else if (osname.equals("Linux")) {  // true for the ibm vm
-        platform = LINUX;
-
-      } else if (osname.equals("Irix")) {
-        platform = IRIX;
-
-      } else {
-        platform = WINDOWS;  // probably safest
-        System.out.println("unhandled osname: " + osname);
-      }
-    }
-
-    try {
-      //if (platform == LINUX) {
-        // linux is by default (motif?) even uglier than metal
-        // actually, i'm using native menus, so they're ugly and
-        // motif-looking. ick. need to fix this.
-        //System.out.println("setting to metal");
-      //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-      //} else {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        //}
-    } catch (Exception e) { 
-      e.printStackTrace();
-    }
-
-    //try {
     PdeBase app = new PdeBase();
-    // people attempting to use p5 in headless mode are
-    // already setting themselves up for disappointment
-    //} catch (HeadlessException e) {
-    //e.printStackTrace();
-    //System.exit(1);
-    //}
   }
 
 
@@ -180,20 +133,71 @@ public class PdeBase extends Frame
   public PdeBase() {
     super(WINDOW_TITLE);
 
+
+    // figure out which operating system
+
+    if (System.getProperty("mrj.version") != null) {  // running on a mac
+      platform = (System.getProperty("os.name").equals("Mac OS X")) ?
+        MACOSX : MACOS9;
+
+    } else {
+      String osname = System.getProperty("os.name");
+
+      if (osname.indexOf("Windows") != -1) {
+        platform = WINDOWS;
+
+      } else if (osname.equals("Linux")) {  // true for the ibm vm
+        platform = LINUX;
+
+      } else if (osname.equals("Irix")) {
+        platform = IRIX;
+
+      } else {
+        platform = WINDOWS;  // probably safest
+        System.out.println("unhandled osname: \"" + osname + "\"");
+      }
+    }
+
+
+    // set the look and feel before opening the window
+
+    try {
+      if (platform == LINUX) {
+        // linux is by default (motif?) even uglier than metal
+        // actually, i'm using native menus, so they're ugly and
+        // motif-looking. ick. need to fix this.
+        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+      } else {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      }
+    } catch (Exception e) { 
+      e.printStackTrace();
+    }
+
+
+    // set the window icon
+
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
       this.setIconImage(icon);
     } catch (Exception e) { } // fail silently, no big whup
 
-    windowListener = new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        handleQuit();
-      }
-    };
+
+    // add listener to handle window close box hit event
+
+    addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          handleQuit();
+        }
+      });
     //frame.addWindowListener(windowListener);
-    this.addWindowListener(windowListener);
+    //this.addWindowListener(windowListener);
+
+
+    // load in preferences (last sketch used, window placement, etc)
 
     prefs = new PdePreferences();
+
 
     // read in the keywords for the reference
 
@@ -228,17 +232,18 @@ public class PdeBase extends Frame
     // build the editor object
 
     editor = new PdeEditor(this);
-#ifdef SWINGSUCKS
-    this.setLayout(new BorderLayout());
-    this.add("Center", editor);
-#else
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add("Center", editor);
-#endif
+
+
+    // setup menu bar
 
     MenuBar menubar = new MenuBar();
     Menu menu;
     MenuItem item;
+
+
+    // file menu
 
     menu = new Menu("File");
     menu.add(new MenuItem("New", new MenuShortcut('N')));
@@ -387,32 +392,19 @@ public class PdeBase extends Frame
       menu.add(new MenuItem("Show sketch folder"));
     }
 
-    recordingHistory = getBoolean("history.recording", true);
+    recordingHistory = PdePreferences.getBoolean("history.recording", true);
     if (recordingHistory) {
       historyMenu = new Menu("History");
       menu.add(historyMenu);
-
-      /*
-      item = new MenuItem("Clear History");
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (!editor.historyFile.delete()) {
-              System.err.println("couldn't erase history");
-            }
-            rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
-          }
-        });
-      menu.add(item);
-      menu.addSeparator();
-      */
     }
 
-    menu.addSeparator();
+    //menu.addSeparator();
 
     //menu.addSeparator();
     //serialMenu = new Menu("Serial Port");
     //menu.add(serialMenu);
 
+    /*
     Menu rendererMenu = new Menu("Renderer");
 #ifdef OPENGL
     // opengl support has started, but remains as yet unfinished
@@ -437,6 +429,7 @@ public class PdeBase extends Frame
           normalItem.setState(false);
         }
       });
+    */
 
     /*
     externalEditorItem = new CheckboxMenuItem("Use External Editor");
@@ -602,8 +595,8 @@ public class PdeBase extends Frame
       //menu.add(newSkechItem);
       //menu.addSeparator();
 
-      //sketchbookFolder = new File("sketchbook");
-      sketchbookFolder = new File(get("sketchbook.path", "sketchbook"));
+      sketchbookFolder = 
+        new File(PdePreferences.get("sketchbook.path", "sketchbook"));
       sketchbookPath = sketchbookFolder.getCanonicalPath();
       if (!sketchbookFolder.exists()) {
         System.err.println("sketchbook folder doesn't exist, " + 
@@ -1054,103 +1047,6 @@ public class PdeBase extends Frame
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-
-  // all the information from pde.properties
-
-  static public String get(String attribute) {
-    return get(attribute, null);
-  }
-
-  static public String get(String attribute, String defaultValue) {
-    //String value = (properties != null) ?
-    //properties.getProperty(attribute) : applet.getParameter(attribute);
-    String value = properties.getProperty(attribute);
-
-    return (value == null) ? 
-      defaultValue : value;
-  }
-
-  static public boolean getBoolean(String attribute, boolean defaultValue) {
-    String value = get(attribute, null);
-    return (value == null) ? defaultValue : 
-      (new Boolean(value)).booleanValue();
-
-    /*
-      supposedly not needed, because anything besides 'true'
-      (ignoring case) will just be false.. so if malformed -> false
-    if (value == null) return defaultValue;
-
-    try {
-      return (new Boolean(value)).booleanValue();
-    } catch (NumberFormatException e) {
-      System.err.println("expecting an integer: " + attribute + " = " + value);
-    }
-    return defaultValue;
-    */
-  }
-
-  static public int getInteger(String attribute, int defaultValue) {
-    String value = get(attribute, null);
-    if (value == null) return defaultValue;
-
-    try {
-      return Integer.parseInt(value);
-    } catch (NumberFormatException e) { 
-      // ignored will just fall through to returning the default
-      System.err.println("expecting an integer: " + attribute + " = " + value);
-    }
-    return defaultValue;
-    //if (value == null) return defaultValue;
-    //return (value == null) ? defaultValue : 
-    //Integer.parseInt(value);
-  }
-
-  static public Color getColor(String name, Color otherwise) {
-    Color parsed = null;
-    String s = get(name, null);
-    if ((s != null) && (s.indexOf("#") == 0)) {
-      try {
-        int v = Integer.parseInt(s.substring(1), 16);
-        parsed = new Color(v);
-      } catch (Exception e) {
-      }
-    }
-    if (parsed == null) return otherwise;
-    return parsed;
-  }
-
-
-  static public Font getFont(String which, Font otherwise) {
-    //System.out.println("getting font '" + which + "'");
-    String str = get(which);
-    if (str == null) return otherwise;  // ENABLE LATER
-    StringTokenizer st = new StringTokenizer(str, ",");
-    String fontname = st.nextToken();
-    String fontstyle = st.nextToken();
-    return new Font(fontname, 
-                    ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) | 
-                    ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
-                    Integer.parseInt(st.nextToken()));
-  }
-
-
-  static public SyntaxStyle getStyle(String what, String dflt) {
-    String str = get("editor.program." + what + ".style", dflt);
-
-    StringTokenizer st = new StringTokenizer(str, ",");
-
-    String s = st.nextToken();
-    if (s.indexOf("#") == 0) s = s.substring(1);
-    Color color = new Color(Integer.parseInt(s, 16));
-
-    s = st.nextToken();
-    boolean bold = (s.indexOf("bold") != -1);
-    boolean italic = (s.indexOf("italic") != -1);
-    //System.out.println(str + " " + bold + " " + italic);
-
-    return new SyntaxStyle(color, italic, bold);
   }
 
 
