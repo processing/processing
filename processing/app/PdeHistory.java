@@ -2,7 +2,7 @@
 
 /*
   PdeHistory - handler for storing history information about a project
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -21,6 +21,10 @@
   along with this program; if not, write to the Free Software Foundation, 
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+
+#ifdef BEN_COULD_EVER_FINISH_SIXTY_EIGHT
+
 
 import java.awt.*;
 import java.awt.event.*;
@@ -55,8 +59,8 @@ public class PdeHistory {
   ActionListener menuListener;
 
 
-  public PdeHistory(PdeEditor editor) {
-    this.editor = editor;
+  public PdeHistory(Sketch sketch) {
+    //this.editor = editor;
 
     menu = new JMenu("History");
 
@@ -352,3 +356,6 @@ public class PdeHistory {
     }
   }
 }
+
+
+#endif
