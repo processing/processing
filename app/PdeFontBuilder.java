@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -56,7 +56,7 @@ public class PdeFontBuilder extends JFrame {
   int selection = -1;
 
   static final String styles[] = {
-    "Plain", "Bold", "Italic", "Bold Italic" 
+    "Plain", "Bold", "Italic", "Bold Italic"
   };
 
 
@@ -77,9 +77,9 @@ public class PdeFontBuilder extends JFrame {
 
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
-    String labelText = 
+    String labelText =
       "Use this tool to create bitmap fonts for your program.\n" +
-      "Select a font and size, and click 'OK' to generate the font.\n" + 
+      "Select a font and size, and click 'OK' to generate the font.\n" +
       "It will be added to the data folder of the current sketch.";
 
     //JLabel label = new JLabel(labelText);
@@ -97,7 +97,7 @@ public class PdeFontBuilder extends JFrame {
 
     /*
       // save this as an alternative implementation
-    GraphicsEnvironment ge = 
+    GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
@@ -117,10 +117,11 @@ public class PdeFontBuilder extends JFrame {
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
     // getFontList is deprecated in 1.4, so this has to be used
-    GraphicsEnvironment ge = 
+    GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
+    //PApplet.printarr(fonts);
     String flist[] = new String[fonts.length];
     table = new Hashtable();
 
@@ -149,7 +150,7 @@ public class PdeFontBuilder extends JFrame {
     list = new String[index];
     System.arraycopy(flist, 0, list, 0, index);
 
-    fontSelector = new JList(list); //families); 
+    fontSelector = new JList(list); //families);
     fontSelector.addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
           if (e.getValueIsAdjusting() == false) {
@@ -206,8 +207,8 @@ public class PdeFontBuilder extends JFrame {
         public void paintComponent(Graphics g) {
           //System.out.println("disabling aa");
           Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-                              smooth ? 
+          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                              smooth ?
                               RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
                               RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
           super.paintComponent(g2);
@@ -234,7 +235,7 @@ public class PdeFontBuilder extends JFrame {
         public void actionPerformed(ActionEvent e) {
           String command = e.getActionCommand();
           int style = Font.PLAIN;
-          if (command.indexOf("Bold") != -1) { 
+          if (command.indexOf("Bold") != -1) {
             style |= Font.BOLD;
           }
           if (command.indexOf("Italic") != -1) {
@@ -252,8 +253,8 @@ public class PdeFontBuilder extends JFrame {
     panel.add(new JLabel("Size:"));
     sizeSelector = new JTextField(" 48 ");
     sizeSelector.getDocument().addDocumentListener(new DocumentListener() {
-	public void insertUpdate(DocumentEvent e) { update(); }
-	public void removeUpdate(DocumentEvent e) { update(); }
+        public void insertUpdate(DocumentEvent e) { update(); }
+        public void removeUpdate(DocumentEvent e) { update(); }
         public void changedUpdate(DocumentEvent e) { }
       });
     panel.add(sizeSelector);
@@ -268,7 +269,7 @@ public class PdeFontBuilder extends JFrame {
 
     smoothBox = new JCheckBox("Smooth");
     smoothBox.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           smooth = smoothBox.isSelected();
           update();
         }
@@ -278,7 +279,7 @@ public class PdeFontBuilder extends JFrame {
 
     allBox = new JCheckBox("All Characters");
     allBox.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           all = allBox.isSelected();
         }
       });
@@ -393,9 +394,9 @@ public class PdeFontBuilder extends JFrame {
       f.write(new FileOutputStream(new File(targetFolder, filename)));
 
     } catch (IOException e) {
-      JOptionPane.showMessageDialog(this, 
+      JOptionPane.showMessageDialog(this,
                                     "An error occurred while creating font.",
-                                    "No font for you", 
+                                    "No font for you",
                                     JOptionPane.WARNING_MESSAGE);
       e.printStackTrace();
     }
