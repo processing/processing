@@ -41,6 +41,7 @@ public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
+  // jdkVersionStr = "1.3" or "1.1" or whatever
   static final String jdkVersionStr = 
     System.getProperty("java.version").substring(0,3);
   static final double jdkVersion = 
@@ -55,12 +56,17 @@ public class PApplet extends Applet
   /** Path to sketch folder */
   public String folder; // = System.getProperty("user.dir");
 
+  /** When debugging headaches */
   static final boolean THREAD_DEBUG = false; //true; 
 
   public int pixels[];
 
   public int mouseX, mouseY;
   public int pmouseX, pmouseY;
+
+  // used to set pmouseX/Y to mouseX/Y the first time
+  // mouseX/Y are used, otherwise pmouseX/Y would always
+  // be zero making a big jump. yech.
   boolean firstMouseEvent;
 
   public boolean mousePressed;
@@ -122,13 +128,10 @@ public class PApplet extends Applet
   //boolean qmouseDragged;
   //boolean qmouseMoved;
 
-  // used to set pmouseX/Y to mouseX/Y the first time
-  // mouseX/Y are used, otherwise pmouseX/Y would always
-  // be zero making a big jump. yech.
-  boolean firstFrame;
+  //boolean firstFrame;
 
   // current frame number (could this be used to replace firstFrame?)
-  public int frame;
+  public int frameCount;
 
   // true if the feller has spun down
   public boolean finished;
@@ -193,7 +196,7 @@ public class PApplet extends Applet
 
     finished = false; // just for clarity
     //drawn = false;
-    firstFrame = true;
+    //firstFrame = true;
 
     // this will be cleared by loop() if it is not overridden
     //drawMethod = true;
@@ -369,8 +372,9 @@ public class PApplet extends Applet
   }
 
 
-  boolean updated = false;
+  //boolean updated = false;
 
+  /*
   public void update() {
     if (firstFrame) firstFrame = false; 
 
@@ -380,18 +384,23 @@ public class PApplet extends Applet
     getToolkit().sync();  // force repaint now (proper method)
     if (THREAD_DEBUG) println("   3c update() internal " + firstFrame);
   }
+  */
 
   public void update(Graphics screen) {
-    if (THREAD_DEBUG) println("    4 update() external");
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                              "    4 update() external");
     paint(screen);
   }
 
-  synchronized public void paint(Graphics screen) {
-    if (THREAD_DEBUG) println("     5a enter paint");
+  //synchronized public void paint(Graphics screen) {
+  public void paint(Graphics screen) {
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                              "     5a enter paint");
 
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
-    if (firstFrame) return;
+    //if (firstFrame) return;
+    if (frameCount == 0) return;
 
     // without ignoring the first call, the first several frames
     // are confused because paint() gets called in the midst of 
@@ -402,9 +411,12 @@ public class PApplet extends Applet
     // try to fight over it. this was causing a randomized slowdown
     // that would cut the framerate into a third on macosx,
     // and is probably related to the windows sluggishness bug too
-    if (THREAD_DEBUG) println("     5b enter paint sync");
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                              "     5b enter paint sync");
 
     synchronized (g) {
+      if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                "     5c inside paint sync");
       //System.out.println("5b paint has sync");
       //Exception e = new Exception();
       //e.printStackTrace();
@@ -416,21 +428,67 @@ public class PApplet extends Applet
       if (g != null) {
         screen.drawImage(g.image, 0, 0, null);
       }
+      //if (THREAD_DEBUG) println("notifying all");
+      //notifyAll();
+      //thread.notify();
       //System.out.println("      6 exit paint");
     }
-    updated = true;
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                              "      6 exit paint");
+    //updated = true;
   }
 
 
   public void run() {
     try {
       while ((Thread.currentThread() == thread) && !finished) {
-        updated = false;
+        //updated = false;
 
-        if (PApplet.THREAD_DEBUG) println("nextFrame()");
-        //println(looping + " " + redraw);
-        if (looping || redraw) nextFrame();
-        redraw = false;
+        if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                          " formerly nextFrame()");
+        //if (looping || redraw) nextFrame();
+        if (looping || redraw) {
+          if (fpsTarget != 0) framerate_delay();
+
+          synchronized (g) {
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      " 1a beginFrame");
+            g.beginFrame();
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      " 1b draw");
+            draw();
+
+            // these are called *after* loop so that valid
+            // drawing commands can be run inside them. it can't
+            // be before, since a call to background() would wipe
+            // out anything that had been drawn so far.
+            dequeueMouseEvents();
+            dequeueKeyEvents();
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      " 2b endFrame");
+            g.endFrame();
+          //}  // end sync
+
+          //update();
+          // formerly 'update'
+          //if (firstFrame) firstFrame = false; 
+          // internal frame counter
+          frameCount++;
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                    "   3a calling repaint() " + frameCount);
+          repaint();
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                    "   3b calling Toolkit.sync " + frameCount);
+          getToolkit().sync();  // force repaint now (proper method)
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                    "   3c done " + frameCount);
+          //if (THREAD_DEBUG) println("   3d waiting");
+          //wait();
+          //if (THREAD_DEBUG) println("   3d out of wait");
+          //frameCount++;
+          }
+        }
+        redraw = false;  // unset 'redraw' flag in case it was set
 
         // moving this to update() (for 0069+) for linux sync problems
         //if (firstFrame) firstFrame = false; 
@@ -439,21 +497,24 @@ public class PApplet extends Applet
         // this is necessary since the drawing is sometimes in a 
         // separate thread, meaning that the next frame will start 
         // before the update/paint is completed
-        while (!updated) { 
+        //while (!updated) { 
           try {
-            if (PApplet.THREAD_DEBUG) System.out.println(looping + " " + redraw);
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      " " + looping + " " + redraw);
             //Thread.yield();
             // windows doesn't like 'yield', so have to sleep at least
             // for some small amount of time.
-            if (PApplet.THREAD_DEBUG) System.out.println("gonna sleep");
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      " gonna sleep");
             // can't remember when/why i changed that to '1'..
             // i have a feeling that some applets aren't gonna like that
             Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
-            if (PApplet.THREAD_DEBUG) System.out.println("outta sleep");
+            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                      " outta sleep");
           } catch (InterruptedException e) { 
             break;
           }
-        }
+        //}
       }
     } catch (Exception e) {
       // formerly in kjcapplet, now just checks to see
@@ -475,72 +536,8 @@ public class PApplet extends Applet
         e.printStackTrace();
       }
     }
-  }
-
-
-  public void nextFrame() {
-    //mouseX = qmouseX;   // only if updated?
-    //mouseY = qmouseY;
-
-    if (fpsTarget != 0) framerate_delay();
-
-    /*
-    // attempt to draw a static image using draw()
-    if (!drawn) {
-      //synchronized (g.image) {
-      synchronized (g) {
-        // always do this once. empty if not overridden
-        g.beginFrame();
-        draw();
-
-        if (drawMethod) {
-          g.endFrame();
-          update();
-          finished = true;
-        }
-        drawn = true;
-      }  // end synch
-    }
-    */
-
-    // if not a static app, run the loop
-    //if (!drawMethod) {
-    synchronized (g) {
-      g.beginFrame();
-      //mouseUpdated = false;
-      //insideLoop = true;
-      draw();
-      //insideLoop = false;
-
-      // these are called *after* loop so that valid
-      // drawing commands can be run inside them. it can't
-      // be before, since a call to background() would wipe
-      // out anything that had been drawn so far.
-      dequeueMouseEvents();
-      dequeueKeyEvents();
-
-      /*
-      if (qmouseMoved) {
-        mouseMoved();
-        qmouseMoved = false;
-      }
-      if (qmouseDragged) {
-        mouseDragged();
-        qmouseDragged = false;
-      }
-      */
-      g.endFrame();
-    }  // end synch
-    update();
-    //}
-
-    // takedown
-    //if (!loopMethod) {
-    //finished = true;
-    //}
-
-    // internal frame counter
-    frame++;
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                              " thread finished");
   }
 
 
@@ -903,7 +900,7 @@ public class PApplet extends Applet
    * I'm not sure if this is even helpful anymore.
    */
   public void delay(int napTime) {
-    if (firstFrame) return;
+    if (frameCount == 0) return;
     if (napTime > 0) {
       try {
         Thread.sleep(napTime);
@@ -1081,7 +1078,7 @@ public class PApplet extends Applet
     }
 
     //File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
-    save(save_location("screen-" + nf(frame, 4) + ".tif", true));
+    save(save_location("screen-" + nf(frameCount, 4) + ".tif", true));
     //save("screen-" + nf(frame, 4) + ".tif");
   }
 
@@ -1117,7 +1114,7 @@ public class PApplet extends Applet
       // in case the user tries to make subdirs with the filename
       //new File(file.getParent()).mkdirs();
       //save(file.getAbsolutePath());
-      save(save_location(prefix + nf(frame, count) + suffix, true));
+      save(save_location(prefix + nf(frameCount, count) + suffix, true));
     }
   }
 
