@@ -22,6 +22,8 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import processing.core.*;
+
 import java.awt.FileDialog;
 import java.io.*;
 import java.util.*;
@@ -1221,8 +1223,8 @@ public class PdeSketch {
     }
 
     if (writeHtml) {
-      int wide = BApplet.DEFAULT_WIDTH;
-      int high = BApplet.DEFAULT_HEIGHT;
+      int wide = PApplet.DEFAULT_WIDTH;
+      int high = PApplet.DEFAULT_HEIGHT;
 
       //try {
       PatternMatcher matcher = new Perl5Matcher();
@@ -1447,7 +1449,7 @@ public class PdeSketch {
   static public void packClassPathIntoZipFile(String path, 
                                               ZipOutputStream zos) 
     throws IOException {
-    String pieces[] = BApplet.split(path, File.pathSeparatorChar);
+    String pieces[] = PApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;

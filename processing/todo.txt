@@ -217,6 +217,9 @@ X what is set(x, y, image) -> remove it, make a copy() instead
 X modify image functions to use imageMode
 
 040707 late
+X lots more work on make.sh for both mac and pc
+X further tweaking of the new class structure
+X trying to get the build scripts wrapped up/working
 
 _ casting working properly.. int() maps to toInt()? 
 _   what is performance hit for this thing?
