@@ -42,7 +42,8 @@ public class PdeEditor extends Panel {
   //String lastDirectory;
   //String lastFile;
 
-  PdeRunner runner;
+  //PdeRunner runner;
+  KjcEngine engine;
 
   Frame frame;
   Window presentationWindow;
@@ -112,7 +113,7 @@ public class PdeEditor extends Panel {
     //textarea.addKeyListener(new PdeKeyListener(this));
     //}
 
-    runner = new PdeRunner(this);
+    //runner = new PdeRunner(this);
   }
 
 
@@ -180,11 +181,43 @@ public class PdeEditor extends Panel {
     running = true;
     buttons.run();
 
-    runner.setProgram(textarea.getText());
-    runner.start();
+    //runner.setProgram(textarea.getText());
+    //runner.start();
 
+    try {
+      String program = textarea.getText();
+      if (program.length() != 0) {
+	String buildPath = "lib" + File.separator + "build";  // TEMPORARY
+	File buildDir = new File(buildPath);
+	if (!buildDir.exists()) buildDir.mkdirs();
+
+	String dataPath = 
+	  sketchFile.getParent() + File.separator + "data";
+	  //editor.sketchFile.getParent() + File.separator + "data";
+
+	engine = new KjcEngine(this, program, buildPath, dataPath);
+	engine.start();
+	//System.out.println("done iwth engine.start()");
+      }
+
+    } catch (PdeException e) { 
+      //state = RUNNER_ERROR;
+      //forceStop = false;
+      //this.stop();
+      engine.stop();
+      e.printStackTrace();
+      //editor.error(e);
+      error(e);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      //this.stop();
+      engine.stop();
+    }	
+    //engine = null;
+    //System.out.println("out of doRun()");
     // required so that key events go to the panel and <key> works
-    //graphics.requestFocus();  // removed for pde
+    //graphics.requestFocus();  // removed for pde    
   }
 
 
@@ -261,7 +294,8 @@ public class PdeEditor extends Panel {
 	    //presentationWindow.toBack();
 	    if (frame != null) frame.toFront();
 	    try {
-	      ((KjcEngine)(runner.engine)).window.toFront();
+	      //((KjcEngine)(runner.engine)).window.toFront();
+	      engine.front();
 	    } catch (Exception ex) { }
 	  }
 	}
@@ -283,7 +317,9 @@ public class PdeEditor extends Panel {
     */
 
     try {
-      ((KjcEngine)(runner.engine)).window.toFront();
+      //((KjcEngine)(runner.engine)).window.toFront();
+      engine.front();
+
     } catch (Exception e) {
       // rather than writing code to check all the posible
       // errors with the above statement, just fail quietly
@@ -320,7 +356,14 @@ public class PdeEditor extends Panel {
     //#ifdef RECORDER
     //    if (!running) return;
     //#endif
-    terminate();
+
+    //terminate(); 
+    // following 3 replace terminate
+    //runner.stop();
+    //System.out.println("doStop, engine is " + engine);
+    if (engine != null) engine.stop();
+    message(EMPTY);
+
     buttons.clear();
     running = false;
 
@@ -343,11 +386,17 @@ public class PdeEditor extends Panel {
     // some code to close the window here
     try {
       // runner.engine is null (runner is not)
-      ((KjcEngine)(runner.engine)).close();
+      //((KjcEngine)(runner.engine)).close();
+      engine.close();
+
       // runner shouldn't be set to null because it gets reused
       //System.err.println("runner = " + runner);
       //runner = null;
+      // engine not reused
+      engine = null; // will this help?
+
     } catch (Exception e) { }
+
     buttons.clear();
   }
 
@@ -804,16 +853,16 @@ public class PdeEditor extends Panel {
       // create the project directory
       // pass null for datapath because the files shouldn't be 
       // copied to the build dir.. that's only for the temp stuff
-      KjcEngine engine = new KjcEngine(program, appletDir.getPath(), 
-				       null, this);
+      KjcEngine ex_engine = new KjcEngine(this, program, 
+					  appletDir.getPath(), null);
 				       //dataDir.getPath(), this);
       //File projectDir = new File(appletDir, projectName);
       //projectDir.mkdirs();
       appletDir.mkdirs();
 
       // projectName will be updated with actual class name
-      exportSketchName = engine.writeJava(exportSketchName, false);
-      if (!engine.compileJava()) {
+      exportSketchName = ex_engine.writeJava(exportSketchName, false);
+      if (!ex_engine.compileJava()) {
 	//throw new Exception("error while compiling, couldn't export");
 	// message() will already have error message in this case
 	return;
@@ -827,7 +876,7 @@ public class PdeEditor extends Panel {
       //copyFile(new File(javaName), new File(appletDir, javaName));
 
       // remove temporary .java and .class files
-      //engine.cleanup();
+      //ex_engine.cleanup();
 
       int wide = BApplet.DEFAULT_WIDTH;
       int high = BApplet.DEFAULT_HEIGHT;
@@ -933,7 +982,7 @@ public class PdeEditor extends Panel {
       zos.close();
       //zipOutputFile.close();
 
-      //engine.cleanup();  // no! buildPath is applet!
+      //ex_engine.cleanup();  // no! buildPath is applet!
 
       message("Done exporting.");
 
@@ -1125,10 +1174,13 @@ public class PdeEditor extends Panel {
   }
 
 
+  /*
   public void terminate() {   // part of PdeEnvironment
-    runner.stop();
+    //runner.stop();
+    if (engine != null) engine.stop();
     message(EMPTY);
   }
+  */
 
 
   // TODO iron out bugs with this code under
