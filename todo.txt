@@ -19,16 +19,18 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X print(char) and println(char) didn't exist. whoops.
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055940673
 X added constructor in BImage that takes java.awt.Image
+X added FileInputStream version of loadStream for locally running code
 
 other folks
 ks X adaptive sizing of circle segmenting based on rendered size
 ks X   rather than requiring a fixed amount
 ks X   have a few settings cached
 dm X patch to fix last line highlight bug in highlightLine()
+cr X new function for linking to external web page
 
-
-_ inside draw() mode, delay() does nothing
-_   delay might be a good way to signal drawing to the screen/updating
+bf b _ some flag to know whether applet is online or not
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+bf b _   fix link() and loadStream code once that's fixed
 
 bf b _ if sketchbook.dir is set, makes new sketchbook folder
 bf b _   reads sketchbook properly from other folder
@@ -50,6 +52,9 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=displ
 bf b _ perlin noise 1D. noise() 
 bf b _ cartesian/polar conversion
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
+
+bf b _ inside draw() mode, delay() does nothing
+bf b _   delay might be a good way to signal drawing to the screen/updating
 
 
 ////////////////////////////////////////////////////////////////////
@@ -222,8 +227,6 @@ BAGEL / Details
 
    b _ break out BSerial as separate object like BVideo
    b _   BSerial.flush and BSerial.available
-bf b _ some flag to know whether applet is online or not
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 bf b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
@@ -383,6 +386,10 @@ _ subst Image -> BImage, Font -> BFont
 _ contextual syntax highlighting based on grammar
 _   probably want to include everything that's in java.lang and maybe others
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
+
+dm b _ additional data conversions to avoid this syntax:
+dm b _   Integer.toString()
+dm b _   Integer.parseInt()
 
 
 PDE / Compiler
