@@ -79,6 +79,10 @@ X   was adding all folders in the classpath
 X workaround for the // causing an OutOfMemoryError
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 
+040622 monday evening
+X jikes errors have no newlines because it's a buffered reader
+X   and the newlines are removed when read
+
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
 _   this also needs to be checked when building the sketch menu 
@@ -166,11 +170,6 @@ _   this would avoid having to patch BApplet
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
-
-
-BUGS / PDE
-_ jikes errors have no newlines because it's a buffered reader
-_   and the newlines are removed when read
 
 
 BUGS / preproc

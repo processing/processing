@@ -183,8 +183,9 @@ public class PdeCompiler implements PdeMessageConsumer {
    * and line number, which is then reported back to PdeEditor.
    */
   public void message(String s) {
-    //System.err.println("MSG: " + s);
-    System.err.print(s);
+    // This receives messages as full lines, so a newline needs 
+    // to be added as they're printed to the console.
+    System.err.println(s);
 
     // ignore cautions
     if (s.indexOf("Caution") != -1) return;
