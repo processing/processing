@@ -36,7 +36,7 @@ import javax.sound.sampled.*;
 
 
 public class PSound {
-  static final boolean JDK12 = PApplet.jdkVersion >= 1.2;
+  static final boolean JDK13 = PApplet.jdkVersion >= 1.3;
 
   PApplet applet;
 
@@ -47,7 +47,7 @@ public class PSound {
     this.applet = applet;
 
     try {
-      if (JDK12) {
+      if (JDK13) {
         AudioInputStream stream =
           AudioSystem.getAudioInputStream(input);
 
@@ -104,9 +104,20 @@ public class PSound {
   /**
    * either sets repeat flag, or begins playing (and sets)
    */
-  public void repeat() {
+  public void loop() {
     clip.loop(Clip.LOOP_CONTINUOUSLY);
   }
+
+
+  /**
+   * ala java 1.3 loop docs:
+   * "any current looping should cease and playback should
+   * continue to the end of the clip."
+   */
+  public void noLoop() {
+    clip.loop(0);
+  }
+
 
   // Play and repeat for a certain number of times
   //int numberOfPlays = 3;
@@ -114,6 +125,7 @@ public class PSound {
 
 
   public void pause() {
+    clip.stop();
   }
 
 
@@ -121,6 +133,8 @@ public class PSound {
    * Stops the audio and rewinds to the beginning.
    */
   public void stop() {
+    clip.stop();
+    clip.setFramePosition(0);
   }
 
 
@@ -136,7 +150,7 @@ public class PSound {
   /**
    * duration of the clip in seconds
    */
-  public float length() {
+  public float duration() {
     return (float) (clip.getBufferSize() /
                     (clip.getFormat().getFrameSize() *
                      clip.getFormat().getFrameRate()));
@@ -144,7 +158,7 @@ public class PSound {
 
 
   public void volume(float v) {  // ranges 0..1
-    if (JDK12) {
+    if (JDK13) {
       FloatControl gainControl =
         (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
       double gain = .5D;    // number between 0 and 1 (loudest)

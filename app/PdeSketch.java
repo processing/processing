@@ -1534,8 +1534,7 @@ public class PdeSketch {
       File exportSettings = new File(libraryFolder, "export.txt");
       String exportList[] = null;
       if (exportSettings.exists()) {
-        //exportList = PApplet.loadStrings(exportSettings);
-        String info[] = PApplet.loadStrings(exportSettings);
+        String info[] = PdeBase.loadStrings(exportSettings);
         for (int i = 0; i < info.length; i++) {
           if (info[i].startsWith("applet")) {
             int idx = info[i].indexOf('=');  // get applet= or applet =
