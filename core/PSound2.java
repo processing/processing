@@ -25,25 +25,23 @@
 package processing.core;
 
 import java.io.*;
+import java.lang.reflect.*;
 import javax.sound.sampled.*;
 
-// add check for reflection in host applet for sound completion
 
-// also needs to register for stop events with applet
-
-// http://javaalmanac.com/egs/javax.sound.sampled/pkg.html
-
-
+// useful info about how to do all this stuff, munged together
+// for this class: http://javaalmanac.com/egs/javax.sound.sampled/pkg.html
 
 public class PSound2 extends PSound {
-  PApplet applet;
+  PApplet parent;
+  Method soundEventMethod;
 
   Clip clip;
   FloatControl gainControl;
 
 
-  public PSound2(PApplet applet, InputStream input) {
-    this.applet = applet;
+  public PSound2(PApplet iparent, InputStream input) {
+    this.parent = iparent;
 
     try {
       AudioInputStream stream =
@@ -93,7 +91,32 @@ public class PSound2 extends PSound {
         });
       */
 
-      applet.registerDispose(this);
+      parent.registerDispose(this);
+
+      try {
+        soundEventMethod =
+          parent.getClass().getMethod("soundEvent",
+                                      new Class[] { PSound.class });
+
+        // if we're here, then it means that there's a method for it
+        clip.addLineListener(new LineListener() {
+            public void update(LineEvent event) {
+              if (event.getType() == LineEvent.Type.STOP) {
+                try {
+                  soundEventMethod.invoke(parent,
+                                          new Object[] { PSound2.this });
+                } catch (Exception e) {
+                  System.err.println("error, disabling soundEvent()");
+                  e.printStackTrace();
+                  soundEventMethod = null;
+                }
+              }
+            }
+          });
+
+      } catch (Exception e) {
+        // no such method, or an error.. which is fine, just ignore
+      }
 
     } catch (Exception e) {
       error("<init>", e);
@@ -201,7 +224,7 @@ public class PSound2 extends PSound {
    * I think of something slightly more intelligent to do.
    */
   protected void error(String where, Exception e) {
-    applet.die("Error inside PSound2." + where + "()", e);
+    parent.die("Error inside PSound2." + where + "()", e);
     //e.printStackTrace();
   }
 }
