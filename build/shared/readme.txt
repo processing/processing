@@ -325,6 +325,10 @@ the p5 community, whose name i have misplaced. if it was you, please
 drop me a line so you can be properly cited. this kind of help is huge
 for us, since we're such a small group!)
 
+"hs_err_pid10XX.txt" error.. this is something within the java vm that
+we can't fix. it's not clear what the problem is, but it seems to have
+show up with java 1.4.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
