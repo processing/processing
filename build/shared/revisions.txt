@@ -4,6 +4,96 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0052 - 5 march 2003
+
+[ feature additions ] 
+
+- alpha/transparency is partially working.. there are still problems
+  (see 'known bugs' section below) but it's in there.
+
+- smooth() and noSmooth() are partially implemented. they've got
+  several bugs that we know about but might be fun to play with. we
+  know of most of the bugs so we hope to get to them soon.
+
+- fill color can be set for images. IMPORTANT: to get just the image,
+  be sure to set the fill to white.
+
+- images no longer cache by default IMPORTANT: if you *want* images to
+  cache, you should use loadImage("filename.jpg", false). the second
+  parameter is whether or not images should be 'forced' to load fresh.
+
+- get the on-screen locations of an xyz point using:
+  float sx = screenX(x, y, z); 
+  float sy = screenY(x, y, z); 
+  float sz = screenZ(x, y, z);
+
+- get the object-space coordinates (how the object is affected by
+  translate and rotate etc) using:
+  float ox = objectX(x, y, z); 
+  float oy = objectY(x, y, z); 
+  float oz = objectZ(x, y, z);
+
+- constrain() is now part of the api
+
+- format numbers with nf().. syntax: nf(int num, int digits)
+  to make '27' into '0027' -> String formatted = nf(27, 4);
+
+- also for numbers with decimals.. nf(float num, int left, int right)
+  to make 27.3 into '027.3000' -> String formatted = nf(27.3, 3, 4);
+  or use zero if you don't care the number of digits:
+  i.e. make 27.3 into "27.3000" -> String fmt = nf(27.3, 0, 4);
+
+- camera functions now work. the following is the code for the
+  perspective camera (sorry no more docs, you can check opengl
+  references for more info until we get caught up)
+  beginCamera();
+  cameraMode(CUSTOM);
+  perspective(fov, aspect, nearDist, farDist);
+  lookat(eyeX, eyeY, eyeDist, eyeX, eyeY, 0, 0, 1, 0);
+  endCamera();
+  there's also ortho(left, right, bottom, top, near, far) to give you
+  an orthographic projection.. frustum() is another useful function in
+  this class. these work like their opengl equivalents, but without
+  docs are for advanced users only.
+
+- more matrix math.. applyMatrix() takes 16 floats which get
+  multiplied by the current transformation matrix. resetMatrix()
+  resets the transformation matrix to identity. 
+
+- switched to jre 1.4.1_02 from 1.4.1_01
+
+
+[ bug fixes ]
+
+- some programs that used 'color' didn't work, now they do.
+
+- fixed other broken examples.
+
+- missing images should no longer lock up the environment. on windows,
+  they used to throw an exception and lock everything up.
+
+- color for 'use external editor' works with new scheme.
+
+- numberFormat() had a bug where commas would show up. oops.
+
+
+[ known bugs ]
+
+- still can't figure out the 'caret disappearing' bug.
+
+- alpha is a little weird (doesn't always work) on lines. it won't
+  work on single pixel lines unless smooth() is turned on. 
+
+- smooth() is still imperfect. you may find some jagged edges. text
+  marches in a funny way (i.e. typography04). shapes don't always
+  properly overlap.
+
+- random freezes under windows, after running a few time. every 20th
+  or every 100th time the app just freaks out. use ctrl-alt-del to
+  kill the java runtime and restart your app. this will slowly be
+  ironed out. 
+
+
 ABOUT REV 0051 - 31 january 2003
 
 enables key presses in the editor when 'alt' or 'option' is pressed. 
