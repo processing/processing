@@ -4029,6 +4029,7 @@ public class PApplet extends Applet
             }
             try {
               Thread.sleep(250);
+              //Thread.sleep(100);  // kick up latency for 0075?
             } catch (InterruptedException e) { }
           }
         }

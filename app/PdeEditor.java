@@ -1039,6 +1039,22 @@ public class PdeEditor extends JFrame
       presentationWindow.toFront();
     }
 
+    try {
+      if (!sketch.handleRun()) return;
+
+      runtime = new PdeRuntime(sketch, PdeEditor.this);
+      runtime.start(presenting ? presentLocation : appletLocation);
+      watcher = new RunButtonWatcher();
+
+    } catch (PdeException e) {
+      error(e);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // this doesn't seem to help much or at all
+    /*
     final SwingWorker worker = new SwingWorker() {
         public Object construct() {
           try {
@@ -1058,6 +1074,7 @@ public class PdeEditor extends JFrame
         }
       };
     worker.start();
+    */
     //sketch.cleanup();  // where does this go?
   }
 

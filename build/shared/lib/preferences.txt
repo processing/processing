@@ -1,14 +1,45 @@
 # !!!!!!!! UNLIKE PREVIOUS VERSIONS OF PROCESSING !!!!!!!!!!
 # DO NOT MODIFY THIS FILE, OR DELETE SETTINGS FROM THIS FILE
 
-# These are the default preferences. They will be copied to:
-# My Documents -> Processing -> preferences.txt (on windows)
-# Documents -> Processing -> preferences.txt (on macosx)
-# ~/.processing/preferences.txt (on linux)
-# where you can make changes for your machine.
+# These are the default preferences. If you want to modify 
+# them directly, use the per-user local version of the file:
+
+# Documents and Settings -> Application Data -> 
+#    Processing -> preferences.txt (on windows)
+
+# ~/Library -> Processing -> preferences.txt (on macosx)
+
+# ~/.processing -> preferences.txt (on linux)
 
 # You'll have problems running Processing if you incorrectly 
 # modify lines in this file.
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# DEFAULT PATHS FOR SKETCHBOOK AND SETTINGS
+
+# relative paths will be relative to processing.exe or procesing.app.
+# absolute paths may also be used.
+
+# note that this path should use forward slashes (like unix)
+# instead of \ on windows or : on macos or whatever else
+
+# the .fallback locations are used in case the default location 
+# cannot be written (and the line above it is not customized)
+
+# if you don't want users to have their sketchbook default to 
+# "my documents/processing" on windows and "documents/processing" on osx, 
+# set this to another path that will be used by default
+#sketchbook.path=sketchbook
+sketchbook.path.fallback=sketchbook
+
+# if you don't want settings to go into "application data" on windows
+# and "library" on macosx, set this to the alternate location.
+#settings.path=data
+settings.path.fallback=data
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -159,11 +190,8 @@ sketchbook.prompt = false
 # true if empty sketches should be removed automatically
 sketchbook.auto_clean = true
 
-sketchbook.name.default = sketchbook
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-# note that this path should use forward slashes (like unix)
-# instead of \ on windows or : on windows or whatever else
-#sketchbook.path = 
 
 history.recording = true
 
