@@ -1373,6 +1373,15 @@ public class PGraphics extends PImage implements PConstants {
   // this probably needs to be broken into affine/non-affine versions
   // since affine w/ smoothing is a fairly easy case to handle and
   // with better quality and speed than using the full texture mapping.
+
+  /**
+   * u, v coordinates are always of the form x1, y1, x2, y2, or the
+   * same as imageMode(CORNERS), even if the imageMode is something else.
+   *
+   * when drawing without depth(), the coordinates for u, v are
+   * always done in IMAGE_SPACE, because the textureMode() option
+   * is not available in 2D.
+   */
   public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
