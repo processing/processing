@@ -155,6 +155,8 @@ _ shearX and shearY removed
 _ removed noBackground
 _ added background(BImage)
 _ screenGrab -> saveFrame
+_ textMode for alignments .. ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT
+_   ALIGN_XXXX becuase LEFT already used for keys
 
   // imaging API keywords	  	  
   pdeKeywords.add("REPLACE", Token.LITERAL1);
@@ -169,10 +171,9 @@ _ screenGrab -> saveFrame
 
 
 API
-_ implement text(int something) and text(float something)
-_   and perhaps others?
-_ textMode alignments -> or is it textAlign() ?
-_   so that textMode can be FLAT/SCREEN or SPATIAL
+X implement text(int something) and text(float something)
+o   and perhaps others?
+_ textSpace SCREEN_SPACE and OBJECT_SPACE
 _ need bezierTangent() code
 _ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
 _ param() function 
@@ -184,6 +185,8 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 _   fix link, loadStrings, saveBytes code once that's fixed
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
+_ light(x, y, z, c1, c2, c3, TYPE)
+_   also BLight with same constructor, and on() and off() fxn
 
 
 HIGH
@@ -446,6 +449,13 @@ bf _ more advanced splitting of files into rows/cols uses another class
 bf _   other class also has concept for random access of lines
 bf _   by storing the line positions, can access without loading all
 bf _   into memory because some files will be too large
+bf _ illustrator export / rendering mode
+bf _   also postscript or pdf export?
+bf _   version of Illustrator.java that uses bagel api
+bf _   sorting of polygons/lines on simple painters algorithm
+bf _   better lighting model to show darkness at various depths
+bf _     maybe just ultra-high res bitmaps from gl
+bf _   version of BApplet that replaces g. with ai. or pdf.
 
 
 licensing
@@ -637,12 +647,6 @@ A hybrid of OpenGL (3D Graphics) and some aspects of Postscript (Fill, Stroke)
 The graphics library is called Bagel, which is an internal name.
 
 
-BAGEL / Graphics API Additions
-
-bf b _ light(x, y, z, c1, c2, c3, TYPE)
-bf b _   also BLight with same constructor, and on() and off() fxn
-
-
 BAGEL / Rendering
 
    b _ picking
@@ -703,14 +707,6 @@ ks b _   finish fill mode of flat circle function
 ks b _   stroked version of sphere is just a circle (?)
 ks b _   setting accuracy of circles/sphere
    1 _ toxi ellipses don't adapt for larger sizes
-
-bf 1 _ illustrator export / rendering mode
-bf 1 _   also postscript or pdf export?
-bf 1 _   version of Illustrator.java that uses bagel api
-bf 1 _   sorting of polygons/lines on simple painters algorithm
-bf 1 _   better lighting model to show darkness at various depths
-bf 1 _     maybe just ultra-high res bitmaps from gl
-bf 1 _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
 
 BAGEL / Serial
