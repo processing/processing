@@ -727,6 +727,18 @@ public class PdeSketch {
   }
 
 
+  public void addLibrary(String jarPath) {
+    String list[] = PdeCompiler.packageListFromClassPath(jarPath);
+
+    // if the current code is a .java file, insert into current
+    // else import statements into the main sketch file (code[0])
+    
+    for (int i = 0; i < list.length; i++) {
+      System.out.println(list[i]);
+    }
+  }
+
+
   /**
    * Change what file is currently being edited. 
    * 1. store the String for the text of the current file.
@@ -959,7 +971,7 @@ public class PdeSketch {
       externalRuntime = true;
       classPath += File.pathSeparator + 
         PdeCompiler.contentsToClassPath(codeFolder);
-      importPackageList = PdeCompiler.makeImportsFromClassPath(classPath);
+      importPackageList = PdeCompiler.packageListFromClassPath(classPath);
       //libraryPath = codeFolder.getCanonicalPath();
       libraryPath = codeFolder.getAbsolutePath();
     } else {

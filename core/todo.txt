@@ -151,6 +151,13 @@ X processing.net -> PClient, PServer
 X   write client/server implementations for new-style api
 X   basic test with old net server has things working fine
 
+_ massive graphics engine changes
+_   explicitly state depth()/nodepth()
+_   move to new graphics engine
+_     test with rgb cube, shut off smoothing
+_   make sure line artifacts are because of smoothing
+_   implement 2x oversampling for anti-aliasing
+
 _ api for file-based renderers
 _   need to work this out since it will affect other api changes
 _   size(0, 0) and then ai.size(10000, 20000)
@@ -166,13 +173,6 @@ _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
 _   version of BApplet that replaces g. with ai. or pdf.
-
-_ massive graphics engine changes
-_   explicitly state depth()/nodepth()
-_   move to new graphics engine
-_     test with rgb cube, shut off smoothing
-_   make sure line artifacts are because of smoothing
-_   implement 2x oversampling for anti-aliasing
 
 
 ............................................................

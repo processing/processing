@@ -579,6 +579,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       });
     menu.addSeparator();
 
+    //
+
+    menu.add(sketchbook.getAddLibraryMenu());
+
     item = new JMenuItem("Import...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
