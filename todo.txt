@@ -76,12 +76,21 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X code folder was causing mega-crashes
 X rewrite magic import methods to only use packages where classes found
 X   was adding all folders in the classpath
+X workaround for the // causing an OutOfMemoryError
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
-_   can this requirement just be on the pde file, not the directory?
+_   this also needs to be checked when building the sketch menu 
 _ bug: after using sketchbook menu as popup, disappears from file menu
 _ re-implement history
+_ what happens when the .pde file isn't named 
+_   the same as the enclosing folder?
+_   maybe put up a window saying no way, and ask:
+_   ( ) rename enclosing or ( ) add a subfolder
+_   it's useful to have loose .pde files be runnable..
+_   i.e. when double-clicking on them.. downloaded off web.. 
+_     but need to deal with simply, not providing a new exception case
 _ write sketchbook.clean()
 _ write 'new text file'
 _ implement hide/unhide
@@ -106,6 +115,7 @@ _   would this help casey with the examples?
 _ how to handle .pde vs .java
 _   how to determine what the 'main' file is
 _   sun won't want us to say things are .java when they aren't
+_ .pde files opened on their own
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing
@@ -159,9 +169,6 @@ _   but also potential stop() for individual items
 
 
 BUGS / PDE
-_ if last line of code is a comment with no CR after it,
-_   an OutOfMemoryError ensues
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 _ jikes errors have no newlines because it's a buffered reader
 _   and the newlines are removed when read
 
@@ -174,6 +181,9 @@ _   float u = float(x)/width; works.
 _   float u = (float(x)/width); doesn't work: "unexpected token: float".
 _   float u = (x/float(width)); works! 
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084011098;start=0
+_ if last line of code is a comment with no CR after it,
+_   an OutOfMemoryError wants to happen, 
+_   but right now there's a hack to add a CR in PdePreprocessor
 
 
 BUGS / Windows
