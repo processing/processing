@@ -14,6 +14,10 @@ X         they can be added to their code libraries
 X join() like split
 X   also add additional item for NaN data
 X   add doubles and longs for genome stuff
+X numberFormat (formerly zeroPad)
+X   numberFormat(float num, int left, int right) 
+X     zero means any number of digits, don't pad
+X   numberFormat(int num, int left) for 27 -> 0027
 
 _ camera work
 _   beginCamera, endCamera -> does glMatrixMode style swapping
@@ -28,10 +32,6 @@ _   other class also has concept for random access of lines
 _   by storing the line positions, can access without loading all
 _   into memory because some files will be too large
 
-_ numberFormat (formerly zeroPad)
-_   numberFormat(float num, int left, int right) 
-_     zero means any number of digits, don't pad
-_   numberFormat(int num, int left) for 27 -> 0027
 
 
 _ add keyCode to BApplet
