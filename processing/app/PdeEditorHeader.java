@@ -369,19 +369,21 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     
     menu.add(unhide);
 
-    menu.addSeparator();
+    if (sketch != null) {
+      menu.addSeparator();
 
-    ActionListener jumpListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
-          //System.out.println("jump to " + e.getActionCommand());
-          System.out.println("jump to " + e);
-        }
-      };
-    for (int i = 0; i < sketch.codeCount; i++) {
-      item = new JMenuItem(sketch.code[i].name);
-      //item.setActionCommand(files[i]);
-      item.addActionListener(jumpListener);
-      menu.add(item);
+      ActionListener jumpListener = new ActionListener() {
+          public void actionPerformed(ActionEvent e) { 
+            //System.out.println("jump to " + e.getActionCommand());
+            System.out.println("jump to " + e);
+          }
+        };
+      for (int i = 0; i < sketch.codeCount; i++) {
+        item = new JMenuItem(sketch.code[i].name);
+        //item.setActionCommand(files[i]);
+        item.addActionListener(jumpListener);
+        menu.add(item);
+      }
     }
   }
 
