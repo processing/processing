@@ -87,7 +87,7 @@ public class PApplet extends Applet
    * (frameCount == 0) won't work since mouseXxxxx() may not be called
    * until a couple frames into things.
    */
-  boolean firstMouse;
+  public boolean firstMouse;
 
   public boolean mousePressed;
   public MouseEvent mouseEvent;
@@ -802,14 +802,15 @@ public class PApplet extends Applet
 
               draw();
 
+              // dmouseX/Y is updated only once per frame
+              dmouseX = mouseX;
+              dmouseY = mouseY;
+
               // these are called *after* loop so that valid
               // drawing commands can be run inside them. it can't
               // be before, since a call to background() would wipe
               // out anything that had been drawn so far.
               dequeueMouseEvents();
-              // dmouseX/Y is updated only once per frame
-              dmouseX = mouseX;
-              dmouseY = mouseY;
 
               dequeueKeyEvents();
               if (THREAD_DEBUG) println(Thread.currentThread().getName() +
@@ -958,6 +959,8 @@ public class PApplet extends Applet
     if (firstMouse) {
       pmouseX = mouseX;
       pmouseY = mouseY;
+      dmouseX = mouseX;
+      dmouseY = mouseY;
       firstMouse = false;
     }
 
