@@ -58,11 +58,11 @@ public class PdeKeywords extends CTokenMarker {
           int tab = line.indexOf('\t');
           if (tab == -1) continue;
 
-          String keyword = line.substring(0, tab);
+          String keyword = line.substring(0, tab).trim();
           String second = line.substring(tab + 1);
           tab = second.indexOf('\t');
-          String coloring = second.substring(0, tab);
-          String htmlFilename = second.substring(tab + 1);
+          String coloring = second.substring(0, tab).trim();
+          String htmlFilename = second.substring(tab + 1).trim();
 
           if (coloring.length() > 0) {
             // text will be KEYWORD or LITERAL
@@ -70,6 +70,8 @@ public class PdeKeywords extends CTokenMarker {
             // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
             int num = coloring.charAt(coloring.length() - 1) - '1';
             byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+            //System.out.println("got " + (isKey ? "keyword" : "literal") + 
+            //                 (num+1) + " for " + keyword);
             keywordColoring.add(keyword, id);
           }
 
