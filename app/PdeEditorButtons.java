@@ -7,30 +7,32 @@ import java.awt.*;
 public class PdeEditorButtons extends Panel {
   static final String EMPTY_STATUS = "                                                                 ";
 
-  static final int BUTTON_COUNT  = 9;
-  static final int BUTTON_WIDTH  = 24;
-  static final int BUTTON_HEIGHT = 24;
-
   static final String title[] = {
-    "Play", "Stop", 
+    "Play", "Stop", "Close",
     "Open", "Save", "Save on Server", "Print", "Beautify",
     "Disable Full Screen", "Full Screen"
   };
 
-  static final int PLAY = 0;
-  static final int STOP = 1;
-  static final int OPEN = 2;
-  static final int SAVE = 3;
-  static final int SNAPSHOT = 4; // only available is save_as defined
-  static final int PRINT = 5;
-  static final int BEAUTIFY = 6;
+  static final int BUTTON_COUNT  = title.length;
+  static final int BUTTON_WIDTH  = 24;
+  static final int BUTTON_HEIGHT = 24;
 
-  static final int DISABLE_FULL_SCREEN = 7;
-  static final int FULL_SCREEN = 8;
+  static final int PLAY     = 0;
+  static final int STOP     = 1;
+  static final int CLOSE    = 2;
+
+  static final int OPEN     = 3;
+  static final int SAVE     = 4;
+  static final int SNAPSHOT = 5; // only available is save_as defined
+  static final int PRINT    = 6;
+  static final int BEAUTIFY = 7;
+
+  static final int DISABLE_FULL_SCREEN = 8;
+  static final int FULL_SCREEN         = 9;
 
   static final int INACTIVE = 0;
   static final int ROLLOVER = 1;
-  static final int ACTIVE = 2;
+  static final int ACTIVE   = 2;
 
   PdeEditor editor;
   Label status;
@@ -65,6 +67,7 @@ public class PdeEditorButtons extends Panel {
     // always include these
     which[buttonCount++] = PLAY;
     which[buttonCount++] = STOP;
+    which[buttonCount++] = CLOSE;
 
     // the rest are conditional
     if (useOpenSave) {
@@ -138,7 +141,7 @@ public class PdeEditorButtons extends Panel {
 	x1[i] = offsetX;
 	x2[i] = offsetX + BUTTON_WIDTH;
 	offsetX += BUTTON_WIDTH + 4;
-	if (i == 1) offsetX += 8;  // extra space after play/stop
+	if (i == 2) offsetX += 8;  // extra space after play/stop/close
       }
 
       /*
@@ -279,6 +282,7 @@ public class PdeEditorButtons extends Panel {
 
     case PLAY: editor.doPlay(); break;
     case STOP: setState(PLAY, INACTIVE, true); editor.doStop(); break;
+    case CLOSE: editor.doClose(); break;
 
     case OPEN: editor.doOpen(); break;
     case SAVE: editor.doSave(); break;
@@ -347,7 +351,7 @@ public class PdeEditorButtons extends Panel {
 
 
   public Dimension preferredSize() {
-    return new Dimension(200, 35);
+    return new Dimension(220, 35);
   }
 }
 

@@ -117,10 +117,26 @@ public class PdeRunner implements Runnable {
 
 	engine = new KjcEngine(program, env);
 	engine.start();
+
+	/*
+	while (!((KjcEngine)engine).applet.finished) { 
+	  System.out.println("waiting");
+	  try {
+	    Thread.sleep(500);
+	  } catch (InterruptedException e) { }
+	}
+	*/
       }
+
+      // maybe this code shouldn't be called automatically, 
+      // and instead ProcessingApplet and the others 
+      // must call it explicitly
       //System.out.println("finished");
+      /*
       state = RUNNER_FINISHED;
+      System.out.println("finishing");
       env.finished();
+      */
       //graphics.update();  // removed for pde
 
     } catch (PdeException e) { 
@@ -138,6 +154,12 @@ public class PdeRunner implements Runnable {
   }
 
 
+  public void finished() {  // called by KjcProcessingApplet or something
+    state = RUNNER_FINISHED;
+    env.finished();
+  }
+
+
   public void stop() {
     if (engine != null) {
       engine.stop();
@@ -147,7 +169,8 @@ public class PdeRunner implements Runnable {
 	thread = null;
       }
       */
-      engine = null;
+      // is this necessary [fry]
+      //engine = null;
     }
   }
 }

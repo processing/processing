@@ -111,10 +111,18 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     add("North", top);
 
     if (program == null) program = DEFAULT_PROGRAM;
-    textarea = new TextArea(program, 20, 48);
+    textarea = new TextArea(program, 20, 48, 
+			    TextArea.SCROLLBARS_VERTICAL_ONLY );
     textarea.setFont(PdeApplet.getFont("editor"));
     //right.add("Center", textarea);
     add("Center", textarea);
+
+    /*
+    TextArea console = new TextArea("welcome to pr0[3551ng", 5, 48,
+				    TextArea.SCROLLBARS_VERTICAL_ONLY);
+    console.setBackground(Color.gray);
+    add("South", console);
+    */
 
     //#ifdef FANCY
     //    right.add("South", PdeFancy.makeDescription());
@@ -135,7 +143,8 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
 
   public void doPlay() {
-    doStop();
+    //doStop();
+    doClose();
     playing = true;
     buttons.play();
 
@@ -146,13 +155,16 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     //graphics.requestFocus();  // removed for pde
   }
 
+
 #ifdef RECORDER
   public void doRecord() {
-    doStop();
+    //doStop();
+    doClose();
     PdeRecorder.start(this, graphics.width, graphics.height);
     doPlay();
   }
 #endif
+
 
   public void doStop() {
 #ifdef RECORDER
@@ -161,6 +173,17 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     terminate();
     buttons.clear();
     playing = false;
+  }
+
+
+  public void doClose() {
+    if (playing) doStop();
+    // some code to close the window here
+    try {
+      // runner.engine is null (runner is not)
+      ((KjcEngine)(runner.engine)).close();
+    } catch (Exception e) { }
+    buttons.clear();
   }
 
 

@@ -33,7 +33,7 @@ public class ProcessingApplet extends Applet
 
   int width, height;
 
-  PrintStream errStream;
+  //PrintStream errStream;
 
 
   public void init() {
@@ -130,68 +130,69 @@ public class ProcessingApplet extends Applet
   public void run() {
     while ((Thread.currentThread() == thread) && !finished) {
 
-      try {
-	// setup
-	if (timing) {
-	  actualMillis = System.currentTimeMillis();
-	  calendar = null;
-	}
+      if (timing) {
+	actualMillis = System.currentTimeMillis();
+	calendar = null;
+      }
 
-	// attempt to draw a static image using draw()
-	if (!drawn) {
-	  // always do this once. empty if not overridden
-	  g.beginFrame();
-	  draw();
-	  if (!drawMethod) {
-	    // that frame was bogus, mark it as such
-	    // before ending the frame so that it doesn't get
-	    // saved to a quicktime movie or whatever
-
-	    // might be as simple as not calling endFrame?
-	  }
-	  if (drawMethod) {
-	    g.endFrame();
-	    update();
-	    finished = true;
-	  }
-	  drawn = true;
-	}
-
-	// if not a static app, run the loop
+      // attempt to draw a static image using draw()
+      if (!drawn) {
+	// always do this once. empty if not overridden
+	g.beginFrame();
+	draw();
 	if (!drawMethod) {
-	  g.beginFrame();
-	  loop();
+	  // that frame was bogus, mark it as such
+	  // before ending the frame so that it doesn't get
+	  // saved to a quicktime movie or whatever
+
+	  // might be as simple as not calling endFrame?
+	}
+	if (drawMethod) {
 	  g.endFrame();
 	  update();
-	}
-
-	// takedown
-	if (!loopMethod) {
 	  finished = true;
 	}
+	drawn = true;
+      }
 
-	if (mousePressedBriefly) {
-	  mousePressedBriefly = false;
-	  mousePressed = false;
-	}
+      // if not a static app, run the loop
+      if (!drawMethod) {
+	g.beginFrame();
+	loop();
+	g.endFrame();
+	update();
+      }
 
-	if (keyPressedBriefly) {
-	  keyPressedBriefly = false;
-	  keyPressed = false;
-	}
+      // takedown
+      if (!loopMethod) {
+	finished = true;
+      }
 
+      if (mousePressedBriefly) {
+	mousePressedBriefly = false;
+	mousePressed = false;
+      }
+
+      if (keyPressedBriefly) {
+	keyPressedBriefly = false;
+	keyPressed = false;
+      }
+
+      /*
 	// with any luck, kjcengine will be listening
 	// and slurp this right up
-      } catch (Exception e) {  
+	} catch (Exception e) {  
 	//System.out.println("exception caught in run");
 	//System.err.println("i'm here in err");
 	if (errStream != null) {
-	  errStream.print("MAKE WAY");
-	  e.printStackTrace(errStream);
+	errStream.print("MAKE WAY");
+	e.printStackTrace(errStream);
 	} else {
-	  e.printStackTrace();
+	e.printStackTrace();
 	}
-      }
+	}
+      */
+
       // sleep to make OS happy
       try {
 	thread.sleep(5);
@@ -295,27 +296,31 @@ public class ProcessingApplet extends Applet
   }
 
   public int getSecond() {
-    //calendar.setTimeInMillis(actualMillis);
     if (calendar == null) calendar = Calendar.getInstance();
     return calendar.get(Calendar.SECOND);
   }
 
   public int getMinute() {
     if (calendar == null) calendar = Calendar.getInstance();
-    //calendar.setTimeInMillis(actualMillis);
     return calendar.get(Calendar.MINUTE);
   }
 
   public int getHour() {
     if (calendar == null) calendar = Calendar.getInstance();
-    //calendar.setTimeInMillis(actualMillis);
     return calendar.get(Calendar.HOUR_OF_DAY);
+  }
+
+  // if users want day of week or day of year,
+  // they can add their own functions
+  public int getDay() {
+    if (calendar == null) calendar = Calendar.getInstance();
+    return calendar.get(Calendar.DAY_OF_MONTH);    
   }
 
   public int getMonth() {
     if (calendar == null) calendar = Calendar.getInstance();
-    //calendar.setTimeInMillis(actualMillis);
-    return calendar.get(Calendar.MONTH);
+    // months are number 0..11 so change to colloquial 1..12
+    return calendar.get(Calendar.MONTH) + 1;
   }
 
   public int getYear() {
@@ -323,6 +328,57 @@ public class ProcessingApplet extends Applet
     //calendar.setTimeInMillis(actualMillis);
     return calendar.get(Calendar.YEAR);
   }
+
+  public void delay(int howlong) {
+    long stop = System.currentTimeMillis() + (long)howlong;
+    while (System.currentTimeMillis() < stop) { }
+    return;
+  }
+
+
+  // ------------------------------------------------------------
+
+
+  public void print(boolean what) {
+    System.out.print(what);
+  }
+
+  public void print(int what) {
+    System.out.print(what);
+  }
+
+  public void print(float what) {
+    System.out.print(what);
+  }
+
+  public void print(String what) {
+    System.out.print(what);
+  }
+
+  public void println(boolean what) {
+    print(what); System.out.println();
+  }
+
+  public void println(int what) {
+    print(what); System.out.println();
+  }
+
+  public void println(float what) {
+    print(what); System.out.println();
+  }
+
+  public void println(String what) {
+    print(what); System.out.println();
+  }
+
+  public void println() {
+    System.out.println();
+  }
+
+  // would be nice to have a way to write messages to the
+  // console (whether in the browser or the environment)
+  // this might be part of adding an AppletContext to the
+  // environment. 
 
 
   // ------------------------------------------------------------
@@ -725,6 +781,14 @@ public class ProcessingApplet extends Applet
 
   public void background(float x, float y, float z) {
     g.background(x, y, z);
+  }
+
+  public void lightsOn() {
+    g.lightsOn();
+  }
+
+  public void lightsOff() {
+    g.lightsOff();
   }
 
   public void message(int level, String message) {
