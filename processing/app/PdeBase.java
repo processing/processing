@@ -553,7 +553,7 @@ public class PdeBase implements ActionListener {
       } else if ((platform == MACOS9) || (platform == MACOSX)) {
 #ifdef MACOS
 	try {
-	  MRJFileUtils.openURL("http://Proce55ing.net");
+	  com.apple.mrj.MRJFileUtils.openURL("http://Proce55ing.net");
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}
@@ -582,7 +582,7 @@ public class PdeBase implements ActionListener {
       } else if ((platform == MACOSX) || (platform == MACOS9)) {
 #ifdef MACOS
 	try {
-	  MRJFileUtils.openURL("http://Proce55ing.net/reference/");
+	  com.apple.mrj.MRJFileUtils.openURL("reference/index.html");
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}
