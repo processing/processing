@@ -1,21 +1,77 @@
 0068
 X ifdef JDK14 around a piece of 1.4 specific window code
 X use mozilla for opening urls in linux, switched to more compatible exec()
+o note in the docs: can't use transforms inside beginShape()
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068795597
+X make components all swing components
+X   switch to swing menus (for linux), because motif widgets are nasty
+X moved 'find in reference' to the help menu
 
-_ add examples stuff
+_ why are cmd keys for menus not working (on mac only?)
 
-_ make components all swing components
+examples/readonly
+_ how to handle examples: read only, somewhere inside lib
+_ move examples to folder that goes w/ p5 app
+_   set examples somehow read-only
+_ 'save as' from examples puts into examples dir.. :(
+_   make it default to the user's sketch dir
+
+_ don't allow editing of multiple files in this release
+_   but support multiple java/pde files through the 'add file' option
+_ "new text java/pde file" menu item
+_   option for having multiple files open
+
+_ sketch.properties should go into user.home
+_   otherwise moving sketch folder will kill it
+_ may need to start putting properties somewhere besides lib
+_   home directory  (or preferences folder under macos9)
+
+_ open mode
+_   on application open, override 'open' mode
+_   and just open an empty sketch in the sketchbook folder
+
+_ check if file is read-only, and if so, ask where to put sketch
+
+_ when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
+
+_ need ui for tabs
+
+_ only create 'data' folder when it's needed/used
+_   auto-create code and data folder via 'add files to sketch..'
 
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
 _ eliminate the requirement for a 'data' folder
 _ fix code for changing the sketch folder
 
-_ "new text java/pde file" menu item
-_   option for having multiple files open
+_ if sketchbook.dir is set, makes new sketchbook folder
+_   reads sketchbook properly from other folder
+_   but creates a new folder for new sketches to go into
+_ sketchbook.dir not properly read or written
+_ install sketchbook into another location on person's machine
+_   use System.getProperty("user.home"); 
+_   remove the 'default' for sketchbook
+_   bring this up on bboard and get votes
+_   win2k: my documents, macosx: ~/Documents, 
+_   macos9: hd:Users?, linux: ~/sketchbook
 
-_ sketch.properties should go into user.home
-_   otherwise moving sketch folder will kill it
+
+0069+
+_ tabbed interface for multiple files
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
+
+_ put screenshots into sketch folder
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+
+
+API WORK
+_ libraries: static and non-static init for libs
+_   final stop() for static shutdown of lib
+_   but also potential stop() for individual items
+_ some way to properly quit sketch when stopped
+_   if people have other threads they've spawned, impossible to stop
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
+_ BImage.smooth() ?
 
 
 bugsies
@@ -29,30 +85,43 @@ _ jikes errors have no newlines because it's a buffered reader
 _   and the newlines are removed when read
 _ new sphere code from toxi
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
+_ colorMode broken for red() green() etc
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
+_ p5's exe prolly has trouble when PATH has quotes (or spaces?)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
+_ z values not set properly on ellipses?
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
 
 
-sketchbook 
-bf   _ if sketchbook.dir is set, makes new sketchbook folder
-bf   _   reads sketchbook properly from other folder
-bf   _   but creates a new folder for new sketches to go into
-bf   _ install sketchbook into another location on person's machine
-bf   _   use System.getProperty("user.home"); 
-bf   _   remove the 'default' for sketchbook
-bf   _   bring this up on bboard and get votes
-bf   _   win2k: my documents, macosx: ~/Documents, 
-bf   _   macos9: hd:Users?, linux: ~/sketchbook
-bf   _ move examples to folder that goes w/ p5 app
-bf   _   set examples somehow read-only
-dh 1 _ 'save as' from examples puts into examples dir.. :(
-dh 1 _   make it default to the user's sketch dir
-bf   _ sketchbook.dir not properly read or written
-dh b _ may need to start putting properties somewhere besides lib
-dh b _   home directory  (or preferences folder under macos9)
-dh b _ put screenshots into sketch folder
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+network api
+_ don't send unicode data
+_ when you stop the client, it freezes 
+_   until you quit the processing running the server
+_   (the server starts and stops fine)
+_ add constants for building NET, move stuff around in bagel dir
+_ some method for just downloading the entire contents of a url
+_ make grayscale image in p5
+_   could be used in conjunction with alpha() to properly set alpha values
+void toGrayscale() {
+   int col,lum;
+   for(int i=0; i<pixels.length; i++) {
+     col=pixels[i];
+     // luminance = 0.3*red + 0.59*green + 0.11*blue
+     // 0.3*256 = 76
+     // 0.59*256 = 151
+     // 0.11*256 = 28
+     lum = (76*(col>>16&0xff)+151*(col>>8&0xff)+28*(col&0xff))>>8;
+     pixels[i]=lum<<16 | lum<<8 | lum;
+   }
+}
 
 
 lotsa video issues
+_ selecting input source (wintv board and quickcam installed.. problem)
+_ including qtjava in path when in java mode (oops)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
+_ beginVideo not colored
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
 _ things will freeze if winvdig not installed
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
 _ quicktime 6.4 update breaks p5 on the mac?
@@ -72,21 +141,6 @@ _   test against 'pixels' example
 _ make BVideo subclass BImage
 _   make sure the high bits are getting set as opaque
 
-_ make grayscale image in p5
-_   could be used in conjunction with alpha() to properly set alpha values
-void toGrayscale() {
-   int col,lum;
-   for(int i=0; i<pixels.length; i++) {
-     col=pixels[i];
-     // luminance = 0.3*red + 0.59*green + 0.11*blue
-     // 0.3*256 = 76
-     // 0.59*256 = 151
-     // 0.11*256 = 28
-     lum = (76*(col>>16&0xff)+151*(col>>8&0xff)+28*(col&0xff))>>8;
-     pixels[i]=lum<<16 | lum<<8 | lum;
-   }
-}
-
 _ problems running external vm/vm is hanging
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
@@ -95,10 +149,6 @@ _ option to disable smoothing on font creator
 _ create font doesn't support umlauts
 _   fix up font code to generate unicode chars, at least for iso8859-1 charset
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
-
-_ some way to properly quit sketch when stopped
-_   if people have other threads they've spawned, impossible to stop
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 
 _ punt on the expert release? at least until beta? 
 _   remove the fonts from the distribution?
@@ -116,10 +166,8 @@ bf b _ set decent fonts (probably same as editor above), looks bad on mac
 bf b _ console runs really really slow with a lot of println() calls
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
-_ BImage.smooth() ?
 _ mouse wheel not working on macosx, need to dynamically load 1.4 code
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
-_ simong interested in helping
 
 _ find/replace.. when hitting 'find', select the text in the field
 _   give that field focus explicitly, rather than just for typing
@@ -231,24 +279,12 @@ _   along with another file that is actually a table of offsets
 _   no need to make the thing a gzip stream
 _   checkbox on menu for 'record history' ?
 _   history converter option?
-
-
-multiple files / java mode
-_ tabbed interface for multiple files
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
+_ only first 20 entries visible?
+_ get code from revisionist in there
 
 
 linux
 _ doesn't seem interested in quitting properly (?)
-_ switch to swing menus, because motif widgets are nasty
-
-
-network api
-_ don't send unicode data
-_ when you stop the client, it freezes 
-_   until you quit the processing running the server
-_   (the server starts and stops fine)
-_ add constants for building NET, move stuff around in bagel dir
 
 
 licensing
@@ -266,6 +302,12 @@ _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&s
 
 VOLUNTEER TASKS
 _ need curveTangent() code
+
+
+big things for graphics
+_ concave/convex polygons
+_ porper lineweight
+_ camera clipping
 
 
 NEW GRAPHICS
@@ -712,9 +754,8 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 dh 1 _ rename doesn't set focus to renamer area
    1 _   under windows, immediately typing after rename doesn't select it
 
-   1 _ get rid of 'data' folder if not used?
-   1 _   auto-create code and data folder 
-   1 _   when doing the 'add files to sketch..'
+   1 _ some method to store a description of a sketch in its comments
+   1 _   then embed that into the html page
    1 _ don't cache stuff from loadStrings and others
    1 _   mac java vm won't give up old version of file
    1 _   or use setUseCaches(false)
