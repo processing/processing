@@ -27,6 +27,8 @@ X   now at least spews the exception
 X removed ugly white borders from ui on macosx java 1.3
 X   is there anything better that can be done for osx java 1.3
 X   setInsets() to zero or something?
+X font.stringWidth -> font.width(char c) or width(String s) 
+X removed extra push()/pop() in text(String s) that may save time
 
 fixes because of dmose parser
 X move to antlr
@@ -46,7 +48,7 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X weird comments bug (// on last line causes oro trouble)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
 
-api changes in progress
+api changes in progress -> COLORING FOR ALL THESE
 _ color(x, y, z) has become swatch(x, y, z) 
 _   because of conflicts with the new parser
 _ textureImage() -> texture()
@@ -60,9 +62,19 @@ _ textSize(size), textLeading(leading)
 _ BFont.charWidth, BFont.stringWidth -> BFont.width()
 _ BFont.drawChar, BFont.drawString -> BFont.text()
 
-
-_ textMode alignments
+_ mousePressed, keyPressed, others.. queue them all
+_   queue multiple times
+_ update() mode should be finished before beta
+_ if (loop == false) and (draw == false) then provide an error
+_   so user knows that one or the other is needed
+_ textMode alignments -> or is it textAlign() ?
+_   so that textMode can be FLAT/SCREEN or SPATIAL
 _ need bezierTangent() code
+_ resize should call background again to set color
+_   if background was set before the resize
+_   and the background is not an image (or should it just stretch?)
+
+_ windows fresh checkout still has problems
 
 
 ..
@@ -84,6 +96,7 @@ API NAMING
 NEW PARSER
 dm _ unexpected token 'void' in letters sketch.. 
 dm _   being parsed as static mode app
+dm _ extra parens confusing things (toxi message)
 
 
 ..
@@ -101,10 +114,25 @@ _ sphere code needs only front face polygon
 _   all triangles must be counter-clockwise (front-facing)
 
 FONT SUCKAGE
-
+_ change .vlw.gz fonts to just .vlw but still gzip compress
+_   reader code should just catch the exception if they're not gzipped
+_   and try to re-download them
 
 ..
 
+
+_ toxi image code (!) 
+_   need background(BImage) and scaling, copy area, etc.
+
+_ multiple error messages from jikes, little turner to scroll thru
+
+_ param() function 
+_   also include code to read from properties file
+_   for application mode or while inside the environment
+_   these properties will be written to html on export
+
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else?
 
 X when exporting applet, line numbers will be off.. 
 _   when not exporting with new preproc code, imports all on same line
@@ -145,7 +173,6 @@ _ don't allow apostrophe (i.e. casey's_cells) when naming sketch!
 
 _ implement text(int something) and text(float something)
 _   and perhaps others?
-_ font.stringWidth -> font.width(char c) or width(String s) 
 
 _ BGraphics, BVideo both subclass BImage
 _   inherits all image manipulation and image use methods
@@ -244,7 +271,6 @@ FRY PILE
 b _ some flag to know whether applet is online or not
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 b _   fix link, loadStrings, saveBytes code once that's fixed
-b _ param() function 
 b _ saveBytes not in proper dir is annoying
 
 b _ modify build instructions for the many changes
@@ -746,23 +772,27 @@ dm b _     i.e. valueOf(Object) returns null or Object.toString()
 dm b _   int("1234") -> Integer.parseInt("1234")
 dm b _   float("1234.35") -> (new Float("1234.35").floatValue())
 dm b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
-dm b _ subst Image -> BImage, Font -> BFont
-dm b _   this should be optional until we get the naming down
+
 dm b _ foreach implementation, ala java 1.5 spec
 dm b _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html
 dm b _   for (String s : c) { ... }
 dm b _   or example for sum of int array:
 dm b _   int sum = 0; for (int e : a) { sum += e; }
 
+   b _ for (int i = 0; i < 10; i++) -> for (int i < 10) (?)
+   b _    what's a better method for this?
+
+   b _ allow import blahblah.blah.blah to get passed through
+   b _   and included with the imports list.
+
+   b _ check through all the examples to look for other themes
+
+dm b _ subst Image -> BImage, Font -> BFont
+dm b _   this should be optional until we get the naming down
 dm b _ contextual syntax highlighting based on grammar
 dm b _   everything that's in java.lang plus more is too much for keywords
 dm b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
 
-   b _ for (int i = 0; i < 10; i++) -> for (int i .. 10) 
-   b _    what's a better method for this?
-   b _ allow import blahblah.blah.blah to get passed through
-   b _   and included with the imports list.
-   b _ check through all the examples to look for other themes
 
 Current Preprocessor Subsitutions:
 
