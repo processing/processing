@@ -39,20 +39,77 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   *(strrchr(loaddir, '\\')) = '\0';
 
   char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
-  // put quotes around contents of cp, 
-  // because %s might have spaces in it.
+
+
+  // if this code looks shitty, that's because it is.
+  // people put the durndest things in their CLASSPATH and
+  // QTJAVA environment variables. who knows where and
+  // when the quotes will show up. this is a guess at 
+  // dealing with the things, without spending a whole
+  // day to make it overly robust. [fry]
+
 
   // test to see if running with a java runtime nearby or not
-
   char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
   *testpath = 0;
   strcpy(testpath, loaddir);
   strcat(testpath, "\\java\\bin\\java.exe");
   FILE *fp = fopen(testpath, "rb");
-  int localJreInstalled = (fp != NULL);
+  int local_jre_installed = (fp != NULL);
+  //char *rt_jar = (fp == NULL) ? "" : "java\\lib\\rt.jar;";
+  fclose(fp); // argh! this was probably causing trouble
 
-  const char *envClasspath = getenv("CLASSPATH");
+
+  //const char *envClasspath = getenv("CLASSPATH");
+  char *env_classpath = (char *)malloc(256 * sizeof(char));
+  if (getenv("CLASSPATH") != NULL) {
+    strcpy(env_classpath, getenv("CLASSPATH"));
+    if (env_classpath[0] == '\"') {
+      // starting quote in classpath.. yech
+      env_classpath++;  // shitty.. i know..
+
+      int len = strlen(env_classpath);
+      if (env_classpath[len-1] == '\"') {
+        env_classpath[len-1] = 0;
+      } else {
+        // a starting quote but no ending quote.. ugh
+        // maybe throw an error
+      }
+    }
+    int last = strlen(env_classpath);
+    env_classpath[last++] = ';';
+    env_classpath[last] = 0;
+  } else {
+    env_classpath[0] = 0;
+  }
+
+
+  char *env_qtjava = (char *)malloc(256 * sizeof(char));
+  if (getenv("QTJAVA") != NULL) {
+    strcpy(env_qtjava, getenv("QTJAVA"));
+    if (env_qtjava[0] == '\"') {
+      // starting quote in qtjava.. almost always
+      env_qtjava++;
+
+      int len = strlen(env_qtjava);
+      if (env_qtjava[len-1] == '\"') {
+        env_qtjava[len-1] = 0;
+      } else {
+        // a starting quote but no ending quote..
+      }
+    }
+    int last = strlen(env_qtjava);
+    env_qtjava[last++] = ';';
+    env_qtjava[last] = 0;
+  } else {
+    env_qtjava[0] = 0;
+  }
+
+
+  // put quotes around contents of cp, 
+  // because %s might have spaces in it.
   sprintf(cp,	
+          "\""   // begin quote
           "%s"
           "%s"
           "%s"
@@ -61,14 +118,17 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           "%s\\lib\\pde.jar;"
           "%s\\lib\\kjc.jar;"
           "%s\\lib\\oro.jar;"
-	  "%s\\lib\\antlr.jar;"
+          "%s\\lib\\antlr.jar;"
           "%s\\lib\\comm.jar;"
-          "C:\\WINNT\\system32\\QTJava.zip;"
-          "C:\\WINDOWS\\system32\\QTJava.zip;"
-          "\" ",
-          localJreInstalled ? "java\\lib\\rt.jar;" : "", 
-          envClasspath ? envClasspath : "",
-          envClasspath ? ";" : "",
+          //"C:\\WINNT\\system32\\QTJava.zip;"  // worthless
+          //"C:\\WINDOWS\\system32\\QTJava.zip;"
+          "\"",   // end quote
+          //localJreInstalled ? "java\\lib\\rt.jar;" : "", 
+          local_jre_installed ? "java\\lib\\rt.jar;" : "", //rt_jar, 
+          env_qtjava,
+          env_classpath, 
+          //envClasspath ? envClasspath : "",
+          //envClasspath ? ";" : "",
           loaddir, loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
@@ -76,6 +136,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
                "Processing Error", MB_OK);
     return 0;
   }
+
+  //MessageBox(NULL, cp, "whaadddup", MB_OK);
 
   // add the name of the class to execute and a space before the next arg
   strcat(outgoing_cmdline, JAVA_MAIN_CLASS " ");
@@ -86,7 +148,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   char *executable = (char *)malloc(256 * sizeof(char));
   // loaddir is the name path to the current application
 
-  if (localJreInstalled) {
+  //if (localJreInstalled) {
+  if (local_jre_installed) {
     strcpy(executable, loaddir);
     // copy in the path for javaw, relative to launcher.exe
     strcat(executable, "\\java\\bin\\javaw.exe");
