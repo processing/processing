@@ -48,10 +48,13 @@ public class PdeSketchbook {
   //String sketchbookPath;  // canonical path
 
   // last file/directory used for file opening
-  String handleOpenDirectory;
+  //String handleOpenDirectory;
+  // opted against this.. in imovie, apple always goes
+  // to the "Movies" folder, even if that wasn't the last used
 
-  File examplesFolder;
-  String examplesPath;  // canonical path (for comparison)
+  // these are static because they're used by PdeSketch
+  static File examplesFolder;
+  static String examplesPath;  // canonical path (for comparison)
 
 
   public PdeSketchbook(PdeEditor editor) {
@@ -86,11 +89,8 @@ public class PdeSketchbook {
                          sketchbookFolder.getAbsolutePath());
 
       if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
-      //sketchbookPath = sketchbookFolder.getAbsolutePath();
-    //} else {
-      //sketchbookFolder = new File(sketchbookPath);
     }
-    menu = new JMenu("Open");
+    menu = new JMenu("Sketchbook");
   }
 
 
@@ -110,11 +110,13 @@ public class PdeSketchbook {
     // unless, ermm, they user tested it and people preferred that as 
     // a way to get started. shite. now i hate myself. 
     // 
-    if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
+    //if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
+    if (!startup) {
       // prompt for the filename and location for the new sketch
 
       FileDialog fd = new FileDialog(new Frame(), 
-                                     "Create new sketch named", 
+                                     //"Create new sketch named", 
+                                     "Create sketch folder named:", 
                                      FileDialog.SAVE);
       fd.setDirectory(PdePreferences.get("sketchbook.path"));
       fd.show();
@@ -158,9 +160,9 @@ public class PdeSketchbook {
       MRJFileUtils.setFileTypeAndCreator(newbieFile,
                                          MRJOSType.kTypeTEXT,
                                          new MRJOSType("Pde1"));
+      // thank you apple, for changing this @#$)(*
+      //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
     }
-    // thank you apple, for changing this @#$)(*
-    //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
 #endif
 
     // make a note of a newly added sketch in the sketchbook menu
@@ -174,13 +176,16 @@ public class PdeSketchbook {
 
 
   public String handleOpen() {
+    // swing's file choosers are ass ugly, so we use the
+    // native (awt peered) dialogs instead
     FileDialog fd = new FileDialog(new Frame(), 
                                    "Open a Processing sketch...", 
                                    FileDialog.LOAD);
-    if (handleOpenDirectory == null) {
-      handleOpenDirectory = PdePreferences.get("sketchbook.path");
-    }
-    fd.setDirectory(handleOpenDirectory);
+    //if (handleOpenDirectory == null) {
+    //  handleOpenDirectory = PdePreferences.get("sketchbook.path");
+    //}
+    //fd.setDirectory(handleOpenDirectory);
+    fd.setDirectory(PdePreferences.get("sketchbook.path"));
 
     // only show .pde files as eligible bachelors
     fd.setFilenameFilter(new FilenameFilter() {
@@ -200,7 +205,7 @@ public class PdeSketchbook {
     if (filename == null) return null;
 
     // this may come in handy sometime
-    handleOpenDirectory = directory;
+    //handleOpenDirectory = directory;
 
     File selection = new File(directory, filename);
     return selection.getAbsolutePath();
