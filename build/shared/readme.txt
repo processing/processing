@@ -365,6 +365,34 @@ coding to be a lot more like sketching. the sketchbook and the
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+WHY JAVA? OR WHY SUCH A JAVA-ESQUE LANGUAGE?
+
+
+We didn't set out to make the ultimate language for visual
+programming, we set out to make something that was:
+
+1) a sketchbook for our own work, simplifying the majority 
+   of tasks that we undertake, 
+2) a teaching environment for that kind of process, and
+3) a point of transition to more complicated or difficult 
+   languages like full-blown Java or C++. (a gateway drug)
+
+At the intersection of these points is a tradeoff between speed and
+simplicity of use. i.e. if we didnt' care about speed, python or other
+scripting languages would make far more sense. if we didn't care about
+transition to more advanced languages, we'd get rid of the crummy
+c-style (well, algol, really) syntax. etc etc.
+
+Processing is not intended as the ultimate environment/language (in
+fact, the language is just Java, but with another graphics api and
+some simplifications), it's just putting together several years of
+experience in building things, and trying to simplify the parts that
+should be easier. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 EXTERNAL FILES / FONTS / READING DATA FILES
 
 

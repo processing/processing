@@ -394,6 +394,8 @@ public class PdeEditor extends JPanel {
     }
 
     try {
+      boolean noPreviousHistory = false;
+
       ByteArrayOutputStream old = null;
       if (historyFile.exists()) {
         InputStream oldStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(historyFile)));
@@ -406,6 +408,9 @@ public class PdeEditor extends JPanel {
         }
         //return out.toByteArray();
         oldStream.close();
+
+      } else {
+        noPreviousHistory = true;  // rebuild menu
       }
 
       OutputStream historyStream = 
@@ -457,6 +462,11 @@ public class PdeEditor extends JPanel {
 
       historyWriter.flush();
       historyWriter.close();
+
+      if (noPreviousHistory) {  
+        // to get add the actual menu, to get the 'clear' item in there
+        base.rebuildHistoryMenu(historyFile.getPath());
+      }
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -1734,6 +1744,33 @@ public class PdeEditor extends JPanel {
   }
 
 
+  public void addDataFile() {
+    // get a dialog, select a file to add to the sketch
+    String prompt = "Select an image or other data file to copy to your sketch";
+    FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
+    //if (sketchFile != null) {
+    //fd.setDirectory(sketchFile.getPath());
+    //}
+    fd.show();
+
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+    if (filename == null) return;
+
+    // copy the file into the folder
+    // if people don't want it to copy, they can do it by hand
+    File sourceFile = new File(directory, filename);
+
+    File dataFolder = new File(sketchDir, "data");
+    if (!dataFolder.exists()) dataFolder.mkdirs();
+
+    File destFile = new File(dataFolder, filename);
+    //System.out.println("copying from " + sourceFile);
+    //System.out.println("copying to " + destFile);
+    copyFile(sourceFile, destFile);
+  }
+
+
   // TODO iron out bugs with this code under
   //      different platforms, especially macintosh
   public void highlightLine(int lnum) {
@@ -1842,7 +1879,9 @@ public class PdeEditor extends JPanel {
       }
       to.flush();
       from.close(); // ??
+      from = null;
       to.close(); // ??
+      to = null;
 
 #ifdef JDK13
       bfile.setLastModified(afile.lastModified());  // jdk13 required

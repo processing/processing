@@ -403,6 +403,9 @@ public class PdeBase extends Frame
       });
     menu.add(item);
 
+    beautifyMenuItem = new MenuItem("Beautify", new MenuShortcut('B'));
+    menu.add(beautifyMenuItem);
+
     menu.addSeparator();
 
     item = new MenuItem("Find...", new MenuShortcut('F'));
@@ -456,10 +459,21 @@ public class PdeBase extends Frame
     menu.add(new MenuItem("Stop", new MenuShortcut('T')));
     menu.addSeparator();
 
+    menu.add(new MenuItem("Add data file..."));
+    menu.add(new MenuItem("Create font..."));
+
+    if ((platform == WINDOWS) || (platform == MACOSX)) {
+      // no way to do an 'open in file browser' on other platforms
+      // since there isn't any sort of standard
+      menu.add(new MenuItem("Show sketch folder"));
+    }
+
     recordingHistory = getBoolean("history.recording", true);
     if (recordingHistory) {
       historyMenu = new Menu("History");
       menu.add(historyMenu);
+
+      /*
       item = new MenuItem("Clear History");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -471,11 +485,10 @@ public class PdeBase extends Frame
         });
       menu.add(item);
       menu.addSeparator();
+      */
     }
 
-    beautifyMenuItem = new MenuItem("Beautify", new MenuShortcut('B'));
-    //item.setEnabled(false);
-    menu.add(beautifyMenuItem);
+    menu.addSeparator();
 
     //menu.addSeparator();
     serialMenu = new Menu("Serial Port");
@@ -816,8 +829,21 @@ public class PdeBase extends Frame
     if (!recordingHistory) return;
 
     menu.removeAll();
+
     File hfile = new File(path);
-    if (!hfile.exists()) return;
+    if (!hfile.exists()) return;  // no history yet
+
+    MenuItem item = new MenuItem("Clear History");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (!editor.historyFile.delete()) {
+            System.err.println("couldn't erase history");
+          }
+          rebuildHistoryMenu(historyMenu, editor.historyFile.getPath());
+        }
+      });
+    menu.add(item);
+    menu.addSeparator();
 
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(path))));
@@ -1060,6 +1086,15 @@ public class PdeBase extends Frame
     } else if (command.equals("Beautify")) {
       editor.doBeautify();
 
+    } else if (command.equals("Add data file...")) {
+      editor.addDataFile();
+
+    } else if (command.equals("Create font...")) {
+      new PdeFontBuilder(editor.sketchDir);
+
+    } else if (command.equals("Show sketch folder")) {
+      openFolder(editor.sketchDir);
+
     } else if (command.equals("Help")) {
       openURL(System.getProperty("user.dir") + 
               File.separator + "reference" + 
@@ -1146,6 +1181,29 @@ public class PdeBase extends Frame
         System.err.println("unspecified platform");
       }
 
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  /** 
+   * Implements the other cross-platform headache of opening
+   * a folder in the machine's native file browser.
+   */
+  public void openFolder(File file) {
+    try {
+      String folder = file.getCanonicalPath();
+
+      if (platform == WINDOWS) {
+        Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
+
+#ifdef MACOS
+      } else if (platform == MACOSX) {
+        com.apple.mrj.MRJFileUtils.openURL("file://" + folder);
+
+#endif
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
