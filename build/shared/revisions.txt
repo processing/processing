@@ -1,3 +1,16 @@
+ABOUT REV 0045 - 20 october 2002
+
+[ internal release only ]
+
+- major tweak to fix lots of the random freezing and crashing that
+  occurred when hitting the 'run' button.
+
+- changes to sketch menu: no more CVS and .cvsignore entries and
+  sketches are only added if they have the correct structure
+
+- shape mode TWO_CORNERS is now called CORNERS
+
+
 ABOUT REV 0044 - 2 september 2002
 
 [ features ] 
