@@ -11,6 +11,8 @@ ABOUT REV 0080
 
 - examples have finally been updated in this release, please test!
 
+- keywords have also been updated
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
