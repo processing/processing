@@ -145,7 +145,7 @@ public class PdeEditor extends JFrame
 
     try {
       //icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
-      icon = PdeBase.getImage("icon.gif");
+      icon = PdeBase.getImage("icon.gif", this);
       setIconImage(icon);
     } catch (Exception e) { } // fail silently, no big whup
 
@@ -195,8 +195,9 @@ public class PdeEditor extends JFrame
     rightPanel.add(header, BorderLayout.NORTH);
 
     textarea = new JEditTextArea();
+    textarea.setRightClickPopup(new TextAreaPopup(this));
     textarea.setTokenMarker(new PdeTokenMarker());
- 
+
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
     //System.out.println(consolePanel.getInsets());
@@ -519,6 +520,19 @@ public class PdeEditor extends JFrame
     exportMenu = buildExportMenu();
     menu.add(exportMenu);
 
+    menu.addSeparator();
+
+    item = newMenuItem("Page Setup", 'P', true);
+    item.setEnabled(false);
+    menu.add(item);
+
+    item = newMenuItem("Print", 'P');
+    item.setEnabled(false);
+    menu.add(item);
+
+    menu.addSeparator();
+
+    // macosx already has its own preferences and quit menu
     if (PdeBase.platform != PdeBase.MACOSX) {
       item = new JMenuItem("Preferences");
       item.addActionListener(new ActionListener() {
@@ -886,7 +900,7 @@ public class PdeEditor extends JFrame
 
   public void handleAbout() {
     //System.out.println("the about box will now be shown");
-    final Image image = getImage("about.jpg", this);
+    final Image image = PdeBase.getImage("about.jpg", this);
     int w = image.getWidth(this);
     int h = image.getHeight(this);
     final Window window = new Window(this) {
@@ -938,10 +952,11 @@ public class PdeEditor extends JFrame
    */
   public void handleQuit() {
     storePreferences();
-    editor.storePreferences();
+    //editor.storePreferences();
 
     // this will save the prefs even if quit is cancelled, but who cares
-    PdePreferences.save();
+    //PdePreferences.save();
+    preferences.save();
 
     // check to see if the person actually wants to quit
     //editor.doQuit();
@@ -956,7 +971,7 @@ public class PdeEditor extends JFrame
     textarea.setText(what);
 
     // TODO need to wipe out the undo state here
-    if (emptyUndo) PdeBase.undo.discardAllEdits();
+    if (emptyUndo) undo.discardAllEdits();
 
     textarea.select(0, 0);    // move to the beginning of the document
     textarea.requestFocus();  // get the caret blinking
@@ -1119,11 +1134,11 @@ public class PdeEditor extends JFrame
 
     for (int i = 0; i < 10; i++) System.out.println();
 
-    if (PdeBase.getBoolen("editor.external")) {
+    if (PdeBase.getBoolean("editor.external")) {
       // history gets screwed by the open..
-      String historySaved = historyLast;
+      String historySaved = history.lastRecorded;
       handleOpen(sketchName, sketchFile, sketchDir);
-      historyLast = historySaved;
+      history.lastRecorded = historySaved;
     }
 
     presenting = present;
@@ -1136,7 +1151,8 @@ public class PdeEditor extends JFrame
       }
 
       String program = textarea.getText();
-      makeHistory(program, RUN);
+      //makeHistory(program, RUN);
+      history.record(program, PdeHistory.RUN);
 
       //if (PdeBase.platform == PdeBase.MACOSX) {
       //String pkg = "Proce55ing.app/Contents/Resources/Java/";
@@ -1155,7 +1171,7 @@ public class PdeEditor extends JFrame
       //if (dataPath != null) {
       File dataDir = new File(dataPath);
       if (dataDir.exists()) {
-        PdeEditor.copyDir(dataDir, buildDir);
+        PdeBase.copyDir(dataDir, buildDir);
       }
       //}
       int numero1 = (int) (Math.random() * 10000);
@@ -1341,7 +1357,7 @@ public class PdeEditor extends JFrame
     //}
 
     // toxi_030903: focus the PDE again after quitting presentation mode
-    base.toFront();
+    toFront();
   }
 
 
@@ -1644,7 +1660,8 @@ public class PdeEditor extends JFrame
         return; // user cancelled
       }
     }
-    makeHistory(s, SAVE);
+    //makeHistory(s, SAVE);
+    history.record(s, PdeHistory.SAVE);
     File file = new File(directory, filename);
 
     try {
@@ -1720,7 +1737,7 @@ public class PdeEditor extends JFrame
       copyFile(sketchFile, newSketchFile);
 
       // copy everything from the old dir to the new one
-      copyDir(sketchDir, newSketchDir);
+      PdeBase.copyDir(sketchDir, newSketchDir);
 
       // remove the old sketch file from the new dir
       new File(newSketchDir, sketchName + ".pde").delete();
@@ -1745,7 +1762,8 @@ public class PdeEditor extends JFrame
     }
 
     // get the changes into the sketchbook menu
-    base.rebuildSketchbookMenu();
+    //base.rebuildSketchbookMenu();
+    sketchbook.rebuildMenu();
 
     // open the new guy
     handleOpen(newSketchName, newSketchFile, newSketchDir);
@@ -1960,7 +1978,7 @@ public class PdeEditor extends JFrame
         if (!bagelClasses[i].endsWith(".class")) continue;
         entry = new ZipEntry(bagelClasses[i]);
         zos.putNextEntry(entry);
-        zos.write(grabFile(new File(exportDir + bagelClasses[i])));
+        zos.write(PdeBase.grabFile(new File(exportDir + bagelClasses[i])));
         zos.closeEntry();
       }
 
@@ -1975,7 +1993,7 @@ public class PdeEditor extends JFrame
           //}
           entry = new ZipEntry(datafiles[i]);
           zos.putNextEntry(entry);
-          zos.write(grabFile(new File(dataDir, datafiles[i])));
+          zos.write(PdeBase.grabFile(new File(dataDir, datafiles[i])));
           zos.closeEntry();
         }
       }
@@ -1989,7 +2007,7 @@ public class PdeEditor extends JFrame
         if (classfiles[i].endsWith(".class")) {
           entry = new ZipEntry(classfiles[i]);
           zos.putNextEntry(entry);
-          zos.write(grabFile(new File(appletDir, classfiles[i])));
+          zos.write(PdeBase.grabFile(new File(appletDir, classfiles[i])));
           zos.closeEntry();
         }
       }
@@ -2170,7 +2188,8 @@ public class PdeEditor extends JFrame
 
   public void doBeautify() {
     String prog = textarea.getText();
-    makeHistory(prog, BEAUTIFY);
+    //makeHistory(prog, BEAUTIFY);
+    history.record(prog, PdeHistory.BEAUTIFY);
 
     char program[] = prog.toCharArray();
     StringBuffer buffer = new StringBuffer();
@@ -2394,6 +2413,127 @@ public class PdeEditor extends JFrame
     //
     if (dirObject.exists()) {
       removeDescendants(dirObject);
+    }
+  }
+
+
+  /**
+   * Returns the edit popup menu.
+   */  
+  class TextAreaPopup extends JPopupMenu {
+    //protected ReferenceKeys referenceItems = new ReferenceKeys();
+    String currentDir = System.getProperty("user.dir");
+    String referenceFile = null;
+
+    JEditTextArea parent;
+
+    JMenuItem cutItem, copyItem;
+    JMenuItem referenceItem;
+
+
+    public TextAreaPopup(JEditTextArea parent) {
+      this.parent = parent;
+
+      JMenuItem item;
+
+      cutItem = new JMenuItem("Cut");
+      cutItem.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            parent.cut();
+          }
+      });
+      this.add(cutItem);
+
+      copyItem = new JMenuItem("Copy");
+      copyItem.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+	    parent.copy();
+	  }
+        });
+      this.add(copyItem);
+
+      item = new JMenuItem("Paste");
+      item.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+	    parent.paste();
+	  }
+        });
+      this.add(item);
+      
+      //this.addSeparator();
+
+      item = new JMenuItem("Select All");
+      item.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent e) {
+	  parent.selectAll();
+	}
+      });
+      this.add(item);
+
+      this.addSeparator();
+
+      referenceItem = new JMenuItem("Find in Reference");
+      referenceItem.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+            PdeBase.showReference(referenceFile);
+	  }
+        });
+      this.add(referenceItem);
+    }
+
+    /*
+    // enables/disables "Reference Lookup" option
+    public void setReferenceLookup(String file)
+    {
+      if (file != null) {
+        this.getComponent(5).setEnabled(true);
+        referenceFile = file;
+      }
+      else {
+        this.getComponent(5).setEnabled(false);
+      }
+    }
+    */
+
+    /*
+    public void showReferenceFile()
+    {
+      PdeBase.openURL(currentDir + File.separator + 
+                      "reference" + File.separator + 
+                      referenceFile + ".html");
+    }
+    */
+
+    // if no text is selected, disable copy and cut menu items
+    public void show(Component component, int x, int y)
+    {
+      if (parent.isSelectionActive()) {
+        cutItem.setEnabled(true);
+        copyItem.setEnabled(true);
+
+        referenceFile = PdeBase.keywords.get(getSelectedText());
+        if (referenceFile != null) {
+          referenceItem.setEnabled(true);
+        }
+      } else {
+        cutItem.setEnabled(false);
+        copyItem.setEnabled(false);
+        referenceItem.setEnabled(false);
+      }
+      super.show(component, x, y);
+
+      /*
+      //popup.setEnabledCut(selectionIsActive);
+      //popup.setEnabledCopy(selectionIsActive);
+
+      String file = null;
+      if (selectionIsActive) {
+        file = (String) PdeBase.keywords.get(getSelectedText());
+      }
+      popup.setReferenceLookup(file);
+      
+      super.show(invoker, x, y);
+      */
     }
   }
 }
