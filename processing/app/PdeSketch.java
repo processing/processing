@@ -254,7 +254,7 @@ public class PdeSketch {
   /**
    * Save all code in the current sketch.
    */
-  public void save() {
+  public void save() throws IOException {
     // check if the files are read-only. 
     // if so, need to first do a "save as".
     if (modified && isReadOnly()) {
@@ -272,7 +272,7 @@ public class PdeSketch {
   }
 
 
-  public void saveCurrent() {
+  public void saveCurrent() throws IOException {
     current.save();
     calcModified();
   }
@@ -327,7 +327,13 @@ public class PdeSketch {
       if (!dataFolder.exists()) dataFolder.mkdirs();
       destFile = new File(dataFolder, filename);
     }
-    PdeBase.copyFile(sourceFile, destFile);
+    try {
+      PdeBase.copyFile(sourceFile, destFile);
+    } catch (IOException e) {
+      PdeBase.showWarning("Error adding file",
+                          "Could not add '" + filename + 
+                          "' to the sketch.", e);
+    }
   }
 
 
@@ -349,7 +355,7 @@ public class PdeSketch {
     // set to the text for this file
     // 'true' means to wipe out the undo buffer
     // (so they don't undo back to the other file.. whups!)
-    editor.changeText(current.program, true); 
+    editor.setText(current.program, true); 
 
     // and i'll personally make a note of the change
     //current = which;
@@ -437,7 +443,12 @@ public class PdeSketch {
       // just drop the files in the build folder (pre-68)
       //PdeBase.copyDir(dataDir, buildDir);
       // drop the files into a 'data' subfolder of the build dir
-      PdeBase.copyDir(dataFolder, new File(tempBuildFolder, "data"));
+      try {
+        PdeBase.copyDir(dataFolder, new File(tempBuildFolder, "data"));
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new PdeException("Problem copying files from data folder");
+      }
     }
 
     // make up a temporary class name to suggest.
@@ -562,7 +573,13 @@ public class PdeSketch {
         // into the build directory. uses byte stream and reader/writer
         // shtuff so that unicode bunk is properly handled
         String filename = code[i].name + ".java";
-        PdeBase.saveFile(code[i].program, new File(buildPath, filename));
+        try {
+          PdeBase.saveFile(code[i].program, new File(buildPath, filename));
+        } catch (IOException e) {
+          e.printStackTrace();
+          throw new PdeException("Problem moving " + filename + 
+                                 " to the build folder");
+        }
         code[i].preprocName = filename;
 
       } else if (code[i].flavor == PDE) {
@@ -573,7 +590,7 @@ public class PdeSketch {
           String className = 
             preprocessor.write(code[i].program, buildPath,
                                (i == 0) ? suggestedClassName : null, 
-                               additionalImports);
+                               importPackageList);
           if (className == null) {
             // TODO this is temporary for debugging
             System.err.println("class could not be determined for " + 
@@ -603,12 +620,20 @@ public class PdeSketch {
           // while this seems to store line and column internally,
           // there doesn't seem to be a method to grab it.. 
           // so instead it's done using a regexp
-
           PatternMatcher matcher = new Perl5Matcher();
           PatternCompiler compiler = new Perl5Compiler();
           // line 3:1: unexpected char: 0xA0
           String mess = "^line (\\d+):(\\d+):\\s";
-          Pattern pattern = compiler.compile(mess);
+
+          Pattern pattern = null;
+          try {
+            pattern = compiler.compile(mess);
+          } catch (MalformedPatternException e) {
+            PdeBase.showWarning("Internal Problem",
+                                "An internal error occurred while trying\n" + 
+                                "to compile the sketch. Please report\n" +
+                                "this online at http://processing.org/bugs", e);
+          }
 
           PatternMatcherInput input = 
             new PatternMatcherInput(tsre.toString());
@@ -741,7 +766,7 @@ public class PdeSketch {
     // create the project directory
     // pass null for datapath because the files shouldn't be 
     // copied to the build dir.. that's only for the temp stuff
-    File appletDir = new File(directory, "applet");
+    File appletDir = new File(folder, "applet");
 
     boolean writeHtml = true;
     if (appletDir.exists()) {
@@ -764,7 +789,7 @@ public class PdeSketch {
     if (!name.equals(foundName)) {
       PdeBase.showWarning("Error during export", 
                           "Sketch name is " + name + " but the sketch\n" +
-                          "name in the code was " + foundName);
+                          "name in the code was " + foundName, null);
       return false;
     }
 
@@ -788,7 +813,8 @@ public class PdeSketch {
       // adds a space at the beginning, in case size() is the very 
       // first thing in the program (very common), since the regexp 
       // needs to check for things in front of it.
-      PatternMatcherInput input = new PatternMatcherInput(" " + program);
+      PatternMatcherInput input = 
+        new PatternMatcherInput(" " + code[0].program);
       if (matcher.contains(input, pattern)) {
         MatchResult result = matcher.getMatch();
         try {
@@ -891,7 +917,7 @@ public class PdeSketch {
     }
 
     // add the appropriate bagel to the classpath
-    String jdkVersionStr = PdePreferences.get("compiler.jdk_version");
+    String jdkVersion = PdePreferences.get("compiler.jdk_version");
     String bagelJar = "lib/export11.jar";  // default
     if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
       bagelJar = "lib/export13.jar";
