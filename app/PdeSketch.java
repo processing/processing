@@ -470,11 +470,10 @@ public class Sketch {
   public String getMainFilePath() {
     return files[0].getAbsolutePath();
   }
-  }
 
 
   class Code {
-    String name;
+    String name;  // pretty name (no extension), not the full file name
     File file;
     int flavor;
 
