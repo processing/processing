@@ -270,6 +270,13 @@ past, i've used a keyspan 28X dual port adapter, and the selection i
 use on the serial port menu reads "/dev/cu.USA28X21P1.1". you'll
 probably have something similar. don't mind the frightening names.
 
+another note on serial port.. tom igoe was kind enough to note that
+you'll be in a world of hurt if you disconnect your serial adapter
+while a sketch is running--it'll prolly freeze the machine and require
+a forced reboot. (while this may seem nutty, you might run into it if
+your adapter is plugged into your usb keyboard, and you have the
+keyboard plugged into a monitor/keyboard switcher).
+
 naming of sketches.. on other platforms, you aren't allowed to type
 characters besides letters, numbers, and underscores for the names of
 sketches. because of what looks like a bug in osx java, this feature
