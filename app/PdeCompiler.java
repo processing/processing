@@ -288,7 +288,7 @@ public class PdeCompiler implements PdeMessageConsumer {
    * Return the path for a folder, with appended paths to 
    * any .jar or .zip files inside that folder.
    */
-  static protected String includeFolder(File folder) {
+  static public String includeFolder(File folder) {
     if (folder == null) return "";
 
     StringBuffer abuffer = new StringBuffer();
@@ -395,5 +395,106 @@ public class PdeCompiler implements PdeMessageConsumer {
       }
     }
     return importCount;
+  }
+
+
+  /// 
+
+
+  // goes through a colon (or semicolon on windows) separated list
+  // of all the paths inside the 'code' folder
+
+  static public void magicExports(String path, ZipOutputStream zos) 
+  throws IOException {
+    String pieces[] = 
+      BApplet.splitStrings(path, File.pathSeparatorChar);
+
+    for (int i = 0; i < pieces.length; i++) {
+      if (pieces[i].length() == 0) continue;
+      //System.out.println("checking piece " + pieces[i]);
+
+      // is it a jar file or directory?
+      if (pieces[i].toLowerCase().endsWith(".jar") || 
+          pieces[i].toLowerCase().endsWith(".zip")) {
+        try {
+          ZipFile file = new ZipFile(pieces[i]);
+          Enumeration entries = file.entries();
+          while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            if (entry.isDirectory()) {
+              String name = entry.getName();
+              if (name.equals("META-INF/")) continue;
+              // actually 'continue's for all dir entries
+
+            } else {
+              //zos.putNextEntry(entry);
+              ZipEntry entree = new ZipEntry(entry.getName());
+              zos.putNextEntry(entree);
+              byte buffer[] = new byte[(int) entry.getSize()];
+              InputStream is = file.getInputStream(entry);
+              //DataInputStream is = 
+              //new DataInputStream(file.getInputStream(entry));
+              //is.readFully(buffer);
+              //System.out.println(buffer.length);
+              //System.out.println(count + " " + buffer.length);
+
+              int offset = 0;
+              int remaining = buffer.length; 
+              while (remaining > 0) {
+                int count = is.read(buffer, offset, remaining);
+                offset += count;
+                remaining -= count;
+              }
+
+              zos.write(buffer);
+              zos.flush();
+              zos.closeEntry();
+            }
+          }
+        } catch (IOException e) {
+          System.err.println("Error in file " + pieces[i]);
+        }
+      } else {  // not a .jar or .zip, prolly a directory
+        File dir = new File(pieces[i]);
+        // but must be a dir, since it's one of several paths
+        // just need to check if it exists
+        if (dir.exists()) {
+          magicExportsRecursive(dir, null, zos);
+        }
+      }
+    }
+  }
+
+
+  static public void magicExportsRecursive(File dir, String sofar, 
+                                           ZipOutputStream zos) 
+  throws IOException {
+
+    String files[] = dir.list();
+    for (int i = 0; i < files.length; i++) {
+      //if (files[i].equals(".") || files[i].equals("..")) continue;
+      // ignore . .. and .DS_Store
+      if (files[i].charAt(0) == '.') continue;
+
+      File sub = new File(dir, files[i]);
+      String nowfar = (sofar == null) ? 
+        files[i] : (sofar + "/" + files[i]);
+
+      if (sub.isDirectory()) {
+        magicExportsRecursive(sub, nowfar, zos);
+
+      } else {
+        // don't add .jar and .zip files, since they only work
+        // inside the root, and they're unpacked
+        if (!files[i].toLowerCase().endsWith(".jar") &&
+            !files[i].toLowerCase().endsWith(".zip") &&
+            files[i].charAt(0) != '.') {
+          ZipEntry entry = new ZipEntry(nowfar);
+          zos.putNextEntry(entry);
+          zos.write(PdeEditor.grabFile(sub));
+          zos.closeEntry();
+        }
+      }
+    }
   }
 }
