@@ -89,7 +89,7 @@ cd ../..
 
 cd app
 
-CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar"
+CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
 
 ../build/linux/work/jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 
