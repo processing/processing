@@ -1,3 +1,42 @@
+ABOUT REV 0014
+
+features and tweaks:
+
+- completely flat, unresized images are now significantly faster. this
+  affects any time that you use image(img, x, y) and you haven't yet
+  used translate/rotate/scale/etc. 
+
+- thin, one pixel lines are much much faster, provided you aren't
+  scaling them larger, by say scale(10) or something like that.
+
+- new version of java compiler (kjc) that hopefully sucks less.
+
+- bezierCurve() and catmullRomCurve() have reappeared
+
+
+bugs fixed:
+
+- way too many OutOfMemoryErrors and maybe that nasty flickery/jumpy
+  thing.
+
+- 3D calls to vertex() weren't making things 3D unless a translate or
+  a rotate was used
+
+
+known issues:
+
+- flickery/jumpy thing after the applet runs for a little while. this
+  is a bug in sun's java virtual machine (i can't actually program the
+  pyrotechnics you're seeing on your screen) but may have resurfaced
+  due to low memory conditions because run.bat was screwed up. so the
+  problem may be fixed. hopefully. maybe. hmm. 
+
+- i've tweaked a bunch of stuff in this release but haven't had a lot
+  of time to test. things look like they're doing much better. but as
+  is the case with any release, you can always go back to a previous
+  version if the new one gives you too much trouble.
+
+
 ABOUT REV 0013
 
 features and tweaks:
