@@ -51,6 +51,11 @@ public class PdeCompilerKjc extends PdeCompiler {
         //err += "error:".length();
         String description = s1.substring(err + "error:".length());
         description = description.trim();
+        
+        // as in: ...error:Constructor setup must be named Temporary_5362_2548 [JL1 8.6]
+        if(description.indexOf("Constructor setup must be named") != -1) {
+          description = "Missing function return type, or constructor does not match class name";
+        }
         //exception = new PdeException(description, lineNumber-2);
         exception = new PdeException(description, lineNumber-1);
         editor.error(exception);
