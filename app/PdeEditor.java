@@ -7,11 +7,65 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
- 
-// play, stop, open, save, courseware, print, beautify
-// height of button panel is 35
 
-public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
+/*
+
+
+[ File ]
+New
+Open ->
+Save
+Duplicate
+Export
+-
+Proce55ing.net
+Reference
+-
+Quit
+
+
+[ Open-> (Sketchbook) ]
+sketch-001
+sketch-002
+sketch-003
+-- 
+Course ->
+Examples -> 
+Users ->
+Proce55ing.net ->
+--
+Refresh List
+Compile All
+
+
+[ Edit ]
+Undo
+-
+Cut
+Copy 
+Paste
+-
+Select all
+
+
+[ Sketch ]
+Play
+Present
+Stop
+
+
+new sketch just makes a new sketch, doesn't ask for name
+tries to do numbered version based on sketches already present
+
+last section is configurable
+choose a name for the entries, and a url for the base of the code
+  file urls will be local, don't include file:/// to user
+  http urls are base of directory where the code is found
+
+*/ 
+
+
+public class PdeEditor extends Panel {
 
   static final String DEFAULT_PROGRAM = "// type program here\n";
 
@@ -22,7 +76,7 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
-  PdeApplet app;
+  //PdeBase app;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -44,20 +98,20 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
   boolean playing;
 
 
-  public PdeEditor(PdeApplet app, String program) {
-    this.app = app;
+  public PdeEditor(/*PdeBase app,*/ String program) {
+    //this.app = app;
 
     setLayout(new BorderLayout());
 
     Panel leftPanel = new Panel();
     leftPanel.setLayout(new BorderLayout());
 
-    Color buttonBgColor = 
-      PdeApplet.getColor("editor.buttons.bgcolor", new Color(153, 0, 0));
+    // set bgcolor of buttons here, b/c also used for empty component
     buttons = new PdeEditorButtons(this);
+    Color buttonBgColor = 
+      PdeBase.getColor("editor.buttons.bgcolor", new Color(153, 0, 0));
     buttons.setBackground(buttonBgColor);
     leftPanel.add("North", buttons);
-
     Label dummy = new Label();
     dummy.setBackground(buttonBgColor);
     leftPanel.add("Center", dummy);
@@ -73,10 +127,10 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     if (program == null) program = DEFAULT_PROGRAM;
     textarea = 
       new TextArea(program, 
-		   PdeApplet.getInteger("editor.program.rows", 20),
-		   PdeApplet.getInteger("editor.program.columns", 60),
+		   PdeBase.getInteger("editor.program.rows", 20),
+		   PdeBase.getInteger("editor.program.columns", 60),
 		   TextArea.SCROLLBARS_VERTICAL_ONLY);
-    textarea.setFont(PdeApplet.getFont("editor.program.font",
+    textarea.setFont(PdeBase.getFont("editor.program.font",
 				       new Font("Monospaced", 
 						Font.PLAIN, 12)));
     rightPanel.add("Center", textarea);
@@ -91,7 +145,7 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
 
     add("Center", rightPanel);
 
-    if (!PdeApplet.isMacintosh()) {  // this still relevant?
+    if (!PdeBase.isMacintosh()) {  // this still relevant?
       PdeEditorListener listener = new PdeEditorListener();
       textarea.addKeyListener(listener);
       textarea.addFocusListener(listener);
@@ -294,10 +348,10 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
       // local encoding for this system.
       //textarea.setText(app.languageEncode(data));
       // what the hell was i thinking when i wrote this code
-      if (app.encoding == null)
-	textarea.setText(new String(data));
-      else 
-	textarea.setText(new String(data, app.encoding));
+      //if (app.encoding == null)
+      textarea.setText(new String(data));
+      //else 
+      //textarea.setText(new String(data, app.encoding));
 
     } catch (FileNotFoundException e1) {
       e1.printStackTrace();
@@ -537,7 +591,7 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
 	new DataOutputStream(conn.getOutputStream());
 
       String content = 
-	"save_as=" + URLEncoder.encode(PdeApplet.get("save_as")) + 
+	"save_as=" + URLEncoder.encode(PdeBase.get("save_as")) + 
 	"&save_image=" + URLEncoder.encode(imageStr) +
 	"&save_program=" + URLEncoder.encode(programStr);
 
@@ -773,7 +827,7 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
   public void enableFullScreen() {
     if (fullScreenWindow == null) {
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      if (PdeApplet.isMacintosh()) {
+      if (PdeBase.isMacintosh()) {
 	fullScreenWindow = new Frame();
 
 	// mrj is still (with version 2.2.x) a piece of shit, 
@@ -792,7 +846,7 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
 	fullScreenWindow.setBounds(0, 0, screen.width, screen.height);
       }
       Color fullScreenBgColor = 
-	PdeApplet.getColor("fullscreen.bgcolor", new Color(102, 102, 102));
+	PdeBase.getColor("fullscreen.bgcolor", new Color(102, 102, 102));
       fullScreenWindow.setBackground(fullScreenBgColor);
 
       /*

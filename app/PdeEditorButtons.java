@@ -67,7 +67,7 @@ public class PdeEditorButtons extends Panel {
 			  boolean useBeautify*/) {
     this.editor = editor;
     // this could be causing trouble
-    buttons = PdeApplet.readImage("buttons.gif");
+    buttons = PdeBase.readImage("buttons.gif");
 
     buttonCount = 0;
     which = new int[BUTTON_COUNT];
@@ -83,13 +83,16 @@ public class PdeEditorButtons extends Panel {
 
     setLayout(null);
     status = new Label();
-    status.setFont(PdeApplet.getFont("editor.buttons.status.font",
+    status.setFont(PdeBase.getFont("editor.buttons.status.font",
 				     new Font("SansSerif", Font.PLAIN, 10)));
-    status.setForeground(PdeApplet.getColor("editor.buttons.status.color",
+    status.setForeground(PdeBase.getColor("editor.buttons.status.color",
 					    Color.black));
-    //status.setForeground(Color.black);
-    //status.setBackground(Color.yellow);
     add(status);
+
+    Color buttonBgColor = 
+      PdeBase.getColor("editor.buttons.bgcolor", new Color(153, 0, 0));
+    setBackground(buttonBgColor);
+
     status.setBounds(-5, BUTTON_COUNT*BUTTON_HEIGHT, 
 		     BUTTON_WIDTH + 15, BUTTON_HEIGHT);
     status.setAlignment(Label.CENTER);

@@ -41,18 +41,18 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
     if (bgColor == null) {
       bgColor = new Color[3];
-      bgColor[0] = PdeApplet.getColor("editor.status.notice.bgcolor",
+      bgColor[0] = PdeBase.getColor("editor.status.notice.bgcolor",
 				      new Color(102, 102, 102));
-      bgColor[1] = PdeApplet.getColor("editor.status.error.bgcolor",
+      bgColor[1] = PdeBase.getColor("editor.status.error.bgcolor",
 				      new Color(102, 26, 0));
-      bgColor[2] = PdeApplet.getColor("editor.status.prompt.bgcolor",
+      bgColor[2] = PdeBase.getColor("editor.status.prompt.bgcolor",
 				      new Color(204, 153, 0));
       fgColor = new Color[3];
-      fgColor[0] = PdeApplet.getColor("editor.status.notice.fgcolor",
+      fgColor[0] = PdeBase.getColor("editor.status.notice.fgcolor",
 				      new Color(255, 255, 255));
-      fgColor[1] = PdeApplet.getColor("editor.status.error.fgcolor",
+      fgColor[1] = PdeBase.getColor("editor.status.error.fgcolor",
 				      new Color(255, 255, 255));
-      fgColor[2] = PdeApplet.getColor("editor.status.prompt.fgcolor",
+      fgColor[2] = PdeBase.getColor("editor.status.prompt.fgcolor",
 				      new Color(0, 0, 0));
     }
   }
@@ -153,7 +153,7 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdeApplet.getFont("editor.status.font",
+      font = PdeBase.getFont("editor.status.font",
 			       new Font("SansSerif", Font.PLAIN, 10));
       //font = new Font("SansSerif", Font.PLAIN, 10);
       g.setFont(font);
