@@ -35,7 +35,11 @@ public class PdePreprocessor {
   static final String application_imports[] = {
     "java.applet", "java.awt", "java.awt.image", "java.awt.event",
     "java.io", "java.net", "java.text", "java.util", "java.util.zip",
+#ifndef RXTX
     "javax.comm",
+#else
+    "gnu.io",
+#endif
 
     // if jdk14 defined, jdk13 will be as well
 #ifdef JDK13
