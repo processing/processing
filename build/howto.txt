@@ -4,14 +4,15 @@ HOW TO BUILD PROCESSING
 ////////////////////////////////////////////////////////////////////
 
 
-BUILDING THE WINDOWS VERSION
+BUILDING THE WINDOWS OR LINUX VERSIONS
 
 
-// Steps for First Time Setup 
+//// Steps for First Time Setup 
 
 
-1. INSTALL CYGWIN, downloadable from www.cygwin.com
-or directly link to the installer: www.cygwin.com/setup.exe
+1. INSTALL CYGWIN (windows users only). it's downloadable from 
+   www.cygwin.com or specifically: www.cygwin.com/setup.exe
+   linux users can hop ahead to step 2.
 
 ** of the packages, begin with the defaults, and add:
 cvs - used for version control
@@ -35,7 +36,6 @@ base stuff, and then come back to install the other bits.
 
 it's also useful to run the installer (grab a new one from the site,
 since it changes) every few months to keep things fresh.
-
 
 
 2. GRAB THE CODE FROM SOURCEFORGE
@@ -67,65 +67,10 @@ cvs update -P
 cd ..
 
 
+3. INSTALL QUICKTIME FOR JAVA (windows users only)
 
-3. INSTALL JIKES
-
-* a copy of jikes, the ibm's free and speedy java compiler that we
-  use, has been placed in build/windows/jikes.exe.gz
-
-* NOTE! this version of jikes has been specially compiled under cygwin
-  to use : as a path separator, so that all the build scripts work. so
-  if you already have another version of jikes installed, this one is
-  the one you want for building P5. 
-
-* open up a cygwin shell, then go like dis:
-
-cd /yourpath/to/processing/build/windows
-# /yourpath/to is where you've placed the processing folder
-# for instance, if it's in c:\processing, the line below would be 
-# /cygdrive/c/processing/build/windows
-
-# make a copy of jikes
-cp jikes.exe.gz /usr/bin/
-
-# unpack and install
-cd /usr/bin
-gzip -d jikes.exe.gz
-chmod +x jikes.exe
-
-# make sure it's now in the path
-rehash
-
-# and see if it works by typing:
-jikes
-# if it doesn't list the options, then something wasn't installed
-# correctly. retrace your steps and see if you've done everything.
-# or if i've made an error in the instructions, lemme know.
-
-# back to home
-cd /yourpath/to/processing
-
-
-
-4. SET YOUR CLASSPATH (for bagel) 
-
-* you need a few things in your classpath, they are:
-  - the rt.jar from a java runtime (1.1 or 1.4) 
-  - comm.jar, from javacomm. you can find a copy in 
-    processing/build/windows/dist/lib/comm.jar
-    if you don't already have it installed
-
-* to add them to your CLASSPATH (win2k or xp), go to Control Panels -> 
-  System Properties -> Advanced -> Environment Variables
-  if CLASSPATH is already listed in one of the lefthand columns, 
-  just make sure it includes those two things. if it doesn't, add
-  them (with full paths to them), separated by semicolons.
-  on win98 or winme (ack! don't use em!) you'll have to mess with
-  autoexec.bat. but we strongly recommend not doing this on 98/ME.
-
-* you'll also need to install quicktime for java, if you're building
-  for windows or mac. grab a quicktime installer from: 
-  http://www.apple.com/quicktime/download/
+* you'll also need to install quicktime for java. grab a quicktime
+  installer from: http://www.apple.com/quicktime/download/
 
 * if you already have quicktime installed, just make sure that
   quicktime for java has already been installed, use the quicktime
@@ -133,34 +78,20 @@ cd /yourpath/to/processing
   'Details' button in the updater, and if it lists "Not installed" 
   for "QuickTime for Java", well, take care of that.
 
-* make sure that qtjava is in your classpath as well, done
-  properly. arielm had problems with this, and adds:
 
-  so i checked a bit and it seems that the quicktime 4 java
-  installation (at least on windows xp) is broken, for the 2 following
-  reasons:
-  1) CLASSPATH is defined as a "System variable" 
-     instead of a "User variable"
-  2) the value of CLASSPATH is encosed into quotes (")
-
-  after manually fixing these issues, things were fine. (either
-  properly place quotes around a single version of CLASSPATH, or use a
-  version that doesn't need to be quoted and has no spaces,
-  i.e. replace 'Program Files' with the 8.3 dos version: 'PROGRA~1'
-  (indeed, this awful nomenclature still works).
-
-
-5. BUILD IT
-
-* you'll need to close and re-open the cygwin window after setting
-  your CLASSPATH.
+4. BUILD IT
 
 # now to build for the first time:
 cd /path/to/processing/build/windows
+
+# or if you're on linux
+cd /path/to/processing/build/linux
+
+# and then..
 ./make.sh
 
-# if everything went well, you'll have no errors. 
-# (need more doc here on common problems..)
+# if everything went well, you'll have no errors. (feel free to make
+# suggestions for things to include here for common problems)
 
 # then to run it
 ./run.sh
@@ -170,7 +101,7 @@ cd /path/to/processing/build/windows
 
 
 
-// Updating to the Latest Version
+//// Updating to the Latest Version
 
 1. Each time you want to update to latest version from cvs:
 
@@ -196,18 +127,13 @@ cvs -z3 update -d -P
 # missing from a subfolder.
 
 
-//// MAC OS 9
-
-this is actually built from inside osx, but then you reboot into os9
-to move files around, remove and .DS_Store files that may have shown
-up, and package the thing with stuffit. 
-
-when first attempting to build, it's necessary to un-macbinarize the
-Proce55ing application. (processing/build/macos9/dist/Proce55ing.bin)
-
+3. If there have been significant changes, or you get weird build
+   errors, try deleting (or renaming, if you need sketches from
+   inside) your 'work' folder. This will create a fresh build.
 
 
 /////////////////////////////////////////////////////////////////
+
 
 
 HOW TO BUILD PROCESSING FOR THE MAC PLATFORM
@@ -216,7 +142,10 @@ HOW TO BUILD PROCESSING FOR THE MAC PLATFORM
 // if you have any corrections/additions/suggestions:
 // send email to tmohn@sbcglobal.net
 
-//// MAC OS X/9
+// note: the macos9 instructions are a little crusty since things 
+// have changed since we suspended support for macos9.
+
+
 
 1. GRAB THE CODE FROM SOURCEFORGE
 
@@ -257,28 +186,8 @@ cvs update -P
 cd ..
 
 
-2. SET YOUR CLASSPATH (for bagel) 
 
-// SETUP JAVA CLASSPATH.  You need to set an environment 
-// variable for CLASSPATH.  This gets setup in your .tcshrc file for 
-// your account.  Typically with a line like this:
-
-setenv CLASSPATH /System/Library/Frameworks/JavaVM.framework/
-Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/
-Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home
-/lib/ext/comm.jar
-
-// Make sure you have comm.jar installed at the following location:
-
-/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
-
-// if it isn't there, you can get it from build/macosx.
-
-// you'll also need to install quicktime for java.  grab a quicktime 
-// installer from: http://www.apple.com/quicktime/download/
-
-
-3. BUILD IT
+2. BUILD IT
 
 // first lets get bagel (the make.sh script does this as well if you're 
 // feeling lazy).
@@ -392,3 +301,8 @@ cvs -z3 update -d -P
 # since been added. but if you're getting "class not found" errors
 # while building, then that's a good indicator that something is
 # missing from a subfolder.
+
+If there have been significant changes, or you get weird build
+errors, try deleting (or renaming, if you need sketches from
+inside) your 'work' folder. This will create a fresh build.
+

@@ -97,24 +97,18 @@ cd ../..
 
 cd bagel
 
-# old comm.jar
-#MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
-
-# new rxtx comm
-MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
-# need not be included
-
-CLASSPATH=$MACOSX_CLASSPATH
+# rxtx comm.jar will be included by the build script
+CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
 export CLASSPATH
 
 ### --- make version with all the goodies for the application
 echo Building bagel with serial, video, audio, and jdk13 support
-perl make.pl SERIAL RXTX VIDEO SONIC JDK13
+perl make.pl JIKES=../build/macosx/work/jikes SERIAL RXTX VIDEO SONIC JDK13
 cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
 echo Building bagel for export with audio
-perl make.pl SONIC
+perl make.pl JIKES=../build/macosx/work/jikes SONIC
 cp classes/*.class ../build/macosx/work/lib/export/
 
 cd ..
@@ -124,28 +118,20 @@ cd app
 
 ### -- BUILD PARSER ---------------------------------------------
 
-
-# disabled these guys temporarily
-# instead doing it once, when the 'work' dir is built
-#cd preprocessor
-# first build the default java goop
-#java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
-# now build the pde stuff that extends the java classes
-#java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
-#cd ..
+# add code here later to conditionally build the parser. 
+# but for now, the parser is only built when the work dir 
+# is created, to speed the build process.
 
 
 
 ### -- BUILD PDE ------------------------------------------------
 
-#echo Building PDE for JDK 1.4
 echo Building PDE for JDK 1.3
 
 # new rxtx
-CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$MACOSX_CLASSPATH
+CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$CLASSPATH
 
-#perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dJDK14 -dMACOS -dRXTX *.java jeditsyntax/*.java
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
+perl ../bagel/buzz.pl "../build/macosx/work/jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
