@@ -798,6 +798,22 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public void bezierCurve(float x1, float y1, 
+			  float x2, float y2,
+			  float x3, float y3,
+			  float x4, float y4) {
+    g.bezierCurve(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
+  public void catmullRomCurve(float x1, float y1, 
+			      float x2, float y2,
+			      float x3, float y3,
+			      float x4, float y4) {
+    g.catmullRomCurve(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
   public BagelImage loadImage(String filename) {
    return g.loadImage(filename);
   }
