@@ -1,12 +1,17 @@
 0046 
-
+X install new swing-based textarea with syntax highlighting
+_   set better defaults for coloring
+_   improve the flicker problems (re-enable backing store?)
+_   implement edit menu
 
 bagel
+_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 _ images don't load during setup()
 _ finish fill mode of flat circle function
 _ 'image' is too generic a variable to have inside BApplet
 _   check for others that shouldn't be used (pixels? width? height?)
 _ these boxes overlap but shouldn't:
+_   may be simple <= instead of <, leftover from dbn
 int thick = 36;
 size(200, 200);
 background(0);
@@ -35,6 +40,7 @@ _   ME seems to be very broken
 
 macosx 
 _ put mac rxtx inside the p5 folder (hide it?)
+_   include more strongly worded message about rxtx
 _ bug report from the site
 resizing the editor window in Mac OS X leaves the status bar in
 place. The result is an editor window with a grey bar layered on top,
