@@ -109,7 +109,7 @@ public class PdeEditor extends JFrame
   // location for lib/build, contents for which will be emptied
   String tempBuildPath;
 
-  static final String TEMP_CLASS = "Temporary";
+  //static final String TEMP_CLASS = "Temporary";
 
   // undo fellers
   JMenuItem undoItem, redoItem;
@@ -944,6 +944,14 @@ public class PdeEditor extends JFrame
 
 
   /**
+   * Get the contents of the current buffer. Used by the Sketch class.
+   */
+  public String getText() {
+    return textarea.getText();
+  }
+
+
+  /**
    * Called by PdeEditorHeader when the tab is changed 
    * (or a new set of files are opened)
    */
@@ -958,6 +966,7 @@ public class PdeEditor extends JFrame
   }
 
 
+  /*
   // in an advanced program, the returned classname could be different,
   // which is why the className is set based on the return value.
   // @param exporting if set, then code is cleaner, 
@@ -1053,6 +1062,7 @@ public class PdeEditor extends JFrame
 
     return success ? className : null;
   }
+  */
 
 
   /**
@@ -1091,44 +1101,46 @@ public class PdeEditor extends JFrame
 
     for (int i = 0; i < 10; i++) System.out.println();
 
-    // if an external editor is being used, need to grab the
-    // latest version of the code from the file.
-    if (PdePreferences.getBoolean("editor.external")) {
-      // history gets screwed by the open..
-      String historySaved = history.lastRecorded;
-      //handleOpen(sketchName, sketchFile, sketchDir);
-      //handleOpen(sketch.name, sketch.file, sketch.directory);
-      handleOpen(sketch);
-      history.lastRecorded = historySaved;
-    }
-
     presenting = present;
-
     try {
       if (presenting) {
+        // wipe everything out with a bulbous screen-covering window 
         presentationWindow.show();
         presentationWindow.toFront();
       }
 
+      sketch.run();
+
+      /*
       String program = textarea.getText();
       history.record(program, PdeHistory.RUN);
 
-      tempBuildPath = "lib" + File.separator + "build";
+      // if an external editor is being used, need to grab the
+      // latest version of the code from the file.
+      if (PdePreferences.getBoolean("editor.external")) {
+        // history gets screwed by the open..
+        String historySaved = history.lastRecorded;
+        //handleOpen(sketchName, sketchFile, sketchDir);
+        //handleOpen(sketch.name, sketch.file, sketch.directory);
+        handleOpen(sketch);
+        history.lastRecorded = historySaved;
+      }
 
+      // temporary build folder is inside 'lib'
+      // this is added to the classpath by default
+      tempBuildPath = "lib" + File.separator + "build";
       File buildDir = new File(tempBuildPath);
       if (!buildDir.exists()) {
         buildDir.mkdirs();
       }
-
+      // copy (changed) files from data directory into build folder
       sketch.updateDataDirectory(buildDir);
-      //File dataDir = new File(dataPath);
-      //if (dataDir.exists()) {
-      //PdeBase.copyDir(dataDir, buildDir);
-      //}
 
+      // make up a temporary class name to suggest
       int numero1 = (int) (Math.random() * 10000);
       int numero2 = (int) (Math.random() * 10000);
-      String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
+      //String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
+      String className = "Temporary_" + numero1 + "_" + numero2;
 
       // handle building the code
       className = build(program, className, tempBuildPath, false);
@@ -1185,7 +1197,8 @@ public class PdeEditor extends JFrame
         cleanTempFiles(); //tempBuildPath);
       }
     } catch (PdeException e) { 
-      // if we made it to the runtime stage, unwind that thread
+      // if it made it as far as creating a Runtime object, 
+      // call its stop method to unwind its thread
       if (runtime != null) runtime.stop();
       cleanTempFiles(); //tempBuildPath);
 
@@ -1198,11 +1211,13 @@ public class PdeEditor extends JFrame
     } catch (Exception e) {  // something more general happened
       e.printStackTrace();
 
-      // if we made it to the runtime stage, unwind that thread
+      // if it made it as far as creating a Runtime object, 
+      // call its stop method to unwind its thread
       if (runtime != null) runtime.stop();
 
       cleanTempFiles(); //tempBuildPath);
     }        
+      */
 
     //engine = null;
     //System.out.println("out of doRun()");
