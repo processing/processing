@@ -43,6 +43,8 @@ X   very necessary, since opens window at 100x100
 X   problem was the threading issues
 X bring back renderer menu
 X   reading/saving pref for opengl renderer
+X remove cameraMode(PERSPECTIVE) on each frame
+X   why is the first one failing?
 
 _ basic sample audio playback needed for p5
 _   make separate java 1.1 and java 1.3 classes
@@ -79,9 +81,6 @@ _ what should the update image function be called?
 
 _ get loop, noLoop, redraw, and framerate all working in opengl
 _   needs custom animator thread..
-
-_ and cameraMode(PERSPECTIVE) on each frame
-o   why is the first one failing?
 
 _ be consistent about getXxx() methods
 
