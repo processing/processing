@@ -2,10 +2,10 @@
 
 /*
   PdeEditorHeader - sketch tabs at the top of the screen
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
   FontMetrics metrics;
   int fontAscent;
 
-  PdeSketch sketch;
+  //PdeSketch sketch;
 
   //
 
@@ -92,8 +92,8 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     this.editor = eddie; // weird name for listener
 
     pieces = new Image[STATUS.length][WHERE.length];
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < STATUS.length; i++) {
+      for (int j = 0; j < WHERE.length; j++) {
         pieces[i][j] = PdeBase.getImage("tab-" + STATUS[i] + "-" + 
                                         WHERE[j] + ".gif", this);
       }
@@ -135,10 +135,11 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
             popup.show(PdeEditorHeader.this, x, y);
 
           } else {
-            for (int i = 0; i < sketch.codeCount; i++) {
+            //for (int i = 0; i < sketch.codeCount; i++) {
+            for (int i = 0; i < editor.sketch.codeCount; i++) {
               if ((x > tabLeft[i]) && (x < tabRight[i])) {
                 //setCurrent(i);
-                sketch.setCurrent(i);
+                editor.sketch.setCurrent(i);
                 repaint();
               }
             }
@@ -160,7 +161,8 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     if (screen == null) return;
     //if (editor.sketchName == null) return;
 
-    //PdeSketch sketch = editor.sketch;
+    PdeSketch sketch = editor.sketch;
+    if (sketch == null) return;  // ??
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -194,6 +196,12 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
       fontAscent = metrics.getAscent();
     }
 
+    // set the background for the offscreen
+    g.setColor(backgroundColor);
+    //System.out.println("bg = " + backgroundColor);
+    //g.setColor(Color.red);
+    g.fillRect(0, 0, imageW, imageH);
+
     if ((tabLeft == null) ||
         (tabLeft.length < sketch.codeCount)) {
       tabLeft = new int[sketch.codeCount];
@@ -206,6 +214,7 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
 
       // if modified, add the li'l glyph next to the name
       String text = "  " + code.name + (code.modified ? " \u00A7" : "  ");
+      //System.out.println("code " + i + " " + text);
 
       int textWidth = metrics.stringWidth(text);
       int pieceCount = 2 + (textWidth / PIECE_WIDTH);
@@ -260,6 +269,16 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     */
 
     screen.drawImage(offscreen, 0, 0, null);
+  }
+
+
+  /**
+   * Called when a new sketch is opened.
+   */
+  public void rebuild() {
+    System.out.println("rebuilding editor header");
+    rebuildMenu(); 
+    repaint();
   }
 
 
@@ -330,17 +349,24 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
     JMenu unhide = new JMenu("Unhide");
     ActionListener unhideListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          sketch.unhide((String) (e.getActionCommand()));
+          editor.sketch.unhide((String) (e.getActionCommand()));
           rebuildMenu();
         }
       };
-    for (int i = 0; i < sketch.hiddenCount; i++) {
-      item = new JMenuItem(sketch.hidden[i].name);
-      //item.setActionCommand(hiddenFiles[i]);
-      item.setActionCommand(sketch.hidden[i].name);
-      item.addActionListener(unhideListener);
-      unhide.add(item);
+    PdeSketch sketch = editor.sketch;
+    if (sketch != null) {
+      for (int i = 0; i < sketch.hiddenCount; i++) {
+        item = new JMenuItem(sketch.hidden[i].name);
+        //item.setActionCommand(hiddenFiles[i]);
+        item.setActionCommand(sketch.hidden[i].name);
+        item.addActionListener(unhideListener);
+        unhide.add(item);
+      }
     }
+    if (unhide.getItemCount() == 0) {
+      unhide.setEnabled(false);
+    }
+    
     menu.add(unhide);
 
     menu.addSeparator();
