@@ -4433,6 +4433,11 @@ public class PApplet extends Applet
   }
 
 
+  public void circle(float x, float y, float radius) {
+     g.circle(x, y, radius);
+  }
+
+
   public float bezierPoint(float a, float b, float c, float d,
                            float t) {
     return g.bezierPoint(a, b, c, d, t);
