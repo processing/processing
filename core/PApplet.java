@@ -1541,38 +1541,38 @@ public class PApplet extends Applet
 
 
   public final float sin(float angle) {
-    if ((g != null) && (g.angle_mode == DEGREES)) angle *= DEG_TO_RAD;
+    if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   public final float cos(float angle) {
-    if ((g != null) && (g.angle_mode == DEGREES)) angle *= DEG_TO_RAD;
+    if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   public final float tan(float angle) {
-    if ((g != null) && (g.angle_mode == DEGREES)) angle *= DEG_TO_RAD;
+    if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 
 
   public final float asin(float value) {
-    return ((g != null) && (g.angle_mode == DEGREES)) ?
+    return ((g != null) && (g.angleMode == DEGREES)) ?
       ((float)Math.asin(value) * RAD_TO_DEG) : (float)Math.asin(value);
   }
 
   public final float acos(float value) {
-    return ((g != null) && (g.angle_mode == DEGREES)) ?
+    return ((g != null) && (g.angleMode == DEGREES)) ?
       ((float)Math.acos(value) * RAD_TO_DEG) : (float)Math.acos(value);
   }
 
   public final float atan(float value) {
-    return ((g != null) && (g.angle_mode == DEGREES)) ?
+    return ((g != null) && (g.angleMode == DEGREES)) ?
       ((float)Math.atan(value) * RAD_TO_DEG) : (float)Math.atan(value);
   }
 
   public final float atan2(float a, float b) {
-    return ((g != null) && (g.angle_mode == DEGREES)) ?
+    return ((g != null) && (g.angleMode == DEGREES)) ?
       ((float)Math.atan2(a, b) * RAD_TO_DEG) : (float)Math.atan2(a, b);
   }
 
