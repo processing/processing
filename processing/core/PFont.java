@@ -751,7 +751,7 @@ public class PFont implements PConstants {
     int ph = height[glyph];
 
     // if the character is off the screen
-    if ((sx + ph >= parent.width) || (sy >= parent.height) ||
+    if ((sx - ph >= parent.width) || (sy >= parent.height) ||
         (sy + pw < 0) || (sx < 0)) return;
 
     // off the left of screen, cut off bottom of letter
@@ -760,7 +760,7 @@ public class PFont implements PConstants {
       //w0 += xx;  // and reduce the width by that (negative) amount
       //py0 -= xx;  // if x = -3, cut off 3 pixels from the bottom
       //ph0 += xx;
-      ph -= (ph - sx);
+      ph -= (ph - sx) - 1;
       //sx = 0;
     }
     // off the right of the screen, cut off top of the letter
@@ -768,7 +768,7 @@ public class PFont implements PConstants {
       int extra = sx - (parent.width-1);
       py += extra;
       ph -= extra;
-      sx = parent.width-1;
+      //sx = parent.width-1;
     }
     // off the top, cut off left edge of letter
     if (sy < 0) {
@@ -779,7 +779,7 @@ public class PFont implements PConstants {
     }
     // off the bottom, cut off right edge of letter
     if (sy + pw >= parent.height-1) {
-      int extra = (sy + pw) - (parent.height-1);
+      int extra = (sy + pw) - parent.height;
       pw -= extra;
     }
 
@@ -803,7 +803,7 @@ public class PFont implements PConstants {
         try {
           //int index = (yy + x0-col)*parent.width + (xx+row-y0);
           //int index = (sy + px-col)*parent.width + (sx+row-py);
-          int index = (sy + px+col)*parent.width + (sx+row-py);
+          int index = (sy + px+col)*parent.width + (sx-row);
           int p2 = spixels[index];
 
           // x coord is backwards
