@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
+import javax.comm.*;
 
 
 public class PdeBase implements ActionListener {
@@ -29,6 +30,8 @@ public class PdeBase implements ActionListener {
 	  editor.retrieveHistory(e.getActionCommand());
 	}
       };
+
+  Menu serialMenu;
 
   static final String WINDOW_TITLE = "Proce55ing";
 
@@ -223,19 +226,15 @@ public class PdeBase implements ActionListener {
     item.setEnabled(false);
     menu.add(item);
     menu.addActionListener(this);
-    menubar.add(menu);
+
+    //menu.addSeparator();
+    serialMenu = new Menu("Serial Port");
+    menu.add(serialMenu);
+    buildSerialMenu();
+
+    menubar.add(menu);  // add the sketch menu
 
     frame.setMenuBar(menubar);
-
-    /*
-    Menu fileMenu = new Menu("File");
-    MenuItem mi;
-    goodies.add(new MenuItem("Save QuickTime movie..."));
-    goodies.add(new MenuItem("Quit"));
-    goodies.addActionListener(this);
-    menubar.add(goodies);
-    frame.setMenuBar(menubar);
-    */
 
     Insets insets = frame.getInsets();
     Toolkit tk = Toolkit.getDefaultToolkit();
@@ -267,27 +266,15 @@ public class PdeBase implements ActionListener {
   // the directories above it
 
   class SketchbookMenuListener implements ActionListener {
-    //PdeEditor editor;
     String path;
 
-    public SketchbookMenuListener(/*PdeEditor editor,*/ String path) {
-      //this.editor = editor;
+    public SketchbookMenuListener(String path) {
       this.path = path;
     }
 
     public void actionPerformed(ActionEvent e) {
-      //if (e.getActionCommand().equals(NEW_SKETCH_ITEM)) {
-      //editor.handleNew();
-
-      //} else {
-      //editor.sketchbookOpen(path + File.separator + e.getActionCommand());
-      //}
-      //System.out.println("got action in skbkmenulistener " + e);
       String name = e.getActionCommand();
-      //System.out.println("calling editor.skOpen on " + path + " " + name);
-      //editor.skOpen(path, name);
       editor.skOpen(path + File.separator + name, name);
-      //File.separator + name + ".pde");
     }
   }
 
@@ -466,6 +453,64 @@ public class PdeBase implements ActionListener {
       reader.close();
 
     } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  class SerialMenuListener implements ItemListener /*, ActionListener*/ {
+    //public SerialMenuListener() { }
+
+    public void itemStateChanged(ItemEvent e) {
+      int count = serialMenu.getItemCount();
+      for (int i = 0; i < count; i++) {
+	((CheckboxMenuItem)serialMenu.getItem(i)).setState(false);
+      }
+      CheckboxMenuItem item = (CheckboxMenuItem)e.getSource();
+      item.setState(true);
+      String name = item.getLabel();
+      //System.out.println(item.getLabel());
+      PdeBase.properties.put("serial.port", name);
+      //System.out.println("set to " + get("serial.port"));
+    }
+    
+    /*
+    public void actionPerformed(ActionEvent e) {
+      System.out.println(e.getSource());
+      String name = e.getActionCommand();
+      PdeBase.properties.put("serial.port", name);
+      System.out.println("set to " + get("serial.port"));
+      //editor.skOpen(path + File.separator + name, name);
+      // need to push "serial.port" into PdeBase.properties
+    }
+    */
+  }
+
+  protected void buildSerialMenu() {
+    // get list of names for serial ports
+    // have the default port checked (if present)
+
+    SerialMenuListener listener = new SerialMenuListener();
+    String defaultName = get("serial.port", "unspecified");
+    //boolean found;
+
+    try {
+      Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+      while (portList.hasMoreElements()) {
+	CommPortIdentifier portId = 
+	  (CommPortIdentifier) portList.nextElement();
+
+	if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+	  //if (portId.getName().equals(port)) {
+	  String name = portId.getName();
+	  CheckboxMenuItem mi = 
+	    new CheckboxMenuItem(name, name.equals(defaultName));
+	  //mi.addActionListener(listener);
+	  mi.addItemListener(listener);
+	  serialMenu.add(mi);
+	}
+      }
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
