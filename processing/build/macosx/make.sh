@@ -67,7 +67,8 @@ else
   #cd ../..
 
   # get jikes and depedencies
-  gunzip < dist/jikes.gz > work/jikes
+  #gunzip < dist/jikes.gz > work/jikes
+  cp dist/jikes work/
   chmod +x work/jikes
 
   echo
