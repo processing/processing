@@ -1,6 +1,7 @@
 0071
 X properly swap alpha values when lines need to be rendered backwards
 X make cursor() commands public
+X ltext and rtext for screen space stuff
 
 _ now that it's actually a key, should it be a char? (what's keyChar?)
 _   that way println(c) would work a little better..
