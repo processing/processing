@@ -71,3 +71,7 @@ rm -f ../lib/pde.jar
 zip -0q ../lib/pde.jar *.class
 cd ../..
 
+
+### -- BUILD STUB -----------------------------------------------
+
+gcc -o work/Proce55ing stub.cpp

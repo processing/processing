@@ -40,7 +40,7 @@ rm -rf processing/lib/export/CVS
 # get platform-specific goodies from the dist dir
 #cp dist/run.bat processing/
 #cp dist/run95.bat processing/
-cp dist/Proce55ing processing/
+cp work/Proce55ing processing/
 cp dist/lib/pde.properties_linux processing/lib/
 
 # make sure notes.txt is unix LFs
