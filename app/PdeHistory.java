@@ -51,7 +51,7 @@ public class PdeHistory {
   File historyFile;
   //OutputStream historyStream;
   //PrintWriter historyWriter;
-  //String historyLast;
+  //String lastRecorded;
   String lastRecorded;
 
   ActionListener menuListener;
@@ -96,8 +96,8 @@ public class PdeHistory {
   public void record(String program, int mode) {
     if (!PdePreferences.getBoolean("history.recording")) return;
 
-    if ((historyLast != null) &&
-        (historyLast.equals(program))) return;
+    if ((lastRecorded != null) &&
+        (lastRecorded.equals(program))) return;
 
     String modeStr = null;
     switch (mode) {
@@ -167,7 +167,7 @@ public class PdeHistory {
       historyWriter.println();
       historyWriter.println(program);
       historyWriter.flush();  // ??
-      historyLast = program;
+      lastRecorded = program;
 
       //JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
       JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
@@ -230,7 +230,7 @@ public class PdeHistory {
           }
           //textarea.editorSetText(buffer.toString());
           editor.changeText(buffer.toString(), true);
-          historyLast = editor.textarea.getText();
+          lastRecorded = editor.textarea.getText();
           editor.setSketchModified(false);
 
         } else {
