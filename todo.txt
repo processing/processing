@@ -255,8 +255,8 @@ dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;a
 X notify user when size() is bad
 X   need to use oro matcher when trying to grab the applet size (export?)
 _ open button getting stuck on windows
-_ macosx doesn't listen if 'cancel' is selected for save changes on quit
-_   but windows works fine, so it's a macosx problem
+X macosx doesn't listen if 'cancel' is selected for save changes on quit
+X   but windows works fine, so it's a macosx problem
 
 fixes from toxi 
 X BImage.get() was only grabbing a single line of pixels
@@ -377,10 +377,12 @@ _   (currently cannot because it quits before getting response)
 _   tried to pop up a modal Dialog in exactly the same location
 _     but couldn't remove the decoration from the window (jvm bug?)
 _     because it just quit without finishing
+_ macosx handleQuit forces termination (at least on 1.3)
+_   figure out how to prevent it, and add the 'cancel' button back
 
 
 VOLUNTEER TASKS
-_ need bezierTangent() code
+_ need curveTangent() code
 
 
 INTERNAL
