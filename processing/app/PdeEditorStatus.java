@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -34,7 +34,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   static Color fgcolor[];
 
   static final int NOTICE = 0;
-  static final int ERROR  = 1;
+  static final int ERR    = 1;
   static final int PROMPT = 2;
   static final int EDIT   = 3;
 
@@ -109,7 +109,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
 
   public void error(String message) {
-    mode = ERROR;
+    mode = ERR;
     this.message = message;
     repaint();
   }
@@ -151,7 +151,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     editField.selectAll();
     editField.requestFocus();
 
-    repaint(); 
+    repaint();
   }
 
   public void unedit() {
@@ -193,7 +193,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
       } else {
         // who cares, just resize
-        sizeW = size.width; 
+        sizeW = size.width;
         sizeH = size.height;
         setButtonBounds();
       }
@@ -237,7 +237,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
       cancelButton = new JButton(PdePreferences.PROMPT_CANCEL);
       okButton     = new JButton(PdePreferences.PROMPT_OK);
 
-      // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)( 
+      // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)(
       // os9 seems to work if bg of component is set, but x still a bastard
       if (PdeBase.platform == PdeBase.MACOSX) {
         yesButton.setBackground(bgcolor[PROMPT]);
@@ -275,30 +275,30 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
           //}
 
           // use keyTyped to catch when the feller is actually
-          // added to the text field. with keyTyped, as opposed to 
-          // keyPressed, the keyCode will be zero, even if it's 
+          // added to the text field. with keyTyped, as opposed to
+          // keyPressed, the keyCode will be zero, even if it's
           // enter or backspace or whatever, so the keychar should
           // be used instead. grr.
           public void keyTyped(KeyEvent event) {
-            //System.out.println("got event " + event + "  " + 
+            //System.out.println("got event " + event + "  " +
             // KeyEvent.VK_SPACE);
             int c = event.getKeyChar();
 
             if (c == KeyEvent.VK_ENTER) {  // accept the input
               String answer = editField.getText();
               editor.sketch.nameCode(answer);
-              unedit(); 
+              unedit();
               event.consume();
 
               // easier to test the affirmative case than the negative
             } else if ((c == KeyEvent.VK_BACK_SPACE) ||
-                       (c == KeyEvent.VK_DELETE) || 
-                       (c == KeyEvent.VK_RIGHT) || 
-                       (c == KeyEvent.VK_LEFT) || 
-                       (c == KeyEvent.VK_UP) || 
-                       (c == KeyEvent.VK_DOWN) || 
-                       (c == KeyEvent.VK_HOME) || 
-                       (c == KeyEvent.VK_END) || 
+                       (c == KeyEvent.VK_DELETE) ||
+                       (c == KeyEvent.VK_RIGHT) ||
+                       (c == KeyEvent.VK_LEFT) ||
+                       (c == KeyEvent.VK_UP) ||
+                       (c == KeyEvent.VK_DOWN) ||
+                       (c == KeyEvent.VK_HOME) ||
+                       (c == KeyEvent.VK_END) ||
                        (c == KeyEvent.VK_SHIFT)) {
               //System.out.println("nothing to see here");
               //noop();
@@ -313,12 +313,12 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
               // if a space, insert an underscore
               //editField.insert("_", editField.getCaretPosition());
               /* tried to play nice and see where it got me
-                 editField.dispatchEvent(new KeyEvent(editField, 
+                 editField.dispatchEvent(new KeyEvent(editField,
                  KeyEvent.KEY_PRESSED,
                  System.currentTimeMillis(),
                  0, 45, '_'));
               */
-              //System.out.println("start/end = " + 
+              //System.out.println("start/end = " +
               //                 editField.getSelectionStart() + " " +
               //                 editField.getSelectionEnd());
               String t = editField.getText();
@@ -395,7 +395,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, PdePreferences.GRID_SIZE);    
+    return new Dimension(3000, PdePreferences.GRID_SIZE);
   }
 
 
@@ -412,7 +412,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
       editor.handleSave();
       editor.checkModified2();
 
-    } else if (e.getSource() == cancelButton) { 
+    } else if (e.getSource() == cancelButton) {
       // don't do anything, don't continue with checkModified2
       if (mode == PROMPT) unprompt();
       else if (mode == EDIT) unedit();

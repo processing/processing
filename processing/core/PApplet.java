@@ -442,8 +442,8 @@ public class PApplet extends Applet
   //}
 
   public void registerSize(Object o) {
-    Class args[] = new Class[] { Integer.TYPE, Integer.TYPE };
-    registerWithArgs(preMethods, "size", o, args);
+    Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    registerWithArgs(preMethods, "size", o, methodArgs);
   }
 
   public void registerPre(Object o) {
@@ -459,14 +459,14 @@ public class PApplet extends Applet
   }
 
   public void registerMouseEvent(Object o) {
-    Class args[] = new Class[] { MouseEvent.class };
-    registerWithArgs(mouseEventMethods, "mouseEvent", o, args);
+    Class methodArgs[] = new Class[] { MouseEvent.class };
+    registerWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
   }
 
 
   public void registerKeyEvent(Object o) {
-    Class args[] = new Class[] { KeyEvent.class };
-    registerWithArgs(keyEventMethods, "keyEvent", o, args);
+    Class methodArgs[] = new Class[] { KeyEvent.class };
+    registerWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
   }
 
   public void registerDispose(Object o) {
@@ -618,8 +618,9 @@ public class PApplet extends Applet
     this.width = g.width;
     this.height = g.height;
 
-    Object args[] = new Object[] { new Integer(width), new Integer(height) };
-    sizeMethods.handle(args);
+    Object methodArgs[] =
+      new Object[] { new Integer(width), new Integer(height) };
+    sizeMethods.handle(methodArgs);
     /*
     for (int i = 0; i < libraryCount; i++) {
       if (libraryCalls[i][PLibrary.SIZE]) {
@@ -2003,8 +2004,8 @@ public class PApplet extends Applet
       // [toxi 031112]
       // noise broke due to recent change of cos table in PGraphics
       // this will take care of it
-      perlin_cosTable = g.cosLUT;
-      perlin_TWOPI = perlin_PI = g.SINCOS_LENGTH;
+      perlin_cosTable = PGraphics.cosLUT;
+      perlin_TWOPI = perlin_PI = PGraphics.SINCOS_LENGTH;
       perlin_PI >>= 1;
     }
 
@@ -2366,18 +2367,18 @@ public class PApplet extends Applet
   }
 
   public File inputFile(String prompt) {
-    Frame frame = null;
+    Frame parentFrame = null;
     Component comp = getParent();
     while (comp != null) {
       if (comp instanceof Frame) {
-        frame = (Frame) comp;
+        parentFrame = (Frame) comp;
         break;
       }
       comp = comp.getParent();
     }
     //System.out.println("found frame " + frame);
-    if (frame == null) frame = new Frame();
-    FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
+    if (parentFrame == null) parentFrame = new Frame();
+    FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.LOAD);
     fd.show();
 
     String directory = fd.getDirectory();
@@ -2392,20 +2393,20 @@ public class PApplet extends Applet
   }
 
   public File outputFile(String prompt) {
-    Frame frame = null;
+    Frame parentFrame = null;
     Component comp = getParent();
     //System.out.println(comp + " " + comp.getClass());
     while (comp != null) {
       System.out.println(comp + " " + comp.getClass());
       if (comp instanceof Frame) {
-        frame = (Frame) comp;
+        parentFrame = (Frame) comp;
         break;
       }
       comp = comp.getParent();
     }
     //System.out.println("found frame " + frame);
-    if (frame == null) frame = new Frame();
-    FileDialog fd = new FileDialog(frame, prompt, FileDialog.SAVE);
+    if (parentFrame == null) parentFrame = new Frame();
+    FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.SAVE);
     fd.show();
 
     String directory = fd.getDirectory();
@@ -4363,7 +4364,7 @@ public class PApplet extends Applet
   }
 
 
-  public void setupExternal(Frame frame) {
+  public void setupExternal(Frame parentFrame) {
     //externalRuntime = true;
 
     /*
@@ -4438,7 +4439,7 @@ v              PApplet.this.stop();
     //ethread.start();
     */
 
-    frame.addComponentListener(new ComponentAdapter() {
+    parentFrame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
           //System.out.println(e);
           Point where = ((Frame) e.getSource()).getLocation();
@@ -4449,7 +4450,7 @@ v              PApplet.this.stop();
         }
       });
 
-    frame.addWindowListener(new WindowAdapter() {
+    parentFrame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           System.err.println(PApplet.EXTERNAL_QUIT);
           System.err.flush();  // important

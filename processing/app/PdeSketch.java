@@ -1576,11 +1576,11 @@ public class PdeSketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    Enumeration enum = importedLibraries.elements();
-    while (enum.hasMoreElements()) {
+    Enumeration en = importedLibraries.elements();
+    while (en.hasMoreElements()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
-      File libraryFolder = (File)enum.nextElement();
+      File libraryFolder = (File)en.nextElement();
       //System.out.println("exporting files from " + libFolder);
       File exportSettings = new File(libraryFolder, "export.txt");
       String exportList[] = null;

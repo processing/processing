@@ -1,3 +1,10 @@
+0076 pde
+X fix launcher issues on windows (didn't include registry.jar)
+X   also fix run.bat and run-expert.bat
+X fix launcher issues on mac os x
+X   fix Info.plist, and chmod +x JavaApplicationStub
+
+
 0075 pde
 X backported to 73
 X   change horizontal offset to 5 instead of 4
