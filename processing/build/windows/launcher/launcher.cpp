@@ -95,35 +95,35 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
   */
 
-  char *env_qtjava = (char *)malloc(256 * sizeof(char));
-  env_qtjava[0] = 0;
+  char *qtjava_path = (char *)malloc(256 * sizeof(char));
+  qtjava_path[0] = 0;
 
   if (getenv("WINDIR") == NULL) {
     // uh-oh.. serious problem.. gonna have to report this
     // but hopefully WINDIR is set on win98 too
 
   } else {
-    strcpy(env_qtjava, getenv("WINDIR"));
-    strcat(env_qtjava, "\\SYSTEM32\\QTJava.zip");
+    strcpy(qtjava_path, getenv("WINDIR"));
+    strcat(qtjava_path, "\\SYSTEM32\\QTJava.zip");
 
-    FILE *fp = fopen(env_qtjava, "rb");
+    FILE *fp = fopen(qtjava_path, "rb");
     if (fp != NULL) {
       fclose(fp);  // found it, all set
-      strcat(env_qtjava, ";"); // add path separator
+      strcat(qtjava_path, ";"); // add path separator
 
     } else {
-      strcpy(env_qtjava, getenv("WINDIR"));
-      strcat(env_qtjava, "\\SYSTEM\\QTJava.zip");
+      strcpy(qtjava_path, getenv("WINDIR"));
+      strcat(qtjava_path, "\\SYSTEM\\QTJava.zip");
 
-      fp = fopen(env_qtjava, "rb");
+      fp = fopen(qtjava_path, "rb");
       if (fp != NULL) {
         fclose(fp);  // found it, all set
-        strcat(env_qtjava, ";"); // add path separator
+        strcat(qtjava_path, ";"); // add path separator
 
       } else {
         // doesn't seem to be installed, which is a problem.
         // but the error will be reported by the pde
-        env_qtjava[0] = 0;
+        qtjava_path[0] = 0;
       }
     }
   }
@@ -153,29 +153,40 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
   */
 
-  // put quotes around contents of cp, 
-  // because %s might have spaces in it.
+  // NO! put quotes around contents of cp, because %s might have spaces in it.
+  // don't put quotes in it, because it's setting the environment variable
+  // for CLASSPATH, not being included on the command line. so setting the
+  // env var it's ok to have spaces, and the quotes prevent 
+  // javax.comm.properties from being found.
   sprintf(cp,	
-          "\""   // begin quote
+          //"\""   // begin quote
+          //"'"
+
           "%s"
           "%s"
           "%s"
+
+          "%s\\lib\\comm.jar;"
           "%s\\lib;"
           "%s\\lib\\build;"
           "%s\\lib\\pde.jar;"
           "%s\\lib\\kjc.jar;"
           "%s\\lib\\oro.jar;"
-          "%s\\lib\\antlr.jar;"
-          "%s\\lib\\comm.jar;"
+          "%s\\lib\\antlr.jar;",
+
           //"C:\\WINNT\\system32\\QTJava.zip;"  // worthless
           //"C:\\WINDOWS\\system32\\QTJava.zip;"
-          "\"",   // end quote
-          //localJreInstalled ? "java\\lib\\rt.jar;" : "", 
-          local_jre_installed ? "java\\lib\\rt.jar;" : "", //rt_jar, 
-          env_qtjava,
+
+          //"\"",   // end quote
+          //"'",
+          //,
+
+          // the first three %s args
+          local_jre_installed ? "java\\lib\\rt.jar;" : "", 
+          qtjava_path,
           env_classpath, 
-          //envClasspath ? envClasspath : "",
-          //envClasspath ? ";" : "",
+
+          // the next several %s args
           loaddir, loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
