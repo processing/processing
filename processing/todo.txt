@@ -239,8 +239,9 @@ X remove sketchbook -> libraries until it works
 X serial_setup.command is missing from osx distribution
 X   fix the note in the readme about it
 X properly import qtjava from processing.exe
-
-_ fix the default network, camera, serial examples
+X fix the default network, camera, serial examples
+X   extra libraries for libs not being imported
+X fix threading issue, don't call "break"
 
 
 with casey
