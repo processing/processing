@@ -29,7 +29,7 @@ import java.io.*;
 public class PdeCompiler implements PdeMessageConsumer{
   static final String SUPER_BADNESS = 
     "Strange error while compiling, " + 
-    "please send this code to processing@media.mit.edu";
+    "please send code to processing@media.mit.edu";
 
   String buildPath;
   String className;

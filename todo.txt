@@ -17,6 +17,8 @@ X   cleanup cvs bunk
 X   modify build/dist to use processing.exe
 X upgrade windows to jre 1.4.2
 X ask on bboard about macosx 1.3 vs 1.4 experiences
+X modified millis() to always update
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635;start=
 
 dh X save last-used serial to sketch.properties on quit
 dh X rename sketch 'can't rename' error (file being kept open)
@@ -26,7 +28,6 @@ dh X   open sketch, make a change, save, run, rename -> error
 ..................................................................
 
 
-
 _ try installing serial adapter with p5
 _   tom igoe is using rxtx 2.1.6, patch that into p5
 _   libs from 2.1.6 download for osx seem to work
@@ -34,13 +35,11 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
 
+bf _ bring linux up to 1.4
 bf _ pde_keywords.properties isn't getting copied into work/lib
-
 
 mac stuff
 bf _ set nice background for disk image on macosx
-
-bf _ bring linux up to 1.4
 
 language stuff
 bf _ actionscript has nice hastables.. as does perl/python

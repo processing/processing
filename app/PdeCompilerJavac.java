@@ -26,6 +26,20 @@
 import java.io.*;
 
 
+// this class is incomplete. it was added in an attempt to support
+// mac os 9, but the javac for jdk 1.1 doesn't seem to like the 
+// file format of the classes produced by jikes, which is revision
+// 57 code instead of rev 55. 
+
+// using jikes -target 1.1 doesn't seem to help. the next attempt 
+// was to use javac from the 1.1 jdk, which i attempted to hack
+// into the bagel build scripts, but javac actually crashed (not
+// just and exception, but an application crash) whenever used
+// (especially if called on long paths/from another directory).
+
+// there are plenty of ways to address this, but for the time being,
+// it's not worth the time so we'll just suspend macos9 support.
+
 public class PdeCompilerJavac extends PdeCompiler {
 
   public PdeCompilerJavac(String buildPath, 
@@ -38,15 +52,19 @@ public class PdeCompilerJavac extends PdeCompiler {
     // probably not needed with javac
     //System.setErr(leechErr); // redirect stderr to our leech filter
 
-    String args[] = new String[3];
-    args[0] = "-d" + buildPath;
-    args[1] = "-nowarn";
-    args[2] = buildPath + File.separator + className + ".java";
+    int argc = 0;
+    String args[] = new String[4];
+    args[argc++] = "-d";
+    args[argc++] = buildPath;
+    args[argc++] = "-nowarn";
+    args[argc++] = buildPath + File.separator + className + ".java";
     //System.out.println("args = " + args[0] + " " + args[1]);
 
 #ifdef JAVAC
+    System.out.println("compiling with javac");
     return new sun.tools.javac.Main(leechErr, "javac").compile(args);
 #else
+    System.out.println("compile fell thru");
     return false;
 #endif
 
