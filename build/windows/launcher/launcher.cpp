@@ -163,10 +163,10 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           //"'"
 
           "%s"
-          "%s"
-          "%s"
+          //"%s"
+          //"%s"
 
-          "%s\\lib\\comm.jar;"
+          //"%s\\lib\\comm.jar;"
           "%s\\lib;"
           "%s\\lib\\build;"
           "%s\\lib\\pde.jar;"
@@ -185,11 +185,15 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           // the first three %s args
           //local_jre_installed ? "java\\lib\\rt.jar;java\\lib\\jaws.jar;" : "", 
           local_jre_installed ? "java\\lib\\rt.jar;" : "", 
-          qtjava_path,
-          env_classpath, 
+          //qtjava_path,
+          //env_classpath, 
 
           // the next several %s args
-          loaddir, loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
+          loaddir, loaddir, loaddir, loaddir, 
+          loaddir, loaddir, loaddir);
+
+  //MessageBox(NULL, cp,
+  //         "it's twoo! it's twoo!", MB_OK);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",

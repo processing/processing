@@ -13,9 +13,6 @@ rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
-# something like the following might be better:
-# find / -name "*.mp3" -exec rm -f {}\;
-# and same for cvsignore
 rm -rf processing/CVS
 rm -rf processing/lib/CVS
 rm -rf processing/lib/netscape/CVS
@@ -28,10 +25,10 @@ rm -rf processing/sketchbook/default/CVS
 rm -f  processing/sketchbook/default/.cvsignore
 
 # new style examples thing ala reas
-cd processing/sketchbook
+cd processing
 unzip -q examples.zip
 rm examples.zip
-cd ../..
+cd ..
 
 # new style reference
 cd processing
@@ -53,8 +50,9 @@ mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar processing/lib/
-cp -r work/lib/export processing/lib/
-rm -rf processing/lib/export/CVS
+cp work/lib/core.jar processing/lib/
+#cp -r work/lib/export processing/lib/
+#rm -rf processing/lib/export/CVS
 
 # get jikes and depedencies
 #gunzip < dist/jikes.gz > processing/jikes.exe
@@ -67,16 +65,17 @@ cp dist/run.bat processing/
 #cp dist/lib/pde_windows.properties processing/lib/
 
 # get serial stuff from the bagel dir
-cp ../../bagel/serial/comm.jar processing/lib/
-cp ../../bagel/serial/javax.comm.properties processing/lib/
-cp ../../bagel/serial/win32com.dll processing/
-chmod +x processing/win32com.dll
+#cp ../../bagel/serial/comm.jar processing/lib/
+#cp ../../bagel/serial/javax.comm.properties processing/lib/
+#cp ../../bagel/serial/win32com.dll processing/
+#chmod +x processing/win32com.dll
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
 unix2dos processing/readme.txt 2> /dev/null
 unix2dos processing/revisions.txt 2> /dev/null
-unix2dos processing/lib/pde.properties 2> /dev/null
+unix2dos processing/lib/preferences.txt 2> /dev/null
+unix2dos processing/lib/keywords.txt 2> /dev/null
 #unix2dos processing/lib/pde_windows.properties 2> /dev/null
 
 # zip it all up for release
@@ -101,3 +100,8 @@ rm -rf $P5/java
 zip -rq $P5-expert.zip $P5
 
 echo Done.
+
+
+# something like the following might be better:
+# find / -name "*.mp3" -exec rm -f {}\;
+# and same for cvsignore, ~ files, .DS_Store
