@@ -133,10 +133,11 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 X incorporated NO_FLYING_POO line/poly hack developed for axel
 
 040902
-X sort should return an array, rather than sort in place
+X sort() should return an array, rather than sort in place
+X fix binary function, had wrong offset number
+X   casey: i wan't able to get binary() to work at all:
 
 _ standalone 'alpha' function for PImage
-
 
 The biggest problem was the key and mouse functions not working. For example:
 Input: Mouse_Functions
@@ -147,40 +148,6 @@ Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
 Typography: Helix won't compile 
 
 ....
-
-i wan't able to get binary() to work at all:
-here are three examples:
-
-/ / / /
-
-int i = 8;
-println(binary(i));
-
-java.lang.StringIndexOutOfBoundsException:
-String index out of range: -20
-      at java.lang.String.substring(Unknown Source)
-
-/ / / /
-
-char c = 8;
-println(binary(c));
-
-java.lang.StringIndexOutOfBoundsException:
-String index out of range: -4
-      at java.lang.String.substring(Unknown Source)
-
-/ / / /
-
-char c = 8;
-String s = binary(c);
-println(s);
-
-
-java.lang.StringIndexOutOfBoundsException:
-String index out of range: -4
-      at java.lang.String.substring(Unknown Source)
-
-/ / / / 
 
 _ processing.net -> PClient, PServer
 
