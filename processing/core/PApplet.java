@@ -42,7 +42,7 @@ public class PApplet extends Applet
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
   static final double jdkVersion = 
-    toDouble(System.getProperty("java.version").substring(0,3));
+    toFloat(System.getProperty("java.version").substring(0,3));
 
   public PGraphics g;
 
@@ -806,8 +806,8 @@ public class PApplet extends Applet
       return;
     }
 
-    File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
-    save(file.getAbsolutePath());
+    //File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
+    save(save_location("screen-" + nf(frame, 4) + ".tif", true));
     //save("screen-" + nf(frame, 4) + ".tif");
   }
 
@@ -839,11 +839,11 @@ public class PApplet extends Applet
       int count = last - first + 1;
       String suffix = what.substring(last + 1);
 
-      //save(prefix + nf(frame, count) + suffix);
-      File file = new File(folder, prefix + nf(frame, count) + suffix);
+      //File file = new File(folder, prefix + nf(frame, count) + suffix);
       // in case the user tries to make subdirs with the filename
-      new File(file.getParent()).mkdirs();
-      save(file.getAbsolutePath());
+      //new File(file.getParent()).mkdirs();
+      //save(file.getAbsolutePath());
+      save(save_location(prefix + nf(frame, count) + suffix, true));
     }
   }
 
@@ -1690,9 +1690,10 @@ public class PApplet extends Applet
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
-  // FILE I/O
+  // FILE INPUT
 
 
   public InputStream openStream(String filename) throws IOException {
@@ -1819,14 +1820,44 @@ public class PApplet extends Applet
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // FILE OUTPUT
+
+
+  /**
+   * Saves bytes to inside the sketch folder.
+   * The filename can be a relative path, i.e. "poo/bytefun.txt"
+   * would save to a file named "bytefun.txt" to a subfolder 
+   * called 'poo' inside the sketch folder. If the in-between
+   * subfolders don't exist, they'll be created.
+   */
   public void saveBytes(String filename, byte buffer[]) {
     try {
-      FileOutputStream fos = new FileOutputStream(filename);
+      String location = save_location(filename, true);
+      FileOutputStream fos = new FileOutputStream(location);
       saveBytes(fos, buffer);
       fos.close();
 
     } catch (IOException e) {
       System.err.println("error saving bytes to " + filename);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Saves bytes to a specific location specified by the user.
+   */
+  public void saveBytes(File file, byte buffer[]) {
+    try {
+      String filename = save_location(file.getAbsolutePath(), false);
+      FileOutputStream fos = new FileOutputStream(filename);
+      saveBytes(fos, buffer);
+      fos.close();
+
+    } catch (IOException e) {
+      System.err.println("error saving bytes to " + file);
       e.printStackTrace();
     }
   }
@@ -1843,10 +1874,26 @@ public class PApplet extends Applet
     }
   }
 
+  //
 
   public void saveStrings(String filename, String strings[]) {
     try {
-      FileOutputStream fos = new FileOutputStream(filename);
+      String location = save_location(filename, true);
+      FileOutputStream fos = new FileOutputStream(location);
+      saveStrings(fos, strings);
+      fos.close();
+
+    } catch (IOException e) {
+      System.err.println("error while saving strings");
+      e.printStackTrace();
+    }
+  }
+
+
+  public void saveStrings(File file, String strings[]) {
+    try {
+      String location = save_location(file.getAbsolutePath(), false);
+      FileOutputStream fos = new FileOutputStream(location);
       saveStrings(fos, strings);
       fos.close();
 
@@ -1857,17 +1904,32 @@ public class PApplet extends Applet
   }
 
   public void saveStrings(OutputStream output, String strings[]) {
-    //try {
     PrintWriter writer = 
       new PrintWriter(new OutputStreamWriter(output));
     for (int i = 0; i < strings.length; i++) {
       writer.println(strings[i]);
     }
     writer.flush();
-    //} catch (IOException e) {
-    //System.err.println("error while saving strings");
-    //e.printStackTrace();
-    //}
+  }
+
+  //
+
+  /**
+   * figures out the full path for where to save things
+   * if 'sketch' is true, then the path will be relative to 
+   * the sketch folder. creates in-between folders if they
+   * don't already exist.
+   */
+  protected String save_location(String where, boolean sketch) {
+    String filename = 
+      sketch ? (folder + File.separator + where) : where;
+    File file = new File(filename);
+    String parent = file.getParent();
+    if (parent != null) {
+      File unit = new File(parent);
+      if (!unit.exists()) unit.mkdirs();
+    }
+    return filename;
   }
 
 
@@ -2600,6 +2662,8 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
+  // CASTING FUNCTIONS, INSERTED BY PREPROC
+
 
   static final public boolean toBoolean(char what) {
     return ((what == 't') || (what == 'T') || (what == '1'));
@@ -2719,7 +2783,11 @@ public class PApplet extends Applet
   //
 
   static final public char toChar(boolean what) {  // 0/1 or T/F ?
-    return what ? '1' : '0';
+    return what ? 't' : 'f';
+  }
+
+  static final public char toChar(byte what) {
+    return (char) (what & 0xff);
   }
 
   static final public char toChar(int what) {
@@ -2736,12 +2804,54 @@ public class PApplet extends Applet
 
   //
 
+  static final public char[] toChar(boolean what[]) {  // 0/1 or T/F ?
+    char outgoing[] = new char[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = what[i] ? 't' : 'f';
+    }
+    return outgoing;
+  }
+
+  static final public char[] toChar(int what[]) {
+    char outgoing[] = new char[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (char) what[i];
+    }
+    return outgoing;
+  }
+
+  static final public char[] toChar(byte what[]) {
+    char outgoing[] = new char[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (char) (what[i] & 0xff);
+    }
+    return outgoing;
+  }
+
+  static final public char[] toChar(float what[]) {  // nonsensical
+    char outgoing[] = new char[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (char) what[i];
+    }
+    return outgoing;
+  }
+
+  static final public char[][] toChar(String what[]) {  // note: array[][]
+    char outgoing[][] = new char[what.length][];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = what[i].toCharArray();
+    }
+    return outgoing;
+  }
+
+  //
+
   static final public int toInt(boolean what) {
     return what ? 1 : 0;
   }
 
-  static final public int toInt(byte what) {
-    return what;
+  static final public int toInt(byte what) {  // note this unsigns
+    return what & 0xff;
   }
 
   static final public int toInt(char what) {
@@ -2777,10 +2887,10 @@ public class PApplet extends Applet
     return list;
   }
 
-  static final public int[] toInt(byte what[]) {
+  static final public int[] toInt(byte what[]) {  // note this unsigns
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
-      list[i] = what[i];
+      list[i] = (what[i] & 0xff);
     }
     return list;
   }
@@ -2801,7 +2911,6 @@ public class PApplet extends Applet
     return inties;
   }
 
-
   /**
    * Make an array of int elements from an array of String objects.
    * If the String can't be parsed as a number, it will be set to zero.
@@ -2814,7 +2923,6 @@ public class PApplet extends Applet
   static public int[] toInt(String what[]) {
     return toInt(what, 0);
   }
-
 
   /**
    * Make an array of int elements from an array of String objects.
@@ -2840,34 +2948,20 @@ public class PApplet extends Applet
 
   //
 
-  //
-
-  static final public String toString(boolean what) {
-    return what ? "true" : "false";
-  }
-
-
-  // ...........................................................
-
-
   static final public float toFloat(boolean what) {
     return what ? 1 : 0;
   }
 
-  /**
-   * Wrapper for tedious new Float(string).floatValue().
-   */
-  static public float toFloat(String what) {
+  static final public float toFloat(int what) {
+    return (float)what;
+  }
+
+  static final public float toFloat(String what) {
     //return new Float(what).floatValue();
     return toFloat(what, Float.NaN);
   }
 
-
-  /**
-   * Wrapper for tedious new Float(string).floatValue().
-   */
-  static public float toFloat(String what, float otherwise) {
-    //return new Float(what).floatValue();
+  static final public float toFloat(String what, float otherwise) {
     try {
       return new Float(what).floatValue();
     } catch (NumberFormatException e) { }
@@ -2875,42 +2969,37 @@ public class PApplet extends Applet
     return otherwise;
   }
 
+  //
 
-  /**
-   * Cast an int to a float.
-   */
-  static public float toFloat(int what) {
-    return (float)what;
-  }
-
-
-  /**
-   * Create an array of ints that correspond to an array of floats.
-   */
-  static public float[] toFloat(int what[]) {
+  static final public float[] toFloat(boolean what[]) {
     float floaties[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
-      //floaties[i] = (float)what[i];
+      floaties[i] = what[i] ? 1 : 0;
+    }
+    return floaties;
+  }
+
+  static final public float[] toFloat(char what[]) {
+    float floaties[] = new float[what.length];
+    for (int i = 0; i < what.length; i++) {
+      floaties[i] = (char) what[i];
+    }
+    return floaties;
+  }
+
+  static final public float[] toFloat(int what[]) {
+    float floaties[] = new float[what.length];
+    for (int i = 0; i < what.length; i++) {
       floaties[i] = what[i];
     }
     return floaties;
   }
 
-
-  /**
-   * Convert an array of Strings into an array of floats.
-   * See the documentation for toInt().
-   */
-  static public float[] toFloat(String what[]) {
+  static final public float[] toFloat(String what[]) {
     return toFloat(what, 0);
   }
 
-
-  /**
-   * Convert an array of Strings into an array of floats.
-   * See the documentation for toInt().
-   */
-  static public float[] toFloat(String what[], float missing) {
+  static final public float[] toFloat(String what[], float missing) {
     float output[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       try {
@@ -2922,73 +3011,136 @@ public class PApplet extends Applet
     return output;
   }
 
+  //
 
-  // ...........................................................
+  static final public String str(boolean x) { return String.valueOf(x); }
+  static final public String str(byte x)    { return String.valueOf(x); }
+  static final public String str(char x)    { return String.valueOf(x); }
+  static final public String str(short x)   { return String.valueOf(x); }
+  static final public String str(int x)     { return String.valueOf(x); }
+  static final public String str(float x)   { return String.valueOf(x); }
+  static final public String str(long x)    { return String.valueOf(x); }
+  static final public String str(double x)  { return String.valueOf(x); }
 
+  //
 
-  /**
-   * Wrapper for tedious Long.parseLong().
-   */
-  static public long toLong(String what) {
-    return Long.parseLong(what);
+  static final public String[] str(boolean x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(byte x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(char x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(short x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(int x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(float x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(long x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
+  }
+
+  static final public String[] str(double x[]) { 
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
+    return s;
   }
 
 
-  /**
-   * Convert an array of Strings into an array of longs.
-   * See the documentation for toInt().
-   */
-  static public long[] toLong(String what[]) {
-    return toLong(what, 0);
-  }
+
+  //////////////////////////////////////////////////////////////
+
+  // INT NUMBER FORMATTING
+
 
   /**
-   * Convert an array of Strings into an array of longs.
-   * See the documentation for toInt().
+   * Integer number formatter.
    */
-  static public long[] toLong(String what[], int missing) {
-    long output[] = new long[what.length];
-    for (int i = 0; i < what.length; i++) {
-      try {
-        output[i] = Long.parseLong(what[i]);
-      } catch (NumberFormatException e) {
-        output[i] = missing;
-      }
+  static private NumberFormat int_nf;
+  static private int int_nf_digits;
+
+  static public String[] nf(int num[], int digits) {
+    String formatted[] = new String[num.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nf(num[i], digits);
     }
-    return output;
+    return formatted;    
   }
 
-
-  /**
-   * Wrapper for tedious new Double(string).doubleValue()
-   */
-  static public double toDouble(String what) {
-    return new Double(what).doubleValue();
-  }
-
-
-  /**
-   * Convert an array of Strings into an array of doubles.
-   * See the documentation for toInt().
-   */
-  static public double[] toDouble(String what[]) {
-    return toDouble(what, 0);
-  }
-
-  /**
-   * Convert an array of Strings into an array of doubles.
-   * See the documentation for toInt().
-   */
-  static public double[] toDouble(String what[], double missing) {
-    double output[] = new double[what.length];
-    for (int i = 0; i < what.length; i++) {
-      try {
-        output[i] = new Double(what[i]).doubleValue();
-      } catch (NumberFormatException e) {
-        output[i] = missing;
-      }
+  static public String nf(int num, int digits) {
+    if ((int_nf != null) && (int_nf_digits == digits)) {
+      return int_nf.format(num);
     }
-    return output;
+
+    int_nf = NumberFormat.getInstance();
+    int_nf.setGroupingUsed(false); // no commas
+    int_nf.setMinimumIntegerDigits(digits);
+    int_nf_digits = digits;
+    return int_nf.format(num);
+  }
+
+
+  /**
+   * number format signed (or space)
+   * Formats a number but leaves a blank space in the front
+   * when it's positive so that it can be properly aligned with 
+   * numbers that have a negative sign in front of them.
+   */
+  static public String nfs(int num, int digits) {
+    return (num < 0) ? nf(num, digits) : (' ' + nf(num, digits));
+  }
+
+  static public String[] nfs(int num[], int digits) {
+    String formatted[] = new String[num.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nfs(num[i], digits);
+    }
+    return formatted;    
+  }
+
+  // 
+
+  /**
+   * number format positive (or plus)
+   * Formats a number, always placing a - or + sign 
+   * in the front when it's negative or positive. 
+   */
+  static public String nfp(int num, int digits) {
+    return (num < 0) ? nf(num, digits) : ('+' + nf(num, digits));
+  }
+
+  static public String[] nfp(int num[], int digits) {
+    String formatted[] = new String[num.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nfp(num[i], digits);
+    }
+    return formatted;
   }
 
 
@@ -3056,135 +3208,6 @@ public class PApplet extends Applet
 
   static public String nfp(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  ('+' + nf(num, left, right));
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // INT NUMBER FORMATTING
-
-
-  static public String str(boolean x) { return String.valueOf(x); }
-  static public String str(byte x)    { return String.valueOf(x); }
-  static public String str(char x)    { return String.valueOf(x); }
-  static public String str(short x)   { return String.valueOf(x); }
-  static public String str(int x)     { return String.valueOf(x); }
-  static public String str(float x)   { return String.valueOf(x); }
-  static public String str(long x)    { return String.valueOf(x); }
-  static public String str(double x)  { return String.valueOf(x); }
-
-  static public String[] str(boolean x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(byte x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(char x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(short x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(int x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(float x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(long x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static public String[] str(double x[]) { 
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-
-  /**
-   * Integer number formatter.
-   */
-  static private NumberFormat int_nf;
-  static private int int_nf_digits;
-
-  static public String[] nf(int num[], int digits) {
-    String formatted[] = new String[num.length];
-    for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nf(num[i], digits);
-    }
-    return formatted;    
-  }
-
-  static public String nf(int num, int digits) {
-    if ((int_nf != null) && (int_nf_digits == digits)) {
-      return int_nf.format(num);
-    }
-
-    int_nf = NumberFormat.getInstance();
-    int_nf.setGroupingUsed(false); // no commas
-    int_nf.setMinimumIntegerDigits(digits);
-    int_nf_digits = digits;
-    return int_nf.format(num);
-  }
-
-
-  /**
-   * number format signed (or space)
-   * Formats a number but leaves a blank space in the front
-   * when it's positive so that it can be properly aligned with 
-   * numbers that have a negative sign in front of them.
-   */
-  static public String nfs(int num, int digits) {
-    return (num < 0) ? nf(num, digits) : (' ' + nf(num, digits));
-  }
-
-  static public String[] nfs(int num[], int digits) {
-    String formatted[] = new String[num.length];
-    for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfs(num[i], digits);
-    }
-    return formatted;    
-  }
-
-  // 
-
-  /**
-   * number format positive (or plus)
-   * Formats a number, always placing a - or + sign 
-   * in the front when it's negative or positive. 
-   */
-  static public String nfp(int num, int digits) {
-    return (num < 0) ? nf(num, digits) : ('+' + nf(num, digits));
-  }
-
-  static public String[] nfp(int num[], int digits) {
-    String formatted[] = new String[num.length];
-    for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfp(num[i], digits);
-    }
-    return formatted;
   }
 
 
@@ -3425,50 +3448,6 @@ public class PApplet extends Applet
           }
         }
 
-        /*
-        if (locationX - windowW > 10) {  
-          // if it fits to the left of the window
-          frame.setBounds(locationX - windowW, locationY, 
-                          windowW, windowH);
-        } else { 
-          // if it fits inside the editor window, 
-          // offset slightly from upper lefthand corner 
-          // so that it's plunked inside the text area
-          locationX = location[0] + 66; 
-          locationY = location[1] + 66;
-
-          if ((locationX + windowW > screen.width - 33) ||
-              (locationY + windowH > screen.height - 33)) {
-            // otherwise center on screen
-            locationX = (screen.width - windowW) / 2;
-            locationY = (screen.height - windowH) / 2;
-          }
-          frame.setBounds(locationX, locationY, windowW, windowH); //ww, wh);
-        }
-
-        if (exactLocation) {
-          // ignore the stuff above for window x y coords, but still use it
-          // for the bounds, and the placement of the applet within the window
-          //System.out.println("setting exact " + 
-          //location[0] + " " + location[1]);
-          frame.setLocation(location[0], location[1]);
-        }
-        */
-
-        /*
-        frame.addComponentListener(new ComponentAdapter() {
-            public void componentMoved(ComponentEvent e) {
-              int newX = e.getComponent().getX();
-              int newY = e.getComponent().getY();
-              //System.out.println(newX + " " + newY);
-            }
-          });
-        */
-
-        // shorten args by two (remove --external and applet name)
-        //applet.args = new String[args.length - 2];
-        //System.arraycopy(args, 2, applet.args, 0, args.length - 2);
-
         frame.setLayout(null);
         frame.add(applet);
         frame.setBackground(SystemColor.control);
@@ -3499,7 +3478,7 @@ public class PApplet extends Applet
       }
 
       frame.show();
-      applet.requestFocus(); // get keydowns right away
+      applet.requestFocus(); // ask for keydowns
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -3591,6 +3570,11 @@ public class PApplet extends Applet
   public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+  }
+
+
+  public PImage copy() {
+    return g.copy();
   }
 
 
