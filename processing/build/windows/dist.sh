@@ -88,8 +88,8 @@ zip -rq $P5.zip $P5
 # zip up another for experts
 echo Packaging expert release...
 echo
-cp -r dist/serial $P5/
-rm -rf $P5/serial/CVS
+#cp -r dist/serial $P5/
+#rm -rf $P5/serial/CVS
 # remove enormous java runtime
 rm -rf $P5/java
 zip -rq $P5-expert.zip $P5

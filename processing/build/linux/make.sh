@@ -59,7 +59,7 @@ export CLASSPATH
 
 ### --- make version with serial for the application
 echo Building bagel with serial and sonic support
-perl make.pl SERIAL SONIC
+perl make.pl SERIAL SONIC JDK13
 cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting

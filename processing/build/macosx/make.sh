@@ -36,13 +36,14 @@ else
   echo
 fi
 
-if test -f /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
-then
-  echo
-else
-#  echo Copying comm.jar into the machine's classpath
-  sudo cp comm.jar /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/
-fi
+# removing for rxtx 2.1.6
+#if test -f /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar
+#then
+#  echo
+#else
+##  echo Copying comm.jar into the machine's classpath
+#  sudo cp comm.jar /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/
+#fi
 
 
 ### -- START BUILDING -------------------------------------------
@@ -66,14 +67,19 @@ else
 fi
 cd bagel
 
-MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
+# old comm.jar
+#MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Home/lib/ext/comm.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
+
+# new rxtx comm
+MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
+# need not be included
 
 CLASSPATH=$MACOSX_CLASSPATH
 export CLASSPATH
 
 ### --- make version with all the goodies for the application
-echo Building bagel with serial, video, and audio support
-perl make.pl SERIAL VIDEO SONIC OPENGL
+echo Building bagel with serial, video, audio, and jdk13 support
+perl make.pl SERIAL VIDEO SONIC JDK13
 cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting
@@ -89,7 +95,8 @@ cd app
 
 echo Building PDE for JDK 1.4
 
-CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/oro.jar:$MACOSX_CLASSPATH
+# new rxtx
+CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$MACOSX_CLASSPATH
 
 perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dJDK14 -dMACOS *.java jeditsyntax/*.java
 
