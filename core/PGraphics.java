@@ -5399,6 +5399,8 @@ public class PGraphics extends PImage
 
   public final int color(int gray) {  // ignore
     if (color_rgb255) {
+      // bounds checking to make sure the numbers aren't to high or low
+      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
     calc_color(gray);
@@ -5413,7 +5415,11 @@ public class PGraphics extends PImage
 
   public final int color(int gray, int alpha) {  // ignore
     if (color_rgb255) {
-      return (gray << 24) | (gray << 16) | (gray << 8) | gray;
+      // bounds checking to make sure the numbers aren't to high or low
+      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
+      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
+
+      return ((alpha & 0xff) << 24) | (gray << 16) | (gray << 8) | gray;
     }
     calc_color(gray, alpha);
     return calci;
@@ -5427,6 +5433,11 @@ public class PGraphics extends PImage
 
   public final int color(int x, int y, int z) {  // ignore
     if (color_rgb255) {
+      // bounds checking to make sure the numbers aren't to high or low
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
       return 0xff000000 | (x << 16) | (y << 8) | z;
     }
     calc_color(x, y, z);
@@ -5441,6 +5452,12 @@ public class PGraphics extends PImage
 
   public final int color(int x, int y, int z, int a) {  // ignore
     if (color_rgb255) {
+      // bounds checking to make sure the numbers aren't to high or low
+      if (a > 255) a = 255; else if (a < 0) a = 0;
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
       return (a << 24) | (x << 16) | (y << 8) | z;
     } 
     calc_color(x, y, z, a);
