@@ -27,7 +27,9 @@ _ should the default be 100x100
 _ maybe stop/kill button should only be a stop btn
 
 
-for 0012
+for 0013
+_ examples - setting background using a full screen image
+_   uses System.arraycopy for speed
 _ write code to bind/convert java fonts
 _ finish color function inside applet
 _   do by simplifying stroke/fill/background inside bagel
@@ -41,7 +43,7 @@ _   make it run in current version of processing
 _   fix background from showing up black
 
 
-for 0013
+for 0014
 _ make size() work for draw() mode
 _   inside KjcEngine, reach in and grab calls to 'size'
 _   if call is not using a constant number, then punt
@@ -50,7 +52,7 @@ _   document fixed width font format
 _   write code for reading uncompressed b/w tiff images
 
 
-for 0014 (first semi-public release)
+for 0015 (first semi-public release)
 _ docs
 _   explain using inner classes and using non-public classes
 _   start 'errors' section
@@ -73,7 +75,7 @@ _ setting a fill color when drawing an image should affect the image
 _   or maybe image.setColor or setTone to mix a specific color in
 
 
-for 0015
+for 0016
 _ option to enable/disable frame on running applets
 _   more like photoshop - presentation mode w/ nothing or frames on all
 _ compiling .java files leaves the .class files next to the .java
@@ -95,7 +97,7 @@ _   breaks on every 2nd run when using serial apps (or others?)
 _     try calling gc on stop as well
 
 
-for 0016
+for 0017
 _ fix bugs from the 'bugs' file 
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
@@ -310,6 +312,10 @@ String binary(int value) {
 
 
 ---------------------------------------------
+
+
+0012
+X 'extends' replacement is mangling things.. fix it
 
 
 0011
