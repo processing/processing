@@ -824,6 +824,14 @@ public class PGraphics extends PImage implements PConstants {
       y1 -= vradius;
     }
 
+    if (x1 > x2) {
+      float temp = x1; x1 = x2; x2 = temp;
+    }
+
+    if (y1 > y2) {
+      float temp = y1; y1 = y2; y2 = temp;
+    }
+
     rectImpl(x1, y1, x2, y2);
   }
 
@@ -863,6 +871,16 @@ public class PGraphics extends PImage implements PConstants {
     } else if (ellipseMode == CENTER) {
       x = a - c/2f;
       y = b - d/2f;
+    }
+
+    if (w < 0) {  // undo negative width
+      x += w;
+      w = -w;
+    }
+
+    if (h < 0) {  // undo negative height
+      y += h;
+      h = -h;
     }
 
     ellipseImpl(x, y, w, h);
