@@ -435,8 +435,8 @@ public class PFont implements PConstants {
   /**
    * Draw a character at an x, y, z position.
    */
-  //public void text(char c, float x, float y, float z, PGraphics parent) {
-  protected void textImpl(char c, float x, float y, float z, PGraphics parent) {
+  protected void textImpl(char c, float x, float y, float z,
+                          PGraphics parent) {
     //if (!valid) return;
     //if (!exists(c)) return;
 
@@ -643,8 +643,8 @@ public class PFont implements PConstants {
    * Same as below, just without a z coordinate.
    */
   public void text(String str, float x, float y,
-                   float w, float h, PGraphics parent) {
-    text(str, x, y, 0, w, h, parent);
+                   float c, float d, PGraphics parent) {
+    text(str, x, y, c, d, 0, parent);
   }
 
 
@@ -673,7 +673,7 @@ public class PFont implements PConstants {
     }
 
     // ala illustrator, the text itself must fit inside the box
-    currentY += ascent();
+    currentY += ascent() * parent.textSize;
     // if the box is already too small, tell em to f off
     if (currentY > boxY2) return;
 
@@ -693,6 +693,7 @@ public class PFont implements PConstants {
         // boundary of a word
         float wordWidth = parent.textSize *
           calcWidth(textBuffer, wordStart, index);
+
         if (runningX + wordWidth > boxX2) {
           if (runningX == boxX1) {
             // if this is the first word, and its width is
@@ -703,6 +704,7 @@ public class PFont implements PConstants {
               index--;
               if (index == wordStart) {
                 // not a single char will fit on this line. screw 'em.
+                //System.out.println("screw you");
                 return;
               }
               wordWidth = parent.textSize *
