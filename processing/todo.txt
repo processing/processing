@@ -156,41 +156,41 @@ BAGEL / Rendering
    b _   but how to determine *where* on object the hit occurs
 
 ca b _ lines
-ca b _   rewrite line and stroke code, it's a buggy mess
-ca b _     lines become 2 pixels thick after a 3D transform 
-ca b _     better handling of single-pixel special case
+ca b X   rewrite line and stroke code, it's a buggy mess
+ca b X     lines become 2 pixels thick after a 3D transform 
+ca b X     better handling of single-pixel special case
 ca b _       flat_line_retribution is a hack, can go away
 ca b _   setting stroke width on circle makes odd patterns
-ca b _     line endcaps and line joins. strokeMode()
+ca b X     line endcaps and line joins. strokeMode()
 ca b _       lower priority, but at least leave room
-ca b _   make sure line() commands don't try to have a fill
+ca b ?   make sure line() commands don't try to have a fill
 ca b _   box is not opaque
 ca b X     problem is that lines are drawn second
 ca b X     one pixel lines have no z value.. argh
-ca b _     bug re: 3d depth sorting on lines
+ca b X     bug re: 3d depth sorting on lines
 ca b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
 ca b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
 ca b _     translate(58, 48, 0); 
 ca b _     rotateY(0.5);
 ca b _     box(40);
 
-ca b _ concave/complex polygon
+ca b X concave/complex polygon
 ca b _   eventually POLYGON auto-detects convex/concave polygon
 ca b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 
-ca b _ clipping objects (clipping planes?)
+ca b X clipping objects (clipping planes?)
 ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-ca b _   things are flying into the camera and halting apps
+ca b X   things are flying into the camera and halting apps
 ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
-ca b _   NullPointerException apparently when things way offscreen
+ca b X   NullPointerException apparently when things way offscreen
 ca b _     i.e. glyphrot with scale set to 4
 ca b _     or at least that things get ridiculously slow
 ca b _     clipping issues here.. but also something in scan converter
-ca b _     not clipping areas from offscreen
+ca b X     not clipping areas from offscreen
 ca b _       huge geometry slows things way down
 
 ca b _ get font things sewn up 
-ca b _   create a simple generator for grayscale bdf fonts
+ca b X  create a simple generator for grayscale bdf fonts
 ca b _     document the change and make several of them
 ca b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
