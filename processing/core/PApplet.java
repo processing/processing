@@ -1149,7 +1149,7 @@ public class PApplet extends Applet
     }
 
     //File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
-    save(save_location("screen-" + nf(frameCount, 4) + ".tif", true));
+    save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
     //save("screen-" + nf(frame, 4) + ".tif");
   }
 
@@ -1185,7 +1185,7 @@ public class PApplet extends Applet
       // in case the user tries to make subdirs with the filename
       //new File(file.getParent()).mkdirs();
       //save(file.getAbsolutePath());
-      save(save_location(prefix + nf(frameCount, count) + suffix, true));
+      save(savePath(prefix + nf(frameCount, count) + suffix));
     }
   }
 
@@ -2116,7 +2116,7 @@ public class PApplet extends Applet
    */
   public PrintWriter writer(String filename) {
     try {
-      return writer(new FileOutputStream(save_location(filename, true)));
+      return writer(new FileOutputStream(savePath(filename)));
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -2298,7 +2298,7 @@ public class PApplet extends Applet
    */
   public void saveBytes(String filename, byte buffer[]) {
     try {
-      String location = save_location(filename, true);
+      String location = savePath(filename);
       FileOutputStream fos = new FileOutputStream(location);
       saveBytes(fos, buffer);
       fos.close();
@@ -2314,8 +2314,9 @@ public class PApplet extends Applet
    */
   public void saveBytes(File file, byte buffer[]) {
     try {
-      String filename = save_location(file.getAbsolutePath(), false);
-      FileOutputStream fos = new FileOutputStream(filename);
+      String filename = file.getAbsolutePath();
+      createPath(filename);
+      FileOutputStream fos = new FileOutputStream(file);
       saveBytes(fos, buffer);
       fos.close();
 
@@ -2344,7 +2345,7 @@ public class PApplet extends Applet
 
   public void saveStrings(String filename, String strings[]) {
     try {
-      String location = save_location(filename, true);
+      String location = savePath(filename);
       FileOutputStream fos = new FileOutputStream(location);
       saveStrings(fos, strings);
       fos.close();
@@ -2358,7 +2359,8 @@ public class PApplet extends Applet
 
   public void saveStrings(File file, String strings[]) {
     try {
-      String location = save_location(file.getAbsolutePath(), false);
+      String location = file.getAbsolutePath();
+      createPath(location);
       FileOutputStream fos = new FileOutputStream(location);
       saveStrings(fos, strings);
       fos.close();
@@ -2378,24 +2380,30 @@ public class PApplet extends Applet
     writer.flush();
   }
 
+
   //
 
+
   /**
-   * figures out the full path for where to save things
-   * if 'sketch' is true, then the path will be relative to 
-   * the sketch folder. creates in-between folders if they
-   * don't already exist.
+   * Figures out the full path for where to save things.
+   * Can be used by external libraries to save to the sketch folder.
    */
-  protected String save_location(String where, boolean sketch) {
-    String filename = 
-      sketch ? (folder + File.separator + where) : where;
+  public String savePath(String where) {
+    String filename = folder + File.separator + where;
+    createPath(filename);
+    return filename;
+  }
+
+  /**
+   * Creates in-between folders if they don't already exist.
+   */
+  static public void createPath(String filename) {
     File file = new File(filename);
     String parent = file.getParent();
     if (parent != null) {
       File unit = new File(parent);
       if (!unit.exists()) unit.mkdirs();
     }
-    return filename;
   }
 
 

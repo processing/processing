@@ -200,6 +200,10 @@ X get library stuff debugged
 X port arcball and finish up dxf writer
 X beginCamera() no longer sets an identity matrix
 
+040925
+X make savePath() and createPath() accessible to the outside world
+X   useful for libraries saving files etc.
+
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
