@@ -120,6 +120,13 @@ X windows fresh checkout from cvs still has problems
 X   major changes to build scripts for far easier building under windows
 X added error messages for noCursor in jdk11
 X boost memory size of processing.exe to 128 megs, instead of 64
+X classpath issues.. just ignore classpath altogether
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064185080;start=0
+X QTJAVA path and CLASSPATH are weird if java not first installed
+X   or just get set improperly, reinstalling quicktime doesn't help
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184794;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184892;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064185169;start=0
 
 
 fixes because of dmose parser
@@ -222,10 +229,8 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 ..................................................................
 
 
-HIGH (to be completed for 0060)
-_ QTJAVA path and CLASSPATH are weird if java not first installed
-_   or just get set improperly, reinstalling quicktime doesn't help
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
+0060
+_ make sure no CVS folders or .DS_Store files in the distribution
 
 
 MEDIUM
@@ -425,8 +430,7 @@ dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Softwa
 dh b _   can't copy text from console directly (winxp and macosx)
 bf 1 _ console -> should be using JEditTextArea not TextPane
 bf b _ set decent fonts (probably same as editor above), looks bad on mac
-bf b o   remove the border around the edge
-bf b o   what's with the 2 blank lines on startup?
+bf b _ http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
 
 macosx
