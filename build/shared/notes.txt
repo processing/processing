@@ -1,3 +1,34 @@
+ABOUT REV 0037 - 27 july 2002
+
+[ a few great things ] 
+
+- 'history' now implemented, jump back to old versions of your app
+
+- now saves applet window position between runs
+
+- no exception when size() not called!
+
+[ that go great together ]
+
+- slightly different technique for substituting f's 
+
+- comment mangler codec no long mangling so badly
+
+- console converts tabs in stdout/stderr to spaces for indent
+
+- line numbers for errors now slightly more correct
+
+- linefeed weirdness in code base
+
+- the data dir can now have subfolders
+
+- more new make.sh/dist.sh goodness
+
+- wrote to everyone who had signed up for the alpha
+
+- still receiving bounced mail
+
+
 ABOUT REV 0036 - 27 july 2002
 
 significant hacking coming into deadline for alpha release
