@@ -105,6 +105,8 @@ _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
 
+_ make sure applet is stopping in draw mode
+
 _ get frame recording working
 _ also have a simple way to hook in triangle leeches to PGraphics3
 
