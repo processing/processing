@@ -28,6 +28,17 @@ else
 
   cp dist/lib/pde_linux.properties work/lib/
 
+  # get the serial stuff
+  echo Copying serial support from bagel dir
+  cp ../../bagel/serial/RXTXcomm.jar work/lib/
+  mkdir work/lib/i386
+  cp ../../bagel/serial/librxtxSerial.so work/lib/i386/libSerial.so
+  #chmod +x work/librxtxSerial.so
+
+  # get jikes and depedencies
+  gunzip < dist/jikes.gz > work/jikes
+  chmod +x work/jikes
+
   echo
 fi
 
@@ -53,13 +64,14 @@ else
 fi
 cd bagel
 
-CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
+CLASSPATH=../build/linux/work/java/lib/rt.jar
+#CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
 #CLASSPATH=../app/build/linux/work/java/lib/rt.jar:../app/build/linux/work/java/lib/ext/comm.jar
 export CLASSPATH
 
 ### --- make version with serial for the application
 echo Building bagel with serial and sonic support
-perl make.pl SERIAL SONIC JDK13
+perl make.pl SERIAL RXTX SONIC JDK13
 cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting
@@ -75,9 +87,9 @@ cd app
 
 echo Building PDE for JDK 1.3
 
-CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/java/lib/ext/comm.jar
+CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/lib/RXTXcomm.jar
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 *.java jeditsyntax/*.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 -dRXTX *.java jeditsyntax/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
@@ -87,5 +99,5 @@ cd ../..
 
 ### -- BUILD STUB -----------------------------------------------
 
-install -m 755 stub.sh work/Processing
+install -m 755 stub.sh work/processing
 
