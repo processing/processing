@@ -24,8 +24,11 @@ _ BImage.smooth() ?
 _ mouse wheel not working on macosx, need to dynamically load 1.4 code
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ simong interested in helping
-_ set PATH to include java (!)
-_   external classes currently require expert release
+
+X set PATH to include java (!)
+X   external classes currently require expert release
+_   code written for linux, test it
+_   code written for windows, rebuild the exe and test it
 
 _ update the release of jikes that's used
 X   updated for macosx
