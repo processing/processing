@@ -111,6 +111,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           //, "1>", "C:\\net1.txt"
           //, "2>", "C:\\net2.txt"
         };
+        //PApplet.printarr(command);
 
         //for (int i = 0; i < command.length; i++) {
         //  System.out.println(i + " = " + command[i]);
@@ -121,7 +122,6 @@ public class PdeRuntime implements PdeMessageConsumer {
         processInput = new SystemOutSiphon(process.getInputStream());
         processError = new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
-        //process.waitFor();
 
       } else {  // !externalRuntime
         //Class c = Class.forName(className);
@@ -302,8 +302,9 @@ public class PdeRuntime implements PdeMessageConsumer {
       // this handles errors that happen inside setup()
       e.printStackTrace();
 
-      // mod by fry for removal of KjcEngine
-      applet.finished = true;
+      // make sure applet is in use
+      if (applet != null) applet.finished = true;
+
       leechErr.println(PApplet.LEECH_WAKEUP);
       e.printStackTrace(this.leechErr);
     }
@@ -383,14 +384,6 @@ public class PdeRuntime implements PdeMessageConsumer {
       return;
     }
 
-    // these are used for debugging, in case there are concerns
-    // that som errors aren't coming through properly
-    /*
-    if (s.length() > 2) {
-      System.err.println("message " + s.length() + ":" + s);
-    }
-    */
-
     // this is PApplet sending a message saying "i'm about to spew
     // a stack trace because an error occurred during PApplet.run()"
     if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
@@ -401,10 +394,23 @@ public class PdeRuntime implements PdeMessageConsumer {
       return;  // this line ignored
     }
 
+    // these are used for debugging, in case there are concerns
+    // that some errors aren't coming through properly
+    /*
+    if (s.length() > 2) {
+      System.err.println(newMessage);
+      System.err.println("message " + s.length() + ":" + s);
+    }
+    */
+    // always shove out the mesage, since it might not fall under
+    // the same setup as we're expecting
+    System.err.print(s);
+
     // if s.length <=2, ignore it because that probably means
     // that it's just the platform line-terminators.
     if (newMessage && s.length() > 2) {
       exception = new PdeException(s);  // type of java ex
+      exception.hideStackTrace = true;
       //System.out.println("setting ex type to " + s);
       newMessage = false;
       foundMessageSource = false;
@@ -470,6 +476,7 @@ java.lang.NullPointerException
               //System.out.println("code/line is " + codeIndex + " " + lineIndex);
               exception = new PdeException(exception.getMessage(),
                                            codeIndex, lineIndex - 1, -1);
+              exception.hideStackTrace = true;
               foundMessageSource = true;
             }
           }
@@ -525,6 +532,7 @@ java.lang.NullPointerException
         // so if five lines have gone past, might as well signal
         messageLineCount = -100;
         exception = new PdeException(exception.getMessage());
+        exception.hideStackTrace = true;
         editor.error(exception);
 
       } else {

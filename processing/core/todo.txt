@@ -7,6 +7,24 @@ X   they weren't properly resetting
 
 _ loadImage() is mostly broken
 
+_ uv coords > 1 shouldn't clamp, they should just repeat ala opengl
+_   actually i think opengl has a setting for it
+_ textureMode(NORMAL_SPACE)  screws up the image() command
+_   image() appears to require IMAGE_SPACE to function properly. 
+
+_ fishwick bug with text() and shapes
+_   ellipses no longer completed when g.dimensions = 2 or 3,
+_   or not even drawn.. what a mess.
+
+_ renderers can plug in:
+_   at direct api level
+_     taking over all color() functions and vertex collection
+_   at endShape() level
+_     where vertices are collected by core and blit on endShape()
+_     (takes polygons and lines)
+_   at post tesselation level
+_     takes only line segments and triangles to blit (dxf writer)
+
 _ vertices max out at 512.. make it grow
 
 _ getAllFonts() not quite working for many fonts
