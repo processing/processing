@@ -4,6 +4,44 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0058 - *also* 5 august 2003
+
+a handful of fixes because of late-breaking problems with 57. argh!
+
+see the revision 57 release notes for the more useful stuff that's
+changed, since it was released the same day.
+
+
+[ windows ] 
+
+- check to see if quicktime for java is installed, if it isn't, then
+  warn the user that it needs to happen.
+
+- moved back to java 1.4.1 so that sound and video work better.
+
+
+[ macosx ]
+
+- replaced jikes with a version that doesn't require 'fink' to be
+  installed.
+
+- use java 1.3.1 as the default, instead of java 1.4. seems that 1.4
+  is just not ready for prime time.
+
+
+[ linux ]
+
+- brought linux java vm up to 1.4.2
+
+- checks to see if jikes is in the PATH, warns if not. this is
+  temporary, since jikes isn't properly found.
+
+- testing and notes for new rxtx serial support
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0057 - 5 august 2003
 
 

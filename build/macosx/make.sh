@@ -101,12 +101,14 @@ cd app
 
 ### -- BUILD PDE ------------------------------------------------
 
-echo Building PDE for JDK 1.4
+#echo Building PDE for JDK 1.4
+echo Building PDE for JDK 1.3
 
 # new rxtx
 CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$MACOSX_CLASSPATH
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dJDK14 -dMACOS -dRXTX *.java jeditsyntax/*.java
+#perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dJDK14 -dMACOS -dRXTX *.java jeditsyntax/*.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar

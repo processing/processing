@@ -20,10 +20,6 @@ rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
-#cp -r ../shared/fonts processing/
-#cp -r ../shared/reference processing/
-#cp -r ../shared/sketchbook processing/
-
 rm -rf processing/CVS
 rm -rf processing/lib/CVS
 rm -rf processing/fonts/CVS
@@ -45,6 +41,12 @@ unzip -q reference.zip
 rm reference.zip
 cd ..
 
+# get serial stuff
+cp dist/serial_setup.command processing/
+chmod a+x processing/serial_setup.command
+cp ../../bagel/serial/RXTXcomm.jar processing/lib/
+cp ../../bagel/serial/libSerial.jnilib processing/
+
 # get package from the dist dir
 cp -r dist/Processing.app processing/
 rm -rf processing/Processing.app/CVS
@@ -52,13 +54,6 @@ rm -rf processing/Processing.app/Contents/CVS
 rm -rf processing/Processing.app/Contents/MacOS/CVS
 rm -rf processing/Processing.app/Contents/Resources/CVS
 rm -rf processing/Processing.app/Contents/Resources/Java/CVS
-
-cp -r dist/serial processing/
-rm -rf processing/serial/CVS
-rm -rf processing/serial/RXTX.pkg/CVS
-rm -rf processing/serial/RXTX.pkg/Contents/CVS
-rm -rf processing/serial/RXTX.pkg/Contents/Resources/CVS
-rm -rf processing/serial/RXTX.pkg/Contents/Resources/English.lproj/CVS
 
 # put jar files into the resource dir, leave the rest in lib
 RES=processing/Processing.app/Contents/Resources/Java/
@@ -77,9 +72,11 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
-cp `which jikes` processing
+#cp `which jikes` processing
+gunzip < dist/jikes.gz > processing/jikes
+chmod a+x processing/jikes
+ 
 cp dist/lib/pde_macosx.properties processing/lib/
-#cp dist/lib/comm.jar processing/lib/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty

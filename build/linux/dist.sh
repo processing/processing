@@ -49,7 +49,9 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
-cp work/Proce55ing processing/
+#cp work/Proce55ing processing/
+#cp work/processing processing/
+install -m 755 stub.sh processing/processing
 cp dist/lib/pde_linux.properties processing/lib/
 
 # make sure notes.txt is unix LFs
@@ -58,6 +60,16 @@ dos2unix processing/readme.txt 2> /dev/null
 dos2unix processing/revisions.txt 2> /dev/null
 dos2unix processing/lib/pde.properties 2> /dev/null
 dos2unix processing/lib/pde_linux.properties 2> /dev/null
+
+# get the serial stuff
+echo Copying serial support from bagel dir
+cp ../../bagel/serial/RXTXcomm.jar processing/lib/
+mkdir processing/lib/i386
+cp ../../bagel/serial/librxtxSerial.so processing/lib/i386/libSerial.so
+
+# get jikes and depedencies
+gunzip < dist/jikes.gz > processing/jikes
+chmod +x processing/jikes
 
 # zip it all up for release
 echo Creating tarball and finishing...
