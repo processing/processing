@@ -127,7 +127,10 @@ X fix array functions not returning a value
 
 040726 
 X noiseSeed and randomSeed
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1090749784;start=0
 
+040727
+X incorporated NO_FLYING_POO line/poly hack developed for axel
 
 _ processing.net -> PClient, PServer
 
