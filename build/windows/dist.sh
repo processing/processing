@@ -53,7 +53,7 @@ gunzip < jikes.exe.gz > processing/jikes.exe
 chmod +x processing/jikes.exe
 
 # get platform-specific goodies from the dist dir
-cp dist/Proce55ing.exe processing/
+cp launcher/processing.exe processing/
 cp dist/run.bat processing/
 cp dist/lib/pde_windows.properties processing/lib/
 cp dist/lib/comm.jar processing/lib/
