@@ -78,10 +78,11 @@ public class PdeEditor extends JFrame
   JEditTextArea textarea;
 
   // currently opened program
-  String sketchName; // name of the file (w/o pde if a sketch)
-  File sketchFile;   // the .pde file itself
-  File sketchDir;    // if a sketchbook project, the parent dir
-  boolean sketchModified;
+  //String sketchName; // name of the file (w/o pde if a sketch)
+  //File sketchFile;   // the .pde file itself
+  //File sketchDir;    // if a sketchbook project, the parent dir
+  //boolean sketchModified;
+  PdeSketch sketch;
 
   Point appletLocation; //= new Point(0, 0);
   Point presentLocation; // = new Point(0, 0);
@@ -401,16 +402,19 @@ public class PdeEditor extends JFrame
 
     // last sketch that was in use
 
-    String sketchName = PdePreferences.get("last.sketch.name");
-    String sketchDir = PdePreferences.get("last.sketch.path");
+    //String sketchName = PdePreferences.get("last.sketch.name");
+    String sketchPath = PdePreferences.get("last.sketch.path");
+    //PdeSketch sketchTemp = new PdeSketch(sketchPath);
 
-    if (sketchName != null) {
-      if (new File(sketchDir + File.separator + sketchName + ".pde").exists()) {
-        skOpen(sketchDir, sketchName);
+    //if (sketchName != null) {
+    if ((sketchPath != null) && (new File(sketchPath)).exists()) {
+      skOpen(new PdeSketch(sketchFile));
+      //if (new File(sketchDir + File.separator + sketchName + ".pde").exists()) {
+      //skOpen(sketchDir, sketchName);
 
-      } else {
-        skNew2(true);
-      }
+      //} else {
+      //skNew2(true);
+      //}
     } else {
       skNew2(true);
     }
@@ -490,8 +494,9 @@ public class PdeEditor extends JFrame
     PdePreferences.setInteger("last.screen.height", screen.height);
 
     // last sketch that was in use
-    PdePreferences.set("last.sketch.name", sketchName);
-    PdePreferences.set("last.sketch.path", sketchDir.getAbsolutePath());
+    //PdePreferences.set("last.sketch.name", sketchName);
+    //PdePreferences.set("last.sketch.name", sketch.name);
+    PdePreferences.set("last.sketch.path", sketch.getPath());
 
     // location for the console/editor area divider
     int location = splitPane.getDividerLocation();    
@@ -1175,7 +1180,9 @@ public class PdeEditor extends JFrame
     if (PdePreferences.getBoolean("editor.external")) {
       // history gets screwed by the open..
       String historySaved = history.lastRecorded;
-      handleOpen(sketchName, sketchFile, sketchDir);
+      //handleOpen(sketchName, sketchFile, sketchDir);
+      //handleOpen(sketch.name, sketch.file, sketch.directory);
+      handleOpen(sketch);
       history.lastRecorded = historySaved;
     }
 
@@ -1431,7 +1438,7 @@ public class PdeEditor extends JFrame
     openingName = name;
 
     if (sketchModified) {
-      String prompt = "Save changes to " + sketchName + "?  ";
+      String prompt = "Save changes to " + sketch.name + "?  ";
 
       if (checking == DO_QUIT) {
 
@@ -1653,9 +1660,9 @@ public class PdeEditor extends JFrame
         changeText("", true);
       }
 
-      sketchName = isketchName;
-      sketchFile = isketchFile;
-      sketchDir = isketchDir;
+      sketch.name = isketchName;
+      sketch.file = isketchFile;
+      sketch.directory = isketchDir;
       setSketchModified(false);
 
       history.setPath(sketchFile.getParent(), readOnlySketch());
