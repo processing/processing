@@ -151,6 +151,11 @@ public class PdePreferences extends JComponent {
     }
 
 
+    // other things that have to be set explicitly for the defaults
+
+    setColor("run.window.bgcolor", SystemColor.control);
+
+
     // next load user preferences file
 
     String home = System.getProperty("user.home");
