@@ -2696,28 +2696,42 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       break;
     }
 
-    if (depth) {
-      if (fill) ellipse3_fill(x, y, hradius, vradius);
-      if (stroke) ellipse3_stroke(x, y, hradius, vradius);
+    if (depth || !optimize2) {
+      ellipse3(x, y, hradius, vradius);
 
     } else {
-      if (fill) ellipse2_fill(x, y, hradius, vradius);
-      if (stroke) ellipse2_stroke(x, y, hradius, vradius);
+      ellipse2(x, y, hradius, vradius);
     }
+  }
+
+
+  public void ellipse3(float x, float y, float hradius, float vradius) {
+    if (fill) ellipse3_fill(x, y, hradius, vradius);
+    if (stroke) ellipse3_stroke(x, y, hradius, vradius);
   }
 
 
   protected void ellipse3_fill(float x, float y, float h, float v) {
   }
 
+
   protected void ellipse3_stroke(float x, float y, float h, float v) {
   }
+
+
+  public void ellipse2(float x, float y, float hradius, float vradius) {
+    if (fill) ellipse2_fill(x, y, hradius, vradius);
+    if (stroke) ellipse2_stroke(x, y, hradius, vradius);
+  }
+
 
   protected void ellipse2_fill(float x, float y, float h, float v) {
   }
 
+
   protected void ellipse2_stroke(float x, float y, float h, float v) {
   }
+
 
   /*
   protected void ellipse_mess(float x, float y,
@@ -2839,6 +2853,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     } while (y > 0);
   }
 
+
   private final void ellipse0_rough_internal(int centerX, int centerY,
                                              int ellipseX, int ellipseY,
                                              boolean filling) {
@@ -2856,6 +2871,41 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       point0(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
       point0(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
     }
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void circle(float x, float y, float radius) {
+    switch (ellipseMode) {
+    case CENTER_RADIUS:
+      break;
+    case CENTER:
+      radius /= 2f; radius /= 2f;
+      break;
+    case CORNER:
+      radius /= 2f; radius /= 2f;
+      x += radius; y += radius;
+      break;
+    case CORNERS:
+      radius = (radius - x) / 2f;
+      radius = (radius - y) / 2f;
+      x += radius;
+      y += radius;
+      break;
+    }
+
+    if (depth || !optimize2) {
+      ellipse3(x, y, radius, radius);
+
+    } else {
+      circle2(x, y, radius);
+    }
+  }
+
+
+  public void circle2(float x, float y, float radius) {
   }
 
 
