@@ -472,7 +472,7 @@ public class PdeBase extends Frame
     menu.add(new MenuItem("Stop", new MenuShortcut('T')));
     menu.addSeparator();
 
-    menu.add(new MenuItem("Add data file..."));
+    menu.add(new MenuItem("Add file..."));
     menu.add(new MenuItem("Create font..."));
 
     if ((platform == WINDOWS) || (platform == MACOSX)) {
@@ -1101,8 +1101,8 @@ public class PdeBase extends Frame
     } else if (command.equals("Beautify")) {
       editor.doBeautify();
 
-    } else if (command.equals("Add data file...")) {
-      editor.addDataFile();
+    } else if (command.equals("Add file...")) {
+      editor.addFile();
 
     } else if (command.equals("Create font...")) {
       new PdeFontBuilder(new File(editor.sketchDir, "data"));

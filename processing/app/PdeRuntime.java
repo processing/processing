@@ -68,25 +68,24 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     this.leechErr = leechErr;
 
-    //Frame frame = PdeBase.frame;
-    Point parentLoc = editor.base.getLocation(); //frame.getLocation();
-    Insets parentInsets = editor.base.getInsets(); //frame.getInsets();
+    Point parentLoc = editor.base.getLocation();
+    Insets parentInsets = editor.base.getInsets();
 
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
 
     try {
-      //if (PdeBase.getBoolean("play.external", false)) {
-      //System.out.println(externalPaths);      
-
       if (externalRuntime) {
-        //System.out.println("going external");
         String command[] = new String[] { 
           "java", 
           "-cp",
           externalPaths,
           "BApplet",
-          "--external=" + x1 + "," + y1,
+          BApplet.EXTERNAL_FLAG + ((windowLocation != null) ? 
+                                   ("e" + 
+                                    windowLocation.x + "," + 
+                                    windowLocation.y) : 
+                                   (x1 + "," + y1)),
           className
         };
 
@@ -379,6 +378,16 @@ public class PdeRuntime implements PdeMessageConsumer {
       //close();
       //System.out.println("got proper quit message");
       editor.doClose();
+      return;
+    }
+
+    if (s.indexOf(BApplet.EXTERNAL_MOVE) == 0) {
+      String nums = s.substring(s.indexOf(' ') + 1);
+      int space = nums.indexOf(' ');
+      int left = Integer.parseInt(nums.substring(0, space));
+      int top = Integer.parseInt(nums.substring(space + 1));
+      editor.appletLocation = new Point(left, top);
+      //System.out.println("wanna move to " + left + " " + top);
       return;
     }
 
