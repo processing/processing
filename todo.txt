@@ -10,7 +10,9 @@ X fix curve()/bezier()
 X make curve() work as 6 point with doubled endpoints
 X translate is disabling color
 X   (probably because of lighting)
-
+X save as instead of rename/duplicate
+X   this makes more sense, hopefully it won't break everything
+X put newline after imports header in exported .java files
 
 bagel
 a _ fold simpleserial into BApplet
@@ -331,6 +333,7 @@ _ make some kind of internal color picker
 _   could be a separate window that's always around if needed
 _ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 _ a better editor: 
+_   line numbers like bbedit
 _   syntax coloring
 _   emacs indents and key commands
 _   http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/je/index.html

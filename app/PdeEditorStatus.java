@@ -44,7 +44,7 @@ public class PdeEditorStatus extends Panel
   Button cancelButton;
   Button okButton;
   TextField editField;
-  boolean editRename;
+  //boolean editRename;
   //Thread promptThread;
   int response;
 
@@ -148,10 +148,10 @@ public class PdeEditorStatus extends Panel
   }
 
 
-  public void edit(String message, String dflt, boolean rename) {
+  public void edit(String message, String dflt /*, boolean rename*/) {
     mode = EDIT;
     this.message = message;
-    this.editRename = rename;
+    //this.editRename = rename;
 
     response = 0;
     okButton.setVisible(true);
@@ -212,7 +212,8 @@ public class PdeEditorStatus extends Panel
 	    
 	    if (code == KeyEvent.VK_ENTER) {
 	      // accept the input
-	      editor.skDuplicateRename2(editField.getText(), editRename);
+	      //editor.skDuplicateRename2(editField.getText(), editRename);
+	      editor.skSaveAs2(editField.getText());
 	      unedit();
 	      event.consume();
 
@@ -368,7 +369,8 @@ public class PdeEditorStatus extends Panel
       editor.buttons.clear();
 
     } else if (e.getSource() == okButton) {
-      editor.skDuplicateRename2(editField.getText(), editRename);
+      editor.skSaveAs2(editField.getText());
+      //editor.skDuplicateRename2(editField.getText(), editRename);
       unedit();
 
     } else if (e.getSource() == editField) {
