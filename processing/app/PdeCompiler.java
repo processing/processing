@@ -36,19 +36,60 @@ public class PdeCompiler implements PdeMessageConsumer{
   PdeException exception;
   PdeEditor editor;
 
+  String additional;
+
+
   public PdeCompiler(String buildPath, String className, PdeEditor editor) {
     this.buildPath = buildPath;
     this.className = className;
     this.editor = editor;
   }
 
+
   public boolean compileJava(PrintStream leechErr) {
+    //System.out.println("jcp: " + System.getProperty("java.class.path"));
+    //System.out.println("mrj: " + System.getProperty("com.apple.mrj.application.classpath"));
+
+    String userdir = System.getProperty("user.dir") + File.separator;
+
+    if (additional == null) {
+#ifndef MACOS
+      additional = "";
+#else
+      // for macosx only, doesn't work on macos9
+      StringBuffer abuffer = new StringBuffer();
+
+      // add the build folder.. why isn't it already there?
+      //abuffer.append(":" + userdir + "lib/build");
+
+      String list[] = new File("/System/Library/Java/Extensions").list();
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].endsWith(".class") || list[i].endsWith(".jar") ||
+            list[i].endsWith(".zip")) {
+          //abuffer.append(System.getProperty("path.separator"));
+          abuffer.append(":/System/Library/Java/Extensions/" + list[i]);
+        }
+      }
+      additional = abuffer.toString();      
+#endif
+    }
+
     String command[] = new String[] { 
+#ifdef MACOS
+      userdir + "jikes",
+#else 
       "jikes",
+#endif
 
       // used when run without a vm ("expert" mode)
       "-bootclasspath",
-      System.getProperty("sun.boot.class.path"),
+      System.getProperty("sun.boot.class.path") + additional,
+
+#ifdef MACOS
+      // only because not tested elsewhere
+      "-classpath",
+      System.getProperty("java.class.path"),
+#endif
 
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
@@ -82,6 +123,7 @@ public class PdeCompiler implements PdeMessageConsumer{
       }
 
     } catch (Exception e) {
+      e.printStackTrace();
       result = -1;
     }
     //System.err.println("result = " + result);
@@ -97,12 +139,14 @@ public class PdeCompiler implements PdeMessageConsumer{
     return result == 0 ? true : false;
   }
 
+
   boolean firstErrorFound;
   boolean secondErrorFound;
 
   // part of the PdeMessageConsumer interface
   //
   public void message(String s) {
+    System.err.println("MSG: " + s);
 
     // ignore cautions
     if (s.indexOf("Caution") != -1) return;
