@@ -1,20 +1,5 @@
-0034
+0036
 
-a _ write message to people who signed up for p5 alpha
-a _ collapse pdeengine/pderunner/kjcengine to some extent
-a _ shouldn't substitute f's for: "Univers76.vlw.gz";
-
-play
-a _ implement presentation mode
-_   editor frame doesn't have to be in front
-_     include button in present mode to bring editor back up
-a _ add frame to launched window
-a X   add maximize event catcher to make fullscreen
-a o     doesn't work, because of screen sizing stupidity
-a _   shift-click on play to go directly into this 'presentation mode'
-a _ make all windows 120x120?
-a _   default program should be large, 300x200 or so
-a _   what if it's smaller? boundary of color 51, 51, 51 around it
 
 bagel
 a _ mousePressed() not working, also mouseReleased
@@ -25,6 +10,13 @@ a _ fix curve()/bezier()
 a _   also make curve() work as 6 point with doubled endpoints
 a _ translate is disabling color
 a _   (probably because of lighting)
+a _ fold simpleserial into BApplet
+a _   sprint an sprintln functions
+a _   make i/o work just like mouse (event driven, with dflt behavior)
+a _   need to have function to enable it in setup
+
+play
+a _ shouldn't substitute f's for: "Univers76.vlw.gz";
 
 macos
 a _ implement menuitem to load ref and to launch p5.net
@@ -38,6 +30,8 @@ a _ serial port code needs to be implemented
 a _   something that docks better to java serial api
 a _ need double-clickable application version for the mac
 a _   if os9, this is a no-brainer.. for osx may take a little time
+a _ lines being highlighted for errors are off (?)
+a _   test this on other platforms as well
 
 ui
 a _ saving to gzipped 'versions' file
@@ -45,23 +39,39 @@ a _   autosave every few minutes, also on each compile, also on save
 a _   mark each as 'save', 'autosave', 'failed' or 'successful' compile
 a _   also include a timestamp
 a _ remove projects if created but nothing happens to them
-
-cvs
-a _ move structure of app/application dirs around a bit
-a _ small script to remove CVS directories from a tree
-
-a _ lines being highlighted for errors are off (?)
-a _   test this on other platforms as well
-a _ make a new 'dist' function for building
-a _   easier to build on mac for pc than vice-versa..
-a _ fold simpleserial into BApplet
-a _   sprint an sprintln functions
-a _   make i/o work just like mouse (event driven, with dflt behavior)
-a _   need to have function to enable it in setup
 a _ console work
 a _   make scrollbar for console
 a _   convert tabs to 8 spaces
 a o   line wrapping (but save info for resize? noo..)
+
+pde
+a _ serial.messageReceived extra long crap in demo.pde (clean up?)
+a _   improve simpleserial and clean up a bit
+a _   document a bit more regarding its use
+a _   should serial be an event like mouse/key
+a _ serial works poorly for starting/stopping applets
+a _   this is behaving strangely
+a _   breaks on every 2nd run when using serial apps (or others?)
+a _     try calling gc on stop as well
+a _ class unloading not happening
+a _   when doing an extends ProcessingApplet
+a _   need to add randomizer to even non-self gen'd classes
+a _   or figure out how to unload old classes.. grr
+
+cvs / release
+a _ write message to people who signed up for p5 alpha
+a _ move structure of app/application dirs around a bit
+a _ small script to remove CVS directories from a tree
+a _ make a new 'dist' function for building
+a _   easier to build on mac for pc than vice-versa..
+a _ collapse pdeengine/pderunner/kjcengine a bit
+a _ figure out about distributing source
+a _   kjc is gnu, so source needs to be available
+a _   make it simpler to build the code.. 
+a _     buzz.pl actually no longer needed (no ifdefs)
+a _     use a regular makefile for everything
+a _ get all of casey's examples into the sketchbook
+a _   these should become the standard test cases for everything
 
 
 ////////////////////////////////////////////////////////////////////
@@ -198,21 +208,6 @@ _   degrees(), radians()
 
 
 PDE / high
-b _ serial.messageReceived extra long crap in demo.pde (clean up?)
-b _   improve simpleserial and clean up a bit
-b _   document a bit more regarding its use
-b _   should serial be an event like mouse/key
-
-
-PDE / high & time consuming
-b _ serial works poorly for starting/stopping applets
-b _   this is behaving strangely
-b _   breaks on every 2nd run when using serial apps (or others?)
-b _     try calling gc on stop as well
-b _ class unloading not happening
-b _   when doing an extends ProcessingApplet
-b _   need to add randomizer to even non-self gen'd classes
-b _   or figure out how to unload old classes.. grr
 
 
 PDE / medium
@@ -271,6 +266,8 @@ b _ Compiler.disable() message is weird and doesn't always work
 b _   probably just remove it for now
 
 cosmetic [lower priority]
+b _ run button can be highlighted to show how long thread is alive
+b _   the thread would be the one inside bapplet that keeps it going
 b _ only copy data files into build when there are changes
 b _   make sure the still relevant files aren't removed
 b _   setLastModified on the files after copying (jdk13)

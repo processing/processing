@@ -1,3 +1,16 @@
+0034
+X make all windows 120x120?
+X   default program should be large, 300x200 or so
+X   what if it's smaller? boundary of color 51, 51, 51 around it
+X implement presentation mode
+X   editor frame doesn't have to be in front
+X     include button in present mode to bring editor back up
+X add frame to launched window
+X   add maximize event catcher to make fullscreen
+o     doesn't work, because of screen sizing stupidity
+X   shift-click on play to go directly into this 'presentation mode'
+
+
 0033
 X implement 'duplicate'
 X implement renaming of projects
