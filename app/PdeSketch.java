@@ -199,9 +199,6 @@ public class PdeSketch {
       }
     }
 
-    // set the main file to be the current tab
-    current = code[0];
-
     // cheap-ass sort of the rest of the files
     // it's a dumb, slow sort, but there shouldn't be more than ~5 files
     for (int i = 1; i < codeCount; i++) {
@@ -217,6 +214,10 @@ public class PdeSketch {
         code[i] = temp;
       }
     }
+
+    // set the main file to be the current tab
+    //current = code[0];
+    setCurrent(0);
   }
 
 
@@ -226,6 +227,7 @@ public class PdeSketch {
   //public void setCurrentModified(boolean what) {
   //public void setModified(boolean what) {
   public void setModified() {
+    System.out.println("setting modified for " + current.program);
     //modified = true;
     current.modified = true;
     //editor.header.repaint();
@@ -261,6 +263,11 @@ public class PdeSketch {
    * Save all code in the current sketch.
    */
   public void save() throws IOException {
+    // get the current text area
+    if (current.modified) {
+      current.program = editor.getText();
+    }
+
     // check if the files are read-only. 
     // if so, need to first do a "save as".
     if (modified && isReadOnly()) {
@@ -272,7 +279,7 @@ public class PdeSketch {
     }
 
     for (int i = 0; i < codeCount; i++) {
-      code[i].save();
+      if (code[i].modified) code[i].save();
     }
     calcModified();
   }
@@ -286,6 +293,8 @@ public class PdeSketch {
 
   public void saveAs() {
     System.err.println("need to save ass here. code not yet finished.");
+
+    // mark all files as modified so that it will save them
   }
 
 
@@ -365,6 +374,8 @@ public class PdeSketch {
 
     // and i'll personally make a note of the change
     //current = which;
+
+    editor.header.rebuild();
   }
 
 
