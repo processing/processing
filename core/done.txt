@@ -1,3 +1,222 @@
+0070 core
+o check ordering of split() in java vs perl for regexp
+X don't include empty chars in font builder
+X   .vlw font files are enormous with full charset
+X   check to see if the character exists before adding it to the font
+X fixed (unreported) problem with char lookup code
+o split() with multiple args (i think this is completed)
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1078985667
+X trim() not chop().. whups
+X random(5, 5) -> return 5, random(6, 4) return error
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083275855;start=0
+X use random.nextFloat() because it's faster
+X make grayscale image in p5
+X   could be used with alpha() to properly set alpha values
+X   made into filter(GRAYSCALE) and filter(BLACK_WHITE) functions
+X make g.depthTest settable as a hint
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303102;start=0
+X #ifdef to remove client and server code as well
+X need to resolve issues between rendering screen/file
+X   illustrator-based rendering needs to work for ars projects
+X   screen may be 400x400 pixels, but file be 36x36"
+X launcher.cpp broke serial.. see versions in processing.notcvs
+X rewrite bagel code.. 
+X   for this release, because it will break things along with the lib stuff
+X   switch to PImage, PApplet, etc
+o bug in BImage.smooth() when resizing an image
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303158;start=0
+X shut off the automatic gunzipping of streams, keep for fonts
+X fix for duplicated points in polygons that foiled the tesselator
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077819175
+X cleaned up texture() code between NEW/OLD graphics
+X   not quite so much duplicated in cases etc.
+X lines: vertex coloring bug with my swap hack
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
+X   last vertex on LINE_LOOP fades out
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096303406;start=0
+X include values in PConstants for additional blend modes:
+X   DIFFERENCE, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT
+X include a lerp()? is there one in flash?
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1083289030
+X   should it be called lerp or mix?
+X acos, asin, atan, log, exp, ceil/floor, pow, mag(x,y,z)
+X color issues
+X   doesn't work when outside a function:
+X     color bg_color = color(255,0,0);
+X   colorMode broken for red() green() etc
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068664455
+X   add color(gray) and color(gray, alpha)
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089898189;start=0
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1090133107
+o update() mode needs to be hacked in (?)
+X make 'online' a boolean
+X pass in args[] from main
+X angleMode(DEGREES) and angleMode(RADIANS)
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075507381;start=0
+X fixes to line and curve code
+X api to properly sense when applet has focus
+X   add a 'focused' variable to the applet
+X   code now in zipdecode, maybe just list this as a standard thing?
+X do applets know when they're stopped? stop? dispose?
+X   would be good to set a param in p5 so that the thread dies
+X   if people have other threads they've spawned, impossible to stop
+
+cleaning up
+X make bagel more usable as standalone
+X   breakout BGraphics (have its own BImage)
+o   breakout BApplet into BComponent ? (fix out-of-bounds mouse - doesn't)
+o opengl export / rendering mode
+o   currently implemented, but somewhat broken
+o   finish this once all the line code is done
+o make possible to use buzz.pl to create versions w/ stuff removed
+o build gl4java for java 1.4
+o separating of BGraphics and BApplet
+o change copyrights on the files again (to match ?)
+X loadStrings has a problem with URLs and a code folder
+o   turned out to be a problem with firewall/antivirus software
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086551792
+o when running as an applet, need to loadStream from documentBase too
+o   problem is that BGraphics has the loadStream code, not BApplet
+o new sphere code from toxi
+o   already added a while back
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067005325
+o sphere code needs only front face polygon 
+o   all triangles must be counter-clockwise (front-facing)
+X fix loadImage to be inside PApplet
+
+040715
+X saveFrame() to a folder horks things up if a mkdirs() is required
+X   on macosx, this makes things hang; on windows it complains
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752;start=0
+X decide on whether to use PTools
+X   decided against, since it doesn't help anything
+X   and some functions need the applet object, so it's just annoying
+o   i.e. move math functions into utility library
+o   check what other functions require PGraphics to exist but shouldn't
+o   look at BGraphics to see if setting an 'applet' could be used
+o     then other than that, if no applet set, no connection to PApplet
+
+040716
+X change font api to not use leading() as a way to reset the leading
+X   resetLeading and resetSize are the things
+X embed all available chars from a font, so japanese, etc works
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1083598817;start=3
+X fix a bunch of font bugs regarding charsets and lookup
+X array operations: boolean, byte, char, int, float, String
+X   expand/contract
+X   append, shorten
+o   shift/unshift
+o   slice
+X   splice
+X   reverse
+X   concat
+
+040717
+X make clone() into copy()
+X add a method BApplet.setPath() or something like that
+X   use it to repair saveBytes, saveStrings, etc
+X   put screenshots into their sketch folder
+o     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+X full casting operations on primitives and arrays of them
+X text(String text, x, y, width, height)  // based on rectMode
+X   textMode() for align left, center, right (no justify.. har!)
+X hex(), binary(), unhex(), unbinary()
+
+040725 
+X fix array functions not returning a value
+
+040726 
+X noiseSeed and randomSeed
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1090749784;start=0
+
+040727
+X incorporated NO_FLYING_POO line/poly hack developed for axel
+
+040902
+X sort() should return an array, rather than sort in place
+X fix binary function, had wrong offset number
+X   casey: i wan't able to get binary() to work at all:
+o Typography: Helix won't compile 
+o   works fine, just needs BFont -> PFont
+X standalone 'alpha' function for PImage (static methods for alpha fxns)
+X Image: Edge, Image: Blur: Alpha not set? The error is easier to see on Blur
+X   turns out bounds checking wasn't working properly on colors
+
+040903 
+X fix mouse/key events, make properly public for the package stuff
+X   The biggest problem was the key and mouse functions not working. 
+X   Input: Mouse_Functions
+X   Input: Keyboard_Functions
+X processing.net -> PClient, PServer
+X   write client/server implementations for new-style api
+X   basic test with old net server has things working fine
+
+040908
+X inputFile, outputFile, reader, writer commands
+X   also loadStrings(File file)
+
+040913
+X printarr instead of print/println for arrays
+X   println(Object o) conflicts with println(int a[])
+X   but println(Object o) is very needed
+
+040919
+X loop/noLoop setup
+
+040920
+X make loop/noLoop work properly
+X fixes/changes to key and mousehandling
+X   tab key not working? 
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091853942;start=0
+X   mousePressed, keyPressed, others.. queue them all
+X     queue multiple times
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079555200;start=0
+X   strangeness with key codes on keyPressed
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083406438;start=0
+X   key codes not properly coming through for UP/DOWN/etc
+X     had to bring back keyCode
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+X add redraw() function
+X   call redraw() on the first time through (to force initial draw)
+X   otherwise noLoop() in setup means no drawing happens at all
+
+040920 evening
+X defaults for PApplet and PGraphics are different
+o   PGraphics has none.. PApplet has fill/stroke
+X   actually not the case, only that wasn't calling decent superclass
+X set PImage.format as RGB by default? 
+X   this was problem with rendering an image from PGraphics on board
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1080671926;start=0
+
+040921 morning
+X bug in get() that was removing the high bits (rather than adding)
+
+040921 evening
+X lots of work on libraries, figuring out PLibrary api
+
+040922 
+X get library stuff debugged
+X port arcball and finish up dxf writer
+X beginCamera() no longer sets an identity matrix
+
+040925
+X make savePath() and createPath() accessible to the outside world
+X   useful for libraries saving files etc.
+
+
+0070p8
+X sizing bug fix to fonts, they now match platform standards
+X   however, *this will break people's code*
+X text in a box not written
+X   make sure to note in the docs that text/textrect position differently
+o     for this reason, should it be called textrect()?
+X font heights and leading are bad
+X   get good values for ascent and descent
+X   if ScreenFont subclasses PFont.. can that be used in textFont()?
+X check to make sure the tops of fonts not getting chopped in font builder
+
+
 0069 bagel
 X text(x, y, z)
 X fixed camera modes / replaced how isometric is handled
