@@ -1,16 +1,22 @@
 0047
-
+_ delay() should sleep the thread [glen murphy]
+_   it's sucking cpu and won't open a window until the delay is up
+_ reference doesn't launch on mac (mKoser)
 _ add -Xmx128m -Xms128m because people running out of memory (pitaru)
 _   tried with a 3k x 1k image and things broke
-
-_ getting mouse movement outside the window
-
-_ reference doesn't launch on mac (mKoser)
-
-_ when trying to use serial, provide error if things not installed
-
+_ make a note that size() has to come first [nluken]
 _ extra linefeeds is getting annoying for folks
+_   line endings joy
+_   is setText goobering up on beautify?
+_   how are line endings working during save?
 
+_ known issues
+_   random freezes.. especially under windows
+_ notes on debugging
+_   look at the code that's created in build/
+_   run with java -Xint blahblah (turns off jit)
+
+_ lots of problems in moving sketches over
 _ reported by fdb and brendanberg
 After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
 Exception in thread "main" java.lang.NullPointerException 
@@ -20,39 +26,44 @@ Exception in thread "main" java.lang.NullPointerException
   at PdeBase.<init>(PdeBase.java:362) 
   at PdeBase.main(PdeBase.java:102) 
 Removing all sketches would solve the problem. 
-
 _ reported by brandenberg
 _    need to pay attention to when running from read-only drive
 p5 will launch from the disk image, but will not draw the sketch name bar doesn't appear (possibly b/c the image is read-only)... 
  i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
  i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
 again, after i moved my sketches over it broke permanently... 
-
-_ lots of problems in moving sketches over
-
-_ make a note that size() has to come first [nluken]
-
 _ 46 dies when run from desktop on some machines [jes]
+_   spaces in the dir name?
+
+_ noCursor()
+_ getting mouse movement outside the window
+_ no longer require size() to come first?
+
+_ is sketch.properties getting mangled on the mac?
+
+_ beginQuads() beginLineStrip() ?
+
+_ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
+
+_ is quad strip broken or not behaving as expected? (me)
+_   may be correct, it worked for nik
+
+_ images don't load during setup [reas]
+
 While I've used random() in other projects often without fail, if I uncomment the 'float r = random(50);', the applet window fails to appear, with no error messages. 
- 
+
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
 _   check output from file that's created.. seems to fail silently(?)
-
 (this code is a mutilated version of working code, just to show the error). 
-
 int WIDTH = 500; 
 int HEIGHT = 500; 
 int NUMMINES = 6; 
- 
 Mine mine[] = new Mine[NUMMINES]; 
- 
 class Mine { 
   int NUMSPOKES = 12; 
-   
   float x, y, size; 
   Spoke spoke[] = new Spoke[NUMSPOKES]; 
-   
   Mine(float xIn, float yIn, float sizeIn) { 
     x = xIn; 
     y = yIn; 
@@ -63,14 +74,13 @@ class Mine {
  } 
     } 
   } 
- 
+
 class Spoke { 
   float dist, dir, dirVel; 
-   
   Spoke(float distIn, float dirIn, float dirVelIn) { 
     } 
   } 
- 
+
 void setup() { 
   size(500,500); 
   ellipseMode(CENTER_DIAMETER); 
@@ -81,21 +91,17 @@ void setup() {
   } 
   
 void loop() { 
- 
   } 
-//////////////////////////  
- 
-
 
 
 bagel
-_ images don't load during setup (?)
 _ make bagel usable on its own as a drawing surface
 _   needs to be used as a component, without applet 
 _   but retain functionality, ie. image i/o
 _ finish fill mode of flat circle function
 _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+_ when trying to use serial, provide error if things not installed
 
 pde
 _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
@@ -114,9 +120,6 @@ _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
 _ preprocessor problems -> switch to java cup (one day's work)
 _   subst Image -> BImage, Font -> BFont
-_ line endings joy
-_   is setText goobering up on beautify?
-_   how are line endings working during save?
 _ get syntax coloring debugged?
 _   talk to casey about better default colors
 _ scroll to beginning after setText()
@@ -135,6 +138,7 @@ _   jre icon not appearing in the systray
 macosx
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
+_   may not be the case under swing?
 _ escape key not quitting presentation mode
 _   no events seem to be coming through at all
 
@@ -152,7 +156,7 @@ FURTHER AHEAD
 _ 'image' is too generic a variable to have inside BApplet
 _   check for others that shouldn't be used (pixels? width? height?)
 _   or have a way to syntax color them
-_ put processing/bagel into sourceforge cvs
+_ put processing/bagel into sourceforge cvs FOR BETA
 _   probably after kjc/engine stuff restructured
 _ bring cbagel up to par
 _ modify cbagel for opie
