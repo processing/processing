@@ -105,13 +105,6 @@ public class PdeRuntime implements PdeMessageConsumer {
                 }
               }
             });
-          /*
-            window.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-            System.out.println(e);
-            window.toFront();
-            }});
-          */
 
         } else {
           window = new Frame(editor.sketchName); // gonna use ugly windows instead
@@ -123,9 +116,6 @@ public class PdeRuntime implements PdeMessageConsumer {
               public void windowClosing(WindowEvent e) {
                 stop();
                 editor.doClose();
-                //new DelayedClose(editor);
-                //editor.doClose();
-                //editor.doStop();
               }
             });
         }
