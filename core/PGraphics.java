@@ -89,9 +89,9 @@ public class PGraphics extends PImage
 
   // fill color
   boolean _fill, fill_alpha;
-  float fillR, fillG, fillB, fillA;
-  int fillRi, fillGi, fillBi, fillAi;
-  int fill;
+  public float fillR, fillG, fillB, fillA;
+  public int fillRi, fillGi, fillBi, fillAi;
+  public int fill;
 
   // stroke color
   boolean _stroke, stroke_alpha;
