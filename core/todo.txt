@@ -38,6 +38,8 @@ X make play button un-highlight with opengl
 X   also make window move messages work properly
 X   very necessary, since opens window at 100x100
 X   problem was the threading issues
+X bring back renderer menu
+X   reading/saving pref for opengl renderer
 
 X beginFrame() around setup()
 X   draw mode stuff happens inside setup.. 
@@ -45,7 +47,14 @@ o   or maybe need to get better at size() inside of draw() ?
 _   make this consistent with the regular PApplet
 _     otherwise things are going to be weird/difficult for debugging
 
-_ when running externally, regular applets don't get placed properly
+_ make sure background() gets called at least once with opengl
+_ depth() shouldn't be needed for opengl unless actually 3D
+_   right now the camera doesn't get set up unless you call depth()
+
+_ when running externally, applets don't always get placed properly
+_   problem is in gl and in core, and is inconsistent
+_   move more logic for layout into PApplet.. maybe a static method?
+_   this way can avoid duplicating / breaking things
 
 _ still threading issues with running opengl 
 _   first run hangs until quit 
