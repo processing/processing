@@ -12,11 +12,11 @@ public class ProcessingApplet extends Applet
 
   public int mouseX, mouseY;
   public boolean mousePressed;
-  boolean mousePressedBriefly;
+  boolean mousePressedBriefly;  // internal only
 
   public int key;
   public boolean keyPressed;
-  boolean keyPressedBriefly;
+  boolean keyPressedBriefly;  // internal only
 
   boolean timing;
   public int millis;
@@ -546,14 +546,6 @@ public class ProcessingApplet extends Applet
   }
 
 
-  //public final float randomf() {
-  //return ((float)Math.random() - 0.5f)*2.0f;
-  //}
-
-  //public final float randomuf() {
-  //return (float)Math.random();
-  //}
-
   public final float random(float howbig) {
     return (float)Math.random() * howbig;
   }
@@ -563,6 +555,7 @@ public class ProcessingApplet extends Applet
     return howsmall + (float)Math.random() * diff;
   }
 
+  /*
   public final int random(int howbig) {
     return (int) (Math.random() * (double)howbig);
   }
@@ -571,6 +564,7 @@ public class ProcessingApplet extends Applet
     double diff = howbig - howsmall;
     return howsmall + (int) (Math.random() * diff);
   }
+  */
 
 
   // ------------------------------------------------------------
