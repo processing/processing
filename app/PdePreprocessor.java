@@ -43,11 +43,13 @@ public class PdePreprocessor {
   static final int JDK14 = 2;
 
   static String defaultImports[][] = new String[3][];
+  String extraImports[];
 
   static final int STATIC = 0;  // formerly BEGINNER
   static final int ACTIVE = 1;  // formerly INTERMEDIATE
   static final int JAVA   = 2;  // formerly ADVANCED
-  static int programType = -1;
+  // static to make it easier for the antlr preproc to get at it
+  static int programType = -1;  
 
   Reader programReader;
   String buildPath;
@@ -158,12 +160,14 @@ public class PdePreprocessor {
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
 
-      System.out.println("removing " + piece);
+      //System.out.println("removing " + piece);
 
     } while (true);
 
-    String extraImports[] = new String[imports.size()];
+    //if (imports.size() > 0) {
+    extraImports = new String[imports.size()];
     imports.copyInto(extraImports);
+    //} 
 
     //
 

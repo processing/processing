@@ -93,7 +93,8 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-Djava.library.path=" + 
           // sketch.libraryPath might be ""
           // librariesClassPath will always have sep char prepended
-          sketch.libraryPath + PdeSketchbook.librariesClassPath,
+          sketch.libraryPath + PdeSketchbook.librariesClassPath + 
+          File.pathSeparator + System.getProperty("java.library.path"),
           "-cp",
           sketch.classPath + PdeSketchbook.librariesClassPath,
           "processing.core.PApplet",
@@ -101,6 +102,10 @@ public class PdeRuntime implements PdeMessageConsumer {
           PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
           sketch.mainClassName
         };
+
+        //for (int i = 0; i < command.length; i++) {
+        //  System.out.println(i + " = " + command[i]);
+        //}
 
         //PApplet.println(PApplet.join(command, " "));
         process = Runtime.getRuntime().exec(command);
