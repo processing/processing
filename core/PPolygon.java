@@ -142,9 +142,9 @@ public class PPolygon implements PConstants {
 
     // vertexCount-1 is the current vertex that would be used
     // vertexCount-2 would be the previous feller
-    if ((Math.abs(vertices[vertexCount-2][MX] - x) < 0.0001f) &&
-        (Math.abs(vertices[vertexCount-2][MY] - y) < 0.0001f) &&
-        (Math.abs(vertices[vertexCount-2][MZ] - z) < 0.0001f)) {
+    if ((Math.abs(vertices[vertexCount-2][MX] - x) < EPSILON) &&
+        (Math.abs(vertices[vertexCount-2][MY] - y) < EPSILON) &&
+        (Math.abs(vertices[vertexCount-2][MZ] - z) < EPSILON)) {
       vertexCount--;
       return true;
     }
