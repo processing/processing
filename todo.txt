@@ -1,102 +1,31 @@
-0047
-X reported by fdb and brendanberg
-After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
-Exception in thread "main" java.lang.NullPointerException 
-  at PdeBase.addSketches(PdeBase.java:598 ) 
-  at PdeBase.addSketches(PdeBase.java:615) 
-  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575) 
-  at PdeBase.<init>(PdeBase.java:362) 
-  at PdeBase.main(PdeBase.java:102) 
-Removing all sketches would solve the problem. 
-/ lots of problems in moving sketches over
- i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
- i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
-again, after i moved my sketches over it broke permanently... 
-/ 46 dies when run from desktop on some machines [jes]
-/   spaces in the dir name?
-o is sketch.properties getting mangled on the mac?
-X jedit text area
-X   change bg color for 'use external editor'
-X   enable/disable undo/redo
-X   don't let undo after setting text
-X   get focus after setText
-X   need to take care of auto-indent etc
-X   is setText goobering up on beautify?
-X   re-implement cut/copy/paste
-X   re-implement undo/redo
-X   get settings from PdeBase
-X   better defaults for syntax highlighting
-X     comments should be gray and not italicized
-X     disable end of line marker by default
-X     highlight p5 keywords
-X       setup, draw, loop as one class
-X       rect, line etc as another
-X       width, height, pixels as a third
-X   jump to top of document on load
-X   change style of ~ at end of document for unused area
-X extra linefeeds is getting annoying for folks
-X   line endings joy
-X   how are line endings working during save?
-X recursive sketch add that works properly and ignores crap
-X crashes while starting
-LaunchRunner Error] PdeBase.main(String[]) threw an exception:
-java.lang.NullPointerException
-  at PdeBase.addSketches(PdeBase.java:598)
-  at PdeBase.addSketches(PdeBase.java:615)
-  at PdeBase.rebuildSketchbookMenu(PdeBase.java:476)
-  at PdeEditor.skNew2(PdeEditor.java:872)
-  at PdeEditor.checkModified2(PdeEditor.java:814)
-  at PdeEditor.checkModified(PdeEditor.java:797)
-  at PdeEditor.checkModified(PdeEditor.java:785)
-  at PdeEditor.skNew(PdeEditor.java:826)
-  at PdeEditor.init(PdeEditor.java:428)
-  at PdeBase.<init>(PdeBase.java:361)
-  at PdeBase.main(PdeBase.java:102)
-  at java.lang.reflect.Method.invoke(Native Method)
-  at com.apple.buckyball.app.LaunchRunner.run(LaunchRunner.java:82)
-  at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
-  at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
-X undo/redo can go to far
-X docs
-X   make a note that size() has to come first [nluken]
-X   look at the code that's created in build/
-X known issues
-X   random freezes.. especially under windows
-X   wheel mouse is gone again, to return later
-X describe rundown of constants pulled from pde.properties
-X   coloring for syntax
-X   sketchbook.path, very preliminary, still creates 'default'
-X macos9 stuff
-X   check to see if swing is working properly
-X   get new release out, remove 1.3 specific stuff from textpane
-X get syntax coloring debugged?
-X   talk to casey about better default colors
-X scroll to beginning after setText()
-X color not set for default text area with empty text
-X   color not set on 'new', setForeground won't do it
-X   probably reasonably simple fix, but not in time
-X undo/redo
-X   should enable/disable as available
-X   undo-ing too much will empty the text area
-X     the setText is an undoable thing. grr.
-X method to set a folder for the sketchbook
-X when trying to use serial, provide error if things not installed
-
-
 0048
+
+pde
+_ re-enable wheel mouse
+System.getProperty("java.version") -> "1.4.1_01"
+
+windows
+_ remove built-in jre (!)
+X   modify run.bat, modify .exe file as well
+X add -Xmx128m -Xms128m because people running out of memory (pitaru)
+X   tried with a 3k x 1k image and things broke
+o   maybe command line read properties from a file in lib
+
+macosx
+X include note in the readme that 1.4 is not supported
+X is sketch.properties saving properly under macosx?
+X text in editor is anti-aliased, allow to turn off (franklin_mint)
+X   also make text courier instead of monospaced
+public void paint(Graphics g) 
+{       
+  Graphics2D g2 = (Graphics2D) g; 
+  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);                
+  super.paint(g2);       
+}
 
 
 ................................................................
-
-
-docs/faq
-_ notes on debugging
-_   run with java -Xint blahblah (turns off jit)
-_ doesn't yet run under java 1.4 on mac (?)
-_ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
-_   also 'why p5' message from amit pitaru on 12/15/02
-_     and p5 versus flash stuff
-_   lists the main arguments, could be a useful document
 
 
 bagel / bugs
@@ -117,10 +46,11 @@ _   make into oval function
 _ no longer require size() to come first?
 _ beginQuads() beginLineStrip() ?
 _ noCursor()
+_ creating background image in setup, or setting background(BImage)
+_ also using bagel as separate component, being able to grab its BImage
 
 
 pde / bugs
-_ re-enable wheel mouse
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
 _ images don't load during setup [reas]
@@ -155,27 +85,24 @@ _   not draw the sketch name bar doesn't appear"
 
 
 pde / features
+_ highlight a word and jump to it inside the reference
 _ splitints, et al.. have another version to specify what to use
 _   when the value gets a NumberFormatException.. ie.
 _   splitInts("blah blah blah", ' ', 0);
 _   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
 _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
 _ ctrl-f for find, g for find next, h for next occurrence of selected
-_   using external files
-_ "look up in reference" function for selecting keywords
+_   "look up in reference" function for selecting keywords
 _ support 'classes' folder, through the use of a classloader
 _   could also be done by launching external java app
 _   all .jar files etc are added from this folder automatically
-_ will need doubles for genomics work. ugh.
-_   this is just enable/disable float stuff
 _ may need to start putting properties somewhere besides lib
 _   home directory  (or preferences folder under macos9)
+_ will need doubles for genomics work. ugh.
+_   this is just enable/disable float stuff
 
 
 windows
-_ add -Xmx128m -Xms128m because people running out of memory (pitaru)
-_   tried with a 3k x 1k image and things broke
-_   maybe command line read properties from a file in lib
 _ need splash screen, startup takes a long time
 _ windows 95/98/ME seems to be broken
 _   ME seems to be very broken
@@ -183,22 +110,25 @@ _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
 macosx
-_ is sketch.properties saving properly under macosx?
 _ reference doesn't launch on mac (mKoser)
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
 _   may not be the case under swing?
 _ escape key not quitting presentation mode
 _   no events seem to be coming through at all
-_ text in editor is anti-aliased, allow to turn off
-_   also make text courier instead of monospaced
-public void paint(Graphics g) 
-{       
-  Graphics2D g2 = (Graphics2D) g; 
-  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);                
-  super.paint(g2);       
-}
+
+macosx / try with next java 1.4 dp release
+_ tweak for java 1.4 
+_   need to add a line to the properties file
+_   include a note about this in the readme, include url for download
+_     connect.apple.com
+running 1.4 from the command line:
+/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Commands/java 
+Info.plist, setting JVMVersion
+* 1.3.1 - only use JDK 1.3.1, even if later versions are available. 
+* 1.3* - use any version of JDK 1.3.x. Do not use JDK 1.4 even if it's dflt.
+* 1.3+ - use the latest JDK version from JDK 1.3 onward, up to default JDK. 
+* 1.4+ - use JDK 1.4 or later, even if an earlier JDK is the default. 
 
 macos9
 _ set file type for html files
@@ -209,6 +139,17 @@ linux
 _ look for jdk 1.4 to use instead of 1.3
 _   make sure javacomm gets in there
 _ test it a little more to make sure it works (cygwin x sucks)
+
+
+docs/faq
+_ make clear that setup is just for setup
+_   but should also in the future allow to create static image
+_ notes on debugging
+_   run with java -Xint blahblah (turns off jit)
+_ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
+_   also 'why p5' message from amit pitaru on 12/15/02
+_     and p5 versus flash stuff
+_   lists the main arguments, could be a useful document
 
 
 OTHER NOTES / API TO ADD
