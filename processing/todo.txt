@@ -1,39 +1,29 @@
-0049
-X add http url support for loadImage and loadStream
-X ceil/floor/round
-X new set of examples
-X   remove old examples from cvs
-X pmouseX and pmouseX should be colored with mouseX and mouseY
-X new html for export
-X new colors chosen by casey (replace pde.properties and buttons.gif)
-/ disappearing text caret on win2k
-/   works in 'insert' mode
-X   just disabled it ever hiding.. we'll see if it fixes
-X flush() after every println()
-X   incremental printout 
-X uncovered bug with long line lengths in console
-/ pmouseX problem reported by casey (in bugs.txt)
-o images don't load during setup [reas] 
-X   //This is not a problem -- Casey
-X framerate() and framerate(15)
-X delay() should sleep the thread [glen murphy]
-X   it's sucking cpu and won't open a window until the delay is up
-X   also don't delay on the first time through
-X   add framerate to colored things list
-
-
 0050
-_ go through the bboard and make sure everything up to date here
-_   see if moved topics need to be deleted as well
-_     (log in from another machine as guest)
+X go through the bboard and make sure everything up to date here
+X   see if moved topics need to be deleted as well
+X     (log in from another machine as guest)
+
 _ weirdness with mac swiss-german keyboard on []{}|
 _ several examples broken (note from creas) in bugs.txt
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
 
 
 ////////////////////////////////////////////////////////////////////
 
 
 BAGEL / bugs
+_ if image doesn't exist, spews null pointer exception and freaks
+_   locks up environment/machine, have to restart
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
+Uncaught error fetching image: 
+java.lang.NullPointerException 
+ at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
+ at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
+ at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
+ at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
+ at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+_ bezier is broken for > 4 points
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042201137
 _ getting mouse movement outside the window
 _ is quad strip broken or not behaving as expected? (me)
 _   may be correct, it worked for nik
@@ -54,6 +44,8 @@ b _   but retain functionality, ie. image i/o
 b _ finish fill mode of flat circle function
 b _   make into oval function
 b _ no longer require size() to come first?
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
 b _ beginQuads() beginLineStrip() ?
 b _ noCursor()
 b _ creating background image in setup, or setting background(BImage)
@@ -63,6 +55,7 @@ b _ also using bagel as separate component, being able to grab its BImage
 BAGEL / high & time consuming
 b _ implement clipping planes and clipping of objects
 b _   things are flying into the camera and halting apps
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
 b _ alpha
 b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
@@ -70,6 +63,7 @@ b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 b _ box is not opaque
 b X   problem is that lines are drawn second
 b X   one pixel lines have no z value.. argh
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
 b   translate(58, 48, 0); 
 b   rotateY(0.5);
 b   box(40);
@@ -195,39 +189,36 @@ _ live video editing, wanting things more procedural
 
 
 PDE / bugs
-_ compiler barfs on: float[] moo = new int[10]; 
+_ compiler barfs on: float[] moo = new int[10];  
 _   although no error comes through to p5 (benelek)
 _ when missing a closed brace, often has compiler error
 _   Jordan J message in email and bugs list
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039411135
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038807934
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1029289775
 _ weird comments bug (external file)
-_ if image doesn't exist, spews null pointer exception and freaks
-_   locking up environment/machine
-Uncaught error fetching image: 
-java.lang.NullPointerException 
- at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
- at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
- at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
- at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
- at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1040466898
 
 
 PDE / stability
 _ need to check if volume is read-only, notify and quit if it is
 _   people are trying to run off the disk image
-_ lots of problems with the console 
-_   [maybe this needs to be a textarea?]
-_   also printing of objects, esp when null, in jdk 14
-_   exception when trying to write to stdout
 _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
+_ p5 becomes a memory hog (benelek and glen murphy)
+_   even without sketches open, perhaps not gc'ing properly
 _ preprocessor problems -> switch to java cup (one day's work)
 _   subst Image -> BImage, Font -> BFont
 _ need to pay attention to when running from read-only drive
 _   reported by brandenberg
 _  "p5 will launch from the disk image, but will 
 _   not draw the sketch name bar doesn't appear"
+_ lots of problems with the console 
+_   [maybe this needs to be a textarea?]
+_   also printing of objects, esp when null, in jdk 14
+_   exception when trying to write to stdout
 
 
 PDE / high
@@ -278,6 +269,13 @@ b _   also make sure pack() is happening
 
 
 PDE / medium
+b _ sketches can't be named starting with numbers (D.YOO)
+b _   either provide an error message or explanation for this
+b _   or allow the sketch name to be separte from the class/folder names
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
+b _ size() has memory limitations (pitaru)
+b _   catch OutOfMemoryError inside size() and let the user know
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
 b _ 'save as' from examples puts into examples dir.. :(
 b _ option to delete current project (trickier)
 b _   also needs to have method for verify.. blech
@@ -334,6 +332,8 @@ b _   fairly quick--just use code from dbn
 
 
 PDE / low
+_ scroll bar has some painting weirdness with jedit textarea
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
 _ method of collapsing history for useful versions
 _   archive associated files as well.. data/etc
 _ see about setting up simple bug tracker/feature system
@@ -377,10 +377,10 @@ _ moving sketchbook folder for lab environments
 _ lots of ui ideas from adrien in the bboard
 _ can't copy text from console directly
 o   make note in readme about stderr.txt and stdout.txt
-_ Rename the button options to verbs, e.g. instead of "Do you want to
-  save? yes/no", change it to "Document Has been modified -- Save
-  changes? Save/Cancel/Don't Save". Look at Aqua Human Interface
-  guidelines (http://developer.apple.com/ue/switch/windows.html, tip 9) 
+_ some ui stuff from fdb
+_   rename the button options to verbs
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986
+
 
 
 PDE / science fiction
@@ -418,12 +418,16 @@ windows
 b _ need splash screen, startup takes a long time
 b _   file association for .pde files
 b _ windows 95/98/ME seems to be broken
-b _   ME seems to be very broken
+b _   ME doesn't seem to like the .exe, but run.bat worked ok
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028990066
 1 _ lockup/freezes (mKoser and zeitgeist)
 1 _   jre icon not appearing in the systray
+1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
 
 
 macos
+b _ reference doesn't launch on mac (mKoser)  //Yes, confirmed
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038424448
 b _ handlers for basic events
 b _   MRJAboutHandler (just show splash screen)
 b _     image for 'about processing'
@@ -444,24 +448,26 @@ macos9
 b _ make sure editor window is front so that error line highlights
 b _ set file type for html files
 b _   why is bbedit the type for the other files? make simpletext
-b _ reference doesn't launch on mac (mKoser)
 
 
 macosx
 b _ remove 'quit' from file menu
-b _ reference doesn't launch on mac (mKoser)  //Yes, confirmed
 b _ Event.consume() doesn't work on entry fields 
 b _   manifests itself in sketch naming, can't be constrained
 b _   may not be the case under swing?
 b _ escape key not quitting presentation mode
 b _   no events seem to be coming through at all
 b _ splash screen 
+b _ select all (apple-a) on azerty keyboard is quitting the app
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
 
-macosx / try with next java 1.4 dp release
+
+macosx / java 1.4
 _ tweak for java 1.4 
 _   need to add a line to the properties file
 _   include a note about this in the readme, include url for download
 _     connect.apple.com
+_   bug on p5 bboard: http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1037829938;start=0
 running 1.4 from the command line:
 /System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Commands/java 
 Info.plist, setting JVMVersion
