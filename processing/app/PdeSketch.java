@@ -673,15 +673,19 @@ public class PdeSketch {
       }
       */
 
+      // TODO these two loops are insufficient.
+      // should instead recursively add entire contents of build folder
+      // the data folder will already be a subdirectory
+      // and the classes may be buried in subfolders if a package name was used
+
       // files to include from data directory
       if ((dataDir != null) && (dataDir.exists())) {
         String datafiles[] = dataDir.list();
         for (int i = 0; i < datafiles.length; i++) {
-          // don't export hidden files, this handles, . .. .DS_Store
+          // don't export hidden files
+          // skipping dot prefix removes all: . .. .DS_Store
           if (datafiles[i].charAt(0) == '.') continue;
-          //if (datafiles[i].equals(".") || datafiles[i].equals("..")) {
-          //continue;
-          //}
+
           entry = new ZipEntry(datafiles[i]);
           zos.putNextEntry(entry);
           zos.write(PdeBase.grabFile(new File(dataDir, datafiles[i])));
@@ -689,8 +693,8 @@ public class PdeSketch {
         }
       }
 
-      // add the project's .class to the jar
-      // actually, these should grab everything from the build directory
+      // add the project's .class files to the jar
+      // just grabs everything from the build directory
       // since there may be some inner classes
       // (add any .class files from the applet dir, then delete them)
       String classfiles[] = appletDir.list();
@@ -710,9 +714,10 @@ public class PdeSketch {
         if (classfiles[i].endsWith(".class")) {
           File deadguy = new File(appletDir, classfiles[i]);
           if (!deadguy.delete()) {
-            System.err.println(classfiles[i] + 
-                               " could not be deleted from the applet folder.");
-            System.err.println("You'll need to remove it by hand.");
+            PdeBase.showWarning("Could not delete", 
+                                classfiles[i] + " could not \n" +
+                                "be deleted from the applet folder.  \n" + 
+                                "You'll need to remove it by hand.", null);
           }
         }
       }
