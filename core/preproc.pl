@@ -6,7 +6,7 @@ open(F, "PImage.java") || die $!;
 close(F);
 
 # next slurp methods from PGraphics
-open(F, "PGraphics3.java") || die $!;
+open(F, "PGraphics.java") || die $!;
 #@contents = <F>;
 foreach $line (<F>) {
     # can't remember perl right now.. there must be a better way
