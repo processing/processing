@@ -1589,7 +1589,14 @@ afterwards, some of these steps need a cleanup function
 	String urlstr = url.getFile();
 	urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
 	  "sketch.properties";
+#ifdef JDK13
+	// the ifdef is weird, but it's set for everything but 
+	// macos9, and this will never get hit 
 	output = new FileOutputStream(URLDecoder.decode(urlstr));
+#else
+	System.err.println("bad error while writing sketch.properties");
+	System.err.println("you should never see this message");
+#endif
       }
 
       //url = new URL(urlstr + "sketch.properties");

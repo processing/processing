@@ -184,6 +184,15 @@ _   manifests itself in sketch naming, can't be constrained
 _   may not be the case under swing?
 _ escape key not quitting presentation mode
 _   no events seem to be coming through at all
+_ text in editor is anti-aliased, allow to turn off
+_   also make text courier instead of monospaced
+public void paint(Graphics g) 
+{       
+  Graphics2D g2 = (Graphics2D) g; 
+  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);                
+  super.paint(g2);       
+}
 
 macos9
 _ reference doesn't launch on mac (mKoser)
