@@ -110,10 +110,11 @@ public class PdeBase extends Frame
   static final int MACOS9  = 2;
   static final int MACOSX  = 3;
   static final int LINUX   = 4;
+  static final int IRIX    = 5;
   static int platform;
 
   static final String platforms[] = {
-    "", "windows", "macos9", "macosx", "linux"
+    "", "windows", "macos9", "macosx", "linux", "irix"
   };
 
 
@@ -128,7 +129,7 @@ public class PdeBase extends Frame
       //System.out.println(System.getProperty("os.name"));
       platform = (System.getProperty("os.name").equals("Mac OS X")) ?
         MACOSX : MACOS9;
-        
+
     } else {
       //System.out.println("unknown OS");
       //System.out.println(System.getProperty("os.name"));
@@ -139,6 +140,9 @@ public class PdeBase extends Frame
 
       } else if (osname.equals("Linux")) {  // true for the ibm vm
         platform = LINUX;
+
+      } else if (osname.equals("Irix")) {
+        platform = IRIX;
 
       } else {
         platform = WINDOWS;  // probably safest
