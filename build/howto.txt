@@ -12,10 +12,12 @@ HOW TO BUILD PROCESSING ON YOUR FAVORITE PLATFORM
 
 ** of the packages, begin with the defaults, and add:
 
++ cvs - used for version control
+
 + gcc-mingw - used to build processing.exe
   (this will also pull in gcc-core)
 
-+ cvs - used for version control
++ make
 
 + perl - use this version, activestate or other distros have trouble
   

@@ -112,7 +112,7 @@ public class PApplet extends Applet
   public PGraphics recorder;
 
   /**
-   * Command line options passed in from main()
+   * Command line options passed in from main().
    * <P>
    * This does not include the arguments passed in to PApplet itself.
    */
@@ -4602,6 +4602,8 @@ v              PApplet.this.stop();
 
 
   /**
+   * main() method for running this class from the command line.
+   * <P>
    * The simplest way to turn and applet into an application is to
    * add the following code to your program:
    * <PRE>static public void main(String args[]) {
