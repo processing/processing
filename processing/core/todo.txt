@@ -34,16 +34,23 @@ o   make width() return values based on natural size?
 X   not a great idea.. plus java2d uses 1 pixel font for things
 X email simon re: lighting api
 X   things are actually more on track than expected
-X goodbye sphere(x, y, z, r)
 X camera is swapping colors in gl (on mac?)
 X   in fact, all textures on mac were swapping colors
-_   test this on windows to see if fixed
-
+X   test this on windows to see if fixed
+X sphere x,y,z,r or box w,h,d.. need to make them consistent
+X   goodbye sphere(x, y, z, r)
 o should available() be waiting() or something like that instead?
+o go through and see what functions (no pixel ops?) frame recorders should have
+X   decided instead to use recordFrame(PGraphics)
+o remove SCREEN_SPACE altogether? 
+X   can't do this for now
 
 implemented in 79
 X make sure arc goes in the right direction that we want it to
 X   (make sure that PGraphics3 goes the same direction)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 BETA
@@ -60,7 +67,7 @@ _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
 
-_ get PGraphics working again (with crappy line support) 
+_ get PGraphics.java engine working again
 
 _ remove PMethods as actual class, use recordFrame(PGraphics)
 _   size(200, 200, "processing.illustrator.PGraphicsAI");
@@ -83,6 +90,11 @@ X   need size(30000, 20000) for illustrator, problem in papplet
 _   size(30000, 20000, ILLUSTRATOR)
 o implement fullsize().. this takes over the screen as best it can
 _   size(screen.width, screen.height, OPENGL);
+_ make Graphics2 et al load dynamically using reflection
+_   can this be done with g2 and if exception just falls back to g1?
+_   this way people can remove g1 by hand
+
+present mode
 o call present() from inside the code?
 o   that if applet is 500x500, centers on a 800x600 window
 X   no, that's nasty... use --present to launch in present window
@@ -95,9 +107,45 @@ _   why do mouse motion events go away in full screen mode
 _   or with a Window object
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
+_ use screen manager to run present mode properly
+_   set both versions to require java 1.4
+_   change the Info.plist inside macosx
+_   and add something to PdeBase to make sure that it's in 1.4
+_ running present mode with a bug in the program hoses things
+_   make sure the program compiles before starting present mode
+_ ed's thread re: fullscreen strategies
+_   could add a new BApplet that uses BufferStrategy?
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
 
 _ add something to PApplet to have constants for the platform
-_   needed for error messages (winvdig?) and other misc
+_   needed for error messages (don't talk about winvdig on mac)
+_   and also useful for programs
+
+PApplet
+_ check for what else inside PApplet should be static
+_   maybe catch RuntimeExceptions in the called sub-functions
+_   that way more stuff can be static w/o losing useful error handling
+_   (emitting errors when closest to source.. i.e. w/ the filename)
+
+PGraphics3
+_ fix bezierVertex() for newer api
+_ error message saying that strokeCap and strokeJoin don't work
+_ PPolygon no longer in use and PLine is a mess
+_ also have a simple way to hook in triangle leeches to PGraphics3
+_   this exists, but needs to be documented, or have accessors
+
+
+to be fixed with new lighting
+_ The PushPop example in Transformations is not working
+_   with lights() callled
+_ The transparency of the Rotate3D example in Translformations
+_   is not as expected
+_ lighting totally sucks (both PGraphics3 and PGraphicsGL)
+_ bring in materials for opengl as well?
+_   don't include a class, just make it similar to the light functions
+_ sphere() and box() should set normals and take textures
+_ background color seems to be wrong?
+_   check this once lighting actually works
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -105,18 +153,13 @@ _   needed for error messages (winvdig?) and other misc
 
 NOT NECESSARY BEFORE BETA
 
+
+PApplet
+_ printarr() of null array crashes without an error
+_   actually, errors from many crashes not coming through on the mac?
 _ allow save(), saveFrame() et al to properly pass in absolute paths
 _   (so that it doesn't always save to the applet folder)
 _   could require that save() takes an absolute path?
-
-_ printarr() of null array crashes without an error
-_ actually, errors from many crashes not coming through on the mac?
-
-PApplet
-_ check for what else inside PApplet should be static
-_   maybe catch RuntimeExceptions in the called sub-functions
-_   that way more stuff can be static w/o losing useful error handling
-_   (emitting errors when closest to source.. i.e. w/ the filename)
 
 PGraphics2
 _ textSpace(SCREEN_SPACE) needs to be faster
@@ -137,39 +180,16 @@ g2.setPaint(gradient);
 g2.draw(gp);
 
 PGraphics3
-_ fix bezierVertex() for newer api
-_ error message saying that strokeCap and strokeJoin don't work
-_ tint() honoring alpha but not colored tint
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
 _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _ Stroking a rect() leaves the upper right pixel off.
-_   also, points not working in opengl (carlos line truncation?)
-void setup() {
-  size(200, 200);
-  background(0);
-}
-void draw() {
-  stroke(255);
-  point(60, 30);
-}
 
-PGraphicsGL
-_ background color seems to be wrong?
-_   check this once lighting actually works
 
 api questions
-
-_ sphere x,y,z,r or box w,h,d.. need to make them consistent
-
-_ remove SCREEN_SPACE altogether? 
-
-_ might be able to do a typed expand()
-public Object growArray(Object array, int size) {
-    Class type = array.getClass().getComponentType();
-    Object grown = Array.newInstance(type, size);
-    System.arraycopy(array, 0, grown, 0,
-        Math.min(Array.getLength(array), size));
-    return grown;
-}
+_ what to call firstMouse, implement rightMouse?
 _ should nf() handle commas as well?
 _   yes, and add nf(int what) so that non-padded version works
 _   but don't put commas into the zero-padded version
@@ -181,17 +201,18 @@ _   just use the variable names.. don't do overkill on fillR et al
 _   or just what functions are actually made public
 _   is fillRi needed? it's pretty goofy..
 _ how to handle full screen (opengl especially) or no screen (for scripts)
-
-_ go through and see what functions (no pixel ops?) frame recorders should have
 _ expose api to launch files, folders, URLs
 _   use with/in place of link()
+_ might be able to do a typed expand()
+public Object growArray(Object array, int size) {
+    Class type = array.getClass().getComponentType();
+    Object grown = Array.newInstance(type, size);
+    System.arraycopy(array, 0, grown, 0,
+        Math.min(Array.getLength(array), size));
+    return grown;
+}
 
-_ PPolygon no longer in use and PLine is a mess
-
-_ something really bad happened with println() in this release
-_   perhaps only without a code folder and/or running in java2d mode?
-_   this may also be what's hosing 
-
+text api questions
 _ text should maybe use built-in font if available?
 _ don't use pixels to do screen space text inside PFont
 _   add a function in PGraphics for direct pixel image impl 
@@ -203,43 +224,12 @@ _   for postscript, can grab the real font
 _   -> altho problem here is that really the fonts just need a name
 _      since needs to render to screen as well
 
-_ rewrite library/howto.txt for to get rid of old interface
-
-_ also have a simple way to hook in triangle leeches to PGraphics3
-_   this exists, but needs to be documented, or have accessors
-
-_ sphere() and box() should set normals and take textures
-
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-
-_ make Graphics2 et al load dynamically using reflection
-_   can this be done with g2 and if exception just falls back to g1?
-_   this way people can remove g1 by hand
-
-to be fixed with new lighting
-_ The PushPop example in Transformations is not working
-_   with lights() callled
-_ The transparency of the Rotate3D example in Translformations
-_   is not as expected
-_ lighting totally sucks (both PGraphics3 and PGraphicsGL)
-_ bring in materials for opengl as well?
-_   don't include a class, just make it similar to the light functions
-
-_ get PGraphics.java engine working again
+_ rewrite library/howto.txt to get rid of old interface
 
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
-
-_ basic sample audio playback needed for p5
-_   make separate java 1.1 and java 1.3 classes
-
-_ microphone input for java 1.3
-_   this may be reason to move sound classes out into a lib?
-_   or maybe just microphone goes into its own library?
 
 _ image loading bug is huge
 _ figure out how to handle cached images, multiple images
@@ -378,11 +368,6 @@ _   it could be placed at the end of the file
 _ simple way to just use java text in p5 applets? 
 _   the current text support is just so hokey
 
-_ named colors.. have a method for a full color lookup table
-_   addcolor("blah blah blah", colornum);
-_   fill("blah blah blah");
-_   maybe this is bad practice--too slow, should use variables
-
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
 _   update illustrator code to use core api
@@ -400,7 +385,7 @@ o   version of BApplet that replaces g. with ai. or pdf.
 GRAPHICS LIBRARY
 
 A hybrid of OpenGL (3D Graphics) and some aspects of Postscript (Fill, Stroke)
-The graphics library was formerly called Bagel, which is an internal name.
+The graphics library was formerly called Bagel.
 
 
 CORE / PApplet
@@ -491,6 +476,7 @@ CORE / PGraphics
    1 _ alpha of zero still draws boogers on screen
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
+
    1 _ color
    1 _   rounding errors on color conversion
    1 _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
@@ -516,10 +502,6 @@ CORE / PGraphics
    1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
    1 _   toxi ellipses don't adapt properly with transformations
 
-   b _ lighting is completely buggy and broken
-   b _   add a lighting object
-   b _   simong wrote fixed lighting code
-
    b _ texture mapping
    b _   very odd, "doom era" stuff
    b _   would it be possible to have a 'slow but accurate' mode?
@@ -537,13 +519,6 @@ CORE / PGraphics
    b _     not clipping areas from offscreen
    b _       huge geometry slows things way down
 
-   b _ picking
-   b _   what is the API for picking?
-   b _   ability to write data other than image into the buffer
-   b _   user can introduce new kinds of buffers at will (!)
-   b _   lists of names of objects, or the 'line number' buffer
-   b _   but how to determine *where* on object the hit occurs
-
    1 _ points
    1 _   point() being funneled through beginShape is terribly slow
    1 _     go the other way 'round
@@ -552,14 +527,15 @@ CORE / PGraphics
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
 
 
-CORE / Sound
+CORE / PSound
 
+   1 _ make java 1.1 version of PSound work properly
    1 _ merge PSound and PSound2 via reflection?
    1 _   once debugged, merge these back together and use reflection
    1 _     (unless it's a messy disaster)
 
 
-CORE / Details
+CORE / PApplet
 
    1 _ framerate(30) is still flickery and jumpy..
    1 _ fix param() to use a sketch.properties file when run as an app
@@ -591,13 +567,6 @@ CORE / Details
    1 _   see if reflection will allow expand for all class types
 
 
-CORE / main()
-
-   b _ ed's thread re: fullscreen strategies
-   b _   could add a new BApplet that uses BufferStrategy?
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
-
-
 CORE / Documentation
 
    1 _ write documentation on general use of processing.core
@@ -616,19 +585,3 @@ CORE / Mac OS X
    b _ cursor() broken in applets on macosx?
    b _   or is it a java 1.4 versus java 1.3 problem?
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
-
-
-CORE / PFont
-
-
-CORE / New Graphics
-What the hell do we do with this code?
-
-   1 _ stroke not set on flat_rect
-   1 _ when drawing fonts w/ sami's code, left edge has problem
-   1 _   8-bit (alpha) textures not blending 
-   1 _ near-plane clipping currently disabled for triangles, enabled for lines
-   1 _   (but culling offscreen triangles works.. but may have been
-   1 _   commented out by carlos)
-   1 _ hint(NEW_GRAPHICS) needs to be called before allocate()
-   1 _   otherwise stencil buffer and 'triangle' object are null on first run
