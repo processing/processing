@@ -538,6 +538,7 @@ public class PdeBase implements ActionListener {
 	}
       }
     } catch (Exception e) {
+      System.out.println("exception building serial menu");
       e.printStackTrace();
     }
   }
