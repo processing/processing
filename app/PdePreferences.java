@@ -625,7 +625,7 @@ public class PdePreferences extends JComponent {
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1);
     boolean italic = (s.indexOf("italic") != -1);
-    //System.out.println(str + " " + bold + " " + italic);
+    //System.out.println(what + " = " + str + " " + bold + " " + italic);
 
     return new SyntaxStyle(color, italic, bold);
   }
