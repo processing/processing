@@ -211,6 +211,10 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     return new Dimension(300, PdeEditor.GRID_SIZE);
   }
 
+  public Dimension getMaximumSize() {
+    return new Dimension(3000, PdeEditor.GRID_SIZE);
+  }
+
 
   /*
   public void actionPerformed(ActionEvent e) {
