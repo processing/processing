@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -41,10 +41,12 @@ public class PdeKeywords extends CTokenMarker {
 
 
   /**
-   * Handles loading of keywords file. uses getKeywords()  
-   * method because that's part of the TokenMarker classes.
-   *
-   * It is recommended that a # sign be used for comments 
+   * Handles loading of keywords file.
+   * <P>
+   * Uses getKeywords()  method because that's part of the
+   * TokenMarker classes.
+   * <P>
+   * It is recommended that a # sign be used for comments
    * inside keywords.txt.
    */
   static public KeywordMap getKeywords() {
@@ -76,7 +78,7 @@ public class PdeKeywords extends CTokenMarker {
             // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
             int num = coloring.charAt(coloring.length() - 1) - '1';
             byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
-            //System.out.println("got " + (isKey ? "keyword" : "literal") + 
+            //System.out.println("got " + (isKey ? "keyword" : "literal") +
             //                 (num+1) + " for " + keyword);
             keywordColoring.add(keyword, id);
           }
@@ -88,8 +90,8 @@ public class PdeKeywords extends CTokenMarker {
         reader.close();
 
       } catch (Exception e) {
-        PdeBase.showError("Problem loading keywords", 
-                          "Could not find keywords.txt,\n" + 
+        PdeBase.showError("Problem loading keywords",
+                          "Could not find keywords.txt,\n" +
                           "please re-install Processing.", e);
         System.exit(1);
       }

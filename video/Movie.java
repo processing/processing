@@ -41,7 +41,7 @@ import quicktime.util.RawEncodedImage;
 
 
 public class Movie extends PImage
-implements StdQTConstants, StdQTConstants4, PConstants, Runnable {
+  implements /*StdQTConstants, StdQTConstants4,*/ PConstants, Runnable {
   PApplet parent;
   Method movieEventMethod;
   String filename;
