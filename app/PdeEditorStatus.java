@@ -180,6 +180,125 @@ public class PdeEditorStatus extends Panel
     //promptThread.start();
   }
 
+
+
+  /**
+   * Makes the Dialog visible. If the dialog and/or its owner
+   * are not yet displayable, both are made displayable.  The 
+   * dialog will be validated prior to being made visible.  
+   * If the dialog is already visible, this will bring the dialog 
+   * to the front.
+   * <p>
+   * If the dialog is modal and is not already visible, this call will
+   * not return until the dialog is hidden by calling <code>hide</code> or
+   * <code>dispose</code>. It is permissible to show modal dialogs from
+   * the event dispatching thread because the toolkit will ensure that
+   * another event pump runs while the one which invoked this method
+   * is blocked. 
+   * @see Component#hide
+   * @see Component#isDisplayable
+   * @see Component#validate
+   * @see java.awt.Dialog#isModal
+   */
+
+  /*
+  // Stores the app context on which event dispatch thread the dialog
+  // is being shown. Initialized in show(), used in hideAndDisposeHandler()
+  private AppContext showAppContext;
+
+
+  public void show() {
+    //if (!isModal()) {
+    //conditionalShow();
+    //} else {
+
+    // Set this variable before calling conditionalShow(). That
+    // way, if the Dialog is hidden right after being shown, we
+    // won't mistakenly block this thread.
+    keepBlocking = true;
+
+    // Store the app context on which this dialog is being shown.
+    // Event dispatch thread of this app context will be sleeping until
+    // we wake it by any event from hideAndDisposeHandler().
+    showAppContext = AppContext.getAppContext();
+
+    if (conditionalShow()) {
+      // We have two mechanisms for blocking: 1. If we're on the
+      // EventDispatchThread, start a new event pump. 2. If we're
+      // on any other thread, call wait() on the treelock.
+
+      // keep the KeyEvents from being dispatched
+      // until the focus has been transfered
+      long time = Toolkit.getEventQueue().getMostRecentEventTime();
+      Component predictedFocusOwner = getMostRecentFocusOwner();
+      KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        enqueueKeyEvents(time, predictedFocusOwner); 
+
+      if (Toolkit.getEventQueue().isDispatchThread()) {
+        EventDispatchThread dispatchThread =
+          (EventDispatchThread)Thread.currentThread();
+        dispatchThread.pumpEventsForHierarchy(new Conditional() {
+            public boolean evaluate() {
+              return keepBlocking && windowClosingException == null;
+            }
+          }, this);
+      } else {
+        synchronized (getTreeLock()) {
+          while (keepBlocking && windowClosingException == null) {
+            try {
+              getTreeLock().wait();
+            } catch (InterruptedException e) {
+              break;
+            }
+          }
+        }
+      }
+      KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        dequeueKeyEvents(time, predictedFocusOwner);
+      if (windowClosingException != null) {
+        windowClosingException.fillInStackTrace();
+        throw windowClosingException;
+      }
+    }
+  }
+  //}
+
+  void interruptBlocking() {
+    //if (modal) {
+    //disposeImpl();
+    } else if (windowClosingException != null) {
+            windowClosingException.fillInStackTrace();
+            windowClosingException.printStackTrace();
+            windowClosingException = null;
+        }
+    }
+
+  final static class WakingRunnable implements Runnable {
+    public void run() {
+    }
+  }
+
+  private void hideAndDisposeHandler() {
+    if (keepBlocking) {
+      synchronized (getTreeLock()) {
+        keepBlocking = false;
+        
+        if (showAppContext != null) {
+          // Wake up event dispatch thread on which the dialog was 
+          // initially shown
+          SunToolkit.postEvent(showAppContext, 
+                               new PeerEvent(this, 
+                                             new WakingRunnable(), 
+                                             PeerEvent.PRIORITY_EVENT));
+        }
+        EventQueue.invokeLater(new WakingRunnable());
+        getTreeLock().notifyAll();
+      }
+    }
+  }   
+  */
+
+
   // prompt has been handled, re-hide the buttons
   public void unprompt() {
     yesButton.setVisible(false);
