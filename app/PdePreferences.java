@@ -91,8 +91,9 @@ public class PdePreferences extends JComponent {
   JFrame frame;
   int wide, high;
 
-  JCheckBox newSketchPromptBox;
   JTextField sketchbookLocationField;
+  JCheckBox newSketchPromptBox;
+  JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
 
 
@@ -249,36 +250,14 @@ public class PdePreferences extends JComponent {
     top += vmax + GUI_BETWEEN;
 
 
-    // Default serial port:  [ COM1 + ]
+    // [ ] Use external editor
 
-    /*
-    label = new JLabel("Default serial port:");
-    pain.add(label);
-    d = label.getPreferredSize();
-
-    Vector list = buildPortList();
-    combo = new JComboBox(list);
-    pain.add(combo);
-    d2 = combo.getPreferredSize();
-
-    if (list.size() == 0) {
-      label.setEnabled(false);
-      combo.setEnabled(false);
-
-    } else {
-      String defaultName = PdePreferences.get("serial.port", "unspecified");
-      combo.setSelectedItem(defaultName);
-    }
-
-    vmax = Math.max(d.height, d2.height);
-    label.setBounds(left, top + (vmax-d.height)/2, 
-                    d.width, d.height);
-    h = left + d.width + BETWEEN;
-    combo.setBounds(h, top + (vmax-d2.height)/2, 
-                    d2.width, d2.height);    
-    right = Math.max(right, h + d2.width + BIG);
-    top += vmax + BETWEEN;
-    */
+    exportLibraryBox = new JCheckBox("Enable export to \"Library\"");
+    pain.add(exportLibraryBox);
+    d = exportLibraryBox.getPreferredSize();
+    exportLibraryBox.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + BETWEEN;
 
 
     // [ ] Use external editor
@@ -387,6 +366,8 @@ public class PdePreferences extends JComponent {
 
     put("sketchbook.path", sketchbookLocation.getText());
 
+    putBoolean("export.library", exportLibraryBox.getSelected());
+
     putBoolean("editor.external", externalEditorBox.getSelected());
   }
 
@@ -397,6 +378,8 @@ public class PdePreferences extends JComponent {
     sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
 
     sketchbookLocation.setText(get("sketchbook.path"));
+
+    exportLibraryBox.setSelected(getBoolean("export.library"));
 
     externalEditorBox.setSelected(getBoolean("editor.external"));
 
@@ -423,39 +406,6 @@ public class PdePreferences extends JComponent {
     }
     reader.close();
   }
-
-
-  // open the last-used sketch, etc
-
-  //public void init() {
-
-    //String what = path + File.separator + name + ".pde";
-
-    ///String serialPort = skprops.getProperty("serial.port");
-    //if (serialPort != null) {
-    //  properties.put("serial.port", serialPort);
-    //}
-
-    //boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
-    //editor.setExternalEditor(ee);
-
-    ///} catch (Exception e) { 
-      // this exception doesn't matter, it's just the normal course of things
-      // the app reaches here when no sketch.properties file exists
-      //e.printStackTrace();
-
-      // indicator that this is the first time this feller has used p5
-    //firstTime = true;
-
-      // even if folder for 'default' user doesn't exist, or
-      // sketchbook itself is missing, mkdirs() will make it happy
-      //userName = "default";
-
-      // doesn't exist, not available, make my own
-      //skNew();
-      //}
-  //}
-
 
 
   // .................................................................
@@ -649,3 +599,66 @@ public class PdePreferences extends JComponent {
     return new SyntaxStyle(color, italic, bold);
   }
 }
+
+
+    // Default serial port:  [ COM1 + ]
+
+    /*
+    label = new JLabel("Default serial port:");
+    pain.add(label);
+    d = label.getPreferredSize();
+
+    Vector list = buildPortList();
+    combo = new JComboBox(list);
+    pain.add(combo);
+    d2 = combo.getPreferredSize();
+
+    if (list.size() == 0) {
+      label.setEnabled(false);
+      combo.setEnabled(false);
+
+    } else {
+      String defaultName = PdePreferences.get("serial.port", "unspecified");
+      combo.setSelectedItem(defaultName);
+    }
+
+    vmax = Math.max(d.height, d2.height);
+    label.setBounds(left, top + (vmax-d.height)/2, 
+                    d.width, d.height);
+    h = left + d.width + BETWEEN;
+    combo.setBounds(h, top + (vmax-d2.height)/2, 
+                    d2.width, d2.height);    
+    right = Math.max(right, h + d2.width + BIG);
+    top += vmax + BETWEEN;
+    */
+
+  // open the last-used sketch, etc
+
+  //public void init() {
+
+    //String what = path + File.separator + name + ".pde";
+
+    ///String serialPort = skprops.getProperty("serial.port");
+    //if (serialPort != null) {
+    //  properties.put("serial.port", serialPort);
+    //}
+
+    //boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
+    //editor.setExternalEditor(ee);
+
+    ///} catch (Exception e) { 
+      // this exception doesn't matter, it's just the normal course of things
+      // the app reaches here when no sketch.properties file exists
+      //e.printStackTrace();
+
+      // indicator that this is the first time this feller has used p5
+    //firstTime = true;
+
+      // even if folder for 'default' user doesn't exist, or
+      // sketchbook itself is missing, mkdirs() will make it happy
+      //userName = "default";
+
+      // doesn't exist, not available, make my own
+      //skNew();
+      //}
+  //}
