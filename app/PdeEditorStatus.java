@@ -275,7 +275,7 @@ public class PdeEditorStatus extends Panel
 		editField.setText(t.substring(0, start) + "_" +
 				  t.substring(end));
 		editField.setCaretPosition(start+1);
-		System.out.println("consuming event");
+		//System.out.println("consuming event");
 		event.consume();
 
 	      } else if (c == '_') {
