@@ -37,6 +37,10 @@ _ also using bagel as separate component, being able to grab its BImage
 
 
 pde / bugs
+_ compiler barfs on: float[] moo = new int[10]; 
+_   although no error comes through to p5 (benelek)
+_ when missing a closed brace, often has compiler error
+_   Jordan J message in email and bugs list
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
 x images don't load during setup [reas] //This is not a problem -- Casey
@@ -71,6 +75,7 @@ _   not draw the sketch name bar doesn't appear"
 
 
 pde / features
+_ mention connection to java and docs on getting started in java
 _ highlight a word and jump to it inside the reference
 _ splitints, et al.. have another version to specify what to use
 _   when the value gets a NumberFormatException.. ie.
@@ -86,6 +91,7 @@ _ may need to start putting properties somewhere besides lib
 _   home directory  (or preferences folder under macos9)
 _ will need doubles for genomics work. ugh.
 _   this is just enable/disable float stuff
+_ zeroPad(num, left, right); or zeroPad(num, left). 
 
 
 windows
