@@ -109,21 +109,24 @@ cd ..
 cd app
 
 
+
+### -- BUILD PARSER ---------------------------------------------
+
+
+# disabled these guys temporarily
+#cd preprocessor
+# first build the default java goop
+#java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
+# now build the pde stuff that extends the java classes
+#java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
+#cd ..
+
+
+
 ### -- BUILD PDE ------------------------------------------------
 
 #echo Building PDE for JDK 1.4
 echo Building PDE for JDK 1.3
-
-cd preprocessor
-
-# first build the default java goop
-java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
-
-# now build the pde stuff that extends the java classes
-java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool \
-    -glib java.g pde.g
-
-cd ..
 
 # new rxtx
 CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$MACOSX_CLASSPATH
