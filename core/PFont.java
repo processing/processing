@@ -261,6 +261,10 @@ public class PFont implements PConstants {
    * @return index into arrays or -1 if not found
    */
   public int index(char c) {
+    // degenerate case, but the find function will have trouble
+    // if there are somehow zero chars in the lookup
+    if (value.length == 0) return -1;
+
     // these chars required in all fonts
     //if ((c >= 33) && (c <= 126)) {
     //return c - 33;
