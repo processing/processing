@@ -151,7 +151,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
     setBounds((screen.width - wide) / 2,
 	      (screen.height - high) / 2, wide, high);
-    show();
+    //show();
   }
 
 
