@@ -69,10 +69,7 @@ unix2dos processing/revisions.txt 2> /dev/null
 unix2dos processing/lib/preferences.txt 2> /dev/null
 unix2dos processing/lib/keywords.txt 2> /dev/null
 
-
-# something like the following might be better:
-# find / -name "*.mp3" -exec rm -f {}\;
-# and same for cvsignore, ~ files, .DS_Store
+# remove boogers
 find processing -name "*~" -exec rm -f {} ';'
 find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
