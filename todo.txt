@@ -1,18 +1,7 @@
 0036
-X fixed a NullPointerException on startup 
-X   when sketch.properties didn't exist, shouldn't print error
-X fix status standard message color text color
-X mousePressed() not working, also mouseReleased
-X   also has to be public void mousePressed() for kjc
-X background(), fill(), stroke() using color datatype
-X   check 0xff high bits to see if it's an int gray value or a color
-X fix curve()/bezier()
-X make curve() work as 6 point with doubled endpoints
-X translate is disabling color
-X   (probably because of lighting)
-X save as instead of rename/duplicate
-X   this makes more sense, hopefully it won't break everything
-X put newline after imports header in exported .java files
+X editor.buttons.bgcolor default value was wrong
+
+_ dbn2p5 converter.. ooh!
 
 bagel
 a _ fold simpleserial into BApplet
