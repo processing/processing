@@ -2,7 +2,22 @@ iprocessing todo list // last updated 28 september 2001
 (most up-to-date version of this file is in processing cvs)
 
 
+KjcEngine died on line 367 with this:
+(trying to stop the applet)
+void setup() {
+  size(300, 300);
+  colorScale(100);
+}
+
+void loop() {
+  bezierCurve(10, 10,  100, 50,  50, 100,  290, 290);
+}
+
 for 0010
+X strangeness with stroke when a rect goes off outside the window
+_ fix color cube applet 
+_   make it run in current version of processing
+_   fix background from showing up black
 _ make note in documentation about getting access to pixel array
 _   check to see if get/set functions in applet actually work
 _   fix documentation appropriately
@@ -91,6 +106,61 @@ _ show creas how to get access to cvs
 _ how to use ssh identity file to maintain auth for brancusi
 
 
+BAGEL
+X got rid of colorscale and using colormode for all instead
+_   make note in documentation
+_ catmullrom is broken 
+_ have to get rid of static i/o stuff before porting to c
+
+_ current acu fonts are broken
+
+_ 'ellipse' instead of 'oval'?
+_ area copying function: copy(x1, y1, w, h,  xto, yto);
+
+_ should math functions be moved in?
+_   this could help porting, and sanity in processingapplet
+_   io functions might be treated similarly
+
+_ loadImage/loadFont or getImage/getFont?
+_ text(char c), text(string s)
+_ image() and 2D/2D affine versions of it
+_ min() seems funny/unavailable
+_ some method of moving between 
+_   center oriented: x, y, radius (3D style)
+_   and 2D style: x1, y1, x2, y2
+_   or x, y, diameter
+_ make note in docs about removal of LINE from LINES
+_ build in second matrix type: 2d affine
+_ add convex polygon type
+_   make note in documentation about convex polygons
+_ sketch in antialiasing functions
+_ how does color depth work on ipaq? 4-4-4? 5-6-5?
+_ font usage/substition solution
+_   java freetype? jni freetype to build texmap fonts?
+_   look at flash file format? (does it have kerning?)
+
+_ screen grabbing code
+_ simpler bitmap fonts w/o smoothing, just 2D
+_ alpha blending (easier)
+_ antialiasing
+_ bresenham (flat) oval function
+_ setting origins
+_   should shapes draw from center or from upper left?
+_   should ovals use radius or diameter?
+_   should shapes use x1, y1 - x2, y2 or x, y, w, h?
+
+BAGEL - SHOULD DO
+_ write shearing function
+_ optimize rotation functions
+_ test winding polygons in different directions
+_ test lighting to see how it compares with gl
+
+BAGEL - FEATURES
+_ non-homogenous colors for beginShape()
+_   currently disabled b/c homogenousColors not set false for vertices
+_   and code not written for curve vertices
+
+
 BUG WATCH 
 _ getMillis() returning 0 in some instances/on some machines
 
@@ -98,8 +168,6 @@ _ getMillis() returning 0 in some instances/on some machines
 PROCESSING - FEATURES
 _ run code with a main() that's not a processing applet
 _ want emacs-style editor that's faster loading than emacs
-_ anti-aliasing
-_ alpha
 _ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 _ a better editor: 
 _   syntax coloring
@@ -136,6 +204,30 @@ _   or some other model of naming based on inserted text with "" or // or #
 _   could fit nicely with printf-style statements and comments
 _   comments would contain descriptions //!blah for printing and formatting
 _ sketchbook - doodling/scribbling area.. since wacom tablet easily accessible
+
+
+---------------------------------------------
+
+
+// ability to write data other than image into the buffer
+// pixels won't go away, embrace pixels in sophisticated way
+// lists of names of objects, or the 'line number' buffer
+// maybe user can introduce new kinds of buffers at will (!!!)
+
+// better 3D for valence/illustrator output:
+//   sorting of polygons/lines on simple painters algorithm
+//   better lighting model to show darkness at various depths
+//     maybe just ultra-high res bitmaps from gl
+
+// drawLine vs moveto, lineto
+// less of a deal, until fillpath, since that needs to store the
+// last several points. but maybe if it's inside a begin/end
+// then it's no big deal, and it's easy to implement
+
+// when casting to an int, should 0.5f be added first
+
+// functions that take 2d arguments are drawn on the
+// z = 0 plane, and not affected by current 3D transform matrix
 
 
 ---------------------------------------------

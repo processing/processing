@@ -2,12 +2,25 @@ open(F, "bagel/Bagel.java") || die $!;
 @contents = <F>;
 close(F);
 
-open(OUT, ">>ProcessingApplet.java") || die $!;
+open(APPLET, "ProcessingApplet.java") || die $!;
+@applet = <APPLET>;
+close(APPLET);
+
+$insert = 'public functions from bagel';
+
+open(OUT, ">ProcessingApplet.java") || die $!;
+foreach $line (@applet) {
+    print OUT $line;
+    last if ($line =~ /$insert/);
+}
+
+
+#open(OUT, ">>ProcessingApplet.java") || die $!;
 select(OUT);
 
 $comments = 0;
 
-print "\n\n";
+#print "\n\n";
 
 #foreach $line (@contents) {
 while ($line = shift(@contents)) {
@@ -24,7 +37,7 @@ while ($line = shift(@contents)) {
     if ($line =~ /^\s*(public \w+ [a-zA-z_]+\(.*$)/) {
 	#print "$1\n";
 	#$decl .= $line;
-	print $line;
+	print "\n\n$line";
 	$decl .= $line;
 	while (!($line =~ /\)/)) {
 	    $line = shift (@contents);
@@ -58,7 +71,7 @@ while ($line = shift(@contents)) {
 
 	#print "$decl\r\n";
 
-	print "  }\n\n";
+	print "  }\n"; #\n";
     }
 }
 print "}\n";
