@@ -3,10 +3,14 @@ X editor.buttons.bgcolor default value was wrong
 X sketch.properties exception when closing on linux and mac
 X   urlstr was garbage because of windows-specific code
 X test build macos9 version with JDK13 flag turned off
+X make buttons taller by 4 pixels (looking bad on macos9/macosx)
+X   change to uppercase (looks dumb on mac, and casey doesn't like)
+X set background color of buttons in EditorStatus
+X check splash screen and icons into cvs
 
-_ check splash screen and icons into cvs
 _ get icon in macos9/macosx/windows formats
-
+_ macosx.. editor.status.font needs to be size 12
+_   introduce pde.properties_OSNAME
 
 _ background() not working
 _ imageMode() is gone
@@ -40,16 +44,6 @@ _ box is not opaque
 
 _ size() not being called in setup is gonna cause lots of headaches
 
-
-dist directories contain only the files specific to that platform
-(those are the ones checked into cvs)
-  when dist.sh is run:
-  1) a copy of the dist dir is created, renamed 'processing-nnnn'
-  2) the remaining files are added (buttons.gif, pde.properties)
-  3) files are lf converted (i.e. notes.txt)
-
-_ make buttons taller by 4 pixels (looking bad on macos9/macosx)
-_   change to uppercase (looks dumb on mac, and casey doesn't like)
 _ save window position (only during session) of sketch run window
 _ present mode should hide editor frame
 _ present mode doesn't work for draw()
@@ -57,14 +51,10 @@ _ present mode doesn't work for draw()
 _ get macutils to build under cygwin. argh.
 _   get to build under macosx?
 
-_ make.bat in root of 'app' should jump to build/windows/make.bat
-_ dist.bat should be inside build dir
-_   and will build for each platform in turn
 _ macos may be superior platform for building
 _   retain unix file permissions for linux
 _   resource fork goodness for the mac
 _   hhmmm
-_ comm.jar now needs to be in CLASSPATH for build environment
 _ for jgl version of bagel, jgl.jar needs to be in classpath
 _ perl should be ok to be cygwin perl.. try deinstalling activestate
 
@@ -653,3 +643,12 @@ little guys: rm, cp, mv, tcsh
 build jikes for cygwin
 ./configure, make, make install
 add $cygwin/usr/local/bin to path
+
+dist directories contain only the files specific to that platform
+(those are the ones checked into cvs)
+  when dist.sh is run:
+  1) a copy of the dist dir is created, renamed 'processing-nnnn'
+  2) the remaining files are added (buttons.gif, pde.properties)
+  3) files are lf converted (i.e. notes.txt)
+_ comm.jar now needs to be in CLASSPATH for build environment
+
