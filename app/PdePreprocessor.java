@@ -248,14 +248,21 @@ public class PdePreprocessor {
     }
   }
 
+  static String advClassName = "";
+
   /**
    * Find the first CLASS_DEF node in the tree, and return the name of the
    * class in question.
+   *
+   * XXXdmose right now, we're using a little hack to the grammar to get
+   * this info.  In fact, we should be descending the AST passed in.
    */
   String getFirstClassName(AST ast) {
 
-    // XXXdmose actually do the find
-    return "MyDemo";
+    String t = advClassName;
+    advClassName = "";
+
+    return t;
   }
 
 }
