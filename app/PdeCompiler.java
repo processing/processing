@@ -33,12 +33,14 @@ public class PdeCompiler implements PdeMessageConsumer {
   static final String SUPER_BADNESS = 
     "Compiler error, please submit this code to " + BUGS_URL;
 
+  PdeSketch sketch;
+  String buildPath;
+
   //String buildPath;
   //String className;
   //File includeFolder;
   PdeException exception;
   //PdeEditor editor;
-
 
   /*
   public PdeCompiler(String buildPath, String className, 
@@ -53,19 +55,22 @@ public class PdeCompiler implements PdeMessageConsumer {
   public boolean compile(PrintStream leechErr) {
   */
 
-  public PdeCompiler() { }
+  public PdeCompiler() { }  // consider this a warning, you werkin soon.
 
 
-  public boolean compile(PdeSketch sketch) {
-    String userdir = System.getProperty("user.dir") + File.separator;
+  public boolean compile(PdeSketch sketch, String buildPath) {
+    this.sketch = sketch;
+    this.buildPath = buildPath;
+    
+    // the pms object isn't used for anything but storage
+    PdeMessageStream pms = new PdeMessageStream(this);
 
-    //System.out.println(userdir + "jikes");
-    //System.out.println(System.getProperty("sun.boot.class.path"));
-
-    String command[] = new String[] {
-      // linux doesn't seem to like this
-      // though windows probably doesn't care
-      ((PdeBase.platform == PdeBase.MACOSX) ? userdir + "jikes" : "jikes"),
+    String baseCommand[] = new String[] {
+      // user.dir is folder containing P5 (and therefore jikes)
+      // macosx needs the extra path info. linux doesn't like it, though
+      // windows doesn't seem to care. write once, headache anywhere.
+      ((PdeBase.platform != PdeBase.MACOSX) ? "jikes" :
+       System.getProperty("user.dir") + File.separator + "jikes"),
 
       // necessary to make output classes compatible with 1.1
       // i.e. so that exported applets can work with ms jvm on the web
@@ -81,27 +86,29 @@ public class PdeCompiler implements PdeMessageConsumer {
       // also for windows because qtjava will most likely be here
       // and for linux, it just doesn't hurt
       "-classpath",
-      calcClassPath(includeFolder),
+      sketch.classPath, //calcClassPath(includeFolder),
 
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
-      "-d", buildPath, // output the classes in the buildPath
-      buildPath + File.separator + className + ".java" // file to compile
+      "-d", buildPath // output the classes in the buildPath
+      //buildPath + File.separator + className + ".java" // file to compile
     };
 
-    //for (int i = 0; i < command.length; i++) {
-    //System.out.println("C" + i + ": " + command[i]);
-    //System.out.println();
-    //}
+    String command[] = new String[baseCommand.length + sketch.codeCount];
+    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
+    // append each of the files to the command string
+    for (int i = 0; i < sketch.codeCount; i++) {
+      command[baseCommand.length + i] = 
+        buildPath + File.separator + sketch.code[i].preprocName;
+    }
 
     firstErrorFound = false;  // haven't found any errors yet
     secondErrorFound = false;
 
     int result = 0; // pre-initialized to quiet a bogus warning from jikes
     try { 
-
-      // execute the compiler, and create threads to deal with the input
-      // and error streams
+      // execute the compiler, and create threads to deal 
+      // with the input and error streams
       //
       Process process = Runtime.getRuntime().exec(command);
       new PdeMessageSiphon(process.getInputStream(), this);
@@ -115,8 +122,7 @@ public class PdeCompiler implements PdeMessageConsumer {
         try {
           result = process.waitFor();
           compiling = false;
-        } catch (InterruptedException intExc) {
-        }
+        } catch (InterruptedException ignored) { }
       }
 
     } catch (Exception e) {
@@ -128,21 +134,31 @@ public class PdeCompiler implements PdeMessageConsumer {
                             "jikes is missing from your PATH,\n" +
                             "see readme.txt for help.", null);
         return false;
+
+      } else {
+        e.printStackTrace();
+        result = -1;
       }
-      e.printStackTrace();
-      result = -1;
     }
+
+    // an error was queued up by message(), barf this back to build()
+    // which will barf it back to PdeEditor. if you're having trouble
+    // discerning the imagery, consider how cows regurgitate their food
+    // to digest it, and the fact that they have five stomaches.
+    //
+    if (exception != null) throw exception; 
 
     // if the result isn't a known, expected value it means that something
     // is fairly wrong, one possibility is that jikes has crashed.
     //
     if (result != 0 && result != 1 ) {
-      exception = new PdeException(SUPER_BADNESS);
-      editor.error(exception);
-      PdeBase.openURL(BUGS_URL); 
+      //exception = new PdeException(SUPER_BADNESS);
+      //editor.error(exception);  // this will instead be thrown
+      PdeBase.openURL(BUGS_URL);
+      throw new PdeException(SUPER_BADNESS);
     }
 
-    return (result == 0) ? true : false;
+    return (result == 0); // ? true : false;
   }
 
 
@@ -166,12 +182,26 @@ public class PdeCompiler implements PdeMessageConsumer {
     // so replace any platform-specific separator characters before
     // attemping to compare
     //
-    String partialTempPath = buildPath.replace(File.separatorChar, '/') 
-      + "/" + className + ".java";
+    String buildPathSubst = buildPath.replace(File.separatorChar, '/') + "/";
+
+    String partialTempPath = null;
+    int partialStartIndex = -1; //s.indexOf(partialTempPath);
+    int fileIndex = -1;  // use this to build a better exception
+
+    // iterate through the project files to see who's causing the trouble
+    for (int i = 0; i < sketch.codeCount; i++) {
+      partialTempPath = buildPathSubst + sketch.code[i].preprocName;
+      partialStartIndex = s.indexOf(partialTempPath);
+      if (partialStartIndex != -1) {
+        fileIndex = i;
+        break;
+      }
+    }
+    //+ className + ".java";
 
     // if the partial temp path appears in the error message...
     //
-    int partialStartIndex = s.indexOf(partialTempPath);
+    //int partialStartIndex = s.indexOf(partialTempPath);
     if (partialStartIndex != -1) {
 
       // skip past the path and parse the int after the first colon
@@ -193,7 +223,7 @@ public class PdeCompiler implements PdeMessageConsumer {
           return;
         }
 
-        // if we're here at all, this is at least the first error
+        // if executing at this point, this is *at least* the first error
         firstErrorFound = true;
 
         //err += "error:".length();
@@ -201,21 +231,23 @@ public class PdeCompiler implements PdeMessageConsumer {
         description = description.trim();
         //System.out.println("description = " + description);
         exception = new PdeException(description, lineNumber-1);
-        editor.error(exception);
+
+        // NOTE!! major change here, this exception will be queued
+        // here to be thrown by the compile() function
+        //editor.error(exception);
 
       } else {
         System.err.println("i suck: " + s);
       }
 
     } else {
-
       // this isn't the start of an error line, so don't attempt to parse
       // a line number out of it.
 
-      // if we're not yet at the second error, these lines are probably 
-      // associated with the first error message, which is already in the 
-      // status bar, and are likely to be of interest to the user, so
-      // spit them to the console.
+      // if the second error hasn't been discovered yet, these lines 
+      // are probably associated with the first error message, 
+      // which is already in the status bar, and are likely to be 
+      // of interest to the user, so spit them to the console.
       //
       if (!secondErrorFound) {
         System.err.println(s);
@@ -237,16 +269,6 @@ public class PdeCompiler implements PdeMessageConsumer {
       bootClassPath =  System.getProperty("sun.boot.class.path") + additional;
     }
     return bootClassPath;
-  }
-
-
-  /**
-   * Return the java.class.path, along with additional items
-   * that were magically gleaned from the 'include' folder, 
-   * which may contain additional library classes.
-   */
-  static public String calcClassPath(File include) {
-    return System.getProperty("java.class.path") + contentsToClassPath(include);
   }
 
 
@@ -295,6 +317,12 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
+  /**
+   * Generate a list of packages for an import list 
+   * based on the contents of a classpath.
+   * @param path the input classpath
+   * @return array of possible package names
+   */
   static public String[] magicImports(String path) {
     String imports[] = new String[100];
     int importCount = 0;
@@ -348,6 +376,9 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
+  /**
+   * Support function for magicImports()
+   */
   static public int magicImportsRecursive(File dir, String sofar, 
                                           String imports[], 
                                           int importCount) {
