@@ -201,6 +201,22 @@ public class PPolygon implements PConstants {
       r[i] = 0; dr[i] = 0; l[i] = 0; dl[i] = 0; 
     }
 
+    // hack to not make polygons fly into the screen
+    if (parent.hints[NO_FLYING_POO]) {
+      float nwidth2 = -width * 2;
+      float nheight2 = -height * 2;
+      float width2 = width * 2;
+      float height2 = height * 2;
+      for (int i = 0; i < vertexCount; i++) {
+        if ((vertices[i][X] < nwidth2) ||
+            (vertices[i][X] > width2) ||
+            (vertices[i][Y] < nheight2) ||
+            (vertices[i][Y] > height2)) {
+          return;  // this is a bad poly
+        }
+      }
+    }
+
     if (smoothing) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][X] *= SUBXRES;
