@@ -11,6 +11,8 @@ X loadPixels throwing NPEs
 X fixes to SCREEN_SPACE text not being sized properly
 X loadPixels()/updatePixels() on screen space text (ouch)
 
+_ text in a box is broken (at least for PGraphics2)
+
 _ really need to take a look at the curve/vertex code
 _   make sure we don't want curveVertices(1,2,3,u,v)
 _   also make test cases so that java2d and java11 behave the same
