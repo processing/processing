@@ -1436,7 +1436,7 @@ public class PGraphics extends PImage implements PConstants {
   public void textSize(float size) {
     if (textFont != null) {
       textSize = size;
-      resetLeading();
+      textLeadingReset();
 
     } else {
       throw new RuntimeException("use textFont() before textSize()");
@@ -1444,8 +1444,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void resetLeading() {
-    textLeading = (textFont.ascent() + textFont.descent()) * 1.275f;
+  protected void textLeadingReset() {
+    textLeading = textSize *
+      ((textFont.ascent() + textFont.descent()) * 1.275f);
   }
 
 
