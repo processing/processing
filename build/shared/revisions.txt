@@ -24,7 +24,7 @@ just skip 78 since we didn't get to it).
 
 - the ui is now blonde... casey decided that it was time to go horizontal 
   with the toolbar buttons. drunk with power, he wound up re-coloring
-  everything while he was at it. as a result your prefs will get nuked
+  everything while he was at it. as a result your prefs need to be nuked
   the first time you run with this release.
 
 - added a status bar at the bottom of the screen that displays the 
