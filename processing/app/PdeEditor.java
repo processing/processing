@@ -1906,9 +1906,11 @@ public class PdeEditor extends JPanel {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-        if (!dead.delete()) {
-          // temporarily disabled
-          //System.err.println("couldn't delete " + dead);
+        if (!PdeBase.getBoolean("editor.save_build_files", false)) {
+          if (!dead.delete()) {
+            // temporarily disabled
+            //System.err.println("couldn't delete " + dead);
+          }
         }
       } else {
         removeDir(dead);
