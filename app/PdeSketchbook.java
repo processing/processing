@@ -109,7 +109,7 @@ public class PdeSketchbook {
       //String folderName = PdePreferences.get("sketchbook.name.default");
       //File sketchbookFolder = new File(home, folderName);
 
-      File sketchbookFolder = PdeBase.getProcessingHome();
+      File sketchbookFolder = PdeBase.getDefaultSketchbookFolder();
       PdePreferences.set("sketchbook.path",
                          sketchbookFolder.getAbsolutePath());
 
