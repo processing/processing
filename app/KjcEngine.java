@@ -185,8 +185,9 @@ public class KjcEngine extends PdeEngine {
 	// so that regexp works correctly in this strange edge case
 	if (program.indexOf("color") == 0) program = " " + program;
 	program = substipoot(program, 
-			     "([^A-Za-z0-9_])color([^A-Za-z0-9_\\(])", "$1int$2");
-	//program = substipoot(program, "([^A-Za-z0-9_])color\\((.*)\\)", "$1(int)($2)");
+			     "([;\\s])color([\\s])", "$1int$2");
+			     //"([^A-Za-z0-9_.])color([^A-Za-z0-9_\\(.])", "$1int$2");
+	program = substipoot(program, "([^A-Za-z0-9_])color\\((.*)\\)", "$1(int)($2)");
       }
 
       if (PdeBase.getBoolean("compiler.inline_web_colors", true)) {
@@ -394,12 +395,18 @@ public class KjcEngine extends PdeEngine {
 
   //static char encodeTable[] = new char[127];
   //static char decodeTable[] = new char[127];
-  static char rotateTable[] = new char[127];
+  static char rotateTable[] = new char[128];
   static {
+    for (int i = 0; i < 80; i++) {
+      rotateTable[i+48] = (char) (48 + ((i + 40) % 80));
+    }
+
+    /*
     int rot = (123 - 65) / 2;
     for (int i = 65; i < 123; i++) {
       rotateTable[i] = (char) (((i - 65 + rot) % (rot*2)) + 65); // : (char)i;
     }
+    */
 
     //for (int i = 33; i < 127; i++) {
       //rotateTable[i] = //Character.isAlpha((char)i) ?
@@ -419,9 +426,11 @@ public class KjcEngine extends PdeEngine {
     // need to preprocess class to remove comments
     // so tthat they don't fool this crappy parsing below
     char p[] = program.toCharArray();
+    char lastp = 0;
     boolean insideComment = false;
     boolean eolComment = false;
     boolean slash = false;
+    boolean insideQuote = false;
     for (int i = 0; i < p.length; i++) {
       if (insideComment) {
 	if (eolComment &&
@@ -438,29 +447,45 @@ public class KjcEngine extends PdeEngine {
 
 	} else {
 	  //if ((p[i] > 32) && (p[i] < 127)) {
-	  if ((p[i] >= 0x30) && (p[i] < 127)) {
+	  if ((p[i] >= 48) && (p[i] < 128)) {
 	    p[i] = rotateTable[p[i]];
 	    //p[i] = encode ? encodeTable[p[i]] : decodeTable[p[i]];
 	  }
 	  //p[i] = ' ';
 	}
       } else {  // not yet inside a comment
-	if (p[i] == '/') {
-	  if (slash) {
-	    insideComment = true;
-	    eolComment = true;
+	if (insideQuote) {
+	  if ((p[i] == '\"') && (lastp != '\\')) {
+	    insideQuote = !insideQuote;
 	  } else {
-	    slash = true;
+	    if ((p[i] >= 48) && (p[i] < 128)) {
+	      p[i] = rotateTable[p[i]];
+	      //p[i] = encode ? encodeTable[p[i]] : decodeTable[p[i]];
+	    }
 	  }
-	} else if (p[i] == '*') {
-	  if (slash) {
-	    insideComment = true;
-	    eolComment = false;
+
+	} else {  // not inside a quote
+	  if (p[i] == '/') {
+	    if (slash) {
+	      insideComment = true;
+	      eolComment = true;
+	    } else {
+	      slash = true;
+	    }
+	  } else if (p[i] == '\"') {
+	    if (lastp != '\\') insideQuote = !insideQuote;
+
+	  } else if (p[i] == '*') {
+	    if (slash) {
+	      insideComment = true;
+	      eolComment = false;
+	    }
+	  } else {
+	    slash = false;
 	  }
-	} else {
-	  slash = false;
 	}
       }
+      lastp = p[i];
     }
     //System.out.println(new String(p));
     return new String(p);
