@@ -1,3 +1,18 @@
+ABOUT REV 0029
+
+- actually updated pde.jar, export, pde.properties, BApplet.java 
+  in sketchbook, removed extra dbn.pde from lib (it's in sketchbk)
+
+- new api: triangle, quad (put rect back too)
+
+- keyPressed() and mousePressed() events
+
+- new functions: degrees(), radians() 
+
+- new color tidbits (though color still ints) final solution
+  for get/set pixel debate
+
+
 ABOUT REV 0028
 
 - serial port should work again (win32comm was missing)
