@@ -32,6 +32,12 @@ o   there should be other places that they work..
 o   could even copy the dll to the p5 folder from the code folder
 o   already fixed with LD_LIBRARY_PATH stuff
 
+040902
+X building Processing from scratch 
+X   not able to write "preferences.txt" on the first run 
+
+040903
+X examples should be in a submenu of open
 
 _ System.out isn't being heard from P* classes
 _   errors inside those classes also causing weirdness
@@ -44,8 +50,11 @@ _   looks for subfolder called 'library' inside sketches
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
-_   simong: request a preloop and postloop call for libraries
-_     this would avoid having to patch BApplet
+_ register pre() and post() calls
+_   this would avoid having to patch BApplet
+_ register for setup() calls
+_ be able to link against, but not export, certain parts of lib
+_   jsyn.jar not needed on export, netscape libs not needed on export
 _ where do libraries for distribution go?
 _   libraries subfolder of p5? or inside examples?
 _ String in apache classes and java.lang
@@ -188,7 +197,15 @@ PDE / Details
    1 _   call the person a genius and tell them to install java
    1 _ make some fancy extendo things because the tabs get too big
 
-   1 _ properly open .pde files opened from explorer/finder
+   1 _ tie .pde files as documents of the application
+   1 _   figure out proper registry key for windows
+   1 _     can be handled when the app first run (jni?)
+   1 _   write handler for main() to take document names
+   1 _   need document icons
+   1 _   add MRJOpenApplicationHandler and MRJOpenDocumentHandler
+   1 _       especially the open document fella
+   1 _       under osx, app won't get doc unless app already launched
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
 
    1 _ implement page setup and print
    1 _   pretty printing of code in project
@@ -378,14 +395,6 @@ DISTRIBUTION / Windows
 1 _ winamp/audio getting starved or crackly while applets running
 1 _   thread priority too high? or something weird
 1 _ need splash screen, startup takes a long time
-1 _ tie .pde files as documents of the application
-1 _   figure out proper registry key for windows
-1 _     can be handled when the app first run (jni?)
-1 _   write handler for main() to take document names
-1 _   need document icons
-1 _   add MRJOpenApplicationHandler and MRJOpenDocumentHandler
-1 _       especially the open document fella
-1 _       under osx, app won't get doc unless app already launched
 
 
 DISTRIBUTION / Linux
@@ -412,7 +421,8 @@ b _ set nice background for disk image on macosx
 1 _ use disk:// notation as panther alternative
 1 _   so that it doesn't download the disk, just mounts it
 1 _   although.. this only works on panther.. how many are using it?
-
+1 _ mac standard key combinations for moving around in the editor
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
 
 
 ////////////////////////////////////////////////////////////////////
