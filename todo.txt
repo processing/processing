@@ -20,6 +20,13 @@ o   related classes also need to implement pConstants
 X fixed annoying findSelection bug spew on startup
 X (fixed) 0.4f no longer allowed in the code
 
+X size() code no longer checks for resize() and other similar things
+X add char(), byte() to int/float stuff
+
+_ keyDown(), mouseDown(), lastMouseX, lastMouseY
+_ exceptions in draw() apps aren't caught
+_   the program resize(200, 200); just does nothing
+_ get casey setup with full cvs so that he can build w/ changes
 _ fold simpleserial into BApplet
 _   sprint an sprintln functions
 _   make i/o work just like mouse (event driven, with dflt behavior)
