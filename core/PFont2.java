@@ -67,21 +67,23 @@ public class PFont2 extends PFont {
   };
 
 
-  public PFont2(String name, int size) throws IOException {
+  public PFont2(String name, int size) {
     this(new Font(name, Font.PLAIN, size), false, true);
   }
 
-  public PFont2(String name, int size, boolean smooth) throws IOException {
+  public PFont2(String name, int size, boolean smooth) {
     this(new Font(name, Font.PLAIN, size), false, smooth);
   }
 
-  public PFont2(Font font, boolean all, boolean smooth) throws IOException {
+  public PFont2(Font font, boolean all, boolean smooth) {
     //int firstChar = 33;
     //int lastChar = 126;
 
     //this.charCount = lastChar - firstChar + 1;
     this.charCount = all ? 65536 : charset.length;
     this.mbox = font.getSize();
+
+    fwidth = fheight = mbox;
 
     /*
     // size for image/texture is next power of 2 over font size
@@ -91,7 +93,7 @@ public class PFont2 extends PFont {
     iwidthf = iheightf = (float) iwidth;
     */
 
-    images = new PImage[charCount];
+    PImage bitmaps[] = new PImage[charCount];
 
     // allocate enough space for the character info
     value       = new int[charCount];
@@ -118,8 +120,8 @@ public class PFont2 extends PFont {
     g.setFont(font);
     FontMetrics metrics = g.getFontMetrics();
 
-    ascent = metrics.getAscent();
-    descent = metrics.getDescent();
+    //ascent = metrics.getAscent();
+    //descent = metrics.getDescent();
     //System.out.println("descent found was " + descent);
 
     int maxWidthHeight = 0;
@@ -177,7 +179,8 @@ public class PFont2 extends PFont {
       setWidth[index] = metrics.charWidth(c);
 
       // cache locations of the ascii charset
-      if (value[i] < 128) ascii[value[i]] = i;
+      //if (value[i] < 128) ascii[value[i]] = i;
+      if (c < 128) ascii[c] = index;
 
       // offset from vertical location of baseline
       // of where the char was drawn (mbox*2)
@@ -186,35 +189,64 @@ public class PFont2 extends PFont {
       // offset from left of where coord was drawn
       leftExtent[index] = minX - mbox;
 
-      //System.out.println(height[index] + " " + width[index] + " " + 
-      //                 setWidth[index] + " " + 
-      //                 topExtent[index] + " " + leftExtent[index]);
+      if (c == 'd') {
+        ascent = topExtent[index];
+      }
+      if (c == 'p') {
+        descent = -topExtent[index] + height[index];
+      }
 
       if (width[index] > maxWidthHeight) maxWidthHeight = width[index];
       if (height[index] > maxWidthHeight) maxWidthHeight = height[index];
 
-      images[index] = new PImage(new int[width[index] * height[index]],
-                                 width[index], height[index], ALPHA);
+      bitmaps[index] = new PImage(new int[width[index] * height[index]],
+                                  width[index], height[index], ALPHA);
 
       for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
-          //System.out.println("getting pixel " + x + " " + y);
           int value = 255 - raster.getSample(x, y, 0);
           int pindex = (y - minY) * width[index] + (x - minX);
-          images[index].pixels[pindex] = value;
-          //System.out.print(BApplet.nf(value, 3) + " ");
+          bitmaps[index].pixels[pindex] = value;
         }
-        //System.out.println();
       }
-      //System.out.println();
       index++;
     }
     charCount = index;
 
+    // foreign font, so just make ascent the max topExtent
+    if ((ascent == 0) && (descent == 0)) {
+      for (int i = 0; i < charCount; i++) {
+        char cc = (char) value[i];
+        if (Character.isWhitespace(cc) ||
+            (cc == '\u00A0') || (cc == '\u2007') || (cc == '\u202F')) {
+          continue;
+        }
+        if (topExtent[i] > ascent) {
+          ascent = topExtent[i];
+        }
+        int d = -topExtent[i] + height[i];
+        if (d > descent) {
+          descent = d;
+        }
+      }
+    }
     // size for image/texture is next power of 2 over largest char
     mbox2 = (int) 
       Math.pow(2, Math.ceil(Math.log(maxWidthHeight) / Math.log(2)));
-    //System.out.println("mbox is " + mbox);
-    //System.out.println("found " + charCount + " chars
+    twidth = theight = mbox2;
+
+    //images = bitmaps;
+    //System.out.println("Mbox 2 is " + mbox2);
+    images = new PImage[charCount];
+    // copy from bitmaps into actual image pixels
+    for (int i = 0; i < charCount; i++) {
+      images[i] = new PImage(new int[mbox2*mbox2], mbox2, mbox2, ALPHA);
+      for (int y = 0; y < height[i]; y++) {
+        System.arraycopy(bitmaps[i].pixels, y*width[i],
+                         images[i].pixels, y*mbox2, 
+                         width[i]);
+      }
+      bitmaps[i] = null;
+    }
   }
 }
