@@ -140,10 +140,10 @@ public class PdeEditor extends Panel {
       if (PdeBase.platform == PdeBase.MACOSX) {
 	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
 	//skprops.load(new FileInputStream(pkg + "sketch.properties"));
-	skprops.load(new FileInputStream("lib/pde.properties"));
+	skprops.load(new FileInputStream("lib/sketch.properties"));
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
-	skprops.load(new FileInputStream("lib/pde.properties"));
+	skprops.load(new FileInputStream("lib/sketch.properties"));
 
       } else {
 	skprops.load(getClass().getResource("sketch.properties").openStream());
@@ -1249,10 +1249,10 @@ public class PdeEditor extends Panel {
       if (PdeBase.platform == PdeBase.MACOSX) {
 	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
 	//output = new FileOutputStream(pkg + "sketch.properties");
-	output = new FileOutputStream("lib/pde.properties");
+	output = new FileOutputStream("lib/sketch.properties");
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
-	output = new FileOutputStream("lib/pde.properties");
+	output = new FileOutputStream("lib/sketch.properties");
 
       } else { // win95/98/ME doesn't set cwd properly
 	URL url = getClass().getResource("buttons.gif");

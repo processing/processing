@@ -100,17 +100,17 @@ public class PdeBase implements ActionListener {
 	//properties.load(new FileInputStream(pkg + "pde.properties"));
 	//properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
 	properties.load(new FileInputStream("lib/pde.properties"));
-	properties.load(new FileInputStream("lib/pde.properties_macosx"));
+	properties.load(new FileInputStream("lib/pde_macosx.properties"));
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
 	properties.load(new FileInputStream("lib/pde.properties"));
-	properties.load(new FileInputStream("lib/pde.properties_macos9"));
+	properties.load(new FileInputStream("lib/pde_macos9.properties"));
 
       } else {  
 	// under win95, current dir not set properly
 	// so using a relative url like "lib/" won't work
 	properties.load(getClass().getResource("pde.properties").openStream());
-	String platformProps = "pde.properties_" + platforms[platform];
+	String platformProps = "pde_" + platforms[platform] + ".properties";
 	properties.load(getClass().getResource(platformProps).openStream());
       }
       //properties.list(System.out);
