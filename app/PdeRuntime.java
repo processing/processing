@@ -75,12 +75,24 @@ public class PdeRuntime implements PdeMessageConsumer {
       thread.start();
     }
 
-    public void run() {    
+    public void run() {
+      byte boofer[] = new byte[1024];
+
       try {
+        while (true) {
+          //int count = input.available();
+          //int offset = 0; 
+          int count = input.read(boofer, 0, boofer.length);
+          if (count == -1) break;
+          System.out.print(new String(boofer, 0, count));
+        }
+
+        /*
         int c;
         while ((c = input.read()) != -1) {
           System.out.print((char) c);
         }
+        */
       } catch (Exception e) { 
         System.err.println("PdeSystemOutSiphon error " + e);
         e.printStackTrace();
