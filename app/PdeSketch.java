@@ -117,14 +117,6 @@ public class PdeSketch {
     folder = new File(new File(path).getParent());
     //System.out.println("sketch dir is " + folder);
 
-    codeFolder = new File(folder, "code");
-    dataFolder = new File(folder, "data");
-
-    File libraryFolder = new File(folder, "library");
-    if (libraryFolder.exists()) {
-      library = true;
-    }
-
     load();
   }
 
@@ -137,10 +129,21 @@ public class PdeSketch {
    * a nightmare to keep track of what files went where, because
    * not all the data will be saved to disk.
    *
-   * The exception is when an external editor is in use,
+   * This also gets called when the main sketch file is renamed,
+   * because the sketch has to be reloaded from a different folder.
+   *
+   * Another exception is when an external editor is in use,
    * in which case the load happens each time "run" is hit.
    */
   public void load() {
+    codeFolder = new File(folder, "code");
+    dataFolder = new File(folder, "data");
+
+    File libraryFolder = new File(folder, "library");
+    if (libraryFolder.exists()) {
+      library = true;
+    }
+
     // get list of files in the sketch folder
     String list[] = folder.list();
 
@@ -269,7 +272,7 @@ public class PdeSketch {
 
   public void renameCode() {
     // don't allow rename of the main code
-    if (current == code[0]) return;
+    //if (current == code[0]) return;
     // TODO maybe gray out the menu on setCurrent(0)
 
     // ask for new name of file (internal to window)
@@ -298,6 +301,11 @@ public class PdeSketch {
       return;
     }
 
+    if (newName.trim().equals("")) {
+      // don't allow blank names
+      return;
+    }
+
     String newFilename = null;
     int newFlavor = 0;
 
@@ -308,6 +316,14 @@ public class PdeSketch {
       newFlavor = PDE;
 
     } else if (newName.endsWith(".java")) {
+      if (code[0] == current) {
+        PdeBase.showWarning("Problem with rename",
+                            "The main .pde file cannot be .java file.\n" +
+                            "(It may be time for your to graduate to a\n" +
+                            "\"real\" programming environment)", null);
+        return;
+      }
+
       newFilename = newName;
       newName = newName.substring(0, newName.length() - 5);
       newFlavor = JAVA;
@@ -341,9 +357,20 @@ public class PdeSketch {
                             "\" to \"" + newFile.getName() + "\"", null);
         return;
       }
-      current.file = newFile;
-      current.name = newName;
-      current.flavor = newFlavor;
+
+      if (current == code[0]) {
+        // if renaming the main class, now rename the folder and re-open
+        File newFolder = new File(folder.getParentFile(), newName);
+        boolean success = folder.renameTo(newFolder);
+        folder = newFolder;
+        load();
+
+      } else {
+        // just reopen the class itself
+        current.file = newFile;
+        current.name = newName;
+        current.flavor = newFlavor;
+      }
 
     } else {  // creating a new file
       try {
@@ -591,10 +618,14 @@ public class PdeSketch {
     FileDialog fd = new FileDialog(editor, //new Frame(),
                                    "Save sketch folder as...",
                                    FileDialog.SAVE);
-    // always default to the sketchbook folder..
-    //fd.setDirectory(PdePreferences.get("sketchbook.path"));
-    fd.setDirectory(folder.getParent());
+    if (isReadOnly()) {
+      // default to the sketchbook folder
+      fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    } else {
+      fd.setDirectory(folder.getParent());
+    }
     fd.setFile(folder.getName());
+
     //System.out.println("setting to " + folder.getParent());
 
     // TODO or maybe this should default to the
