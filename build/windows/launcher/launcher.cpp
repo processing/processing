@@ -195,6 +195,21 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     return 0;
   }
 
+  // need to add the local jre to the path for 'java mode' in the env
+  if (local_jre_installed) {
+    char *env_path = (char *)malloc(512 * sizeof(char));
+    strcpy(env_path, getenv("PATH"));
+
+    char *paf = (char *)malloc(1024 * sizeof(char));
+    sprintf(paf, "%s\\java\\bin;%s", loaddir, env_path);
+
+    if (!SetEnvironmentVariable("PATH", paf)) {
+      MessageBox(NULL, "Could not set PATH environment variable",
+                 "Processing Error", MB_OK);
+      return 0;
+    }
+  }
+
   //MessageBox(NULL, cp, "whaadddup", MB_OK);
 
   // add the name of the class to execute and a space before the next arg
