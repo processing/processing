@@ -1,6 +1,26 @@
 #!/bin/sh
 
 
+### -- CHECK TO MAKE SURE BAGEL EXISTS -------------------------
+
+# move to base 'processing' directory
+cd ../..
+
+# make sure bagel exists, if not, check it out of cvs
+if test -d bagel
+then 
+else
+  echo Doing CVS checkout of bagel...
+  cvs co bagel
+  cd bagel
+  cvs update -P
+  cd ..
+fi
+
+# back to where we came from
+cd build/windows
+
+
 ### -- SETUP WORK DIR -------------------------------------------
 
 if test -d work
@@ -73,17 +93,6 @@ cd ../..
 
 
 ### -- BUILD BAGEL ----------------------------------------------
-
-# make sure bagel exists, if not, check it out of cvs
-if test -d bagel
-then 
-else
-  echo Doing CVS checkout of bagel...
-  cvs co bagel
-  cd bagel
-  cvs update -P
-  cd ..
-fi
 
 cd bagel
 
