@@ -152,7 +152,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
-    boolean boringUser = user.equals("default");
+    boolean boringUser = editor.userName.equals("default");
 
     g.setColor(secondaryColor);
     g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);

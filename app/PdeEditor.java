@@ -12,9 +12,9 @@ public class PdeEditor extends Panel {
 
   static final String DEFAULT_PROGRAM = "// type program here\n";
 
-  static final String NEW_SKETCH_ITEM = "( new sketch )";
-  static final String SKETCH_PREFIX_NAME = "sketch-";
-  static final String CODE_FILENAME = "sketch.pde";
+  //static final String NEW_SKETCH_ITEM = "( new sketch )";
+  //static final String SKETCH_PREFIX_NAME = "sketch-";
+  //static final String CODE_FILENAME = "sketch.pde";
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
@@ -101,20 +101,37 @@ public class PdeEditor extends Panel {
       PdeEditorListener listener = new PdeEditorListener();
       textarea.addKeyListener(listener);
       textarea.addFocusListener(listener);
-      textarea.addKeyListener(new PdeKeyListener(this));
+      //textarea.addKeyListener(new PdeKeyListener(this));
     }
 
     runner = new PdeRunner(this);
-
 
     // load the last program that was in use
 
     Properties skprops = new Properties();
     try {
       skprops.load(getClass().getResource("sketch.properties").openStream());
-      String sketch = (String) skprops.get("sketch.name");
-      String path = (String) skprops.get("sketch.directory");
-      String user = (String) skprops.get("user.name");
+
+      int windowX = Integer.parseInt(skprops.getProperty("window.x"), -1);
+      int windowY = Integer.parseInt(skprops.getProperty("window.y"), -1);
+      int windowW = Integer.parseInt(skprops.getProperty("window.w"), -1);
+      int windowH = Integer.parseInt(skprops.getProperty("window.h"), -1);
+
+      // if screen size has changed, the window coordinates no longer
+      // make sense, so don't use them unless they're identical
+      int screenW = Integer.parseInt(skprops.getProperty("screen.w"), -1);
+      int screenH = Integer.parseInt(skprops.getProperty("screen.h"), -1);
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+      if ((windowX != -1) &&
+	  ((screen.width == screenW) || (screen.height == screenH))) {
+	PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
+      }
+
+      String name = skprops.getProperty("sketch.name");
+      String path = skprops.getProperty("sketch.directory");
+      String user = skprops.getProperty("user.name");
+
       if (new File(path + File.separator + name + 
 		   File.separator + name + ".pde").exists()) {
 	userName = user;
@@ -125,6 +142,10 @@ public class PdeEditor extends Panel {
       }
 
     } catch (Exception e) { 
+      // even if folder for 'default' user doesn't exist, or
+      // sketchbook itself is missing, mkdirs() will make it happy
+      userName = "default";
+
       // doesn't exist, not available, make my own
       skNew();
     }
@@ -243,6 +264,7 @@ public class PdeEditor extends Panel {
   */
 
 
+  // local vars prevent sketchName from being set
   public void skNew() {
     try {
       // does all the plumbing to create a new project
@@ -272,7 +294,7 @@ public class PdeEditor extends Panel {
 
       // now open it up
       //skOpen(sketchFile, sketchDir);
-      handleOpen(sketchFile, sketchDir);
+      handleOpen(sketchName, sketchFile, sketchDir);
 
     } catch (IOException e) {
       // NEED TO DO SOME ERROR REPORTING HERE ***
@@ -328,7 +350,7 @@ public class PdeEditor extends Panel {
 			    File isketchFile, File isketchDir) {
     try {
       FileInputStream input = new FileInputStream(isketchFile);
-      int length = (int) file.length();
+      int length = (int) isketchFile.length();
       byte data[] = new byte[length];
 
       int count = 0;
@@ -349,6 +371,10 @@ public class PdeEditor extends Panel {
       //else 
       //textarea.setText(new String(data, app.encoding));
 
+      sketchName = isketchName;
+      sketchFile = isketchFile;
+      sketchDir = isketchDir;
+
       //header.setProject(file.getName(), projectDir);
       header.reset();
 
@@ -364,7 +390,8 @@ public class PdeEditor extends Panel {
 
   public void doSave() {
     // true if lastfile not set, otherwise false, meaning no prompt
-    handleSave(lastFile == null);
+    //handleSave(lastFile == null);
+    handleSave(sketchName == null);
   }
 
   public void doSaveAs() {
@@ -375,16 +402,15 @@ public class PdeEditor extends Panel {
     message("Saving file...");
     String s = textarea.getText();
 
-    String directory = lastDirectory;
-    String filename = lastFile;
+    String directory = sketchFile.getPath(); //lastDirectory;
+    String filename = sketchFile.getName(); //lastFile;
 
-System.out.println("1");
     if (promptUser) {
       FileDialog fd = new FileDialog(new Frame(), 
 				     "Save PDE program as...", 
 				     FileDialog.SAVE);
-      fd.setDirectory(lastDirectory);
-      fd.setFile(lastFile);
+      fd.setDirectory(directory);
+      fd.setFile(filename);
       fd.show();
 
       directory = fd.getDirectory();
@@ -396,16 +422,16 @@ System.out.println("1");
       }
     }
     File file = new File(directory, filename);
-System.out.println("2");
 
     try {
       FileWriter writer = new FileWriter(file);
       writer.write(s);
       writer.flush();
       writer.close();
-System.out.println("3");
-      lastDirectory = directory;
-      lastFile = filename;
+
+      //lastDirectory = directory;
+      //lastFile = filename;
+      sketchFile = file;
       message("Done saving " + filename + ".");
 
     } catch (IOException e) {
@@ -423,9 +449,8 @@ System.out.println("3");
 
 
   public void skExport() {
-    File appletDir = new File(header.projectDir, "applet");
-    handleExport(appletDir, header.project, 
-		 new File(header.projectDir, "data"));
+    File appletDir = new File(sketchDir, "applet");
+    handleExport(appletDir, sketchName, new File(sketchDir, "data"));
   }
 
   public void doExport() {
@@ -434,26 +459,30 @@ System.out.println("3");
     FileDialog fd = new FileDialog(new Frame(), 
 				   "Create applet project named...", 
 				   FileDialog.SAVE);
-    fd.setDirectory(lastDirectory);
-    fd.setFile(lastFile);
+
+    String directory = sketchFile.getPath(); //lastDirectory;
+    String project = sketchFile.getName(); //lastFile;
+
+    fd.setDirectory(directory);
+    fd.setFile(project);
     fd.show();
 
-    String directory = fd.getDirectory();
-    String projectName = fd.getFile();
-    if (projectName == null) {   // user cancelled
+    directory = fd.getDirectory();
+    project = fd.getFile();
+    if (project == null) {   // user cancelled
       message(EMPTY);
       buttons.clear();
       return;
-    } else if (projectName.indexOf(' ') != -1) {  // space in filename
+
+    } else if (project.indexOf(' ') != -1) {  // space in filename
       message("Project name cannot have spaces.");
       buttons.clear();
       return;
     }
-
-    handleExport(new File(directory), projectName, null);
+    handleExport(new File(directory), project, null);
   }
 
-  protected void handleExport(File appletDir, String projectName, 
+  protected void handleExport(File appletDir, String exportSketchName, 
 			      File dataDir) {
     try {
       String program = textarea.getText();
@@ -465,7 +494,7 @@ System.out.println("3");
       appletDir.mkdirs();
 
       // projectName will be updated with actual class name
-      projectName = engine.writeJava(projectName, false);
+      exportSketchName = engine.writeJava(exportSketchName, false);
       if (!engine.compileJava()) {
 	//throw new Exception("error while compiling, couldn't export");
 	// message() will already have error message in this case
@@ -473,7 +502,7 @@ System.out.println("3");
       }
 
       // copy .java to project dir
-      String javaName = projectName + ".java";
+      String javaName = exportSketchName + ".java";
       //copyFile(new File(javaName), new File(projectDir, javaName));
       copyFile(new File(javaName), new File(appletDir, javaName));
 
@@ -505,13 +534,13 @@ System.out.println("3");
       ps.println("<BR> <BR> <BR> <CENTER>");
 
       ps.println();
-      ps.print("<APPLET CODE=\"" + projectName  + "\" ARCHIVE=\"");
-      ps.print(projectName + ".jar");
+      ps.print("<APPLET CODE=\"" + exportSketchName + "\" ARCHIVE=\"");
+      ps.print(exportSketchName + ".jar");
       ps.println("\" WIDTH=" + wide + " HEIGHT=" + high + ">");
       ps.println("</APPLET>");
       ps.println();
 
-      ps.println("<A HREF=\"" + projectName + ".java\">source code</A>");
+      ps.println("<A HREF=\"" + exportSketchName + ".java\">source code</A>");
       ps.println();
 
       ps.println("</CENTER>");
@@ -526,7 +555,7 @@ System.out.println("3");
 
       // create new .jar file
       FileOutputStream zipOutputFile = 
-	new FileOutputStream(new File(appletDir, projectName + ".jar"));
+	new FileOutputStream(new File(appletDir, exportSketchName + ".jar"));
 	//new FileOutputStream(new File(projectDir, projectName + ".jar"));
       ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
       ZipEntry entry;
@@ -555,9 +584,11 @@ System.out.println("3");
       }
 
       // add the project's .class to the jar
-      entry = new ZipEntry(projectName + ".class");
+      // actually, these should grab everything from the build directory
+      // since there may be some inner classes
+      entry = new ZipEntry(exportSketchName + ".class");
       zos.putNextEntry(entry);
-      zos.write(grabFile(new File("lib", projectName + ".class")));
+      zos.write(grabFile(new File("lib", exportSketchName + ".class")));
       zos.closeEntry();
 
       // close up the jar file
@@ -613,8 +644,59 @@ System.out.println("3");
 
   public void doQuit() {
     // write sketch.properties
-    URL url = getClass().getResource("sketch.properties");
-    System.out.println(url);
+    try {
+      URL url = getClass().getResource("buttons.gif");
+      String urlstr = url.toString();
+      urlstr = urlstr.substring(6, urlstr.lastIndexOf("/") + 1) + 
+	"sketch.properties";
+      //System.out.println(urlstr);
+      //System.exit(0);
+      FileOutputStream output = new FileOutputStream(urlstr);
+
+      //url = new URL(urlstr + "sketch.properties");
+
+      /*
+      URL url = getClass().getResource("sketch.properties");
+      if (url == null) {
+	//url = getClass().getResource(getClass().getName() + ".class");
+	url = getClass().getResource("buttons.gif");
+	String urlstr = url.toString();
+	//int lastSlash = urlstr.lastIndexOf("/");
+	urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1);
+	//System.out.println(urlstr);
+	url = new URL(urlstr + "sketch.properties");
+      }
+      //System.out.println(url);
+      //System.exit(0);
+
+      URLConnection conn = url.openConnection();
+      conn.setDoOutput(true);
+      OutputStream pstream = conn.getOutputStream();
+      */
+
+      Properties skprops = new Properties();
+
+      Rectangle window = PdeBase.frame.getBounds();
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+      skprops.put("window.x", String.valueOf(window.x));
+      skprops.put("window.y", String.valueOf(window.y));
+      skprops.put("window.w", String.valueOf(window.width));
+      skprops.put("window.h", String.valueOf(window.height));
+
+      skprops.put("screen.w", String.valueOf(screen.width));
+      skprops.put("screen.h", String.valueOf(screen.height));
+
+      skprops.put("sketch.name", sketchName);
+      skprops.put("sketch.directory", sketchDir.getCanonicalPath());
+      skprops.put("user.name", userName);
+
+      skprops.save(output, "auto-generated by pde, please don't touch");
+
+    } catch (IOException e) {
+      System.err.println("doQuit: error saving properties");
+      e.printStackTrace();
+    }
 
     System.exit(0);
   }
