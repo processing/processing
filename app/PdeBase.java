@@ -10,9 +10,9 @@ import javax.comm.*;
 import javax.swing.text.*;
 
 
-public class PdeBase implements ActionListener {
+public class PdeBase extends Frame implements ActionListener {
   static Properties properties;
-  static Frame frame;
+  static Frame frame;  // now 'this'
   static String encoding;
   static Image icon;
 
@@ -83,16 +83,39 @@ public class PdeBase implements ActionListener {
       }
     }
 
+    //try {
     PdeBase app = new PdeBase();
+    // people attempting to use p5 in headless mode are
+    // already setting themselves up for disappointment
+    //} catch (HeadlessException e) {
+    //e.printStackTrace();
+    //System.exit(1);
+    //}
   }
 
+
+  // hack for #@#)$(* macosx
+  public Dimension getMinimumSize() {
+    return new Dimension(300, 300);
+  }
+
+
   public PdeBase() {
+    super(WINDOW_TITLE);
+    //#ifdef JDK14
+    //    try {
+      //#endif
+    /*
     frame = new Frame(WINDOW_TITLE) {
-	// hack for #@#)$(* macosx
 	public Dimension getMinimumSize() {
 	  return new Dimension(300, 300);
 	}
       };
+    */
+    frame = this;  // clean this up later
+    //#ifdef JDK14
+
+    //#endif
 
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
