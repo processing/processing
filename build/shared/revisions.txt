@@ -91,7 +91,11 @@ work.
 
 - release 82 (or 83?) will be all about getting proper 3D lighting,
   camera, and geometry working. simon's done some amazing work.
-  
+
+- if anyone's looking at the cvs, you'll need to do a 
+  "cvs update -d -P" because the folder structure has moved around
+  for this release.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
