@@ -32,11 +32,8 @@ rm -rf Processing*
 # use 'shared' files as starting point
 cp -r ../shared processing
 
-# get rid of any boogers
-rm -f processing/*~
-
-rm -rf processing/CVS
-rm -rf processing/lib/CVS
+# add the libraries folder with source
+cp -r ../../lib processing/libraries
 
 # new style examples thing ala reas
 cd processing
@@ -49,6 +46,10 @@ cd processing
 unzip -q reference.zip
 rm reference.zip
 cd ..
+
+# clean out the cvs entries
+find processing -name "CVS" -exec rm -rf {} ';'
+#find processing -name "CVS" -exec echo {} ';'
 
 # get serial stuff
 #cp dist/serial_setup.command processing/
@@ -98,7 +99,7 @@ chmod a+x processing/jikes
 # find / -name "*.mp3" -exec rm -f {}\;
 # and same for cvsignore, ~ files, .DS_Store
 find processing -name "*~" -exec rm -f {} ';'
-#find processing -name ".DS_Store" -exec rm -f {} ';'
+#find processing -name ".DS_Store" -exec rm -f {} ';'  # one is legit
 find processing -name "._*" -exec rm -f {} ';'
 
 # zip it all up for release

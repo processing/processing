@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CLASSPATH=java/lib/rt.jar:lib:lib/build:lib/pde.jar:lib/core.jar:lib/antlr.jar:lib/oro.jar
+CLASSPATH=java/lib/rt.jar:lib:lib/build:lib/pde.jar:lib/core.jar:lib/antlr.jar:lib/oro.jar:lib/mrj.jar
 export CLASSPATH
 
 # put the directory where this file lives in the front of the path, because
