@@ -34,7 +34,7 @@ public class Archiver {
   PdeEditor editor;
 
   // someday these will be settable
-  boolean useDate = true; //false;
+  boolean useDate = false;
   int digits = 3;
 
   NumberFormat numberFormat;
