@@ -73,8 +73,14 @@ glance through them should help clear things up.
 - font.stringWidth(String s) -> font.width(String s)
   font.charWidth(char c) -> font.width(char c)
 
+- removed control key 'F' for 'reference', gave it to 'find'. 
+  also set cmd-shift-f as 'find in reference'.
+
 
 [ additions ] 
+
+- good god, an implementation of find & replace, which means we've
+  caught up to 1984.
 
 - BImage.save(String filename) has been implemented. the filename
   should be something and a .tif or .tga at the end to determine how
@@ -172,6 +178,12 @@ glance through them should help clear things up.
   for the continous_lines example since they weren't, err, continuous.
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166777;start=0
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
+
+- fixed bug where the 'open' button would get stuck if no sketch was
+  selected for opening.
+
+- fixed a bug where the caret would show up even though processing
+  processing's window was not active.
 
 - removed ugly white borders around gui elements that show up on
   macosx (workaround for a bug in apple's java 1.3 implementation).

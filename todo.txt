@@ -229,11 +229,34 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 ..................................................................
 
 
+0060c2
+
+X jedittextarea caret blinks even w/o focus
+X   may have been my own hack breaking it
+X popup menu for sketches doesn't unhighlight if no sketch selected
+X   originally assigned to dan haskovec, but implemented by fry
+X set a better ctrl-key for reference (anything but 'F')
+X   probably need to use mac or pc specific keys?
+X   nope, it doesn't really need a command key
+X   instead, cmd-shift-f is now 'find in reference'
+
+
+assigned to dan haskovec, completed by fry
+dh X find/replace
+dh X   ctrl-f for find, g for find next, h for next occurrence of selected
+dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
+
+
+..................................................................
+
+
 0060
 _ make sure no CVS folders or .DS_Store files in the distribution
 
 
 MEDIUM
+_ adding files to sketch.. menu item
+_   also do drag & drop implementation to pull in files
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 _ mousePressed, keyPressed, others.. queue them all
@@ -731,7 +754,7 @@ bf b _   need fast 2D text that's not affected by the transforms
 bf b _   also needs to look good, not squished from texture weirdness
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
 
-   1 _ toxi ellipses don't adapt for larger sizes
+   1 _ toxi ellipses don't adapt properly with transformations
 
 
 BAGEL / Serial
@@ -941,11 +964,6 @@ dh b _   compile entire sketchbook on startup, check for new files on compile?
 PDE / Editor
 if you dream it, you can do it.
 
-dh b _ find/replace
-dh b _   ctrl-f for find, g for find next, h for next occurrence of selected
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
-_ set a better ctrl-key for reference (anything but 'F')
-_   probably need to use mac or pc specific keys?
 
 
 PDE / Details
@@ -974,7 +992,6 @@ dh 1 _   is play button properly unhighlighting?
 dh 1 _     does it unhighlight after compile or runtime errors?
 dh 1 _     also when using draw() instead of loop()
 dh 1 _       applet needs to notify runner that it has terminated
-dh 1 _   popup menu for sketches doesn't unhighlight if no sketch selected
 dh 1 _   if export fails (compile error) need deselect
 dh 1 _ only copy data files into build dir when there are changes
 dh 1 _   make sure the still relevant files aren't removed
@@ -1006,8 +1023,6 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
    1 _ dim edit menus as appropriate during selection/no selection/etc
    1 _ switch to newer syntax package from jedit cvs
    1 _   is enormous horizontal scroller issue fixed properly
-   1 _ jedittextarea caret blinks even w/o focus
-   1 _   may have been my own hack breaking it
 
 
 danh couldn't replicate on win2k, but test under osx and others
