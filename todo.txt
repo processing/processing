@@ -191,6 +191,20 @@ b _   java freetype? jni freetype to build texmap fonts?
 b _   look at flash file format? (does it have kerning?)
 
 
+PDE / ui
+a _ cosmetic ui update so that it's not so dbn-like
+b _ ui for sketchbook/projects handling
+
+
+PDE / macos
+a _ crashes when people click on help in top bar (same in DBN)
+a _ dataInputStream, setUseCaches on the url to false
+a _   URLConnection.setUseCaches(false)
+a _ parent.obj.close() on the url
+b _ serial port code needs to be implemented
+b _   something that docks better to java serial api
+
+
 PDE / low
 _ support for moving the camera around
 _ if 'void' left out before loop or setup, cryptic message about
@@ -258,34 +272,14 @@ _ check out interface builder for interesting tidbits
 
 
 WEB
-_ online discussion/talk system (gets people using the site too)
+a _ online discussion/talk system (gets people using the site too)
 _ see about setting up simple bug tracker/feature system
 _   queue for people reporting things externally
 _   bugzilla but simpler
 _   would also be nice for people to be able to vote on features
 
 
-MISC / macos
-a _ crashes when people click on help in top bar (same in DBN)
-a _ dataInputStream, setUseCaches on the url to false
-a _   URLConnection.setUseCaches(false)
-a _ parent.obj.close() on the url
-b _ serial port code needs to be implemented
-b _   something that docks better to java serial api
-
-
-MISC / building
-_ build a linux/x86 release
-_ write converter for java bagel -> cpp version
-_   include #ifdefs for c stuff
-_ fix buzz.pl to not create ../../bagel 
-_ how to use ssh identity file to maintain auth for brancusi
-_ write dist.bat for releases
-_   don't forget to update 'export' dir with processing releases
-_   write code for automatic macintosh releases
-
-
-MISC / docs
+DOCS / guide
 _ 'rot' example not working in release 18
 _ list of reserved keywords
 _   make note of functions/variables used by ProcessingApplet
@@ -305,27 +299,7 @@ _ notes about running on win98 and that stupid startup exception
 _ make note in documentation about convex polygons
 
 
-MISC / advanced docs
-_ adding lights
-_   control of position/color of default lights
-_ controlling camera movements
-_   mcguffin sent some notes about this
-_ multmatrix/identity
-_ constants besides PI, TWO_PI
-_ min/max with 3 parameters
-_ if (a) ? 3 : 4
-_ formatting printf-style things
-_ audio input
-_ audio synthesis
-_ just saying 'millis' in processingapplet, instead of getMillis()
-_ keyPressed, keyReleased, mousePressed, mouseReleased
-
-
-MISC / ui
-_ ui for sketchbook/projects handling
-
-
-MISC / technotes
+DOCS / technotes
 _ bug in sun vm for freaking out
 _   also happened with ibm vm.. grr.. (or was it a path problem?)
 _ fixed width font format as technote and how to use
@@ -344,6 +318,33 @@ _ making things faster
 _ memory running out, using ms and mx
 _ noBackground() if you're covering everything
 _ converting to/from ascii/decimal/hex/binary
+
+
+DOCS / reference
+_ adding lights
+_   control of position/color of default lights
+_ controlling camera movements
+_   mcguffin sent some notes about this
+_ multmatrix/identity
+_ constants besides PI, TWO_PI
+_ min/max with 3 parameters
+_ if (a) ? 3 : 4
+_ formatting printf-style things
+_ audio input
+_ audio synthesis
+_ just saying 'millis' in processingapplet, instead of getMillis()
+_ keyPressed, keyReleased, mousePressed, mouseReleased
+
+
+MISC / building
+_ build a linux/x86 release
+_ write converter for java bagel -> cpp version
+_   include #ifdefs for c stuff
+_ fix buzz.pl to not create ../../bagel 
+_ how to use ssh identity file to maintain auth for brancusi
+_ write dist.bat for releases
+_   don't forget to update 'export' dir with processing releases
+_   write code for automatic macintosh releases
 
 
 MISC / code tidbits for scrapbook
