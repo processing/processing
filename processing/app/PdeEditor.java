@@ -400,15 +400,15 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Apply changes to preferences that come from changes 
-   * by the user in the preferences window.
+   * Read and apply new values from the preferences, either because 
+   * the app is just starting up, or the user just finished messing
+   * with things in the Preferences window.
    */
   public void applyPreferences() {
-    // apply the setting for 'use external editor' 
 
+    // apply the setting for 'use external editor' 
     boolean external = PdePreferences.getBoolean("editor.external");
 
-    listener.setExternalEditor(external);
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
     saveAsMenuItem.setEnabled(!external);
@@ -430,18 +430,10 @@ public class PdeEditor extends JFrame
       textarea.setCaretVisible(true);
     }
 
-
     // in case tab expansion stuff has changed
     listener.applyPreferences();
 
-
-    // in case library option has been enabled or disabled
-
-    //buildExportMenu();
-
-
     // in case moved to a new location
-
     sketchbook.rebuildMenu();
   }
 
