@@ -398,41 +398,46 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     public static final int HALF_PI         = PI / 2;
     
     /** Multiplies two fixed point values and returns a fixed point value. */
-    public static final int mul(int value1, int value2) {
+    public final int mul(int value1, int value2) {
         return (value1 * value2) >> FP_PRECISION;
     }
     
     /** Returns the fixed point quotient from dividing the fixed point dividend by the fixed point divisor. */
-    public static final int div(int dividend, int divisor) {
+    public final int div(int dividend, int divisor) {
         return (dividend << FP_PRECISION) / divisor;
     }
     
     /** Returns the fixed point representation of the specified integer value. */
-    public static final int itofp(int value1) {
+    public final int itofp(int value1) {
         return value1 << FP_PRECISION;
     }
     
     /** Returns the closest integer value less than or equal to the specified fixed point value. */
-    public static final int floor(int value1) {
+    public final int floor(int value1) {
         return value1 >> FP_PRECISION;
     }
     
+    /** Returns the fixed point radian equivalent to the specified fixed point degree value. */
+    public final int radians(int angle) {
+        return angle * PI / (180 << FP_PRECISION);
+    }
+    
     /** Returns the sin of the specified fixed-point radian angle as a fixed point value. */
-    public static final int sin(int rad) {
+    public final int sin(int rad) {
         //// convert to degrees
         int index = rad * 180 / PI % 360;
         return sin[index];
     }
     
     /** Returns the cos of the specified fixed-point radian angle as a fixed point value. */
-    public static final int cos(int rad) {
+    public final int cos(int rad) {
         //// convert to degrees
         int index = (rad * 180 / PI + 90) % 360;
         return sin[index];
     }
     
     /** Lookup table for sin function, indexed by degrees. */
-    private static final int[] sin = {
+    public static final int[] sin = {
         (int) (0f * ONE),
         (int) (0.0174524064372835f * ONE),
         (int) (0.034899496702501f * ONE),
