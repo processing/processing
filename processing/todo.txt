@@ -6,19 +6,32 @@ PEOPLE WHO WANT IT
 d.amarel <d.amarel@dotsperinch.com>
 Eric ANDRON <ericandron@wanadoo.fr>
 Bert Balcaen <bert@rekalldesign.com>
+Julian Bonilla <bonilla@fas.harvard.edu>
 christophe buffet <christophe@wkmx.org>
 Fabrice Clérot <fabrice.clerot@francetelecom.com>
+Los cos <awumpus2000@yahoo.com>
 Michael Davis <shyfter@imsa.edu>
+Marco Dinkel <marco@do-com.de>
+<ezDAC@free.fr>
+Andrej Jungnickel <andrej@nickelz-bros.de>
+Kay Koester <mail@ekay.de>
+matthew kowal <mkowal@postmaster.co.uk>
+Jean-Yves Herpet <jherpet@fnac.com>
+Kevin Lahoda <kevin@m.parsons.edu>
 Roger Langley <galahad@uslink.net>
 Roy Macarthur <roy@mcarthur.com>
 Oddur Snær Magnússon <oddur@magnusson.is>
 Daniel Mendelsohn <dan@heads4sale.com>
 Daniel Mendelsohn <dmendel@optonline.net>
 Michael McGuffin <mjmcguff@dgp.toronto.edu>
+widianto nugroho <widi@kmrg.itb.ac.id>
 Anthony Okolie <anthony@anthonyone.com>
+Andrew Otwell <andrew@heyotwell.com>
 Luis Miguel P. <luismi@standbyclick.com>
+Alex Robinson <alexr@cloudband.com>i
 Daniel Evan Schwartz <design@roomn8.com>
 Enrico Trujillo <etrujill@unm.edu>
+Ronnie Vuine <wintermute@vuine.de>
 Jeff Williams <jeffw@pinchy.org>
 Ian Wojtowicz <ian@woj.com>
 andres <moscoca@bigpond.com>
@@ -48,6 +61,9 @@ _ lightsOff() seems dumb with noStroke and noFill
 _ make close() work to kill applet in kjc
 _ code to automatically open generated .ai files (exec(..ai))
 
+_ technote: using runtime.exec to run .ai files
+_ stop() method in applet should stop kjc environment
+_   should be able to call stop() to 'quit' an applet
 _ add method for exporting applications with processing
 _   wrapper that invokes the applet using a copy of the jre
 _ move MemoryImageSource out of bagel and into ProcessingApplet
@@ -123,6 +139,19 @@ _ writing serial code (something that docks better to java serial api)
 
 
 0018
+_ fonts are broken.. try megan's color selector applet
+_ when exporting 'name of folder for export...'
+_   default name should be from public class <xxxx>
+_   because otherwise errors are happening
+_   or name from user only determines folder name
+_     if extends ProcessingApplet [more compatible]
+
+_ export as application
+_   main() method needs to set layout manager if jexegen is to be used
+_     (msft vm defaults to null layout manager)
+_   also make sure pack() is happening
+
+0019
 _ z coordinates are backwards from gl (at least from mazo)
 _   how did this happen? what's the appropriate way to fix?
 _ single color function inside applet
