@@ -6,13 +6,29 @@ X   remove old examples from cvs
 X pmouseX and pmouseX should be colored with mouseX and mouseY
 X new html for export
 X new colors chosen by casey (replace pde.properties and buttons.gif)
+/ disappearing text caret on win2k
+/   works in 'insert' mode
+X   just disabled it ever hiding.. we'll see if it fixes
+X flush() after every println()
+X   incremental printout 
+X uncovered bug with long line lengths in console
+/ pmouseX problem reported by casey (in bugs.txt)
+o images don't load during setup [reas] 
+X   //This is not a problem -- Casey
+X framerate() and framerate(15)
+X delay() should sleep the thread [glen murphy]
+X   it's sucking cpu and won't open a window until the delay is up
+X   also don't delay on the first time through
+X   add framerate to colored things list
 
-_ disappearing text caret on win2k
-_   works in 'insert' mode
-_ framerate() and framerate(15)
-_ pmouseX problem reported by casey (in bugs.txt)
+
+0050
 _ weirdness with mac swiss-german keyboard on []{}|
 _ several examples broken (note from creas) in bugs.txt
+
+_ go through the bboard and make sure everything up to date here
+_   see if moved topics need to be deleted as well
+_     (log in from another machine as guest)
 
 
 ////////////////////////////////////////////////////////////////////
@@ -20,8 +36,6 @@ _ several examples broken (note from creas) in bugs.txt
 
 BAGEL / bugs
 _ getting mouse movement outside the window
-_ delay() should sleep the thread [glen murphy]
-_   it's sucking cpu and won't open a window until the delay is up
 _ is quad strip broken or not behaving as expected? (me)
 _   may be correct, it worked for nik
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
@@ -188,7 +202,6 @@ _ when missing a closed brace, often has compiler error
 _   Jordan J message in email and bugs list
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
-x images don't load during setup [reas] //This is not a problem -- Casey
 _ weird comments bug (external file)
 _ if image doesn't exist, spews null pointer exception and freaks
 _   locking up environment/machine
@@ -206,7 +219,6 @@ _ need to check if volume is read-only, notify and quit if it is
 _   people are trying to run off the disk image
 _ lots of problems with the console 
 _   [maybe this needs to be a textarea?]
-_   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
 _ split KjcEngine into three parts
