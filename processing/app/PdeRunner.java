@@ -1,6 +1,7 @@
 public class PdeRunner implements Runnable {
   //DbnGraphics graphics;
-  PdeEnvironment env;
+  //PdeEnvironment env;
+  PdeEditor editor;
   String program;
 
   PdeEngine engine;
@@ -17,14 +18,13 @@ public class PdeRunner implements Runnable {
   boolean forceStop;
 
 
-  public PdeRunner(PdeEnvironment env) {
-    this(env, "");
+  public PdeRunner(PdeEditor editor) {
+    this(editor, "");
   }
 
-  public PdeRunner(PdeEnvironment env, String program) { 
+  public PdeRunner(PdeEditor editor, String program) { 
     this.program = program;
-    //this.graphics = graphics;
-    this.env = env;
+    this.editor = editor;
   }
 
 
@@ -115,7 +115,7 @@ public class PdeRunner implements Runnable {
 	forceStop = false;
 	*/
 
-	engine = new KjcEngine(program, env);
+	engine = new KjcEngine(program, editor);
 	engine.start();
 
 	/*
@@ -143,7 +143,7 @@ public class PdeRunner implements Runnable {
       state = RUNNER_ERROR;
       forceStop = false;
       this.stop();
-      env.error(e);
+      editor.error(e);
 
     } catch (Exception e) {
 #ifndef KVM
@@ -156,7 +156,7 @@ public class PdeRunner implements Runnable {
 
   public void finished() {  // called by KjcProcessingApplet or something
     state = RUNNER_FINISHED;
-    env.finished();
+    editor.finished();
   }
 
 
