@@ -624,6 +624,52 @@ public class PdeEditor extends Panel {
   }
 
 
+  public void skSaveAs() {
+    status.edit("Save sketch as...", sketchName);
+  }
+
+  public void skSaveAs2(String newSketchName) {
+    if (newSketchName.equals(sketchName)) {
+      // nothing changes
+      return;
+    }
+    //doSave(); // save changes before renaming.. risky but oh well
+    String textareaContents = textarea.getText();
+    int textareaPosition = textarea.getCaretPosition();
+
+    File newSketchDir = new File(sketchDir.getParent() +
+				 File.separator + newSketchName);
+    File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
+
+    // make new dir
+    newSketchDir.mkdirs();
+    // copy the sketch file itself with new name
+    copyFile(sketchFile, newSketchFile);
+
+    // copy everything from the old dir to the new one
+    copyDir(sketchDir, newSketchDir);
+
+    // remove the old sketch file from the new dir
+    new File(newSketchDir, sketchName + ".pde").delete();
+
+    // remove the old dir (!)
+    //if (rename) removeDir(sketchDir);
+    // oops.. has to be done before opening, otherwise the new
+    // dir is set to sketchDir.. duh..
+
+    base.rebuildSketchbookMenu();
+
+    // open the new guy
+    handleOpen(newSketchName, newSketchFile, newSketchDir);
+
+    // update with the new junk and save that as the new code
+    textarea.setText(textareaContents);
+    textarea.setCaretPosition(textareaPosition);
+    doSave();
+  }
+
+
+  /*
   public void skDuplicateRename(boolean rename) {
     status.edit(rename ? "Rename to?" : "Duplicate title?", 
 		sketchName, rename);
@@ -632,10 +678,10 @@ public class PdeEditor extends Panel {
   public void skDuplicateRename2(String newSketchName, boolean rename) {
     if (newSketchName.equals(sketchName)) {
       // explain to the user that they're lame
-      System.err.println("what kind of a loser " + 
-			 (rename ? "renames the directory" :
-			  "creates a duplicate") + 
-			 " using the same name?");
+      //      System.err.println("what kind of a loser " + 
+      //			 (rename ? "renames the directory" :
+      //			  "creates a duplicate") + 
+      //			 " using the same name?");
       return;
     }
     //System.out.println("rename to " + newname);
@@ -652,12 +698,11 @@ public class PdeEditor extends Panel {
     //boolean result = sketchDir.renameTo(newSketchDir);
     //System.out.println(result);
 
-    /*
-    System.out.println("move \"" + sketchFile.getPath() + "\" " +
-		       newSketchName + ".pde");
-    System.out.println("move \"" + sketchDir.getPath() + "\" " + 
-		       newSketchName);
-    */
+
+    //    System.out.println("move \"" + sketchFile.getPath() + "\" " +
+    //		       newSketchName + ".pde");
+    //    System.out.println("move \"" + sketchDir.getPath() + "\" " + 
+    //		       newSketchName);
 
     // make new dir
     newSketchDir.mkdirs();
@@ -679,6 +724,15 @@ public class PdeEditor extends Panel {
 
     // open the new guy
     if (rename) handleOpen(newSketchName, newSketchFile, newSketchDir);
+
+    //if (result) {
+    //if (sketchDir.renameTo(newSketchDir)) {
+    //} else {
+    //System.err.println("couldn't rename " + sketchDir + " to " + 
+    //		 newSketchDir);
+    //} 
+  }
+  */
 
     /*
     try {
@@ -705,19 +759,6 @@ public class PdeEditor extends Panel {
       e.printStackTrace();
     }
     */
-
-    //if (result) {
-    //if (sketchDir.renameTo(newSketchDir)) {
-    //} else {
-    //System.err.println("couldn't rename " + sketchDir + " to " + 
-    //		 newSketchDir);
-    //} 
-  }
-
-
-  //public void skDuplicate() {
-    //System.err.println("sketch duplicate not yet implemented");
-  //}
 
 
   public void skExport() {
