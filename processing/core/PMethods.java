@@ -58,11 +58,11 @@ public interface PMethods {
 
   public void beginShape(int kind);
 
-  public void texture(PImage image);
+  public void normal(float nx, float ny, float nz);
 
   public void textureMode(int mode);
 
-  public void normal(float nx, float ny, float nz);
+  public void texture(PImage image);
 
   public void vertex(float x, float y);
 
@@ -97,26 +97,29 @@ public interface PMethods {
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3);
 
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4);
-
   public void rectMode(int mode);
 
   public void rect(float x1, float y1, float x2, float y2);
 
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4);
+
+  public void image(PImage image, float x1, float y1);
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2);
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    float u1, float v1, float u2, float v2);
+
+  public void cache(PImage image);
+
+  public void cache(PImage images[]);
+
   public void ellipseMode(int mode);
 
   public void ellipse(float x, float y, float hradius, float vradius);
-
-  public void box(float size);
-
-  public void box(float w, float h, float d);
-
-  public void sphereDetail(int res);
-
-  public void sphere(float r);
-
-  public void sphere(float x, float y, float z, float r);
 
   public float bezierPoint(float a, float b, float c, float d,
                            float t);
@@ -156,18 +159,15 @@ public interface PMethods {
                     float x3, float y3, float z3,
                     float x4, float y4, float z4);
 
-  public void image(PImage image, float x1, float y1);
+  public void box(float size);
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2);
+  public void box(float w, float h, float d);
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
-                    float u1, float v1, float u2, float v2);
+  public void sphereDetail(int res);
 
-  public void cache(PImage image);
+  public void sphere(float r);
 
-  public void cache(PImage images[]);
+  public void sphere(float x, float y, float z, float r);
 
   public void textFont(PFont which);
 
@@ -201,56 +201,6 @@ public interface PMethods {
 
   public void text(float num, float x, float y, float z);
 
-  public void push();
-
-  public void pop();
-
-  public void resetMatrix();
-
-  public void applyMatrix(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33);
-
-  public void printMatrix();
-
-  public void beginCamera();
-
-  public void cameraMode(int mode);
-
-  public void endCamera();
-
-  public void printCamera();
-
-  public float screenX(float x, float y);
-
-  public float screenY(float x, float y);
-
-  public float screenX(float x, float y, float z);
-
-  public float screenY(float x, float y, float z);
-
-  public float screenZ(float x, float y, float z);
-
-  public float objectX(float x, float y, float z);
-
-  public float objectY(float x, float y, float z);
-
-  public float objectZ(float x, float y, float z);
-
-  public void ortho(float left, float right,
-                    float bottom, float top,
-                    float near, float far);
-
-  public void perspective(float fovy, float aspect, float zNear, float zFar);
-
-  public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar);
-
-  public void lookat(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ);
-
   public void angleMode(int mode);
 
   public void translate(float tx, float ty);
@@ -277,6 +227,59 @@ public interface PMethods {
                         float n10, float n11, float n12, float n13,
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33);
+
+  public void push();
+
+  public void pop();
+
+  public void resetMatrix();
+
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33);
+
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12);
+
+  public void printMatrix();
+
+  public void cameraMode(int mode);
+
+  public void beginCamera();
+
+  public void endCamera();
+
+  public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far);
+
+  public void perspective(float fovy, float aspect, float zNear, float zFar);
+
+  public void frustum(float left, float right, float bottom,
+                      float top, float znear, float zfar);
+
+  public void lookat(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ);
+
+  public void printCamera();
+
+  public float screenX(float x, float y);
+
+  public float screenY(float x, float y);
+
+  public float screenX(float x, float y, float z);
+
+  public float screenY(float x, float y, float z);
+
+  public float screenZ(float x, float y, float z);
+
+  public float objectX(float x, float y, float z);
+
+  public float objectY(float x, float y, float z);
+
+  public float objectZ(float x, float y, float z);
 
   public void colorMode(int mode);
 

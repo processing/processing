@@ -4269,8 +4269,8 @@ public class PApplet extends Applet
   }
 
 
-  public void texture(PImage image) {
-     g.texture(image);
+  public void normal(float nx, float ny, float nz) {
+     g.normal(nx, ny, nz);
   }
 
 
@@ -4279,8 +4279,8 @@ public class PApplet extends Applet
   }
 
 
-  public void normal(float nx, float ny, float nz) {
-     g.normal(nx, ny, nz);
+  public void texture(PImage image) {
+     g.texture(image);
   }
 
 
@@ -4362,12 +4362,6 @@ public class PApplet extends Applet
   }
 
 
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4) {
-     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-  }
-
-
   public void rectMode(int mode) {
      g.rectMode(mode);
   }
@@ -4378,6 +4372,40 @@ public class PApplet extends Applet
   }
 
 
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
+  public void image(PImage image, float x1, float y1) {
+     g.image(image, x1, y1);
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2) {
+     g.image(image, x1, y1, x2, y2);
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    float u1, float v1, float u2, float v2) {
+     g.image(image, x1, y1, x2, y2, u1, v1, u2, v2);
+  }
+
+
+  public void cache(PImage image) {
+     g.cache(image);
+  }
+
+
+  public void cache(PImage images[]) {
+     g.cache(images);
+  }
+
+
   public void ellipseMode(int mode) {
      g.ellipseMode(mode);
   }
@@ -4385,31 +4413,6 @@ public class PApplet extends Applet
 
   public void ellipse(float x, float y, float hradius, float vradius) {
      g.ellipse(x, y, hradius, vradius);
-  }
-
-
-  public void box(float size) {
-     g.box(size);
-  }
-
-
-  public void box(float w, float h, float d) {
-     g.box(w, h, d);
-  }
-
-
-  public void sphereDetail(int res) {
-     g.sphereDetail(res);
-  }
-
-
-  public void sphere(float r) {
-     g.sphere(r);
-  }
-
-
-  public void sphere(float x, float y, float z, float r) {
-     g.sphere(x, y, z, r);
   }
 
 
@@ -4484,31 +4487,28 @@ public class PApplet extends Applet
   }
 
 
-  public void image(PImage image, float x1, float y1) {
-     g.image(image, x1, y1);
+  public void box(float size) {
+     g.box(size);
   }
 
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2) {
-     g.image(image, x1, y1, x2, y2);
+  public void box(float w, float h, float d) {
+     g.box(w, h, d);
   }
 
 
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
-                    float u1, float v1, float u2, float v2) {
-     g.image(image, x1, y1, x2, y2, u1, v1, u2, v2);
+  public void sphereDetail(int res) {
+     g.sphereDetail(res);
   }
 
 
-  public void cache(PImage image) {
-     g.cache(image);
+  public void sphere(float r) {
+     g.sphere(r);
   }
 
 
-  public void cache(PImage images[]) {
-     g.cache(images);
+  public void sphere(float x, float y, float z, float r) {
+     g.sphere(x, y, z, r);
   }
 
 
@@ -4592,119 +4592,6 @@ public class PApplet extends Applet
   }
 
 
-  public void push() {
-     g.push();
-  }
-
-
-  public void pop() {
-     g.pop();
-  }
-
-
-  public void resetMatrix() {
-     g.resetMatrix();
-  }
-
-
-  public void applyMatrix(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33) {
-     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
-  }
-
-
-  public void printMatrix() {
-     g.printMatrix();
-  }
-
-
-  public void beginCamera() {
-     g.beginCamera();
-  }
-
-
-  public void cameraMode(int mode) {
-     g.cameraMode(mode);
-  }
-
-
-  public void endCamera() {
-     g.endCamera();
-  }
-
-
-  public void printCamera() {
-     g.printCamera();
-  }
-
-
-  public float screenX(float x, float y) {
-    return g.screenX(x, y);
-  }
-
-
-  public float screenY(float x, float y) {
-    return g.screenY(x, y);
-  }
-
-
-  public float screenX(float x, float y, float z) {
-    return g.screenX(x, y, z);
-  }
-
-
-  public float screenY(float x, float y, float z) {
-    return g.screenY(x, y, z);
-  }
-
-
-  public float screenZ(float x, float y, float z) {
-    return g.screenZ(x, y, z);
-  }
-
-
-  public float objectX(float x, float y, float z) {
-    return g.objectX(x, y, z);
-  }
-
-
-  public float objectY(float x, float y, float z) {
-    return g.objectY(x, y, z);
-  }
-
-
-  public float objectZ(float x, float y, float z) {
-    return g.objectZ(x, y, z);
-  }
-
-
-  public void ortho(float left, float right,
-                    float bottom, float top,
-                    float near, float far) {
-     g.ortho(left, right, bottom, top, near, far);
-  }
-
-
-  public void perspective(float fovy, float aspect, float zNear, float zFar) {
-     g.perspective(fovy, aspect, zNear, zFar);
-  }
-
-
-  public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar) {
-     g.frustum(left, right, bottom, top, znear, zfar);
-  }
-
-
-  public void lookat(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ) {
-     g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-  }
-
-
   public void angleMode(int mode) {
      g.angleMode(mode);
   }
@@ -4765,6 +4652,125 @@ public class PApplet extends Applet
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33) {
      g.transform(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+  }
+
+
+  public void push() {
+     g.push();
+  }
+
+
+  public void pop() {
+     g.pop();
+  }
+
+
+  public void resetMatrix() {
+     g.resetMatrix();
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+     g.applyMatrix(n00, n01, n02, n10, n11, n12);
+  }
+
+
+  public void printMatrix() {
+     g.printMatrix();
+  }
+
+
+  public void cameraMode(int mode) {
+     g.cameraMode(mode);
+  }
+
+
+  public void beginCamera() {
+     g.beginCamera();
+  }
+
+
+  public void endCamera() {
+     g.endCamera();
+  }
+
+
+  public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far) {
+     g.ortho(left, right, bottom, top, near, far);
+  }
+
+
+  public void perspective(float fovy, float aspect, float zNear, float zFar) {
+     g.perspective(fovy, aspect, zNear, zFar);
+  }
+
+
+  public void frustum(float left, float right, float bottom,
+                      float top, float znear, float zfar) {
+     g.frustum(left, right, bottom, top, znear, zfar);
+  }
+
+
+  public void lookat(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+     g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+  }
+
+
+  public void printCamera() {
+     g.printCamera();
+  }
+
+
+  public float screenX(float x, float y) {
+    return g.screenX(x, y);
+  }
+
+
+  public float screenY(float x, float y) {
+    return g.screenY(x, y);
+  }
+
+
+  public float screenX(float x, float y, float z) {
+    return g.screenX(x, y, z);
+  }
+
+
+  public float screenY(float x, float y, float z) {
+    return g.screenY(x, y, z);
+  }
+
+
+  public float screenZ(float x, float y, float z) {
+    return g.screenZ(x, y, z);
+  }
+
+
+  public float objectX(float x, float y, float z) {
+    return g.objectX(x, y, z);
+  }
+
+
+  public float objectY(float x, float y, float z) {
+    return g.objectY(x, y, z);
+  }
+
+
+  public float objectZ(float x, float y, float z) {
+    return g.objectZ(x, y, z);
   }
 
 
