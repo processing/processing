@@ -4286,115 +4286,78 @@ public class PApplet extends Applet
       value = x;
     }
 
-    /**
-     * Compute the value to be returned by the <code>get</code> method.
-     */
-    //public abstract Object construct();
-            public Object construct() {
-          //while ((Thread.currentThread() == this) && !finished) {
-          try {
-            // is this what's causing all the trouble?
-            int anything = System.in.read();
-            if (anything == EXTERNAL_STOP) {
-              //System.out.println("********** STOPPING");
+    public Object construct() {
+      try {
+        int anything = System.in.read();
+        if (anything == EXTERNAL_STOP) {
 
-              // adding this for 0073.. need to stop libraries
-              // when the stop button is hit.
-              PApplet.this.stop();
+          // adding this for 0073.. need to stop libraries
+          // when the stop button is hit.
+          PApplet.this.stop();
+          finished = true;
+        }
+      } catch (IOException e) {
+        finished = true;
+      }
+      try {
+        Thread.sleep(250);
+        //Thread.sleep(100);  // kick up latency for 0075?
+      } catch (InterruptedException e) { }
+      return null;
+    }
 
-              //System.out.println("********** REALLY");
-              finished = true;
-            }
-          } catch (IOException e) {
-            // not tested (needed?) but seems correct
-            //stop();
-            finished = true;
-            //thread = null;
-          }
-          try {
-            Thread.sleep(250);
-            //Thread.sleep(100);  // kick up latency for 0075?
-          } catch (InterruptedException e) { }
+    // removing this from SwingWorker
+    //public void finished() { }
+
+    public void interrupt() {
+      Thread t = workerVar.get();
+      if (t != null) {
+        t.interrupt();
+      }
+      workerVar.clear();
+    }
+
+    public Object get() {
+      while (true) {
+        Thread t = workerVar.get();
+        if (t == null) {
+          return getValue();
+        }
+        try {
+          t.join();
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt(); // propagate
           return null;
         }
-
-    /**
-     * Called on the event dispatching thread (not on the worker thread)
-     * after the <code>construct</code> method has returned.
-     */
-    public void finished() {
+      }
     }
 
-    /**
-     * A new method that interrupts the worker thread.  Call this method
-     * to force the worker to stop what it's doing.
-     */
-    public void interrupt() {
-        Thread t = workerVar.get();
-        if (t != null) {
-            t.interrupt();
-        }
-        workerVar.clear();
-    }
-
-    /**
-     * Return the value created by the <code>construct</code> method.
-     * Returns null if either the constructing thread or the current
-     * thread was interrupted before a value was produced.
-     *
-     * @return the value created by the <code>construct</code> method
-     */
-    public Object get() {
-        while (true) {
-            Thread t = workerVar.get();
-            if (t == null) {
-                return getValue();
-            }
-            try {
-                t.join();
-            }
-            catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // propagate
-                return null;
-            }
-        }
-    }
-
-
-    /**
-     * Start a thread that will call the <code>construct</code> method
-     * and then exit.
-     */
     public Worker() {
-        final Runnable doFinished = new Runnable() {
-           public void run() { finished(); }
-        };
+      // removing this from SwingWorker
+      //final Runnable doFinished = new Runnable() {
+      //    public void run() { finished(); }
+      //  };
 
-        Runnable doConstruct = new Runnable() {
-            public void run() {
-                try {
-                    setValue(construct());
-                }
-                finally {
-                    workerVar.clear();
-                }
+      Runnable doConstruct = new Runnable() {
+          public void run() {
+            try {
+              setValue(construct());
 
-                javax.swing.SwingUtilities.invokeLater(doFinished);
+            } finally {
+              workerVar.clear();
             }
+            // removing this from SwingWorker to avoid swing
+            //javax.swing.SwingUtilities.invokeLater(doFinished);
+          }
         };
 
-        Thread t = new Thread(doConstruct);
-        workerVar = new WorkerVar(t);
+      Thread t = new Thread(doConstruct);
+      workerVar = new WorkerVar(t);
     }
 
-    /**
-     * Start the worker thread.
-     */
     public void start() {
-        Thread t = workerVar.get();
-        if (t != null) {
-            t.start();
-        }
+      Thread t = workerVar.get();
+      if (t != null) t.start();
     }
   }
 
@@ -4414,7 +4377,7 @@ public class PApplet extends Applet
 
               // adding this for 0073.. need to stop libraries
               // when the stop button is hit.
-              PApplet.this.stop();
+v              PApplet.this.stop();
 
               //System.out.println("********** REALLY");
               finished = true;
