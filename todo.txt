@@ -1,11 +1,13 @@
 0068
 X ifdef JDK14 around a piece of 1.4 specific window code
 
-
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
 _ eliminate the requirement for a 'data' folder
 _ fix code for changing the sketch folder
+
+_ "new text java/pde file" menu item
+_   option for having multiple files open
 
 _ sketch.properties should go into user.home
 _   otherwise moving sketch folder will kill it
