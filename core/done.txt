@@ -1,3 +1,30 @@
+0071 core
+X properly swap alpha values when lines need to be rendered backwards
+X make cursor() commands public
+X ltext and rtext for screen space stuff
+X ltext is broken when it goes y < 0 or y > height
+X ltext & rtext completely working
+X make sure font creator is making fonts properly fixed width
+X   probably not using java charwidth for the char's width
+X   probably wasn't using textFont() properly
+X now that it's actually a key, should it be a char? (what's keyChar?)
+X   that way println(c) would work a little better..
+X libraryCalls() not properly working for pre, post, or draw()
+o image(myg, x, y) doesn't work but image(myg, x, y, w, h) does
+o   (image kind prolly not set right and so image() gets pissy)
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1091798655
+
+text fixes
+X make text rect use rectMode for placement
+X if a word (no spaces) is too long to fit, insert a 'space'
+X move left/center/right aligning into the font class
+X   otherwise text with alignment has problems with returns
+X could PFont2 be done entirely with reflection?
+X   that way other font types can properly extend PFont
+o font char widths from orator were not fixed width
+o   may just need to regenerate. if not, widths may be set wrong.
+
+
 0070 core
 o check ordering of split() in java vs perl for regexp
 X don't include empty chars in font builder
