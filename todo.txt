@@ -70,16 +70,22 @@ X "Processing" folder not properly created on new install
 X add noLoop() to static mode apps
 X remove "loop" from special inserts on preproc
 
-_ static applets need to be able to resize themselves on 'play'
-_ figure out what to do with static apps exported as application
-_   needs to just hang there
-_ scripts will need to call exit() explicitly
-
 _ add all imported libs to hash table of jars
 
 _ after export of library, rebuild "import library" menu
 
 _ when running externally, build into sketch folder?
+
+
+_ static applets need to be able to resize themselves on 'play'
+_ figure out what to do with static apps exported as application
+_   needs to just hang there
+_ scripts will need to call exit() explicitly
+_ "create font" not working well with postscript font names
+_   need to remap the postscript name back to the java font name
+_   or keep a list of font objects, not just the names
+_     since already have the list, can use deriveFont
+_ tabs on macosx are stinking.. need to use line metrics class
 
 _ libraries
 _   attachLibrary(new libsomething()) and attachLibrary("pitaru.Sonia");
