@@ -14,9 +14,10 @@ X moving p5 prefs on mac into documents? or inside sketchbook?
 X   Documents -> Processing -> preferences.txt
 X   do the same for windows, with sketchbook as a subfolder
 
-_ don't exit p5 if platform is unknown
-
-_ "save as" needs to update the editorheader
+040716 evening
+o don't exit p5 if platform is unknown
+o "save as" needs to update the editorheader
+X   couldn't replicate this
 
 _ make additional .pde files embed themselves into the main class
 
