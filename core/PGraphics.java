@@ -1362,7 +1362,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void image(PImage image, float x, float y) {
       imageImpl(image,
-                x, y, image.width, image.height,
+                x, y, x+image.width, y+image.height,
                 0, 0, image.width, image.height);
   }
 
@@ -1382,12 +1382,12 @@ public class PGraphics extends PImage implements PConstants {
                     int u1, int v1, int u2, int v2) {
     if (imageMode == CORNER) {
       imageImpl(image,
-                a, b, c, d,
+                a, b, a + c, b + d,
                 u1, v1, u2, v2);
 
     } else if (imageMode == CORNERS) {
       imageImpl(image,
-                a, b, c - a, d - b,
+                a, b, c, d,
                 u1, v1, u2, v2);
 
       /*
