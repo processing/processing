@@ -123,6 +123,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         processInput = new SystemOutSiphon(process.getInputStream());
         processError = new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
+        //processOutput.write(' ');
+        //processOutput.flush();
 
       } else {  // !externalRuntime
         //Class c = Class.forName(className);
@@ -331,15 +333,18 @@ public class PdeRuntime implements PdeMessageConsumer {
       //System.out.println("killing external process");
 
       try {
-        //System.out.println("writing to stop process");
+        System.out.println("writing to stop process");
         processOutput.write('s');
+        System.out.println("written");
         processOutput.flush();
+        System.out.println("flushing");
 
       } catch (IOException e) {
         //System.err.println("error stopping external applet");
         //e.printStackTrace();
         close();
       }
+      System.out.println("out");
     }
   }
 

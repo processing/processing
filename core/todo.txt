@@ -11,28 +11,40 @@ X add TRIANGLE_FAN
 X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
 X modify targa and tiff writing routines to break into header writing
 X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
+X use TEXT_ANTIALIAS instead of ANTIALIAS on font editor
 
+opengl
+_ why is the thing hanging until 'stop' is hit?
+_   what happens when stop is hit that sets it free?
+_   (at what point does it start working properly?)
+_ debug why certain spots are having errors (see 'problem here' notes)
+_ resolve ARGB versus RGBA versus just A issues for fonts
+_   make sure that current scenario works identically on mac
+_   if so, just switch the image code to expect alpha in the high bits
+_   fonts probably need to be RGBA, not ALPHA style images
+_   there's nothing really ALPHA about them?
 _ remove need to use depth() at the beginning
 _ and cameraMode(PERSPECTIVE) on each frame
+_   why is the first one failing?
 _ reverse y coordinates
 _ minimum texture size may be 64x64
+_   might need to enforce it as a minimum
+X cache needs to also make things a power of 2
+X   if images are already a power of 2, then needn't re-alloc
+X cacheIndex needs to be set to -1 when the image is modified
+X   or maybe have a modified() function?
 
 _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _ implement fullscreen().. this takes over the screen as best it can
 _   really more like present mode.. 
 _   that if applet is 500x500, centers on a 800x600 window
 
-opengl
-_ cache needs to also make things a power of 2
-_   if images are already a power of 2, then needn't re-alloc
-_   warn people that they should make images be a pow of 2
-_ cacheIndex needs to be set to -1 when the image is modified
-_   or maybe have a modified() function?
+opengl documentation
 _ lights cannot be enabled/disabled throughout 
 _   lighting will be based on what's left at endFrame()
+_ images should be a power of 2, or call modified()
 
-_ fonts probably need to be RGBA, not ALPHA style images
-_   there's nothing really ALPHA about them?
+
 _ also when drawing an image, sense whether drawn rotated
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ bring screen space and font size settings back in to PGraphics
