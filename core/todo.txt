@@ -3,8 +3,6 @@ X textureMode(NORMAL_SPACE)  screws up the image() command
 X   image() appears to require IMAGE_SPACE to function properly. 
 X added focusGained() and focusLost()
 X lots of changes to internal naming of vars
-X beginShape() defaults to beginShape(POLYGON)
-_   needs to be noted for the reference
 X screenX(x, y) and screenY(x, y) added for noDepth()
 X add TRIANGLE_FAN
 X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
@@ -13,7 +11,6 @@ X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
 X MAJOR CHANGE: RGBA becomes ARGB for accuracy
 o uv coords > 1 shouldn't clamp, they should just repeat ala opengl
 o   actually i think opengl has a setting for it
-_   make a note that u/v coordinates clamp
 o remove need to use depth() at the beginning
 X   need only be set once
 X pmouseX is broken again
