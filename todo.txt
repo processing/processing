@@ -33,7 +33,6 @@ X add keyCode to BApplet (quick addition)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
 
-
 other folks
 dm X patch to fix last line highlight bug in highlightLine()
 cr X new function for linking to external web page
@@ -45,6 +44,10 @@ ks X   fixed again for scale() issues
 ks X RGBA code for simage(), along with some speedups
 ks X faster version of _blend() function
 ks X MAX_LIGHTS instead of '10' sprinkled through the code
+
+after 0056rc1
+X patched up ellipse code because adaptive sizing not working properly
+X   added more segments to the adaptive sizing algo
 
 
 ..................................................................
