@@ -18,6 +18,11 @@ else
 
   echo Extracting big ass JRE...
   unzip -q -d work jre.zip
+  # cygwin requires this because of unknown weirdness
+  # it was not formerly this anal retentive
+  chmod +x work/java/bin/*.exe
+  chmod +x work/java/bin/*.dll
+  chmod +x work/java/bin/client/*.dll
 
   mkdir work/lib/export
   mkdir work/lib/build
