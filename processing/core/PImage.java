@@ -315,16 +315,20 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Mark all pixels as needing update.
    */
-  public void updatePixels() {  // ignore
+  public void updatePixels() {
     updatePixels(0, 0, width, height);
   }
 
 
   /**
+   * Mark the pixels in this region as needing an update.
+   * <P>
+   * This doesn't take into account
+   * <P>
    * Note that when using imageMode(CORNERS),
    * the x2 and y2 positions are non-inclusive.
    */
-  public void updatePixels(int x1, int y1, int x2, int y2) {  // ignore
+  public void updatePixels(int x1, int y1, int x2, int y2) {
     //if (!modified) {  // could just set directly, but..
     //}
 
@@ -602,6 +606,9 @@ public class PImage implements PConstants, Cloneable {
    * <LI>filter(OPAQUE) set all the high bits in the image to opaque
    * <LI>filter(THRESHOLD) converts the image to black and white.
    * </UL>
+   *
+   * Gaussian blur code contributed by Mario Klingemann
+   * http://incubator.quasimondo.com
    */
   public void filter(int kind) {
     switch (kind) {
@@ -666,6 +673,9 @@ public class PImage implements PConstants, Cloneable {
    * <LI>filter(THRESHOLD, float center) allows you to set the
    * center point for the threshold. It takes a value from 0 to 1.0.
    * </UL>
+   *
+   * Gaussian blur code contributed by Mario Klingemann
+   * http://incubator.quasimondo.com
    */
   public void filter(int kind, float param) {
     switch (kind) {

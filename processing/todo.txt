@@ -1,21 +1,71 @@
 0081 pde
+X need to make sure people add the OPENGL lib if using opengl mode
+X   throws an error message
+o put processing.exe into cvs so that make et al aren't required
+o particles lib requires depth() (but shouldn't)
+o   fix for 78 since not sure when simon's new version is happening
+X   requires because uses 3D.. oh well
+o "draw" is not highlighted as a keyword.. other keywords?
+o   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
+o   PClient(), PClient.available(), PClient.read(), 
+o   PServer(), PServer.dispose(), PServer.write(), attach(), length
+o   round() is not colored
+
+return flight from tokyo
+X make preferences a modal dialog
+X   it's annoying when it hides itself
+X add editor font size in the preferences window
+X move the lib folders to a new location
+o libraries need to remove the PLibrary interface
+X fix bug where prefs were being applied even if cancel hit
+X the runtime environment requires java 1.4
+X   make sure this is known and tested for properly
+X PdeRuntime/PApplet cleanup
+X   run as external whenever using present mode
+X   significantly limit range of cases.. if presenting ext is ok
+X   uses internal pretty much only when single class, etc
+X   remove initialWidth/Height stuff from PdeRuntime for when running internally
+
+_ when centering applet on-screen, needs to check for multiple screens
+_   this is both for PApplet and PdeRuntime
+_   PApplet screen size constant is no good
+
+_ check current present code with multiple monitors
+_   if it's working, make it all reflection-based in PApplet
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 MUST BE COMPLETE FOR BETA
 
-_ remove jvm from cvs
-_   use wget to grab it if it doesn't exist
-_   and include an md5hash to see if the file is correct
+
+non-coding tasks (for beta)
+_ new bboard? archive the old one, remove bugs sections
+_ environment reference
+_ consolidate readme.txt, revisions.txt
+_ bugzilla: move bugs.txt and todo.txt into bugzilla
+_ update processing/build/howto.txt
+_   add 'make' to list of things that should be installed
+_ update libraries/howto.txt 
+_   should we queue lib events until the end of loop?
+_   nope, libraries can handle that themselves, 
+_     and queue events by registering for draw or whatever they'd like
+_   lib could call queueEvent with the args
+_   then call them inside post()
+
+_ first pass on full screen
+_   exceptions in full screen mode will quit the app completely
+_   (can't keep window open because things are hosed)
+
+_ update checker (can be turned off in prefs)
+_   send unique id, and information about person's java vm/platform
+_   using timezone would be an interesting method for tracking location
+
+_ border weirdness in PdeEditor panels on windows
 
 _ move everything to packages, and start auto-javadoc
-_   also move the lib folders to a new location
-
-_ better method of posting/handling bugs
-
-_ put processing.exe into cvs so that make et al aren't required
-_   add 'make' to list of things that should be installed
+_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
@@ -27,14 +77,6 @@ _     which then causes a full lock
 _ something really bad happened with println() in this release
 _   perhaps only without a code folder and/or running in java2d mode?
 _   this may also be what's hosing 
-
-_ PdeRuntime/PApplet cleanup
-_   run as external whenever using present mode
-_   significantly limit range of cases.. if presenting ext is ok
-_   uses internal pretty much only when single class, etc
-
-_ the runtime environment requires java 1.4
-_   make sure this is known and tested for properly
 
 
 //
@@ -74,7 +116,25 @@ what happens if folder already exists on save as?
 
 NOT NECESSARY BEFORE BETA
 
+_ split Preferences and PreferencesFrame ?
+
+_ properly handle ENTER, Ctrl-W and ESC on all dialogs
+_   there must be a proper "swing" way of doing this that doesn't
+_   involve adding key listeners to every friggin component
+_   ESC should fake a cancel button press
+_   ENTER should do the default option
+_   (might be a matter of setting the default action for the window?)
+
+secondary non-coding tasks (not before beta)
+_ move to new server
+_ javadoc everything
+
+_ when running as external applet, hide the editor text area
 _ drag & drop implementation to add files to sketch
+
+_ remove jvm from cvs
+_   use wget to grab it if it doesn't exist
+_   and include an md5hash to see if the file is correct
 
 _ straighten out int() -> toInt() conversion in the preproc
 
@@ -82,6 +142,8 @@ _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 
 camera
+_ when passing in 'null' as the camera, dialog pops up fine
+_   but the applet craps out after a few seconds (pinwheel spin)
 _ list() should return full list with all sub-components
 _   find the example code from the board
 _ add prompt() method to Camera ("" means default, null is prompt)
@@ -107,26 +169,12 @@ _ openStream returning 'null' really horked up the letters applet
 _   no System.out was coming through
 _   System.err was getting cut off before finishing
 
-libraries
-_ libraries need to remove the PLibrary interface
-_ particles lib requires depth() (but shouldn't)
-_   fix for 78 since not sure when simon's new version is happening
-X should we queue lib events until the end of loop?
-_   nope, libraries can handle that themselves, 
-_     and queue events by registering for draw or whatever they'd like
-_   lib could call queueEvent with the args
-_   then call them inside post()
 _ add prompt() method to Serial (simple dialog box that pops up)
-_ get an xml library in there
-_   nanoxml problems with manifest
-_   appears to use 1.6.8 version since it's just two classes
 
 _ subfolders in the 'data' directory don't work
 
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-
-_ "new midlet" option.. keeping things open for midlet projects
 
 _ track loadImage() with filenames that are inconsistent
 _   i.e. mixed case filename in sketch is different in windows
@@ -170,11 +218,6 @@ _ images should be a power of 2, or call modified()
 _ document the use of "die" 
 _   can override the method to do your own handling
 _ sketches no longer require a "data" folder
-_ "draw" is not highlighted as a keyword.. other keywords?
-_   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
-_   PClient(), PClient.available(), PClient.read(), 
-_   PServer(), PServer.dispose(), PServer.write(), attach(), length
-_   round() is not colored
 _ example that uses loop/noLoop, or redraw?
 _ talk to creas about making html files for bugs, readme, revisions.
 _   or how they should relate to the 'faq'.. readme -> faq? 
@@ -193,6 +236,9 @@ _   needs to be noted for the reference
 _ make a note that u/v coordinates clamp at 0 and 1
 _ no transformations before background() is called
 _   implementation specific, may cause trouble
+_ get an xml library in there
+_   nanoxml problems with manifest
+_   appears to use 1.6.8 version since it's just two classes
 
 _ different name for 'lib' folder because of libraries folder?
 _   avoid some confusion for when describing the libraries folder to users
@@ -269,6 +315,10 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 _   applet default is one file, application default is multiple
 _   user in advanced mode can switch to the other
 _   buttons on side of sketch do default (last) behavior
+_ need to decide how to handle "stop" button in present mode
+_   when running externally, people need to write their own stop function
+_   just get export to application working so this can be supported
+_   for now, they're stuck w/ running in the env and getting the ugliness
 
 
 
@@ -282,8 +332,6 @@ PDE - Processing Development Environment
 PDE / Details
 
    1 _ preferences
-   1 _   make preferences a modal dialog
-   1 _     it's annoying when it hides itself
    1 _   redo panel to use proper swing layout etc
 
    1 _ setting sketchbook to a folder on the network
@@ -295,6 +343,8 @@ PDE / Details
 
    1 _ save caret position when switching tabs
    1 _ ctrl-tab to switch between tabs
+   1 _ maintain tab scroll and caret positions
+
    1 _ add mnemonics for menus (alt-f to open 'file')
 
    1 _ processing.exe: problem if expert version is run, and no java installed

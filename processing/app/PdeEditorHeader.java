@@ -366,14 +366,14 @@ public class PdeEditorHeader extends JComponent {
   }
 
   public Dimension getMinimumSize() {
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    if (PdeBase.isMacOS()) {
       return new Dimension(300, PdePreferences.GRID_SIZE);
     }
     return new Dimension(300, PdePreferences.GRID_SIZE - 1);
   }
 
   public Dimension getMaximumSize() {
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    if (PdeBase.isMacOS()) {
       return new Dimension(3000, PdePreferences.GRID_SIZE);
     }
     return new Dimension(3000, PdePreferences.GRID_SIZE - 1);

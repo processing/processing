@@ -36,27 +36,29 @@ import javax.swing.filechooser.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
+import processing.core.PApplet;
 
-/*
-  need to bring all the prefs into here
-  PdeEditor with its sketch.properties
-  and PdeBase with preferences.txt
 
-  on first run:
-  processing.properties is created in user.home
-  it contains the contents of
-  preferences.txt + pde_platform.properties
-  and then begins writing additional sketch.properties stuff
-
-  this class no longer uses the Properties class, since
-  properties files are iso8859-1, which is highly likely to
-  be a problem when trying to save sketch folders and locations
+/**
+ * Preferences storage class.
+ * <P>
+ * This class no longer uses the Properties class, since
+ * properties files are iso8859-1, which is highly likely to
+ * be a problem when trying to save sketch folders and locations.
  */
 public class PdePreferences extends JComponent {
 
   // what to call the feller
 
   static final String PREFS_FILE = "preferences.txt";
+
+
+  // platform strings (used to get settings for specific platforms)
+
+  static final String platforms[] = {
+    "other", "windows", "macos9", "macosx", "linux"
+  };
+
 
   // prompt text stuff
 
@@ -84,14 +86,18 @@ public class PdePreferences extends JComponent {
 
   // gui elements
 
-  JFrame frame;
+  //JFrame frame;
+  JDialog frame;
   int wide, high;
 
   JTextField sketchbookLocationField;
   JCheckBox sketchPromptBox;
   JCheckBox sketchCleanBox;
-  JCheckBox exportLibraryBox;
+  //JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
+
+  JTextField fontSizeField;
+
 
   // the calling editor, so updates can be applied
   PdeEditor editor;
@@ -100,12 +106,11 @@ public class PdePreferences extends JComponent {
   // data model
 
   static Hashtable table = new Hashtable();;
-
-  File preferencesFile;
+  static File preferencesFile;
   //boolean firstTime;  // first time this feller has been run
 
 
-  public PdePreferences() {
+  static public void init() {
 
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
@@ -118,10 +123,10 @@ public class PdePreferences extends JComponent {
                         "You'll need to reinstall Processing.", e);
     }
 
-
     // check for platform-specific properties in the defaults
 
-    String platformExtension = "." + PdeBase.platforms[PdeBase.platform];
+    String platformExtension = "." +
+      platforms[processing.core.PApplet.platform];
     int extensionLength = platformExtension.length();
 
     Enumeration e = table.keys(); //properties.propertyNames();
@@ -167,16 +172,19 @@ public class PdePreferences extends JComponent {
                           " and restart Processing.", ex);
       }
     }
+  }
 
+
+  public PdePreferences() {
 
     // setup frame for the prefs
 
-    frame = new JFrame("Preferences");
-    //frame = new JDialog("Preferences");
-    frame.setResizable(false);
+    //frame = new JFrame("Preferences");
+    frame = new JDialog(editor, "Preferences", true);
+    //frame.setResizable(false);
 
-    Container pain = this;
-    //Container pain = frame.getContentPane();
+    //Container pain = this;
+    Container pain = frame.getContentPane();
     pain.setLayout(null);
 
     int top = GUI_BIG;
@@ -257,8 +265,24 @@ public class PdePreferences extends JComponent {
     top += vmax + GUI_BETWEEN;
 
 
+    // Editor font size [    ]
+
+    Container box = Box.createHorizontalBox();
+    label = new JLabel("Editor font size: ");
+    box.add(label);
+    fontSizeField = new JTextField(4);
+    box.add(fontSizeField);
+    pain.add(box);
+    d = box.getPreferredSize();
+    box.setBounds(left, top, d.width, d.height);
+    Font editorFont = PdePreferences.getFont("editor.font");
+    fontSizeField.setText(String.valueOf(editorFont.getSize()));
+    top += d.height + GUI_BETWEEN;
+
+
     // [ ] Enable export to "Library"
 
+    /*
     exportLibraryBox = new JCheckBox("Enable advanced \"Library\" features" +
                                      " (requires restart)");
     exportLibraryBox.setEnabled(false);
@@ -267,6 +291,7 @@ public class PdePreferences extends JComponent {
     exportLibraryBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
+    */
 
 
     // [ ] Use external editor
@@ -297,14 +322,20 @@ public class PdePreferences extends JComponent {
     pain.add(textarea);
     */
     label = new JLabel("More preferences can be edited directly in the file");
-    label.setForeground(Color.gray);
+
     pain.add(label);
     d = label.getPreferredSize();
+    label.setForeground(Color.gray);
     label.setBounds(left, top, d.width, d.height);
     top += d.height; // + GUI_SMALL;
 
     label = new JLabel(preferencesFile.getAbsolutePath());
-    label.setForeground(Color.gray);
+    label.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+          PdeBase.openURL(preferencesFile.getAbsolutePath());
+        }
+      });
+    label.setForeground(new Color(51, 25, 153));
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
@@ -371,6 +402,19 @@ public class PdePreferences extends JComponent {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     frame.setLocation((screen.width - wide) / 2,
                       (screen.height - high) / 2);
+
+
+    // handle window closing commands for ctrl/cmd-W or hitting ESC.
+
+    addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          KeyStroke wc = PdeEditor.WINDOW_CLOSE_KEYSTROKE;
+          if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+              (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
+            disposeFrame();
+          }
+        }
+      });
   }
 
 
@@ -382,16 +426,21 @@ public class PdePreferences extends JComponent {
   // .................................................................
 
 
+  /**
+   * Close the window after an OK or Cancel.
+   */
   public void disposeFrame() {
-    frame.hide();
-    editor.applyPreferences();
-    editor.show();
-    //frame.dispose();
+    //frame.hide();
+    //editor.applyPreferences();
+    //editor.show();
+    frame.dispose();
   }
 
 
-  // change settings based on what was chosen in the prefs
-
+  /**
+   * Change internal settings based on what was chosen in the prefs,
+   * then send a message to the editor saying that it's time to do the same.
+   */
   public void applyFrame() {
     //editor.setExternalEditor(getBoolean("editor.external"));
     // put each of the settings into the table
@@ -399,21 +448,33 @@ public class PdePreferences extends JComponent {
     setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
     set("sketchbook.path", sketchbookLocationField.getText());
-    setBoolean("export.library", exportLibraryBox.isSelected());
+    //setBoolean("export.library", exportLibraryBox.isSelected());
     setBoolean("editor.external", externalEditorBox.isSelected());
+
+    String newSizeText = fontSizeField.getText();
+    try {
+      int newSize = Integer.parseInt(newSizeText.trim());
+      String pieces[] = PApplet.split(get("editor.font"), ',');
+      pieces[2] = String.valueOf(newSize);
+      set("editor.font", PApplet.join(pieces, ','));
+
+    } catch (Exception e) {
+      System.err.println("ignoring invalid font size " + newSizeText);
+    }
+    editor.applyPreferences();
   }
 
 
   public void showFrame(PdeEditor editor) {
     // hide the editor window so it can't be messed with
     this.editor = editor;
-    editor.hide();
+    //editor.hide();
 
     // set all settings entry boxes to their actual status
     sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
     sketchCleanBox.setSelected(getBoolean("sketchbook.auto_clean"));
     sketchbookLocationField.setText(get("sketchbook.path"));
-    exportLibraryBox.setSelected(getBoolean("export.library"));
+    //exportLibraryBox.setSelected(getBoolean("export.library"));
     externalEditorBox.setSelected(getBoolean("editor.external"));
 
     frame.show();
@@ -423,7 +484,7 @@ public class PdePreferences extends JComponent {
   // .................................................................
 
 
-  public void load(InputStream input) throws IOException {
+  static public void load(InputStream input) throws IOException {
     BufferedReader reader =
       new BufferedReader(new InputStreamReader(input));
 
@@ -448,7 +509,7 @@ public class PdePreferences extends JComponent {
   // .................................................................
 
 
-  public void save() {
+  static public void save() {
     try {
       FileOutputStream output = new FileOutputStream(preferencesFile);
       PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));

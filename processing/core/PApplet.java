@@ -41,33 +41,120 @@ public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
-  // JDK_VERSION_STR = "1.3" or "1.1" or whatever
+  /**
+   * "1.3" or "1.1" or whatever (just the first three chars)
+   */
   public static final String JDK_VERSION_STRING =
     System.getProperty("java.version").substring(0,3);
+
+  /**
+   * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
+   * stored as a double.
+   */
   public static final double JDK_VERSION =
     new Double(JDK_VERSION_STRING).doubleValue();
-    //toFloat(System.getProperty("java.version").substring(0,3));
+
+
+  /**
+   * Current platform in use, one of the
+   * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
+   */
+  static public int platform;
+
+  static {
+    // figure out which operating system
+    // this has to be first, since editor needs to know
+
+    if (System.getProperty("mrj.version") != null) {  // running on a mac
+      platform = (System.getProperty("os.name").equals("Mac OS X")) ?
+        MACOSX : MACOS9;
+
+    } else {
+      String osname = System.getProperty("os.name");
+
+      if (osname.indexOf("Windows") != -1) {
+        platform = WINDOWS;
+
+      } else if (osname.equals("Linux")) {  // true for the ibm vm
+        platform = LINUX;
+
+        //} else if (osname.equals("Irix")) {
+        //platform = IRIX;
+
+      } else {
+        platform = OTHER;
+        //System.out.println("unhandled osname: \"" + osname + "\"");
+      }
+    }
+  }
+
 
   public PGraphics g;
+
   protected Object glock = new Object(); // for sync
   public Frame frame;
 
-  protected PMethods recorder;
+  static final String NEW_RENDERER = "new renderer";
 
-  /** Command line options passed in from main() */
+  /**
+   * The screen size when the applet was started.
+   * <P>
+   * Access this via screen.width and screen.height. To make an applet
+   * run at full screen, use size(screen.width, screen.height).
+   * <P>
+   * This won't update if you change the resolution of your screen
+   * once the the applet is running.
+   */
+  static public Dimension screen =
+    Toolkit.getDefaultToolkit().getScreenSize();
+
+  //protected PMethods recorder;
+  public PGraphics recorder;
+
+  /**
+   * Command line options passed in from main()
+   * <P>
+   * This does not include the arguments passed in to PApplet itself.
+   */
   public String args[];
 
   /** Path to sketch folder */
-  public String folder; // = System.getProperty("user.dir");
+  public String folder;
 
   /** When debugging headaches */
   static final boolean THREAD_DEBUG = false;
 
+  static public final int DEFAULT_WIDTH = 100;
+  static public final int DEFAULT_HEIGHT = 100;
+
+  //protected int INITIAL_WIDTH = DEFAULT_WIDTH;
+  //protected int INITIAL_HEIGHT = DEFAULT_HEIGHT;
+
+  /**
+   * Pixel buffer from this applet's PGraphics.
+   * <P>
+   * When used with OpenGL or Java2D, this value will
+   * be null until loadPixels() has been called.
+   */
   public int pixels[];
 
-  public int mouseX, mouseY;
+  /** width of this applet's associated PGraphics */
+  public int width;
 
-  public int pmouseX, pmouseY;
+  /** height of this applet's associated PGraphics */
+  public int height;
+
+  /** current x position of the mouse */
+  public int mouseX;
+
+  /** current y position of the mouse */
+  public int mouseY;
+
+  /** previous x position of the mouse */
+  public int pmouseX;
+
+  /** previous y position of the mouse */
+  public int pmouseY;
 
   /**
    * previous mouseX/Y for the draw loop, separated out because this is
@@ -99,19 +186,28 @@ public class PApplet extends Applet
   /**
    * Last key pressed.
    * <P>
-   * If it's a coded key (arrows or ctrl/shift/alt,
-   * this will be set to 0xffff or 65535).
+   * If it's a coded key, i.e. UP/DOWN/CTRL/SHIFT/ALT,
+   * this will be set to CODED (0xffff or 65535).
    */
   public char key;
 
   /**
-   * If the key is a coded key such as UP/DOWN/CTRL/SHIFT/ALT,
-   * the 'key' comes through as 0xffff (65535) and keyCode will
-   * contain the proper value.
+   * When "key" is set to CODED, this will contain a Java key code.
+   * <P>
+   * For the arrow keys, keyCode will be one of UP, DOWN, LEFT and RIGHT.
+   * Also available are ALT, CONTROL and SHIFT. A full set of constants
+   * can be obtained from java.awt.event.KeyEvent, from the VK_XXXX variables.
    */
   public int keyCode;
 
+  /**
+   * true if the mouse is currently pressed.
+   */
   public boolean keyPressed;
+
+  /**
+   * the last KeyEvent object passed into a mouse function.
+   */
   public KeyEvent keyEvent;
 
   /**
@@ -127,93 +223,128 @@ public class PApplet extends Applet
    */
   public boolean online = false;
 
+  /**
+   * Time in milliseconds when the applet was started.
+   * <P>
+   * Used by the millis() function.
+   */
   long millisOffset;
 
-  // getting the frame rate
-  protected float fps = 10;
-  protected long fpsLastMillis = 0;
+  /**
+   * The current value of frames per second.
+   * <P>
+   * The initial value will be 10 fps, and will be updated with each
+   * frame thereafter. The value is not instantaneous (since that
+   * wouldn't be very useful since it would jump around so much),
+   * but is instead averaged (integrated) over several frames.
+   * As such, this value won't be valid until after 5-10 frames.
+   */
+  public float framerate = 10;
+  protected long framerateLastMillis = 0;
 
   // setting the frame rate
-  protected long fpsLastDelayTime = 0;
-  protected float fpsTarget = 0;
+  protected long framerateLastDelayTime = 0;
+  protected float framerateTarget = 0;
 
-  //boolean drawMethod;
-  //boolean loopMethod;
   protected boolean looping;
+
+  /** flag set to true when a redraw is asked for by the user */
   protected boolean redraw;
 
-  // true if inside the loop method
-  //boolean insideLoop;
-
-  // used for mouse tracking so that pmouseX doesn't get
-  // updated too many times while still inside the loop
-  // instead, it's updated only before/after the loop()
-  //int qmouseX, qmouseY;
-
-  // queue for whether to call the simple mouseDragged or
-  // mouseMoved functions. these are called after beginFrame
-  // but before loop() is called itself, to avoid problems
-  // in synchronization.
-  //boolean qmouseDragged;
-  //boolean qmouseMoved;
-
-  //boolean firstFrame;
-
-  // current frame number (could this be used to replace firstFrame?)
+  /**
+   * How many frames have been displayed since the applet started.
+   * <P>
+   * This value is read-only <EM>do not</EM> attempt to set it,
+   * otherwise bad things will happen.
+   * <P>
+   * Inside setup(), frameCount is 0.
+   * For the first iteration of draw(), frameCount will equal 1.
+   */
   public int frameCount;
 
-  // true if the feller has spun down
+  /**
+   * true if this applet has had it.
+   */
   public boolean finished;
 
-  //boolean drawn;
   Thread thread;
 
-  public Exception exception; // the last exception thrown
-
-  static public final int DEFAULT_WIDTH = 100;
-  static public final int DEFAULT_HEIGHT = 100;
-
-  protected int INITIAL_WIDTH = DEFAULT_WIDTH;
-  protected int INITIAL_HEIGHT = DEFAULT_HEIGHT;
-
-  public int width, height;
+  /**
+   * Set to the an exception that occurs inside run() and is not
+   * caught. <P> Used by PdeRuntime to determine what happened and
+   * report back to the user.
+   */
+  public Exception exception;
 
   protected RegisteredMethods sizeMethods;
   protected RegisteredMethods preMethods, drawMethods, postMethods;
   protected RegisteredMethods mouseEventMethods, keyEventMethods;
   protected RegisteredMethods disposeMethods;
 
-  //protected int libraryCount;
-  //protected PLibrary libraries[];
-  //protected boolean libraryCalls[][];
-  //int setupCount = 0;
-
   // this text isn't seen unless PApplet is used on its
   // own and someone takes advantage of leechErr.. not likely
   static public final String LEECH_WAKEUP = "Error while running applet.";
   public PrintStream leechErr;
 
-  // message to send if attached as an external vm
-  //static public final String EXTERNAL_FLAG = "--external=";
-  //static public final char EXTERNAL_EXACT_LOCATION = 'e';
-  static public final String EXT_LOCATION = "--location=";
-  static public final String EXT_SIZE = "--size=";
-  static public final String EXT_EXACT_LOCATION = "--exact-location=";
-  static public final String EXT_SKETCH_FOLDER = "--sketch-folder=";
+  // messages to send if attached as an external vm
 
+  /**
+   * Position of the upper-lefthand corner of the editor window
+   * that launched this applet.
+   */
+  static public final String ARGS_EDITOR_LOCATION = "--editor-location";
+
+  /**
+   * Location for where to position the applet window on screen.
+   * <P>
+   * This is used by the editor to when saving the previous applet
+   * location, or could be used by other classes to launch at a
+   * specific position on-screen.
+   */
+  static public final String ARGS_EXTERNAL = "--external";
+
+  static public final String ARGS_LOCATION = "--location";
+
+  static public final String ARGS_DISPLAY = "--display";
+
+  static public final String ARGS_PRESENT = "--present";
+
+  static public final String ARGS_PRESENT_BGCOLOR = "--present-color";
+
+  static public final String ARGS_PRESENT_STOP_COLOR = "--present-stop-color";
+
+  /**
+   * Allows the user or PdeEditor to set a specific sketch folder path.
+   * <P>
+   * Used by PdeEditor to pass in the location where saveFrame()
+   * and all that stuff should write things.
+   */
+  static public final String ARGS_SKETCH_FOLDER = "--sketch-folder";
+
+  /**
+   * Message from parent editor (when run as external) to quit.
+   */
   static public final char EXTERNAL_STOP = 's';
-  static public final String EXTERNAL_QUIT = "__QUIT__";
-  static public final String EXTERNAL_MOVE = "__MOVE__";
-  //boolean externalRuntime;
 
-  //static boolean setupComplete = false;
+  /**
+   * When run externally to a PdeEditor,
+   * this is sent by the applet when it quits.
+   */
+  static public final String EXTERNAL_QUIT = "__QUIT__";
+
+  /**
+   * When run externally to a PdeEditor, this is sent by the applet
+   * whenever the window is moved.
+   * <P>
+   * This is used so that the editor can re-open the sketch window
+   * in the same position as the user last left it.
+   */
+  static public final String EXTERNAL_MOVE = "__MOVE__";
+
 
   public void init() {
-    //checkParams();
 
-    // can/may be resized later
-    //g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    initGraphics();
+    //initGraphics();
 
     // send tab keys through to the PApplet
     try {
@@ -244,6 +375,12 @@ public class PApplet extends Applet
     keyEventMethods = new RegisteredMethods();
     disposeMethods = new RegisteredMethods();
 
+    // create a dummy graphics context
+    size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    //size(INITIAL_WIDTH, INITIAL_HEIGHT);
+    width = 0;  // use this to flag whether the width/height are valid
+    height = 0;
+
     try {
       getAppletContext();
       online = true;
@@ -255,6 +392,7 @@ public class PApplet extends Applet
   }
 
 
+  /*
   // override for subclasses (i.e. opengl)
   // so that init() doesn't have to be replicated
   public void initGraphics() {
@@ -303,6 +441,7 @@ public class PApplet extends Applet
     // fine since it's post-beginFrame.
     g.defaults();
   }
+  */
 
 
   /**
@@ -500,8 +639,8 @@ public class PApplet extends Applet
       looping = false;
 
       // reset framerate delay times
-      fpsLastDelayTime = 0;
-      fpsLastMillis = 0;
+      framerateLastDelayTime = 0;
+      framerateLastMillis = 0;
 
       if (thread != null) {
         thread.interrupt();  // wake from sleep
@@ -513,17 +652,130 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Starts up and creates a two-dimensional drawing surface.
+   * <P>
+   * If using Java 1.3 or later, this will default to using
+   * PGraphics2, the Java2D-based renderer. If using Java 1.1,
+   * or if PGraphics2 is not available, then PGraphics will be used.
+   * To set your own renderer, use the other version of the size()
+   * method that takes a renderer as its last parameter.
+   * <P>
+   * If called once a renderer has already been set, this will
+   * use the previous renderer and simply resize it.
+   */
   public void size(int iwidth, int iheight) {
+    if (g != null) {
+      // just resize the current renderer
+      size(iwidth, iheight, g.getClass().getName());
+
+    } else {
+      if (PApplet.JDK_VERSION >= 1.3) {
+        try {
+          Class c = Class.forName(JAVA2D);
+          size(iwidth, iheight, JAVA2D);
+          return;
+
+        } catch (ClassNotFoundException e) { }
+      }
+      size(iwidth, iheight, P2D);  // fall-through case
+    }
+  }
+
+
+  /**
+   * Creates a new PGraphics object and sets it to the specified size.
+   * <P>
+   * Note that you cannot change the renderer once outside of setup().
+   * You can call size() to give it a new size, but you need to always
+   * ask for the same renderer, otherwise you're gonna run into trouble.
+   */
+  public void size(int iwidth, int iheight, String renderer) {
+    String currentRenderer = (g == null) ? null : g.getClass().getName();
+
+    if (currentRenderer != null) {
+      if (currentRenderer.equals(renderer)) {
+        if ((iwidth == g.width) && (iheight == g.height)) {
+          // all set, the renderer was queued up last time
+          // before throwing the exception
+          //System.out.println("ignoring additional size()");
+          return;
+        }
+      } else {
+        if (frameCount > 0) {
+          throw new RuntimeException("size() cannot be called to change " +
+                                     "the renderer outside of setup()");
+        }
+      }
+    }
+
+    try {
+      //if (renderer.equals(OPENGL)) {
+      //g = new processing.opengl.PGraphicsGL(iwidth, iheight, this);
+      //} else {
+
+      Class rendererClass = Class.forName(renderer);
+      Class constructorParams[] =
+        new Class[] { Integer.TYPE,
+                      Integer.TYPE,
+                      PApplet.class };
+      Constructor constructor =
+        rendererClass.getConstructor(constructorParams);
+      Object constructorValues[] =
+        new Object[] { new Integer(iwidth),
+                       new Integer(iheight),
+                       this };
+      // create the actual PGraphics object for rendering
+      //System.out.println("creating new PGraphics " + constructor);
+      g = (PGraphics)
+        constructor.newInstance(constructorValues);
+
+      //System.out.println("setting size to
+      this.width = iwidth;
+      this.height = iheight;
+
+      //width = g.width;
+      //height = g.height;
+      //pixels = g.pixels;  // this may be null
+
+      // make the applet itself larger
+      setSize(width, height);
+
+      // probably needs to mess with the parent frame here?
+      // TODO wait for a "legitimate size" flag to be set
+      // (meaning that setup has finished properly)
+      // at which time the parent frame will do its thing.
+
+    } catch (InvocationTargetException ite) {
+      String msg = ite.getTargetException().getMessage();
+      if (msg.indexOf("no jogl in java.library.path") != -1) {
+        throw new RuntimeException("Before using OpenGL, you must " +
+                                   "first select Import Library > " +
+                                   "opengl from the Sketch menu.");
+        //System.out.println("ite found: " + ite.getTargetException().getMessage());
+      } else {
+        ite.getTargetException().printStackTrace();
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      die("Could not start because of a problem with size()", e);
+    }
+
+    // throw an exception so that setup() is called again
+    // but with a properly sized render
+    if ((currentRenderer != null) &&
+        !currentRenderer.equals(renderer)) {
+      throw new RuntimeException(NEW_RENDERER);
+    }
+
+    /*
     if (g == null) return;
     g.resize(iwidth, iheight);
 
     this.pixels = g.pixels;
     this.width = g.width;
     this.height = g.height;
-
-    Object methodArgs[] =
-      new Object[] { new Integer(width), new Integer(height) };
-    sizeMethods.handle(methodArgs);
 
     if (frame != null) {
       Insets insets = frame.getInsets();
@@ -542,6 +794,11 @@ public class PApplet extends Applet
       //System.out.println("frame was null");
       //setBounds(0, 0, width, height);
     }
+    */
+
+    Object methodArgs[] =
+      new Object[] { new Integer(width), new Integer(height) };
+    sizeMethods.handle(methodArgs);
   }
 
 
@@ -564,6 +821,7 @@ public class PApplet extends Applet
     if (frameCount == 0) {
       // paint() may be called more than once before things
       // are finally painted to the screen and the thread gets going
+      //System.out.println("not painting");
       /*
       if (thread == null) {
         initGraphics();
@@ -597,7 +855,7 @@ public class PApplet extends Applet
       //g.mis.newPixels(pixels, g.cm, 0, width); // must call this
 
       // make sure the screen is visible and usable
-      if (g != null) {
+      if ((g != null) && (g.image != null)) {
         screen.drawImage(g.image, 0, 0, null);
       }
       //if (THREAD_DEBUG) println("notifying all");
@@ -625,16 +883,86 @@ public class PApplet extends Applet
 
       while ((Thread.currentThread() == thread) && !finished) {
         //while ((thread != null) && !finished) {
-      //while (!finished) {
+        //while (!finished) {
         //updated = false;
 
+        // render a single frame
+        g.requestDisplay(this);
+
+        // moving this to update() (for 0069+) for linux sync problems
+        //if (firstFrame) firstFrame = false;
+
+        // wait for update & paint to happen before drawing next frame
+        // this is necessary since the drawing is sometimes in a
+        // separate thread, meaning that the next frame will start
+        // before the update/paint is completed
+        //while (!updated) {
+        try {
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                      " " + looping + " " + redraw);
+          //Thread.yield();
+          // windows doesn't like 'yield', so have to sleep at least
+          // for some small amount of time.
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                    " gonna sleep");
+          // can't remember when/why i changed that to '1'
+          // (rather than 3 or 5, as has been traditional), but i
+          // have a feeling that some platforms aren't gonna like that
+          // if !looping, sleeps for a nice long time
+          int nap = looping ? 1 : 10000;
+          // don't nap after setup, because if noLoop() is called this
+          // will make the first draw wait 10 seconds before showing up
+          if (frameCount == 1) nap = 1;
+          Thread.sleep(nap);
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                    " outta sleep");
+        } catch (InterruptedException e) { }
+        //}
+      }
+
+    } catch (Exception e) {
+      // formerly in kjcapplet, now just checks to see
+      // if someone wants to leech off errors
+
+      // note that this will not catch errors inside setup()
+      // those are caught by the PdeRuntime
+
+      System.out.println("exception occurred (if you don't see a stack " +
+                         "trace below this message, we've got a bug)");
+      finished = true;
+      exception = e;
+      //e.printStackTrace(System.out);
+
+      if (leechErr != null) {
+        // if draw() mode, make sure that ui stops waiting
+        // and the run button quits out
+        leechErr.println(LEECH_WAKEUP);
+        e.printStackTrace(leechErr);
+
+      } else {
+        System.err.println(LEECH_WAKEUP);
+        e.printStackTrace();
+      }
+    }
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                              " thread finished");
+    //System.out.println("exiting run " + finished);
+    stop();  // call to shutdown libs?
+  }
+
+
+  public void display() {
         if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
                                           " formerly nextFrame()");
-        //if (looping || redraw) nextFrame();
         if (looping || redraw) {
+          /*
           if (frameCount == 0) {  // needed here for the sync
-            createGraphics();
+            //createGraphics();
+            // set up a dummy graphics in case size() is never
+            // called inside setup
+            size(INITIAL_WIDTH, INITIAL_HEIGHT);
           }
+          */
 
           // g may be rebuilt inside here, so turning of the sync
           //synchronized (g) {
@@ -647,28 +975,56 @@ public class PApplet extends Applet
                                       " 1b draw");
 
             if (frameCount == 0) {
-              //initGraphics();
-              //createGraphics();
               g.defaults();
-              setup();
+
+              try {
+                //System.out.println("attempting setup");
+                //System.out.println("into try");
+                setup();
+                //System.out.println("done attempting setup");
+                //System.out.println("out of try");
+
+              } catch (RuntimeException e) {
+                //System.out.println("catching a cold " + e.getMessage());
+                if (e.getMessage().indexOf(NEW_RENDERER) != -1) {
+                  //System.out.println("got new renderer");
+                  return;
+                  //continue;  // will this work?
+
+                } else {
+                  throw e;
+                }
+              }
               // if depth() is called inside setup, pixels/width/height
               // will be ok by the time it's back out again
 
-              this.pixels = g.pixels;
+              //this.pixels = g.pixels;  // make em call loadPixels
+              // now for certain that we've got a valid size
               this.width = g.width;
               this.height = g.height;
 
             } else {
-              if (fpsTarget != 0) {
-                if (fpsLastDelayTime == 0) {
-                  fpsLastDelayTime = System.currentTimeMillis();
+              // update the current framerate
+              if (framerateLastMillis != 0) {
+                float elapsed = (float)
+                  (System.currentTimeMillis() - framerateLastMillis);
+                if (elapsed != 0) {
+                  framerate =
+                    (framerate * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
+                }
+              }
+              framerateLastMillis = System.currentTimeMillis();
+
+              if (framerateTarget != 0) {
+                if (framerateLastDelayTime == 0) {
+                  framerateLastDelayTime = System.currentTimeMillis();
 
                 } else {
                   long timeToLeave =
-                    fpsLastDelayTime + (long)(1000.0f / fpsTarget);
+                    framerateLastDelayTime + (long)(1000.0f / framerateTarget);
                   int napTime =
                     (int) (timeToLeave - System.currentTimeMillis());
-                  fpsLastDelayTime = timeToLeave;
+                  framerateLastDelayTime = timeToLeave;
                   delay(napTime);
                 }
               }
@@ -735,65 +1091,6 @@ public class PApplet extends Applet
             //}
           }  // end of synchronize
         }
-
-        // moving this to update() (for 0069+) for linux sync problems
-        //if (firstFrame) firstFrame = false;
-
-        // wait for update & paint to happen before drawing next frame
-        // this is necessary since the drawing is sometimes in a
-        // separate thread, meaning that the next frame will start
-        // before the update/paint is completed
-        //while (!updated) {
-        try {
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " " + looping + " " + redraw);
-          //Thread.yield();
-          // windows doesn't like 'yield', so have to sleep at least
-          // for some small amount of time.
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    " gonna sleep");
-          // can't remember when/why i changed that to '1'
-          // (rather than 3 or 5, as has been traditional), but i
-          // have a feeling that some platforms aren't gonna like that
-          // if !looping, sleeps for a nice long time
-          int nap = looping ? 1 : 10000;
-          // don't nap after setup, because if noLoop() is called this
-          // will make the first draw wait 10 seconds before showing up
-          if (frameCount == 1) nap = 1;
-          Thread.sleep(nap);
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    " outta sleep");
-        } catch (InterruptedException e) { }
-        //}
-      }
-
-    } catch (Exception e) {
-      // formerly in kjcapplet, now just checks to see
-      // if someone wants to leech off errors
-
-      // note that this will not catch errors inside setup()
-      // those are caught by the PdeRuntime
-
-      System.out.println("exception occurred (if you don't see a stack " +
-                         "trace below this message, we've got a bug)");
-      finished = true;
-      //e.printStackTrace(System.out);
-
-      if (leechErr != null) {
-        // if draw() mode, make sure that ui stops waiting
-        // and the run button quits out
-        leechErr.println(LEECH_WAKEUP);
-        e.printStackTrace(leechErr);
-
-      } else {
-        System.err.println(LEECH_WAKEUP);
-        e.printStackTrace();
-      }
-    }
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              " thread finished");
-    //System.out.println("exiting run " + finished);
-    stop();  // call to shutdown libs?
   }
 
 
@@ -1046,11 +1343,11 @@ public class PApplet extends Applet
 
   /**
    * Called each time a single key on the keyboard is pressed.
-   *
+   * <P>
    * Examples for key handling:
    * (Tested on Windows XP, please notify if different on other
    * platforms, I have a feeling Mac OS and Linux may do otherwise)
-   *
+   * <PRE>
    * 1. Pressing 'a' on the keyboard:
    *    keyPressed  with key == 'a' and keyCode == 'A'
    *    keyTyped    with key == 'a' and keyCode ==  0
@@ -1086,6 +1383,7 @@ public class PApplet extends Applet
    *    this behavior off if Java 1.4 is in use (tested 1.4.2_05 Windows).
    *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
    *    Not tested on other platforms or for 1.3.
+   * </PRE>
    */
   public void keyPressed() { }
 
@@ -1131,7 +1429,12 @@ public class PApplet extends Applet
   // getting the time
 
 
-  /** Get the number of milliseconds since the applet started. */
+  /**
+   * Get the number of milliseconds since the applet started.
+   * <P>
+   * This is a function, rather than a variable, because it may
+   * change multiple times per frame.
+   */
   public int millis() {
     return (int) (System.currentTimeMillis() - millisOffset);
   }
@@ -1146,13 +1449,20 @@ public class PApplet extends Applet
     return Calendar.getInstance().get(Calendar.MINUTE);
   }
 
-  /** Hour position of the current time. */
+  /**
+   * Hour position of the current time in international format (0-23).
+   * <P>
+   * To convert this value to American time: <BR>
+   * <PRE>int yankeeHour = (hour() % 12);
+   * if (yankeeHour == 0) yankeeHour = 12;</PRE>
+   */
   static public int hour() {
     return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
   }
 
   /**
    * Get the current day of the month (1 through 31).
+   * <P>
    * If you're looking for the day of the week (M-F or whatever)
    * or day of the year (1..365) then use java's Calendar.get()
    */
@@ -1195,30 +1505,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Get the current framerate. The initial value will be 10 fps,
-   * and will be updated with each frame thereafter. The value is not
-   * instantaneous (since that wouldn't be very useful since it would
-   * jump around so much), but is instead averaged (integrated)
-   * over roughly the last 10 frames.
-   */
-  public float framerate() {
-    if (fpsLastMillis != 0) {
-      float elapsed = (float) (System.currentTimeMillis() - fpsLastMillis);
-      if (elapsed != 0) {
-        fps = (fps * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
-      }
-    }
-    fpsLastMillis = System.currentTimeMillis();
-    return fps;
-  }
-
-
-  /**
    * Set a target framerate. This will cause delay() to be called
    * after each frame to allow for a specific rate to be set.
    */
-  public void framerate(float fpsTarget) {
-    this.fpsTarget = fpsTarget;
+  public void framerate(float framerateTarget) {
+    this.framerateTarget = framerateTarget;
   }
 
 
@@ -3234,17 +3525,25 @@ public class PApplet extends Applet
     */
   }
 
+  /**
+   * Join an array of Strings together as a single String,
+   * separated by the whatever's passed in for the separator.
+   */
+  static public String join(String str[], char separator) {
+    return join(str, String.valueOf(separator));
+  }
+
 
   /**
    * Join an array of Strings together as a single String,
    * separated by the whatever's passed in for the separator.
-   *
+   * <P>
    * To use this on numbers, first pass the array to nf() or nfs()
    * to get a list of String objects, then use join on that.
-   *
+   * <PRE>
    * e.g. String stuff[] = { "apple", "bear", "cat" };
    *      String list = join(stuff, ", ");
-   *      // list is now "apple, bear, cat"
+   *      // list is now "apple, bear, cat"</PRE>
    */
   static public String join(String str[], String separator) {
     StringBuffer buffer = new StringBuffer();
@@ -3260,16 +3559,16 @@ public class PApplet extends Applet
    * Split the provided String at wherever whitespace occurs.
    * Multiple whitespace (extra spaces or tabs or whatever)
    * between items will count as a single break.
-   *
+   * <P>
    * The whitespace characters are "\t\n\r\f", which are the defaults
    * for java.util.StringTokenizer, plus the unicode non-breaking space
    * character, which is found commonly on files created by or used
    * in conjunction with Mac OS X (character 160, or 0x00A0 in hex).
-   *
+   * <PRE>
    * i.e. split("a b") -> { "a", "b" }
    *      split("a    b") -> { "a", "b" }
    *      split("a\tb") -> { "a", "b" }
-   *      split("a \t  b  ") -> { "a", "b" }
+   *      split("a \t  b  ") -> { "a", "b" }</PRE>
    */
   static public String[] split(String what) {
     return split(what, WHITESPACE);
@@ -3282,13 +3581,13 @@ public class PApplet extends Applet
    * in addition to white space, you might want to treat commas
    * as a separator. The delimeter characters won't appear in
    * the returned String array.
-   *
+   * <PRE>
    * i.e. split("a, b", " ,") -> { "a", "b" }
-   *
+   * </PRE>
    * To include all the whitespace possibilities, use the variable
    * WHITESPACE, found in PConstants:
-   *
-   * i.e. split("a   | b", WHITESPACE + "|");  ->  { "a", "b" }
+   * <PRE>
+   * i.e. split("a   | b", WHITESPACE + "|");  ->  { "a", "b" }</PRE>
    */
   static public String[] split(String what, String delim) {
     StringTokenizer toker = new StringTokenizer(what, delim);
@@ -3305,7 +3604,7 @@ public class PApplet extends Applet
   /**
    * Split a string into pieces along a specific character.
    * Most commonly used to break up a String along tab characters.
-   *
+   * <P>
    * This operates differently than the others, where the
    * single delimeter is the only breaking point, and consecutive
    * delimeters will produce an empty string (""). This way,
@@ -4301,170 +4600,259 @@ v              PApplet.this.stop();
   }
 
 
+  /**
+   * The simplest way to turn and applet into an application is to
+   * add the following code to your program:
+   * <PRE>static public void main(String args[]) {
+   *   PApplet.main(new String[] { "YourSketchName" };
+   * }</PRE>
+   * This will properly launch your applet from a double-clickable
+   * .jar or from the command line.
+   * <PRE>
+   * Parameters useful for launching or also used by the PDE:
+   *
+   * --location=x,y        upper-lefthand corner of where the applet
+   *                       should appear on screen. if not used,
+   *                       the default is to center on the main screen.
+   *
+   * --present             put the applet into full screen presentation
+   *                       mode. requires java 1.4.
+   *
+   * --present-color       background color of the presentation window
+   *
+   * --sketch-folder       location of where to save files from functions
+   *                       like saveStrings() or saveFrame(). defaults to
+   *                       the folder that the java application was
+   *                       launched from, which means if this isn't set by
+   *                       the pde, everything goes into the same folder
+   *                       as processing.exe.
+   *
+   * --display=n           set what display should be used by this applet.
+   *                       displays are numbered starting from 1.
+   *
+   *
+   * Parameters used by Processing when running an applet externally:
+   *
+   * --external             set when the applet is being used by the PDE
+   *
+   * --editor-location=x,y  position of the upper-lefthand corner of the
+   *                        editor window, for placement of applet window
+   *
+   * --present-stop-color   color of the 'stop' text used to quit an
+   *                        applet when it's in present mode.
+   */
   static public void main(String args[]) {
     if (args.length < 1) {
-      System.err.println("error: PApplet <appletname>");
+      System.err.println("Usage: PApplet <appletname>");
       System.exit(1);
     }
 
     try {
       boolean external = false;
       int location[] = null;
-      //int locationX, locationY;
-      boolean exactLocation = false;
+      int editorLocation[] = null;
+      //boolean exactLocation = false;
       String folder = System.getProperty("user.dir");
-      //if (args[0].indexOf(EXTERNAL_FLAG) == 0) external = true;
       String name = null;
+      boolean present = false;
+      Color presentColor = Color.BLACK;
+      Color stopColor = Color.GRAY;
+      //Object displayDevice = null;
+      GraphicsDevice displayDevice = null;
 
-      int initialWidth = PApplet.DEFAULT_WIDTH;
-      int initialHeight = PApplet.DEFAULT_HEIGHT;
+      String param = null, value = null;
 
       int argIndex = 0;
       while (argIndex < args.length) {
-        if (args[argIndex].indexOf(EXT_LOCATION) == 0) {
-          external = true;
-          String locationStr =
-            args[argIndex].substring(EXT_LOCATION.length());
-          location = toInt(split(locationStr, ','));
-          //locationX = location[0] - 20;
-          //locationY = location[1];
+        int equals = args[argIndex].indexOf('=');
+        if (equals != -1) {
+          param = args[argIndex].substring(0, equals);
+          value = args[argIndex].substring(equals + 1);
 
-        } else if (args[argIndex].indexOf(EXT_EXACT_LOCATION) == 0) {
-          external = true;
-          String locationStr =
-            args[argIndex].substring(EXT_EXACT_LOCATION.length());
-          location = toInt(split(locationStr, ','));
-          exactLocation = true;
+          if (param.equals(ARGS_EDITOR_LOCATION)) {
+            external = true;
+            editorLocation = toInt(split(value, ','));
 
-        } else if (args[argIndex].indexOf(EXT_SKETCH_FOLDER) == 0) {
-          folder = args[argIndex].substring(EXT_SKETCH_FOLDER.length());
+          } else if (param.equals(ARGS_DISPLAY)) {
+            int deviceIndex = Integer.parseInt(value) - 1;
 
-        } else if (args[argIndex].indexOf(EXT_SIZE) == 0) {
-          String sizeStr = args[argIndex].substring(EXT_SIZE.length());
-          int initial[] = toInt(split(sizeStr, ','));
-          initialWidth = initial[0];
-          initialHeight = initial[1];
-          //System.out.println("initial: " + initialWidth + " " + initialHeight);
+            GraphicsEnvironment environment =
+              GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice devices[] = environment.getScreenDevices();
+            if ((deviceIndex >= 0) && (deviceIndex < devices.length)) {
+              displayDevice = devices[deviceIndex];
+            } else {
+              System.err.println("Display " + value + " does not exist, " +
+                                 "using the default display instead.");
+            }
+
+          } else if (param.equals(ARGS_PRESENT_BGCOLOR)) {
+            if (value.charAt(0) == '#') value = value.substring(1);
+            presentColor = new Color(Integer.parseInt(value, 16));
+
+          } else if (param.equals(ARGS_PRESENT_STOP_COLOR)) {
+            if (value.charAt(0) == '#') value = value.substring(1);
+            stopColor = new Color(Integer.parseInt(value, 16));
+
+          } else if (param.equals(ARGS_SKETCH_FOLDER)) {
+            folder = value;
+
+          } else if (param.equals(ARGS_LOCATION)) {
+            location = toInt(split(value, ','));
+          }
 
         } else {
-          name = args[argIndex];
-          break;
+          if (args[argIndex].equals(ARGS_PRESENT)) {
+            present = true;
+
+          } else if (args[argIndex].equals(ARGS_EXTERNAL)) {
+            external = true;
+
+          } else {
+            name = args[argIndex];
+            break;
+          }
         }
         argIndex++;
       }
 
-      Frame frame = new Frame();
+      Frame frame = null; //new Frame();
+      if (displayDevice != null) {
+        //GraphicsConfiguration gc = displayDevice.getDefaultConfiguration();
+        //frame = new Frame(gc);
+        frame = new Frame(displayDevice.getDefaultConfiguration());
+      } else {
+        frame = new Frame();
+      }
+
       frame.setResizable(false);  // remove the grow box
-      frame.pack();  // get insets. get more.
-      //frame.show();  // gl hack
+      //frame.pack();  // get insets. get more.
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
-      applet.frame = frame;
-
-      applet.INITIAL_WIDTH = initialWidth;
-      applet.INITIAL_HEIGHT = initialHeight;
 
       // these are needed before init/start
+      applet.frame = frame;
       applet.folder = folder;
-      int argc = args.length - (argIndex+1);
-      applet.args = new String[argc];
-      System.arraycopy(args, argc, applet.args, 0, argc);
+      applet.args = PApplet.subset(args, 1);
 
-      //System.out.println("calling applet.init");
       applet.init();
-      //applet.start();
-      //System.out.println("done calling applet.init");
 
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      // wait until the applet has figured out its width
+      // hoping that this won't hang if the applet has an exception
+      while ((applet.width == 0) && !applet.finished) {
+        try {
+          Thread.sleep(5);
 
-      if (external) {
-        Insets insets = frame.getInsets();  // does pack() first above
-        //System.out.println(insets);
+        } catch (InterruptedException e) { }
+      }
 
-        int locationX = location[0] - 20;
-        int locationY = location[1];
+      if (present) {
+        frame.setUndecorated(true);
+        //frame.setResizable(false);
 
-        // applet.width and .height are zero here
-        /*
-        int minW = 120;
-        int minH = 120;
-        int windowW =
-          Math.max(applet.width, minW) + insets.left + insets.right;
-        int windowH =
-          Math.max(applet.height, minH) + insets.top + insets.bottom;
-        */
-        //int windowW = 120 + insets.left + insets.right;
-        //int windowH = 120 + insets.top + insets.bottom;
-        int windowW = initialWidth + insets.left + insets.right;
-        int windowH = initialHeight + insets.top + insets.bottom;
-        frame.setSize(windowW, windowH);
+        //DisplayMode dm = device.getDisplayMode();
+        //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
 
-        if (exactLocation) {
-          frame.setLocation(location[0], location[1]);
+        //if (presentColor != null) {
+        frame.setBackground(presentColor);
+        //}
+        displayDevice.setFullScreenWindow(frame);
 
-        } else {
-          if (locationX - windowW > 10) {
-            // if it fits to the left of the window
-            frame.setLocation(locationX - windowW, locationY);
-
-          } else {
-            // if it fits inside the editor window,
-            // offset slightly from upper lefthand corner
-            // so that it's plunked inside the text area
-            locationX = location[0] + 66;
-            locationY = location[1] + 66;
-
-            if ((locationX + windowW > screen.width - 33) ||
-                (locationY + windowH > screen.height - 33)) {
-              // otherwise center on screen
-              locationX = (screen.width - windowW) / 2;
-              locationY = (screen.height - windowH) / 2;
-            }
-            frame.setLocation(locationX, locationY);
-          }
-        }
-        //System.out.println("applet izzat: " + applet.width + " " +
-        //                 applet.height);
-
-        frame.setLayout(null);
         frame.add(applet);
-        frame.setBackground(SystemColor.control);
-        /*
-        applet.setBounds((windowW - applet.width)/2,
-                         insets.top + ((windowH - insets.top - insets.bottom) -
-                                       applet.height)/2,
-                         windowW, windowH);
-        */
-        applet.setBounds((windowW - initialWidth) / 2,
-                         insets.top + ((windowH - insets.top -
-                                        insets.bottom) - initialHeight)/2,
-                         windowW, windowH);
+        Dimension fullscreen = frame.getSize();
+        //System.out.println("screen size is " + screen);
+        applet.setBounds((fullscreen.width - applet.width) / 2,
+                         (fullscreen.height - applet.height) / 2,
+                         applet.width, applet.height);
 
-        applet.setupExternal(frame);
+        if (external) {
+          Label label = new Label("stop");
+          label.setForeground(stopColor);
+          label.addMouseListener(new MouseAdapter() {
+              public void mousePressed(MouseEvent e) {
+                System.exit(0);
+              }
+            });
+          frame.add(label);
+          Dimension labelSize = label.getPreferredSize();
+          label.setSize(labelSize);
+          //label.setLocation(20, 40);
+          label.setLocation(20, fullscreen.height - labelSize.height - 20);
+          applet.setupExternal(frame);
+        }
 
-      } else {  // !external
-        //System.out.println("applet not external");
-
-        // remove applet name from args passed in
-        applet.args = new String[args.length - 1];
-        System.arraycopy(args, 1, applet.args, 0, args.length - 1);
-
-        frame.setLayout(new BorderLayout());
-        frame.add(applet, BorderLayout.CENTER);
+      } else {  // if not presenting
+        // can't do this earlier cuz present mode don't like it
         frame.pack();
 
-        frame.setLocation((screen.width - applet.g.width) / 2,
-                          (screen.height - applet.g.height) / 2);
+        if (external) {
+          Insets insets = frame.getInsets();  // does pack() first above
 
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-              System.exit(0);
+          int windowW =
+            Math.max(applet.width, 120) + insets.left + insets.right;
+          int windowH =
+            Math.max(applet.height, 120) + insets.top + insets.bottom;
+          frame.setSize(windowW, windowH);
+
+          if (location != null) {
+            // a specific location was received from PdeRuntime
+            // (applet has been run more than once, user placed window)
+            frame.setLocation(location[0], location[1]);
+
+          } else {
+            int locationX = editorLocation[0] - 20;
+            int locationY = editorLocation[1];
+
+            if (locationX - windowW > 10) {
+              // if it fits to the left of the window
+              frame.setLocation(locationX - windowW, locationY);
+
+            } else {
+              // if it fits inside the editor window,
+              // offset slightly from upper lefthand corner
+              // so that it's plunked inside the text area
+              locationX = editorLocation[0] + 66;
+              locationY = editorLocation[1] + 66;
+
+              if ((locationX + windowW > screen.width - 33) ||
+                  (locationY + windowH > screen.height - 33)) {
+                // otherwise center on screen
+                locationX = (screen.width - windowW) / 2;
+                locationY = (screen.height - windowH) / 2;
+              }
+              frame.setLocation(locationX, locationY);
             }
-          });
+          }
+
+          frame.setLayout(null);
+          frame.add(applet);
+          frame.setBackground(SystemColor.control);
+          int usableWindowH = windowH - insets.top - insets.bottom;
+          applet.setBounds((windowW - applet.width)/2,
+                           insets.top + (usableWindowH - applet.height)/2,
+                           windowW, windowH);
+          applet.setupExternal(frame);
+
+        } else {  // !external
+          frame.setLayout(new BorderLayout());
+          frame.add(applet, BorderLayout.CENTER);
+          //frame.pack();  // is this necessary?
+
+          frame.setLocation((screen.width - applet.width) / 2,
+                            (screen.height - applet.height) / 2);
+
+          frame.addWindowListener(new WindowAdapter() {
+              public void windowClosing(WindowEvent e) {
+                System.exit(0);
+              }
+            });
+        }
+
+        frame.show();
       }
+
       //System.out.println("showing frame");
 
-      frame.show();
       //System.out.println("applet requesting focus");
       applet.requestFocus(); // ask for keydowns
       //System.out.println("exiting main()");
@@ -4479,7 +4867,7 @@ v              PApplet.this.stop();
   //////////////////////////////////////////////////////////////
 
 
-  public void recordFrame(PMethods recorder) {
+  public void recordFrame(PGraphics recorder) {
     this.recorder = recorder;
     recorder.beginFrame();
   }
@@ -4494,15 +4882,15 @@ v              PApplet.this.stop();
   }
 
 
-  public void updatePixels() {
+  //public void updatePixels() {
     // anything special here?
-    g.updatePixels();
-  }
+    //g.updatePixels();
+  //}
 
 
-  public void updatePixels(int x1, int y1, int x2, int y2) {
-    g.updatePixels(x1, y1, x2, y2);
-  }
+  //public void updatePixels(int x1, int y1, int x2, int y2) {
+  //g.updatePixels(x1, y1, x2, y2);
+  //}
 
 
   //////////////////////////////////////////////////////////////
@@ -4526,6 +4914,18 @@ v              PApplet.this.stop();
   public void noSmooth() {
     if (recorder != null) recorder.noSmooth();
     g.noSmooth();
+  }
+
+
+  public void updatePixels() {
+    if (recorder != null) recorder.updatePixels();
+    g.updatePixels();
+  }
+
+
+  public void updatePixels(int x1, int y1, int x2, int y2) {
+    if (recorder != null) recorder.updatePixels(x1, y1, x2, y2);
+    g.updatePixels(x1, y1, x2, y2);
   }
 
 
@@ -4649,6 +5049,12 @@ v              PApplet.this.stop();
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height) {
     return PGraphics.saveTGA(output, pixels, width, height);
+  }
+
+
+  public void requestDisplay(PApplet parent) {
+    if (recorder != null) recorder.requestDisplay(parent);
+    g.requestDisplay(parent);
   }
 
 

@@ -296,8 +296,8 @@ public class PGraphics extends PImage implements PConstants {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics(int iwidth, int iheight) {
-    resize(iwidth, iheight);
+  //public PGraphics(int iwidth, int iheight) {
+  //resize(iwidth, iheight);
 
     // init color/stroke/fill
     // called instead just before setup on first frame
@@ -306,6 +306,26 @@ public class PGraphics extends PImage implements PConstants {
     // clear geometry for loading later
     //circleX = null;  // so that bagel knows to init these
     //sphereX = null;  // diff from cpp b/c mem in cpp is preallocated
+  //}
+
+
+  /**
+   * Constructor for the PGraphics object. Use this to ensure that
+   * the defaults get set properly. In a subclass, use this(w, h)
+   * as the first line of a subclass' constructor to properly set
+   * the internal fields and defaults.
+   *
+   * @param iwidth  viewport width
+   * @param iheight viewport height
+   */
+  public PGraphics(int iwidth, int iheight, PApplet applet) {
+    if (applet != null) {
+      applet.addMouseListener(applet);
+      applet.addMouseMotionListener(applet);
+      applet.addKeyListener(applet);
+      applet.addFocusListener(applet);
+    }
+    resize(iwidth, iheight);
   }
 
 
@@ -313,7 +333,7 @@ public class PGraphics extends PImage implements PConstants {
    * Called in repsonse to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
-   *
+   * <P>
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
@@ -328,6 +348,14 @@ public class PGraphics extends PImage implements PConstants {
 
     // clear the screen with the old background color
     //background(backgroundColor);
+  }
+
+
+  /**
+   * Parent thread has requested that visual action be taken.
+   */
+  public void requestDisplay(PApplet parent) {
+    parent.display();
   }
 
 
@@ -387,6 +415,7 @@ public class PGraphics extends PImage implements PConstants {
    *  set engine's default values
    */
   public void defaults() {  // ignore
+    //System.out.println("PGraphics.defaults()");
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);

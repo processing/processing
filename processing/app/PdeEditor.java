@@ -46,7 +46,7 @@ public class PdeEditor extends JFrame
              MRJOpenDocumentHandler //, MRJOpenApplicationHandler
 {
   // yeah
-  static final String WINDOW_TITLE = "Processing";
+  static final String WINDOW_TITLE = "Processing" + " - " + PdeBase.VERSION;
 
   // p5 icon for the window
   Image icon;
@@ -58,6 +58,9 @@ public class PdeEditor extends JFrame
     "                                                                     " +
     "                                                                     ";
 
+  static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
+    KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+
   static final int HANDLE_NEW  = 1;
   static final int HANDLE_OPEN = 2;
   static final int HANDLE_QUIT = 3;
@@ -65,8 +68,6 @@ public class PdeEditor extends JFrame
   String handleOpenPath;
   boolean handleNewShift;
   boolean handleNewLibrary;
-  //String handleSaveAsPath;
-  //String openingName;
 
   PdeEditorButtons buttons;
   PdeEditorHeader header;
@@ -88,22 +89,14 @@ public class PdeEditor extends JFrame
 
   // runtime information and window placement
   Point appletLocation;
-  Point presentLocation;
-  Window presentationWindow;
+  //Point presentLocation;
+  //Window presentationWindow;
   RunButtonWatcher watcher;
   PdeRuntime runtime;
-
-  //boolean externalRuntime;
-  //String externalPaths;
-  //File externalCode;
 
   JMenuItem exportAppItem;
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
-  //JMenuItem beautifyMenuItem;
-
-  JRadioButtonMenuItem coreRendererItem;
-  JRadioButtonMenuItem openglRendererItem;
 
   //
 
@@ -120,14 +113,14 @@ public class PdeEditor extends JFrame
 
   //PdeHistory history;  // TODO re-enable history
   PdeSketchbook sketchbook;
-  PdePreferences preferences;
+  //PdePreferences preferences;
   PdeEditorFind find;
 
   //static Properties keywords; // keyword -> reference html lookup
 
 
   public PdeEditor() {
-    super(WINDOW_TITLE + " - " + PdeBase.VERSION);
+    super(WINDOW_TITLE);
 
     // #@$*(@#$ apple.. always gotta think different
     MRJApplicationUtils.registerAboutHandler(this);
@@ -135,8 +128,8 @@ public class PdeEditor extends JFrame
     MRJApplicationUtils.registerQuitHandler(this);
     MRJApplicationUtils.registerOpenDocumentHandler(this);
 
-    // this is needed by just about everything else
-    preferences = new PdePreferences();
+    // run static initialization that grabs all the prefs
+    PdePreferences.init();
 
     // set the window icon
     try {
@@ -240,7 +233,7 @@ public class PdeEditor extends JFrame
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    if (PdeBase.isMacOS()) {
       splitPane.setBorder(null);
     }
 
@@ -274,9 +267,9 @@ public class PdeEditor extends JFrame
     Document document = textarea.getDocument();
     document.addUndoableEditListener(new PdeUndoableEditListener());
 
+    /*
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    if ((PdeBase.platform == PdeBase.MACOSX) ||
-        (PdeBase.platform == PdeBase.MACOS9)) {
+    if (PdeBase.isMacOS()) {
       presentationWindow = new Frame();
 
       // mrj is still (with version 2.2.x) a piece of shit,
@@ -291,17 +284,7 @@ public class PdeEditor extends JFrame
                                    screen.height + insets.top + insets.bottom);
     } else {
       presentationWindow = new Frame();
-      //((Frame)presentationWindow).setUndecorated(true);
-      try {
-        Method undecoratedMethod =
-          Frame.class.getMethod("setUndecorated",
-                                new Class[] { Boolean.TYPE });
-        undecoratedMethod.invoke(presentationWindow,
-                                 new Object[] { Boolean.TRUE });
-      } catch (Exception e) { }
-      //} catch (NoSuchMethodException e) { }
-      //} catch (NoSuchMethodError e) { }
-
+      ((Frame)presentationWindow).setUndecorated(true);
       presentationWindow.setBounds(0, 0, screen.width, screen.height);
     }
 
@@ -358,6 +341,7 @@ public class PdeEditor extends JFrame
           }
         }
       });
+    */
   }
 
 
@@ -478,6 +462,12 @@ public class PdeEditor extends JFrame
       textarea.setCaretVisible(true);
     }
 
+    // apply changes to the font size for the editor
+    //TextAreaPainter painter = textarea.getPainter();
+    painter.setFont(PdePreferences.getFont("editor.font"));
+    //Font font = painter.getFont();
+    //textarea.getPainter().setFont(new Font("Courier", Font.PLAIN, 36));
+
     // in case tab expansion stuff has changed
     listener.applyPreferences();
 
@@ -521,6 +511,15 @@ public class PdeEditor extends JFrame
   protected JMenu buildFileMenu() {
     JMenuItem item;
     JMenu menu = new JMenu("File");
+
+    /*
+    menu.add(item = new JMenuItem("do the editor thing"));
+    item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+          textarea.getPainter().setFont(new Font("Courier", Font.PLAIN, 36));
+          }
+        });
+    */
 
     if (!PdePreferences.getBoolean("export.library")) {
       item = newJMenuItem("New", 'N');
@@ -615,10 +614,10 @@ public class PdeEditor extends JFrame
     menu.add(item);
 
     // macosx already has its own preferences and quit menu
-    if (PdeBase.platform != PdeBase.MACOSX) {
+    if (!PdeBase.isMacOS()) {
       menu.addSeparator();
 
-      item = new JMenuItem("Preferences");
+      item = newJMenuItem("Preferences", ',');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handlePrefs();
@@ -668,6 +667,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
+    /*
     JMenu rendererMenu = new JMenu("Renderer");
     menu.add(rendererMenu);
 
@@ -700,6 +700,7 @@ public class PdeEditor extends JFrame
     boolean useOpenGL = PdePreferences.get("renderer").equals("opengl");
     coreRendererItem.setSelected(!useOpenGL);
     openglRendererItem.setSelected(useOpenGL);
+    */
 
     //
 
@@ -717,8 +718,7 @@ public class PdeEditor extends JFrame
 
     menu.add(sketchbook.getImportMenu());
 
-    if ((PdeBase.platform == PdeBase.WINDOWS) ||
-        (PdeBase.platform == PdeBase.MACOSX)) {
+    if (PdeBase.isWindows() || PdeBase.isMacOS()) {
       // no way to do an 'open in file browser' on other platforms
       // since there isn't any sort of standard
       item = new JMenuItem("Show Sketch Folder");
@@ -825,7 +825,7 @@ public class PdeEditor extends JFrame
     menu.add(item);
 
     // macosx already has its own about menu
-    if (PdeBase.platform != PdeBase.MACOSX) {
+    if (!PdeBase.isMacOS()) {
       menu.addSeparator();
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
@@ -915,8 +915,7 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Convenience method for the antidote to overthought
-   * swing api mess for setting accelerators.
+   * Convenience method, see below.
    */
   static public JMenuItem newJMenuItem(String title, int what) {
     return newJMenuItem(title, what, false);
@@ -925,9 +924,9 @@ public class PdeEditor extends JFrame
 
   /**
    * A software engineer, somewhere, needs to have his abstraction
-   * taken away. I hear they jail people in third world countries for
-   * writing the sort of crappy api that would require a four line
-   * helpher function to *set the command key* for a menu item.
+   * taken away. In some countries they jail people for writing the
+   * sort of crappy api that would require a four line helper function
+   * to set the command key for a menu item.
    */
   static public JMenuItem newJMenuItem(String title,
                                        int what, boolean shift) {
@@ -1054,12 +1053,15 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Show the (already created on app init) preferences window.
+   * Show the preferences window.
    */
   public void handlePrefs() {
+    PdePreferences preferences = new PdePreferences();
+    preferences.showFrame(this);
+
     // since this can't actually block, it'll hide
     // the editor window while the prefs are open
-    preferences.showFrame(this);
+    //preferences.showFrame(this);
     // and then call applyPreferences if 'ok' is hit
     // and then unhide
 
@@ -1113,17 +1115,19 @@ public class PdeEditor extends JFrame
     }
 
     presenting = present;
+    /*
     if (presenting) {
       // wipe everything out with a bulbous screen-covering window
       presentationWindow.show();
       presentationWindow.toFront();
     }
+    */
 
     try {
       if (!sketch.handleRun()) return;
 
       runtime = new PdeRuntime(sketch, PdeEditor.this);
-      runtime.start(presenting ? presentLocation : appletLocation);
+      runtime.start(appletLocation);
       watcher = new RunButtonWatcher();
 
     } catch (PdeException e) {
@@ -1231,20 +1235,19 @@ public class PdeEditor extends JFrame
    * mode, this will always be called instead of doStop().
    */
   public void doClose() {
-    if (presenting) {
-      presentationWindow.hide();
-
-    } else {
-      try {
-        // the window will also be null the process was running
-        // externally. so don't even try setting if window is null
-        // since PdeRuntime will set the appletLocation when an
-        // external process is in use.
-        if (runtime.window != null) {
-          appletLocation = runtime.window.getLocation();
-        }
-      } catch (NullPointerException e) { }
-    }
+    //if (presenting) {
+    //presentationWindow.hide();
+    //} else {
+    try {
+      // the window will also be null the process was running
+      // externally. so don't even try setting if window is null
+      // since PdeRuntime will set the appletLocation when an
+      // external process is in use.
+      if (runtime.window != null) {
+        appletLocation = runtime.window.getLocation();
+      }
+    } catch (NullPointerException e) { }
+    //}
 
     //if (running) doStop();
     doStop();  // need to stop if runtime error
@@ -1642,7 +1645,7 @@ public class PdeEditor extends JFrame
    */
   protected void handleQuit2() {
     storePreferences();
-    preferences.save();
+    PdePreferences.save();
 
     sketchbook.clean();
 

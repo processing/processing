@@ -125,7 +125,10 @@ cd app
 
 CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\mrj.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\oro.jar;..\\build\\windows\\work\\lib\\registry.jar;..\\build\\windows\\work\\java\\lib\\rt.jar"
 
-../build/windows/work/jikes +D -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+# compile the code as java 1.3, so that the application will run and
+# show the user an error, rather than crapping out with some strange
+# "class not found" crap
+../build/windows/work/jikes -target 1.3 +D -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 #/cygdrive/c/jdk-1.4.2_05/bin/javac.exe -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/windows/work/classes
@@ -138,33 +141,43 @@ cd ../..
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
-CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\work\\java\\lib\\rt.jar"
+
+PLATFORM=windows
+
+
+CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar:..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
+JIKES="..\\build\\$PLATFORM\\work\\jikes"
+CORE="..\\build\\$PLATFORM\\work\\lib\\core.jar"
+LIBRARIES="..\\build\\$PLATFORM\\work\\libraries"
+
+# move to processing/build 
+cd ..
 
 
 # SERIAL LIBRARY
-echo Build serial library...
-cd ../../lib/serial
-../../build/windows/work/jikes -target 1.1 +D -classpath "code\\RXTXcomm.jar;$CLASSPATH" -d . *.java 
+echo Building serial library...
+cd ../serial
+$JIKES -target 1.1 +D -classpath "code\\RXTXcomm.jar:$CORE:$CLASSPATH" -d . *.java 
 rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
-mkdir -p ../../build/windows/work/libraries/serial/library/
-cp library/serial.jar ../../build/windows/work/libraries/serial/library/
+mkdir -p $LIBRARIES/serial/library/
+cp library/serial.jar $LIBRARIES/serial/library/
 
 
 # NET LIBRARY
-echo Build net library...
-cd ../../lib/net
-../../build/windows/work/jikes -target 1.1 +D -d . *.java 
+echo Building net library...
+cd ../net
+$JIKES -target 1.1 +D -d . *.java 
 rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
-mkdir -p ../../build/windows/work/libraries/net/library/
-cp library/net.jar ../../build/windows/work/libraries/net/library/
+mkdir -p $LIBRARIES/net/library/
+cp library/net.jar $LIBRARIES/net/library/
 
 
 # VIDEO LIBRARY
-echo Build video library...
+echo Building video library...
 QTJAVA="$WINDIR\\system32\\QTJava.zip"
 if test -f "${QTJAVA}"
 then
@@ -175,32 +188,43 @@ else
   echo "quicktime for java must be installed before building."
   exit 1;
 fi
-cd ../../lib/video
-../../build/windows/work/jikes -target 1.1 +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
+cd ../video
+$JIKES -target 1.1 +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
 rm -f library/video.jar
 zip -r0q library/video.jar processing
 rm -rf processing
-mkdir -p ../../build/windows/work/libraries/video/library/
-cp library/video.jar ../../build/windows/work/libraries/video/library/
-
-
-# PARTICLES LIBRARY
-echo Build particles library...
-cd ../../lib/particles
-../../build/windows/work/jikes -target 1.1 +D -d . *.java 
-rm -f library/particles.jar
-zip -r0q library/particles.jar simong
-rm -rf simong
-mkdir -p ../../build/windows/work/libraries/particles/library/
-cp library/particles.jar ../../build/windows/work/libraries/particles/library/
+mkdir -p $LIBRARIES/video/library/
+cp library/video.jar $LIBRARIES/video/library/
 
 
 # OPENGL LIBRARY
 echo Building OpenGL library...
-cd ../../lib/opengl
-../../build/windows/work/jikes -target 1.1 +D -classpath "library\\jogl.jar;$CLASSPATH" -d . *.java 
+cd ../opengl
+$JIKES -target 1.1 +D -classpath "library\\jogl.jar:$CLASSPATH" -d . *.java 
 rm -f library/opengl.jar
 zip -r0q library/opengl.jar processing
 rm -rf processing
-mkdir -p ../../build/windows/work/libraries/opengl/library/
-cp library/opengl.jar ../../build/windows/work/libraries/opengl/library/
+mkdir -p $LIBRARIES/opengl/library/
+cp library/opengl.jar $LIBRARIES/opengl/library/
+
+
+CLASSPATH=..\\$CLASSPATH
+JIKES=..\\..\\build\\$PLATFORM\\work\\jikes
+CORE=..\\..\\build\\$PLATFORM\\work\\lib\\core.jar
+LIBRARIES=..\\..\\build\\$PLATFORM\\work\\libraries
+
+
+# PARTICLES LIBRARY
+echo Build particles library...
+cd ../lib/particles
+$JIKES -target 1.1 +D -d . *.java 
+rm -f library/particles.jar
+zip -r0q library/particles.jar simong
+rm -rf simong
+mkdir -p $LIBRARIES/particles/library/
+cp library/particles.jar $LIBRARIES/particles/library/
+
+pwd 
+
+echo
+echo Done.
