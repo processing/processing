@@ -31,7 +31,6 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.net.*;
-import java.util.zip.*;
 
 
 public class PGraphics extends PImage implements PConstants {
@@ -5480,13 +5479,12 @@ public class PGraphics extends PImage implements PConstants {
 
   public InputStream openStream(String filename) throws IOException {
     InputStream stream = null;
-    boolean gz = filename.toLowerCase().endsWith(".gz");
 
     if (filename.startsWith("http://")) {
       try {
         URL url = new URL(filename);
         stream = url.openStream();
-        return gz ? new GZIPInputStream(stream) : stream;
+        return stream;
 
       } catch (MalformedURLException e) { 
         e.printStackTrace();
@@ -5494,25 +5492,21 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
 
-    try {
-      stream = getClass().getResourceAsStream(filename);
-      if (stream != null) return gz ? new GZIPInputStream(stream) : stream;
-    } catch (IOException e) { }
+    stream = getClass().getResourceAsStream(filename);
+    if (stream != null) return stream;
 
-    try {
-      stream = getClass().getResourceAsStream("data/" + filename);
-      if (stream != null) return gz ? new GZIPInputStream(stream) : stream;
-    } catch (IOException e) { }
+    stream = getClass().getResourceAsStream("data/" + filename);
+    if (stream != null) return stream;
 
     try {
       try {
         stream = new FileInputStream(new File("data", filename));
-        if (stream != null) return gz ? new GZIPInputStream(stream) : stream;
+        if (stream != null) return stream;
       } catch (IOException e2) { }
 
       try {
         stream = new FileInputStream(filename);
-        if (stream != null) return gz ? new GZIPInputStream(stream) : stream;
+        if (stream != null) return stream;
       } catch (IOException e1) { }
 
     } catch (SecurityException se) { }  // online, whups

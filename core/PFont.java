@@ -27,6 +27,7 @@ package processing.core;
 
 import java.io.*;
 import java.util.*;
+import java.util.zip.*;
 
 
 // value[] could be used to build a char to byte mapping table
@@ -127,14 +128,12 @@ public class PFont implements PConstants {
     //this.parent = parent;
     //this.valid = false;
 
-    //try {
     String lower = filename.toLowerCase();
-    if (lower.endsWith(".vlw") || lower.endsWith(".vlw.gz")) {
-      //load_vlw_font(filename);
+    if (lower.endsWith(".vlw")) {
       read(parent.openStream(filename));
 
-      //} else if (lower.endsWith(".fbf")) {
-      //load_fbf_font(filename);
+    } else if (lower.endsWith(".vlw.gz")) {
+      read(new GZIPInputStream(parent.openStream(filename)));
 
     } else {
       throw new IOException("don't know what type of file that is");
