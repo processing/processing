@@ -13,12 +13,13 @@ rm -rf processing
 rm -f processing-*.hqx
 
 # use 'shared' files as starting point
-cp -r ../shared/fonts processing/
-cp -r ../shared/reference processing/
-cp -r ../shared/sketchbook processing/
+cp -r ../shared processing
+#cp -r ../shared/fonts processing/
+#cp -r ../shared/reference processing/
+#cp -r ../shared/sketchbook processing/
 
 rm -rf processing/CVS
-#rm -rf processing/lib/CVS
+rm -rf processing/lib/CVS
 rm -rf processing/fonts/CVS
 rm -rf processing/reference/CVS
 rm -rf processing/reference/images/CVS
@@ -34,23 +35,26 @@ rm -rf processing/Proce55ing.app/Contents/MacOS/CVS
 rm -rf processing/Proce55ing.app/Contents/Resources/CVS
 rm -rf processing/Proce55ing.app/Contents/Resources/Java/CVS
 
+# put jar files into the resource dir, leave the rest in lib
 RES=processing/Proce55ing.app/Contents/Resources/Java/
-cp ../shared/dist/lib/*.jar $RES/
-cp ../shared/dist/lib/pde.properties $RES/
-cp ../shared/dist/lib/buttons.gif $RES/
-cp comm.jar $RES/
+mv processing/lib/*.jar $RES/
+#cp comm.jar $RES/
+#cp ../shared/dist/lib/*.jar $RES/
+#cp ../shared/dist/lib/pde.properties $RES/
+#cp ../shared/dist/lib/buttons.gif $RES/
 
 # directories used by the app
-#mkdir processing/lib/build
+mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar $RES/
-cp -r work/lib/export $RES/
-rm -rf $RES/export/CVS
+cp -r work/lib/export processing/lib/
+rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
 #cp dist/Proce55ing processing/
-#cp dist/lib/pde.properties_macosx processing/lib/
+cp dist/lib/pde.properties_macosx processing/lib/
+cp dist/lib/comm.jar processing/lib/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
