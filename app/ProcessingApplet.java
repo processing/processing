@@ -38,6 +38,8 @@ public class ProcessingApplet extends Applet
 
 
   public void init() {
+    checkParams();
+
     addMouse();  // set basic params
     addKeyboard();
     addTime();
@@ -151,6 +153,7 @@ public class ProcessingApplet extends Applet
 
       if (timing) {
 	actualMillis = System.currentTimeMillis();
+	millis = (int) (actualMillis - millisOffset);
 	calendar = null;
       }
 
@@ -169,6 +172,7 @@ public class ProcessingApplet extends Applet
 	if (drawMethod) {
 	  g.endFrame();
 	  update();
+	  if (isMacintosh) getToolkit().sync();
 	  finished = true;
 	}
 	drawn = true;
@@ -180,6 +184,7 @@ public class ProcessingApplet extends Applet
 	loop();
 	g.endFrame();
 	update();
+	if (isMacintosh) getToolkit().sync();
       }
 
       // takedown
@@ -704,6 +709,13 @@ public class ProcessingApplet extends Applet
   // ------------------------------------------------------------
 
   // run as application
+
+  boolean isMacintosh;
+
+  void checkParams() {
+    isMacintosh = 
+      System.getProperty("os.name").toLowerCase().indexOf("mac") != -1;
+  }
 
 
   static public void main(String args[]) {

@@ -51,7 +51,8 @@ _ code to automatically open generated .ai files (exec(..ai))
 _ add method for exporting applications with processing
 _   wrapper that invokes the applet using a copy of the jre
 _ move MemoryImageSource out of bagel and into ProcessingApplet
-_   need to be able to run bagel to just render to a large internal buffer
+_   need to run bagel to just render to a large internal buffer
+_   this fits better with the c++ model of things
 _ version of ProcessingApplet that replaces g. with ai. or pdf.
 _ it's very unstable, previous versions such as 7 were solid. 
 _   problems come with moving (what's that mean?)
@@ -63,7 +64,7 @@ _ garbage created when color values out of range
 _ exporting to applet/.jar file
 _   include other .class files built besides the main one
 _   include referenced image and font files (can't do if numbered)
-_ debugging serial code
+_ technote: debugging serial code
 _   hyperterminal - watching for binary garbage vs ascii text
 _   first debug (maybe even using ascii) and watch in hyperterminal
 _     or ship pooterm along with processing
@@ -80,6 +81,7 @@ _   doesn't include additional (private) classes
 _ technote: using transformPoint
 _ technote: using curves
 _ technote: making things faster
+_ technote: memory running out, using ms and mx
 _   noBackground() if you're covering everything
 _ class unloading not happening
 _   when doing an extends ProcessingApplet
@@ -90,14 +92,15 @@ _   option to toggle window on/off (not just in properties, but realtime)
 _   set # of lines in properties
 _ remove .java and .class files for compiled classes
 _ technote about bug in sun vm for freaking out
-_ technote about memory running out, using ms and mx
+_   also happened with ibm vm.. grr.. (or was it a path problem?)
 _ apparent NullPointerException when things way offscreen
 _   i.e. glyphrot with scale set to 4
 _   or at least that things get ridiculously slow
+_   clipping issues here.. but also something in scan converter
 _ Compiler.disable() message is weird and doesn't always work
-_ exceptions cause play to never un-highlight
+_ play never un-highlights
+_   especially with exceptions
 _ weird exception crap/messages.. erroneous shite
-_ z coordinates are backwards from gl (at least from mazo)
 _ look into using serialporteventlistener for simpleserial
 _ see about setting up simple bug tracker/feature system
 _   would also be nice for people to be able to vote on features
@@ -105,10 +108,6 @@ _ look into maxx programming
 _ live video editing, wanting things more procedural
 _ illustrator exporting
 _   version of Illustrator.java that uses bagel api
-_ finish color function inside applet
-_   do by simplifying stroke/fill/background inside bagel
-_     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
-_     needs to be done inside cpp version too.. minimize amt of code
 _ translateMiddle() ? to move to the middle of the screen?
 _ shouldn't do so much work (redrawing in loop) if waiting for input
 _   mode for when no full animation taking place
@@ -116,24 +115,37 @@ _   otherwise machine is continually maxed out while app is running
 
 
 MACOS
-_ explicity refresh screen on macosx at end of loop:
-_   java.awt.Toolkit.getDefaultToolkit().sync();
 _ crashes when people click on help in top bar (same in DBN)
 _ dataInputStream, setUseCaches on the url to false
+_   URLConnection.setUseCaches(false)
 _ parent.obj.close() on the url
 _ writing serial code (something that docks better to java serial api)
 
 
-0016 improve exporting and lines
-_ g.applet = this at beginning of program
-_ finish setFont with a font size
-_ add 'hint' function for scaling line thickness
-_ add hint for super smooth fonts
-_ add preferredsize to processingapplet
-X bug in Bagel.loadImage that made images not work in applets
-_ millis returns 0 (though getMillis() is fine)
-X catch exception inside polygon scanner (slower?)
+0018
+_ z coordinates are backwards from gl (at least from mazo)
+_   how did this happen? what's the appropriate way to fix?
+_ single color function inside applet
+_   need to clamp colors (nothing > 255 or < 0)
+_   do by simplifying stroke/fill/background inside bagel
+_     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
+_     needs to be done inside cpp version too.. minimize amt of code
 
+_ draw mode needs to be better for workshops
+_   make size() work for draw() mode
+_     inside KjcEngine, reach in and grab calls to 'size'
+_     if call is not using a constant number, then punt
+
+_ int version of min and abs
+_ fix bugs from the 'bugs' file
+_   then remove the file from cvs
+
+_ when exporting with as a named class file, need to export w/ that name
+_ make sure export is compiling first
+_   right now have to hit play and then hit export (?)
+_ lines being highlighted for errors are off
+
+_ rewrite line and stroke code, it's a buggy mess
 _ rewrite fill/stroke/etc to use same code
 _   doesn't need to be super fast, so the extra assigns no big deal
 
@@ -147,25 +159,18 @@ _   getStream sucks (zach rewrote)
 _   should be able to work for application or applets
 _   may want to use getResource() (to get things from .jar files)
 _ fix buzz.pl to not create ../../bagel 
-_ need to clamp colors (nothing > 255 or < 0)
 _ try using serial events from javacomm instead of just reading straight
 _ paren problems comes from overusing parens (too many closing)
 _   image[first[i], 0, 0) hitting last paren causes jump to top
 _ lib/pde.properties should be read using getResource
-_ export not working for processing
+_   otherwise path issues cause trouble (likely under win98)
 _ talk to simon about error streams and kjc
 _    better piping of output from kjc
 _ erroneous errors from kjc regarding 'var not inited'
 _   is there any way to disable this message?
-_ make size() work for draw() mode
-_   inside KjcEngine, reach in and grab calls to 'size'
-_   if call is not using a constant number, then punt
 _ bezier and catmullrom aren't setting ndim to at least two 
 _ translate(x, y) doesn't seem to affect a rect()
 _   same with rect. looks like this causing trouble with lots of things
-_ int version of min and abs
-_ fix bugs from the 'bugs' file
-_   then remove the file from cvs
 _ way to screen grab at higher resolution
 _   method for rendering at higher res and then scaling down
 _   (even if this causes signficant performance hit)
@@ -176,10 +181,10 @@ _   if a new version is available, asks 'do you want to update?'
 _   multi-file: quicksort + sortable
 _ quicksort should probably just be made into 'sort' class
 _   it's the only one ever used
-_ also stringutils.split
+_ stringutils.split is a useful one
 
 
-0017 (first semi-public release)
+0030 (first semi-public release)
 _ write code to bind/convert java fonts
 _ docs
 _   explain using inner classes and using non-public classes
@@ -203,7 +208,7 @@ _   or maybe image.setColor or setTone to mix a specific color in
 _ new user interface?
 
 
-0018
+0031
 _ option to enable/disable frame on running applets
 _   more like photoshop - presentation mode w/ nothing or frames on all
 _ compiling .java files leaves the .class files next to the .java
@@ -225,7 +230,7 @@ _   breaks on every 2nd run when using serial apps (or others?)
 _     try calling gc on stop as well
 
 
-0019
+0032
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
 
@@ -440,6 +445,23 @@ String binary(int value) {
 ---------------------------------------------
 
 
+0017 improve exporting and lines
+X g.applet = this at beginning of program
+X finish setFont with a font size
+X add 'hint' function for scaling line thickness
+X add hint for super smooth images
+X add preferredsize to processingapplet
+X bug in Bagel.loadImage that made images not work in applets
+X catch exception inside polygon scanner (slower?)
+X millis returns 0 (though getMillis() is fine)
+X explicity refresh screen on macosx at end of loop:
+X   java.awt.Toolkit.getDefaultToolkit().sync();
+
+
+0016
+X disable play.external by default
+
+
 0015
 X flickery jumpy thing with canvas.. sun jvm bug
 X   switched to ibm java vm
@@ -598,3 +620,4 @@ o setup imrf linux machine?
 DISCARD
 o get proce55ing.net, make that the target launch site
 o write a dbn compatability mode (forever() instead of loop() ?)
+
