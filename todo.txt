@@ -92,6 +92,10 @@ X   errors inside those classes also causing weirdness
 X   this might be a broader running as external app problem
 X   errorMessage in PSerial/PClient/PServer are all using System.out
 
+040923 late
+X write handler for loop() error, warning user to rename loop to draw
+X   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6:29:11: Semantic Error: The method "void loop();" with default access cannot replace the accessible method "void loop();" with public access declared in type "processing.core.PApplet".
+
 _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ netscape.javascript not properly working in 1.4
@@ -132,9 +136,6 @@ _   or rename the old applet folder to something else? (nah, too messy)
 
 _ write better handler for compiler error:
 _   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63:1:70: Semantic Error: You need to modify your classpath, sourcepath, bootclasspath, and/or extdirs setup. Package "poo/shoe" could not be found in:
-
-_ write handler for loop() error, warning user to rename loop to draw
-_   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6:29:11: Semantic Error: The method "void loop();" with default access cannot replace the accessible method "void loop();" with public access declared in type "processing.core.PApplet".
 
 _ static applets need to be able to resize themselves on 'play'
 _ figure out what to do with static apps exported as application
