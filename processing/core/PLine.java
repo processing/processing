@@ -270,16 +270,23 @@ public class PLine implements PConstants
 
     yLonger = false;
 
-    // HACK for drawing lines left-to-right [fry]
+    // HACK for drawing lines left-to-right for rev 0069
     // some kind of bug exists with the line-stepping algorithm
-    // that causes strange patterns in the anti-aliasing
+    // that causes strange patterns in the anti-aliasing.
+    // [040228 fry] 
+    //
+    // swap rgba as well as the coords.. oops 
+    // [040712 fry] 
+    //
     if (x_array[1] < x_array[0]) {
-      float t = x_array[1];
-      x_array[1] = x_array[0];
-      x_array[0] = t;
-      t = y_array[1];
-      y_array[1] = y_array[0];
-      y_array[0] = t;
+      float t;
+
+      t = x_array[1]; x_array[1] = x_array[0]; x_array[0] = t;
+      t = y_array[1]; y_array[1] = y_array[0]; y_array[0] = t;
+      t = r_array[1]; r_array[1] = r_array[0]; r_array[0] = t;
+      t = g_array[1]; g_array[1] = g_array[0]; g_array[0] = t;
+      t = b_array[1]; b_array[1] = b_array[0]; b_array[0] = t;
+      t = z_array[1]; z_array[1] = z_array[0]; z_array[0] = t;
     }
 
     // important - dont change the casts

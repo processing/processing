@@ -27,9 +27,13 @@ X bug in BImage.smooth() when resizing an image
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077669847
 X shut off the automatic gunzipping of streams, keep for fonts
 X fix for duplicated points in polygons that foiled the tesselator
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077819175
 X cleaned up texture() code between NEW/OLD graphics
 X   not quite so much duplicated in cases etc.
-
+X lines: vertex coloring bug with my swap hack
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
+X   last vertex on LINE_LOOP fades out
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
 
 cleaning up
 X make bagel more usable as standalone
@@ -174,10 +178,6 @@ CORE / PImage
 CORE / PGraphics
 
    b _ lines
-   b _   last vertex on LINE_LOOP fades out
-   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
-   b _   vertex coloring bug with carlos' new line code
-   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085348942
    b X   rewrite line and stroke code, it's a buggy mess
    b X     lines become 2 pixels thick after a 3D transform 
    b X     better handling of single-pixel special   se
@@ -200,7 +200,6 @@ CORE / PGraphics
    b _   setting stroke width on circle makes odd patterns
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077013848;start=0
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080347160
-
    b _ more weirdness with stroke on rect, prolly not alpha
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085799526
    b _ rect is not getting it's stroke color set
