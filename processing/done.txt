@@ -1,3 +1,35 @@
+0048
+
+macosx
+X include note in the readme that 1.4 is not supported
+X is sketch.properties saving properly under macosx?
+X text in editor is anti-aliased, allow to turn off (franklin_mint)
+X   also make text courier instead of monospaced
+public void paint(Graphics g) 
+{       
+  Graphics2D g2 = (Graphics2D) g; 
+  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);                
+  super.paint(g2);       
+}
+
+pde
+X re-enable wheel mouse
+X   just uses #ifdef for JDK14
+o   System.getProperty("java.version") -> "1.4.1_01"
+
+windows
+X remove built-in jre (!)
+X   add folder and instructions for serial in expert
+X   modify run.bat, modify .exe file as well
+X add -Xmx128m -Xms128m because people running out of memory (pitaru)
+X   tried with a 3k x 1k image and things broke
+o   maybe command line read properties from a file in lib
+
+macos9 
+X do some font tweaking (monaco 9 or 10 might be good)
+
+
 0047
 X reported by fdb and brendanberg
 After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
