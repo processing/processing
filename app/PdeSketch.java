@@ -72,7 +72,7 @@ public class PdeSketch {
   String classPath;
   String libraryPath;
   boolean externalRuntime;
-
+  Vector importedLibraries; // vec of File objects
 
   /**
    * path is location of the main .pde file, because this is also
@@ -1136,6 +1136,19 @@ public class PdeSketch {
       System.err.println("Uncaught exception type:" + ex.getClass());
       ex.printStackTrace();
       throw new PdeException(ex.toString());
+    }
+
+    // grab the imports from the code just preproc'd
+
+    importedLibraries = new Vector();
+    String imports[] = preprocessor.extraImports;
+    for (int i = 0; i < imports.length; i++) {
+      // remove things up to the last dot
+      String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
+      System.out.println("found package " + entry);
+      Object libFolder = PdeSketchbook.importToLibraryTable.get(entry);
+      System.out.println("  found lib folder " + libFolder);
+      importedLibraries.add(libFolder);
     }
 
 

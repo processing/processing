@@ -338,6 +338,10 @@ public class PdeCompiler implements PdeMessageConsumer {
    * any .jar or .zip files inside that folder.
    * This will prepend a colon (or whatever the path separator is)
    * so that it can be directly appended to another path string.
+   *
+   * This will always add the root folder as well, and doesn't bother 
+   * checking to see if there are any .class files in the folder or
+   * within a subfolder.
    */
   static public String contentsToClassPath(File folder) {
     if (folder == null) return "";
