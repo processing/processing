@@ -347,6 +347,7 @@ public class PdeBase extends Frame implements ActionListener {
 
     normalItem = new CheckboxMenuItem("Normal");
     rendererMenu.add(normalItem);
+    normalItem.setState(true);
     normalItem.addItemListener(new ItemListener() {
 	public void itemStateChanged(ItemEvent e) {
 	  openglItem.setState(false);
