@@ -1,0 +1,117 @@
+KNOWN BUGS FOR THE MOST RECENT RELEASE
+
+this was moved out of the release notes since it's getting too long,
+and since only a handful of things change between releases
+
+
+..................................................................
+
+
+COMMON PROBLEMS (NOT BUGS)
+things that are often perceived as bugs, which means maybe they'll be
+changed in the future, but for now, they're not actually 'broken'.
+
+
+- names of sketches cannot start with a number, or have spaces
+  inside. this is mostly because of a restriction on the naming of
+  java classes. i suppose if lots of people find this upsetting, we
+  could add some extra code to unhinge the resulting class name from
+  the sketch name, but it adds complexity, and complexity == bugs. :)
+
+- 'export to application' remains unimplemented, though it's closer,
+  and should be ready before beta.
+
+- 'preferences' will get better in a future release
+
+- quicktime for java is still required on windows. it's required on
+  macosx too, but it's installed there by default. the requirement
+  will be removed in a later release for people who don't want to use
+  video, but the fix is more difficult than anticipated, so it will
+  probably happen after the initial beta release.
+
+
+..................................................................
+
+
+KNOWN BUGS
+the real deal, keeping us awake at night
+
+
+- clipping planes are not yet implemented. meaning that objects may
+  sometimes fly into the camera and turn upside down or do other tricks.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+
+- concave polygons still don't work, meaning that lots of irregular
+  polygons won't draw properly.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062469819;start=0
+
+- a lot of println() commands will make the environment really slow or
+  even lock up completely. it's because the console can't keep
+  up. we're working on a fix.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+
+- macosx doesn't provide an option to 'cancel' when it so politely asks
+  if you want to "save changes before quitting?". this is because of
+  weirdness in apple's java that we're trying to straighten out.
+
+- lines with stroke weights that aren't 1 are probably broken.
+
+- single pixel lines still have some problems with drawing over things.
+
+- the size of exported applets has jumped in this release. this will
+  get smaller again in a future release. we're in the middle of
+  transitioning between two different sets of rendering/graphics code.
+
+- curveTangent() is not yet implemented. contributions welcome.
+
+- strokeMiter() and strokeJoin() exist but are not implemented.
+
+- textures warp in strange ways due to perspective problems.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
+
+- smooth() is not completely implemented. there will be quirks in how
+  it draws (like a weird flat line at the end of a shape, or areas
+  that are less than smooth).
+
+- on windows, processing can't be run from a folder that has non-ascii
+  characters in its name. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+
+- video examples sometimes crash the whole environment on windows
+
+- jikes is ~9 megabytes in size, which is a bit obnoxious. it doesn't
+  hurt anything but we plan to put it on a diet for a future release.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
+
+- net needs work, it's currently sending unicode, instead of ascii or
+  UTF-8, data. this can cause problems with other programs.
+
+- run.bat hasn't been given love for a while and may not work. at the
+  very least, you'll need to modify it to find your copy of quicktime
+  for java. 
+
+- sound doesn't always stop when the 'stop' button is hit (i.e. the
+  mixer example seems broken). for now, you have to first quit
+  processing to stop it. 
+
+- the horizontal scroller for the text area has some weirdness, this
+  may not be fixed until after beta, depending on how bad it is.
+
+- using saveFrame() or saveBytes() or some of those things will cause
+  trouble inside applets. we'll try to do better error trapping soon
+  so that your applet doesn't crash when this happens. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
+
+
+..................................................................
+
+
+BUGS THAT WE PROBABLY CAN'T FIX
+these are things that are out of our control
+
+
+- "create font" crashes sometimes on windows, bringing down the whole
+  environment. this seems to be a jdk bug, because it's not a java
+  exception, but a full crash.
