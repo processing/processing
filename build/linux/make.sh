@@ -75,3 +75,4 @@ cd ../..
 ### -- BUILD STUB -----------------------------------------------
 
 gcc -o work/Proce55ing stub.cpp
+chmod 777 work/Proce55ing
