@@ -42,6 +42,13 @@ X   if this causes trouble, change the preference for lib/pde.properties
 X   compiler.substitute_unicode = false
 X option to set what browser is in use
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074106123;start=0
+X implement concave/convex polygons
+X   code from carlos that was patched into old graphics
+
+toxi
+X sphereDetail() function + reference
+X optimized the flat_rect() function for solid colours (20% faster)
+X noise() is (partially) broken in v67
 
 goodbye macos9
 X posted to message board about it going away
@@ -72,6 +79,49 @@ o basic usb support?
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
 o try ariel's Thread.yield() suggestion
 o set default framerate of 24? 30? 2x that?
+
+
+_ notify toxi when i know how soon before i'm going to release 68
+
+_ put SecurityException things around file i/o for applets
+_   rather than checking online(), since applets might be signed
+_ shut off the automatic gunzipping
+
+_ shift-backspace doesn't work in the editor
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074192817;start=0
+
+_ key codes not properly coming through for UP/DOWN/etc
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1075138932;start=0
+
+eclipse when running in debug mode:
+ps -w -w -axo command | grep java
+/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Home/bin/java -Djava.security.policy=java.policy.applet -classpath /Users/fry/Desktop/eclipse/workspace/javatest -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp transport=dt_socket,suspend=y,address=localhost:10506 sun.applet.AppletViewer
+
+whoa.. BGraphics.screenX() et al had the camera stuff shut off
+and that's what shipped in 67. shite.
+need to get things fixed up properly so camera is properly set
+ISOMETRIC was completely broken.. need to implement properly
+  also, the default camera is perspective
+
+_ split() function splits strings
+_   ints() converts an array of strings/doubles/floats to an int array
+_ split() should also use StringTokenizer
+_   to do countTokens() and then stuff into an array
+_ shave() or chomp() or trim() method to remove whitespace on either side
+_   including unicode nbsp
+_ check ordering of split() in java vs perl for regexp
+_   make a note in the docs about using split
+_ StrList.subset(3);  subsets starting at 3
+_   other matlab style commands
+_ die() command to exit an application or just stall out an applet
+_   die(String error) and die(String error, Exception e) 
+_   knows not to die when run as an application in p5 env because
+_   the leecherror will be non-null (otherwise external, so die is ok)
+
+_ commands for askSerialPort() and askVideoInput?
+_   like the askFile() command, prompt for the port to use
+_   or just store it for later use
+_   fileBrowser / serialPortBrowser / cameraBrowser or videoBrowser ?
 
 _ once compiling again, change PdeException
 _   rename the class for a minute to find all references
@@ -104,16 +154,12 @@ _ sync files into lib/build rather than copying everything new
 _   check file existence and modification dates to know which to copy
 _   and which files to delete if some have been removed
 _   this also means that the file copying has to set mod dates (JDK13)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074789934
 
 when creating a new file, suggest untitled.pde
 they can put a .java or .pde extension on the file
 if no extension is found, add the .pde extension
 if the file has a .pde extension, then it will be run through the preproc.
-
-code coming from toxi
-_ sphereDetail() function + reference
-_ optimized the flat_rect() function for solid colours (20% faster)
-_ noise() is (partially) broken in v67
 
 _ option for having multiple files open
 X   need ui for tabs from casey
@@ -123,6 +169,8 @@ _   "new text java/pde file" menu item
 
 
 SKETCHBOOK
+_ sort sketch names in the open menu
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
 _ sketch.properties should go into user.home
 _   otherwise moving sketch folder will kill it
 _   last-used sketch not being saved
@@ -146,6 +194,7 @@ _ when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
 
 EXAMPLES
 _ check if file is read-only, and if so, ask where to put sketch
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149564;start=0
 _ how to handle examples: read only, somewhere inside lib
 _ move examples to folder that goes w/ p5 app
 _   set examples somehow read-only
@@ -174,7 +223,6 @@ _   switch to PImage, PApplet, etc
 _ update() mode needs to be hacked in
 _ separating of BGraphics and BApplet
 _ change copyrights on the files again (to match ?)
-_ concave/convex polygons
 _ proper lineweight
 _ camera clipping
 _ put screenshots into their sketch folder
@@ -295,6 +343,9 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 
 CONSOLE
+_ error messages run off the edge and go invisible
+_   actually this is just for the editor status box
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
 _ set max frame rate at 60 fps? avoid the full-on spew to the console
 _ console runs really really slow with a lot of println() calls
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
@@ -705,6 +756,10 @@ PDE / Details
    1 _     and on second find run, should instead select all the find string
    1 _       so that typing will replace it directly
 
+   1 _ rename/saveas doesn't properly have its focus set
+   1 _   the whole thing is selected, but not directly editable
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
+
 
 PDE / Font Builder
 
@@ -773,6 +828,8 @@ DISTRIBUTION / Windows
 
 DISTRIBUTION / Linux
 b _ splash screen
+1 _ ctrl-t is not stopping a sketch
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074810469
 
 
 DISTRIBUTION / Mac OS X
