@@ -49,12 +49,14 @@ public class PdeSketchbook {
   public PdeSketchbook(PdeEditor editor) {
     this.editor = editor;
 
+    // this shouldn't change throughout.. it may as well be static 
+    // but only one instance of sketchbook will be built so who cares
     examplesFolder = new File(System.getProperty("user.dir"), "examples");
-    examplesPath = examplesFolder.getCanonicalPath();
+    examplesPath = examplesFolder.getAbsolutePath();
 
-    String sketchbookPath = PdePreferences.get("sketchbook.path");
-
-    if (sketchbookPath == null) {
+    //String sketchbookPath = PdePreferences.get("sketchbook.path");
+    //if (sketchbookPath == null) {
+    if (PdePreferences.get("sketchbook.path") == null) {
       // by default, set default sketchbook path to the user's 
       // home folder with 'sketchbook' as a subdirectory of that
       File home = new File(System.getProperty("user.home"));
@@ -75,21 +77,11 @@ public class PdeSketchbook {
       PdePreferences.set("sketchbook.path", 
                          sketchbookFolder.getAbsolutePath());
 
-      if (!sketchbookFolder.exists()) {  // in case it exists already
-        sketchbookFolder.mkdirs();
-      }
-
-      try {
-        sketchbookPath = sketchbookFolder.getCanonicalPath();
-      } catch (IOException e) {
-        sketchbookPath = sketchbookFolder.getPath();
-        e.printStackTrace();
-      }
-
-    } else {
-      sketchbookFolder = new File(sketchbookPath);
+      if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
+      //sketchbookPath = sketchbookFolder.getAbsolutePath();
+    //} else {
+      //sketchbookFolder = new File(sketchbookPath);
     }
-
     menu = new JMenu("Open");
   }
 
@@ -147,9 +139,6 @@ public class PdeSketchbook {
     new FileOutputStream(newbieFile);  // create the file
 
 #ifdef MACOS
-    // thank you apple, for changing this @#$)(*
-    //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
-
     // TODO this wouldn't be needed if i could figure out how to 
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs. you're my only hope
@@ -162,6 +151,8 @@ public class PdeSketchbook {
                                          MRJOSType.kTypeTEXT,
                                          new MRJOSType("Pde1"));
     }
+    // thank you apple, for changing this @#$)(*
+    //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
 #endif
 
     // make a note of a newly added sketch in the sketchbook menu
@@ -170,13 +161,14 @@ public class PdeSketchbook {
     // now open it up
     //handleOpen(newbieName, newbieFile, newbieDir);
     //return newSketch;
-    return newbieFile.getCanonicalPath();
+    return newbieFile.getAbsolutePath();
   }
 
 
   // listener for sketchbk items uses getParent() to figure out
   // the directories above it
 
+  /*
   class SketchbookMenuListener implements ActionListener {
     String path;
 
@@ -185,13 +177,14 @@ public class PdeSketchbook {
     }
 
     public void actionPerformed(ActionEvent e) {
-      String name = e.getActionCommand();
-      editor.skOpen(path + File.separator + name, name);
+      //String name = e.getActionCommand();
+      //editor.skOpen(path + File.separator + name, name);
+      editor.handleOpen(
     }
   }
+  */
 
-
-  public JPopupMenu getPopup() {
+  public JPopupMenu getPopupMenu() {
     return menu.getPopupMenu();
   }
 
@@ -205,109 +198,47 @@ public class PdeSketchbook {
     menu.removeAll();
 
     try {
-      //MenuItem newSketchItem = new MenuItem("New Sketch");
-      //newSketchItem.addActionListener(this);
-      //menu.add(newSkechItem);
-      //menu.addSeparator();
-
       addSketches(menu, sketchbookFolder);
-
       menu.addSeparator();
       addSketches(menu, examplesFolder);
 
-      // TODO add examples folder here too
-
-      /*
-      // files for the current user (for now, most likely 'default')
-
-      // header knows what the current user is
-      String userPath = sketchbookPath + 
-        File.separator + editor.userName;
-
-      File userFolder = new File(userPath);
-      if (!userFolder.exists()) {
-        System.err.println("sketchbook folder for '" + editor.userName + 
-                           "' doesn't exist, creating a new one");
-        userFolder.mkdirs();
-      }
-      */
-
-      /*
-      SketchbookMenuListener userMenuListener = 
-        new SketchbookMenuListener(userPath);
-
-      String entries[] = new File(userPath).list();
-      boolean added = false;
-      for (int j = 0; j < entries.length; j++) {
-        if (entries[j].equals(".") || 
-            entries[j].equals("..") ||
-            entries[j].equals("CVS")) continue;
-        //entries[j].equals(".cvsignore")) continue;
-        added = true;
-        if (new File(userPath, entries[j] + File.separator + 
-                     entries[j] + ".pde").exists()) {
-          MenuItem item = new MenuItem(entries[j]);
-          item.addActionListener(userMenuListener);
-          menu.add(item);
-        }
-        //submenu.add(entries[j]);
-      }
-      if (!added) {
-        MenuItem item = new MenuItem("No sketches");
-        item.setEnabled(false);
-        menu.add(item);
-      }
-      menu.addSeparator();
-      */
-
-      /*
-      if (addSketches(menu, userFolder, false)) {
-        menu.addSeparator();
-      }
-      if (!addSketches(menu, sketchbookFolder, true)) {
-        JMenuItem item = new JMenuItem("No sketches");
-        item.setEnabled(false);
-        menu.add(item);
-      }
-      */
-
-      /*
-      // doesn't seem that refresh is worthy of its own menu item
-      // people can stop and restart p5 if they want to muck with it
-      menu.addSeparator();
-      MenuItem item = new MenuItem("Refresh");
-      item.addActionListener(this);
-      menu.add(item);
-      */
-
     } catch (IOException e) {
-      e.printStackTrace();
+      PdeBase.showWarning("Problem while building sketchbook menu",
+                          "There was a problem with building the\n" +
+                          "sketchbook menu. Things might get a little\n" +
+                          "kooky around here.\n", e);
+      //e.printStackTrace();
     }
     return menu;
   }
 
 
-  protected boolean addSketches(JMenu menu, File folder) throws IOException {
+  protected boolean addSketches(File folder) throws IOException {
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
 
     String list[] = folder.list();
-    SketchbookMenuListener listener = 
-      new SketchbookMenuListener(folder.getAbsolutePath());
+    //SketchbookMenuListener listener = 
+    //new SketchbookMenuListener(folder.getAbsolutePath());
+
+    ActionListener listener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleOpen(e.getActionCommand());
+        }
+      };
 
     boolean ifound = false;
 
     for (int i = 0; i < list.length; i++) {
-      //if (list[i].equals(editor.userName) && root) continue;
-
-      if (list[i].equals(".") ||
-          list[i].equals("..") ||
+      if ((list[i].charAt(0) == '.') ||
           list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
-      if (new File(subfolder, list[i] + ".pde").exists()) {
+      File entry = new File(subfolder, list[i] + ".pde");
+      if (entry.exists()) {
         JMenuItem item = new JMenuItem(list[i]);
         item.addActionListener(listener);
+        item.setActionCommand(entry.getAbsolutePath());
         menu.add(item);
         ifound = true;
 
@@ -322,12 +253,12 @@ public class PdeSketchbook {
         }
       }
     }
-    return ifound;
+    return ifound;  // actually ignored, but..
   }
 
 
   /**
-   * clear out projects that are empty
+   * Clear out projects that are empty.
    */
   public void clean() {
     if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
@@ -344,8 +275,7 @@ public class PdeSketchbook {
         for (int j = 0; j < entries.length; j++) {
           //System.out.println(entries[j] + " " + entries.length);
 
-          if ((entries[j].equals(".")) || 
-              (entries[j].equals(".."))) continue;
+          if (entries[j].charAt(0) == '.') continue;
 
           //File prey = new File(userPath, entries[j]);
           File prey = new File(sketchbookFolder, entries[j]);
@@ -363,19 +293,6 @@ public class PdeSketchbook {
               //                 calcFolderSize(prey));
             }
           }
-
-          //File prey = new File(preyDir, entries[j] + ".pde");
-          //if (prey.exists()) {
-          //if (prey.length() == 0) {
-          // this is a candidate for deletion, but make sure
-          // that the user hasn't added anything else to the folder
-          
-          //System.out.println("remove: " + prey);
-          //  removeDir(preyDir);
-          //}
-          //} else {
-          //System.out.println(prey + " doesn't exist.. weird");
-          //}
         }
       }
     }
