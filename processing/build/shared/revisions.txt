@@ -7,6 +7,39 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0074
+
+- fixed an issue with text and shapes fixing in a bad way (paul
+  fishwick's 'clock' bug)
+
+- removed a zbuffer precision hack that was drawing lines above
+  everything else
+
+- includes new icons designed by florian
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0073
+
+fixes to several nastier bugs (hopefully) 
+
+- the hanging bug may be fixed in this release
+
+- loadImage() should no longer re-download the entire jar file
+
+- libraries are built as 1.1 code like everything else, so things with
+  particles can be exported again
+
+- fixed a minor bug that prevented non-smoothed fonts from being 
+  created in the font builder on macosx due to apple's creativity 
+  with the java spec
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0072
 
 bug fix release, most major being that the code folder should now be
