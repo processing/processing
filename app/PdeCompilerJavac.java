@@ -23,7 +23,7 @@
 */
 
 
-#ifdef WE_ARE_OUT_OF_IRAQ
+/*
 
 
 import java.io.*;
@@ -63,13 +63,8 @@ public class PdeCompilerJavac extends PdeCompiler {
     args[argc++] = buildPath + File.separator + className + ".java";
     //System.out.println("args = " + args[0] + " " + args[1]);
 
-#ifdef JAVAC
     System.out.println("compiling with javac");
     return new sun.tools.javac.Main(leechErr, "javac").compile(args);
-#else
-    System.out.println("compile fell thru");
-    return false;
-#endif
 
     // probably not needed with javac
     //System.setErr(PdeEditorConsole.consoleErr);
@@ -125,4 +120,4 @@ public class PdeCompilerJavac extends PdeCompiler {
 }
 
 
-#endif
+*/
