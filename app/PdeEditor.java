@@ -1206,9 +1206,9 @@ public class PdeEditor extends Panel {
   }
 
   static protected void copyDir(File sourceDir, File targetDir) {
-    System.out.println("dir " + sourceDir);
-    System.out.println(" -> " + targetDir);
-    System.out.println();
+    //System.out.println("dir " + sourceDir);
+    //System.out.println(" -> " + targetDir);
+    //System.out.println();
 
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
@@ -1228,7 +1228,7 @@ public class PdeEditor extends Panel {
   }
 
   static protected void removeDir(File dir) {
-    System.out.println("removing " + dir);
+    //System.out.println("removing " + dir);
 
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
