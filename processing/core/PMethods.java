@@ -2,11 +2,9 @@ package processing.core;
 
 
 
-// this file is auto-generated. no touchy-touchy.
+// this file is semiautomatically generated. no touchy-touchy.
 
 public interface PMethods {
-
-  //
 
   public void beginFrame();
 

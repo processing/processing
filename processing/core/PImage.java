@@ -439,18 +439,19 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Set alpha channel for an image.
    */
-  public void alpha(int alpha[]) {
-    alpha(this, alpha);
+  public void mask(int alpha[]) {
+    mask(this, alpha);
   }
+
 
   /**
    * Set alpha channel for an image.
    */
-  static public void alpha(PImage image, int alpha[]) {
+  static public void mask(PImage image, int alpha[]) {
     // don't execute if mask image is different size
     if (alpha.length != image.pixels.length) {
-      System.err.println("alpha(): the mask image must be the same size");
-      return;
+      throw new RuntimeException("The PImage used with mask() must be " +
+                                 "the same size as the applet.");
     }
     for (int i = 0; i < image.pixels.length; i++) {
       image.pixels[i] =
@@ -475,12 +476,13 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Set alpha channel for an image using another image as the source.
    */
-  public void alpha(PImage alpha) {
-    alpha(alpha.pixels);
+  public void mask(PImage alpha) {
+    mask(alpha.pixels);
   }
 
-  static public void alpha(PImage image, PImage alpha) {
-    alpha(image, alpha.pixels);
+
+  static public void mask(PImage image, PImage alpha) {
+    mask(image, alpha.pixels);
   }
 
 

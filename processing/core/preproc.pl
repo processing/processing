@@ -67,7 +67,7 @@ while ($line = shift(@contents)) {
     #if ($line =~ /^\s*public (\w+) [a-zA-z_]+\(.*$/) {
     if ($got_something == 1) {
         if ($1 ne 'void') {
-            $returns = 'return';
+            $returns = 'return ';
         } else {
             $returns = '';
         }
@@ -91,13 +91,22 @@ while ($line = shift(@contents)) {
 #		print INTF $iline;
 	    }
         }
+	
+	#$g_line = '';
+	#$r_line = '';
 
         $decl =~ /\s(\S+)\(/;
         $decl_name = $1;
 	if ($got_static == 1) {
-	    print OUT "    $returns PGraphics.${decl_name}(";
+	    #print OUT "    ${returns}PGraphics.${decl_name}(";
+	    $g_line = "    ${returns}PGraphics.${decl_name}(";
 	} else {
-	    print OUT "    $returns g.${decl_name}(";
+	    #if ($returns eq '') {
+	    #print OUT "    if (recorder != null) recorder.${decl_name}(";
+	    $r_line = "    if (recorder != null) recorder.${decl_name}(";
+	    #}
+	    #print OUT "    ${returns}g.${decl_name}(";
+	    $g_line = "    ${returns}g.${decl_name}(";
 	}
 
         $decl =~ s/\s+/ /g; # smush onto a single line
@@ -110,14 +119,24 @@ while ($line = shift(@contents)) {
             ($the_type, $the_arg) = split(' ', $part);
             $the_arg =~ s/[\[\]]//g;
             if ($prev != 0) {
-                print OUT ", ";
+                #print OUT ", ";
+		$g_line .= ", ";
+		$r_line .= ", ";
             }
-            print OUT "${the_arg}";
+            #print OUT "${the_arg}";
+	    $g_line .= "${the_arg}";
+	    $r_line .= "${the_arg}";
             $prev = 1;
         }
-        print OUT ");\n";
+        #print OUT ");\n";
+	$g_line .= ");\n";
+	$r_line .= ");\n";
 
-        print OUT "  }\n"; #\n";
+	if (($got_static != 1) && ($returns eq '')) {
+	    print OUT $r_line;
+	}
+	print OUT $g_line;
+        print OUT "  }\n";
     }
 }
 print OUT "}\n";

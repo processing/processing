@@ -48,6 +48,8 @@ X alpha(PImage) is now called mask() instead
 X   already have an alpha() function that gets alpha bits
 X on start, mouseX is 0.. how to avoid?
 X   use firstMouse variable.. figure out naming
+X get frame recording working
+X   not tested, but at least it's there
 
 image stuff
 o could also do PImage2, which would need a getPixels() before messing w/ it
@@ -115,7 +117,6 @@ _ lighting totally sucks
 
 _ make sure applet is stopping in draw mode
 
-_ get frame recording working
 _ also have a simple way to hook in triangle leeches to PGraphics3
 
 _ implement PGraphics2.curveVertex()

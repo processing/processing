@@ -51,6 +51,8 @@ public class PApplet extends Applet
   public PGraphics g;
   public Frame frame;
 
+  protected PMethods recorder;
+
   /** Command line options passed in from main() */
   public String args[];
 
@@ -610,7 +612,7 @@ public class PApplet extends Applet
             if (frameCount == 0) {
               //initGraphics();
               //createGraphics();
-              defaults();
+              g.defaults();
               setup();
               // if depth() is called inside setup, pixels/width/height
               // will be ok by the time it's back out again
@@ -648,6 +650,11 @@ public class PApplet extends Applet
             }
 
             g.endFrame();
+            if (recorder != null) {
+              recorder.endFrame();
+              recorder = null;
+            }
+
             //}  // end sync
 
             //update();
@@ -4362,6 +4369,14 @@ v              PApplet.this.stop();
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+
+  public void recordFrame(PMethods recorder) {
+    this.recorder = recorder;
+    recorder.beginFrame();
+  }
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4370,32 +4385,38 @@ v              PApplet.this.stop();
 
 
   public void imageMode(int mode) {
-     g.imageMode(mode);
+    if (recorder != null) recorder.imageMode(mode);
+    g.imageMode(mode);
   }
 
 
   public void smooth() {
-     g.smooth();
+    if (recorder != null) recorder.smooth();
+    g.smooth();
   }
 
 
   public void noSmooth() {
-     g.noSmooth();
+    if (recorder != null) recorder.noSmooth();
+    g.noSmooth();
   }
 
 
   public void loadPixels() {
-     g.loadPixels();
+    if (recorder != null) recorder.loadPixels();
+    g.loadPixels();
   }
 
 
   public void updatePixels() {
-     g.updatePixels();
+    if (recorder != null) recorder.updatePixels();
+    g.updatePixels();
   }
 
 
   public void updatePixels(int x1, int y1, int x2, int y2) {
-     g.updatePixels(x1, y1, x2, y2);
+    if (recorder != null) recorder.updatePixels(x1, y1, x2, y2);
+    g.updatePixels(x1, y1, x2, y2);
   }
 
 
@@ -4410,55 +4431,63 @@ v              PApplet.this.stop();
 
 
   public void set(int x, int y, int c) {
-     g.set(x, y, c);
+    if (recorder != null) recorder.set(x, y, c);
+    g.set(x, y, c);
   }
 
 
-  public void alpha(int alpha[]) {
-     g.alpha(alpha);
+  public void mask(int alpha[]) {
+    if (recorder != null) recorder.mask(alpha);
+    g.mask(alpha);
   }
 
 
-  static public void alpha(PImage image, int alpha[]) {
-     PGraphics.alpha(image, alpha);
+  static public void mask(PImage image, int alpha[]) {
+    PGraphics.mask(image, alpha);
   }
 
 
-  public void alpha(PImage alpha) {
-     g.alpha(alpha);
+  public void mask(PImage alpha) {
+    if (recorder != null) recorder.mask(alpha);
+    g.mask(alpha);
   }
 
 
-  static public void alpha(PImage image, PImage alpha) {
-     PGraphics.alpha(image, alpha);
+  static public void mask(PImage image, PImage alpha) {
+    PGraphics.mask(image, alpha);
   }
 
 
   public void filter(int kind) {
-     g.filter(kind);
+    if (recorder != null) recorder.filter(kind);
+    g.filter(kind);
   }
 
 
   public void filter(int kind, float param) {
-     g.filter(kind, param);
+    if (recorder != null) recorder.filter(kind, param);
+    g.filter(kind, param);
   }
 
 
   public void copy(PImage src, int dx, int dy) {
-     g.copy(src, dx, dy);
+    if (recorder != null) recorder.copy(src, dx, dy);
+    g.copy(src, dx, dy);
   }
 
 
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-     g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    if (recorder != null) recorder.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
 
   public void copy(PImage src,
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-     g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    if (recorder != null) recorder.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
 
@@ -4468,26 +4497,30 @@ v              PApplet.this.stop();
 
 
   public void blend(int sx, int sy, int dx, int dy, int mode) {
-     g.blend(sx, sy, dx, dy, mode);
+    if (recorder != null) recorder.blend(sx, sy, dx, dy, mode);
+    g.blend(sx, sy, dx, dy, mode);
   }
 
 
   public void blend(PImage src,
                     int sx, int sy, int dx, int dy, int mode) {
-     g.blend(src, sx, sy, dx, dy, mode);
+    if (recorder != null) recorder.blend(src, sx, sy, dx, dy, mode);
+    g.blend(src, sx, sy, dx, dy, mode);
   }
 
 
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-     g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    if (recorder != null) recorder.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
   public void blend(PImage src,
                     int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-     g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
@@ -4516,186 +4549,204 @@ v              PApplet.this.stop();
 
 
   public void save(String filename) {
-     g.save(filename);
-  }
-
-
-  public void beginFrame() {
-     g.beginFrame();
-  }
-
-
-  public void endFrame() {
-     g.endFrame();
-  }
-
-
-  public void defaults() {
-     g.defaults();
+    if (recorder != null) recorder.save(filename);
+    g.save(filename);
   }
 
 
   public void hint(int which) {
-     g.hint(which);
+    if (recorder != null) recorder.hint(which);
+    g.hint(which);
   }
 
 
   public void unhint(int which) {
-     g.unhint(which);
+    if (recorder != null) recorder.unhint(which);
+    g.unhint(which);
   }
 
 
   public void beginShape() {
-     g.beginShape();
+    if (recorder != null) recorder.beginShape();
+    g.beginShape();
   }
 
 
   public void beginShape(int kind) {
-     g.beginShape(kind);
+    if (recorder != null) recorder.beginShape(kind);
+    g.beginShape(kind);
   }
 
 
   public void normal(float nx, float ny, float nz) {
-     g.normal(nx, ny, nz);
+    if (recorder != null) recorder.normal(nx, ny, nz);
+    g.normal(nx, ny, nz);
   }
 
 
   public void textureMode(int mode) {
-     g.textureMode(mode);
+    if (recorder != null) recorder.textureMode(mode);
+    g.textureMode(mode);
   }
 
 
   public void texture(PImage image) {
-     g.texture(image);
+    if (recorder != null) recorder.texture(image);
+    g.texture(image);
   }
 
 
   public void vertex(float x, float y) {
-     g.vertex(x, y);
+    if (recorder != null) recorder.vertex(x, y);
+    g.vertex(x, y);
   }
 
 
   public void vertex(float x, float y, float z) {
-     g.vertex(x, y, z);
+    if (recorder != null) recorder.vertex(x, y, z);
+    g.vertex(x, y, z);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-     g.vertex(x, y, u, v);
+    if (recorder != null) recorder.vertex(x, y, u, v);
+    g.vertex(x, y, u, v);
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
-     g.vertex(x, y, z, u, v);
+    if (recorder != null) recorder.vertex(x, y, z, u, v);
+    g.vertex(x, y, z, u, v);
   }
 
 
   public void bezierVertex(float x, float y) {
-     g.bezierVertex(x, y);
+    if (recorder != null) recorder.bezierVertex(x, y);
+    g.bezierVertex(x, y);
   }
 
 
   public void bezierVertex(float x, float y, float z) {
-     g.bezierVertex(x, y, z);
+    if (recorder != null) recorder.bezierVertex(x, y, z);
+    g.bezierVertex(x, y, z);
   }
 
 
   public void curveVertex(float x, float y) {
-     g.curveVertex(x, y);
+    if (recorder != null) recorder.curveVertex(x, y);
+    g.curveVertex(x, y);
   }
 
 
   public void curveVertex(float x, float y, float z) {
-     g.curveVertex(x, y, z);
+    if (recorder != null) recorder.curveVertex(x, y, z);
+    g.curveVertex(x, y, z);
   }
 
 
   public void endShape() {
-     g.endShape();
+    if (recorder != null) recorder.endShape();
+    g.endShape();
   }
 
 
   public void point(float x, float y) {
-     g.point(x, y);
+    if (recorder != null) recorder.point(x, y);
+    g.point(x, y);
   }
 
 
   public void point(float x, float y, float z) {
-     g.point(x, y, z);
+    if (recorder != null) recorder.point(x, y, z);
+    g.point(x, y, z);
   }
 
 
   public void line(float x1, float y1, float x2, float y2) {
-     g.line(x1, y1, x2, y2);
+    if (recorder != null) recorder.line(x1, y1, x2, y2);
+    g.line(x1, y1, x2, y2);
   }
 
 
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
-     g.line(x1, y1, z1, x2, y2, z2);
+    if (recorder != null) recorder.line(x1, y1, z1, x2, y2, z2);
+    g.line(x1, y1, z1, x2, y2, z2);
   }
 
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-     g.triangle(x1, y1, x2, y2, x3, y3);
+    if (recorder != null) recorder.triangle(x1, y1, x2, y2, x3, y3);
+    g.triangle(x1, y1, x2, y2, x3, y3);
   }
 
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
-     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    if (recorder != null) recorder.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
   public void rectMode(int mode) {
-     g.rectMode(mode);
+    if (recorder != null) recorder.rectMode(mode);
+    g.rectMode(mode);
   }
 
 
   public void rect(float x1, float y1, float x2, float y2) {
-     g.rect(x1, y1, x2, y2);
+    if (recorder != null) recorder.rect(x1, y1, x2, y2);
+    g.rect(x1, y1, x2, y2);
   }
 
 
   public void ellipseMode(int mode) {
-     g.ellipseMode(mode);
+    if (recorder != null) recorder.ellipseMode(mode);
+    g.ellipseMode(mode);
   }
 
 
   public void ellipse(float a, float b, float c, float d) {
-     g.ellipse(a, b, c, d);
+    if (recorder != null) recorder.ellipse(a, b, c, d);
+    g.ellipse(a, b, c, d);
   }
 
 
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
-     g.arc(a, b, c, d, start, stop);
+    if (recorder != null) recorder.arc(a, b, c, d, start, stop);
+    g.arc(a, b, c, d, start, stop);
   }
 
 
   public void box(float size) {
-     g.box(size);
+    if (recorder != null) recorder.box(size);
+    g.box(size);
   }
 
 
   public void box(float w, float h, float d) {
-     g.box(w, h, d);
+    if (recorder != null) recorder.box(w, h, d);
+    g.box(w, h, d);
   }
 
 
   public void sphereDetail(int res) {
-     g.sphereDetail(res);
+    if (recorder != null) recorder.sphereDetail(res);
+    g.sphereDetail(res);
   }
 
 
   public void sphere(float r) {
-     g.sphere(r);
+    if (recorder != null) recorder.sphere(r);
+    g.sphere(r);
   }
 
 
   public void sphere(float x, float y, float z, float r) {
-     g.sphere(x, y, z, r);
+    if (recorder != null) recorder.sphere(x, y, z, r);
+    g.sphere(x, y, z, r);
   }
 
 
@@ -4713,7 +4764,8 @@ v              PApplet.this.stop();
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
-     g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+    if (recorder != null) recorder.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+    g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -4721,22 +4773,26 @@ v              PApplet.this.stop();
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    if (recorder != null) recorder.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
 
   public void bezierDetail(int detail) {
-     g.bezierDetail(detail);
+    if (recorder != null) recorder.bezierDetail(detail);
+    g.bezierDetail(detail);
   }
 
 
   public void curveDetail(int detail) {
-     g.curveDetail(detail);
+    if (recorder != null) recorder.curveDetail(detail);
+    g.curveDetail(detail);
   }
 
 
   public void curveTightness(float tightness) {
-     g.curveTightness(tightness);
+    if (recorder != null) recorder.curveTightness(tightness);
+    g.curveTightness(tightness);
   }
 
 
@@ -4755,7 +4811,8 @@ v              PApplet.this.stop();
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
-     g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+    if (recorder != null) recorder.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -4763,181 +4820,216 @@ v              PApplet.this.stop();
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-     g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    if (recorder != null) recorder.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
 
   public void image(PImage image, float x, float y) {
-     g.image(image, x, y);
+    if (recorder != null) recorder.image(image, x, y);
+    g.image(image, x, y);
   }
 
 
   public void image(PImage image,
                     float x, float y, float c, float d) {
-     g.image(image, x, y, c, d);
+    if (recorder != null) recorder.image(image, x, y, c, d);
+    g.image(image, x, y, c, d);
   }
 
 
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
-     g.image(image, a, b, c, d, u1, v1, u2, v2);
+    if (recorder != null) recorder.image(image, a, b, c, d, u1, v1, u2, v2);
+    g.image(image, a, b, c, d, u1, v1, u2, v2);
   }
 
 
   public void textFont(PFont which) {
-     g.textFont(which);
+    if (recorder != null) recorder.textFont(which);
+    g.textFont(which);
   }
 
 
   public void textFont(PFont which, float size) {
-     g.textFont(which, size);
+    if (recorder != null) recorder.textFont(which, size);
+    g.textFont(which, size);
   }
 
 
   public void textSize(float size) {
-     g.textSize(size);
+    if (recorder != null) recorder.textSize(size);
+    g.textSize(size);
   }
 
 
   public void textLeading(float leading) {
-     g.textLeading(leading);
+    if (recorder != null) recorder.textLeading(leading);
+    g.textLeading(leading);
   }
 
 
   public void textMode(int mode) {
-     g.textMode(mode);
+    if (recorder != null) recorder.textMode(mode);
+    g.textMode(mode);
   }
 
 
   public void textSpace(int space) {
-     g.textSpace(space);
+    if (recorder != null) recorder.textSpace(space);
+    g.textSpace(space);
   }
 
 
   public void text(char c, float x, float y) {
-     g.text(c, x, y);
+    if (recorder != null) recorder.text(c, x, y);
+    g.text(c, x, y);
   }
 
 
   public void text(char c, float x, float y, float z) {
-     g.text(c, x, y, z);
+    if (recorder != null) recorder.text(c, x, y, z);
+    g.text(c, x, y, z);
   }
 
 
   public void text(String s, float x, float y) {
-     g.text(s, x, y);
+    if (recorder != null) recorder.text(s, x, y);
+    g.text(s, x, y);
   }
 
 
   public void text(String s, float x, float y, float z) {
-     g.text(s, x, y, z);
+    if (recorder != null) recorder.text(s, x, y, z);
+    g.text(s, x, y, z);
   }
 
 
   public void text(String s, float x1, float y1, float x2, float y2) {
-     g.text(s, x1, y1, x2, y2);
+    if (recorder != null) recorder.text(s, x1, y1, x2, y2);
+    g.text(s, x1, y1, x2, y2);
   }
 
 
   public void text(String s, float x1, float y1, float z, float x2, float y2) {
-     g.text(s, x1, y1, z, x2, y2);
+    if (recorder != null) recorder.text(s, x1, y1, z, x2, y2);
+    g.text(s, x1, y1, z, x2, y2);
   }
 
 
   public void text(int num, float x, float y) {
-     g.text(num, x, y);
+    if (recorder != null) recorder.text(num, x, y);
+    g.text(num, x, y);
   }
 
 
   public void text(int num, float x, float y, float z) {
-     g.text(num, x, y, z);
+    if (recorder != null) recorder.text(num, x, y, z);
+    g.text(num, x, y, z);
   }
 
 
   public void text(float num, float x, float y) {
-     g.text(num, x, y);
+    if (recorder != null) recorder.text(num, x, y);
+    g.text(num, x, y);
   }
 
 
   public void text(float num, float x, float y, float z) {
-     g.text(num, x, y, z);
+    if (recorder != null) recorder.text(num, x, y, z);
+    g.text(num, x, y, z);
   }
 
 
   public void translate(float tx, float ty) {
-     g.translate(tx, ty);
+    if (recorder != null) recorder.translate(tx, ty);
+    g.translate(tx, ty);
   }
 
 
   public void translate(float tx, float ty, float tz) {
-     g.translate(tx, ty, tz);
+    if (recorder != null) recorder.translate(tx, ty, tz);
+    g.translate(tx, ty, tz);
   }
 
 
   public void angleMode(int mode) {
-     g.angleMode(mode);
+    if (recorder != null) recorder.angleMode(mode);
+    g.angleMode(mode);
   }
 
 
   public void rotate(float angle) {
-     g.rotate(angle);
+    if (recorder != null) recorder.rotate(angle);
+    g.rotate(angle);
   }
 
 
   public void rotateX(float angle) {
-     g.rotateX(angle);
+    if (recorder != null) recorder.rotateX(angle);
+    g.rotateX(angle);
   }
 
 
   public void rotateY(float angle) {
-     g.rotateY(angle);
+    if (recorder != null) recorder.rotateY(angle);
+    g.rotateY(angle);
   }
 
 
   public void rotateZ(float angle) {
-     g.rotateZ(angle);
+    if (recorder != null) recorder.rotateZ(angle);
+    g.rotateZ(angle);
   }
 
 
   public void rotate(float angle, float vx, float vy, float vz) {
-     g.rotate(angle, vx, vy, vz);
+    if (recorder != null) recorder.rotate(angle, vx, vy, vz);
+    g.rotate(angle, vx, vy, vz);
   }
 
 
   public void scale(float s) {
-     g.scale(s);
+    if (recorder != null) recorder.scale(s);
+    g.scale(s);
   }
 
 
   public void scale(float sx, float sy) {
-     g.scale(sx, sy);
+    if (recorder != null) recorder.scale(sx, sy);
+    g.scale(sx, sy);
   }
 
 
   public void scale(float x, float y, float z) {
-     g.scale(x, y, z);
+    if (recorder != null) recorder.scale(x, y, z);
+    g.scale(x, y, z);
   }
 
 
   public void push() {
-     g.push();
+    if (recorder != null) recorder.push();
+    g.push();
   }
 
 
   public void pop() {
-     g.pop();
+    if (recorder != null) recorder.pop();
+    g.pop();
   }
 
 
   public void resetMatrix() {
-     g.resetMatrix();
+    if (recorder != null) recorder.resetMatrix();
+    g.resetMatrix();
   }
 
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-     g.applyMatrix(n00, n01, n02, n10, n11, n12);
+    if (recorder != null) recorder.applyMatrix(n00, n01, n02, n10, n11, n12);
+    g.applyMatrix(n00, n01, n02, n10, n11, n12);
   }
 
 
@@ -4945,57 +5037,67 @@ v              PApplet.this.stop();
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+    if (recorder != null) recorder.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+    g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
   }
 
 
   public void printMatrix() {
-     g.printMatrix();
+    if (recorder != null) recorder.printMatrix();
+    g.printMatrix();
   }
 
 
   public void cameraMode(int mode) {
-     g.cameraMode(mode);
+    if (recorder != null) recorder.cameraMode(mode);
+    g.cameraMode(mode);
   }
 
 
   public void beginCamera() {
-     g.beginCamera();
+    if (recorder != null) recorder.beginCamera();
+    g.beginCamera();
   }
 
 
   public void endCamera() {
-     g.endCamera();
+    if (recorder != null) recorder.endCamera();
+    g.endCamera();
   }
 
 
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-     g.ortho(left, right, bottom, top, near, far);
+    if (recorder != null) recorder.ortho(left, right, bottom, top, near, far);
+    g.ortho(left, right, bottom, top, near, far);
   }
 
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-     g.perspective(fovy, aspect, zNear, zFar);
+    if (recorder != null) recorder.perspective(fovy, aspect, zNear, zFar);
+    g.perspective(fovy, aspect, zNear, zFar);
   }
 
 
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
-     g.frustum(left, right, bottom, top, znear, zfar);
+    if (recorder != null) recorder.frustum(left, right, bottom, top, znear, zfar);
+    g.frustum(left, right, bottom, top, znear, zfar);
   }
 
 
   public void lookat(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-     g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+    if (recorder != null) recorder.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+    g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
   }
 
 
   public void printCamera() {
-     g.printCamera();
+    if (recorder != null) recorder.printCamera();
+    g.printCamera();
   }
 
 
@@ -5040,200 +5142,239 @@ v              PApplet.this.stop();
 
 
   public void lights() {
-     g.lights();
+    if (recorder != null) recorder.lights();
+    g.lights();
   }
 
 
   public void noLights() {
-     g.noLights();
+    if (recorder != null) recorder.noLights();
+    g.noLights();
   }
 
 
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
-     g.light(num, x, y, z, red, green, blue);
+    if (recorder != null) recorder.light(num, x, y, z, red, green, blue);
+    g.light(num, x, y, z, red, green, blue);
   }
 
 
   public void lightEnable(int num) {
-     g.lightEnable(num);
+    if (recorder != null) recorder.lightEnable(num);
+    g.lightEnable(num);
   }
 
 
   public void lightDisable(int num) {
-     g.lightDisable(num);
+    if (recorder != null) recorder.lightDisable(num);
+    g.lightDisable(num);
   }
 
 
   public void lightPosition(int num, float x, float y, float z) {
-     g.lightPosition(num, x, y, z);
+    if (recorder != null) recorder.lightPosition(num, x, y, z);
+    g.lightPosition(num, x, y, z);
   }
 
 
   public void lightAmbient(int num, float x, float y, float z) {
-     g.lightAmbient(num, x, y, z);
+    if (recorder != null) recorder.lightAmbient(num, x, y, z);
+    g.lightAmbient(num, x, y, z);
   }
 
 
   public void lightDiffuse(int num, float x, float y, float z) {
-     g.lightDiffuse(num, x, y, z);
+    if (recorder != null) recorder.lightDiffuse(num, x, y, z);
+    g.lightDiffuse(num, x, y, z);
   }
 
 
   public void lightSpecular(int num, float x, float y, float z) {
-     g.lightSpecular(num, x, y, z);
+    if (recorder != null) recorder.lightSpecular(num, x, y, z);
+    g.lightSpecular(num, x, y, z);
   }
 
 
   public void colorMode(int mode) {
-     g.colorMode(mode);
+    if (recorder != null) recorder.colorMode(mode);
+    g.colorMode(mode);
   }
 
 
   public void colorMode(int mode, float max) {
-     g.colorMode(mode, max);
+    if (recorder != null) recorder.colorMode(mode, max);
+    g.colorMode(mode, max);
   }
 
 
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ) {
-     g.colorMode(mode, maxX, maxY, maxZ);
+    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
+    g.colorMode(mode, maxX, maxY, maxZ);
   }
 
 
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
-     g.colorMode(mode, maxX, maxY, maxZ, maxA);
+    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
+    g.colorMode(mode, maxX, maxY, maxZ, maxA);
   }
 
 
   public void noTint() {
-     g.noTint();
+    if (recorder != null) recorder.noTint();
+    g.noTint();
   }
 
 
   public void tint(int rgb) {
-     g.tint(rgb);
+    if (recorder != null) recorder.tint(rgb);
+    g.tint(rgb);
   }
 
 
   public void tint(float gray) {
-     g.tint(gray);
+    if (recorder != null) recorder.tint(gray);
+    g.tint(gray);
   }
 
 
   public void tint(float gray, float alpha) {
-     g.tint(gray, alpha);
+    if (recorder != null) recorder.tint(gray, alpha);
+    g.tint(gray, alpha);
   }
 
 
   public void tint(float x, float y, float z) {
-     g.tint(x, y, z);
+    if (recorder != null) recorder.tint(x, y, z);
+    g.tint(x, y, z);
   }
 
 
   public void tint(float x, float y, float z, float a) {
-     g.tint(x, y, z, a);
+    if (recorder != null) recorder.tint(x, y, z, a);
+    g.tint(x, y, z, a);
   }
 
 
   public void noFill() {
-     g.noFill();
+    if (recorder != null) recorder.noFill();
+    g.noFill();
   }
 
 
   public void fill(int rgb) {
-     g.fill(rgb);
+    if (recorder != null) recorder.fill(rgb);
+    g.fill(rgb);
   }
 
 
   public void fill(float gray) {
-     g.fill(gray);
+    if (recorder != null) recorder.fill(gray);
+    g.fill(gray);
   }
 
 
   public void fill(float gray, float alpha) {
-     g.fill(gray, alpha);
+    if (recorder != null) recorder.fill(gray, alpha);
+    g.fill(gray, alpha);
   }
 
 
   public void fill(float x, float y, float z) {
-     g.fill(x, y, z);
+    if (recorder != null) recorder.fill(x, y, z);
+    g.fill(x, y, z);
   }
 
 
   public void fill(float x, float y, float z, float a) {
-     g.fill(x, y, z, a);
+    if (recorder != null) recorder.fill(x, y, z, a);
+    g.fill(x, y, z, a);
   }
 
 
   public void strokeWeight(float weight) {
-     g.strokeWeight(weight);
+    if (recorder != null) recorder.strokeWeight(weight);
+    g.strokeWeight(weight);
   }
 
 
   public void strokeJoin(int join) {
-     g.strokeJoin(join);
+    if (recorder != null) recorder.strokeJoin(join);
+    g.strokeJoin(join);
   }
 
 
   public void strokeCap(int cap) {
-     g.strokeCap(cap);
+    if (recorder != null) recorder.strokeCap(cap);
+    g.strokeCap(cap);
   }
 
 
   public void noStroke() {
-     g.noStroke();
+    if (recorder != null) recorder.noStroke();
+    g.noStroke();
   }
 
 
   public void stroke(int rgb) {
-     g.stroke(rgb);
+    if (recorder != null) recorder.stroke(rgb);
+    g.stroke(rgb);
   }
 
 
   public void stroke(float gray) {
-     g.stroke(gray);
+    if (recorder != null) recorder.stroke(gray);
+    g.stroke(gray);
   }
 
 
   public void stroke(float gray, float alpha) {
-     g.stroke(gray, alpha);
+    if (recorder != null) recorder.stroke(gray, alpha);
+    g.stroke(gray, alpha);
   }
 
 
   public void stroke(float x, float y, float z) {
-     g.stroke(x, y, z);
+    if (recorder != null) recorder.stroke(x, y, z);
+    g.stroke(x, y, z);
   }
 
 
   public void stroke(float x, float y, float z, float a) {
-     g.stroke(x, y, z, a);
+    if (recorder != null) recorder.stroke(x, y, z, a);
+    g.stroke(x, y, z, a);
   }
 
 
   public void background(int rgb) {
-     g.background(rgb);
+    if (recorder != null) recorder.background(rgb);
+    g.background(rgb);
   }
 
 
   public void background(float gray) {
-     g.background(gray);
+    if (recorder != null) recorder.background(gray);
+    g.background(gray);
   }
 
 
   public void background(float x, float y, float z) {
-     g.background(x, y, z);
+    if (recorder != null) recorder.background(x, y, z);
+    g.background(x, y, z);
   }
 
 
   public void background(PImage image) {
-     g.background(image);
+    if (recorder != null) recorder.background(image);
+    g.background(image);
   }
 
 
   public void clear() {
-     g.clear();
+    if (recorder != null) recorder.clear();
+    g.clear();
   }
 
 
@@ -5269,15 +5410,5 @@ v              PApplet.this.stop();
 
   public final float brightness(int what) {
     return g.brightness(what);
-  }
-
-
-  public void mask(int alpha[]) {
-     g.mask(alpha);
-  }
-
-
-  public void mask(PImage alpha) {
-     g.mask(alpha);
   }
 }
