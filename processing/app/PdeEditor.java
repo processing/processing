@@ -373,6 +373,9 @@ public class PdeEditor extends Panel {
       // the app reaches here when no sketch.properties file exists
       //e.printStackTrace();
 
+      // indicator that this is the first time this feller has used p5
+      PdeBase.firstTime = true;
+
       // even if folder for 'default' user doesn't exist, or
       // sketchbook itself is missing, mkdirs() will make it happy
       userName = "default";

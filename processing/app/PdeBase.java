@@ -22,6 +22,9 @@ public class PdeBase extends Frame implements ActionListener {
   protected RedoAction redoAction;
   protected UndoManager undo = new UndoManager();
 
+  // indicator that this is the first time this feller has used p5
+  static boolean firstTime;
+
   boolean errorState;
   PdeEditor editor;
 
@@ -297,7 +300,6 @@ public class PdeBase extends Frame implements ActionListener {
     //menu.addSeparator();
     serialMenu = new Menu("Serial Port");
     menu.add(serialMenu);
-    buildSerialMenu();
 
     externalEditorItem = new CheckboxMenuItem("Use External Editor");
     externalEditorItem.addItemListener(new ItemListener() {
@@ -341,6 +343,7 @@ public class PdeBase extends Frame implements ActionListener {
     editor.frame = frame;  // no longer really used
     editor.init();
     rebuildSketchbookMenu(sketchbookMenu);
+    buildSerialMenu();
     frame.show();  // added back in for pde
   }
 
@@ -714,7 +717,7 @@ public class PdeBase extends Frame implements ActionListener {
 
     SerialMenuListener listener = new SerialMenuListener();
     String defaultName = get("serial.port", "unspecified");
-    //boolean found;
+    boolean problem = false;
 
     try {
       Enumeration portList = CommPortIdentifier.getPortIdentifiers();
@@ -733,17 +736,23 @@ public class PdeBase extends Frame implements ActionListener {
 	}
       }
     } catch (UnsatisfiedLinkError e) {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(frame,
-				    "Serial port support not installed. " +
-				    "Check the readme for instructions if you " +
-				    "need to use the serial port",
-				    "Serial Port Warning",
-				    JOptionPane.WARNING_MESSAGE);
+      //e.printStackTrace();
+      problem = true;
 
     } catch (Exception e) {
       System.out.println("exception building serial menu");
       e.printStackTrace();
+    }
+
+    // only warn them if this is the first time
+    //if (getInteger("window.x", 0) == 0) {
+    if (firstTime) {
+      JOptionPane.showMessageDialog(frame,
+				    "Serial port support not installed.\n" +
+				    "Check the readme for instructions if you " +
+				    "need to use the serial port.   ",
+				    "Serial Port Warning",
+				    JOptionPane.WARNING_MESSAGE);
     }
   }
 
