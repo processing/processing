@@ -103,14 +103,14 @@ cd /path/to/processing/build/linux
 
 //// Updating to the Latest Version
 
-1. Each time you want to update to latest version from cvs:
+5a. Each time you want to update to latest version from cvs:
 
 cd /path/to/processing
 cvs -z3 update
 # -z3 means make it snappy (using compression)
 
 
-2. Or if new folders have been added, use:
+5b. Or if new folders have been added, use:
 
 cd /path/to/processing
 cvs -z3 update -d -P
@@ -127,9 +127,12 @@ cvs -z3 update -d -P
 # missing from a subfolder.
 
 
-3. If there have been significant changes, or you get weird build
-   errors, try deleting (or renaming, if you need sketches from
-   inside) your 'work' folder. This will create a fresh build.
+5c. If there have been significant changes, or you get weird build
+    errors, try deleting (or renaming, if you need sketches from
+    inside) your 'work' folder. This will create a fresh build.
+    This includes any changes to the reference, the examples, the
+    bagel serial libraries, jikes, or just about any time you
+    have to use -d -P with the update.
 
 
 /////////////////////////////////////////////////////////////////
@@ -305,4 +308,6 @@ cvs -z3 update -d -P
 If there have been significant changes, or you get weird build
 errors, try deleting (or renaming, if you need sketches from
 inside) your 'work' folder. This will create a fresh build.
-
+This includes any changes to the reference, the examples, the
+bagel serial libraries, jikes, or just about any time you
+have to use -d -P with the update.
