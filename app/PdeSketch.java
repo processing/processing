@@ -924,7 +924,7 @@ public class PdeSketch {
     }
     //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
     //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
-    packClassPathIntoZipFile(bagelJar);
+    packClassPathIntoZipFile(bagelJar, zos);
 
     /*
       // add the contents of lib/export to the jar file
@@ -1012,8 +1012,7 @@ public class PdeSketch {
   static public void packClassPathIntoZipFile(String path, 
                                               ZipOutputStream zos) 
     throws IOException {
-    String pieces[] = 
-      BApplet.splitStrings(path, File.pathSeparatorChar);
+    String pieces[] = BApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
@@ -1132,6 +1131,36 @@ public class PdeSketch {
   // don't allow the user to hide the 0 tab (the main file)
 
   public void hide(int which) {
+  }
+
+
+  public void unhide(String what) {
+    //System.out.println("unhide " + e);
+    File from = null;
+    for (int i = 0; i < hiddenCount; i++) {
+      if (hidden[i].name.equals(what)) {
+        from = hidden[i].file;
+      }
+    }
+    if (from == null) {
+      System.err.println("could find " + what + " to unhide.");
+      return;
+    }
+
+    String filename = from.getName();
+    if (!filename.endsWith(".x")) {
+      System.err.println("error while trying to unhide a file");
+
+    } else if (!from.exists()) {
+      System.err.println("file no longer exists");
+
+    } else {
+      File to = new File(from.getPath(), 
+                         filename.substring(0, filename.length() - 2));
+      if (!from.renameTo(to)) {
+        System.err.println("problem while unhiding");
+      }
+    }
   }
 
 

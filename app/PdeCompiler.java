@@ -59,7 +59,9 @@ public class PdeCompiler implements PdeMessageConsumer {
   public PdeCompiler() { }  // consider this a warning, you werkin soon.
 
 
-  public boolean compile(PdeSketch sketch, String buildPath) {
+  public boolean compile(PdeSketch sketch, String buildPath) 
+    throws PdeException {
+
     this.sketch = sketch;
     this.buildPath = buildPath;
     
@@ -261,11 +263,10 @@ public class PdeCompiler implements PdeMessageConsumer {
 
   static public String calcBootClassPath() {
     if (bootClassPath == null) {
+      String additional = "";
       if (PdeBase.platform == PdeBase.MACOSX) {
         additional = 
           contentsToClassPath(new File("/System/Library/Java/Extensions/"));
-      } else {
-        additional = "";
       }
       bootClassPath =  System.getProperty("sun.boot.class.path") + additional;
     }
