@@ -1,7 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0043 "ALPHA"
-2 AUGUST 2002
+RELEASE 0044 - 2 SEPTEMBER 2002
 
 (c) 2002, 2001 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -32,13 +31,22 @@ lather, rinse, repeat as necessary.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+THANKS TO...
+
+all the people who reported bugs for this release: jes, adrien,
+eviltyler, fdb, ik0, chrism, jeremy, mKoser, michaONE.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 REVISIONS & ROADMAP
 
-
 at least until the final "1.0" version, we'll be using four digit
-numbers for the release. we're calling revision "0043" (this one)
-alpha, which for us means "first publicly consumable app that can 
-be used by early adopters". 
+numbers for the release. we're calling revision "0043" the first
+"alpha", which for us means "first publicly consumable app that can 
+be used by early adopters". later revisions (like this one) will
+simply be numbered.
 
 there will be a few more numbered releases leading up to a beta
 release. beta means that all the features are in, but not all the bugs
@@ -67,7 +75,8 @@ or send email to bugs@proce55ing.net. the bboard is probably the
 better way to go, because more people will be watching it. the email
 goes straight to the developers, but their schedules are erratic and
 it could be anywhere from two minutes to two weeks before you receive
-a response.
+a response. if you want to go straight to the bugs page, it's:
+http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 when reporting this "bug" please include information about
 1. the revision number (i.e. 0043)
@@ -177,11 +186,22 @@ RXTX, the serial port driver. this is for more advanced users, and the
 package is included with the p5 download, and includes its own
 instructions. 
 
-resizing windows.. there's some weirdness with resizing windows under
-osx due to apple's strangely strict interpretation of the java api
-spec. sometimes windows can only get larger but not smaller, or become
-constrained in a particular direction. this will be repaired in the
-future.
+naming of sketches.. on other platforms, you aren't allowed to type
+characters besides letters, numbers, and underscores for the names of
+sketches. because of what looks like a bug in osx java, this feature
+is disabled, and the file is simply renamed (bad characters are
+replaced with underscores) after you hit 'ok'. boo apple.. i'm getting
+sick of all these workarounds.
+
+quitting presentation mode.. on other platforms, hitting the 'escape'
+key will quickly get you out of presentation mode. however, there
+seems to be some key event weirdness under osx. we hope to find a fix
+someday.
+
+arrow keys work (they didn't under 43) using a hokey algorithm to do
+placement of the cursor. this is a workaround for an apple bug. things
+might be a little funny, but maybe someone else will be able to repair
+this in the future.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
