@@ -44,6 +44,7 @@ public class PGraphics2 extends PGraphics {
     new AffineTransform[MATRIX_STACK_DEPTH];
   double transform[] = new double[6];
 
+  Line2D.Float line = new Line2D.Float();
   Ellipse2D.Float ellipse = new Ellipse2D.Float();
   Rectangle2D.Float rect = new Rectangle2D.Float();
   Arc2D.Float arc = new Arc2D.Float();
@@ -370,8 +371,10 @@ public class PGraphics2 extends PGraphics {
 
 
   public void line(float x1, float y1, float x2, float y2) {
-    graphics.setColor(strokeColorObject);
-    graphics.drawLine(x1, y1, x2, y2);
+    //graphics.setColor(strokeColorObject);
+    //graphics.drawLine(x1, y1, x2, y2);
+    line.setLine(x1, y1, x2, y2);
+    stroke_shape(line);
   }
 
 
@@ -514,8 +517,10 @@ public class PGraphics2 extends PGraphics {
       x1 -= image.width /2f;
       y1 -= image.height / 2f;
     }
-    check_image_cache();
-    graphics.drawImage((Image) image.cache, x1, y1, x2, y2, null);
+    check_image_cache(image);
+    //graphics.drawImage((Image) image.cache, x1, y1, x2, y2, null);
+    graphics.drawImage((Image) image.cache,
+                       (int)x1, (int)y1, (int)x2, (int)y2, null);
   }
 
 
