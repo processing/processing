@@ -100,9 +100,13 @@ public class PdeSketchbook {
    * Handle creating a sketch folder, return its base .pde file 
    * or null if the operation was cancelled.
    */
-  public String handleNew(boolean startup) throws IOException {
+  public String handleNew(boolean startup, 
+                          boolean shift) throws IOException {
     File newbieDir = null;
     String newbieName = null;
+
+    boolean prompt = PdePreferences.getBoolean("sketchbook.prompt");
+    if (shift) prompt = !prompt; // reverse behavior if shift is down
 
     // no sketch has been started, don't prompt for the name if it's 
     // starting up, just make the farker. otherwise if the person hits 
@@ -112,8 +116,10 @@ public class PdeSketchbook {
     // unless, ermm, they user tested it and people preferred that as 
     // a way to get started. shite. now i hate myself. 
     // 
-    //if (PdePreferences.getBoolean("sketchbook.prompt") && !startup) {
-    if (!startup) {
+    if (startup) prompt = false;
+
+    if (prompt) {
+    //if (!startup) {
       // prompt for the filename and location for the new sketch
 
       FileDialog fd = new FileDialog(editor, //new Frame(), 
