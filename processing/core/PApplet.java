@@ -4112,10 +4112,10 @@ public class PApplet extends Applet
       applet.args = new String[argc];
       System.arraycopy(args, argc, applet.args, 0, argc);
 
-      System.out.println("calling applet.init");
+      //System.out.println("calling applet.init");
       applet.init();
       //applet.start();
-      System.out.println("done calling applet.init");
+      //System.out.println("done calling applet.init");
 
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
