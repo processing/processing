@@ -8,6 +8,45 @@ X     make sure that fink is not in the path when building
 X     what are the args to configure a release version?
 X   update linux version of jikes
 
+create a new sketch
+create a new tab named "a"
+create a new tab named "a_2"
+hide tab named "a_2"
+hide "a"
+unhide "a_2"
+unhide "a"
+where did "a_2" go ?
+
+(v74) if a project folder is made (with save as), and then deleted while processing is still open, there is an error (of course).  but the error ('file/folder not found') is not displayed to the user, and the drop-downs don't go away / the IDE doesn't refresh.
+
+(74) "save as" not actually saving properly
+File>New
+edit file...
+File>Save As
+File>Open some other file
+File>Open original file
+file is empty.
+the only way to make File>Save As actually save new files, as far as i
+can tell, is to Save As once, make at least one change, then Save. 
+
+what happens if folder already exists on save as?
+
+_ look for size() method to determine default size of applet
+_   (same as applet exporter function)
+_ when using core graphics, don't show applet frame until first frame
+_   (in opengl, open frame early, make sure this isn't inhibited)
+
+_ add tool to hit 'next' to go through examples
+_   just make it "next file in folder" since examples are all over
+_   also need to copy examples locally
+_ add tool for running in jview
+_   only available after export (or when an applet dir exists)
+_   warn user that applet html will be over-written
+_ add tool to "Add custom html to sketch"
+_   that copies applet.html, 
+_   opens sketch folder, 
+_   and gives info about what to do next (how to edit)
+
 _ examples need to be updated
 
 //
@@ -77,15 +116,23 @@ _   underscoring everything is kinda nasty
 PROBLEMS FOR NEW USERS
 _ making it easier to draw shapes
 _ missing semicolons - better error message
+_ missing brackets, unmatched brackets
 _ "unexpected token void" -> "You're mixing dynamic and static mode"
 _ forgetting the quotes around strings
 _ separate reference for /dev version
+_ loadImage() mixed case problems
+_ loadImage() using spaces in the name
+_   if loadImage() when online(), throw an error
+_ files not in the data folder (works in env, not in sketch)
 _ angleMode(DEGREES) -> mistyped keywords, caps being wrong
 _ NullPointerException on unterminated comment at end of code
 _   (and OutOfMemoryError and weird lockup)
 _ not enough args for triangle (or args in general) 
 _   throws out bizarre message 
-
+_ document for new users:
+_   what's a NullPointerException
+_   use of strings
+_   println() for debugging
 
 TALK TO CASEY ABOUT...
 _ must call depth() for 3D applications
@@ -121,6 +168,8 @@ _   implement and remove PdeEditorStatus stuff
 _ beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 _ make a note that u/v coordinates clamp at 0 and 1
+_ no transformations before background() is called
+_   implementation specific, may cause trouble
 
 _ different name for 'lib' folder because of libraries folder?
 _   avoid some confusion for when describing the libraries folder to users

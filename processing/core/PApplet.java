@@ -262,7 +262,15 @@ public class PApplet extends Applet
 
 
   public void depth() {
-    g = new PGraphics3(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    if (g.width != 0) {
+      g = new PGraphics3(g.width, g.height);
+    } else {
+      g = new PGraphics3(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+    // it's ok to call this, because depth() is only getting called
+    // at least inside of setup, so things can be drawn just
+    // fine since it's post-beginFrame.
+    g.defaults();
   }
 
 
@@ -1949,125 +1957,18 @@ public class PApplet extends Applet
   // IMAGE I/O
 
 
-  /*
-  private Image gimmeImage(URL url, boolean force) {
-    Toolkit tk = Toolkit.getDefaultToolkit();
-
-    URLConnection conn = null;
-    try {
-      //conn = new URLConnection(url);
-      conn = url.openConnection();
-
-      // i don't think this does anything,
-      // but just set the fella for good measure
-      conn.setUseCaches(false);
-      // also had a note from zach about parent.obj.close() on url
-      // but that doesn't seem to be needed anymore...
-
-      // throws an exception if it doesn't exist
-      conn.connect();
-
-      if (!force) {
-        // how do you close the bastard?
-        conn = null;
-        // close connection and just use regular method
-        return tk.getImage(url);
-      }
-
-      // slurp contents of that stream
-      InputStream stream = conn.getInputStream();
-
-      BufferedInputStream bis = new BufferedInputStream(stream);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-      try {
-        int c = bis.read();
-        while (c != -1) {
-          out.write(c);
-          c = bis.read();
-        }
-      } catch (IOException e) {
-        return null;
-      }
-      bis.close();  // will this help?
-      //byte bytes[] = out.toByteArray();
-
-      // build an image out of it
-      //return tk.createImage(bytes);
-      return tk.createImage(out.toByteArray());
-
-    } catch (Exception e) {  // null pointer or i/o ex
-      //System.err.println("error loading image: " + url);
-      return null;
-    }
-  }
-  */
-
   public PImage loadImage(String filename) {
     if (filename.toLowerCase().endsWith(".tga")) {
-      return loadTargaImage(filename);
+      return loadImageTGA(filename);
     }
     return loadImage(filename, true);
   }
 
+
   // returns null if no image of that name is found
   public PImage loadImage(String filename, boolean force) {
-    //Image awtimage = null;
-    //String randomizer = "?" + nf((int) (random()*10000), 4);
-
-    /*
-    if (filename.startsWith("http://")) {
-      try {
-        URL url = new URL(filename);
-        awtimage = gimmeImage(url, force);
-
-      } catch (MalformedURLException e) {
-        System.err.println("error loading image from " + filename);
-        e.printStackTrace();
-        return null;
-      }
-
-    } else {
-      //System.out.println(getClass().getName());
-      //System.out.println(getClass().getResource(filename));
-      awtimage = gimmeImage(getClass().getResource(filename), force);
-      if (awtimage == null) {
-        awtimage =
-          gimmeImage(getClass().getResource("data/" + filename), force);
-      }
-      if (awtimage == null) {
-        try {
-          //FileInputStream fis =
-          //new FileInputStream(folder + "data/" + filename);
-          String url = "file:/" + folder + "/data/" + filename;
-            //URL url = new URL("file:/" + folder + "data/" + filename);
-          awtimage = gimmeImage(new URL(url), force);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    */
-
     Image awtImage =
       Toolkit.getDefaultToolkit().createImage(loadBytes(filename));
-
-    /*
-    if (awtimage == null) {
-      System.err.println("could not load image " + filename);
-      return null;
-    }
-    */
-
-    /*
-    Component component = this; //applet;
-    if (component == null) {
-      component = new Frame();
-      ((Frame)component).pack();
-      // now we have a peer! yay!
-    }
-    MediaTracker tracker = new MediaTracker(component);
-    */
 
     MediaTracker tracker = new MediaTracker(this);
     tracker.addImage(awtImage, 0);
@@ -2089,37 +1990,7 @@ public class PApplet extends Applet
         }
       }
     }
-
     return image;
-
-    /*
-    int jwidth = awtimage.getWidth(null);
-    int jheight = awtimage.getHeight(null);
-
-    int jpixels[] = new int[jwidth*jheight];
-    PixelGrabber pg =
-      new PixelGrabber(awtimage, 0, 0, jwidth, jheight, jpixels, 0, jwidth);
-    try {
-      pg.grabPixels();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-
-    //int format = RGB;
-    if (filename.toLowerCase().endsWith(".gif")) {
-      // if it's a .gif image, test to see if it has transparency
-      for (int i = 0; i < jpixels.length; i++) {
-        // since transparency is often at corners, hopefully this
-        // will find a non-transparent pixel quickly and exit
-        if ((jpixels[i] & 0xff000000) != 0xff000000) {
-          return new PImage(jpixels, jwidth, jheight, ARGB);
-          //format = RGBA;
-          //break;
-        }
-      }
-    }
-    return new PImage(jpixels, jwidth, jheight, RGB);
-    */
   }
 
 
@@ -2129,44 +2000,44 @@ public class PApplet extends Applet
    * [fry] this could be optimized to not use loadBytes
    * which would help out memory situations with large images
    */
-  protected PImage loadTargaImage(String filename) {
+  protected PImage loadImageTGA(String filename) {
     // load image file as byte array
     byte[] buffer = loadBytes(filename);
 
-   // check if it's a TGA and has 8bits/colour channel
-   if (buffer[2] == 2 && buffer[17] == 8) {
-     // get image dimensions
-     //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]);
-     int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
-     //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]);
-     int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
-     // check if image has alpha
-     boolean hasAlpha=(buffer[16] == 32);
+    // check if it's a TGA and has 8bits/colour channel
+    if (buffer[2] == 2 && buffer[17] == 8) {
+      // get image dimensions
+      //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]);
+      int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
+      //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]);
+      int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
+      // check if image has alpha
+      boolean hasAlpha=(buffer[16] == 32);
 
-     // setup new image object
-     PImage img = new PImage(w,h);
-     img.format = (hasAlpha ? ARGB : RGB);
+      // setup new image object
+      PImage img = new PImage(w,h);
+      img.format = (hasAlpha ? ARGB : RGB);
 
-     // targa's are written upside down, so we need to parse it in reverse
-     int index = (h-1) * w;
-     // actual bitmap data starts at byte 18
-     int offset = 18;
+      // targa's are written upside down, so we need to parse it in reverse
+      int index = (h-1) * w;
+      // actual bitmap data starts at byte 18
+      int offset = 18;
 
-     // read out line by line
-     for (int y = h-1; y >= 0; y--) {
-       for (int x = 0; x < w; x++) {
-         img.pixels[index + x] =
-           (buffer[offset++] & 0xff) |
-           ((buffer[offset++] & 0xff) << 8) |
-           ((buffer[offset++] & 0xff) << 16) |
-           (hasAlpha ? ((buffer[offset++] & 0xff) << 24) : 0xff000000);
-       }
-       index -= w;
-     }
-     return img;
-   }
-   die("loadImage(): bad targa image format");
-   return null;
+      // read out line by line
+      for (int y = h-1; y >= 0; y--) {
+        for (int x = 0; x < w; x++) {
+          img.pixels[index + x] =
+            (buffer[offset++] & 0xff) |
+            ((buffer[offset++] & 0xff) << 8) |
+            ((buffer[offset++] & 0xff) << 16) |
+            (hasAlpha ? ((buffer[offset++] & 0xff) << 24) : 0xff000000);
+        }
+        index -= w;
+      }
+      return img;
+    }
+    die("loadImage(): bad targa image format");
+    return null;
   }
 
 
@@ -4510,23 +4381,18 @@ v              PApplet.this.stop();
   }
 
 
-  public void modified() {
-     g.modified();
+  public void updatePixels() {
+     g.updatePixels();
   }
 
 
-  public void modified(int x, int y) {
-     g.modified(x, y);
+  public void updatePixels(int x1, int y1, int x2, int y2) {
+     g.updatePixels(x1, y1, x2, y2);
   }
 
 
-  public void modified(int x1, int y1, int x2, int y2) {
-     g.modified(x1, y1, x2, y2);
-  }
-
-
-  public void resetModified() {
-     g.resetModified();
+  public void pixelsUpdated() {
+     g.pixelsUpdated();
   }
 
 
@@ -4778,6 +4644,12 @@ v              PApplet.this.stop();
   }
 
 
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
   public void rectMode(int mode) {
      g.rectMode(mode);
   }
@@ -4785,12 +4657,6 @@ v              PApplet.this.stop();
 
   public void rect(float x1, float y1, float x2, float y2) {
      g.rect(x1, y1, x2, y2);
-  }
-
-
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4) {
-     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -5001,11 +4867,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void angleMode(int mode) {
-     g.angleMode(mode);
-  }
-
-
   public void translate(float tx, float ty) {
      g.translate(tx, ty);
   }
@@ -5013,6 +4874,16 @@ v              PApplet.this.stop();
 
   public void translate(float tx, float ty, float tz) {
      g.translate(tx, ty, tz);
+  }
+
+
+  public void angleMode(int mode) {
+     g.angleMode(mode);
+  }
+
+
+  public void rotate(float angle) {
+     g.rotate(angle);
   }
 
 
@@ -5028,11 +4899,6 @@ v              PApplet.this.stop();
 
   public void rotateZ(float angle) {
      g.rotateZ(angle);
-  }
-
-
-  public void rotate(float angle) {
-     g.rotate(angle);
   }
 
 
