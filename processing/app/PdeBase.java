@@ -49,13 +49,9 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 {
   static final String VERSION = "0068 Alpha";
 
-  //static Properties properties;
-  PdePreferences preferences;
-  static Properties keywords; // keyword -> reference html lookup
-
   //static Frame frame;  // now 'this'
   //static String encoding;
-  static Image icon;
+  //static Image icon;
 
   // indicator that this is the first time this feller has used p5
   //static boolean firstTime;
@@ -89,6 +85,12 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
 
   public PdeBase() {
+
+    // build the editor object
+
+    editor = new PdeEditor();
+    editor.pack();
+
 
     // figure out which operating system
 
@@ -133,31 +135,22 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
     // load in preferences (last sketch used, window placement, etc)
 
-    preferences = new PdePreferences();
+    //preferences = new PdePreferences();
 
 
     // read in the keywords for the reference
 
     final String KEYWORDS = "pde_keywords.properties";
     keywords = new Properties();
-    try {
-      if ((PdeBase.platform == PdeBase.MACOSX) || 
-          (PdeBase.platform == PdeBase.MACOS9)) {
-        // macos doesn't seem to think that files in the lib folder
-        // are part of the resources, unlike windows or linux.
-        // actually, this is only the case when running as a .app, 
-        // since it works fine from run.sh, but not Processing.app
-        keywords.load(new FileInputStream("lib/" + KEYWORDS));
 
-      } else {  // other, more reasonable operating systems
-        keywords.load(getClass().getResource(KEYWORDS).openStream());
-      }
+    try {
+      keywords.load(PdeBase.getStream(KEYWORDS));
 
     } catch (Exception e) {
       String message = 
         "An error occurred while loading the keywords,\n" + 
         "\"Find in reference\" will not be available.";
-      JOptionPane.showMessageDialog(this, message, 
+      JOptionPane.showMessageDialog(editor, message, 
                                     "Problem loading keywords",
                                     JOptionPane.WARNING_MESSAGE);
 
@@ -166,10 +159,9 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     }
 
 
-    // build the editor object
+    // get things rawkin
 
-    editor = new PdeEditor();
-    editor.pack();
+    editor.restorePreferences();
     editor.show();
 
 
@@ -318,7 +310,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
   static public void showMessage(String title, String message) {
     if (title == null) title = "Message";
-    JOptionPane.showMessageDialog(this, message, title,
+    JOptionPane.showMessageDialog(new Frame(), message, title,
                                   JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -327,7 +319,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   static public void showWarning(String title, String message, 
                                  Exception e) {
     if (title == null) title = "Warning";
-    JOptionPane.showMessageDialog(this, message, title,
+    JOptionPane.showMessageDialog(new Frame(), message, title,
                                   JOptionPane.WARNING_MESSAGE);
 
     //System.err.println(e.toString());
@@ -339,7 +331,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
   static public void showError(String title, String message, 
                                Exception e) {
     if (title == null) title = "Error";
-    JOptionPane.showMessageDialog(this, message, title,
+    JOptionPane.showMessageDialog(new Frame(), message, title,
                                   JOptionPane.ERROR_MESSAGE);
 
     if (e != null) e.printStackTrace();
@@ -372,6 +364,23 @@ public class PdeBase /*extends JFrame implements ActionListener*/
       tracker.waitForAll();
     } catch (InterruptedException e) { }      
     return image;
+  }
+
+  //
+
+  static public InputStream getStream(String filename) throws IOException {
+    if ((PdeBase.platform == PdeBase.MACOSX) || 
+        (PdeBase.platform == PdeBase.MACOS9)) {
+      // macos doesn't seem to think that files in the lib folder
+      // are part of the resources, unlike windows or linux.
+      // actually, this is only the case when running as a .app, 
+      // since it works fine from run.sh, but not Processing.app
+      return new FileInputStream("lib/" + filename);
+
+    } 
+
+    // all other, more reasonable operating systems
+    return getClass().getResource(filename).openStream();
   }
 
 
@@ -435,30 +444,6 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     }
   }
 
-  // cleanup temp files
-  //
-  //static protected void cleanTempFiles(String buildPath) {
-  //static protected void cleanTempFiles() {
-  protected void cleanTempFiles() {
-    if (tempBuildPath == null) return;
-
-    // if the java runtime is holding onto any files in the build dir, we
-    // won't be able to delete them, so we need to force a gc here
-    //
-    System.gc();
-
-    //File dirObject = new File(buildPath);
-    File dirObject = new File(tempBuildPath);
-
-    // note that we can't remove the builddir itself, otherwise
-    // the next time we start up, internal runs using PdeRuntime won't
-    // work because the build dir won't exist at startup, so the classloader
-    // will ignore the fact that that dir is in the CLASSPATH in run.sh
-    //
-    if (dirObject.exists()) {
-      removeDescendants(dirObject);
-    }
-  }
 
   // remove all files in a directory
   //
@@ -468,7 +453,8 @@ public class PdeBase /*extends JFrame implements ActionListener*/
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-        if (!PdePreferences.getBoolean("editor.save_build_files", false)) {
+        //if (!PdePreferences.getBoolean("editor.save_build_files", false)) {
+        if (!PdePreferences.getBoolean("editor.save_build_files")) {
           if (!dead.delete()) {
             // temporarily disabled
             //System.err.println("couldn't delete " + dead);
@@ -480,6 +466,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
       }
     }
   }
+
 
   // remove all files in a directory and the dir itself
   //
