@@ -57,6 +57,15 @@ X   resize is maybe goofy, so just size() for all?
 X color() with alpha now works properly
 X removed SMOOTH_IMAGES
 X removed shearX and shearY
+X toxi image code (!) 
+X   need background(BImage) and scaling, copy area, etc.
+X vertex(x, y, u, v) and vertex(x, y, z, u, v)
+X don't cast color()
+X   since more important for color(v1, v2, v3) to work
+X getPixel/setPixel -> get/set.. 
+X   get(x, y, w, h) is nice but no set(x,y,w,h)
+X   though set(x,y,w,h) could be nice
+X   and copy() to copy a section of pixels
 
 
 fixes because of dmose parser
@@ -118,6 +127,7 @@ _ tint() colors images, not fill()
 _ shearX and shearY removed
 _ removed noBackground
 _ added background(BImage)
+_ screenGrab -> saveFrame
 
   // imaging API keywords	  	  
   pdeKeywords.add("REPLACE", Token.LITERAL1);
@@ -126,14 +136,6 @@ _ added background(BImage)
   pdeKeywords.add("SUBSTRACT", Token.LITERAL1);
   pdeKeywords.add("LIGHTEST", Token.LITERAL1);
   pdeKeywords.add("DARKEST", Token.LITERAL1);
-
-X vertex(x, y, u, v) and vertex(x, y, z, u, v)
-X don't cast color()
-X   since more important for color(v1, v2, v3) to work
-X getPixel/setPixel -> get/set.. 
-X   get(x, y, w, h) is nice but no set(x,y,w,h)
-X   though set(x,y,w,h) could be nice
-X   and copy() to copy a section of pixels
 
 
 ..................................................................
@@ -144,8 +146,6 @@ _ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
 _ screenGrab() -> saveImage()
 _   BImage.save()
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
-_ toxi image code (!) 
-_   need background(BImage) and scaling, copy area, etc.
 _ param() function 
 _   also include code to read from properties file
 _   for application mode or while inside the environment
