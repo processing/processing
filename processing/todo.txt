@@ -47,6 +47,20 @@ _ mac version for casey
 _   with serial for michael
 _ flickery jumpy thing with canvas.. sun jvm bug
 
+_ translate(x, y) doesn't seem to affect a rect()
+_ debugging serial code
+_   hyperterminal - watching for binary garbage vs ascii text
+_   first debug (maybe even using ascii) and watch in hyperterminal
+_     or ship pooterm along with processing
+_   flicker - often ascii instead of binary
+_   timing of sleep, size of message, timing of write
+_   starting processing first, then stamp
+_ serial.messageReceived extra long crap in demo.pde
+
+_ NullPointerException on startup in pde editor buttons
+_ it's really a pain to use external files in processing
+_ int version of min and abs
+_ millis() returns 0 (though getMillis() is fine)
 _ exporting applets that have custom name problems:
 _   if extends processingapplet, the name user types must be same
 _   gets confused about paths and puts boogers in weird places

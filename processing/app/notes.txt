@@ -1,3 +1,26 @@
+ABOUT REV 0015
+
+known issues:
+
+- this version of processing is even more sketchy than many other
+  ones. but maybe it fix two huge issues, so i'm releasing it
+  anyways with this caveat. just go back to 14 or another one if this
+  gives you too much trouble.
+
+
+features and tweaks:
+
+- includes a strange hack that fixes the CommPortInUseException that
+  had been so annoying, forcing you to restart processing to run your
+  apps. the downside is that the fix means that if there's an error in
+  your app, you have to check the console (the msdos prompt) for the
+  error line, because it won't get highlighted automatically
+
+- switch to the IBM's java virtual machine. it seems stabler than the
+  sun one, and sun's stinks because of that nasty screen flickering
+  bonanza that starts after you've been running processing for a bit.
+
+
 ABOUT REV 0014
 
 features and tweaks:
