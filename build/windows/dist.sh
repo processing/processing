@@ -57,8 +57,7 @@ echo Zipping and finishing...
 P5=processing-$REVISION
 mv processing $P5
 zip -rq $P5.zip $P5
-rm -rf $P5
-#zip -rq processing-$1.zip processing
-#rm -rf processing
+# nah, keep the new directory around
+#rm -rf $P5
 
 echo Done.

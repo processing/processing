@@ -12,8 +12,16 @@ import java.io.*;
 public class PdeEditorConsole extends Component {
   PdeEditor editor;
 
-  static final byte CR = (byte)'\r';
-  static final byte LF = (byte)'\n';
+  static final byte CR  = (byte)'\r';
+  static final byte LF  = (byte)'\n';
+  static final byte TAB = (byte)'\t';
+  static final int TAB_SIZE = 2;
+  //static byte tabchunk[] = new byte[TAB_SIZE];
+  //static {
+  //for (int i = 0; i < TAB_SIZE; i++) {
+  //  tabchunk[i] = ' ';
+  //}
+  //}
 
   int lineCount;
   int maxLineCount;
@@ -88,11 +96,11 @@ public class PdeEditorConsole extends Component {
     //systemOut.println("paint()");
     if (bgColor == null) {
       bgColor = PdeBase.getColor("editor.console.bgcolor", 
-				   new Color(26, 26, 26));
+				 new Color(26, 26, 26));
       fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
-				      new Color(153, 153, 153));
+				    new Color(153, 153, 153));
       fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
-				      new Color(153, 0, 0));
+				    new Color(204, 51, 0));
       screen.setFont(font);
       metrics = screen.getFontMetrics();
       ascent = metrics.getAscent();
@@ -175,6 +183,16 @@ public class PdeEditorConsole extends Component {
 	message(new String(cline, 0, clength), cerror, true);
 	clength = 0;
 
+      } else if (b[i] == TAB) {
+	if (clength + TAB_SIZE > cline.length) {
+	  byte temp[] = new byte[clength * 2];
+	  System.arraycopy(cline, 0, temp, 0, clength);
+	  cline = temp;
+	}
+	for (int m = 0; m < TAB_SIZE; m++) {
+	  cline[clength++] = ' ';
+	}
+
       } else {
 	if (cline.length == clength) {
 	  byte temp[] = new byte[clength * 2];
@@ -206,7 +224,7 @@ public class PdeEditorConsole extends Component {
     //systemOut.println("pref'd sizde");
     if (font == null) {
       font = PdeBase.getFont("editor.console.font", 
-			       new Font("Monospaced", Font.PLAIN, 11));
+			     new Font("Monospaced", Font.PLAIN, 11));
       //font = new Font("SansSerif", Font.PLAIN, 10);
       //g.setFont(font);
       //metrics = g.getFontMetrics();
