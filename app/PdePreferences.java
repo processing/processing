@@ -169,7 +169,7 @@ public class PdePreferences extends JComponent {
       } catch (Exception e) {
         showError("Error reading preferences", 
                   "Error reading the preferences file. Please delete\n" +
-                  perferencesFile.getCanonicalPath() + "\n" + 
+                  perferencesFile.getAbsolutePath() + "\n" + 
                   "and restart Processing.", e);
       }
     }
@@ -177,7 +177,8 @@ public class PdePreferences extends JComponent {
 
     // setup frame for the prefs
 
-    frame = new JFrame("Preferences");
+    //frame = new JFrame("Preferences");
+    frame = new JDialog("Preferences");
     frame.setResizable(false);
 
     Container pain = this;
@@ -225,13 +226,8 @@ public class PdePreferences extends JComponent {
 
           int returned = fc.showOpenDialog(new JDialog());
           if (returned == JFileChooser.APPROVE_OPTION) {
-            try {
-              File file = fc.getSelectedFile();
-              sketchbookLocationField.setText(file.getCanonicalPath());
-
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
+            File file = fc.getSelectedFile();
+            sketchbookLocationField.setText(file.getAbsolutePath());
           }
         }
       });
@@ -312,7 +308,8 @@ public class PdePreferences extends JComponent {
     textarea.setBounds(left, top, d.width, d.height);
     top += d.height + BETWEEN;
 
-    // OK Cancel  maybe these should be next to the message?
+
+    // [  OK  ] [ Cancel ]  maybe these should be next to the message?
 
     button = new JButton(PROMPT_OK);
     button.addActionListener(new ActionListener() {
@@ -374,6 +371,20 @@ public class PdePreferences extends JComponent {
 
   public void hideFrame() {
     frame.hide();
+  }
+
+
+  // change settings based on what was chosen in the prefs
+
+  public void applyFrame() {
+    //editor.setExternalEditor(getBoolean("editor.external"));
+    // put each of the settings into the table
+
+    putBoolean("sketchbook.prompt", sketchPrompBox.getSelected());
+
+    put("sketchbook.path", sketchbookLocation.getText());
+
+    putBoolean("editor.external", externalEditorBox.getSelected());
   }
 
 
@@ -444,14 +455,6 @@ public class PdePreferences extends JComponent {
 
 
 
-  // change settings based on what was chosen in the prefs
-
-  public void apply() {
-    //editor.setExternalEditor(getBoolean("editor.external"));
-    // put each of the settings into the table
-  }
-
-
   // .................................................................
 
 
@@ -482,6 +485,8 @@ public class PdePreferences extends JComponent {
 #endif
       }
 
+      base.storePreferences();
+
       Properties skprops = new Properties();
 
       //Rectangle window = PdeBase.frame.getBounds();
@@ -497,7 +502,7 @@ public class PdePreferences extends JComponent {
       skprops.put("last.screen.h", String.valueOf(screen.height));
 
       skprops.put("last.sketch.name", sketchName);
-      skprops.put("last.sketch.directory", sketchDir.getCanonicalPath());
+      skprops.put("last.sketch.directory", sketchDir.getAbsolutePath());
       //skprops.put("user.name", userName);
 
       skprops.put("last.divider.location", 
