@@ -140,11 +140,11 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
     // read in the keywords for the reference
 
-    final String KEYWORDS = "pde_keywords.properties";
+    //final String KEYWORDS = "pde_keywords.properties";
     keywords = new Properties();
 
     try {
-      keywords.load(PdeBase.getStream(KEYWORDS));
+      keywords.load(PdeBase.getStream("pde_keywords.properties"));
 
     } catch (Exception e) {
       String message = 
@@ -368,7 +368,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
 
   //
 
-  static public InputStream getStream(String filename) throws IOException {
+  public InputStream getStream(String filename) throws IOException {
     if ((PdeBase.platform == PdeBase.MACOSX) || 
         (PdeBase.platform == PdeBase.MACOS9)) {
       // macos doesn't seem to think that files in the lib folder
