@@ -1,14 +1,79 @@
 0047
+X reported by fdb and brendanberg
+After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
+Exception in thread "main" java.lang.NullPointerException 
+  at PdeBase.addSketches(PdeBase.java:598 ) 
+  at PdeBase.addSketches(PdeBase.java:615) 
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575) 
+  at PdeBase.<init>(PdeBase.java:362) 
+  at PdeBase.main(PdeBase.java:102) 
+Removing all sketches would solve the problem. 
+/ lots of problems in moving sketches over
+ i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
+ i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
+again, after i moved my sketches over it broke permanently... 
+/ 46 dies when run from desktop on some machines [jes]
+/   spaces in the dir name?
+o is sketch.properties getting mangled on the mac?
+
+
+_ if image doesn't exist, spews null pointer exception and freaks
+_   locking up environment/machine
+Uncaught error fetching image: 
+java.lang.NullPointerException 
+ at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
+ at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
+ at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java :251) 
+ at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
+ at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+
 _ delay() should sleep the thread [glen murphy]
 _   it's sucking cpu and won't open a window until the delay is up
 _ reference doesn't launch on mac (mKoser)
 _ add -Xmx128m -Xms128m because people running out of memory (pitaru)
 _   tried with a 3k x 1k image and things broke
+_   maybe command line read properties from a file in lib
 _ make a note that size() has to come first [nluken]
 _ extra linefeeds is getting annoying for folks
 _   line endings joy
 _   is setText goobering up on beautify?
 _   how are line endings working during save?
+
+_ reported by brandenberg
+_    need to pay attention to when running from read-only drive
+p5 will launch from the disk image, but will not draw the sketch name bar doesn't appear (possibly b/c the image is read-only)... 
+
+_ ctrl-f for find, g for find next, h for next occurrence of selected
+_   using external files
+
+_ bug in comments
+sometimes (never when creating a new sketch, only when an old one has been loaded), if I try to add a comment to identify the end of a method class, ie like 
+ 
+void Sample () 
+{ 
+  <basic code here> 
+} // end of Sample handler 
+ 
+P5 return me an unexpected 'handler' token error! 
+And when I change this comment to  
+} /* end of Sample handler */ 
+everything comes back to normal?! 
+ 
+This don't happen everytimes.. but once it started, the error stay there!  
+Just try it in your next sketchbook, add some comments at the end of your methods, and see what happen 
+ 
+(0046, w2k)
+
+
+jikes -classpath /cygdrive/d/fry/processing/build/windows/work/lib/pde.jar:/cygdrive/d/fry/processing/build/windows/work/java/lib/rt.jar:/cygdrive/d/fry/processing/build/windows/work/java/lib/ext/comm.jar:$CLASSPATH *.java
+
+
+_ will need doubles for genomics work. ugh.
+_   this is just enable/disable float stuff
+_ splitints, et al.. have another version to specify what to use
+_   when the value gets a NumberFormatException.. ie.
+_   splitInts("blah blah blah", ' ', 0);
+_   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
 
 _ crashes while starting
 LaunchRunner Error] PdeBase.main(String[]) threw an exception:
@@ -34,35 +99,16 @@ _   random freezes.. especially under windows
 _ notes on debugging
 _   look at the code that's created in build/
 _   run with java -Xint blahblah (turns off jit)
-
-_ lots of problems in moving sketches over
-_ reported by fdb and brendanberg
-After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
-Exception in thread "main" java.lang.NullPointerException 
-  at PdeBase.addSketches(PdeBase.java:598 ) 
-  at PdeBase.addSketches(PdeBase.java:615) 
-  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575) 
-  at PdeBase.<init>(PdeBase.java:362) 
-  at PdeBase.main(PdeBase.java:102) 
-Removing all sketches would solve the problem. 
-_ reported by brandenberg
-_    need to pay attention to when running from read-only drive
-p5 will launch from the disk image, but will not draw the sketch name bar doesn't appear (possibly b/c the image is read-only)... 
- i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
- i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
-again, after i moved my sketches over it broke permanently... 
-_ 46 dies when run from desktop on some machines [jes]
-_   spaces in the dir name?
+_ join, source code is online
 
 _ noCursor()
 _ getting mouse movement outside the window
 _ no longer require size() to come first?
-
-_ is sketch.properties getting mangled on the mac?
-
 _ beginQuads() beginLineStrip() ?
 
 _ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
+_   also 'why p5' message from amit pitaru on 12/15/02
+_   lists the main arguments, could be a useful document
 
 _ is quad strip broken or not behaving as expected? (me)
 _   may be correct, it worked for nik
@@ -122,8 +168,16 @@ _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 _ when trying to use serial, provide error if things not installed
 
-pde
-_ shortcut to walk through history, ala photoshop (ctrl-alt-z)
+
+pde / bugs
+_ undo/redo
+_   should enable/disable as available
+_   undo-ing too much will empty the text area
+_     the setText is an undoable thing. grr.
+
+pde / stability
+_ need to check if volume is read-only, notify and quit if it is
+_   people are trying to run off the disk image
 _ lots of problems with the console 
 _   [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
@@ -132,9 +186,6 @@ _   exception when trying to write to stdout
 _ color not set for default text area with empty text
 _   color not set on 'new', setForeground won't do it
 _   probably reasonably simple fix, but not in time
-_ support 'classes' folder, through the use of a classloader
-_   could also be done by launching external java app
-_   all .jar files etc are added from this folder automatically
 _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
 _ preprocessor problems -> switch to java cup (one day's work)
@@ -142,10 +193,14 @@ _   subst Image -> BImage, Font -> BFont
 _ get syntax coloring debugged?
 _   talk to casey about better default colors
 _ scroll to beginning after setText()
-_ undo/redo
-_   should enable/disable as available
-_   undo-ing too much will empty the text area
-_     the setText is an undoable thing. grr.
+
+pde / features
+_ method to set a folder for the sketchbook
+_ shortcut to walk through history, ala photoshop (ctrl-alt-z)
+_ support 'classes' folder, through the use of a classloader
+_   could also be done by launching external java app
+_   all .jar files etc are added from this folder automatically
+
 
 windows
 _ need splash screen, startup takes a long time
@@ -155,6 +210,7 @@ _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
 macosx
+_ is sketch.properties saving properly under macosx?
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
 _   may not be the case under swing?
