@@ -1,61 +1,18 @@
-0038
-X set bg color on macos9 buttons as well
-X get icon in macos9/macosx/windows formats
-X wahoo! figure out how to do do simple .exe with icons
-o   use launcher code from sun jre
-o   needs to be built from command line
-X keyPressed() and others weren't being called
-X serial work under windows
-X   make bapplet a serialporteventlistener
-X   remove 'public' from beginner listener event handlers
-X   trying to make eventlistener work
-X   comm.jar has to be in classpath for kjc (interesting)
-X   fixed launcher.exe because of problems in classpath
-X how to make double-clickable version for osx
-X   might be as simple as combined jar with manifest and symlink
-X   jar doesn't like opening pde.properties b/c getClass fails
-X app title comes up as PdeBase
-X   -Xdock:name property or 
-X   com.apple.mrj.application.apple.menu.about.name (gulp)
-X -XDock:icon (lowercase dock?) to set icon, or
-X   .icns file in the Contents/Resources of the bundle
-X   check tn on java runtime properties for macosx
-X need fxns to test platform and java version
-X serial works poorly for starting/stopping applets
-X   appears to be fixed through use of static object in bagel
-X   breaks on every 2nd run when using serial apps (or others?)
-X     try calling gc on stop as well
-X make it simpler to build the code.. 
-X   buzz.pl actually no longer needed (no ifdefs)
-o   use a regular makefile for everything
-X getResource stuff breaks, sketch.properties can't save
-X   FileNotFoundException: /FILE9/+/sketch.properties
-X doc: requires java 1.3.1 update 1
-X button backgrounds are weird since not square
-X   (seen when asking to save a file etc)
-X   see if possible to set background of button object
-X   or maybe just background of the awt object it sits on
-X get casey's examples into the sketchbook
-X   these should become the standard test cases for everything
-o crashes when people click on help in top bar (same in DBN) [macos9]
-X   not reproduced.. mrjappbuilder seems stabler?
-X use osx utilities to setfileinfo for .jar files etc
-o try to build macutils under osx
-X bug where pde.properties was being replaced for sketch.properties
-X changed pde.properties_PLATFORM -> pde_PLATFORM.properties
-X f subst problems: include , and ; as allowable
-X   float f = 0.3; and fill(0.3, 0.2, 0.1);
-X windows needs to work from the .exe
-X   also included run.bat just in case
-
-
 0039
-a _ make win/linux write stderr to stderr.txt like the mac
-a _   this will be useful until i implement scrollbar
+X left PdeBase out of the run.bat in windows.. piss me.
+X need comprehensive set of tests for 'f' substitution scenarios
+X    here is the test code to see if it's fixed
+X much reworking for run/present modes
+X   run/present modes are getting confused
+X   [esc] to exit presentation mode
+X remove 'edit' menu because it's worthless
+
 
 bagel
 a _ serial
-a _   pde menu item for listing serial ports available
+a _   some method for getting list of serial ports
+a _     pde menu item for listing serial ports available
+a _     could just println them to the console
 a _   import javax.comm stuff as standard in kjc (not in applet)
 
 pde
@@ -64,11 +21,17 @@ a _ click on project name to quickly go to rename mode
 a _ make scrollbar for console
 a _ remove projects if created but nothing happens to them
 a _ see if play being highlighted can be implemented again
+a _ text editor? jedit's textarea class? hmm? hmm? 
+a _ make win/linux write stderr to stderr.txt like the mac
+a _   this will be useful until i implement scrollbar
 
 macos9
 a _ apple control keys register as edit events in buffer
 a _   use Toolkit.getShortcutKeymask() to figure out what's up
 a _ set file type/creator for .pde files.. TEXTPde1
+
+macosx
+a _ test presentation mode for window sizing status
 
 macos
 a _ implement menuitem to load ref and to launch p5.net
@@ -82,10 +45,8 @@ a _   parent.obj.close() on the url
 a _ check to see if lines for error messages are off
 
 windwows
+a _ build 'release' version of app, wants MFC42D.dll
 a _ splash screen.. check win95 book for simple code
-
-linux
-a _ test the gcc executable, and tweak dist script accordingly
 
 release
 a _ add 'readme.txt' to dist.sh.. change notes to revisions
@@ -95,9 +56,10 @@ a _   or small script to remove CVS directories from a tree
 a _ check osname under win98 and linux
 a _   information on how to submit bugs to p5-bugs@proce55ing.net
 a _     include release number, platform, and a copy of the code
-a _ need comprehensive set of tests for 'f' substitution scenarios
 
 web / docs
+a _ change download/index.html to not describe dates but process
+a _   "this is alpha, we're heading to beta with series of sm releases"
 a _ check on linefeeds and other errors with bbs on web site
 a _ online discussion/talk system (gets people using the site too)
 a _ online signup cgi for people to add themselves to the list
@@ -107,16 +69,19 @@ a _   bugzilla but simpler
 a _   would also be nice for people to be able to vote on features
 a _ document serial a bit more in release notes
 
-dammit we need a text editor.
-gonna get sick of people bitching about it.
-also an interesting possibility (for tech-minded only)
-  use terminal emulator, and run iostream from process
-  use pooterm stuff for the emulation window
-  key commands would conflict
-  but could use emacs under osx, linux
-  use nano (maybe emacs?) under windows
-  and nothing for macos9  
 
+a _ can't get fonts to load
+a _   bagel complaint: could not load font Univerx76.vlw.gz
+a _   why the x? what's going on?
+BFont font;
+font = loadFont("Univers76.vlw.gz");
+//font = loadFont("Bodoni.vlw.gz");
+//BFont font = loadFont("Univerx76.vlw.gz");
+setFont(font);
+String happy = "FontTest";
+//float happyWidth = font.stringWidth(happy);
+//text(happy, (width - happyWidth)/2, 10);
+text(happy, 20, 50);
 
 a _ this code is not performing correctly
 BImage b;  // declare variable "b" of type BImage
@@ -139,6 +104,8 @@ endShape();
 
 a _ first a syntax error, when fixed, causes NullPointerException 
 a _   quitting the app makes things all better. argh.
+a _   this just started with version37, it happens extrememely 
+a _     frequently and should be easy to reproduce the error
 // problematic version
 color rr = #FFCC00;
 fill(255);
@@ -314,6 +281,8 @@ b _   need to add randomizer to even non-self gen'd classes
 b _   or figure out how to unload old classes.. grr
 b _ lockup when something missing from classpath on dynamic load
 b _   but makes no error.. peditorconsole probably swallowing it
+b _ change writeJava/start functions to be combined in kjc
+b _   but the rest inside PdeEditor that takes care of launching/placing
 
 
 PDE / medium
@@ -656,6 +625,17 @@ _ check out flash for its text editor
 _ write function to swap different names for Proce55ing
 _   use for window title
 _   simple app that does swapping of letters as an animation
+
+
+dammit we need a text editor.
+gonna get sick of people bitching about it.
+also an interesting possibility (for tech-minded only)
+  use terminal emulator, and run iostream from process
+  use pooterm stuff for the emulation window
+  key commands would conflict
+  but could use emacs under osx, linux
+  use nano (maybe emacs?) under windows
+  and nothing for macos9  
 
 
 BUILDING P5

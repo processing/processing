@@ -183,6 +183,7 @@ public class PdeBase implements ActionListener {
     // beautify, open, print, play save were key commands
 
     // completely un-functional edit menu
+    /*
     menu = new Menu("Edit");
     menu.add(new MenuItem("Undo"));
     menu.addSeparator();    
@@ -193,11 +194,12 @@ public class PdeBase implements ActionListener {
     menu.add(new MenuItem("Select all"));
     menu.setEnabled(false);
     menubar.add(menu);
+    */
 
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Run", new MenuShortcut('R')));
     menu.add(new MenuItem("Present", new MenuShortcut('P')));
-    menu.add(new MenuItem("Stop"));
+    menu.add(new MenuItem("Stop", new MenuShortcut('T')));
     menu.addSeparator();
 
     recordingHistory = getBoolean("history.recording", true);
@@ -517,10 +519,15 @@ public class PdeBase implements ActionListener {
       editor.doRun(false);
 
     } else if (command.equals("Present")) {
-      editor.doPresent();
+      editor.doRun(true);
+      //editor.doPresent();
 
     } else if (command.equals("Stop")) {    
-      editor.doStop();
+      if (editor.presenting) {
+	editor.doClose();
+      } else {
+	editor.doStop();
+      }
 
     } else if (command.equals("Refresh")) {    
       //System.err.println("got refresh");
@@ -627,9 +634,9 @@ public class PdeBase implements ActionListener {
 		    Integer.parseInt(st.nextToken()));
   }
 
-  static public boolean isMacintosh() {
-    return System.getProperty("os.name").toLowerCase().indexOf("mac") != -1;
-  }
+  //static public boolean isMacintosh() {
+  //return System.getProperty("os.name").toLowerCase().indexOf("mac") != -1;
+  //}
 
 
   // used by PdeEditorButtons, but probably more later
