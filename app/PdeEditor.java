@@ -158,7 +158,9 @@ public class PdeEditor extends Panel {
       }
 
     } catch (Exception e) { 
-      e.printStackTrace();
+      // this exception doesn't matter, it's just the normal course of things
+      // the app reaches here when no sketch.properties file exists
+      //e.printStackTrace();
 
       // even if folder for 'default' user doesn't exist, or
       // sketchbook itself is missing, mkdirs() will make it happy

@@ -38,7 +38,7 @@ REM set CLASSPATH=lib\kjc.jar;lib\oro.jar;java\lib\rt.jar;java\lib\ext\comm.jar;
 set CLASSPATH=classes;lib\kjc.jar;lib\oro.jar;java\lib\rt.jar;java\lib\ext\comm.jar
 
 REM cd ..
-perl buzz.pl "jikes +D -nowarn -d application\classes" -dJDK13 *.java kjc\*.java 
+perl buzz.pl "jikes +D -nowarn -d classes" -dJDK13 *.java kjc\*.java 
 REM cd application
 
 REM rm -f lib/version
@@ -46,7 +46,6 @@ REM rm -f lib/version
 rem -- make pde.jar
 cd classes
 rm -f ..\lib\pde.jar
-REM zip -0q ..\lib\pde.jar *.class *.gif
 zip -0q ..\lib\pde.jar *.class
 cd ..
 
