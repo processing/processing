@@ -89,10 +89,6 @@ public class PdeEditorButtons extends Panel {
 					    Color.black));
     add(status);
 
-    Color buttonBgColor = 
-      PdeBase.getColor("editor.buttons.bgcolor", new Color(153, 0, 0));
-    setBackground(buttonBgColor);
-
     status.setBounds(-5, BUTTON_COUNT*BUTTON_HEIGHT, 
 		     BUTTON_WIDTH + 15, BUTTON_HEIGHT);
     status.setAlignment(Label.CENTER);
