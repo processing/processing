@@ -111,12 +111,6 @@ public class PdeEditor extends Panel {
     header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
 
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (Exception e) { 
-      e.printStackTrace();
-    }
-
     textarea = new PdeEditorTextPane();
 
     JScrollPane scroller = new JScrollPane();
@@ -144,7 +138,8 @@ public class PdeEditor extends Panel {
     status = new PdeEditorStatus(this);
     statusPanel.add("North", status);
     console = new PdeEditorConsole(this);
-    statusPanel.add("South", console);
+    //statusPanel.add("South", console);
+    statusPanel.add("Center", console);
     rightPanel.add("South", statusPanel);
 
     add("Center", rightPanel);
@@ -391,7 +386,8 @@ public class PdeEditor extends Panel {
   public void makeHistory(String program, int mode) {
     if (!base.recordingHistory) return;
     //if (historyLast.equals(program) && !externalEditor) return;
-    if (historyLast.equals(program)) return;
+    if ((historyLast != null) &&
+	(historyLast.equals(program))) return;
 
     String modeStr = null;
     switch (mode) {
