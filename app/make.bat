@@ -2,57 +2,79 @@
 
 REM -- standard Proce55ing application build
 
-REM set ME=application
-REM set JRE=\jre-1.3.1_04-intl
-
-rm -f classes/*.class
-
 REM -- BUG need to test if lib/export exists, create it if not
 REM --     may exist but is being pruned by cvs
 
-REM -- need to remove sketchbook\standard from here
-REM -- sketchbook needs to be compiled on startup or for
-REM -- each compile of any given app
 
-REM -- compile bagel and copy in its classes
-REM -- also an extra set of files for the export-to-applet
-
+REM -- BUILD BAGEL ----------------------------------------------
 cd ..
 cd bagel
 
-REM -- attempting to get serial to work
-REM set CLASSPATH=d:\fry\processing\app\application\classes;%JRE%\lib\rt.jar;%JRE%\lib\ext\comm.jar;%CLASSPATH%
-REM set CLASSPATH=..\app\application\classes;%JRE%\lib\ext\comm.jar;%CLASSPATH%
-REM perl make.pl SERIAL
+set SAVED_CLASSPATH = %CLASSPATH%
+set CLASSPATH = java\lib\ext\comm.jar;%CLASSPATH%
 
-perl make.pl 
+REM --- make version with serial for the application
+echo Building bagel with serial support
+perl make.pl SERIAL
 cp classes/*.class ../app/classes/
-rm -f ../app/lib/export/*.class
+
+REM --- make version without serial for applet exporting
+echo Building bagel for export
+perl make.pl
 cp classes/*.class ../app/lib/export/
+
 cd ..
 cd app
 
-REM -- needs to happen before building b/c classpath needs to be set
+set CLASSPATH = %SAVED_CLASSPATH%
+
+
+REM -- BUILD PDE ------------------------------------------------
+
+echo Building PDE for JDK 1.3
 set CLASSPATH2=%CLASSPATH%
-REM set CLASSPATH=lib\kjc.jar;lib\oro.jar;java\lib\rt.jar;java\lib\ext\comm.jar;%CLASSPATH%
 set CLASSPATH=classes;lib\kjc.jar;lib\oro.jar;java\lib\rt.jar;java\lib\ext\comm.jar
 
-REM cd ..
-REM perl buzz.pl "jikes +D -nowarn -d classes" -dJDK13 *.java kjc\*.java 
-perl buzz.pl "jikes +D -deprecation -d classes" -dJDK13 *.java kjc\*.java 
-REM cd application
+REM rm -f classes/*.class
 
-REM rm -f lib/version
+perl buzz.pl "jikes +D -d classes" -dJDK13 *.java kjc\*.java 
 
-rem -- make pde.jar
 cd classes
 rm -f ..\lib\pde.jar
 zip -0q ..\lib\pde.jar *.class
 cd ..
+
+set CLASSPATH=%CLASSPATH2%
+
+
+REM -- BUILD PDE for 1.1 ----------------------------------------
+
+if "%1" == "jdk11" goto buildjdk11
+goto skipjdk11
+
+:buildjdk11
+echo Building PDE for JDK 1.1
+set CLASSPATH2=%CLASSPATH%
+set CLASSPATH=mac\classes;lib\kjc.jar;lib\oro.jar;mac\rt.jar;java\lib\ext\comm.jar
+
+cp ../bagel/classes/*.class mac/classes
+
+perl buzz.pl "jikes +D -d mac/classes" *.java kjc\*.java 
+
+cd mac\classes
+rm -f ..\pde.jar
+zip -0q ..\pde.jar *.class
+cd ..\..
+
+set CLASSPATH=%CLASSPATH2%
+
+:skipjdk11
+
+
+REM -------------------------------------------------------------
 
 rem -- build exe from the classes folder
 REM cd classes
 REM jexegen /w /main:PdeApplication /out:..\pde.exe *.class
 REM cd ..
 
-set CLASSPATH=%CLASSPATH2%
