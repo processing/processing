@@ -1319,7 +1319,7 @@ public class PApplet extends Applet
    * Same as above but with an exception. Also needs work.
    */
   public void die(String what, Exception e) {
-    e.printStackTrace();
+    if (e != null) e.printStackTrace();
     die(what);
   }
 
@@ -1352,10 +1352,12 @@ public class PApplet extends Applet
 
 
   /**
-   * grab an image of what's currently in the drawing area.
-   * best used just before endFrame() at the end of your loop().
-   * only creates .tif or .tga images, so if extension isn't specified
-   * it defaults to writing a tiff.
+   * Grab an image of what's currently in the drawing area and save it
+   * as a .tif or .tga file.
+   * <P>
+   * Best used just before endFrame() at the end of your loop().
+   * This can only create .tif or .tga images, so if neither extension
+   * is specified it defaults to writing a tiff and adds a .tif suffix.
    */
   public void saveFrame() {
     if (online) {
@@ -1371,13 +1373,13 @@ public class PApplet extends Applet
 
   /**
    * Save the current frame as a .tif or .tga image.
-   *
+   * <P>
    * The String passed in can contain a series of # signs
    * that will be replaced with the screengrab number.
-   *
+   * <PRE>
    * i.e. saveFrame("blah-####.tif");
    *      // saves a numbered tiff image, replacing the
-   *      // # signs with zeros and the frame number
+   *      // # signs with zeros and the frame number </PRE>
    */
   public void saveFrame(String what) {
     if (online) {
