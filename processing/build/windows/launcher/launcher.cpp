@@ -41,12 +41,12 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
 
 
-  // if this code looks shitty, that's because it is.
-  // people put the durndest things in their CLASSPATH and
-  // QTJAVA environment variables. who knows where and
-  // when the quotes will show up. this is a guess at 
-  // dealing with the things, without spending a whole
-  // day to make it overly robust. [fry]
+  // if this code looks shitty, that's because it is. people are 
+  // likely to have the durndest things in their CLASSPATH and QTJAVA 
+  // environment variables. mostly because installers often mangle 
+  // them without the user knowing. so who knows where and when the
+  // quotes will show up. this is a guess at dealing with the things, 
+  // without spending a whole day to make it overly robust. [fry]
 
 
   // test to see if running with a java runtime nearby or not
@@ -57,7 +57,10 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   FILE *fp = fopen(testpath, "rb");
   int local_jre_installed = (fp != NULL);
   //char *rt_jar = (fp == NULL) ? "" : "java\\lib\\rt.jar;";
-  fclose(fp); // argh! this was probably causing trouble
+  if (fp != NULL) fclose(fp); // argh! this was probably causing trouble
+
+  //MessageBox(NULL, local_jre_installed ? 
+  //         "local jre installed" : "couldn't find jre", "p5", MB_OK);
 
 
   //const char *envClasspath = getenv("CLASSPATH");
