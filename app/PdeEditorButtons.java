@@ -19,8 +19,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -114,7 +114,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     statusColor = PdePreferences.getColor("buttons.status.color");
     //add(status);
 
-    //status.setBounds(-5, BUTTON_COUNT * BUTTON_HEIGHT, 
+    //status.setBounds(-5, BUTTON_COUNT * BUTTON_HEIGHT,
     //               BUTTON_WIDTH + 15, BUTTON_HEIGHT);
     //status.setAlignment(Label.CENTER);
     statusY = (BUTTON_COUNT + 1) * BUTTON_HEIGHT;
@@ -168,13 +168,13 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
       }
     }
     Dimension size = size();
-    if ((offscreen == null) || 
+    if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {
       offscreen = createImage(size.width, size.height);
       width = size.width;
       height = size.height;
 
-      x1 = 0; 
+      x1 = 0;
       x2 = BUTTON_WIDTH;
 
       y1 = new int[buttonCount];
@@ -199,7 +199,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     g.setColor(statusColor);
     g.setFont(statusFont);
 
-    // if i ever find the guy who wrote the java2d api, 
+    // if i ever find the guy who wrote the java2d api,
     // i will hurt him. or just laugh in his face. or pity him.
     Graphics2D g2 = (Graphics2D) g;
     FontRenderContext frc = g2.getFontRenderContext();
@@ -216,7 +216,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   public void mouseMoved(MouseEvent e) {
     // mouse events before paint();
-    if (state == null) return; 
+    if (state == null) return;
 
     if (state[OPEN] != INACTIVE) {
       // avoid flicker, since there will probably be an update event
@@ -256,7 +256,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
 
   private int findSelection(int x, int y) {
-    // if app loads slowly and cursor is near the buttons 
+    // if app loads slowly and cursor is near the buttons
     // when it comes up, the app may not have time to load
     if ((y1 == null) || (y2 == null)) return -1;
 
@@ -277,13 +277,13 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
     state[slot] = newState;
     switch (newState) {
     case INACTIVE:
-      stateImage[slot] = inactive[which[slot]]; 
+      stateImage[slot] = inactive[which[slot]];
       break;
-    case ACTIVE: 
-      stateImage[slot] = active[which[slot]]; 
+    case ACTIVE:
+      stateImage[slot] = active[which[slot]];
       break;
-    case ROLLOVER: 
-      stateImage[slot] = rollover[which[slot]]; 
+    case ROLLOVER:
+      stateImage[slot] = rollover[which[slot]];
       message(title[which[slot]]);
       break;
     }
@@ -317,7 +317,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   public void mousePressed(MouseEvent e) {
     int x = e.getX();
     int y = e.getY();
-    
+
     int sel = findSelection(x, y);
     ///if (sel == -1) return false;
     if (sel == -1) return;
@@ -344,16 +344,16 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
   public void mouseReleased(MouseEvent e) {
     switch (currentSelection) {
-      case RUN:    
+      case RUN:
         if (!disableRun) {
-          editor.handleRun(e.isShiftDown()); 
+          editor.handleRun(e.isShiftDown());
         }
         break;
 
-      case STOP:   
+      case STOP:
         if (!disableRun) {
-          setState(RUN, INACTIVE, true); 
-          editor.handleStop(); 
+          setState(RUN, INACTIVE, true);
+          editor.handleStop();
         }
         break;
 

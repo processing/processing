@@ -171,7 +171,7 @@ public class PdeEditorHeader extends JComponent {
     // disable rename on the first tab
     renameItem.setEnabled(sketch.current != sketch.code[0]);
 
-    int x = PdePreferences.GUI_SMALL;
+    int x = 0; //PdePreferences.GUI_SMALL;
     for (int i = 0; i < sketch.codeCount; i++) {
       PdeCode code = sketch.code[i];
 
@@ -364,10 +364,10 @@ public class PdeEditorHeader extends JComponent {
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, PdePreferences.GRID_SIZE - 1);
+    return new Dimension(300, PdePreferences.GRID_SIZE); // - 1);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, PdePreferences.GRID_SIZE - 1);
+    return new Dimension(3000, PdePreferences.GRID_SIZE); // - 1);
   }
 }

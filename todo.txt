@@ -10,6 +10,9 @@ X   when hitting 'find', select the text in the field
 X   add extra space to exterior of find (especially on windows)
 X fixes to the horizontal scrollbar
 X   still not perfect, but some tweaks for improvement
+X cosmetic fixes
+X   is PdeEditorHeader one pixel too tall
+X   move the tabs over just slightly
 
 _ may need a progress bar for "save as"
 _   or just the file copy function in general
@@ -288,7 +291,6 @@ _   need to be able to produce the serial, video, etc libs
 _   see if sonia project can compile
 _ implement horizontal version of PdeEditorButtons
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
-o   is PdeEditorHeader one pixel too tall?
 _ menu option for Renderer > to "Core" or "OpenGL"
 _   on export, uses this setting to determine if jogl is added to project
 _ add a "make archive" option
