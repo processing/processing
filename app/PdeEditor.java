@@ -178,8 +178,6 @@ public class PdeEditor extends JPanel {
 
     rightPanel.add(splitPane, BorderLayout.CENTER);
 
-    // end swing version from danh
-
     add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
@@ -209,7 +207,6 @@ public class PdeEditor extends JPanel {
     }
 
     Label label = new Label("stop");
-    //label.setBackground(Color.red);
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
           //System.out.println("got stop");
@@ -224,7 +221,6 @@ public class PdeEditor extends JPanel {
           //#endif
         }});
 
-    //Dimension labelSize = label.getPreferredSize();
     Dimension labelSize = new Dimension(60, 20);
     presentationWindow.setLayout(null);
     presentationWindow.add(label);
@@ -235,84 +231,42 @@ public class PdeEditor extends JPanel {
       PdeBase.getColor("run.present.bgcolor", new Color(102, 102, 102));
     presentationWindow.setBackground(presentationBgColor);
 
-    // windowActivated doesn't seem to do much, so focus listener better
-    /*presentationWindow.addFocusListener(new FocusAdapter() {
-        public void focusGained(FocusEvent e) {
-          //System.out.println("presentationWindow focusGained: " + e);
-            try {
-              //System.out.println("moving applet window to front");
-              pdeRuntime.window.toFront();
-            } catch (Exception ex) { }
-          }
-      }); */
-
     textarea.addFocusListener(new FocusAdapter() {
         public void focusGained(FocusEvent e) {
-          //System.err.println("textarea focusGained: " + e);
           if (presenting == true) {
             try {
               presentationWindow.toFront();
-			  pdeRuntime.applet.requestFocus();
+              pdeRuntime.applet.requestFocus();
             } catch (Exception ex) { }
           }
         }
       });
 
     this.addFocusListener(new FocusAdapter() {
-      public void focusGained(FocusEvent e) {
-        //System.out.println("PdeEditor focusGained: " + e);
+        public void focusGained(FocusEvent e) {
           if (presenting == true) {
             try {
-            //System.out.println("moving presentation window to front");
               presentationWindow.toFront();
-			  pdeRuntime.applet.requestFocus();
+              pdeRuntime.applet.requestFocus();
             } catch (Exception ex) { }
           }
         }
       });
-    
-    // if user clicks on background presentationWindow, restore applet window
-    // ("engine.window") to the front immediately
-	
-	// toxi_030903: temporarily removed, don't seem to need those anymore
-	
-    /*presentationWindow.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        //System.out.println("mouseClicked: " + e.toString());
-        try {
-          //System.out.println("moving to front");
-          pdeRuntime.window.toFront();
-        } catch (Exception ex) { }
-      }
-      public void mousePressed(MouseEvent e)  {
-        //System.out.println("mousePressed: " + e.toString());
-        try {
-          //System.out.println("moving to front");
-          pdeRuntime.window.toFront();
-        } catch (Exception ex) { }
-      }
-      public void mouseReleased(MouseEvent e)  {
-        //System.out.println("mouseReleased: " + e.toString());
-        try {
-          //System.out.println("moving to front");
-          pdeRuntime.window.toFront();
-          } catch (Exception ex) { }
-      }
-    }); */
-	
-	// toxi_030903: moved this from the PDERuntime window to our main presentation window
-	presentationWindow.addKeyListener(new KeyAdapter() {
-              public void keyPressed(KeyEvent e) {
-                //System.out.println("window got " + e);
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                  pdeRuntime.stop();
-                  doClose();
-                } else {
-					// toxi_030903: pass on the event to the applet
-					pdeRuntime.applet.keyPressed(e);
-				}
-              }
-    });
+
+    // moved from the PdeRuntime window to the main presentation window
+    // [toxi 030903]
+    presentationWindow.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          //System.out.println("window got " + e);
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            pdeRuntime.stop();
+            doClose();
+          } else {
+            // pass on the event to the applet [toxi 030903]
+            pdeRuntime.applet.keyPressed(e);
+          }
+        }
+      });
   }
 
 
@@ -375,7 +329,7 @@ public class PdeEditor extends JPanel {
       }
 
       String serialPort = skprops.getProperty("serial.port");
-      if(serialPort != null) {
+      if (serialPort != null) {
         PdeBase.properties.put("serial.port", serialPort);
       }
 
@@ -630,7 +584,32 @@ public class PdeEditor extends JPanel {
   }
 
 
-
+  /**
+   * Preprocess, Compile, and Run the current code.
+   *
+   * There are three main parts to this process:
+   *
+   *   (0. if not java, then use another 'engine'.. i.e. python)
+   *
+   *    1. do the p5 language preprocessing
+   *       this creates a working .java file in a specific location
+   *       better yet, just takes a chunk of java code and returns a 
+   *       new/better string editor can take care of saving this to a 
+   *       file location
+   *
+   *    2. compile the code from that location
+   *       catching errors along the way
+   *       currently done with kjc, but would be nice to use jikes
+   *       placing it in a ready classpath, or .. ?
+   *
+   *    3. run the code 
+   *       needs to communicate location for window 
+   *       and maybe setup presentation space as well
+   *       currently done internally
+   *       would be nice to use external (at least on non-os9)
+   *
+   *    X. afterwards, some of these steps need a cleanup function
+   */
   public void doRun(boolean present) {
     //System.out.println(System.getProperty("java.class.path"));
 
@@ -679,112 +658,16 @@ public class PdeEditor extends JPanel {
           PdeEditor.copyDir(dataDir, buildDir);
         }
       }
-
-      /*
-        this needs to be reworked. there are three essential parts
-
-        (0. if not java, then use another 'engine'.. i.e. python)
-
-        1. do the p5 language preprocessing
-        -> this creates a working .java file in a specific location
-           better yet, just takes a chunk of java code and returns a 
-           new/better string editor can take care of saving this to a 
-           file location
-
-        2. compile the code from that location
-           catching errors along the way
-           currently done with kjc, but would be nice to use jikes
-           placing it in a ready classpath, or .. ?
-
-        3. run the code 
-           needs to communicate location for window 
-           and maybe setup presentation space as well
-           -> currently done internally
-           -> would be nice to use external (at least on non-os9)
-
-           afterwards, some of these steps need a cleanup function
-      */
       int numero1 = (int) (Math.random() * 10000);
       int numero2 = (int) (Math.random() * 10000);
       String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
 
-
-      /// 
-
-
+      
+      // handle building the code
       className = build(program, className, tempBuildPath, false);
-
-      /*
-      // do the preprocessing and write a .java file
-      //
-      // in an advanced program, the returned classname could be different,
-      // which is why we need to set className based on the return value
-      //
-      PdePreprocessor preprocessor = null;
-
-      if (PdeBase.getBoolean("preprocessor.antlr", true)) {
-        preprocessor = new PdePreprocessor(program, buildPath);
-        try {
-          //System.out.println("using antlr");
-          className = preprocessor.writeJava(className, 
-                                             base.normalItem.getState(),
-                                             false);
-        } catch (antlr.RecognitionException ae) {
-          // this even returns a column
-          System.out.println(ae.toString());
-          throw new PdeException(ae.getMessage(), 
-                                 ae.getLine() - 1, ae.getColumn());
-
-        } catch (Exception ex) {
-          System.err.println("Uncaught exception type:" + ex.getClass());
-          ex.printStackTrace();
-          throw new PdeException(ex.toString());
-          //System.out.println("pissed about: '" + ex.getMessage() + "'");
-          //ex.printStackTrace();
-          // if there was an issue (including unrecoverable parse errors)
-          // try falling back to the old preprocessor
-          //preprocessor = new PdePreprocessorOro(program, buildPath);
-          //className = preprocessor.writeJava(className, 
-          //                               base.normalItem.getState(), 
-          //                               false);
-        }
-      } else {
-        //System.out.println("not using antlr");
-        preprocessor = new PdePreprocessorOro(program, buildPath);
-        className = preprocessor.writeJava(className, 
-                                           base.normalItem.getState(),
-                                           false);
-      }
-
-      // compile the program
-      //
-      PdeCompiler compiler = 
-        new PdeCompiler(buildPath, className, this);
-      // macos9 now officially broken.. see PdeCompilerJavac
-      //PdeCompiler compiler = 
-      //  ((PdeBase.platform == PdeBase.MACOS9) ? 
-      //   new PdeCompilerJavac(buildPath, className, this) :
-      //   new PdeCompiler(buildPath, className, this));
-
-      // run the compiler, and funnel errors to the leechErr
-      // which is a wrapped around 
-      // (this will catch and parse errors during compilation
-      // the messageStream will call message() for 'compiler')
-      messageStream = new PdeMessageStream(compiler);
-      // leechErr also used while runnign the applet
-      PrintStream leechErr = new PrintStream(messageStream);
-      boolean result = compiler.compileJava(leechErr);
-
-      // messageStream gets reset after this anyways
-      */
-
-
-      /// 
 
 
       // if the compilation worked, run the applet
-      //
-      //if (result) {
       if (className != null) {
 
         // create a runtime object
@@ -912,9 +795,9 @@ public class PdeEditor extends JPanel {
     //if (buildPath != null) {
     cleanTempFiles(); //buildPath);
     //}
-    
-  	// toxi_030903: focus the PDE again after quitting presentation mode
-	base.toFront();
+
+    // toxi_030903: focus the PDE again after quitting presentation mode
+    base.toFront();
   }
 
 
@@ -938,17 +821,45 @@ public class PdeEditor extends JPanel {
     openingName = name;
 
     if (sketchModified) {
+      //System.out.println("sketch modified");
       status.prompt("Save changes to " + sketchName + "?");
-      //while ((status.mode == PdeEditorStatus.EDIT) ||
-      //     (status.mode == PdeEditorStatus.PROMPT)) {
-        //try {
-          //Thread.sleep(10);
-          //} catch (InterruptedException e) { } 
-      //}
+
+      //System.out.println("showing dialog");
+      //Dialog dialog = new Dialog(base, "something", true);
+      //dialog.show();
+
+      /*
+      Object[] options = {"Quit", "Cancel"}; // YES, NO
+      Object[] optionsModified = {"Save", "Don't save", "Cancel"}; // YES, NO, CANCEL
+      int value = 0;
+
+      value = JOptionPane.showOptionDialog(this,
+                                           "Save changes before quitting?",
+                                           "Quit",
+                                           JOptionPane.YES_NO_CANCEL_OPTION,
+                                           JOptionPane.QUESTION_MESSAGE,
+                                           null,
+                                           optionsModified,
+                                           optionsModified[1]);
+      */
+      //if (value == JOptionPane.YES_OPTION) {
+
+      /*
+        // this is *not* the way to do it.. sleeps the wrong thread
+        // and jsut freezes the application.
+      while ((status.mode == PdeEditorStatus.EDIT) ||
+             (status.mode == PdeEditorStatus.PROMPT)) {
+        System.err.println("waiting for something useful");
+        try {
+          Thread.sleep(10);
+        } catch (InterruptedException e) { } 
+      }
+      */
 
     } else {
       checkModified2();
     }
+    //System.out.println("exiting checkmodified");
   }
 
   public void checkModified2() {
@@ -1549,9 +1460,11 @@ public class PdeEditor extends JPanel {
     doStop();
     //if (!checkModified()) return;
     checkModified(DO_QUIT);
+    //System.out.println("exiting doquit");
   }
 
   protected void doQuit2() {
+    System.out.println("doquit2");
     //doStop();
 
     // clear out projects that are empty
@@ -1637,6 +1550,7 @@ public class PdeEditor extends JPanel {
       e.printStackTrace();
     }
 
+    //System.out.println("exiting here");
     System.exit(0);
   }
 
