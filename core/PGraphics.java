@@ -176,6 +176,30 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  protected boolean bezier_inited = false;
+  protected int bezier_detail = 20; //BEZIER_DETAIL;
+  // msjvm complained when bezier_basis was final
+  protected float bezier_basis[][] = {
+    { -1,  3, -3,  1},
+    {  3, -6,  3,  0},
+    { -3,  3,  0,  0},
+    {  1,  0,  0,  0}
+  };
+  protected float bezier_forward[][]; // = new float[4][4];
+  protected float bezier_draw[][]; // = new float[4][4];
+
+  // ........................................................
+
+  protected boolean curve_inited = false;
+  protected int curve_detail = 20;
+  // catmull-rom basis matrix, perhaps with optional s parameter
+  protected float curve_tightness = 0;
+  protected float curve_basis[][]; // = new float[4][4];
+  protected float curve_forward[][]; // = new float[4][4];
+  protected float curve_draw[][];
+
+  // ........................................................
+
   // spline vertices
 
   static final int DEFAULT_SPLINE_VERTICES = 128;
@@ -213,11 +237,15 @@ public class PGraphics extends PImage implements PConstants {
 
   public int rectMode;
   public int ellipseMode;
-  public int arcMode;
+  //public int arcMode;
 
   //int text_mode;
   //int text_space;
   public PFont textFont;
+  public int textMode; // alignment
+  public int textSpace;
+  public float textSize;
+  public float textLeading;
 
 
 
@@ -295,34 +323,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   *  set engine's default values
-   */
-  public void defaults() {
-    colorMode(RGB, TFF);
-    fill(TFF);
-    stroke(0);
-    strokeWeight(ONE);
-    background(204);
-
-    // init shape stuff
-    shape = 0;
-
-    // init matrices (must do before lights)
-    matrixStackDepth = 0;
-
-    rectMode(CORNER);
-    ellipseMode(CENTER);
-    arcMode(CENTER);
-    angleMode(RADIANS);
-
-    // no current font
-    textFont = null;
-    //text_mode    = ALIGN_LEFT;
-    //text_space   = OBJECT_SPACE;
-  }
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -354,6 +354,56 @@ public class PGraphics extends PImage implements PConstants {
     mis.newPixels(pixels, cm, 0, width);
   }
 
+
+  /**
+   *  set engine's default values
+   */
+  public void defaults() {
+    colorMode(RGB, TFF);
+    fill(TFF);
+    stroke(0);
+    strokeWeight(ONE);
+    background(204);
+
+    // init shape stuff
+    shape = 0;
+
+    // init matrices (must do before lights)
+    matrixStackDepth = 0;
+
+    rectMode(CORNER);
+    ellipseMode(CENTER);
+    //arcMode(CENTER);
+    angleMode(RADIANS);
+
+    // no current font
+    textFont = null;
+    //text_mode    = ALIGN_LEFT;
+    //text_space   = OBJECT_SPACE;
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // HINTS
+
+  // for the most part, hints are temporary api quirks,
+  // for which a proper api hasn't been properly worked out.
+  // for instance SMOOTH_IMAGES existed because smooth()
+  // wasn't yet implemented, but it will soon go away.
+
+  // they also exist for obscure features in the graphics
+  // engine, like enabling/disabling single pixel lines
+  // that ignore the zbuffer, the way they do in alphabot.
+
+  public void hint(int which) {
+    hints[which] = true;
+  }
+
+  public void unhint(int which) {
+    hints[which] = false;
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -389,291 +439,173 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void endShape() {
-    int vertex_end = vertexCount;
+  public void normal(float nx, float ny, float nz) {
+    // not supported in 2D
+  }
 
-    // don't try to draw if there are no vertices
-    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-    if (vertexCount == 0) {
-      shape = 0;
-      return;
-    }
+  public void textureMode(int mode) {
+    // not supported in 2D
+  }
 
-
-    // ------------------------------------------------------------------
-    // CREATE LINES
-
-    int increment = 1;
-    int stop = 0;
-    int counter = 0;
-
-    if (stroke) {
-      switch (shape) {
-
-        case POINTS:
-        {
-          stop = vertex_end;
-          for (int i = vertex_start; i < stop; i++) {
-            add_path();  // total overkill for points
-            add_line(i, i);
-          }
-        }
-        break;
-
-        case LINES:
-        case LINE_STRIP:
-        case LINE_LOOP:
-        {
-          // store index of first vertex
-          int first = lineCount;
-          stop = vertex_end - 1;
-          increment = (shape == LINES) ? 2 : 1;
-
-          // for LINE_STRIP and LINE_LOOP, make this all one path
-          if (shape != LINES) add_path();
-
-          for (int i = vertex_start; i < stop; i+=increment) {
-            // for LINES, make a new path for each segment
-            if (shape == LINES) add_path();
-            add_line(i, i+1);
-          }
-
-          // for LINE_LOOP, close the loop with a final segment
-          if (shape == LINE_LOOP) {
-            add_line(stop, lines[first][VERTEX1]);
-          }
-        }
-        break;
-
-        case TRIANGLES:
-        {
-          for (int i = vertex_start; i < vertex_end; i += 3) {
-            add_path();
-            counter = i - vertex_start;
-            add_line(i+0, i+1);
-            add_line(i+1, i+2);
-            add_line(i+2, i+0);
-          }
-        }
-        break;
-
-        case TRIANGLE_STRIP:
-        {
-          // first draw all vertices as a line strip
-          stop = vertex_end-1;
-
-          add_path();
-          for (int i = vertex_start; i < stop; i++) {
-            counter = i - vertex_start;
-            add_line(i,i+1);
-          }
-
-          // then draw from vertex (n) to (n+2)
-          stop = vertex_end-2;
-          for (int i = vertex_start; i < stop; i++) {
-            add_path();
-            add_line(i,i+2);
-          }
-        }
-        break;
-
-        case TRIANGLE_FAN:
-        {
-          // this just draws a series of line segments
-          // from the center to each exterior point
-          for (int i = vertex_start + 1; i < vertex_end; i++) {
-            add_path();
-            add_line(vertex_start, i);
-          }
-
-          // then a single line loop around the outside.
-          add_path();
-          for (int i = vertex_start + 1; i < vertex_end-1; i++) {
-            add_line(i, i+1);
-          }
-          // closing the loop
-          add_line(vertex_end-1, vertex_start + 1);
-        }
-        break;
-
-        case QUADS:
-        {
-          for (int i = vertex_start; i < vertex_end; i += 4) {
-            add_path();
-            counter = i - vertex_start;
-            add_line(i+0, i+1);
-            add_line(i+1, i+2);
-            add_line(i+2, i+3);
-            add_line(i+3, i+0);
-          }
-        }
-        break;
-
-        case QUAD_STRIP:
-        {
-          // first draw all vertices as a line strip
-          stop = vertex_end - 1;
-
-          add_path();
-          for (int i = vertex_start; i < stop; i++) {
-            counter = i - vertex_start;
-            add_line(i, i+1);
-          }
-
-          // then draw from vertex (n) to (n+3)
-          stop = vertex_end-2;
-          increment = 2;
-
-          add_path();
-          for (int i = vertex_start; i < stop; i += increment) {
-            add_line(i, i+3);
-          }
-        }
-        break;
-
-        case POLYGON:
-        case CONCAVE_POLYGON:
-        case CONVEX_POLYGON:
-        {
-          // store index of first vertex
-          int first = lineCount;
-          stop = vertex_end - 1;
-
-          add_path();
-          for (int i = vertex_start; i < stop; i++) {
-            add_line(i, i+1);
-          }
-          // draw the last line connecting back to the first point in poly
-          add_line(stop, lines[first][VERTEX1]);
-        }
-        break;
-      }
-    }
-
-
-    // ------------------------------------------------------------------
-    // CREATE TRIANGLES
-
-    if (fill) {
-      switch (shape) {
-        case TRIANGLES:
-        case TRIANGLE_STRIP:
-        {
-          stop = vertex_end - 2;
-          increment = (shape == TRIANGLES) ? 3 : 1;
-          for (int i = vertex_start; i < stop; i += increment) {
-            add_triangle(i, i+1, i+2);
-          }
-        }
-        break;
-
-        case QUADS:
-        case QUAD_STRIP:
-        {
-          stop = vertexCount-3;
-          increment = (shape == QUADS) ? 4 : 2;
-
-          for (int i = vertex_start; i < stop; i += increment) {
-            // first triangle
-            add_triangle(i, i+1, i+2);
-            // second triangle
-            add_triangle(i, i+2, i+3);
-          }
-        }
-        break;
-
-        case POLYGON:
-        case CONCAVE_POLYGON:
-        case CONVEX_POLYGON:
-        {
-          triangulate_polygon();
-        }
-        break;
-      }
-    }
-
-
-    // ------------------------------------------------------------------
-    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (X, Y, Z)
-
-    // if no depth in use, then the points can be transformed simpler
-    for (int i = vertex_start; i < vertex_end; i++) {
-      vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m02;
-      vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m12;
-    }
-
-
-    // ------------------------------------------------------------------
-    // TRANSFORM / LIGHT / CLIP
-
-    //light_and_transform();
-
-
-    // ------------------------------------------------------------------
-    // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
-
-    // if true, the shapes will be rendered on endFrame
-    //if (hints[DEPTH_SORT]) {
-    //shape = 0;
-    //return;
-    //}
-
-    if (fill) render_triangles();
-    if (stroke) render_lines();
-
-    shape = 0;
+  public void texture(PImage image) {
+    // not supported in 2D
   }
 
 
   public void vertex(float x, float y) {
+    splineVertexCount = 0;
+    float vertex[];
+
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
-      message(CHATTER, "allocating more vertices " + vertices.length);
+      //message(CHATTER, "allocating more vertices " + vertices.length);
     }
-    float vertex[] = vertices[vertexCount++];
+    // not everyone needs this, but just easier to store rather
+    // than adding another moving part to the code...
+    vertices[vertexCount][MX] = x;
+    vertices[vertexCount][MY] = x;
+    vertexCount++;
 
-    //if (polygon.redundantVertex(x, y, z)) return;
+    switch (shape) {
 
-    // user called vertex(), so that invalidates anything queued
-    // up for curve vertices. if this is internally called by
-    // spline_segment, then splineVertexCount will be saved and restored.
-    splineVertexCount = 0;
+    case POINTS:
+      point(x, y);
+      break;
 
-    vertex[MX] = x;
-    vertex[MY] = y;
+    case LINES:
+      if ((vertexCount % 2) == 0) {
+        line(vertices[vertexCount-2][MX],
+             vertices[vertexCount-2][MY], x, y);
+      }
+      break;
 
-    if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
-    }
+    case LINE_STRIP:
+    case LINE_LOOP:
+      if (vertexCount == 1) {
+        path = new GeneralPath();
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+      break;
 
-    if (stroke) {
-      vertex[SR] = strokeR;
-      vertex[SG] = strokeG;
-      vertex[SB] = strokeB;
-      vertex[SA] = strokeA;
-      vertex[SW] = strokeWeight;
+    case TRIANGLES:
+      if ((vertexCount % 3) == 0) {
+        triangle(vertices[vertexCount - 3][MX],
+                 vertices[vertexCount - 3][MY],
+                 vertices[vertexCount - 2][MX],
+                 vertices[vertexCount - 2][MY],
+                 x, y);
+      }
+      break;
+
+    case TRIANGLE_STRIP:
+      if (vertexCount == 3) {
+        triangle(vertices[0][MX], vertices[0][MY],
+                 vertices[1][MX], vertices[1][MY],
+                 x, y);
+      } else if (vertexCount > 3) {
+        path = new GeneralPath();
+        // when vertexCount == 4, draw an un-closed triangle
+        // for indices 2, 3, 1
+        path.moveTo(vertices[vertexCount - 2][MX],
+                    vertices[vertexCount - 2][MY]);
+        path.lineTo(vertices[vertexCount - 1][MX],
+                    vertices[vertexCount - 1][MY]);
+        path.lineTo(vertices[vertexCount - 3][MX],
+                    vertices[vertexCount - 3][MY]);
+        draw_shape(path);
+      }
+      break;
+
+    case TRIANGLE_FAN:
+      if (vertexCount == 3) {
+        triangle(vertices[0][MX], vertices[0][MY],
+                 vertices[1][MX], vertices[1][MY],
+                 x, y);
+      } else if (vertexCount > 3) {
+        path = new GeneralPath();
+        // when vertexCount > 3, draw an un-closed triangle
+        // for indices 0 (center), previous, current
+        path.moveTo(vertices[0][MX],
+                    vertices[0][MY]);
+        path.lineTo(vertices[vertexCount - 2][MX],
+                    vertices[vertexCount - 2][MY]);
+        path.lineTo(x, y);
+        draw_shape(path);
+      }
+      break;
+
+    case QUADS:
+      if ((vertexCount % 4) == 0) {
+        quad(vertices[vertexCount - 4][MX],
+             vertices[vertexCount - 4][MY],
+             vertices[vertexCount - 3][MX],
+             vertices[vertexCount - 3][MY],
+             vertices[vertexCount - 2][MX],
+             vertices[vertexCount - 2][MY],
+             x, y);
+      }
+      break;
+
+    case QUAD_STRIP:
+      // 0---2---4
+      // |   |   |
+      // 1---3---5
+      if (vertexCount == 4) {
+        // note difference in winding order:
+        quad(vertices[0][MX], vertices[0][MY],
+             vertices[2][MX], vertices[2][MY],
+             x, y,
+             vertices[1][MX], vertices[1][MY]);
+
+      } else if (vertexCount > 4) {
+        path = new GeneralPath();
+        // when vertexCount == 5, draw an un-closed triangle
+        // for indices 2, 4, 5, 3
+        path.moveTo(vertices[vertexCount - 3][MX],
+                    vertices[vertexCount - 3][MY]);
+        path.lineTo(vertices[vertexCount - 1][MX],
+                    vertices[vertexCount - 1][MY]);
+        path.lineTo(x, y);
+        path.lineTo(vertices[vertexCount - 2][MX],
+                    vertices[vertexCount - 2][MY]);
+        draw_shape(path);
+      }
+      break;
+
+    case POLYGON:
+    case CONCAVE_POLYGON:
+    case CONVEX_POLYGON:
+      if (vertexCount == 1) {
+        path = new GeneralPath();
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+      break;
     }
   }
 
 
-  //public void vertex(float x, float y, float u, float v) {
-  //}
+  public void vertex(float x, float y, float u, float v) {
+    // not supported in 2D
+  }
 
-  //public void vertex(float x, float y, float z) {
-  //}
+  public void vertex(float x, float y, float z) {
+    // not supported in 2D
+  }
 
-  //public void vertex(float x, float y, float z, float u, float v) {
-  //}
+  public void vertex(float x, float y, float z, float u, float v) {
+    // not supported in 2D
+  }
 
 
-  protected void spline_vertex(float x, float y, boolean bezier) {
-    // allocate space for the spline vertices
-    // to improve processing applet load times, don't allocate until actual use
+  public void bezierVertex(float x, float y) {
+    vertexCount = 0;
+
     if (splineVertices == null) {
       splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
     }
@@ -686,53 +618,26 @@ public class PGraphics extends PImage implements PConstants {
                        splineVertices[1], 0, VERTEX_FIELD_COUNT);
       splineVertexCount = 3;
     }
-
-    // 'flat' may be a misnomer here because it's actually just
-    // calculating whether z is zero for all the spline points,
-    // so that it knows whether to calculate all three params,
-    // or just two for x and y.
-    //if (splineVertices_flat) {
-    //if (z != 0) splineVertices_flat = false;
-    //}
-    float vertex[] = splineVertices[splineVertexCount];
-
-    vertex[MX] = x;
-    vertex[MY] = y;
-
-    if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
-    }
-
-    if (stroke) {
-      vertex[SR] = strokeR;
-      vertex[SG] = strokeG;
-      vertex[SB] = strokeB;
-      vertex[SA] = strokeA;
-      vertex[SW] = strokeWeight;
-    }
-
+    splineVertices[splineVertexCount][MX] = x;
+    splineVertices[splineVertexCount][MY] = y;
     splineVertexCount++;
 
-    // draw a segment if there are enough points
-    if (splineVertexCount > 3) {
-      if (bezier) {
-        if ((splineVertexCount % 4) == 0) {
-          if (!bezier_inited) bezier_init();
-          spline2_segment(splineVertexCount-4,
-                          splineVertexCount-4,
-                          bezier_draw,
-                          bezier_detail);
-        }
-      } else {  // catmull-rom curve (!bezier)
-        if (!curve_inited) curve_init();
-        spline2_segment(splineVertexCount-4,
-                        splineVertexCount-3,
-                        curve_draw,
-                        curve_detail);
+    switch (shape) {
+    case LINE_LOOP:
+    case POLYGON:
+    case CONCAVE_POLYGON:
+    case CONVEX_POLYGON:
+      if (splineVertexCount == 1) {
+        path.moveTo(x, y);
+
+      } else if (splineVertexCount >= 4) {
+        path.curveTo(splineVertices[splineVertexCount-3][MX],
+                     splineVertices[splineVertexCount-3][MY],
+                     splineVertices[splineVertexCount-2][MX],
+                     splineVertices[splineVertexCount-2][MY],
+                     x, y);
       }
+      break;
     }
   }
 
@@ -740,28 +645,48 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * See notes with the bezier() function.
    */
-  public void bezierVertex(float x, float y) {
-    spline_vertex(x, y, true);
+  public void bezierVertex(float x, float y, float z) {
+    // not supported in 2D
   }
 
-  /**
-   * See notes with the bezier() function.
-   */
-  //public void bezierVertex(float x, float y, float z) {
-  //}
 
   /**
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y) {
-    spline_vertex(x, y, false);
+    // TODO get matrix setup happening
   }
+
 
   /**
    * See notes with the curve() function.
    */
-  //public void curveVertex(float x, float y, float z) {
-  //}
+  public void curveVertex(float x, float y, float z) {
+    // not supported in 2D
+  }
+
+
+  public void endShape() {
+    shape = 0;
+
+    switch (shape) {
+    case LINE_STRIP:
+      stroke_shape(path);
+      break;
+
+    case LINE_LOOP:
+      path.closePath();
+      stroke_shape(path);
+      break;
+
+    case POLYGON:
+    case CONCAVE_POLYGON:
+    case CONVEX_POLYGON:
+      path.closePath();
+      draw_shape(path);
+      break;
+    }
+  }
 
 
 
@@ -771,144 +696,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void point(float x, float y) {
-    point(x, y, 0);
+    // TODO
   }
 
 
   public void point(float x, float y, float z) {
-    // temporary, just for the opengl stuff
-    beginShape(POINTS);
-    vertex(x, y, z);
-    endShape();
-
-    /*
-    if (depth) {
-      if (strokeWeight < 2) {
-        // just a single dot on the screen with a z value
-        // TODO what is lighting calculation for this point?
-        point0(screenX(x, y, z),
-               screenY(x, y, z),
-               screenZ(x, y, z), strokeColor);
-
-      } else {
-        float cx = screenX(x, y, z);
-        float cy = screenX(x, y, z);
-        float hsw = strokeWeight / 2f;
-
-        if (strokeCap == ROUND_ENDCAP) {
-          // non-smoothed, filled circle
-          circle0_rough_fill(cx, cy, z, hsw, strokeColor);
-
-        } else {  // otherwise one of the square endcaps
-          //if ((strokeCap == PROJECTED_ENDCAP) ||
-          //    (strokeCap == SQUARE_ENDCAP)) {
-          // technically, if SQUARE_ENDCAP, nothing should be drawn
-          // but we'll go easy on the lads
-          // non-smoothed (since 3D), filled square
-
-          int x1 = (int) (cx - hsw + 0.5f);
-          int y1 = (int) (cy - hsw + 0.5f);
-          int x2 = (int) (cx + hsw + 0.5f);
-          int y2 = (int) (cy + hsw + 0.5f);
-
-          rect0_rough_fill(x1, y1, x2, y2, z, strokeColor);
-        }
-      }
-
-    } else {  // noDepth
-      if (strokeWeight < 2) {
-        point0(screenX(x, y), screenY(x, y), 0, strokeColor);
-
-      } else {
-        float hsw = strokeWeight / 2f;
-
-        if ((strokeCap == PROJECTED_ENDCAP) ||
-            (strokeCap == SQUARE_ENDCAP)) {
-          rect0_fill(x - hsw, y - hsw, x + hsw, y + hsw, 0, strokeColor);
-
-        } else if (strokeCap == ROUND_ENDCAP) {
-          circle0_fill(x - hsw, y - hsw, 0, hsw, strokeColor);
-        }
-      }
-    }
-    */
+    // not supported in 2D
   }
 
-
-  private void point2(float x, float y, int color) {
-  }
-
-
-  private void point0(float xx, float yy, float z, int color) {
-    point0((int) (xx + 0.5f), (int) (yy + 0.5f), z, color);
-  }
-
-
-  private void point0(int x, int y, float z, int color) {
-    if ((x < 0) || (x > width1) ||
-        (y < 0) || (y > height1)) return;
-
-    int index = y*width + x;
-    if ((color & 0xff000000) == 0xff000000) {  // opaque
-      pixels[index] = color;
-
-    } else {  // transparent
-      // a1 is how much of the orig pixel
-      int a2 = (color >> 24) & 0xff;
-      int a1 = a2 ^ 0xff;
-
-      int p2 = strokeColor;
-      int p1 = pixels[index];
-
-      int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
-      int g = (a1 * ((p1 >>  8) & 0xff) + a2 * ((p2 >>  8) & 0xff)) & 0xff00;
-      int b = (a1 * ( p1        & 0xff) + a2 * ( p2        & 0xff)) >> 8;
-
-      pixels[index] =  0xff000000 | (r << 8) | g | b;
-    }
-    if (zbuffer != null) zbuffer[index] = z;
-  }
-
-
-  // points are inherently flat, but always tangent
-  // to the screen surface. the z is only so that things
-  // get scaled properly if the pt is way in back
-  /*
-  private void thick_point(float x, float y, float z, // note floats
-                           float r, float g, float b, float a) {
-    spolygon.reset(4);
-    spolygon.interpARGB = false;  // no changes for vertices of a point
-
-    float strokeWidth2 = strokeWeight/2.0f;
-
-    float svertex[] = spolygon.vertices[0];
-    svertex[X] = x - strokeWidth2;
-    svertex[Y] = y - strokeWidth2;
-    svertex[Z] = z;
-
-    svertex[R] = r;
-    svertex[G] = g;
-    svertex[B] = b;
-    svertex[A] = a;
-
-    svertex = spolygon.vertices[1];
-    svertex[X] = x + strokeWidth2;
-    svertex[Y] = y - strokeWidth2;
-    svertex[Z] = z;
-
-    svertex = spolygon.vertices[2];
-    svertex[X] = x + strokeWidth2;
-    svertex[Y] = y + strokeWidth2;
-    svertex[Z] = z;
-
-    svertex = spolygon.vertices[3];
-    svertex[X] = x - strokeWidth2;
-    svertex[Y] = y + strokeWidth2;
-    svertex[Z] = z;
-
-    spolygon.render();
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -917,141 +712,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void line(float x1, float y1, float x2, float y2) {
-    beginShape(LINES);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    endShape();
+    // TODO
   }
 
 
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
-    beginShape(LINES);
-    vertex(x1, y1, z1);
-    vertex(x2, y2, z2);
-    endShape();
-  }
-
-
-  private void thick_flat_line(float ox1, float oy1,
-                               float r1, float g1, float b1, float a1,
-                               float ox2, float oy2,
-                               float r2, float g2, float b2, float a2) {
-    /*
-    spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
-    spolygon.interpZ = false;
-
-    float dX = ox2-ox1 + EPSILON;
-    float dY = oy2-oy1 + EPSILON;
-    float len = sqrt(dX*dX + dY*dY);
-
-    // TODO strokeWidth should be transformed!
-    float rh = strokeWeight / len;
-
-    float dx0 = rh * dY;
-    float dy0 = rh * dX;
-    float dx1 = rh * dY;
-    float dy1 = rh * dX;
-
-    spolygon.reset(4);
-
-    float svertex[] = spolygon.vertices[0];
-    svertex[X] = ox1+dx0;
-    svertex[Y] = oy1-dy0;
-    svertex[R] = r1;
-    svertex[G] = g1;
-    svertex[B] = b1;
-    svertex[A] = a1;
-
-    svertex = spolygon.vertices[1];
-    svertex[X] = ox1-dx0;
-    svertex[Y] = oy1+dy0;
-    svertex[R] = r1;
-    svertex[G] = g1;
-    svertex[B] = b1;
-    svertex[A] = a1;
-
-    svertex = spolygon.vertices[2];
-    svertex[X] = ox2-dx1;
-    svertex[Y] = oy2+dy1;
-    svertex[R] = r2;
-    svertex[G] = g2;
-    svertex[B] = b2;
-    svertex[A] = a2;
-
-    svertex = spolygon.vertices[3];
-    svertex[X] = ox2+dx1;
-    svertex[Y] = oy2-dy1;
-    svertex[R] = r2;
-    svertex[G] = g2;
-    svertex[B] = b2;
-    svertex[A] = a2;
-
-    spolygon.render();
-    */
-  }
-
-
-  // the incoming values are transformed,
-  // and the colors have been calculated
-  private void thick_spatial_line(float x1, float y1, float z1,
-                                  float r1, float g1, float b1,
-                                  float x2, float y2, float z2,
-                                  float r2, float g2, float b2) {
-    /*
-    spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2);
-    spolygon.interpZ = true;
-
-    float ox1 = x1; float oy1 = y1; float oz1 = z1;
-    float ox2 = x2; float oy2 = y2; float oz2 = z2;
-
-    float dX = ox2-ox1 + 0.0001f;
-    float dY = oy2-oy1 + 0.0001f;
-    float len = sqrt(dX*dX + dY*dY);
-
-    float rh = strokeWeight / len;
-
-    float dx0 = rh * dY;
-    float dy0 = rh * dX;
-    float dx1 = rh * dY;
-    float dy1 = rh * dX;
-
-    spolygon.reset(4);
-
-    float svertex[] = spolygon.vertices[0];
-    svertex[X] = ox1+dx0;
-    svertex[Y] = oy1-dy0;
-    svertex[Z] = oz1;
-    svertex[R] = r1;
-    svertex[G] = g1;
-    svertex[B] = b1;
-
-    svertex = spolygon.vertices[1];
-    svertex[X] = ox1-dx0;
-    svertex[Y] = oy1+dy0;
-    svertex[Z] = oz1;
-    svertex[R] = r1;
-    svertex[G] = g1;
-    svertex[B] = b1;
-
-    svertex = spolygon.vertices[2];
-    svertex[X] = ox2-dx1;
-    svertex[Y] = oy2+dy1;
-    svertex[Z] = oz2;
-    svertex[R] = r2;
-    svertex[G] = g2;
-    svertex[B] = b2;
-
-    svertex = spolygon.vertices[3];
-    svertex[X] = ox2+dx1;
-    svertex[Y] = oy2-dy1;
-    svertex[Z] = oz2;
-    svertex[R] = r2;
-    svertex[G] = g2;
-    svertex[B] = b2;
-
-    spolygon.render();
-    */
+    // not supported in 2D
   }
 
 
@@ -1063,11 +730,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-    beginShape(TRIANGLES);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    vertex(x3, y3);
-    endShape();
+    // TODO
   }
 
 
@@ -1107,150 +770,7 @@ public class PGraphics extends PImage implements PConstants {
       y1 -= vradius;
     }
 
-    if (depth || !optimize2) {
-      rect3(x1, y1, x2, y2);
-
-    } else {
-      rect2(x1, y1, x2, y2);
-    }
-
-    /*
-    if (depth) {
-      rect3(x1, y1, x2, y2);
-
-    } else if ((m00 != 1) || (m11 != 1) ||
-               (m01 != 0) || (m10 != 0)) {
-      rect2(x1, y1, x2, y2);
-
-    } else {
-      rect0(x1 + m02, y1 + m12, x2 + m02, y2 + m12);
-    }
-    */
-  }
-
-
-  /**
-   * This is the function overridden by other renderers.
-   */
-  protected void rect3(float x1, float y1, float x2, float y2) {
-    beginShape(QUADS);
-    vertex(x1, y1);
-    vertex(x2, y1);
-    vertex(x2, y2);
-    vertex(x1, y2);
-    endShape();
-  }
-
-
-  protected void rect2(float x1, float y1, float x2, float y2) {
-    if (fill) rect2_fill(x1, y1, x2, y2);
-    if (stroke) rect2_stroke(x1, y1, x2, y2);
-  }
-
-
-  protected void rect2_fill(float x1, float y1, float x2, float y2) {
-    if ((m01 != 0) || (m10 != 0)) {
-      // this is actually transformed, transform points and draw a quad
-      quad0_fill(screenX(x1, y1), screenY(x1, y1),
-                 screenX(x2, y1), screenY(x2, y1),
-                 screenX(x2, y2), screenY(x2, y2),
-                 screenX(x1, y2), screenY(x1, y2), fillColor);
-
-    } else {
-      if ((m00 == 1) && (m11 == 1)) {
-        // no scale, but maybe a translate
-        rect0_fill(x1 + m02, y1 + m12, x2 + m02, y2 + m12, 0, fillColor);
-
-      } else {
-        // scaled, maybe translated
-        rect0_fill(screenX(x1, y1), screenY(x1, y1),
-                   screenX(x2, y2), screenY(x2, y2), 0, fillColor);
-      }
-    }
-  }
-
-
-  protected void rect0_fill(float x1, float y1, float x2, float y2,
-                            float z, int color) {
-    if (smooth) {
-      rect0_smooth_fill(x1, y1, x2, y2, z, color);
-
-    } else {
-      rect0_rough_fill((int) (x1+0.5f), (int) (y1+0.5f),
-                       (int) (x2+0.5f), (int) (y2+0.5f), z, color);
-    }
-  }
-
-
-  protected void rect0_smooth_fill(float x1, float y1, float x2, float y2,
-                                   float z, int color) {
-    quad0_smooth_fill(x1, y1, x2, y1, x2, y2, x1, y2, color);
-  }
-
-
-  protected void rect0_rough_fill(int x1, int y1, int x2, int y2,
-                                  float z, int color) {
-    // needs to check if smooth
-    // or if there's an affine transform on the shape
-    // also the points are now floats instead of ints
-
-    //System.out.println("flat quad");
-    if (y2 < y1) {
-      int temp = y1; y1 = y2; y2 = temp;
-    }
-    if (x2 < x1) {
-      int temp = x1; x1 = x2; x2 = temp;
-    }
-    // checking to watch out for boogers
-    if ((x1 > width1) || (x2 < 0) ||
-        (y1 > height1) || (y2 < 0)) return;
-
-    int fx1 = (int) x1;
-    int fy1 = (int) y1;
-    int fx2 = (int) x2;
-    int fy2 = (int) y2;
-
-    // these only affect the fill, not the stroke
-    // (otherwise strange boogers at edges b/c frame changes shape)
-    if (fx1 < 0) fx1 = 0;
-    if (fx2 > width) fx2 = width;
-    if (fy1 < 0) fy1 = 0;
-    if (fy2 > height) fy2 = height;
-
-    // [toxi 031223]
-    // on avg. 20-25% faster fill routine using System.arraycopy()
-    int ww = fx2 - fx1;
-    int hh = fy2 - fy1;
-    int[] row = new int[ww];
-    for (int i = 0; i < ww; i++) row[i] = fillColor;
-    int idx = fy1 * width + fx1;
-    for (int y = 0; y < hh; y++) {
-      System.arraycopy(row, 0, pixels, idx, ww);
-      idx += width;
-    }
-    row = null;
-  }
-
-
-  protected void rect2_stroke(float x1, float y1, float x2, float y2) {
-    /*
-    if (strokeWeight == 1) {
-      thin_flat_line(x1, y1, x2, y1);
-      thin_flat_line(x2, y1, x2, y2);
-      thin_flat_line(x2, y2, x1, y2);
-      thin_flat_line(x1, y2, x1, y1);
-
-    } else {
-      thick_flat_line(x1, y1, fillR, fillG, fillB, fillA,
-                      x2, y1, fillR, fillG, fillB, fillA);
-      thick_flat_line(x2, y1, fillR, fillG, fillB, fillA,
-                      x2, y2, fillR, fillG, fillB, fillA);
-      thick_flat_line(x2, y2, fillR, fillG, fillB, fillA,
-                      x1, y2, fillR, fillG, fillB, fillA);
-      thick_flat_line(x1, y2, fillR, fillG, fillB, fillA,
-                      x1, y1, fillR, fillG, fillB, fillA);
-    }
-    */
+    // TODO write rect drawing function
   }
 
 
@@ -1262,457 +782,38 @@ public class PGraphics extends PImage implements PConstants {
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
-    beginShape(QUADS);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    vertex(x3, y3);
-    vertex(x4, y4);
-    endShape();
-  }
-
-
-  protected void quad0_fill(float x1, float y1, float x2, float y2,
-                            float x3, float y3, float x4, float y4,
-                            int color) {
-    if (smooth) {
-      quad0_smooth_fill(x1, y1, x2, y2, x3, y3, x4, y4, color);
-
-    } else {
-      quad0_rough_fill((int) (x1+0.5f), (int) (y1+0.5f),
-                       (int) (x2+0.5f), (int) (y2+0.5f),
-                       (int) (x3+0.5f), (int) (y3+0.5f),
-                       (int) (x4+0.5f), (int) (y4+0.5f),
-                       color);
-    }
-  }
-
-
-  protected void quad0_smooth_fill(float x1, float y1, float x2, float y2,
-                                   float x3, float y3, float x4, float y4,
-                                   int color) {
-  }
-
-
-  protected void quad0_rough_fill(float x1, float y1, float x2, float y2,
-                                  float x3, float y3, float x4, float y4,
-                                  int color) {
-  }
-
-
-  protected void quad0_stroke(float x1, float y1, float x2, float y2,
-                              float x3, float y3, float x4, float y4,
-                              int color) {
-    if (smooth) {
-      quad0_smooth_stroke(x1, y1, x2, y2, x3, y3, x4, y4, color);
-
-    } else {
-      quad0_rough_stroke((int) (x1+0.5f), (int) (y1+0.5f),
-                         (int) (x2+0.5f), (int) (y2+0.5f),
-                         (int) (x3+0.5f), (int) (y3+0.5f),
-                         (int) (x4+0.5f), (int) (y4+0.5f), color);
-    }
-  }
-
-
-  protected void quad0_smooth_stroke(float x1, float y1, float x2, float y2,
-                                     float x3, float y3, float x4, float y4,
-                                     int color) {
-  }
-
-
-  protected void quad0_rough_stroke(float x1, float y1, float x2, float y2,
-                                    float x3, float y3, float x4, float y4,
-                                    int color) {
+    // TODO
   }
 
 
 
   //////////////////////////////////////////////////////////////
 
-  // IMAGE
+  // CIRCLES AND ELLIPSES
 
 
-  // NOPE this has to be overridden for opengl to prevent the
-  // NOPE upper situation from happening, since the mXX vars
-  // NOPE will be bad and glDrawPixels is slower drawing
-  // NOPE flat images than drawing an image as a texture..
-  public void image(PImage image, float x1, float y1) {
-    if (optimize0 && !depth &&
-        (m00 == 1) && (m01 == 0) &&
-        (m10 == 0) && (m11 == 1)) {
-      // if drawing a flat image with no warping,
-      // use faster routine to draw direct to the screen
-      if ((imageMode == CENTER) ||
-          (imageMode == CENTER_RADIUS)) {
-        x1 -= image.width /2f;
-        y1 -= image.height / 2f;
-      }
-      image0(image,
-             (int) (x1 + m02 + 0.5f),
-             (int) (y1 + m12 + 0.5f));
-
-    } else {
-      int savedTextureMode = textureMode;
-      textureMode(IMAGE_SPACE);
-
-      image(image, x1, y1, image.width, image.height,
-            0, 0, image.width, image.height);
-
-      textureMode(savedTextureMode);
-    }
-  }
-
-
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2) {
-    int savedTextureMode = textureMode;
-    textureMode(IMAGE_SPACE);
-
-    image(image, x1, y1, x2, y2, 0, 0, image.width, image.height);
-
-    textureMode(savedTextureMode);
-  }
-
-
-  // this probably needs to be broken into affine/non-affine versions
-  // since affine w/ smoothing is a fairly easy case to handle and
-  // with better quality and speed than using the full texture mapping.
-
-  /**
-   * u, v coordinates are always of the form x1, y1, x2, y2, or the
-   * same as imageMode(CORNERS), even if the imageMode is something else.
-   *
-   * when drawing without depth(), the coordinates for u, v are
-   * always done in IMAGE_SPACE, because the textureMode() option
-   * is not available in 2D.
-   */
-  public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
-                    float u1, float v1, float u2, float v2) {
-    float hr, vr;
-
-    switch (imageMode) {
-    case CORNERS:
-      break;
-    case CORNER:
-      x2 += x1; y2 += y1;
-      break;
-    case CENTER:
-      x2 /= 2f;
-      y2 /= 2f;
-      hr = x2;
-      vr = y2;
-      x2 = x1 + hr;
-      y2 = y1 + vr;
-      x1 -= hr;
-      y1 -= vr;
-      break;
-    case CENTER_RADIUS:
-      hr = x2;
-      vr = y2;
-      x2 = x1 + hr;
-      y2 = y1 + vr;
-      x1 -= hr;
-      y1 -= vr;
-      break;
-    }
-
-    boolean savedStroke = stroke;
-    boolean savedFill = fill;
-
-    stroke = false;
-    fill = true;
-
-    float savedFillR = fillR;
-    float savedFillG = fillG;
-    float savedFillB = fillB;
-    float savedFillA = fillA;
-
-    if (tint) {
-      fillR = tintR;
-      fillG = tintG;
-      fillB = tintB;
-      fillA = tintA;
-
-    } else {
-      fillR = 1;
-      fillG = 1;
-      fillB = 1;
-      fillA = 1;
-    }
-
-    beginShape(QUADS);
-    texture(image); // move outside to make java gl happier?
-    vertex(x1, y1, u1, v1);
-    vertex(x1, y2, u1, v2);
-    vertex(x2, y2, u2, v2);
-    vertex(x2, y1, u2, v1);
-    endShape();
-
-    stroke = savedStroke;
-    fill = savedFill;
-
-    fillR = savedFillR;
-    fillG = savedFillG;
-    fillB = savedFillB;
-    fillA = savedFillA;
-  }
-
-
-  /**
-   * Image drawn in flat "screen space", with no scaling or warping.
-   * this is so common that a special routine is included for it,
-   * because the alternative is much slower.
-   *
-   * @param image image to be drawn
-   * @param sx1 x coordinate of upper-lefthand corner in screen space
-   * @param sy1 y coordinate of upper-lefthand corner in screen space
-   */
-  protected void image0(PImage image, int sx1, int sy1) {
-    int ix1 = 0;
-    int iy1 = 0;
-    int ix2 = image.width;
-    int iy2 = image.height;
-
-    /*
-    if (imageMode == CENTER) {
-      sx1 -= image.width / 2;
-      sy1 -= image.height / 2;
-    }
-    */
-
-    int sx2 = sx1 + image.width;
-    int sy2 = sy1 + image.height;
-
-    // don't draw if completely offscreen
-    // (without this check, ArrayIndexOutOfBoundsException)
-    if ((sx1 > width1) || (sx2 < 0) ||
-        (sy1 > height1) || (sy2 < 0)) return;
-
-    if (sx1 < 0) {  // off left edge
-      ix1 -= sx1;
-      sx1 = 0;
-    }
-    if (sy1 < 0) {  // off top edge
-      iy1 -= sy1;
-      sy1 = 0;
-    }
-    if (sx2 > width) {  // off right edge
-      ix2 -= sx2 - width;
-      sx2 = width;
-    }
-    if (sy2 > height) {  // off bottom edge
-      iy2 -= sy2 - height;
-      sy2 = height;
-    }
-
-    int source = iy1 * image.width + ix1;
-    int target = sy1 * width;
-
-    if (image.format == ARGB) {
-      for (int y = sy1; y < sy2; y++) {
-        int tx = 0;
-
-        for (int x = sx1; x < sx2; x++) {
-          pixels[target + x] =
-            _blend(pixels[target + x],
-                   image.pixels[source + tx],
-                   image.pixels[source + tx++] >>> 24);
-        }
-        source += image.width;
-        target += width;
-      }
-    } else if (image.format == ALPHA) {
-      for (int y = sy1; y < sy2; y++) {
-        int tx = 0;
-
-        for (int x = sx1; x < sx2; x++) {
-          pixels[target + x] =
-            _blend(pixels[target + x],
-                   fillColor,
-                   image.pixels[source + tx++]);
-        }
-        source += image.width;
-        target += width;
-      }
-
-    } else if (image.format == RGB) {
-      target += sx1;
-      int tw = sx2 - sx1;
-      for (int y = sy1; y < sy2; y++) {
-        System.arraycopy(image.pixels, source, pixels, target, tw);
-        // should set z coordinate in here
-        // or maybe not, since dims=0, meaning no relevant z
-        source += image.width;
-        target += width;
-      }
-    }
-  }
-
-
-  /**
-   * Used by OpenGL implementations of PGraphics, so that images,
-   * or textures, can be loaded into texture memory.
-   */
-  public void cache(PImage image) {
-    // keep the lower } on a separate line b/c of preproc
-  }
-
-  public void cache(PImage images[]) {
-    // keep the lower } on a separate line b/c of preproc
-  }
-
-  protected void cache(PImage image, int index) {
-    // keep the lower } on a separate line b/c of preproc
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // ARC
-
-
-  public void arcMode(int mode) {
-    arcMode = mode;
-  }
-
-
-  /**
-   * Identical parameters and placement to ellipse,
-   * but draws only an arc of that ellipse.
-   */
-  public void arc(float start, float stop,
-                  float x, float y, float radius) {
-    arc(start, stop, x, y, radius, radius);
-  }
-
-
-  /**
-   * Identical parameters and placement to ellipse,
-   * but draws only an arc of that ellipse.
-   */
-  public void arc(float start, float stop,
-                  float x, float y, float hr, float vr) {
-    switch (arcMode) {
+  public void circle(float x, float y, float radius) {
+    switch (ellipseMode) {
     case CENTER_RADIUS:
       break;
     case CENTER:
-      hr /= 2f; vr /= 2f;
+      radius /= 2f; radius /= 2f;
       break;
     case CORNER:
-      hr /= 2f; vr /= 2f;
-      x += hr; y += vr;
+      radius /= 2f; radius /= 2f;
+      x += radius; y += radius;
       break;
     case CORNERS:
-      hr = (hr - x) / 2f;
-      vr = (vr - y) / 2f;
-      x += hr;
-      y += vr;
+      radius = (radius - x) / 2f;
+      radius = (radius - y) / 2f;
+      x += radius;
+      y += radius;
       break;
     }
 
-    if (angleMode == DEGREES) {
-      start = start * DEG_TO_RAD;
-      stop = stop * DEG_TO_RAD;
-
-      // before running a while loop like this,
-      // make sure it will exit at some point.
-      if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
-      while (stop < start) stop += TWO_PI;
-    }
-
-    if (depth || !optimize2) {
-      arc3(start, stop, x, y, hr, vr);
-
-    } else {
-      arc2(start, stop, x, y, hr, vr);
-    }
+    // TODO make a circle happen
   }
 
-
-  protected void arc3(float start, float stop,
-                      float x, float y, float hr, float vr) {
-    if (fill) arc3_fill(start, stop, x, y, hr, vr);
-    if (stroke) arc3_stroke(start, stop, x, y, hr, vr);
-  }
-
-
-  /**
-   * Start and stop are in radians, converted by the parent function.
-   * Note that the radians can be greater (or less) than TWO_PI.
-   * This is so that an arc can be drawn that crosses zero mark,
-   * and the user will still collect $200.
-   */
-  protected void arc3_fill(float start, float stop,
-                           float x, float y, float hr, float vr) {
-    // shut off stroke for a minute
-    boolean savedStroke = stroke;
-    stroke = false;
-
-    int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
-    int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
-
-    beginShape(TRIANGLE_FAN);
-    vertex(x, y);
-    int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-    for (int i = startLUT; i < stopLUT; i += increment) {
-      int ii = i % SINCOS_LENGTH;
-      vertex(x + cosLUT[ii] * hr,
-             y + sinLUT[ii] * vr);
-    }
-    // draw last point explicitly for accuracy
-    vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-           y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
-    endShape();
-
-    stroke = savedStroke;
-  }
-
-
-  /**
-   * Almost identical to the arc3_fill() command, but this one
-   * uses a LINE_STRIP and doesn't include the first (center) vertex.
-   */
-  protected void arc3_stroke(float start, float stop,
-                             float x, float y, float hr, float vr) {
-    boolean savedFill = fill;
-    fill = false;
-
-    int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
-    int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
-
-    beginShape(LINE_STRIP);
-    int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-    for (int i = startLUT; i < stopLUT; i += increment) {
-      int ii = i % SINCOS_LENGTH;
-      vertex(x + cosLUT[ii] * hr,
-             y + sinLUT[ii] * vr);
-    }
-    // draw last point explicitly for accuracy
-    vertex(x + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-           y + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
-    endShape();
-
-    fill = savedFill;
-  }
-
-
-  protected void arc2(float start, float stop,
-                      float x, float y, float hr, float vr) {
-    if (fill) arc2_fill(start, stop, x, y, hr, vr);
-    if (stroke) arc2_stroke(start, stop, x, y, hr, vr);
-  }
-
-
-  protected void arc2_fill(float start, float stop,
-                           float x, float y, float hr, float vr) {
-  }
-
-
-  protected void arc2_stroke(float start, float stop,
-                             float x, float y, float hr, float vr) {
-  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1744,370 +845,88 @@ public class PGraphics extends PImage implements PConstants {
       break;
     }
 
-    if (depth || !optimize2) {
-      ellipse3(x, y, hradius, vradius);
-
-    } else {
-      ellipse2(x, y, hradius, vradius);
-    }
+    // TODO draw an ellipse
   }
 
-
-  public void ellipse3(float x, float y, float hradius, float vradius) {
-    if (fill) ellipse3_fill(x, y, hradius, vradius);
-    if (stroke) ellipse3_stroke(x, y, hradius, vradius);
-  }
-
-
-  protected void ellipse3_fill(float x, float y, float h, float v) {
-  }
-
-
-  protected void ellipse3_stroke(float x, float y, float h, float v) {
-  }
-
-
-  public void ellipse2(float x, float y, float hradius, float vradius) {
-    if (fill) ellipse2_fill(x, y, hradius, vradius);
-    if (stroke) ellipse2_stroke(x, y, hradius, vradius);
-  }
-
-
-  protected void ellipse2_fill(float x, float y, float h, float v) {
-  }
-
-
-  protected void ellipse2_stroke(float x, float y, float h, float v) {
-  }
-
-
-  /*
-  protected void ellipse_mess(float x, float y,
-                              float hradius, float vradius) {
-    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
-    // now uses current scale factors to determine "real" transformed radius
-
-    //System.out.println(m00 + " " + m11);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
-
-    // notched this up to *3 instead of *2 because things were
-    // looking a little rough, i.e. the calculate->arctangent example [fry]
-
-    // also removed the m00 and m11 because those were causing weirdness
-    // need an actual measure of magnitude in there [fry]
-
-    int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
-
-    boolean plain =
-      !lights && !smooth && (strokeWeight == 1) &&
-      !fillAlpha && !strokeAlpha;
-
-    //boolean flat = (dimensions == 0) ||
-    //((dimensions == 2) && (m00 == m11) && (m00 == 1));
-    // FIXME
-    boolean flat = false;
-
-    if (plain && flat) {
-      if (hradius == vradius) {
-        circle0((int)x, (int)y, (int)hradius);
-
-      } else {
-        ellipse0((int)x, (int)y, (int)hradius, (int)vradius);
-      }
-
-    } else {
-      // [toxi031031] adapted to use new lookup tables
-      float inc = (float)SINCOS_LENGTH / cAccuracy;
-
-      float val = 0;
-      beginShape(POLYGON);
-      for (int i = 0; i < cAccuracy; i++) {
-        vertex(x + cosLUT[(int) val] * hradius,
-               y + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      endShape();
-    }
-  }
-  */
-
-
-  /*
-  private void flat_ellipse(int centerX, int centerY, int a, int b) {
-    //FIXME
-    //if (dimensions == 2) {  // probably a translate but no scale
-      centerX = (int) screenX(centerX, centerY, 0);
-      centerY = (int) screenY(centerX, centerY, 0);
-      //}
-    if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
-    if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
-  }
-  */
-
-
-  private void ellipse0_stroke_rough(int cx, int cy, int a, int b) {
-    ellipse0_rough(cx, cy, a, b, false);
-  }
-
-
-  private void ellipse0_fill_rough(int cx, int cy, int a, int b) {
-    ellipse0_rough(cx, cy, a, b, true);
-  }
-
-
-  /**
-   * Bresenham-style ellipse drawing function, adapted from a posting to
-   * comp.graphics.algortihms.
-   *
-   * This function is included because the quality is so much better,
-   * and the drawing significantly faster than with adaptive ellipses
-   * drawn using the sine/cosine tables.
-   *
-   * @param centerX x coordinate of the center
-   * @param centerY y coordinate of the center
-   * @param a horizontal radius
-   * @param b vertical radius
-   */
-  private void ellipse0_rough(int centerX, int centerY,
-                              int a, int b, boolean filling) {
-    //int x, y, a2, b2, s, t;
-
-    int a2 = a*a;
-    int b2 = b*b;
-    int x = 0;
-    int y = b;
-    int s = a2*(1-2*b) + 2*b2;
-    int t = b2 - 2*a2*(2*b-1);
-    ellipse0_rough_internal(centerX, centerY, x, y, filling);
-
-    do {
-      if (s < 0) {
-        s += 2*b2*(2*x+3);
-        t += 4*b2*(x+1);
-        x++;
-      } else if (t < 0) {
-        s += 2*b2*(2*x+3) - 4*a2*(y-1);
-        t += 4*b2*(x+1) - 2*a2*(2*y-3);
-        x++;
-        y--;
-      } else {
-        s -= 4*a2*(y-1);
-        t -= 2*a2*(2*y-3);
-        y--;
-      }
-      ellipse0_rough_internal(centerX, centerY, x, y, filling);
-
-    } while (y > 0);
-  }
-
-
-  private final void ellipse0_rough_internal(int centerX, int centerY,
-                                             int ellipseX, int ellipseY,
-                                             boolean filling) {
-    // unfortunately this can't handle fill and stroke simultaneously,
-    // because the fill will later replace some of the stroke points
-
-    if (filling) {
-      for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
-        point0(i, centerY - ellipseY, 0, fillColor);
-        point0(i, centerY + ellipseY, 0, fillColor);
-      }
-    } else {
-      point0(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
-      point0(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
-      point0(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
-      point0(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
-    }
-  }
 
 
   //////////////////////////////////////////////////////////////
 
+  // ARC
 
-  public void circle(float x, float y, float radius) {
+
+  //public void arcMode(int mode) {
+  //arcMode = mode;
+  //}
+
+
+  /**
+   * Identical parameters and placement to ellipse,
+   * but draws only an arc of that ellipse.
+   */
+  public void arc(float start, float stop,
+                  float x, float y, float radius) {
+    arc(start, stop, x, y, radius, radius);
+  }
+
+
+  /**
+   * Identical parameters and placement to ellipse,
+   * but draws only an arc of that ellipse.
+   */
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr) {
     switch (ellipseMode) {
     case CENTER_RADIUS:
       break;
     case CENTER:
-      radius /= 2f; radius /= 2f;
+      hr /= 2f; vr /= 2f;
       break;
     case CORNER:
-      radius /= 2f; radius /= 2f;
-      x += radius; y += radius;
+      hr /= 2f; vr /= 2f;
+      x += hr; y += vr;
       break;
     case CORNERS:
-      radius = (radius - x) / 2f;
-      radius = (radius - y) / 2f;
-      x += radius;
-      y += radius;
+      hr = (hr - x) / 2f;
+      vr = (vr - y) / 2f;
+      x += hr;
+      y += vr;
       break;
     }
 
-    if (depth || !optimize2) {
-      ellipse3(x, y, radius, radius);
+    if (angleMode == DEGREES) {
+      start = start * DEG_TO_RAD;
+      stop = stop * DEG_TO_RAD;
 
-    } else {
-      circle2(x, y, radius);
+      // before running a while loop like this,
+      // make sure it will exit at some point.
+      if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
+      while (stop < start) stop += TWO_PI;
     }
+
+    // TODO draw an arc
   }
 
 
-  public void circle2(float x, float y, float radius) {
+
+  //////////////////////////////////////////////////////////////
+
+  // 3D SHAPES
+
+
+  public void box(float size) {
   }
 
-
-  /*
-  private void flat_circle(int centerX, int centerY, int radius) {
-    // FIXME
-    //if (dimensions == 2) {  // translate but no scale
-      centerX = (int) screenX(centerX, centerY, 0);
-      centerY = (int) screenY(centerX, centerY, 0);
-      //}
-    if (fill) circle0_fill(centerX, centerY, radius);
-    if (stroke) circle0_stroke(centerX, centerY, radius);
-  }
-  */
-
-
-  private void circle0(float x, float y, float r) {
-    if (fill) circle0_fill(x, y, 0, r, fillColor);
-    if (stroke) circle0_stroke(x, y, 0, r, strokeColor);
+  public void box(float w, float h, float d) {
   }
 
-
-  private void circle0_stroke(float x, float y, float z, float r, int color) {
-    if (smooth) {
-      circle0_stroke_smooth(x, y, z, r, color);
-    } else {
-      circle0_stroke_rough(x, y, z, r, color);
-    }
+  public void sphereDetail(int res) {
   }
 
-
-  private void circle0_stroke_smooth(float x, float y, float z,
-                                     float r, int color) {
-    // TODO draw a circle that's smoothed in screen space coords
+  public void sphere(float r) {
   }
 
-
-  /**
-   * Draw the outline around a flat circle using a bresenham-style
-   * algorithm. Adapted from drawCircle function in "Computer Graphics
-   * for Java Programmers" by Leen Ammeraal, p. 110
-   *
-   * This function is included because the quality is so much better,
-   * and the drawing significantly faster than with adaptive ellipses
-   * drawn using the sine/cosine tables.
-   *
-   * Circle quadrants break down like so:
-   *              |
-   *        \ NNW | NNE /
-   *          \   |   /
-   *       WNW  \ | /  ENE
-   *     -------------------
-   *       WSW  / | \  ESE
-   *          /   |   \
-   *        / SSW | SSE \
-   *              |
-   *
-   * @param xc x center
-   * @param yc y center
-   * @param r radius
-   */
-  private void circle0_stroke_rough(float xcf, float ycf, float z,
-                                    float rf, int color) {
-    int xc = (int) (xcf + 0.5f);
-    int yc = (int) (ycf + 0.5f);
-    int r = (int) (rf + 0.5f);
-
-    int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
-    while (x < y) {
-      point0(xc + x, yc + y, z, color); // NNE
-      point0(xc + y, yc - x, z, color); // ESE
-      point0(xc - x, yc - y, z, color); // SSW
-      point0(xc - y, yc + x, z, color); // WNW
-
-      x++; E += u; u += 2;
-      if (v < 2 * E) {
-        y--; E -= v; v -= 2;
-      }
-      if (x > y) break;
-
-      point0(xc + y, yc + x, z, color); // ENE
-      point0(xc + x, yc - y, z, color); // SSE
-      point0(xc - y, yc - x, z, color); // WSW
-      point0(xc - x, yc + y, z, color); // NNW
-    }
-  }
-
-
-  private void circle0_fill(float x, float y, float z, float r, int color) {
-    if (smooth) {
-      circle0_smooth_fill(x, y, z, r, color);
-    } else {
-      circle0_rough_fill(x, y, z, r, color);
-    }
-  }
-
-
-  /**
-   * Heavily adapted version of the above algorithm that handles
-   * filling the ellipse. Works by drawing from the center and
-   * outwards to the points themselves. Has to be done this way
-   * because the values for the points are changed halfway through
-   * the function, making it impossible to just store a series of
-   * left and right edges to be drawn more quickly.
-   *
-   * @param xc x center
-   * @param yc y center
-   * @param r radius
-   */
-  private void circle0_rough_fill(float xcf, float ycf, float z,
-                                  float rf, int color) {
-    int xc = (int) (xcf + 0.5f);
-    int yc = (int) (ycf + 0.5f);
-    int r = (int) (rf + 0.5f);
-
-    int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
-    while (x < y) {
-      for (int xx = xc; xx < xc + x; xx++) {  // NNE
-        point0(xx, yc + y, z, color);
-      }
-      for (int xx = xc; xx < xc + y; xx++) {  // ESE
-        point0(xx, yc - x, z, color);
-      }
-      for (int xx = xc - x; xx < xc; xx++) {  // SSW
-        point0(xx, yc - y, z, color);
-      }
-      for (int xx = xc - y; xx < xc; xx++) {  // WNW
-        point0(xx, yc + x, z, color);
-      }
-
-      x++; E += u; u += 2;
-      if (v < 2 * E) {
-        y--; E -= v; v -= 2;
-      }
-      if (x > y) break;
-
-      for (int xx = xc; xx < xc + y; xx++) {  // ENE
-        point0(xx, yc + x, z, color);
-      }
-      for (int xx = xc; xx < xc + x; xx++) {  // SSE
-        point0(xx, yc - y, z, color);
-      }
-      for (int xx = xc - y; xx < xc; xx++) {  // WSW
-        point0(xx, yc - x, z, color);
-      }
-      for (int xx = xc - x; xx < xc; xx++) {  // NNW
-        point0(xx, yc + y, z, color);
-      }
-    }
-  }
-
-
-  private void circle0_smooth_fill(float x, float y, float z,
-                                   float r, int color) {
+  public void sphere(float x, float y, float z, float r) {
   }
 
 
@@ -2223,17 +1042,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected boolean bezier_inited = false;
-  protected int bezier_detail = 20; //BEZIER_DETAIL;
-  // msjvm complained when bezier_basis was final
-  protected float bezier_basis[][] = {
-    { -1,  3, -3,  1},
-    {  3, -6,  3,  0},
-    { -3,  3,  0,  0},
-    {  1,  0,  0,  0}
-  };
-  protected float bezier_forward[][]; // = new float[4][4];
-  protected float bezier_draw[][]; // = new float[4][4];
+  public void bezier(float x1, float y1, float z1,
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3,
+                     float x4, float y4, float z4) {
+    // not implemented in 2D
+  }
 
 
   protected void bezier_init() {
@@ -2257,15 +1071,6 @@ public class PGraphics extends PImage implements PConstants {
     // saves much time since this needn't be done for each curve
     mult_spline_matrix(bezier_forward, bezier_basis, bezier_draw, 4);
   }
-
-
-  protected boolean curve_inited = false;
-  protected int curve_detail = 20;
-  // catmull-rom basis matrix, perhaps with optional s parameter
-  protected float curve_tightness = 0;
-  protected float curve_basis[][]; // = new float[4][4];
-  protected float curve_forward[][]; // = new float[4][4];
-  protected float curve_draw[][];
 
 
   protected void curve_init() {
@@ -2536,6 +1341,66 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // IMAGE
+
+
+
+  protected void draw_image(PImage image,
+                            float x1, float y1, float x2, float y2,
+                            int u1, int v1, int u2, int v2) {
+    // TODO blit an image to the screen
+  }
+
+
+  public void image(PImage image, float x, float y) {
+    if ((imageMode == CORNER) ||
+        (imageMode == CORNERS)) {
+      draw_image(image,
+                 x, y, x + image.width, y + image.height,
+                 0, 0, image.width, image.height);
+
+    } else if ((imageMode == CENTER) ||
+               (imageMode == CENTER_RADIUS)) {
+      draw_image(image,
+                 x - image.width/2.0f, y - image.height/2.0f,
+                 x + image.width/2.0f, y + image.height/2.0f,
+                 0, 0, image.width, image.height);
+    }
+  }
+
+
+  public void image(PImage image,
+                    float a, float b, float c, float d) {
+    image(image, a, b, c, d, 0, 0, image.width, image.height);
+  }
+
+
+  public void image(PImage image,
+                    float x1, float y1, float x2, float y2,
+                    int u1, int v1, int u2, int v2) {
+    if (imageMode == CORNER) {
+      draw_image(image,
+                 a, b, a+c, b+d,
+                 u1, v1, u2, v2);
+
+    } else if (imageMode == CORNERS) {
+      draw_image(image,
+                 a, b, c, d,
+                 u1, v1, u2, v2);
+
+    } else if ((imageMode == CENTER) ||
+               (imageMode == CENTER_RADIUS)) {
+      draw_image(image,
+                 a - c/2f, b - d/2f,
+                 a + c/2f, b + d/2f,
+                 u1, v1, u2, v2);
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // TEXT/FONTS
 
 
@@ -2551,19 +1416,20 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void textFont(PFont which, float size) {
+    textFont(which);
+    textSize(size);
+  }
+
+
   public void textSize(float size) {
     if (textFont != null) {
-      textFont.size(size);
+      //textFont.size(size);
+      textSize = size;
 
     } else {
       System.err.println("First set a font before setting its size.");
     }
-  }
-
-
-  public void textFont(PFont which, float size) {
-    textFont(which);
-    textSize(size);
   }
 
 
@@ -2598,26 +1464,23 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(char c, float x, float y) {
-    text(c, x, y, 0);
-  }
-
-  public void text(char c, float x, float y, float z) {
     if (textFont != null) {
-      textFont.text(c, x, y, z, this);
+      textFont.text(c, x, y, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");
     }
+  }
+
+
+  public void text(char c, float x, float y, float z) {
+    // not supported in 2D
   }
 
 
   public void text(String s, float x, float y) {
-    text(s, x, y, 0);
-  }
-
-  public void text(String s, float x, float y, float z) {
     if (textFont != null) {
-      textFont.text(s, x, y, z, this);
+      textFont.text(s, x, y, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");
@@ -2625,11 +1488,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void text(String s, float x, float y, float w, float h) {
-    text(s, x, y, 0, w, h);
+  public void text(String s, float x, float y, float z) {
+    // not supported in 2D
   }
 
-  public void text(String s, float x1, float y1, float z, float x2, float y2) {
+
+  public void text(String s, float x1, float y1, float x2, float y2) {
     if (textFont != null) {
       float hradius, vradius;
       switch (rectMode) {
@@ -2666,21 +1530,20 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void text(int num, float x, float y) {
-    text(String.valueOf(num), x, y, 0);
+  public void text(String s, float x1, float y1, float z, float x2, float y2) {
+    // not supported in 2D
   }
+
+
+  public void text(int num, float x, float y) {
+    text(String.valueOf(num), x, y);
+  }
+
 
   public void text(int num, float x, float y, float z) {
-    text(String.valueOf(num), x, y, z);
+    // not supported in 2D
   }
 
-
-  /**
-   * See three-dimensional version of the same function, below.
-   */
-  public void text(float num, float x, float y) {
-    text(PApplet.nfs(num, 0, 3), x, y, 0);
-  }
 
   /**
    * This does a basic number formatting, to avoid the
@@ -2689,8 +1552,13 @@ public class PGraphics extends PImage implements PConstants {
    * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
    */
+  public void text(float num, float x, float y) {
+    text(PApplet.nfs(num, 0, 3), x, y);
+  }
+
+
   public void text(float num, float x, float y, float z) {
-    text(PApplet.nf(num, 0, 3), x, y, z);
+    // not supported in 2D
   }
 
 
@@ -2700,24 +1568,32 @@ public class PGraphics extends PImage implements PConstants {
   // MATRIX TRANSFORMATIONS
 
 
+  public void angleMode(int mode) {
+    angleMode = mode;
+  }
+
+
   public void translate(float tx, float ty) {
     m02 += tx*m00 + ty*m01 + m02;
     m12 += tx*m10 + ty*m11 + m12;
   }
 
 
-  //public void translate(float tx, float ty, float tz) {
-  //}
+  public void translate(float tx, float ty, float tz) {
+    // not supported in 2D
+  }
 
+  public void rotateX(float angle) {
+    // not supported in 2D
+  }
 
-  //public void rotateX(float angle) {
-  //}
+  public void rotateY(float angle) {
+    // not supported in 2D
+  }
 
-  //public void rotateY(float angle) {
-  //}
-
-  //public void rotateZ(float angle) {
-  //}
+  public void rotateZ(float angle) {
+    // not supported in 2D
+  }
 
 
   /**
@@ -2733,8 +1609,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  //public void rotate(float angle, float vx, float vy, float vz) {
-  //}
+  public void rotate(float angle, float vx, float vy, float vz) {
+    // not supported in 2D
+  }
 
 
   /**
@@ -2753,20 +1630,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  //public void scale(float x, float y, float z) {
-  //}
-
-
-  /*
-  public void transform(float n00, float n01, float n02, float n03,
-                        float n10, float n11, float n12, float n13,
-                        float n20, float n21, float n22, float n23,
-                        float n30, float n31, float n32, float n33) {
-    //dimensions = 3;
-    applyMatrix(n00, n01, n02, n03,  n10, n11, n12, n13,
-                n20, n21, n22, n23,  n30, n31, n32, n33);
+  public void scale(float x, float y, float z) {
+    // not supported in 2D
   }
-  */
+
 
 
   //////////////////////////////////////////////////////////////
@@ -2776,7 +1643,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void push() {
     if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
-      message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
+      //message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
       return;
     }
     float mat[] = matrixStack[matrixStackDepth];
@@ -2788,7 +1655,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void pop() {
     if (matrixStackDepth == 0) {
-      message(COMPLAINT, "matrix stack underflow, to many popmatrix");
+      //message(COMPLAINT, "matrix stack underflow, to many popmatrix");
       return;
     }
     matrixStackDepth--;
@@ -2828,6 +1695,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+    // not supported in 2D
+  }
+
+
   /**
    * Print the current model (or "transformation") matrix.
    */
@@ -2856,6 +1731,42 @@ public class PGraphics extends PImage implements PConstants {
   // CAMERA
 
 
+  public void cameraMode(int mode) {
+  }
+
+  public void beginCamera() {
+  }
+
+  public void endCamera() {
+  }
+
+  public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far) {
+  }
+
+  public void perspective(float fovy, float aspect, float zNear, float zFar) {
+  }
+
+  public void frustum(float left, float right, float bottom,
+                      float top, float znear, float zfar) {
+  }
+
+  public void lookat(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+  }
+
+  public void printCamera() {
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SCREEN TRANSFORMS
+
+
   public float screenX(float x, float y) {
     return m00*x + m01*y + m02;
   }
@@ -2863,6 +1774,60 @@ public class PGraphics extends PImage implements PConstants {
 
   public float screenY(float x, float y) {
     return m10*x + m11*y + m12;
+  }
+
+
+  public float screenX(float x, float y, float z) {
+  }
+
+  public float screenY(float x, float y, float z) {
+  }
+
+  public float screenZ(float x, float y, float z) {
+  }
+
+  public float objectX(float x, float y, float z) {
+  }
+
+  public float objectY(float x, float y, float z) {
+  }
+
+  public float objectZ(float x, float y, float z) {
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // LIGHTS
+
+
+  public void lights() {
+  }
+
+  public void noLights() {
+  }
+
+  public void light(int num, float x, float y, float z,
+                    float red, float green, float blue) {
+  }
+
+  public void lightEnable(int num) {
+  }
+
+  public void lightDisable(int num) {
+  }
+
+  public void lightPosition(int num, float x, float y, float z) {
+  }
+
+  public void lightAmbient(int num, float x, float y, float z) {
+  }
+
+  public void lightDiffuse(int num, float x, float y, float z) {
+  }
+
+  public void lightSpecular(int num, float x, float y, float z) {
   }
 
 
@@ -3307,32 +2272,10 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // HINTS
-
-  // for the most part, hints are temporary api quirks,
-  // for which a proper api hasn't been properly worked out.
-  // for instance SMOOTH_IMAGES existed because smooth()
-  // wasn't yet implemented, but it will soon go away.
-
-  // they also exist for obscure features in the graphics
-  // engine, like enabling/disabling single pixel lines
-  // that ignore the zbuffer, the way they do in alphabot.
-
-  public void hint(int which) {
-    hints[which] = true;
-  }
-
-  public void unhint(int which) {
-    hints[which] = false;
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
   // MESSAGES / ERRORS / LOGGING
 
 
+  /*
   public void message(int level, String message) {  // ignore
     switch (level) {
     case CHATTER:
@@ -3351,7 +2294,7 @@ public class PGraphics extends PImage implements PConstants {
     message(level, message);
     e.printStackTrace();
   }
-
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -3489,6 +2432,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /*
   public final static int _blend(int p1, int p2, int a2) {
     // scale alpha by alpha of incoming pixel
     a2 = (a2 * (p2 >>> 24)) >> 8;
@@ -3500,7 +2444,7 @@ public class PGraphics extends PImage implements PConstants {
 
     return 0xff000000 | (r << 8) | g | b;
   }
-
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -3514,10 +2458,6 @@ public class PGraphics extends PImage implements PConstants {
   // with the versions found in PApplet when fxn importing happens
   // also might be faster that way. hmm.
 
-
-  public void angleMode(int mode) {
-    angleMode = mode;
-  }
 
   private final float mag(float a, float b) {
     return (float)Math.sqrt(a*a + b*b);
