@@ -45,7 +45,8 @@ public class PdeEditor extends Panel {
   PdeEditorConsole console;
 
   //JEditorPane textarea;
-  public PdeEditorTextPane textarea;
+  //public PdeEditorTextPane textarea;
+  JEditTextArea textarea;
 
   boolean externalEditor;
 
@@ -115,8 +116,11 @@ public class PdeEditor extends Panel {
     header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
 
-    textarea = new PdeEditorTextPane();
+    //textarea = new PdeEditorTextPane();
+    textarea = new JEditTextArea();
+    textarea.setTokenMarker(new JavaTokenMarker());
 
+    /*  PREVIOUS.. uses PdeEditorTextPane
     JScrollPane scroller = new JScrollPane();
     //scroller.setDoubleBuffered(true);
     JViewport viewport = scroller.getViewport();
@@ -131,6 +135,8 @@ public class PdeEditor extends Panel {
     textarea.setFont(PdeBase.getFont("editor.program.default.style",
 				     new Font("Monospaced", 
 					      Font.PLAIN, 12)));
+    */
+
     /*
       // doesn't work
     String farbe = PdeBase.get("editor.program.default.style");
@@ -151,11 +157,15 @@ public class PdeEditor extends Panel {
     textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
     			    Color.black));
     */
+
+    /*  PREVIOUS.. uses PdeEditorTextPane
     textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
     				    Color.white));
 
     rightPanel.add("Center", scroller);
-    //rightPanel.add("Center", textarea);
+    */
+
+    rightPanel.add("Center", textarea);
 
     /*
     Panel statusPanel = new Panel();
@@ -574,7 +584,8 @@ public class PdeEditor extends Panel {
 	    buffer.append(line + "\n");
 	    //System.out.println("'" + line + "'");
 	  }
-	  textarea.editorSetText(buffer.toString());
+	  //textarea.editorSetText(buffer.toString());
+	  textarea.setText(buffer.toString());
 	  historyLast = textarea.getText();
 	  setSketchModified(false);
 
@@ -976,7 +987,8 @@ afterwards, some of these steps need a cleanup function
 	}
 	program = buffer.toString();
 	//System.out.print(program);
-	textarea.editorSetText(program);
+	//textarea.editorSetText(program);
+	textarea.setText(program);
 
 	//System.out.print(textarea.getText());
 
@@ -1013,7 +1025,7 @@ afterwards, some of these steps need a cleanup function
       } else {
 	//System.out.println("new guy, so setting empty");
 	// style info only gets set if there's text
-	textarea.editorSetText("");
+	textarea.setText("");
 	//textarea.editorSetText(" ");
 	// now set to now text. yay hack!
 	//textarea.editorSetText(""); // this doesn't work. oh well
@@ -1090,19 +1102,28 @@ afterwards, some of these steps need a cleanup function
     File file = new File(directory, filename);
 
     try {
+      System.out.println("handleSave: results of getText");
       System.out.print(s);
 
       BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes())));
 
+      PrintWriter writer = 
+	new PrintWriter(new BufferedWriter(new FileWriter(file)));
+
       String line = null;
       while ((line = reader.readLine()) != null) {
-	System.out.println("'" + line + "'");
+	System.out.println("w '" + line + "'");
+	writer.println(line);
       }
+      writer.flush();
+      writer.close();
 
+      /*
       FileWriter writer = new FileWriter(file);
       writer.write(s);
       writer.flush();
       writer.close();
+      */
 
       //lastDirectory = directory;
       //lastFile = filename;
@@ -1174,7 +1195,8 @@ afterwards, some of these steps need a cleanup function
     handleOpen(newSketchName, newSketchFile, newSketchDir);
 
     // update with the new junk and save that as the new code
-    textarea.editorSetText(textareaContents);
+    //textarea.editorSetText(textareaContents);
+    textarea.setText(textareaContents);
     textarea.setCaretPosition(textareaPosition);
     doSave();
   }
@@ -1678,7 +1700,8 @@ afterwards, some of these steps need a cleanup function
 	gotBlankLine = false;
       }
     }
-    textarea.editorSetText(buffer.toString());
+    //textarea.editorSetText(buffer.toString());
+    textarea.setText(buffer.toString());
     setSketchModified(true);
     buttons.clear();
   }

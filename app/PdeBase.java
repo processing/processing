@@ -251,6 +251,7 @@ public class PdeBase extends Frame implements ActionListener {
     menu.addActionListener(this);
     menubar.add(menu);
 
+    /*
     createActionTable(editor.textarea);
     menu = new Menu("Edit");
     //undoAction = new UndoAction();
@@ -283,6 +284,7 @@ public class PdeBase extends Frame implements ActionListener {
     // i hear a cs prof or a first year student screaming somewhere
     Document document = editor.textarea.document;
     document.addUndoableEditListener(new MyUndoableEditListener());
+    */
 
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Run", new MenuShortcut('R')));
