@@ -287,6 +287,13 @@ public class PdeCompiler implements PdeMessageConsumer {
         //err += "error:".length();
         String description = s1.substring(err + "Error:".length());
         description = description.trim();
+        
+        String hasLoop = "The method \"void loop();\" with default access";
+        if (description.indexOf(hasLoop) != -1) {
+          description = 
+            "Rename loop() to draw() in Processing 0070 and higher";
+        }
+
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);
         exception = new PdeException(description, fileIndex, lineNumber-1, -1);
