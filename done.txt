@@ -1,3 +1,69 @@
+0039 BUGS WITH CODE
+//BFont font1;
+//BFont font2;
+//font1 = loadFont("Univers76.vlw.gz");
+//font2 = loadFont("Bodoni.vlw.gz");
+println("Univers76.vlw.gz");
+float a = 80.4;
+float b = .7;
+float c = (b * 20.3);
+float d = 10;
+fill(a, b, c);
+rect(a, b, c, c);
+
+
+0038
+X set bg color on macos9 buttons as well
+X get icon in macos9/macosx/windows formats
+X wahoo! figure out how to do do simple .exe with icons
+o   use launcher code from sun jre
+o   needs to be built from command line
+X keyPressed() and others weren't being called
+X serial work under windows
+X   make bapplet a serialporteventlistener
+X   remove 'public' from beginner listener event handlers
+X   trying to make eventlistener work
+X   comm.jar has to be in classpath for kjc (interesting)
+X   fixed launcher.exe because of problems in classpath
+X how to make double-clickable version for osx
+X   might be as simple as combined jar with manifest and symlink
+X   jar doesn't like opening pde.properties b/c getClass fails
+X app title comes up as PdeBase
+X   -Xdock:name property or 
+X   com.apple.mrj.application.apple.menu.about.name (gulp)
+X -XDock:icon (lowercase dock?) to set icon, or
+X   .icns file in the Contents/Resources of the bundle
+X   check tn on java runtime properties for macosx
+X need fxns to test platform and java version
+X serial works poorly for starting/stopping applets
+X   appears to be fixed through use of static object in bagel
+X   breaks on every 2nd run when using serial apps (or others?)
+X     try calling gc on stop as well
+X make it simpler to build the code.. 
+X   buzz.pl actually no longer needed (no ifdefs)
+o   use a regular makefile for everything
+X getResource stuff breaks, sketch.properties can't save
+X   FileNotFoundException: /FILE9/+/sketch.properties
+X doc: requires java 1.3.1 update 1
+X button backgrounds are weird since not square
+X   (seen when asking to save a file etc)
+X   see if possible to set background of button object
+X   or maybe just background of the awt object it sits on
+X get casey's examples into the sketchbook
+X   these should become the standard test cases for everything
+o crashes when people click on help in top bar (same in DBN) [macos9]
+X   not reproduced.. mrjappbuilder seems stabler?
+X use osx utilities to setfileinfo for .jar files etc
+o try to build macutils under osx
+X bug where pde.properties was being replaced for sketch.properties
+X changed pde.properties_PLATFORM -> pde_PLATFORM.properties
+X f subst problems: include , and ; as allowable
+X   float f = 0.3; and fill(0.3, 0.2, 0.1);
+X windows needs to work from the .exe
+X   also included run.bat just in case
+X test the gcc executable, and tweak dist script accordingly
+
+
 0037
 X copying files from 'data' dir is not recursive.. fixed
 X move structure of app/application dirs around a bit

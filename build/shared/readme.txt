@@ -137,6 +137,25 @@ VERSIONS: this version has only been tested under Mac OS 9.2.2.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+WHAT IS SKETCHBOOK?
+
+>>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+EXTERNAL FILES / FONTS / READING DATA FILES
+
+
+things need to go in a folder called 'data' inside sketchbook/default
+
+>>>>>>>>>>>>>> NEED TO WRITE THIS SECTION <<<<<<<<<<<<<<<<
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 SERIAL PORT
 
 the serial port is a useful way to hook things up to hardware
