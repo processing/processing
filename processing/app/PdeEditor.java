@@ -1402,7 +1402,10 @@ public class PdeEditor extends JPanel {
 
         Pattern pattern = compiler.compile(sizing);
 
-        PatternMatcherInput input = new PatternMatcherInput(program);
+        // adds a space at the beginning, in case size() is the very first
+        // thing in the program (very common), since the regexp needs to check
+        // for things in front of it.
+        PatternMatcherInput input = new PatternMatcherInput(" " + program);
         if (matcher.contains(input, pattern)) {
           MatchResult result = matcher.getMatch();
           try {
@@ -1422,12 +1425,7 @@ public class PdeEditor extends JPanel {
                                           "Could not find applet size",
                                           JOptionPane.WARNING_MESSAGE);
           }
-        }
-          //} else {
-          // no size() defined, make it default
-          //sizeInfo = "size(" + BApplet.DEFAULT_WIDTH + ", " + 
-          //BApplet.DEFAULT_HEIGHT + "); ";
-          //}
+        }  // else no size() command found
 
       } catch (MalformedPatternException e){
         e.printStackTrace();

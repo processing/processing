@@ -63,6 +63,32 @@ public class PdeRuntime implements PdeMessageConsumer {
   }
 
 
+  class SystemOutSiphon implements Runnable {
+    InputStream input;
+    Thread thread;
+
+
+    public SystemOutSiphon(InputStream input) {
+      this.input = input;
+
+      thread = new Thread(this);
+      thread.start();
+    }
+
+    public void run() {    
+      try {
+        int c;
+        while ((c = input.read()) != -1) {
+          System.out.print((char) c);
+        }
+      } catch (Exception e) { 
+        System.err.println("PdeSystemOutSiphon error " + e);
+        e.printStackTrace();
+      }
+    }
+  }
+
+
   public void start(Point windowLocation, PrintStream leechErr)
     throws PdeException {
 
@@ -90,7 +116,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         };
 
         process = Runtime.getRuntime().exec(command);
-        new PdeMessageSiphon(process.getInputStream(), this);
+        //new PdeMessageSiphon(process.getInputStream(), this);
+        new SystemOutSiphon(process.getInputStream());
         new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
 
