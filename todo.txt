@@ -1,4 +1,13 @@
 0064
+X re-enable (bad) thick line code since it was completely shut off
+X set default filename for the font
+X line 6:1: unexpected char: 0xA0
+X clicking cancel on 'save changes' doesn't cancel, but still quits
+X   removed the cancel button
+
+
+_ figure out how to cancel 'save changes' on macosx and windows
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
 _ set PATH to include java (!)
 _ history could be gzipped and appended to history.dat
 _   along with another file that is actually a table of offsets
@@ -11,7 +20,7 @@ _ network/shared_canvas, network/value has old code
 _ write script to remove .DS_Store and CVS folders from dist
 _ include version number in the about box
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
-_ set default filename for the font
+_ change run.bat, run-expert.bat to use 128m
 
 
 MEDIUM
