@@ -2,7 +2,7 @@
 
 /*
   PdeRuntime - runs compiled java applet
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -39,39 +39,31 @@ public class PdeRuntime implements PdeMessageConsumer {
   BApplet applet;
   PdeException exception;
   Window window;
-  PdeEditor editor;
   PrintStream leechErr;
-  String className;
+  //String className;
+
+  PdeEditor editor;
+  PdeSketch sketch;
 
   boolean newMessage;
   int messageLineCount;
 
   Process process;
   OutputStream processOutput;
-  boolean externalRuntime;
-  //String codeFolderPath;
-  //String externalPaths;
-  String libraryPath;
-  String classPath;
+
+  //boolean externalRuntime;
+  //String libraryPath;
+  //String classPath;
 
 
-  public PdeRuntime(PdeEditor editor, String className,
-                    boolean externalRuntime, 
-                    String classPath, String libraryPath) {
-                    //String codeFolderPath, String externalPaths) {
+  public PdeRuntime(PdeSketch sketch, PdeEditor editor) {
+    this.sketch = sketch;
     this.editor = editor;
-    this.className = className;
-
-    this.externalRuntime = externalRuntime;
-    this.classPath = classPath;
-    this.libraryPath = libraryPath;
-    //this.codeFolderPath = codeFolderPath;
-    //this.externalPaths = externalPaths;
   }
 
 
-  public void start(Point windowLocation, PrintStream leechErr)
-    throws PdeException {
+  public void start(Point windowLocation, 
+                    PrintStream leechErr) throws PdeException {
 
     this.leechErr = new PrintStream(new PdeMessageStream(this));
 
@@ -82,23 +74,28 @@ public class PdeRuntime implements PdeMessageConsumer {
     int y1 = parentLoc.y;
 
     try {
-      if (externalRuntime) {
+      if (sketch.externalRuntime) {
+        // if there was a saved location (this guy has been run more than
+        // once) then windowLocation will be set to the last position of
+        // the sketch window. this will be passed to the BApplet runner
+        // using something like --external=e30,20 where the e stands for
+        // exact. otherwise --external=x,y for just the regular positioning.
+        String location = (windowLocation != null) ? 
+          (BApplet.EXACT_LOCATION + 
+           windowLocation.x + "," + windowLocation.y) : 
+          (x1 + "," + y1);      
+
         String command[] = new String[] { 
           "java",
-          "-Djava.library.path=" + libraryPath,  // might be ""
+          "-Djava.library.path=" + sketch.libraryPath,  // might be ""
           "-cp",
-          classPath,
+          sketch.classPath,
           "BApplet",
-          BApplet.EXTERNAL_FLAG + ((windowLocation != null) ? 
-                                   ("e" + 
-                                    windowLocation.x + "," + 
-                                    windowLocation.y) : 
-                                   (x1 + "," + y1)),
-          className
+          BApplet.EXTERNAL_FLAG + location,
+          sketch.mainClassName
         };
 
         process = Runtime.getRuntime().exec(command);
-        //new PdeMessageSiphon(process.getInputStream(), this);
         new SystemOutSiphon(process.getInputStream());
         new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
@@ -108,7 +105,6 @@ public class PdeRuntime implements PdeMessageConsumer {
         applet = (BApplet) c.newInstance();
 
         // replaces setRuntime with BApplet having leechErr [fry]
-        //applet.setRuntime(this);
         applet.leechErr = leechErr;
 
         // has to be before init
@@ -155,7 +151,7 @@ public class PdeRuntime implements PdeMessageConsumer {
           // toxi_030903: moved keyListener to PdeEditor's presentationWindow
 
         } else {
-          window = new Frame(editor.sketchName); // use ugly windows
+          window = new Frame(sketch.name); // use ugly windows
           ((Frame)window).setResizable(false);
           if (editor.icon != null) {
             ((Frame)window).setIconImage(editor.icon);
@@ -225,8 +221,10 @@ public class PdeRuntime implements PdeMessageConsumer {
 
           int minW = PdePreferences.getInteger("run.window.width.minimum");
           int minH = PdePreferences.getInteger("run.window.height.minimum");
-          int windowW = Math.max(applet.width, minW) + insets.left + insets.right;
-          int windowH = Math.max(applet.height, minH) + insets.top + insets.bottom;
+          int windowW = 
+            Math.max(applet.width, minW) + insets.left + insets.right;
+          int windowH = 
+            Math.max(applet.height, minH) + insets.top + insets.bottom;
 
           if (x1 - windowW > 10) {  // if it fits to the left of the window
             window.setBounds(x1 - windowW, y1, windowW, windowH);
@@ -246,15 +244,12 @@ public class PdeRuntime implements PdeMessageConsumer {
             window.setBounds(x1, y1, windowW, windowH); //ww, wh);
           }
 
-          Color windowBgColor = 
-            PdePreferences.getColor("run.window.bgcolor");
-          //new Color(102, 102, 102));
+          Color windowBgColor = PdePreferences.getColor("run.window.bgcolor");
           window.setBackground(windowBgColor);
-          //window.setBackground(SystemColor.windowBorder);
-          //window.setBackground(SystemColor.control);
 
           applet.setBounds((windowW - applet.width)/2, 
-                           insets.top + ((windowH - insets.top - insets.bottom) -
+                           insets.top + ((windowH - 
+                                          insets.top - insets.bottom) -
                                          applet.height)/2, 
                            windowW, windowH);
         }
@@ -266,13 +261,6 @@ public class PdeRuntime implements PdeMessageConsumer {
         window.show();
         applet.requestFocus();  // necessary for key events
       }
-      //System.out.println("KJC RUNNING");
-
-      //need to parse this code to give a decent error message
-      //internal error
-      //java.lang.NullPointerException
-      //  at ProcessingApplet.colorMode(ProcessingApplet.java:652)
-      //  at Temporary_203_1176.setup(Temporary_203_1176.java:3)
 
     } catch (Exception e) {
       // this will pass through to the first part of message
@@ -314,23 +302,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         //e.printStackTrace();
         close();
       }
-
-      /*
-      try {
-        FileOutputStream fos = new FileOutputStream("die");
-        fos.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      */
     }
-
-    //System.gc();
-    //System.out.println("* stopped");
-
-    //System.out.println("thread count: " + Thread.activeCount());
-    //System.out.println();
-    //System.out.println();
   }
 
 
@@ -355,13 +327,15 @@ public class PdeRuntime implements PdeMessageConsumer {
 
 
   public void message(String s) {
+    // this is BApplet sending a message (via System.out.println)
+    // that signals that the applet has been quit.
     if (s.indexOf(BApplet.EXTERNAL_QUIT) == 0) {
-      //close();
-      //System.out.println("got proper quit message");
       editor.doClose();
       return;
     }
 
+    // this is the BApplet sending us a message that the applet
+    // is being moved to a new window location
     if (s.indexOf(BApplet.EXTERNAL_MOVE) == 0) {
       String nums = s.substring(s.indexOf(' ') + 1);
       int space = nums.indexOf(' ');
@@ -375,14 +349,16 @@ public class PdeRuntime implements PdeMessageConsumer {
     //System.err.println("message " + s.length() + ":" + s);
     if (s.length() > 2) System.err.println(s);
 
+    // this is BApplet sending a message saying "i'm about to spew 
+    // a stack trace because an error occurred during BApplet.run()"
     if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
       //System.err.println("got wakeup");
       newMessage = true;
       return;  // this line ignored
     }
 
-    // if s.length <=2, that probably means that it's just the platform
-    // line-terminators.  ignore it.
+    // if s.length <=2, ignore it because that probably means 
+    // that it's just the platform line-terminators.  
     if (newMessage && s.length() > 2) {
       exception = new PdeException(s);  // type of java ex
       //System.out.println("setting ex type to " + s);
@@ -392,20 +368,22 @@ public class PdeRuntime implements PdeMessageConsumer {
     } else {
       messageLineCount++;
 
+      // TODO this is insufficient. need to cycle through the 
+      // different classes that are currently loaded and see if
+      // there is an error in one of them.
+      String className = sketch.mainClassName;
+
       int index = s.indexOf(className + ".java");
-      //System.out.println("> " + index + " " + s);
       if (index != -1) {
         int len = (className + ".java").length();
         String lineNumberStr = s.substring(index + len + 1);
         index = lineNumberStr.indexOf(')');
         lineNumberStr = lineNumberStr.substring(0, index);
-        //System.err.println("error line is: " + lineNumberStr);
         try {
           exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
-          //System.out.println("exception in RUNNING");
           editor.error(exception);
         } catch (NumberFormatException e) {  
-          e.printStackTrace();
+          e.printStackTrace();  // a recursive error waiting to happen?
         }
       } else if ((index = s.indexOf(className + ".class")) != -1) {
         // code to check for:
