@@ -332,6 +332,9 @@ public class PdeSketchbook {
     if (!folder.isDirectory()) return false;
 
     String list[] = folder.list();
+    // if a bad folder or something like that, this might come back null
+    if (list == null) return false;
+
     // alphabetize list, since it's not always alpha order
     // use cheapie bubble-style sort which should be fine
     // since not a tone of files, and things will mostly be sorted

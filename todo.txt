@@ -198,8 +198,15 @@ X implement clone for BImage
 X api name changes for imaging functions
 X   constant SUBSTRACT -> SUBTRACT 
 
+040707 afternoon
+X minor bug with when setting sketchbook to a bad location
+X add export back to the file menu
+
 before next release
 
+_ put export back into the file menu
+_ change "add file" to import
+_ change "new" to "new file"
 _ CENTER instead of CENTER_DIAMETER
 _ make CENTER default for ellipses
 _ move imageMode() to BImage
