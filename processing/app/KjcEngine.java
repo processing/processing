@@ -26,9 +26,28 @@ public class KjcEngine extends PdeEngine {
   static final int RUNNING = 2;
   int messageMode;
 
-  static final String imports[] = {
+  static final String applet_imports[] = {
     "java.applet", "java.awt", "java.awt.image", "java.awt.event",
     "java.io", "java.net", "java.text", "java.util", "java.util.zip"
+  };
+
+  static final String application_imports[] = {
+    "java.applet", "java.awt", "java.awt.image", "java.awt.event",
+    "java.io", "java.net", "java.text", "java.util", "java.util.zip",
+    "javax.comm",
+
+    // if jdk14 defined, jdk13 will be as well
+#ifdef JDK13
+    "javax.sound.midi", "javax.sound.midi.spi",
+    "javax.sound.sampled", "javax.sound.sampled.spi",
+#endif
+
+#ifdef JDK14
+    "javax.xml.parsers", "javax.xml.transform", 
+    "javax.xml.transform.dom", "javax.xml.transform.sax",
+    "javax.xml.transform.stream", "org.xml.sax",
+    "org.xml.sax.ext", "org.xml.sax.helpers"
+#endif
   };
 
   String tempClass;
@@ -212,12 +231,21 @@ public class KjcEngine extends PdeEngine {
 
       if (programType < ADVANCED) {
 	// spew out a bunch of java imports 
-	for (int i = 0; i < imports.length; i++) {
-	  writer.print("import " + imports[i] + ".*; ");
-	  // add serial if running inside pde
-	  if (!kjc) writer.println();
+	if (kjc) {  // if running in environment, or exporting an app
+	  for (int i = 0; i < application_imports.length; i++) {
+	    writer.print("import " + application_imports[i] + ".*; ");
+	  }
+
+	} else {  // exporting an applet
+	  for (int i = 0; i < applet_imports.length; i++) {
+	    writer.println("import " + applet_imports[i] + ".*; ");
+	    //writer.print("import " + applet_imports[i] + ".*; ");
+	    //if (!kjc) writer.println();
+	  }
 	}
-	if (kjc) writer.print("import javax.comm.*;");
+
+	// add serial if running inside pde
+	//if (kjc) writer.print("import javax.comm.*;");
 	if (!kjc) writer.println();
 
 	writer.print("public class " + name + " extends " +

@@ -23,62 +23,56 @@ X fix issues with new swing-based text area
 X   auto indent on next line no longer works
 X   tabs no longer convert to 2 spaces
 o   balance parens is no longer available
+X problem with axel's strings example [might be related to long lines]
+X   freezing problem, compiler was crashing and spewing bad message
+X move build directory to root in cvs (on server)
+X   and update scripts accordingly
+X should java 1.3 classes be included in the imports
+X   but not for exported applets? (might create some confusion)
+X   included java audio classes for 1.3
+X   included xml classes for 1.4
 
+
+bagel
+_ pmouseX should be set at the end of loop(), not on mouse movement
+_ images don't load during setup()
+
+_ make bagel usable on its own w/o applet
+_   but retain functionality, ie. image i/o
+_ finish fill mode of flat circle function
+_   make into oval function
+_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
+pde
+_ set frame title of launched window to the name of the sketch
+_ when renaming a sketch, select the text in the field, 
+    so you can type the new name immediately. 
+_ use date in the sketch name sketch_021104 
+_   with a _2 if needed or '021104a' '021104b' etc
+_   when using save as, allow to remove the old (numbered) sketch
+_ preprocessor problems
+_   "color.jpg" or "int.jpg" causes trouble
+_   "http://acg.media.mit.edu" doesn't work because of //
+_   subst Image -> BImage, Font -> BFont
+_ remove .class files on save as [dimitre]
+When I am working in a project and I save it with another name, 
+all the old files are copyied to new directory, and some of the old 
+unused .class files and images remains inside new project JAR files. 
+_ seems that file i/o may be picking up lots of extra \r 
+_   perhaps when doing setText, it's goobering things up
+_ better default size than 300x300 when starting up first time
+_ serial port
+_   better message for PortInUseException (full explanation)
+_   better message for when serial port code not available/not installed
 _ lots of problems with the console [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
 
-_ problem with axel's strings example [might be related to long lines]
-
-_ should java 1.3 classes be included in the imports
-_   but not for exported applets? (might create some confusion)
-
-_ support 'classes' folder, through the use of a classloader
-_   all .jar files etc are added from this folder automatically
-
-_ remove .class files on save as [dimitre]
-When I am working in a project and I save it with another name, 
-all the old files are copyied to new directory, and some of the old 
-unused .class files and images remains inside new project JAR files. 
-
-_ use date in the sketch name sketch_021104 
-_   with a _2 if needed or '021104a' '021104b' etc
-_   when using save as, allow to remove the old (numbered) sketch
-
-_ method of collapsing history for useful versions
-_   archive associated files as well.. data/etc
-
-_ set frame title of launched window to the name of the sketch
-
-bagel
-_ pmouseX should be set at the end of loop(), not on mouse movement
-_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
-_ images don't load during setup()
-_ 'image' is too generic a variable to have inside BApplet
-_   check for others that shouldn't be used (pixels? width? height?)
-_   or have a way to syntax color them
-_ make bagel usable on its own w/o applet
-_   but retain functionality, ie. image i/o
-_ finish fill mode of flat circle function
-_   make into oval function
-
-pde
-_ "color.jpg" or "int.jpg" causes trouble
-_ "http://acg.media.mit.edu" doesn't work because of //
-_ subst Image -> BImage, Font -> BFont
-
-_ seems that file i/o may be picking up lots of extra \r 
-_   perhaps when doing setText, it's goobering things up
-
-_ better default size than 300x300 when starting up first time
-_ better message for PortInUseException (full explanation)
 _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
-_ move build directory to root in cvs (on server)
-_   and update scripts accordingly
-_ When renaming a sketch, select the text in the field, 
-    so you can type the new name immediately. 
+_ support 'classes' folder, through the use of a classloader
+_   all .jar files etc are added from this folder automatically
 _ talk to casey about better default colors
 
 windows
@@ -88,6 +82,7 @@ _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
 macosx 
+_ update build/dist scripts to work with new layout
 _ check to see if swing is working properly
 _ put mac rxtx inside the p5 folder (hide it?)
 _   include more strongly worded message about rxtx
@@ -133,8 +128,13 @@ _ long list from frederik (fdb)
   selection when pressed twice. It also selects the line under the
   current line. 
 
-some further ahead..
+
+FURTHER AHEAD
+_ 'image' is too generic a variable to have inside BApplet
+_   check for others that shouldn't be used (pixels? width? height?)
+_   or have a way to syntax color them
 _ put processing/bagel into sourceforge cvs
+_   probably after kjc/engine stuff restructured
 _ bring cbagel up to par
 _ modify cbagel for opie
 _ would be interesting to build pre-processor for java p5
@@ -163,6 +163,9 @@ o   make note in readme about stderr.txt and stdout.txt
 
 
 OTHER NOTES
+
+_ method of collapsing history for useful versions
+_   archive associated files as well.. data/etc
 
 text editor - color coding is the big issue
 
