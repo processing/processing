@@ -16,6 +16,30 @@ X size not properly detected when "size()" was the first thing
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067217366;start=0
 X nasty but where System.out was being piped to System.err
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067218548;start=0
+X   println() and System.out.println() from external classes has trouble
+X     println() / print() not always flushing until after app quits
+X change "send to bugs@proce55ing.net" to a longer popup dialog
+X   open the discourse board in another window, ask to post the code
+
+X set PATH to include java (!)
+X   external classes currently require expert release
+_   code written for linux, test it
+_   code written for windows, rebuild the exe and test it
+
+_ update the release of jikes that's used
+X   updated for macosx
+_   compile new version for linux
+_   compile new version for windows
+
+_ netscape/javascript had to be included for linux and for expert
+_   add it to the cvs and the build scripts
+_   also needs to be included for 1.4 on the mac
+_   probably a good idea to include on all
+
+
+0068
+_ new html code for eolas patent case
+_   move html to external file in the lib folder
 
 console
 dh b _ clear console each time 'run' gets hit
@@ -28,34 +52,10 @@ bf b _ set decent fonts (probably same as editor above), looks bad on mac
 bf b _ console runs really really slow with a lot of println() calls
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
 
-
-_ new html code for eolas patent case
-_   move html to external file in the lib folder
-
-_ netscape/javascript had to be included for linux and for expert
-_   add it to the cvs and the build scripts
-_   also needs to be included for 1.4 on the mac
-
 _ BImage.smooth() ?
 _ mouse wheel not working on macosx, need to dynamically load 1.4 code
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ simong interested in helping
-
-X set PATH to include java (!)
-X   external classes currently require expert release
-_   code written for linux, test it
-_   code written for windows, rebuild the exe and test it
-
-_ update the release of jikes that's used
-X   updated for macosx
-_   compile new version for linux
-_   compile new version for windows
-
-_ println() and System.out.println() from external classes has trouble
-_   println() / print() not always flushing until after app quits
-
-_ change "send to bugs@proce55ing.net" to a longer popup dialog
-_   open the discourse board in another window, ask to post the code
 
 _ find/replace.. when hitting 'find', select the text in the field
 _   give that field focus explicitly, rather than just for typing

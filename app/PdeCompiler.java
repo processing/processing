@@ -28,11 +28,11 @@ import java.util.*;
 import java.util.zip.*;
 import javax.swing.*;
 
-
 public class PdeCompiler implements PdeMessageConsumer {
+  static final String BUGS_URL = 
+    "http://Proce55ing.net/bugs/";
   static final String SUPER_BADNESS = 
-    "Strange error while compiling, " + 
-    "please send code to processing@media.mit.edu";
+    "Compiler error, please submit this code to " + BUGS_URL;
 
   String buildPath;
   String className;
@@ -51,34 +51,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
 
   public boolean compileJava(PrintStream leechErr) {
-    //System.out.println("jcp: " + System.getProperty("java.class.path"));
-    //System.out.println("mrj: " + System.getProperty("com.apple.mrj.application.classpath"));
-
     String userdir = System.getProperty("user.dir") + File.separator;
-
-    /*
-    if (additional == null) {
-#ifndef MACOS
-      additional = "";
-#else
-      // for macosx only, doesn't work on macos9
-      StringBuffer abuffer = new StringBuffer();
-
-      // add the build folder.. why isn't it already there?
-      //abuffer.append(":" + userdir + "lib/build");
-
-      String list[] = new File("/System/Library/Java/Extensions").list();
-      for (int i = 0; i < list.length; i++) {
-        if (list[i].toLowerCase().endsWith(".jar") ||
-            list[i].toLowerCase().endsWith(".zip")) {
-          //abuffer.append(System.getProperty("path.separator"));
-          abuffer.append(":/System/Library/Java/Extensions/" + list[i]);
-        }
-      }
-      additional = abuffer.toString();
-#endif
-    }
-    */
 
     //System.out.println(userdir + "jikes");
     //System.out.println(System.getProperty("sun.boot.class.path"));
@@ -167,6 +140,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     if (result != 0 && result != 1 ) {
       exception = new PdeException(SUPER_BADNESS);
       editor.error(exception);
+      PdeBase.openURL(BUGS_URL); 
     }
 
     return (result == 0) ? true : false;
