@@ -222,6 +222,10 @@ public interface PMethods {
 
   public void printCamera();
 
+  public float screenX(float x, float y);
+
+  public float screenY(float x, float y);
+
   public float screenX(float x, float y, float z);
 
   public float screenY(float x, float y, float z);
