@@ -27,13 +27,9 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
   PdeEditorButtons buttons;
   PdeEditorHeader header;
   PdeEditorStatus status;
-  //PdeEditorOutput output;
   PdeEditorConsole console;
-
-  //Label status;
   TextArea textarea;
 
-  //PdeGraphics graphics;
   PdeRunner runner;
 
   Frame frame;
@@ -71,46 +67,8 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     Panel rightPanel = new Panel();
     rightPanel.setLayout(new BorderLayout());
 
-    /*
-    PdeEditorLabel sketchLabel = new PdeEditorLabel(1);
-    Color sketchBgColor = new Color(51, 51, 51);
-    Color sketchPrimaryTextColor = Color.white;
-    Color sketchSecondaryTextColor = new Color(153, 153, 153);
-    sketchLabel.setForeground(sketchPrimaryTextColor);
-    sketchLabel.setBackground(sketchBgColor);
-    rightPanel.add("North", sketchLabel);
-    */
-
     header = new PdeEditorHeader(this, "untitled", "default");
     rightPanel.add("North", header);
-
-    /*
-    Panel top = new Panel();
-    top.setBackground(buttonBgColor);
-    top.setLayout(new BorderLayout());
-
-    buttons = new PdeEditorButtons(this);
-    buttons.setBackground(buttonBgColor);
-    top.add("West", buttons);
-
-    Label buttonStatus = 
-      new Label(PdeEditorButtons.EMPTY_STATUS, Label.RIGHT);
-    buttonStatus.setBackground(buttonBgColor);
-    top.add("East", buttonStatus);
-
-    buttons.status = buttonStatus;
-    */
-
-    /*
-    Panel statusPanel = new Panel();
-    statusPanel.setBackground(statusBgColor);
-    statusPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-    statusPanel.add(status = new Label(EMPTY));
-    //right.add("North", statusPanel);
-    top.add("South", statusPanel);
-
-    add("North", top);
-    */
 
     if (program == null) program = DEFAULT_PROGRAM;
     textarea = 
@@ -121,53 +79,17 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     textarea.setFont(PdeApplet.getFont("editor.program.font",
 				       new Font("Monospaced", 
 						Font.PLAIN, 12)));
-    //right.add("Center", textarea);
     rightPanel.add("Center", textarea);
 
     Panel statusPanel = new Panel();
     statusPanel.setLayout(new BorderLayout());
-
-    /*
-    PdeEditorLabel errorLabel = new PdeEditorLabel(1);
-    //errorLabel.setBackground(errorBgColor);
-    errorLabel.setBackground(statusBgColor);
-    errorLabel.setForeground(errorFgColor);
-    errorLabel.setText("Cannot find method \"bbackground(int)\"");
-    statusPanel.add("North", errorLabel);
-    */
     status = new PdeEditorStatus(this);
     statusPanel.add("North", status);
-
-    //int lineCount = PdeApplet.getInteger("editor.console.lines", 4);
-    console = new PdeEditorConsole(this); //, lineCount);
-
-    /*
-    Color consoleBgColor = 
-      PdeApplet.getColor("editor.console.bgcolor", new Color(26, 26, 26));
-    Color consoleFgColor = 
-      PdeApplet.getColor("editor.console.fgcolor", new Color(153, 153, 153));
-    //console.setBackground(consoleBgColor);
-    //console.setForeground(consoleFgColor);
-    Font consoleFont = 
-      PdeApplet.getFont("editor.console.font", 
-			new Font("monospaced", Font.PLAIN, 11));
-    console.setFont(consoleFont);
-    */
-    //console.setText("Test the print");
-    //console.setInsets(new Insets(4, 4, 4, 4));
+    console = new PdeEditorConsole(this);
     statusPanel.add("South", console);
-
     rightPanel.add("South", statusPanel);
 
     add("Center", rightPanel);
-
-    /*
-    TextArea console = new TextArea("welcome to pr0[3551ng", 5, 48,
-				    TextArea.SCROLLBARS_VERTICAL_ONLY);
-    console.setBackground(Color.gray);
-    console.setFont(PdeApplet.getFont("editor"));
-    add("South", console);
-    */
 
     if (!PdeApplet.isMacintosh()) {  // this still relevant?
       PdeEditorListener listener = new PdeEditorListener();
@@ -461,18 +383,6 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
       buttons.clear();
       return;
     }
-    //File file = new File(directory, filename);
-
-    // write java code for applet
-    /*
-    File javaOutputFile = new File(outputDirectory, projectName + ".java");
-    FileOutputStream fos = new FileOutputStream(javaOutputFile);
-    PrintStream ps = new PrintStream(fos);
-    ps.println("public class " + 
-    ps.print(converted);
-    ps.flush();
-    ps.close();
-    */
 
     try {
       String program = textarea.getText();
@@ -535,14 +445,6 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
 			  "export" + File.separator);
       String bagelClasses[] = new File(exportDir).list();
 
-	/*
-      final String classes[] = {
-	"Bagel.class", "BagelConstants.class", "BagelFont.class", 
-	"BagelImage.class", "BagelLight.class", "BagelPolygon.class",
-	"ProcessingApplet.class"
-      };
-	*/
-
       // create new .jar file
       FileOutputStream zipOutputFile = 
 	new FileOutputStream(new File(projectDir, projectName + ".jar"));
@@ -552,9 +454,6 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
       // add standard .class files to the jar
       for (int i = 0; i < bagelClasses.length; i++) {
 	if (!bagelClasses[i].endsWith(".class")) continue;
-	//if ((bagelClasses[i].equals(".")) || 
-	//  (bagelClasses[i].equals(".."))) continue;
-	//System.out.println("adding class " + (i+1) + " of " + classes.length);
 	entry = new ZipEntry(bagelClasses[i]);
 	zos.putNextEntry(entry);
 	zos.write(grabFile(new File(exportDir + bagelClasses[i])));
@@ -562,7 +461,6 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
       }
 
       // add the project's .class to the jar
-      //System.out.println("adding " + projectName + ".class");
       entry = new ZipEntry(projectName + ".class");
       zos.putNextEntry(entry);
       zos.write(grabFile(new File("lib", projectName + ".class")));
@@ -592,10 +490,8 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     int bytesRead;
     while ((bytesRead = input.read(buffer, offset, size-offset)) != -1) {
       offset += bytesRead;
-      //System.out.println(offset + " " + bytesRead);
       if (bytesRead == 0) break;
     }
-    //System.out.println("done grabbing file");
     return buffer;
   }
 

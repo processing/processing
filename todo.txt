@@ -1,12 +1,70 @@
-0030
-X attempt to fold serial into bapplet, but mostly fail
-_ kjc issues
-_   modify to allow for the 'build' directory in lib
-X   convert color -> int
-X     also include #ff00cc -> proper conversion
-X   comments are removed from exported files
-_ make a new 'dist' function for building
+0031
 
+ui
+a _ sketch.properties contains the last program run
+a _   also the window positions, etc
+a _   if it doesn't exist, starts with a new project
+a _     for a new project, name it untitled-0001 or as appropriate
+a _       so that previous projects aren't written over
+a _ 'open' button is a switch-to button
+a _   pops up list of everything in the sketchbook
+a _   first item is 'new sketch', followed by delimeter
+a _   next is list of subdirs other than current user, then delim
+a _   the rest are the items in the current user's folder
+a X need 'new' button on the toolbar --> NOPE, first item on 'open' menu
+a _   the zero looking one might be good (instead of export)
+a _   export could be three circles in a row, overlapping
+a _ everything is a project.. what about short snippets of code?
+a _   this version won't be able to access everything from scrapbook
+a _   (that requires a more robust class loader)
+
+file structure for export
+a _ exporting to applet/.jar file
+a _   need to set project name for files
+a _   include other .class files built besides the main one
+a _     compile into 'classes' folder
+a _   include referenced image and font files (can't do if numbered)
+
+included files
+a _   'data' directory for all media
+a _   make included media part of the .jar file 
+a _   it's really a pain to use external files in processing
+a _     getStream sucks (zach rewrote)
+a _     should be able to work for application or applets
+a _     may want to use getResource() (to get things from .jar files)
+
+compiling
+a _   remove .java and .class files for compiled classes
+a _     (just clean up the boogers afterwards)
+a _   compiling .java files leaves the .class files next to the .java
+a _     make sure all the dirs in sketchbook added to classpath on startup
+a _     if new dir added, must restart processing (this is acceptable)
+
+running
+a _   ability to include other code from sketchbook directory
+a _     compile entire sketchbook on startup, check for new files on compile?
+
+export
+a _   exporting applets that have custom name problems:
+a _     if extends processingapplet, the name user types must be same
+a _     gets confused about paths and puts boogers in weird places
+a _     doesn't compile correctly (must first compile with play)
+a _     doesn't include additional (private) classes
+a _   when exporting 'name of folder for export...'
+a _     default name should be from public class <xxxx>
+a _     because otherwise errors are happening
+a _     or name from user only determines folder name
+a _       if extends ProcessingApplet [more compatible]
+a _   make sure export is compiling first
+a _     right now have to hit play and then hit export (?)
+a _   include main class info for executable jar file with jdk > 1.2
+
+a _ verify save when
+a _   closing p5 window
+a _   moving to other sketch
+
+_ modify to allow for the 'build' directory in lib
+_ make a new 'dist' function for building
 _ exceptions in draw() apps aren't caught
 _   the program resize(200, 200); just does nothing (doesn't complain)
 _ fold simpleserial into BApplet
@@ -267,56 +325,6 @@ b _   this means msft or newer version of jdk
 
 
 PDE / high & time consuming
-a _ exporting to applet/.jar file
-a _   need to set project name for files
-a _   'data' directory for all media
-a _   include other .class files built besides the main one
-a _     compile into 'classes' folder
-a _   include referenced image and font files (can't do if numbered)
-a _   exporting applets that have custom name problems:
-a _     if extends processingapplet, the name user types must be same
-a _     gets confused about paths and puts boogers in weird places
-a _     doesn't compile correctly (must first compile with play)
-a _     doesn't include additional (private) classes
-a _   when exporting 'name of folder for export...'
-a _     default name should be from public class <xxxx>
-a _     because otherwise errors are happening
-a _     or name from user only determines folder name
-a _       if extends ProcessingApplet [more compatible]
-a _   make sure export is compiling first
-a _     right now have to hit play and then hit export (?)
-a _   include main class info for executable jar file with jdk > 1.2
-a _   remove .java and .class files for compiled classes
-a _     (just clean up the boogers afterwards)
-a _   it's really a pain to use external files in processing
-a _     getStream sucks (zach rewrote)
-a _     should be able to work for application or applets
-a _     may want to use getResource() (to get things from .jar files)
-a _   compiling .java files leaves the .class files next to the .java
-a _     make sure all the dirs in sketchbook added to classpath on startup
-a _     if new dir added, must restart processing (this is acceptable)
-a _   ability to include other code from sketchbook directory
-a _     compile entire sketchbook on startup, check for new files on compile?
-a _ sketch.properties contains the last program run
-a _   also the window positions, etc
-a _   if it doesn't exist, starts with a new project
-a _     for a new project, name it untitled-0001 or as appropriate
-a _       so that previous projects aren't written over
-a _ 'open' button is a switch-to button
-a _   pops up list of everything in the sketchbook
-a _   first item is 'new sketch', followed by delimeter
-a _   next is list of subdirs other than current user, then delim
-a _   the rest are the items in the current user's folder
-a X need 'new' button on the toolbar --> NOPE, first item on 'open' menu
-a _   the zero looking one might be good (instead of export)
-a _   export could be three circles in a row, overlapping
-a _ everything is a project.. what about short snippets of code?
-a _   this version won't be able to access everything from scrapbook
-a _   (that requires a more robust class loader)
-a _ verify save when
-a _   closing p5 window
-a _   moving to other sketch
-
 b _ serial works poorly for starting/stopping applets
 b _   this is behaving strangely
 b _   breaks on every 2nd run when using serial apps (or others?)
