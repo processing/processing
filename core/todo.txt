@@ -30,6 +30,11 @@ o     or is just a message to save the next frame (problem for anim)
 X vertices max out at 512.. make it grow
 X add gzipInput and gzipOutput
 
+_ beginShape() 
+_   don't allow you to draw stroked items unless stroke() is called
+_   don't allow beginShape() if shape is already set
+_     (otherwise will cause some very strange errors)
+
 _ PFont.list() to return string list of all the available fonts
 _   textFont with a named font can use the renderer/os font
 _   for postscript, can grab the real font
