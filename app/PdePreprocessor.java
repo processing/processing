@@ -190,40 +190,38 @@ public class PdePreprocessor {
    * Write any required header material (eg imports, class decl stuff)
    * 
    * @param out                 PrintStream to write it to.
-   * @param extendsNormal       Extending the normal renderer?
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
    */
   void writeHeader(PrintStream out, String imports[], 
-                   /*boolean extendsNormal,*/ 
                    boolean exporting, String name) {
 
+    // emit emports that are needed for classes from the code folder
+    // 
     if (imports != null) {
-      //System.out.println("imports not null");
       for (int i = 0; i < imports.length; i++) {
         out.print("import " + imports[i] + ".*; ");
       }      
     }
 
-    if (programType < ADVANCED) {
-
-      // spew out a bunch of java imports 
-      //
-      if (!exporting) {  // if running in environment, or exporting an app
-        for (int i = 0; i < application_imports.length; i++) {
-          out.print("import " + application_imports[i] + ".*; ");
-        }
-      } else {  // exporting an applet
-        for (int i = 0; i < applet_imports.length; i++) {
-          out.print("import " + applet_imports[i] + ".*; ");
-        }
+    // Spew out a semi-standard set of java imports.
+    // 
+    // Prior to 68, these were only done when not int ADVANCED mode, 
+    // but these won't hurt, and may be helpful in cases where the user 
+    // can't be bothered to add imports to the top of their classes.
+    //
+    if (!exporting) {  // if running in environment, or exporting an app
+      for (int i = 0; i < application_imports.length; i++) {
+        out.print("import " + application_imports[i] + ".*; ");
       }
+    } else {  // exporting an applet
+      for (int i = 0; i < applet_imports.length; i++) {
+        out.print("import " + applet_imports[i] + ".*; ");
+      }
+    }
 
-      //String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
-      String extendsWhat = "BApplet";
-
-      out.print("public class " + name + " extends " +
-                extendsWhat + " {");
+    if (programType < ADVANCED) {
+      out.print("public class " + name + " extends BApplet {");
 
       if (programType == BEGINNER) {
         // XXXdmose need to actually deal with size / background info here
