@@ -1,3 +1,10 @@
+ABOUT REV 0040 - 1 august 2002
+
+[ oops ]
+
+- fixed a bug that prevented 39 from running at all. argh.
+
+
 ABOUT REV 0039 - 31 july 2002
 
 [ you feel yourself getting very sleepy ]
