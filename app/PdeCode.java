@@ -5,7 +5,7 @@
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -66,6 +66,14 @@ public class PdeCode {
     // TODO re-enable history
     //history.record(s, PdeHistory.SAVE);
 
-    PdeBase.saveFile(program, file);
+    try {
+      PdeBase.saveFile(program, file);
+
+    } catch (Exception e) {
+      PdeBase.showWarning("Error saving file",
+                          "Could not save " + file + "\n" +
+                          "because of an error.", e);
+    }
+    modified = false;
   }
 }
