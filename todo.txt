@@ -8,11 +8,31 @@ X move 'clear history' into the history menu itself
 X move beautify to the edit menu
 X menu item for copying data files to the sketch
 X "add files to sketch..." menu item
+X font builder (!)
+X need fast 2D text that's not affected by the transforms
+X   also needs to look good, not squished from texture weirdness
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
+o change .vlw.gz fonts to just .vlw but still gzip compress
+o   reader code should just catch the exception if they're not gzipped
+o   and try to re-download them
+X   instead, not compressed, since font builder being used
+X     will be compressed into the .jar anyways
+X open button stays stuck if no sketch is selected from popup
+X open applet folder after exporting sketch
+
 
 assigned to dan haskovec, completed by fry
 X event to explorer to open 'data' directory of project
 X   better just to go directly to the sketch's folder
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
+
+
+from carlos' contract, but implemented by fry
+X get font things sewn up 
+X  create a simple generator for grayscale bdf fonts
+X     document the change and make several of them
+X   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
 
 _ trying to track down sluggishness with applets.. 
 _   beginShape/endShape.. 3D scenes with boxes..
@@ -204,9 +224,6 @@ _   when you try to export for web.
 _ catch security exceptions around applet i/o calls
 _   not just for saving files, but provide better error msgs when
 _     attempting to download from another server
-_ change .vlw.gz fonts to just .vlw but still gzip compress
-_   reader code should just catch the exception if they're not gzipped
-_   and try to re-download them
 _ if (loop == false) and (draw == false) then provide an error
 _   so user knows that one or the other is needed
 _ make PdeEditorStatus modal
@@ -338,11 +355,6 @@ ca b _     or at least that things get ridiculously slow
 ca b _     clipping issues here.. but also something in scan converter
 ca b X     not clipping areas from offscreen
 ca b _       huge geometry slows things way down
-
-bf b _ font support is overkill and sucks
-bf b _   need fast 2D text that's not affected by the transforms
-bf b _   also needs to look good, not squished from texture weirdness
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
 
 
 BAGEL / Serial
@@ -620,6 +632,7 @@ dh 1 _ rename doesn't set focus to renamer area
 
 PDE / Features
 
+   1 _ make a preference panel to set pde.properties stuff
 dh b _ some notion of plugins for pde
 dh b _   color picker or other things written by folks
 dh b _   add all .jar files in lib/plugins on startup
@@ -629,13 +642,11 @@ dh b _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
 dh b _ external editor -> add a command to launch
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
 
-   1 _ make a preference panel to set pde.properties stuff
-   1 _ open button stays stuck if no sketch is selected from popup
-
 
 PDE / see you next year
 not necessary for 1.0 release
 
+2 _ font support is overkill and sucks
 2 _ editor features asked for on the bboard
 2 _   line numbers like bbedit
 2 _   command to comment-out the current selection
