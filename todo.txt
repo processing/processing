@@ -99,6 +99,54 @@ X   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6
 040925 
 X change how export.txt works
 X make p2 dist for amit
+X break out BSerial as separate object like BVideo
+X   include rxtx and the rest of that setup in subfolder
+X   BSerial.flush and BSerial.available in object
+
+video
+X video commands not color coded
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069342913;start=0
+o quicktime 6.4 update breaks p5 on the mac?
+o   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
+o   "Type quicktime.std.stdQTConstants was not found"
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
+o   http://docs.info.apple.com/article.html?artnum=120255
+X split classes to BVideo and BMovie ? 
+X don't force install of qtjava
+X   this requires a separate version of bagel that doesn't use video
+X   or a version that loads video dynamically. that kinda sucks.
+o   maybe could even compile it in with jikes? (blech)
+o hangs frequently on the mac (prolly a sync issue)
+o   karsten's stuff has same problem
+o   but the roger's video tracking does not
+X   should be fixed with new synchronization stuff
+X video.pixels don't seem to have high bytes set
+X   so fill(video.pixels[blah]) doesn't work
+X   test against 'pixels' example
+X   this is ok.. modify get() for RGB images to set high bits
+X make BVideo subclass BImage
+o   make sure the high bits are getting set as opaque
+X   get() now sets high bits, reference will explain PVideo.pixels[]
+X video keeps running, cpu load high, even after app killed
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086800853
+X just locks up after running examples, then does the 'can't delete' thing
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
+X problems with hanging video when not in the root of the c drive
+X   is this because of the LIBRARY_PATH having spaces?
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084464062;start=0
+X first row of video pixels are black
+X   casey says it may only be his camera (verified to be ok on my machine)
+X selecting input source (wintv board and quickcam installed.. problem)
+
+network
+o don't send unicode data
+X when you stop the client, it freezes 
+X   until you quit the processing running the server
+X   (the server starts and stops fine)
+X add constants for building NET, move stuff around in bagel dir
+X some method for just downloading the entire contents of a url
+X   loadBytes("http://blah.com/blah.txt");
+o add udp support
 
 040926 first
 X add javascript libs to cvs distribution
@@ -143,6 +191,13 @@ X add "archive" option since history is gone
 
 _ macosx - check to see if new linemetrics stuff is working better
 
+
+VIDEO
+_ things will freeze if winvdig not installed (todo over in core)
+_   video hanging without a camera installed
+_   provide a useful error message when winvdig not installed (for capture)
+_     also be able to set one in particular
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
 
 README
 _ write revisions.txt and readme.txt
