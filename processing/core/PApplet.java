@@ -1373,7 +1373,7 @@ public class PApplet extends Applet
 
     if (invisible_cursor == null) {
       //invisible_cursor = new PImage(new int[32*32], 32, 32, RGBA);
-      invisible_cursor = new PImage(new int[16*16], 16, 16, RGBA);
+      invisible_cursor = new PImage(new int[16*16], 16, 16, ARGB);
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix
     // for macosx, which didn't wasn't honoring the invisible cursor
@@ -2027,7 +2027,7 @@ public class PApplet extends Applet
         // since transparency is often at corners, hopefully this
         // will find a non-transparent pixel quickly and exit
         if ((jpixels[i] & 0xff000000) != 0xff000000) {
-          return new PImage(jpixels, jwidth, jheight, RGBA);
+          return new PImage(jpixels, jwidth, jheight, ARGB);
           //format = RGBA;
           //break;
         }
@@ -2059,7 +2059,7 @@ public class PApplet extends Applet
 
      // setup new image object
      PImage img = new PImage(w,h);
-     img.format = (hasAlpha ? RGBA : RGB);
+     img.format = (hasAlpha ? ARGB : RGB);
 
      // targa's are written upside down, so we need to parse it in reverse
      int index = (h-1) * w;
@@ -4101,7 +4101,7 @@ public class PApplet extends Applet
       Frame frame = new Frame();
       frame.setResizable(false);  // remove the grow box
       frame.pack();  // get insets. get more.
-      frame.show();  // gl hack
+      //frame.show();  // gl hack
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
       applet.frame = frame;

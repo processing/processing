@@ -18,6 +18,8 @@ _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
 
+_ opening up sketch folder may be extremely slow 
+
 _ preproc: making all functions public that have no specifier
 _   this will make draw() etc all much easier
 _   as well as the library events

@@ -49,7 +49,7 @@ public class PPolygon implements PConstants {
   boolean interpX;
   boolean interpZ;
   boolean interpUV; // is this necessary? could just check timage != null
-  boolean interpRGBA;
+  boolean interpARGB;
 
   int rgba;
   int r2, g2, b2, a2, a2orig;
@@ -108,7 +108,7 @@ public class PPolygon implements PConstants {
     interpX = true;
     interpZ = true;
     interpUV = false;
-    interpRGBA = true;
+    interpARGB = true;
     timage = null;
   }
 
@@ -190,7 +190,7 @@ public class PPolygon implements PConstants {
     width1 = width - 1;
     height1 = height - 1;
 
-    if (!interpRGBA) {
+    if (!interpARGB) {
       r2 = (int) (vertices[0][R] * 255);
       g2 = (int) (vertices[0][G] * 255);
       b2 = (int) (vertices[0][B] * 255);
@@ -434,9 +434,9 @@ public class PPolygon implements PConstants {
               px0 = (pixel00*tuf + pixel10*tuf1) >> 8;
               px1 = (pixel01*tuf + pixel11*tuf1) >> 8;
               ta = (((px0*tvf + px1*tvf1) >> 8) *
-                    (interpRGBA ? ((int) (sp[A]*255)) : a2orig)) >> 8;
+                    (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
 
-            } else if (tformat == RGBA) {
+            } else if (tformat == ARGB) {
               p00 = (pixel00 >> 24) & 0xff;
               p01 = (pixel01 >> 24) & 0xff;
               p10 = (pixel10 >> 24) & 0xff;
@@ -445,13 +445,13 @@ public class PPolygon implements PConstants {
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
               ta = (((px0*tvf + px1*tvf1) >> 8) *
-                    (interpRGBA ? ((int) (sp[A]*255)) : a2orig)) >> 8;
+                    (interpARGB ? ((int) (sp[A]*255)) : a2orig)) >> 8;
 
             } else {  // RGB image, no alpha
-              ta = interpRGBA ? ((int) (sp[A]*255)) : a2orig;
+              ta = interpARGB ? ((int) (sp[A]*255)) : a2orig;
             }
 
-            if ((tformat == RGB) || (tformat == RGBA)) {
+            if ((tformat == RGB) || (tformat == ARGB)) {
               p00 = (pixel00 >> 16) & 0xff;  // red
               p01 = (pixel01 >> 16) & 0xff;
               p10 = (pixel10 >> 16) & 0xff;
@@ -460,7 +460,7 @@ public class PPolygon implements PConstants {
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
               tr = (((px0*tvf + px1*tvf1) >> 8) *
-                    (interpRGBA ? ((int) sp[R]*255) : r2)) >> 8;
+                    (interpARGB ? ((int) sp[R]*255) : r2)) >> 8;
 
 
               p00 = (pixel00 >> 8) & 0xff;  // green
@@ -471,7 +471,7 @@ public class PPolygon implements PConstants {
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
               tg = (((px0*tvf + px1*tvf1) >> 8) *
-                    (interpRGBA ? ((int) sp[G]*255) : g2)) >> 8;
+                    (interpARGB ? ((int) sp[G]*255) : g2)) >> 8;
 
 
               p00 = pixel00 & 0xff;  // blue
@@ -482,10 +482,10 @@ public class PPolygon implements PConstants {
               px0 = (p00*tuf + p10*tuf1) >> 8;
               px1 = (p01*tuf + p11*tuf1) >> 8;
               tb = (((px0*tvf + px1*tvf1) >> 8) *
-                    (interpRGBA ? ((int) sp[B]*255) : b2)) >> 8;
+                    (interpARGB ? ((int) sp[B]*255) : b2)) >> 8;
 
             } else {  // alpha image, only use current fill color
-              if (interpRGBA) {
+              if (interpARGB) {
                 tr = (int) (sp[R] * 255);
                 tg = (int) (sp[G] * 255);
                 tb = (int) (sp[B] * 255);
@@ -511,7 +511,7 @@ public class PPolygon implements PConstants {
             if (tformat == ALPHA) {
               ta = tpixel;
 
-              if (interpRGBA) {
+              if (interpARGB) {
                 tr = (int) sp[R]*255;
                 tg = (int) sp[G]*255;
                 tb = (int) sp[B]*255;
@@ -526,10 +526,10 @@ public class PPolygon implements PConstants {
                 ta = (a2orig * ta) >> 8;
               }
 
-            } else {  // RGB or RGBA
+            } else {  // RGB or ARGB
               ta = (tformat == RGB) ? 255 : (tpixel >> 24) & 0xff;
 
-              if (interpRGBA) {
+              if (interpARGB) {
                 tr = (((int) sp[R]*255) * ((tpixel >> 16) & 0xff)) >> 8;
                 tg = (((int) sp[G]*255) * ((tpixel >> 8) & 0xff)) >> 8;
                 tb = (((int) sp[B]*255) * ((tpixel) & 0xff)) >> 8;
@@ -566,7 +566,7 @@ public class PPolygon implements PConstants {
         } else {  // no image applied
           int weight = smoothing ? coverage(x) : 255;
 
-          if (interpRGBA) {
+          if (interpARGB) {
             r2 = (int) (sp[R] * 255);
             g2 = (int) (sp[G] * 255);
             b2 = (int) (sp[B] * 255);
@@ -652,7 +652,7 @@ public class PPolygon implements PConstants {
       p[Z] = p1[Z] + dp[Z] * fraction;
     }
 
-    if (interpRGBA) {
+    if (interpARGB) {
       dp[R] = (p2[R] - p1[R]) / delta;
       dp[G] = (p2[G] - p1[G]) / delta;
       dp[B] = (p2[B] - p1[B]) / delta;
@@ -699,7 +699,7 @@ public class PPolygon implements PConstants {
       p[Z] = p1[Z] + dp[Z] * fraction;
     }
 
-    if (interpRGBA) {
+    if (interpARGB) {
       dp[R] = (p2[R] - p1[R]) / delta;
       dp[G] = (p2[G] - p1[G]) / delta;
       dp[B] = (p2[B] - p1[B]) / delta;
@@ -736,7 +736,7 @@ public class PPolygon implements PConstants {
     if (interpX) p[X] += dp[X];
     if (interpZ) p[Z] += dp[Z];
 
-    if (interpRGBA) {
+    if (interpARGB) {
       p[R] += dp[R];
       p[G] += dp[G];
       p[B] += dp[B];

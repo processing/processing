@@ -1855,7 +1855,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   private void thick_point(float x, float y, float z, // note floats
                            float r, float g, float b, float a) {
     spolygon.reset(4);
-    spolygon.interpRGBA = false;  // no changes for vertices of a point
+    spolygon.interpARGB = false;  // no changes for vertices of a point
 
     float strokeWidth2 = strokeWeight/2.0f;
 
@@ -1915,7 +1915,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
                                float r1, float g1, float b1, float a1,
                                float ox2, float oy2,
                                float r2, float g2, float b2, float a2) {
-    spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
+    spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
     spolygon.interpZ = false;
 
     float dX = ox2-ox1 + EPSILON;
@@ -1974,7 +1974,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
                                   float r1, float g1, float b1,
                                   float x2, float y2, float z2,
                                   float r2, float g2, float b2) {
-    spolygon.interpRGBA = (r1 != r2) || (g1 != g2) || (b1 != b2);
+    spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2);
     spolygon.interpZ = true;
 
     float ox1 = x1; float oy1 = y1; float oz1 = z1;
@@ -2465,7 +2465,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     int source = iy1 * image.width + ix1;
     int target = sy1 * width;
 
-    if (image.format == RGBA) {
+    if (image.format == ARGB) {
       for (int y = sy1; y < sy2; y++) {
         int tx = 0;
 
@@ -4893,7 +4893,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
                          "as your application");
       return;
     }
-    if ((image.format != RGB) && (image.format != RGBA)) {
+    if ((image.format != RGB) && (image.format != ARGB)) {
       System.err.println("background images should be RGB or RGBA");
       return;
     }
