@@ -56,19 +56,40 @@ unused .class files and images remains inside new project JAR files.
 X serial port
 X   better message for PortInUseException (full explanation)
 X   better message for when serial port code not available/not installed
+X set frame title of launched window to the name of the sketch
+X fixed history bug where first history made would crash
+X   this was previous unknown, but likely several found it (!)
+X macosx - check to see if swing is working properly
+X macosx - update build script to work with new layout
+X Add an Edit menu containing Undo/Redo/Cut/Copy/Paste/Select
+  All. It's standard Mac behaviour. 
+X long list from frederik (fdb)
+X If the cursor is at the last character of the last line of the 
+  text area, moving the cursor up or down using the arrow keys throws 
+  the following exception: 
+  java.lang.ArrayIndexOutOfBoundsException 
+    at PdeEditorListener.keyPressed(PdeEditorListener.java:86) 
+    at java.awt.Component.processKeyEvent(Component.java:3673) 
+X If the cursor is at the last character of the first line of the text
+  area, moving the cursor up using the arrow keys throws the same
+  exception. However, moving the cursor down doesn't throw one.  
+X Double-clicking a word doesn't select it, but the character after
+  it. (however, sometimes the behaviour is correct) 
+X Scrolling action when using cursor keys is not consistent with other
+  editors: The window should only scroll when it needs to; it now tries
+  to keep the cursor on the current line. (or one line below it) 
+X Using Apple-shift-arrowLeft to select from the cursor pos to the
+  beginning of the line, selects one character too little at the right
+  side. Apple-shift-arrowRight has the same issue (selects one char too
+  little at the left side). 
+X Using Apple-shift-arrowDown selects only from the beginning of this
+  line to the end of the following line. It doesn't extend the
+  selection when pressed twice. It also selects the line under the
+  current line. 
+X Pressing the tab key moves to the bottom of the text area.
 
-bagel
-_ images don't load during setup()
-
-_ make bagel usable on its own as a drawing surface
-_   needs to be used as a component, without applet 
-_   but retain functionality, ie. image i/o
-_ finish fill mode of flat circle function
-_   make into oval function
-_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
-_ set frame title of launched window to the name of the sketch
 _ use date in the sketch name sketch_021104 
 _   with a _2 if needed or '021104a' '021104b' etc
 _   when using save as, allow to remove the old (numbered) sketch
@@ -76,7 +97,23 @@ _ lots of problems with the console [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
+_ better default size than 300x300 when starting up first time
 
+
+LATER RELEASES
+
+
+bagel
+_ images don't load during setup()
+_ make bagel usable on its own as a drawing surface
+_   needs to be used as a component, without applet 
+_   but retain functionality, ie. image i/o
+_ finish fill mode of flat circle function
+_   make into oval function
+_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
+
+pde
 _ support 'classes' folder, through the use of a classloader
 _   could also be done by launching external java app
 _   all .jar files etc are added from this folder automatically
@@ -103,10 +140,8 @@ _ update build/dist scripts to work with new layout
 _ check to see if swing is working properly
 
 
-macosx 
-_ better default size than 300x300 when starting up first time
-_ update build/dist scripts to work with new layout
-_ check to see if swing is working properly
+macosx
+_ update dist script for new layout
 _ put mac rxtx inside the p5 folder (hide it?)
 _   include more strongly worded message about rxtx
 _ bug report from the site
@@ -115,41 +150,19 @@ place. The result is an editor window with a grey bar layered on top,
 obscuring the editable text. 
 _ escape key not quitting presentation mode
 _   no events seem to be coming through at all
+
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
-_ long list from frederik (fdb)
-* Select All (Apple-A) closes the application (Ctrl-Q) on Azerty-keyboards 
-* Add an Edit menu containing Undo/Redo/Cut/Copy/Paste/Select
-  All. It's standard Mac behaviour. 
+
+X hopefully fixed, but needs to be tested
+_ Select All (Apple-A) closes the application 
+  (Ctrl-Q) on Azerty-keyboards 
+
+maybe someday
 * Rename the button options to verbs, e.g. instead of "Do you want to
   save? yes/no", change it to "Document Has been modified -- Save
   changes? Save/Cancel/Don't Save". Look at Aqua Human Interface
   guidelines (http://developer.apple.com/ue/switch/windows.html, tip 9) 
-* Pressing the tab key moves to the bottom of the text area.  
-* If the cursor is at the last character of the last line of the text
-  area, moving the cursor up or down using the arrow keys throws the
-  following exception: 
- java.lang.ArrayIndexOutOfBoundsException 
-   at PdeEditorListener.keyPressed(PdeEditorListener.java:86) 
-   at java.awt.Component.processKeyEvent(Component.java:3673) 
-* If the cursor is at the last character of the first line of the text
-  area, moving the cursor up using the arrow keys throws the same
-  exception. However, moving the cursor down doesn't throw one.  
-* Status bar appears at a fixed location, drawing over the text area
-  when the window is resized.  
-* Double-clicking a word doesn't select it, but the character after
-  it. (however, sometimes the behaviour is correct) 
-* Scrolling action when using cursor keys is not consistent with other
-  editors: The window should only scroll when it needs to; it now tries
-  to keep the cursor on the current line. (or one line below it) 
-* Using Apple-shift-arrowLeft to select from the cursor pos to the
-  beginning of the line, selects one character too little at the right
-  side. Apple-shift-arrowRight has the same issue (selects one char too
-  little at the left side). 
-* Using Apple-shift-arrowDown selects only from the beginning of this
-  line to the end of the following line. It doesn't extend the
-  selection when pressed twice. It also selects the line under the
-  current line. 
 
 
 FURTHER AHEAD

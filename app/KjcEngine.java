@@ -766,7 +766,7 @@ public class KjcEngine extends PdeEngine {
 	    });
 
 	} else {
-	  window = new Frame(); // gonna use ugly windows instead
+	  window = new Frame(editor.sketchName); // gonna use ugly windows instead
 	  ((Frame)window).setResizable(false);
 	  if (PdeBase.icon != null) ((Frame)window).setIconImage(PdeBase.icon);
 	  window.pack(); // to get a peer, size set later, need for insets
