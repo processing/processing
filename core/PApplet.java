@@ -601,6 +601,7 @@ public class PApplet extends Applet
       mousePressed();
       break;
     case MouseEvent.MOUSE_RELEASED:
+      System.out.println("mouse released");
       mousePressed = false;
       mouseReleased();
       break;
@@ -733,9 +734,17 @@ public class PApplet extends Applet
     keyCode = event.getKeyCode();
 
     switch (event.getID()) {
-    case KeyEvent.KEY_PRESSED:  keyPressed();  break;
-    case KeyEvent.KEY_RELEASED: keyReleased(); break;
-    case KeyEvent.KEY_TYPED:    keyTyped();    break;
+    case KeyEvent.KEY_PRESSED:  
+      keyPressed = true;
+      keyPressed(); 
+      break;
+    case KeyEvent.KEY_RELEASED: 
+      keyPressed = false;
+      keyReleased();
+      break;
+    case KeyEvent.KEY_TYPED:    
+      keyTyped();
+      break;
     }
   }
 
