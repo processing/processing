@@ -148,10 +148,10 @@ public class PGraphics extends PImage
 
   // lighting
   static final int MAX_LIGHTS = 10;
-  boolean lighting;
-  float lightR[], lightG[], lightB[];
-  float lightX[], lightY[], lightZ[];
-  int lightKind[];
+  public boolean lights;
+  public float lightR[], lightG[], lightB[];
+  public float lightX[], lightY[], lightZ[];
+  public int lightType[];
 
   // ........................................................
 
@@ -164,7 +164,7 @@ public class PGraphics extends PImage
   public float m20, m21, m22, m23;
   public float m30, m31, m32, m33;
 
-  int angle_mode;
+  public int angleMode;
 
   static final int MATRIX_STACK_DEPTH = 32;
   float matrixStack[][] = new float[MATRIX_STACK_DEPTH][16];
@@ -173,26 +173,29 @@ public class PGraphics extends PImage
   // ........................................................
 
   // current 3D transformation matrix
-  int camera_mode;
-  //int projection;  // none, perspective, or isometric
+
+  public int cameraMode;
   public int dimensions;  // 0, 2 (affine 2d), 3 (perspective/isometric)
 
   // perspective setup
-  float fov;
-  float eyeX, eyeY;
-  float eyeDist, nearDist, farDist;
-  float aspect;
+  public float cameraFOV;
+  public float cameraEyeX, cameraEyeY;
+  public float cameraEyeDist, cameraNearDist, cameraFarDist;
+  public float cameraAspect;
 
-  float p00, p01, p02, p03; // projection matrix
-  float p10, p11, p12, p13;
-  float p20, p21, p22, p23;
-  float p30, p31, p32, p33;
+  public float p00, p01, p02, p03; // projection matrix
+  public float p10, p11, p12, p13;
+  public float p20, p21, p22, p23;
+  public float p30, p31, p32, p33;
 
   // ........................................................
 
   // shapes
 
+  /** True if currently inside beginShape / endShape */
   boolean shape;
+
+  /** Type of shape passed to beginShape() */
   int shapeKind;
 
 
@@ -243,8 +246,8 @@ public class PGraphics extends PImage
 
   // six planes
   // (A,B,C in plane eq + D)
-  float frustum[][] = new float[6][4];
-  float   cp[] = new float[16]; // temporary
+  //float frustum[][] = new float[6][4];
+  //float   cp[] = new float[16]; // temporary
 
 
   // ........................................................
@@ -310,17 +313,17 @@ public class PGraphics extends PImage
   // ........................................................
 
 
-  int rect_mode;
-  int ellipse_mode;
+  public int rectMode;
+  public int ellipseMode;
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  int sphere_detail = 0;
+  public int sphere_detail = 0;
   float sphereX[], sphereY[], sphereZ[];
 
   //int text_mode;
   //int text_space;
-  PFont text_font;
+  public PFont textFont;
 
   // used by PFont/PGraphics.. forces higher quality texture rendering
   boolean drawing_text = false;  // used by PFont
@@ -364,6 +367,8 @@ public class PGraphics extends PImage
    * Called in repsonse to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
+   *
+   * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
     //System.out.println("resize " + iwidth + " " + iheight);
@@ -379,13 +384,13 @@ public class PGraphics extends PImage
     background(backgroundColor);
 
     // init perspective projection based on new dimensions
-    fov = 60; // at least for now
-    eyeX = width / 2.0f;
-    eyeY = height / 2.0f;
-    eyeDist = eyeY / ((float) tan(PI * fov / 360f));
-    nearDist = eyeDist / 10.0f;
-    farDist = eyeDist * 10.0f;
-    aspect = (float)width / (float)height;
+    cameraFOV = 60; // at least for now
+    cameraEyeX = width / 2.0f;
+    cameraEyeY = height / 2.0f;
+    cameraEyeDist = cameraEyeY / ((float) tan(PI * cameraFOV / 360f));
+    cameraNearDist = cameraEyeDist / 10.0f;
+    cameraFarDist = cameraEyeDist * 10.0f;
+    cameraAspect = (float)width / (float)height;
 
     cameraMode(PERSPECTIVE);
   }
@@ -477,12 +482,12 @@ public class PGraphics extends PImage
       svertices = new float[2][];
     }
 
-    text_font = null;
+    textFont = null;
 
     // better to leave this turned off by default
     noLights();
 
-    // init matrices (must do before lighting)
+    // init matrices (must do before lights)
     matrixStackDepth = 0;
 
     // init lights
@@ -492,9 +497,9 @@ public class PGraphics extends PImage
     lightX = new float[MAX_LIGHTS];
     lightY = new float[MAX_LIGHTS];
     lightZ = new float[MAX_LIGHTS];
-    lightKind = new int[MAX_LIGHTS];
+    lightType = new int[MAX_LIGHTS];
 
-    lightKind[0] = AMBIENT;
+    lightType[0] = AMBIENT;
     lightR[0] = 0;
     lightG[0] = 0;
     lightB[0] = 0;
@@ -502,23 +507,23 @@ public class PGraphics extends PImage
     lightY[0] = 0;
     lightZ[0] = 0;
 
-    lightKind[1] = DIFFUSE;
-    lightX[1] = eyeX;
-    lightY[1] = eyeY;
-    lightZ[1] = eyeDist;
+    lightType[1] = DIFFUSE;
+    lightX[1] = cameraEyeX;
+    lightY[1] = cameraEyeY;
+    lightZ[1] = cameraEyeDist;
     lightR[1] = ONE;
     lightG[1] = ONE;
     lightB[1] = ONE;
 
-    textureMode = IMAGE_SPACE;
-    rect_mode    = CORNER;
-    ellipse_mode = CENTER;
-    angle_mode   = RADIANS;
+    textureMode  = IMAGE_SPACE;
+    rectMode   = CORNER;
+    ellipseMode = CENTER;
+    angleMode   = RADIANS;
     //text_mode    = ALIGN_LEFT;
     //text_space   = OBJECT_SPACE;
 
     for (int i = 2; i < MAX_LIGHTS; i++) {
-      lightKind[i] = DISABLED;
+      lightType[i] = DISABLED;
     }
   }
 
@@ -535,14 +540,14 @@ public class PGraphics extends PImage
   public void beginFrame() {
     //if (PApplet.THREAD_DEBUG) System.out.println(" 1 beginFrame");
     /*
-    if (camera_mode == -1) {
+    if (cameraMode == -1) {
       //System.out.println("setting up camera");
       beginCamera();
       //setupProjection(PERSPECTIVE);
       perspective(fov, aspect, nearDist, farDist);
       lookat(eyeX, eyeY, eyeDist,  eyeX, eyeY, 0,  0, 1, 0);
       endCamera();
-      camera_mode = PERSPECTIVE;
+      cameraMode = PERSPECTIVE;
     }
     */
 
@@ -749,7 +754,7 @@ public class PGraphics extends PImage
 
   //////////////////////////////////////////////////////////////
 
-  // LIGHTING AND COLOR
+  // LIGHTS AND COLOR
 
   /**
    * lighting calculation of final colour.
@@ -774,7 +779,7 @@ public class PGraphics extends PImage
                              float target[], int toffset) {
     //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
 
-    if (!lighting) {
+    if (!lights) {
       target[toffset + 0] = r;
       target[toffset + 1] = g;
       target[toffset + 2] = b;
@@ -845,7 +850,7 @@ public class PGraphics extends PImage
     //float specular_b = 0;
 
     for (int i = 1; i < MAX_LIGHTS; i++) {
-      if (lightKind[i] == DISABLED) break;
+      if (lightType[i] == DISABLED) break;
 
       //Light light = (Light) list.value;
       //Ii = light.color;
@@ -1533,15 +1538,15 @@ public class PGraphics extends PImage
     // ------------------------------------------------------------------
     // POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (VX, VY, VZ)
 
-    //if ((camera_mode == PERSPECTIVE) && (dimensions == 0)) {
-    if ((camera_mode != CUSTOM) && (dimensions == 0)) {
+    //if ((cameraMode == PERSPECTIVE) && (dimensions == 0)) {
+    if ((cameraMode != CUSTOM) && (dimensions == 0)) {
       // flat 2D
       for (int i = vertex_start; i < vertex_end; i++) {
         vertices[i][X] = vertices[i][MX];
         vertices[i][Y] = vertices[i][MY];
       }
 
-    } else if ((camera_mode != CUSTOM) && (dimensions == 2)) {
+    } else if ((cameraMode != CUSTOM) && (dimensions == 2)) {
 
       // affine transform, ie rotated 2D
       for (int i = vertex_start; i < vertex_end; i++) {
@@ -1623,10 +1628,7 @@ public class PGraphics extends PImage
     // ------------------------------------------------------------------
     // COLORS
 
-    // calculate RGB for each vertex
-    //if (homogenousColors && !lighting) {  // if no lighting, do only once
-
-    if (!lighting) {
+    if (!lights) {
 
       // all the values for r, g, b have been set with calls to vertex()
       // (no need to re-calculate anything here)
@@ -1663,7 +1665,7 @@ public class PGraphics extends PImage
     // ------------------------------------------------------------------
     // NEAR PLANE CLIPPING AND CULLING
 
-    //if ((camera_mode == PERSPECTIVE) && (dimensions == 3) && clip) {
+    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3) && clip) {
       //float z_plane = eyeDist + ONE;
 
       //for (int i = 0; i < lines_count; i ++) {
@@ -1677,7 +1679,7 @@ public class PGraphics extends PImage
     // ------------------------------------------------------------------
     // POINTS FROM VIEW SPACE (MX, MY, MZ) TO SCREEN SPACE (X, Y, Z)
 
-    if ((camera_mode == PERSPECTIVE) && (dimensions == 3)) {
+    if ((cameraMode == PERSPECTIVE) && (dimensions == 3)) {
 
       for (int i = vertex_start; i < vertex_end; i++) {
         float vx[] = vertices[i];
@@ -1900,7 +1902,7 @@ public class PGraphics extends PImage
     // ------------------------------------------------------------------
     // POINTS FROM MODEL (MX, MY, MZ) TO SCREEN SPACE (X, Y, Z)
 
-    if ((camera_mode == PERSPECTIVE) && (dimensions == 0)) {
+    if ((cameraMode == PERSPECTIVE) && (dimensions == 0)) {
       polygon.interpZ = false;
       spolygon.interpZ = false;
       for (int i = 0; i < vertexCount; i++) {
@@ -1908,7 +1910,7 @@ public class PGraphics extends PImage
         vertices[i][Y] = vertices[i][MY];
       }
 
-    } else if ((camera_mode == PERSPECTIVE) && (dimensions == 2)) {
+    } else if ((cameraMode == PERSPECTIVE) && (dimensions == 2)) {
       polygon.interpZ = false;
       spolygon.interpZ = false;
       for (int i = 0; i < vertexCount; i++) {
@@ -1917,7 +1919,7 @@ public class PGraphics extends PImage
       }
 
       /*
-    } else if (camera_mode == ISOMETRIC) {
+    } else if (cameraMode == ISOMETRIC) {
       for (int i = 0; i < vertexCount; i++) {
         float v[] = vertices[i];
         v[X] =  v[MX] - v[MZ];
@@ -2008,9 +2010,8 @@ public class PGraphics extends PImage
     // COLORS
 
     // calculate RGB for each vertex
-    //if (homogenousColors && !lighting) {  // if no lighting, do only once
 
-    if (!lighting) {
+    if (!lights) {
       //polygon.interpRGB  = //false;
       spolygon.interpRGBA = strokeChanged; //false;
       fpolygon.interpRGBA = fillChanged; //false;
@@ -2066,7 +2067,7 @@ public class PGraphics extends PImage
     switch (shapeKind) {
     case POINTS:
       if ((dimensions == 0) && unchangedZ &&
-          (strokeWeight == ONE) && !lighting) {
+          (strokeWeight == ONE) && !lights) {
         if (!strokeChanged) {
           for (int i = 0; i < vertexCount; i++) {
             thin_point((int) vertices[i][X], (int) vertices[i][Y],
@@ -2091,7 +2092,7 @@ public class PGraphics extends PImage
           // or if lighting is enabled
           // or the stroke color has changed inside beginShape/endShape
           // then re-calculate the color at this vertex
-          if ((i == 0) || lighting || strokeChanged) {
+          if ((i == 0) || lights || strokeChanged) {
             // push calculated color into 'f' (this way, f is always valid)
             calc_lighting(v[SR], v[SG], v[SB],
                        v[X],  v[Y],  v[Z],
@@ -2491,8 +2492,6 @@ public class PGraphics extends PImage
         dest[j] = src[j];
       }
     }
-
-    // render triangle
     tpolygon.render();
   }
 
@@ -2871,7 +2870,7 @@ public class PGraphics extends PImage
     } else {  // use old line code for thickness > 1
 
       if ((dimensions != 3) && unchangedZ) {
-        if ((strokeWeight < TWO) && !lighting && !strokeChanged) {
+        if ((strokeWeight < TWO) && !lights && !strokeChanged) {
           // need to set color at least once?
 
           // THIS PARTICULAR CASE SHOULD NO LONGER BE REACHABLE
@@ -3353,13 +3352,13 @@ public class PGraphics extends PImage
 
 
   public void rectMode(int mode) {
-    rect_mode = mode;
+    rectMode = mode;
   }
 
 
   public void rect(float x1, float y1, float x2, float y2) {
     float hradius, vradius;
-    switch (rect_mode) {
+    switch (rectMode) {
     case CORNERS:
       break;
     case CORNER:
@@ -3382,7 +3381,7 @@ public class PGraphics extends PImage
       y1 -= vradius;
     }
 
-    if ((dimensions == 0) && !lighting && !fillAlpha) {
+    if ((dimensions == 0) && !lights && !fillAlpha) {
       // draw in 2D
       flat_rect((int) x1, (int) y1, (int) x2, (int) y2);
 
@@ -3399,13 +3398,13 @@ public class PGraphics extends PImage
 
 
   public void ellipseMode(int mode) {
-    ellipse_mode = mode;
+    ellipseMode = mode;
   }
 
 
   // adaptive ellipse accuracy contributed by toxi
   public void ellipse(float x, float y, float hradius, float vradius) {
-    switch (ellipse_mode) {
+    switch (ellipseMode) {
     case CENTER_RADIUS:
       break;
     case CENTER:
@@ -3443,7 +3442,7 @@ public class PGraphics extends PImage
     int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
 
     boolean plain =
-      !lighting && !smooth && (strokeWeight == 1) &&
+      !lights && !smooth && (strokeWeight == 1) &&
       !fillAlpha && !strokeAlpha;
 
     boolean flat = (dimensions == 0) ||
@@ -3451,15 +3450,8 @@ public class PGraphics extends PImage
 
     if (plain && flat) {
       if (hradius == vradius) {
-        //if ((dimensions == 0) &&
-        //!lighting && !smooth && (hradius == vradius)) {
         flat_circle((int)x, (int)y, (int)hradius);
-        //if (_fill) flat_circle_fill((int)x, (int)y, (int)hradius);
-        //if (_stroke) flat_circle_stroke((int)x, (int)y, (int)hradius);
 
-        //} else if (((dimensions == 0) || ((dimensions == 2) &&
-        //                     (m00 == m11) && (m00 == 1))) &&
-        //     !lighting && !smooth) {
       } else {
         flat_ellipse((int)x, (int)y, (int)hradius, (int)vradius);
       }
@@ -4098,7 +4090,7 @@ public class PGraphics extends PImage
 
 
   public void image(PImage image, float x1, float y1) {
-    if ((dimensions == 0) && !lighting && !tint &&
+    if ((dimensions == 0) && !lights && !tint &&
         (image_mode != CENTER_RADIUS)) {
       // if drawing a flat image with no warping,
       // use faster routine to draw direct to the screen
@@ -4218,9 +4210,9 @@ public class PGraphics extends PImage
 
   public void textFont(PFont which) {
     if (which != null) {
-      text_font = which;
-      text_font.resetSize();
-      text_font.resetLeading();
+      textFont = which;
+      textFont.resetSize();
+      textFont.resetLeading();
 
     } else {
       System.err.println("Ignoring improperly loaded font in textFont()");
@@ -4229,8 +4221,8 @@ public class PGraphics extends PImage
 
 
   public void textSize(float size) {
-    if (text_font != null) {
-      text_font.size(size);
+    if (textFont != null) {
+      textFont.size(size);
 
     } else {
       System.err.println("First set a font before setting its size.");
@@ -4245,8 +4237,8 @@ public class PGraphics extends PImage
 
 
   public void textLeading(float leading) {
-    if (text_font != null) {
-      text_font.leading(leading);
+    if (textFont != null) {
+      textFont.leading(leading);
 
     } else {
       System.err.println("First set a font before setting its leading.");
@@ -4255,8 +4247,8 @@ public class PGraphics extends PImage
 
 
   public void textMode(int mode) {
-    if (text_font != null) {
-      text_font.align(mode);
+    if (textFont != null) {
+      textFont.align(mode);
 
     } else {
       System.err.println("First set a font before setting its mode.");
@@ -4265,8 +4257,8 @@ public class PGraphics extends PImage
 
 
   public void textSpace(int space) {
-    if (text_font != null) {
-      text_font.space(space);
+    if (textFont != null) {
+      textFont.space(space);
 
     } else {
       System.err.println("First set a font before setting the space.");
@@ -4279,8 +4271,8 @@ public class PGraphics extends PImage
   }
 
   public void text(char c, float x, float y, float z) {
-    if (text_font != null) {
-      text_font.text(c, x, y, z, this);
+    if (textFont != null) {
+      textFont.text(c, x, y, z, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");
@@ -4293,8 +4285,8 @@ public class PGraphics extends PImage
   }
 
   public void text(String s, float x, float y, float z) {
-    if (text_font != null) {
-      text_font.text(s, x, y, z, this);
+    if (textFont != null) {
+      textFont.text(s, x, y, z, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");
@@ -4307,9 +4299,9 @@ public class PGraphics extends PImage
   }
 
   public void text(String s, float x1, float y1, float z, float x2, float y2) {
-    if (text_font != null) {
+    if (textFont != null) {
       float hradius, vradius;
-      switch (rect_mode) {
+      switch (rectMode) {
       case CORNER:
         x2 += x1; y2 += y1;
         break;
@@ -4335,7 +4327,7 @@ public class PGraphics extends PImage
       if (y2 < y1) {
         float temp = y1; y1 = y2; y2 = temp;
       }
-      text_font.text(s, x1, y1, z, x2, y2, this);
+      textFont.text(s, x1, y1, z, x2, y2, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");
@@ -4519,17 +4511,22 @@ public class PGraphics extends PImage
   }
 
 
+  /**
+   * Note that this setting gets nuked if resize() is called.
+   */
   public void cameraMode(int icameraMode) {
-    camera_mode = icameraMode;  // this doesn't do much
+    cameraMode = icameraMode;  // this doesn't do much
 
-    if (camera_mode == PERSPECTIVE) {
+    if (cameraMode == PERSPECTIVE) {
       beginCamera();
       resetMatrix();
-      perspective(fov, aspect, nearDist, farDist);
-      lookat(eyeX, eyeY, eyeDist,  eyeX, eyeY, 0,  0, 1, 0);
+      perspective(cameraFOV, cameraAspect, cameraNearDist, cameraFarDist);
+      lookat(cameraEyeX, cameraEyeY, cameraEyeDist,
+             cameraEyeX, cameraEyeY, 0,
+             0, 1, 0);
       endCamera();
 
-    } else if (camera_mode == ORTHOGRAPHIC) {
+    } else if (cameraMode == ORTHOGRAPHIC) {
       beginCamera();
       resetMatrix();
       ortho(0, width, 0, height, -10, 10);
@@ -4776,7 +4773,7 @@ public class PGraphics extends PImage
 
 
   public void angleMode(int mode) {
-    angle_mode = mode;
+    angleMode = mode;
   }
 
 
@@ -5393,11 +5390,11 @@ public class PGraphics extends PImage
 
 
   public void lights() {
-    lighting = true;
+    lights = true;
   }
 
   public void noLights() {
-    lighting = false;
+    lights = false;
   }
 
 
@@ -5648,17 +5645,17 @@ public class PGraphics extends PImage
   }
 
   private final float sin(float angle) {
-    if (angle_mode == DEGREES) angle *= DEG_TO_RAD;
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   private final float cos(float angle) {
-    if (angle_mode == DEGREES) angle *= DEG_TO_RAD;
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   private final float tan(float angle) {
-    if (angle_mode == DEGREES) angle *= DEG_TO_RAD;
+    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 }
