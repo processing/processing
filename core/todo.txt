@@ -1,11 +1,13 @@
 0078 core
-X text lines were getting horizontally mashed together
-X text lines also getting vertically smashed together
-X make a note of the change to font.width()
+X text fixes
+X   lines were getting horizontally mashed together
+X   lines also getting vertically smashed together
+X   make a note of the change to font.width()
+X backwards rects and backwards ellipses weren't properly drawn
+X   code now compensates for negative widths or swapped x1/x2
 
 _ get SCREEN_SPACE text working again
 
-_ backwards rects may not be getting drawn in PGraphics2
 
 _ updatePixels() not setting PApplet.pixels
 _   also throwing NPEs
