@@ -4028,7 +4028,7 @@ public class PApplet extends Applet
       Frame frame = new Frame();
       frame.setResizable(false);  // remove the grow box
       frame.pack();  // get insets. get more.
-      frame.show();  // gl hack
+      //frame.show();  // gl hack
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
 
@@ -4139,6 +4139,11 @@ public class PApplet extends Applet
 
   // everything below this line is automatically generated. no touch.
   // public functions for processing.core
+
+
+  public void modified() {
+     g.modified();
+  }
 
 
   public void alpha(int alpha[]) {
