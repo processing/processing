@@ -506,18 +506,7 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("Export", 'E');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.message("Exporting code...");
-          try {
-            if (sketch.export()) {
-              message("Done exporting.");
-            } else {
-              // error message will already be visible
-            }
-          } catch (Exception e) {
-            editor.message("Error during export.");
-            e.printStackTrace();
-          }
-          buttons.clear();
+          handleExport();
         }
       });
 
@@ -917,17 +906,6 @@ public class PdeEditor extends JFrame
 
     // next have editor do its thing
     //editor.appyPreferences();
-  }
-
-
-  /** 
-   * Quit, but first ask user if it's ok. Also store preferences
-   * to disk just in case they want to quit. Final exit() happens 
-   * in PdeEditor since it has the callback from PdeEditorStatus.
-   */
-  public void handleQuit() {
-    // check to see if the person actually wants to quit
-    doQuit();
   }
 
 
@@ -1468,7 +1446,32 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void doQuit() {
+  /**
+   * Handles calling the export() function on sketch, and
+   * queues all the gui status stuff that comes along with it.
+   */
+  public void handleExport() {
+    editor.message("Exporting code...");
+    try {
+      if (sketch.export()) {
+        message("Done exporting.");
+      } else {
+        // error message will already be visible
+      }
+    } catch (Exception e) {
+      editor.message("Error during export.");
+      e.printStackTrace();
+    }
+    buttons.clear();
+  }
+
+
+  /** 
+   * Quit, but first ask user if it's ok. Also store preferences
+   * to disk just in case they want to quit. Final exit() happens 
+   * in PdeEditor since it has the callback from PdeEditorStatus.
+   */
+  public void handleQuit() {
     // stop isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
     //doStop();

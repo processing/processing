@@ -358,7 +358,6 @@ public class PdeBase {
 
 
   static public void copyFile(File afile, File bfile) throws IOException {
-    //try {
     InputStream from = new BufferedInputStream(new FileInputStream(afile));
     OutputStream to = new BufferedOutputStream(new FileOutputStream(bfile));
     byte[] buffer = new byte[16 * 1024];
@@ -373,7 +372,7 @@ public class PdeBase {
     to = null;
 
 #ifdef JDK13
-  bfile.setLastModified(afile.lastModified());  // jdk13+ required
+    bfile.setLastModified(afile.lastModified());  // jdk13+ required
 #endif
   //} catch (IOException e) {
   //  e.printStackTrace();
@@ -382,20 +381,45 @@ public class PdeBase {
 
 
   /**
+   * Grab the contents of a file as a string.
+   */
+  static public String loadFile(File file) throws IOException {  
+    // empty code file.. no worries, might be getting filled up later
+    if (file.length() == 0) return "";
+
+    InputStreamReader isr = new InputStreamReader(new FileInputStream(file));
+    BufferedReader reader = new BufferedReader(isr);
+
+    StringBuffer buffer = new StringBuffer();
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      buffer.append(line);
+      buffer.append('\n');
+    }
+    reader.close();
+    return buffer.toString();
+  }
+
+
+  /**
    * Spew the contents of a String object out to a file.
    */
-  static public void saveFile(String contents, File location) 
-    throws IOException {
+  static public void saveFile(String str, 
+                              File file) throws IOException {
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(contents.getBytes())));
-    PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(location)));
+    ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
+    InputStreamReader isr = new InputStreamReader(bis);
+    BufferedReader reader = new BufferedReader(isr);
+
+    FileWriter fw = new FileWriter(file);
+    PrintWriter writer = new PrintWriter(new BufferedWriter(fw));
 
     String line = null;
     while ((line = reader.readLine()) != null) {
       writer.println(line);
     }
     writer.flush();
-    writer.close();        
+    writer.close();
   }
 
 
