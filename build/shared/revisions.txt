@@ -4,6 +4,27 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0060 - 
+
+
+[ known bugs, pardon our dust ]
+
+- single pixel lines draw on top of everything. they have no alpha
+  value so they can't be semi-transparent, and no z-coordinate.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+
+- clipping planes are not yet implemented. meaning that objects may
+  sometimes fly into the camera and turn upside down or do other tricks.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+
+- concave polygons still don't work, meaning that lots of irregular
+  polygons won't draw properly.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062469819;start=0
+
+
 
 ABOUT REV 0059 - 31 august 2003
 
