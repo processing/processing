@@ -37,21 +37,12 @@ rm -f processing/*~
 
 rm -rf processing/CVS
 rm -rf processing/lib/CVS
-rm -rf processing/lib/netscape/CVS
-rm -rf processing/lib/netscape/javascript/CVS
-rm -rf processing/fonts/CVS
-rm -rf processing/reference/CVS
-rm -rf processing/reference/images/CVS
-rm -rf processing/sketchbook/CVS
-rm -rf processing/sketchbook/default/CVS
-rm -f  processing/sketchbook/default/.cvsignore
 
 # new style examples thing ala reas
-#cd processing/sketchbook
-cd processing/lib
+cd processing
 unzip -q examples.zip
 rm examples.zip
-cd ../..
+cd ..
 
 # new style reference
 cd processing
@@ -60,10 +51,10 @@ rm reference.zip
 cd ..
 
 # get serial stuff
-cp dist/serial_setup.command processing/
-chmod a+x processing/serial_setup.command
-cp ../../bagel/serial/RXTXcomm.jar processing/lib/
-cp ../../bagel/serial/libSerial.jnilib processing/
+#cp dist/serial_setup.command processing/
+#chmod a+x processing/serial_setup.command
+#cp ../../bagel/serial/RXTXcomm.jar processing/lib/
+#cp ../../bagel/serial/libSerial.jnilib processing/
 
 # get ds_store file (!)
 cp dist/DS_Store processing/.DS_Store
@@ -79,18 +70,15 @@ rm -rf processing/Processing.app/Contents/Resources/Java/CVS
 # put jar files into the resource dir, leave the rest in lib
 RES=processing/Processing.app/Contents/Resources/Java/
 mv processing/lib/*.jar $RES/
-#cp comm.jar $RES/
-#cp ../shared/dist/lib/*.jar $RES/
-#cp ../shared/dist/lib/pde.properties $RES/
-#cp ../shared/dist/lib/buttons.gif $RES/
 
 # directories used by the app
 mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar $RES/
-cp -r work/lib/export processing/lib/
-rm -rf processing/lib/export/CVS
+cp work/lib/core.jar $RES/
+#cp -r work/lib/export processing/lib/
+#rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
 #cp `which jikes` processing
@@ -106,9 +94,22 @@ chmod a+x processing/jikes
 #unix2dos processing/lib/pde.properties 2> /dev/null
 #unix2dos processing/lib/pde.properties_macosx 2> /dev/null
 
+# something like the following might be better:
+# find / -name "*.mp3" -exec rm -f {}\;
+# and same for cvsignore, ~ files, .DS_Store
+find processing -name "*~" -exec rm -f {} ';'
+#find processing -name ".DS_Store" -exec rm -f {} ';'
+find processing -name "._*" -exec rm -f {} ';'
+
 # zip it all up for release
 mv processing "Processing $REVISION"
 
 # if there is a command line tool to make a dmg from this dir.. hmm
+
+# actually, could probably use:
+# open processing-uncomp.dmg
+# rm -rf /Volumes/Processing/Processing*
+# mv "Processing $REVISION" /Volumes/Processing
+# umount /Volumes/Processing
 
 echo Done.

@@ -1,26 +1,6 @@
 #!/bin/sh
 
 
-### -- CHECK TO MAKE SURE BAGEL EXISTS -------------------------
-
-# move to base 'processing' directory
-#cd ../..
-
-# make sure bagel exists, if not, check it out of cvs
-#if test -d bagel
-#then 
-#  echo
-#else
-#  echo Doing CVS checkout of bagel...
-#  cvs co bagel
-#  cd bagel
-#  cvs update -P
-#  cd ..
-#fi
-
-#cd build/macosx
-
-
 ### -- SETUP WORK DIR -------------------------------------------
 
 if test -d work 
@@ -31,7 +11,7 @@ else
   then
     echo
   else
-    echo You need to install fink and fileutils
+    echo You need to install fink with fileutils, textutils, etc
     exit
   fi
 
@@ -50,48 +30,17 @@ else
   rm reference.zip
   cd ..
 
-#  mkdir work/lib/export
   mkdir work/lib/build
-#  mkdir work/classes
-
-  # get a copy of the mac-specific properties
-  #cp dist/lib/pde_macosx.properties work/lib/
-
-  # grab serial goodies
-#  echo Copying serial support from bagel dir...
-#  cp ../../bagel/serial/RXTXcomm.jar work/lib/
-#  cp ../../bagel/serial/libSerial.jnilib work/
-
-  # copy gl4java libs and jar file
-  # disabled till the next release when i can recompile for 1.4
-  #cp ../../bagel/opengl/gl4java.jar work/lib/
-  #cp ../../bagel/opengl/libGL4JavaJauGljJNI13.jnilib work/
 
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
-  #/sw/bin/cp -dpR dist/Processing.app work/
   /sw/bin/cp -a dist/Processing.app work/
-  #cd work/Processing.app
-  #find . -name "CVS" -depth -exec rm {} \;
-  #cd ../..
 
   # get jikes and depedencies
-  #gunzip < dist/jikes.gz > work/jikes
   echo Copying jikes...
   cp dist/jikes work/
   chmod +x work/jikes
-
-  # build classes/grammar for preprocessor
-#  echo Building antlr grammar code...
-#  cd ../../app/preprocessor
-#  # first build the default java goop
-#  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
-#  # now build the pde stuff that extends the java classes
-#  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
-#  cd ../../build/macosx
-
-  #echo
 fi
 
 
@@ -103,7 +52,6 @@ cd ../..
 
 ### -- BUILD BAGEL ----------------------------------------------
 
-#cd bagel
 cd core
 
 echo Building processing.core...
@@ -111,30 +59,6 @@ echo Building processing.core...
 # rxtx comm.jar will be included by the build script
 CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
 export CLASSPATH
-
-### --- make version with all the goodies for the application
-#echo Building bagel with serial, video, audio, and jdk13 support
-#perl make.pl JIKES=../build/macosx/work/jikes SERIAL RXTX VIDEO SONIC JDK13
-#cp classes/*.class ../build/macosx/work/classes/
-
-### --- make version without serial for applet exporting
-#echo Building bagel for export with audio
-#perl make.pl JIKES=../build/macosx/work/jikes SONIC
-#cp classes/*.class ../build/macosx/work/lib/export/
-
-#echo Building export classes for 1.1
-#rm -f classes/*.class
-#perl make.pl JIKES=../build/macosx/work/jikes
-#cd classes
-#zip -0q ../../build/macosx/work/lib/export11.jar *.class
-#cd ..
-
-#echo Building export classes for 1.3
-#rm -f classes/*.class
-#perl make.pl JIKES=../build/macosx/work/jikes
-#cd classes
-#zip -0q ../../build/macosx/work/lib/export13.jar *.class
-#cd ..
 
 ../build/macosx/work/jikes -d . +D -target 1.1 *.java
 zip -r0q ../build/macosx/work/lib/core.jar processing
@@ -170,18 +94,9 @@ fi
 
 ### -- BUILD PDE ------------------------------------------------
 
-#echo Building PDE for JDK 1.3
 echo Building the PDE...
 
-# new rxtx
-#CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$CLASSPATH
-
-#CLASSPATH=../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:$CLASSPATH
-
 ../build/macosx/work/jikes +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java
-
-#perl ../bagel/buzz.pl "../build/macosx/work/jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
-#perl ../bagel/buzz.pl "javac -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
@@ -201,21 +116,21 @@ CLASSPATH=../../build/macosx/work/lib/core.jar:$CLASSPATH
 # SERIAL LIBRARY
 echo Building serial library...
 cd ../../lib/serial
-../../build/macosx/work/jikes +D -classpath "RXTXcomm.jar:../../build/macosx/work/lib/core.jar:$CLASSPATH" -d . *.java 
-zip -r0q serial.jar processing
+../../build/macosx/work/jikes +D -classpath "code/RXTXcomm.jar:../../build/macosx/work/lib/core.jar:$CLASSPATH" -d . *.java 
+zip -r0q library/serial.jar processing
 rm -rf processing
 mkdir -p ../../build/macosx/work/libraries/serial/library/
-cp serial.jar ../../build/macosx/work/libraries/serial/library/
+cp library/serial.jar ../../build/macosx/work/libraries/serial/library/
 
 
 # NET LIBRARY
 echo Building net library...
 cd ../../lib/net
 ../../build/macosx/work/jikes +D -d . *.java 
-zip -r0q net.jar processing
+zip -r0q library/net.jar processing
 rm -rf processing
 mkdir -p ../../build/macosx/work/libraries/net/library/
-cp net.jar ../../build/macosx/work/libraries/net/library/
+cp library/net.jar ../../build/macosx/work/libraries/net/library/
 
 
 # VIDEO LIBRARY
@@ -223,19 +138,17 @@ echo Building video library...
 QTJAVA=/System/Library/Java/Extensions/QTJava.zip
 if test -f "${QTJAVA}"
 then
-  echo "Found Quicktime at $QTJAVA"
+  echo "Found QuickTime for Java at $QTJAVA"
 else 
-  echo "could not find qtjava.zip in"
-  echo "${WINDIR}\\system32\\qtjava.zip"
-  echo "quicktime for java must be installed before building."
+  echo "QuickTime for Java must be installed before building."
   exit 1;
 fi
 cd ../../lib/video
 ../../build/macosx/work/jikes +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
-zip -r0q video.jar processing
+zip -r0q library/video.jar processing
 rm -rf processing
 mkdir -p ../../build/macosx/work/libraries/video/library/
-cp video.jar ../../build/macosx/work/libraries/video/library/
+cp library/video.jar ../../build/macosx/work/libraries/video/library/
 
 
 echo
