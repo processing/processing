@@ -151,6 +151,10 @@ X processing.net -> PClient, PServer
 X   write client/server implementations for new-style api
 X   basic test with old net server has things working fine
 
+040908
+X inputFile, outputFile, reader, writer commands
+X   also loadStrings(File file)
+
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
 _   move to new graphics engine

@@ -1746,6 +1746,82 @@ public class PApplet extends Applet
   // FILE INPUT
 
 
+  public File inputFile() {
+    Frame frame = null;
+    Component comp = getParent();
+    while (comp != null) {
+      if (comp instanceof Frame) {
+        frame = (Frame) comp;
+        break;
+      }
+      comp = comp.getParent();
+    }
+    //System.out.println("found frame " + frame);
+    if (frame == null) frame = new Frame();
+
+    FileDialog fd = new FileDialog(frame,
+                                   "Select a file...", 
+                                   FileDialog.LOAD);
+    fd.show();
+
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+    if (filename == null) return null;
+    return new File(directory, filename);
+  }
+
+
+  public File outputFile() {
+    Frame frame = null;
+    Component comp = getParent();
+    while (comp != null) {
+      if (comp instanceof Frame) {
+        frame = (Frame) comp;
+        break;
+      }
+      comp = comp.getParent();
+    }
+    //System.out.println("found frame " + frame);
+    if (frame == null) frame = new Frame();
+
+    FileDialog fd = new FileDialog(frame,
+                                   "Save as...", 
+                                   FileDialog.SAVE);
+    fd.show();
+
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+    if (filename == null) return null;
+    return new File(directory, filename);
+  }
+
+
+  public BufferedReader reader(File file) {
+    try {
+      FileInputStream fis = new FileInputStream(file);
+      InputStreamReader isr = new InputStreamReader(fis);
+      return new BufferedReader(isr);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  public PrintWriter writer(File file) {
+    try {
+      FileOutputStream fos = new FileOutputStream(file);
+      OutputStreamWriter osw = new OutputStreamWriter(fos);
+      return new PrintWriter(osw);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
   public InputStream openStream(String filename) throws IOException {
     InputStream stream = null;
 
@@ -1824,6 +1900,17 @@ public class PApplet extends Applet
     return null;
   }
 
+
+  static public String[] loadStrings(File file) {
+    try {
+      return loadStrings(new FileInputStream(file));
+
+    } catch (IOException e) {
+      System.err.println("problem loading strings from " + file);
+      e.printStackTrace();
+    }
+    return null;
+  }
 
   public String[] loadStrings(String filename) {
     try {
