@@ -77,6 +77,8 @@ Export to:   [ Library       + ]    [  OK  ]
  */
 
 public class Sketch {
+  String path;  // path to 'main' file for this sketch
+
   String name; 
   File directory;
 
@@ -228,7 +230,8 @@ public class Sketch {
    */
   public void run() {
     try {
-      String program = textarea.getText();
+      //String program = textarea.getText();
+      current.program = textarea.getText();
       current.history.record(program, PdeHistory.RUN);
 
       // if an external editor is being used, need to grab the
@@ -250,15 +253,17 @@ public class Sketch {
       if (!buildDir.exists()) {
         buildDir.mkdirs();
       }
-      // copy (changed) files from data directory into build folder
-      //sketch.updateDataDirectory(buildDir);
 
-      // copy contents of data dir.. eventually, if the files 
-      // already exist in the target, don't' bother.
-      //public void updateDataDirectory(File buildDir) {
+      // copy contents of data dir into lib/build
+      // TODO write a file sync procedure here.. if the files 
+      //      already exist in the target, or haven't been modified
+      //      don't' bother. this can waste a lot of time when running.
       File dataDir = new File(directory, "data");
       if (dataDir.exists()) {
-        PdeBase.copyDir(dataDir, buildDir);
+        // just drop the files in the build folder (pre-68)
+        //PdeBase.copyDir(dataDir, buildDir);
+        // drop the files into a 'data' subfolder of the build dir
+        PdeBase.copyDir(dataDir, new File(buildDir, "data"));
       }
 
       // make up a temporary class name to suggest
@@ -342,7 +347,8 @@ public class Sketch {
       if (runtime != null) runtime.stop();
 
       cleanTempFiles(); //tempBuildPath);
-    }        
+    } 
+  }
 
 
   /**
@@ -362,9 +368,6 @@ public class Sketch {
   protected String build(String program, String suggestedClassName,
                          String buildPath) throws PdeException, Exception {
 
-    // true if this should extend BApplet instead of BAppletGL
-    //boolean extendsNormal = base.normalItem.getState();
-
     externalRuntime = false;
     externalPaths = null;
     String externalImports[] = null;
@@ -381,9 +384,9 @@ public class Sketch {
 
     PdePreprocessor preprocessor = new PdePreprocessor();
     try {
-      className = 
+      mainClassName = 
         preprocessor.write(program, buildPath,
-                           className, imports, false);
+                           suggestedClassName, externalImports);
 
     } catch (antlr.RecognitionException re) {
       // this even returns a column
@@ -423,14 +426,14 @@ public class Sketch {
       throw new PdeException(ex.toString());
     }
 
-    if (PdePreprocessor.programType == PdePreprocessor.ADVANCED) {
+    if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
       externalRuntime = true; // we in advanced mode now, boy
     }
 
     // compile the program
     //
     PdeCompiler compiler = 
-      new PdeCompiler(buildPath, className, externalCode, this);
+      new PdeCompiler(buildPath, mainClassName, externalCode, this);
 
     // run the compiler, and funnel errors to the leechErr
     // which is a wrapped around 
