@@ -362,7 +362,9 @@ public class PdeRuntime implements PdeMessageConsumer {
 
 
   public void message(String s) {
+    if (s.trim().length() == 0) return;
     //System.out.println("M" + s.length() + ":" + s);
+
     // this is PApplet sending a message (via System.out.println)
     // that signals that the applet has been quit.
     if (s.indexOf(PApplet.EXTERNAL_QUIT) == 0) {
