@@ -85,6 +85,7 @@ public class PdePreferences extends JComponent {
 
   JTextField sketchbookLocationField;
   JCheckBox sketchPromptBox;
+  JCheckBox sketchCleanBox;
   JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
 
@@ -194,6 +195,16 @@ public class PdePreferences extends JComponent {
     top += d.height + GUI_BETWEEN;
 
 
+    // [ ] Delete empty sketches on Quit
+
+    sketchCleanBox = new JCheckBox("Delete empty sketches on Quit");
+    pain.add(sketchCleanBox);
+    d = sketchCleanBox.getPreferredSize();
+    sketchCleanBox.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+
     // Sketchbook location: 
     // [...............................]  [ Browse ]
 
@@ -240,7 +251,7 @@ public class PdePreferences extends JComponent {
     top += vmax + GUI_BETWEEN;
 
 
-    // [ ] Use external editor
+    // [ ] Enable export to "Library"
 
     exportLibraryBox = new JCheckBox("Enable export to \"Library\"");
     pain.add(exportLibraryBox);
@@ -367,6 +378,7 @@ public class PdePreferences extends JComponent {
     // put each of the settings into the table
 
     setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
+    setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
     set("sketchbook.path", sketchbookLocationField.getText());
     setBoolean("export.library", exportLibraryBox.isSelected());
     setBoolean("editor.external", externalEditorBox.isSelected());
@@ -380,6 +392,7 @@ public class PdePreferences extends JComponent {
 
     // set all settings entry boxes to their actual status
     sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
+    sketchCleanBox.setSelected(getBoolean("sketchbook.auto_clean"));
     sketchbookLocationField.setText(get("sketchbook.path"));
     exportLibraryBox.setSelected(getBoolean("export.library"));
     externalEditorBox.setSelected(getBoolean("editor.external"));
