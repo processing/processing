@@ -73,8 +73,8 @@ public class PdePreferences extends JComponent {
 
   // mac needs it to be 70, windows needs 66, linux needs 76
 
-  static final int BUTTON_WIDTH  = 76;
-  static final int BUTTON_HEIGHT = 24;
+  static /*final*/ int BUTTON_WIDTH  = 76;
+  static /*final*/ int BUTTON_HEIGHT = 24;
 
   // value for the size bars, buttons, etc
 
@@ -84,7 +84,7 @@ public class PdePreferences extends JComponent {
   // gui variables
 
   static final int GUI_BIG     = 13;
-  static final int GUI_BETWEEN = 13;
+  static final int GUI_BETWEEN = 10;
   static final int GUI_SMALL   = 6;
 
   // gui elements
@@ -220,15 +220,18 @@ public class PdePreferences extends JComponent {
     top += d.height + GUI_BETWEEN;
 
 
-    // Sketchbook location: [...............................]  [ Browse ]
+    // Sketchbook location: 
+    // [...............................]  [ Browse ]
 
     label = new JLabel("Sketchbook location:");
     pain.add(label);
     d = label.getPreferredSize();
+    label.setBounds(left, top, d.width, d.height);
+    top += d.height; // + GUI_SMALL;
 
-    sketchbookLocationField = new JTextField(18);
+    sketchbookLocationField = new JTextField(30);
     pain.add(sketchbookLocationField);
-    d2 = sketchbookLocationField.getPreferredSize();
+    d = sketchbookLocationField.getPreferredSize();
 
     button = new JButton(PROMPT_BROWSE);
     button.addActionListener(new ActionListener() {
@@ -245,20 +248,21 @@ public class PdePreferences extends JComponent {
         }
       });
     pain.add(button);
-    d3 = button.getPreferredSize();
+    d2 = button.getPreferredSize();
 
     // take max height of all components to vertically align em
-    vmax = Math.max(Math.max(d.height, d2.height), d3.height);
-    label.setBounds(left, top + (vmax-d.height)/2, 
-                    d.width, d.height);
-    h = left + d.width + GUI_BETWEEN;
-    sketchbookLocationField.setBounds(h, top + (vmax-d2.height)/2, 
-                                      d2.width, d2.height);
-    h += d2.width + GUI_BETWEEN;
-    button.setBounds(h, top + (vmax-d3.height)/2, 
-                     d3.width, d3.height);
+    vmax = Math.max(d.height, d2.height);
+    //label.setBounds(left, top + (vmax-d.height)/2, 
+    //              d.width, d.height);
 
-    right = Math.max(right, h + d3.width + GUI_BIG);
+    //h = left + d.width + GUI_BETWEEN;
+    sketchbookLocationField.setBounds(left, top + (vmax-d.height)/2, 
+                                      d.width, d.height);
+    h = left + d.width + GUI_SMALL; //GUI_BETWEEN;
+    button.setBounds(h, top + (vmax-d2.height)/2, 
+                     d2.width, d2.height);
+
+    right = Math.max(right, h + d2.width + GUI_BIG);
     top += vmax + GUI_BETWEEN;
 
 
@@ -285,22 +289,28 @@ public class PdePreferences extends JComponent {
     // More preferences are in the ...
 
     String blather = 
-      "More preferences are in the 'lib' folder inside text files\n" +
-      "named pde.properties and pde_" + 
-      PdeBase.platforms[PdeBase.platform] + ".properties";
+      "More preferences can be edited directly\n" + 
+      "in the file " + preferencesFile.getAbsolutePath();
+      //"More preferences are in the 'lib' folder inside text files\n" +
+      //"named pde.properties and pde_" + 
+      //PdeBase.platforms[PdeBase.platform] + ".properties";
 
     JTextArea textarea = new JTextArea(blather);
-    textarea.setBorder(new EmptyBorder(GUI_SMALL, GUI_SMALL, GUI_SMALL, GUI_SMALL));
+    textarea.setEditable(false);
+    textarea.setBorder(new EmptyBorder(0, 0, 0, 0));
+    textarea.setBackground(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
 
-    //pain.add(label);
     d = textarea.getPreferredSize();
     textarea.setBounds(left, top, d.width, d.height);
-    top += d.height + GUI_BETWEEN;
+    top += d.height; // + GUI_BETWEEN;
 
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
+
+    right = Math.max(right, left + d.width + GUI_BETWEEN + 
+                     BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
 
     button = new JButton(PROMPT_OK);
     button.addActionListener(new ActionListener() {
@@ -310,10 +320,15 @@ public class PdePreferences extends JComponent {
         }
       });
     pain.add(button);
-    button.setBounds(left, top, BUTTON_WIDTH, BUTTON_HEIGHT);
-    h = left + BUTTON_WIDTH + GUI_BETWEEN;
+    d2 = button.getPreferredSize();
+    BUTTON_HEIGHT = d2.height;
 
-    //d = button.getPreferredSize();
+    // smoosh up to the line before
+    top -= BUTTON_HEIGHT;
+
+    h = right - (BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
+    button.setBounds(h, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    h += BUTTON_WIDTH + GUI_SMALL;
 
     button = new JButton(PROMPT_CANCEL);
     button.addActionListener(new ActionListener() {
@@ -326,7 +341,8 @@ public class PdePreferences extends JComponent {
 
     top += BUTTON_HEIGHT + GUI_BETWEEN;
 
-    //
+
+    // finish up
 
     wide = right + GUI_BIG;
     high = top + GUI_BIG;

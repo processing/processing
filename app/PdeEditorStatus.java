@@ -370,7 +370,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     //if (screen == null) return;
     if (yesButton == null) setup();
 
-    System.out.println("status.paintComponent");
+    //System.out.println("status.paintComponent");
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
