@@ -9,6 +9,7 @@ X   may need a 'wedge' function to draw a stroke around the whole thing
 X only allocate stencil and zbuffer on first call to depth()
 X   this will require changes to PTriangle and PLine inside their loops
 X try running javadoc
+X die() may need to throw a RuntimeException
 
 covered in previous
 X before graphics engine change, attach jogl stuff
@@ -107,15 +108,7 @@ X make light() functions actually do something in PGraphicsGL
 X box() and sphere() working again
 X make opengl work in draw mode
 X   set initial size using --size=
-
-api todos
-_ sphere x,y,z,r or box w,h,d.. need to make them consistent
-_ look at curve functions more closely
-_   should we switch to curveVertex(1,2,3) (ala curveto)
-_   because some confusion with mixing types of curves
-_ how to force PGraphics() instead of PGraphics2()
-
-_ color channels seem to be swapped on windows in displaying image example
+X color channels seem to be swapped on windows in image example
 X   check on the mac to see what it looks like
 
 _ get text working again
@@ -131,9 +124,15 @@ _ default to single byte input from serial port
 _   and add serial.setBuffer() for message length as alternative
 _   or serial.setDelimiter() to fire message on delim
 
-_ die() may need to throw a RuntimeException
 
 //
+
+api todos
+_ sphere x,y,z,r or box w,h,d.. need to make them consistent
+_ look at curve functions more closely
+_   should we switch to curveVertex(1,2,3) (ala curveto)
+_   because some confusion with mixing types of curves
+_ how to force PGraphics() instead of PGraphics2()
 
 _ also have a simple way to hook in triangle leeches to PGraphics3
 
