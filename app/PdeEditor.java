@@ -39,6 +39,7 @@ import javax.swing.text.*;
 import com.apple.mrj.*;
 #endif
 
+
 public class PdeEditor extends JPanel {
 
   static final String DEFAULT_PROGRAM = "// type program here\n";
