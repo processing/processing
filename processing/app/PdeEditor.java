@@ -98,6 +98,9 @@ public class PdeEditor extends JFrame
   JMenuItem saveAsMenuItem;
   //JMenuItem beautifyMenuItem;
 
+  JRadioButtonMenuItem coreRendererItem;
+  JRadioButtonMenuItem openglRendererItem;
+
   //
 
   boolean running;
@@ -616,13 +619,49 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    //menu.add(newJMenuItem("Stop", 'T'));
-    menu.add(new JMenuItem("Stop"));
+    item = new JMenuItem("Stop");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStop();
         }
       });
+    menu.add(item);
+
+    JMenu rendererMenu = new JMenu("Renderer");
+    menu.add(rendererMenu);
+
+    coreRendererItem = new JRadioButtonMenuItem("Processing");
+    rendererMenu.add(coreRendererItem);
+    coreRendererItem.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          //System.out.println("setting renderer");
+          //openglRendererItem.setState(false);
+          //coreRendererItem.setState(true);
+          PdePreferences.set("renderer", "core");
+        }
+      });
+
+    openglRendererItem = new JRadioButtonMenuItem("OpenGL");
+    rendererMenu.add(openglRendererItem);
+    openglRendererItem.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          //System.out.println("setting renderer");
+          //openglRendererItem.setState(true);
+          //coreRendererItem.setState(false);
+          PdePreferences.set("renderer", "opengl");
+        }
+      });
+
+    ButtonGroup rendererGroup = new ButtonGroup();
+    rendererGroup.add(coreRendererItem);
+    rendererGroup.add(openglRendererItem);
+
+    boolean useOpenGL = PdePreferences.get("renderer").equals("opengl");
+    coreRendererItem.setSelected(!useOpenGL);
+    openglRendererItem.setSelected(useOpenGL);
+
+    //
+
     menu.addSeparator();
 
     //

@@ -184,6 +184,9 @@ run.external = false
 run.window.width.minimum = 120
 run.window.height.minimum = 120
 
+# set this to opengl to make it the default renderer
+renderer = core
+
 # prompt for sketch location when 'new' is hit
 sketchbook.prompt = false
 

@@ -202,7 +202,7 @@ public class PApplet extends Applet
     //loopMethod = true;
     looping = true;
     redraw = true;  // draw this guy once
-    firstMouseEvent = true;
+    //firstMouseEvent = true;
 
     /*
     // call setup for changed params
