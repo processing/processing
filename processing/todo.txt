@@ -23,6 +23,7 @@ BXDatabase, BXDatabaseCache (keeps queries to fill out table)
 BAGEL / high
 b _ better access to projX et al
 b _   what's a better name? calcX? or write to an array?
+b _   projectX, projectY, .. or projectedX ? 
 
 
 BAGEL / high & time consuming
@@ -111,28 +112,31 @@ X get rid of 'kill' button
 X int version of min and abs
 X introduce pImage, pFont, pGraphics, pConstants (pSound)
 
+a _ add frame to launched window
+a _   add maximize event catcher to make fullscreen
+a _   shift-click on play to go directly into this 'presentation mode'
+a _ lines being highlighted for errors are off
+a _   test this on other platforms as well
 a _ move everything to new bagel api names
 a _ draw mode needs to be better for workshops
 a _   make size() work for draw() mode
 a _     inside Engine, reach in and grab calls to 'size'
 a _     if call is not using a constant number, then punt
 a _ importing images doesn't work
-a _ add frame to launched window
-a _   add maximize event catcher to make fullscreen
-a _   shift-click on play to go directly into this 'presentation mode'
-a _ serial.messageReceived extra long crap in demo.pde (clean up?)
-a _ NullPointerException on startup in pde editor buttons
-a _   shows up on slower machines, probably images not loaded yet
-a _ lines being highlighted for errors are off
-a _   test this on other platforms as well
-a _ use a vm that won't destroy the screen like sun/ibm does
-a _   this means msft or newer version of jdk
+
+b _ serial.messageReceived extra long crap in demo.pde (clean up?)
+b _ NullPointerException on startup in pde editor buttons
+b _   shows up on slower machines, probably images not loaded yet
+b _ use a vm that won't destroy the screen like sun/ibm does
+b _   this means msft or newer version of jdk
 
 
 PDE / high & time consuming
 a _ exporting to applet/.jar file
+a _   need to set project name for files
 a _   'data' directory for all media
 a _   include other .class files built besides the main one
+a _     compile into 'classes' folder
 a _   include referenced image and font files (can't do if numbered)
 a _   exporting applets that have custom name problems:
 a _     if extends processingapplet, the name user types must be same
@@ -149,10 +153,11 @@ a _     right now have to hit play and then hit export (?)
 a _   include main class info for executable jar file with jdk > 1.2
 a _   remove .java and .class files for compiled classes
 a _     (just clean up the boogers afterwards)
-a _ it's really a pain to use external files in processing
-a _   getStream sucks (zach rewrote)
-a _   should be able to work for application or applets
-a _   may want to use getResource() (to get things from .jar files)
+a _   it's really a pain to use external files in processing
+a _     getStream sucks (zach rewrote)
+a _     should be able to work for application or applets
+a _     may want to use getResource() (to get things from .jar files)
+
 a _ Compiler.disable() message is weird and doesn't always work
 a _   probably just remove it for now
 a _ kjc is really frustrating about some of its error/warning msgs
@@ -212,10 +217,13 @@ b _   look at flash file format? (does it have kerning?)
 
 PDE / ui
 a _ cosmetic ui update so that it's not so dbn-like
-b _ ui for sketchbook/projects handling
+a _   should this instead be simple colors update (no placement)
+a _ basic ui for sketchbook/projects
+b _ real ui for sketchbook/projects handling
 
 
 PDE / macos
+a _ how to make double-clickable version for osx
 a _ crashes when people click on help in top bar (same in DBN) [macos9]
 a _ dataInputStream, setUseCaches on the url to false
 a _   URLConnection.setUseCaches(false)
