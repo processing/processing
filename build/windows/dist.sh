@@ -2,6 +2,15 @@
 
 REVISION=`head -c 4 ../../todo.txt`
 
+# check to see if the version number in the app is correct
+# so that mikkel doesn't kick my ass
+VERSIONED=`cat ../../app/PdeBase.java | grep $REVISION`
+if [ -z "$VERSIONED" ]
+then
+  echo Fix the revision number in PdeBase.java
+  exit
+fi
+
 ./make.sh
 
 echo Creating P5 distribution for revision $REVISION...
@@ -13,8 +22,9 @@ rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
-rm -rf processing/CVS
-rm -rf processing/lib/CVS
+
+# add the libraries folder with source
+cp -r ../../lib processing/libraries
 
 # new style examples thing ala reas
 cd processing
@@ -33,6 +43,10 @@ chmod +x reference/environment/*.html
 # get rid of the zip file
 rm reference.zip
 cd ..
+
+# clean out the cvs entries
+find processing -name "CVS" -exec rm -rf {} ';'
+#find processing -name "CVS" -exec echo {} ';'
 
 # add java (jre) files
 unzip -q -d processing jre.zip

@@ -12,7 +12,12 @@ rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
+
+# add the libraries folder with source
 cp -r ../../lib processing/libraries
+
+# doesn't work on linux, don't include it and confuse people
+rm -rf processing/libraries/video
 
 # new style examples thing ala reas
 cd processing
