@@ -146,10 +146,11 @@ public class PdeEditorHeader extends JComponent {
     Graphics g = offscreen.getGraphics();
     if (font == null) {
       font = PdePreferences.getFont("header.text.font");
-      g.setFont(font);
-      metrics = g.getFontMetrics();
-      fontAscent = metrics.getAscent();
     }
+    g.setFont(font);  // need to set this each time through
+    metrics = g.getFontMetrics();
+    fontAscent = metrics.getAscent();
+    //}
 
     //Graphics2D g2 = (Graphics2D) g;
     //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
