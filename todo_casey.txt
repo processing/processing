@@ -1,3 +1,10 @@
+0043 _ALPHA_
+
+# Hex colors are always in RGB, if you set colorMode(HSB, 255); and then set a color with #ffffff it will display the color at RGB
+
+the println buffer is crashing. run println for a long time watch.
+
+
 / / / / / / / / / /
 
 I'm totally confused about how mouseDown keyDown mouseUp keyUp is supposed to be working so i can't document it. do you have simple examples?
