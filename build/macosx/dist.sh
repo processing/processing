@@ -3,13 +3,22 @@
 
 if test -f /sw/bin/head
 then
-  # a more useful version of head than what's included with osx
+  # old 4 char version.. osx only uses the two chars
   #REVISION=`head -c 4 ../../todo.txt`
+  # a more useful version of head than what's included with osx
   REVISION=`head -c 4 ../../todo.txt | tail -c 2`
 else
   # can't get four bytes of head (osx doesn't support -c)
   REVISION=0000
 fi
+
+VERSIONED=`cat ../../app/PdeBase.java | grep 00$REVISION`
+if [ -z "$VERSIONED" ]
+then
+  echo Fix the revision number in PdeBase.java
+  exit
+fi
+
 
 ./make.sh
 
