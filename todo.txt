@@ -6,43 +6,14 @@ o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X make components all swing components
 X   switch to swing menus (for linux), because motif widgets are nasty
 X moved 'find in reference' to the help menu
-
-_ why are cmd keys for menus not working (on mac only?)
-
-examples/readonly
-_ how to handle examples: read only, somewhere inside lib
-_ move examples to folder that goes w/ p5 app
-_   set examples somehow read-only
-_ 'save as' from examples puts into examples dir.. :(
-_   make it default to the user's sketch dir
-
-_ don't allow editing of multiple files in this release
-_   but support multiple java/pde files through the 'add file' option
-_ "new text java/pde file" menu item
-_   option for having multiple files open
+X eliminate the requirement for a 'data' folder
+X   only create 'data' folder when it's needed/used
+X   auto-create code and data folder via 'add files to sketch..'
 
 _ sketch.properties should go into user.home
 _   otherwise moving sketch folder will kill it
-_ may need to start putting properties somewhere besides lib
-_   home directory  (or preferences folder under macos9)
-
-_ open mode
-_   on application open, override 'open' mode
-_   and just open an empty sketch in the sketchbook folder
-
-_ check if file is read-only, and if so, ask where to put sketch
-
-_ when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
-
-_ need ui for tabs
-
-_ only create 'data' folder when it's needed/used
-_   auto-create code and data folder via 'add files to sketch..'
-
-_ "add library" menu item and submenu
-_   iterate through the 'library' folders
-_ eliminate the requirement for a 'data' folder
-_ fix code for changing the sketch folder
+X may need to start putting properties somewhere besides lib
+X   home directory  (or preferences folder under macos9)
 
 _ if sketchbook.dir is set, makes new sketchbook folder
 _   reads sketchbook properly from other folder
@@ -55,16 +26,32 @@ _   bring this up on bboard and get votes
 _   win2k: my documents, macosx: ~/Documents, 
 _   macos9: hd:Users?, linux: ~/sketchbook
 
+. . . . . . . . . 
 
-0069+
-_ tabbed interface for multiple files
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
+_ why are cmd keys for menus not working (on mac only?)
 
-_ put screenshots into sketch folder
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+examples/readonly
+_ check if file is read-only, and if so, ask where to put sketch
+_ how to handle examples: read only, somewhere inside lib
+_ move examples to folder that goes w/ p5 app
+_   set examples somehow read-only
+_ 'save as' from examples puts into examples dir.. :(
+_   make it default to the user's sketch dir
 
+_ don't allow editing of multiple files in this release
+_   but support multiple java/pde files through the 'add file' option
 
-API WORK
+_ open mode
+_   on application open, override 'open' mode
+_   and just open an empty sketch in the sketchbook folder
+
+_ when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
+
+_ "add library" menu item and submenu
+_   iterate through the 'library' folders
+_ fix code for changing the sketch folder
+
+api changes
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
@@ -72,6 +59,28 @@ _ some way to properly quit sketch when stopped
 _   if people have other threads they've spawned, impossible to stop
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ BImage.smooth() ?
+
+_ rewrite bagel code.. 
+_   for this release, because it will break things along with the lib stuff
+_   switch to PImage, PApplet, etc
+
+_ update() mode should be finished before beta
+
+_ change copyrights on the files again
+
+
+0069+
+_ option for having multiple files open
+_   need ui for tabs from casey
+_   tabbed interface for multiple files
+_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
+_   "new text java/pde file" menu item
+
+_ get new simong code in there
+
+_ put screenshots into their sketch folder
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
+_   add a method BApplet.setPath() or something like that
 
 
 bugsies
@@ -988,9 +997,6 @@ _ 7 day search on discourse board
 
 
 api work
-
-_ merge BImage/BGraphics into BLayer/Pixels ?
-_ update() mode should be finished before beta
 
 _ for int i for 0 to b.length
 _ for i from 0 upto b.length
