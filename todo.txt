@@ -1,26 +1,9 @@
-0029
-X triangle() 6 parameters
-X quad() 8 parameters
-X rect/rectMode again
-X remove addMouse/addKeyboard/addTime
-X keyDown(), mouseDown(), lastMouseX, lastMouseY
-X degrees(), radians()
-X new color solution
-X   make sure fxns come through (if static/final?)
-X   color() -> uses colorMode
-X   red/green/blue() hue/saturation/value() functions
-X   getPixel/setPixel
-X proposed color solution (canned)
-o   color -> since color 'mode', responds to colorMode
-o   getPixel/setPixel -> get/set int for purpose of moving pixels
-o   get/set Red/Green/Blue/Hue/Saturation/Brightness -> uses colorMode
-o   setColor(x, y, z) -> hsb or rgb via colorMode
-X get casey setup with full cvs so that he can build w/ changes
-_ make sure lib/export is updated properly this time
-
-kjc issues
-_ comments are removed from exported files
-_ modify to allow for the 'build' directory on lib
+0030
+_ kjc issues
+_   convert color -> int
+_   comments are removed from exported files
+_   modify to allow for the 'build' directory on lib
+_ make a new 'dist' function for building
 
 _ exceptions in draw() apps aren't caught
 _   the program resize(200, 200); just does nothing
@@ -28,8 +11,6 @@ _ fold simpleserial into BApplet
 _   sprint an sprintln functions
 _   make i/o work just like mouse (event driven, with dflt behavior)
 _   need to have function to enable it in setup
-
-_ make a new 'dist' function for building
 _ make scrollbar for console
 
 
