@@ -27,6 +27,13 @@ if test -d work
 then
   echo 
 else
+  if test -f /sw/bin/cp
+  then
+    echo
+  else
+    echo You need to install fink and fileutils
+  fi
+
   echo Setting up directories to build under Mac OS X
   cp -r ../shared work
 
@@ -63,8 +70,8 @@ else
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
-  #cp -dpR dist/Processing.app work/
-  cp -R dist/Processing.app work/
+  #/sw/bin/cp -dpR dist/Processing.app work/
+  /sw/bin/cp -a dist/Processing.app work/
   #cd work/Processing.app
   #find . -name "CVS" -depth -exec rm {} \;
   #cd ../..
