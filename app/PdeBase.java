@@ -249,6 +249,8 @@ public class PdeBase extends Frame
     menu.add(saveMenuItem);
     menu.add(saveAsMenuItem);
     menu.add(new MenuItem("Rename..."));
+    menu.addSeparator();
+
     menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
     item = new MenuItem("Export Application", new MenuShortcut('E', true));
     item.setEnabled(false);
