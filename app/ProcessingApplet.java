@@ -1,6 +1,7 @@
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 
@@ -10,6 +11,9 @@ public class ProcessingApplet extends Applet
 	     MouseListener, MouseMotionListener, KeyListener {
   public Bagel g;
   public int pixels[];
+
+  MemoryImageSource mis;
+  Image image;
 
   public int mouseX, mouseY;
   public boolean mousePressed;
@@ -58,7 +62,7 @@ public class ProcessingApplet extends Applet
     if (g == null) {
       // if programmer hasn't added a special graphics
       // object, then setup a standard 320x240 one
-      size(320, 240);
+      size(100, 100);
     }
   }
 
@@ -116,11 +120,13 @@ public class ProcessingApplet extends Applet
 
 
   // this is where screen grab could attach itself
+
+  DirectColorModel cm = 
+    new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff); 
+
   public void update() {
     Graphics g = this.getGraphics();
-    if (g != null) {
-      paint(g);
-    }
+    if (g != null) paint(g);
   }
 
   public void update(Graphics screen) {
@@ -128,6 +134,8 @@ public class ProcessingApplet extends Applet
   }
 
   public void paint(Graphics screen) {
+    mis.newPixels(pixels, cm, 0, width); // must call this
+
     /*
     if ((thread == null) && !finished) {
       // kickstart my heart
@@ -140,11 +148,11 @@ public class ProcessingApplet extends Applet
       screen.drawImage(g.image, 0, 0, null);
     }
     */
-    if (screen == null) 
-      System.out.println("ProcessinApplet.paint screen is null");
-    if (g == null) 
-      System.out.println("ProcessinApplet.paint g is null");
-    screen.drawImage(g.image, 0, 0, null);
+    //if (screen == null) 
+    //System.out.println("ProcessinApplet.paint screen is null");
+    //if (g == null) 
+    //System.out.println("ProcessinApplet.paint g is null");
+    screen.drawImage(image, 0, 0, null);
   }
 
 
@@ -236,6 +244,15 @@ public class ProcessingApplet extends Applet
 
     g = new Bagel(width, height);
     pixels = g.pixels;
+
+    // because of a java bug
+    for (int i = 0; i < pixels.length; i++) pixels[i] = 0xffffffff;
+
+    // setup MemoryImageSource
+    mis = new MemoryImageSource(width, height, pixels, 0, width);
+    mis.setFullBufferUpdates(true); // maybe this will help ipaq?
+    mis.setAnimated(true);
+    image = Toolkit.getDefaultToolkit().createImage(mis);
 
     // set this here, and if not inside browser, getDocumentBase()
     // will fail with a NullPointerException, and cause applet to
@@ -774,6 +791,11 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public void beginShape() {
+    g.beginShape();
+  }
+
+
   public void beginShape(int kind) {
     g.beginShape(kind);
   }
@@ -809,8 +831,8 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void catmullRomVertex(float x, float y) {
-    g.catmullRomVertex(x, y);
+  public void curveVertex(float x, float y) {
+    g.curveVertex(x, y);
   }
 
 
@@ -840,8 +862,18 @@ public class ProcessingApplet extends Applet
   }
 
 
+  public void rectMode(int mode) {
+    g.rectMode(mode);
+  }
+
+
   public void rect(float x1, float y1, float x2, float y2) {
     g.rect(x1, y1, x2, y2);
+  }
+
+
+  public void ellipseMode(int mode) {
+    g.ellipseMode(mode);
   }
 
 
@@ -870,19 +902,19 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void bezierCurve(float x1, float y1, 
-			  float x2, float y2,
-			  float x3, float y3,
-			  float x4, float y4) {
-    g.bezierCurve(x1, y1, x2, y2, x3, y3, x4, y4);
+  public void bezier(float x1, float y1, 
+		     float x2, float y2,
+		     float x3, float y3,
+		     float x4, float y4) {
+    g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
-  public void catmullRomCurve(float x1, float y1, 
-			      float x2, float y2,
-			      float x3, float y3,
-			      float x4, float y4) {
-    g.catmullRomCurve(x1, y1, x2, y2, x3, y3, x4, y4);
+  public void curve(float x1, float y1, 
+		    float x2, float y2,
+		    float x3, float y3,
+		    float x4, float y4) {
+    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -959,6 +991,12 @@ public class ProcessingApplet extends Applet
 
   public void projectPoint(float x, float y, float z) {
     g.projectPoint(x, y, z);
+  }
+
+
+  public void projectSize(float x, float y, float z,
+			  float w, float h, float d) {
+    g.projectSize(x, y, z, w, h, d);
   }
 
 
@@ -1122,13 +1160,13 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void lightsOn() {
-    g.lightsOn();
+  public void lights() {
+    g.lights();
   }
 
 
-  public void lightsOff() {
-    g.lightsOff();
+  public void noLights() {
+    g.noLights();
   }
 
 
