@@ -5,6 +5,9 @@ X ltext and rtext for screen space stuff
 X ltext is broken when it goes y < 0 or y > height
 X ltext & rtext completely working
 
+_ make sure font creator is making fonts properly fixed width
+_   probably not using java charwidth for the char's width
+
 _ now that it's actually a key, should it be a char? (what's keyChar?)
 _   that way println(c) would work a little better..
 
@@ -14,6 +17,7 @@ _ write PApplet2, a full screen version of PApplet
 _   this might be used for presentation mode
 
 text fixes
+_ make text rect use rectMode for placement
 _ need to resolve rotated text in SCREEN_SPACE
 _   SCREEN_SPACE is weird for text
 _   does the font or PApplet control the size? (the font, ala java)
