@@ -262,7 +262,11 @@ public class PdePreprocessor {
 
       if (programType == STATIC) {
         // now that size() and background() can go inside of draw()
-        out.print("public void draw() {");
+        // actually, use setup(), because when running externally
+        // the applet size needs to be set before the window is drawn,
+        // meaning that after setup() things need to be ducky.
+        //out.print("public void draw() {");
+        out.print("public void setup() {");
       }
     }
   }
