@@ -1,7 +1,8 @@
 0070 pde
+X run java mode when large 'data' folder is in use
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
 
-_ run java mode when large 'data' folder is in use
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
+_ line fade out gradient bug.. is this an easy fix?
 
 _ "save as" needs to update the editorheader
 
@@ -17,11 +18,11 @@ _   iterate through the 'library' folders
 _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
-_ simong: request a preloop and postloop call for libraries
-_   this would avoid having to patch BApplet
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
+_   simong: request a preloop and postloop call for libraries
+_     this would avoid having to patch BApplet
 _ where do libraries for distribution go?
 _   libraries subfolder of p5? or inside examples?
 _ String in apache classes and java.lang

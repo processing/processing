@@ -985,7 +985,8 @@ public class PdeSketch {
     }
 
     // if 'data' folder is large, set to external runtime
-    if (PdeBase.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
+    if (dataFolder.exists() &&
+        PdeBase.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
       externalRuntime = true;
     }
 
