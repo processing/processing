@@ -294,10 +294,89 @@ public class PdeSketch {
   }
 
 
-  public void saveAs() {
-    System.err.println("need to save ass here. code not yet finished.");
+  /**
+   * handles 'save as' for a sketch.. essentially duplicates
+   * the current sketch folder to a new location, and then calls
+   * 'save'. (needs to take the current state of the open files
+   * and save them to the new folder.. but not save over the old 
+   * versions for the old sketch..)
+   *
+   * also removes the previously-generated .class and .jar files, 
+   * because they can cause trouble.
+   */
+  public boolean saveAs() throws IOException {
+    // get new name for folder
+    FileDialog fd = new FileDialog(editor, //new Frame(), 
+                                   "Save sketch folder as...", 
+                                   FileDialog.SAVE);
+    // always default to the sketchbook folder.. 
+    fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    // TODO or maybe this should default to the 
+    //      parent dir of the old folder?
 
-    // mark all files as modified so that it will save them
+    fd.show();
+    String newParentDir = fd.getDirectory();
+    String newName = fd.getFile();
+
+    // user cancelled selection
+    if (newName == null) return false;
+
+    // new sketch folder
+    File newFolder = new File(newParentDir, newName);
+
+    // make sure the paths aren't the same
+    if (newFolder.equals(folder)) {
+      PdeBase.showWarning("You can't fool me", 
+                          "The new sketch name and location are the same\n" +
+                          "as the old. I ain't not doin nuthin'.", null);
+      return false;
+    }
+
+    // copy the entire contents of the sketch folder
+    PdeBase.copyDir(folder, newFolder);
+
+    // change the references to the dir location in PdeCode files
+    for (int i = 0; i < codeCount; i++) {
+      code[i].file = new File(newFolder, code[i].file.getName());
+    }
+    for (int i = 0; i < hiddenCount; i++) {
+      hidden[i].file = new File(newFolder, hidden[i].file.getName());
+    }
+
+    // remove the old sketch file from the new dir
+    code[0].file.delete();
+    // name for the new main .pde file
+    code[0].file = new File(newFolder, newName + ".pde");
+    code[0].name = newName;
+    // write the contents to the renamed file
+    // (this may be resaved if the code is modified)
+    code[0].save();
+
+    // change the other paths
+    String oldName = name;
+    name = newName;
+    File oldFolder = folder;
+    folder = newFolder;
+    dataFolder = new File(folder, "data");
+    codeFolder = new File(folder, "code");
+
+    // remove the 'applet', 'application', 'library' folders
+    // from the copied version.
+    // otherwise their .class and .jar files can cause conflicts.
+    PdeBase.removeDir(new File(folder, "applet"));
+    PdeBase.removeDir(new File(folder, "application"));
+    PdeBase.removeDir(new File(folder, "library"));
+
+    // do a "save"
+    // this will take care of the unsaved changes in each of the tabs
+    save();
+
+    // get the changes into the sketchbook menu
+    //sketchbook.rebuildMenu();
+    // done inside PdeEditor instead
+
+    // let PdeEditor know that the save was successful
+    return true;
   }
 
 

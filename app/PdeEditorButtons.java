@@ -341,7 +341,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
       case STOP:   setState(RUN, INACTIVE, true); editor.handleStop(); break;
       case OPEN:   setState(OPEN, INACTIVE, true); break;
       case NEW:    editor.handleNew(); break;
-      case SAVE:   editor.handleSave2(); break;
+      case SAVE:   editor.handleSave(); break;
       case EXPORT: editor.handleExport(); break;
     }
     currentSelection = -1;
