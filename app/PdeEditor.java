@@ -126,7 +126,6 @@ public class PdeEditor extends JFrame
     // this is needed by just about everything else
     preferences = new PdePreferences();
 
-
 #ifdef MACOS
       // #@$*(@#$ apple.. always gotta think different
       MRJApplicationUtils.registerAboutHandler(this);
@@ -469,11 +468,28 @@ public class PdeEditor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("File");
 
-    item = newJMenuItem("New", 'N');
+    item = newJMenuItem("New sketch", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //skNew();
           handleNew();
+        }
+      });
+    menu.add(item);
+
+    /*
+    item = newJMenuItem("New code", 'N', true);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleNewCode();
+        }
+      });
+    menu.add(item);
+    */
+
+    item = newJMenuItem("Open", 'O');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleOpen();
         }
       });
     menu.add(item);
@@ -591,7 +607,7 @@ public class PdeEditor extends JFrame
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           //PdeBase.openFolder(sketchDir);
-          PdeBase.openFolder(sketch.sketchFolder);
+          PdeBase.openFolder(sketch.folder);
         }
       });
       menu.add(item);
@@ -1072,12 +1088,18 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void setModified(boolean what) {
-    //header.sketchModified = what;
-    sketch.setCurrentModified(what);
-    header.repaint();
-    //sketchModified = what;
+  /*
+  public boolean isModified() {
+    return sketch.isModified();
   }
+
+
+  public void setModified(boolean what) {
+    //sketch.setCurrentModified(what);
+    sketch.setModified(what);
+    header.repaint();
+  }
+  */
 
 
   /**
@@ -1094,9 +1116,8 @@ public class PdeEditor extends JFrame
     //openingPath = path;
     //openingName = name;
 
-    if (!sketch.isModified()) {
-      checkModified2();
-    }
+    //if (!sketch.isModified()) {
+    if (sketch.modified) checkModified2();
 
     String prompt = "Save changes to " + sketch.name + "?  ";
 
@@ -1148,7 +1169,7 @@ public class PdeEditor extends JFrame
   public void checkModified2() {
     switch (checking) {
       case HANDLE_NEW:  handleNew2(false); break;
-      case HANDLE_OPEN: handleOpen2(); break;
+      case HANDLE_OPEN: handleOpen2(handleOpenPath); break;
       case HANDLE_QUIT: handleQuit2(); break;
     }
     checking = 0;
@@ -1187,8 +1208,8 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Need to determine what to open, happens when the 'open' button
-   * is hit or open is selected from the menu.
+   * Handler for the user selecting "Open" to open a sketch 
+   * from anywhere else.
    */
   public void handleOpen() {
     String path = sketchbook.handleOpen();
@@ -1197,7 +1218,7 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Get ready to open something good.
+   * Handler used by handleOpen() and also by the sketchbook menu
    */
   public void handleOpen(String path) {
     doStop();
@@ -1208,13 +1229,14 @@ public class PdeEditor extends JFrame
 
   protected void handleOpen2(String path) {
     try {
-      sketch = new PdeSketch(path);
+      sketch = new PdeSketch(this, path);
     } catch (Exception e) {
       error(e);
     }
   }
 
 
+  /*
   protected void handleOpen2() {
     try {
       sketch = new PdeSketch(handleOpenPath);
@@ -1223,6 +1245,7 @@ public class PdeEditor extends JFrame
       error(e);
     }
   }
+  */
 
 
   /*
@@ -1740,7 +1763,8 @@ public class PdeEditor extends JFrame
     textarea.select(selectionEnd, selectionEnd);
 
     //setSketchModified(true);
-    sketch.setCurrentModified(true);
+    //sketch.setCurrentModified(true);
+    sketch.setModified();
     buttons.clear();
   }
 

@@ -227,7 +227,8 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
     editor.textarea.setSelectedText(replaceField.getText());
     //editor.setSketchModified(true);
-    editor.sketch.setCurrentModified(true);
+    //editor.sketch.setCurrentModified(true);
+    editor.sketch.setModified();
 
     // don't allow a double replace
     replaceButton.setEnabled(false);
