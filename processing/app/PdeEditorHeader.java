@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -72,27 +72,27 @@ public class PdeEditorHeader extends JComponent {
   int imageW, imageH;
 
 
-  public PdeEditorHeader(PdeEditor eddie) { 
+  public PdeEditorHeader(PdeEditor eddie) {
     this.editor = eddie; // weird name for listener
 
     pieces = new Image[STATUS.length][WHERE.length];
     for (int i = 0; i < STATUS.length; i++) {
       for (int j = 0; j < WHERE.length; j++) {
-        pieces[i][j] = PdeBase.getImage("tab-" + STATUS[i] + "-" + 
+        pieces[i][j] = PdeBase.getImage("tab-" + STATUS[i] + "-" +
                                         WHERE[j] + ".gif", this);
       }
     }
 
     if (backgroundColor == null) {
-      backgroundColor = 
+      backgroundColor =
         PdePreferences.getColor("header.bgcolor");
-      textColor[SELECTED] = 
+      textColor[SELECTED] =
         PdePreferences.getColor("header.text.selected.color");
-      textColor[UNSELECTED] = 
+      textColor[UNSELECTED] =
         PdePreferences.getColor("header.text.unselected.color");
     }
 
-    addMouseListener(new MouseAdapter() { 
+    addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
           int x = e.getX();
           int y = e.getY();
@@ -129,7 +129,7 @@ public class PdeEditorHeader extends JComponent {
 
       } else {
         // who cares, just resize
-        sizeW = size.width; 
+        sizeW = size.width;
         sizeH = size.height;
         //userLeft = 0; // reset
       }
@@ -153,7 +153,7 @@ public class PdeEditorHeader extends JComponent {
     //}
 
     //Graphics2D g2 = (Graphics2D) g;
-    //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+    //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
     //                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
     // set the background for the offscreen
@@ -170,17 +170,17 @@ public class PdeEditorHeader extends JComponent {
     for (int i = 0; i < sketch.codeCount; i++) {
       PdeCode code = sketch.code[i];
 
-      String codeName = (code.flavor == PdeSketch.PDE) ? 
+      String codeName = (code.flavor == PdeSketch.PDE) ?
         code.name : code.file.getName();
 
       // if modified, add the li'l glyph next to the name
       String text = "  " + codeName + (code.modified ? " \u00A7" : "  ");
 
-      //int textWidth = metrics.stringWidth(text);       
+      //int textWidth = metrics.stringWidth(text);
       Graphics2D g2 = (Graphics2D) g;
       int textWidth = (int)
         font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
-        
+
       int pieceCount = 2 + (textWidth / PIECE_WIDTH);
       int pieceWidth = pieceCount * PIECE_WIDTH;
 
@@ -209,7 +209,7 @@ public class PdeEditorHeader extends JComponent {
     menuLeft = sizeW - (16 + pieces[0][MENU].getWidth(this));
     menuRight = sizeW - 16;
     // draw the dropdown menu target
-    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU], 
+    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
                 menuLeft, 0, null);
 
     screen.drawImage(offscreen, 0, 0, null);
@@ -221,7 +221,7 @@ public class PdeEditorHeader extends JComponent {
    */
   public void rebuild() {
     //System.out.println("rebuilding editor header");
-    rebuildMenu(); 
+    rebuildMenu();
     repaint();
   }
 
@@ -234,10 +234,10 @@ public class PdeEditorHeader extends JComponent {
       menu = new JMenu();
       popup = menu.getPopupMenu();
       add(popup);
-      popup.addPopupMenuListener(new PopupMenuListener() { 
+      popup.addPopupMenuListener(new PopupMenuListener() {
           public void popupMenuCanceled(PopupMenuEvent e) {
             // on redraw, the isVisible() will get checked.
-            // actually, a repaint may be fired anyway, so this 
+            // actually, a repaint may be fired anyway, so this
             // may be redundant.
             repaint();
           }
@@ -251,9 +251,36 @@ public class PdeEditorHeader extends JComponent {
     // maybe this shouldn't have a command key anyways..
     // since we're not trying to make this a full ide..
     //item = PdeEditor.newJMenuItem("New", 'T');
-    item = new JMenuItem("New File");
+
+    /*
+    item = PdeEditor.newJMenuItem("Previous", KeyEvent.VK_PAGE_UP);
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
+          System.out.println("prev");
+        }
+      });
+    if (editor.sketch != null) {
+      item.setEnabled(editor.sketch.codeCount > 1);
+    }
+    menu.add(item);
+
+    item = PdeEditor.newJMenuItem("Next", KeyEvent.VK_PAGE_DOWN);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          System.out.println("ext");
+        }
+      });
+    if (editor.sketch != null) {
+      item.setEnabled(editor.sketch.codeCount > 1);
+    }
+    menu.add(item);
+
+    menu.addSeparator();
+    */
+
+    item = new JMenuItem("New Tab");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
           editor.sketch.newCode();
         }
       });
@@ -261,7 +288,7 @@ public class PdeEditorHeader extends JComponent {
 
     item = new JMenuItem("Rename");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           editor.sketch.renameCode();
         }
       });
@@ -269,7 +296,7 @@ public class PdeEditorHeader extends JComponent {
 
     item = new JMenuItem("Delete");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           editor.sketch.deleteCode();
         }
       });
@@ -277,7 +304,7 @@ public class PdeEditorHeader extends JComponent {
 
     item = new JMenuItem("Hide");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           editor.sketch.hideCode();
         }
       });
@@ -302,14 +329,14 @@ public class PdeEditorHeader extends JComponent {
     if (unhide.getItemCount() == 0) {
       unhide.setEnabled(false);
     }
-    
+
     menu.add(unhide);
 
     if (sketch != null) {
       menu.addSeparator();
 
       ActionListener jumpListener = new ActionListener() {
-          public void actionPerformed(ActionEvent e) { 
+          public void actionPerformed(ActionEvent e) {
             editor.sketch.setCurrent(e.getActionCommand());
           }
         };

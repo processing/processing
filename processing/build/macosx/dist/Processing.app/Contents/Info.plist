@@ -31,7 +31,7 @@
 		<key>JVMVersion</key>
 		<string>1.3+</string>
 		<key>ClassPath</key>
-			<string>$JAVAROOT/pde.jar:$JAVAROOT/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/oro.jar:lib/build</string>
+			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/oro.jar:lib/build</string>
 		<key>Properties</key>
 		<dict>
 			<key>apple.laf.useScreenMenuBar</key>
