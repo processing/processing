@@ -273,13 +273,15 @@ public class PdeBase implements ActionListener {
 	  new SketchbookMenuListener(subPath);
 
 	entries = subFolder.list();
-	for (int j = 0; j < entries.length; j++) {
-	  if ((entries[j].equals(".")) || 
-	      (entries[j].equals(".."))) continue;
-	  //subMenu.add(entries[j]);
-	  MenuItem item = new MenuItem(entries[j]);
-	  item.addActionListener(subMenuListener);
-	  subMenu.add(item);
+	if (entries != null) {
+	  for (int j = 0; j < entries.length; j++) {
+	    if ((entries[j].equals(".")) || 
+		(entries[j].equals(".."))) continue;
+	    //subMenu.add(entries[j]);
+	    MenuItem item = new MenuItem(entries[j]);
+	    item.addActionListener(subMenuListener);
+	    subMenu.add(item);
+	  }
 	}
 
 	menu.add(subMenu);
