@@ -2,10 +2,10 @@
 // while the kjc engine is in use. takes care of error handling.
 
 public class KjcApplet extends BApplet {
-  KjcEngine engine;
+    PdeRuntime pdeRuntime;
 
-  public void setEngine(KjcEngine engine) {
-    this.engine = engine;
+  public void setRuntime(PdeRuntime pdeRuntime) {
+    this.pdeRuntime = pdeRuntime;
   }
 
   public void run() {
@@ -16,8 +16,8 @@ public class KjcApplet extends BApplet {
       //System.out.println("ex found in run");
       e.printStackTrace();
       //engine.error(e);
-      engine.newMessage = true;
-      e.printStackTrace(engine.leechErr);
+      pdeRuntime.newMessage = true;
+      e.printStackTrace(pdeRuntime.leechErr);
     }
   }  
 }
