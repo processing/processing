@@ -13,6 +13,7 @@
 //#define STACKSIZE_MATCH " -mx"
 #define JAVA_ARGS ""
 #define JAVA_MAIN_CLASS "PdeBase"
+//#define JAVA_CLASS_PATH "lib;lib\\build;lib\\pde.jar;lib\\kjc.jar;lib\\oro.jar;lib\\ext\\comm.jar"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -55,9 +56,9 @@ BOOL CLauncherApp::InitInstance()
 	// what was passed to this application
 	char *incoming_cmdline = (char *)malloc(256 * sizeof(char));
 	strcpy (incoming_cmdline, this->m_lpCmdLine);
-	
+
 	// what gets put together to pass to jre
-	char *outgoing_cmdline = (char *)malloc(2048 * sizeof(char));
+	char *outgoing_cmdline = (char *)malloc(16384 * sizeof(char));
 	char *p = outgoing_cmdline;
 	
 	// prepend the args for -mx and -ms if they weren't
@@ -89,26 +90,36 @@ BOOL CLauncherApp::InitInstance()
 	strcpy(outgoing_cmdline, JAVA_ARGS);
 
 	// append the classpath and launcher.Application
-	char *cp = (char *)malloc(1024 * sizeof(char));
+	//char *cp = (char *)malloc(1024 * sizeof(char));
 	char *loaddir = (char *)malloc(MAX_PATH * sizeof(char));
+    *loaddir = 0;
 
     GetModuleFileName(NULL, loaddir, MAX_PATH);
     // remove the application name
 	*(strrchr(loaddir, '\\')) = '\0';
 
-    //cp = (char *)malloc(5 * strlen(loaddir) + 200);
+    char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
 	// put quotes around contents of cp, 
 	// because %s might have spaces in it.
+	
     sprintf(cp, 
 		"-cp \""
         "%s\\lib;"
         "%s\\lib\\build;"
         "%s\\lib\\pde.jar;"
 	    "%s\\lib\\kjc.jar;"
-	    "%s\\lib\\oro.jar"
+	    "%s\\lib\\oro.jar;"
+	    "%s\\lib\\java\\ext\\comm.jar"
 		"\" ",
-	    loaddir, loaddir, loaddir, loaddir, loaddir);
+	    loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
+		
+	//sprintf(cp, "-cp ");
+	//strcat(cp, JAVA_CLASSPATH);
+	//strcat(cp, " ");
 	strcat(outgoing_cmdline, cp);
+	//strcat(outgoing_cmdline, "-cp ");
+	//strcat(outgoing_cmdline, JAVA_CLASS_PATH);
+	//strcat(outgoing_cmdline, " ");
 
 	// add the name of the class to execute
 	//strcat(outgoing_cmdline, "launcher.Application ");
@@ -125,7 +136,7 @@ BOOL CLauncherApp::InitInstance()
 	strcpy(executable, loaddir);
 	// copy in the path for jrew, relative to launcher.exe
 	//strcat(executable, "\\bin\\jrew");
-	strcat(executable, "\\java\\bin\\javaw");
+	strcat(executable, "\\java\\bin\\java");
 	
 	//AfxMessageBox(executable);
 
@@ -145,7 +156,8 @@ BOOL CLauncherApp::InitInstance()
 
 	HINSTANCE result;
 	result = ShellExecute(NULL, "open", executable,
-		                  outgoing_cmdline, NULL, SW_SHOWNORMAL);
+		                  outgoing_cmdline, loaddir, SW_SHOWNORMAL);
+//		                  outgoing_cmdline, NULL, SW_SHOWNORMAL);
 
 	if ((int)result <= 32) {
 		// some type of error occurred
