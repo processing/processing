@@ -118,6 +118,7 @@ X error message when trying to do a screengrab from inside a browser
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167220;start=0
 X windows fresh checkout from cvs still has problems
 X   major changes to build scripts for far easier building under windows
+X added error messages for noCursor in jdk11
 
 
 carlos line code for single pixel lines
