@@ -131,6 +131,17 @@ mkdir -p ../../build/linux/work/libraries/net/library/
 cp library/net.jar ../../build/linux/work/libraries/net/library/
 
 
+# PARTICLES LIBRARY
+echo Build particles library...
+cd ../../lib/particles
+../../build/linux/work/jikes +D -d . *.java 
+rm -f library/particles.jar
+zip -r0q library/particles.jar simong
+rm -rf simong
+mkdir -p ../../build/linux/work/libraries/particles/library/
+cp library/particles.jar ../../build/linux/work/libraries/particles/library/
+
+
 cd ../../build/linux
 
 
