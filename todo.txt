@@ -109,7 +109,23 @@ _ bezierMode -> bezierSegments
 _ curveMode -> curveSegments, curveTightness
 _ removed fill(), stroke(), background() with no args
 _   (used to return current)
-X tint() colors images, not fill()
+_ getPixel/setPixel -> get/set
+_ tint() colors images, not fill()
+
+  // imaging API keywords	  	  
+  pdeKeywords.add("REPLACE", Token.LITERAL1);
+  pdeKeywords.add("BLEND", Token.LITERAL1);
+  pdeKeywords.add("ADD", Token.LITERAL1);
+  pdeKeywords.add("SUBSTRACT", Token.LITERAL1);
+  pdeKeywords.add("LIGHTEST", Token.LITERAL1);
+  pdeKeywords.add("DARKEST", Token.LITERAL1);
+	  
+  pdeKeywords.add("blendMode",  Token.KEYWORD2);
+  pdeKeywords.add("copyPixel",  Token.KEYWORD2);
+  pdeKeywords.add("copyImage",  Token.KEYWORD2);
+  pdeKeywords.add("copyRegion",  Token.KEYWORD2);
+  pdeKeywords.add("region",  Token.KEYWORD2);
+  pdeKeywords.add("mask",  Token.KEYWORD2);
 
 
 ..................................................................
