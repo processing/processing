@@ -874,25 +874,25 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void colorMode(int colorMode) {
-    g.colorMode(colorMode);
+  public void colorMode(int icolorMode) {
+    g.colorMode(icolorMode);
   }
 
 
-  public void colorMode(int colorMode, int max) {
-    g.colorMode(colorMode, max);
+  public void colorMode(int icolorMode, float max) {
+    g.colorMode(icolorMode, max);
   }
 
 
-  public void colorMode(int colorMode, 
-			int maxX, int maxY, int maxZ) {
-    g.colorMode(colorMode, maxX, maxY, maxZ);
+  public void colorMode(int icolorMode, 
+			float maxX, float maxY, float maxZ) {
+    g.colorMode(icolorMode, maxX, maxY, maxZ);
   }
 
 
-  public void colorMode(int colorMode, 
-			int maxX, int maxY, int maxZ, int maxA) {
-    g.colorMode(colorMode, maxX, maxY, maxZ, maxA);
+  public void colorMode(int icolorMode, 
+			float maxX, float maxY, float maxZ, float maxA) {
+    g.colorMode(icolorMode, maxX, maxY, maxZ, maxA);
   }
 
 
@@ -921,8 +921,8 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public void strokeWidth(float strokeWidth) {
-    g.strokeWidth(strokeWidth);
+  public void strokeWidth(float istrokeWidth) {
+    g.strokeWidth(istrokeWidth);
   }
 
 
