@@ -3,6 +3,52 @@
 
 ..................................................................
 
+
+_ remove lexer dir from cvs
+
+1 _ horizontal scroller on the mac is enormous
+
+_ is it possible to get rid of KjcApplet
+_   better 'newMessage' trigger with the printstream
+_   notify dmose about changes
+
+_ history
+_   do people even use it
+_   oooh.. combine in app to show diffs
+
+_ get proper tab comments into source files
+_ get proper licensing info into source files
+_ write notes about p5 code spec
+
+_ console -> should be using JEditTextArea, not TextPane
+_   scroll to most current line, or scroll as changing
+_   set decent fonts (probably same as editor above), looks bad on mac
+_   remove the border around the edge
+_   what's with the 2 blank lines on startup?
+
+ks b _ background(BImage)
+ks b _   also creating background image inside setup()
+
+bf b _ make bagel usable on its own as a drawing surface
+bf b _   needs to be used as a component, without applet 
+bf b _   but retain functionality, ie. image i/o
+bf b _   exports pixels or a BImage or does MemoryImageSource itself
+bf b _   move math functions into utility library associated
+bf b _     with bagel, because those will be useful on other bagel platforms
+bf b _     pApplet will call BagelMath.whatever, so still looks like cos()
+
+bf b _ opengl export / rendering mode
+bf b _   currently implemented, but somewhat broken
+bf b _   finish this once all the line code is done
+
+bf _ look into eclipse ide a little more
+bf _ platform parity issues
+bf _   bring linux up to 1.4
+bf _   ask on bboard about macosx 1.3 vs 1.4 experiences
+bf _   upgrade windows to 1.4.2
+
+bf _ too many frames drawn before window visible - especially on mac
+
 bf b _ curves
 bf b _   curveMode(), curveMode to tweak the s parameter of catmullrom
 bf b _   setting accuracy of curve segments
@@ -10,6 +56,7 @@ bf b _     right now it's hardwired at 20, should be adjustable
 bf b _   function to evaluate bezier or catmullrom points
 bf b _     used heavily in genome valence, asked about on the bboard
 bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
 
 bf b _ perlin noise 1D. noise() 
 
@@ -24,6 +71,13 @@ bf b _   fix link() and loadStream code once that's fixed
 bf b _ if sketchbook.dir is set, makes new sketchbook folder
 bf b _   reads sketchbook properly from other folder
 bf b _   but creates a new folder for new sketches to go into
+bf b _ remove the 'default' for sketchbook
+bf b _ install sketchbook into another location on person's machine
+bf b _   bring this up on bboard and get votes
+bf b _   win2k: my documents, macosx: ~/Documents, 
+bf b _   macos9: hd:Users?, linux: ~/sketchbook
+bf b _ move examples to folder that goes w/ p5 app
+bf b _   set examples somehow read-only
 
 bf b _ tweak video to get it working
 bf b _   beginVideo(int, int, int) not found
@@ -79,17 +133,6 @@ ks b _   copyImage(x, y, w, h,  to_x, to_y)
 ks b _   resize of bimage, make a copy of image?
 ks b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
 ks b _ getPixel() and other fxns for BImage
-
-ks b _ background(BImage)
-ks b _   also creating background image inside setup()
-
-bf b _ make bagel usable on its own as a drawing surface
-bf b _   needs to be used as a component, without applet 
-bf b _   but retain functionality, ie. image i/o
-bf b _   exports pixels or a BImage or does MemoryImageSource itself
-bf b _   move math functions into utility library associated
-bf b _     with bagel, because those will be useful on other bagel platforms
-bf b _     pApplet will call BagelMath.whatever, so still looks like cos()
 
 bf b _ light(x, y, z, c1, c2, c3, TYPE)
 bf b _   also BLight with same constructor, and on() and off() fxn
@@ -161,10 +204,6 @@ ks b _   bresenham (flat) oval function
 ks b _   finish fill mode of flat circle function
 ks b _   stroked version of sphere is just a circle (?)
 ks b _   setting accuracy of circles/sphere
-
-   b _ opengl export / rendering mode
-   b _   currently implemented, but somewhat broken
-   b _   finish this once all the line code is done
 
 bf b _ illustrator export / rendering mode
 bf b _   also postscript or pdf export?

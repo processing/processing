@@ -7,9 +7,8 @@ import com.oroinc.text.regex.*;
 import java.io.*;
 
 public class PdePreprocessorOro extends PdePreprocessor {
- 
-  static final String EXTENDS = "extends BApplet ";
-  static final String EXTENDS_KJC = "extends KjcApplet ";
+  //static final String EXTENDS = "extends BApplet ";
+  //static final String EXTENDS_KJC = "extends KjcApplet ";
 
   static final String applet_imports[] = {
     "java.applet", "java.awt", "java.awt.image", "java.awt.event",
@@ -55,8 +54,10 @@ public class PdePreprocessorOro extends PdePreprocessor {
   static final int ADVANCED     = 2;
 
   // writes .java file into buildPath
-  public String writeJava(String name, boolean kjc) {
-    //System.out.println("writing java");
+  public String writeJava(String name, boolean extendsNormal,
+                          boolean exporting) {
+    String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+
     try {
       int programType = BEGINNER;
 
@@ -140,15 +141,19 @@ public class PdePreprocessorOro extends PdePreprocessor {
         tempClass = name;
 
         // and we're running inside 
-        if (kjc) {  // if running inside processing...
-          index = program.indexOf(EXTENDS); // ...and extends BApplet
+        // no longer necessary, i think, since kjcapplet is gone
+        /*
+        if (!exporting) {
+          index = program.indexOf(extendsWhat); // ...and extends BApplet
           if (index != -1) {  // just extends object
             String left = program.substring(0, index);
-            String right = program.substring(index + EXTENDS.length());
+            String right = program.substring(index + extendsWhat.length());
             // replace with 'extends KjcApplet'
-            program = left + ((usingExternal) ? EXTENDS : EXTENDS_KJC) + right;
+            //program = left + ((usingExternal) ? EXTENDS : EXTENDS_KJC) + right;
+            program = left + extendsWhat + right;
           }
         }
+        */
       }
       tempFilename = name + ".java";
       tempClassFilename = name + ".class";
@@ -159,7 +164,7 @@ public class PdePreprocessorOro extends PdePreprocessor {
 
       if (programType < ADVANCED) {
         // spew out a bunch of java imports 
-        if (kjc) {  // if running in environment, or exporting an app
+        if (!exporting) {  // if running in environment, or exporting an app
           for (int i = 0; i < application_imports.length; i++) {
             writer.print("import " + application_imports[i] + ".*; ");
           }
@@ -174,14 +179,15 @@ public class PdePreprocessorOro extends PdePreprocessor {
 
         // add serial if running inside pde
         //if (kjc) writer.print("import javax.comm.*;");
-        if (!kjc) writer.println();
+        if (exporting) writer.println();
 
         writer.print("public class " + name + " extends " +
-                     ((kjc && !usingExternal) ? 
-                      "KjcApplet" : "BApplet") + " {");
+                     extendsWhat + " {");
+                     //((kjc && !usingExternal) ? 
+                     //"KjcApplet" : "BApplet") + " {");
       }
       if (programType == BEGINNER) {
-        if (!kjc) writer.println();
+        if (exporting) writer.println();
 
         // hack so that the regexp below works
         //if (program.indexOf("size(") == 0) program = " " + program;
@@ -299,7 +305,7 @@ public class PdePreprocessorOro extends PdePreprocessor {
       // especially when not in kjc mode (!kjc == export)
 
       // things will be one line off if there's an error in the code
-      if (!kjc) writer.println();
+      if (exporting) writer.println();
 
       writer.println(program);
       //System.out.println(program);

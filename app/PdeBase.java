@@ -50,7 +50,13 @@ public class PdeBase extends Frame implements ActionListener {
   MenuItem beautifyMenuItem;
   CheckboxMenuItem externalEditorItem;
 
-  static final String WINDOW_TITLE = "Proce55ing";
+  //Menu renderMenu;
+  CheckboxMenuItem normalItem, openglItem;
+  //MenuItem illustratorItem;
+
+  
+
+  static final String WINDOW_TITLE = "Processing";
 
   // the platforms
   static final int WINDOWS = 1;
@@ -300,63 +306,8 @@ public class PdeBase extends Frame implements ActionListener {
       });
     menu.add(item);
 
-    /*
-    item = new MenuItem("Cut", new MenuShortcut('X'));
-    //Action act = getActionByName(DefaultEditorKit.cutAction);
-    //System.out.println("act is " + act);
-    item.addActionListener(getActionByName(DefaultEditorKit.cutAction));
-    menu.add(item);
-    item = new MenuItem("Copy", new MenuShortcut('C'));
-    item.addActionListener(getActionByName(DefaultEditorKit.copyAction));
-    menu.add(item);
-    item = new MenuItem("Paste", new MenuShortcut('V'));
-    item.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
-    menu.add(item);
-    menu.addSeparator();
-    item = new MenuItem("Select All", new MenuShortcut('A'));
-    item.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
-    menu.add(item);
-    */
-
     menubar.add(menu);
 
-    /*
-      PdeEditorTextPane version
-
-    createActionTable(editor.textarea);
-    menu = new Menu("Edit");
-    //undoAction = new UndoAction();
-    //menu.add(undoAction);
-    item = new MenuItem("Undo", new MenuShortcut('Z'));
-    item.addActionListener(undoAction = new UndoAction());
-    menu.add(item);
-    item = new MenuItem("Redo", new MenuShortcut('Y'));
-    item.addActionListener(redoAction = new RedoAction());
-    menu.add(item);
-    menu.addSeparator();
-
-    item = new MenuItem("Cut", new MenuShortcut('X'));
-    //Action act = getActionByName(DefaultEditorKit.cutAction);
-    //System.out.println("act is " + act);
-    item.addActionListener(getActionByName(DefaultEditorKit.cutAction));
-    menu.add(item);
-    item = new MenuItem("Copy", new MenuShortcut('C'));
-    item.addActionListener(getActionByName(DefaultEditorKit.copyAction));
-    menu.add(item);
-    item = new MenuItem("Paste", new MenuShortcut('V'));
-    item.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
-    menu.add(item);
-    menu.addSeparator();
-    item = new MenuItem("Select All", new MenuShortcut('A'));
-    item.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
-    menu.add(item);
-    menubar.add(menu);
-
-    // i hear a cs prof or a first year student screaming somewhere
-    //Document document = editor.textarea.document;
-    Document document = editor.textarea.getDocument();
-    document.addUndoableEditListener(new MyUndoableEditListener());
-    */
     Document document = editor.textarea.getDocument();
     document.addUndoableEditListener(new MyUndoableEditListener());
 
@@ -390,6 +341,27 @@ public class PdeBase extends Frame implements ActionListener {
     //menu.addSeparator();
     serialMenu = new Menu("Serial Port");
     menu.add(serialMenu);
+
+    Menu rendererMenu = new Menu("Renderer");
+    menu.add(rendererMenu);
+
+    normalItem = new CheckboxMenuItem("Normal");
+    rendererMenu.add(normalItem);
+    normalItem.addItemListener(new ItemListener() {
+	public void itemStateChanged(ItemEvent e) {
+	  openglItem.setState(false);
+	  normalItem.setState(true);
+	}
+      });
+
+    openglItem = new CheckboxMenuItem("OpenGL");
+    rendererMenu.add(openglItem);
+    openglItem.addItemListener(new ItemListener() {
+	public void itemStateChanged(ItemEvent e) {
+	  openglItem.setState(true);
+	  normalItem.setState(false);
+	}
+      });
 
     externalEditorItem = new CheckboxMenuItem("Use External Editor");
     externalEditorItem.addItemListener(new ItemListener() {
