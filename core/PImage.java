@@ -64,10 +64,10 @@ public class PImage implements PConstants, Cloneable {
 
   // note that RGB images still require 0xff in the high byte
   // because of how they'll be manipulated by other functions
-  int format;
+  public int format;
 
-  int pixels[];
-  int width, height;
+  public int pixels[];
+  public int width, height;
   // would scan line be useful? maybe for pow of 2 gl textures
 
   // note! inherited by PGraphics

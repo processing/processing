@@ -44,11 +44,11 @@ public class PGraphics extends PImage implements PConstants {
 
   int pixelCount;
   //public int pixels[];  // wtf? appletviewer wants this pubic
-  int stencil[];        // stencil buffer used to antialias polygons
-  float zbuffer[];
+  public int stencil[];        // stencil buffer used to antialias polygons
+  public float zbuffer[];
   //boolean zbufferTainted;
 
-  boolean depthTest;
+  //boolean depthTest;
 
   //int frameCount;
 
@@ -439,7 +439,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void defaults() {
     //frameCount = 0; 
-    depthTest = true;
+    //depthTest = true;
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
