@@ -8,7 +8,8 @@
 // 2) if the user has a long path, and it gets copied five times over for the
 // classpath, the program runs the risk of crashing. Bad bad.
 
-#define JAVA_ARGS "-Xms64m -Xmx64m "
+//#define JAVA_ARGS "-Xms64m -Xmx64m "
+#define JAVA_ARGS "-Xms128m -Xmx128m "
 #define JAVA_MAIN_CLASS "PdeBase"
 
 #include <windows.h>
@@ -65,6 +66,13 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   //const char *envClasspath = getenv("CLASSPATH");
   char *env_classpath = (char *)malloc(256 * sizeof(char));
+
+  // ignoring CLASSPATH for now, because it's not needed
+  // and causes more trouble than it's worth [0060]
+  env_classpath[0] = 0;
+
+  /*
+  // keep this code around since may be re-enabled later
   if (getenv("CLASSPATH") != NULL) {
     strcpy(env_classpath, getenv("CLASSPATH"));
     if (env_classpath[0] == '\"') {
@@ -85,9 +93,43 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   } else {
     env_classpath[0] = 0;
   }
-
+  */
 
   char *env_qtjava = (char *)malloc(256 * sizeof(char));
+  env_qtjava[0] = 0;
+
+  if (getenv("WINDIR") == NULL) {
+    // uh-oh.. serious problem.. gonna have to report this
+    // but hopefully WINDIR is set on win98 too
+
+  } else {
+    strcpy(env_qtjava, getenv("WINDIR"));
+    strcat(env_qtjava, "\\SYSTEM32\\QTJava.zip");
+
+    FILE *fp = fopen(env_qtjava, "rb");
+    if (fp != NULL) {
+      // found it, all set to go
+      fclose(fp);
+
+    } else {
+      strcpy(env_qtjava, getenv("WINDIR"));
+      strcat(env_qtjava, "\\SYSTEM\\QTJava.zip");
+
+      fp = fopen(env_qtjava, "rb");
+      if (fp != NULL) {
+        fclose(fp);
+
+      } else {
+        // serious problem, but will be caught by the pde
+        env_qtjava[0] = 0;
+      }
+    }
+  }
+  /*
+  // there's a bug in the QTJAVA installer, that sets this
+  // to a bad value if no java has been installed. grr.
+  // as a result, it's better just to ignore it.
+  // keep this code around since may be re-enabled later
   if (getenv("QTJAVA") != NULL) {
     strcpy(env_qtjava, getenv("QTJAVA"));
     if (env_qtjava[0] == '\"') {
@@ -107,7 +149,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   } else {
     env_qtjava[0] = 0;
   }
-
+  */
 
   // put quotes around contents of cp, 
   // because %s might have spaces in it.
