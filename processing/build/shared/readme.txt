@@ -58,8 +58,11 @@ I FOUND A BUG!
 
 we prefer to call them "issues."
 
+first, be sure to check under the notes for your specific platform to
+make sure it isn't a known issue or that there isn't a simple fix.
+
 you can either post to the bulletin board at:
-http://www.proce55ing.net/discourse/
+http://proce55ing.net/discourse/
 or send email to bugs@proce55ing.net. the bboard is probably the
 better way to go, because more people will be watching it. the email
 goes straight to the developers, but their schedules are erratic and
@@ -77,20 +80,47 @@ when reporting this "bug" please include information about
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+GENERAL NOTES / COMMON MISTAKES
+
+- size() must use numbers, not variables. this is because of how
+  the size command is interpreted by proce55ing. 
+
+- when using draw() mode, background() must also use only numbers, and
+  no variables. this is similar to the issue with the size command,
+  because in both cases, Proce55ing needs to know the size and
+  background color of the app before it starts, so since variables
+  are determined while the program is running, things break. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+GOODIES & SEMI-HIDDEN FEATURES
+
+- shift-click on the 'run' button to go straight to 'present' mode
+
+- for quick renaming, just click on the sketch title 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PLATFORMS
 
 the processing development environment runs best on:
 
-1. windows
+1. windows 2000/XP
 2. mac os x
 3. linux
 4. mac os 9
+5. windows 95/98/ME
 
 our priority for how well the beast runs looks like:
 
 1. windows & mac os x (tied for first)
-2. mac os 9
-3. linux
+3. mac os 9
+4. windows 95/98/ME (because we must)
+5. linux
 
 windows is the superior platform for running java applications. it's
 not because we like windows the best, so sorry to the zealots in all
@@ -105,6 +135,11 @@ lots of people still use the crusty operating system, so we're going
 to keep supporting it for the meantime. the guess is that a lot of
 schools are still using it in their labs, and since schools are a
 significant target for the environment, we gotta play along.
+
+windows 95/98/ME is a piece of crap, but since lots of people (are
+often forced to) use it, we'll try and support. early alpha versions
+seem to be having trouble with 95/98/ME, but it'll run better in the
+future.
 
 for the linux version, you guys can support yourselves. if you're
 enough of a hacker weenie to get a linux box setup, you oughta know
@@ -136,6 +171,18 @@ vm with text areas, so as a result, the arrow keys won't work in the
 editor. we think this really stinks and are searching for options for
 a (near?) future release.
 
+"Caught java.lang.UnsatisfiedLinkError" on startup...
+in order to use the serial port under macosx, you'll need to install
+RXTX, the serial port driver. this is for more advanced users, and the
+package is included with the p5 download, and includes its own
+instructions. 
+
+resizing windows.. there's some weirdness with resizing windows under
+osx due to apple's strangely strict interpretation of the java api
+spec. sometimes windows can only get larger but not smaller, or become
+constrained in a particular direction. this will be repaired in the
+future.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -151,6 +198,16 @@ button, it might take a while to bring up the actual
 program. hopefully after that, things will improve.
 
 versions: this version has only been tested under Mac OS 9.2.2. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+WINDOWS
+
+win2k works well, reports point to xp working well also. win95/98/me
+seems to have lots of trouble, but it's just with the .exe that we
+use, so that'll get fixed in the future.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -177,6 +234,10 @@ if you want to use external files, like images or text files
 or fonts, they should be placed in a folder called 'data' inside:
 sketchbook -> default -> SKETCH_NAME
 
+starting with version 44, there are several functions that make
+dealing with data in files much easier (loadFile, loadStrings,
+splitStrings, etc) so file i/o should be fun!
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -192,7 +253,7 @@ the windows version works well, much better than in previous releases.
 on macos9, works fairly well with my keyspan usb/serial adapter. thank
 god for patrick beard and jdirect.
 
-on macosx, need rxtx to be installed (dmg included with p5 download),
+on macosx, need rxtx to be installed (pkg included with p5 download),
 follow their bizarre instructions. on my machine, i'm using a keyspan
 28X dual port adapter, and the selection i use on the serial port menu
 reads "/dev/cu.USA28X21P1.1". your mileage may vary.

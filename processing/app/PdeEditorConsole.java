@@ -218,7 +218,7 @@ public class PdeEditorConsole extends Component {
       //int ii = (firstLine + i) % maxLineCount;
       int ii = (firstLine + i) + scrollOffset;
       while (ii < 0) ii += maxLineCount;
-      if (ii > maxLineCount) ii = ii % maxLineCount;
+      if (ii >= maxLineCount) ii = ii % maxLineCount;
 
       g.setColor(isError[ii] ? fgColorErr : fgColorOut);
       //System.out.println(leading);
