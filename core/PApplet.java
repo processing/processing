@@ -57,7 +57,7 @@ public class PApplet extends Applet
   public String folder; // = System.getProperty("user.dir");
 
   /** When debugging headaches */
-  static final boolean THREAD_DEBUG = false; //true; 
+  static final boolean THREAD_DEBUG = false;
 
   public int pixels[];
 
@@ -373,12 +373,16 @@ public class PApplet extends Applet
   }
 
   public void loop() {
+    //println("loop 1");
     if (!looping) {
+      //println("loop 2");
       looping = true;
       if (thread != null) {
+        //println("loop 3");
         //println(Thread.currentThread().getName());
         //println("loop wakeup");
         thread.interrupt();  // wake from sleep
+        //println("loop 4");
       }
     }
   }
@@ -489,6 +493,7 @@ public class PApplet extends Applet
   public void run() {
     try {
       while ((Thread.currentThread() == thread) && !finished) {
+      //while (!finished) {
         //updated = false;
 
         if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() + 
@@ -559,24 +564,23 @@ public class PApplet extends Applet
         // separate thread, meaning that the next frame will start 
         // before the update/paint is completed
         //while (!updated) { 
-          try {
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+        try {
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
                                       " " + looping + " " + redraw);
-            //Thread.yield();
-            // windows doesn't like 'yield', so have to sleep at least
-            // for some small amount of time.
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
-                                      " gonna sleep");
-            // can't remember when/why i changed that to '1'..
-            // i have a feeling that some applets aren't gonna like that
-            Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
-                                      " outta sleep");
-          } catch (InterruptedException e) { 
-            break;
-          }
+          //Thread.yield();
+          // windows doesn't like 'yield', so have to sleep at least
+          // for some small amount of time.
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                    " gonna sleep");
+          // can't remember when/why i changed that to '1'..
+          // i have a feeling that some applets aren't gonna like that
+          Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
+          if (THREAD_DEBUG) println(Thread.currentThread().getName() + 
+                                    " outta sleep");
+        } catch (InterruptedException e) { }
         //}
       }
+
     } catch (Exception e) {
       // formerly in kjcapplet, now just checks to see
       // if someone wants to leech off errors
