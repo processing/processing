@@ -381,9 +381,10 @@ public class PdeRuntime implements PdeMessageConsumer {
       return;
     }
 
+    // these are used for debugging, in case there are concerns
+    // that som errors aren't coming through properly
     //System.err.println("message " + s.length() + ":" + s);
-    // is this only for debugging, or?
-    if (s.length() > 2) System.err.println(s);
+    //if (s.length() > 2) System.err.println(s);
 
     // this is PApplet sending a message saying "i'm about to spew 
     // a stack trace because an error occurred during PApplet.run()"
