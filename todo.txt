@@ -8,9 +8,21 @@ _ cleanup lastFile/lastDirectory
 _ renaming projects
 _ sketch: sketch-000 is dumb
 _ make sure compiling into build directory
+_   remove everything from build when starting a new build
+_   and once compiled there, read all classes for export
 _ implement popup menu
 _ save (just) last program run in sketch.properties
 _ move structure of app/application dirs around a bit
+
+_ saving to gzipped 'versions' file
+_   autosave every few minutes, also on each compile
+_ remove Editor's frame instance, replace refs with PdeBase.frame
+_ small script to remove CVS directories from a tree
+
+_ remove projects if created but nothing happens to them
+_   need to implement code for whether changes have been made
+_   check for key events in textarea or something
+_     if key events, compare contents against the existing file
 
 pdebase simple
 _ remove 'encoding' crap from PdeBase
@@ -132,7 +144,6 @@ a _ Compiler.disable() message is weird and doesn't always work
 a _   probably just remove it for now
 
 other mess
-_ modify to allow for the 'build' directory in lib
 _ make a new 'dist' function for building
 _ exceptions in draw() apps aren't caught
 _   the program resize(200, 200); just does nothing (doesn't complain)

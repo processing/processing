@@ -105,26 +105,31 @@ public class PdeEditor extends Panel {
     }
 
     runner = new PdeRunner(this);
+  }
 
+
+  public void init() {
     // load the last program that was in use
 
     Properties skprops = new Properties();
     try {
       skprops.load(getClass().getResource("sketch.properties").openStream());
 
-      int windowX = Integer.parseInt(skprops.getProperty("window.x"), -1);
-      int windowY = Integer.parseInt(skprops.getProperty("window.y"), -1);
-      int windowW = Integer.parseInt(skprops.getProperty("window.w"), -1);
-      int windowH = Integer.parseInt(skprops.getProperty("window.h"), -1);
+      int windowX = Integer.parseInt(skprops.getProperty("window.x", "-1"));
+      int windowY = Integer.parseInt(skprops.getProperty("window.y", "-1"));
+      int windowW = Integer.parseInt(skprops.getProperty("window.w", "-1"));
+      int windowH = Integer.parseInt(skprops.getProperty("window.h", "-1"));
 
       // if screen size has changed, the window coordinates no longer
       // make sense, so don't use them unless they're identical
-      int screenW = Integer.parseInt(skprops.getProperty("screen.w"), -1);
-      int screenH = Integer.parseInt(skprops.getProperty("screen.h"), -1);
+      int screenW = Integer.parseInt(skprops.getProperty("screen.w", "-1"));
+      int screenH = Integer.parseInt(skprops.getProperty("screen.h", "-1"));
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
+
       if ((windowX != -1) &&
-	  ((screen.width == screenW) || (screen.height == screenH))) {
+	  (screen.width == screenW) && (screen.height == screenH)) {
+	//System.out.println("setting bounds of frame");
 	PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
       }
 
@@ -132,16 +137,21 @@ public class PdeEditor extends Panel {
       String path = skprops.getProperty("sketch.directory");
       String user = skprops.getProperty("user.name");
 
-      if (new File(path + File.separator + name + 
-		   File.separator + name + ".pde").exists()) {
+      String what = path + File.separator + name + ".pde";
+      System.out.println(what);
+
+      if (new File(what).exists()) {
 	userName = user;
 	skOpen(path, name);
 
       } else {
+	userName = "default";
 	skNew();
       }
 
     } catch (Exception e) { 
+      e.printStackTrace();
+
       // even if folder for 'default' user doesn't exist, or
       // sketchbook itself is missing, mkdirs() will make it happy
       userName = "default";
@@ -320,9 +330,17 @@ public class PdeEditor extends Panel {
   public void skOpen(String path, String name) {
     //header.isProject = true;
     //header.project = name;
-    handleOpen(name, 
-	       new File(path + File.separator + name, name + ".pde"), 
-	       new File(path));
+    //System.out.println("skopen " + path + " " + name);
+    File osketchFile = new File(path, name + ".pde");
+    File osketchDir = new File(path);
+    //System.out.println("skopen:");
+    //System.out.println("1: " + name);
+    //System.out.println("2: " + osketchFile);
+    //System.out.println("3: " + osketchDir);
+    handleOpen(name, osketchFile, osketchDir);
+    //handleOpen(name, 
+    //       new File(path, name + ".pde"), 
+    //       new File(path));
   }
 
 
@@ -348,29 +366,34 @@ public class PdeEditor extends Panel {
 
   protected void handleOpen(String isketchName, 
 			    File isketchFile, File isketchDir) {
+    //System.out.println("handleOpen " + isketchName + " " + 
+    //	       isketchFile + " " + isketchDir);
     try {
+      //if (true) throw new IOException("blah");
+
       FileInputStream input = new FileInputStream(isketchFile);
       int length = (int) isketchFile.length();
-      byte data[] = new byte[length];
+      if (length == 0) {
+	byte data[] = new byte[length];
 
-      int count = 0;
-      while (count != length) {
-	data[count++] = (byte) input.read();
+	int count = 0;
+	while (count != length) {
+	  data[count++] = (byte) input.read();
+	}
+	// set the last dir and file, so that they're
+	// the defaults when you try to save again
+	//lastDirectory = file.getCanonicalPath(); //directory;
+	//lastFile = file.getName(); //filename;
+
+	// once read all the bytes, convert it to the proper
+	// local encoding for this system.
+	//textarea.setText(app.languageEncode(data));
+	// what the hell was i thinking when i wrote this code
+	//if (app.encoding == null)
+	textarea.setText(new String(data));
+	//else 
+	//textarea.setText(new String(data, app.encoding));
       }
-      // set the last dir and file, so that they're
-      // the defaults when you try to save again
-      //lastDirectory = file.getCanonicalPath(); //directory;
-      //lastFile = file.getName(); //filename;
-
-      // once read all the bytes, convert it to the proper
-      // local encoding for this system.
-      //textarea.setText(app.languageEncode(data));
-      // what the hell was i thinking when i wrote this code
-      //if (app.encoding == null)
-      textarea.setText(new String(data));
-      //else 
-      //textarea.setText(new String(data, app.encoding));
-
       sketchName = isketchName;
       sketchFile = isketchFile;
       sketchDir = isketchDir;
