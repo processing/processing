@@ -15,7 +15,7 @@ else
   mkdir work/lib/build
   mkdir work/classes
 
-  cp dist/lib/pde.properties_linux work/lib/
+  cp dist/lib/pde_linux.properties work/lib/
 
   echo
 fi

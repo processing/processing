@@ -14,8 +14,7 @@ else
 
   mkdir work/classes
 
-  #cp dist/run.bat work/
-  cp dist/lib/pde.properties_macosx work/lib/
+  cp dist/lib/pde_macosx.properties work/lib/
 
   echo
 fi

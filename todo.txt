@@ -44,6 +44,13 @@ o try to build macutils under osx
 X bug where pde.properties was being replaced for sketch.properties
 X changed pde.properties_PLATFORM -> pde_PLATFORM.properties
 
+before 39 goes out
+_ f subst problems: include , and ; as allowable
+_   float f = 0.3; and fill(0.3, 0.2, 0.1);
+_ make win/linux write stderr to stderr.txt like the mac
+_   this will be useful until i implement scrollbar
+
+
 bagel
 a _ serial
 a _   pde menu item for listing serial ports available
