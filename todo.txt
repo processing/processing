@@ -41,29 +41,13 @@ o crashes when people click on help in top bar (same in DBN) [macos9]
 X   not reproduced.. mrjappbuilder seems stabler?
 X use osx utilities to setfileinfo for .jar files etc
 o try to build macutils under osx
-
-a _ this code is not performing correctly
-BImage b;  // declare variable "b" of type BImage
-b = loadImage("image.gif");
-image(b, 0, 0);
-imageMode(CENTER);
-image(b, 0, 0);
-
-a _ this code is not performing correctly
-a _   (see example in reference for expected output)
-beginShape(TRIANGLE_STRIP);
-vertex(30, 75);
-vertex(40, 20);
-vertex(50, 75);
-vertex(60, 20);
-vertex(70, 75);
-vertex(80, 20);
-vertex(90, 75);
-endShape();
+X bug where pde.properties was being replaced for sketch.properties
+X changed pde.properties_PLATFORM -> pde_PLATFORM.properties
 
 bagel
 a _ serial
 a _   pde menu item for listing serial ports available
+a _   import javax.comm stuff as standard in kjc (not in applet)
 
 pde
 a _ move background() out of draw() for draw mode apps
@@ -80,6 +64,7 @@ a _ set file type/creator for .pde files.. TEXTPde1
 macos
 a _ implement menuitem to load ref and to launch p5.net
 a _   MRJFileUtils.openURL(String url) throws IOException
+a _   also, ref should go to index page, not environment
 a _ serial port code needs to be implemented
 a _   something that docks better to java serial api
 a _ dataInputStream, setUseCaches on the url to false
@@ -121,6 +106,45 @@ also an interesting possibility (for tech-minded only)
   but could use emacs under osx, linux
   use nano (maybe emacs?) under windows
   and nothing for macos9  
+
+
+a _ this code is not performing correctly
+BImage b;  // declare variable "b" of type BImage
+b = loadImage("image.gif");
+image(b, 0, 0);
+imageMode(CENTER);
+image(b, 0, 0);
+
+a _ this code is not performing correctly
+a _   (see example in reference for expected output)
+beginShape(TRIANGLE_STRIP);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+
+a _ first a syntax error, when fixed, causes NullPointerException 
+a _   quitting the app makes things all better. argh.
+// problematic version
+color rr = #FFCC00;
+fill(255);
+rect(20, 20, 50, 50);
+fill(rr);
+rect(50, 50, 50, 50);
+// then fix the error and run again:
+color rr = #FFCC00;
+fill(255);
+rect(20, 20, 50, 50);
+fill(rr);
+rect(50, 50, 50, 50);
+
+a _ proce55ing thinks the following numbers are a double:
+float a = .5;
+float b = 0.5;
 
 
 ////////////////////////////////////////////////////////////////////
