@@ -161,6 +161,10 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  Path path;
+
+  // ........................................................
+
   /**
    * Type of shape passed to beginShape(),
    * zero if no shape is currently being drawn.
@@ -484,7 +488,7 @@ public class PGraphics extends PImage implements PConstants {
     case LINE_STRIP:
     case LINE_LOOP:
       if (vertexCount == 1) {
-        path = new GeneralPath();
+        path = new Path();
         path.moveTo(x, y);
       } else {
         path.lineTo(x, y);
@@ -507,7 +511,7 @@ public class PGraphics extends PImage implements PConstants {
                  vertices[1][MX], vertices[1][MY],
                  x, y);
       } else if (vertexCount > 3) {
-        path = new GeneralPath();
+        path = new Path();
         // when vertexCount == 4, draw an un-closed triangle
         // for indices 2, 3, 1
         path.moveTo(vertices[vertexCount - 2][MX],
@@ -526,7 +530,7 @@ public class PGraphics extends PImage implements PConstants {
                  vertices[1][MX], vertices[1][MY],
                  x, y);
       } else if (vertexCount > 3) {
-        path = new GeneralPath();
+        path = new Path();
         // when vertexCount > 3, draw an un-closed triangle
         // for indices 0 (center), previous, current
         path.moveTo(vertices[0][MX],
@@ -562,7 +566,7 @@ public class PGraphics extends PImage implements PConstants {
              vertices[1][MX], vertices[1][MY]);
 
       } else if (vertexCount > 4) {
-        path = new GeneralPath();
+        path = new Path();
         // when vertexCount == 5, draw an un-closed triangle
         // for indices 2, 4, 5, 3
         path.moveTo(vertices[vertexCount - 3][MX],
@@ -580,7 +584,7 @@ public class PGraphics extends PImage implements PConstants {
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
       if (vertexCount == 1) {
-        path = new GeneralPath();
+        path = new Path();
         path.moveTo(x, y);
       } else {
         path.lineTo(x, y);
@@ -685,6 +689,38 @@ public class PGraphics extends PImage implements PConstants {
       path.closePath();
       draw_shape(path);
       break;
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // STROKE/FILL/DRAW
+
+
+  protected void fill_shape(Shape s) {
+    if (fill) {
+      //graphics.setColor(fillColorObject);
+      //graphics.fill(s);
+    }
+  }
+
+  protected void stroke_shape(Shape s) {
+    if (stroke) {
+      //graphics.setColor(strokeColorObject);
+      //graphics.draw(s);
+    }
+  }
+
+  protected void draw_shape(Shape s) {
+    if (fill) {
+      //graphics.setColor(fillColorObject);
+      //graphics.fill(s);
+    }
+    if (stroke) {
+      //graphics.setColor(strokeColorObject);
+      //graphics.draw(s);
     }
   }
 
@@ -1376,7 +1412,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void image(PImage image,
-                    float x1, float y1, float x2, float y2,
+                    float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
     if (imageMode == CORNER) {
       draw_image(image,
@@ -1643,8 +1679,9 @@ public class PGraphics extends PImage implements PConstants {
 
   public void push() {
     if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
+      throw new RuntimeException("too many calls to push()");
       //message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
-      return;
+      //return;
     }
     float mat[] = matrixStack[matrixStackDepth];
     mat[0] = m00; mat[1] = m01; mat[2] = m02;
@@ -1655,6 +1692,8 @@ public class PGraphics extends PImage implements PConstants {
 
   public void pop() {
     if (matrixStackDepth == 0) {
+      throw new RuntimeException("too many calls to pop() " +
+                                 "(and not enough to push)");
       //message(COMPLAINT, "matrix stack underflow, to many popmatrix");
       return;
     }
@@ -1778,21 +1817,27 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public float screenX(float x, float y, float z) {
+    return 0;
   }
 
   public float screenY(float x, float y, float z) {
+    return 0;
   }
 
   public float screenZ(float x, float y, float z) {
+    return 0;
   }
 
   public float objectX(float x, float y, float z) {
+    return 0;
   }
 
   public float objectY(float x, float y, float z) {
+    return 0;
   }
 
   public float objectZ(float x, float y, float z) {
+    return 0;
   }
 
 
@@ -2500,6 +2545,32 @@ public class PGraphics extends PImage implements PConstants {
   private final float tan(float angle) {
     if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // PATH
+
+  class Path {
+
+    public void moveTo(float x, float y) {
+    }
+
+    public void lineTo(float x, float y) {
+    }
+
+    public void curveTo(float x1, float y1,
+                        float x2, float y2,
+                        float x3, float y3) {
+    }
+
+    public void closePath() {
+    }
+  }
+
+  class Shape extends Path {
   }
 }
 
