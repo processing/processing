@@ -1394,10 +1394,39 @@ afterwards, some of these steps need a cleanup function
 	}
       }
 
-      //File htmlOutputFile = new File(projectDir, "index.html");
       File htmlOutputFile = new File(appletDir, "index.html");
       FileOutputStream fos = new FileOutputStream(htmlOutputFile);
       PrintStream ps = new PrintStream(fos);
+
+      ps.println("<html>");
+      ps.println("<head>");
+      ps.println("<title>" + exportSketchName + " : Built with Proce55ing</title>");
+      ps.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
+      ps.println("<BODY BGCOLOR=\"#666666\" text=\"#FFFFFF\" link=\"#CCCC00\" vlink=\"#CCCC00\" alink=\"#999900\">");
+      ps.println("<center>");
+      ps.println("  <table width=\"400\" border=\"0\" cellspacing=\"0\" cellpadding=\"10\">");
+      ps.println("    <tr>");
+      ps.println("      <td>&nbsp;</td>");
+      ps.println("    </tr>");
+      ps.println("    <tr>");
+      ps.println("      <td><applet code=\"" + exportSketchName + " archive=\"" + exportSketchName + ".jar width=" + wide + " height=" + high + ">");
+      ps.println("        </applet></td>");
+      ps.println("    </tr>");
+      ps.println("    <tr>");
+      ps.println("      <td>&nbsp;</td>");
+      ps.println("    </tr>");
+      ps.println("    <tr>");
+      ps.println("      <td><a href=\"" + exportSketchName + ".java\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\">Source code</font></a></td>");
+      ps.println("    </tr>");
+      ps.println("    <tr>");
+      ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://Proce55ing.net\">Proce55ing</a></font></td>");
+      ps.println("    </tr>");
+      ps.println("  </table>");
+      ps.println("</center>");
+      ps.println("</body>");
+      ps.println("</html>");
+
+	   /*
       ps.println("<HTML> <BODY BGCOLOR=\"white\">");
       ps.println();
       ps.println("<BR> <BR> <BR> <CENTER>");
@@ -1415,8 +1444,11 @@ afterwards, some of these steps need a cleanup function
       ps.println("</CENTER>");
 
       ps.println("</BODY> </HTML>");
+	   */
+
       ps.flush();
       ps.close();
+
 #ifdef MACOS
       /*
       if (PdeBase.platform == PdeBase.MACOS9) {
