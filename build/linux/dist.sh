@@ -14,12 +14,12 @@ rm -rf processing-*
 cp -r ../shared processing
 
 # add the libraries folder with source
-cp -r ../../lib processing/libraries
-cp -r ../../net ../../lib processing/libraries/
-cp -r ../../opengl ../../lib processing/libraries/
-cp -r ../../serial ../../lib processing/libraries/
+cp -r ../../lib work/libraries
+cp -r ../../net work/libraries/
+cp -r ../../opengl work/libraries/
+cp -r ../../serial work/libraries/
+#cp -r ../../video work/libraries/
 # doesn't work on linux, don't include it and confuse people
-#cp -r ../../video ../../lib processing/libraries/
 
 # new style examples thing ala reas
 cd processing

@@ -318,6 +318,14 @@ public interface PMethods {
   public void lightDiffuse(int num, float x, float y, float z);
 
   public void lightSpecular(int num, float x, float y, float z);
+  
+  public void lightDirection(int num, float x, float y, float z);
+
+  public void lightFalloff(int num, float constant, float linear, float quadratic);
+  
+  public void lightSpotAngle(int num, float spotAngle);
+  
+  public void lightSpotConcentration(int num, float concentration);
 
   //
 
@@ -497,5 +505,74 @@ public interface PMethods {
   */
 
   public void save(String filename);
+
+  public void postSetup();
+
+  public void diffuse(int rgb);
+
+  public void diffuse(float gray);
+
+
+  public void diffuse(float gray, float alpha);
+
+
+  public void diffuse(float x, float y, float z);
+
+
+  public void diffuse(float x, float y, float z, float a);
+
+//////////////////////////////////////////////////////////////
+
+  public void ambient(int rgb);
+
+  public void ambient(float gray);
+
+  public void ambient(float x, float y, float z);
+
+//////////////////////////////////////////////////////////////
+
+  public void specular(int rgb);
+
+  public void specular(float gray);
+
+  public void specular(float gray, float alpha);
+
+  public void specular(float x, float y, float z);
+
+  public void specular(float x, float y, float z, float a);
+
+  public void shininess(float shine);
+  
+  public void emissive(int rgb);
+
+  public void emissive(float gray);
+
+  public void emissive(float x, float y, float z);
+
+//////////////////////////////////////////////////////////////
+
+  public int createAmbientLight(int rgb);
+
+  public int createAmbientLight(float gray);
+
+  public int createAmbientLight(float lr, float lg, float lb);
+
+  public int createDirectionalLight(int rgb, float nx, float ny, float nz);
+
+  public int createDirectionalLight(float gray, float nx, float ny, float nz);
+
+  public int createDirectionalLight(float r, float g, float b, float nx, float ny, float nz);
+
+  public int createPointLight(int rgb, float x, float y, float z);
+
+  public int createPointLight(float gray, float x, float y, float z);
+
+  public int createPointLight(float lr, float lg, float lb, float x, float y, float z);
+
+  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle);
+
+  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle);
+
+  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle);
 }
 

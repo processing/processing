@@ -215,10 +215,10 @@ public interface PConstants {
 
   // lighting
 
-  static final int DISABLED = 0;
-  static final int AMBIENT  = 1;
-  static final int DIFFUSE  = 2;
-  static final int SPECULAR = 3;
+  static final int AMBIENT = 0;
+  static final int DIRECTIONAL  = 1;
+  static final int POINT  = 2;
+  static final int SPOT = 3;
 
 
   // net
@@ -329,8 +329,33 @@ public interface PConstants {
   static final int VZ = 22;
   static final int VW = 23;
 
-  static final int VERTEX_FIELD_COUNT = 24;
+  // Ambient color (usually to be kept the same as diffuse)
+  // fill(_) sets both ambient and diffuse.
+  static final int AR = 24;
+  static final int AG = 25;
+  static final int AB = 26;
+  
+  // Diffuse is shared with fill.
+  static final int DR = 3;
+  static final int DG = 4;
+  static final int DB = 5;
+  static final int DA = 6;
 
+  //specular (by default kept white)
+  static final int SPR = 27;
+  static final int SPG = 28;
+  static final int SPB = 29;
+  //GL doesn't use a separate specular alpha, but we do (we're better)
+  static final int SPA = 30;
+  
+  static final int SHINE = 31;
+  
+  //emissive (by default kept black)
+  static final int ER = 32;
+  static final int EG = 33;
+  static final int EB = 34;
+  
+  static final int VERTEX_FIELD_COUNT = 35;
 
   // line & triangle fields (note how these overlap)
 
@@ -344,4 +369,9 @@ public interface PConstants {
 
   static final int LINE_FIELD_COUNT = 5;
   static final int TRIANGLE_FIELD_COUNT = 5;
+
+  // normal modes for lighting
+  static final int AUTO_NORMAL = 0;   // normal calculated per triangle
+  static final int MANUAL_SHAPE_NORMAL = 1; // one normal manually specified per shape
+  static final int MANUAL_VERTEX_NORMAL = 2; // normals specified for each shape vertex
 }
