@@ -89,11 +89,11 @@ public class PdeEditorConsole extends JScrollPane {
 
     // build styles for different types of console output
     Color bgColor = PdeBase.getColor("editor.console.bgcolor", 
-                                     new Color(26, 26, 26));
+                                     new Color(0x1A, 0x1A, 0x00));
     Color fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
-                                        new Color(153, 153, 153));
+                                        new Color(0xcc, 0xcc, 0xbb));
     Color fgColorErr = PdeBase.getColor("editor.console.fgcolor.error", 
-                                        new Color(204, 51, 0));
+                                        new Color(0xff, 0xcc, 0x00));
     Font font = PdeBase.getFont("editor.console.font", 
                                 new Font("Monospaced", Font.PLAIN, 11));
 
