@@ -326,24 +326,26 @@ public class PGraphics3 extends PGraphics {
     triangle = new PTriangle(this);
   }
 
-  protected void resetLights() {
-    //  reset lights
-    // This looks like a funny reset, but it's to make the most common
-    // case the easiest to attain even if the user chooses to do everything
-    // by hand.
+  public void clearLights() {
     lightCount = 0;
     light[0] = false;
-    lightType[0] = AMBIENT;
-    for (int i = 1; i < MAX_LIGHTS; i++) {
+    for (int i = 0; i < MAX_LIGHTS; i++) {
       light[i] = false;
-      lightType[i] = POINT;
     }
+  }
+  
+  public void defaultLights() {
+    clearLights();
+    createAmbientLight(60);
+    createDirectionalLight(80, 80, 80, 0, 0, -1);
   }
 
   public void beginFrame() {
     super.beginFrame();
 
-    resetLights();
+    if (lights) {
+      defaultLights();
+    }
 
     // reset lines
     lineCount = 0;
@@ -2678,6 +2680,7 @@ public class PGraphics3 extends PGraphics {
 
   public void lights() {
     lights = true;
+    defaultLights();
   }
 
   public void noLights() {
