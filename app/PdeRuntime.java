@@ -80,7 +80,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         // using something like --external=e30,20 where the e stands for
         // exact. otherwise --external=x,y for just the regular positioning.
         String location = (windowLocation != null) ? 
-          (BApplet.EXACT_LOCATION + 
+          (BApplet.EXTERNAL_EXACT_LOCATION + 
            windowLocation.x + "," + windowLocation.y) : 
           (x1 + "," + y1);      
 
@@ -100,7 +100,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         processOutput = process.getOutputStream();
 
       } else {
-        Class c = Class.forName(className);
+        //Class c = Class.forName(className);
+        Class c = Class.forName(sketch.mainClassName);
         applet = (BApplet) c.newInstance();
 
         // replaces setRuntime with BApplet having leechErr [fry]
