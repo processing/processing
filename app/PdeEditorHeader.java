@@ -27,12 +27,14 @@ import java.awt.event.*;
 import java.io.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 
 
-public class PdeEditorHeader extends JComponent implements MouseInputListener {
+public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
   //static final String SKETCH_TITLER = "sketch";
 
   //static Color primaryColor;
+  static Color backgroundColor;
   static Color textColor[] = new Color[2];
   //static Color unselectedColor;
 
@@ -50,6 +52,8 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
   Font font;
   FontMetrics metrics;
   int fontAscent;
+
+  PdeSketch sketch;
 
   //
 
@@ -107,6 +111,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
       //secondaryColor  = PdePreferences.getColor("header.fgcolor.secondary");
     }
 
+    /*
     addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
           //System.out.println("got mouse");
@@ -116,9 +121,30 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
           }
         }
       });
+    */
 
-    addMouseListener(this);
+    //addMouseListener(this);
     //addMouseMotionListener(this);
+
+    addMouseListener(new MouseAdapter() { 
+        public void mousePressed(MouseEvent e) {
+          int x = e.getX();
+          int y = e.getY();
+
+          if ((x > menuLeft) && (x < menuRight)) {
+            popup.show(this, x, y);
+
+          } else {
+            for (int i = 0; i < sketch.codeCount; i++) {
+              if ((x > tabLeft[i]) && (x < tabRight[i])) {
+                //setCurrent(i);
+                sketch.setCurrent(i);
+                repaint();
+              }
+            }
+          }
+        }
+      });
   }
 
 
@@ -132,7 +158,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     if (screen == null) return;
     //if (editor.sketchName == null) return;
 
-    PdeSketch sketch = editor.sketch;
+    //PdeSketch sketch = editor.sketch;
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -167,22 +193,23 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     }
 
     if ((tabLeft == null) ||
-        (tabLeft.length < sketch.fileCount)) {
-      tabLeft = new int[sketch.fileCount];
-      tabRight = new int[sketch.fileCount];
+        (tabLeft.length < sketch.codeCount)) {
+      tabLeft = new int[sketch.codeCount];
+      tabRight = new int[sketch.codeCount];
     }
 
     int x = PdePreferences.GUI_SMALL;
-    for (int i = 0; i < sketch.fileCount; i++) {
-      String text = sketch.modified[i] ? 
-        ("  " + sketch.names[i] + "  ") :
-        ("  " + sketch.names[i] + " \u00A7");
+    for (int i = 0; i < sketch.codeCount; i++) {
+      PdeCode code = sketch.code[i];
+
+      // if modified, add the li'l glyph next to the name
+      String text = "  " + code.name + (code.modified ? " \u00A7" : "  ");
 
       int textWidth = metrics.stringWidth(text);
       int pieceCount = 2 + (textWidth / PIECE_WIDTH);
       int pieceWidth = pieceCount * PIECE_WIDTH;
 
-      state = (i == sketch.current) ? SELECTED : UNSELECTED;
+      int state = (code == sketch.current) ? SELECTED : UNSELECTED;
       g.drawImage(pieces[state][LEFT], x, 0, null);
       x += PIECE_WIDTH;
 
@@ -197,17 +224,18 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
 
       g.setColor(textColor[STATUS]);
       int baseline = (sizeH + fontAscent) / 2;
-      g.drawString(names[i], textLeft, baseline);
+      //g.drawString(sketch.code[i].name, textLeft, baseline);
+      g.drawString(text, textLeft, baseline);
 
       g.drawImage(pieces[state][RIGHT], x, 0, null);
       x += PIECE_WIDTH - 1;  // overlap by 1 pixel
     }
 
-    menuLeft = sizeW - (16 + pieces[0][MENU].getWidth());
+    menuLeft = sizeW - (16 + pieces[0][MENU].getWidth(this));
     menuRight = sizeW - 16;
     // draw the dropdown menu target
     g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU], 
-                menuLeft, 0);
+                menuLeft, 0, null);
 
     /*
     sketchTitleLeft = PdePreferences.GUI_SMALL;
@@ -246,7 +274,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
       menu.removeAll();
     } else {
       menu = new JMenu();
-      popup = menu.getPopUp();
+      popup = menu.getPopupMenu();
       add(popup);
       popup.addPopupMenuListener(new PopupMenuListener() { 
           public void popupMenuCanceled(PopupMenuEvent e) {
@@ -256,8 +284,8 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
             repaint();
           }
 
-          //public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { }
-          //public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
+          public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { }
+          public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
         });
     }
     JMenuItem item;
@@ -331,8 +359,8 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
           System.out.println("jump to " + e);
         }
       };
-    for (int i = 0; i < fileCount; i++) {
-      item = new JMenuItem(names[i]);
+    for (int i = 0; i < sketch.codeCount; i++) {
+      item = new JMenuItem(sketch.code[i].name);
       //item.setActionCommand(files[i]);
       item.addActionListener(jumpListener);
       menu.add(item);
@@ -343,25 +371,6 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
   public void deselectMenu() {
     menuVisible = false; 
     repaint();
-  }
-
-
-  public void mousePressed(MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
-
-    if ((x > menuLeft) && (x < menuRight)) {
-      popup.show(this, x, y);
-
-    } else {
-      for (int i = 0; i < fileCount; i++) {
-        if ((x > tabLeft[i]) && (x < tabRight[i])) {
-          //setCurrent(i);
-          editor.sketch.setCurrent(i);
-          repaint();
-        }
-      }
-    }
   }
 
 
@@ -378,7 +387,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
 
 
   public Dimension getPreferredSize() {
-      return getMinimumSize();
+    return getMinimumSize();
   }
 
   public Dimension getMinimumSize() {

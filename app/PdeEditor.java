@@ -122,7 +122,7 @@ public class PdeEditor extends JFrame
 
   // 
 
-  PdeHistory history;
+  //PdeHistory history;
   PdeSketchbook sketchbook;
   PdePreferences preferences;
   PdeEditorFind find;
@@ -827,7 +827,7 @@ public class PdeEditor extends JFrame
     JMenuItem menuItem = new JMenuItem(title);
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     if (shift) modifiers |= ActionEvent.SHIFT_MASK;
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
 

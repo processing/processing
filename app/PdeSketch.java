@@ -22,6 +22,11 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import java.io.*;
+import java.util.*;
+import java.util.zip.*;
+
+
 public class PdeSketch {
   static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
   static String tempBuildFolder;
@@ -1074,53 +1079,3 @@ public class PdeSketch {
   }
 }
 
-
-class PdeCode {
-  String name;  // pretty name (no extension), not the full file name
-  String preprocName;  // name of .java file after preproc
-  File file;
-  int flavor;
-
-  String program;
-  boolean modified;
-  //History history;  // later
-
-
-  public PdeCode(String name, File file, int flavor) {
-    this.name = name;
-    this.file = file;
-    this.flavor = flavor;
-  }
-
-
-  public void load() {
-    program = null;
-    try {
-      if (files[i].length() != 0) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i])));
-        StringBuffer buffer = new StringBuffer();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-          buffer.append(line);
-          buffer.append('\n');
-        }
-        reader.close();
-        program = buffer.toString();
-
-      } else {
-        // empty code file.. no worries, might be getting filled up
-        program = "";
-      }
-
-    } catch (IOException e) {
-      PdeBase.showWarning("Error loading file", 
-                          "Error while opening the file\n" + 
-                          files[i].getPath(), e);
-      program = null;  // just in case
-    }
-
-    //if (program != null) {
-    //history = new History(file);
-    //}
-  }
-}
