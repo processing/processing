@@ -245,27 +245,27 @@ X fix threading issue, don't call "break"
 X fixed a bunch of weird chmod stuff for windows
 X update with other examples
 
-
 0070p8
 X height for applets wasn't working properly
 X debug font stuff in processing.core
 X   mbox wasn't set properly (not a power of 2) 
 X debug framerate() stuff with noLoop()
 X re-enabled printarr(Object[])
+X remove SystemOutSiphon: i just died message
+X readme.txt/bugs.txt: strange hangs, errors that don't come up:
+X   watch out for loadFont() outside of setup
+X   or other things that can cause errors
+X change PSerial to serial, also PMovie etc..
 
--> most stuff is over in core.. argh
-
-_ remove SystemOutSiphon: i just died message
+_ bring back some form of beginSerial/beginVideo
+_   openSerial(), serial().. 
+_   should it prompt or use the first available if none specified?
+_   serial(null, ...) could prompt
 
 _ nanoxml problems with manifest
 
-_ readme.txt/bugs.txt: strange hangs, errors that don't come up:
-_   watch out for loadFont() outside of setup
-_   or other things that can cause errors
+_ make exit() and/or size(0, 0) work for scripts
 
-
-
-with casey
 _ figure out what to include for examples/libraries
 _ sketches no longer require a "data" folder
 _ let's not call it 'expert', let's just say w/o java
@@ -278,6 +278,8 @@ _ example that uses loop/noLoop, or redraw?
 
 ......................................................................
 
+
+_ serial - if null serial port name, prompt for one
 
 _ run library destroy after hitting 'stop'
 _   quicktime audio doesn't stop after hitting 'stop'
