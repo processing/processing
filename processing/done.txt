@@ -1,3 +1,21 @@
+0053
+X add smooth() noSmooth() to the keywords
+X image of 256x256 doesn't draw the last line of pixels
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
+X weird line in showing in the center of an image
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
+X color() should work for alpha.. 
+X   also #rrggbbaa
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1049141984
+X blend() (or any other 'final' functions) is causing trouble
+X   when other people write methods of the same name
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1049249938
+X text caret goes missing
+o   removing extra jre's, uninstalling java apps fixed it
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
+
+
 0052
 X identityMatrix and multiplyMatrix
 X   or resetMatrix and applyMatrix
