@@ -31,9 +31,10 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.URL;
+import java.net.*;
 import java.text.*;
 import java.util.*;
+import java.util.zip.*;
 
 
 public class PApplet extends Applet
@@ -47,6 +48,9 @@ public class PApplet extends Applet
 
   /** Command line options passed in from main() */
   public String args[];
+
+  /** Path to sketch folder */
+  public String folder; // = System.getProperty("user.dir");
 
   static final boolean THREAD_DEBUG = false; //true;
 
@@ -132,12 +136,16 @@ public class PApplet extends Applet
   public PrintStream leechErr;
 
   // message to send if attached as an external vm
-  static public final String EXTERNAL_FLAG = "--external=";
-  static public final char EXTERNAL_EXACT_LOCATION = 'e';
+  //static public final String EXTERNAL_FLAG = "--external=";
+  //static public final char EXTERNAL_EXACT_LOCATION = 'e';
+  static public final String EXT_LOCATION = "--location=";
+  static public final String EXT_EXACT_LOCATION = "--exact-location=";
+  static public final String EXT_SKETCH_FOLDER = "--sketch-folder=";
+
   static public final char EXTERNAL_STOP = 's';
   static public final String EXTERNAL_QUIT = "__QUIT__";
   static public final String EXTERNAL_MOVE = "__MOVE__";
-  boolean externalRuntime;
+  //boolean externalRuntime;
 
 
   public void init() {
@@ -189,7 +197,7 @@ public class PApplet extends Applet
     this.pixels = g.pixels;
     this.width = g.width;
     this.height = g.height;
-    g.applet = this;
+    //g.applet = this;
 
     try {
       getAppletContext();
@@ -299,7 +307,7 @@ public class PApplet extends Applet
     // set this here, and if not inside browser, getDocumentBase()
     // will fail with a NullPointerException, and cause applet to
     // be set to null. might be a better way to deal with that, but..
-    g.applet = this;
+    //g.applet = this;
   }
 
 
@@ -793,7 +801,9 @@ public class PApplet extends Applet
       return;
     }
 
-    save("screen-" + nf(frame, 4) + ".tif");
+    File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
+    save(file.getAbsolutePath());
+    //save("screen-" + nf(frame, 4) + ".tif");
   }
 
 
@@ -824,7 +834,11 @@ public class PApplet extends Applet
       int count = last - first + 1;
       String suffix = what.substring(last + 1);
 
-      save(prefix + nf(frame, count) + suffix);
+      //save(prefix + nf(frame, count) + suffix);
+      File file = new File(folder, prefix + nf(frame, count) + suffix);
+      // in case the user tries to make subdirs with the filename
+      new File(file.getParent()).mkdirs();
+      save(file.getAbsolutePath());
     }
   }
 
@@ -1082,9 +1096,14 @@ public class PApplet extends Applet
   //}
 
 
-  // ------------------------------------------------------------
 
-  // math stuff for convenience
+  //////////////////////////////////////////////////////////////
+
+  // MATH 
+
+  // lots of convenience methods for math with floats.
+  // doubles are overkill for processing applets, and casting
+  // things all the time is annoying, thus the functions below.
 
 
   static public final float abs(float n) {
@@ -1276,24 +1295,15 @@ public class PApplet extends Applet
    */
   static public final float random(float howsmall, float howbig) {
     if (howsmall >= howbig) return howsmall;
-
     float diff = howbig - howsmall;
     return random(diff) + howsmall;
-
-    /*
-    if (internalRandom == null) internalRandom = new Random();
-
-    float diff = howbig - howsmall;
-    //return howsmall + (float)Math.random() * diff;
-    float value = 0;
-    do {
-      //value = howsmall + (float)Math.random() * diff;
-      value = howsmall + internalRandom.nextFloat() * diff;
-    } while (value == howbig);  // don't allow inclusive
-    return value;
-    */
   }
 
+
+
+  //////////////////////////////////////////////////////////////
+
+  // PERLIN NOISE
 
   /*
     Computes the Perlin noise function value at the point (x, y, z).
@@ -1331,26 +1341,14 @@ public class PApplet extends Applet
   float perlin[];
 
 
-  //public float noise(int x) {
-  //return noise((float)x, 0f, 0f);
-  //}
-
   public float noise(float x) {
     // is this legit? it's a dumb way to do it (but repair it later)
     return noise(x, 0f, 0f);
   }
 
-  //public float noise(int x, int y) {
-  //return noise((float)x, (float)y, 0f);
-  //}
-
   public float noise(float x, float y) {
     return noise(x, y, 0f);
   }
-
-  //public float noise(int x, int y, int z) {
-  //return noise((float)x, (float)y, (float)z);
-  //}
 
   public float noise(float x, float y, float z) {
     if (perlin == null) {
@@ -1438,9 +1436,579 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
 
-  // utilities for dealing with arrays
+  //////////////////////////////////////////////////////////////
+
+  // IMAGE I/O
+
+
+  private Image gimmeImage(URL url, boolean force) {
+    Toolkit tk = Toolkit.getDefaultToolkit();
+
+    URLConnection conn = null;
+    try {
+      //conn = new URLConnection(url);
+      conn = url.openConnection();
+
+      // i don't think this does anything, 
+      // but just set the fella for good measure
+      conn.setUseCaches(false);
+      // also had a note from zach about parent.obj.close() on url
+      // but that doesn't seem to be needed anymore...
+
+      // throws an exception if it doesn't exist
+      conn.connect();
+
+      if (!force) {
+        // how do you close the bastard?
+        conn = null;
+        // close connection and just use regular method
+        return tk.getImage(url);
+      }
+
+      // slurp contents of that stream
+      InputStream stream = conn.getInputStream();
+
+      BufferedInputStream bis = new BufferedInputStream(stream);
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+      try {
+        int c = bis.read();
+        while (c != -1) {
+          out.write(c);
+          c = bis.read();
+        }
+      } catch (IOException e) {
+        return null;
+      }
+      bis.close();  // will this help?
+      //byte bytes[] = out.toByteArray();
+
+      // build an image out of it
+      //return tk.createImage(bytes);
+      return tk.createImage(out.toByteArray());
+
+    } catch (Exception e) {  // null pointer or i/o ex
+      //System.err.println("error loading image: " + url);
+      return null;
+    }
+  }
+
+  public PImage loadImage(String filename) {
+    if (filename.toLowerCase().endsWith(".tga")) {
+      return loadTargaImage(filename);
+    }
+    return loadImage(filename, true);
+  }
+
+  // returns null if no image of that name is found
+  public PImage loadImage(String filename, boolean force) {
+    Image awtimage = null;
+    //String randomizer = "?" + nf((int) (random()*10000), 4);
+
+    if (filename.startsWith("http://")) {
+      try {
+        URL url = new URL(filename);
+        awtimage = gimmeImage(url, force);
+
+      } catch (MalformedURLException e) { 
+        System.err.println("error loading image from " + filename);
+        e.printStackTrace();
+        return null;
+      }
+
+    } else {
+      //System.out.println(getClass().getName());
+      //System.out.println(getClass().getResource(filename));
+      awtimage = gimmeImage(getClass().getResource(filename), force);
+      if (awtimage == null) {
+        awtimage = 
+          gimmeImage(getClass().getResource("data/" + filename), force);
+      }
+      if (awtimage == null) {
+        try {
+          //FileInputStream fis = 
+          //new FileInputStream(folder + "data/" + filename);
+          URL url = new URL("file:/" + folder + "data/" + filename);
+          awtimage = gimmeImage(url, force);
+        } catch (IOException e) { 
+          e.printStackTrace();
+        }
+      }
+    }
+    if (awtimage == null) {
+      System.err.println("could not load image " + filename);
+      return null;
+    }
+
+    Component component = this; //applet;
+    if (component == null) {
+      component = new Frame();
+      ((Frame)component).pack();
+      // now we have a peer! yay!
+    }
+
+    MediaTracker tracker = new MediaTracker(component);
+    tracker.addImage(awtimage, 0);
+    try {
+      tracker.waitForAll();
+    } catch (InterruptedException e) { 
+      e.printStackTrace();
+    }
+
+    int jwidth = awtimage.getWidth(null);
+    int jheight = awtimage.getHeight(null);
+
+    int jpixels[] = new int[jwidth*jheight];
+    PixelGrabber pg = 
+      new PixelGrabber(awtimage, 0, 0, jwidth, jheight, jpixels, 0, jwidth);
+    try {
+      pg.grabPixels();
+    } catch (InterruptedException e) { 
+      e.printStackTrace();
+    }
+
+    //int format = RGB;
+    if (filename.toLowerCase().endsWith(".gif")) {
+      // if it's a .gif image, test to see if it has transparency
+      for (int i = 0; i < jpixels.length; i++) {
+        // since transparency is often at corners, hopefully this
+        // will find a non-transparent pixel quickly and exit
+        if ((jpixels[i] & 0xff000000) != 0xff000000) {
+          return new PImage(jpixels, jwidth, jheight, RGBA);
+          //format = RGBA;
+          //break;
+        }
+      }
+    }
+    return new PImage(jpixels, jwidth, jheight, RGB);
+  }
+
+
+  /**
+   * [toxi 040304] Targa bitmap loader for 24/32bit RGB(A) 
+   *
+   * [fry] this could be optimized to not use loadBytes
+   * which would help out memory situations with large images
+   */
+  protected PImage loadTargaImage(String filename) {
+    // load image file as byte array 
+    byte[] buffer = loadBytes(filename); 
+  
+   // check if it's a TGA and has 8bits/colour channel 
+   if (buffer[2] == 2 && buffer[17] == 8) { 
+     // get image dimensions 
+     //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]); 
+     int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
+     //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]); 
+     int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
+     // check if image has alpha 
+     boolean hasAlpha=(buffer[16] == 32); 
+  
+     // setup new image object 
+     PImage img = new PImage(w,h); 
+     img.format = (hasAlpha ? RGBA : RGB); 
+  
+     // targa's are written upside down, so we need to parse it in reverse 
+     int index = (h-1) * w; 
+     // actual bitmap data starts at byte 18 
+     int offset = 18; 
+  
+     // read out line by line 
+     for (int y = h-1; y >= 0; y--) { 
+       for (int x = 0; x < w; x++) { 
+         img.pixels[index + x] = 
+           (buffer[offset++] & 0xff) | 
+           ((buffer[offset++] & 0xff) << 8) | 
+           ((buffer[offset++] & 0xff) << 16) | 
+           (hasAlpha ? ((buffer[offset++] & 0xff) << 24) : 0xff000000);
+       }
+       index -= w; 
+     }
+     return img; 
+   } 
+   System.err.println("loadImage(): bad targa image format"); 
+   return null; 
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // FONT I/O
+
+
+  public PFont loadFont(String filename) {
+    try {
+      String lower = filename.toLowerCase();
+      InputStream input = null;
+
+      if (lower.endsWith(".vlw")) {
+        input = openStream(filename);
+
+      } else if (lower.endsWith(".vlw.gz")) {
+        input = new GZIPInputStream(openStream(filename));
+
+      } else {
+        throw new IOException("don't know what type of file that is");
+      }
+      return new PFont(input);
+
+    } catch (IOException e) {
+      System.err.println("Could not load font " + filename);
+      System.err.println("Make sure that the font has been copied");
+      System.err.println("to the data folder of your sketch.");
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+  // FILE I/O
+
+
+  public InputStream openStream(String filename) throws IOException {
+    InputStream stream = null;
+
+    if (filename.startsWith("http://")) {
+      try {
+        URL url = new URL(filename);
+        stream = url.openStream();
+        return stream;
+
+      } catch (MalformedURLException e) { 
+        e.printStackTrace();
+        return null;
+      }
+    }
+
+    stream = getClass().getResourceAsStream(filename);
+    if (stream != null) return stream;
+
+    stream = getClass().getResourceAsStream("data/" + filename);
+    if (stream != null) return stream;
+
+    try {
+      try {
+        stream = new FileInputStream(new File("data", filename));
+        if (stream != null) return stream;
+      } catch (IOException e2) { }
+
+      try {
+        stream = new FileInputStream(filename);
+        if (stream != null) return stream;
+      } catch (IOException e1) { }
+
+    } catch (SecurityException se) { }  // online, whups
+
+    if (stream == null) {
+      throw new IOException("openStream() could not open " + filename);
+    }
+    return null;  // #$(*@ compiler
+  }
+
+
+  public byte[] loadBytes(String filename) {
+    try {
+      return loadBytes(openStream(filename));
+
+    } catch (IOException e) {
+      System.err.println("problem loading bytes from " + filename);
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  static public byte[] loadBytes(InputStream input) {
+    try {
+      BufferedInputStream bis = new BufferedInputStream(input);
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+      int c = bis.read();
+      while (c != -1) {
+        out.write(c);
+        c = bis.read();
+      }
+      return out.toByteArray();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  public String[] loadStrings(String filename) {
+    try {
+      return loadStrings(openStream(filename));
+
+    } catch (IOException e) {
+      System.err.println("problem loading strings from " + filename);
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  static public String[] loadStrings(InputStream input) {
+    try {
+      BufferedReader reader = 
+        new BufferedReader(new InputStreamReader(input));
+
+      String lines[] = new String[100];
+      int lineCount = 0;
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (lineCount == lines.length) {
+          String temp[] = new String[lineCount << 1];
+          System.arraycopy(lines, 0, temp, 0, lineCount);
+          lines = temp;
+        }
+        lines[lineCount++] = line;
+      }
+      reader.close();
+
+      if (lineCount == lines.length) {
+        return lines;
+      }
+
+      // resize array to appropraite amount for these lines
+      String output[] = new String[lineCount];
+      System.arraycopy(lines, 0, output, 0, lineCount);
+      return output;
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  public void saveBytes(String filename, byte buffer[]) {
+    try {
+      FileOutputStream fos = new FileOutputStream(filename);
+      saveBytes(fos, buffer);
+      fos.close();
+
+    } catch (IOException e) {
+      System.err.println("error saving bytes to " + filename);
+      e.printStackTrace();
+    }
+  }
+
+  public void saveBytes(OutputStream output, byte buffer[]) {
+    try {
+      //BufferedOutputStream bos = new BufferedOutputStream(output);
+      output.write(buffer);
+      output.flush();
+
+    } catch (IOException e) {
+      System.err.println("error while saving bytes");
+      e.printStackTrace();
+    }
+  }
+
+
+  public void saveStrings(String filename, String strings[]) {
+    try {
+      FileOutputStream fos = new FileOutputStream(filename);
+      saveStrings(fos, strings);
+      fos.close();
+
+    } catch (IOException e) {
+      System.err.println("error while saving strings");
+      e.printStackTrace();
+    }
+  }
+
+  public void saveStrings(OutputStream output, String strings[]) {
+    //try {
+    PrintWriter writer = 
+      new PrintWriter(new OutputStreamWriter(output));
+    for (int i = 0; i < strings.length; i++) {
+      writer.println(strings[i]);
+    }
+    writer.flush();
+    //} catch (IOException e) {
+    //System.err.println("error while saving strings");
+    //e.printStackTrace();
+    //}
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SORT
+
+  int sort_mode;
+
+  static final int STRINGS = 0;
+  static final int INTS = 1;
+  static final int FLOATS = 2;
+  static final int DOUBLES = 3;
+
+  String sort_strings[];
+  int sort_ints[];
+  float sort_floats[];
+  double sort_doubles[];
+  Object sort_objects[];
+
+
+  /**
+   * Sort an array of String objects.
+   */
+  public void sort(String what[]) {
+    sort(what, what.length, null);
+  }
+
+  /**
+   * Sort an array of String objects, along with a generic
+   * array of type Object. 
+   *
+   * String names[] = { "orange", "black", "red" };
+   * Object colors[] = { Color.orange, Color.black, Color.red };
+   * sort(names, colors);
+   * 
+   * result is 'names' alphabetically sorted
+   * and the colors[] array sorted along with it.
+   */
+  public void sort(String what[], Object objects[]) {
+    sort(what, what.length, objects);
+  }
+
+  public void sort(int what[]) {
+    sort(what, what.length, null);
+  }
+
+  public void sort(int what[], Object objects[]) {
+    sort(what, what.length, objects);
+  }
+
+  public void sort(float what[]) {
+    sort(what, what.length, null);
+  }
+
+  public void sort(float what[], Object objects[]) {
+    sort(what, what.length, objects);
+  }
+
+  public void sort(double what[]) {
+    sort(what, what.length, null);
+  }
+
+  public void sort(double what[], Object objects[]) {
+    sort(what, what.length, objects);
+  }
+
+
+  public void sort(String what[], int count, Object objects[]) {
+    if (count == 0) return;
+    sort_mode = STRINGS;
+    sort_strings = what;
+    sort_objects = objects;
+    sort_internal(0, count-1);
+  }
+
+  public void sort(int what[], int count, Object objects[]) {
+    if (count == 0) return;
+    sort_mode = INTS;
+    sort_ints = what;
+    sort_objects = objects;
+    sort_internal(0, count-1);
+  }
+
+  public void sort(float what[], int count, Object objects[]) {
+    if (count == 0) return;
+    sort_mode = FLOATS;
+    sort_floats = what;
+    sort_objects = objects;
+    sort_internal(0, count-1);
+  }
+
+  public void sort(double what[], int count, Object objects[]) {
+    if (count == 0) return;
+    sort_mode = DOUBLES;
+    sort_doubles = what;
+    sort_objects = objects;
+    sort_internal(0, count-1);
+  }
+
+
+  protected void sort_internal(int i, int j) {
+    int pivotIndex = (i+j)/2;
+    sort_swap(pivotIndex, j);
+    int k = sort_partition(i-1, j);
+    sort_swap(k, j);
+    if ((k-i) > 1) sort_internal(i, k-1);
+    if ((j-k) > 1) sort_internal(k+1, j);
+  }
+
+
+  protected int sort_partition(int left, int right) {
+    int pivot = right;
+    do {
+      while (sort_compare(++left, pivot) < 0) { }
+      while ((right != 0) && (sort_compare(--right, pivot) > 0)) { }
+      sort_swap(left, right);
+    } while (left < right);
+    sort_swap(left, right);
+    return left;
+  }
+
+
+  protected void sort_swap(int a, int b) {
+    switch (sort_mode) {
+    case STRINGS:
+      String stemp = sort_strings[a];
+      sort_strings[a] = sort_strings[b];
+      sort_strings[b] = stemp;
+      break;
+    case INTS:
+      int itemp = sort_ints[a];
+      sort_ints[a] = sort_ints[b];
+      sort_ints[b] = itemp;
+      break;
+    case FLOATS:
+      float ftemp = sort_floats[a];
+      sort_floats[a] = sort_floats[b];
+      sort_floats[b] = ftemp;
+      break;
+    case DOUBLES:
+      double dtemp = sort_doubles[a];
+      sort_doubles[a] = sort_doubles[b];
+      sort_doubles[b] = dtemp;
+      break;
+    }
+    if (sort_objects != null) {
+      Object otemp = sort_objects[a];
+      sort_objects[a] = sort_objects[b];
+      sort_objects[b] = otemp;
+    }
+  }
+
+  protected int sort_compare(int a, int b) {
+    switch (sort_mode) {
+    case STRINGS:    
+      return sort_strings[a].compareTo(sort_strings[b]);
+    case INTS:
+      if (sort_ints[a] < sort_ints[b]) return -1;
+      return (sort_ints[a] == sort_ints[b]) ? 0 : 1;
+    case FLOATS:
+      if (sort_floats[a] < sort_floats[b]) return -1;
+      return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
+    case DOUBLES:
+      if (sort_doubles[a] < sort_doubles[b]) return -1;
+      return (sort_doubles[a] == sort_doubles[b]) ? 0 : 1;
+    }
+    return 0;
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // ARRAY UTILITIES
 
 
   static public int[] expand(int list[]) {
@@ -1544,9 +2112,10 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
 
-  // utilities for dealing with strings
+  //////////////////////////////////////////////////////////////
+
+  // STRINGS
 
 
   /**
@@ -1905,9 +2474,10 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
 
-  // number formatting - floats
+  //////////////////////////////////////////////////////////////
+
+  // FLOAT NUMBER FORMATTING
 
 
   static private NumberFormat float_nf;
@@ -1971,9 +2541,10 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
 
-  // number formatting - integers
+  //////////////////////////////////////////////////////////////
+
+  // INT NUMBER FORMATTING
 
 
   static public String str(boolean x) { return String.valueOf(x); }
@@ -2099,205 +2670,13 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
 
-  // run as application
+  //////////////////////////////////////////////////////////////
 
+  // COLOR FUNCTIONS
 
-  public Stopper stopper;
-
-  class Stopper implements Runnable {
-    //PApplet parent;
-    Thread thread;
-
-    public Stopper() {
-      //this.parent = parent;
-      thread = new Thread(this);
-      thread.start();
-    }
-
-    public void run() {
-      while (thread != null) {
-        try {
-          //System.out.println("Stopper: blocking for input");
-          int anything = System.in.read();
-          //System.out.println("Stopper: got input " + anything);
-
-          if (anything == EXTERNAL_STOP) {
-            finished = true;
-            //parent.finished = true;  // kill parent
-            //parent = null;
-            thread = null;  // kill self
-          }
-        } catch (IOException e) {
-          // not tested (needed?) but seems correct
-          finished = true;
-          thread = null;
-          //System.err.println("Stopper: error on reading");
-          //e.printStackTrace();
-        }
-
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException e) { }
-      }
-    }
-  }
-
-  public void setupExternal(Frame frame) {
-    externalRuntime = true;
-    stopper = new Stopper();
-
-    frame.addComponentListener(new ComponentAdapter() {
-        public void componentMoved(ComponentEvent e) {
-          //System.out.println(e);
-          Point where = ((Frame) e.getSource()).getLocation();
-          //System.out.println(e);
-          System.err.println(PApplet.EXTERNAL_MOVE + " " + 
-                             where.x + " " + where.y);
-          System.err.flush();
-        }
-      });
-
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          //if (externalRuntime) {
-          System.err.println(PApplet.EXTERNAL_QUIT);
-          System.err.flush();  // important
-          //}
-          System.exit(0);
-        }
-      });
-  }
-
-
-  static public void main(String args[]) {
-    if (args.length < 1) {
-      System.err.println("error: PApplet <appletname>");
-      System.exit(1);
-    }
-
-    try {
-      //boolean locationFound = false;
-      //externalRuntime = false;
-      boolean external = false;
-      //String str = "--external=";
-      if (args[0].indexOf(EXTERNAL_FLAG) == 0) external = true;
-
-      Frame frame = new Frame();
-      frame.pack();  // maybe get insets
-      Class c = Class.forName(args[external ? 1 : 0]);
-      PApplet applet = (PApplet) c.newInstance();
-      applet.init();
-      applet.start();
-
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-      //String str = "--location=";
-
-      if (external) {
-        String argh = args[0].substring(EXTERNAL_FLAG.length());
-        boolean exact = argh.charAt(0) == EXTERNAL_EXACT_LOCATION;
-        if (exact) argh = argh.substring(1);
-        int location[] = toInt(split(argh, ','));
-
-        int x1 = location[0] - 20;
-        int y1 = location[1];
-
-        Insets insets = frame.getInsets();  // pack() first?
-        //System.out.println(insets);
-
-        int minW = 120;
-        int minH = 120;
-        int windowW = 
-          Math.max(applet.width, minW) + insets.left + insets.right;
-        int windowH = 
-          Math.max(applet.height, minH) + insets.top + insets.bottom;
-
-        if (x1 - windowW > 10) {  // if it fits to the left of the window
-          frame.setBounds(x1 - windowW, y1, windowW, windowH);
-
-        } else { 
-          // if it fits inside the editor window, 
-          // offset slightly from upper lefthand corner 
-          // so that it's plunked inside the text area
-          x1 = location[0] + 66; 
-          y1 = location[1] + 66;
-
-          if ((x1 + windowW > screen.width - 33) ||
-              (y1 + windowH > screen.height - 33)) {
-            // otherwise center on screen
-            x1 = (screen.width - windowW) / 2;
-            y1 = (screen.height - windowH) / 2;
-          }
-          frame.setBounds(x1, y1, windowW, windowH); //ww, wh);
-        }
-
-        if (exact) {
-          // ignore the stuff above for window x y coords, but still use it
-          // for the bounds, and the placement of the applet within the window
-          //System.out.println("setting exact " + 
-          //location[0] + " " + location[1]);
-          frame.setLocation(location[0], location[1]);
-        }
-
-        /*
-        frame.addComponentListener(new ComponentAdapter() {
-            public void componentMoved(ComponentEvent e) {
-              int newX = e.getComponent().getX();
-              int newY = e.getComponent().getY();
-              //System.out.println(newX + " " + newY);
-            }
-          });
-        */
-
-        // shorten args by two (remove --external and applet name)
-        applet.args = new String[args.length - 2];
-        System.arraycopy(args, 2, applet.args, 0, args.length - 2);
-
-        frame.setLayout(null);
-        frame.add(applet);
-        frame.setBackground(SystemColor.control);
-        applet.setBounds((windowW - applet.width)/2, 
-                         insets.top + ((windowH - insets.top - insets.bottom) -
-                                       applet.height)/2, 
-                         windowW, windowH);
-
-        applet.setupExternal(frame);
-
-      } else {  // !external
-        // remove applet name from args passed in
-        applet.args = new String[args.length - 1];
-        System.arraycopy(args, 1, applet.args, 0, args.length - 1);
-
-        frame.setLayout(new BorderLayout());
-        frame.add(applet, BorderLayout.CENTER);
-        frame.pack();
-
-        frame.setLocation((screen.width - applet.g.width) / 2,
-                          (screen.height - applet.g.height) / 2);
-
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-              System.exit(0);
-            }
-          });
-      }
-
-      frame.show();
-      applet.requestFocus(); // get keydowns right away
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
-  }
-
-
-  // ------------------------------------------------------------
-
-  // color functions, moved here so that they can work without
-  // the graphics actually being instantiated
+  // moved here so that they can work without
+  // the graphics actually being instantiated (outside setup)
 
 
   public final int color(int gray) {
@@ -2374,314 +2753,526 @@ public class PApplet extends Applet
   }
 
 
-  // ------------------------------------------------------------
+
+  //////////////////////////////////////////////////////////////
+
+  // MAIN
+
+
+  public void setupExternal(Frame frame) {
+    //externalRuntime = true;
+
+    Thread thread = new Thread() {  //new Runnable() {
+        public void run() {
+          while ((Thread.currentThread() == this) && !finished) {
+            try {
+              // is this what's causing all the trouble?
+              int anything = System.in.read();
+              if (anything == EXTERNAL_STOP) {
+                finished = true;
+                //thread = null;  // kill self
+              }
+            } catch (IOException e) {
+              // not tested (needed?) but seems correct
+              finished = true;
+              //thread = null;
+            }
+            try {
+              Thread.sleep(250);
+            } catch (InterruptedException e) { }
+          }
+        }
+      };
+    thread.start();
+
+    frame.addComponentListener(new ComponentAdapter() {
+        public void componentMoved(ComponentEvent e) {
+          //System.out.println(e);
+          Point where = ((Frame) e.getSource()).getLocation();
+          //System.out.println(e);
+          System.err.println(PApplet.EXTERNAL_MOVE + " " + 
+                             where.x + " " + where.y);
+          System.err.flush();
+        }
+      });
+
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          System.err.println(PApplet.EXTERNAL_QUIT);
+          System.err.flush();  // important
+          System.exit(0);
+        }
+      });
+  }
+
+
+  static public void main(String args[]) {
+    if (args.length < 1) {
+      System.err.println("error: PApplet <appletname>");
+      System.exit(1);
+    }
+
+    try {
+      boolean external = false;
+      int location[] = null;
+      //int locationX, locationY;
+      boolean exactLocation = false;
+      String folder = System.getProperty("user.dir");
+      //if (args[0].indexOf(EXTERNAL_FLAG) == 0) external = true;
+      String name = null;
+
+      int argIndex = 0;
+      while (argIndex < args.length) {
+        if (args[argIndex].indexOf(EXT_LOCATION) == 0) {
+          external = true;
+          String locationStr = 
+            args[argIndex].substring(EXT_LOCATION.length());
+          location = toInt(split(locationStr, ','));
+          //locationX = location[0] - 20;
+          //locationY = location[1];          
+
+        } else if (args[argIndex].indexOf(EXT_EXACT_LOCATION) == 0) {
+          external = true;
+          String locationStr = 
+            args[argIndex].substring(EXT_LOCATION.length());
+          location = toInt(split(locationStr, ','));
+          exactLocation = true;
+
+        } else if (args[argIndex].indexOf(EXT_SKETCH_FOLDER) == 0) {
+          folder = args[argIndex].substring(EXT_SKETCH_FOLDER.length());
+
+        } else {
+          name = args[argIndex];
+          break;
+        }
+      }
+
+      Frame frame = new Frame();
+      frame.pack();  // maybe get insets
+      Class c = Class.forName(name);
+      PApplet applet = (PApplet) c.newInstance();
+
+      // these are needed before init/start
+      applet.folder = folder;
+      int argc = args.length - argIndex;
+      applet.args = new String[argc];
+      System.arraycopy(args, argc, applet.args, 0, argc);
+
+      applet.init();
+      applet.start();
+
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+      if (external) {
+        /*
+        String argh = args[0].substring(EXTERNAL_FLAG.length());
+        boolean exact = argh.charAt(0) == EXTERNAL_EXACT_LOCATION;
+        if (exact) argh = argh.substring(1);
+        int location[] = toInt(split(argh, ','));
+        int locationX = location[0] - 20;
+        int locationY = location[1];
+        */
+
+        Insets insets = frame.getInsets();  // pack() first?
+        //System.out.println(insets);
+
+        int locationX = location[0] - 20;
+        int locationY = location[1];          
+
+        int minW = 120;
+        int minH = 120;
+        int windowW = 
+          Math.max(applet.width, minW) + insets.left + insets.right;
+        int windowH = 
+          Math.max(applet.height, minH) + insets.top + insets.bottom;
+        frame.setSize(windowW, windowH);
+
+        if (exactLocation) {
+          frame.setLocation(location[0], location[1]);
+          
+        } else {
+          if (locationX - windowW > 10) {  
+            // if it fits to the left of the window
+            frame.setLocation(locationX - windowW, locationY);
+          } else { 
+            // if it fits inside the editor window, 
+            // offset slightly from upper lefthand corner 
+            // so that it's plunked inside the text area
+            locationX = location[0] + 66; 
+            locationY = location[1] + 66;
+
+            if ((locationX + windowW > screen.width - 33) ||
+                (locationY + windowH > screen.height - 33)) {
+              // otherwise center on screen
+              locationX = (screen.width - windowW) / 2;
+              locationY = (screen.height - windowH) / 2;
+            }
+            frame.setLocation(locationX, locationY);
+          }
+        }
+
+        /*
+        if (locationX - windowW > 10) {  
+          // if it fits to the left of the window
+          frame.setBounds(locationX - windowW, locationY, 
+                          windowW, windowH);
+        } else { 
+          // if it fits inside the editor window, 
+          // offset slightly from upper lefthand corner 
+          // so that it's plunked inside the text area
+          locationX = location[0] + 66; 
+          locationY = location[1] + 66;
+
+          if ((locationX + windowW > screen.width - 33) ||
+              (locationY + windowH > screen.height - 33)) {
+            // otherwise center on screen
+            locationX = (screen.width - windowW) / 2;
+            locationY = (screen.height - windowH) / 2;
+          }
+          frame.setBounds(locationX, locationY, windowW, windowH); //ww, wh);
+        }
+
+        if (exactLocation) {
+          // ignore the stuff above for window x y coords, but still use it
+          // for the bounds, and the placement of the applet within the window
+          //System.out.println("setting exact " + 
+          //location[0] + " " + location[1]);
+          frame.setLocation(location[0], location[1]);
+        }
+        */
+
+        /*
+        frame.addComponentListener(new ComponentAdapter() {
+            public void componentMoved(ComponentEvent e) {
+              int newX = e.getComponent().getX();
+              int newY = e.getComponent().getY();
+              //System.out.println(newX + " " + newY);
+            }
+          });
+        */
+
+        // shorten args by two (remove --external and applet name)
+        //applet.args = new String[args.length - 2];
+        //System.arraycopy(args, 2, applet.args, 0, args.length - 2);
+
+        frame.setLayout(null);
+        frame.add(applet);
+        frame.setBackground(SystemColor.control);
+        applet.setBounds((windowW - applet.width)/2, 
+                         insets.top + ((windowH - insets.top - insets.bottom) -
+                                       applet.height)/2, 
+                         windowW, windowH);
+
+        applet.setupExternal(frame);
+
+      } else {  // !external
+        // remove applet name from args passed in
+        applet.args = new String[args.length - 1];
+        System.arraycopy(args, 1, applet.args, 0, args.length - 1);
+
+        frame.setLayout(new BorderLayout());
+        frame.add(applet, BorderLayout.CENTER);
+        frame.pack();
+
+        frame.setLocation((screen.width - applet.g.width) / 2,
+                          (screen.height - applet.g.height) / 2);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+              System.exit(0);
+            }
+          });
+      }
+
+      frame.show();
+      applet.requestFocus(); // get keydowns right away
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
 
   // everything below this line is automatically generated. no touch.
   // public functions for processing.core
 
 
-  public void setup(int width, int height, int format) {
-    g.setup(width, height, format);
-  }
-
-
   public void alpha(int alpha[]) {
-    g.alpha(alpha);
+     g.alpha(alpha);
   }
 
 
   public void alpha(PImage alpha) {
-    g.alpha(alpha);
-  }
-
-
-  public int blendColor(int c1, int c2, int mode) {
-   return g.blendColor(c1, c2, mode);
+     g.alpha(alpha);
   }
 
 
   public void filter(int kind) {
-    g.filter(kind);
+     g.filter(kind);
   }
 
 
   public void filter(int kind, float param) {
-    g.filter(kind, param);
+     g.filter(kind, param);
   }
 
 
   public int get(int x, int y) {
-   return g.get(x, y);
+    return g.get(x, y);
   }
 
 
   public PImage get(int x, int y, int w, int h) {
-   return g.get(x, y, w, h);
+    return g.get(x, y, w, h);
   }
 
 
   public void set(int x, int y, int c) {
-    g.set(x, y, c);
+     g.set(x, y, c);
   }
 
 
   public void copy(PImage src, int dx, int dy) {
-    g.copy(src, dx, dy);
+     g.copy(src, dx, dy);
   }
 
 
   public void copy(int sx1, int sy1, int sx2, int sy2, 
                    int dx1, int dy1, int dx2, int dy2) {
-    g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+     g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
 
 
   public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-    g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+     g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+  }
+
+
+  static public int blend(int c1, int c2, int mode) {
+    return PGraphics.blend(c1, c2, mode);
   }
 
 
   public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
-    g.blend(src, sx, sy, dx, dy, mode);
+     g.blend(src, sx, sy, dx, dy, mode);
   }
 
 
   public void blend(int sx, int sy, int dx, int dy, int mode) {
-    g.blend(sx, sy, dx, dy, mode);
+     g.blend(sx, sy, dx, dy, mode);
   }
 
 
   public void blend(int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+     g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
   public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  }
-
-
-  public Object clone() throws CloneNotSupportedException {
-   return g.clone();
+     g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
   public void save(String filename) {
-    g.save(filename);
+     g.save(filename);
   }
 
 
   public void smooth() {
-    g.smooth();
+     g.smooth();
   }
 
 
   public void noSmooth() {
-    g.noSmooth();
+     g.noSmooth();
   }
 
 
   public void imageMode(int mode) {
-    g.imageMode(mode);
+     g.imageMode(mode);
   }
 
 
   public void defaults() {
-    g.defaults();
+     g.defaults();
   }
 
 
   public void beginFrame() {
-    g.beginFrame();
+     g.beginFrame();
   }
 
 
   public void endFrame() {
-    g.endFrame();
-  }
-
-
-  public final float[] nextVertex() {
-   return g.nextVertex();
-  }
-
-
-  public final void addTexture(PImage image) {
-    g.addTexture(image);
-  }
-
-
-  public final void addLine(int a, int b) {
-    g.addLine(a, b);
-  }
-
-
-  public final void addTriangle(int a, int b, int c) {
-    g.addTriangle(a, b, c);
+     g.endFrame();
   }
 
 
   public void beginShape() {
-    g.beginShape();
+     g.beginShape();
   }
 
 
   public void beginShape(int kind) {
-    g.beginShape(kind);
+     g.beginShape(kind);
   }
 
 
   public void texture(PImage image) {
-    g.texture(image);
+     g.texture(image);
   }
 
 
   public void textureMode(int texture_mode) {
-    g.textureMode(texture_mode);
+     g.textureMode(texture_mode);
   }
 
 
   public void normal(float nx, float ny, float nz) {
-    g.normal(nx, ny, nz);
+     g.normal(nx, ny, nz);
   }
 
 
   public void vertex(float x, float y) {
-    g.vertex(x, y);
+     g.vertex(x, y);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    g.vertex(x, y, u, v);
+     g.vertex(x, y, u, v);
   }
 
 
   public void vertex(float x, float y, float z) {
-    g.vertex(x, y, z);
+     g.vertex(x, y, z);
   }
 
 
   public void vertex(float x, float y, float z,  
                      float u, float v) {
-    g.vertex(x, y, z, u, v);
+     g.vertex(x, y, z, u, v);
   }
 
 
   public void bezierVertex(float x, float y) {
-    g.bezierVertex(x, y);
+     g.bezierVertex(x, y);
   }
 
 
   public void bezierVertex(float x, float y, float z) {
-    g.bezierVertex(x, y, z);
+     g.bezierVertex(x, y, z);
   }
 
 
   public void curveVertex(float x, float y) {
-    g.curveVertex(x, y);
+     g.curveVertex(x, y);
   }
 
 
   public void curveVertex(float x, float y, float z) {
-    g.curveVertex(x, y, z);
+     g.curveVertex(x, y, z);
   }
 
 
   public void endShape() {
-    g.endShape();
+     g.endShape();
   }
 
 
   public void point(float x, float y) {
-    g.point(x, y);
+     g.point(x, y);
   }
 
 
   public void point(float x, float y, float z) {
-    g.point(x, y, z);
+     g.point(x, y, z);
   }
 
 
   public void line(float x1, float y1, float x2, float y2) {
-    g.line(x1, y1, x2, y2);
+     g.line(x1, y1, x2, y2);
   }
 
 
   public void line(float x1, float y1, float z1, 
                    float x2, float y2, float z2) {
-    g.line(x1, y1, z1, x2, y2, z2);
+     g.line(x1, y1, z1, x2, y2, z2);
   }
 
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-    g.triangle(x1, y1, x2, y2, x3, y3);
+     g.triangle(x1, y1, x2, y2, x3, y3);
   }
 
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
-    g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+     g.quad(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
   public void rectMode(int mode) {
-    g.rectMode(mode);
+     g.rectMode(mode);
   }
 
 
   public void rect(float x1, float y1, float x2, float y2) {
-    g.rect(x1, y1, x2, y2);
+     g.rect(x1, y1, x2, y2);
   }
 
 
   public void ellipseMode(int mode) {
-    g.ellipseMode(mode);
+     g.ellipseMode(mode);
   }
 
 
   public void ellipse(float x, float y, float hradius, float vradius) {
-    g.ellipse(x, y, hradius, vradius);
+     g.ellipse(x, y, hradius, vradius);
   }
 
 
   public void box(float size) {
-    g.box(size);
+     g.box(size);
   }
 
 
   public void box(float w, float h, float d) {
-    g.box(w, h, d);
+     g.box(w, h, d);
   }
 
 
   public void sphereDetail(int res) {
-    g.sphereDetail(res);
+     g.sphereDetail(res);
   }
 
 
   public void sphere(float r) {
-    g.sphere(r);
+     g.sphere(r);
   }
 
 
   public void sphere(float x, float y, float z, float r) {
-    g.sphere(x, y, z, r);
+     g.sphere(x, y, z, r);
   }
 
 
   public float bezierPoint(float a, float b, float c, float d,
                            float t) {
-   return g.bezierPoint(a, b, c, d, t);
+    return g.bezierPoint(a, b, c, d, t);
   }
 
 
   public float bezierTangent(float a, float b, float c, float d,
                              float t) {
-   return g.bezierTangent(a, b, c, d, t);
+    return g.bezierTangent(a, b, c, d, t);
   }
 
 
@@ -2689,7 +3280,7 @@ public class PApplet extends Applet
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
-    g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+     g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -2697,34 +3288,34 @@ public class PApplet extends Applet
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+     g.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
 
   public void bezierDetail(int detail) {
-    g.bezierDetail(detail);
+     g.bezierDetail(detail);
   }
 
 
   public void curveDetail(int detail) {
-    g.curveDetail(detail);
+     g.curveDetail(detail);
   }
 
 
   public void curveTightness(float tightness) {
-    g.curveTightness(tightness);
+     g.curveTightness(tightness);
   }
 
 
   public float curvePoint(float a, float b, float c, float d,
                           float t) {
-   return g.curvePoint(a, b, c, d, t);
+    return g.curvePoint(a, b, c, d, t);
   }
 
 
   public float curveTangent(float a, float b, float c, float d,
                             float t) {
-   return g.curveTangent(a, b, c, d, t);
+    return g.curveTangent(a, b, c, d, t);
   }
 
 
@@ -2732,7 +3323,7 @@ public class PApplet extends Applet
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
-    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+     g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -2740,135 +3331,120 @@ public class PApplet extends Applet
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-  }
-
-
-  public PImage loadImage(String filename) {
-   return g.loadImage(filename);
-  }
-
-
-  public PImage loadImage(String filename, boolean force) {
-   return g.loadImage(filename, force);
+     g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
   }
 
 
   public void image(PImage image, float x1, float y1) {
-    g.image(image, x1, y1);
+     g.image(image, x1, y1);
   }
 
 
   public void image(PImage image, 
                     float x1, float y1, float x2, float y2) {
-    g.image(image, x1, y1, x2, y2);
+     g.image(image, x1, y1, x2, y2);
   }
 
 
   public void image(PImage image, 
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
-    g.image(image, x1, y1, x2, y2, u1, v1, u2, v2);
+     g.image(image, x1, y1, x2, y2, u1, v1, u2, v2);
   }
 
 
-  public void cache(PImage image) {
-    g.cache(image);
+  public void cache(PImage image) { 
+     g.cache(image);
   }
 
 
-  public void cache(PImage images[]) {    
-    g.cache(images);
-  }
-
-
-  public PFont loadFont(String name) {
-   return g.loadFont(name);
+  public void cache(PImage images[]) { 
+     g.cache(images);
   }
 
 
   public void textFont(PFont which) {
-    g.textFont(which);
+     g.textFont(which);
   }
 
 
   public void textFont(PFont which, float size) {
-    g.textFont(which, size);
+     g.textFont(which, size);
   }
 
 
   public void textSize(float size) {
-    g.textSize(size);
+     g.textSize(size);
   }
 
 
   public void textLeading(float leading) {
-    g.textLeading(leading);
+     g.textLeading(leading);
   }
 
 
   public void textMode(int mode) {
-    g.textMode(mode);
+     g.textMode(mode);
   }
 
 
   public void textSpace(int space) {
-    g.textSpace(space);
+     g.textSpace(space);
   }
 
 
   public void text(char c, float x, float y) {
-    g.text(c, x, y);
+     g.text(c, x, y);
   }
 
 
   public void text(char c, float x, float y, float z) {
-    g.text(c, x, y, z);
+     g.text(c, x, y, z);
   }
 
 
   public void text(String s, float x, float y) {
-    g.text(s, x, y);
+     g.text(s, x, y);
   }
 
 
   public void text(String s, float x, float y, float z) {
-    g.text(s, x, y, z);
+     g.text(s, x, y, z);
   }
 
 
   public void text(int num, float x, float y) {
-    g.text(num, x, y);
+     g.text(num, x, y);
   }
 
 
   public void text(int num, float x, float y, float z) {
-    g.text(num, x, y, z);
+     g.text(num, x, y, z);
   }
 
 
   public void text(float num, float x, float y) {
-    g.text(num, x, y);
+     g.text(num, x, y);
   }
 
 
   public void text(float num, float x, float y, float z) {
-    g.text(num, x, y, z);
+     g.text(num, x, y, z);
   }
 
 
   public void push() {
-    g.push();
+     g.push();
   }
 
 
   public void pop() {
-    g.pop();
+     g.pop();
   }
 
 
   public void resetMatrix() {
-    g.resetMatrix();
+     g.resetMatrix();
   }
 
 
@@ -2876,142 +3452,142 @@ public class PApplet extends Applet
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
   }
 
 
   public void printMatrix() {
-    g.printMatrix();
+     g.printMatrix();
   }
 
 
   public void beginCamera() {
-    g.beginCamera();
+     g.beginCamera();
   }
 
 
   public void cameraMode(int icameraMode) {
-    g.cameraMode(icameraMode);
+     g.cameraMode(icameraMode);
   }
 
 
   public void endCamera() {
-    g.endCamera();
+     g.endCamera();
   }
 
 
   public void printCamera() {
-    g.printCamera();
+     g.printCamera();
   }
 
 
   public float screenX(float x, float y, float z) {
-   return g.screenX(x, y, z);
+    return g.screenX(x, y, z);
   }
 
 
   public float screenY(float x, float y, float z) {
-   return g.screenY(x, y, z);
+    return g.screenY(x, y, z);
   }
 
 
   public float screenZ(float x, float y, float z) {
-   return g.screenZ(x, y, z);
+    return g.screenZ(x, y, z);
   }
 
 
   public float objectX(float x, float y, float z) {
-   return g.objectX(x, y, z);
+    return g.objectX(x, y, z);
   }
 
 
   public float objectY(float x, float y, float z) {
-   return g.objectY(x, y, z);
+    return g.objectY(x, y, z);
   }
 
 
   public float objectZ(float x, float y, float z) {
-   return g.objectZ(x, y, z);
+    return g.objectZ(x, y, z);
   }
 
 
   public void ortho(float left, float right, 
                     float bottom, float top,
                     float near, float far) {
-    g.ortho(left, right, bottom, top, near, far);
+     g.ortho(left, right, bottom, top, near, far);
   }
 
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    g.perspective(fovy, aspect, zNear, zFar);
+     g.perspective(fovy, aspect, zNear, zFar);
   }
 
 
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
-    g.frustum(left, right, bottom, top, znear, zfar);
+     g.frustum(left, right, bottom, top, znear, zfar);
   }
 
 
   public void lookat(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-    g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+     g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
   }
 
 
   public void angleMode(int mode) {
-    g.angleMode(mode);
+     g.angleMode(mode);
   }
 
 
   public void translate(float tx, float ty) {
-    g.translate(tx, ty);
+     g.translate(tx, ty);
   }
 
 
   public void translate(float tx, float ty, float tz) {
-    g.translate(tx, ty, tz);
+     g.translate(tx, ty, tz);
   }
 
 
   public void rotateX(float angle) {
-    g.rotateX(angle);
+     g.rotateX(angle);
   }
 
 
   public void rotateY(float angle) {
-    g.rotateY(angle);
+     g.rotateY(angle);
   }
 
 
   public void rotate(float angle) {
-    g.rotate(angle);
+     g.rotate(angle);
   }
 
 
   public void rotateZ(float angle) {
-    g.rotateZ(angle);
+     g.rotateZ(angle);
   }
 
 
   public void rotate(float angle, float v0, float v1, float v2) {
-    g.rotate(angle, v0, v1, v2);
+     g.rotate(angle, v0, v1, v2);
   }
 
 
   public void scale(float s) {
-    g.scale(s);
+     g.scale(s);
   }
 
 
   public void scale(float sx, float sy) {
-    g.scale(sx, sy);
+     g.scale(sx, sy);
   }
 
 
   public void scale(float x, float y, float z) {
-    g.scale(x, y, z);
+     g.scale(x, y, z);
   }
 
 
@@ -3019,328 +3595,223 @@ public class PApplet extends Applet
                         float n10, float n11, float n12, float n13,
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33) {
-    g.transform(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+     g.transform(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
   }
 
 
   public void colorMode(int icolorMode) {
-    g.colorMode(icolorMode);
+     g.colorMode(icolorMode);
   }
 
 
   public void colorMode(int icolorMode, float max) {
-    g.colorMode(icolorMode, max);
+     g.colorMode(icolorMode, max);
   }
 
 
   public void colorMode(int icolorMode, 
                         float maxX, float maxY, float maxZ) {
-    g.colorMode(icolorMode, maxX, maxY, maxZ);
+     g.colorMode(icolorMode, maxX, maxY, maxZ);
   }
 
 
   public void colorMode(int icolorMode, 
                         float maxX, float maxY, float maxZ, float maxA) {
-    g.colorMode(icolorMode, maxX, maxY, maxZ, maxA);
+     g.colorMode(icolorMode, maxX, maxY, maxZ, maxA);
   }
 
 
   public void noTint() {
-    g.noTint();
+     g.noTint();
   }
 
 
   public void tint(int rgb) {
-    g.tint(rgb);
+     g.tint(rgb);
   }
 
 
   public void tint(float gray) {
-    g.tint(gray);
+     g.tint(gray);
   }
 
 
   public void tint(float gray, float alpha) {
-    g.tint(gray, alpha);
+     g.tint(gray, alpha);
   }
 
 
   public void tint(float x, float y, float z) {
-    g.tint(x, y, z);
+     g.tint(x, y, z);
   }
 
 
   public void tint(float x, float y, float z, float a) {
-    g.tint(x, y, z, a);
+     g.tint(x, y, z, a);
   }
 
 
   public void noFill() {
-    g.noFill();
+     g.noFill();
   }
 
 
   public void fill(int rgb) {
-    g.fill(rgb);
+     g.fill(rgb);
   }
 
 
   public void fill(float gray) {
-    g.fill(gray);
+     g.fill(gray);
   }
 
 
   public void fill(float gray, float alpha) {
-    g.fill(gray, alpha);
+     g.fill(gray, alpha);
   }
 
 
   public void fill(float x, float y, float z) {
-    g.fill(x, y, z);
+     g.fill(x, y, z);
   }
 
 
   public void fill(float x, float y, float z, float a) {
-    g.fill(x, y, z, a);
+     g.fill(x, y, z, a);
   }
 
 
   public void strokeWeight(float weight) {
-    g.strokeWeight(weight);
+     g.strokeWeight(weight);
   }
 
 
   public void strokeJoin(int join) {
-    g.strokeJoin(join);
+     g.strokeJoin(join);
   }
 
 
   public void strokeMiter(int miter) {
-    g.strokeMiter(miter);
+     g.strokeMiter(miter);
   }
 
 
   public void noStroke() {
-    g.noStroke();
+     g.noStroke();
   }
 
 
   public void stroke(int rgb) {
-    g.stroke(rgb);
+     g.stroke(rgb);
   }
 
 
   public void stroke(float gray) {
-    g.stroke(gray);
+     g.stroke(gray);
   }
 
 
   public void stroke(float gray, float alpha) {
-    g.stroke(gray, alpha);
+     g.stroke(gray, alpha);
   }
 
 
   public void stroke(float x, float y, float z) {
-    g.stroke(x, y, z);
+     g.stroke(x, y, z);
   }
 
 
   public void stroke(float x, float y, float z, float a) {
-    g.stroke(x, y, z, a);
+     g.stroke(x, y, z, a);
   }
 
 
   public void background(int rgb) {
-    g.background(rgb);
+     g.background(rgb);
   }
 
 
   public void background(float gray) {
-    g.background(gray);
+     g.background(gray);
   }
 
 
   public void background(float x, float y, float z) {
-    g.background(x, y, z);
+     g.background(x, y, z);
   }
 
 
   public void background(PImage image) {
-    g.background(image);
+     g.background(image);
   }
 
 
   public void clear() {
-    g.clear();
+     g.clear();
+  }
+
+
+  public void depth() {
+     g.depth();
+  }
+
+
+  public void noDepth() {
+     g.noDepth();
   }
 
 
   public void lights() {
-    g.lights();
+     g.lights();
   }
 
 
   public void noLights() {
-    g.noLights();
+     g.noLights();
   }
 
 
   public void hint(int which) {
-    g.hint(which);
+     g.hint(which);
   }
 
 
   public void unhint(int which) {
-    g.unhint(which);
-  }
-
-
-  public void message(int level, String message) {
-    g.message(level, message);
-  }
-
-
-  public void message(int level, String message, Exception e) {
-    g.message(level, message, e);
-  }
-
-
-  public InputStream openStream(String filename) throws IOException {
-   return g.openStream(filename);
-  }
-
-
-  public byte[] loadBytes(String filename) {
-   return g.loadBytes(filename);
-  }
-
-
-  static public byte[] loadBytes(InputStream input) {
-   return PGraphics.loadBytes(input);
-  }
-
-
-  public String[] loadStrings(String filename) {
-   return g.loadStrings(filename);
-  }
-
-
-  static public String[] loadStrings(InputStream input) {
-   return PGraphics.loadStrings(input);
-  }
-
-
-  public void saveBytes(String filename, byte buffer[]) {
-    g.saveBytes(filename, buffer);
-  }
-
-
-  public void saveBytes(OutputStream output, byte buffer[]) {
-    g.saveBytes(output, buffer);
-  }
-
-
-  public void saveStrings(String filename, String strings[]) {
-    g.saveStrings(filename, strings);
-  }
-
-
-  public void saveStrings(OutputStream output, String strings[]) {
-    g.saveStrings(output, strings);
-  }
-
-
-  public void sort(String what[]) {
-    g.sort(what);
-  }
-
-
-  public void sort(String what[], Object objects[]) {
-    g.sort(what, objects);
-  }
-
-
-  public void sort(int what[]) {
-    g.sort(what);
-  }
-
-
-  public void sort(int what[], Object objects[]) {
-    g.sort(what, objects);
-  }
-
-
-  public void sort(float what[]) {
-    g.sort(what);
-  }
-
-
-  public void sort(float what[], Object objects[]) {
-    g.sort(what, objects);
-  }
-
-
-  public void sort(double what[]) {
-    g.sort(what);
-  }
-
-
-  public void sort(double what[], Object objects[]) {
-    g.sort(what, objects);
-  }
-
-
-  public void sort(String what[], int count, Object objects[]) {
-    g.sort(what, count, objects);
-  }
-
-
-  public void sort(int what[], int count, Object objects[]) {
-    g.sort(what, count, objects);
-  }
-
-
-  public void sort(float what[], int count, Object objects[]) {
-    g.sort(what, count, objects);
-  }
-
-
-  public void sort(double what[], int count, Object objects[]) {
-    g.sort(what, count, objects);
+     g.unhint(which);
   }
 
 
   public final float alpha(int what) {
-   return g.alpha(what);
+    return g.alpha(what);
   }
 
 
   public final float red(int what) {
-   return g.red(what);
+    return g.red(what);
   }
 
 
   public final float green(int what) {
-   return g.green(what);
+    return g.green(what);
   }
 
 
   public final float blue(int what) {
-   return g.blue(what);
+    return g.blue(what);
   }
 
 
   public final float hue(int what) {
-   return g.hue(what);
+    return g.hue(what);
   }
 
 
   public final float saturation(int what) {
-   return g.saturation(what);
+    return g.saturation(what);
   }
 
 
   public final float brightness(int what) {
-   return g.brightness(what);
+    return g.brightness(what);
   }
 }

@@ -82,10 +82,17 @@ public class PdeRuntime implements PdeMessageConsumer {
         // the sketch window. this will be passed to the PApplet runner
         // using something like --external=e30,20 where the e stands for
         // exact. otherwise --external=x,y for just the regular positioning.
+        /*
         String location = (windowLocation != null) ? 
           (PApplet.EXTERNAL_EXACT_LOCATION + 
            windowLocation.x + "," + windowLocation.y) : 
           (x1 + "," + y1);      
+        */
+        String location = 
+          (windowLocation != null) ? 
+          (PApplet.EXT_EXACT_LOCATION + 
+           windowLocation.x + "," + windowLocation.y) :
+          (PApplet.EXT_LOCATION + x1 + "," + y1);
 
         String command[] = new String[] { 
           "java",
@@ -93,13 +100,16 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-cp",
           sketch.classPath,
           "processing.core.PApplet",
-          PApplet.EXTERNAL_FLAG + location,
+          //PApplet.EXTERNAL_FLAG + location,
+          location,
+          PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
           sketch.mainClassName
         };
 
+        //PApplet.println(command);
         process = Runtime.getRuntime().exec(command);
-        new SystemOutSiphon(process.getInputStream());
         new PdeMessageSiphon(process.getErrorStream(), this);
+        new SystemOutSiphon(process.getInputStream());
         processOutput = process.getOutputStream();
 
       } else {
@@ -109,6 +119,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         // replaces setRuntime with PApplet having leechErr [fry]
         applet.leechErr = leechErr;
+        applet.folder = sketch.folder.getAbsolutePath();
 
         // has to be before init
         //applet.serialProperties(PdePreferences.properties);
