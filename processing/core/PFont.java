@@ -180,6 +180,7 @@ public class PFont implements PConstants {
       int pixels[] = new int[twidth * theight];
       //images[i] = new PImage(pixels, 64, 64, ALPHA);
       images[i] = new PImage(pixels, twidth, theight, ALPHA);
+      //images[i] = new PImage(pixels, twidth, theight, RGBA);
       int bitmapSize = height[i] * width[i];
 
       byte temp[] = new byte[bitmapSize];
@@ -194,7 +195,11 @@ public class PFont implements PConstants {
           //images[i].pixels[y * twidth + x] = valu;
 
           images[i].pixels[y * twidth + x] =
-            (valu << 24) | (valu << 16) | (valu << 8) | valu;
+            (valu << 24) | 0xFFFFFF;
+            //0xFFFFFF00 | valu;
+            //(valu << 24) | (valu << 16) | (valu << 8) | valu;
+          //0x8040ff40;
+            //(valu << 24) | (valu << 16) | (valu << 8) | valu;
           //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
         }
         //System.out.println();
