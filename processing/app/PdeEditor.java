@@ -136,6 +136,7 @@ public class PdeEditor extends JFrame
 
 
   public PdeEditor() {
+    super(WINDOW_TITLE + " - " + PdeBase.VERSION);
     // this is needed by just about everything else
     preferences = new PdePreferences();
 
@@ -1488,7 +1489,6 @@ public class PdeEditor extends JFrame
 
   protected void skNew2() {
     try {
-      System.out.println("skNew2()");
       // does all the plumbing to create a new project
       // then calls handleOpen to load it up
 
@@ -1509,7 +1509,6 @@ public class PdeEditor extends JFrame
         sketchDir = new File(sketchParentDir, sketchName);
 
       } else {
-        System.out.println("this is the thing");
         String sketchParentDir = PdePreferences.get("sketchbook.path");
 
         int index = 0;
