@@ -105,7 +105,7 @@ public class PdeSketch {
     }
 
     folder = new File(new File(path).getParent());
-    System.out.println("sketch dir is " + folder);
+    //System.out.println("sketch dir is " + folder);
 
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
@@ -262,14 +262,14 @@ public class PdeSketch {
   /**
    * Save all code in the current sketch.
    */
-  public void save() throws IOException {
+  public boolean save() throws IOException {
     // first get the contents of the editor text area
     if (current.modified) {
       current.program = editor.getText();
     }
 
     // see if actually modified
-    if (!modified) return;
+    if (!modified) return false;
 
     // check if the files are read-only. 
     // if so, need to first do a "save as".
@@ -278,13 +278,14 @@ public class PdeSketch {
                           "Some files are marked \"read-only\", so you'll\n" +
                           "need to re-save this sketch to another location.");
       // if the user cancels, give up on the save()
-      if (!saveAs()) return;
+      if (!saveAs()) return false;
     }
 
     for (int i = 0; i < codeCount; i++) {
       if (code[i].modified) code[i].save();
     }
     calcModified();
+    return true;
   }
 
 
@@ -703,6 +704,7 @@ public class PdeSketch {
         try {
           // if (i != 0) preproc will fail if a pde file is not 
           // java mode, since that's required
+          //System.out.println("build path is " + buildPath);
           String className = 
             preprocessor.write(code[i].program, buildPath,
                                (i == 0) ? suggestedClassName : null, 
@@ -895,7 +897,7 @@ public class PdeSketch {
     }
 
     // build the sketch 
-    String foundName = build(name, appletDir.getPath());
+    String foundName = build(appletDir.getPath(), name);
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
@@ -959,7 +961,7 @@ public class PdeSketch {
 
       StringBuffer sources = new StringBuffer();
       for (int i = 0; i < codeCount; i++) {
-        sources.append("<a href=\'" + code[i].file.getName() + "\">" + 
+        sources.append("<a href=\"" + code[i].file.getName() + "\">" + 
                        code[i].name + "</a> ");
       }
 
@@ -969,7 +971,15 @@ public class PdeSketch {
 
       // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
 
-      InputStream is = PdeBase.getStream("applet.html");
+      InputStream is = null; 
+      // if there is an applet.html file in the sketch folder, use that
+      File customHtml = new File(folder, "applet.html");
+      if (customHtml.exists()) {
+        is = new FileInputStream(customHtml);
+      }
+      if (is == null) {
+        is = PdeBase.getStream("applet.html");
+      }
       BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
       String line = null;

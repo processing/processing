@@ -188,8 +188,8 @@ public class PdePreprocessor {
     // output the code
     //
     PdeEmitter emitter = new PdeEmitter();
-    PrintStream stream = new PrintStream(
-      new FileOutputStream(buildPath + File.separator + name + ".java"));
+    File streamFile = new File(buildPath, name + ".java");
+    PrintStream stream = new PrintStream(new FileOutputStream(streamFile));
 
     writeHeader(stream, extraImports, name);
 
