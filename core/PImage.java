@@ -70,7 +70,7 @@ import java.io.*;
 public class PImage implements PConstants, Cloneable {
 
   /**
-   * Format for this image, one of RGB, RGBA or ALPHA.
+   * Format for this image, one of RGB, ARGB or ALPHA.
    * note that RGB images still require 0xff in the high byte
    * because of how they'll be manipulated by other functions
    */
@@ -121,7 +121,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage(int width, int height) {
     init(width, height, RGB);
-    //this(new int[width * height], width, height, RGBA);
+    //this(new int[width * height], width, height, ARGB);
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
     // fry: i'm opting for the full transparent image, which is how
@@ -160,6 +160,7 @@ public class PImage implements PConstants, Cloneable {
     int width2 = (int) Math.pow(2, Math.ceil(Math.log(width) / Math.log(2)));
     int height2 = (int) Math.pow(2, Math.ceil(Math.log(height) / Math.log(2)));
 
+    /*
     if ((width2 == width) && (height2 == height)) {
       // image can be used by itself as the texture image
       tpixels = pixels;
@@ -167,24 +168,53 @@ public class PImage implements PConstants, Cloneable {
       theight = height;
 
     } else {
-      if ((width2 > twidth) || (height2 > theight)) {
-        // either twidth/theight are zero, or size has changed
-        tpixels = null;
-      }
-      if (tpixels == null) {
-        twidth = width2;
-        theight = height2;
-        tpixels = new int[twidth * theight];
-      }
-      // copy image data into the texture
-      int p = 0;
-      int t = 0;
-      for (int y = 0; y < height; y++) {
+    */
+    if ((width2 > twidth) || (height2 > theight)) {
+      // either twidth/theight are zero, or size has changed
+      tpixels = null;
+    }
+    if (tpixels == null) {
+      twidth = width2;
+      theight = height2;
+      tpixels = new int[twidth * theight];
+    }
+    // copy image data into the texture
+    int p = 0;
+    int t = 0;
+    for (int y = 0; y < height; y++) {
+      switch (format) {
+      case ALPHA:
+        for (int x = 0; x < width; x++) {
+          tpixels[t++] = 0xFFFFFF00 | pixels[p++];
+        }
+        t += twidth - width;
+        break;
+
+      case RGB:
+        for (int x = 0; x < width; x++) {
+          int pixel = pixels[p++];
+          tpixels[t++] = (pixel << 8) | 0xff;
+        }
+        t += twidth - width;
+        /*
         System.arraycopy(pixels, p, tpixels, t, width);
         p += width;
         t += twidth;
+        */
+        break;
+
+      case ARGB:
+        for (int x = 0; x < width; x++) {
+          int pixel = pixels[p++];
+          //tpixels[t++] = 0x80808080;
+          tpixels[t++] = (pixel << 8) | ((pixel >> 24) & 0xff);
+          //tpixels[t++] = 0xFFFFFF00 | pixels[p++];
+        }
+        t += twidth - width;
+        break;
       }
     }
+    //}
   }
 
 
@@ -233,7 +263,7 @@ public class PImage implements PConstants, Cloneable {
         (image.pixels[i] & 0xffffff);
     }
     /*
-    if (highbits) {  // grab alpha from the high 8 bits (RGBA style)
+    if (highbits) {  // grab alpha from the high 8 bits (ARGB style)
       for (int i = 0; i < pixels.length; i++) {
         pixels[i] = pixels[i] & 0xffffff | (alpha[i] & 0xff000000);
       }
@@ -243,7 +273,7 @@ public class PImage implements PConstants, Cloneable {
       }
     }
     */
-    image.format = RGBA;
+    image.format = ARGB;
   }
 
 
