@@ -73,11 +73,11 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   JSplitPane splitPane;
   JPanel consolePanel;
 
-  JEditTextArea textarea;
-  PdeEditorListener listener;
-
   // currently opened program
-  PdeSketch sketch;
+  public PdeSketch sketch;
+
+  public JEditTextArea textarea;
+  PdeEditorListener listener;
 
   // runtime information and window placement
   Point appletLocation;

@@ -3214,6 +3214,75 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
+  // HEX/BINARY CONVERSION
+
+
+  static final public String hex(byte what) {
+    return hex(what, 2);
+  }
+
+  static final public String hex(char what) {
+    return hex(what, 4);
+  }
+
+  static final public String hex(int what) {
+    return hex(what, 8);
+  }
+
+  static final public String hex(int what, int digits) {
+    String stuff = Integer.toHexString(what).toUpperCase();
+
+    int length = stuff.length();
+    if (length > digits) {
+      return stuff.substring(length - digits);
+
+    } else if (length < digits) {
+      return "00000000".substring(8 - (digits-length)) + stuff;
+    }
+    return stuff;
+  }
+
+  static final int unhex(String what) {
+    return Integer.parseInt(what, 16);
+  }
+
+  //
+
+  static final public String binary(byte what) {
+    return binary(what, 8);
+  }
+
+  static final public String binary(char what) {
+    return binary(what, 16);
+  }
+
+  static final public String binary(int what) {
+    return binary(what, 32);
+  }
+
+  static final public String binary(int what, int digits) {
+    String stuff = Integer.toBinaryString(what);
+
+    int length = stuff.length();
+    if (length > digits) {
+      return stuff.substring(length - digits);
+
+    } else if (length < digits) {
+      int offset = 8 - (digits-length);
+      return "00000000000000000000000000000000".substring(offset) + stuff;
+    }
+    return stuff;
+  }
+
+
+  static final int unbinary(String what) {
+    return Integer.parseInt(what, 2);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // COLOR FUNCTIONS
 
   // moved here so that they can work without
@@ -3573,8 +3642,8 @@ public class PApplet extends Applet
   }
 
 
-  public PImage copy() {
-    return g.copy();
+  public PImage get() {
+    return g.get();
   }
 
 

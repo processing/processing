@@ -48,6 +48,8 @@ BAGEL / Future
 PDE / see you next year
 not necessary for 1.0 release
 
+2 _ better api for plugins
+2 _   jedit guide might be useful: http://plugins.jedit.org/building.php
 2 _ comments -> embedding in applet text? (ala javadoc)
 2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076967353
 2 _   would this help casey with the examples?

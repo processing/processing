@@ -117,18 +117,18 @@ X   use it to repair saveBytes, saveStrings, etc
 X   put screenshots into their sketch folder
 o     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 X full casting operations on primitives and arrays of them
+X text(String text, x, y, width, height)  // based on rectMode
+X   textMode() for align left, center, right (no justify.. har!)
+X hex(), binary(), unhex(), unbinary()
 
-_ array utiles on Object[] are worthless.. fix it with reflection?
-_   also, should it be named resize() instead?
-_   see if reflection will allow expand for all class types
+_ processing.net -> PClient, PServer
 
-megabucket
-_ move to new graphics engine
-_   test with rgb cube, shut off smoothing
-_   make sure line artifacts are because of smoothing
-_ explicitly state depth()/nodepth()
-_ implement 2x oversampling for anti-aliasing
-
+_ api for file-based renderers
+_   need to work this out since it will affect other api changes
+_   size(0, 0) and then ai.size(10000, 20000)
+_   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+_   saveFrame gets called at the beginning of loop()
+_     or is just a message to save the next frame (problem for anim)
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
 _   version of Illustrator.java that uses core api
@@ -141,6 +141,13 @@ _     even if not actually working properly.. just in naming of things
 _   colorMode(CMYK)
 _     just does 1-r/1-g/1-b inside 
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
+
+_ massive graphics engine changes
+_   explicitly state depth()/nodepth()
+_   move to new graphics engine
+_     test with rgb cube, shut off smoothing
+_   make sure line artifacts are because of smoothing
+_   implement 2x oversampling for anti-aliasing
 
 
 ............................................................
@@ -206,7 +213,6 @@ CORE / PImage
    1 _ loadImage must be used inside or after setup
    1 _   either document this and/or provide a better error message
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
-
    b _ more blend() modes (the five listed on the thread below?)
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
    b _   figure out what the modes should actually be: 
@@ -351,6 +357,8 @@ CORE / Details
    1 _ catch security exceptions around applet i/o calls
    1 _   not just for saving files, but provide better error msgs when
    1 _     attempting to download from another server
+   1 _ array utilities on Object[] are worthless.. fix it with reflection?
+   1 _   see if reflection will allow expand for all class types
 
 
 CORE / main()

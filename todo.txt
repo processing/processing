@@ -26,16 +26,21 @@ X   i.e. cut -> new file -> paste doesn't mark any as changed
 X "include all chars" and all the bugs it represents
 X working on datatype conversions
 
+040717 
+o dll and jnilib files have to be in the p5 folder (confirmed by amit)
+o   there should be other places that they work.. 
+o   could even copy the dll to the p5 folder from the code folder
+o   already fixed with LD_LIBRARY_PATH stuff
+
+
 _ System.out isn't being heard from P* classes
 _   errors inside those classes also causing weirdness
+_   this might be a broader running as external app problem
 
-_ processing.net -> PClient, PServer
-
+_ add preference for showing library stuff
+_ make built-in libraries read-only
 _ "add library" menu item and submenu
-_   iterate through the 'library' folders
-_ dll and jnilib files have to be in the p5 folder (confirmed by amit)
-_   there should be other places that they work.. 
-_   could even copy the dll to the p5 folder from the code folder
+_   looks for subfolder called 'library' inside sketches
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
 _   but also potential stop() for individual items
@@ -45,8 +50,8 @@ _ where do libraries for distribution go?
 _   libraries subfolder of p5? or inside examples?
 _ String in apache classes and java.lang
 _   maybe ignore classes not inside the p5 libs dir?
-_   need to be able to select between which to include
-_   auto-resolve by saying java.* wins, others ask
+o   need to be able to select between which to include
+o   auto-resolve by saying java.* wins, others ask
 
 _ get export working again
 _   make multiple jar files thing work.. blech
@@ -77,14 +82,6 @@ _   can java get the root directory for system/win32 etc?
 
 _ processing.app -> PdeBase, PdeEditor..
 
-_ api for file-based renderers
-_   need to work this out since it will affect other api changes
-_   size(0, 0) and then ai.size(10000, 20000)
-_   saveFrame(PRenderer) or saveFrame("name", PRenderer)
-
-_ text(String text, x, y, width, height)  // based on rectMode
-_   textMode() for align left, center, right (no justify.. har!)
-
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
 _   history causing trouble - super slow with a huge sketch
@@ -109,7 +106,7 @@ README
 _ cut out some of the chatter
 _ processing won't start..
 _   people with non-ascii chars in the folder name 
-_     at least try to catch this?
+_     at least try to catch this? is that possible?
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 _   or with spaces in the folder name, causes problems for serial
@@ -518,4 +515,4 @@ _   that knows about aliases (jdk13)
 _ overall contrast/color control (genomevalence for hulk)
 _ mac -> vlw (or sbit?) font converter
 _   need to also read the fond for metrics
-_ general font editor, see what chars are in font, etc
+_ general bitmap font editor, see what chars are in font, etc
