@@ -101,6 +101,10 @@ X no time to ask for "save changes" before quit
 X   PdeEditor, around line 910.. not blocking until input 
 X   read up on how to properly block for input in a java app
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061659700
+X do not delete sketch folder if empty sketch but non-empty data dir
+X   maybe needs to be a holding area for the current sketch
+X   this is how the read-only examples would be used
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064160655;start=0
 
 
 fixes because of dmose parser
@@ -200,11 +204,6 @@ X param(), online(), and status() functions
 
 
 HIGH (to be completed for 0060)
-
-_ do not delete sketch folder if empty sketch but non-empty data dir
-_   maybe needs to be a holding area for the current sketch
-_   this is how the read-only examples would be used
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062875454;start=0
 _ QTJAVA path and CLASSPATH are weird if java not first installed
 _   or just get set improperly, reinstalling quicktime doesn't help
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
