@@ -9,6 +9,10 @@ X moved 'find in reference' to the help menu
 X eliminate the requirement for a 'data' folder
 X   only create 'data' folder when it's needed/used
 X   auto-create code and data folder via 'add files to sketch..'
+X option to disable smoothing on font creator
+X font builder should update when the size for the font is changed
+X   (so long as the size itself is valid)
+X font builder bug, was cutting off parts of letters
 
 _ sketch.properties should go into user.home
 _   otherwise moving sketch folder will kill it
@@ -85,6 +89,8 @@ _   add a method BApplet.setPath() or something like that
 
 
 bugsies
+_ doesn't work when outside a function:
+_   color bg_color = color(255,0,0);
 _ find/replace hangs when recapitalizing things
 _ if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError ensues
@@ -155,7 +161,6 @@ _ problems running external vm/vm is hanging
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
 
-_ option to disable smoothing on font creator
 _ create font doesn't support umlauts
 _   fix up font code to generate unicode chars, at least for iso8859-1 charset
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
@@ -189,7 +194,6 @@ _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
 
-_ add something to font editor to enable/disable smoothing
 _ mac -> vlw (or sbit?) font converter
 _   need to add font metrics code
 
@@ -790,8 +794,6 @@ dh 1 _ rename doesn't set focus to renamer area
    1 _ add ESC to font builder, and find
    1 _ font builder should open back up with the same selection
    1 _   maybe just hide it, just like find
-   1 _ font builder should update when the size for the font is changed
-   1 _  (so long as the size itself is valid)
    1 _ why aren't cursors working on the mac
    1 _ clearing the text area on the mac
 
