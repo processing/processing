@@ -17,6 +17,9 @@ X major applet freezing error fixed with external
 X   printStackTrace wasn't being called for runtime errors if no leechErr
 X may need to start putting properties somewhere besides lib
 X   home directory  (or preferences folder under macos9)
+X create font doesn't support umlauts
+X   fix up font code to generate unicode chars, at least for iso8859-1 charset
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
 
 goodbye macos9
 o leftover todos
@@ -115,11 +118,6 @@ _ put screenshots into their sketch folder
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 _   add a method BApplet.setPath() or something like that
 
-
-FONTS
-_ create font doesn't support umlauts
-_   fix up font code to generate unicode chars, at least for iso8859-1 charset
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
 
 
 IMAGE
