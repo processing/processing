@@ -22,11 +22,28 @@ X added constructor in BImage that takes java.awt.Image
 X added FileInputStream version of loadStream for locally running code
 
 other folks
-ks X adaptive sizing of circle segmenting based on rendered size
-ks X   rather than requiring a fixed amount
-ks X   have a few settings cached
 dm X patch to fix last line highlight bug in highlightLine()
 cr X new function for linking to external web page
+ks X BGraphics patch for faster lines and points
+ks X adaptive sizing of circle segmenting based on rendered size
+ks X   rather than requiring a fixed amount
+ks o   have a few settings cached
+ks X   fixed again for scale() issues
+
+
+..................................................................
+
+
+bf b _ screenGrab(filename), not just screenGrab()
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1056481749
+
+bf b _ getting current fill color and stroke color
+bf b _   stroke() with no params?
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
+
+bf b _ saveBytes, saveStrings
+bf b _   file output, save strings or pile of bytes
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1056311967;start=0
 
 bf b _ some flag to know whether applet is online or not
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
@@ -38,7 +55,9 @@ bf b _   but creates a new folder for new sketches to go into
 
 bf b _ tweak video to get it working
 bf b _   beginVideo(int, int, int) not found
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
+bf b _   how does the syntax work?
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
 
 bf b _ net not closing, dispose() not getting called
 bf b _   make sure dispose() gets called? that way people can override?
@@ -52,6 +71,7 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=displ
 bf b _ perlin noise 1D. noise() 
 bf b _ cartesian/polar conversion
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
+bf b _   thread includes code for the 2D case
 
 bf b _ inside draw() mode, delay() does nothing
 bf b _   delay might be a good way to signal drawing to the screen/updating
@@ -197,17 +217,11 @@ bf b _   better lighting model to show darkness at various depths
 bf b _     maybe just ultra-high res bitmaps from gl
 bf b _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
-bf b _ getting current fill color and stroke color
-bf b _   stroke() with no params?
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
-
 
 BAGEL / Data API
 
-bf b _ writeBytes, writeStrings (actually saveBytes/saveStrings)
 bf b _ split to take strings (ie. for ", ")
 bf b _ versions of loadStream/loadBytes etc that use streams and/or urls
-bf b _ file output, save strings or pile of bytes
 bf b _ quicksort should probably just be made into 'sort' class
 bf b _   it's the only one ever used
 bf b _   can this be done using an inner class?
@@ -223,10 +237,16 @@ bf b _   getting whole words from serial, network, and files
 bf b _   or buffers of specific length with a sync byte
 
 
-BAGEL / Details
+BAGEL / Serial
 
    b _ break out BSerial as separate object like BVideo
-   b _   BSerial.flush and BSerial.available
+   b _ BSerial.flush and BSerial.available
+   b _ basic usb support?
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053684925
+
+
+BAGEL / Details
+
 bf b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
@@ -251,6 +271,8 @@ bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 
 BAGEL / Future
 
+   2 _ alter strokeWidth in LINE_STRIP
+   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053795842;start=0
    2 _ keypressed is not persistent
    2 _   key repeat in os vs. how java handles it
    2 _   search java faq for info about getting around it
@@ -376,6 +398,8 @@ _   although no error comes through to p5 (benelek)
 _ int() doesn't work inside other functions
 _   argh, need a real parser
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1052994613
+_ more int() troubles
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1056479871;start=0
 _ something about the second line of this turns things to mush
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051654054;start=0
 println("3"); 
@@ -441,6 +465,7 @@ dh b _   could also be done by launching external java app
 dh b _   all .jar files etc are added from this folder automatically
 dh b _   'public class' thing to make things available to all sketches
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050571290
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055355089
 dh b _ class unloading not happening in java mode
 dh b _   need to add randomizer to even non-self gen'd classes
 dh b _   or figure out how to unload old classes.. grr
@@ -479,8 +504,10 @@ if you dream it, you can do it.
 dh b _ find/replace
 dh b _   ctrl-f for find, g for find next, h for next occurrence of selected
 dh b _   "look up in reference" function for selecting keywords
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
 dh b _ context menu cut/copy/paste
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800
 
 
 PDE / Details
@@ -568,7 +595,9 @@ dh b _ put screenshots into sketch folder
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1046185738;start=0
 dh b _ external editor -> add a command to launch
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
-dh b _ event to explorer to open 'parts' directory of project
+dh b _ event to explorer to open 'data' directory of project
+dh b _   better just to go directly to the sketch's folder
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
 dh b _ expose access to oro api, perhaps as a plugin
 dh b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 
@@ -583,6 +612,8 @@ not necessary for 1.0 release
 2 _   split screen
 2 _   collapsable functions, or quick access to functions
 2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
+2 _   tabbed interface for multiple files
+2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
 2 _ make console like director messagewindow.. 
 2 _   ability to type commands and try functions
 2 _ menu option to change username/login
