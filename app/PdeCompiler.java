@@ -139,7 +139,8 @@ public class PdeCompiler implements PdeMessageConsumer {
       }
 
     } catch (Exception e) {
-      if (e.getMessage().indexOf("jikes: not found") != -1) {
+      String msg = e.getMessage();
+      if ((msg != null) && (msg.indexOf("jikes: not found") != -1)) {
         //System.err.println("jikes is missing");
         JOptionPane.showMessageDialog(editor.base, 
                                       "Could not find the compiler.\n" +
@@ -149,20 +150,19 @@ public class PdeCompiler implements PdeMessageConsumer {
                                       JOptionPane.ERROR_MESSAGE);
         return false;
       }
-
       e.printStackTrace();
       result = -1;
     }
 
-    // if the result isn't a known, expected value it means that something is 
-    // fairly wrong, one possibility is that jikes has crashed.
+    // if the result isn't a known, expected value it means that something
+    // is fairly wrong, one possibility is that jikes has crashed.
     //
     if (result != 0 && result != 1 ) {
       exception = new PdeException(SUPER_BADNESS);
       editor.error(exception);
     }
 
-    return result == 0 ? true : false;
+    return (result == 0) ? true : false;
   }
 
 
