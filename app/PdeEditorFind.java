@@ -4,8 +4,8 @@
   PdeEditorFind - find/replace window for processing
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     pain.add(buttons);
 
     // 0069 TEMPORARILY DISABLED!
-    replaceAllButton.setEnabled(false);
+    //replaceAllButton.setEnabled(false);
 
     // to fix ugliness.. normally macosx java 1.3 puts an 
     // ugly white border around this object, so turn it off.
@@ -159,7 +159,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     Object source = e.getSource();
 
     if (source == findButton) {
-      find();
+      find(true);
 
     } else if (source == replaceButton) {
       replace();
@@ -175,7 +175,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
   // once found, select it (and go to that line)
 
-  public void find() {
+  public void find(boolean wrap) {
     // in case search len is zero, 
     // otherwise replace all will go into an infinite loop
     found = false;
@@ -196,8 +196,12 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
     int nextIndex = text.indexOf(search, selectionEnd);
     if (nextIndex == -1) {
-      nextIndex = text.indexOf(search, 0);
-      if (nextIndex == -1) {  // wrapping
+      if (wrap) {
+        // if wrapping, a second chance is ok, start from beginning
+        nextIndex = text.indexOf(search, 0);
+      }
+
+      if (nextIndex == -1) {
 	found = false;
 	replaceButton.setEnabled(false);
 	//Toolkit.getDefaultToolkit().beep();
@@ -238,8 +242,11 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   // keep doing find and replace alternately until nothing more found
 
   public void replaceAll() {
+    // move to the beginning
+    editor.textarea.select(0, 0);
+
     do {
-      find();
+      find(false);
       replace();
     } while (found);
   }
