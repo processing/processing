@@ -1,3 +1,7 @@
+0079 core
+X no changes to core in this release
+
+
 0078 core
 X text fixes
 X   lines were getting horizontally mashed together
