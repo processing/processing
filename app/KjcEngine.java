@@ -661,6 +661,7 @@ public class KjcEngine extends PdeEngine {
 	  window = new Window(new Frame());
 	  window.addKeyListener(new KeyAdapter() {
 	      public void keyPressed(KeyEvent e) {
+		//System.out.println("window got " + e);
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 		  //editor.doClose();
 		  //new DelayedClose(editor);
@@ -691,6 +692,7 @@ public class KjcEngine extends PdeEngine {
 
 	applet.addKeyListener(new KeyAdapter() {
 	    public void keyPressed(KeyEvent e) {
+	      //System.out.println("applet got " + e);
 	      if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 		stop();
 		editor.doClose();
