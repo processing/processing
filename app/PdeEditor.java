@@ -578,6 +578,13 @@ public class PdeEditor extends Panel {
       // make empty pde file
       File sketchFile = new File(sketchDir, sketchName + ".pde");
       new FileOutputStream(sketchFile);
+#ifdef MACOS
+      if (PdeBase.platform == PdeBase.MACOS9) {
+	MRJFileUtils.setFileTypeAndCreator(sketchFile, 
+					   MRJOSType.kTypeTEXT,
+					   new MRJOSType("Pde1"));
+      }
+#endif
 
       // make 'data' 'applet' dirs inside that
       // actually, don't, that way can avoid too much extra mess
@@ -1036,6 +1043,13 @@ public class PdeEditor extends Panel {
       ps.println("</BODY> </HTML>");
       ps.flush();
       ps.close();
+#ifdef MACOS
+      if (PdeBase.platform == PdeBase.MACOS9) {
+	MRJFileUtils.setFileTypeAndCreator(sketchFile, 
+					   MRJOSType.kTypeTEXT,
+					   new MRJOSType("MSIE"));
+      }
+#endif
 
       String exportDir = ("lib" + File.separator + 
 			  "export" + File.separator);
