@@ -1,18 +1,15 @@
-0065
-X fix SMOOTH_IMAGES problem with how text had been modified
-X include version number in the about box
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
-X Ctrl-B will beautify the code and send the cursor back to the
-X   beginning of the the text. Then you have to scroll back to 
-X   where you were... ok, so maybe I am a heavy user of Ctrl-B.
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+0066
+X BImage.replicate for straight 1:1 copy, blend() for blended version
+X   remove the blendMode function because it's confusing 
+X big changes to image code from toxi
+
+_ bresenham ellipses/circle ignore alpha
+_ strokeWeight != 1 then shouldn't use flat_rect or flat_ellipse
 
 
 DEVELOPERS
 _ try ariel's Thread.yield() suggestion
 _ set default framerate of 24? 30?
-_ BImage.replicate for straight 1:1 copy, blend() for blended version
-_   remove the blendMode function because it's confusing 
 
 
 MEDIUM
