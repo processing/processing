@@ -117,6 +117,14 @@ public interface PMethods {
 
   public void cache(PImage images[]);
 
+  public void arcMode(int mode);
+
+  public void arc(float start, float stop,
+                  float x, float y, float radius);
+
+  public void arc(float start, float stop,
+                  float x, float y, float hr, float vr);
+
   public void ellipseMode(int mode);
 
   public void ellipse(float x, float y, float hradius, float vradius);
@@ -319,7 +327,7 @@ public interface PMethods {
 
   public void strokeJoin(int join);
 
-  public void strokeMiter(int miter);
+  public void strokeCap(int cap);
 
   public void noStroke();
 
