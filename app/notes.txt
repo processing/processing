@@ -1,3 +1,25 @@
+ABOUT REV 0028
+
+- serial port should work again (win32comm was missing)
+
+- modified pde.properties slightly for console and header
+
+- added output console the main interface
+
+- old-style c++ int(), float(), char(), byte() all work 
+  for casting of datatypes, instead of confusing c syntax
+
+- size now works in draw() mode
+
+- fixed annoying findSelection bug spew on startup
+
+- 0.4f now works, formerly wasn't allowed
+
+- lots of preprocessor tweaking for exceptional cases
+
+- jre now in its own subdirectory, separate from 'lib'
+
+
 ABOUT REV 0027
 
 - released on the floor of dis2002. welcome to london.
