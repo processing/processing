@@ -115,6 +115,9 @@ _ getPixel/setPixel -> get/set
 _ addition of copy(), duplicate(), alpha(), and blendMode()
 _   all the imaging modes that go with those guys
 _ tint() colors images, not fill()
+_ shearX and shearY removed
+_ removed noBackground
+_ added background(BImage)
 
   // imaging API keywords	  	  
   pdeKeywords.add("REPLACE", Token.LITERAL1);
@@ -124,11 +127,23 @@ _ tint() colors images, not fill()
   pdeKeywords.add("LIGHTEST", Token.LITERAL1);
   pdeKeywords.add("DARKEST", Token.LITERAL1);
 
+X vertex(x, y, u, v) and vertex(x, y, z, u, v)
+X don't cast color()
+X   since more important for color(v1, v2, v3) to work
+X getPixel/setPixel -> get/set.. 
+X   get(x, y, w, h) is nice but no set(x,y,w,h)
+X   though set(x,y,w,h) could be nice
+X   and copy() to copy a section of pixels
+
 
 ..................................................................
 
 
 API
+_ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
+_ screenGrab() -> saveImage()
+_   BImage.save()
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
 _ toxi image code (!) 
 _   need background(BImage) and scaling, copy area, etc.
 _ param() function 
@@ -489,26 +504,10 @@ _ 7 day search on discourse board
 
 
 api work
-
-_ go through examples to see if there's other annoying syntax
-
 _ for int i for 0 to b.length
 _ for i from 0 upto b.length
 
-_ vertex(x, y, u, v) and vertex(x, y, z, u, v)
-
-_ don't cast color()
-_   since more important for color(v1, v2, v3) to work
-
-_ screenGrab() -> saveImage()
-_   BImage.save()
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
-
 ugly but no ideas yet
-_ getPixel/setPixel -> get/set.. 
-_   get(x, y, w, h) is nice but no set(x,y,w,h)
-_   though set(x,y,w,h) could be nice
-_   and copy() to copy a section of pixels
 _ serialWrite -> sprint ? 
 _ noSmooth
 _ noFill()
@@ -516,12 +515,9 @@ _ rectMode means rectPlacement
 _   becomes a problem when strokeMode and strokeWidth are mixed
 _ beginRect() beginLineLoop() et al. ?
 
-_ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
-
 _ begin/end.. beginSerial/endSerial -> 
 _   openSerial/closeSerial ?
 _   startSerial/stopSerial
-
 _ need some model for i/o that makes more sense
 _   getting whole words from serial, network, and files
 _   or buffers of specific length with a sync byte
@@ -529,6 +525,9 @@ _ split to take strings (ie. for ", ")
 _ quicksort should probably just be made into 'sort' class
 _   it's the only one ever used
 _   can this be done using an inner class?
+
+_ should BSpace be included?
+_ go through examples to see if there's other annoying syntax
 
 
 additions that i want
