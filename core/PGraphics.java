@@ -5951,6 +5951,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
+    System.out.println((color_mode == RGB) + " " + color_scale);
     if ((color_mode == RGB) && (!color_scale)) return c;
     return (c / 255.0f) * colorMaxX;
   }

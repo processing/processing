@@ -674,27 +674,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Is the applet online or not? This can be used to test how the 
-   * applet should behave since online situations are different.
-   */
-  /*
-  public boolean online() {
-    try {
-      getAppletContext();
-    } catch (NullPointerException e) { 
-      return false;
-    }
-    return true;
-  }
-  */
-
-
-  /**
    * Get a param from the web page, or (eventually) 
    * from a properties file.
    */
   public String param(String what) {
-    if (online()) {
+    if (online) {
       return getParameter(what);
 
     } else {
@@ -710,7 +694,7 @@ public class PApplet extends Applet
    * p5 environment itself, rather than relying on the console.
    */
   public void status(String what) {
-    if (online()) {
+    if (online) {
       showStatus(what);
 
     } else {
@@ -725,7 +709,7 @@ public class PApplet extends Applet
    * for applications as well, using code from PdeBase.
    */
   void link(String here) {
-    if (!online()) {
+    if (!online) {
       System.err.println("Can't open " + here);
       System.err.println("link() only works inside a web browser");
       return;
@@ -741,7 +725,7 @@ public class PApplet extends Applet
   }
 
   void link(String here, String there) {
-    if (!online()) {
+    if (!online) {
       System.err.println("Can't open " + here);
       System.err.println("link() only works inside a web browser");
       return;
@@ -758,7 +742,7 @@ public class PApplet extends Applet
 
 
   public void die(String what) {
-    if (online()) {
+    if (online) {
       System.err.println("i'm dead.. " + what);
 
     } else {
@@ -787,7 +771,7 @@ public class PApplet extends Applet
    * it defaults to writing a tiff.
    */
   public void saveFrame() {
-    if (online()) {
+    if (online) {
       System.err.println("Can't use saveFrame() when running in a browser.");
       return;
     }
@@ -807,7 +791,7 @@ public class PApplet extends Applet
    *      // # signs with zeros and the frame number 
    */
   public void saveFrame(String what) {
-    if (online()) {
+    if (online) {
       System.err.println("Can't use saveFrame() when running in a browser.");
       return;
     }
