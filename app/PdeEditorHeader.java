@@ -16,9 +16,13 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   static final String PROJECT_TITLER = "sketch";
   static final String USER_TITLER = "user";
 
-  static final Color primaryColor = Color.white;
-  static final Color secondaryColor = new Color(153, 153, 153);
-  static final Color backgroundColor = new Color(51, 51, 51);
+  //static final Color primaryColor = Color.white;
+  //static final Color secondaryColor = new Color(153, 153, 153);
+  //static final Color backgroundColor = new Color(51, 51, 51);
+
+  static Color primaryColor; // = Color.white;
+  static Color secondaryColor; // = new Color(153, 153, 153);
+  static Color backgroundColor; // = new Color(51, 51, 51);
 
   PdeEditor editor;
 
@@ -45,6 +49,15 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     this.editor = editor;
     this.project = project;
     this.user = user;
+
+    if (primaryColor == null) {
+      backgroundColor = PdeApplet.getColor("editor.header.bgcolor", 
+					   new Color(51, 51, 51));
+      primaryColor = PdeApplet.getColor("editor.header.fgcolor1", 
+					new Color(255, 255, 255));
+      secondaryColor = PdeApplet.getColor("editor.header.fgcolor2", 
+					  new Color(153, 153, 153));
+    }
   }
 
 
@@ -97,7 +110,9 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = new Font("SansSerif", Font.PLAIN, 12);
+      //font = new Font("SansSerif", Font.PLAIN, 12);
+      font = PdeApplet.getFont("editor.header.font",
+			       new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
       fontAscent = metrics.getAscent();

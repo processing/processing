@@ -307,13 +307,14 @@ public class PdeApplet extends Applet
     return !isApplet();
   }
 
-  static public Font getFont(String which) {
-    if (which.equals("editor")) {
-      // 'Monospaced' and 'courier' also caused problems.. ;-/
-      //return new Font("monospaced", Font.PLAIN, 12);
-      return new Font("Monospaced", Font.PLAIN, 12);
-    }
-    return null;
+  static public Font getFont(String which, Font otherwise) {
+    //System.out.println("getting font '" + which + "'");
+    String str = get(which);
+    if (str == null) return otherwise;  // ENABLE LATER
+    StringTokenizer st = new StringTokenizer(str, ",");
+    return new Font(st.nextToken(), 
+		    st.nextToken().equals("bold") ? Font.BOLD : Font.PLAIN,
+		    Integer.parseInt(st.nextToken()));
   }
 #endif  // PLAYER
 

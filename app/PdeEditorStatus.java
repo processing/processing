@@ -3,18 +3,9 @@ import java.awt.event.*;
 
 
 public class PdeEditorStatus extends Panel implements ActionListener {
+  static Color bgColor[];
+  static Color fgColor[];
 
-  static final Color bgColor[] = {
-    new Color(102, 102, 102),
-    new Color(102, 26, 0),
-    new Color(204, 153, 0)
-  };
-
-  static final Color fgColor[] = {
-    new Color(255, 255, 255),
-    new Color(255, 255, 255),
-    new Color(0, 0, 0)
-  };
 
   static final int NOTICE = 0;
   static final int ERROR  = 1;
@@ -47,6 +38,23 @@ public class PdeEditorStatus extends Panel implements ActionListener {
   public PdeEditorStatus(PdeEditor editor) {
     this.editor = editor;
     empty();
+
+    if (bgColor == null) {
+      bgColor = new Color[3];
+      bgColor[0] = PdeApplet.getColor("editor.status.notice.bgcolor",
+				      new Color(102, 102, 102));
+      bgColor[1] = PdeApplet.getColor("editor.status.error.bgcolor",
+				      new Color(102, 26, 0));
+      bgColor[2] = PdeApplet.getColor("editor.status.prompt.bgcolor",
+				      new Color(204, 153, 0));
+      fgColor = new Color[3];
+      fgColor[0] = PdeApplet.getColor("editor.status.notice.fgcolor",
+				      new Color(255, 255, 255));
+      fgColor[1] = PdeApplet.getColor("editor.status.error.fgcolor",
+				      new Color(255, 255, 255));
+      fgColor[2] = PdeApplet.getColor("editor.status.prompt.fgcolor",
+				      new Color(0, 0, 0));
+    }
   }
 
 
@@ -145,7 +153,9 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = new Font("SansSerif", Font.PLAIN, 10);
+      font = PdeApplet.getFont("editor.status.font",
+			       new Font("SansSerif", Font.PLAIN, 10));
+      //font = new Font("SansSerif", Font.PLAIN, 10);
       g.setFont(font);
       metrics = g.getFontMetrics();
       fontAscent = metrics.getAscent();
