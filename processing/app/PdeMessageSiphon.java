@@ -44,27 +44,33 @@ class PdeMessageSiphon implements Runnable {
 
 
   public void run() {    
+    while (Thread.currentThread() == thread) {
+      //System.err.print("p");
+      //System.err.println(streamReader);
+      String currentLine;
 
-    String currentLine;
+      try {
+        // process data until we hit EOF; this may block
+        //
+        while ((currentLine = streamReader.readLine()) != null) {
+          consumer.message(currentLine);
+          //System.err.println("PMS: " + currentLine);
+        }
+      } catch (NullPointerException npe) {
+        // ignore this guy, since it's prolly just shutting down
+        //npe.printStackTrace();
+        thread = null;
 
-    try {
-      // process data until we hit EOF; this may block
-      //
-      while ((currentLine = streamReader.readLine()) != null) {
-        consumer.message(currentLine);
-        //System.err.println(currentLine);
-      }
-    } catch (NullPointerException npe) {
-      // ignore this guy, since it's prolly just shutting down
-
-    } catch (Exception e) { 
-      // on linux, a "bad file descriptor" message comes up when
-      // closing an applet that's being run externally.
-      // use this to cause that to fail silently since not important
-      if ((PdeBase.platform != PdeBase.LINUX) || 
-          (e.getMessage().indexOf("Bad file descriptor") == -1)) {
-        System.err.println("PdeMessageSiphon err " + e);
-        e.printStackTrace();
+      } catch (Exception e) { 
+        // on linux, a "bad file descriptor" message comes up when
+        // closing an applet that's being run externally.
+        // use this to cause that to fail silently since not important
+        if ((PdeBase.platform != PdeBase.LINUX) || 
+            (e.getMessage().indexOf("Bad file descriptor") == -1)) {
+          System.err.println("PdeMessageSiphon err " + e);
+          e.printStackTrace();
+          thread = null;
+        }
       }
     }
     //System.err.println("siphon thread exiting");
