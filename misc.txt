@@ -139,6 +139,17 @@ BXDatabase, BXDatabaseCache (keeps queries to fill out table)
 MISCELLANEOUS NOTES
 
 
+buzz.pl
+opt-in/opt-out #ifdef setup
+rather than forcing people to use buzz.pl to compile. could pick
+features that are opt-out, like net, that would have comments:
+//#ifdef NET
+//#endif
+meaning that it would normally get compiled without any trouble
+or similarly, could have other sections commented out that are opt-in,
+that use #ifdefs to be enabled.`
+
+
 Things that break often/things to test
 _ handling of key events (both as applet and in application)
 _ per-vertex coloring for different kinds of shapes

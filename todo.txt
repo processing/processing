@@ -32,6 +32,12 @@ X horizontal scroller has enormous range
 X   horizontal scroller has slightly less enormous range
 X   turned off weirdo scrolling
 X dim serial port menu when not available
+X move reference lookup code up into PdeBase
+X   remove ReferenceKeys class, make it an inner class
+X   add reference lookup option to the edit menu
+X saveBytes, saveStrings
+X   file output, save strings or pile of bytes
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1056311967;start=0
 
 
 macosx
@@ -62,7 +68,12 @@ X take a look at sourceforge bugs
 X dataInputStream, setUseCaches on the url to false
 X   URLConnection.setUseCaches(false)
 o   parent.obj.close() on the url
-b X set file type/creator for .pde files.. TEXTPde1
+X set file type/creator for .pde files.. TEXTPde1
+X make a note about macosx problems with 1.4
+X   currently the only fix is to switch to java 1.3
+X update the readme to note that macos9 is suspended
+X why doesn't processing.app work anymore
+X   machine was screwy
 
 
 dh X save last-used serial to sketch.properties on quit
@@ -72,19 +83,20 @@ dh X context menu cut/copy/paste
 dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
 dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800
 dh X "look up in reference" function for selecting keywords
+dh X improve the console
+dh X   maybe it needs to be a textarea?
+dh o   printing of objects, esp when null, in jdk 14 seems to crash
+dh o     this may have been fixed
+dh o   exception when trying to write to stdout
+dh X   may need horizontal scroller, or text wrap
+dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
 
-dh b _ improve the console
+
+additional console fixes
 dh b _   clear console each time 'run' gets hit
 dh b _     don't actually clear, just advance by the number of lines visible
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-dh b _   maybe it needs to be a textarea?
-dh b _   printing of objects, esp when null, in jdk 14 seems to crash
-dh b _     this may have been fixed
-dh b o   exception when trying to write to stdout
-dh b _   may need horizontal scroller, or text wrap
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
 dh b _   can't copy text from console directly
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811
 
 
 ..................................................................
@@ -94,10 +106,11 @@ BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
 macosx
+b _ why do command keys / menu shortcuts get passed through?
+b _   cmd-s drops an s into the text area (grr)
+b _   only happened on java 1.3 if the cmd-key was unused
 b _ change Proce55ing.app to Processing.app
 b _   should cvs be changed or just do this as a renaming step?
-b _ make a note about macosx problems with 1.4
-b _   currently the only fix is to switch to java 1.3
 b _ double-check to see if wheel mouse is working
 b _ macosx quit handler takes over ctrl-q
 b _   so file->quit doesn't get called on close
@@ -123,29 +136,8 @@ b _   no events seem to be coming through at all
 b _ splash screen 
 b _ select all (apple-a) on azerty keyboard is quitting the app
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
-b _ would be nice to have macosx packaged up as a single .app file
+b _ why are the end of text messages under osx getting chopped?
 
-_ why is the end of text messages under osx getting chopped?
-
-_ why doesn't processing.app work anymore
-
-_ mac 1.4 crashes when attempting to stop applets (pcho definitely)
-_   locking up on my machine after hitting stop
-_   is this only a problem when run from run.sh?
-
-_ examples should be read-only
-_   stored in a separate folder from the sketchbook
-
-_ move reference lookup code up into PdeBase
-_   remove ReferenceKeys class, make it an inner class
-_   add reference lookup option to the edit menu
-
-_ error message dialog?
-_   maybe something that shows stack trace 
-_   with an 'email this' button? (include source code too?)
-
-mac
-_ update the readme to note that macos9 is suspended
 _ set nice background for disk image on macosx
 _ try installing serial adapter with p5
 _   tom igoe is using rxtx 2.1.6, patch that into p5
@@ -153,20 +145,25 @@ _   libs from 2.1.6 download for osx seem to work
 _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
+_ mac 1.4 crashes when attempting to stop applets (pcho definitely)
+_   doesn't seem to do this with the .app, or at least in prev release
+_   locking up on my machine after hitting stop
+_   is this only a problem when run from run.sh?
+
+windows
+_ tabbedpane separator is too small
 
 linux
 _ bring linux up to 1.4
 _   grab rxtx for linux and include with distribution
 
-buzz.pl
-opt-in/opt-out #ifdef setup
-rather than forcing people to use buzz.pl to compile. could pick
-features that are opt-out, like net, that would have comments:
-//#ifdef NET
-//#endif
-meaning that it would normally get compiled without any trouble
-or similarly, could have other sections commented out that are opt-in,
-that use #ifdefs to be enabled.`
+
+_ examples should be read-only
+_   stored in a separate folder from the sketchbook
+
+_ error message dialog?
+_   maybe something that shows stack trace 
+_   with an 'email this' button? (include source code too?)
 
 
 thesis / acg
@@ -205,10 +202,6 @@ bf _   currently implemented, but somewhat broken
 bf _   finish this once all the line code is done
 
 bf b _ perlin noise 1D. noise() 
-
-bf b _ saveBytes, saveStrings
-bf b _   file output, save strings or pile of bytes
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1056311967;start=0
 
 bf b _ some flag to know whether applet is online or not
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
@@ -878,6 +871,7 @@ b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 DISTRIBUTION / Mac OS X
 
 1 _ set file type/creator for .pde files of examples
+1 _ would be nice to have macosx packaged up as a single .app file
 
 
 
