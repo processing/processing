@@ -2,6 +2,8 @@
 X properly swap alpha values when lines need to be rendered backwards
 X make cursor() commands public
 X ltext and rtext for screen space stuff
+X ltext is broken when it goes y < 0 or y > height
+X ltext & rtext completely working
 
 _ now that it's actually a key, should it be a char? (what's keyChar?)
 _   that way println(c) would work a little better..
@@ -12,6 +14,11 @@ _ write PApplet2, a full screen version of PApplet
 _   this might be used for presentation mode
 
 text fixes
+_ need to resolve rotated text in SCREEN_SPACE
+_   SCREEN_SPACE is weird for text
+_   does the font or PApplet control the size? (the font, ala java)
+_   without setting the font, the values come out weird rotated text
+_     get rotated text into the screen space stuff
 _ if a word (no spaces) is too long to fit, insert a 'space'
 _ move left/center/right aligning into the font class
 _   otherwise text with alignment has problems with returns
@@ -41,11 +48,6 @@ _     test with rgb cube, shut off smoothing
 _   make sure line artifacts are because of smoothing
 _   implement 2x oversampling for anti-aliasing
 
-_ need to resolve rotated text in SCREEN_SPACE
-_   SCREEN_SPACE is weird for text
-_   does the font or PApplet control the size? (the font, ala java)
-_   without setting the font, the values come out weird rotated text
-_     get rotated text into the screen space stuff
 _ make PApplet2 that handles full screen 1.4 mode drawing
 
 _ api for file-based renderers
