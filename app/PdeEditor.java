@@ -13,7 +13,7 @@ import java.util.zip.*;
 
 public class PdeEditor extends Panel implements PdeEnvironment {
   static final String DEFAULT_PROGRAM = "// type program here\n";
-  
+
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static final String EMPTY = "                                                                                                                                                             ";
@@ -401,8 +401,9 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
       // add standard .class files to the jar
       for (int i = 0; i < bagelClasses.length; i++) {
-	if ((bagelClasses[i].equals(".")) || 
-	    (bagelClasses[i].equals(".."))) continue;
+	if (!bagelClasses[i].endsWith(".class")) continue;
+	//if ((bagelClasses[i].equals(".")) || 
+	//  (bagelClasses[i].equals(".."))) continue;
 	//System.out.println("adding class " + (i+1) + " of " + classes.length);
 	entry = new ZipEntry(bagelClasses[i]);
 	zos.putNextEntry(entry);
