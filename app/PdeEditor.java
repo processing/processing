@@ -179,29 +179,19 @@ public class PdeEditor extends JFrame
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
-    System.out.println("PdeEditor: here 1");
-
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
     //System.out.println(consolePanel.getInsets());
     consolePanel.setLayout(new BorderLayout());
 
-    System.out.println("PdeEditor: here 1a");
-
     status = new PdeEditorStatus(this);
     consolePanel.add(status, BorderLayout.NORTH);
-
-    System.out.println("PdeEditor: here 1b");
 
     console = new PdeEditorConsole(this);
     consolePanel.add(console, BorderLayout.CENTER);
 
-    System.out.println("PdeEditor: here 1c");
-
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                textarea, consolePanel);
-
-    System.out.println("PdeEditor: here 2");
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
@@ -220,8 +210,6 @@ public class PdeEditor extends JFrame
     if (dividerSize != 0) {
       splitPane.setDividerSize(dividerSize);
     }
-
-    System.out.println("PdeEditor: here 3");
 
     rightPanel.add(splitPane, BorderLayout.CENTER);
 
@@ -1219,10 +1207,19 @@ public class PdeEditor extends JFrame
   }
 
 
+  /**
+   * Second stage of open, occurs after having checked to
+   * see if the modifications (if any) to the previous sketch
+   * need to be saved.
+   */
   protected void handleOpen2(String path) {
     try {
       sketch = new PdeSketch(this, path);
       header.rebuild();
+      if (PdePreferences.getBoolean("console.auto_clear")) {
+        console.clear();
+      }
+
     } catch (Exception e) {
       error(e);
     }

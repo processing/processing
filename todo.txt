@@ -96,6 +96,13 @@ X   the popup from the toolbar needs an "Open..." on it as well
 X make save() return true/false so it doesn't say "saved" when it hasn't
 X export is badly broken, fix it.. file names were backwards
 X if 'applet.html' is in sketch folder, use that as the template
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1083935144
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082124454;start=0
+X get the console working again
+X   appendText is disabled due to NullPointerEx on startup
+X empty the console when a new sketch is opened
+X   if console.auto_clear is set to true, will clear on run and open
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1086972918
 
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
@@ -113,8 +120,7 @@ _     but need to deal with simply, not providing a new exception case
 _ write sketchbook.clean()
 _ write 'new text file'
 _ implement hide/unhide
-_ get the console working again
-_   appendText is disabled due to NullPointerEx on startup
+
 _ ctrl-5 (at least on xp) is marking the current sketch as modified
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
