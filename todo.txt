@@ -218,7 +218,12 @@ X   junk in the classpath can often cause trouble
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094871304
 X history is not implemented in this version
 
-_ macosx - check to see if new linemetrics stuff is working better
+X update build instructions for cvs
+
+_ macosx
+_   check to see if new linemetrics stuff is working better (it's not)
+_   enable the "use screen menubar" stuff (finch?)
+_   check to see if it's running ok with new java update
 
 with casey
 _ figure out what to include for examples/libraries
