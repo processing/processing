@@ -552,9 +552,10 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Convenience method to avoid an extra cast.
+   * Convenience method to avoid an extra cast, 
+   * and the exception handling.
    */
-  public PImage copy() {
+  public PImage get() {
     try {
       return (PImage) clone();
     } catch (CloneNotSupportedException e) { 
