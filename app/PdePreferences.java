@@ -37,14 +37,6 @@ import javax.swing.filechooser.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-/*
-#ifndef RXTX
-import javax.comm.*;
-#else
-import gnu.io.*;
-#endif
-*/
-
 
 /*
   need to bring all the prefs into here
@@ -111,28 +103,12 @@ public class PdePreferences extends JComponent {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
 
-
     try {
       load(PdeBase.getStream("pde.properties"));
-
-      /*
-      if ((PdeBase.platform == PdeBase.MACOSX) ||
-          (PdeBase.platform == PdeBase.MACOS9)) {
-        //load(new FileInputStream("lib/pde.properties"));
-
-      } else {  
-        // under win95, current dir not set properly
-        // so using a relative url like "lib/" won't work
-        load(getClass().getResource("pde.properties").openStream());
-      }
-      */
 
     } catch (Exception e) {
       PdeBase.showError(null, "Could not read default settings.\n" + 
                         "You'll need to reinstall Processing.", e);
-      //System.exit(1);
-      //System.err.println("Error reading default settings");
-      //e.printStackTrace();
     }
 
 
@@ -148,11 +124,7 @@ public class PdePreferences extends JComponent {
         // this is a key specific to a particular platform
         String actualKey = key.substring(0, key.length() - extensionLength);
         String value = get(key);
-
-        //System.out.println("found platform specific prop \"" + 
-        //                 actualKey + "\" \"" + value + "\"");
         table.put(actualKey, value);
-        //System.out.println("now set to " + table.get(actualKey));
       }
     }
 
