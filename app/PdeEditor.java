@@ -672,9 +672,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     JMenu menu = new JMenu("Help");
     JMenuItem item;
 
-    item = new JMenuItem("Help");
-    item.setEnabled(false);
-    /*
+    item = new JMenuItem("Environment");
+    /* item.setEnabled(false); */
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           PdeBase.openURL(System.getProperty("user.dir") + File.separator + 
@@ -682,7 +681,6 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
                           File.separator + "index.html");
         }
       });
-    */
     menu.add(item);
 
     item = new JMenuItem("Reference");
@@ -693,6 +691,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         }
       });
     menu.add(item);
+    
     item = newJMenuItem("Find in Reference", 'F', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
