@@ -246,11 +246,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   static final int DEFAULT_VERTICES = 512;
   public float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   int vertex_count; // total number of vertices
-  int vertex_start; // pos of first vertex of current shape in vertices array
+  protected int vertex_start; // pos of first vertex of current shape in vertices array
   // i think vertex_end is actually the last vertex in the current shape
   // and is separate from vertex_count for occasions where drawing happens
   // on endFrame with all the triangles being depth sorted
-  int vertex_end;   // total number of vertex in current shape
+  protected int vertex_end;   // total number of vertex in current shape
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
   int vertex_order[] = new int[DEFAULT_VERTICES];
@@ -405,7 +405,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
-    //System.out.println("resize " + iwidth + " " + iheight);
+    System.out.println("resize " + iwidth + " " + iheight);
 
     width = iwidth;
     height = iheight;
@@ -1227,9 +1227,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       int tex = triangles[i][TEXTURE_INDEX];
       int index = triangles[i][INDEX];
 
-      System.out.println("A " + a[X] + " " + a[Y] + " " + a[Z]);
-      System.out.println("B " + b[X] + " " + b[Y] + " " + b[Z]);
-      System.out.println("C " + c[X] + " " + c[Y] + " " + c[Z]);
+      //System.out.println("A " + a[X] + " " + a[Y] + " " + a[Z]);
+      //System.out.println("B " + b[X] + " " + b[Y] + " " + b[Z]);
+      //System.out.println("C " + c[X] + " " + c[Y] + " " + c[Z]);
 
       triangle.reset();
 
@@ -4185,7 +4185,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    */
   public void cameraMode(int mode) {
     if (mode == PERSPECTIVE) {
-      System.out.println("setting camera to perspective");
+      //System.out.println("setting camera to perspective");
+      //System.out.println("  " + cameraFOV + " " + cameraAspect);
       beginCamera();
       resetMatrix();
       perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
@@ -4607,7 +4608,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   /**
    * unpacks AARRGGBB color for direct use with calc_color.
-   * handled here with its own function since this is independent
+   * handled here with its own function since this is indepenent
    * of the color mode.
    *
    * strangely the old version of this code ignored the alpha
