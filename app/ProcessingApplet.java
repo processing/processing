@@ -60,16 +60,16 @@ public class ProcessingApplet extends Applet
   // ------------------------------------------------------------
 
 
-  public void setup() {
+  void setup() {
   }
 
 
-  public void draw() {
+  void draw() {
     drawMethod = false;
   }
 
 
-  public void loop() {
+  void loop() {
     loopMethod = false;
   }
 
@@ -277,4 +277,8 @@ public class ProcessingApplet extends Applet
     //calendar.setTimeInMillis(actualMillis);
     return calendar.get(Calendar.YEAR);
   }
-}
+
+
+  // ------------------------------------------------------------
+
+
