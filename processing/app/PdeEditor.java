@@ -200,7 +200,7 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 				   "Open a PDE program...", 
 				   FileDialog.LOAD);
     fd.setDirectory(lastDirectory);
-    fd.setFile(lastFile);
+    //fd.setFile(lastFile);
     fd.show();
 	
     String directory = fd.getDirectory();
@@ -215,7 +215,7 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       FileInputStream input = new FileInputStream(file);
       int length = (int) file.length();
       byte data[] = new byte[length];
-	    
+
       int count = 0;
       while (count != length) {
 	data[count++] = (byte) input.read();
@@ -224,10 +224,11 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       // the defaults when you try to save again
       lastDirectory = directory;
       lastFile = filename;
-	
+
       // once read all the bytes, convert it to the proper
       // local encoding for this system.
       //textarea.setText(app.languageEncode(data));
+      // what the hell was i thinking when i wrote this code
       if (app.encoding == null)
 	textarea.setText(new String(data));
       else 
@@ -244,21 +245,36 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
 
   public void doSave() {
+    // true if lastfile not set, otherwise false, meaning no prompt
+    handleSave(lastFile == null);
+  }
+
+  public void doSaveAs() {
+    handleSave(true);
+  }
+
+  public void handleSave(boolean promptUser) {
     message("Saving file...");
     String s = textarea.getText();
-    FileDialog fd = new FileDialog(new Frame(), 
-				   "Save PDE program as...", 
-				   FileDialog.SAVE);
-    fd.setDirectory(lastDirectory);
-    fd.setFile(lastFile);
-    fd.show();
-	
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-    if (filename == null) {
-      message(EMPTY);
-      buttons.clear();
-      return; // user cancelled
+
+    String directory = lastDirectory;
+    String filename = lastFile;
+
+    if (promptUser) {
+      FileDialog fd = new FileDialog(new Frame(), 
+				     "Save PDE program as...", 
+				     FileDialog.SAVE);
+      fd.setDirectory(lastDirectory);
+      fd.setFile(lastFile);
+      fd.show();
+
+      directory = fd.getDirectory();
+      filename = fd.getFile();
+      if (filename == null) {
+	message(EMPTY);
+	buttons.clear();
+	return; // user cancelled
+      }
     }
     File file = new File(directory, filename);
 
