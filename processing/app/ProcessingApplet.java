@@ -194,6 +194,10 @@ public class ProcessingApplet extends Applet
     this.height = height;
 
     g = new Bagel(width, height);
+
+    // do all the defaults down here, because
+    // subclasses need to go through this function
+    g.lighting = false;
   }
 
 
