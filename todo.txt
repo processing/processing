@@ -27,7 +27,7 @@ X   tried with a 3k x 1k image and things broke
 o   maybe command line read properties from a file in lib
 
 macos9 
-_ do some font tweaking (monaco 9 or 10 might be good)
+X do some font tweaking (monaco 9 or 10 might be good)
 
 
 ................................................................
