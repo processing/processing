@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -77,7 +77,7 @@ public class PdeSketchbook {
   public PdeSketchbook(PdeEditor editor) {
     this.editor = editor;
 
-    // this shouldn't change throughout.. it may as well be static 
+    // this shouldn't change throughout.. it may as well be static
     // but only one instance of sketchbook will be built so who cares
     examplesFolder = new File(System.getProperty("user.dir"), "examples");
     examplesPath = examplesFolder.getAbsolutePath();
@@ -88,7 +88,7 @@ public class PdeSketchbook {
     //String sketchbookPath = PdePreferences.get("sketchbook.path");
     //if (sketchbookPath == null) {
     if (PdePreferences.get("sketchbook.path") == null) {
-      // by default, set default sketchbook path to the user's 
+      // by default, set default sketchbook path to the user's
       // home folder with 'sketchbook' as a subdirectory of that
 
       /*
@@ -110,7 +110,7 @@ public class PdeSketchbook {
       //File sketchbookFolder = new File(home, folderName);
 
       File sketchbookFolder = PdeBase.getProcessingHome();
-      PdePreferences.set("sketchbook.path", 
+      PdePreferences.set("sketchbook.path",
                          sketchbookFolder.getAbsolutePath());
 
       if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
@@ -127,11 +127,11 @@ public class PdeSketchbook {
 
 
   /**
-   * Handle creating a sketch folder, return its base .pde file 
+   * Handle creating a sketch folder, return its base .pde file
    * or null if the operation was cancelled.
    */
-  public String handleNew(boolean startup, 
-                          boolean shift, 
+  public String handleNew(boolean startup,
+                          boolean shift,
                           boolean library) throws IOException {
     File newbieDir = null;
     String newbieName = null;
@@ -139,23 +139,23 @@ public class PdeSketchbook {
     boolean prompt = PdePreferences.getBoolean("sketchbook.prompt");
     if (shift) prompt = !prompt; // reverse behavior if shift is down
 
-    // no sketch has been started, don't prompt for the name if it's 
-    // starting up, just make the farker. otherwise if the person hits 
-    // 'cancel' i'd have to add a thing to make p5 quit, which is silly. 
-    // instead give them an empty sketch, and they can look at examples. 
-    // i hate it when imovie makes you start with that goofy dialog box. 
-    // unless, ermm, they user tested it and people preferred that as 
-    // a way to get started. shite. now i hate myself. 
-    // 
+    // no sketch has been started, don't prompt for the name if it's
+    // starting up, just make the farker. otherwise if the person hits
+    // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
+    // instead give them an empty sketch, and they can look at examples.
+    // i hate it when imovie makes you start with that goofy dialog box.
+    // unless, ermm, they user tested it and people preferred that as
+    // a way to get started. shite. now i hate myself.
+    //
     if (startup) prompt = false;
 
     if (prompt) {
     //if (!startup) {
       // prompt for the filename and location for the new sketch
 
-      FileDialog fd = new FileDialog(editor, //new Frame(), 
-                                     //"Create new sketch named", 
-                                     "Create sketch folder named:", 
+      FileDialog fd = new FileDialog(editor, //new Frame(),
+                                     //"Create new sketch named",
+                                     "Create sketch folder named:",
                                      FileDialog.SAVE);
       fd.setDirectory(getSketchbookPath());
       fd.show();
@@ -193,7 +193,7 @@ public class PdeSketchbook {
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
 
-    // TODO this wouldn't be needed if i could figure out how to 
+    // TODO this wouldn't be needed if i could figure out how to
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs, you're my only hope.
 
@@ -219,7 +219,7 @@ public class PdeSketchbook {
 
 
   /**
-   * Convert to sanitized name and alert the user 
+   * Convert to sanitized name and alert the user
    * if changes were made.
    */
   static public String sanitizeName(String origName) {
@@ -228,7 +228,7 @@ public class PdeSketchbook {
     if (!newName.equals(origName)) {
       PdeBase.showMessage("Naming issue",
                           "The sketch name had to be modified.\n" +
-                          "You can only use basic letters and numbers\n" + 
+                          "You can only use basic letters and numbers\n" +
                           "to name a sketch (ascii only and no spaces,\n" +
                           "and it can't start with a number)");
     }
@@ -238,7 +238,7 @@ public class PdeSketchbook {
 
   /**
    * Java classes are pretty limited about what you can use
-   * for their naming. This helper function replaces everything 
+   * for their naming. This helper function replaces everything
    * but A-Z, a-z, and 0-9 with underscores. Also disallows
    * starting the sketch name with a digit.
    */
@@ -268,8 +268,8 @@ public class PdeSketchbook {
   public String handleOpen() {
     // swing's file choosers are ass ugly, so we use the
     // native (awt peered) dialogs instead
-    FileDialog fd = new FileDialog(editor, //new Frame(), 
-                                   "Open a Processing sketch...", 
+    FileDialog fd = new FileDialog(editor, //new Frame(),
+                                   "Open a Processing sketch...",
                                    FileDialog.LOAD);
     //fd.setDirectory(PdePreferences.get("sketchbook.path"));
     fd.setDirectory(getSketchbookPath());
@@ -302,11 +302,11 @@ public class PdeSketchbook {
 
 
   /**
-   * Rebuild the menu full of sketches based on the 
-   * contents of the sketchbook. 
-   * 
-   * Creates a separate JMenu object for the popup, 
-   * because it seems that after calling "getPopupMenu" 
+   * Rebuild the menu full of sketches based on the
+   * contents of the sketchbook.
+   *
+   * Creates a separate JMenu object for the popup,
+   * because it seems that after calling "getPopupMenu"
    * the menu will disappear from its original location.
    */
   public void rebuildMenus() {
@@ -353,7 +353,7 @@ public class PdeSketchbook {
     menu.addSeparator();
 
     try {
-      boolean sketches = 
+      boolean sketches =
         addSketches(menu, new File(getSketchbookPath()));
       if (sketches) menu.addSeparator();
     } catch (IOException e) {
@@ -416,7 +416,7 @@ public class PdeSketchbook {
     for (int i = 0; i < list.length; i++) {
       int who = i;
       for (int j = i+1; j < list.length; j++) {
-        if (list[j].compareTo(list[who]) < 0) {
+        if (list[j].compareToIgnoreCase(list[who]) < 0) {
           who = j;  // this guy is earlier in the alphabet
         }
       }
@@ -427,7 +427,7 @@ public class PdeSketchbook {
       }
     }
 
-    //SketchbookMenuListener listener = 
+    //SketchbookMenuListener listener =
     //new SketchbookMenuListener(folder.getAbsolutePath());
 
     ActionListener listener = new ActionListener() {
@@ -450,9 +450,9 @@ public class PdeSketchbook {
         String sanityCheck = sanitizedName(list[i]);
         if (!sanityCheck.equals(list[i])) {
           if (!builtOnce) {
-            String mess = 
+            String mess =
               "The sketch \"" + list[i] + "\" cannot be used.\n" +
-              "Sketch names must contain only basic letters and numbers.\n" + 
+              "Sketch names must contain only basic letters and numbers.\n" +
               "(ascii only and no spaces, and it cannot start with a number)";
             PdeBase.showMessage("Ignoring bad sketch name", mess);
           }
@@ -467,7 +467,7 @@ public class PdeSketchbook {
 
       } else {  // might contain other dirs, get recursive
         JMenu submenu = new JMenu(list[i]);
-        // needs to be separate var 
+        // needs to be separate var
         // otherwise would set ifound to false
         boolean found = addSketches(submenu, subfolder); //, false);
         if (found) {
@@ -495,7 +495,7 @@ public class PdeSketchbook {
     for (int i = 0; i < list.length; i++) {
       int who = i;
       for (int j = i+1; j < list.length; j++) {
-        if (list[j].compareTo(list[who]) < 0) {
+        if (list[j].compareToIgnoreCase(list[who]) < 0) {
           who = j;  // this guy is earlier in the alphabet
         }
       }
@@ -526,23 +526,23 @@ public class PdeSketchbook {
       if (entry.exists()) {
         String sanityCheck = sanitizedName(list[i]);
         if (!sanityCheck.equals(list[i])) {
-          String mess = 
+          String mess =
             "The library \"" + list[i] + "\" cannot be used.\n" +
-            "Library names must contain only basic letters and numbers.\n" + 
+            "Library names must contain only basic letters and numbers.\n" +
             "(ascii only and no spaces, and it cannot start with a number)";
           PdeBase.showMessage("Ignoring bad sketch name", mess);
           continue;
         }
 
         // get the path for all .jar files in this code folder
-        String libraryClassPath = 
+        String libraryClassPath =
           PdeCompiler.contentsToClassPath(exported);
-        // grab all jars and classes from this folder, 
+        // grab all jars and classes from this folder,
         // and append them to the library classpath
-        librariesClassPath += 
+        librariesClassPath +=
           File.pathSeparatorChar + libraryClassPath;
         // need to associate each import with a library folder
-        String packages[] = 
+        String packages[] =
           PdeCompiler.packageListFromClassPath(libraryClassPath);
         for (int k = 0; k < packages.length; k++) {
           importToLibraryTable.put(packages[k], exported);
@@ -556,7 +556,7 @@ public class PdeSketchbook {
 
       } else {  // might contain other dirs, get recursive
         JMenu submenu = new JMenu(list[i]);
-        // needs to be separate var 
+        // needs to be separate var
         // otherwise would set ifound to false
         boolean found = addLibraries(submenu, subfolder); //, false);
         if (found) {
@@ -600,18 +600,18 @@ public class PdeSketchbook {
             PdeBase.removeDir(prey);
 
           } else {  // otherwise prompt the user
-            String prompt = 
+            String prompt =
               "Remove empty sketch titled \"" + entries[j] + "\"?";
 
             Object[] options = { "Yes", "No" };
-            int result = 
+            int result =
               JOptionPane.showOptionDialog(editor,
                                            prompt,
                                            "Housekeeping",
                                            JOptionPane.YES_NO_OPTION,
                                            JOptionPane.QUESTION_MESSAGE,
                                            null,
-                                           options, 
+                                           options,
                                            options[0]);
             if (result == JOptionPane.YES_OPTION) {
               PdeBase.removeDir(prey);
