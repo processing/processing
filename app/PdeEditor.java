@@ -990,9 +990,14 @@ public class PdeEditor extends Panel {
     // write sketch.properties
     try {
       URL url = getClass().getResource("buttons.gif");
-      String urlstr = url.toString();
-      urlstr = urlstr.substring(6, urlstr.lastIndexOf("/") + 1) + 
+      //String urlstr = url.toString();
+      //System.out.println(url.getFile());
+      //urlstr = urlstr.substring(6, urlstr.lastIndexOf("/") + 1) + 
+      //"sketch.properties";
+      String urlstr = url.getFile();
+      urlstr = urlstr.substring(0, urlstr.lastIndexOf("/") + 1) +
 	"sketch.properties";
+
       //System.out.println(urlstr);
       //System.exit(0);
       FileOutputStream output = new FileOutputStream(urlstr);
