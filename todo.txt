@@ -8,10 +8,11 @@ X   was this the big one? a big one?
 X threading issues resolved
 X fixed bug with errors not coming through
 X fixed bug with errors not being recognized amonst exceptions
-
-_ moving p5 prefs on mac into documents? or inside sketchbook?
-_   Documents -> Processing -> preferences.txt
-_   do the same for windows, with sketchbook as a subfolder
+X fixed bug with draw mode apps, they now run inside setup
+X   width/height wasn't getting set during setup(), so window bad
+X moving p5 prefs on mac into documents? or inside sketchbook?
+X   Documents -> Processing -> preferences.txt
+X   do the same for windows, with sketchbook as a subfolder
 
 _ don't exit p5 if platform is unknown
 

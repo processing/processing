@@ -56,7 +56,7 @@ public class PdePreferences extends JComponent {
 
   // what to call the feller
 
-  static final String PREFS_FILE = "Processing Preferences.txt";
+  static final String PREFS_FILE = "preferences.txt";
 
   // prompt text stuff
 
@@ -143,8 +143,10 @@ public class PdePreferences extends JComponent {
 
     // next load user preferences file
 
-    File home = new File(System.getProperty("user.home"));
-    preferencesFile = new File(home, PREFS_FILE);
+    //File home = new File(System.getProperty("user.home"));
+    //File processingHome = new File(home, "Processing");
+    //preferencesFile = new File(home, PREFS_FILE);
+    preferencesFile = new File(getProcessingHome(), PREFS_FILE);
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
@@ -506,6 +508,26 @@ public class PdePreferences extends JComponent {
       PdeBase.showWarning(null, "Error while saving the settings file", ex);
       //e.printStackTrace();
     }
+  }
+
+
+  // .................................................................
+
+
+  static public File getProcessingHome() {
+    File home = new File(System.getProperty("user.home"));
+
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      // on macosx put the sketchbook in the "Documents" folder
+      return new File(home, "Documents" + File.separator + "Processing");
+
+    } else if (PdeBase.platform == PdeBase.WINDOWS) {
+      // on windows put the sketchbook in the "My Documents" folder
+      return new File(home, "My Documents" + File.separator + "Processing");
+    }
+
+    // all others, just say home directory
+    return new File(home, "processing");
   }
 
 

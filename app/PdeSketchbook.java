@@ -74,6 +74,8 @@ public class PdeSketchbook {
     if (PdePreferences.get("sketchbook.path") == null) {
       // by default, set default sketchbook path to the user's 
       // home folder with 'sketchbook' as a subdirectory of that
+
+      /*
       File home = new File(System.getProperty("user.home"));
 
       if (PdeBase.platform == PdeBase.MACOSX) {
@@ -84,6 +86,8 @@ public class PdeSketchbook {
         // on windows put the sketchbook in the "My Documents" folder
         home = new File(home, "My Documents");
       }
+      */
+      File home = PdePreferences.getProcessingHome();
 
       String folderName = PdePreferences.get("sketchbook.name.default");
       //System.out.println("home = " + home);
