@@ -579,11 +579,13 @@ public class PdeEditor extends Panel {
       File sketchFile = new File(sketchDir, sketchName + ".pde");
       new FileOutputStream(sketchFile);
 #ifdef MACOS
+      /*
       if (PdeBase.platform == PdeBase.MACOS9) {
 	MRJFileUtils.setFileTypeAndCreator(sketchFile, 
 					   MRJOSType.kTypeTEXT,
 					   new MRJOSType("Pde1"));
       }
+      */
 #endif
 
       // make 'data' 'applet' dirs inside that
@@ -1044,11 +1046,13 @@ public class PdeEditor extends Panel {
       ps.flush();
       ps.close();
 #ifdef MACOS
+      /*
       if (PdeBase.platform == PdeBase.MACOS9) {
 	MRJFileUtils.setFileTypeAndCreator(sketchFile, 
 					   MRJOSType.kTypeTEXT,
 					   new MRJOSType("MSIE"));
       }
+      */
 #endif
 
       String exportDir = ("lib" + File.separator + 
