@@ -10,6 +10,25 @@ _   line endings joy
 _   is setText goobering up on beautify?
 _   how are line endings working during save?
 
+_ crashes while starting
+LaunchRunner Error] PdeBase.main(String[]) threw an exception:
+java.lang.NullPointerException
+  at PdeBase.addSketches(PdeBase.java:598)
+  at PdeBase.addSketches(PdeBase.java:615)
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:476)
+  at PdeEditor.skNew2(PdeEditor.java:872)
+  at PdeEditor.checkModified2(PdeEditor.java:814)
+  at PdeEditor.checkModified(PdeEditor.java:797)
+  at PdeEditor.checkModified(PdeEditor.java:785)
+  at PdeEditor.skNew(PdeEditor.java:826)
+  at PdeEditor.init(PdeEditor.java:428)
+  at PdeBase.<init>(PdeBase.java:361)
+  at PdeBase.main(PdeBase.java:102)
+  at java.lang.reflect.Method.invoke(Native Method)
+  at com.apple.buckyball.app.LaunchRunner.run(LaunchRunner.java:82)
+  at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
+  at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
+
 _ known issues
 _   random freezes.. especially under windows
 _ notes on debugging
