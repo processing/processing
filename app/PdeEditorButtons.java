@@ -71,7 +71,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   JPopupMenu popup;
 
   int buttonCount;
-  int state[];
+  int state[] = new int[BUTTON_COUNT];
   Image stateImage[];
   int which[]; // mapping indices to implementation
 
@@ -142,7 +142,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
       rollover = new Image[BUTTON_COUNT];
       active   = new Image[BUTTON_COUNT];
 
-      state = new int[BUTTON_COUNT];
+      //state = new int[BUTTON_COUNT];
 
       for (int i = 0; i < BUTTON_COUNT; i++) {
         inactive[i] = createImage(BUTTON_WIDTH, BUTTON_HEIGHT);

@@ -182,18 +182,29 @@ public class PdeEditor extends JFrame
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
+    System.out.println("here 1");
+
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
     //System.out.println(consolePanel.getInsets());
     consolePanel.setLayout(new BorderLayout());
 
+    System.out.println("here 1a");
+
     status = new PdeEditorStatus(this);
     consolePanel.add(status, BorderLayout.NORTH);
+
+    System.out.println("here 1b");
+
     console = new PdeEditorConsole(this);
     consolePanel.add(console, BorderLayout.CENTER);
 
+    System.out.println("here 1c");
+
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                textarea, consolePanel);
+
+    System.out.println("here 2");
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
@@ -212,6 +223,8 @@ public class PdeEditor extends JFrame
     if (dividerSize != 0) {
       splitPane.setDividerSize(dividerSize);
     }
+
+    System.out.println("here 3");
 
     rightPanel.add(splitPane, BorderLayout.CENTER);
 
@@ -365,18 +378,11 @@ public class PdeEditor extends JFrame
     String sketchPath = PdePreferences.get("last.sketch.path");
     //PdeSketch sketchTemp = new PdeSketch(sketchPath);
 
-    //if (sketchName != null) {
     if ((sketchPath != null) && (new File(sketchPath)).exists()) {
-      handleOpen(sketchPath);
-      //skOpen(new PdeSketch(sketchFile));
-      //if (new File(sketchDir + File.separator + sketchName + ".pde").exists()) {
-      //skOpen(sketchDir, sketchName);
+      // don't check modified because nothing is open yet
+      handleOpen2(sketchPath);
 
-      //} else {
-      //skNew2(true);
-      //}
     } else {
-      //skNew2(true);
       handleNew2(true);
     }
 
