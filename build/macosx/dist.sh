@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#REVISION=`head -c 4 ../../../todo.txt`
+#REVISION=`head -c 4 ../../todo.txt`
 # 'head' for osx doesn't support -c.. what a pisser
 REVISION=0000
 
@@ -25,25 +25,64 @@ rm -rf processing/reference/CVS
 rm -rf processing/reference/images/CVS
 rm -rf processing/sketchbook/CVS
 rm -rf processing/sketchbook/default/CVS
-rm -f processing/sketchbook/default/.cvsignore
-
+rm -f  processing/sketchbook/default/.cvsignore
 rm -rf processing/sketchbook/examples/CVS
-rm -rf processing/sketchbook/examples/form00/CVS
-rm -rf processing/sketchbook/examples/form01/CVS
-rm -rf processing/sketchbook/examples/form02/CVS
-rm -rf processing/sketchbook/examples/form03/CVS
-rm -rf processing/sketchbook/examples/form04/CVS
-rm -rf processing/sketchbook/examples/motion00/CVS
-rm -rf processing/sketchbook/examples/motion01/CVS
-rm -rf processing/sketchbook/examples/motion02/CVS
-rm -rf processing/sketchbook/examples/response00/CVS
-rm -rf processing/sketchbook/examples/response01/CVS
-rm -rf processing/sketchbook/examples/response02/CVS
-rm -rf processing/sketchbook/examples/response03/CVS
-rm -rf processing/sketchbook/examples/response04/CVS
-rm -rf processing/sketchbook/examples/response05/CVS
-rm -rf processing/sketchbook/examples/response06/CVS
-rm -rf processing/sketchbook/examples/response07/CVS
+rm -rf processing/sketchbook/examples/calculate/CVS
+rm -rf processing/sketchbook/examples/calculate/calculate03/CVS
+rm -rf processing/sketchbook/examples/calculate/calculate04/CVS
+rm -rf processing/sketchbook/examples/calculate/calculate05/CVS
+rm -rf processing/sketchbook/examples/calculate/calculate06/CVS
+rm -rf processing/sketchbook/examples/calculate/calculate07/CVS
+rm -rf processing/sketchbook/examples/calculate/calculate08/CVS
+rm -rf processing/sketchbook/examples/color/CVS
+rm -rf processing/sketchbook/examples/color/color01/CVS
+rm -rf processing/sketchbook/examples/control/CVS
+rm -rf processing/sketchbook/examples/control/control00/CVS
+rm -rf processing/sketchbook/examples/control/control01/CVS
+rm -rf processing/sketchbook/examples/control/control02/CVS
+rm -rf processing/sketchbook/examples/data/CVS
+rm -rf processing/sketchbook/examples/data/data00/CVS
+rm -rf processing/sketchbook/examples/form/CVS
+rm -rf processing/sketchbook/examples/form/form00/CVS
+rm -rf processing/sketchbook/examples/form/form04/CVS
+rm -rf processing/sketchbook/examples/form/form06/CVS
+rm -rf processing/sketchbook/examples/gui/CVS
+rm -rf processing/sketchbook/examples/gui/gui00/CVS
+rm -rf processing/sketchbook/examples/image/CVS
+rm -rf processing/sketchbook/examples/image/image01/CVS
+rm -rf processing/sketchbook/examples/image/image01/data/CVS
+rm -rf processing/sketchbook/examples/image/image02/CVS
+rm -rf processing/sketchbook/examples/image/image02/data/CVS
+rm -rf processing/sketchbook/examples/image/image03/CVS
+rm -rf processing/sketchbook/examples/image/image03/data/CVS
+rm -rf processing/sketchbook/examples/image/image08/CVS
+rm -rf processing/sketchbook/examples/image/image08/data/CVS
+rm -rf processing/sketchbook/examples/image/image09/CVS
+rm -rf processing/sketchbook/examples/image/image09/data/CVS
+rm -rf processing/sketchbook/examples/input/CVS
+rm -rf processing/sketchbook/examples/input/input02/CVS
+rm -rf processing/sketchbook/examples/input/input03/CVS
+rm -rf processing/sketchbook/examples/input/input04/CVS
+rm -rf processing/sketchbook/examples/input/input05/CVS
+rm -rf processing/sketchbook/examples/input/input06/CVS
+rm -rf processing/sketchbook/examples/input/input07/CVS
+rm -rf processing/sketchbook/examples/input/input08/CVS
+rm -rf processing/sketchbook/examples/motion/CVS
+rm -rf processing/sketchbook/examples/motion/motion00/CVS
+rm -rf processing/sketchbook/examples/motion/motion01/CVS
+rm -rf processing/sketchbook/examples/motion/motion02/CVS
+rm -rf processing/sketchbook/examples/motion/motion05/CVS
+rm -rf processing/sketchbook/examples/motion/motion06/CVS
+rm -rf processing/sketchbook/examples/simulate/CVS
+rm -rf processing/sketchbook/examples/simulate/simulate00/CVS
+rm -rf processing/sketchbook/examples/simulate/simulate01/CVS
+rm -rf processing/sketchbook/examples/structure/CVS
+rm -rf processing/sketchbook/examples/structure/structure00/CVS
+rm -rf processing/sketchbook/examples/structure/structure01/CVS
+rm -rf processing/sketchbook/examples/structure/structure04/CVS
+rm -rf processing/sketchbook/examples/structure/structure05/CVS
+rm -rf processing/sketchbook/examples/transform/CVS
+rm -rf processing/sketchbook/examples/transform/transform05/CVS
 
 # get package from the dist dir
 cp -r dist/Proce55ing.app processing/
@@ -52,6 +91,13 @@ rm -rf processing/Proce55ing.app/Contents/CVS
 rm -rf processing/Proce55ing.app/Contents/MacOS/CVS
 rm -rf processing/Proce55ing.app/Contents/Resources/CVS
 rm -rf processing/Proce55ing.app/Contents/Resources/Java/CVS
+
+cp -r dist/serial processing/
+rm -rf processing/serial/CVS
+rm -rf processing/serial/RXTX.pkg/CVS
+rm -rf processing/serial/RXTX.pkg/Contents/CVS
+rm -rf processing/serial/RXTX.pkg/Contents/Resources/CVS
+rm -rf processing/serial/RXTX.pkg/Contents/Resources/English.lproj/CVS
 
 # put jar files into the resource dir, leave the rest in lib
 RES=processing/Proce55ing.app/Contents/Resources/Java/

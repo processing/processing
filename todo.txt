@@ -107,13 +107,13 @@ FINISH for 46
 
 macosx
 _ update dist script for new layout
-_   put mac rxtx inside the p5 folder (hide it?)
-_     include more strongly worded message about rxtx
+X   put mac rxtx inside the p5 folder (hide it?)
+X     include more strongly worded message about rxtx
 _ escape key not quitting presentation mode
 _   no events seem to be coming through at all
 
 macos9
-_ update build/dist scripts to work with new layout
+X update build/dist scripts to work with new layout
 _ check to see if swing is working properly
 _ add swing.jar to dist (?)
 
