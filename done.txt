@@ -1,3 +1,38 @@
+0062
+X modify build instructions for the many changes
+X   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+X   usually need to remove the 'work' dir
+X   modify macosx to use jikes from p5
+X   in general, things are way simpler on the pc
+X move 'clear history' into the history menu itself
+X move beautify to the edit menu
+X menu item for copying data files to the sketch
+X "add files to sketch..." menu item
+X font builder (!)
+X need fast 2D text that's not affected by the transforms
+X   also needs to look good, not squished from texture weirdness
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051806272
+o change .vlw.gz fonts to just .vlw but still gzip compress
+o   reader code should just catch the exception if they're not gzipped
+o   and try to re-download them
+X   instead, not compressed, since font builder being used
+X     will be compressed into the .jar anyways
+X open button stays stuck if no sketch is selected from popup
+X open applet folder after exporting sketch
+X switch back to red instead of yellow for errors. whups.
+
+from carlos' contract, but implemented by fry
+X get font things sewn up 
+X  create a simple generator for grayscale bdf fonts
+X     document the change and make several of them
+X   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
+assigned to dan haskovec, completed by fry
+X event to explorer to open 'data' directory of project
+X   better just to go directly to the sketch's folder
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055926880
+
+
 0061
 X remove private references in audio code that were breaking audio
 X   with the microsoft java vm
