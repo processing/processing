@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
 
 
 public class PdeEditor extends Panel {
@@ -42,7 +44,7 @@ public class PdeEditor extends Panel {
   PdeEditorConsole console;
 
   //JEditorPane textarea;
-  PdeEditorTextPane textarea;
+  public PdeEditorTextPane textarea;
 
   boolean externalEditor;
 
@@ -208,6 +210,33 @@ public class PdeEditor extends Panel {
 	  } catch (Exception ex) { }
 	}
       });
+
+    /*
+    Document doc = textarea.document;
+    //System.out.println(doc);
+    doc.addDocumentListener(new DocumentListener() {
+	//editor.setSketchModified(true);
+
+        public void insertUpdate(DocumentEvent e) {
+	  //displayEditInfo(e);
+	  //System.out.println(e);
+	  //if (!sketchModified) setSketchModified(true);
+        }
+        public void removeUpdate(DocumentEvent e) {
+	  //displayEditInfo(e);
+	  //System.out.println(e);
+        }
+        public void changedUpdate(DocumentEvent e) {
+	  //displayEditInfo(e);
+	  //System.out.println(e);
+	  //if (!sketchModified) setSketchModified(true);
+        }
+        private void displayEditInfo(DocumentEvent e) {
+	  //Document doc = (Document)e.getDocument();
+	  //System.out.println(e);
+        }
+      });
+    */
   }
 
 
@@ -358,6 +387,7 @@ public class PdeEditor extends Panel {
       historyWriter.flush();  // ??
       historyLast = program;
 
+      //JMenuItem menuItem = new JMenuItem(modeStr + " - " + readableDate);
       MenuItem menuItem = new MenuItem(modeStr + " - " + readableDate);
       menuItem.addActionListener(base.historyMenuListener);
       base.historyMenu.insert(menuItem, 0);

@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 
+//import javax.swing.*;
+
 
 public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
   static final String EMPTY_STATUS = "                                                                 ";
@@ -50,6 +52,7 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
   int currentRollover;
   int currentSelection;
 
+  //JPopupMenu popup;
   PopupMenu popup;
 
   int buttonCount;
@@ -315,6 +318,7 @@ public class PdeEditorButtons extends Panel /*implements ActionListener*/ {
 
     if (currentSelection == OPEN) {
       if (popup == null) {
+	//popup = new JPopupMenu();
 	popup = new PopupMenu();
 	add(popup);
       }

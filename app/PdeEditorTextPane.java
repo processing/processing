@@ -36,7 +36,7 @@ public class PdeEditorTextPane extends JTextPane {
   protected JTextPane textPane;
 
   // styled document that is the model for the textPane
-  protected HighLightedDocument document;
+  public HighLightedDocument document; // pdebase needs it for undo
 
   // a reader to be used to feed the doc to the lexer
   protected DocumentReader documentReader;
