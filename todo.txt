@@ -32,14 +32,17 @@ X netscape/javascript had to be included for linux and for expert
 X   add it to the cvs and the build scripts
 X   also needs to be included for 1.4 on the mac
 X   probably a good idea to include on all
-
-_ multiple jar export is broken
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067307030;start=0
+X multiple jar export is broken
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067307030;start=0
 
 
 0068
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
+
+_ jikes errors have no newlines because it's a buffered reader
+_   and the newlines are removed when read
+
 
 console
 dh b _ clear console each time 'run' gets hit

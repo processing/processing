@@ -6,16 +6,17 @@ about to enjoy is extremely hot.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0067 - 27 october 2003
+ABOUT REV 0067 - 28 october 2003
 
-another bug fix release. medium importance, this release..
+another bug fix release. high importance for people using 'java' 
+mode, or external libraries (like amit's jsyn stuff), or of medium
+importance for everyone else.
 
 
 [ bug fixes ]
 
-- actually set the correct version number for the about dialog. also
-  added code to prevent the wrong release number from being used on a
-  release.
+- set the correct version number for the about dialog. also added code
+  to prevent the wrong release number from being used on a release.
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
 
 - fixed IllegalArgumentException when using run.bat or run-expert.bat
@@ -27,11 +28,49 @@ another bug fix release. medium importance, this release..
 - updated to a new version of jikes, the compiler that's used behind
   the scenes. fixes a couple issues where code wouldn't compile.
 
+- save/saveFrame was super-slow, especially on macosx, where times for
+  a 640x480 image could easily approach a full minute. things have
+  been sped up way more better. 
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135103;start=0
+
+- size not properly detected during export when "size()" was the first
+  thing in a program. now fixed.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067217366;start=0
+
+
+[ bug fixes for java mode ]
+
+- native libraries (.dll, .jnilib, or .so files) can be dropped
+  into the 'code' folder of your sketch. this didn't work in the past,
+  but is now much simpler. 
+
+- println() wasn't working properly from java mode classes, and
+  sometimes caused applications to die. no more.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067218548;start=0
+
+- you no longer need to have java installed (i.e. the expert version)
+  to use java mode. so the following entry has been removed from
+  bugs.txt: "java mode in rev 63 and higher only works if you have
+  java available in your path--meaning that you've installed it
+  yourself under windows or linux, or this will always be the case 
+  for macosx."
+
+- fixed a problem with multiple jar files
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067359364;start=0
+
 
 [ changes ]
 
 - apple has updated quicktime for java on the mac for 6.4
   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
+
+- on compiler errors, instead of the message saying "send to
+  bugs@proce55ing.net" instead it asks to use the discourse section of
+  the site, and automatically opens that page in a web browser.
+
+- netscape.javascript is now included in the lib/ folder. seems that
+  not all jvm distributions include it, so just easier to include our
+  own copy. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

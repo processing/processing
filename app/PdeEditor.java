@@ -773,9 +773,17 @@ public class PdeEditor extends JPanel {
             externalPaths;
         }
 
+        // get a useful folder name for the 'code' folder
+        // so that it can be included in the java.library.path
+        String codeFolderPath = "";
+        if (externalCode != null) {
+          codeFolderPath = externalCode.getCanonicalPath();
+        }
+
         // create a runtime object
         runtime = new PdeRuntime(this, className,
-                                 externalRuntime, externalPaths);
+                                 externalRuntime, 
+                                 codeFolderPath, externalPaths);
 
         // if programType is ADVANCED
         //   or the code/ folder is not empty -> or just exists (simpler)
