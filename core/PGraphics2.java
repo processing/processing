@@ -421,37 +421,63 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  public void ellipse(float a, float b, float c, float d) {
+    float x = a;
+    float y = b;
+    float w = c;
+    float h = d;
+
+    if (ellipseMode == CORNERS) {
+      w = c - a;
+      h = d - b;
+
+    } else if (ellipseMode == CENTER_RADIUS) {
+      x = a - c;
+      y = b - d;
+      w = c * 2;
+      h = d * 2;
+
+    } else if (ellipseMode == CENTER) {
+      x = a - c/2f;
+      y = b - d/2f;
+    }
+
+    ellipse.setFrame(x, y, w, h);
+    draw_shape(ellipse);
+  }
+
+  /*
   public void arc(float start, float stop,
                   float x, float y, float radius) {
     arc(start, stop, x, y, radius, radius);
   }
+  */
 
 
   public void arc(float start, float stop,
-                  float x, float y, float w, float h) {
+                  float a, float b, float c, float d) {
+    float x = a;
+    float y = b;
+    float w = c;
+    float h = d;
+
     if (ellipseMode == CORNERS) {
-      w -= x;
-      h -= y;
+      w = c - a;
+      h = d - b;
 
     } else if (ellipseMode == CENTER_RADIUS) {
-      x -= w;
-      y -= h;
-      w *= 2;
-      h *= 2;
+      x = a - c;
+      y = b - d;
+      w = c * 2;
+      h = d * 2;
 
     } else if (ellipseMode == CENTER) {
-      x -= w;
-      y -= h;
+      x = a - c/2f;
+      y = b - d/2f;
     }
 
     arc.setArc(x, y, w, h, start, stop-start, Arc2D.PIE);
     draw_shape(arc);
-  }
-
-
-  public void ellipse(float x, float y, float hradius, float vradius) {
-    ellipse.setFrame(x, y, hradius, vradius);
-    draw_shape(ellipse);
   }
 
 
@@ -533,8 +559,8 @@ public class PGraphics2 extends PGraphics {
 
   protected void check_image_cache(PImage who) {
     if (who.cache == null) {
-      cache = new BufferedImage(who.width, who.height,
-                                BufferedImage.TYPE_INT_ARGB);
+      who.cache = new BufferedImage(who.width, who.height,
+                                    BufferedImage.TYPE_INT_ARGB);
       who.modified();  // mark the whole thing for update
     }
 
@@ -647,9 +673,6 @@ public class PGraphics2 extends PGraphics {
 
 
   public void printMatrix() {
-    // TODO maybe format this the same way as the superclass
-    //AffineTransform t = graphics.getTransform();
-    //System.out.println(t);  // not sure what this does
     graphics.getTransform().getMatrix(transform);
 
     m00 = (float) transform[0];

@@ -828,36 +828,7 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // CIRCLES AND ELLIPSES
-
-
-  public void circle(float x, float y, float radius) {
-    switch (ellipseMode) {
-    case CENTER_RADIUS:
-      break;
-    case CENTER:
-      radius /= 2f; radius /= 2f;
-      break;
-    case CORNER:
-      radius /= 2f; radius /= 2f;
-      x += radius; y += radius;
-      break;
-    case CORNERS:
-      radius = (radius - x) / 2f;
-      radius = (radius - y) / 2f;
-      x += radius;
-      y += radius;
-      break;
-    }
-
-    // TODO make a circle happen
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // ELLIPSE
+  // ELLIPSE AND ARC
 
 
   public void ellipseMode(int mode) {
@@ -865,72 +836,58 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void ellipse(float x, float y, float hradius, float vradius) {
-    switch (ellipseMode) {
-    case CENTER_RADIUS:
-      break;
-    case CENTER:
-      hradius /= 2f; vradius /= 2f;
-      break;
-    case CORNER:
-      hradius /= 2f; vradius /= 2f;
-      x += hradius; y += vradius;
-      break;
-    case CORNERS:
-      hradius = (hradius - x) / 2f;
-      vradius = (vradius - y) / 2f;
-      x += hradius;
-      y += vradius;
-      break;
+  public void ellipse(float a, float b, float c, float d) {
+    float x = a;
+    float y = b;
+    float w = c;
+    float h = d;
+
+    if (ellipseMode == CORNERS) {
+      w = c - a;
+      h = d - b;
+
+    } else if (ellipseMode == CENTER_RADIUS) {
+      x = a - c;
+      y = b - d;
+      w = c * 2;
+      h = d * 2;
+
+    } else if (ellipseMode == CENTER) {
+      x = a - c/2f;
+      y = b - d/2f;
     }
 
     // TODO draw an ellipse
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // ARC
-
-
-  //public void arcMode(int mode) {
-  //arcMode = mode;
-  //}
-
-
   /**
    * Identical parameters and placement to ellipse,
    * but draws only an arc of that ellipse.
+   *
+   * angleMode() sets DEGREES or RADIANS for the start & stop
+   * ellipseMode() sets the placement.
    */
   public void arc(float start, float stop,
-                  float x, float y, float radius) {
-    arc(start, stop, x, y, radius, radius);
-  }
+                  float a, float b, float c, float d) {
+    float x = a;
+    float y = b;
+    float w = c;
+    float h = d;
 
+    if (ellipseMode == CORNERS) {
+      w = c - a;
+      h = d - b;
 
-  /**
-   * Identical parameters and placement to ellipse,
-   * but draws only an arc of that ellipse.
-   */
-  public void arc(float start, float stop,
-                  float x, float y, float hr, float vr) {
-    switch (ellipseMode) {
-    case CENTER_RADIUS:
-      break;
-    case CENTER:
-      hr /= 2f; vr /= 2f;
-      break;
-    case CORNER:
-      hr /= 2f; vr /= 2f;
-      x += hr; y += vr;
-      break;
-    case CORNERS:
-      hr = (hr - x) / 2f;
-      vr = (vr - y) / 2f;
-      x += hr;
-      y += vr;
-      break;
+    } else if (ellipseMode == CENTER_RADIUS) {
+      x = a - c;
+      y = b - d;
+      w = c * 2;
+      h = d * 2;
+
+    } else if (ellipseMode == CENTER) {
+      x = a - c/2f;
+      y = b - d/2f;
     }
 
     if (angleMode == DEGREES) {
@@ -2254,6 +2211,12 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Note that background() must be called before any
+   * transformations occur, because some implementations may
+   * require the current transformation matrix to be identity
+   * before drawing.
+   */
   public void background(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       background((float) rgb);
