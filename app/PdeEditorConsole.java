@@ -55,6 +55,9 @@ public class PdeEditorConsole extends Component {
   static PrintStream consoleOut;
   static PrintStream consoleErr;
 
+  static OutputStream stdoutFile;
+  static OutputStream stderrFile;
+
 
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
@@ -65,8 +68,30 @@ public class PdeEditorConsole extends Component {
       systemOut = System.out;
       systemErr = System.err;
 
-      consoleOut = new PrintStream(new PdeEditorConsoleStream(this, false));
-      consoleErr = new PrintStream(new PdeEditorConsoleStream(this, true));
+      if (PdeBase.getBoolean("editor.console.out.enabled", false)) {
+	String outFileName = 
+	  PdeBase.get("editor.console.out.file", "lib/stdout.txt");
+	try {
+	  stdoutFile = new FileOutputStream(outFileName);
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+      }
+
+      if (PdeBase.getBoolean("editor.console.err.enabled", false)) {
+	String errFileName = 
+	  PdeBase.get("editor.console.err.file", "lib/stderr.txt");
+	try {
+	  stderrFile = new FileOutputStream(errFileName);
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+      }
+
+      consoleOut = 
+	new PrintStream(new PdeEditorConsoleStream(this, false, stdoutFile));
+      consoleErr = 
+	new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
 
       System.setOut(consoleOut);
       System.setErr(consoleErr);
@@ -95,6 +120,7 @@ public class PdeEditorConsole extends Component {
   public void paint(Graphics screen) {
     //systemOut.println("paint()");
     if (bgColor == null) {
+
       bgColor = PdeBase.getColor("editor.console.bgcolor", 
 				 new Color(26, 26, 26));
       fgColorOut = PdeBase.getColor("editor.console.fgcolor.output", 
@@ -251,10 +277,13 @@ class PdeEditorConsoleStream extends OutputStream {
   PdeEditorConsole parent;
   boolean err; // whether stderr or stdout
   byte single[] = new byte[1];
+  OutputStream echo;
 
-  public PdeEditorConsoleStream(PdeEditorConsole parent, boolean err) {
+  public PdeEditorConsoleStream(PdeEditorConsole parent, 
+				boolean err, OutputStream echo) {
     this.parent = parent;
     this.err = err;
+    this.echo = echo;
   }
 
   public void close() { }
@@ -263,10 +292,28 @@ class PdeEditorConsoleStream extends OutputStream {
 
   public void write(byte b[]) {  // appears never to be used
     parent.write(b, 0, b.length, err);
+    if (echo != null) {
+      try {
+	echo.write(b); //, 0, b.length);
+	echo.flush();
+      } catch (IOException e) {
+	e.printStackTrace();
+	echo = null;
+      }
+    }
   }
 
   public void write(byte b[], int offset, int length) {
     parent.write(b, offset, length, err);
+    if (echo != null) {
+      try {
+	echo.write(b, offset, length);
+	echo.flush();
+      } catch (IOException e) {
+	e.printStackTrace();
+	echo = null;
+      }
+    }
     /*
     //System.out.println("leech2:");
     if (length >= 1) {
@@ -295,6 +342,15 @@ class PdeEditorConsoleStream extends OutputStream {
   public void write(int b) {
     single[0] = (byte)b;
     parent.write(single, 0, 1, err);
+    if (echo != null) {
+      try {
+	echo.write(b);
+	echo.flush();
+      } catch (IOException e) {
+	e.printStackTrace();
+	echo = null;
+      }
+    }
     //parent.message(String.valueOf((char)b), err);
   }
 }
