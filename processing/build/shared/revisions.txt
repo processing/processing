@@ -7,7 +7,47 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0077
+ABOUT REV 0078
+
+bug fixes: 
+
+- lines of text were getting mashed together both horizontally and
+  vertically. the font stuff was moved around a lot in 0077 and so
+  this made a mess of things.
+
+- backwards rectangles and ellipses are now drawn properly. (i.e. 
+  rectangles where (x2 < x1) or (y2 < y1), or ellipses with a 
+  negative width or height).
+
+- same thing for backwards images, note that an image drawn backwards
+  won't actually flip the image or anything nutty like that.
+
+api changes:
+
+- as of 0077, font.width() works differently. it returns the width of
+  a one point font, not the font at its current size. the font api
+  built into PGraphics/PApplet now consists of:
+
+  public void textFont(PFont which);
+  public void textFont(PFont which, float size);
+  public void textSize(float size);
+  public void textLeading(float leading);
+  public void textMode(int mode);
+  public void textSpace(int space);
+  public float textAscent();
+  public float textDescent();
+  public float textWidth(char c);
+  public float textWidth(String s);
+
+  instead of using PFont.width() or PFont.ascent() to get the size of
+  text, you should use textWidth() or textAscent() in PGraphics/PApplet
+  which will return values based on what was set in textSize().
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0077 - 1 March 2005
 
 * PLEASE READ THIS INFORMATION BEFORE POSTING TO THE BETA LIST *
 
@@ -32,6 +72,9 @@ changes/important notes:
   portion (this is currently no faster, but later will represent an
   optimization). 
 
+- you'll also need to use loadPixels() on any PGraphics object 
+  before reading its pixels and messing with its pixels[] buffer.
+
 - using size() with actual numbers, as opposed to variables, is
   strongly recommended. there's no reason to use size(WIDTH, HEIGHT)
   because the variables width & height can be used for the same
@@ -44,9 +87,9 @@ changes/important notes:
 
   PGraphics     2D rendering with Java 1.1 
                 this is the old renderer, but it has been semi-disabled
-		in the current release. this means that things won't 
-	        draw properly (or at all) in 2D in most web browsers 
-	        (where the java plugin is not installed). this renderer
+                in the current release. this means that things won't 
+                draw properly (or at all) in 2D in most web browsers 
+                (where the java plugin is not installed). this renderer
                 will no longer support smooth() and noSmooth().
 
   PGraphics2    2D rendering for systems using Java 1.3+ 
@@ -56,9 +99,9 @@ changes/important notes:
                 on Java2D. this was a shortcut to get a renderer that
                 worked properly on the vast majority of machines in
                 our target audience (courses, beginners, developers) 
-	        until i have time to complete the 1.1 renderer (so
+                until i have time to complete the 1.1 renderer (so
                 that exporting to the web works again). basically, 
-		i've sold out, in hope of ever reaching 1.0.
+                i've sold out, in hope of ever reaching 1.0.
 
   PGraphics3    3D rendering in Java 1.1
                 this is loaded when the depth() command is executed
@@ -69,11 +112,11 @@ changes/important notes:
                 triangle rendering, meaning that things are much
                 faster than before (although textures are a little
                 fuggly). there are no plans to support smooth() in 
-		this mode. for smoothing, use the OpenGL renderer.
-		stroke caps/joins will also probably not work in this 
-		mode (lines are 2D objects, how do you put a stroke
- 		on a 3D object?), but that hasn't yet been fully
-		determined.
+                this mode. for smoothing, use the OpenGL renderer.
+                stroke caps/joins will also probably not work in this 
+                mode (lines are 2D objects, how do you put a stroke
+                on a 3D object?), but that hasn't yet been fully
+                determined.
 
   PGraphicsGL   OpenGL renderer for use in Java 1.3+ 
                 jogl requires java 1.3, and this rendering option can
@@ -86,13 +129,13 @@ changes/important notes:
                 for instance, to write a postscript renderer, one
                 need only implement the "PMethods" interface with
                 your class. then, at the beginning of draw(), use:
-		recordFrame(psRenderer);
-		which will echo all rendering calls to that
+                recordFrame(psRenderer);
+                which will echo all rendering calls to that
                 class until the end of the frame. this handles
                 writing to files, we won't be supporting plug-in
                 visual renderers in Processing 1.0 (unless you want
-		to use this to open up a separate window or something
-		weird like that)
+                to use this to open up a separate window or something
+                weird like that)
 
   if you're curious, or filing a bug report, you can always check what
   the current rendering engine is by using: println(g.getClass());
