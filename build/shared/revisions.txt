@@ -4,6 +4,14 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0061 - 
+
+[ bug fixes ]
+
+- modifications to the sound code that prevented it from running with
+  the microsoft java 1.1 vm.
+
+
 ABOUT REV 0060 - 22 september 2003
 
 IMPORTANT NOTE! ACHTUNG!
