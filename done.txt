@@ -1,3 +1,10 @@
+0051
+X go through the bboard and make sure everything up to date here
+X   see if moved topics need to be deleted as well
+X     (log in from another machine as guest)
+X weirdness with mac swiss-german keyboard on []{}|
+
+
 0050
 X fix quotes missing in the export html
 
