@@ -12,6 +12,6 @@ fi
 #QT_JAVA_PATH=..\\build\\shared\\lib\\qtjava.zip
 
 
-CLASSPATH=lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\oro.jar\;java\\lib\\ext\\comm.jar\;${QT_JAVA_PATH}
+CLASSPATH=java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\oro.jar\;java\\lib\\ext\\comm.jar\;${QT_JAVA_PATH}
 
 cd work && ./java/bin/java -cp ${CLASSPATH} PdeBase
