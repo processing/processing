@@ -1,8 +1,21 @@
 0072 pde
 X error message when an import isn't available
+o particle examples c & d don't have their extra files
+o let's not call it 'expert', let's just say w/o java
+X new thread-safer version of the PdeEditorConsole
+
+macosx
+_ resize box intrudes on the scroller for the console area
+_ horizontal scroller is always present
 
 
 //
+
+_ creating sketchbook / lab situations
+_   test to see if it's possible to write to "My Documents"
+_   if not, should bring up a prompt asking where to put sketchbook
+_   also put something in lib/preferences.txt for default location
+_     this way a course admin can change the default location
 
 _ allow to use doubles on casting -- particularly for Math.cos() et al
 
@@ -43,9 +56,7 @@ _ if additional tab is "public" class.. then make external?
 
 
 casey notes
-_ particle examples c & d don't have their extra files
 _ sketches no longer require a "data" folder
-_ let's not call it 'expert', let's just say w/o java
 _ "draw" is not highlighted as a keyword.. other keywords?
 _   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
 _   PClient(), PClient.available(), PClient.read(), 
