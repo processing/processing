@@ -43,13 +43,15 @@ X use osx utilities to setfileinfo for .jar files etc
 o try to build macutils under osx
 X bug where pde.properties was being replaced for sketch.properties
 X changed pde.properties_PLATFORM -> pde_PLATFORM.properties
+X f subst problems: include , and ; as allowable
+X   float f = 0.3; and fill(0.3, 0.2, 0.1);
+X windows needs to work from the .exe
+X   also included run.bat just in case
 
-before 39 goes out
-_ f subst problems: include , and ; as allowable
-_   float f = 0.3; and fill(0.3, 0.2, 0.1);
-_ make win/linux write stderr to stderr.txt like the mac
-_   this will be useful until i implement scrollbar
 
+0039
+a _ make win/linux write stderr to stderr.txt like the mac
+a _   this will be useful until i implement scrollbar
 
 bagel
 a _ serial
@@ -96,6 +98,7 @@ a _     include release number, platform, and a copy of the code
 a _ need comprehensive set of tests for 'f' substitution scenarios
 
 web / docs
+a _ check on linefeeds and other errors with bbs on web site
 a _ online discussion/talk system (gets people using the site too)
 a _ online signup cgi for people to add themselves to the list
 a _ see about setting up simple bug tracker/feature system
