@@ -1,33 +1,10 @@
-0048
+0049
+_ disappearing text caret on win2k
+_   works in 'insert' mode
+_ pmouseX and pmouseX should be colored with mouseX and mouseY
 
-macosx
-X include note in the readme that 1.4 is not supported
-X is sketch.properties saving properly under macosx?
-X text in editor is anti-aliased, allow to turn off (franklin_mint)
-X   also make text courier instead of monospaced
-public void paint(Graphics g) 
-{       
-  Graphics2D g2 = (Graphics2D) g; 
-  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);                
-  super.paint(g2);       
-}
-
-pde
-X re-enable wheel mouse
-X   just uses #ifdef for JDK14
-o   System.getProperty("java.version") -> "1.4.1_01"
-
-windows
-X remove built-in jre (!)
-X   add folder and instructions for serial in expert
-X   modify run.bat, modify .exe file as well
-X add -Xmx128m -Xms128m because people running out of memory (pitaru)
-X   tried with a 3k x 1k image and things broke
-o   maybe command line read properties from a file in lib
-
-macos9 
-X do some font tweaking (monaco 9 or 10 might be good)
+_ several examples broken (note from creas) in bugs.txt
+_ pmouseX problem reported by casey (in bugs.txt)
 
 
 ................................................................
@@ -40,6 +17,7 @@ _   it's sucking cpu and won't open a window until the delay is up
 _ is quad strip broken or not behaving as expected? (me)
 _   may be correct, it worked for nik
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+_ too many push() will silently stop the applet inside a loop
 
 
 bagel / features
