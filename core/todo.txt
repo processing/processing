@@ -5,6 +5,8 @@ X   lines also getting vertically smashed together
 X   make a note of the change to font.width()
 X backwards rects and backwards ellipses weren't properly drawn
 X   code now compensates for negative widths or swapped x1/x2
+X fix noLoop() not properly running
+X also fix redraw() to include interrupt() again
 
 X made loadStrings() and openStream(File) static again
 _   fix other stuff that's supposed to be static
