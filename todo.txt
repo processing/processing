@@ -40,12 +40,18 @@ X help->reference and find in reference don't work on some machines
 X   complaints from osx and windows..
 X after hitting replace, dim the replace button
 X   otherwise it causes another replace to happen
+X quicktime 6.4 update breaks p5 on the mac?
+X   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
+X   "Type quicktime.std.stdQTConstants was not found"
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
+X   http://docs.info.apple.com/article.html?artnum=120255
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
 
 _ included code is not packaged in the outgoing jar file on export
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
+
 
 ................
 
@@ -75,6 +81,8 @@ _ BImage.smooth() ?
 _ mouse wheel not working on macosx, need to dynamically load 1.4 code
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ simong interested in helping
+_ set PATH to include java (!)
+_   external classes currently require expert release
 
 _ find/replace.. when hitting 'find', select the text in the field
 _   give that field focus explicitly, rather than just for typing
@@ -86,22 +94,22 @@ _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
 _   there should be other places that they work.. 
 _   could even copy the dll to the p5 folder from the code folder
 
-_ text(String.valueOf(i+1), left + i*20, top);
-_   unexpected token "String"
-
 _ it's possible to write non-1.1 code, even syntax
 _   would -source 1.1 help this? 
 _  'final int' needs to be 'static final int' in 1.1
 
-post-beta
-_ get rid of 'data' folder if not used?
-_   auto-create code and data folder when doing the 'add files to sketch..'
+
+PREPROC
+_ text(String.valueOf(i+1), left + i*20, top);
+_   unexpected token "String"
 
 
 lotsa video issues
 _ quicktime 6.4 update breaks p5 on the mac?
+_   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
 _   "Type quicktime.std.stdQTConstants was not found"
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
+_   http://docs.info.apple.com/article.html?artnum=120255
 _ split classes to BVideo and BMovie ? 
 _ things will freeze if winvdig not installed
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
@@ -136,7 +144,6 @@ _ set default framerate of 24? 30? 2x that?
 
 
 MEDIUM
-_ set PATH to include java (!)
 _ jikes errors are missing newline/linefeed ?
 _ using run-expert.bat on 62 causes NullPointerException weirdness (?)
 _ network/shared_canvas, network/value has old code
@@ -701,6 +708,9 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 dh 1 _ rename doesn't set focus to renamer area
    1 _   under windows, immediately typing after rename doesn't select it
 
+   1 _ get rid of 'data' folder if not used?
+   1 _   auto-create code and data folder 
+   1 _   when doing the 'add files to sketch..'
    1 _ don't cache stuff from loadStrings and others
    1 _   mac java vm won't give up old version of file
    1 _   or use setUseCaches(false)
