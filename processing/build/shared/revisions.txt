@@ -1,3 +1,31 @@
+ABOUT REV 0048 - 7 january 2003
+
+[ mac os ]
+
+- this release includes a bit of tweaking to the fonts that are used by
+  default so that they look nicer on the mac. also, anti-aliasing is
+  turned *off* by default (thanks to franklin_mint for the tip), which 
+  is a little more appropriate for coding. if you want to re-enable it, 
+  check out pde.properties inside 'lib'.
+
+- tried java 1.4 dp8 but it *does not work*, at least not very well,
+  with processing. assertion failures or outright crashes. blech. 
+  hopefully apple will get this cleaned up and finished soon, because
+  it's already running fine under 1.4 on windows.
+
+[ windows ] 
+
+- the release is now split in two, using 'basic' and 'advanced' versions.
+  the basic release includes a working java vm, and is all set up and 
+  ready to go. the advanced version is for people who already have java
+  installed (and don't want to deal with the 20MB download), and know what 
+  they're doing enough that they can also install the serial port code by 
+  hand. instructions on installing the serial code are in the 'serial' 
+  folder inside the advanced release.
+
+- increased the default memory allocation to 64 MB. 
+
+
 ABOUT REV 0047 - 5 january 2003
 
 [ happy new year ]

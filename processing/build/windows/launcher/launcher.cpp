@@ -11,7 +11,7 @@
 
 //#define STACKSIZE_ARGS "-mx60m -ms60m "
 //#define STACKSIZE_MATCH " -mx"
-#define JAVA_ARGS ""
+#define JAVA_ARGS "-Xms64m -Xmx64m "
 #define JAVA_MAIN_CLASS "PdeBase"
 //#define JAVA_CLASS_PATH "lib;lib\\build;lib\\pde.jar;lib\\kjc.jar;lib\\oro.jar;lib\\ext\\comm.jar"
 
@@ -102,6 +102,19 @@ BOOL CLauncherApp::InitInstance()
 	// put quotes around contents of cp, 
 	// because %s might have spaces in it.
 
+	// test to see if running with a java runtime nearby or not
+
+	char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
+    *testpath = 0;
+	strcpy(testpath, loaddir);
+	strcat(testpath, "\\java\\bin\\java.exe");
+	FILE *fp = fopen(testpath, "rb");
+	if (fp == NULL) {
+		AfxMessageBox("no java runtime");
+	} else {
+		AfxMessageBox("found java runtime");
+	}
+
     sprintf(cp, 
 		"-cp \""
         "%s\\lib;"
@@ -109,9 +122,15 @@ BOOL CLauncherApp::InitInstance()
         "%s\\lib\\pde.jar;"
 	    "%s\\lib\\kjc.jar;"
 	    "%s\\lib\\oro.jar;"
+#ifdef LOCAL_JRE
 	    "%s\\java\\lib\\ext\\comm.jar"
+#endif
 		"\" ",
+#ifdef LOCAL_JRE
 	    loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
+#else		
+	    loaddir, loaddir, loaddir, loaddir, loaddir);
+#endif
 		
 	//sprintf(cp, "-cp ");
 	//strcat(cp, JAVA_CLASSPATH);
@@ -133,10 +152,14 @@ BOOL CLauncherApp::InitInstance()
 
 	char *executable = (char *)malloc(256 * sizeof(char));
 	// loaddir is the name path to the current application
+#ifdef LOCAL_JRE
 	strcpy(executable, loaddir);
 	// copy in the path for jrew, relative to launcher.exe
 	//strcat(executable, "\\bin\\jrew");
 	strcat(executable, "\\java\\bin\\javaw");
+#else 
+	strcpy(executable, "java");
+#endif
 
 	//AfxMessageBox(executable);
 
@@ -164,7 +187,9 @@ BOOL CLauncherApp::InitInstance()
 		switch ((int)result) {
 			case ERROR_FILE_NOT_FOUND:
 			case ERROR_PATH_NOT_FOUND:
-				AfxMessageBox("A required file could not be found, please re-install.");
+				AfxMessageBox("A required file could not be found. \n"
+							  "You may need to install a Java runtime\n"
+							  "or re-install Proce55ing.");
 				break;
 			case 0:
 			case SE_ERR_OOM:
