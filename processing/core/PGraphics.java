@@ -1,10 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BGraphics - main graphics and rendering context for bagel
+  PGraphics - main graphics and rendering context for bagel
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03 Massachusetts Institute of Technology 
+  Copyright (c) 2001-04 Massachusetts Institute of Technology 
   (Except where noted that the author is not Ben Fry)
 
   This library is free software; you can redistribute it and/or
@@ -23,6 +23,8 @@
   Boston, MA  02111-1307  USA
 */
 
+package processing.core;
+
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -32,7 +34,7 @@ import java.net.*;
 import java.util.zip.*;
 
 
-public class BGraphics extends BImage implements BConstants {
+public class PGraphics extends PImage implements PConstants {
   public Applet applet;  // not comfortable with this being static
 
   // ........................................................
@@ -131,7 +133,7 @@ public class BGraphics extends BImage implements BConstants {
   float lightX[], lightY[], lightZ[];
   int lightKind[];
 
-  // inherited from BImage
+  // inherited from PImage
   //boolean smooth = false;  // antialiasing
 
   // projection
@@ -183,12 +185,12 @@ public class BGraphics extends BImage implements BConstants {
 
   // OLD_GRAPHICS
   
-  BPolygon polygon;     // general polygon to use for shape
-  BPolygon fpolygon;    // used to fill polys for tri or quad strips
-  BPolygon spolygon;    // stroke/line polygon
+  PPolygon polygon;     // general polygon to use for shape
+  PPolygon fpolygon;    // used to fill polys for tri or quad strips
+  PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
 
-  BPolygon tpolygon;    // for calculating concave/convex
+  PPolygon tpolygon;    // for calculating concave/convex
   int TPOLYGON_MAX_VERTICES = 512;
   int tpolygon_vertex_order[]; // = new int[MAX_VERTICES];
 
@@ -210,13 +212,13 @@ public class BGraphics extends BImage implements BConstants {
 
   // lines
   static final int DEFAULT_LINES = 512;
-  BLine line;  // used for drawing
+  PLine line;  // used for drawing
   int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
   int lines_count;
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
-  BTriangle triangle; // used for rendering
+  PTriangle triangle; // used for rendering
   int triangles[][] = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
   int triangles_count;   // total number of triangles
 
@@ -242,9 +244,9 @@ public class BGraphics extends BImage implements BConstants {
   boolean texture;
 
   // NEW_GRAPHICS
-  private BImage textureImage;
+  private PImage textureImage;
   static final int DEFAULT_TEXTURES = 3;
-  BImage textures[] = new BImage[DEFAULT_TEXTURES];
+  PImage textures[] = new PImage[DEFAULT_TEXTURES];
   int texture_index;
   
 
@@ -305,7 +307,7 @@ public class BGraphics extends BImage implements BConstants {
 
   int text_mode = ALIGN_LEFT;
   int text_space = OBJECT_SPACE;
-  BFont text_font;
+  PFont text_font;
   boolean drawing_text = false;
 
 
@@ -315,20 +317,20 @@ public class BGraphics extends BImage implements BConstants {
 
 
   /**
-   * Constructor for the BGraphics object.
+   * Constructor for the PGraphics object.
    * This prototype only exists because of annoying 
    * java compilers, and should not be used.
    */
-  public BGraphics() { }
+  public PGraphics() { }
 
 
   /**
-   * Constructor for the BGraphics object
+   * Constructor for the PGraphics object
    *
    * @param  iwidth   viewport width
    * @param  iheight  viewport height
    */
-  public BGraphics(int iwidth, int iheight) {
+  public PGraphics(int iwidth, int iheight) {
     resize(iwidth, iheight);
 
     // init color/stroke/fill
@@ -400,12 +402,12 @@ public class BGraphics extends BImage implements BConstants {
     image = Toolkit.getDefaultToolkit().createImage(mis);
 
     // use now in the old engine too
-    line = new BLine(this);
+    line = new PLine(this);
 
-    // moved from BGraphics constructor since not needed by opengl
+    // moved from PGraphics constructor since not needed by opengl
     if (hints[NEW_GRAPHICS]) {  
-      //line = new BLine(this);
-      triangle = new BTriangle(this);
+      //line = new PLine(this);
+      triangle = new PTriangle(this);
 
       /*
       // these are all done on beginFrame(), so not doing them here [fry]
@@ -419,11 +421,11 @@ public class BGraphics extends BImage implements BConstants {
       vertex_end = 0;
 
       // init lines
-      line = new BLine(this);
+      line = new PLine(this);
       lines_count = 0;
 
       // init triangles
-      triangle = new BTriangle(this);
+      triangle = new PTriangle(this);
       triangles_count = 0;
 
       // textures
@@ -450,9 +452,9 @@ public class BGraphics extends BImage implements BConstants {
     shapeKind = 0;
 
     if (!hints[NEW_GRAPHICS]) {
-      polygon  = new BPolygon(this);
-      fpolygon = new BPolygon(this);
-      spolygon = new BPolygon(this);
+      polygon  = new PPolygon(this);
+      fpolygon = new PPolygon(this);
+      spolygon = new PPolygon(this);
       spolygon.vertexCount = 4;
       svertices = new float[2][];
     }
@@ -506,7 +508,7 @@ public class BGraphics extends BImage implements BConstants {
    *  initializes engine before drawing a new frame
    */
   public void beginFrame() {
-    if (BApplet.THREAD_DEBUG) System.out.println(" 1 beginFrame");
+    if (PApplet.THREAD_DEBUG) System.out.println(" 1 beginFrame");
     /*
     if (camera_mode == -1) {
       //System.out.println("setting up camera");
@@ -558,7 +560,7 @@ public class BGraphics extends BImage implements BConstants {
    *  indicates a completed frame
    */
   public void endFrame() {
-    if (BApplet.THREAD_DEBUG) System.out.println("  2 endFrame");
+    if (PApplet.THREAD_DEBUG) System.out.println("  2 endFrame");
 
     if (hints[NEW_GRAPHICS]) {
 
@@ -654,10 +656,10 @@ public class BGraphics extends BImage implements BConstants {
   }
 
 
-  public final void addTexture(BImage image) {
+  public final void addTexture(PImage image) {
 
     if (texture_index == textures.length - 1) {
-      BImage temp[] = new BImage[texture_index<<1];
+      PImage temp[] = new PImage[texture_index<<1];
       System.arraycopy(textures, 0, temp, 0, texture_index);
       textures = temp;
       System.out.println("allocating more textures " + textures.length);
@@ -977,10 +979,10 @@ public class BGraphics extends BImage implements BConstants {
    *  set texture image for current shape
    *  needs to be called between @see beginShape and @see endShape
    *
-   * @param  image  reference to a BImage object
+   * @param  image  reference to a PImage object
    */
-  //public void textureImage(BImage image) {
-  public void texture(BImage image) {
+  //public void textureImage(PImage image) {
+  public void texture(PImage image) {
     if (hints[NEW_GRAPHICS]) {
       if (z_order == true) {
         addTexture(image);
@@ -2281,7 +2283,7 @@ public class BGraphics extends BImage implements BConstants {
     if (tpolygon == null) {
       // allocate on first use, rather than slowing 
       // the startup of the class.
-      tpolygon = new BPolygon(this);
+      tpolygon = new PPolygon(this);
       tpolygon_vertex_order = new int[TPOLYGON_MAX_VERTICES];
     }
     tpolygon.reset(3);
@@ -3187,7 +3189,7 @@ public class BGraphics extends BImage implements BConstants {
    * @param  sx1    x coordinate of upper-lefthand corner in screen space
    * @param  sy1    y coordinate of upper-lefthand corner in screen space
    */
-  public void flat_image(BImage image, int sx1, int sy1) {
+  public void flat_image(PImage image, int sx1, int sy1) {
     int ix1 = 0;
     int iy1 = 0;
     int ix2 = image.width;
@@ -4069,7 +4071,7 @@ public class BGraphics extends BImage implements BConstants {
     }
   }
 
-  public BImage loadImage(String filename) {
+  public PImage loadImage(String filename) {
     if (filename.toLowerCase().endsWith(".tga")) {
       return loadTargaImage(filename);
     }
@@ -4077,7 +4079,7 @@ public class BGraphics extends BImage implements BConstants {
   }
 
   // returns null if no image of that name is found
-  public BImage loadImage(String filename, boolean force) {
+  public PImage loadImage(String filename, boolean force) {
     Image awtimage = null;
     //String randomizer = "?" + nf((int) (random()*10000), 4);
 
@@ -4165,18 +4167,18 @@ public class BGraphics extends BImage implements BConstants {
         // since transparency is often at corners, hopefully this
         // will find a non-transparent pixel quickly and exit
         if ((jpixels[i] & 0xff000000) != 0xff000000) {
-          return new BImage(jpixels, jwidth, jheight, RGBA);
+          return new PImage(jpixels, jwidth, jheight, RGBA);
           //format = RGBA;
           //break;
         }
       }
     }
-    return new BImage(jpixels, jwidth, jheight, RGB);
+    return new PImage(jpixels, jwidth, jheight, RGB);
   }
 
 
   /*
-  public BImage loadImage(String file) { 
+  public PImage loadImage(String file) { 
     try { 
       byte[] imgarray=loadBytes(file); 
       java.awt.Image awtimage = 
@@ -4201,7 +4203,7 @@ public class BGraphics extends BImage implements BConstants {
         e.printStackTrace(); 
       } 
   
-      BImage img=new BImage(pix,w,h,RGB); 
+      PImage img=new PImage(pix,w,h,RGB); 
   
       if (file.toLowerCase().endsWith(".gif")) { 
         for (int i = 0; i < pix.length; i++) { 
@@ -4225,7 +4227,7 @@ public class BGraphics extends BImage implements BConstants {
   // [fry] this could be optimized to not use loadBytes
   // which would help out memory situations with large images
 
-  protected BImage loadTargaImage(String filename) {
+  protected PImage loadTargaImage(String filename) {
     // load image file as byte array 
     byte[] buffer = loadBytes(filename); 
   
@@ -4240,7 +4242,7 @@ public class BGraphics extends BImage implements BConstants {
      boolean hasAlpha=(buffer[16] == 32); 
   
      // setup new image object 
-     BImage img = new BImage(w,h); 
+     PImage img = new PImage(w,h); 
      img.format = (hasAlpha ? RGBA : RGB); 
   
      // targa's are written upside down, so we need to parse it in reverse 
@@ -4275,7 +4277,7 @@ public class BGraphics extends BImage implements BConstants {
     image_mode = mode;
   }
 
-  public void image(BImage image, float x1, float y1) {
+  public void image(PImage image, float x1, float y1) {
     if ((dimensions == 0) && !lighting && !_tint &&
         (image_mode != CENTER_RADIUS)) {
       // if drawing a flat image with no warping, 
@@ -4289,13 +4291,13 @@ public class BGraphics extends BImage implements BConstants {
   }
 
 
-  public void image(BImage image, 
+  public void image(PImage image, 
                     float x1, float y1, float x2, float y2) {
     image(image, x1, y1, x2, y2, 0, 0, image.width, image.height);
   }
 
 
-  public void image(BImage image, 
+  public void image(PImage image, 
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
     switch (image_mode) {
@@ -4361,13 +4363,13 @@ public class BGraphics extends BImage implements BConstants {
   }
 
 
-  public void cache(BImage image) {
+  public void cache(PImage image) {
   }
 
-  public void cache(BImage images[]) {    
+  public void cache(PImage images[]) {    
   }
 
-  protected void cache(BImage image, int index) {
+  protected void cache(PImage image, int index) {
   }
 
 
@@ -4376,9 +4378,9 @@ public class BGraphics extends BImage implements BConstants {
   // TEXT/FONTS
 
 
-  public BFont loadFont(String name) {
+  public PFont loadFont(String name) {
     try {
-      BFont font = new BFont(name, this);
+      PFont font = new PFont(name, this);
       return font;
 
     } catch (IOException e) {
@@ -4391,7 +4393,7 @@ public class BGraphics extends BImage implements BConstants {
   }
 
 
-  public void textFont(BFont which) {
+  public void textFont(PFont which) {
     if (which == null) {
       System.err.println("Ignoring improperly loaded font in textFont()");
       return;
@@ -4405,7 +4407,7 @@ public class BGraphics extends BImage implements BConstants {
     text_font.leading();
   }
 
-  public void textFont(BFont which, float size) {
+  public void textFont(PFont which, float size) {
     if (which == null) {
       System.err.println("Ignoring improperly loaded font in textFont()");
       return;
@@ -4502,7 +4504,7 @@ public class BGraphics extends BImage implements BConstants {
 
 
   public void text(float num, float x, float y) {
-    text(BApplet.nfs(num, 0, 3), x, y, 0);
+    text(PApplet.nfs(num, 0, 3), x, y, 0);
   }
 
   /**
@@ -4511,7 +4513,7 @@ public class BGraphics extends BImage implements BConstants {
    * Users who want more control should use their own nfs() cmmand.
    */
   public void text(float num, float x, float y, float z) {
-    text(BApplet.nfs(num, 0, 3), x, y, z);
+    text(PApplet.nfs(num, 0, 3), x, y, z);
   }
 
 
@@ -4606,19 +4608,19 @@ public class BGraphics extends BImage implements BConstants {
     int d = 1;
     while ((big /= 10) != 0) d++;
 
-    BApplet.println(BApplet.nfs(m00, d, 4) + " " + BApplet.nfs(m01, d, 4) + " " + 
-                    BApplet.nfs(m02, d, 4) + " " + BApplet.nfs(m03, d, 4));
+    PApplet.println(PApplet.nfs(m00, d, 4) + " " + PApplet.nfs(m01, d, 4) + " " + 
+                    PApplet.nfs(m02, d, 4) + " " + PApplet.nfs(m03, d, 4));
 
-    BApplet.println(BApplet.nfs(m10, d, 4) + " " + BApplet.nfs(m11, d, 4) + " " + 
-                    BApplet.nfs(m12, d, 4) + " " + BApplet.nfs(m13, d, 4));
+    PApplet.println(PApplet.nfs(m10, d, 4) + " " + PApplet.nfs(m11, d, 4) + " " + 
+                    PApplet.nfs(m12, d, 4) + " " + PApplet.nfs(m13, d, 4));
 
-    BApplet.println(BApplet.nfs(m20, d, 4) + " " + BApplet.nfs(m21, d, 4) + " " + 
-                    BApplet.nfs(m22, d, 4) + " " + BApplet.nfs(m23, d, 4));
+    PApplet.println(PApplet.nfs(m20, d, 4) + " " + PApplet.nfs(m21, d, 4) + " " + 
+                    PApplet.nfs(m22, d, 4) + " " + PApplet.nfs(m23, d, 4));
 
-    BApplet.println(BApplet.nfs(m30, d, 4) + " " + BApplet.nfs(m31, d, 4) + " " + 
-                    BApplet.nfs(m32, d, 4) + " " + BApplet.nfs(m33, d, 4));
+    PApplet.println(PApplet.nfs(m30, d, 4) + " " + PApplet.nfs(m31, d, 4) + " " + 
+                    PApplet.nfs(m32, d, 4) + " " + PApplet.nfs(m33, d, 4));
 
-    BApplet.println();
+    PApplet.println();
   }
 
 
@@ -4662,19 +4664,19 @@ public class BGraphics extends BImage implements BConstants {
     int d = 1;
     while ((big /= 10) != 0) d++;
 
-    BApplet.println(BApplet.nfs(p00, d, 4) + " " + BApplet.nfs(p01, d, 4) + " " + 
-                    BApplet.nfs(p02, d, 4) + " " + BApplet.nfs(p03, d, 4));
+    PApplet.println(PApplet.nfs(p00, d, 4) + " " + PApplet.nfs(p01, d, 4) + " " + 
+                    PApplet.nfs(p02, d, 4) + " " + PApplet.nfs(p03, d, 4));
 
-    BApplet.println(BApplet.nfs(p10, d, 4) + " " + BApplet.nfs(p11, d, 4) + " " + 
-                    BApplet.nfs(p12, d, 4) + " " + BApplet.nfs(p13, d, 4));
+    PApplet.println(PApplet.nfs(p10, d, 4) + " " + PApplet.nfs(p11, d, 4) + " " + 
+                    PApplet.nfs(p12, d, 4) + " " + PApplet.nfs(p13, d, 4));
 
-    BApplet.println(BApplet.nfs(p20, d, 4) + " " + BApplet.nfs(p21, d, 4) + " " + 
-                    BApplet.nfs(p22, d, 4) + " " + BApplet.nfs(p23, d, 4));
+    PApplet.println(PApplet.nfs(p20, d, 4) + " " + PApplet.nfs(p21, d, 4) + " " + 
+                    PApplet.nfs(p22, d, 4) + " " + PApplet.nfs(p23, d, 4));
 
-    BApplet.println(BApplet.nfs(p30, d, 4) + " " + BApplet.nfs(p31, d, 4) + " " + 
-                    BApplet.nfs(p32, d, 4) + " " + BApplet.nfs(p33, d, 4));
+    PApplet.println(PApplet.nfs(p30, d, 4) + " " + PApplet.nfs(p31, d, 4) + " " + 
+                    PApplet.nfs(p32, d, 4) + " " + PApplet.nfs(p33, d, 4));
 
-    BApplet.println();
+    PApplet.println();
   }
 
 
@@ -5375,7 +5377,7 @@ public class BGraphics extends BImage implements BConstants {
   }
 
 
-  public void background(BImage image) {
+  public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
       System.err.println("background image must be the same size " + 
                          "as your application");
@@ -5969,10 +5971,10 @@ public class BGraphics extends BImage implements BConstants {
   // MATH
 
   // these are *only* the functions used internally
-  // the real math functions are inside BApplet
+  // the real math functions are inside PApplet
 
   // these have been made private so as not to conflict
-  // with the versions found in BApplet when fxn importing happens
+  // with the versions found in PApplet when fxn importing happens
   // also might be faster that way. hmm. 
 
 

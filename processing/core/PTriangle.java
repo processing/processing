@@ -1,8 +1,8 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
- BFont - font object for text rendering
- Part of the Processing project - http://Proce55ing.net
+ PTriangle - handler for tesselated triangle rendering
+ Part of the Processing project - http://processing.org
 
  Copyright (c) 2001-03
  Ben Fry, Massachusetts Institute of Technology and
@@ -24,9 +24,12 @@
  Boston, MA  02111-1307  USA
  */
 
-// written by sami www.sumea.com
+package processing.core;
 
-public class BTriangle implements BConstants
+/**
+ * written by sami www.sumea.com
+ */
+public class PTriangle implements PConstants
 {
   static final int R_GOURAUD = 0x1;
   static final int R_TEXTURE8 = 0x2;
@@ -41,7 +44,7 @@ public class BTriangle implements BConstants
   private float[]   m_zbuffer;
 
   // texture image
-  private BImage    m_tImage;
+  private PImage    m_tImage;
 
   //
   private int     SCREEN_WIDTH;
@@ -182,7 +185,7 @@ public class BTriangle implements BConstants
   private int m_index;
 
   /** */
-  private BGraphics parent;
+  private PGraphics parent;
 
   /** */
   private boolean   m_culling;
@@ -193,7 +196,7 @@ public class BTriangle implements BConstants
   /** */
   private boolean   m_bilinear;
 
-  public BTriangle(BGraphics g) {
+  public PTriangle(PGraphics g) {
     //SCREEN_WIDTH = g.width;
     //SCREEN_HEIGHT = g.height;
     //SCREEN_WIDTH1 = SCREEN_WIDTH-1;
@@ -221,7 +224,7 @@ public class BTriangle implements BConstants
    * Resets polygon attributes
    */
   public void reset() {
-    // reset these in case BGraphics was resized
+    // reset these in case PGraphics was resized
 
     SCREEN_WIDTH = parent.width;
     SCREEN_HEIGHT = parent.height;
@@ -338,7 +341,7 @@ public class BTriangle implements BConstants
   /**
    * Sets texture image used for the polygon
    */
-  public void setTexture(BImage image) {
+  public void setTexture(PImage image) {
     m_tImage = image;
     m_texture = image.pixels;
     TEX_WIDTH = image.width;
@@ -394,7 +397,7 @@ public class BTriangle implements BConstants
    * Renders the polygon
    */
   public void render() {
-    // removed. done in BGraphics [rocha]
+    // removed. done in PGraphics [rocha]
     // increase polygon offset
     //m_index = (m_index + 1) & 0xFFFFFFF;
 

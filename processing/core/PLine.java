@@ -1,8 +1,8 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
- BFont - font object for text rendering
- Part of the Processing project - http://Proce55ing.net
+ PLine - code for rendering lines
+ Part of the Processing project - http://processing.org
 
  Copyright (c) 2001-03
  Ben Fry, Massachusetts Institute of Technology and
@@ -24,8 +24,9 @@
  Boston, MA  02111-1307  USA
  */
 
+package processing.core;
 
-public class BLine implements BConstants
+public class PLine implements PConstants
 {
 
   private int[]   m_pixels;
@@ -97,10 +98,10 @@ public class BLine implements BConstants
   //int x[] = new int[2];
   //int y[] = new int[2];
 
-  private BGraphics parent;
+  private PGraphics parent;
 
 
-  public BLine(BGraphics g)
+  public PLine(PGraphics g)
   {
     //SCREEN_WIDTH = g.width;
     //SCREEN_HEIGHT = g.height;
@@ -126,7 +127,7 @@ public class BLine implements BConstants
 
   public void reset()
   {
-    // reset these in case BGraphics was resized
+    // reset these in case PGraphics was resized
 
     SCREEN_WIDTH = parent.width;
     SCREEN_HEIGHT = parent.height;
