@@ -81,7 +81,7 @@ public class PdePreprocessor {
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
-    usingExternal = PdePreferences.getBoolean("play.external", false);
+    usingExternal = PdePreferences.getBoolean("run.external"); //, false);
   }
 
   /**
@@ -170,7 +170,7 @@ public class PdePreprocessor {
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
 
-    if (PdePreferences.getBoolean("compiler.output_parse_tree", false)) {
+    if (PdePreferences.getBoolean("compiler.output_parse_tree")) {
 
       stream = new PrintStream(new FileOutputStream("parseTree.xml"));
       stream.println("<?xml version=\"1.0\"?>");

@@ -122,12 +122,10 @@ public class PdeCompiler implements PdeMessageConsumer {
       String msg = e.getMessage();
       if ((msg != null) && (msg.indexOf("jikes: not found") != -1)) {
         //System.err.println("jikes is missing");
-        JOptionPane.showMessageDialog(editor.base, 
-                                      "Could not find the compiler.\n" +
-                                      "jikes is missing from your PATH,\n" +
-                                      "see readme.txt for help.",
-                                      "Compiler error",
-                                      JOptionPane.ERROR_MESSAGE);
+        PdeBase.showWarning("Compiler error",
+                            "Could not find the compiler.\n" +
+                            "jikes is missing from your PATH,\n" +
+                            "see readme.txt for help.", null);
         return false;
       }
       e.printStackTrace();
@@ -469,7 +467,7 @@ public class PdeCompiler implements PdeMessageConsumer {
             files[i].charAt(0) != '.') {
           ZipEntry entry = new ZipEntry(nowfar);
           zos.putNextEntry(entry);
-          zos.write(PdeEditor.grabFile(sub));
+          zos.write(PdeBase.grabFile(sub));
           zos.closeEntry();
         }
       }

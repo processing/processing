@@ -4,6 +4,8 @@ X use mozilla for opening urls in linux, switched to more compatible exec()
 
 _ add examples stuff
 
+_ make components all swing components
+
 _ "add library" menu item and submenu
 _   iterate through the 'library' folders
 _ eliminate the requirement for a 'data' folder

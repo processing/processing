@@ -28,31 +28,19 @@ import java.awt.event.*;
 import java.io.*;
 
 
-public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
+public class PdeEditorHeader extends Panel {
   static final String SKETCH_TITLER = "sketch";
-  //static final String USER_TITLER = "user";
 
-  //static final Color primaryColor = Color.white;
-  //static final Color secondaryColor = new Color(153, 153, 153);
-  //static final Color backgroundColor = new Color(51, 51, 51);
-
-  static Color primaryColor; // = Color.white;
-  static Color secondaryColor; // = new Color(153, 153, 153);
-  static Color backgroundColor; // = new Color(51, 51, 51);
+  static Color primaryColor;
+  static Color secondaryColor;
+  static Color backgroundColor;
 
   PdeEditor editor;
 
-  //private String sketch; // name of current file
   int sketchLeft;
   int sketchRight;
   int sketchTitleLeft;
-  //File sketchDir;
   boolean sketchModified;
-
-  //private String user;
-  //int userLeft;
-  //int userRight;
-  //int userTitleLeft;
 
   Font font;
   FontMetrics metrics;
@@ -67,12 +55,9 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     this.editor = eddie; // weird name for listener
 
     if (primaryColor == null) {
-      backgroundColor = PdePreferences.getColor("editor.header.bgcolor", 
-                                                new Color(51, 51, 51));
-      primaryColor = PdePreferences.getColor("editor.header.fgcolor.primary", 
-                                             new Color(255, 255, 255));
-      secondaryColor = PdePreferences.getColor("editor.header.fgcolor.secondary", 
-                                               new Color(153, 153, 153));
+      backgroundColor = PdePreferences.getColor("header.bgcolor");
+      primaryColor    = PdePreferences.getColor("header.fgcolor.primary");
+      secondaryColor  = PdePreferences.getColor("header.fgcolor.secondary");
     }
 
     addMouseListener(new MouseAdapter() {
@@ -92,20 +77,6 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     //userLeft = 0;
     update();
   }
-
-  /*
-  public void setSketch(String sketch, File sketchDir) {
-    this.sketch = sketch;
-    this.sketchDir = sketchDir;
-    sketchLeft = 0;
-    update();
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-    userLeft = 0;
-  }
-  */
 
 
   public void update() {
@@ -147,21 +118,20 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdePreferences.getFont("editor.header.font",
-                                    new Font("SansSerif", Font.PLAIN, 12));
+      font = PdePreferences.getFont("header.font");
       g.setFont(font);
       metrics = g.getFontMetrics();
       fontAscent = metrics.getAscent();
     }
 
     //if (sketchLeft == 0) {
-    sketchTitleLeft = PdeEditor.INSET_SIZE;
+    sketchTitleLeft = PdePreferences.GUI_SMALL;
     sketchLeft = sketchTitleLeft + 
-      metrics.stringWidth(SKETCH_TITLER) + PdeEditor.INSET_SIZE;
+      metrics.stringWidth(SKETCH_TITLER) + PdePreferences.GUI_SMALL;
     sketchRight = sketchLeft + metrics.stringWidth(editor.sketchName);
-    int modifiedLeft = sketchRight + PdeEditor.INSET_SIZE;
+    int modifiedLeft = sketchRight + PdePreferences.GUI_SMALL;
     //int modifiedLeft = sketchLeft + 
-    //metrics.stringWidth(editor.sketchName) + PdeEditor.INSET_SIZE;
+    //metrics.stringWidth(editor.sketchName) + PdePreferences.GUI_SMALL;
 
     //sketch = editor.sketchName;
     //if (sketch == null) sketch = "";
@@ -169,7 +139,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     //if (userLeft == 0) {
     //userLeft = sizeW - 20 - metrics.stringWidth(editor.userName);
-    //userTitleLeft = userLeft - PdeEditor.INSET_SIZE - 
+    //userTitleLeft = userLeft - PdePreferences.GUI_SMALL - 
     //metrics.stringWidth(USER_TITLER);
 
     //user = editor.userName;
@@ -199,58 +169,21 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     //if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
 
     //g.setColor(fgColor[mode]);
-    //g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + fontAscent) / 2);
+    //g.drawString(message, PdePreferences.GUI_SMALL, (sizeH + fontAscent) / 2);
 
     screen.drawImage(offscreen, 0, 0, null);
   }
 
 
-  /*
-  protected void setButtonBounds() {
-    int top = (sizeH - BUTTON_HEIGHT) / 2;
-    int noLeft = sizeW - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
-    int yesLeft = noLeft - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
-
-    noButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
-    yesButton.setBounds(yesLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
-  }
-  */
-
-
   public Dimension getPreferredSize() {
-      //return new Dimension(300, PdeEditor.GRID_SIZE);
       return getMinimumSize();
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, PdeEditor.GRID_SIZE);
+    return new Dimension(300, PdePreferences.GRID_SIZE);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, PdeEditor.GRID_SIZE);
+    return new Dimension(3000, PdePreferences.GRID_SIZE);
   }
-
-
-  /*
-  public void actionPerformed(ActionEvent e) {
-    if (e.getSource() == noButton) {
-      System.out.println("clicked no");
-
-    } else if (e.getSource() == yesButton) {
-      System.out.println("clicked yes");
-    }
-  }
-  */
 }
-
-
-  /*
-  Color noticeBgColor = new Color(102, 102, 102);
-  Color noticeFgColor = new Color(255, 255, 255);
-
-  Color errorBgColor = new Color(102, 26, 0);
-  Color errorFgColor = new Color(255, 255, 255);
-
-  Color promptBgColor = new Color(204, 153, 0);
-  Color promptFgColor = new COlor(0, 0, 0);
-  */

@@ -78,6 +78,7 @@ public class PdePreferences extends JComponent {
 
   // value for the size bars, buttons, etc
 
+  //static final int INSET_SIZE    = 5;
   static final int GRID_SIZE     = 33;
 
   // gui variables

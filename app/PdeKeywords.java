@@ -23,6 +23,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import java.io.*;
 import java.util.*;
 
 
@@ -47,7 +48,7 @@ public class PdeKeywords extends CTokenMarker {
   static public KeywordMap getKeywords() {
     if (keywordColoring == null) {
       try {
-        keywords = new KeywordMap(false);
+        keywordColoring = new KeywordMap(false);
         keywordToReference = new Hashtable();
 
         InputStream input = PdeBase.getStream("keywords.txt");
@@ -66,24 +67,25 @@ public class PdeKeywords extends CTokenMarker {
 
           if (coloring.length() > 0) {
             // text will be KEYWORD or LITERAL
-            boolean isKeyword = (coloring.charAt(0) == 'K');
+            boolean isKey = (coloring.charAt(0) == 'K');
             // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
             int num = coloring.charAt(coloring.length() - 1) - '1';
-            int constant = (isKeyword ? KEYWORD : LITERAL) + num;
-            keywordColoring.add(keyword, constant);
+            byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+            keywordColoring.add(keyword, id);
           }
 
           if (htmlFilename.length() > 0) {
             keywordToReference.put(keyword, htmlFilename);
           }
         }
+        reader.close();
+
       } catch (Exception e) {
         PdeBase.showError("Problem loading keywords", 
                           "Could not find keywords.txt,\n" + 
                           "please re-install Processing.", e);
         System.exit(1);
       }
-      reader.close();
     }
     return keywordColoring;
   }
