@@ -68,7 +68,7 @@ public class PdeBase implements ActionListener {
 
   static public void main(String args[]) {
     //System.getProperties().list(System.out);
-    System.out.println(System.getProperty("java.class.path"));
+    //System.out.println(System.getProperty("java.class.path"));
     PdeBase app = new PdeBase();
   }
 
@@ -86,9 +86,27 @@ public class PdeBase implements ActionListener {
     properties = new Properties();
     try {
       //properties.load(new FileInputStream("lib/pde.properties"));
-      properties.load(getClass().getResource("pde.properties").openStream());
-      String platformProps = "pde.properties_" + platforms[platform];
-      properties.load(getClass().getResource(platformProps).openStream());
+      //#URL where = getClass().getResource("PdeBase.class");
+      //System.err.println(where);
+      //System.getProperties().list(System.err);
+      //System.err.println("userdir = " + System.getProperty("user.dir"));
+
+      if (PdeBase.platform == PdeBase.MACOSX) {
+	String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	properties.load(new FileInputStream(pkg + "pde.properties"));
+	properties.load(new FileInputStream(pkg + "pde.properties_macosx"));
+
+      } else if (PdeBase.platform == PdeBase.MACOS9) {
+	properties.load(new FileInputStream("lib/pde.properties"));
+	properties.load(new FileInputStream("lib/pde.properties_macos9"));
+
+      } else {  
+	// under win95, current dir not set properly
+	// so using a relative url like "lib/" won't work
+	properties.load(getClass().getResource("pde.properties").openStream());
+	String platformProps = "pde.properties_" + platforms[platform];
+	properties.load(getClass().getResource(platformProps).openStream());
+      }
       //properties.list(System.out);
 
     } catch (Exception e) {
@@ -615,7 +633,16 @@ public class PdeBase implements ActionListener {
     //image = applet.getImage(applet.getCodeBase(), name);
     //} else {
     Toolkit tk = Toolkit.getDefaultToolkit();
-    image = tk.getImage(who.getClass().getResource(name));
+
+    if (PdeBase.platform == PdeBase.MACOSX) {
+      String pkg = "Proce55ing.app/Contents/Resources/Java/";
+      image = tk.getImage(pkg + name);
+    } else if (PdeBase.platform == PdeBase.MACOS9) {
+      image = tk.getImage("lib/" + name);
+    } else {
+      image = tk.getImage(who.getClass().getResource(name));
+    }
+
     //image =  tk.getImage("lib/" + name);
     //URL url = PdeApplet.class.getResource(name);
     //image = tk.getImage(url);
