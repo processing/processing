@@ -55,7 +55,10 @@ public class PdeEditor extends JFrame
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
-  static final String EMPTY = "                                                                                                                                                             ";
+  static final String EMPTY = 
+    "                                                                     " +
+    "                                                                     " +
+    "                                                                     ";
 
   static final int SK_NEW  = 1;
   static final int SK_OPEN = 2;
@@ -85,8 +88,7 @@ public class PdeEditor extends JFrame
 
   Window presentationWindow;
 
-  RunButtonWatcher watcher;
-
+  //RunButtonWatcher watcher;
   //PdeRuntime runtime;
   //boolean externalRuntime;
   //String externalPaths;
@@ -107,7 +109,7 @@ public class PdeEditor extends JFrame
   PdeMessageStream messageStream;
 
   // location for lib/build, contents for which will be emptied
-  String tempBuildPath;
+  //String tempBuildPath;
 
   //static final String TEMP_CLASS = "Temporary";
 
@@ -474,7 +476,7 @@ public class PdeEditor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("File");
 
-    item = newMenuItem("New", 'N');
+    item = newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           skNew();
@@ -484,7 +486,7 @@ public class PdeEditor extends JFrame
 
     menu.add(sketchbook.rebuildMenu());
 
-    saveMenuItem = newMenuItem("Save", 'S');
+    saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           doSave();
@@ -492,7 +494,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(saveMenuItem);
 
-    saveAsMenuItem = newMenuItem("Save as...", 'S', true);
+    saveAsMenuItem = newJMenuItem("Save as...", 'S', true);
     saveAsMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           skSaveAs(false);
@@ -508,7 +510,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Export", 'E');
+    item = newJMenuItem("Export", 'E');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.message("Exporting code...");
@@ -530,11 +532,11 @@ public class PdeEditor extends JFrame
 
     menu.addSeparator();
 
-    item = newMenuItem("Page Setup", 'P', true);
+    item = newJMenuItem("Page Setup", 'P', true);
     item.setEnabled(false);
     menu.add(item);
 
-    item = newMenuItem("Print", 'P');
+    item = newJMenuItem("Print", 'P');
     item.setEnabled(false);
     menu.add(item);
 
@@ -552,7 +554,7 @@ public class PdeEditor extends JFrame
 
       menu.addSeparator();
 
-      item = newMenuItem("Quit", 'Q');
+      item = newJMenuItem("Quit", 'Q');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleQuit();
@@ -573,7 +575,7 @@ public class PdeEditor extends JFrame
     }
     JMenuItem item;
 
-    item = newMenuItem("Applet", 'E');
+    item = newJMenuItem("Applet", 'E');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           skExport();
@@ -581,7 +583,7 @@ public class PdeEditor extends JFrame
       });
     exportMenu.add(item);
 
-    item = newMenuItem("Application", 'E', true);
+    item = newJMenuItem("Application", 'E', true);
     item.setEnabled(false);
     exportMenu.add(item);
 
@@ -599,7 +601,7 @@ public class PdeEditor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("Sketch");
 
-    item = newMenuItem("Run", 'R');
+    item = newJMenuItem("Run", 'R');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           doRun(false);
@@ -607,7 +609,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Present", 'R', true);
+    item = newJMenuItem("Present", 'R', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           doRun(true);
@@ -615,7 +617,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    menu.add(newMenuItem("Stop", 'T'));
+    menu.add(newJMenuItem("Stop", 'T'));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStop();
@@ -634,7 +636,7 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Create font...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new PdeFontBuilder(new File(sketchDir, "data"));
+          new PdeFontBuilder(sketch.dataFolder);
         }
       });
     menu.add(item);
@@ -664,9 +666,8 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Help");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL(System.getProperty("user.dir") + 
-                          File.separator + "reference" + 
-                          File.separator + "environment" +
+          PdeBase.openURL(System.getProperty("user.dir") + File.separator + 
+                          "reference" + File.separator + "environment" +
                           File.separator + "index.html");
         }
       });
@@ -680,7 +681,7 @@ public class PdeEditor extends JFrame
         }
       });
     menu.add(item);
-    item = newMenuItem("Find in Reference", 'F', true);
+    item = newJMenuItem("Find in Reference", 'F', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
           if (textarea.isSelectionActive()) {
@@ -701,7 +702,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Visit processing.org", '5');
+    item = newJMenuItem("Visit processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           PdeBase.openURL("http://processing.org/");
@@ -728,11 +729,11 @@ public class PdeEditor extends JFrame
     JMenu menu = new JMenu("Edit");
     JMenuItem item; 
 
-    undoItem = newMenuItem("Undo", 'Z');
+    undoItem = newJMenuItem("Undo", 'Z');
     undoItem.addActionListener(undoAction = new UndoAction());
     menu.add(undoItem);
 
-    redoItem = newMenuItem("Redo", 'Y');
+    redoItem = newJMenuItem("Redo", 'Y');
     redoItem.addActionListener(redoAction = new RedoAction());
     menu.add(redoItem);
 
@@ -740,7 +741,7 @@ public class PdeEditor extends JFrame
 
     // TODO "cut" and "copy" should really only be enabled 
     // if some text is currently selected
-    item = newMenuItem("Cut", 'X');
+    item = newJMenuItem("Cut", 'X');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.cut();
@@ -748,7 +749,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Copy", 'C');
+    item = newJMenuItem("Copy", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.copy();
@@ -756,7 +757,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Paste", 'V');
+    item = newJMenuItem("Paste", 'V');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.paste();
@@ -764,7 +765,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Select All", 'A');
+    item = newJMenuItem("Select All", 'A');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.selectAll();
@@ -772,7 +773,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    beautifyMenuItem = newMenuItem("Beautify", 'B');
+    beautifyMenuItem = newJMenuItem("Beautify", 'B');
     beautifyMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           doBeautify();
@@ -782,7 +783,7 @@ public class PdeEditor extends JFrame
 
     menu.addSeparator();
 
-    item = newMenuItem("Find...", 'F');
+    item = newJMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find == null) { 
@@ -794,7 +795,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Find Next", 'G');
+    item = newJMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find != null) find.find();
@@ -806,18 +807,32 @@ public class PdeEditor extends JFrame
   }
 
 
-  static public JMenuItem newMenuItem(String title, char what) {
-    return newMenuItem(title, what, false);
+  /**
+   * Convenience method for the antidote to overthought 
+   * swing api mess for setting accelerators. 
+   */
+  static public JMenuItem newJMenuItem(String title, char what) {
+    return newJMenuItem(title, what, false);
   }
 
+
   /**
-   * Antidote for overthought swing api mess for setting accelerators.
+   * A software engineer, somewhere, needs to have his abstraction 
+   * taken away. I hear they jail people in third world countries for
+   * writing the sort of crappy api that would require a four line
+   * helpher function to *set the command key* for a menu item. 
    */
-  static public JMenuItem newMenuItem(String title, char what, boolean shift) {
+  static public JMenuItem newJMenuItem(String title, 
+                                       char what, boolean shift) {
     JMenuItem menuItem = new JMenuItem(title);
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | (shift ? ActionEvent.SHIFT_MASK : 0)));
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    if (shift) modifiers |= ActionEvent.SHIFT_MASK;
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers);
     return menuItem;
   }
+
+
+  // ...................................................................
 
 
   // This one listens for edits that can be undone.
@@ -985,130 +1000,6 @@ public class PdeEditor extends JFrame
   }
 
 
-  /*
-  // in an advanced program, the returned classname could be different,
-  // which is why the className is set based on the return value.
-  // @param exporting if set, then code is cleaner, 
-  //                  but line numbers won't line up properly.
-  //                  also modifies which imports (1.1 only) are included.
-  // @return null if compilation failed, className if not
-  //
-  protected String build(String program, String className,
-                         String buildPath, boolean exporting) 
-    throws PdeException, Exception {
-
-    // true if this should extend BApplet instead of BAppletGL
-    //boolean extendsNormal = base.normalItem.getState();
-
-    externalRuntime = false;
-    externalPaths = null;
-
-    externalCode = new File(sketchDir, "code");
-    if (externalCode.exists()) {
-      externalRuntime = true;
-      externalPaths = PdeCompiler.includeFolder(externalCode);
-
-    } else {
-      externalCode = null;
-    }
-
-    // add the includes from the external code dir
-    //
-    String imports[] = null;
-    if (externalCode != null) {
-      imports = PdeCompiler.magicImports(externalPaths);
-    }
-
-    PdePreprocessor preprocessor = null;
-    preprocessor = new PdePreprocessor(program, buildPath);
-    try {
-      className = 
-        preprocessor.writeJava(className, imports, false);
-
-    } catch (antlr.RecognitionException re) {
-      // this even returns a column
-      throw new PdeException(re.getMessage(), 
-                             re.getLine() - 1, re.getColumn());
-
-    } catch (antlr.okenStreamRecognitionException tsre) {
-      // while this seems to store line and column internally,
-      // there doesn't seem to be a method to grab it.. 
-      // so instead it's done using a regexp
-
-      PatternMatcher matcher = new Perl5Matcher();
-      PatternCompiler compiler = new Perl5Compiler();
-      // line 3:1: unexpected char: 0xA0
-      String mess = "^line (\\d+):(\\d+):\\s";
-      Pattern pattern = compiler.compile(mess);
-
-      PatternMatcherInput input = 
-        new PatternMatcherInput(tsre.toString());
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
-
-        int line = Integer.parseInt(result.group(1).toString());
-        int column = Integer.parseInt(result.group(2).toString());
-        throw new PdeException(tsre.getMessage(), line-1, column);
-
-      } else {
-        throw new PdeException(tsre.toString());
-      }
-
-    } catch (PdeException pe) {
-      throw pe;
-
-    } catch (Exception ex) {
-      System.err.println("Uncaught exception type:" + ex.getClass());
-      ex.printStackTrace();
-      throw new PdeException(ex.toString());
-    }
-
-    if (PdePreprocessor.programType == PdePreprocessor.ADVANCED) {
-      externalRuntime = true; // we in advanced mode now, boy
-    }
-
-    // compile the program
-    //
-    PdeCompiler compiler = 
-      new PdeCompiler(buildPath, className, externalCode, this);
-
-    // run the compiler, and funnel errors to the leechErr
-    // which is a wrapped around 
-    // (this will catch and parse errors during compilation
-    // the messageStream will call message() for 'compiler')
-    messageStream = new PdeMessageStream(compiler);
-    boolean success = compiler.compile(new PrintStream(messageStream));
-
-    return success ? className : null;
-  }
-  */
-
-
-  /**
-   * Preprocess, Compile, and Run the current code.
-   *
-   * There are three main parts to this process:
-   *
-   *   (0. if not java, then use another 'engine'.. i.e. python)
-   *
-   *    1. do the p5 language preprocessing
-   *       this creates a working .java file in a specific location
-   *       better yet, just takes a chunk of java code and returns a 
-   *       new/better string editor can take care of saving this to a 
-   *       file location
-   *
-   *    2. compile the code from that location
-   *       catching errors along the way
-   *       placing it in a ready classpath, or .. ?
-   *
-   *    3. run the code 
-   *       needs to communicate location for window 
-   *       and maybe setup presentation space as well
-   *       currently done internally
-   *       would be nice to use external (at least on non-os9)
-   *
-   *    X. afterwards, some of these steps need a cleanup function
-   */
   public void doRun(boolean present) {
     doClose();
     running = true;

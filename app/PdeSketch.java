@@ -49,7 +49,7 @@ public class PdeSketch {
 
   // all these set each time build() is called
   boolean externalRuntime;
-  String mainClassName;
+  //String mainClassName;
   String classPath;
   String libraryPath;
 
@@ -475,7 +475,7 @@ public class PdeSketch {
 
 
   /**
-   * Have the contents of the currently visible tab been modified.
+   * Have the contents of the currently visible tab been modified?
    */
   /*
   public boolean isCurrentModified() {
@@ -520,6 +520,8 @@ public class PdeSketch {
     //   if .java, write programs[i] to buildpath
     //   if .pde, run preproc to buildpath
     //     if no class def'd for the pde file, then complain
+
+    String mainClassName = null;
 
     for (int i = 0; i < codeCount; i++) {
       if (code[i].flavor == JAVA) {
@@ -608,7 +610,7 @@ public class PdeSketch {
     //
     PdeCompiler compiler = new PdeCompiler();
     boolean success = compiler.compile(this, buildPath);
-    return success ? className : null;
+    return success ? mainClassName : null;
   }
 
 
