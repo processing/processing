@@ -1,3 +1,54 @@
+TODO CLEANUP
+o online signup cgi for people to add themselves to the list
+o probably should doClose() on new/open instead of doStop()
+o option to delete current project (trickier)
+o   also needs to have method for verify.. blech
+o check logs to see where we're getting traffic from
+o option to toggle console on/off (not just in properties, but realtime)
+o look into using serialporteventlistener for simpleserial
+o   may help with problems due to threading/synchronizing
+o font usage/substition solution
+o   write code to bind/convert java fonts
+o     best would be freetype or jdk 1.3/1.4
+o   java freetype? jni freetype to build texmap fonts?
+o   look at flash file format? (does it have kerning?)
+o may want to throw exceptions from bagel
+o   but catch them inside bapplet--as part of making things easier
+o file i/o utility classes
+o   read as set of lines, read as cells in grid, read num sequence
+o   then methods for writing all of the same
+o stop() method in applet should stop kjc environment
+o   should be able to call stop() to 'quit' an applet
+X make versions available w/o fonts and jre
+o moving sketchbook folder for lab environments
+o adding lights
+o   control of position/color of default lights
+o controlling camera movements
+o   mcguffin sent some notes about this
+o multmatrix/identity
+o constants besides PI, TWO_PI
+o min/max with 3 parameters
+o if (a) ? 3 : 4
+o formatting printf-style things
+o audio input
+o audio synthesis
+X stringutils.split is a useful one
+X readFileLines et al
+o translateMiddle() ? to move to the middle of the screen?
+o perlin noise function
+o delayUntil would be nice to have
+o   but at some point there has to be a cutoff
+o   have a library of useful code that people can add to programs
+o   otherwise things are too simple, and env is a crutch
+o example: multi-user server app (shared whiteboard)
+o example: basic network app
+o bug in sun vm for freaking out
+o   also happened with ibm vm.. grr.. (or was it a path problem?)
+X is it necessary to have fullscreen option on toolbar anymore?
+o what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
+o should we use jdk 1.3 or msft vm?
+
+
 0051
 X go through the bboard and make sure everything up to date here
 X   see if moved topics need to be deleted as well
