@@ -12,6 +12,8 @@ else
   rm -f work/.DS_Store 
   # in case one of those little mac poopers show up
 
+  cp -r ../../lib work/libraries
+
   echo Extracting examples...
   cd work
   unzip -q examples.zip

@@ -9,6 +9,7 @@ then
 else
   echo Setting up directories to build for linux...
   cp -r ../shared work
+  cp -r ../../lib work/libraries
 
   cd work
   unzip -q examples.zip
