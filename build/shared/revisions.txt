@@ -1,3 +1,44 @@
+ABOUT REV 0047 - 5 january 2003
+
+[ happy new year ]
+
+- hopefully january 2003 will be a good month for p5, as i have
+  a short bit of time to work on it and there was a beautiful little
+  ibook under the p5 xmas tree to help me with the mac releases. 
+  i hope to get a few revisions out this month so i can get back 
+  my 'real' work.
+
+[ features ] 
+
+- the text editor has once again been replaced. the new one is fancier
+  and less buggy. most obvious thing to note is text coloring. 
+  the editor is based on the jedit 'syntax' package. jedit is an
+  amazing and feature heavy java-based text editor with an online
+  community the size of an organized religion as compared to our
+  little p5 cult. see http://www.jedit.org for worship times.
+
+- sketchbook can now be more recursive (folders within folders) than
+  it used to be. for those inclined to playing with fire (you're using
+  alpha software, so this must be you) you can set the root of your
+  sketchbook directory to something besides "sketchbook" inside the
+  Proce55ing folder. details in the 'readme' doc.
+
+[ bug fixes ]
+
+- a strange crashing after a few weeks of use on the macosx has been
+  fixed. it got upset as soon as a .DS_Store file made its way into
+  the sketchbook directory. i'd get upset too since those little
+  buggers get pooped all over the place as soon as a mac connects to
+  anything, but instead some code was written to ignore them. i'm
+  trying to learn to ignore them myself. thanks to fdb, brendanberg,
+  jes and perhaps others who notified of this one. 
+
+- the undo forever problem has (hopefully) been squashed. in 0046,
+  one could undo until the text area went empty, or the previous
+  project loaded. if one were to hit undo quickly enough, they might
+  have noticed the clock on their wall moving backwards.
+
+
 ABOUT REV 0046 - 20 november 2002
 
 [ major release, new features ]

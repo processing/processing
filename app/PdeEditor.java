@@ -1116,8 +1116,8 @@ afterwards, some of these steps need a cleanup function
     File file = new File(directory, filename);
 
     try {
-      System.out.println("handleSave: results of getText");
-      System.out.print(s);
+      //System.out.println("handleSave: results of getText");
+      //System.out.print(s);
 
       BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes())));
 
@@ -1126,7 +1126,7 @@ afterwards, some of these steps need a cleanup function
 
       String line = null;
       while ((line = reader.readLine()) != null) {
-	System.out.println("w '" + line + "'");
+	//System.out.println("w '" + line + "'");
 	writer.println(line);
       }
       writer.flush();

@@ -1,8 +1,8 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0046 - 20 NOVEMBER 2002
+RELEASE 0047 - 5 JANUARY 2003
 
-(c) 2002, 2001 Massachusetts Institute of Technology 
+(c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
 
 
@@ -83,22 +83,44 @@ we prefer to call them "issues."
 first, be sure to check under the notes for your specific platform to
 make sure it isn't a known issue or that there isn't a simple fix.
 
+second, check the bboard to see if something related has been
+reported, or if there is already a workaround.
+
 you can either post to the bulletin board at:
 http://proce55ing.net/discourse/
 or send email to bugs@proce55ing.net. the bboard is probably the
 better way to go, because more people will be watching it. the email
 goes straight to the developers, but their schedules are erratic and
-it could be anywhere from two minutes to two weeks before you receive
+it could be anywhere from two minutes to two months before you receive
 a response. if you want to go straight to the bugs page, it's:
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 when reporting this "bug" please include information about
-1. the revision number (i.e. 0043)
+1. the revision number (i.e. 0047)
 2. what operating system you're using, on what kind of hardware
 3. a copy of your code
 4. details of the error, which may be the last few lines from 
    the files stdout.txt or stderr.txt from the 'lib' folder. 
 
+for stranger errors during compile time, you can also look inside the
+"build" folder inside "lib", which is an intermediate (translated into
+java) version of your code.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+KNOWN BUGS
+
+there are many more, which are in a cryptic 'todo.txt' list that we
+keep, but some of the larger ones that we know about:
+
+- random freezes under windows, after running a few time. every 20th
+  or every 100th time the app just freaks out. use ctrl-alt-del to
+  kill the java runtime and restart your app. this will slowly be
+  ironed out. 
+
+- wheel mouse is disabled again in 47
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -107,6 +129,9 @@ GENERAL NOTES / COMMON MISTAKES
 
 - size() must use numbers, not variables. this is because of how
   the size command is interpreted by proce55ing. 
+
+- size() must also be the first thing inside setup(). we hope to fix
+  this in the future, but the issue is pricklier than might be expected.
 
 - when using draw() mode, background() must also use only numbers, and
   no variables. this is similar to the issue with the size command,
@@ -129,6 +154,15 @@ GOODIES & SEMI-HIDDEN FEATURES
 - shift-click on the 'run' button to go straight to 'present' mode
 
 - for quick renaming, just click on the sketch title 
+
+- inside the 'lib' folder is a 'pde.properties' file, which contains a
+  handful of settings for your app and how it's set up. you can change
+  the coloring of things, or even change your sketchbook location
+  inside this file. a second file with a similar title but that
+  includes "windows" or "macosx" etc in the name is for tweaks
+  specific to your platform. for instance, we use the macosx-specific
+  properties file to set the font size a little differently than on
+  windows.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -189,8 +223,8 @@ mileage may vary if you're running something else. actually, your
 mileage will vary no matter what, because who knows what this software
 is gonna do. you're playing with free, alpha software. get psyched!
 
-minimum requirements.. processing requires at least Mac OS X 10.1. if
-you're running anything older than 10.2, you'll need "Java 1.3.1
+minimum requirements.. processing requires at least Mac OS X 10.1. 
+if you're running anything older than 10.2, you'll need "Java 1.3.1
 Update 1", the latter of which is available as a free update from the
 "Software Update" control panel. it can also be downloaded from
 http://www.apple.com/downloads/macosx/apple/ or from:
@@ -204,6 +238,9 @@ support is disabled until apple finishes an implementation of java
 1.4. if this makes you sad, email steve jobs and tell him to make the
 java team quit patting themselves on the back and get to work on
 finishing 1.4.
+
+we're currently playing with the developer preview releases of 1.4,
+but haven't done anything too fancy with it yet.
 
 "Caught java.lang.UnsatisfiedLinkError" on startup.. in order to 
 use the serial port under macosx, you'll need to install RXTX, 
@@ -343,10 +380,11 @@ would have been called "Processing" and not "Proce55ing."
 
 PROCE55ING IS FREE TO DOWNLOAD / FREE TO USE
 
-we think it's important to have processing freely available, rather
+we think it's important to have Proce55ing freely available, rather
 than selling it for a million dollars under some godawful yearly
 contract update scheme. to that end, we encourage people to distribute
-it widely and refer back to the site: http://Proce55ing.net
+the word widely and refer them to the site: http://Proce55ing.net
+
 on most of our own projects, we usually list them as "Built with
 Proce55ing" or something similar, with a link back to the site. of
 course this isn't a necessity, but it makes us happy when you do.
@@ -372,14 +410,15 @@ share anyway).
 more information about the gnu public license can be found here:
 http://www.gnu.org/copyleft/gpl.html
 
-processing also includes other open projects, namely the oro matcher
-and the kjc compiler. the oro tools are distributed under a bsd style
-license as part of the apache jakarta project, and the kjc compiler is
-part of the kopi suite of tools, which is released under the gpl. so
-in fact, if the final, publicly available version of processing still
-uses kjc, the code for processing will have to be released gpl.
-more about the oro tools is at: http://www.savarese.org/oro/
-and the home for kopi/kjc is here: http://www.dms.at/kopi/
+processing also includes other open projects, namely the oro matcher, 
+the kjc compiler, and the jedit syntax package. the oro tools are
+distributed under a bsd style license as part of the apache jakarta
+project, and the kjc compiler is part of the kopi suite of tools,
+which is released under the gpl. so in fact, if the final, publicly
+available version of processing still uses kjc, the code for
+processing will have to be released gpl. more about the oro tools is
+at: http://www.savarese.org/oro/ and the home for kopi/kjc is here:
+http://www.dms.at/kopi/
 
 we're sorry that the source code isn't available just yet, we're
 cleaning and scrubbing it, it was a decision between getting the alpha
@@ -387,3 +426,7 @@ out to people to try versus taking a few more weeks to clean up the
 project and deal with the technology licensing departments at mit and
 ivrea. these things are far more difficult and time consuming than
 they would appear.
+
+our plan is to have the code available with the first "beta" release,
+which will be the first release that is publicly available and
+downloadable from the site.
