@@ -1,13 +1,3 @@
-Debug
-Release
-launcher.dsw
-launcher.ncb
-launcher.opt
-launcher.plg
-launcher.exe
-launcher.ilk
-launcher.aps
-Proce55ing.ilk
-Proce55ing.exe
-
+*.o
+processing.exe
 
