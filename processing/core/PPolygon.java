@@ -36,7 +36,7 @@ public class PPolygon implements PConstants {
   static final boolean FRY = false;
 
   // after some fiddling, this seems to produce the best results
-  static final int ZBUFFER_MIN_COVERAGE = 204;
+  //static final int ZBUFFER_MIN_COVERAGE = 204;
 
   float r[]   = new float[DEFAULT_SIZE]; // storage used by incrementalize
   float dr[]  = new float[DEFAULT_SIZE];
@@ -54,7 +54,7 @@ public class PPolygon implements PConstants {
   int rgba;
   int r2, g2, b2, a2, a2orig;
 
-  float zbuffer[];
+  //float zbuffer[];
   boolean noDepthTest;
 
   PGraphics parent;
@@ -173,7 +173,7 @@ public class PPolygon implements PConstants {
     // these may have changed due to a resize()
     // so they should be refreshed here
     pixels = parent.pixels;
-    zbuffer = parent.zbuffer;
+    //zbuffer = parent.zbuffer;
 
     noDepthTest = parent.hints[NO_DEPTH_TEST]; //!parent.depthTest;
     smoothing = parent.smooth;
@@ -391,7 +391,8 @@ public class PPolygon implements PConstants {
     for (int x = lx; x <= rx; x++) {
       // added == because things on same plane weren't replacing each other
       // makes for strangeness in 3D, but totally necessary for 2D
-      if (noDepthTest || (sp[Z] <= zbuffer[offset+x])) {
+      //if (noDepthTest || (sp[Z] <= zbuffer[offset+x])) {
+      if (true) {
 
         // map texture based on U, V coords in sp[U] and sp[V]
         if (interpUV) {
@@ -547,7 +548,7 @@ public class PPolygon implements PConstants {
           if ((ta == 254) || (ta == 255)) {  // if (ta & 0xf8) would be good
             // no need to blend
             pixels[offset+x] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
-            zbuffer[offset+x] = sp[Z];
+            //zbuffer[offset+x] = sp[Z];
 
           } else {
             // blend with pixel on screen
@@ -560,7 +561,7 @@ public class PPolygon implements PConstants {
               (((tr*ta + r1*a1) >> 8) << 16) |
               ((tg*ta + g1*a1) & 0xff00) |
               ((tb*ta + b1*a1) >> 8);
-            if (ta > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
+            //if (ta > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
           }
 
         } else {  // no image applied
@@ -581,7 +582,7 @@ public class PPolygon implements PConstants {
           if (weight == 255) {
             // no blend, no aa, just the rgba
             pixels[offset+x] = rgba;
-            zbuffer[offset+x] = sp[Z];
+            //zbuffer[offset+x] = sp[Z];
 
           } else {
             int r1 = (pixels[offset+x] >> 16) & 0xff;
@@ -596,7 +597,7 @@ public class PPolygon implements PConstants {
                                 ((g1*a1 + g2*a2) >> 8) << 8 |
                                 ((b1*a1 + b2*a2) >> 8));
 
-            if (a2 > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
+            //if (a2 > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
           }
         }
       }
