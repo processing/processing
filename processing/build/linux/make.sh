@@ -10,7 +10,12 @@ else
   echo Setting up directories to build for linux...
   BUILD_PREPROC=true
   cp -r ../shared work
+
   cp -r ../../lib work/libraries
+  cp -r ../../net work/libraries/
+  cp -r ../../opengl work/libraries/
+  cp -r ../../serial work/libraries/
+  cp -r ../../video work/libraries/
 
   cd work
   unzip -q examples.zip
