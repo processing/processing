@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
-// Used by Imager.rc
+// Used by launcher.rc
 //
 #define IDD_IMAGER_DIALOG               102
 #define IDR_MAINFRAME                   128

@@ -1,8 +1,8 @@
 // launcher.h : main header file for the LAUNCHER application
 //
 
-#if !defined(AFX_IMAGER_H__12C4E5A4_27C5_11D2_BB54_006008DC2F94__INCLUDED_)
-#define AFX_IMAGER_H__12C4E5A4_27C5_11D2_BB54_006008DC2F94__INCLUDED_
+#if !defined(AFX_LAUNCHER_H__12C4E5A4_27C5_11D2_BB54_006008DC2F94__INCLUDED_)
+#define AFX_LAUNCHER_H__12C4E5A4_27C5_11D2_BB54_006008DC2F94__INCLUDED_
 
 #if _MSC_VER >= 1000
 #pragma once
@@ -19,27 +19,27 @@ extern "C" {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CImagerApp:
-// See Imager.cpp for the implementation of this class
+// CLauncherApp:
+// See Launcher.cpp for the implementation of this class
 //
 
-class CImagerApp : public CWinApp
+class CLauncherApp : public CWinApp
 {
 public:
-	CImagerApp();
+	CLauncherApp();
 	
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CImagerApp)
+	//{{AFX_VIRTUAL(CLauncherApp)
 	public:
 	virtual BOOL InitInstance();
 	//}}AFX_VIRTUAL
 
-	void CImagerApp::buildClassPath(char*);
+	void CLauncherApp::buildClassPath(char*);
 
 // Implementation
 
-	//{{AFX_MSG(CImagerApp)
+	//{{AFX_MSG(CLauncherApp)
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
@@ -52,4 +52,4 @@ public:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_IMAGER_H__12C4E5A4_27C5_11D2_BB54_006008DC2F94__INCLUDED_)
+#endif // !defined(AFX_LAUNCHER_H__12C4E5A4_27C5_11D2_BB54_006008DC2F94__INCLUDED_)

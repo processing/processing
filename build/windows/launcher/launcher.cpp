@@ -1,4 +1,4 @@
-// Imager.cpp : Defines the class behaviors for the application.
+// Launcher.cpp : Defines the class behaviors for the application.
 //
 
 #include "stdafx.h"
@@ -21,10 +21,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CImagerApp
+// CLauncherApp
 
-BEGIN_MESSAGE_MAP(CImagerApp, CWinApp)
-	//{{AFX_MSG_MAP(CImagerApp)
+BEGIN_MESSAGE_MAP(CLauncherApp, CWinApp)
+	//{{AFX_MSG_MAP(CLauncherApp)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 		//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG
@@ -32,23 +32,23 @@ BEGIN_MESSAGE_MAP(CImagerApp, CWinApp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CImagerApp construction
+// CLauncherApp construction
 
-CImagerApp::CImagerApp()
+CLauncherApp::CLauncherApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// The one and only CImagerApp object
+// The one and only CLauncherApp object
 
-CImagerApp theApp;
+CLauncherApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
-// CImagerApp initialization
+// CLauncherApp initialization
 
-BOOL CImagerApp::InitInstance()
+BOOL CLauncherApp::InitInstance()
 {
 	// all these malloc statements... things may need to be larger.
 
@@ -88,7 +88,7 @@ BOOL CImagerApp::InitInstance()
 	*/
 	strcpy(outgoing_cmdline, JAVA_ARGS);
 
-	// append the classpath and imager.Application
+	// append the classpath and launcher.Application
 	char *cp = (char *)malloc(1024 * sizeof(char));
 	char *loaddir = (char *)malloc(MAX_PATH * sizeof(char));
 
@@ -111,7 +111,7 @@ BOOL CImagerApp::InitInstance()
 	strcat(outgoing_cmdline, cp);
 
 	// add the name of the class to execute
-	//strcat(outgoing_cmdline, "imager.Application ");
+	//strcat(outgoing_cmdline, "launcher.Application ");
 	strcat(outgoing_cmdline, JAVA_MAIN_CLASS);
 	strcat(outgoing_cmdline, " "); // space between next arg
 
@@ -123,7 +123,7 @@ BOOL CImagerApp::InitInstance()
 	char *executable = (char *)malloc(256 * sizeof(char));
 	// loaddir is the name path to the current application
 	strcpy(executable, loaddir);
-	// copy in the path for jrew, relative to imager.exe
+	// copy in the path for jrew, relative to launcher.exe
 	//strcat(executable, "\\bin\\jrew");
 	strcat(executable, "\\java\\bin\\javaw");
 	

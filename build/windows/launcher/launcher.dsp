@@ -8,12 +8,12 @@ CFG=Launcher - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "Launcher.mak".
+!MESSAGE NMAKE /f "launcher.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "Launcher.mak" CFG="Launcher - Win32 Debug"
+!MESSAGE NMAKE /f "launcher.mak" CFG="Launcher - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -126,6 +126,10 @@ SOURCE=.\application.ico
 # Begin Source File
 
 SOURCE=.\document.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\launcher.rc
 # End Source File
 # Begin Source File
 
