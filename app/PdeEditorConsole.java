@@ -340,9 +340,14 @@ public class PdeEditorConsole extends Component {
     //}
   }
 
-    public Dimension getMinimumSize() {
-	return getPreferredSize();
-    }
+  public Dimension getMinimumSize() {
+    return getPreferredSize();
+  }
+
+  public Dimension getMaximumSize() {
+    Dimension pref = getPreferredSize();
+    return new Dimension(3000, pref.width);
+  }
 }
 
 
