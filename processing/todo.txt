@@ -66,6 +66,18 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X image grabbing bug caught by amit
 X another bug in smoothing, reported by flight404
 X   removes a random ArrayIndexOutOfBoundsException
+X Thread.stop is deprecated (and has been since 1.2)
+X   http://java.sun.com/products/jdk/1.2/docs/guide/misc/threadPrimitiveDeprecation.html
+X   remove finished in favor of just setting thread to null in BApplet
+X check to see if setting threads to null works on windows 
+X   the multiple thread killing code was in there for a reason
+X   not tested on macos9.. 
+X hiding the cursor. noCursor(), cursor()/cursor(ARROW), cursor(HAND), cursor(CROSS), cursor(image_file)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
+
+[dh] X export to .pde file rather than java
+[dh] X   or at least link to that from the web page
+[dh] X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
 
 
 macosx
@@ -147,12 +159,6 @@ dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
    b _   no events seem to be coming through at all
 
 
-this should get completed before 57.. it's annoying
-dh b _ export to .pde file rather than java
-dh b _   or at least link to that from the web page
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
-
-
 ..................................................................
 
 
@@ -160,59 +166,73 @@ BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
 macosx
+_ get jikes118 in there.. also in cvs
+_   add note to instructions for how to use
 _ what's hanging the application on start in 1.4?
 _   duh.. do println() statements to see where it's hanging
 _   (or hanging on start)
 _   could also be connected to compiling process, though it seems runtime
 _   try disabling Toolkit.sync()
 X   could it be audio that's hanging the application? -> nope
-X change Proce55ing.app to Processing.app
-X   should cvs be changed or just do this as a renaming step?
-_ jikes is not properly wired to Proce55ing.app
-_   puts a couple dots on random lines
-_ build gl4java for java 1.4
-_ Event.consume() doesn't work on entry fields 
-_   manifests itself in sketch naming, can't be constrained
-_   may not be the case under swing?
-_   it's probably because of keyTyped() being the important one
-_     so instead trap for keyTyped events
-_ set nice background for disk image on macosx
 _ mac 1.4 crashes when attempting to stop applets (pcho definitely)
 _   doesn't seem to do this with the .app, or at least in prev release
 _     (although prev release was running 1.3 by default)
 _   locking up on my machine after hitting stop
 _   is this only a problem when run from run.sh?
+X change Proce55ing.app to Processing.app
+X   should cvs be changed or just do this as a renaming step?
+X     changed in cvs
+_ jikes is not properly wired to Proce55ing.app
+_   puts a couple dots on random lines
 _ do objects need to be swing components to draw properly?
 _   macosx has update weirdness for non JComponent items
 _   probably why end of text messages under osx getting chopped?
 
-X Thread.stop is deprecated (and has been since 1.2)
-X   http://java.sun.com/products/jdk/1.2/docs/guide/misc/threadPrimitiveDeprecation.html
-X   remove finished in favor of just setting thread to null in BApplet
-X check to see if setting threads to null works on windows 
-X   the multiple thread killing code was in there for a reason
-X   not tested on macos9.. 
-
-_ serial port work
-_   modify build scripts for rxtx on osx
-_   modify windows build scripts for javacomm in p5 folders
-_   checkin serial stuff for bagel
-_   test rxtx on linux with sun vm
-
+serial port work
+_ modify build scripts for rxtx on osx
+_ modify windows build scripts for javacomm in p5 folders
+_   remove additional javacomm from othe p5 folders
+_ checkin serial stuff for bagel
 _ rxtx is a problem in general.. how to improve installation
-_   try installing serial adapter with p5
-_   report of a problem with the rxtx installer being bad
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
-_   tom igoe is using rxtx 2.1.6, patch that into p5
+X   try installing serial adapter with p5
+X   report of a problem with the rxtx installer being bad
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
+X   tom igoe is using rxtx 2.1.6, patch that into p5
 _   libs from 2.1.6 download for osx seem to work
 _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
-_     will need to be done for gl4java as well
+o     will need to be done for gl4java as well
+_ if dimming serial menu, put up another message
 
+
+_ modify bagel building to include JDK13 flag
+_   test to make sure cursor code works in vm
+_   and behaves properly in a browser
 
 57 _ runtime exceptions not coming through on either mac or windows
 57 _   when array wasn't large enough for curveMode, blank red line
 57 _ perlin noise should be tested for 1d case
+
+
+linux
+_ make mention that linux is i386
+_ bring linux up to 1.4
+_   grab rxtx for linux and include with distribution
+_ make sure a copy of jikes is included
+_ test rxtx on linux with sun vm
+
+
+dist
+b _ need note about setting classpath on platforms when using expert
+b _   put jikes executables into the dist folders
+b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+
+
+
+..................................................................
+
+
+POST-57
 
 
 additional console fixes
@@ -226,17 +246,14 @@ bf b o   remove the border around the edge
 bf b o   what's with the 2 blank lines on startup?
 
 
-linux
-_ make mention that linux is i386
-_ bring linux up to 1.4
-_   grab rxtx for linux and include with distribution
-_ make sure a copy of jikes is included
-
-
-dist
-b _ need note about setting classpath on platforms when using expert
-b _   put jikes executables into the dist folders
-b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+macosx
+_ build gl4java for java 1.4
+_ Event.consume() doesn't work on entry fields 
+_   manifests itself in sketch naming, can't be constrained
+_   may not be the case under swing?
+_   it's probably because of keyTyped() being the important one
+_     so instead trap for keyTyped events
+_ set nice background for disk image on macosx
 
 
 thesis / acg
@@ -267,20 +284,16 @@ bf _   finish this once all the line code is done
 bf _ some flag to know whether applet is online or not
 bf _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 bf _   fix link, loadStrings, saveBytes code once that's fixed
-
-bf b _ if sketchbook.dir is set, makes new sketchbook folder
-bf b _   reads sketchbook properly from other folder
-bf b _   but creates a new folder for new sketches to go into
-bf b _ install sketchbook into another location on person's machine
-bf b _   remove the 'default' for sketchbook
-bf b _   bring this up on bboard and get votes
-bf b _   win2k: my documents, macosx: ~/Documents, 
-bf b _   macos9: hd:Users?, linux: ~/sketchbook
-bf b _ move examples to folder that goes w/ p5 app
-bf b _   set examples somehow read-only
-
-ks b _ background(BImage)
-ks b _   also creating background image inside setup()
+bf _ if sketchbook.dir is set, makes new sketchbook folder
+bf _   reads sketchbook properly from other folder
+bf _   but creates a new folder for new sketches to go into
+bf _ install sketchbook into another location on person's machine
+bf _   remove the 'default' for sketchbook
+bf _   bring this up on bboard and get votes
+bf _   win2k: my documents, macosx: ~/Documents, 
+bf _   macos9: hd:Users?, linux: ~/sketchbook
+bf _ move examples to folder that goes w/ p5 app
+bf _   set examples somehow read-only
 
 
 licensing
@@ -332,8 +345,8 @@ The graphics library is called Bagel, which is an internal name.
 
 BAGEL / Graphics API Additions
 
-ap b _ hiding the cursor. noCursor(), cursor()/cursor(ARROW), cursor(HAND), cursor(CROSS), cursor(image_file)
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
+ks b _ background(BImage)
+ks b _   also creating background image inside setup()
 
 ks b _ images and pixel copying (api for this?)
 ks b _   copyPixel(x, y, to_x, to_y)
