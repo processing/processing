@@ -1,5 +1,6 @@
 0080 pde
 X include /** */ comments into the html page
+X examples have been updated
 
 fixed in rev 79
 X can't scroll the PdeEditorConsole downwards at all on osx
@@ -10,13 +11,23 @@ o   this would need to track whether coming just from an ext runtime
 o make "get quicktime libs" function
 o   can java get the root directory for system/win32 etc?
 
-BETA
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
+MUST BE COMPLETE FOR BETA
+
+_ if NullPointerEx on a line that includes a "pixels[" 
+_   give an error message saying "you may need to call loadPixels"
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+NOT NECESSARY BEFORE BETA
+
 _ .psk file support for bundling sketches
 
-_ add something to PApplet to have constants for the platform
 
 _ move everything to packages, and start auto-javadoc
 _   also move the lib folders to a new location
@@ -34,6 +45,10 @@ _   which will also just give you the last camera
 _   should it be new Camera(PROMPT);
 _ error messages from quicktime not coming through very well
 _ setting the camera should be an index from list()
+_ grabbing sub-devices from camera in the lib (via list() or whatever)
+_   actually, need to use numbered indices (multiple w/ same name)
+_     list should be: "0 - Logitech QuickCam (Blah)"
+_     and then use the indices (or the str i guess) to choose
 
 _ put processing.exe into cvs so that make et al aren't required
 _   add 'make' to list of things that should be installed

@@ -990,9 +990,9 @@ public class PGraphics extends PImage implements PConstants {
     throw new RuntimeException("sphere() can only be used with depth()");
   }
 
-  public void sphere(float x, float y, float z, float r) {
-    throw new RuntimeException("sphere() can only be used with depth()");
-  }
+  //public void sphere(float x, float y, float z, float r) {
+  //throw new RuntimeException("sphere() can only be used with depth()");
+  //}
 
 
 

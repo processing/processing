@@ -97,6 +97,18 @@ public interface PMethods {
 
   //
 
+  // also discussed using the modes..
+  // but when rotating it's gonna make things totally bizarre.
+
+  // rectMode(CORNER, CORNERS, CENTER, CENTER_DIAMETER
+  // box(x, y, z, w, h, d) CORNER
+  // box(x, y, z, x2, y2, z2) CORNERS
+  // box(x, y, z, w, h, d) CENTER (but centered around x, y, z)
+  // box(x, y, z, xr, yr, zr) CENTER_RADIUS
+
+  // sphere(x, y, z, r) CENTER
+  // sphere(x, y, z, r) CORNER draws the ellipse starting int the corner
+
   public void box(float size);
 
   public void box(float w, float h, float d);
@@ -105,7 +117,7 @@ public interface PMethods {
 
   public void sphere(float r);
 
-  public void sphere(float x, float y, float z, float r);
+  //public void sphere(float x, float y, float z, float r);
 
   //
 

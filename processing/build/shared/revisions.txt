@@ -7,6 +7,14 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0080
+
+- examples have finally been updated in this release, please test!
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0079 - 31 March 2005
 
 * horizontal toolbar! new colors! current line number indicator! *
