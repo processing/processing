@@ -214,7 +214,6 @@ public class PdeRuntime implements PdeMessageConsumer {
       //newMessage = true;
       leechErr.println(BApplet.LEECH_WAKEUP);
       e.printStackTrace(this.leechErr);
-      //if (exception != null) throw exception;
     }
   }
 
@@ -275,9 +274,9 @@ public class PdeRuntime implements PdeMessageConsumer {
       return;  // this line ignored
     }
 
-    //} else {
-    if (newMessage) {
-      //System.out.println("making msg of " + s);
+    // if s.length <=2, that probably means that it's just the platform
+    // line-terminators.  ignore it.
+    if (newMessage && s.length() > 2) {
       exception = new PdeException(s);  // type of java ex
       //System.out.println("setting ex type to " + s);
       newMessage = false;
@@ -301,7 +300,6 @@ public class PdeRuntime implements PdeMessageConsumer {
         } catch (NumberFormatException e) {  
           e.printStackTrace();
         }
-
       } else if ((index = s.indexOf(className + ".class")) != -1) {
         // code to check for:
         // at Temporary_484_3845.loop(Compiled Code)
@@ -331,12 +329,13 @@ public class PdeRuntime implements PdeMessageConsumer {
         // in the stack trace.. this is just a general purpose
         // error, but needs to make it through anyway.
         // so if five lines have gone past, might as well signal
-
         //System.out.println("signalling");
         messageLineCount = -100;
         exception = new PdeException(exception.getMessage());
         editor.error(exception);
-      }
+      } else {
+        //System.err.print(s);
+      } 
       //System.out.println("got it " + s);
     }
   }
