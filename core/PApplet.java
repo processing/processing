@@ -250,7 +250,9 @@ public class PApplet extends Applet
     */
 
     for (int i = 0; i < libraryCount; i++) {
-      libraries[i].stop();  // endNet/endSerial etc
+      if (libraries[i] != null) {
+        libraries[i].stop();  // endNet/endSerial etc
+      }
     }
   }
 
@@ -266,11 +268,7 @@ public class PApplet extends Applet
    * when moving between pages), though.
    */
   public void destroy() {
-    if (thread != null) {
-      // call stop since this prolly means someone 
-      // over-rode the stop() function
-      stop();  
-    }
+    stop();  
   }
 
 
@@ -483,14 +481,7 @@ public class PApplet extends Applet
   // ------------------------------------------------------------
 
 
-  void mouseClicked() { }
-
-  public void mouseClicked(MouseEvent e) {  // can this be removed?
-    mouseClicked();
-  }
-
-  // needs 'public' otherwise kjc assumes private
-  void mousePressed() { } // for beginners
+  public void mousePressed() { } // for beginners
 
   // this needn't set mouseX/Y
   // since mouseMoved will have already set it
@@ -500,7 +491,7 @@ public class PApplet extends Applet
     mousePressed();
   }
 
-  void mouseReleased() { }  // for beginners
+  public void mouseReleased() { }  // for beginners
 
   // this needn't set mouseX/Y
   // since mouseReleased will have already set it
@@ -510,11 +501,17 @@ public class PApplet extends Applet
     mouseReleased();
   }
 
+  public void mouseClicked() { }
+
+  public void mouseClicked(MouseEvent e) {  // can this be removed?
+    mouseClicked();
+  }
+
   public void mouseEntered(MouseEvent e) { }
 
   public void mouseExited(MouseEvent e) { }
 
-  void mouseDragged() { } // for beginners
+  public void mouseDragged() { } // for beginners
 
   public void mouseDragged(MouseEvent e) {
     mouseEvent = e;
@@ -534,7 +531,7 @@ public class PApplet extends Applet
     //mouseDragged();
   }
 
-  void mouseMoved() { }   // for beginners
+  public void mouseMoved() { }   // for beginners
 
   public void mouseMoved(MouseEvent e) {
     mouseEvent = e;
@@ -567,17 +564,7 @@ public class PApplet extends Applet
   // keyPressed() {   if (keyCode = 0xffff) { if (key == UP) { .. } } }
   // or something else more difficult
 
-  void keyTyped() { }
-
-  public void keyTyped(KeyEvent e) {
-    keyEvent = e;
-    key = e.getKeyChar();
-    if (key == 0xffff) key = e.getKeyCode();
-    //keyCode = e.getKeyCode();
-    keyTyped();
-  }
-
-  void keyPressed() { }
+  public void keyPressed() { }
 
   public void keyPressed(KeyEvent e) {
     keyEvent = e;
@@ -588,7 +575,7 @@ public class PApplet extends Applet
     keyPressed();
   }
 
-  void keyReleased() { }
+  public void keyReleased() { }
 
   public void keyReleased(KeyEvent e) {
     keyEvent = e;
@@ -597,6 +584,16 @@ public class PApplet extends Applet
     if (key == 0xffff) key = e.getKeyCode();
     //keyCode = e.getKeyCode();
     keyReleased();
+  }
+
+  public void keyTyped() { }
+
+  public void keyTyped(KeyEvent e) {
+    keyEvent = e;
+    key = e.getKeyChar();
+    if (key == 0xffff) key = e.getKeyCode();
+    //keyCode = e.getKeyCode();
+    keyTyped();
   }
 
 
@@ -621,33 +618,46 @@ public class PApplet extends Applet
   // getting the time
 
 
+  /** Get the number of milliseconds since the applet started. */
   public int millis() {
     return (int) (System.currentTimeMillis() - millisOffset);
   }
 
+  /** Seconds position of the current time. */
   static public int second() {
     return Calendar.getInstance().get(Calendar.SECOND);
   }
 
+  /** Minutes position of the current time. */
   static public int minute() {
     return Calendar.getInstance().get(Calendar.MINUTE);
   }
 
+  /** Hour position of the current time. */
   static public int hour() {
     return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
   }
 
-  // if users want day of week or day of year,
-  // they can add their own functions
+  /**
+   * Get the current day of the month (1 through 31). 
+   * If you're looking for the day of the week (M-F or whatever)
+   * or day of the year (1..365) then use java's Calendar.get()
+   */
   static public int day() {
     return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
   }
 
+  /**
+   * Get the current month in range 1 through 12.
+   */
   static public int month() {
     // months are number 0..11 so change to colloquial 1..12
     return Calendar.getInstance().get(Calendar.MONTH) + 1;
   }
 
+  /**
+   * Get the current year.
+   */
   static public int year() {
     return Calendar.getInstance().get(Calendar.YEAR);
   }
@@ -671,6 +681,13 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Get the current framerate. The initial value will be 10 fps,
+   * and will be updated with each frame thereafter. The value is not
+   * instantaneous (since that wouldn't be very useful since it would
+   * jump around so much), but is instead averaged (integrated) 
+   * over roughly the last 10 frames.
+   */
   public float framerate() {
     if (fpsLastMillis != 0) {
       float elapsed = (float) (System.currentTimeMillis() - fpsLastMillis);
@@ -683,6 +700,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Set a target framerate. This will cause delay() to be called
+   * after each frame to allow for a specific rate to be set.
+   */
   public void framerate(float fpsTarget) {
     this.fpsTarget = fpsTarget;
   }
@@ -771,7 +792,13 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Function for an applet/application to kill itself and
+   * display an error. Mostly this is here to be improved later.
+   */
   public void die(String what) {
+    stop();
+
     if (online) {
       System.err.println("i'm dead.. " + what);
 
@@ -782,6 +809,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Same as above but with an exception. Also needs work.
+   */
   public void die(String what, Exception e) {
     e.printStackTrace();
     die(what);
@@ -1284,6 +1314,12 @@ public class PApplet extends Applet
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // RANDOM NUMBERS
+
+
   Random internalRandom;
 
   /**
@@ -1335,25 +1371,16 @@ public class PApplet extends Applet
 
   // PERLIN NOISE
 
-  /*
-    Computes the Perlin noise function value at the point (x, y, z).
+  // [toxi 040903]
+  // octaves and amplitude amount per octave are now user controlled
+  // via the noiseDetail() function.
 
-    [toxi 040903]
-    octaves and amplitude amount per octave are now user controlled
-    via the noiseDetail() function.
+  // [toxi 030902]
+  // cleaned up code and now using bagel's cosine table to speed up
 
-    [toxi 030902]
-    cleaned up code and now using bagel's cosine table to speed up
-
-    [toxi 030901]
-    implementation by the german demo group farbrausch
-    as used in their demo "art": http://www.farb-rausch.de/fr010src.zip
-
-    @param x x coordinate
-    @param y y coordinate
-    @param z z coordinate
-    @return the noise function value at (x, y, z)
-  */
+  // [toxi 030901]
+  // implementation by the german demo group farbrausch
+  // as used in their demo "art": http://www.farb-rausch.de/fr010src.zip
 
   static final int PERLIN_YWRAPB = 4;
   static final int PERLIN_YWRAP = 1<<PERLIN_YWRAPB;
@@ -1373,6 +1400,14 @@ public class PApplet extends Applet
   Random perlinRandom;
 
 
+  /**
+   * Computes the Perlin noise function value at the point (x, y, z).
+   *
+   * @param x x coordinate
+   * @param y y coordinate
+   * @param z z coordinate
+   * @return the noise function value at (x, y, z)
+   */
   public float noise(float x) {
     // is this legit? it's a dumb way to do it (but repair it later)
     return noise(x, 0f, 0f);
@@ -1842,7 +1877,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Saves bytes to inside the sketch folder.
+   * Saves bytes to a file to inside the sketch folder.
    * The filename can be a relative path, i.e. "poo/bytefun.txt"
    * would save to a file named "bytefun.txt" to a subfolder 
    * called 'poo' inside the sketch folder. If the in-between
@@ -1862,7 +1897,7 @@ public class PApplet extends Applet
   }
 
   /**
-   * Saves bytes to a specific location specified by the user.
+   * Saves bytes to a specific File location specified by the user.
    */
   public void saveBytes(File file, byte buffer[]) {
     try {
@@ -1877,6 +1912,9 @@ public class PApplet extends Applet
     }
   }
 
+  /**
+   * Spews a buffer of bytes to an OutputStream.
+   */
   public void saveBytes(OutputStream output, byte buffer[]) {
     try {
       //BufferedOutputStream bos = new BufferedOutputStream(output);

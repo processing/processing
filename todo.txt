@@ -118,6 +118,9 @@ _   people with non-ascii chars in the folder name
 _     at least try to catch this? is that possible?
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+_   other errors with spinning and not doing much
+_     run.bat often works fine
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
 _   or with spaces in the folder name, causes problems for serial
 _ quicktime full uninstall/reinstall
 _   installing winvdig
