@@ -134,6 +134,10 @@ dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
+_ runtime exceptions not coming through on either mac or windows
+_   when array wasn't large enough for curveMode, blank red line
+
+
 bf _ curves
 bf _   curveMode(), curveMode to tweak the s parameter of catmullrom
 bf _   setting accuracy of curve segments
@@ -148,7 +152,7 @@ macosx
 X could it be audio that's hanging the application? -> nope
 _   duh.. do println() statements to see where it's hanging
 _   (or hanging on start)
-
+_   could also be connected to compiling process, though it seems runtime
 _ change Proce55ing.app to Processing.app
 _   should cvs be changed or just do this as a renaming step?
 _ jikes is not properly wired to Proce55ing.app
@@ -181,7 +185,8 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
 
-_ open button stays stuck if no sketch is selected from popup
+1 _ open button stays stuck if no sketch is selected from popup
+57 _ perlin noise should be tested for 1d case
 
 _ tweak video to get it working
 o   beginVideo(int, int, int) not found
