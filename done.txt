@@ -1,3 +1,33 @@
+0037
+X copying files from 'data' dir is not recursive.. fixed
+X move structure of app/application dirs around a bit
+X make a new 'dist' function for building
+X save window position (only during session) of sketch run window
+X shouldn't substitute f's for: "Univers76.vlw.gz";
+X   need lots of testing--this changes lots of things
+X fixed commentsCodec which was mangling things
+o present mode doesn't work for draw()
+X   tested, seems to be fine?
+X console - convert tabs to spaces
+o   line wrapping (but save info for resize? noo..)
+X fix to line numbers being off for KjcEngine exception highlights
+X changed error color slightly for console to fit status error 
+X size() not being called in setup is gonna cause lots of headaches
+X   hack: put exception handler around setup and re-call if necessary
+X linefeeds were wrong in BApplet
+X for people visiting site, what os are they using?
+X saving to gzipped 'versions' file
+X   autosave every few minutes, also on each compile, also on save
+X   mark each as 'save', 'autosave', 'failed' or 'successful' compile
+X   also include a timestamp
+X   if a selection is made from the menu:
+X     autosave, replace text, mark as edited
+X     if there have been no edits, and last thing was hist change, 
+X       should *not* do another autosave
+X       ensure this by historyLast being set on change.. heh. nice.
+X write message to people who signed up for p5 alpha
+
+
 0036
 X editor.buttons.bgcolor default value was wrong
 X sketch.properties exception when closing on linux and mac
