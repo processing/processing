@@ -1,3 +1,6 @@
+#!/usr/bin/perl
+
+
 open(F, "../../bagel/Bagel.java") || die $!;
 @contents = <F>;
 close(F);
