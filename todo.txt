@@ -4,9 +4,8 @@ X ceil/floor/round
 X new set of examples
 X   remove old examples from cvs
 X pmouseX and pmouseX should be colored with mouseX and mouseY
-
-_ new html for export
-_ new colors chosen by casey
+X new html for export
+X new colors chosen by casey (replace pde.properties and buttons.gif)
 
 _ disappearing text caret on win2k
 _   works in 'insert' mode
