@@ -46,7 +46,7 @@ settings.path.fallback=data
 
 # default size for the main window
 default.window.width = 500
-default.window.height = 500
+default.window.height = 600
 
 # font size for editor
 editor.font=Monospaced,plain,12

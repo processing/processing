@@ -3,8 +3,15 @@ X make jdkVersion, jdkVersionName, platform, platformName variables
 X additional note about screen sizes and displays
 X sto instead of stop in present mode
 X appears that opengl libraries weren't correctly added in 81?
+X requestFocus() now called on gl canvas
 
 _ fix bezierVertex() for newer api
+
+_ set(x, y, image)
+_   x, y not setting with processing
+_   y reversed in openGL 
+
+_ fix messages referring to depth()
 
 tweaking up simong light code
 _ why does diffuse just mirror fill()?
@@ -47,6 +54,15 @@ _   needs to get the size of the main screen
 _ make illustrator lib
 
 _ move really general things out of PConstants (X, Y, Z..)
+
+sound
+_ When a sound is finished playing, it should return to 0 so it can play again
+_ Putting sound.loop() in draw() seemed to spawn multiple sounds threads?
+_ After a sound is paused, it will only play from where it was paused
+_   to its end and will not loop again
+_ The ref in PSound2 says volume accepts vals from 0...1
+_   but values larger than one increase the volume.
+_ SoundEvent // is sound finished?? Can't access now. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
