@@ -24,7 +24,7 @@
 */
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -243,10 +243,12 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
   }
   
   public void mouseMoved(MouseEvent e) {
+    //System.out.println(e);
     mouseMove(e);
   }
 
   public void mouseDragged(MouseEvent e) {
+    //System.out.println(e);
     //mouseMove(e);
   }
   
@@ -364,8 +366,7 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
 
     if (currentSelection == OPEN) {
       if (popup == null) {
-        //popup = new JPopupMenu();
-        popup = new PopupMenu();
+       popup = new PopupMenu();
         add(popup);
       }
       //popup.addActionListener(this);
@@ -391,6 +392,8 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
   
   ///public boolean mouseUp(Event e, int x, int y) {
   public void mouseReleased(MouseEvent e) {
+    //System.out.println("mouse is released");
+
     //switch (which[sel]) {
     switch (currentSelection) {
 
@@ -414,17 +417,17 @@ public class PdeEditorButtons extends JPanel implements MouseInputListener {
       //case CLOSE: editor.doClose(); break;
 
       //case OPEN:  editor.doOpen(); break;
-      /*
-      case OPEN:  
-        System.err.println("popup mouseup");
+
+    case OPEN:  
+      setState(OPEN, INACTIVE, true);
+      //System.err.println("popup mouseup");
       //popup.setVisible(false);
-      remove(popup);
+      //remove(popup);
       // kill the popup?
       //PopupMenu popup = new PopupMenu();
       //editor.base.rebuildSketchbookMenu(popup);
       //popup.show(this, x, y);
       break;
-      */
       //editor.doOpen(this, BUTTON_WIDTH, OPEN * BUTTON_HEIGHT); 
 
     case NEW: editor.skNew(); break;

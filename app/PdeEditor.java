@@ -1594,6 +1594,21 @@ public class PdeEditor extends JPanel {
   }
 
 
+  PdeEditorFind find;
+
+  public void find() {
+    if (find == null) { 
+      find = new PdeEditorFind(this);
+    } else {
+      find.show();
+    }
+  }
+
+  public void findNext() {
+    if (find != null) find.find();
+  }
+
+
   public void doBeautify() {
     String prog = textarea.getText();
     makeHistory(prog, BEAUTIFY);
