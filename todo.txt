@@ -24,6 +24,7 @@ X   look into macos9 version of javac
 X get proper tab comments into source files
 X   http://www.jwz.org/doc/tabs-vs-spaces.html
 X get proper licensing info into source files
+X fix bezier curve issues (p. 56 in illustrator spec)
 
 macosx
 X had to disable MRJFileUtils stuff on osx at last minute before 53
@@ -87,9 +88,9 @@ _   grab rxtx for linux and include with distribution
 _ pde_keywords.properties isn't getting copied into work/lib
 
 
+bf _ take a look at sourceforge bugs
+
 thesis / acg
-bf _ fix bezier curve issues
-bf _   take a look at sourceforge bugs
 
 bf b _ curves
 bf b _   curveMode(), curveMode to tweak the s parameter of catmullrom
