@@ -10,6 +10,17 @@ o  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;
 o java vm could be removed from cvs
 o   in favor of requiring a specific jvm, and using registry to find
 X see if mods to PdeCompiler work on windows
+X remove "couldn't delete.." messages
+X modify how size() works
+X   allow size() to be called multiple times
+X   only works once in applet
+X   be able to set size() later in the program
+X   but still maintain other features like background
+X   make the BGraphics constructor less fragile
+X     and also more open to being resized when not in applet mode
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062482781;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062482895;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062483060;start=0
 
 fixes because of dmose parser
 X move to antlr
@@ -28,6 +39,10 @@ X setup( ){} has an error, setup(){} does not
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461971;start=0
 X weird comments bug (// on last line causes oro trouble)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
+
+in progress
+_ color(x, y, z) has become swatch(x, y, z) 
+_   because of conflicts with the new parser
 
 
 the big stuff:
@@ -52,50 +67,38 @@ FONT SUCKAGE
 
 ..
 
+_ Be able to draw something inside setup (?)
+_   at the end of setup: BImage bg = copy(); loop() { background(bg); }
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
 
-X when exporting applet, line numbers will be off.. 
-_   when not exporting with new preproc code, imports all on same line
-_   make preproc keep track of how many lines were added
+_ if there's a bug in bagel, PdeRuntime.message() ignores it
+_   just says "NullPointerException" but provides no info
 
-_ modify antlr stuff to conditionally recompile in make.sh
-_   only recompile if asked or if changes
+_ is draw() mode broken?
 
-_ size(myWidth, myHeight) -> set static var in BGraphics
-_   for the last size that was used, use as default when 
-_   prompting for the size of the exported applet
-_ modify how size() works
-_   allow size() to be called multiple times
-_   only works once in applet
-_   if size() not found in export/compile, ask the user
-_   check what other functions require BGraphics to exist but shouldn't
-_ color has to be called inside or after setup
-_ loadImage must be used inside or after setup
-_   either document this and/or provide a better error message
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+_ draw mode issues.. size and background must be int/float constants
+_   might be a better 'mode' for bagel so bkg and size cmds work
+_   rather than app being enclosed in beginFrame/endFrame loop
 
-   b _ be able to draw something inside setup (?)
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
-   b _ be able to set size() later in the program
-   b _   but still maintain other features like background
-   b _   make the BGraphics constructor less fragile
-   b _     and also more open to being resized when not in applet mode
-
-   b _ draw mode issues.. size and background must be int/float constants
-   b _   might be a better 'mode' for bagel so bkg and size cmds work
-   b _   rather than app being enclosed in beginFrame/endFrame loop
-
-_ setup (200, 200) causes the default size to be used 
-_ no longer require size() to come first.
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059517526
-
-
-_ modify background() to actually clear the screen
+X modify background() to actually clear the screen
 _   modify readme.txt regarding background() requiring constants
 
+_ remove notes from reference about size/background
+_ remove notes from readme about size/background
 
-X remove "couldn't delete.." messages
+_ if size() not found in export/compile, ask the user
+_   size(myWidth, myHeight) -> set static var in BGraphics
+_     for the last size that was used, use as default when 
+_ setup (200, 200) causes the default size to be used 
+_   need to use oro matcher when trying to grab the applet size (export?)
+
+..
+
+_ check what other functions require BGraphics to exist but shouldn't
+_   color has to be called inside or after setup
+_   loadImage must be used inside or after setup
+_     either document this and/or provide a better error message
+_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
 
 _ fix the problem causing all the "couldn't delete" messages
 
@@ -112,6 +115,16 @@ _ font.stringWidth -> font.width(char c) or width(String s)
 
 _ BGraphics, BVideo both subclass BImage
 _   inherits all image manipulation and image use methods
+
+_ no time to ask for "save changes" before quit
+_   PdeEditor, around line 910.. not blocking until input 
+
+X when exporting applet, line numbers will be off.. 
+_   when not exporting with new preproc code, imports all on same line
+_   make preproc keep track of how many lines were added
+
+_ modify antlr stuff to conditionally recompile in make.sh
+_   only recompile if asked or if changes
 
 internal structural stuff
 _ add constants for building NET, move stuff around in bagel dir
