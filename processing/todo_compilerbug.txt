@@ -1,0 +1,167 @@
+From mike@lightcycle.org Wed Nov 27 09:48:09 2002
+Date: Tue, 26 Nov 2002 22:26:35 -0800
+From:  <mike@lightcycle.org>
+To: bugs@proce55ing.net
+Subject: Error during export.
+
+During export, I've recieved the message "Error while compiling, please
+send code to bugs@proce55ing.net".  The following code runs, but doesn't
+export in 0044 or 0046.
+
+I wonder if it has anything to do with my vector2d class - Java has a
+class Vector2d, but it is in javax.vecmath.Vector2d and the case is
+differant.
+
+Thanks,
+Mike Davis
+
+------------------------------------------------------------
+
+int n = 8;
+swimmer[] s;
+float viscousness = 0.3;
+float drag = 0.1;
+
+void setup()
+{
+  size(300, 300);
+  background(255);
+  stroke(0);
+  noFill();
+  s = new swimmer[n];
+  for (int i = 0; i < n; i++)
+    s[i] = new swimmer((float)(i + 1)/(n+1) * width, 7*height/8, (i+1) *
+0.05);
+}
+
+void loop()
+{
+  for (int i = 0; i < n; i++) s[i].step();
+}
+
+class vector2d
+{
+  float x, y;
+  vector2d(float x, float y)
+  {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+vector2d addv(vector2d a, vector2d b)
+{
+  return new vector2d(a.x + b.x, a.y + b.y);
+}
+
+vector2d unitv(vector2d a)
+{
+  vector2d b = a;
+  float length = sqrt(sq(b.x)+sq(b.y));
+  b.x = b.x / length;
+  b.y = b.y / length;
+  return b;
+}
+
+vector2d scalev(vector2d a, float scalar)
+{
+  vector2d b = a;
+  b.x = b.x * scalar;
+  b.y = b.y * scalar;
+  return b;
+}
+
+vector2d perpv(vector2d a)
+{
+  vector2d b = new vector2d(a.y, -a.x);
+  return b;
+}
+
+class paddle
+{
+  float x1, y1, x2, y2;
+  vector2d force, forceat;
+  paddle(float x1, float y1, float x2, float y2)
+  {
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    force = new vector2d(0, 0);
+    forceat = new vector2d(0, 0);
+  }
+  
+  void moveto(float x1, float y1, float x2, float y2)
+  {
+    float f = viscousness *
+0.5*((this.x1*this.y2+this.x2*y2+x2*y1+x1*this.y1)-(this.y1*this.x2+this.y2*x2+y2*x1+y1*this.x1));
+    float midx1 = (this.x1 + x1) / 2;
+    float midy1 = (this.y1 + y1) / 2;
+    float midx2 = (this.x2 + x2) / 2;
+    float midy2 = (this.y2 + y2) / 2;
+    forceat = new vector2d((midx1 + midx2) / 2, (midy1 + midy2) / 2);
+    vector2d m = new vector2d(midx2-midx1, midy2-midy1);
+    force = scalev(unitv(perpv(m)), f);
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+  }
+
+  void draw()
+  {
+    line(this.x1, this.y1, this.x2, this.y2);
+  }
+
+  void drawforce()
+  {
+    line(forceat.x, forceat.y, forceat.x + force.x, forceat.y + force.y);
+  }
+}
+
+class swimmer
+{
+  paddle p1, p2;
+  float t = 0;
+  float mass = 10;
+  float angle;
+  float speed;
+  vector2d position, velocity, acceleration;
+
+  swimmer(float x, float y, float s)
+  {
+    speed = s;
+    p1 = new paddle(0, 0, 10, 0);
+    p2 = new paddle(0, 0, -10, 0);
+    position = new vector2d(x, y);
+    velocity = new vector2d(0, 0);
+    acceleration = new vector2d(0, 0);
+  }
+  
+  void step()
+  {
+    t += speed;
+    p1.moveto(0, 0, -20 * abs(cos(t)/2 + 0.5), 20 * sin(t));
+    p2.moveto(0, 0, 20 * abs(cos(t)/2 + 0.5), 20 * sin(t));
+    push();
+      translate(position.x, position.y);
+      p1.draw();
+      p2.draw();
+      acceleration = scalev(addv(p1.force, p2.force),  1/mass);
+      velocity = addv(velocity, acceleration);
+      position = addv(position, velocity);
+      velocity = scalev(velocity, drag);
+      if (mousePressed)
+      {
+        stroke(255, 0, 0);
+        p1.drawforce();
+        p2.drawforce();
+        stroke(0);
+      }
+      while (position.x < 0) position.x += width;
+      while (position.x >= width) position.x -= width;
+      while (position.y < 0) position.y += height;
+      while (position.y >= height) position.y -= height;
+    pop();
+  }
+}

@@ -70,7 +70,8 @@ cd app
 CLASSPATH=../build/windows/work/classes:../build/windows/work/lib/kjc.jar:../build/windows/work/lib/oro.jar:../build/windows/work/java/lib/rt.jar:../build/windows/work/java/lib/ext/comm.jar
 
 #perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/windows/work/classes" -dJDK13 *.java lexer/*.java
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/windows/work/classes" -dJDK13 -dJDK14 *.java lexer/*.java
+#perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/windows/work/classes" -dJDK13 -dJDK14 *.java lexer/*.java
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/windows/work/classes" -dJDK13 -dJDK14 *.java jeditsyntax/*.java
 
 cd ../build/windows/work/classes
 rm -f ../lib/pde.jar
