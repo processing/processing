@@ -8,9 +8,19 @@ _ fix all the random line types to support alpha
 
 _ write code for line joins.. continuous lines should become polygon snake
 
+_ convex/concave polygons
+
+
+//// 
+
+
 _ beautify() ignores colons for case statements
+_   need to tie this to the parser instead
 
 _ rename doesn't set focus to renamer area
+
+_ rename sketch 'can't rename' error (file being kept open)
+_   open sketch, make a change, save, run, rename -> error
 
 _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
@@ -36,6 +46,8 @@ _ versions of loadStream/loadBytes etc that use streams and/or urls
 _ environment locks up when error stream isn't for the class
 _   this happens when it's another thread (i.e. image fetcher)
 _   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
+
+_ people like downloadable reference + net isn't cheap everywhere
 
 _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
@@ -335,6 +347,7 @@ o
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039411135
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038807934
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1029289775
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1047649496;start=0
    b _ weird comments bug (external file)
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1040466898
    b _ kjc is really frustrating about some of its error/warning msgs
