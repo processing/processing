@@ -55,6 +55,7 @@ cd bagel
 
 CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
 #CLASSPATH=../app/build/linux/work/java/lib/rt.jar:../app/build/linux/work/java/lib/ext/comm.jar
+export CLASSPATH
 
 ### --- make version with serial for the application
 echo Building bagel with serial and sonic support
