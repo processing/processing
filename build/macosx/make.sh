@@ -175,9 +175,10 @@ echo Building the PDE...
 
 # new rxtx
 #CLASSPATH=../build/macosx/work/classes:../build/macosx/work/lib/kjc.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/RXTXcomm.jar:$CLASSPATH
-CLASSPATH=../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:$CLASSPATH
 
-../build/macosx/work/jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java
+#CLASSPATH=../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:$CLASSPATH
+
+../build/macosx/work/jikes +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java
 
 #perl ../bagel/buzz.pl "../build/macosx/work/jikes +D -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
 #perl ../bagel/buzz.pl "javac -classpath $CLASSPATH -d ../build/macosx/work/classes" -dJDK13 -dMACOS -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
@@ -189,6 +190,19 @@ cd ../..
 
 # get the libs
 cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
+
+
+
+### -- BUILD LIBRARIES ------------------------------------------------
+
+#CLASSPATH=../../build/macosx/work/lib/core.jar
+
+#pwd
+cd ../../lib/serial
+../../build/macosx/work/jikes +D -classpath "RXTXcomm.jar:../../build/macosx/work/lib/core.jar:$CLASSPATH" -d . *.java 
+#../../build/windows/work/jikes +D -classpath "comm.jar;$CLASSPATH" -d . *.java 
+zip -r0q serial.jar processing
+rm -rf processing
 
 
 echo Done.
