@@ -46,7 +46,9 @@ public class PdeRuntime implements PdeMessageConsumer {
   boolean foundMessageSource;
 
   Process process;
+  SystemOutSiphon processInput;
   OutputStream processOutput;
+  PdeMessageSiphon processError;
 
   //boolean externalRuntime;
   //String libraryPath;
@@ -109,8 +111,8 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         //PApplet.println(PApplet.join(command, " "));
         process = Runtime.getRuntime().exec(command);
-        new SystemOutSiphon(process.getInputStream());
-        new PdeMessageSiphon(process.getErrorStream(), this);
+        processInput = new SystemOutSiphon(process.getInputStream());
+        processError = new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
 
       } else {  // !externalRuntime
@@ -527,10 +529,13 @@ java.lang.NullPointerException
   }
 
 
+  /**
+   * Siphons from an InputStream of System.out (from a Process)
+   * and sends it to the real System.out.
+   */
   class SystemOutSiphon implements Runnable {
     InputStream input;
     Thread thread;
-
 
     public SystemOutSiphon(InputStream input) {
       this.input = input;
@@ -550,45 +555,16 @@ java.lang.NullPointerException
           if (count == -1) thread = null;
           //System.out.print("bc" + count + " " + new String(boofer, 0, count));
           //PApplet.println(boofer);
+          System.out.print(new String(boofer, 0, count));
 
         } catch (IOException e) {
+          // this is prolly because the app was quit & the stream broken
+          //e.printStackTrace(System.out);
           thread = null;
         }
         //System.out.println("SystemOutSiphon: out");
-        //thread = null;
+        thread = null;
       }        
     }
-
-
-      /*
-      //while (Thread.currentThread() == thread) {
-      //try {
-      //while (true) {
-          //int count = input.available();
-            //int offset = 0; 
-          int count = input.read(boofer, 0, boofer.length);
-          if (count == -1) {
-            System.out.println("SystemOutSiphon: out");
-            thread = null;
-          }
-          //if (count != -1) {
-          if (count > 0) {
-            System.out.print(new String(boofer, 0, count));
-          }
-          //}
-            //}
-
-        } catch (Exception e) { 
-          System.err.println("SystemOutSiphon error " + e);
-          e.printStackTrace();
-        }
-        //Thread.yield();
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) { }
-      }
-    }
-      */
-
   }
 }
