@@ -623,6 +623,9 @@ ca b _     translate(58, 48, 0);
 ca b _     rotateY(0.5);
 ca b _     box(40);
 
+   b _ stroke is still broken
+   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077013848;start=0
+
 ca b X clipping objects (clipping planes?)
 ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
 ca b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
