@@ -166,8 +166,7 @@ public class PdeBase extends Frame
 
 
   public PdeBase() {
-    super(System.getProperty("sun.boot.class.path"));
-    //super(WINDOW_TITLE);
+    super(WINDOW_TITLE);
     frame = this;  // clean this up later
 
     try {

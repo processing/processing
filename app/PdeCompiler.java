@@ -45,6 +45,11 @@ public class PdeCompiler implements PdeMessageConsumer{
   public boolean compileJava(PrintStream leechErr) {
     String command[] = new String[] { 
       "jikes",
+
+      // used when run without a vm ("expert" mode)
+      "-bootclasspath",
+      System.getProperty("sun.boot.class.path"),
+
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
       "-d", buildPath, // output the classes in the buildPath
