@@ -231,6 +231,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       partialStartIndex = s.indexOf(partialTempPath);
       if (partialStartIndex != -1) {
         fileIndex = i;
+        //System.out.println("fileIndex is " + fileIndex);
         break;
       }
     }
@@ -243,8 +244,8 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       // skip past the path and parse the int after the first colon
       //
-      String s1 = s.substring(partialStartIndex + partialTempPath.length()
-                              + 1);
+      String s1 = s.substring(partialStartIndex + 
+                              partialTempPath.length() + 1);
       int colon = s1.indexOf(':');
       int lineNumber = Integer.parseInt(s1.substring(0, colon));
       //System.out.println("pde / line number: " + lineNumber);
@@ -267,7 +268,7 @@ public class PdeCompiler implements PdeMessageConsumer {
         String description = s1.substring(err + "Error:".length());
         description = description.trim();
         //System.out.println("description = " + description);
-        exception = new PdeException(description, lineNumber-1);
+        exception = new PdeException(description, fileIndex, lineNumber-1, -1);
 
         // NOTE!! major change here, this exception will be queued
         // here to be thrown by the compile() function

@@ -4,8 +4,8 @@
   PdeException - an exception with a line number attached
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 
 public class PdeException extends Exception {
+  int file = -1;
   int line = -1;
   int column = -1;
 
@@ -31,7 +32,6 @@ public class PdeException extends Exception {
 
   public PdeException(String message) {
     super(massage(message));
-    //System.out.println("message for this error is " + message);
   }
 
   public PdeException(String message, int line) {
@@ -39,9 +39,15 @@ public class PdeException extends Exception {
     this.line = line;
   }
 
-  // 0060 currently only used by the new preprocessor
   public PdeException(String message, int line, int column) {
     super(massage(message));
+    this.line = line;
+    this.column = column;
+  }
+
+  public PdeException(String message, int file, int line, int column) {
+    super(massage(message));
+    this.file = file;
     this.line = line;
     this.column = column;
   }

@@ -1042,7 +1042,7 @@ public class PdeSketch {
 
         } catch (antlr.RecognitionException re) {
           // this even returns a column
-          throw new PdeException(re.getMessage(), 
+          throw new PdeException(re.getMessage(), i,
                                  re.getLine() - 1, re.getColumn());
 
         } catch (antlr.TokenStreamRecognitionException tsre) {
@@ -1071,10 +1071,11 @@ public class PdeSketch {
 
             int line = Integer.parseInt(result.group(1).toString());
             int column = Integer.parseInt(result.group(2).toString());
-            throw new PdeException(tsre.getMessage(), line-1, column);
+            throw new PdeException(tsre.getMessage(), i, line-1, column);
 
           } else {
-            throw new PdeException(tsre.toString());
+            //throw new PdeException(tsre.toString());
+            throw new PdeException(tsre.toString(), i, -1, -1);
           }
 
         } catch (PdeException pe) {
@@ -1100,19 +1101,15 @@ public class PdeSketch {
     return success ? primaryClassName : null;
   }
 
-
   /**
    * Called by PdeEditor to handle someone having selected 'export'. 
    * Pops up a dialog box for export options, and then calls the
    * necessary function with the parameters from the window.
    *
-   *
    * +-------------------------------------------------------+
    * +                                                       +
    * + Export to:  [ Applet (for the web)   + ]    [  OK  ]  +
    * +                                                       +
-   * + [ ] OK to overwrite HTML file   <-- gray out if no existing folder..
-   * +                                     remembers previous setting as a pref
    * + > Advanced                                            +
    * +                                                       +
    * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
