@@ -6,6 +6,30 @@ import java.net.*; // the start of a bad joke
 
 import com.oroinc.text.regex.*;
 
+/*
+
+this needs to be reworked. there are three essential parts
+
+(0. if not java, then use another 'engine'.. i.e. python)
+
+1. do the p5 language preprocessing
+   -> this creates a working .java file in a specific location
+
+2. compile the code from that location
+   -| catching errors along the way
+   -| currently done with kjc, but would be nice to use jikes
+   -> placing it in a ready classpath, or .. ?
+
+3. run the code 
+   needs to communicate location for window 
+     and maybe setup presentation space as well
+   -> currently done internally
+   -> would be nice to use external (at least on non-os9)
+
+afterwards, some of these steps need a cleanup function
+
+ */
+
 
 // always compile to lib directory
 // always make .java in current directory
@@ -15,6 +39,7 @@ import com.oroinc.text.regex.*;
 
 // doesn't really need to extend kjc.Main anymore, 
 // since reportTrouble doesn't actually do any good
+
 
 public class KjcEngine extends PdeEngine {
   static String TEMP_CLASS = "Temporary";
@@ -921,6 +946,75 @@ class DelayedClose {
 }
 
 
+class KjcMessageSiphon implements Runnable {
+  InputStream stdout, stderr;
+  PrintStream leechErr;
+  Thread thread;
+
+  public KjcMessageSiphon(InputStream stdout, InputStream stderr,
+			  PrintStream leechErr) {
+    this.stdout = stdout;
+    this.stderr = stderr;
+
+    thread = new Thread(this);
+    thread.start();
+  }
+
+  public void run() {
+    while (Thread.currentThread() == thread) {
+      try {
+	if (stderr.available() > 0) {
+	  while (stderr.available() > 0) {
+	    System.out.print((char)stderr.read());
+	  }
+	  stderr = null; // get out
+	  throw new Exception();
+	}
+
+	while (stdout.available() > 0) {
+	  System.out.print((char)stdout.read());
+	}
+	Thread.sleep(100);
+
+      } catch (Exception e) { 
+	if ((stderr != null) && (leechErr != null)) {
+	  System.out.println("KjcMessageSiphon err " + e);
+	}
+	thread.stop();
+	thread = null;
+      }
+    }
+  }
+}
+
+
+class KjcMessageStream extends OutputStream {
+  KjcEngine parent;
+
+  public KjcMessageStream(KjcEngine parent) {
+    this.parent = parent;
+  }
+
+  public void close() { }
+
+  public void flush() { }
+
+  public void write(byte b[]) { 
+    System.out.println("leech1: " + new String(b));
+  }
+
+  public void write(byte b[], int offset, int length) {
+    //System.out.println("leech2: " + new String(b));
+    parent.message(new String(b, offset, length));
+  }
+
+  public void write(int b) {
+    System.out.println("leech3: '" + ((char)b) + "'");
+  }
+}
+
+
+/*
 class KjcClassLoader extends ClassLoader {
   String basePath;
 
@@ -1003,83 +1097,7 @@ class KjcClassLoader extends ClassLoader {
     return out.toByteArray();
   }
 }
-
-
-class KjcMessageSiphon implements Runnable {
-  InputStream input, error;
-  PrintStream leechErr;
-  Thread thread;
-
-  public KjcMessageSiphon(InputStream input, InputStream error,
-			  PrintStream leechErr) {
-    this.input = input;
-    this.error = error;
-
-    thread = new Thread(this);
-    thread.start();
-  }
-
-  public void run() {
-    while (Thread.currentThread() == thread) {
-      try {
-	if (error.available() > 0) {
-	  while (error.available() > 0) {
-	    System.out.print((char)error.read());
-	  }
-	  error = null; // get out
-	  throw new Exception();
-	}
-
-	while (input.available() > 0) {
-	  System.out.print((char)input.read());
-	}
-	Thread.sleep(100);
-
-	/*
-	int c = error.read();
-	if (c == -1) {
-	  error = null; // get out
-	  throw new Exception();
-	}
-	System.out.print((char)c);
-	Thread.sleep(5);
-	*/
-      } catch (Exception e) { 
-	if ((error != null) && (leechErr != null)) {
-	  System.out.println("KjcMessageSiphon err " + e);
-	}
-	thread.stop();
-	thread = null;
-      }
-    }
-  }
-}
-
-
-class KjcMessageStream extends OutputStream {
-  KjcEngine parent;
-
-  public KjcMessageStream(KjcEngine parent) {
-    this.parent = parent;
-  }
-
-  public void close() { }
-
-  public void flush() { }
-
-  public void write(byte b[]) { 
-    System.out.println("leech1: " + new String(b));
-  }
-
-  public void write(byte b[], int offset, int length) {
-    //System.out.println("leech2: " + new String(b));
-    parent.message(new String(b, offset, length));
-  }
-
-  public void write(int b) {
-    System.out.println("leech3: '" + ((char)b) + "'");
-  }
-}
+*/
 
 
 /*
