@@ -375,19 +375,20 @@ public class PGraphics2 extends PGraphics {
 
 
   public void vertex(float x, float y) {
+    splineVertexCount = 0;
     float vertex[];
 
-    if (shapeVertices) {
-      if (vertexCount == vertices.length) {
-        float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
-        System.arraycopy(vertices, 0, temp, 0, vertexCount);
-        vertices = temp;
-        message(CHATTER, "allocating more vertices " + vertices.length);
-      }
-      vertex = vertices[vertexCount++];
-      vertex[MX] = x;
-      vertex[MY] = y;
+    if (vertexCount == vertices.length) {
+      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertexCount);
+      vertices = temp;
+      message(CHATTER, "allocating more vertices " + vertices.length);
     }
+    // not everyone needs this, but just easier to store rather
+    // than adding another moving part to the code...
+    vertices[vertexCount][MX] = x;
+    vertices[vertexCount][MY] = x;
+    vertexCount++;
 
     switch (shape) {
 
@@ -510,6 +511,51 @@ public class PGraphics2 extends PGraphics {
     }
   }
 
+
+  public void bezierVertex(float x, float y) {
+    vertexCount = 0;
+
+    if (splineVertices == null) {
+      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
+    }
+
+    // if more than 128 points, shift everything back to the beginning
+    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 3], 0,
+                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 2], 0,
+                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
+      splineVertexCount = 3;
+    }
+    splineVertices[splineVertexCount][MX] = x;
+    splineVertices[splineVertexCount][MY] = y;
+    splineVertexCount++;
+
+    switch (shape) {
+    case LINE_LOOP:
+    case POLYGON:
+    case CONCAVE_POLYGON:
+    case CONVEX_POLYGON:
+      if (splineVertexCount == 1) {
+        path.moveTo(x, y);
+
+      } else if (splineVertexCount >= 4) {
+        path.curveTo(splineVertices[splineVertexCount-3][MX],
+                     splineVertices[splineVertexCount-3][MY],
+                     splineVertices[splineVertexCount-2][MX],
+                     splineVertices[splineVertexCount-2][MY],
+                     x, y);
+      }
+      break;
+    }
+  }
+
+
+  public void curveVertex(float x, float y) {
+    // TODO handle inverse matrix action
+  }
+
+
   public void endShape() {
     switch (shape) {
 
@@ -531,8 +577,6 @@ public class PGraphics2 extends PGraphics {
     }
   }
 
-  public void curveVertex(float x, float y) {
-  }
 
 
   //////////////////////////////////////////////////////////////
@@ -668,7 +712,7 @@ public class PGraphics2 extends PGraphics {
                      float x4, float y4) {
     GeneralPath gp = new GeneralPath();
     gp.moveTo(x1, y1);
-    gp.quadTo(x2, y2, x3, y3, x4, y4);
+    gp.curveTo(x2, y2, x3, y3, x4, y4);
     gp.closePath();
 
     draw_shape(gp);
