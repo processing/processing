@@ -240,7 +240,8 @@ public class PdeSketchbook {
     menu.removeAll();
 
     try {
-      addSketches(menu, sketchbookFolder);
+      //addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+      addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
       menu.addSeparator();
       addSketches(menu, examplesFolder);
 
@@ -255,7 +256,7 @@ public class PdeSketchbook {
   }
 
 
-  protected boolean addSketches(File folder) throws IOException {
+  protected boolean addSketches(JMenu menu, File folder) throws IOException {
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
 
