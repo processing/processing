@@ -146,8 +146,6 @@ public class PdeEditor extends JFrame
       });
 
     PdeKeywords keywords = new PdeKeywords();
-    // TODO re-enable history
-    //history = new PdeHistory(this);
     sketchbook = new PdeSketchbook(this);
 
     JMenuBar menubar = new JMenuBar();
@@ -155,8 +153,7 @@ public class PdeEditor extends JFrame
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
-    // what platform has their help menu way on the right?
-    //if ((PdeBase.platform == PdeBase.WINDOWS) ||
+    // what platform has their help menu way on the right? motif?
     //menubar.add(Box.createHorizontalGlue());
     menubar.add(buildHelpMenu());
 
@@ -169,37 +166,21 @@ public class PdeEditor extends JFrame
     pain.setLayout(new BorderLayout());
 
     Box box = Box.createVerticalBox();
-
     Box upper = Box.createVerticalBox();
-    //JPanel box = new JPanel();
-    //box.setLayout(new FlowLayout(FlowLayout.VERTICAL));
 
     buttons = new PdeEditorButtons(this);
-    //pain.add("West", buttons);
-    //box.add(buttons);
     upper.add(buttons);
 
-    //JPanel rightPanel = new JPanel();
-    //rightPanel.setLayout(new BorderLayout());
-
     header = new PdeEditorHeader(this);
-    //rightPanel.add(header, BorderLayout.NORTH);
-    //box.add(header);
     upper.add(header);
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
-
     textarea.setHorizontalOffset(6);
-    //textarea.setBorder(new EmptyBorder(0, 20, 0, 0));
-    //textarea.setBackground(Color.white);
-
-    //textarea.setMaximumSize(new Dimension(3000, 3000));
 
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
-    //System.out.println(consolePanel.getInsets());
     consolePanel.setLayout(new BorderLayout());
 
     status = new PdeEditorStatus(this);
@@ -208,16 +189,8 @@ public class PdeEditor extends JFrame
     console = new PdeEditorConsole(this);
     consolePanel.add(console, BorderLayout.CENTER);
 
-    /*
-    lineNumberComponent = new JLabel(" 1234"); //, JLabel.LEFT);
-    lineNumberComponent.setBackground(Color.BLACK);
-    lineNumberComponent.setForeground(Color.WHITE);
-    lineNumberComponent.setFont(new Font("SansSerif", Font.PLAIN, 10));
-    box.add(lineNumberComponent);
-    */
     lineStatus = new PdeEditorLineStatus(textarea);
     consolePanel.add(lineStatus, BorderLayout.SOUTH);
-    //box.add(lineStatus);
 
     upper.add(textarea);
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
@@ -244,104 +217,16 @@ public class PdeEditor extends JFrame
     }
 
     splitPane.setMinimumSize(new Dimension(600, 600));
-    //splitPane.setBackground(Color.RED);
-    //splitPane.setMaximumSize(new Dimension(3000, 3000));
-    ///rightPanel.add(splitPane, BorderLayout.CENTER);
     box.add(splitPane);
-
-    //setBackground(Color.green);
-    //box.add(textarea);
-    //box.add(consolePanel);
-
-    //pain.add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
     listener = new PdeEditorListener(this, textarea);
-    //textarea.editorListener = listener;
-
-    //pain.add("West", box);
     pain.add(box);
 
     // set the undo stuff for this feller
     Document document = textarea.getDocument();
     document.addUndoableEditListener(new PdeUndoableEditListener());
-
-    /*
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    if (PdeBase.isMacOS()) {
-      presentationWindow = new Frame();
-
-      // mrj is still (with version 2.2.x) a piece of shit,
-      // and doesn't return valid insets for frames
-      //presentationWindow.pack(); // make a peer so insets are valid
-      //Insets insets = presentationWindow.getInsets();
-      // the extra +20 is because the resize boxes intrude
-      Insets insets = new Insets(21, 5, 5 + 20, 5);
-
-      presentationWindow.setBounds(-insets.left, -insets.top,
-                                   screen.width + insets.left + insets.right,
-                                   screen.height + insets.top + insets.bottom);
-    } else {
-      presentationWindow = new Frame();
-      ((Frame)presentationWindow).setUndecorated(true);
-      presentationWindow.setBounds(0, 0, screen.width, screen.height);
-    }
-
-    Label label = new Label("stop");
-    label.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          setVisible(true);
-          doClose();
-        }});
-
-    Dimension labelSize = new Dimension(60, 20);
-    presentationWindow.setLayout(null);
-    presentationWindow.add(label);
-    label.setBounds(5, screen.height - 5 - labelSize.height,
-                    labelSize.width, labelSize.height);
-
-    Color presentationBgColor =
-      PdePreferences.getColor("run.present.bgcolor");
-    presentationWindow.setBackground(presentationBgColor);
-
-    textarea.addFocusListener(new FocusAdapter() {
-        public void focusGained(FocusEvent e) {
-          if (presenting == true) {
-            try {
-              presentationWindow.toFront();
-              runtime.applet.requestFocus();
-            } catch (Exception ex) { }
-          }
-        }
-      });
-
-    this.addFocusListener(new FocusAdapter() {
-        public void focusGained(FocusEvent e) {
-          if (presenting == true) {
-            try {
-              presentationWindow.toFront();
-              runtime.applet.requestFocus();
-            } catch (Exception ex) { }
-          }
-        }
-      });
-
-    // moved from the PdeRuntime window to the main presentation window
-    // [toxi 030903]
-    presentationWindow.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          //System.out.println("window got " + e);
-          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            runtime.stop();
-            doClose();
-          } else {
-            // pass on the event to the applet [toxi 030903]
-            runtime.applet.keyPressed(e);
-          }
-        }
-      });
-    */
   }
 
 
@@ -349,7 +234,8 @@ public class PdeEditor extends JFrame
    * Hack for #@#)$(* Mac OS X.
    */
   public Dimension getMinimumSize() {
-    return new Dimension(500, 500);
+    System.out.println("getting minimum size");
+    return new Dimension(500, 550);
   }
 
 
@@ -547,28 +433,6 @@ public class PdeEditor extends JFrame
         });
       menu.add(item);
     }
-
-    /*
-    item = newJMenuItem("New code", 'N', true);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleNewCode();
-        }
-      });
-    menu.add(item);
-    */
-
-    /*
-    item = newJMenuItem("Open", 'O');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleOpen(null);
-        }
-      });
-    menu.add(item);
-    menu.add(sketchbook.rebuildMenu());
-    menu.add(sketchbook.getExamplesMenu());
-    */
     menu.add(sketchbook.getOpenMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
@@ -667,46 +531,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    /*
-    JMenu rendererMenu = new JMenu("Renderer");
-    menu.add(rendererMenu);
-
-    coreRendererItem = new JRadioButtonMenuItem("Processing");
-    rendererMenu.add(coreRendererItem);
-    coreRendererItem.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          //System.out.println("setting renderer");
-          //openglRendererItem.setState(false);
-          //coreRendererItem.setState(true);
-          PdePreferences.set("renderer", "core");
-        }
-      });
-
-    openglRendererItem = new JRadioButtonMenuItem("OpenGL");
-    rendererMenu.add(openglRendererItem);
-    openglRendererItem.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          //System.out.println("setting renderer");
-          //openglRendererItem.setState(true);
-          //coreRendererItem.setState(false);
-          PdePreferences.set("renderer", "opengl");
-        }
-      });
-
-    ButtonGroup rendererGroup = new ButtonGroup();
-    rendererGroup.add(coreRendererItem);
-    rendererGroup.add(openglRendererItem);
-
-    boolean useOpenGL = PdePreferences.get("renderer").equals("opengl");
-    coreRendererItem.setSelected(!useOpenGL);
-    openglRendererItem.setSelected(useOpenGL);
-    */
-
-    //
-
     menu.addSeparator();
-
-    //
 
     item = new JMenuItem("Add File...");
     item.addActionListener(new ActionListener() {
@@ -760,7 +585,6 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Archive Sketch");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //new PdeFontBuilder().show(sketch.dataFolder);
           Archiver archiver = new Archiver();
           archiver.setup(PdeEditor.this);
           archiver.show();
@@ -1021,7 +845,6 @@ public class PdeEditor extends JFrame
   // so used internally for everything else
 
   public void handleAbout() {
-    //System.out.println("the about box will now be shown");
     final Image image = PdeBase.getImage("about.jpg", this);
     int w = image.getWidth(this);
     int h = image.getHeight(this);
@@ -1029,12 +852,9 @@ public class PdeEditor extends JFrame
         public void paint(Graphics g) {
           g.drawImage(image, 0, 0, null);
 
-          /*
-            // does nothing..
           Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-          */
+          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
           g.setFont(new Font("SansSerif", Font.PLAIN, 11));
           g.setColor(Color.white);
