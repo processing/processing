@@ -104,7 +104,7 @@ find processing -name "CVS" -exec rm -rf {} ';'
 #mv processing "Processing $REVISION"
 mv processing "processing-$REVISION"
 
-stuff -f sitx processing-$REVISION
+#stuff -f sitx processing-$REVISION
 
 # if there is a command line tool to make a dmg from this dir.. hmm
 

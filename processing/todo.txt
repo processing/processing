@@ -13,12 +13,15 @@ X   still not perfect, but some tweaks for improvement
 X cosmetic fixes
 X   is PdeEditorHeader one pixel too tall
 X   move the tabs over just slightly
+X put 'play' on a SwingWorker thread
+_   not sure if this is working or not
 
 sketchbook/prefs location
 _ read from registry key to get the proper name for these folders
 _   also find some way to do this on the mac
 _   on non-english windows (or at the broad) these will be named differently
 _   http://support.microsoft.com/?kbid=221837&sd=RMVP
+_   or is there a proper way to do this with java params?
 _ move to ~/Application Data/Processing for windows
 _   and ~/Library/Processing for macosx
 _   and ~/.processing for linux
@@ -31,6 +34,14 @@ _   test to see if it's possible to write to "My Documents"
 _   if not, should bring up a prompt asking where to put sketchbook
 _   also put something in lib/preferences.txt for default location
 _     this way a course admin can change the default location
+_ need to check if volume is read-only, notify and quit if it is
+_   people are trying to run off the disk image
+_   actually that should be fine.. 
+_     but make sure the prefs location can be written
+_   need to pay attention to when running from read-only drive
+_     reported by brandenberg
+_    "p5 will launch from the disk image, but will 
+_     not draw the sketch name bar doesn't appear"
 
 _ bring back "rename" ?
 
@@ -349,13 +360,6 @@ PDE / Details
    1 _   even without sketches open, perhaps not gc'ing properly
    1 _   objects probably not getting finalized
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
-
-   1 _ need to check if volume is read-only, notify and quit if it is
-   1 _   people are trying to run off the disk image
-   1 _   need to pay attention to when running from read-only drive
-   1 _     reported by brandenberg
-   1 _    "p5 will launch from the disk image, but will 
-   1 _     not draw the sketch name bar doesn't appear"
 
    1 _ size() has memory limitations (pitaru)
    1 _   catch OutOfMemoryError inside size() and let the user know
