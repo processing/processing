@@ -144,6 +144,13 @@ cd /path/to/processing/build/windows
 # if everything went well, you'll have no errors. 
 # (need more doc here on common problems..)
 
+# then to run it
+./run.sh
+
+# each time you make a change, use make to build the thing 
+# and run to get it up and running. 
+
+
 
 // Updating to the Latest Version
 
