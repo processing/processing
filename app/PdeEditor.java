@@ -477,12 +477,18 @@ public class PdeEditor extends JFrame
    * Called when the application is quitting.
    */
   public void storePreferences() {
+    System.out.println("storing preferences");
+
     // window location information
     Rectangle bounds = getBounds();
     PdePreferences.setInteger("last.window.x", bounds.x);
     PdePreferences.setInteger("last.window.y", bounds.y);
     PdePreferences.setInteger("last.window.width", bounds.width);
     PdePreferences.setInteger("last.window.height", bounds.height);
+
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    PdePreferences.setInteger("last.screen.width", screen.width);
+    PdePreferences.setInteger("last.screen.height", screen.height);
 
     // last sketch that was in use
     PdePreferences.set("last.sketch.name", sketchName);
