@@ -1180,8 +1180,12 @@ public class PdeSketch {
       //System.out.println("found package " + entry);
       File libFolder = (File) PdeSketchbook.importToLibraryTable.get(entry);
       //System.out.println("  found lib folder " + libFolder);
-      importedLibraries.add(libFolder);
+      if (libFolder == null) {
+        throw new PdeException("Could not find library for " + entry);
+        //return null;
+      }
 
+      importedLibraries.add(libFolder);
       libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
     }
 
