@@ -1821,9 +1821,9 @@ public class PdeSketch {
     // build the sketch
     String   wtkPath     = PdePreferences.get("wtk.path");
     if (wtkPath == null) {
-        PdeBase.showWarning("Sun Wireless Toolkit (WTK) not found. " +
+        PdeBase.showWarning("Sun Wireless Toolkit (WTK) not found",
                             "Please specify the location of the WTK in your preferences.txt file. Example:\n\n" +
-                            "wtk.path=C:\WTK22");
+                            "wtk.path=C:\\WTK22", null);
     }
     String   wtkLibPath  = wtkPath + File.separator + "lib" + File.separator;
     String   baseClass   = "PMIDlet";
