@@ -27,56 +27,7 @@ _ should the default be 100x100
 _ maybe stop/kill button should only be a stop btn
 
 
-for 0010
-X add java.* to top of processingapplet default base class used by kjc
-X KjcProcessingApplet is dumb, kjc should make subst itself
-o   give warning when compiling w/o kjcprocessingapplet
-X random bug with an extra line being added in beginner mode
-X   (threw off error markings)
-X z=0 shit, 2D stuff needs to draw over z=0 plane
-X   new objects draw behind old objects with noBackground()
-X fix crappy way of determining if inside a class--ignores comments
-X   hope this fis works.. not tested much
-X make acu fonts work again
-X write code to use simple bitmap fonts
-X add a file with bugs for testing
-X kjc not smart enough to just compile things that are in classpath
-X redo random functions in processing applet
-X strangeness with stroke when a rect goes off outside the window
-X rect now uses x, y, width, height instead of x1, y1, x2, y2
-X circle has been replaced with ellipse (uses xywh)
-X box takes diameter, or width, height, depth [NOT IN CPP]
-X sphere is the same as box [NOT IN CPP]
-X got rid of colorscale and using colormode for all instead
-X   make changes in documentation
-X 'ellipse' instead of 'oval'?
-X   make note in documentation
-X catmullrom is broken 
-X   write documentation for new curve functions
-o make note in docs about removal of LINE from LINES
-X setting origins
-X   should shapes draw from center or from upper left?
-X   should ovals use radius or diameter?
-X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
-X nice to have a random number generator between -1..1 
-X   as well as an integer random; instead of just 0..1
-X show creas how to get access to cvs
-X documentation says 'mouseDown' even though it's 'mousePressed'
-X font support
-X   use gzip to compress bitmaps (made 115k vlw font -> 16k)
-X   loadImage/loadFont or getImage/getFont?
-X   text(char c), text(string s)
-X   current acu fonts are broken
-X image support
-X   image() and 2D/2D affine versions of it
-X   no stroke should show up on image()
-X   fill being set on image() produces weird results
-X     has to be set, but doesn't actually affect color
-X min() seems funny/unavailable
-X   worked fine for me
-
-
-for 0011
+for 0012
 _ write code to bind/convert java fonts
 _ finish color function inside applet
 _   do by simplifying stroke/fill/background inside bagel
@@ -90,7 +41,7 @@ _   make it run in current version of processing
 _   fix background from showing up black
 
 
-for 0012
+for 0013
 _ make size() work for draw() mode
 _   inside KjcEngine, reach in and grab calls to 'size'
 _   if call is not using a constant number, then punt
@@ -99,7 +50,7 @@ _   document fixed width font format
 _   write code for reading uncompressed b/w tiff images
 
 
-for 0013 (first semi-public release)
+for 0014 (first semi-public release)
 _ docs
 _   explain using inner classes and using non-public classes
 _   start 'errors' section
@@ -122,7 +73,7 @@ _ setting a fill color when drawing an image should affect the image
 _   or maybe image.setColor or setTone to mix a specific color in
 
 
-for 0014
+for 0015
 _ option to enable/disable frame on running applets
 _   more like photoshop - presentation mode w/ nothing or frames on all
 _ compiling .java files leaves the .class files next to the .java
@@ -144,7 +95,7 @@ _   breaks on every 2nd run when using serial apps (or others?)
 _     try calling gc on stop as well
 
 
-for 0015
+for 0016
 _ fix bugs from the 'bugs' file 
 _ run java code besides processing applets 
 _   if not processing applet, look for a main(), no main give an error
@@ -359,6 +310,59 @@ String binary(int value) {
 
 
 ---------------------------------------------
+
+
+0011
+X image(img, x, y) was broken for unwarped mode, disabled it
+
+
+0010
+X add java.* to top of processingapplet default base class used by kjc
+X KjcProcessingApplet is dumb, kjc should make subst itself
+o   give warning when compiling w/o kjcprocessingapplet
+X random bug with an extra line being added in beginner mode
+X   (threw off error markings)
+X z=0 shit, 2D stuff needs to draw over z=0 plane
+X   new objects draw behind old objects with noBackground()
+X fix crappy way of determining if inside a class--ignores comments
+X   hope this fis works.. not tested much
+X make acu fonts work again
+X write code to use simple bitmap fonts
+X add a file with bugs for testing
+X kjc not smart enough to just compile things that are in classpath
+X redo random functions in processing applet
+X strangeness with stroke when a rect goes off outside the window
+X rect now uses x, y, width, height instead of x1, y1, x2, y2
+X circle has been replaced with ellipse (uses xywh)
+X box takes diameter, or width, height, depth [NOT IN CPP]
+X sphere is the same as box [NOT IN CPP]
+X got rid of colorscale and using colormode for all instead
+X   make changes in documentation
+X 'ellipse' instead of 'oval'?
+X   make note in documentation
+X catmullrom is broken 
+X   write documentation for new curve functions
+o make note in docs about removal of LINE from LINES
+X setting origins
+X   should shapes draw from center or from upper left?
+X   should ovals use radius or diameter?
+X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
+X nice to have a random number generator between -1..1 
+X   as well as an integer random; instead of just 0..1
+X show creas how to get access to cvs
+X documentation says 'mouseDown' even though it's 'mousePressed'
+X font support
+X   use gzip to compress bitmaps (made 115k vlw font -> 16k)
+X   loadImage/loadFont or getImage/getFont?
+X   text(char c), text(string s)
+X   current acu fonts are broken
+X image support
+X   image() and 2D/2D affine versions of it
+X   no stroke should show up on image()
+X   fill being set on image() produces weird results
+X     has to be set, but doesn't actually affect color
+X min() seems funny/unavailable
+X   worked fine for me
 
 
 0009
