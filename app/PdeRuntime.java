@@ -90,7 +90,9 @@ public class PdeRuntime implements PdeMessageConsumer {
            windowLocation.x + "," + windowLocation.y) :
           (PApplet.EXT_LOCATION + x1 + "," + y1);
 
-        String command[] = new String[] { 
+        String command[] = new String[] {
+          //"cmd", "/c", "start", 
+
           "java",
           "-Djava.library.path=" + 
           // sketch.libraryPath might be ""
@@ -103,6 +105,9 @@ public class PdeRuntime implements PdeMessageConsumer {
           location,
           PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
           sketch.mainClassName
+
+          //, "1>", "C:\\net1.txt"
+          //, "2>", "C:\\net2.txt"
         };
 
         //for (int i = 0; i < command.length; i++) {
@@ -114,6 +119,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         processInput = new SystemOutSiphon(process.getInputStream());
         processError = new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
+        //process.waitFor();
 
       } else {  // !externalRuntime
         //Class c = Class.forName(className);
@@ -292,6 +298,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     } catch (Exception e) {
       // this will pass through to the first part of message
       // this handles errors that happen inside setup()
+      e.printStackTrace();
 
       // mod by fry for removal of KjcEngine
       applet.finished = true;
@@ -551,22 +558,26 @@ java.lang.NullPointerException
       // read, block until something good comes through
       while (Thread.currentThread() == thread) {
         try {
+          //System.out.println("readin");
           int count = input.read(boofer, 0, boofer.length);
+          //System.out.println("readout " + count);
           if (count == -1) {
             thread = null;
 
           } else {
             System.out.print(new String(boofer, 0, count));
+            //System.out.flush();
           }
 
         } catch (IOException e) {
           // this is prolly because the app was quit & the stream broken
           //e.printStackTrace(System.out);
+          //e.printStackTrace();
           thread = null;
         }
         //System.out.println("SystemOutSiphon: out");
-        thread = null;
-      }        
+        //thread = null;
+      }
     }
   }
 }

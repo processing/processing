@@ -75,6 +75,8 @@ o when running externally, build into sketch folder?
 
 _ add all imported libs to hash table of jars
 
+_ should library be called extension?
+
 _ libraries
 _   attachLibrary(new libsomething()) and attachLibrary("pitaru.Sonia");
 o   final stop() for static shutdown of lib
