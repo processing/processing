@@ -120,56 +120,77 @@ unHint	KEYWORD2
 
 
 abs	KEYWORD2	abs_
-+		add
+acos	KEYWORD2	acos_
 +=		addassign
++		addition
+angleMode	KEYWORD2	angleMode_
+append	KEYWORD2	append_
 Array	KEYWORD1	Array
 []		arrayaccess
+asin	KEYWORD2	asin_
 =		assign
+atan	KEYWORD2	atan_
 atan2	KEYWORD2	atan2_
 background	KEYWORD2	background_
 beginShape	KEYWORD2	beginShape_
 bezier	KEYWORD2	bezier_
+bezierPoint	KEYWORD2	bezierPoint_
+bezierTangent	KEYWORD2	bezierTangent_
 bezierVertex	KEYWORD2	bezierVertex_
+&		bitwiseAND
+|		bitwiseOR
 blend	KEYWORD2	blend_
 blue	KEYWORD2	blue_
 boolean	KEYWORD1	boolean
+boolean	KEYWORD2	boolean_
 box	KEYWORD2	box_
+break	KEYWORD1	break
 brightness	KEYWORD2	brightness_
 byte	KEYWORD1	byte
 byte	KEYWORD2	byte_
+case	KEYWORD1	case
 ceil	KEYWORD2	ceil_
 char	KEYWORD1	char
 char	KEYWORD2	char_
-color	KEYWORD1	color
+class	KEYWORD1	class
+color	KEYWORD2	color_
 colorMode	KEYWORD2	colorMode_
-color	KEYWORD1	color_data
+color	KEYWORD1	color_datatype
 ,		comma
 //		comment
+concat	KEYWORD2	concat_
+?:	KEYWORD1	conditional_
 constrain	KEYWORD2	constrain_
+contract	KEYWORD2	contract_
 copy	KEYWORD2	copy_
 cos	KEYWORD2	cos_
 {}		curlybraces
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
+curvePoint	KEYWORD2	curvePoint_
 curveTightness	KEYWORD2	curveTightness_
 curveVertex	KEYWORD2	curveVertex_
 day	KEYWORD2	day_
 --		decrement
+default	KEYWORD1	default
 degrees	KEYWORD2	degrees_
 delay	KEYWORD2	delay_
 dist	KEYWORD2	dist_
 /		divide
 .		dot
+draw	KEYWORD3	draw_
 ellipse	KEYWORD2	ellipse_
 ellipseMode	KEYWORD2	ellipseMode_
 else	KEYWORD1	else
 endShape	KEYWORD2	endShape_
-endSound	KEYWORD2	endSound_
 ==		equality
+expand	KEYWORD2	expand_
+false	KEYWORD1	false
 fill	KEYWORD2	fill_
 float	KEYWORD1	float
 float	KEYWORD2	float_
 floor	KEYWORD2	floor_
+focused	LITERAL2	focused
 for	KEYWORD1	for_
 framerate	KEYWORD2	framerate_
 get	KEYWORD2	get_
@@ -189,13 +210,13 @@ int	KEYWORD1	int
 int	KEYWORD2	int_
 join	KEYWORD2	join_
 key	LITERAL2	key
-keyCode	LITERAL2	keyCode
 keyPressed	KEYWORD2	keyPressed_
 keyPressed	LITERAL2	keyPressed
 keyReleased	KEYWORD2	keyReleased_
+<<		leftshift
+lerp	KEYWORD2	lerp_
 <		lessthan
 <=		lessthanorequalto
-light	KEYWORD2	light_
 lights	KEYWORD2	lights_
 line	KEYWORD2	line_
 link	KEYWORD2	link_
@@ -203,6 +224,7 @@ loadBytes	KEYWORD2	loadBytes_
 loadFont	KEYWORD2	loadFont_
 loadImage	KEYWORD2	loadImage_
 loadStrings	KEYWORD2	loadStrings_
+log	KEYWORD2	log_
 &&		logicalAND
 !		logicalNOT
 ||		logicalOR
@@ -210,6 +232,7 @@ loop	KEYWORD3	loop_
 max	KEYWORD2	max_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
+-		minus
 minute	KEYWORD2	minute_
 %		modulo
 month	KEYWORD2	month_
@@ -222,20 +245,21 @@ mouseX	LITERAL2	mouseX
 mouseY	LITERAL2	mouseY
 /*		multilinecomment
 *		multiply
--		negation
-netMode	KEYWORD2	netMode_
 new	KEYWORD1	new
 nf	KEYWORD2	nf_
+nfp	KEYWORD2	nfp_
+nfs	KEYWORD2	nfs_
 noCursor	KEYWORD2	noCursor_
 noFill	KEYWORD2	noFill_
 noise	KEYWORD2	noise_
 noiseDetail	KEYWORD2	noiseDetail_
+noiseSeed	KEYWORD2	noiseSeed_
 noLights	KEYWORD2	noLights_
 noSmooth	KEYWORD2	noSmooth_
 noStroke	KEYWORD2	noStroke_
 noTint	KEYWORD2	noTint_
 Object	KEYWORD1	Object
-online	KEYWORD2	online_
+online	LITERAL2	online
 param	KEYWORD2	param_
 ()		parentheses
 PFont	KEYWORD1	PFont
@@ -245,6 +269,7 @@ alpha	KEYWORD2	PImage_alpha_
 blend	KEYWORD2	PImage_blend_
 clone	KEYWORD2	PImage_clone_
 copy	KEYWORD2	PImage_copy_
+filter	KEYWORD2	PImage_filter_
 get	KEYWORD2	PImage_get_
 height	LITERAL2	PImage_height
 pixels	LITERAL2	PImage_pixels
@@ -262,9 +287,13 @@ push	KEYWORD2	push_
 quad	KEYWORD2	quad_
 radians	KEYWORD2	radians_
 random	KEYWORD2	random_
+randomSeed	KEYWORD2	randomSeed_
 rect	KEYWORD2	rect_
 rectMode	KEYWORD2	rectMode_
 red	KEYWORD2	red_
+return	KEYWORD1	return
+reverse	KEYWORD2	reverse_
+>>		rightshift
 rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
 rotateY	KEYWORD2	rotateY_
@@ -282,35 +311,49 @@ second	KEYWORD2	second_
 ;		semicolon
 set	KEYWORD2	set_
 setup	KEYWORD3	setup_
+shorten	KEYWORD2	shorten_
 sin	KEYWORD2	sin_
 size	KEYWORD2	size_
+slice	KEYWORD2	slice_
 smooth	KEYWORD2	smooth_
 sort	KEYWORD2	sort_
 sphere	KEYWORD2	sphere_
 sphereDetail	KEYWORD2	sphereDetail_
+splice	KEYWORD2	splice_
+split	KEYWORD2	split_
 sq	KEYWORD2	sq_
 sqrt	KEYWORD2	sqrt_
 status	KEYWORD2	status_
+str	KEYWORD2	str_
 String	KEYWORD1	String
+charAt	KEYWORD2	String_charAt_
+equals	KEYWORD2	String_equals_
+indexOf	KEYWORD2	String_indexOf_
+length	KEYWORD2	String_length_
+substring	KEYWORD2	String_substring_
+toLowerCase	KEYWORD2	String_toLowerCase_
+toUpperCase	KEYWORD2	String_toUpperCase_
 stroke	KEYWORD2	stroke_
-strokeMode	KEYWORD2	strokeMode_
 strokeWeight	KEYWORD2	strokeWeight_
--		subtract
 -=		subtractassign
+switch	KEYWORD2	switch_
 tan	KEYWORD2	tan_
 text	KEYWORD2	text_
 textFont	KEYWORD2	textFont_
+textLeading	KEYWORD2	textLeading_
 textMode	KEYWORD2	textMode_
 textSize	KEYWORD2	textSize_
-textureVertex	KEYWORD2	textureVertex_
+textSpace	KEYWORD2	textSpace_
+texture	KEYWORD2	texture_
+textureMode	KEYWORD2	textureMode_
 tint	KEYWORD2	tint_
 translate	KEYWORD2	translate_
 triangle	KEYWORD2	triangle_
+trim	KEYWORD2	trim_
+true	KEYWORD1	true
 TWO_PI	LITERAL1	TWO_PI
 vertex	KEYWORD2	vertex_
 void	KEYWORD1	void
 while	KEYWORD1	while_
 width	LITERAL2	width
-writeBytes	KEYWORD2	writeBytes_
-writeStrings	KEYWORD2	writeStrings_
 year	KEYWORD2	year_
