@@ -61,7 +61,13 @@ chmod +x processing/jikes.exe
 cp launcher/processing.exe processing/
 cp dist/run.bat processing/
 cp dist/lib/pde_windows.properties processing/lib/
-cp dist/lib/comm.jar processing/lib/
+#cp dist/lib/comm.jar processing/lib/
+
+# get serial stuff from the bagel dir
+cp ../../bagel/serial/comm.jar processing/lib/
+cp ../../bagel/serial/javax.comm.properties processing/lib/
+cp ../../bagel/serial/win32com.dll processing/
+chmod +x processing/win32com.dll
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
