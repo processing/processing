@@ -5,65 +5,71 @@ _ should we use jdk 1.3 or msft vm?
 
 
 BAGEL / high
-_ box is not filling properly
-_   if fill(), need to draw several non-stroked planes
-_   if stroke(), then draw single lines for each edge
-_     do not duplicate edges for lines
-_ also problem filling on beginShape() triangle stuff
+a _ box is not filling properly
+a _   if fill(), need to draw several non-stroked planes
+a _   if stroke(), then draw single lines for each edge
+a _     do not duplicate edges for lines
+a _ also problem filling on beginShape() triangle stuff
 
 
 BAGEL / high & time consuming
-_ rewrite line and stroke code, it's a buggy mess
-_   lines become 2 pixels thick after a 3D transform 
-_   better handling of single-pixel special case
-_ anti-aliasing
-_ alpha
-_ concave/complex polygon shtuff
-_   eventually POLYGON auto-detects convex/concave polygon
-_   also add POLYGON_CONVEX and POLYGON_CONCAVE
-_ z coordinates are backwards from gl (at least from mazo)
-_   how did this happen? what's the appropriate way to fix?
+a _ z coordinates are backwards from gl (at least from mazo)
+a _   how did this happen? what's the appropriate way to fix?
+a _   in gl, positive z goes into the screen 
+a _   may be able to do a scale(0, 0, -1) that doesn't affect dims
+a _     then when dims set to 3, will fix the z coords
+a _   this will also affect zbuffer ordering
+b _ alpha
+b _ concave/complex polygon shtuff
+b _   eventually POLYGON auto-detects convex/concave polygon
+b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 
 
 BAGEL / medium
-_ area copying functions
-_   copyPixel(x, y, to_x, to_y)
-_   copyArea(x, y, w, h, to_x, to_y)
-_   copyImage(x, y, w, h,  to_x, to_y)
-_ NullPointerException apparently when things way offscreen
-_   i.e. glyphrot with scale set to 4
-_   or at least that things get ridiculously slow
-_   clipping issues here.. but also something in scan converter
-_   not clipping areas from offscreen
-_     huge geometry slows things way down
-_ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
-_   better solution for this (error while opening image)
-_   and document how image loading works
+a _ if BagelImage doesn't load, then image() calls arrayindexoutofbounds
+a _   better solution for this (error while opening image)
+a _   and document how image loading works
+b _ area copying functions
+b _   copyPixel(x, y, to_x, to_y)
+b _   copyArea(x, y, w, h, to_x, to_y)
+b _   copyImage(x, y, w, h,  to_x, to_y)
+b _ bresenham (flat) oval function
+b _ NullPointerException apparently when things way offscreen
+b _   i.e. glyphrot with scale set to 4
+b _   or at least that things get ridiculously slow
+b _   clipping issues here.. but also something in scan converter
+b _   not clipping areas from offscreen
+b _     huge geometry slows things way down
 
 
 BAGEL / medium & time consuming
+b _ anti-aliasing
+b _ rewrite line and stroke code, it's a buggy mess
+b _   lines become 2 pixels thick after a 3D transform 
+b _   better handling of single-pixel special case
+b _ illustrator exporting
+b _   version of Illustrator.java that uses bagel api
+b _   sorting of polygons/lines on simple painters algorithm
+b _   better lighting model to show darkness at various depths
+b _     maybe just ultra-high res bitmaps from gl
+b _   version of ProcessingApplet that replaces g. with ai. or pdf.
+
 _ picking
 _   ability to write data other than image into the buffer
 _   user can introduce new kinds of buffers at will (!)
 _   lists of names of objects, or the 'line number' buffer
 _   but how to determine *where* on object the hit occurs?
-_ illustrator exporting
-_   version of Illustrator.java that uses bagel api
-_   sorting of polygons/lines on simple painters algorithm
-_   better lighting model to show darkness at various depths
-_     maybe just ultra-high res bitmaps from gl
 
 
 BAGEL / lower
+_ line endcaps and line joins
 _ move math functions into utility library associated
 _   with bagel, because those will be useful on other bagel platforms
 _   pApplet will call BagelMath.whatever, so still looks like cos()
-_ perlin noise function
 _ build in second matrix type: 2d affine
 _ make sure line() commands don't try to have a fill
 _ write code for reading uncompressed b/w tiff images
 _   incorporate for fixed width fonts
-_ bresenham (flat) oval function
 _ setting accuracy of circles/sphere
 _ setting accuracy of curve segments
 _ write shearing function
@@ -87,113 +93,106 @@ _ live video editing, wanting things more procedural
 
 
 PDE / high
-_ get rid of 'kill' button
-_ add frame to launched window
-_   add maximize event catcher to make fullscreen
-_   shift-click on play to go directly into this 'presentation mode'
-_ introduce pImage, pFont, pGraphics, pConstants (pSound)
-_ serial.messageReceived extra long crap in demo.pde (clean up?)
-_ NullPointerException on startup in pde editor buttons
-_   shows up on slower machines, probably images not loaded yet
-_ int version of min and abs
-_ draw mode needs to be better for workshops
-_   make size() work for draw() mode
-_     inside Engine, reach in and grab calls to 'size'
-_     if call is not using a constant number, then punt
-_ lines being highlighted for errors are off
-_ use a vm that won't destroy the screen like sun/ibm does
-_   this means msft or newer version of jdk
+a _ get rid of 'kill' button
+a _ add frame to launched window
+a _   add maximize event catcher to make fullscreen
+a _   shift-click on play to go directly into this 'presentation mode'
+a _ introduce pImage, pFont, pGraphics, pConstants (pSound)
+a _ serial.messageReceived extra long crap in demo.pde (clean up?)
+a _ NullPointerException on startup in pde editor buttons
+a _   shows up on slower machines, probably images not loaded yet
+a _ int version of min and abs
+a _ draw mode needs to be better for workshops
+a _   make size() work for draw() mode
+a _     inside Engine, reach in and grab calls to 'size'
+a _     if call is not using a constant number, then punt
+a _ lines being highlighted for errors are off
+a _ use a vm that won't destroy the screen like sun/ibm does
+a _   this means msft or newer version of jdk
 
 
 PDE / high & time consuming
-_ exporting to applet/.jar file
-_   'data' directory for all media
-_   include other .class files built besides the main one
-_   include referenced image and font files (can't do if numbered)
-_   exporting applets that have custom name problems:
-_     if extends processingapplet, the name user types must be same
-_     gets confused about paths and puts boogers in weird places
-_     doesn't compile correctly (must first compile with play)
-_     doesn't include additional (private) classes
-_   when exporting 'name of folder for export...'
-_     default name should be from public class <xxxx>
-_     because otherwise errors are happening
-_     or name from user only determines folder name
-_       if extends ProcessingApplet [more compatible]
-_   make sure export is compiling first
-_     right now have to hit play and then hit export (?)
-_   include main class info for executable jar file with jdk > 1.2
-_   remove .java and .class files for compiled classes
-_     (just clean up the boogers afterwards)
-_ it's really a pain to use external files in processing
-_   getStream sucks (zach rewrote)
-_   should be able to work for application or applets
-_   may want to use getResource() (to get things from .jar files)
-_ having to put 'f' after everything is a mess
-_ related classes
-_   better way to do parent and g.rect stuff in related classes
-_     implement g. passed into any function called draw()
-_     also important for things like cos, sin, max etc
-_     but maybe once you're doing more advanced code, that stuff's ok
-_       or using inner classes is better b/c class stuff works
-_   related classes also need to implement pConstants
-_ sketchbook
-_   compiling .java files leaves the .class files next to the .java
-_     make sure all the dirs in sketchbook added to classpath on startup
-_     if new dir added, must restart processing (this is acceptable)
-_   ability to include other code from sketchbook directory
-_     compile entire sketchbook on startup, check for new files on compile?
-_ serial works poorly for starting/stopping applets
-_   this is behaving strangely
-_   breaks on every 2nd run when using serial apps (or others?)
-_     try calling gc on stop as well
-
-
-PDE / high but after initial pre-release
-_ class unloading not happening
-_   when doing an extends ProcessingApplet
-_   need to add randomizer to even non-self gen'd classes
-_   or figure out how to unload old classes.. grr
+a _ exporting to applet/.jar file
+a _   'data' directory for all media
+a _   include other .class files built besides the main one
+a _   include referenced image and font files (can't do if numbered)
+a _   exporting applets that have custom name problems:
+a _     if extends processingapplet, the name user types must be same
+a _     gets confused about paths and puts boogers in weird places
+a _     doesn't compile correctly (must first compile with play)
+a _     doesn't include additional (private) classes
+a _   when exporting 'name of folder for export...'
+a _     default name should be from public class <xxxx>
+a _     because otherwise errors are happening
+a _     or name from user only determines folder name
+a _       if extends ProcessingApplet [more compatible]
+a _   make sure export is compiling first
+a _     right now have to hit play and then hit export (?)
+a _   include main class info for executable jar file with jdk > 1.2
+a _   remove .java and .class files for compiled classes
+a _     (just clean up the boogers afterwards)
+a _ it's really a pain to use external files in processing
+a _   getStream sucks (zach rewrote)
+a _   should be able to work for application or applets
+a _   may want to use getResource() (to get things from .jar files)
+a _ Compiler.disable() message is weird and doesn't always work
+a _   probably just remove it for now
+a _ kjc is really frustrating about some of its error/warning msgs
+a _   erroneous errors from kjc regarding 'var not inited'
+a _     is there any way to disable this message?
+a _   talk to simon about error streams and kjc
+a _     better piping of output from kjc
+a _     modify kjc to take a PrintWriter, instead of current weird hacks
+b _ having to put 'f' after everything is a mess
+b _ related classes
+b _   better way to do parent and g.rect stuff in related classes
+b _     implement g. passed into any function called draw()
+b _     also important for things like cos, sin, max etc
+b _     but maybe once you're doing more advanced code, that stuff's ok
+b _       or using inner classes is better b/c class stuff works
+b _   related classes also need to implement pConstants
+b _ sketchbook
+b _   compiling .java files leaves the .class files next to the .java
+b _     make sure all the dirs in sketchbook added to classpath on startup
+b _     if new dir added, must restart processing (this is acceptable)
+b _   ability to include other code from sketchbook directory
+b _     compile entire sketchbook on startup, check for new files on compile?
+b _ serial works poorly for starting/stopping applets
+b _   this is behaving strangely
+b _   breaks on every 2nd run when using serial apps (or others?)
+b _     try calling gc on stop as well
+b _ class unloading not happening
+b _   when doing an extends ProcessingApplet
+b _   need to add randomizer to even non-self gen'd classes
+b _   or figure out how to unload old classes.. grr
 
 
 PDE / medium
-_ Compiler.disable() message is weird and doesn't always work
-_   probably just remove it for now
-_ kjc is really frustrating about some of its error/warning msgs
-_   'var not set' any way to disable these?
-_ font usage/substition solution
-_   write code to bind/convert java fonts
-_     best would be freetype or jdk 1.3/1.4
-_   java freetype? jni freetype to build texmap fonts?
-_   look at flash file format? (does it have kerning?)
-_ version of ProcessingApplet that replaces g. with ai. or pdf.
-_ include stdout/stderr in the processing window
-_   option to toggle window on/off (not just in properties, but realtime)
-_   set # of lines in properties
-_ play button not really working
-_   never un-highlights, especially with exceptions
-_   also when using draw() instead of loop()
-_     applet needs to notify runner that it has terminated
-_ look into using serialporteventlistener for simpleserial
-_   may help with problems due to threading/synchronizing
-_ lib/pde.properties should be read using getResource
-_   otherwise path issues cause trouble (likely under win98)
-_ make PdeEditorButtons wait until mouseup to change
-_   (currently doesn't feel as good as it could)
-_ check logs to see where we're getting traffic from
-_ licensing issues with kjc (before public release)
-_ support for moving the camera around
-
-
-PDE / medium & time consuming
-_ talk to simon about error streams and kjc
-_   better piping of output from kjc
-_   modify kjc to take a PrintWriter, instead of current weird hacks
-_ erroneous errors from kjc regarding 'var not inited'
-_   is there any way to disable this message?
+a _ lib/pde.properties should be read using getResource
+a _   otherwise path issues cause trouble (likely under win98)
+a _ check logs to see where we're getting traffic from
+b _ include stdout/stderr in the processing window
+b _   option to toggle window on/off (not just in properties, but realtime)
+b _   set # of lines in properties
+b _ work on editor buttons
+b _   play button not really working
+b _     never un-highlights, especially with exceptions
+b _     also when using draw() instead of loop()
+b _       applet needs to notify runner that it has terminated
+b _   make PdeEditorButtons wait until mouseup to change
+b _     (currently doesn't feel as good as it could)
+b _ look into using serialporteventlistener for simpleserial
+b _   may help with problems due to threading/synchronizing
+b _ licensing issues with kjc (before public release)
+b _ font usage/substition solution
+b _   write code to bind/convert java fonts
+b _     best would be freetype or jdk 1.3/1.4
+b _   java freetype? jni freetype to build texmap fonts?
+b _   look at flash file format? (does it have kerning?)
 
 
 PDE / low
+_ support for moving the camera around
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
@@ -258,13 +257,21 @@ _   multi-file: quicksort + sortable
 _ check out interface builder for interesting tidbits
 
 
+WEB
+_ online discussion/talk system (gets people using the site too)
+_ see about setting up simple bug tracker/feature system
+_   queue for people reporting things externally
+_   bugzilla but simpler
+_   would also be nice for people to be able to vote on features
+
+
 MISC / macos
-_ crashes when people click on help in top bar (same in DBN)
-_ dataInputStream, setUseCaches on the url to false
-_   URLConnection.setUseCaches(false)
-_ parent.obj.close() on the url
-_ serial port code needs to be implemented
-_   something that docks better to java serial api
+a _ crashes when people click on help in top bar (same in DBN)
+a _ dataInputStream, setUseCaches on the url to false
+a _   URLConnection.setUseCaches(false)
+a _ parent.obj.close() on the url
+b _ serial port code needs to be implemented
+b _   something that docks better to java serial api
 
 
 MISC / building
@@ -318,13 +325,6 @@ MISC / ui
 _ ui for sketchbook/projects handling
 
 
-MISC / web
-_ see about setting up simple bug tracker/feature system
-_   queue for people reporting things externally
-_   bugzilla but simpler
-_   would also be nice for people to be able to vote on features
-
-
 MISC / technotes
 _ bug in sun vm for freaking out
 _   also happened with ibm vm.. grr.. (or was it a path problem?)
@@ -356,6 +356,7 @@ _   it's the only one ever used
 _ stringutils.split is a useful one
 _ readFileLines et al
 _ translateMiddle() ? to move to the middle of the screen?
+_ perlin noise function
 
 
 MISC / things that break often/things to test
