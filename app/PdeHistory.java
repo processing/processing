@@ -187,7 +187,8 @@ public class PdeHistory {
 
       if (noPreviousHistory) {  
         // to get add the actual menu, to get the 'clear' item in there
-        rebuildMenu(historyFile.getPath());
+        //rebuildMenu(historyFile.getPath());
+        rebuildMenu();
       }
 
     } catch (IOException e) {
@@ -287,7 +288,8 @@ public class PdeHistory {
             PdeBase.showWarning("History Problem", 
                                 "Could not erase history", null);
           }
-          rebuildMenu(historyFile.getPath());
+          rebuildMenu();
+          //PdeHistory.this.rebuildMenu(historyFile.getPath());
         }
       });
     menu.add(item);

@@ -2501,7 +2501,7 @@ public class PdeEditor extends JFrame
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
 
-        referenceFile = PdeKeywords.get(parent.getSelectedText());
+        referenceFile = PdeKeywords.getReference(parent.getSelectedText());
         if (referenceFile != null) {
           referenceItem.setEnabled(true);
         }
