@@ -13,8 +13,8 @@ public class KjcApplet extends BApplet {
       super.run();
 
     } catch (Exception e) {
-      System.out.println("ex found in run");
-      //e.printStackTrace();
+      //System.out.println("ex found in run");
+      e.printStackTrace();
       //engine.error(e);
       engine.newMessage = true;
       e.printStackTrace(engine.leechErr);
