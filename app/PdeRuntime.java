@@ -332,11 +332,16 @@ public class PdeRuntime implements PdeMessageConsumer {
     // always shove out the mesage, since it might not fall under
     // the same setup as we're expecting
     System.err.print(s);
+    //System.err.println("[" + s.length() + "] " + s);
     System.err.flush();
 
     // if s.length <=2, ignore it because that probably means
     // that it's just the platform line-terminators.
-    if (s.length() < 2) return;
+    //if (s.length() < 2) return;
+
+    // annoying, because it seems as though the terminators
+    // aren't being sent properly
+    //System.err.println(s);
 
     //if (newMessage && s.length() > 2) {
     if (newMessage) {
