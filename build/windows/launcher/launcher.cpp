@@ -146,6 +146,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           "%s\\lib\\core.jar;"
           "%s\\lib\\mrj.jar;"
           "%s\\lib\\oro.jar;"
+          "%s\\lib\\registry.jar;"
           "%s\\lib\\antlr.jar;"
           
           "%s",  // original CLASSPATH
@@ -163,7 +164,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           local_jre_installed ? "java\\lib\\rt.jar;" : "", 
           qtjava_path,
           loaddir, loaddir, loaddir, loaddir, 
-          loaddir, loaddir, loaddir, 
+          loaddir, loaddir, loaddir, loaddir, 
           env_classpath);
 
   //MessageBox(NULL, cp,

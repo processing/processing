@@ -1,4 +1,8 @@
 0076 pde
+X fix launcher issues on windows (didn't include registry.jar)
+X   also fix run.bat and run-expert.bat
+X fix launcher issues on mac os x
+X   fix Info.plist, and chmod +x JavaApplicationStub
 
 _ get an xml library in there
 _   nanoxml problems with manifest
