@@ -1188,7 +1188,28 @@ public class PdeBase extends Frame
 #ifdef MACOS
       } else if (platform == MACOSX) {
         //com.apple.eio.FileManager.openURL(url);
-        if (!url.startsWith("http://")) url = "file://" + url;
+
+        if (!url.startsWith("http://")) {
+          // prepend file:// on this guy since it's a file
+          url = "file://" + url;
+
+          // replace spaces with %20 for the file url
+          // otherwise the mac doesn't like to open it
+          // can't just use URLEncoder, since that makes slashes into
+          // %2F characters, which is no good. some might say "useless"
+          if (url.indexOf(' ') != -1) {
+            StringBuffer sb = new StringBuffer();
+            char c[] = url.toCharArray();
+            for (int i = 0; i < c.length; i++) {
+              if (c[i] == ' ') {
+                sb.append("%20");
+              } else {
+                sb.append(c[i]);
+              }
+            }
+            url = sb.toString();
+          }
+        }
         //System.out.println("trying to open " + url);
         com.apple.mrj.MRJFileUtils.openURL(url);
 
@@ -1235,7 +1256,7 @@ public class PdeBase extends Frame
 
 #ifdef MACOS
       } else if (platform == MACOSX) {
-        com.apple.mrj.MRJFileUtils.openURL("file://" + folder);
+        openURL(folder);  // handles char replacement, etc
 
 #endif
       }

@@ -130,10 +130,11 @@ public class PdeRuntime implements PdeMessageConsumer {
         // until it's finished rendering, otherwise the width/height
         // may not have been properly set.
         if (drawMode) {
+          //System.out.println("draw mode");
           while ((applet.frame != 1) && (!applet.finished)) {
             try {
               //System.out.println("waiting to complete drawing");
-              Thread.sleep(5);
+              Thread.sleep(100);
             } catch (InterruptedException e) { }
           }
         }
