@@ -767,6 +767,7 @@ public class PApplet extends Applet
             if (frameCount == 0) {
               //initGraphics();
               //createGraphics();
+              defaults();
               setup();
 
               this.pixels = g.pixels;
