@@ -100,22 +100,15 @@ find processing -name "*~" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
 find processing -name "CVS" -exec rm -rf {} ';'
 
+stuff -f sitx processing-$REVISION
+
 # zip it all up for release
-#mv processing "Processing $REVISION"
-#mv processing "processing-$REVISION"
-NICE_FOLDER="Processing $SHORT_REVISION"
-DMG_NAME="processing-$REVISION"
-mv processing "$NICE_FOLDER"
-
-#stuff -f sitx processing-$REVISION
-#WHERE=`pwd`
-chmod +x mkdmg
-#./mkdmg $WHERE/processing-$REVISION
-#./mkdmg processing-$REVISION
-./mkdmg "$NICE_FOLDER" "Processing"
-mv "$NICE_FOLDER.dmg" "$DMG_NAME.dmg"
-
-# if there is a command line tool to make a dmg from this dir.. hmm
+#NICE_FOLDER="Processing $SHORT_REVISION"
+#DMG_NAME="processing-$REVISION"
+#mv processing "$NICE_FOLDER"
+#chmod +x mkdmg
+#./mkdmg "$NICE_FOLDER" "Processing"
+#mv "$NICE_FOLDER.dmg" "$DMG_NAME.dmg"
 
 # actually, could probably use:
 # open processing-uncomp.dmg
