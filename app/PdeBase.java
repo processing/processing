@@ -8,12 +8,12 @@ import java.awt.event.*;
 
 public class PdeBase implements ActionListener {
   static Properties properties;
-  boolean errorState;
+  static Frame frame;
+  static String encoding;
 
-  String encoding;
+  boolean errorState;
   PdeEditor editor;
 
-  static Frame frame;
   WindowAdapter windowListener;
 
   File sketchbookFolder;
@@ -27,7 +27,7 @@ public class PdeBase implements ActionListener {
   }
 
   public PdeBase() {
-    frame = new Frame(WINDOW_TITLE); 
+    frame = new Frame(WINDOW_TITLE);
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -55,7 +55,7 @@ public class PdeBase implements ActionListener {
     boolean convertSemicolons = false;
     String program = get("program"); 
     if (program != null) { 
-      program = readFile(program);
+      program = getFile(program);
     } else {
       program = get("inline_program");
       convertSemicolons = true;
@@ -78,7 +78,6 @@ public class PdeBase implements ActionListener {
     frame.setLayout(new BorderLayout());
     frame.add("Center", editor);
 
-
     MenuBar menubar = new MenuBar();
     Menu menu;
     MenuItem item;
@@ -96,6 +95,7 @@ public class PdeBase implements ActionListener {
     menu.add(new MenuItem("Reference"));
     menu.addSeparator();
     menu.add(new MenuItem("Quit"));
+    menu.addActionListener(this);
     menubar.add(menu);
 
     // completely un-functional edit menu
@@ -170,8 +170,11 @@ public class PdeBase implements ActionListener {
       //editor.handleNew();
 
       //} else {
-      editor.sketchbookOpen(path + File.separator + e.getActionCommand());
+      //editor.sketchbookOpen(path + File.separator + e.getActionCommand());
       //}
+      String name = e.getActionCommand();
+      editor.skOpen(path, name); // + File.separator + name + 
+      //File.separator + name + ".pde");
     }
   }
 
@@ -258,12 +261,46 @@ public class PdeBase implements ActionListener {
 
   public void actionPerformed(ActionEvent event) {
     String command = event.getActionCommand();
+    //System.out.println(command);
 
-    if (command.equals("Quit")) {
+    if (command.equals("New")) {
+      editor.skNew();
+
+    } else if (command.equals("Save")) {
+      editor.doSave();
+
+    } else if (command.equals("Duplicate")) {
+      editor.skDuplicate();
+
+    } else if (command.equals("Export")) {
+      editor.skExport();
+
+    } else if (command.equals("Proce55ing.net")) {
+      // same thing here with runtime
+
+    } else if (command.equals("Reference")) {
+      /*
+      try {
+	// need to get the stream from here
+	Runtime.getRuntime().exec("cmd /c d:\\fry\\processing\\app\\application\\reference\\Transform.html");
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
+      */
+
+    } else if (command.equals("Quit")) {
       editor.doQuit();
 
-    } else if (command.equals("")) {
-    
+
+    } else if (command.equals("Play")) {
+      editor.doPlay();
+
+    } else if (command.equals("Present")) {
+      //editor.doPresent();
+
+    } else if (command.equals("Stop")) {    
+      editor.doStop();
+
     }
     //if (command.equals("Save QuickTime movie...")) {
     //  ((PdeEditor)environment).doRecord();
@@ -289,84 +326,6 @@ public class PdeBase implements ActionListener {
     }
   }
   */
-
-  // this could be pruned further
-  public String readFile(String filename) {
-    if (filename.length() == 0) {
-      return null;
-    }
-    URL url;
-    InputStream stream = null;
-    String openMe;
-    byte temp[] = new byte[65536];  // 64k, 16k was too small
-
-    try {
-      // if running as an application, get file from disk
-      stream = new FileInputStream(filename);
-
-    } catch (Exception e1) { try {
-      url = getClass().getResource(filename);
-      stream = url.openStream();
-
-    } catch (Exception e2) { try {
-      // Try to open the param string as a URL
-      url = new URL(filename);
-      stream = url.openStream();
-	
-    } catch (Exception e3) {
-      return null;
-    } } }
-
-    try {
-      int offset = 0;
-      while (true) {
-	int byteCount = stream.read(temp, offset, 1024);
-	if (byteCount <= 0) break;
-	offset += byteCount;
-      }
-      byte program[] = new byte[offset];
-      System.arraycopy(temp, 0, program, 0, offset);
-
-      //return languageEncode(program);
-      // convert the bytes based on the current encoding
-      try {
-	if (encoding == null)
-	  return new String(program);
-	return new String(program, encoding);
-      } catch (UnsupportedEncodingException e) {
-	e.printStackTrace();
-	encoding = null;
-	return new String(program);
-      }
-
-    } catch (Exception e) {
-      System.err.println("problem during download");
-      e.printStackTrace();
-      return null;
-    }
-  }
-
-
-  // used by PdeEditorButtons
-  static public Image readImage(String name) {
-    Image image = null;
-    //if (isApplet()) {
-    //image = applet.getImage(applet.getCodeBase(), name);
-    //} else {
-    Toolkit tk = Toolkit.getDefaultToolkit();
-    image =  tk.getImage("lib/" + name);
-    //URL url = PdeApplet.class.getResource(name);
-    //image = tk.getImage(url);
-    //}
-    //MediaTracker tracker = new MediaTracker(applet);
-    MediaTracker tracker = new MediaTracker(frame);
-    tracker.addImage(image, 0);
-    try {
-      tracker.waitForAll();
-    } catch (InterruptedException e) { }      
-    return image;
-  }
-
 
   // all the information from pde.properties
 
@@ -421,6 +380,85 @@ public class PdeBase implements ActionListener {
 
   static public boolean isMacintosh() {
     return System.getProperty("os.name").toLowerCase().indexOf("mac") != -1;
+  }
+
+
+  // used by PdeEditorButtons, but probably more later
+  static public Image getImage(String name, Component who) {
+    Image image = null;
+    //if (isApplet()) {
+    //image = applet.getImage(applet.getCodeBase(), name);
+    //} else {
+    Toolkit tk = Toolkit.getDefaultToolkit();
+    image = tk.getImage(who.getClass().getResource(name));
+    //image =  tk.getImage("lib/" + name);
+    //URL url = PdeApplet.class.getResource(name);
+    //image = tk.getImage(url);
+    //}
+    //MediaTracker tracker = new MediaTracker(applet);
+    MediaTracker tracker = new MediaTracker(who); //frame);
+    tracker.addImage(image, 0);
+    try {
+      tracker.waitForAll();
+    } catch (InterruptedException e) { }      
+    return image;
+  }
+
+
+  // this could be pruned further
+  static public String getFile(String filename) {
+    if (filename.length() == 0) {
+      return null;
+    }
+    URL url;
+    InputStream stream = null;
+    String openMe;
+    byte temp[] = new byte[65536];  // 64k, 16k was too small
+
+    try {
+      // if running as an application, get file from disk
+      stream = new FileInputStream(filename);
+
+    } catch (Exception e1) { try {
+      url = frame.getClass().getResource(filename);
+      stream = url.openStream();
+
+    } catch (Exception e2) { try {
+      // Try to open the param string as a URL
+      url = new URL(filename);
+      stream = url.openStream();
+	
+    } catch (Exception e3) {
+      return null;
+    } } }
+
+    try {
+      int offset = 0;
+      while (true) {
+	int byteCount = stream.read(temp, offset, 1024);
+	if (byteCount <= 0) break;
+	offset += byteCount;
+      }
+      byte program[] = new byte[offset];
+      System.arraycopy(temp, 0, program, 0, offset);
+
+      //return languageEncode(program);
+      // convert the bytes based on the current encoding
+      try {
+	if (encoding == null)
+	  return new String(program);
+	return new String(program, encoding);
+      } catch (UnsupportedEncodingException e) {
+	e.printStackTrace();
+	encoding = null;
+	return new String(program);
+      }
+
+    } catch (Exception e) {
+      System.err.println("problem during download");
+      e.printStackTrace();
+      return null;
+    }
   }
 
   /*

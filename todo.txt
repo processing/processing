@@ -1,18 +1,34 @@
 0031
 
+in the morning
+_ take state information out of Header
+_ cleanup lastFile/lastDirectory
+_ renaming projects
+_ sketch: sketch-000 is dumb
+_ make sure compiling into build directory
+_ implement popup menu
+_ save (just) last program run in sketch.properties
+
 _ background(), fill(), stroke() using color datatype
 _   check 0xff high bits to see if it's an int gray value or a color
-
 _ fix curve()/bezier()
 _   also make curve() work as 6 point with doubled endpoints
 
-_ make all windows 120x120?
-_   default program should be large, 300x200 or so
-_   what if it's smaller? boundary of color 51, 51, 51 around it
+pdebase simple
+_ remove 'encoding' crap from PdeBase
+_   only existed b/c of reading as bytes and not using jdk11 methods
+_ cleanup program/inline_program crap.. take out scheme stuff
 _ better readFile/loadImage inside PdeBase
 _   temp array should be resizable inside readFile
 _   use getresource for loading image
-_ beautify is broken
+
+_ noClear -- implement with noBackground
+_   need to set bg color even if updated
+_ update/noUpdate() could also be done to force explicit updates only
+_ make all windows 120x120?
+_   default program should be large, 300x200 or so
+_   what if it's smaller? boundary of color 51, 51, 51 around it
+_ beautify is slightly broken
 _ need to update PdeKeyListener for new ui.. 
 _   remove open, add d for duplicate, r for rename, others ?
 

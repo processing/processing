@@ -1,6 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
-
+import java.io.*;
 
     /*
     PdeEditorLabel sketchLabel = new PdeEditorLabel(1);
@@ -30,6 +30,8 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   int projectLeft;
   int projectRight;
   int projectTitleLeft;
+  //boolean isProject;
+  File projectDir;
 
   String user;
   int userLeft;
@@ -61,9 +63,11 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   }
 
 
-  public void setProject(String project) {
+  public void setProject(String project, File projectDir) {
     this.project = project;
+    this.projectDir = projectDir;
     projectLeft = 0;
+    update();
   }
 
   public void setUser(String user) {
