@@ -2,6 +2,12 @@
 X only allow one pmouseX update outside of loop
 X   to avoid jumping lines (drawing -> continuous_lines)
 X   email glen/amit/creas about the change
+X can windows have multiple jre installed and use any of them?
+o another odd NullPointerException -> or just a "couldn't delete" problem
+o  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060341518
+o java vm could be removed from cvs
+o   in favor of requiring a specific jvm, and using registry to find
+X see if mods to PdeCompiler work on windows
 
 bf b _ BApplet.main(new String[] { "flashcards3" });
 bf b _   or even BApplet.main(new String[] { getClass().getName() });
@@ -33,12 +39,16 @@ _   only works once in applet
 _   if size() not found in export/compile, ask the user
 
 _ modify background() to actually clear the screen
+_   modify readme.txt regarding background() requiring constants
 
 _ tint() colors images, not fill()
 _ color has to be called inside or after setup
 _ loadImage must be used inside or after setup
 _   either document this and/or provide a better error message
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+
+_ BGraphics, BVideo both subclass BImage
+_   inherits all image manipulation and image use methods
 
 cosmetic
 _ remove .DS_Store boogers, especially from win/linux distributions
@@ -56,58 +66,50 @@ _   ie. perhaps just 'fill', so that it can be used for a get
 ..................................................................
 
 
-FRY PILE
+Volunteers / Possible tasks 
 
-_ another odd NullPointerException -> or just a "couldn't delete" problem
-_  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060341518
+_ perlin noise is broken
 
-_ what 'known issues' can be fixed before beta
-_    variables for size/background in draw() mode?
-_    make sure these are noted in the documentation as well
-
-rotateRight(), rotateLeft(), flipHorizontal().. etc
-for an actual 'transformations' object
-
-_ sketchbook location not properly read or written
-_ do not delete sketch folder if empty sketch but non-empty data dir
-_   maybe needs to be a holding area for the current sketch
-_     this is how the read-only examples would be used
-
-
-_ for int i for 0 to b.length
-_ for i from 0 upto b.length
-_ saveBytes not in proper dir is annoying
-_ write tiff (or other) header for image stream
-
-_ modify build instructions for the many changes
-_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
-
-_ building windows from scratch 
+_ building releases from scratch 
 _   this is a useful developer task before release
 _     build all releases from a clean cvs
 _   tries to make work/ without bagel serial existing and blows up
 _     b/c bagel checkout happens later
 _   all code needs to be buildable from scratch
 
+thought this was complete, but it's totally broken
+dh b _ present mode, click background window and front window hides
+dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
+dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
+dh b _ focus not properly set in present mode
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
+   b _ escape key not quitting presentation mode
+   b _   no events seem to be coming through at all
+
 _ developers who may be interested in p5 helping: 
 sdlpci@cis.rit.edu
 gerritt@cloudyreason.com
 kyle@kylerode.com
+leonhard@rathner.com
 
-_ go through examples to see if there's other annoying syntax
 
-_ history causing trouble
-_   super slow with a huge sketch
+..................................................................
 
-_ winamp/audio getting starved or crackly while applets running
-_   thread priority too high? or something weird
 
-_ don't cache stuff from loadStrings
-_   mac java vm won't give up old version of file
-_   or use setUseCaches(false)
+FRY PILE
 
-_ multi-line errors a mess in jikes
-_   maybe a dropdown list thing, with the first just shown?
+b _ what 'known issues' can be fixed before beta
+b _    make sure these are noted in the documentation as well
+
+b _ saveBytes not in proper dir is annoying
+b _ modify build instructions for the many changes
+b _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+
+_ sketchbook location not properly read or written
+_   do not delete sketch folder if empty sketch but non-empty data dir
+_     maybe needs to be a holding area for the current sketch
+_     this is how the read-only examples would be used
 
 lotsa video issues
 _ just locks up after running examples, then does the 'can't delete' thing
@@ -118,17 +120,15 @@ _ video.pixels don't seem to have high bytes set
 _   so fill(video.pixels[blah]) doesn't work
 _   test against 'pixels' example
 
-_ switch to swing menus
-_   the other menus really look like hell on linux
 _ better 1.3/1.4 support.. properly detect vm
 _   use when deciding which classes to import
-_ see if mods to PdeCompiler work on windows
+
 _ some flag to know whether applet is online or not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 _   fix link, loadStrings, saveBytes code once that's fixed
+
 _ set a better ctrl-key for reference (anything but 'F')
 _   probably need to use mac or pc specific keys?
-_ interested in devel: Leonhard Rathner <leonhard@rathner.com>
 
 _ catch security exceptions around applet i/o calls
 _   not just for saving files, but provide better error msgs when
@@ -146,21 +146,6 @@ java.security.AccessControlException: access denied (java.io.FilePermission scre
  at BApplet.run(BApplet.java:256) 
  at java.lang.Thread.run(Unknown Source) 
 
-_ perlin noise is broken
-_ java vm could be removed from cvs
-_   in favor of requiring a specific jvm, and using registry to find
-
-
-thought this was complete, but it's totally broken
-dh b _ present mode, click background window and front window hides
-dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
-dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
-dh b _ focus not properly set in present mode
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
-   b _ escape key not quitting presentation mode
-   b _   no events seem to be coming through at all
-
 
 additional console fixes
 dh b _   clear console each time 'run' gets hit
@@ -173,28 +158,20 @@ bf b o   remove the border around the edge
 bf b o   what's with the 2 blank lines on startup?
 
 
-windows
-_ can windows have multiple jre installed and use any of them?
-
-
 macosx
 _ random lockups seem common in 1.4
 _ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing
 _   was missing the error about a package being gone
 _   comment out /System/Library/ code to track that down
-_ build gl4java for java 1.4
-_ Event.consume() doesn't work on entry fields 
-_   manifests itself in sketch naming, can't be constrained
-_   may not be the case under swing?
-_   it's probably because of keyTyped() being the important one
-_     so instead trap for keyTyped events
-_ set nice background for disk image on macosx
-_ Contents/Resources/Java can take jnilib files
+b _ set nice background for disk image on macosx
+b _ Contents/Resources/Java can take jnilib files
 
 
 linux
+_ can't find jikes, so users have to put it in their PATH
 _ doesn't seem interested in quitting properly
+_ switch to swing menus, because motif widgets are nasty
 
 
 thesis / acg
@@ -233,6 +210,7 @@ bf _   macos9: hd:Users?, linux: ~/sketchbook
 bf _ move examples to folder that goes w/ p5 app
 bf _   set examples somehow read-only
 bf _ make possible to use buzz.pl to create versions w/ stuff removed
+bf _ build gl4java for java 1.4
 
 licensing
 bf _ about box 
@@ -245,13 +223,6 @@ bf _   although jedit is under gpl, if we switch to its syntax pkg
 bf _     more info about use is in package.html
 bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
-
-
-api that i want
-_ image(BImage, x, y, float scale) (found in illustrator stuff)
-_ textrect(String text, x, y, width, height)  // based on rectMode
-_   textMode() for align left, center, right (no justify.. har!)
-_ file i/o: file listing util that leaves out . and ..
 
 
 random todos (low priority.. just notes to self)
@@ -273,10 +244,28 @@ low enough importance that they'll be fixed after beta.
 1 _   maybe could even compile it in with jikes? (blech)
 
 
+things for post-beta, to be sorted through later
+
+1 _ history causing trouble
+1 _   super slow with a huge sketch
+1 _ winamp/audio getting starved or crackly while applets running
+1 _   thread priority too high? or something weird
+1 _ don't cache stuff from loadStrings and others
+1 _   mac java vm won't give up old version of file
+1 _   or use setUseCaches(false)
+1 _ multi-line errors a mess in jikes
+1 _   maybe a dropdown list thing, with the first just shown?
+
+
 ..................................................................
 
 
 api work
+
+_ go through examples to see if there's other annoying syntax
+
+_ for int i for 0 to b.length
+_ for i from 0 upto b.length
 
 _ vertex(x, y, u, v) and vertex(x, y, z, u, v)
 
@@ -304,6 +293,16 @@ _ strokeMode/strokeWidth -> strokeMode(weight, join, miter)
 _ begin/end.. beginSerial/endSerial -> 
 _   openSerial/closeSerial ?
 _   startSerial/stopSerial
+
+
+additions that i want
+_ image(BImage, x, y, float scale) (found in illustrator stuff)
+_ textrect(String text, x, y, width, height)  // based on rectMode
+_   textMode() for align left, center, right (no justify.. har!)
+_ file i/o: file listing util that leaves out . and ..
+_ rotateRight(), rotateLeft(), flipHorizontal().. etc
+_   for an actual 'transformations' object
+_ write tiff (or other) header for image stream
 
 
 ////////////////////////////////////////////////////////////////////
