@@ -37,34 +37,31 @@ public class PTriangle implements PConstants
   static final int R_TEXTURE32 = 0x8;
   static final int R_ALPHA = 0x10;
 
-  //
-  private int[]   m_pixels;
-  private int[]   m_stencil;
-  private int[]   m_texture;
-  private float[]   m_zbuffer;
+  private int[] m_pixels;
+  private int[] m_texture;
+  private int[] m_stencil;
+  private float[] m_zbuffer;
 
-  // texture image
-  private PImage    m_tImage;
+  //private PImage m_tImage;
 
-  //
-  private int     SCREEN_WIDTH;
-  private int     SCREEN_HEIGHT;
-  private int     SCREEN_WIDTH1;
-  private int     SCREEN_HEIGHT1;
-  private int     TEX_WIDTH;
-  private int     TEX_HEIGHT;
-  private float   F_TEX_WIDTH;
-  private float   F_TEX_HEIGHT;
+  private int SCREEN_WIDTH;
+  private int SCREEN_HEIGHT;
+  private int SCREEN_WIDTH1;
+  private int SCREEN_HEIGHT1;
 
-  //
-  public  boolean   INTERPOLATE_UV;
-  public  boolean   INTERPOLATE_RGB;
-  public  boolean   INTERPOLATE_ALPHA;
+  private int TEX_WIDTH;
+  private int TEX_HEIGHT;
+  private float F_TEX_WIDTH;
+  private float F_TEX_HEIGHT;
+
+  public  boolean INTERPOLATE_UV;
+  public  boolean INTERPOLATE_RGB;
+  public  boolean INTERPOLATE_ALPHA;
 
   // Vertex coordinates
-  private float[]   x_array;
-  private float[]   y_array;
-  private float[]   z_array;
+  private float[] x_array;
+  private float[] y_array;
+  private float[] z_array;
 
   // U,V coordinates
   private float[]   u_array;
@@ -240,7 +237,7 @@ public class PTriangle implements PConstants
     INTERPOLATE_UV = false;
     INTERPOLATE_RGB = false;
     INTERPOLATE_ALPHA = false;
-    m_tImage = null;
+    //m_tImage = null;
     m_texture = null;
     m_drawFlags = 0;
   }
@@ -343,7 +340,7 @@ public class PTriangle implements PConstants
    * Sets texture image used for the polygon
    */
   public void setTexture(PImage image) {
-    m_tImage = image;
+    //m_tImage = image;
     m_texture = image.pixels;
     TEX_WIDTH = image.width;
     TEX_HEIGHT = image.height;
