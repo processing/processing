@@ -404,39 +404,48 @@ public class PdeSketchbook {
    * Clear out projects that are empty.
    */
   public void clean() {
-    System.err.println("TODO sketchbook.clean() is disabled");
-    if (true) return;  // fool the compiler
+    //if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
 
-    if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
-
-    //String userPath = base.sketchbookPath + File.separator + userName;
-    //File userFolder = new File(userPath);
     File sketchbookFolder = new File(PdePreferences.get("sketchbook.path"));
+    if (!sketchbookFolder.exists()) return;
 
-    //System.out.println("auto cleaning");
-    if (sketchbookFolder.exists()) {
-      //String entries[] = new File(userPath).list();
-      String entries[] = sketchbookFolder.list();
-      if (entries != null) {
-        for (int j = 0; j < entries.length; j++) {
-          //System.out.println(entries[j] + " " + entries.length);
+    //String entries[] = new File(userPath).list();
+    String entries[] = sketchbookFolder.list();
+    if (entries != null) {
+      for (int j = 0; j < entries.length; j++) {
+        //System.out.println(entries[j] + " " + entries.length);
+        if (entries[j].charAt(0) == '.') continue;
 
-          if (entries[j].charAt(0) == '.') continue;
+        //File prey = new File(userPath, entries[j]);
+        File prey = new File(sketchbookFolder, entries[j]);
+        File pde = new File(prey, entries[j] + ".pde");
 
-          //File prey = new File(userPath, entries[j]);
-          File prey = new File(sketchbookFolder, entries[j]);
-          File pde = new File(prey, entries[j] + ".pde");
+        // make sure this is actually a sketch folder with a .pde,
+        // not a .DS_Store file or another random user folder
 
-          // make sure this is actually a sketch folder with a .pde,
-          // not a .DS_Store file or another random user folder
+        if (pde.exists() &&
+            (PdeBase.calcFolderSize(prey) == 0)) {
+          //System.out.println("i want to remove " + prey);
 
-          if (pde.exists()) {
-            if (PdeBase.calcFolderSize(prey) == 0) {
-              //System.out.println("i want to remove " + prey);
+          if (PdePreferences.getBoolean("sketchbook.auto_clean")) {
+            PdeBase.removeDir(prey);
+
+          } else {  // otherwise prompt the user
+            String prompt = 
+              "Remove empty sketch titled \"" + entries[j] + "\"?";
+
+            Object[] options = { "Yes", "No" };
+            int result = 
+              JOptionPane.showOptionDialog(editor,
+                                           prompt,
+                                           "Housekeeping",
+                                           JOptionPane.YES_NO_OPTION,
+                                           JOptionPane.QUESTION_MESSAGE,
+                                           null,
+                                           options, 
+                                           options[0]);
+            if (result == JOptionPane.YES_OPTION) {
               PdeBase.removeDir(prey);
-              //} else {
-              //System.out.println("not removign because size is " + 
-              //                 calcFolderSize(prey));
             }
           }
         }
