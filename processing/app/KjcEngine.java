@@ -773,6 +773,13 @@ public class KjcEngine extends PdeEngine {
 		}
 	      }
 	    });
+	  /*
+	  window.addFocusListener(new FocusAdapter() {
+	      public void focusLost(FocusEvent e) {
+		System.out.println(e);
+		window.toFront();
+	      }});
+	  */
 
 	} else {
 	  window = new Frame(editor.sketchName); // gonna use ugly windows instead

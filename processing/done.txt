@@ -2,6 +2,7 @@
 X disabled the debug flag (oops) in BPolygon
 X disabled code for alpha in web colors (use 0x instead if needed)
 X   make sure that fill(int a) / stroke(int a) work if an alpha is set
+o probably time to send out another message about this release
 
 
 0053
