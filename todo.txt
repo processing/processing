@@ -68,15 +68,14 @@ X "Processing" folder not properly created on new install
 
 040920
 X add noLoop() to static mode apps
+X remove "loop" from special inserts on preproc
 
 _ static applets need to be able to resize themselves on 'play'
 _ figure out what to do with static apps exported as application
 _   needs to just hang there
-
+_ scripts will need to call exit() explicitly
 
 _ add all imported libs to hash table of jars
-
-_ something calling 
 
 _ after export of library, rebuild "import library" menu
 
