@@ -4963,6 +4963,42 @@ public class PApplet extends Applet
   }
 
 
+  public void light(int num, float x, float y, float z,
+                    float red, float green, float blue) {
+     g.light(num, x, y, z, red, green, blue);
+  }
+
+
+  public void lightEnable(int num) {
+     g.lightEnable(num);
+  }
+
+
+  public void lightDisable(int num) {
+     g.lightDisable(num);
+  }
+
+
+  public void lightPosition(int num, float x, float y, float z) {
+     g.lightPosition(num, x, y, z);
+  }
+
+
+  public void lightAmbient(int num, float x, float y, float z) {
+     g.lightAmbient(num, x, y, z);
+  }
+
+
+  public void lightDiffuse(int num, float x, float y, float z) {
+     g.lightDiffuse(num, x, y, z);
+  }
+
+
+  public void lightSpecular(int num, float x, float y, float z) {
+     g.lightSpecular(num, x, y, z);
+  }
+
+
   public void hint(int which) {
      g.hint(which);
   }

@@ -359,6 +359,21 @@ public interface PMethods {
 
   public void noLights();
 
+  public void light(int num, float x, float y, float z,
+                    float red, float green, float blue);
+
+  public void lightEnable(int num);
+
+  public void lightDisable(int num);
+
+  public void lightPosition(int num, float x, float y, float z);
+
+  public void lightAmbient(int num, float x, float y, float z);
+
+  public void lightDiffuse(int num, float x, float y, float z);
+
+  public void lightSpecular(int num, float x, float y, float z);
+
   public void hint(int which);
 
   public void unhint(int which);
