@@ -20,6 +20,13 @@ X print(char) and println(char) didn't exist. whoops.
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055940673
 X added constructor in BImage that takes java.awt.Image
 
+other folks
+ks X adaptive sizing of circle segmenting based on rendered size
+ks X   rather than requiring a fixed amount
+ks X   have a few settings cached
+dm X patch to fix last line highlight bug in highlightLine()
+
+
 _ inside draw() mode, delay() does nothing
 _   delay might be a good way to signal drawing to the screen/updating
 
@@ -254,9 +261,6 @@ BAGEL / Future
    2 _     also needs to be searched for in the fonts/ dir..
    2 _ try with 1.4 frame buffer stuff to see if it's faster
    2 _ write shearing function
-   2 _ adaptive sizing of circle segmenting based on rendered size
-   2 _   rather than requiring a fixed amount
-   2 _   have a few settings cached
    2 _ optimize rotation functions
    2 _ update/noUpdate() could also be done to force explicit updates only
    2 _   for ui-type applications that don't need to continually redraw
