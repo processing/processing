@@ -78,13 +78,13 @@ public class PdeRunner implements Runnable {
 #endif
 	*/
 
-      } else if (program.indexOf("extends ProcessingApplet") != -1) {
-#ifdef JAVAC
-	engine = new JavacEngine(program, graphics);
-	engine.start();
-#else
-	throw new Exception("javac support not included");
-#endif
+	//      } else if (program.indexOf("extends ProcessingApplet") != -1) {
+	//#ifdef JAVAC
+	//	engine = new JavacEngine(program, graphics);
+	//	engine.start();
+	//#else
+	//	throw new Exception("javac support not included");
+	//#endif
 
       } else if (program.indexOf("// dbn") == 0) {
 #ifdef DBN

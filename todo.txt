@@ -3,36 +3,57 @@ iprocessing todo list // last updated 17 september 2001
 
 
 for 0009
-_ ability to include other code from sketchbook directory
-_ stop required before kill for applets that use serial
-_   this is behaving strangely
+X bagel fixes
+X   beginShape(POINTS) is not working, no marks are appearing 
+X     this was a pain in the ass to fix
+X   beginShape(LINE_LOOP) is not looping around 
+X   stroked POLYGON should emulate a LINE_LOOP
+X   fill white, stroke black, background white default in bagel
+X   remove duplicates: LINE/LINES etc
+X 'draw mode' applet support
+X 'advanced' applet support
+_   write documentation about having to use 'extends KjcProcessingApplet'
 _ option to enable/disable frame
-_ new objects draw behind old objects with noBackground()
+_ add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
+_   also add note about paren balancing doing strange things
+_   leave the others turned on, but parens off by default
+_ getMillis() doesn't seem to work
+_   write email to creas to see what the problem is
 _ enable/disable full screen leaves windows in back
 _   (may just require two toFront() calls)
+
+
+for 0010
+_ compiling .java files leaves the .class files next to the .java
+_   make sure all the dirs in sketchbook added to classpath on startup
+_   if new dir added, must restart processing (this is acceptable)
+_ ability to include other code from sketchbook directory
+_   compile entire sketchbook on startup, then check for new files on compile?
+X   kjc not smart enough to just compile things that are in classpath
+_ when applet window is too large to fit, center and put in back
+
+
+for 0011
+_ stop required before kill for applets that use serial
+_   this is behaving strangely
+_ new objects draw behind old objects with noBackground()
 _ breaks on every 2nd run when using serial apps (or others?)
 _   try calling gc on stop as well
 _ post new macintosh version
 _   with serial port support
-_ when applet window is too large to fit, center and put in back
-_ add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
-_   also add note about paren balancing doing strange things
-_   leave the others turned on, but parens off by default
 
 
 PROCESSING - HIGH
+_ make images work again
+_ make acu fonts work again
+_ write code to bind with java fonts
+_ write code to use simple bitmap fonts
 _ bug in paren balancing
-_ getMillis() doesn't seem to work
 _ shift-click on play for 'presentation mode'
 _   does full screen and hides editor window
 _ export doesn't work properly for stuff included from scrapbook
-_ processing applet: fill white, stroke black
 _ write dist.bat for releases
 _   don't forget to update 'export' dir with processing releases
-_ remove duplicates: LINE/LINES etc
-_ make tab key work
-_   include auto-indent?
-_    want emacs-style editor that's faster loading than emacs
 _ what happens if size() not called inside setup() ?
 _ when using draw() instead of loop()
 _   applet needs to notify runner that it has terminated
@@ -49,10 +70,7 @@ _ compile from the sketchbook if there are changes
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _ curves not properly implemented as part of shape architecture 
-_ beginShape(POINTS) is not working, no marks are appearing 
-_ beginShape(LINE_LOOP) is not looping around 
 _ lines become 2 pixels thick after a 3D transform 
-_ stroked POLYGON should emulate a LINE_LOOP
 _ kill button (without stop) doesn't clear play
 _ image grabbing code (write to tiff)
 _ build a linux/x86 release
@@ -87,6 +105,7 @@ _ how to use ssh identity file to maintain auth for brancusi
 
 
 PROCESSING - FEATURES
+_ want emacs-style editor that's faster loading than emacs
 _ anti-aliasing
 _ alpha
 _ regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
@@ -99,14 +118,12 @@ _   http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/je/index.html
 PROCESSING - LOWER
 _ tweak updater a little bit so it's more likely to work
 _   use numbered versioning? 
+_   give updater feedback (progress dialog, error msg)
 _ move math functions into utility library associated
 _   with bagel, because those will be useful on other bagel platforms
 _ perlin noise function
-_ give updater feedback (progress dialog, error msg)
-_ get proce55ing.net, make that the target launch site
 _ make some kind of internal color picker
 _   could be a separate window that's always around if needed
-_ write a dbn compatability mode (forever() instead of loop() ?)
 _ save window x, y, width, height to pde.properties on exit
 _ bagelpublic.pl: open ProcessingApplet, rewrite after special token
 _ look at glut for other needed shapes
@@ -153,6 +170,7 @@ String binary(int value) {
 X ctrl-s does 'save', button on toolbar does 'save as'
 X fixed auto-indent bug for editor
 X SimpleSerialDemo.pde had a bug (was old version)
+X re-enabled key commands for editor (tab expansion, auto-indent)
 
 
 0007
@@ -187,3 +205,6 @@ X put debugging stuff back into Kjc (i disabled some stuff)
 X convert documentation to html
 o setup imrf linux machine?
 
+DISCARD
+o get proce55ing.net, make that the target launch site
+o write a dbn compatability mode (forever() instead of loop() ?)

@@ -754,6 +754,11 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     if (frame != null) frame.toFront();
 
     try {
+      //System.out.println("my parent is " + getParent());
+      ((PdeApplication)getParent()).frame.toFront();
+    } catch (Exception e) { }
+
+    try {
       ((KjcEngine)(runner.engine)).window.toFront();
     } catch (Exception e) {
       // rather than writing code to check all the posible
