@@ -3938,15 +3938,21 @@ public class PApplet extends Applet
 
     Thread ethread = new Thread() {  //new Runnable() {
         public void run() {
+          setPriority(Thread.MIN_PRIORITY);
 
           while ((Thread.currentThread() == this) && !finished) {
             try {
               // is this what's causing all the trouble?
               int anything = System.in.read();
               if (anything == EXTERNAL_STOP) {
+                //System.out.println("********** STOPPING");
+
+                // adding this for 0073.. need to stop libraries
+                // when the stop button is hit.
+                PApplet.this.stop();
+
+                //System.out.println("********** REALLY");
                 finished = true;
-                //stop();
-                //thread = null;  // kill self
               }
             } catch (IOException e) {
               // not tested (needed?) but seems correct
