@@ -138,7 +138,7 @@ cd ../app
 # but for now, the parser is only built when the work dir 
 # is created, to speed the build process.
 
-echo Removing preproc code so it will regenerate
+#echo Removing preproc code so it will regenerate
 #rm preprocessor/expandedpde.g
 
 if test -f preprocessor/expandedpde.g
