@@ -1,3 +1,309 @@
+0060
+X gaps in lines for pmouseX, mouseX
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166777;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
+X only allow one pmouseX update outside of loop
+X   to avoid jumping lines (drawing -> continuous_lines)
+X   email glen/amit/creas about the change
+X can windows have multiple jre installed and use any of them?
+o another odd NullPointerException -> or just a "couldn't delete" problem
+o  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060341518
+o java vm could be removed from cvs
+o   in favor of requiring a specific jvm, and using registry to find
+X see if mods to PdeCompiler work on windows
+X remove "couldn't delete.." messages
+X modify how size() works
+X   allow size() to be called multiple times
+X   only works once in applet
+X   be able to set size() later in the program
+X   but still maintain other features like background
+X   make the BGraphics constructor less fragile
+X     and also more open to being resized when not in applet mode
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062482781;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062482895;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062483060;start=0
+X if there's a bug in bagel, PdeRuntime.message() ignores it
+X   just says "NullPointerException" but provides no info
+X   now at least spews the exception 
+X removed ugly white borders from ui on macosx java 1.3
+X   is there anything better that can be done for osx java 1.3
+X   setInsets() to zero or something?
+X font.stringWidth -> font.width(char c) or width(String s) 
+X removed extra push()/pop() in text(String s) that may save time
+X bezier error, goes up at the end
+X   also when using bezierMode, doesn't draw the first vertex
+X   size(300,200);
+X   bezier(0,100,width/3,100,2*width/3,100,3*width/3,100); 
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166242;start=0
+X add note to tga spec
+X   http://organicbit.com/closecombat/formats/tga.html
+X screenGrab() shouldn't allocate a new pixel buffer
+X   just write things out directly
+X   also fix for the new targa code
+X added a note about needing forward slashes
+X   In the config file, the sketchbook path works if you use forward
+X   slashes, but not if you use unescaped backslashes.
+X draw mode issues.. size and background must be int/float constants
+X   might be a better 'mode' for bagel so bkg and size cmds work
+X   rather than app being enclosed in beginFrame/endFrame loop
+X modify background() to actually clear the screen
+X   modify readme.txt regarding background() requiring constants
+X remove notes from reference about size/background
+X remove notes from readme about size/background
+X change the naming of the two versions of calc_color
+X The web page for ellipse (reference/ellipse_.html) talks about
+X   rectangles in the parameter list instead of ellipses.
+X resize() name is bad because it overrides component..
+X   resize is maybe goofy, so just size() for all?
+X color() with alpha now works properly
+X removed SMOOTH_IMAGES
+X removed shearX and shearY
+X toxi image code (!) 
+X   need background(BImage) and scaling, copy area, etc.
+X vertex(x, y, u, v) and vertex(x, y, z, u, v)
+X don't cast color()
+X   since more important for color(v1, v2, v3) to work
+X getPixel/setPixel -> get/set.. 
+X   get(x, y, w, h) is nice but no set(x,y,w,h)
+X   though set(x,y,w,h) could be nice
+X   and copy() to copy a section of pixels
+X BImage.save()
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1062076172
+X resize should call background again to set color
+X   if background was set before the resize
+X   and the background is not an image (or should it just stretch?)
+X     no need for image, since it has to be same size
+X     and is only explicitly drawn when background() is called
+X BGraphics subclasses BImage
+X   inherits all image manipulation and image use methods
+X background(BImage)
+X   also creating background image inside setup()
+X images drawn from center don't work for simage()
+X   currently calling slower image routine
+o make zbuffer available instead of g.zbuffer
+o shape.. non-homogenous colors for beginShape()
+o   currently disabled b/c homogenousColors not set false for vertices
+X should image(img, x, y, alpha) work instead of using fill?
+X   write tint() command
+X   or maybe another word for fill/stroke.. apply? colorize?
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1050323800
+X circles and spheres
+X   bresenham (flat) oval function
+X   finish fill mode of flat circle function
+o   setting accuracy of circles/sphere
+X some flag to know whether applet is online or not
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+X colorMode is defaulting to 255, 255, 255, 1.. oops
+X   though setting it differently hoses everything (clears everything)
+X setup (200, 200) causes the default size to be used 
+X be able to draw something inside setup (?)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+X no time to ask for "save changes" before quit
+X   PdeEditor, around line 910.. not blocking until input 
+X   read up on how to properly block for input in a java app
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165653;start=0
+X do not delete sketch folder if empty sketch but non-empty data dir
+X   maybe needs to be a holding area for the current sketch
+X   this is how the read-only examples would be used
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064160655;start=0
+X NullPointerException on setFont was confusing people
+X   add better error messages
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165591;start=0
+X color() method now works inside setup
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166837;start=0
+X color method with alpha now works
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166915;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167640;start=0
+X error message when trying to do a screengrab from inside a browser
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167220;start=0
+X windows fresh checkout from cvs still has problems
+X   major changes to build scripts for far easier building under windows
+X added error messages for noCursor in jdk11
+X boost memory size of processing.exe to 128 megs, instead of 64
+X classpath issues.. just ignore classpath altogether
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064185080;start=0
+X QTJAVA path and CLASSPATH are weird if java not first installed
+X   or just get set improperly, reinstalling quicktime doesn't help
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184794;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064184892;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064185169;start=0
+
+
+fixes because of dmose parser
+dm X move to antlr
+dm X float z= float(x) + float(y); 
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062471182;start=0
+dm X compiler barfs on: float[] moo = new int[10];  
+dm X   although no error comes through to p5 (benelek)
+dm X   this was a kjc error, so it's fixed with jikes
+dm X int() doesn't work inside other functions
+dm X   argh, need a real parser
+dm X something about the line println("4"); turns things to mush:
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461664;start=0
+dm X two int(random(5)) on the same line caused problem
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461786;start=0
+dm X setup( ){} has an error, setup(){} does not
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461971;start=0
+dm X weird comments bug (// on last line causes oro trouble)
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
+dm X unexpected token 'void' in letters sketch.. 
+dm X   being parsed as static mode app
+dm X extra parens confusing things (toxi message)
+bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165730;start=0
+bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165923;start=0
+bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166659;start=0
+
+
+code from the madman
+ks X perlin noise is broken
+ks X targa export for images
+ks X images and pixel copying (api for this?)
+ks X   copyPixel(x, y, to_x, to_y)
+ks X   copyArea(x, y, w, h, to_x, to_y)
+ks X   copyImage(x, y, w, h,  to_x, to_y)
+ks X   resize of bimage, make a copy of image?
+ks X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328581
+ks X getPixel() and other fxns for BImage
+
+
+assigned to danh, but completed by toxi
+ks X present mode, click background window and front window hides
+ks X   wasn't present in jdk 1.3, focus manager changed in 1.4
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166198;start=0
+ks X focus not properly set in present mode
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166151;start=0
+ks X escape key not quitting presentation mode
+ks X   no events seem to be coming through at all
+
+
+assigned to danh, but fixed by fry or danm
+dh o environment locks up when error stream isn't for the class
+dh o   this happens when it's another thread (i.e. image fetcher)
+dh o KjcEngine exceptions (formerly 'ex found in run') should be cleaner
+
+
+from carlos' contract, but implemented by fry
+ca o get font things sewn up 
+ca o  create a simple generator for grayscale bdf fonts
+ca o     document the change and make several of them
+ca o   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
+
+carlos line code for single pixel lines
+ca X single pixel lines have z and alpha
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165816;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165995;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166034;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167337;start=0
+
+
+api changes in progress -> COLORING FOR ALL THESE
+X textureImage() -> texture()
+X textureMode() IMAGE_SPACE or NORMAL_SPACE
+X vertexNormal() -> normal();
+X vertexTexture -> vertex(... u, v);
+X bezier(... t) -> bezierPoint() 
+X curveTangent and bezierTangent are in there
+X curve(... t) -> curvePoint()
+X bezierMode -> bezierSegments
+X curveMode -> curveSegments, curveTightness
+X setFont -> textFont(font) or textFont(font, size)
+X textSize(size), textLeading(leading)
+X BFont.charWidth, BFont.stringWidth -> BFont.width()
+X BFont.drawChar, BFont.drawString -> BFont.text()
+X removed fill(), stroke(), background() with no args
+X   (used to return current)
+X getPixel/setPixel -> get/set
+X addition of copy(), replicate(), alpha(), and blendMode()
+X   all the imaging modes that go with those guys
+X tint() colors images, not fill()
+X shearX and shearY removed
+X removed noBackground
+X added background(BImage)
+X screenGrab -> saveFrame
+X textMode for alignments .. ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT
+X   ALIGN_XXXX becuase LEFT already used for keys
+X implement text(int something) and text(float something)
+o   and perhaps others?
+X textSpace SCREEN_SPACE and OBJECT_SPACE
+X strokeMode/strokeWidth -> 
+X   strokeWeight, strokeJoin, strokeMiter  
+X param(), online(), and status() functions
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166444;start=0
+
+
+..................................................................
+
+
+0060c2
+
+X jedittextarea caret blinks even w/o focus
+X   may have been my own hack breaking it
+X popup menu for sketches doesn't unhighlight if no sketch selected
+X   originally assigned to dan haskovec, but implemented by fry
+X set a better ctrl-key for reference (anything but 'F')
+X   probably need to use mac or pc specific keys?
+X   nope, it doesn't really need a command key
+X   instead, cmd-shift-f is now 'find in reference'
+X windows fixes for run.bat, and another expert version of the same
+
+assigned to dan haskovec, completed by fry
+dh X find/replace
+dh X   ctrl-f for find, g for find next, h for next occurrence of selected
+dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
+
+
+..................................................................
+
+
+0060c3
+
+X notify user when size() is bad
+X   need to use oro matcher when trying to grab the applet size (export?)
+X macosx doesn't listen if 'cancel' is selected for save changes on quit
+X   but windows works fine, so it's a macosx problem
+X   removed cancel button on macosx when quitting
+X open button getting stuck on windows
+
+
+from the rest of the crew
+dm X linux can't find jikes, so users have to put it in their PATH
+ks X BImage.get() was only grabbing a single line of pixels
+dm X problem with inner classes and helix example
+
+
+received no verification, and other purges from the list
+o windows 95/98/ME seems to be broken
+o   ME doesn't seem to like the .exe, but run.bat worked ok
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028990066
+o lockup/freezes (mKoser and zeitgeist)
+o   jre icon not appearing in the systray
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
+o getting mouse movement outside the window
+o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
+X building releases from scratch 
+X   this is a useful developer task before release
+X     build all releases from a clean cvs
+X   tries to make work/ without bagel serial existing and blows up
+X     b/c bagel checkout happens later
+X   all code needs to be buildable from scratch
+X internal naming of _fill, image_mode, textureOrientation
+X   these all need to jive better with one another
+X   ie. perhaps just 'fill', so that it can be used for a get
+X look at ken perlin renderer code
+
+
+..................................................................
+
+
+0060 final
+bf X make sure no CVS folders or .DS_Store files in the distribution
+cr X new reference for rev 60
+
+
+..................................................................
+
+
 0059
 X write p5 language spec
 X beginSerial(String port) and beginSerial(String port, int rate)
