@@ -44,6 +44,7 @@ public class PdeSketchbook {
   PdeEditor editor;
 
   JMenu menu;
+  JMenu popup;
   //File sketchbookFolder;
   //String sketchbookPath;  // canonical path
 
@@ -91,6 +92,7 @@ public class PdeSketchbook {
       if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
     }
     menu = new JMenu("Sketchbook");
+    popup = new JMenu("Sketchbook");
   }
 
 
@@ -213,30 +215,48 @@ public class PdeSketchbook {
 
 
   public JPopupMenu getPopupMenu() {
-    return menu.getPopupMenu();
+    //return menu.getPopupMenu();
+    return popup.getPopupMenu();
   }
 
-  //public void rebuildPopup(JPopupMenu popup) {
-  //rebuildMenu();
-  //popup.
-  //}
 
-
+  /**
+   * Rebuild the menu full of sketches based on the 
+   * contents of the sketchbook. 
+   * 
+   * Creates a separate JMenu object for the popup, 
+   * because it seems that after calling "getPopupMenu" 
+   * the menu will disappear from its original location.
+   */
   public JMenu rebuildMenu() {
     menu.removeAll();
+    popup.removeAll();
 
     try {
-      //addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+      //JMenuItem item = PdeEditor.newJMenuItem("Open...");
+      JMenuItem item = new JMenuItem("Open...");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            editor.handleOpen(null);
+          }
+        });
+      popup.add(item);
+      popup.addSeparator();
+
       addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+      addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
+
       menu.addSeparator();
+      popup.addSeparator();
+
       addSketches(menu, examplesFolder);
+      addSketches(popup, examplesFolder);
 
     } catch (IOException e) {
       PdeBase.showWarning("Problem while building sketchbook menu",
                           "There was a problem with building the\n" +
                           "sketchbook menu. Things might get a little\n" +
-                          "kooky around here.\n", e);
-      //e.printStackTrace();
+                          "kooky around here.", e);
     }
     return menu;
   }
