@@ -102,6 +102,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
   public void paint(Graphics screen) {
     if (screen == null) return;
+    if (editor.sketchName == null) return;
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
