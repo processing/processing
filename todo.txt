@@ -146,98 +146,102 @@ X   but remove it again if it's not .pde or .java
 X clean up error handling for empty files (quiet error)
 X preproc messages don't say the file
 
+040706 discuss with casey
+X how should history be handled
+X   per-sketch, not per-file
+X   just looks like old history setup anyways
+X is the sketch folder something that is never seen by the user?
+X   i.e. flash programs 'import' all data, etc
+X   same with how imovie works
+X   no, not for 1.0
+o jikes is exporting column as well.. use it?
+o   3:23:3:25 -> line 3, col 23 to 25
+o   decided a bad idea, too difficult
+X don't bother with 'advanced' on export dialog
+X   that can come later, if needed
+X how to handle .pde vs .java
+X   how to determine what the 'main' file is
+X   sun won't want us to say things are .java when they aren't
+X .pde files opened on their own
+X what should the prefs file be named?
+X horizontal buttons? need final decision [yes]
+X remove underscores from the tab title?
+X   nope, casey says not necessary
+X need nice yes/no dialog boxes, also 
+o does "Open" go at the beginning or end of the sketch popup
+X we need opengl support in there
+X   otherwise we're going to be stuck behind director
+X   go with sun's jogl project
+X core.jar included with .class? or make one jar?
+X libraries and package naming for core & serial etc
+X vec3f, matrix4f classes.. our own or java3d?
+
 040706 first day with creas
 X runtime errors not making it through
 X   now properly handling multiple files
 X also test with multiple files / external run
 X   oh wait, this is only for external run.. duh
 o jikes messages are getting lost (?)
+o ctrl-t doesn't always work
+o   after using the popup menu once, it stops working
+X jikes errors are missing newline/linefeed ?
+o using run-expert.bat on 62 causes NullPointerException weirdness (?)
 
-_ is PdeEditorHeader one pixel too tall?
-_ see if sonia project can compile
-_ write options dialog for export
+_ bring this up for discussion on the board
+_   will splitting actually help.. can jars come from multiple places?
+_ add .java to file name in the tab
+_ change name of prefs to Processing Preferences.txt
+_ implement horizontal version of PdeEditorButtons
+o   is PdeEditorHeader one pixel too tall?
 _ write export-to-application
 _ write export-to-library
 _   need to be able to produce the serial, video, etc libs
+_   see if sonia project can compile
 _ put bagel into its own package
-_ don't force everything into a single .jar on export
-_ ctrl-t doesn't always work
-_   after using the popup menu once, it stops working
-
-_ jikes is exporting column as well.. use it?
-_   3:23:3:25 -> line 3, col 23 to 25
-_ shut off jit errors.. make sure exceptions with .class work
-
-_ netscape.javascript not properly working in 1.4
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
-
-_ running present mode with a bug in the program hoses things
-_   make sure the program compiles before starting present mode
-_ make some fancy extendo things because the tabs get too big
-
-now implemented for [url=http://processing.org/discourse/yabb/YaBB.cgi?board=Collaboration;action=display;num=1084285917]megabucket[/url].
-
-
-discuss with casey
-_ how should history be handled
-X   per-sketch, not per-file
-X   just looks like old history setup anyways
-_   add a "make archive" option
-_     doesn't rename sketch, just names zip file sketch + time stamp
-_   then re-implement history
-X is the sketch folder something that is never seen by the user?
-X   i.e. flash programs 'import' all data, etc
-X   same with how imovie works
-X   no, not for 1.0
-
-_ javadoc "advanced" reference by beta
-_   and then finalizing it towards 1.0
-
-_ general input on ui confusion
-
-_ don't bother with 'advanced' on export dialog
-_   that can come later, if needed
-X how to handle .pde vs .java
-X   how to determine what the 'main' file is
-X   sun won't want us to say things are .java when they aren't
-_   add .java to file name in the tab
-X .pde files opened on their own
-_   implement double-clicking from the explorer/finder
-X what should the prefs file be named?
-_   Processing Preferences.txt
-X horizontal buttons? need final decision
-_   yes, now implement them
-X remove underscores from the tab title?
-X   nope, casey says not necessary
-X need nice yes/no dialog boxes, also showError/Message/Warning
-_   need design from casey
-_   then implement new design (with exception trace)
-o does "Open" go at the beginning or end of the sketch popup
-X we need opengl support in there
-X   otherwise we're going to be stuck behind director
-_   go with sun's jogl project
-_   menu option for Renderer > to "Core" or "OpenGL"
-_     on export, uses this setting to determine if jogl is added to project
-X core.jar included with .class? or make one jar?
-_   bring this up for discussion on the board
-_   will splitting actually help.. can jars come from multiple places?
-_ libraries and package naming for core & serial etc
 _   processing.app -> PdeBase, PdeEditor..
 _   processing.core -> PApplet, PGraphics, PLine, PTriangle, PPolygon
 _   processing.serial -> PSerial, [PUsb]
 _   processing.video -> PMovie (file), PCamera (capture)
 _   processing.net -> PClient, PServer
-X vec3f, matrix4f classes.. our own or java3d?
-_   make an example that uses the java3d classes
-_ add a lighting object
-_   fix lighting.. look at simon's changes
-
-? _ new/old graphics, explicitly stating 2d/3d, huh?
-? _   what to do about anti-aliasing.. oversample 2x?
-
+_ prefs need to have a default
+_   otherwise old prefs and new p5 will cause trouble
 _ api for file-based renderers
 _   size(0, 0) and then ai.size(10000, 20000)
 _   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+
+medium
+_ menu option for Renderer > to "Core" or "OpenGL"
+_   on export, uses this setting to determine if jogl is added to project
+_ add a lighting object
+_   fix lighting.. look at simon's changes
+_ netscape.javascript not properly working in 1.4
+_   include 'netscape.javascript' as a library to be added
+_     but don't export it.. ugh..
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088034754;start=0
+
+lower
+_ add a "make archive" option
+_   doesn't rename sketch, just names zip file sketch + time stamp
+_ properly open .pde files opened from explorer/finder
+_ shut off jit errors.. make sure exceptions with .class work
+_ add mkdmg script to macosx build process
+_   could significantly speed things up
+
+later discussion
+_ new/old graphics, explicitly stating 2d/3d, huh?
+_   what to do about anti-aliasing.. oversample 2x?
+
+waiting
+_ don't force everything into a single .jar on export
+_ need showError/Message/Warning design from casey
+_   then implement new design (with exception trace)
+
+_ running present mode with a bug in the program hoses things
+_   make sure the program compiles before starting present mode
+_ make some fancy extendo things because the tabs get too big
+
+_ javadoc "advanced" reference by beta
+_   and then finalizing it towards 1.0
 
 major bugs
 _ texture mapping bugs in graphics engine
@@ -245,6 +249,7 @@ _ texture mapping bugs in graphics engine
 1 _ examples/libraries: 
 1 _   arcball, joystick, particles (from multip)
 1 _   other phyics (collisions)
+1 _   java3d classes for vec3f and matrix
 
 2 _ comments -> embedding in applet text? (ala javadoc)
 2 _   would this help casey with the examples?
@@ -260,29 +265,20 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
 
+notes for release
 _ processing won't start..
 _   people with non-ascii chars in the folder name 
 _     at least try to catch this?
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 _   or with spaces in the folder name, causes problems for serial
-
-notes for release
 _ quicktime full uninstall/reinstall
 _ code folder problems
 _ hm, lots of other bugs from this list..
 _ update readme with notes from bboard about "built with processing"
 
-_ add mkdmg script to macosx build process
-_   could significantly speed things up
-
 _ run java mode when large 'data' folder is in use
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
-
-_ launcher.cpp broke serial.. see versions in processing.notcvs
-
-_ include 'netscape.javascript' as a library to be added
-_   but don't export it.. ugh..
 
 
 LIBRARIES
@@ -341,8 +337,6 @@ _ set decent fonts (probably same as editor above), looks bad on mac
 
 
 MEDIUM
-_ jikes errors are missing newline/linefeed ?
-_ using run-expert.bat on 62 causes NullPointerException weirdness (?)
 _ network/shared_canvas, network/value has old code
 _ write script to remove .DS_Store and CVS folders from dist
 _   # remove DS_Store files
