@@ -428,24 +428,29 @@ public class PFont implements PConstants {
       float lextent = (float) leftExtent[glyph] / fwidth;
       float textent = (float) topExtent[glyph]  / fheight;
 
-      //int savedTextureMode = parent.textureMode;
-      boolean savedStroke = parent.stroke;
-
-      //parent.textureMode = IMAGE_SPACE;
-      //parent.drawing_text = true;
-      parent.stroke = false;
-
       float x1 = x + lextent * size;
       float y1 = y - textent * size;
       float x2 = x1 + bwidth * size;
       float y2 = y1 + high * size;
 
+      parent.imageImpl(images[glyph],
+                       x1, y1, x2-x1, y2-y1,
+                       0, 0, width[glyph], height[glyph]);
+
+      /*
       // this code was moved here (instead of using parent.image)
       // because now images use tint() for their coloring, which
       // internally is kind of a hack because it temporarily sets
       // the fill color to the tint values when drawing text.
       // rather than doubling up the hack with this hack, the code
       // is just included here instead.
+
+      //int savedTextureMode = parent.textureMode;
+      boolean savedStroke = parent.stroke;
+
+      //parent.textureMode = IMAGE_SPACE;
+      //parent.drawing_text = true;
+      parent.stroke = false;
 
       //System.out.println(x1 + " " + y1 + " " + x2 + " " + y2);
 
@@ -455,17 +460,16 @@ public class PFont implements PConstants {
       parent.vertex(x1, y2, z, 0, height[glyph]);
       parent.vertex(x2, y2, z, width[glyph], height[glyph]);
       parent.vertex(x2, y1, z, width[glyph], 0);
-      /*
-      parent.vertex(x1, y1, z);
-      parent.vertex(x1, y2, z);
-      parent.vertex(x2, y2, z);
-      parent.vertex(x2, y1, z);
-      */
+      //parent.vertex(x1, y1, z);
+      //parent.vertex(x1, y2, z);
+      //parent.vertex(x2, y2, z);
+      //parent.vertex(x2, y1, z);
       parent.endShape();
 
       //parent.textureMode = savedTextureMode;
       //parent.drawing_text = false;
       parent.stroke = savedStroke;
+      */
 
     } else {  // SCREEN_SPACE
       int xx = (int) x + leftExtent[glyph];;

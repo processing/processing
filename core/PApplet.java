@@ -165,6 +165,10 @@ public class PApplet extends Applet
 
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
+
+  protected int INITIAL_WIDTH = DEFAULT_WIDTH;
+  protected int INITIAL_HEIGHT = DEFAULT_HEIGHT;
+
   public int width, height;
 
   protected RegisteredMethods sizeMethods;
@@ -186,6 +190,7 @@ public class PApplet extends Applet
   //static public final String EXTERNAL_FLAG = "--external=";
   //static public final char EXTERNAL_EXACT_LOCATION = 'e';
   static public final String EXT_LOCATION = "--location=";
+  static public final String EXT_SIZE = "--size=";
   static public final String EXT_EXACT_LOCATION = "--exact-location=";
   static public final String EXT_SKETCH_FOLDER = "--sketch-folder=";
 
@@ -255,10 +260,14 @@ public class PApplet extends Applet
 
 
   public void createGraphics() {
+    Dimension size = getSize();
+
     if (PApplet.jdkVersion >= 1.3) {
-      g = new PGraphics2(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      g = new PGraphics2(size.width, size.height);
+      //DEFAULT_WIDTH, DEFAULT_HEIGHT);
     } else {
-      g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      g = new PGraphics(size.width, size.height);
+      //g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
   }
 
@@ -268,8 +277,11 @@ public class PApplet extends Applet
     //     buffer so as not to re-allocate all that memory again
     if (g.width != 0) {
       g = new PGraphics3(g.width, g.height);
+
     } else {
-      g = new PGraphics3(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      Dimension size = getSize();
+      g = new PGraphics3(size.width, size.height);
+      //DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
     // it's ok to call this, because depth() is only getting called
     // at least inside of setup, so things can be drawn just
@@ -444,7 +456,7 @@ public class PApplet extends Applet
     if (!looping) {
       redraw = true;
       if (thread != null) {
-        thread.interrupt();  // wake from sleep
+        //thread.interrupt();  // wake from sleep
       }
     }
   }
@@ -454,7 +466,7 @@ public class PApplet extends Applet
     if (!looping) {
       looping = true;
       if (thread != null) {
-        thread.interrupt();  // wake from sleep
+        //thread.interrupt();  // wake from sleep
       }
     }
   }
@@ -469,7 +481,7 @@ public class PApplet extends Applet
       fpsLastMillis = 0;
 
       if (thread != null) {
-        thread.interrupt();  // wake from sleep
+        //thread.interrupt();  // wake from sleep
       }
     }
   }
@@ -1985,7 +1997,9 @@ public class PApplet extends Applet
     try {
       tracker.waitForAll();
     } catch (InterruptedException e) {
-      e.printStackTrace();  // non-fatal, right?
+      // don't bother, since this may be interrupted by draw
+      // or noLoop or something like that
+      //e.printStackTrace();  // non-fatal, right?
     }
 
     PImage image = new PImage(awtImage);
@@ -4224,6 +4238,9 @@ v              PApplet.this.stop();
       //if (args[0].indexOf(EXTERNAL_FLAG) == 0) external = true;
       String name = null;
 
+      int initialWidth = PApplet.DEFAULT_WIDTH;
+      int initialHeight = PApplet.DEFAULT_HEIGHT;
+
       int argIndex = 0;
       while (argIndex < args.length) {
         if (args[argIndex].indexOf(EXT_LOCATION) == 0) {
@@ -4244,6 +4261,13 @@ v              PApplet.this.stop();
         } else if (args[argIndex].indexOf(EXT_SKETCH_FOLDER) == 0) {
           folder = args[argIndex].substring(EXT_SKETCH_FOLDER.length());
 
+        } else if (args[argIndex].indexOf(EXT_SIZE) == 0) {
+          String sizeStr = args[argIndex].substring(EXT_SIZE.length());
+          int initial[] = toInt(split(sizeStr, ','));
+          initialWidth = initial[0];
+          initialHeight = initial[1];
+          //System.out.println("initial: " + initialWidth + " " + initialHeight);
+
         } else {
           name = args[argIndex];
           break;
@@ -4258,6 +4282,9 @@ v              PApplet.this.stop();
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
       applet.frame = frame;
+
+      applet.INITIAL_WIDTH = initialWidth;
+      applet.INITIAL_HEIGHT = initialHeight;
 
       // these are needed before init/start
       applet.folder = folder;
@@ -4288,8 +4315,10 @@ v              PApplet.this.stop();
         int windowH =
           Math.max(applet.height, minH) + insets.top + insets.bottom;
         */
-        int windowW = 120 + insets.left + insets.right;
-        int windowH = 120 + insets.top + insets.bottom;
+        //int windowW = 120 + insets.left + insets.right;
+        //int windowH = 120 + insets.top + insets.bottom;
+        int windowW = initialWidth + insets.left + insets.right;
+        int windowH = initialHeight + insets.top + insets.bottom;
         frame.setSize(windowW, windowH);
 
         if (exactLocation) {
@@ -4328,9 +4357,9 @@ v              PApplet.this.stop();
                                        applet.height)/2,
                          windowW, windowH);
         */
-        applet.setBounds((windowW - 100) / 2,
-                         insets.top + ((windowH - insets.top - insets.bottom) -
-                                       100)/2,
+        applet.setBounds((windowW - initialWidth) / 2,
+                         insets.top + ((windowH - insets.top -
+                                        insets.bottom) - initialHeight)/2,
                          windowW, windowH);
 
         applet.setupExternal(frame);

@@ -8,6 +8,7 @@ X arc with stroke only draws the arc shape itself
 X   may need a 'wedge' function to draw a stroke around the whole thing
 X only allocate stencil and zbuffer on first call to depth()
 X   this will require changes to PTriangle and PLine inside their loops
+X try running javadoc
 
 covered in previous
 X before graphics engine change, attach jogl stuff
@@ -37,6 +38,7 @@ X vertices max out at 512.. make it grow
 X add gzipInput and gzipOutput
 X light(x, y, z, c1, c2, c3, TYPE)
 X   also BLight with same constructor, and on() and off() fxn
+X make sure applet is stopping in draw mode
 
 api changes
 X removed circle.. it's dumb when ellipse() is in there
@@ -103,6 +105,8 @@ X   not a problem for the main PGraphics, but for any others created to draw on
 opengl
 X make light() functions actually do something in PGraphicsGL
 X box() and sphere() working again
+X make opengl work in draw mode
+X   set initial size using --size=
 
 api todos
 _ sphere x,y,z,r or box w,h,d.. need to make them consistent
@@ -111,19 +115,16 @@ _   should we switch to curveVertex(1,2,3) (ala curveto)
 _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
 
-_ make opengl work in draw mode
-
-_ lighting totally sucks
-
-_ make sure applet is stopping in draw mode
-
-_ also have a simple way to hook in triangle leeches to PGraphics3
-
-_ implement PGraphics2.curveVertex()
+_ get text working again
+_   also colored text, requires tint() to work properly
 
 _ move textMode and textSpace back out of PFont
 _   use die() to fail in font situations
 _   can't, just use a RuntimeException
+
+_ also have a simple way to hook in triangle leeches to PGraphics3
+
+_ implement PGraphics2.curveVertex()
 
 _ get PGraphics.java engine working again
 
@@ -133,18 +134,12 @@ _   or serial.setDelimiter() to fire message on delim
 
 _ die() may need to throw a RuntimeException
 
-_ textFont with a named font can use the renderer/os font
-_   PFont.list() to return string list of all the available fonts
-_   for postscript, can grab the real font
-_   -> altho problem here is that really the fonts just need a name
-_      since needs to render to screen as well
+//
 
-_ fix lighting in PGraphics3
-
+lighting
+_ lighting totally sucks (both PGraphics3 and PGraphicsGL)
 _ bring in materials for opengl as well?
 _   don't include a class, just make it similar to the light functions
-
-//
 
 _ remove SCREEN_SPACE altogether? 
 
@@ -179,6 +174,12 @@ _   or should it be more like present mode?
 _   that if applet is 500x500, centers on a 800x600 window
 _   though how do you get the screen size? 
 _     screen.width and screen.height? 
+
+_ textFont with a named font can use the renderer/os font
+_   PFont.list() to return string list of all the available fonts
+_   for postscript, can grab the real font
+_   -> altho problem here is that really the fonts just need a name
+_      since needs to render to screen as well
 
 //
 
