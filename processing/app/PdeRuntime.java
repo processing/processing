@@ -330,8 +330,8 @@ public class PdeRuntime implements PdeMessageConsumer {
         processOutput.flush();
 
       } catch (IOException e) {
-        System.err.println("error stopping external applet");
-        e.printStackTrace();
+        //System.err.println("error stopping external applet");
+        //e.printStackTrace();
         close();
       }
 
@@ -366,8 +366,8 @@ public class PdeRuntime implements PdeMessageConsumer {
       try {
         process.destroy();
       } catch (Exception e) {
-        System.err.println("(ignored) error while destroying");
-        e.printStackTrace();
+        //System.err.println("(ignored) error while destroying");
+        //e.printStackTrace();
       }
       process = null;
     }
@@ -377,7 +377,7 @@ public class PdeRuntime implements PdeMessageConsumer {
   public void message(String s) {
     if (s.indexOf(BApplet.EXTERNAL_QUIT) == 0) {
       //close();
-      System.out.println("got proper quit message");
+      //System.out.println("got proper quit message");
       editor.doClose();
       return;
     }

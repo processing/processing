@@ -9,11 +9,18 @@ X   need to move both to BApplet.paint()
 
 _ external applet stuff
 X   set initial position of external applets via BApplet
+X   closing window doesn't disable the stop button
+X   hitting 'stop' should freeze applet, not close window
+o   what was the random NullPointerException
+
+_   'add files' for .class, .jar should drop the stuff in
 _   send messages for window location
-_   closing window doesn't disable the stop button
-_   hitting 'stop' should freeze applet, not close window
-_   what was the random NullPointerException
-_   'add files' for .class, .zip, .jar should drop the stuff in
+_   external classes using loadStream, etc have trouble
+
+_ history could be gzipped and appended to history.dat
+_   along with another file that is actually a table of offsets
+_   no need to make the thing a gzip stream
+_   checkbox on menu for 'record history' ?
 
 _ jikes errors are missing newline/linefeed ?
 
