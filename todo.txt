@@ -15,7 +15,7 @@ X   sketch is changing before the "save changes?" is complete
 X     as a result, 'cancel' does nothing
 X   always ask save changes, even if nothing changed
 
-mangling and mess
+040621 sunday 
 X remove 'sketchbook.prompt' (comment it out)
 X   not really needed
 X   remove prompt stuff from the preferences panel
@@ -24,20 +24,36 @@ X   to use JLabel instead of JTextArea
 X   font was wrong on windows
 X start working on "save as"
 
-_ finish "save as"
+040622 monday
+X finish "save as"
 _ after using sketchbook menu as popup, disappears from file menu
 _ re-implement history
 _ write sketchbook.clean()
 _ write 'new text file'
+_ implement hide/unhide
 _ implement read-only sketch folder
 _   examples are sort of there but need to be debugged
 _   read-only files should be checked
 _ get the console working again
 _   appendText is disabled due to NullPointerEx on startup
+_ ctrl-5 (confirmed on xp) is marking the current sketch as modified
+_ running present mode with a bug in the program hoses things
+_   make sure the program compiles before starting present mode
+_ if 'applet.html' is in sketch folder, use that as the template
+_ comments -> embedding in applet text? (ala javadoc)
+_   would this help casey with the examples?
 
+
+_ adding files to data folder that are already in the data folder
+_   makes the file zero, because of internal error
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
+
+
+discuss with casey
 _ is the sketch folder something that is never seen by the user?
 _   i.e. flash programs 'import' all data, etc
 _   same with how imovie works
+
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing
@@ -64,10 +80,6 @@ _ find() hangs on replacing "println" with "//println"
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076740626
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080213711
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083093129
-
-_ adding files to data folder that are already in the data folder
-_   makes the file zero, because of internal error
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
 
 _ add mkdmg script to macosx build process
 _   could significantly speed things up
