@@ -49,8 +49,6 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get jikes and depedencies
-cp /usr/bin/cygwin1.dll processing/
-cp /usr/bin/cygiconv-2.dll processing/
 gunzip < jikes.exe.gz > processing/jikes.exe
 chmod +x processing/jikes.exe
 
