@@ -24,7 +24,7 @@ fi
 ### -- START BUILDING -------------------------------------------
 
 # move to 'app' directory
-cd ../..
+cd ../../app
 
 
 ### -- BUILD BAGEL ----------------------------------------------
@@ -45,15 +45,17 @@ cd bagel
 CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
 #CLASSPATH=../app/build/linux/work/java/lib/rt.jar:../app/build/linux/work/java/lib/ext/comm.jar
 
+echo should be inside bagel dir
+echo $PWD
 ### --- make version with serial for the application
 echo Building bagel with serial support
 perl make.pl SERIAL
-cp classes/*.class ../app/build/linux/work/classes/
+cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting
 echo Building bagel for export
 perl make.pl
-cp classes/*.class ../app/build/linux/work/lib/export/
+cp classes/*.class ../build/linux/work/lib/export/
 
 cd ..
 cd app
@@ -63,11 +65,11 @@ cd app
 
 echo Building PDE for JDK 1.3
 
-CLASSPATH=build/linux/work/classes:build/linux/work/lib/kjc.jar:build/linux/work/lib/oro.jar:build/linux/work/java/lib/rt.jar:build/linux/work/java/lib/ext/comm.jar
+CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/java/lib/ext/comm.jar
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d build/linux/work/classes" -dJDK13 *.java 
+perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 *.java lexer/*.java
 
-cd build/linux/work/classes
+cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
 zip -0q ../lib/pde.jar *.class
 cd ../..
