@@ -114,17 +114,21 @@ export CLASSPATH
 #cp classes/*.class ../build/macosx/work/lib/export/
 
 echo Building export classes for 1.1
-rm -rf classes && mkdir classes
+rm -f classes/*.class
 perl make.pl JIKES=../build/macosx/work/jikes
-cd classes && zip -r0q ../build/macosx/work/lib/export11.jar && cd ..
+cd classes
+zip -0q ../../build/macosx/work/lib/export11.jar *.class
+cd ..
 
 echo Building export classes for 1.3
-rm -rf classes && mkdir classes
+rm -f classes/*.class
 perl make.pl JIKES=../build/macosx/work/jikes
-cd classes && zip -r0q ../build/macosx/work/lib/export13.jar && cd ..
-
+cd classes
+zip -0q ../../build/macosx/work/lib/export13.jar *.class
 cd ..
-cd app
+
+# head back to root "processing" dir
+cd ../app
 
 
 
@@ -135,7 +139,7 @@ cd app
 # is created, to speed the build process.
 
 echo Removing preproc code so it will regenerate
-rm preprocessor/expandedpde.g
+#rm preprocessor/expandedpde.g
 
 if test -f preprocessor/expandedpde.g
 then
