@@ -53,9 +53,9 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     if (primaryColor == null) {
       backgroundColor = PdeApplet.getColor("editor.header.bgcolor", 
 					   new Color(51, 51, 51));
-      primaryColor = PdeApplet.getColor("editor.header.fgcolor1", 
+      primaryColor = PdeApplet.getColor("editor.header.fgcolor.primary", 
 					new Color(255, 255, 255));
-      secondaryColor = PdeApplet.getColor("editor.header.fgcolor2", 
+      secondaryColor = PdeApplet.getColor("editor.header.fgcolor.secondary", 
 					  new Color(153, 153, 153));
     }
   }
