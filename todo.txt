@@ -17,38 +17,13 @@ o   can java get the root directory for system/win32 etc?
 
 MUST BE COMPLETE FOR BETA
 
-_ if NullPointerEx on a line that includes a "pixels[" 
-_   give an error message saying "you may need to call loadPixels"
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-NOT NECESSARY BEFORE BETA
-
-_ .psk file support for bundling sketches
-
-
 _ move everything to packages, and start auto-javadoc
 _   also move the lib folders to a new location
 
-camera
-_ list() should return full list with all sub-components
-_   find the example code from the board
-_ add prompt() method to Camera ("" means default, null is prompt)
-_ couldn't get req'd component also happens when the camera isn't ready
-_   may also mean that no camera is plugged in
-_   also, don't mention winvdig on the mac
-_ if user cancels prompt, throws a '-128,userCanceledErr'
-_   in which case, need to return null (or ""?) for the prompt
-_   which will also just give you the last camera
-_   should it be new Camera(PROMPT);
-_ error messages from quicktime not coming through very well
-_ setting the camera should be an index from list()
-_ grabbing sub-devices from camera in the lib (via list() or whatever)
-_   actually, need to use numbered indices (multiple w/ same name)
-_     list should be: "0 - Logitech QuickCam (Blah)"
-_     and then use the indices (or the str i guess) to choose
+_ if NullPointerEx on a line that includes a "pixels[" 
+_   give an error message saying "you may need to call loadPixels"
+
+_ better method of posting/handling bugs
 
 _ put processing.exe into cvs so that make et al aren't required
 _   add 'make' to list of things that should be installed
@@ -69,8 +44,31 @@ _   uses internal pretty much only when single class, etc
 _ the runtime environment requires java 1.4
 _   make sure this is known and tested for properly
 
-_ some type of sketch archive format for posting examples
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+NOT NECESSARY BEFORE BETA
+
+_ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
+
+camera
+_ list() should return full list with all sub-components
+_   find the example code from the board
+_ add prompt() method to Camera ("" means default, null is prompt)
+_ couldn't get req'd component also happens when the camera isn't ready
+_   may also mean that no camera is plugged in
+_   also, don't mention winvdig on the mac
+_ if user cancels prompt, throws a '-128,userCanceledErr'
+_   in which case, need to return null (or ""?) for the prompt
+_   which will also just give you the last camera
+_   should it be new Camera(PROMPT);
+_ error messages from quicktime not coming through very well
+_ setting the camera should be an index from list()
+_ grabbing sub-devices from camera in the lib (via list() or whatever)
+_   actually, need to use numbered indices (multiple w/ same name)
+_     list should be: "0 - Logitech QuickCam (Blah)"
+_     and then use the indices (or the str i guess) to choose
 
 
 Minor issue, but caused me a couple seconds of confusion.  If you rename your sketch then try to close the application without saving first, it asks you if you want to save but mentions the pre-rename name.  But I hit yes, quit, came back in, and all seemed right in the world.
@@ -100,7 +98,6 @@ can tell, is to Save As once, make at least one change, then Save.
 
 what happens if folder already exists on save as?
 
-_ examples need to be updated
 
 //
 
