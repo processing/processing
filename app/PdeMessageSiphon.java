@@ -55,6 +55,9 @@ class PdeMessageSiphon implements Runnable {
         consumer.message(currentLine);
         //System.err.println(currentLine);
       }
+    } catch (NullPointerException npe) {
+      // ignore this guy, since it's prolly just shutting down
+
     } catch (Exception e) { 
       // on linux, a "bad file descriptor" message comes up when
       // closing an applet that's being run externally.
