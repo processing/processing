@@ -5,7 +5,7 @@
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-//import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -64,7 +63,7 @@ public class PdeEditor extends JFrame
   static final int HANDLE_NEW  = 1;
   static final int HANDLE_OPEN = 2;
   static final int HANDLE_QUIT = 3;
-  int checking;
+  int checkModifiedMode;
   String handleOpenPath; 
   //String handleSaveAsPath;
   //String openingName;
@@ -102,9 +101,6 @@ public class PdeEditor extends JFrame
 
   boolean running;
   boolean presenting;
-  //boolean renaming;
-
-  //PdeMessageStream messageStream;
 
   // undo fellers
   JMenuItem undoItem, redoItem;
@@ -496,7 +492,7 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("Open", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleOpen();
+          handleOpen(null);
         }
       });
     menu.add(item);
@@ -669,7 +665,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newJMenuItem("Visit processing.org", '5');
+    item = newJMenuItem("Visit Processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           PdeBase.openURL("http://processing.org/");
@@ -1096,31 +1092,17 @@ public class PdeEditor extends JFrame
   }
 
 
-  /*
-  public boolean isModified() {
-    return sketch.isModified();
-  }
-
-
-  public void setModified(boolean what) {
-    //sketch.setCurrentModified(what);
-    sketch.setModified(what);
-    header.repaint();
-  }
-  */
-
-
   /**
    * Check to see if there have been changes. If so, prompt user 
    * whether or not to save first. If the user cancels, just ignore.
    * Otherwise, one of the other methods will handle calling 
    * checkModified2() which will get on with business.
    */
-  protected void checkModified(int checking) {
-    //checkModified(checking, null, null);
+  protected void checkModified(int checkModifiedMode) {
+    //checkModified(checkModifiedMode, null, null);
     //}
-    //protected void checkModified(int checking, String path, String name) {
-    this.checking = checking;
+    //protected void checkModified(int checkModifiedMode, String path, String name) {
+    this.checkModifiedMode = checkModifiedMode;
     //openingPath = path;
     //openingName = name;
 
@@ -1133,7 +1115,7 @@ public class PdeEditor extends JFrame
 
     String prompt = "Save changes to " + sketch.name + "?  ";
 
-    if (checking != HANDLE_QUIT) {
+    if (checkModifiedMode != HANDLE_QUIT) {
       // if the user is not quitting, then use the nicer
       // dialog that's actually inside the p5 window.
       status.prompt(prompt);
@@ -1179,12 +1161,12 @@ public class PdeEditor extends JFrame
    * Called by PdeEditorStatus to complete the job.
    */
   public void checkModified2() {
-    switch (checking) {
+    switch (checkModifiedMode) {
       case HANDLE_NEW:  handleNew2(false); break;
       case HANDLE_OPEN: handleOpen2(handleOpenPath); break;
       case HANDLE_QUIT: handleQuit2(); break;
     }
-    checking = 0;
+    checkModifiedMode = 0;
   }
 
 
@@ -1220,19 +1202,14 @@ public class PdeEditor extends JFrame
 
 
   /**
-   * Handler for the user selecting "Open" to open a sketch 
-   * from anywhere else.
-   */
-  public void handleOpen() {
-    String path = sketchbook.handleOpen();
-    if (path != null) handleOpen(path);
-  }
-
-
-  /**
-   * Handler used by handleOpen() and also by the sketchbook menu
+   * Open a sketch given the full path to the .pde file.
+   * Pass in 'null' to prompt the user for the name of the sketch.
    */
   public void handleOpen(String path) {
+    if (path == null) {  // "open..." selected from the menu
+      path = sketchbook.handleOpen();
+      if (path == null) return;
+    }
     doStop();
     handleOpenPath = path;
     checkModified(HANDLE_OPEN);
@@ -1249,129 +1226,12 @@ public class PdeEditor extends JFrame
   }
 
 
-  /*
-  protected void handleOpen2() {
-    try {
-      sketch = new PdeSketch(handleOpenPath);
-      // i guess this just sets everything up properly?
-    } catch (Exception e) {
-      error(e);
-    }
-  }
-  */
-
-
-  /*
-  public void skOpen(String path, String name) {
-    doStop();
-    checkModified(SK_OPEN, path, name);
-  }
-
-
-  protected void skOpen2(String path, String name) {
-    File osketchFile = new File(path, name + ".pde");
-    File osketchDir = new File(path);
-    handleOpen2(name, osketchFile, osketchDir);
-  }
-  */
-
-
-  /*
-  protected void doOpen2() {
-    // at least set the default dir here to the sketchbook folder
-
-    FileDialog fd = new FileDialog(new Frame(), 
-                                   "Open a PDE program...", 
-                                   FileDialog.LOAD);
-    if (sketchFile != null) {
-      fd.setDirectory(sketchFile.getPath());
-    }
-    fd.show();
-
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-    if (filename == null) {
-      buttons.clear();
-      return; // user cancelled
-    }
-
-    handleOpen2(filename, new File(directory, filename), null);
-  }
-  */
-
-
-  /*
-  protected void handleOpen2(String isketchName, 
-                           File isketchFile, File isketchDir) {
-    if (!isketchFile.exists()) {
-      status.error("no file named " + isketchName);
-      return;
-    }
-
-    try {
-      String program = null;
-
-      if (isketchFile.length() != 0) {
-        FileInputStream input = new FileInputStream(isketchFile);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        StringBuffer buffer = new StringBuffer();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-          buffer.append(line);
-          buffer.append('\n');
-        }
-        program = buffer.toString();
-        changeText(program, true);
-
-      } else {
-        changeText("", true);
-      }
-
-      sketch.name = isketchName;
-      sketch.file = isketchFile;
-      sketch.directory = isketchDir;
-      setSketchModified(false);
-
-      // TODO re-enable history
-      //history.setPath(sketchFile.getParent(), readOnlySketch());
-      //history.rebuildMenu();
-      //history.lastRecorded = program;
-
-      header.reset();
-
-      presentLocation = null;
-      appletLocation = null;
-
-    } catch (FileNotFoundException e1) {
-      e1.printStackTrace();
-
-    } catch (IOException e2) {
-      e2.printStackTrace();
-    }
-    buttons.clear();
-  }
-  */
-
-
-  /*
-  public void doSave() {
-    // true if lastfile not set, otherwise false, meaning no prompt
-    //handleSave(lastFile == null);
-    // actually, this will always be false...
-    handleSave(sketchName == null);
-  }
-
-  public void doSaveAs() {
-    handleSave(true);
-  }
-  */
-
-
   // there is no handleSave1 since there's never a need to prompt
   public void handleSave2() {
     message("Saving...");
     try {
       sketch.save();
+      message("Done Saving.");
 
     } catch (Exception e) {
       // show the error as a message in the window
@@ -1379,106 +1239,40 @@ public class PdeEditor extends JFrame
 
       // zero out the current action, 
       // so that checkModified2 will just do nothing
-      checking = 0;
+      checkModifiedMode = 0;
     }
-    message("Done Saving.");
     buttons.clear();      
   }
-
-
-  //public void 
-  //sketch.saveAs();
-
-
-  /*
-  protected void handleSave(boolean promptUser) {
-    message("Saving file...");
-    String s = textarea.getText();
-
-    String directory = sketchFile.getParent(); //lastDirectory;
-    String filename = sketchFile.getName(); //lastFile;
-
-    if (promptUser) {
-      FileDialog fd = new FileDialog(new Frame(), 
-                                     "Save PDE program as...", 
-                                     FileDialog.SAVE);
-      fd.setDirectory(directory);
-      fd.setFile(filename);
-      fd.show();
-
-      directory = fd.getDirectory();
-      filename = fd.getFile();
-      if (filename == null) {
-        message(EMPTY);
-        buttons.clear();
-        return; // user cancelled
-      }
-    }
-
-    // TODO re-enable history
-    //history.record(s, PdeHistory.SAVE);
-
-    File file = new File(directory, filename);
-    try {
-      //System.out.println("handleSave: results of getText");
-      //System.out.print(s);
- 
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes())));
-
-      PrintWriter writer = 
-        new PrintWriter(new BufferedWriter(new FileWriter(file)));
-
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        //System.out.println("w '" + line + "'");
-        writer.println(line);
-      }
-      writer.flush();
-      writer.close();
-
-      sketchFile = file;
-      setSketchModified(false);
-      message("Done saving " + filename + ".");
-      
-    } catch (IOException e) {
-      e.printStackTrace();
-      //message("Did not write file.");
-      message("Could not write " + filename + ".");
-    }
-    buttons.clear();
-  }
-  */
 
 
   public void handleSaveAs() {
     doStop();
 
-    if (!PdePreferences.getBoolean("sketchbook.prompt")) {
-      status.edit("Save sketch as...", sketch.name);
-    } else {
-      handleSaveAs2(null);
-    }
-  }
+    // probably need to do this stuff inside the sketch object itself
 
+    // do a directory copy of contents of 
+    // old sketch folder to new sketch folder
+    //copyDir(sketch.folder, new File(parentDir, sketchDir));
+    //PdeBase.copyDir(null, null);
 
-  /*
-  public void skSaveAs() {
+    // rename the main .pde file
 
-    //this.renaming = rename;
-    //if (rename) {
-    //status.edit("Rename sketch to...", sketchName);
+    // needs to take the current state of the open files
+    // and save them to the new folder.. but not save over
+    // the old versions for the old sketch.. hrm..
+
+    //if (!PdePreferences.getBoolean("sketchbook.prompt")) {
+    //status.edit("Save sketch as...", sketch.name);
     //} else {
-    status.edit("Save sketch as...", sketchName);
+    //handleSaveAs2(null);
     //}
-  }
-  */
+    //}
 
+    //public void handleSaveAs2(String newSketchName) {
+    //if (newSketchName.equals(sketch.name)) {
+    //  return;  // do nothing
 
-  public void handleSaveAs2(String newSketchName) {
-    if (newSketchName.equals(sketch.name)) {
-      return;  // do nothing
-
-    } else if (newSketchName.equalsIgnoreCase(sketch.name)) {
+    //} else if (newSketchName.equalsIgnoreCase(sketch.name)) {
       // NEED TO GET THE ACTUAL SKETCH NAME FROM CODE[0] HERE
       
       // TODO UNFINISHED
@@ -1491,75 +1285,10 @@ public class PdeEditor extends JFrame
       }      
       */
 
-    } else {
+    //} else {
       // setup new sketch object with new name
-    }
+    //}
   }
-
-    /*
-    File newSketchDir = new File(sketchDir.getParent() +
-                                 File.separator + newSketchName);
-    File newSketchFile = new File(newSketchDir, newSketchName + ".pde");
-
-    //doSave(); // save changes before renaming.. risky but oh well
-    String textareaContents = textarea.getText();
-    int textareaPosition = textarea.getCaretPosition();
-
-    // if same name, but different case, just use renameTo
-    if (newSketchName.toLowerCase().
-        equals(sketchName.toLowerCase())) {
-      //System.out.println("using renameTo");
-
-      boolean problem = (sketchDir.renameTo(newSketchDir) || 
-                         sketchFile.renameTo(newSketchFile));
-      if (problem) {
-        status.error("Error while trying to re-save the sketch.");
-      }
-
-    } else {
-      // make new dir
-      newSketchDir.mkdirs();
-      // copy the sketch file itself with new name
-      PdeBase.copyFile(sketchFile, newSketchFile);
-
-      // copy everything from the old dir to the new one
-      PdeBase.copyDir(sketchDir, newSketchDir);
-
-      // remove the old sketch file from the new dir
-      new File(newSketchDir, sketchName + ".pde").delete();
-
-      // remove the old dir (!)
-      //if (renaming) {
-      // in case java is holding on to any files we want to delete
-        //System.gc();
-      //PdeBase.removeDir(sketchDir);
-      //}
-
-      // (important!) has to be done before opening, 
-      // otherwise the new dir is set to sketchDir.. 
-      // remove .jar, .class, and .java files from the applet dir
-      File appletDir = new File(newSketchDir, "applet");
-      File oldjar = new File(appletDir, sketchName + ".jar");
-      if (oldjar.exists()) oldjar.delete();
-      File oldjava = new File(appletDir, sketchName + ".java");
-      if (oldjava.exists()) oldjava.delete();
-      File oldclass = new File(appletDir, sketchName + ".class");
-      if (oldclass.exists()) oldclass.delete();
-    }
-
-    // get the changes into the sketchbook menu
-    //base.rebuildSketchbookMenu();
-    sketchbook.rebuildMenu();
-
-    // open the new guy
-    handleOpen2(newSketchName, newSketchFile, newSketchDir);
-
-    // update with the new junk and save that as the new code
-    changeText(textareaContents, true);
-    textarea.setCaretPosition(textareaPosition);
-    doSave();
-    */
-
 
   /*
   public void skSaveAs2(String newSketchName) {

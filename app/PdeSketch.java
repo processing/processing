@@ -76,18 +76,18 @@ public class PdeSketch {
     this.editor = editor;
 
     File mainFile = new File(path);
-    System.out.println("main file is " + mainFile);
+    //System.out.println("main file is " + mainFile);
 
     mainFilename = mainFile.getName();
-    System.out.println("main file is " + mainFilename);
-    /*
-    if (main.endsWith(".pde")) {
-      main = main.substring(0, main.length() - 4);
+    //System.out.println("main file is " + mainFilename);
 
-    } else if (main.endsWith(".java")) {
-      main = main.substring(0, main.length() - 5);
+    // get the name of the sketch by chopping .pde or .java
+    // off of the main file name
+    if (mainFilename.endsWith(".pde")) {
+      name = mainFilename.substring(0, mainFilename.length() - 4);
+    } else if (mainFilename.endsWith(".java")) {
+      name = mainFilename.substring(0, mainFilename.length() - 5);
     }
-    */
 
     // lib/build must exist when the application is started
     // it is added to the CLASSPATH by default, but if it doesn't
@@ -263,14 +263,17 @@ public class PdeSketch {
    * Save all code in the current sketch.
    */
   public void save() throws IOException {
-    // get the current text area
+    // first get the contents of the editor text area
     if (current.modified) {
       current.program = editor.getText();
     }
 
+    // see if actually modified
+    if (!modified) return;
+
     // check if the files are read-only. 
     // if so, need to first do a "save as".
-    if (modified && isReadOnly()) {
+    if (isReadOnly()) {
       PdeBase.showMessage("Sketch is read-only",
                           "You can't save changes to this sketch\n" +
                           "in the place it's currently located.\n" +
@@ -698,7 +701,7 @@ public class PdeSketch {
    * +                                                       +
    * + Export to:  [ Applet (for the web)   + ]    [  OK  ]  +
    * +                                                       +
-   * + [ ] OK to overwrite HTML file   <-- only visible if there is one there
+   * + [ ] OK to overwrite HTML file   <-- gray out if no existing folder..
    * +                                     remembers previous setting as a pref
    * + > Advanced                                            +
    * +                                                       +
