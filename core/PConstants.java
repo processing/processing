@@ -17,9 +17,9 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General 
-  Public License along with this library; if not, write to the 
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 */
 
@@ -55,12 +55,12 @@ public interface PConstants {
 
   // angle modes
 
-  static final int RADIANS = 0;  
+  static final int RADIANS = 0;
   static final int DEGREES = 1;
 
 
   // used by split, all the standard whitespace chars
-  // (uncludes unicode nbsp, that little bostage) 
+  // (uncludes unicode nbsp, that little bostage)
 
   static final String WHITESPACE = " \t\n\r\f\u00A0";
 
@@ -101,7 +101,7 @@ public interface PConstants {
   public final static int DARKEST    = 1 << 4;
 
   // incomplete, slated for beta
-  public final static int DIFFERENCE = 1 << 5; 
+  public final static int DIFFERENCE = 1 << 5;
   public final static int MULTIPLY   = 1 << 6;
   public final static int SCREEN     = 1 << 7;
   public final static int OVERLAY    = 1 << 8;
@@ -139,7 +139,7 @@ public interface PConstants {
 
   // shapes
 
-  // the low four bits set the variety, 
+  // the low four bits set the variety,
   // higher bits set the specific shape type
 
   static final int POINTS          = (1 << 4) | 0;
@@ -191,13 +191,13 @@ public interface PConstants {
   static final int SQUARE_ENDCAP    = 1 << 0;
   static final int ROUND_ENDCAP     = 1 << 1;
   static final int PROJECTED_ENDCAP = 1 << 2;
-  static final int STROKE_CAP_MASK  = 
+  static final int STROKE_CAP_MASK  =
     SQUARE_ENDCAP | ROUND_ENDCAP | PROJECTED_ENDCAP;
 
   static final int MITERED_JOIN     = 1 << 3;
   static final int ROUND_JOIN       = 1 << 4;
   static final int BEVELED_JOIN     = 1 << 5;
-  static final int STROKE_JOIN_MASK = 
+  static final int STROKE_JOIN_MASK =
     MITERED_JOIN | ROUND_JOIN | BEVELED_JOIN;
 
 
@@ -209,7 +209,7 @@ public interface PConstants {
   static final int SPECULAR = 3;
 
 
-  // net 
+  // net
 
   static final int CLIENT = 0;
   static final int SERVER = 1;
@@ -263,8 +263,9 @@ public interface PConstants {
   static final int DISABLE_SMOOTH_HACK     = 4;
   static final int NO_DEPTH_TEST           = 5;
   static final int NO_FLYING_POO           = 6;
+  static final int DEPTH_SORT              = 7;
 
-  static final int HINT_COUNT              = 7;
+  static final int HINT_COUNT              = 8;
 
 
   //////////////////////////////////////////////////////////////
@@ -297,44 +298,42 @@ public interface PConstants {
   static final int MY = 10;
   static final int MZ = 11;
 
-  static final int SR = 12; // stroke
+  static final int SR = 12; // stroke colors
   static final int SG = 13;
   static final int SB = 14;
   static final int SA = 15;
 
+  static final int SW = 16; // stroke weight
+
   // not used in rendering
   // only used for calculating colors
 
-  static final int NX = 16; // normal
-  static final int NY = 17;
-  static final int NZ = 18;
+  static final int NX = 17; // normal
+  static final int NY = 18;
+  static final int NZ = 19;
 
-  static final int VX = 19; // view space coords
-  static final int VY = 20;
-  static final int VZ = 21;
-  static final int VW = 22;
-
-  static final int WT = 23; // stroke width
-
-  //static final int SPY = 22;  // for subpixel rendering
+  static final int VX = 20; // view space coords
+  static final int VY = 21;
+  static final int VZ = 22;
+  static final int VW = 23;
 
   static final int VERTEX_FIELD_COUNT = 24;
 
   // line  fields
 
-  static final int PA = 0; // point A
-  static final int PB = 1; // point B
-  static final int LI = 2; // shape index
+  static final int LI = 0; // shape index
+  static final int PA = 1; // point A
+  static final int PB = 2; // point B
   static final int SM = 3; // stroke mode
 
   static final int LINE_FIELD_COUNT = 4;
 
   // triangle  fields
 
-  static final int VA = 0;    // point A
-  static final int VB = 1;    // point B
-  static final int VC = 2;    // point B
-  static final int TI = 3;    // shape index
+  static final int TI = 0;    // shape index
+  static final int VA = 1;    // point A
+  static final int VB = 2;    // point B
+  static final int VC = 3;    // point C
   static final int TEX = 4;   // texture index
 
   static final int TRIANGLE_FIELD_COUNT = 5;

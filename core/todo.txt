@@ -4,10 +4,33 @@ X   image() appears to require IMAGE_SPACE to function properly.
 X added focusGained() and focusLost()
 _   add to preprocessor
 X lots of changes to internal naming of vars
+X beginShape() defaults to beginShape(POLYGON)
+_   needs to be noted for the reference
 
-_ add TRIANGLE_FAN
+
+_ beginFrame() around setup()
+_   draw mode stuff happens inside setup.. 
+_   or maybe need to get better at size() inside of draw() ? 
+
+_ depth testing of lines vs text is problematic
+_   probably need to patch in an older version of the line code
+_   use depth()/noDepth() to handle depth test
+
+_ y2 position of rectangles not same as y2 position of lines
+_   happens when the rectangle is flipped on the x or y axis
+_   probably a hack that draws the "last" point differently
+
+_ fishwick bug with text() and shapes
+_   ellipses no longer completed when g.dimensions = 2 or 3,
+_   or not even drawn.. what a mess.
+
+_ only allocate stencil and zbuffer on first call to depth()
+_   this will require changes to PTriangle and PLine inside their loops
 
 _ pmouseX is broken again
+
+
+_ add TRIANGLE_FAN
 
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code
@@ -18,10 +41,6 @@ _   hacked for a fix in 72, but need to better coordinate with openStream()
 
 _ uv coords > 1 shouldn't clamp, they should just repeat ala opengl
 _   actually i think opengl has a setting for it
-
-_ fishwick bug with text() and shapes
-_   ellipses no longer completed when g.dimensions = 2 or 3,
-_   or not even drawn.. what a mess.
 
 _ renderers can plug in:
 _   at direct api level
@@ -40,12 +59,6 @@ _   is getFamilyNames() any different/better?
 _   when did this break? 1.4.1? 1.4.x vs 1.3?
 
 _ go through and figure out what stuff to make public
-
-_ depth testing of lines vs text is problematic
-_   probably need to patch in an older version of the line code
-_   use depth()/noDepth() to handle depth test
-
-_ y2 position of rectangles not same as y2 position of lines
 
 _ screenX/Y aren't properly working for 2D points against a 3D matrix
 _   (ryan alexander rounding bug)

@@ -4274,8 +4274,8 @@ public class PApplet extends Applet
   }
 
 
-  public void textureMode(int textureMode) {
-     g.textureMode(textureMode);
+  public void textureMode(int mode) {
+     g.textureMode(mode);
   }
 
 
@@ -4327,6 +4327,11 @@ public class PApplet extends Applet
 
   public void endShape() {
      g.endShape();
+  }
+
+
+  public void render_lines() {
+     g.render_lines();
   }
 
 
@@ -4620,8 +4625,8 @@ public class PApplet extends Applet
   }
 
 
-  public void cameraMode(int icameraMode) {
-     g.cameraMode(icameraMode);
+  public void cameraMode(int mode) {
+     g.cameraMode(mode);
   }
 
 
