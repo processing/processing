@@ -82,6 +82,8 @@ public class PdeEditor extends Panel {
 
   PdeBase base;
 
+  // hack until i have a better text editor
+
   public PdeEditor(PdeBase base) {
     this.base = base;
 
@@ -147,10 +149,11 @@ public class PdeEditor extends Panel {
     add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
-    //PdeEditorListener listener = new PdeEditorListener(this);
-    //textarea.addKeyListener(listener);
+    PdeEditorListener listener = new PdeEditorListener(this);
+    textarea.addKeyListener(listener);
     //textarea.addFocusListener(listener);
 
+    /*
     textarea.addKeyListener(new KeyAdapter() {
 	public void keyPressed(KeyEvent event) {
 	  // don't do things if the textarea isn't editable
@@ -171,8 +174,56 @@ public class PdeEditor extends Panel {
 	      setSketchModified(true);
 	    }
 	  }
+
+
+    case 9:  // expand tabs
+      if (expandTabs) {
+	//System.out.println("start = " + tc.getSelectionStart());
+	//System.out.println("end = " + tc.getSelectionEnd());
+	//System.out.println("pos = " + tc.getCaretPosition());
+	tc.replaceRange(tabString, tc.getSelectionStart(),
+			tc.getSelectionEnd());
+	event.consume();
+      }
+      break;
+
+    case 10:  // auto-indent
+    case 13:
+      if (autoIndent) {
+	//System.err.println("auto indenting");
+	char contents[] = tc.getText().toCharArray();
+	// back up until \r \r\n or \n.. @#($* cross platform
+	//index = contents.length-1;
+	int index = tc.getCaretPosition() - 1;
+	int spaceCount = 0;
+	boolean finished = false;
+	while ((index != -1) && (!finished)) {
+	  if ((contents[index] == '\r') ||
+	      (contents[index] == '\n')) {
+	    finished = true;
+	  } else {
+	    spaceCount = (contents[index] == ' ') ?
+	      (spaceCount + 1) : 0;
+	  }
+	  index--;
+	}
+
+	// !@#$@#$ MS VM doesn't move the caret position to the
+	// end of an insertion after it happens, even though sun does
+	String insertion = newline + spaces.substring(0, spaceCount);
+	int oldCarrot = tc.getSelectionStart();
+	tc.replaceRange(insertion, oldCarrot, tc.getSelectionEnd());
+	// microsoft vm version:
+	//tc.setCaretPosition(oldCarrot + insertion.length() - 1);
+	// sun vm version:
+	tc.setCaretPosition(oldCarrot + insertion.length());
+	event.consume();
+      }
+      break;
+
 	}
       });
+    */
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
@@ -522,6 +573,30 @@ public class PdeEditor extends Panel {
       String dataPath = 
 	sketchFile.getParent() + File.separator + "data";
       //editor.sketchFile.getParent() + File.separator + "data";
+
+/*
+this needs to be reworked. there are three essential parts
+
+(0. if not java, then use another 'engine'.. i.e. python)
+
+1. do the p5 language preprocessing
+   -> this creates a working .java file in a specific location
+   better yet, just takes a chunk of java code and returns a new/better string
+   editor can take care of saving this to a file location
+
+2. compile the code from that location
+   -| catching errors along the way
+   -| currently done with kjc, but would be nice to use jikes
+   -> placing it in a ready classpath, or .. ?
+
+3. run the code 
+   needs to communicate location for window 
+     and maybe setup presentation space as well
+   -> currently done internally
+   -> would be nice to use external (at least on non-os9)
+
+afterwards, some of these steps need a cleanup function
+*/
 
       engine = new KjcEngine(this, program, buildPath, dataPath);
       //engine.start();

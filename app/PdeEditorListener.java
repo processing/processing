@@ -1,10 +1,14 @@
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.event.*;
 
-public class PdeEditorListener extends KeyAdapter implements FocusListener {
-  static final String spaces = "                                                                              ";
-  String newline = System.getProperty("line.separator");
+
+public class PdeEditorListener extends KeyAdapter /*implements FocusListener*/ {
+  static final String spaces = "                                                                                        ";
+  //String newline = System.getProperty("line.separator");
 
   PdeEditor editor;
 
@@ -14,12 +18,13 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
 
   boolean autoIndent;
 
-  boolean balanceParens;
-  boolean balancing = false;
+  //  boolean balanceParens;
+  //  boolean balancing = false;
 
-  boolean fakeArrowKeys;
+  //boolean fakeArrowKeys;
 
-  TextArea tc;
+  //TextArea tc;
+  //JTextPane tc;
   int selectionStart, selectionEnd;
   int position;
 
@@ -27,13 +32,15 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
   public PdeEditorListener(PdeEditor editor) {
     this.editor = editor;
 
+    //System.out.println("initing PdeEditorListener " + editor);
+
     expandTabs = PdeBase.getBoolean("editor.expand_tabs", true);
     tabSize = PdeBase.getInteger("editor.tab_size", 2);
     tabString = spaces.substring(0, tabSize);
     autoIndent = PdeBase.getBoolean("editor.auto_indent", true);
-    balanceParens = PdeBase.getBoolean("editor.balance_parens", false);
-    fakeArrowKeys = PdeBase.getBoolean("editor.fake_arrow_keys", 
-				       PdeBase.platform == PdeBase.MACOSX);
+    //    balanceParens = PdeBase.getBoolean("editor.balance_parens", false);
+    //fakeArrowKeys = PdeBase.getBoolean("editor.fake_arrow_keys", 
+    //				       PdeBase.platform == PdeBase.MACOSX);
   }
 
 
@@ -41,10 +48,18 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
     // don't do things if the textarea isn't editable
     if (editor.externalEditor) return;
 
+    //System.out.println("blah blah");
+    //System.out.println("source of event is " + event.getSource());
+
     // only works with TextArea, because it needs 'insert'
     //TextComponent tc = (TextComponent) event.getSource();
-    tc = (TextArea) event.getSource();
-    deselect();
+    //tc = (TextArea) event.getSource();
+
+    JTextPane tc = (JTextPane) event.getSource();
+    // getSource() returns PdeEditorTextPane, which is a JTextPane
+    //tc = editor.textarea;
+
+    //deselect();  // this is for paren balancing
     char c = event.getKeyChar();
     int code = event.getKeyCode();
     //System.out.println(event);
@@ -57,6 +72,7 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
       }
     }
 
+/*
     if (fakeArrowKeys && (c == 65535) && 
 	(code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT || 
 	 code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN)) {
@@ -152,10 +168,12 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
 	tc.setCaretPosition(p);
 	break;
       }
-    }
+    } 
+*/
 
     //System.err.println((int)c);
     switch ((int) c) {
+/*
     case ')':
       if (balanceParens) {
 	position = tc.getCaretPosition() + 1;
@@ -193,14 +211,16 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
 	}
       }
       break;
+*/
 
     case 9:  // expand tabs
       if (expandTabs) {
 	//System.out.println("start = " + tc.getSelectionStart());
 	//System.out.println("end = " + tc.getSelectionEnd());
 	//System.out.println("pos = " + tc.getCaretPosition());
-	tc.replaceRange(tabString, tc.getSelectionStart(),
-			tc.getSelectionEnd());
+	//	tc.replaceRange(tabString, tc.getSelectionStart(),
+	//			tc.getSelectionEnd());
+	tc.replaceSelection(tabString);
 	event.consume();
       }
       break;
@@ -209,48 +229,104 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
     case 13:
       if (autoIndent) {
 	//System.err.println("auto indenting");
+
+	//System.out.println("caret, sel = " + tc.getCaretPosition() + ", " + 
+	//	   tc.getSelectionStart());
+
 	char contents[] = tc.getText().toCharArray();
+	//	for (int j = 0; j < Math.min(contents.length, 200); j++) {
+	//	  System.out.println(j + " " + ((char)contents[j]) + " " + 
+	//			   ((int)contents[j]) + "     ");
+	//	}
+	//	System.out.println();
+
+	// this is the position of the caret, if the textarea
+	// only used a single kind of line ending
+	int origIndex = tc.getCaretPosition() - 1;
+
+	//for (int i = 0; i < contents.length-1; i++) {
+	//if ((contents[i] == 13) && (contents[i+1] == 10)) offset++;
+	//}
+
+	// walk through the array to the current caret position,
+	// and count how many weirdo windows line endings there are,
+	// which would be throwing off the caret position number
+	int offset = 0;
+	int realIndex = origIndex;
+	for (int i = 0; i < realIndex-1; i++) {
+	  if ((contents[i] == 13) && (contents[i+1] == 10)) {
+	    offset++;
+	    realIndex++;
+	  }
+	}
+
 	// back up until \r \r\n or \n.. @#($* cross platform
-	//index = contents.length-1;
-	int index = tc.getCaretPosition() - 1;
+
+	//System.out.println(origIndex + " offset = " + offset);
+	origIndex += offset; // ARGH!#(* WINDOWS#@($*
+
+	// if hitting enter on a line that is followed by spaces 
+	// or blank lines, it seems that the caret position will be
+	// just after the newline
+	//if (PdeBase.platform == PdeBase.WINDOWS) {
+	  //if (contents[origIndex] == 13) origIndex--;
+	//}
+
+	int index = origIndex;
 	int spaceCount = 0;
 	boolean finished = false;
 	while ((index != -1) && (!finished)) {
-	  if ((contents[index] == '\r') ||
-	      (contents[index] == '\n')) {
+	  if ((contents[index] == 10) ||
+	      (contents[index] == 13)) {
 	    finished = true;
+	    index++; // maybe ?
+	    //	  } else {
+	    //	    spaceCount = (contents[index] == ' ') ?
+	    //	      (spaceCount + 1) : 0;
 	  } else {
-	    spaceCount = (contents[index] == ' ') ?
-	      (spaceCount + 1) : 0;
+	    //System.out.println("'" + (char)contents[index] + "'");
+	    index--;  // new
 	  }
-	  index--;
 	}
+	//System.out.println("index is " + index);
+	while ((index < contents.length) && (index >= 0) &&
+	       (contents[index++] == ' ')) {
+	  spaceCount++;
+	}
+	//System.out.println("spaceCount is " + spaceCount);
 
 	// !@#$@#$ MS VM doesn't move the caret position to the
 	// end of an insertion after it happens, even though sun does
-	String insertion = newline + spaces.substring(0, spaceCount);
-	int oldCarrot = tc.getSelectionStart();
-	tc.replaceRange(insertion, oldCarrot, tc.getSelectionEnd());
+	//String insertion = newline + spaces.substring(0, spaceCount);
+
+	// seems that \r is being inserted anyway
+	// so no need to insert the platform's line separator
+	String insertion = "\n" + spaces.substring(0, spaceCount);
+	//	int oldCarrot = tc.getSelectionStart();
+	//	tc.replaceRange(insertion, oldCarrot, tc.getSelectionEnd());
+	//	System.out.println("replacing with '" + insertion + "'");
+	tc.replaceSelection(insertion);
 	// microsoft vm version:
 	//tc.setCaretPosition(oldCarrot + insertion.length() - 1);
 	// sun vm version:
-	tc.setCaretPosition(oldCarrot + insertion.length());
+	//	tc.setCaretPosition(oldCarrot + insertion.length());
 	event.consume();
       }
       break;
 
-    case 1: tc.selectAll(); break;  // control a for select all
+      //case 1: tc.selectAll(); break;  // control a for select all
     }
   }
 
-
+  /*
+    // for balancing parens
   protected void deselect() {
-    if (!balancing || (tc == null)) return;	
+    //if (!balancing || (tc == null)) return;	
     // bounce back, otherwise will write over stuff
     if ((selectionStart == tc.getSelectionStart()) &&
 	(selectionEnd == tc.getSelectionEnd()))
       tc.setCaretPosition(position);
-    balancing = false;
+    //balancing = false;
   }
 
 
@@ -260,4 +336,5 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
   public void focusLost(FocusEvent event) {
     deselect();
   }
+  */
 }
