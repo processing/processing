@@ -4,6 +4,18 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0055 - 
+
+- sort functions for arrays of ints, floats, doubles or Strings
+
+  here's how it works for floats:
+float a[] = { 3.4, 3.6, 2, 0, 7.1 };
+sort(a);
+for (int i = 0; i < a.length; i++) {
+  println(a[i]);
+}
+
+
 ABOUT REV 0054 - 11 april 2003
 
 [ ok, so 53 was a bit of a dog ]

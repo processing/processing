@@ -58,11 +58,23 @@ fi
 
 cd bagel
 
-CLASSPATH=../build/windows/work/java/lib/rt.jar:../build/windows/work/java/lib/ext/comm.jar
+if test -d /cygdrive/c/WINNT
+then
+  # windows 2000 or nt
+  QT_JAVA_PATH=/cygdrive/c/WINNT/system32/QTJava.zip
+else
+  # other versions of windows, including xp
+  QT_JAVA_PATH=/cygdrive/c/WINDOWS/system32/QTJava.zip
+fi
+# another alternative
+#QT_JAVA_PATH=../build/shared/lib/qtjava.zip
+
+CLASSPATH=../build/windows/work/java/lib/rt.jar:../build/windows/work/java/lib/ext/comm.jar:${QT_JAVA_PATH}
+
 
 ### --- make version with serial for the application
-echo Building bagel with serial support
-perl make.pl SERIAL
+echo Building bagel with serial and video support
+perl make.pl SERIAL VIDEO
 cp classes/*.class ../build/windows/work/classes/
 
 ### --- make version without serial for applet exporting
