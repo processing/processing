@@ -265,6 +265,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     item = new JMenuItem("New");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
+          System.out.println("TODO write code for New");
         }
       });
     menu.add(item);
@@ -272,6 +273,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     item = new JMenuItem("Rename");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
+          System.out.println("TODO write code for Rename");
         }
       });
     menu.add(item);
@@ -279,6 +281,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     item = new JMenuItem("Delete");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
+          System.out.println("TODO write code for Delete");
         }
       });
     menu.add(item);
@@ -287,6 +290,7 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
           // don't let the user hide if only 1 file open
+          System.out.println("TODO write code for Hide");
         }
       });
     menu.add(item);
@@ -352,21 +356,25 @@ public class PdeEditorHeader extends JComponent implements MouseInputListener {
     } else {
       for (int i = 0; i < fileCount; i++) {
         if ((x > tabLeft[i]) && (x < tabRight[i])) {
-          showTab(i);
+          //setCurrent(i);
+          editor.sketch.setCurrent(i);
+          repaint();
         }
       }
     }
   }
 
 
-  public void showTab(int which) {
+  /*
+  public void setCurrent(int which) {
     current = which;
 
-    
+    editor.sketch.setCurrent(which);
 
     // set to the text for this file, and wipe out the undo buffer
     editor.changeText(contents, true); 
   }
+  */
 
 
   public Dimension getPreferredSize() {

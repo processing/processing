@@ -76,6 +76,10 @@ they can put a .java or .pde extension on the file
 if no extension is found, add the .pde extension
 if the file has a .pde extension, then it will be run through the preproc.
 
+code coming from toxi
+_ sphereDetail() function + reference
+_ optimized the flat_rect() function for solid colours (20% faster)
+_ noise() is (partially) broken in v67
 
 _ international: convert unicode chars to \uXXXX in the preproc
 
