@@ -9,8 +9,153 @@ releases will be super crusty.
 
 ABOUT REV 0077
 
-+ forgot to mention in rev 75 that double-clicking a .pde file on the
+* PLEASE READ THIS INFORMATION BEFORE POSTING TO THE BETA LIST *
+
+this is another release where processing has undergone massive
+changes. hopefully it is hopefully more stable than 75 and 76, 
+and i'm ready to take bug reports again.
+
+
+changes/important notes:
+
+- whenever you use 3D in this release, you must use the depth() command
+  inside of setup (preferably just before or after size()). having
+  tried to keep the 2D rendering together, it's just become too messy
+  and error prone to continue. 
+
+- after editing the pixels[] of an image, you must use the new method
+  updatePixels(). this became necessary because of the Java 2D
+  renderer as well as OpenGL. it's unfortunate, but it's all we can
+  do. so after messing with pixels[] for the main surface, or doing
+  the same with an image, call updatePixels() to mark the entire image
+  as modified, or call updatePixels(x, y, w, h) to update just a
+  portion (this is currently no faster, but later will represent an
+  optimization). 
+
+- using size() with actual numbers, as opposed to variables, is
+  strongly recommended. there's no reason to use size(WIDTH, HEIGHT)
+  because the variables width & height can be used for the same
+  purpose after size() has been called. this helps the "export"
+  command and also becomes very important with opengl.
+
+- rendering... this release represents a significant change to how
+  rendering is handled. all of the graphics has been split into
+  multiple classes, which are: 
+
+  PGraphics     2D rendering with Java 1.1 
+                this is the old renderer, but it has been semi-disabled
+		in the current release. this means that things won't 
+	        draw properly (or at all) in 2D in most web browsers 
+	        (where the java plugin is not installed). this renderer
+                will no longer support smooth() and noSmooth().
+
+  PGraphics2    2D rendering for systems using Java 1.3+ 
+                this is used dynamically whenever the applet detects
+                that it is running on a Java 1.3+ system.
+                it is an entirely new, and *complete* renderer based
+                on Java2D. this was a shortcut to get a renderer that
+                worked properly on the vast majority of machines in
+                our target audience (courses, beginners, developers) 
+	        until i have time to complete the 1.1 renderer (so
+                that exporting to the web works again).
+
+  PGraphics3    3D rendering in Java 1.1
+                this is loaded when the depth() command is executed
+                inside of setup(). any applet requiring 3D must now
+                explicitly state depth() inside setup(). the renderer
+                is composed of the 3D components from the old
+                renderer, although it's using sumea sami's newer
+                triangle rendering, meaning that things are much
+                faster than before (although textures are a little
+                fuggly). smooth() and noSmooth() will not be
+                supported in this mode. for smoothing, use the OpenGL
+                renderer.
+
+  PGraphicsGL   OpenGL renderer for use in Java 1.3+ 
+                jogl requires java 1.3, and this rendering option can
+                just be selected from a menu. this handles both 2D
+                and 3D and will actually ignore the depth() command
+                (though you should still use it with opengl apps for
+                good practice). 
+
+  PMethods      an interface for plug-in file-based renderers.
+                for instance, to write a postscript renderer, one
+                need only implement the "PMethods" interface with
+                your class. then, at the beginning of draw(), use:
+		recordFrame(psRenderer);
+		which will echo all rendering calls to that
+                class until the end of the frame. this handles
+                writing to files, we won't be supporting plug-in
+                visual renderers in Processing 1.0.
+
+- pmouseX and pmouseY have returned and are better than ever.
+
+- firstMouse boolean variable added, which is set 'true' when the
+  mouse gets its first legitimate mouse coordinate. naming for this
+  var will likely change in a future release.
+
+- arc() command has been added. it's just like ellipse:
+  arc(x, y, w, h, start, stop); 
+  and uses ellipseMode() for its placement.
+
+- circle() has been removed. it was a dumb duplication with ellipse().
+  it's not as though we have a square() function to go with rect().
+
+- because of the separation of the 2D and 3D renderers, it should be
+  possible to create much larger PGraphics objects and for them to use
+  far less memory than before. 
+
+- light() commands work, though things seem to look super ugly by
+  default. they're more correct when using OpenGL, and perhaps if
+  placed more explicitly, you may get better results.
+
+- the alpha() command that sets the alpha mask is now called
+  mask(). this is to avoid the name clash with the red(), green(), 
+  blue(), alpha() functions. 
+
+- imageMode(CORNER) and CORNERS are the only valid image modes. 
+  imageMode affects get(), copy(), blend(), etc so it was just too
+  weird to have the CENTER functions operating in that mode. results
+  would have been very strange and unexpected.
+
+- box() and sphere() should be working again with opengl
+
+- die() is a newish internal function that's used whenever exceptions 
+  or internal errors occur. you can make your own error handler by
+  overriding die(String s) and die(String s, Exception e) if you'd
+  like your applet to do something smarter than just halting. we're
+  moving to where exceptions and errors are handled in a more
+  consistent way, and that no p5 methods will require try and catch
+  style exception handling (for advanced users who want it, they can
+  use the java equivalents of the various PApplet methods). 
+
+
+ide fun
+
+- forgot to mention in rev 75 that double-clicking a .pde file on the
 mac will now launch processing with that sketch running
+
+
+bugs
+
+- curveVertex() is temporarily broken in this release.
+
+- export to web is temporarily broken in this release for machines
+  that don't have the java plug-in installed. this includes 60% of
+  Windows users on the web, and anyone using Mac OS 8 or 9. the applet
+  will export, but will turn up mostly blank on machines with Java 1.1.
+
+- windows coming up at the wrong size or with the wrong placement:
+  make sure you're using size(nnn, nnn) where nnn are actual
+  numbers. if you're doing that and still seeing trouble, please
+  report how to reproduce.
+
+- "Using ATI workaround..." error message isn't really an error, it's
+  just something that jogl spits out. fret not.
+
+- lighting is fuggly. i have a feeling that normals aren't being set
+  up properly, partly because that code has gotten no love for a long
+  time and everything around it has changed.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -19,7 +164,9 @@ mac will now launch processing with that sketch running
 ABOUT REV 0076
 
 this was a quick release that fixed launcher issues on both mac os x
-and windows. 
+and windows. it meant being distracted uploading a new build during
+part of the third quarter of the super bowl, but you guys are just
+that important. luckily the patriots still won.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
