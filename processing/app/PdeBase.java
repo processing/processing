@@ -242,6 +242,8 @@ public class PdeBase {
 
 
   static public File getDefaultSketchbookFolder() {
+    File sketchbookFolder = null;
+
     if (platform == MACOSX) {
       // looking for /Users/blah/Documents/Processing
 
@@ -261,7 +263,7 @@ public class PdeBase {
         MRJOSType domainDocuments = new MRJOSType("docs");
         File libraryFolder = MRJFileUtils.findFolder(domainDocuments);
           //MRJFileUtils.findFolder(kUserDomain, domainDocuments);
-        return new File(libraryFolder, "Processing");
+        sketchbookFolder = new File(libraryFolder, "Processing");
 
       } catch (FileNotFoundException e) {
         showError("sketch folder problem",
@@ -270,6 +272,7 @@ public class PdeBase {
 
     } else if (platform == WINDOWS) {
       // looking for Documents and Settings/blah/My Documents/Processing
+      // (though using a reg key since it's different on other platforms)
 
       // http://support.microsoft.com/?kbid=221837&sd=RMVP
       // The path to the My Documents folder is stored in the
@@ -291,7 +294,7 @@ public class PdeBase {
         topKey.closeKey();  // necessary?
         localKey.closeKey();
 
-        return new File(personalPath, "Processing");
+        sketchbookFolder = new File(personalPath, "Processing");
 
       } catch (Exception e) {
         showError("Problem getting documents folder",
@@ -299,16 +302,15 @@ public class PdeBase {
       }
     }
 
-    return null;
-
     // if it failed, or if on linux, prompt the user or quit
-
     /*
       File home = new File(System.getProperty("user.home"));
       File phome = new File(home, ".processing");
       if (!phome.exists()) phome.mkdirs();
       return phome;
     */
+
+    return sketchbookFolder;
   }
 
 
