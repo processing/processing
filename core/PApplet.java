@@ -197,7 +197,6 @@ public class PApplet extends Applet
   // the thread on, instead of doing it inside paint()
   public void stop() {
     if (thread != null) {
-      //thread.stop();
       thread = null;
     }
 
@@ -221,6 +220,11 @@ public class PApplet extends Applet
       libraries[i].stop();  // endNet/endSerial etc
     }
   }
+
+
+  // public void destroy() is another one that gets called as the
+  // applet viewer is shutting down the applet. stop() is called
+  // first, and then destroy() to really get rid of things.
 
 
   public Dimension getPreferredSize() {
