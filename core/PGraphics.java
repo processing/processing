@@ -1442,8 +1442,10 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      //textFont.resetSize();
-      //textFont.resetLeading();
+
+      if (textSpace == SCREEN_SPACE) {
+        textSize(textFont.mbox);
+      }
 
     } else {
       throw new RuntimeException("a null PFont was passed to textFont()");
@@ -1451,10 +1453,20 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the text size, also resets the value for the leading.
+   */
   public void textSize(float size) {
     if (textFont != null) {
+      if ((textSpace == SCREEN_SPACE) &&
+          (size != textFont.mbox)) {
+          throw new RuntimeException("can't use textSize() with " +
+                                     "textSpace(SCREEN_SPACE)");
+      }
       textSize = size;
-      textLeadingReset();
+      textLeading = textSize *
+        ((textFont.ascent() + textFont.descent()) * 1.275f);
+      //textLeadingReset();
 
     } else {
       throw new RuntimeException("use textFont() before textSize()");
@@ -1462,10 +1474,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void textLeadingReset() {
-    textLeading = textSize *
-      ((textFont.ascent() + textFont.descent()) * 1.275f);
-  }
+  //protected void textLeadingReset() {
+  //textLeading = textSize *
+  //  ((textFont.ascent() + textFont.descent()) * 1.275f);
+  //}
 
 
   public void textLeading(float leading) {
@@ -1495,15 +1507,18 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void textSpace(int space) {
-    textSpace = space;
-    /*
     if (textFont != null) {
-      textFont.space(space);
+      textSpace = space;
+
+      // reset the font to its natural size
+      // (helps with width calculations and all that)
+      if (textSpace == SCREEN_SPACE) {
+        textSize(textFont.mbox);
+      }
 
     } else {
       throw new RuntimeException("use textFont() before textSpace()");
     }
-    */
   }
 
 
@@ -1854,7 +1869,7 @@ public class PGraphics extends PImage implements PConstants {
 
     // avoid infinite loop
     if (Float.isNaN(big) || Float.isInfinite(big)) {
-      big = 8; // set to something arbitrary
+      big = 1000000; // set to something arbitrary
     }
 
     int d = 1;

@@ -2190,6 +2190,12 @@ public class PGraphics3 extends PGraphics {
                                          max(abs(m22), abs(m23))),
                                      max(max(abs(m30), abs(m31)),
                                          max(abs(m32), abs(m33))))));
+
+    // avoid infinite loop
+    if (Float.isNaN(big) || Float.isInfinite(big)) {
+      big = 1000000; // set to something arbitrary
+    }
+
     int d = 1;
     while ((big /= 10) != 0) d++;  // cheap log()
 
@@ -2401,6 +2407,12 @@ public class PGraphics3 extends PGraphics {
                                          max(abs(p22), abs(p23))),
                                      max(max(abs(p30), abs(p31)),
                                          max(abs(p32), abs(p33))))));
+
+    // avoid infinite loop
+    if (Float.isNaN(big) || Float.isInfinite(big)) {
+      big = 1000000; // set to something arbitrary
+    }
+
     int d = 1;
     while ((big /= 10) != 0) d++;  // cheap log()
 
