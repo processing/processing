@@ -294,6 +294,29 @@ public class PdeCompiler implements PdeMessageConsumer {
             "Rename loop() to draw() in Processing 0070 and higher";
         }
 
+        String constructorProblem = 
+          "No applicable overload was found for a constructor of type";
+        if (description.indexOf(constructorProblem) != -1) {
+          //"simong.particles.ParticleSystem". Perhaps you wanted the overloaded version "ParticleSystem();" instead?
+          int nextSentence = description.indexOf("\".") + 3;
+          description = description.substring(nextSentence);
+        }
+
+        String overloadProblem = "No applicable overload";
+        if (description.indexOf(overloadProblem) != -1) {
+          int nextSentence = description.indexOf("\".") + 3;
+          description = description.substring(nextSentence);
+        }
+
+        // c:/fry/processing/build/windows/work/lib/build/Temporary_6858_2476.java:1:34:1:41: Semantic Error: You need to modify your classpath, sourcepath, bootclasspath, and/or extdirs setup. Package "poo/shoe" could not be found in:
+        String classpathProblem = "You need to modify your classpath";
+        if (description.indexOf(classpathProblem) != -1) {
+          int nextSentence = description.indexOf(". Package") + 2;
+          description = 
+            description.substring(nextSentence, description.indexOf(':')) + 
+            " the code folder or in any libraries.";
+        }        
+
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);
         exception = new PdeException(description, fileIndex, lineNumber-1, -1);
