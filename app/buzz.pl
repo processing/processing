@@ -170,7 +170,7 @@ print "cleaning...\n";
 `rm -rf $temp_dir`;
 
 # finished
-print "done.\n";
+print "done.\n\n";
 
 
 # reads until else or endif, adding what it finds
