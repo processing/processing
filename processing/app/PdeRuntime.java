@@ -552,10 +552,12 @@ java.lang.NullPointerException
       while (Thread.currentThread() == thread) {
         try {
           int count = input.read(boofer, 0, boofer.length);
-          if (count == -1) thread = null;
-          //System.out.print("bc" + count + " " + new String(boofer, 0, count));
-          //PApplet.println(boofer);
-          System.out.print(new String(boofer, 0, count));
+          if (count == -1) {
+            thread = null;
+
+          } else {
+            System.out.print(new String(boofer, 0, count));
+          }
 
         } catch (IOException e) {
           // this is prolly because the app was quit & the stream broken
