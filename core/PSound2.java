@@ -34,7 +34,6 @@ import javax.sound.sampled.*;
 
 public class PSound2 extends PSound {
   //PApplet parent;
-  Method soundEventMethod;
 
   Clip clip;
   FloatControl gainControl;
@@ -44,12 +43,12 @@ public class PSound2 extends PSound {
     this.parent = iparent;
 
     try {
-      AudioInputStream stream =
+      AudioInputStream ais =
         AudioSystem.getAudioInputStream(input);
 
       // At present, ALAW and ULAW encodings must be converted
       // to PCM_SIGNED before it can be played
-      AudioFormat format = stream.getFormat();
+      AudioFormat format = ais.getFormat();
       if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
         // *** this code appears as though it may just be faulty ***
         format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
@@ -59,15 +58,15 @@ public class PSound2 extends PSound {
                                  format.getFrameSize()*2,
                                  format.getFrameRate(),
                                  true);  // big endian
-        stream = AudioSystem.getAudioInputStream(format, stream);
+        ais = AudioSystem.getAudioInputStream(format, ais);
       //} else {
         //System.out.println("no conversion necessary");
       }
 
-      int frameLength = (int) stream.getFrameLength();
+      int frameLength = (int) ais.getFrameLength();
       int frameSize = format.getFrameSize();
       DataLine.Info info =
-        new DataLine.Info(Clip.class, stream.getFormat(),
+        new DataLine.Info(Clip.class, ais.getFormat(),
                           frameLength * frameSize);
 
       clip = (Clip) AudioSystem.getLine(info);
@@ -77,7 +76,7 @@ public class PSound2 extends PSound {
         (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
 
       // This method does not return until completely loaded
-      clip.open(stream);
+      clip.open(ais);
 
       // determining when a sample is done
       // Add a listener for line events

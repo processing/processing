@@ -2392,6 +2392,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   public void image(PImage image,
                     float x1, float y1, float x2, float y2,
                     float u1, float v1, float u2, float v2) {
+    float hr, vr;
+
     switch (imageMode) {
     case CORNERS:
       break;
@@ -2401,9 +2403,16 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     case CENTER:
       x2 /= 2f;
       y2 /= 2f;
+      hr = x2;
+      vr = y2;
+      x2 = x1 + hr;
+      y2 = y1 + vr;
+      x1 -= hr;
+      y1 -= vr;
+      break;
     case CENTER_RADIUS:
-      float hr = x2;
-      float vr = y2;
+      hr = x2;
+      vr = y2;
       x2 = x1 + hr;
       y2 = y1 + vr;
       x1 -= hr;
@@ -4067,11 +4076,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
       return;
     }
-    float cm[] = matrixStack[matrixStackDepth];
-    cm[ 0] = m00; cm[ 1] = m01; cm[ 2] = m02; cm[ 3] = m03;
-    cm[ 4] = m10; cm[ 5] = m11; cm[ 6] = m12; cm[ 7] = m13;
-    cm[ 8] = m20; cm[ 9] = m21; cm[10] = m22; cm[11] = m23;
-    cm[12] = m30; cm[13] = m31; cm[14] = m32; cm[15] = m33;
+    float mat[] = matrixStack[matrixStackDepth];
+    mat[ 0] = m00; mat[ 1] = m01; mat[ 2] = m02; mat[ 3] = m03;
+    mat[ 4] = m10; mat[ 5] = m11; mat[ 6] = m12; mat[ 7] = m13;
+    mat[ 8] = m20; mat[ 9] = m21; mat[10] = m22; mat[11] = m23;
+    mat[12] = m30; mat[13] = m31; mat[14] = m32; mat[15] = m33;
     matrixStackDepth++;
   }
 
@@ -4082,11 +4091,11 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       return;
     }
     matrixStackDepth--;
-    float cm[] = matrixStack[matrixStackDepth];
-    m00 = cm[ 0]; m01 = cm[ 1]; m02 = cm[ 2]; m03 = cm[ 3];
-    m10 = cm[ 4]; m11 = cm[ 5]; m12 = cm[ 6]; m13 = cm[ 7];
-    m20 = cm[ 8]; m21 = cm[ 9]; m22 = cm[10]; m23 = cm[11];
-    m30 = cm[12]; m31 = cm[13]; m32 = cm[14]; m33 = cm[15];
+    float mat[] = matrixStack[matrixStackDepth];
+    m00 = mat[ 0]; m01 = mat[ 1]; m02 = mat[ 2]; m03 = mat[ 3];
+    m10 = mat[ 4]; m11 = mat[ 5]; m12 = mat[ 6]; m13 = mat[ 7];
+    m20 = mat[ 8]; m21 = mat[ 9]; m22 = mat[10]; m23 = mat[11];
+    m30 = mat[12]; m31 = mat[13]; m32 = mat[14]; m33 = mat[15];
 
     if ((matrixStackDepth == 0) &&
         (m00 == 1) && (m01 == 0) && (m02 == 0) && (m03 == 0) &&

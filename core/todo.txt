@@ -1,4 +1,7 @@
-0076 core
+0077 core
+
+_ metaballs example dies when using box()
+_   long string of exceptions, which are also missing their newlines
 
 _ when running externally, applets don't always get placed properly
 _   if size is never set, then doesn't always layout

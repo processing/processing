@@ -964,26 +964,25 @@ public class PTriangle implements PConstants
           //m_zbuffer[xstart] = iz;
 
           int alpha = ia >> 16;
-          int r0 = m_pixels[xstart];
-          int g0 = r0 & 0xFF00;
-          int b0 = r0 & 0xFF;
-          r0&=0xFF0000;
+          int mr0 = m_pixels[xstart];
+          int mg0 = mr0 & 0xFF00;
+          int mb0 = mr0 & 0xFF;
+          mr0 &= 0xFF0000;
 
-          r0 = r0 + (((pr - r0) * alpha) >> 8);
-          g0 = g0 + (((pg - g0) * alpha) >> 8);
-          b0 = b0 + (((pb - b0) * alpha) >> 8);
-          m_pixels[xstart] = (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
+          mr0 = mr0 + (((pr - mr0) * alpha) >> 8);
+          mg0 = mg0 + (((pg - mg0) * alpha) >> 8);
+          mb0 = mb0 + (((pb - mb0) * alpha) >> 8);
+          m_pixels[xstart] = (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
 
           m_stencil[xstart] = p;
         }
-        iz+=izadd;
-        ia+=iaadd;
+        iz += izadd;
+        ia += iaadd;
       }
-
-      ytop+=SCREEN_WIDTH;
-      xleft+=leftadd;
-      xrght+=rghtadd;
-      zleft+=zleftadd;
+      ytop += SCREEN_WIDTH;
+      xleft += leftadd;
+      xrght += rghtadd;
+      zleft += zleftadd;
     }
   }
 
