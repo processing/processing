@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0051 - 31 JANUARY 2003
+RELEASE 0052 - 5 MARCH 2003
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -123,25 +123,6 @@ out what's going on. useful things when reporting:
   brought up better than that. and as we often lack enough time to
   build our own projects, we have even less time to spend figuring out
   other peoples' projects to rip them off.
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-KNOWN BUGS
-
-there are many more, which are in a cryptic 'todo.txt' list that we
-keep, but some of the larger ones that we know about:
-
-- random freezes under windows, after running a few time. every 20th
-  or every 100th time the app just freaks out. use ctrl-alt-del to
-  kill the java runtime and restart your app. this will slowly be
-  ironed out. 
-
-- some examples seem to be broken, this will be ironed out for 0050
-
-- a couple tweaks with the syntax of 'color' statements are needed,
-  this is related to the above
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -314,7 +295,8 @@ versions: this version has only been tested under Mac OS 9.2.2.
 
 WINDOWS
 
-win2k works well, reports point to xp working well also. 
+win2k and winxp are used as the primary development platforms, so the
+release will likely work best on either platform.
 
 win95/98/me seem to have some trouble, but we think it's just with
 the .exe that we use, so that'll get fixed in the future. you can try

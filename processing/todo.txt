@@ -7,6 +7,10 @@ X   projectSize() should work the same way
 X   screenX instead of projectX
 X   modelX or objectX could do the amit style thing
 X     creas says object
+X better access to projX et al
+X   what's a better name? calcX? or write to an array?
+X   projectX, projectY, .. or projectedX ? 
+X   also projectSize should just be project()
 X smooth() and noSmooth()
 X possible dist() and constrain() functions
 X   reas: I like people making these themselves and then later 
@@ -22,10 +26,6 @@ X camera work
 X   beginCamera, endCamera -> does glMatrixMode style swapping
 X   cameraMode(CUSTOM, PERSPECTIVE, ISOMETRIC)
 X   lookAt->lookat, frustum, perspective should be public too
-X better access to projX et al
-X   what's a better name? calcX? or write to an array?
-X   projectX, projectY, .. or projectedX ? 
-X   also projectSize should just be project()
 X splitints, et al.. have another version to specify what to use
 X   when the value gets a NumberFormatException.. ie.
 X   splitInts("blah blah blah", ' ', 0);
@@ -41,23 +41,21 @@ X images were broken with noSmooth
 X color is ugly for 'use external editor' with new color scheme
 X   now uses color for current line
 X re-enable SMOOTH_IMAGES
-
-
-FIXED, BUT NEEDS POST TO BBOARD ON RELEASE
 X 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
 X several examples broken (note from creas) in bugs.txt
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
 X   drawing02, input09, input08, transform05, others?
 X if image doesn't exist, spews null pointer exception and freaks
 X   locks up environment/machine, have to restart
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
 X disable image cache (setUseCaches?)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
 X add a note to revisions.txt that says "not for use as a reference"
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
+_ switched to jre 1.4.1_02
 
 _ simage() is screwy.. 
 _   its invocation is broken (image_mode can't be two things at once)
