@@ -10,6 +10,9 @@ o refresh sketchbook menu upon returning to the app from elsewhere?
 o   this would need to track whether coming just from an ext runtime
 o make "get quicktime libs" function
 o   can java get the root directory for system/win32 etc?
+X add MRJOpenApplicationHandler and MRJOpenDocumentHandler
+X     especially the open document fella
+X     under osx, app won't get doc unless app already launched
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -19,9 +22,6 @@ MUST BE COMPLETE FOR BETA
 
 _ move everything to packages, and start auto-javadoc
 _   also move the lib folders to a new location
-
-_ if NullPointerEx on a line that includes a "pixels[" 
-_   give an error message saying "you may need to call loadPixels"
 
 _ better method of posting/handling bugs
 
@@ -35,6 +35,9 @@ _   opengl gives an OutOfMemoryError
 _   java2d just goes into a lock
 _   could also be code that's in an infinite loop (i.e. text error) 
 _     which then causes a full lock
+_ something really bad happened with println() in this release
+_   perhaps only without a code folder and/or running in java2d mode?
+_   this may also be what's hosing 
 
 _ PdeRuntime/PApplet cleanup
 _   run as external whenever using present mode
@@ -44,32 +47,10 @@ _   uses internal pretty much only when single class, etc
 _ the runtime environment requires java 1.4
 _   make sure this is known and tested for properly
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+//
 
-NOT NECESSARY BEFORE BETA
-
-_ some type of sketch archive format for posting examples (.psk?)
-_   would be nice to open a sketch directly from a zip file
-
-camera
-_ list() should return full list with all sub-components
-_   find the example code from the board
-_ add prompt() method to Camera ("" means default, null is prompt)
-_ couldn't get req'd component also happens when the camera isn't ready
-_   may also mean that no camera is plugged in
-_   also, don't mention winvdig on the mac
-_ if user cancels prompt, throws a '-128,userCanceledErr'
-_   in which case, need to return null (or ""?) for the prompt
-_   which will also just give you the last camera
-_   should it be new Camera(PROMPT);
-_ error messages from quicktime not coming through very well
-_ setting the camera should be an index from list()
-_ grabbing sub-devices from camera in the lib (via list() or whatever)
-_   actually, need to use numbered indices (multiple w/ same name)
-_     list should be: "0 - Logitech QuickCam (Blah)"
-_     and then use the indices (or the str i guess) to choose
-
+SAVE AS BUGS
 
 Minor issue, but caused me a couple seconds of confusion.  If you rename your sketch then try to close the application without saving first, it asks you if you want to save but mentions the pre-rename name.  But I hit yes, quit, came back in, and all seemed right in the world.
 
@@ -99,7 +80,35 @@ can tell, is to Save As once, make at least one change, then Save.
 what happens if folder already exists on save as?
 
 
-//
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+NOT NECESSARY BEFORE BETA
+
+_ drag & drop implementation to add files to sketch
+
+_ straighten out int() -> toInt() conversion in the preproc
+
+_ some type of sketch archive format for posting examples (.psk?)
+_   would be nice to open a sketch directly from a zip file
+
+camera
+_ list() should return full list with all sub-components
+_   find the example code from the board
+_ add prompt() method to Camera ("" means default, null is prompt)
+_ couldn't get req'd component also happens when the camera isn't ready
+_   may also mean that no camera is plugged in
+_   also, don't mention winvdig on the mac
+_ if user cancels prompt, throws a '-128,userCanceledErr'
+_   in which case, need to return null (or ""?) for the prompt
+_   which will also just give you the last camera
+_   should it be new Camera(PROMPT);
+_ error messages from quicktime not coming through very well
+_ setting the camera should be an index from list()
+_ grabbing sub-devices from camera in the lib (via list() or whatever)
+_   actually, need to use numbered indices (multiple w/ same name)
+_     list should be: "0 - Logitech QuickCam (Blah)"
+_     and then use the indices (or the str i guess) to choose
 
 check these errors to see if they still exist
 _ odd error in System.err stream coming from running external
@@ -122,14 +131,6 @@ _ add prompt() method to Serial (simple dialog box that pops up)
 _ get an xml library in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
-
-_ straighten out int() -> toInt() conversion in the preproc
-_   add use of doubles on casting -- particularly for Math.cos() et al
-
-_ use screen manager to run present mode properly
-_   set both versions to require java 1.4
-_   change the Info.plist inside macosx
-_   and add something to PdeBase to make sure that it's in 1.4
 
 _ subfolders in the 'data' directory don't work
 
@@ -171,6 +172,7 @@ _   what's a NullPointerException
 _   use of strings
 _   println() for debugging
 
+
 TALK TO CASEY ABOUT...
 _ must call depth() for 3D applications
 _ lights cannot be enabled/disabled throughout 
@@ -197,11 +199,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ write an example that uses Hashtable
 _ and another that uses Vector
-_ need showError/Message/Warning/Prompt design from casey
-_   maybe something that shows stack trace?
-_   with an 'email this' button? (include source code too?)
-_   also need a "prompt" dialog for asking filenames, etc
-_   implement and remove PdeEditorStatus stuff
 _ beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 _ make a note that u/v coordinates clamp at 0 and 1
@@ -311,24 +308,8 @@ PDE / Details
    1 _ ctrl-tab to switch between tabs
    1 _ add mnemonics for menus (alt-f to open 'file')
 
-   b _ running present mode with a bug in the program hoses things
-   b _   make sure the program compiles before starting present mode
    1 _ processing.exe: problem if expert version is run, and no java installed
    1 _   call the person a genius and tell them to install java
-   1 _ make some fancy extendo things because the tabs get too big
-
-   1 _ find/replace
-   1 _   only enable "find next" in menu after a find has happened
-
-   1 _ tie .pde files as documents of the application
-   1 _   figure out proper registry key for windows
-   1 _     can be handled when the app first run (jni?)
-   1 _   write handler for main() to take document names
-   1 _   need document icons
-   1 _   add MRJOpenApplicationHandler and MRJOpenDocumentHandler
-   1 _       especially the open document fella
-   1 _       under osx, app won't get doc unless app already launched
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
 
    1 _ implement page setup and print
    1 _   pretty printing of code in project
@@ -383,10 +364,18 @@ PDE / Details
    1 _ make export put a timestamp in the html code (hidden or visible)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
 
-   1 _ drag & drop implementation to add files to sketch
+
+PDE / Find & Replace
+
+   1 _ only enable "find next" in menu after a find has happened
 
 
-PDE / Save, Save As, Sketchbook
+PDE / Editor Header
+
+   1 _ make some fancy extendo things because the tabs get too big
+
+
+PDE / Sketch & Sketchbook
 
    1 _ transparently convert spaces to underscores (?)
    1 _   underscoring everything is kinda nasty
@@ -403,6 +392,8 @@ PDE / Save, Save As, Sketchbook
 
 PDE / Compiler
 
+   1 _ if NullPointerEx on a line that includes a "pixels[" 
+   1 _   give an error message saying "you may need to call loadPixels"
    1 _ warn about writing non-1.1 code. 
    1 X   will jikes do it if the -source is set to 1.1? nope.. 
    1 X     notes inside PdeCompiler
@@ -424,9 +415,11 @@ BUGS / Preprocessor
    1 _ random, single slash in the code doesn't throw an error
    1 _   (just gets removed by the preprocessor)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1099371066;start=0
+   1 _ allow doubles in preproc
+   1 _   (for casting, etc) particularly for Math.cos() et al
 
 
-PDE / Font Builder
+PDE / Create Font
 
    1 _ close/hide window on 'ESC'
    1 _ loading is very slow on the first time (getting all font names)
@@ -437,13 +430,18 @@ PDE / Font Builder
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
 
 
-PDE / Console
+PDE / Editor Status
 
    1 _ error messages run off the edge and go invisible
-   1 _   actually this is just for the editor status box
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
    1 _ multi-line errors a mess in jikes
    1 _   maybe a dropdown list thing, with the first just shown?
+   1 _ move to modal dialog showError/Message/Warning/Prompt design 
+   1 _   nicely design dialog boxes to go with visual of p5
+   1 _   maybe something that shows stack trace?
+   1 _   with an 'email this' button? (include source code too?)
+   1 _   also need a "prompt" dialog for asking filenames, etc
+   1 _   implement and remove PdeEditorStatus stuff
 
 
 
@@ -458,188 +456,96 @@ How the environment gets packed up, downloaded, and installed.
 
 DISTRIBUTION / General 
 
-
-b _ also out of cvs
-b _   check for necessary tools to be installed
-b _   zip, unzip, jikes, etc
-b _ need to change all the copyrights over to mit "except where noted"
-b _ need more comprehensive list of 'known bugs'
-b _ need more comprehensive list of 'known suggestions'
-b _ javadoc "advanced" reference by beta
-b _   and then finalizing it towards 1.0
-b _   document hint() commands for advanced reference
-b _ beta release will include source code
-b _ write notes about running p5 on another platforms 
-b _   this was some feedback from running on bsd:
-b _     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
-b _   need to use the 1.3 vm, and get a fake platform name
-b _   otherwise, goes looking for lib/pde_.properties or something
-1 _ if size() not found in export/compile, ask the user
-1 _   size(myWidth, myHeight) -> set static var in BGraphics
-1 _     for the last size that was used, use as default for fill-in field
-1 o modify antlr stuff to conditionally recompile in make.sh
-1 _   compile antlr inside the initial setup of the work dir
-1 X     done for macosx
-1 _     fix this for windows and linux
-1 _ about box 
-1 _   bring up information about gpl, lgpl, and ibmpl
-1 _   jedit syntax is under mit license
-1 _     http://www.opensource.org/licenses/mit-license.php
+   1 _ need .pde document icons
+   1 _ need .psk file icon
+   1 _ need exported application icons
+   b _ also out of cvs
+   b _   check for necessary tools to be installed
+   b _   zip, unzip, jikes, etc
+   b _ need to change all the copyrights over to mit "except where noted"
+   b _ need more comprehensive list of 'known bugs'
+   b _ need more comprehensive list of 'known suggestions'
+   b _ javadoc "advanced" reference by beta
+   b _   and then finalizing it towards 1.0
+   b _   document hint() commands for advanced reference
+   b _ beta release will include source code
+   b _ write notes about running p5 on another platforms 
+   b _   this was some feedback from running on bsd:
+   b _     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
+   b _   need to use the 1.3 vm, and get a fake platform name
+   b _   otherwise, goes looking for lib/pde_.properties or something
+   1 _ if size() not found in export/compile, ask the user
+   1 _   size(myWidth, myHeight) -> set static var in BGraphics
+   1 _     for the last size that was used, use as default for fill-in field
+   1 o modify antlr stuff to conditionally recompile in make.sh
+   1 _   compile antlr inside the initial setup of the work dir
+   1 X     done for macosx
+   1 _     fix this for windows and linux
+   1 _ about box 
+   1 _   bring up information about gpl, lgpl, and ibmpl
+   1 _   jedit syntax is under mit license
+   1 _     http://www.opensource.org/licenses/mit-license.php
 
 
 BUGS / Windows
-1 _ NullPointerException when alt is pressed
-1 _   might be something to do with the applet frame being an awt not swing
-1 _   event first goes to the applet listener, needs to consume the event
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
-1 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
-1 _   CLASSPATH figured out what to do with quotes, but not PATH
+
+   1 _ NullPointerException when alt is pressed
+   1 _   might be something to do with the applet frame being an awt not swing
+   1 _   event first goes to the applet listener, needs to consume the event
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
+   1 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
+   1 _   CLASSPATH figured out what to do with quotes, but not PATH
 
 
 DISTRIBUTION / Windows
-b _ properly handle non-ascii chars in p5 folder name
-b _   or at least warn the user to install somehwere else
-b _ track down the cause of the processing.exe not starting bugs
-b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
-b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
-b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
-1 _ winamp/audio getting starved or crackly while applets running
-1 _   thread priority too high? or something weird
-1 _ need splash screen, startup takes a long time
+
+   1 _ tie .pde files as documents of the application
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
+   1 _   figure out proper registry key for windows
+   1 _     can be handled when the app first run (jni?)
+   1 _   write handler for main() to take document names
+   1 _ properly handle non-ascii chars in p5 folder name
+   1 _   or at least warn the user to install somehwere else
+   1 _ track down the cause of the processing.exe not starting bugs
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094148057
+   1 _ winamp/audio getting starved or crackly while applets running
+   1 _   thread priority too high? or something weird
+   1 _ need splash screen, startup takes a long time
 
 
 DISTRIBUTION / Linux
-1 _ doesn't seem interested in quitting properly (?)
-b _ splash screen
-1 _ ctrl-t is not stopping a sketch
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074810469
+
+   1 _ doesn't seem interested in quitting properly (?)
+   1 _ splash screen
+   1 _ ctrl-t is not stopping a sketch
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074810469
 
 
 DISTRIBUTION / Mac OS X
-1 _ fix find/replace focus issue on osx
-1 _     give that field focus explicitly, rather than just for typing
-1 _     right now, typing works, but no caret, no blue highlight
-1 _     and on second find run, should instead select all the find string
-1 _       so that typing will replace it directly
-b _ set nice background for disk image on macosx
-1 _ test more to see if runtime exceptions are coming through
-1 _ track down error in PdeCompiler for message parsing
-1 _   was missing the error about a package being gone
-1 _   can comment out /System/Library/ as a test
-1 _ Contents/Resources/Java can take jnilib files
-1 _ set file type/creator for .pde files of examples
-1 _ would be nice to have macosx packaged up as a single .app file
-1 _ is there a way to set the color of the Frame growbox?
-1 _   currently it's white instead of dark gray like the ui
-1 _   setBackground(Color) didn't seem to help inside PdeBase.<init>
-1 _ use disk:// notation as panther alternative
-1 _   so that it doesn't download the disk, just mounts it
-1 _   although.. this only works on panther.. how many are using it?
-1 _ mac standard key combinations for moving around in the editor
-1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
 
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-PRIORITIES
-
-
-casey
-_ graphics engine up to spec
-_ video/net/sound up to spec
-X multiple files open 
-X compile libraries within p5
-
-ed
-_ quality of compiler errors + multiple errors
-X additional class files.. .java or .pde
-X find/replace
-
-juha
-_ documenting how the environment works / is set up
-
-amit
-X find/replace
-X println speed improvements
-_ 'debug' that shows a variable (rather than many many println)
-X tabs for multiple files
-
-zach
-2 _ setting breakpoints / stepping through
-2 _   useful as understanding for how program works
-2 _ tracing like director
-
-schoenerwissen
-2 _ tracing variables
-2 _ bspace object
-b X 7 day search on discourse board
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-FRY
-
-My grab of examples/libraries that I'd like to make. Most of these are
-things I've already written in some form or another, but need to take
-the time to package up and release.
-
-_ example showing quicksort code
-_   and how to implement/use as an inner class
-_ arcball
-_ joystick
-_ particles (from multip?)
-_ phyics & collisions
-_   look at the 'havoc' physics library
-_ java3d classes for vec3f and matrix
-_ quicktime exporter or image sequence export
-_   fairly quick--just use experimental code from dbn
-_ more advanced splitting of files into rows/cols uses another class
-_   other class also has concept for random access of lines
-_   by storing the line positions, can access without loading all
-_   into memory because some files will be too large
-_   read table/csv formatted data into a matrix
-_     pseudo-database format version of this that stores indexes to file
-_       rather than loading the whole thing at once
-_ history.. add my diffs sketch (as a plug-in)
-_   could just include a compiled version of the diff app, ala jikes
-_ something about using regexps in p5
-_   wrap up oro for simple matching
-_   (as alternative to the sun classes.. link to those in the docs)
-_ method for file handling, recursive walk-through a directory
-_   file i/o: file listing util that leaves out . and ..
-
-more random thoughts
-_ stroke picker
-_   just lineweight, so don't bother.. use constants palette instead
-_ font picker
-_   same thing, just quickly generates fonts on the fly and applies them
-_ need to look at matlab's visualization tools
-_ arcs, better 'color' object
-_ take everything in perl cookbook, and make easy to do with p5
-_ database access and reading large files are always hangups
-_ support capabilities of matlab's visualization tools
-_ charting/labeling primitives.. excel never quite does it
-_ botting engine
-_ difficulty of initial grab/analysis of data, that may take some time
-_   then needs to be stored and run on multiple times
-_ methods for picking colors.. how to color code, limit to 5? gradients..
-_ simple way to do tufte-style small multiples on an app
-_ function for reporting percent finished (or swing dialog)
-_ also for reporting the amount of time remaining
-_ loading/selecting a file (or folder), or from command line
-_ load large file as lattice (option of whether to keep in memory)
-_   how many rows/columns for headings
-_ walking through an entire directory, with a handler
-_   that throws out the . and .. items
-_   that knows about aliases (jdk13)
-_ overall contrast/color control (genomevalence for hulk)
-_ mac -> vlw (or sbit?) font converter
-_   need to also read the fond for metrics
-_ general bitmap font editor, see what chars are in font, etc
+   1 _ fix find/replace focus issue on osx
+   1 _   give that field focus explicitly, rather than just for typing
+   1 _   right now, typing works, but no caret, no blue highlight
+   1 _   and on second find run, should instead select all the find string
+   1 _     so that typing will replace it directly
+   b _ set nice background for disk image on macosx
+   1 _ test more to see if runtime exceptions are coming through
+   1 _ track down error in PdeCompiler for message parsing
+   1 _   was missing the error about a package being gone
+   1 _   can comment out /System/Library/ as a test
+   1 _ Contents/Resources/Java can take jnilib files
+   1 _ set file type/creator for .pde files of examples
+   1 _ would be nice to have macosx packaged up as a single .app file
+   1 _ is there a way to set the color of the Frame growbox?
+   1 _   currently it's white instead of dark gray like the ui
+   1 _   setBackground(Color) didn't seem to help inside PdeBase.<init>
+   1 _ use disk:// notation as panther alternative
+   1 _   so that it doesn't download the disk, just mounts it
+   1 _   although.. this only works on panther.. how many are using it?
+   1 _ mac standard key combinations for moving around in the editor
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515

@@ -170,8 +170,8 @@ public interface PConstants {
 
   // uv texture orientation modes
 
-  static final int NORMALIZED   = 1; //_SPACE  = 0;  // 0..1
-  static final int IMAGE   = 2;
+  static final int NORMALIZED = 1; //_SPACE  = 0;  // 0..1
+  static final int IMAGE      = 2;
 
 
   // text placement modes

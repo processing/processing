@@ -7,14 +7,69 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0080
+ABOUT REV 0080 - 2 April 2005
+
+bug fix and api tweaking release... um yeah.
+
 
 - examples have finally been updated in this release, please test!
 
 - keywords have also been updated
 
+- when exporting an applet, you can now include a description in the
+  applet text. the format is a javadoc comment, where the first line
+  should contain /** and the final line */ so the following would work:
+  /**
+   * You can't rock Processing like I can rock Processing.
+   */
+  and that text would automatically be embedded in the exported html 
+  page. like a javadoc comment, the text can (and should) be any valid
+  html since it's just gonna get embedded right in the page.
+
+
+graphics
+
+- fixed opengl bug that was causing some color components to flip on the mac
+
+- removed mask(PImage someImage, PImage theMask)
+  just use someImage.mask(theMask) instead
+
+- filter(BLUR) and filter(BLUR, float radius) rock
+  donated code from quasimondo that does a gaussian blur on an image
+
+- set(x, y, argb) and set(x, y, PImage) now work inside opengl
+
+- copy(PImage, x, y) has become set(x, y, PImage)
+
+- blend(), copy(), and filter() now work for opengl
+
+- textureMode(NORMAL_SPACE) -> textureMode(NORMALIZED)
+  textureMode(IMAGE_SPACE) -> textureMode(IMAGE)
+
+- goodbye sphere(x, y, z, r), you're inconsistent with the api
+
+
+text changes
+
+- textMode(ALIGN_LEFT) -> textAlign(LEFT)
+  textMode(ALIGN_RIGHT) -> textAlign(RIGHT)
+  textMode(ALIGN_CENTER) -> textAlign(CENTER)
+
+- textSpace(SCREEN_SPACE) -> textMode(SCREEN)
+  textSpace(OBJECT_SPACE) -> textMode(OBJECT)
+
+- text() in a box is now fixed again (sometimes a word would hang
+  outside the box)
+
+- textFont(font) now sets the font to its "natural" size by default
+  (the size used for "Create Font")
+
+- font.size is an int that contains the original size of the font
+
 
 forgot to mention for previous releases:
+
+- point() should be working in opengl again
 
 - to make a copy of an image, just use get(), which is the same as
   get(0, 0, image.width, image.height)
@@ -24,6 +79,9 @@ forgot to mention for previous releases:
 
 - macosx users can once again scroll downwards in the console, 
   thanks to the little bar with the line numbers
+
+- arc() was made to behave more properly
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
