@@ -7,18 +7,24 @@ if test -d work
 then
 else
   echo Setting up directories to build P5...
-  mkdir work
+  #mkdir work
+  cp -r ../shared work
   unzip -q -d work jre.zip
-  cp -r ../shared/lib work/
-  rm -rf work/lib/CVS
+
+  #cp -r ../shared/lib work/
+  #rm -rf work/lib/CVS
+  #cp -r ../shared/sketchbook work/
+  #cp -r ../shared/reference work/
+
   mkdir work/lib/export
   mkdir work/lib/build
   # this will copy cvs files intact, meaning that changes
   # could be made and checked back in.. interesting
-  cp -r ../shared/sketchbook work/
-  cp -r ../shared/reference work/
   mkdir work/classes
+
   cp dist/run.bat work/
+  cp dist/lib/pde.properties_windows work/lib/
+
   echo
 fi
 
