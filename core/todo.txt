@@ -10,6 +10,7 @@ X add TRIANGLE_FAN
 X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
 X modify targa and tiff writing routines to break into header writing
 X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
+X MAJOR CHANGE: RGBA becomes ARGB for accuracy
 
 opengl
 X why is the thing hanging until 'stop' is hit?
@@ -24,7 +25,13 @@ X   INVALID_OPERATION after drawing lines for cube
 X fix noLoop bug
 X remove errors when drawing textures
 
-_ fix the usual nasty texture bug found in every acu app
+_ figure out min/max texture sizes when binding to avoid problems
+_ fix non-bound textures from mangling everything else
+_ fix enable/disable textures for some objects
+_ fix endian ordering issues so that things work properly
+_ make play button un-highlight with opengl
+_   also make window move messages work properly
+_ can ALPHA fonts work using the other replace modes
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
