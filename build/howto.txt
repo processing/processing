@@ -191,3 +191,15 @@ cvs -z3 update -d -P
 # since been added. but if you're getting "class not found" errors
 # while building, then that's a good indicator that something is
 # missing from a subfolder.
+
+
+//// MAC OS 9
+
+this is actually built from inside osx, but then you reboot into os9
+to move files around, remove and .DS_Store files that may have shown
+up, and package the thing with stuffit. 
+
+when first attempting to build, it's necessary to un-macbinarize the
+Proce55ing application. (processing/build/macos9/dist/Proce55ing.bin)
+for some reason, this doesn't quite work with stuffit expander. i use
+an app called MacBinaryII+, which is a super crusty app, but it works.
