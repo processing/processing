@@ -9,6 +9,7 @@ Michael Davis <shyfter@imsa.edu>
 andres <moscoca@bigpond.com>
 d.amarel <d.amarel@dotsperinch.com>
 Daniel Evan Schwartz <design@roomn8.com>
+Roger Langley <galahad@uslink.net>
 
 
 changes to graphics
