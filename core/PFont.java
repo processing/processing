@@ -420,7 +420,7 @@ public class PFont implements PConstants {
       boolean savedStroke = parent.stroke;
 
       parent.textureMode = IMAGE_SPACE;
-      parent.drawing_text = true;
+      //parent.drawing_text = true;
       parent.stroke = false;
 
       float x1 = x + lextent * size;
@@ -446,7 +446,7 @@ public class PFont implements PConstants {
       parent.endShape();
 
       parent.textureMode = savedTextureMode;
-      parent.drawing_text = false;
+      //parent.drawing_text = false;
       parent.stroke = savedStroke;
 
     } else {  // SCREEN_SPACE
