@@ -7,33 +7,44 @@ d.amarel <d.amarel@dotsperinch.com>
 Eric ANDRON <ericandron@wanadoo.fr>
 Bert Balcaen <bert@rekalldesign.com>
 Julian Bonilla <bonilla@fas.harvard.edu>
+"Sébastien BOY" <sboy@free.fr>
 christophe buffet <christophe@wkmx.org>
+Paul Caplan <caplan@theinternationale.com>
 Fabrice Clérot <fabrice.clerot@francetelecom.com>
 Los cos <awumpus2000@yahoo.com>
 Michael Davis <shyfter@imsa.edu>
 Marco Dinkel <marco@do-com.de>
 <ezDAC@free.fr>
+fmainzer@gmx.net
+Edward George <edward@suppose.co.uk>
 Andrej Jungnickel <andrej@nickelz-bros.de>
 Kay Koester <mail@ekay.de>
 matthew kowal <mkowal@postmaster.co.uk>
 Jean-Yves Herpet <jherpet@fnac.com>
 Kevin Lahoda <kevin@m.parsons.edu>
 Roger Langley <galahad@uslink.net>
+Isaac Levy <ike@visuallistening.com>
 Roy Macarthur <roy@mcarthur.com>
 Oddur Snær Magnússon <oddur@magnusson.is>
+Roland Megnet <rmegnet@attglobal.net>
 Daniel Mendelsohn <dan@heads4sale.com>
 Daniel Mendelsohn <dmendel@optonline.net>
 Michael McGuffin <mjmcguff@dgp.toronto.edu>
+jtnimoy <jtnimoy@ucla.edu>
 widianto nugroho <widi@kmrg.itb.ac.id>
 Anthony Okolie <anthony@anthonyone.com>
 Andrew Otwell <andrew@heyotwell.com>
 Luis Miguel P. <luismi@standbyclick.com>
-Alex Robinson <alexr@cloudband.com>i
+John Reskusich <jreskus@thoughtdomain.com>
+Alex Robinson <alexr@cloudband.com>
 Daniel Evan Schwartz <design@roomn8.com>
 Enrico Trujillo <etrujill@unm.edu>
+Gregg Vesonder <gtv@research.att.com>
 Ronnie Vuine <wintermute@vuine.de>
+Andres Wanner <andres@pixelstorm.ch>
 Jeff Williams <jeffw@pinchy.org>
 Ian Wojtowicz <ian@woj.com>
+Matthew Kevin Wytch <wytch@execpc.com>
 andres <moscoca@bigpond.com>
 
 
@@ -49,6 +60,8 @@ _ maybe stop/kill button should only be a stop btn
 
 
 RANDOM UNSORTED MESS
+_ check out interface builder for interesting tidbits
+_ 'rot' example not working in release 18
 _ line() should make sure that fill() isn't set
 _ having to put 'f' after everything is a mess
 _ better way to do parent and g.rect stuff in related classes
@@ -154,6 +167,8 @@ _   also make sure pack() is happening
 0019
 _ z coordinates are backwards from gl (at least from mazo)
 _   how did this happen? what's the appropriate way to fix?
+_ not clipping areas from offscreen
+_   huge geometry slows things way down
 _ single color function inside applet
 _   need to clamp colors (nothing > 255 or < 0)
 _   do by simplifying stroke/fill/background inside bagel

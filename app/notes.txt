@@ -1,3 +1,17 @@
+ABOUT REV 0018
+
+bug fix:
+
+- i broke fonts in the last release. now they work again. my own fault
+  for trying to improve things.
+
+feature: 
+
+- projectSize(x, y, z, width, height, depth) is like projectPoint()
+  but allows you to transform an object shape to screen space and puts
+  the size into g.projX, g.projY, g.projZ
+
+
 ABOUT REV 0017
 
 features and tweaks:
