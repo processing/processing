@@ -275,6 +275,8 @@ public class PdeRuntime implements PdeMessageConsumer {
 
   public void message(String s) {
     //System.err.println("message " + s.length() + ":" + s);
+    if (s.length() > 2) System.err.println(s);
+
     if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
       newMessage = true;
       return;  // this line ignored
