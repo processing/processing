@@ -41,11 +41,11 @@ public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
-  // jdkVersionStr = "1.3" or "1.1" or whatever
-  public static final String jdkVersionStr =
+  // JDK_VERSION_STR = "1.3" or "1.1" or whatever
+  public static final String JDK_VERSION_STRING =
     System.getProperty("java.version").substring(0,3);
-  public static final double jdkVersion =
-    new Double(jdkVersionStr).doubleValue();
+  public static final double JDK_VERSION =
+    new Double(JDK_VERSION_STRING).doubleValue();
     //toFloat(System.getProperty("java.version").substring(0,3));
 
   public PGraphics g;
@@ -210,7 +210,7 @@ public class PApplet extends Applet
 
     // send tab keys through to the PApplet
     try {
-      if (jdkVersion >= 1.4) {
+      if (JDK_VERSION >= 1.4) {
         //setFocusTraversalKeysEnabled(false);  // 1.4-only function
         Method defocus =
           Component.class.getMethod("setFocusTraversalKeysEnabled",
@@ -262,7 +262,7 @@ public class PApplet extends Applet
   public void createGraphics() {
     Dimension size = getSize();
 
-    if (PApplet.jdkVersion >= 1.3) {
+    if (PApplet.JDK_VERSION >= 1.3) {
       g = new PGraphics2(INITIAL_WIDTH, INITIAL_HEIGHT);
       //g = new PGraphics2(size.width, size.height);
       //DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -1390,11 +1390,11 @@ public class PApplet extends Applet
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
-    if (jdkVersion < 1.2) {
+    if (JDK_VERSION < 1.2) {
       System.err.println("cursor() error: Java 1.2 or higher is " +
                          "required to set cursors");
       System.err.println("                (You're using version " +
-                         jdkVersionStr + ")");
+                         JDK_VERSION_STRING + ")");
       return;
     }
 
@@ -1423,7 +1423,7 @@ public class PApplet extends Applet
 
     } catch (NoSuchMethodError e) {
       System.out.println("cursor() is not available on " +
-                         nf((float)jdkVersion, 1, 1));
+                         nf((float)JDK_VERSION, 1, 1));
     } catch (IndexOutOfBoundsException e) {
       System.err.println("cursor() error: the hotspot " + hotspot +
                          " is out of bounds for the given image.");
@@ -1974,7 +1974,7 @@ public class PApplet extends Applet
 
 
   public PSound loadSound(String filename) {
-    if (PApplet.jdkVersion >= 1.3) {
+    if (PApplet.JDK_VERSION >= 1.3) {
       return new PSound2(this, openStream(filename));
     }
     return new PSound(this, openStream(filename));
