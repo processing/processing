@@ -116,6 +116,10 @@ sure if related. same for PATH and CLASSPATH.
 * some virus scanning software, particularly older NAV versions cause
 the trouble. 
 
+040925 
+X change how export.txt works
+X make p2 dist for amit
+
 _ remove fonts from distribution
 _ fix dist.sh for mac, pc, linux
 
