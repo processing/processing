@@ -49,10 +49,15 @@ public class PApplet extends Applet
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
-   * stored as a double.
+   * stored as a float.
+   * <P>
+   * Note that because this is stored as a float, the values may
+   * not be <EM>exactly</EM> 1.3 or 1.4. Instead, make sure you're
+   * comparing against 1.3f or 1.4f, which will have the same amount
+   * of error (i.e. 1.40000001). This could just be a double, but
+   * since Processing only uses floats, it's safer to do this,
+   * because there's no good way to specify a double with the preproc.
    */
-  //public static final double javaVersion =
-  //new Double(jdkVersionName).doubleValue();
   public static final float javaVersion =
     new Float(javaVersionName).floatValue();
 
@@ -128,9 +133,6 @@ public class PApplet extends Applet
    */
   public Dimension screen =
     Toolkit.getDefaultToolkit().getScreenSize();
-
-  //DisplayMode dm = device.getDisplayMode();
-  //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
 
   /**
    * A leech graphics object that is echoing all events.
@@ -368,7 +370,7 @@ public class PApplet extends Applet
   public void init() {
     // send tab keys through to the PApplet
     try {
-      if (javaVersion >= 1.4) {
+      if (javaVersion >= 1.4f) {
         //setFocusTraversalKeysEnabled(false);  // 1.4-only function
         Method defocus =
           Component.class.getMethod("setFocusTraversalKeysEnabled",
@@ -641,7 +643,7 @@ public class PApplet extends Applet
       size(iwidth, iheight, g.getClass().getName());
 
     } else {
-      if (PApplet.javaVersion >= 1.3) {
+      if (PApplet.javaVersion >= 1.3f) {
         try {
           Class c = Class.forName(JAVA2D);
           size(iwidth, iheight, JAVA2D);
@@ -679,6 +681,10 @@ public class PApplet extends Applet
         }
       }
     }
+
+    String openglError =
+      "Before using OpenGL, you must first select " +
+      "Import Library > opengl from the Sketch menu.";
 
     try {
       //if (renderer.equals(OPENGL)) {
@@ -720,12 +726,18 @@ public class PApplet extends Applet
     } catch (InvocationTargetException ite) {
       String msg = ite.getTargetException().getMessage();
       if (msg.indexOf("no jogl in java.library.path") != -1) {
-        throw new RuntimeException("Before using OpenGL, you must " +
-                                   "first select Import Library > " +
-                                   "opengl from the Sketch menu.");
-        //System.out.println("ite found: " + ite.getTargetException().getMessage());
+        throw new RuntimeException(openglError);
       } else {
         ite.getTargetException().printStackTrace();
+      }
+
+    } catch (ClassNotFoundException cnfe) {
+      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
+        throw new RuntimeException(openglError);
+      } else {
+        throw new RuntimeException("You need to use \"Import Library\" " +
+                                   "to add " + renderer +
+                                   " to your sketch.");
       }
 
     } catch (Exception e) {
@@ -954,6 +966,7 @@ public class PApplet extends Applet
                 setup();
                 //System.out.println("done attempting setup");
                 //System.out.println("out of try");
+                g.postSetup();  // FIXME
 
               } catch (RuntimeException e) {
                 //System.out.println("catching a cold " + e.getMessage());
@@ -1702,7 +1715,7 @@ public class PApplet extends Applet
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     //if (!isOneTwoOrBetter()) {
-    if (javaVersion < 1.2) {
+    if (javaVersion < 1.2f) {
       System.err.println("Java 1.2 or higher is required to use cursor()");
       System.err.println("(You're using version " + javaVersionName + ")");
       return;
@@ -2290,7 +2303,7 @@ public class PApplet extends Applet
 
 
   public PSound loadSound(String filename) {
-    if (PApplet.javaVersion >= 1.3) {
+    if (PApplet.javaVersion >= 1.3f) {
       return new PSound2(this, openStream(filename));
     }
     return new PSound(this, openStream(filename));
@@ -4650,6 +4663,9 @@ v              PApplet.this.stop();
           } else if (param.equals(ARGS_DISPLAY)) {
             int deviceIndex = Integer.parseInt(value) - 1;
 
+            //DisplayMode dm = device.getDisplayMode();
+            //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
+
             GraphicsEnvironment environment =
               GraphicsEnvironment.getLocalGraphicsEnvironment();
             GraphicsDevice devices[] = environment.getScreenDevices();
@@ -5025,6 +5041,12 @@ v              PApplet.this.stop();
   public void requestDisplay(PApplet parent) {
     if (recorder != null) recorder.requestDisplay(parent);
     g.requestDisplay(parent);
+  }
+
+
+  public void postSetup() {
+    if (recorder != null) recorder.postSetup();
+    g.postSetup();
   }
 
 
@@ -5688,6 +5710,31 @@ v              PApplet.this.stop();
   }
 
 
+  public void lightDirection(int num, float x, float y, float z) {
+    if (recorder != null) recorder.lightDirection(num, x, y, z);
+    g.lightDirection(num, x, y, z);
+  }
+
+
+  public void lightFalloff(int num, float constant,
+                           float linear, float quadratic) {
+    if (recorder != null) recorder.lightFalloff(num, constant, linear, quadratic);
+    g.lightFalloff(num, constant, linear, quadratic);
+  }
+
+
+  public void lightSpotAngle(int num, float spotAngle) {
+    if (recorder != null) recorder.lightSpotAngle(num, spotAngle);
+    g.lightSpotAngle(num, spotAngle);
+  }
+
+
+  public void lightSpotConcentration(int num, float concentration) {
+    if (recorder != null) recorder.lightSpotConcentration(num, concentration);
+    g.lightSpotConcentration(num, concentration);
+  }
+
+
   public void colorMode(int mode) {
     if (recorder != null) recorder.colorMode(mode);
     g.colorMode(mode);
@@ -5783,6 +5830,138 @@ v              PApplet.this.stop();
   public void fill(float x, float y, float z, float a) {
     if (recorder != null) recorder.fill(x, y, z, a);
     g.fill(x, y, z, a);
+  }
+
+
+  public void ambient(int rgb) {
+    if (recorder != null) recorder.ambient(rgb);
+    g.ambient(rgb);
+  }
+
+
+  public void ambient(float gray) {
+    if (recorder != null) recorder.ambient(gray);
+    g.ambient(gray);
+  }
+
+
+  public void ambient(float x, float y, float z) {
+    if (recorder != null) recorder.ambient(x, y, z);
+    g.ambient(x, y, z);
+  }
+
+
+  public void specular(int rgb) {
+    if (recorder != null) recorder.specular(rgb);
+    g.specular(rgb);
+  }
+
+
+  public void specular(float gray) {
+    if (recorder != null) recorder.specular(gray);
+    g.specular(gray);
+  }
+
+
+  public void specular(float gray, float alpha) {
+    if (recorder != null) recorder.specular(gray, alpha);
+    g.specular(gray, alpha);
+  }
+
+
+  public void specular(float x, float y, float z) {
+    if (recorder != null) recorder.specular(x, y, z);
+    g.specular(x, y, z);
+  }
+
+
+  public void specular(float x, float y, float z, float a) {
+    if (recorder != null) recorder.specular(x, y, z, a);
+    g.specular(x, y, z, a);
+  }
+
+
+  public void shininess(float shine) {
+    if (recorder != null) recorder.shininess(shine);
+    g.shininess(shine);
+  }
+
+
+  public void emissive(int rgb) {
+    if (recorder != null) recorder.emissive(rgb);
+    g.emissive(rgb);
+  }
+
+
+  public void emissive(float gray) {
+    if (recorder != null) recorder.emissive(gray);
+    g.emissive(gray);
+  }
+
+
+  public void emissive(float x, float y, float z ) {
+    if (recorder != null) recorder.emissive(x, y, z);
+    g.emissive(x, y, z);
+  }
+
+
+  public int createAmbientLight(int rgb) {
+    return g.createAmbientLight(rgb);
+  }
+
+
+  public int createAmbientLight(float gray) {
+    return g.createAmbientLight(gray);
+  }
+
+
+  public int createAmbientLight(float lr, float lg, float lb) {
+    return g.createAmbientLight(lr, lg, lb);
+  }
+
+
+  public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
+    return g.createDirectionalLight(rgb, nx, ny, nz);
+  }
+
+
+  public int createDirectionalLight(float gray, float nx, float ny, float nz) {
+    return g.createDirectionalLight(gray, nx, ny, nz);
+  }
+
+
+  public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
+    return g.createDirectionalLight(lr, lg, lb, nx, ny, nz);
+  }
+
+
+  public int createPointLight(int rgb, float x, float y, float z) {
+    return g.createPointLight(rgb, x, y, z);
+  }
+
+
+  public int createPointLight(float gray, float x, float y, float z) {
+    return g.createPointLight(gray, x, y, z);
+  }
+
+
+  public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
+    return g.createPointLight(lr, lg, lb, x, y, z);
+  }
+
+
+  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    return g.createSpotLight(rgb, x, y, z, nx, ny, nz, angle);
+  }
+
+
+  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    return g.createSpotLight(gray, x, y, z, nx, ny, nz, angle);
+  }
+
+
+  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    return g.createSpotLight(lr, lg, lb, x, y, z, nx, ny, nz, angle);
   }
 
 

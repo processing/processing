@@ -128,7 +128,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // internal color for setting/calculating
-  float calcR, calcG, calcB, calcA;
+  protected float calcR, calcG, calcB, calcA;
   int calcRi, calcGi, calcBi, calcAi;
   int calcColor;
   boolean calcAlpha;
@@ -445,6 +445,12 @@ public class PGraphics extends PImage implements PConstants {
     textMode = OBJECT;
   }
 
+
+  /**
+   * do anything that needs doing after setup before draw
+   */
+  public void postSetup() {
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -2099,6 +2105,27 @@ public class PGraphics extends PImage implements PConstants {
                                "can only be used with depth()");
   }
 
+  public void lightDirection(int num, float x, float y, float z) {
+    throw new RuntimeException("lightDirection() " +
+                               "can only be used with depth()");
+  }
+
+  public void lightFalloff(int num, float constant,
+                           float linear, float quadratic) {
+    throw new RuntimeException("lightFalloff() " +
+                               "can only be used with depth()");
+  }
+
+  public void lightSpotAngle(int num, float spotAngle) {
+    throw new RuntimeException("lightSpotAngle() " +
+                               "can only be used with depth()");
+  }
+
+  public void lightSpotConcentration(int num, float concentration) {
+    throw new RuntimeException("lightSpotConcentration() " +
+                               "can only be used with depth()");
+  }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -2426,6 +2453,140 @@ public class PGraphics extends PImage implements PConstants {
     calc_fill();
   }
 
+
+  //////////////////////////////////////////////////////////////
+
+
+  /*
+  public void diffuse(int rgb) {
+    throw new RuntimeException("diffuse() can only be used with depth()");
+  }
+
+  public void diffuse(float gray) {
+    throw new RuntimeException("diffuse() can only be used with depth()");
+  }
+
+
+  public void diffuse(float gray, float alpha) {
+    throw new RuntimeException("diffuse() can only be used with depth()");
+  }
+
+
+  public void diffuse(float x, float y, float z) {
+    throw new RuntimeException("diffuse() can only be used with depth()");
+  }
+
+
+  public void diffuse(float x, float y, float z, float a) {
+    throw new RuntimeException("diffuse() can only be used with depth()");
+  }
+  */
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void ambient(int rgb) {
+    throw new RuntimeException("ambient() can only be used with depth()");
+  }
+
+  public void ambient(float gray) {
+    throw new RuntimeException("ambient() can only be used with depth()");
+  }
+
+  public void ambient(float x, float y, float z) {
+    throw new RuntimeException("ambient() can only be used with depth()");
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  public void specular(int rgb) {
+    throw new RuntimeException("specular() can only be used with depth()");
+  }
+
+  public void specular(float gray) {
+    throw new RuntimeException("specular() can only be used with depth()");
+  }
+
+  public void specular(float gray, float alpha) {
+    throw new RuntimeException("specular() can only be used with depth()");
+  }
+
+  public void specular(float x, float y, float z) {
+    throw new RuntimeException("specular() can only be used with depth()");
+  }
+
+  public void specular(float x, float y, float z, float a) {
+    throw new RuntimeException("specular() can only be used with depth()");
+  }
+
+  public void shininess(float shine) {
+    throw new RuntimeException("shininess() can only be used with depth()");
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  public void emissive(int rgb) {
+    throw new RuntimeException("emissive() can only be used with depth()");
+  }
+
+  public void emissive(float gray) {
+    throw new RuntimeException("emissive() can only be used with depth()");
+  }
+
+  public void emissive(float x, float y, float z ) {
+    throw new RuntimeException("emissive() can only be used with depth()");
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  public int createAmbientLight(int rgb) {
+    throw new RuntimeException("createAmbientLight() can only be used with depth()");
+  }
+
+  public int createAmbientLight(float gray) {
+    throw new RuntimeException("createAmbientLight() can only be used with depth()");
+  }
+
+  public int createAmbientLight(float lr, float lg, float lb) {
+    throw new RuntimeException("createAmbientLight() can only be used with depth()");
+  }
+
+  public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
+    throw new RuntimeException("createDirectionalLight() can only be used with depth()");
+  }
+
+  public int createDirectionalLight(float gray, float nx, float ny, float nz) {
+    throw new RuntimeException("createDirectionalLight() can only be used with depth()");
+  }
+
+  public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
+    throw new RuntimeException("createDirectionalLight() can only be used with depth()");
+  }
+
+  public int createPointLight(int rgb, float x, float y, float z) {
+    throw new RuntimeException("createPointLight() can only be used with depth()");
+  }
+
+  public int createPointLight(float gray, float x, float y, float z) {
+    throw new RuntimeException("createPointLight() can only be used with depth()");
+  }
+
+  public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
+    throw new RuntimeException("createPointLight() can only be used with depth()");
+  }
+
+  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    throw new RuntimeException("createSpotLight() can only be used with depth()");
+  }
+
+  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    throw new RuntimeException("createSpotLight() can only be used with depth()");
+  }
+
+  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    throw new RuntimeException("createSpotLight() can only be used with depth()");
+  }
 
 
   //////////////////////////////////////////////////////////////

@@ -31,10 +31,30 @@ import java.awt.image.*;
 
 public class PGraphics3 extends PGraphics {
 
-  public float m03;
-  public float m13;
-  public float m20, m21, m22, m23;
-  public float m30, m31, m32, m33;
+  // modelview matrix
+  public PMatrix modelview = new PMatrix(RADIANS, MATRIX_STACK_DEPTH);
+
+  // ........................................................
+  // Lighting-related variables
+
+  // inverse model matrix
+  public PMatrix inverseModelview = new PMatrix(RADIANS, MATRIX_STACK_DEPTH);
+
+  // store the facing direction to speed rendering
+  boolean useBackfaceCulling = false;
+
+  // Material properties
+
+  public float ambientR, ambientG, ambientB;
+  public int ambientRi, ambientGi, ambientBi;
+
+  public float specularR, specularG, specularB, specularA;
+  public int specularRi, specularGi, specularBi, specularAi;
+
+  public float emissiveR, emissiveG, emissiveB;
+  public int emissiveRi, emissiveGi, emissiveBi;
+
+  public float shininess;
 
   // ........................................................
 
@@ -46,10 +66,20 @@ public class PGraphics3 extends PGraphics {
   public float cameraNear, cameraFar;
   public float cameraAspect;
 
-  public float p00, p01, p02, p03; // projection matrix
-  public float p10, p11, p12, p13;
-  public float p20, p21, p22, p23;
-  public float p30, p31, p32, p33;
+  // This is turned on at beginCamera, and off at endCamera
+  // Currently we don't support nested begin/end cameras.
+  // If we wanted to, this variable would have to become a stack.
+  public boolean manipulatingCamera;
+
+  // projection matrix
+  public PMatrix projection = new PMatrix(RADIANS);
+
+  // These two matrices always point to either the modelview
+  // or the inverseModelview, but they are swapped during
+  // when in camera maniuplation mode. That way camera transforms
+  // are automatically accumulated in inverse on the modelview matrix.
+  public PMatrix forwardTransform;
+  public PMatrix reverseTransform;
 
   // ........................................................
 
@@ -63,7 +93,9 @@ public class PGraphics3 extends PGraphics {
 
   /** Maximum lights by default is 8, which is arbitrary,
       but is the minimum defined by OpenGL */
-  static final int MAX_LIGHTS = 8;
+  protected static final int MAX_LIGHTS = 8;
+
+  int lightCount = 0;
 
   /** True if lights are enabled */
   public boolean lights;
@@ -71,15 +103,30 @@ public class PGraphics3 extends PGraphics {
   /** True if this light is enabled */
   public boolean light[];
 
+  /** Light types */
+  public int lightType[];
+
   /** Light positions */
   public float lightX[], lightY[], lightZ[];
 
-  /** Ambient colors for lights.
-      Internally these are stored as numbers between 0 and 1. */
-  public float lightAmbientR[], lightAmbientG[], lightAmbientB[];
+  /** Light direction */
+  public float lightNX[], lightNY[], lightNZ[];
+
+  /** Light falloff */
+  public float lightConstantFalloff[], lightLinearFalloff[], lightQuadraticFalloff[];
+
+  /** Light spot angle */
+  public float lightSpotAngle[];
+
+  /** Cosine of light spot angle */
+  public float lightCosSpotAngle[];
+
+  /** Light spot concentration */
+  public float lightSpotConcentration[];
 
   /** Diffuse colors for lights.
-      Internally these are stored as numbers between 0 and 1. */
+   *  For an ambient light, this will hold the ambient color.
+   *  Internally these are stored as numbers between 0 and 1. */
   public float lightDiffuseR[], lightDiffuseG[], lightDiffuseB[];
 
   /** Specular colors for lights.
@@ -155,7 +202,8 @@ public class PGraphics3 extends PGraphics {
    * Normals
    */
   public float normalX, normalY, normalZ;
-  //protected boolean normalChanged;
+  public int normalMode;
+  public int normalCount;
 
   // ........................................................
 
@@ -172,7 +220,10 @@ public class PGraphics3 extends PGraphics {
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
-  public PGraphics3() { }
+  public PGraphics3() {
+    forwardTransform = modelview;
+    reverseTransform = inverseModelview;
+  }
 
 
   /**
@@ -185,7 +236,10 @@ public class PGraphics3 extends PGraphics {
    * @param iheight viewport height
    */
   public PGraphics3(int iwidth, int iheight, PApplet parent) {
+    // super will add the listeners to the applet, and call resize()
     super(iwidth, iheight, parent);
+    forwardTransform = modelview;
+    reverseTransform = inverseModelview;
     //resize(iwidth, iheight);
   }
 
@@ -224,15 +278,22 @@ public class PGraphics3 extends PGraphics {
     lightX = new float[MAX_LIGHTS];
     lightY = new float[MAX_LIGHTS];
     lightZ = new float[MAX_LIGHTS];
-    lightAmbientR = new float[MAX_LIGHTS];
-    lightAmbientG = new float[MAX_LIGHTS];
-    lightAmbientB = new float[MAX_LIGHTS];
     lightDiffuseR = new float[MAX_LIGHTS];
     lightDiffuseG = new float[MAX_LIGHTS];
     lightDiffuseB = new float[MAX_LIGHTS];
     lightSpecularR = new float[MAX_LIGHTS];
     lightSpecularG = new float[MAX_LIGHTS];
     lightSpecularB = new float[MAX_LIGHTS];
+    lightType      = new int[MAX_LIGHTS];
+    lightNX        = new float[MAX_LIGHTS];
+    lightNY        = new float[MAX_LIGHTS];
+    lightNZ        = new float[MAX_LIGHTS];
+    lightConstantFalloff = new float[MAX_LIGHTS];
+    lightLinearFalloff   = new float[MAX_LIGHTS];
+    lightQuadraticFalloff = new float[MAX_LIGHTS];
+    lightSpotAngle        = new float[MAX_LIGHTS];
+    lightCosSpotAngle        = new float[MAX_LIGHTS];
+    lightSpotConcentration = new float[MAX_LIGHTS];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
@@ -265,9 +326,24 @@ public class PGraphics3 extends PGraphics {
     triangle = new PTriangle(this);
   }
 
+  protected void resetLights() {
+    //  reset lights
+    // This looks like a funny reset, but it's to make the most common
+    // case the easiest to attain even if the user chooses to do everything
+    // by hand.
+    lightCount = 0;
+    light[0] = false;
+    lightType[0] = AMBIENT;
+    for (int i = 1; i < MAX_LIGHTS; i++) {
+      light[i] = false;
+      lightType[i] = POINT;
+    }
+  }
 
   public void beginFrame() {
     super.beginFrame();
+
+    resetLights();
 
     // reset lines
     lineCount = 0;
@@ -307,11 +383,19 @@ public class PGraphics3 extends PGraphics {
     super.endFrame();
   }
 
+  public void angleMode(int mode) {
+    super.angleMode(mode);
+    modelview.angleMode(mode);
+    inverseModelview.angleMode(mode);
+    projection.angleMode(mode);
+  }
 
   public void defaults() {
-    //System.out.println("PGraphics3.defaults() top");
-
     super.defaults();
+
+    manipulatingCamera = false;
+    forwardTransform = modelview;
+    reverseTransform = inverseModelview;
 
     cameraMode(PERSPECTIVE);
 
@@ -322,12 +406,24 @@ public class PGraphics3 extends PGraphics {
     // better to leave this turned off by default
     noLights();
 
-    lightEnable(0);
-    lightAmbient(0, 0, 0, 0);
+    //lightEnable(0);
+    //lightAmbient(0, 0, 0, 0);
 
-    light(1, cameraX, cameraY, cameraZ, 255, 255, 255);
+    //light(1, cameraX, cameraY, cameraZ, 255, 255, 255);
+
+    emissive(0.0f);
+    specular(0.5f);
+    shininess(1.0f);
+
   }
 
+  /**
+   * do anything that needs doing after setup before draw
+   */
+  public void postSetup() {
+    modelview.storeResetValue();
+    inverseModelview.storeResetValue();
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -359,29 +455,41 @@ public class PGraphics3 extends PGraphics {
     textureImage = null;
 
     splineVertexCount = 0;
+    normalMode = AUTO_NORMAL;
+    normalCount = 0;
   }
 
 
   /**
-   * Sets the current normal. Mostly will apply to vertices
+   * Sets the current normal. Only applies
    * inside a beginShape/endShape block.
    */
   public void normal(float nx, float ny, float nz) {
-    // if drawing a shape and the normal hasn't changed yet,
-    // then need to set all the normal for each vertex so far
-    /*
-    if ((shape != 0) && !normalChanged) {
-      for (int i = vertex_start; i < vertex_end; i++) {
+    normalX = nx;
+    normalY = ny;
+    normalZ = nz;
+
+    // if drawing a shape and the normal hasn't been set yet,
+    // then we need to set the normals for each vertex so far
+    if (shape != 0) {
+      if (normalCount == 0) {
+        for (int i = vertex_start; i < vertexCount; i++) {
         vertices[i][NX] = normalX;
         vertices[i][NY] = normalY;
         vertices[i][NZ] = normalZ;
       }
-      normalChanged = true;
+      }
+
+      normalCount++;
+      if (normalCount == 1) {
+        // One normal per begin/end shape
+        normalMode = MANUAL_SHAPE_NORMAL;
+      }
+      else {
+        // a separate normal for each vertex
+        normalMode = MANUAL_VERTEX_NORMAL;
+      }
     }
-    */
-    normalX = nx;
-    normalY = ny;
-    normalZ = nz;
   }
 
 
@@ -466,6 +574,21 @@ public class PGraphics3 extends PGraphics {
       vertex[G] = fillG;
       vertex[B] = fillB;
       vertex[A] = fillA;
+
+      vertex[AR] = ambientR;
+      vertex[AG] = ambientG;
+      vertex[AB] = ambientB;
+
+      vertex[SPR] = specularR;
+      vertex[SPG] = specularG;
+      vertex[SPB] = specularB;
+      vertex[SPA] = specularA;
+
+      vertex[SHINE] = shininess;
+
+      vertex[ER] = emissiveR;
+      vertex[EG] = emissiveG;
+      vertex[EB] = emissiveB;
     }
 
     if (stroke) {
@@ -481,11 +604,9 @@ public class PGraphics3 extends PGraphics {
       vertex[V] = textureV;
     }
 
-    //if (normalChanged) {
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
-    //}
   }
 
 
@@ -870,15 +991,15 @@ public class PGraphics3 extends PGraphics {
 
 
     // ------------------------------------------------------------------
-    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO VIEW SPACE (X, Y, Z)
+    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO CAMERA SPACE (VX, VY, VZ)
 
     for (int i = vertex_start; i < vertex_end; i++) {
       float vertex[] = vertices[i];
 
-      vertex[VX] = m00*vertex[MX] + m01*vertex[MY] + m02*vertex[MZ] + m03;
-      vertex[VY] = m10*vertex[MX] + m11*vertex[MY] + m12*vertex[MZ] + m13;
-      vertex[VZ] = m20*vertex[MX] + m21*vertex[MY] + m22*vertex[MZ] + m23;
-      vertex[VW] = m30*vertex[MX] + m31*vertex[MY] + m32*vertex[MZ] + m33;
+      vertex[VX] = modelview.m00*vertex[MX] + modelview.m01*vertex[MY] + modelview.m02*vertex[MZ] + modelview.m03;
+      vertex[VY] = modelview.m10*vertex[MX] + modelview.m11*vertex[MY] + modelview.m12*vertex[MZ] + modelview.m13;
+      vertex[VZ] = modelview.m20*vertex[MX] + modelview.m21*vertex[MY] + modelview.m22*vertex[MZ] + modelview.m23;
+      vertex[VW] = modelview.m30*vertex[MX] + modelview.m31*vertex[MY] + modelview.m32*vertex[MZ] + modelview.m33;
     }
 
 
@@ -890,15 +1011,15 @@ public class PGraphics3 extends PGraphics {
 
 
     // ------------------------------------------------------------------
-    // POINTS FROM VIEW SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
+    // POINTS FROM CAMERA SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
 
     for (int i = vertex_start; i < vertex_end; i++) {
       float vx[] = vertices[i];
 
-      float ox = p00*vx[VX] + p01*vx[VY] + p02*vx[VZ] + p03*vx[VW];
-      float oy = p10*vx[VX] + p11*vx[VY] + p12*vx[VZ] + p13*vx[VW];
-      float oz = p20*vx[VX] + p21*vx[VY] + p22*vx[VZ] + p23*vx[VW];
-      float ow = p30*vx[VX] + p31*vx[VY] + p32*vx[VZ] + p33*vx[VW];
+      float ox = projection.m00*vx[VX] + projection.m01*vx[VY] + projection.m02*vx[VZ] + projection.m03*vx[VW];
+      float oy = projection.m10*vx[VX] + projection.m11*vx[VY] + projection.m12*vx[VZ] + projection.m13*vx[VW];
+      float oz = projection.m20*vx[VX] + projection.m21*vx[VY] + projection.m22*vx[VZ] + projection.m23*vx[VW];
+      float ow = projection.m30*vx[VX] + projection.m31*vx[VY] + projection.m32*vx[VZ] + projection.m33*vx[VW];
 
       if (ow != 0) {
         ox /= ow; oy /= ow; oz /= ow;
@@ -999,14 +1120,26 @@ public class PGraphics3 extends PGraphics {
 
       triangle.reset();
 
+      // This is only true when not textured. We really should pass SPECULAR
+      // straight through to triangle rendering.
+      float ar = min(1, a[R] + a[SPR]);
+      float ag = min(1, a[G] + a[SPG]);
+      float ab = min(1, a[B] + a[SPB]);
+      float br = min(1, b[R] + b[SPR]);
+      float bg = min(1, b[G] + b[SPG]);
+      float bb = min(1, b[B] + b[SPB]);
+      float cr = min(1, c[R] + c[SPR]);
+      float cg = min(1, c[G] + c[SPG]);
+      float cb = min(1, c[B] + c[SPB]);
+
       if (tex > -1 && textures[tex] != null) {
         triangle.setTexture(textures[tex]);
         triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
       }
 
-      triangle.setIntensities(a[R], a[G], a[B], a[A],
-                              b[R], b[G], b[B], b[A],
-                              c[R], c[G], c[B], c[A]);
+      triangle.setIntensities(ar, ag, ab, a[A],
+                              br, bg, bb, b[A],
+                              cr, cg, cb, c[A]);
 
       triangle.setVertices(a[X], a[Y], a[Z],
                            b[X], b[Y], b[Z],
@@ -1214,23 +1347,29 @@ public class PGraphics3 extends PGraphics {
     }
     */
 
+    // TODO: You only need to do any of this when you've got lighting and fill is on
+
+    // TODO: You only need to calculate these repeatedly when you've got VERTEX or AUTO normals
     for (int i = vertex_start; i < vertex_end; i++) {
       float v[] = vertices[i];
-      float nx = m00*v[NX] + m01*v[NY] + m02*v[NZ] + m03;
-      float ny = m10*v[NX] + m11*v[NY] + m12*v[NZ] + m13;
-      float nz = m20*v[NX] + m21*v[NY] + m22*v[NZ] + m23;
-      float nw = m30*v[NX] + m31*v[NY] + m32*v[NZ] + m33;
+      //    Multiply by TRANSPOSE!
+      // It's just one of those things. Model normals should be multiplied by the
+      // inverse transpose of the modelview matrix to get world normals.
+      float nx = inverseModelview.m00*v[NX] + inverseModelview.m10*v[NY] + inverseModelview.m20*v[NZ] + inverseModelview.m30;
+      float ny = inverseModelview.m01*v[NX] + inverseModelview.m11*v[NY] + inverseModelview.m21*v[NZ] + inverseModelview.m31;
+      float nz = inverseModelview.m02*v[NX] + inverseModelview.m12*v[NY] + inverseModelview.m22*v[NZ] + inverseModelview.m32;
+      float nw = inverseModelview.m03*v[NX] + inverseModelview.m13*v[NY] + inverseModelview.m23*v[NZ] + inverseModelview.m33;
 
+      v[NX] = nx;
+      v[NY] = ny;
+      v[NZ] = nz;
       if (nw != 0) {
         // divide by perspective coordinate
-        v[NX] = nx/nw; v[NY] = ny/nw; v[NZ] = nz/nw;
-      } else {
-        // can't do inline above
-        v[NX] = nx; v[NY] = ny; v[NZ] = nz;
+        v[NX] /= nw; v[NY] /= nw; v[NZ] /= nw;
       }
 
       float nlen = mag(v[NX], v[NY], v[NZ]);  // normalize
-      if (nlen != 0) {
+      if (nlen != 0 && nlen != ONE) {
         v[NX] /= nlen; v[NY] /= nlen; v[NZ] /= nlen;
       }
     }
@@ -1243,22 +1382,35 @@ public class PGraphics3 extends PGraphics {
     // have been set with calls to vertex() (no need to re-calculate here)
 
     if (lights) {
-      float f[] = vertices[vertex_start];
+      // The assumption here is that we are only using vertex normals
+      // I think face normals may be necessary to offer also. We'll see.
+      //float f[] = vertices[vertex_start];
 
       for (int i = vertex_start; i < vertex_end; i++) {
         float v[] = vertices[i];
-        if (fill) {
-          calc_lighting(v[R],  v[G], v[B],
-                        v[MX], v[MY], v[MZ],
-                        v[NX], v[NY], v[NZ], v, R);
+        float vx = v[VX];
+        float vy = v[VY];
+        float vz = v[VZ];
+        float vw = v[VW];
+        if (vw != 0 && vw != 1) {
+          vx /= vw;
+          vy /= vw;
+          vz /= vw;
         }
-        if (stroke) {
-          calc_lighting(v[SR], v[SG], v[SB],
-                        v[MX], v[MY], v[MZ],
-                        v[NX], v[NY], v[NZ], v, SR);
+
+        if (fill) {
+          calc_lighting(v[AR],  v[AG], v[AB], v[R], v[G], v[B], v[SPR],  v[SPG], v[SPB], v[ER],  v[EG], v[EB],
+                        vx, vy, vz,
+                        v[NX], v[NY], v[NZ], v[SHINE], v, R);
+        }
+        // We're not lighting strokes now.
+        /*if (stroke) {
+          calc_lighting(v[AR],  v[AG], v[AB], v[SR], v[SG], v[SB], v[SPR],  v[SPG], v[SPB], v[ER],  v[EG], v[EB],
+                        vx, vy, vz,
+                        v[NX], v[NY], v[NZ], v[SHINE], v, SR);
+        }*/
         }
       }
-    }
 
 
     // ------------------------------------------------------------------
@@ -1276,184 +1428,190 @@ public class PGraphics3 extends PGraphics {
     //}
   }
 
+  private float dot(float ax, float ay, float az, float bx, float by, float bz) {
+    return ax * bx + ay * by + az * bz;
+  }
+
 
   /**
-   * lighting calculation of final colour.
-   * for now, ip is being done in screen space (transformed),
-   * because the normals are also being transformed
+   * lighting calculation of final color.
+   * Assumptions:
+   * camera space == world space
+   * All coordinates are in world space, including normals
+   * Normals are pre-normalized
+   * Lights are in world-space too
+   * This vertex has not yet been lit. Value changes happen in place.
    *
    * @param  r        red component of object's colour
    * @param  g        green of object's colour
    * @param  b        blue of object's colour
-   * @param  ix       x coord of intersection
-   * @param  iy       y coord of intersection
-   * @param  iz       z coord of intersection
+   * @param  wx       x coord of world point
+   * @param  wy       y coord of world point
+   * @param  wz       z coord of world point
    * @param  nx       x coord of normal vector
-   * @param  ny       y coord of normal
-   * @param  nz       z coord of normal
+   * @param  ny       y coord of normal vector
+   * @param  nz       z coord of normal vector
    * @param  target   float array to store result
    * @param  toffset  starting index in target array
    */
-  private void calc_lighting(float r, float g, float b,
-                             float ix, float iy, float iz,
+  private void calc_lighting(float ar, float ag, float ab,
+                             float dr, float dg, float db,
+                             float sr, float sg, float sb,
+                             float er, float eg, float eb,
+                             float wx, float wy, float wz,
                              float nx, float ny, float nz,
+                             float shininess,
                              float target[], int toffset) {
     //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
 
     if (!lights) {
-      target[toffset + 0] = r;
-      target[toffset + 1] = g;
-      target[toffset + 2] = b;
+      target[toffset + 0] = min(1.0f, er+dr);
+      target[toffset + 1] = min(1.0f, eg+dg);
+      target[toffset + 2] = min(1.0f, eb+db);
       return;
     }
 
-    float nlen = mag(nx, ny, nz);
-    if (nlen != 0) {
-      nx /= nlen; ny /= nlen; nz /= nlen;
+    // Must pre-normalize normals
+    //float nlen = mag(nx, ny, nz);
+    //if (nlen != 0) {
+    //  nx /= nlen; ny /= nlen; nz /= nlen;
+    //}
+
+
+    // Since the camera space == world space,
+    // we can test for visibility by the dot product of
+    // the normal with the direction from pt. to eye.
+    float dir = dot(nx, ny, nz, -wx, -wy, -wz);
+    // If normal is away from camera, choose its opposite.
+    // If we add backface culling this, will be backfacing
+    // (but since this is per vertex, it's more complicated)
+    if (dir < 0) {
+      nx = -nx;
+      ny = -ny;
+      nz = -nz;
     }
 
-    // get direction based on inverse of perspective(?) matrix
-    //screenToWorld.getDirection(x + 0.5, y + 0.5, d);
+    // These two terms will sum the contributions from the various lights
+    float diffuse_r = 0;
+    float diffuse_g = 0;
+    float diffuse_b = 0;
 
-    /*
-      // q in screen space
-      double qs[] = new double[4];
-      qs[0] = x;
-      qs[1] = y;
-      qs[2] = 0;
-      qs[3] = 1;
+    float specular_r = 0;
+    float specular_g = 0;
+    float specular_b = 0;
 
-      // q in world space
-      // transformed 4 vector (homogenous coords)
-      double qw[] = new double[4];
-      multiply(mat, qs, qw);
-      dw.x = qw[0] * mat[3][2] - qw[3] * mat[0][2];
-      dw.y = qw[1] * mat[3][2] - qw[3] * mat[1][2];
-      dw.z = qw[2] * mat[3][2] - qw[3] * mat[2][2];
-    */
-    // multiply (inverse matrix) x (x y 0 1) = qw
-
-    /*
-      // CALC OF DIRECTION OF EYE TO SCREEN/OBJECT
-      // !!! don't delete this code.. used for specular
-      float qwx = i00*sx + i01*sy + i03;
-      float qwy = i10*sx + i11*sy + i13;
-      float qwz = i20*sx + i21*sy + i23;
-      float qww = i30*sx + i31*sy + i33;
-
-      float dwx = qwx*i32 - qww*i02;
-      float dwy = qwy*i32 - qww*i12;
-      float dwz = qwz*i32 - qww*i22;
-    */
-
-    //double kdr = material.kDiffuseReflection;   == 1
-    //double ksr = material.kSpecularReflection;  == 0
-    //double e = material.shadingExponent;        == 0
-    //RgbColor Cmat = material.color;             == r, g, b
-
-    // Direction of light i from ip, Li = L[i].position - ip
-    //Vector3 Li = new Vector3();
-
-    // Radiance of a light source, a color
-    //RgbColor Ii = new RgbColor();
-
-    // The halfway vector
-    //Vector3 Hi = new Vector3();
-
-    //float N_dot_Li, N_dot_Hi, N_dot_Hi_e;
-
-    float diffuse_r = 0; // = lights[0].r;  // sum in ambient term
-    float diffuse_g = 0; // = lights[0].g;
-    float diffuse_b = 0; // = lights[0].b;
-
-    //float specular_r = 0;
-    //float specular_g = 0;
-    //float specular_b = 0;
-
-    for (int i = 1; i < MAX_LIGHTS; i++) {
+    for (int i = 0; i < MAX_LIGHTS; i++) {
       if (!light[i]) continue;
 
-      //Light light = (Light) list.value;
-      //Ii = light.color;
+      float denom = lightConstantFalloff[i];
+      float spotTerm = 1;
 
-      //Vector3.subtract(light.position, ip, Li);
-      //Li.normalize();
-      // li is the vector of the light as it points towards the point
-      // at which it intersects the object
-      float lix = lightX[i] - ix;
-      float liy = lightY[i] - iy;
-      float liz = lightZ[i] - iz;
-      float m = mag(lix, liy, liz);
-      if (m != 0) {
-        lix /= m; liy /= m; liz /= m;
+      if (lightType[i] == AMBIENT) {
+        if (lightQuadraticFalloff[i] != 0 || lightLinearFalloff[i] != 0) {
+          // Falloff depends on distance
+          float distSq = mag(lightX[i] - wx, lightY[i] - wy, lightZ[i] - wz);
+          denom += lightQuadraticFalloff[i] * distSq + lightLinearFalloff[i] * (float)sqrt(distSq);
+        }
+        if (denom == 0) denom = 1;
+        diffuse_r += lightDiffuseR[i] * ar / denom;
+        diffuse_g += lightDiffuseG[i] * ag / denom;
+        diffuse_b += lightDiffuseB[i] * ab / denom;
       }
-      float n_dot_li = (nx*lix + ny*liy + nz*liz);
-      //N_dot_Li = Vector3.dotProduct(N, Li);
+      else {
+        //System.out.println("Light pos: " + lightX[i] + ", " + lightY[i] + ", " + lightZ[i]);
 
-      //if (N_dot_Li > 0.0) {
-      if (n_dot_li > 0) {
-        //System.out.println("n_dot_li = " + n_dot_li);
-        diffuse_r += lightDiffuseR[i] * n_dot_li;
-        diffuse_g += lightDiffuseG[i] * n_dot_li;
-        diffuse_b += lightDiffuseB[i] * n_dot_li;
+        //li is the vector from the vertex to the light
+        float lix, liy, liz;
+        float lightDir_dot_li = 0;
+        float n_dot_li = 0;
 
-        /*
-          // not doing any specular for now
-
-          //Vector3.subtract(light.position, direction, Hi);
-          float hix = lights[i].x - dwx;
-          float hiy = lights[i].y - dwy;
-          float hiz = lights[i].z - dwz;
-          float n_dot_hi = (nx*hix + ny*hiy + nz*hiz);
-          //N_dot_Hi = Vector3.dotProduct(N, Hi);
-          if (n_dot_hi > 0) {
-          //N_dot_Hi_e = pow(N_dot_Hi / Hi.getLength(), e);
-          // since e == 1 for now, this can be simplified
-          //float n_dot_hi_e = pow(n_dot_hi / sqrt(hix*hix + hiy*hiy + hiz*hiz), e);
-          float n_dot_hi_e = n_dot_hi /
-          sqrt(hix*hix + hiy*hiy + hiz*hiz);
-          specular_r += lights[i].r * n_dot_hi_e;
-          specular_g += lights[i].g * n_dot_hi_e;
-          specular_b += lights[i].b * n_dot_hi_e;
-          //specular_r += Ii.r * N_dot_Hi_e;
-          //specular_g += Ii.g * N_dot_Hi_e;
-          //specular_b += Ii.b * N_dot_Hi_e;
+        if (lightType[i] == DIRECTIONAL) {
+          lix = -lightNX[i];
+          liy = -lightNY[i];
+          liz = -lightNZ[i];
+          denom = 1;
+          n_dot_li = (nx*lix + ny*liy + nz*liz);
+          if (n_dot_li <= 0) {
+            continue;
           }
-        */
+        }
+        else { // Point or spot light
+          lix = lightX[i] - wx;
+          liy = lightY[i] - wy;
+          liz = lightZ[i] - wz;
+          // normalize
+          float distSq = mag(lix, liy, liz);
+          if (distSq != 0) {
+            lix /= distSq; liy /= distSq; liz /= distSq;
+          }
+          n_dot_li = (nx*lix + ny*liy + nz*liz);
+          if (n_dot_li <= 0) {
+            continue;
+          }
+
+          if (lightType[i] == SPOT) {
+            lightDir_dot_li = -(lightNX[i]*lix + lightNY[i]*liy + lightNZ[i]*liz);
+            if (lightDir_dot_li <= lightCosSpotAngle[i]) {
+              continue;
+            }
+            spotTerm = pow(lightDir_dot_li, lightSpotConcentration[i]);
+          }
+
+          if (lightQuadraticFalloff[i] != 0 || lightLinearFalloff[i] != 0) {
+            // Falloff depends on distance
+            denom += lightQuadraticFalloff[i] * distSq + lightLinearFalloff[i] * (float)sqrt(distSq);
+          }
+        }
+        // Directional, point, or spot light:
+
+        // We know n_dot_li > 0 from above "continues"
+        //if (n_dot_li > 0) {
+
+        if (denom == 0) denom = 1;
+        float mul = n_dot_li * spotTerm / denom;
+        diffuse_r += lightDiffuseR[i] * mul;
+        diffuse_g += lightDiffuseG[i] * mul;
+        diffuse_b += lightDiffuseB[i] * mul;
+
+        // SPECULAR
+
+        if ((sr > 0 || sg > 0 || sb > 0) && // If the material and light have a specular component.
+            (lightSpecularR[i] > 0 || lightSpecularG[i] > 0 || lightSpecularB[i] > 0) ) {
+
+          float vmag = mag(wx, wy, wz);
+          if (vmag != 0) {
+            wx /= vmag; wy /= vmag; wz /= vmag;
+          }
+          float sx = lix - wx;
+          float sy = liy - wy;
+          float sz = liz - wz;
+          vmag = mag(sx, sy, sz);
+          if (vmag != 0) {
+            sx /= vmag; sy /= vmag; sz /= vmag;
+          }
+          float s_dot_n = (sx*nx + sy*ny + sz*nz);
+          //if (Math.random() < 0.01) System.out.println("s_dot_n: " + s_dot_n);
+          if (s_dot_n > 0) {
+            s_dot_n = pow(s_dot_n, shininess);
+            mul = s_dot_n * spotTerm / denom;
+            specular_r += lightSpecularR[i] * mul;
+            specular_g += lightSpecularG[i] * mul;
+            specular_b += lightSpecularB[i] * mul;
+          }
+
+        }
       }
     }
-    // specular reflection (ksr) is set to zero, so simplify
-    //I.r = (kdr * Cmat.r * diffuse_r) + (ksr * specular_r);
-    //I.g = (kdr * Cmat.g * diffuse_g) + (ksr * specular_g);
-    //I.b = (kdr * Cmat.b * diffuse_b) + (ksr * specular_b);
 
-    //System.out.println(r + " " + g + " " + b + "  " +
-    //               diffuse_r + " " + diffuse_g + " " + diffuse_b);
+    target[toffset+0] = min(1, er + dr * diffuse_r);
+    target[toffset+1] = min(1, eg + dg * diffuse_g);
+    target[toffset+2] = min(1, eb + db * diffuse_b);
 
-    // TODO ** this sucks! **
-    //System.out.println(lights[0].r + " " + lights[0].g + " " +
-    //               lights[0].b);
+    target[SPR] = min(1, sr * specular_r);
+    target[SPG] = min(1, sg * specular_g);
+    target[SPB] = min(1, sb * specular_b);
 
-    target[toffset+0] = lightAmbientR[0] + (r * diffuse_r);
-    target[toffset+1] = lightAmbientG[0] + (g * diffuse_g);
-    target[toffset+2] = lightAmbientB[0] + (b * diffuse_b);
-
-    if (target[toffset+0] > ONE) target[toffset+0] = ONE;
-    if (target[toffset+1] > ONE) target[toffset+1] = ONE;
-    if (target[toffset+2] > ONE) target[toffset+2] = ONE;
-
-    //if (calc1) {
-    //calcR1 = lights[0].r + (r * diffuse_r); if (calcR1 > 1) calcR1 = 1;
-    //calcG1 = lights[0].g + (g * diffuse_g); if (calcG1 > 1) calcG1 = 1;
-    //calcB1 = lights[0].b + (b * diffuse_b); if (calcB1 > 1) calcB1 = 1;
-
-    //System.out.println(255*calcR1 + " " + 255*calcG1 + " " + 255*calcB1);
-    //} else {
-    //calcR2 = lights[0].r + (r * diffuse_r); if (calcR2 > 1) calcR2 = 1;
-    //calcG2 = lights[0].g + (g * diffuse_g); if (calcG2 > 1) calcG2 = 1;
-    //calcB2 = lights[0].b + (b * diffuse_b); if (calcB2 > 1) calcB2 = 1;
-    //System.out.println(255*calcR2 + " " + 255*calcG2 + " " + 255*calcB2);
-    //}
+    return;
   }
 
 
@@ -1523,6 +1681,7 @@ public class PGraphics3 extends PGraphics {
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     beginShape(TRIANGLES);
+    normal(0, 0, 1);
     vertex(x1, y1);
     vertex(x2, y2);
     vertex(x3, y3);
@@ -1533,6 +1692,7 @@ public class PGraphics3 extends PGraphics {
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     beginShape(QUADS);
+    normal(0, 0, 1);
     vertex(x1, y1);
     vertex(x2, y2);
     vertex(x3, y3);
@@ -1592,6 +1752,7 @@ public class PGraphics3 extends PGraphics {
       stroke = false;
 
       beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
       vertex(centerX, centerY);
       for (int i = 0; i < cAccuracy; i++) {
         vertex(centerX + cosLUT[(int) val] * hradius,
@@ -1715,36 +1876,42 @@ public class PGraphics3 extends PGraphics {
     beginShape(QUADS);
 
     // front
+    normal(0, 0, 1);
     vertex(x1, y1, z1);
     vertex(x2, y1, z1);
     vertex(x2, y2, z1);
     vertex(x1, y2, z1);
 
     // right
+    normal(1, 0, 0);
     vertex(x2, y1, z1);
     vertex(x2, y1, z2);
     vertex(x2, y2, z2);
     vertex(x2, y2, z1);
 
     // back
+    normal(0, 0, -1);
     vertex(x2, y1, z2);
     vertex(x1, y1, z2);
     vertex(x1, y2, z2);
     vertex(x2, y2, z2);
 
     // left
+    normal(-1, 0, 0);
     vertex(x1, y1, z2);
     vertex(x1, y1, z1);
     vertex(x1, y2, z1);
     vertex(x1, y2, z2);
 
     // top
+    normal(0, 1, 0);
     vertex(x1, y1, z2);
     vertex(x2, y1, z2);
     vertex(x2, y1, z1);
     vertex(x1, y1, z1);
 
     // bottom
+    normal(0, -1, 0);
     vertex(x1, y2, z1);
     vertex(x2, y2, z1);
     vertex(x2, y2, z2);
@@ -1848,10 +2015,14 @@ public class PGraphics3 extends PGraphics {
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetail; i++) {
+      normal(0, -1, 0);
       vertex(0, -1, 0);
+      normal(sphereX[i], sphereY[i], sphereZ[i]);
       vertex(sphereX[i], sphereY[i], sphereZ[i]);
     }
+    normal(0, -1, 0);
     vertex(0, -1, 0);
+    normal(sphereX[0], sphereY[0], sphereZ[0]);
     vertex(sphereX[0], sphereY[0], sphereZ[0]);
     endShape();
 
@@ -1863,13 +2034,17 @@ public class PGraphics3 extends PGraphics {
       v2=voff;
       beginShape(TRIANGLE_STRIP);
       for (int j = 0; j < sphereDetail; j++) {
+        normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
         vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
+        normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
         vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
       }
       // close each ring
       v1=v11;
       v2=voff;
+      normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
       vertex(sphereX[v1], sphereY[v1], sphereZ[v1]);
+      normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
       vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
       endShape();
     }
@@ -1878,11 +2053,15 @@ public class PGraphics3 extends PGraphics {
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetail; i++) {
       v2 = voff + i;
-      vertex(0, 1, 0);
+      normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
       vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
-    }
+      normal(0, 1, 0);
     vertex(0, 1, 0);
+    }
+    normal(sphereX[voff], sphereY[voff], sphereZ[voff]);
     vertex(sphereX[voff], sphereY[voff], sphereZ[voff]);
+    normal(0, 1, 0);
+    vertex(0, 1, 0);
     endShape();
     pop();
 
@@ -2014,10 +2193,8 @@ public class PGraphics3 extends PGraphics {
 
 
   public void translate(float tx, float ty, float tz) {
-    m03 += tx*m00 + ty*m01 + tz*m02;
-    m13 += tx*m10 + ty*m11 + tz*m12;
-    m23 += tx*m20 + ty*m21 + tz*m22;
-    m33 += tx*m30 + ty*m31 + tz*m32;
+    forwardTransform.translate(tx, ty, tz);
+    reverseTransform.invTranslate(tx, ty, tz);
   }
 
 
@@ -2036,16 +2213,14 @@ public class PGraphics3 extends PGraphics {
   //     putting the multMatrix code here and removing uneccessary terms
 
   public void rotateX(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
-    applyMatrix(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
+    forwardTransform.rotateX(angle);
+    reverseTransform.invRotateX(angle);
   }
 
 
   public void rotateY(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
-    applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
+    forwardTransform.rotateY(angle);
+    reverseTransform.invRotateY(angle);
   }
 
 
@@ -2057,9 +2232,8 @@ public class PGraphics3 extends PGraphics {
    * 2D rotate in the XY plane.
    */
   public void rotateZ(float angle) {
-    float c = cos(angle);
-    float s = sin(angle);
-    applyMatrix(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    forwardTransform.rotateZ(angle);
+    reverseTransform.invRotateZ(angle);
   }
 
 
@@ -2069,22 +2243,8 @@ public class PGraphics3 extends PGraphics {
    * unless angleMode is set to RADIANS.
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    // should be in radians (i think), instead of degrees (gl uses degrees)
-    // based on 15-463 code, but similar to opengl ref p.443
-
-    //modelMatrixIsIdentity = false;
-    //dimensions = 3;
-
-    // TODO should make sure this vector is normalized
-
-    float c = cos(angle);
-    float s = sin(angle);
-    float t = 1.0f - c;
-
-    applyMatrix((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
-                (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
-                (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
-                0, 0, 0, 1);
+    forwardTransform.rotate(angle, v0, v1, v2);
+    reverseTransform.invRotate(angle, v0, v1, v2);
   }
 
 
@@ -2092,7 +2252,7 @@ public class PGraphics3 extends PGraphics {
    * Same as scale(s, s, s);
    */
   public void scale(float s) {
-    applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
+    scale(s, s, s);
   }
 
 
@@ -2102,7 +2262,7 @@ public class PGraphics3 extends PGraphics {
    * Equivalent to scale(sx, sy, 1);
    */
   public void scale(float sx, float sy) {
-    applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    scale(sx, sy, 1);
   }
 
 
@@ -2110,7 +2270,8 @@ public class PGraphics3 extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float x, float y, float z) {
-    applyMatrix(x, 0, 0, 0,  0, y, 0, 0,  0, 0, z, 0,  0, 0, 0, 1);
+    forwardTransform.scale(x, y, z);
+    reverseTransform.invScale(x, y, z);
   }
 
 
@@ -2121,80 +2282,59 @@ public class PGraphics3 extends PGraphics {
 
 
   public void push() {
-    if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
+    if (!modelview.push()) {
       throw new RuntimeException("too many calls to push()");
-      //message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
-      //return;
     }
-    float mat[] = matrixStack[matrixStackDepth];
-    mat[ 0] = m00; mat[ 1] = m01; mat[ 2] = m02; mat[ 3] = m03;
-    mat[ 4] = m10; mat[ 5] = m11; mat[ 6] = m12; mat[ 7] = m13;
-    mat[ 8] = m20; mat[ 9] = m21; mat[10] = m22; mat[11] = m23;
-    mat[12] = m30; mat[13] = m31; mat[14] = m32; mat[15] = m33;
-    matrixStackDepth++;
+    // Do this to the inverse regardless of the lights to keep stack pointers
+    // in sync
+    inverseModelview.push();
   }
 
 
   public void pop() {
-    if (matrixStackDepth == 0) {
+    if (!modelview.pop()) {
       throw new RuntimeException("too many calls to pop() " +
                                  "(and not enough to push)");
-      //message(COMPLAINT, "matrix stack underflow, to many popmatrix");
-      //return;
     }
-    matrixStackDepth--;
-    float mat[] = matrixStack[matrixStackDepth];
-    m00 = mat[ 0]; m01 = mat[ 1]; m02 = mat[ 2]; m03 = mat[ 3];
-    m10 = mat[ 4]; m11 = mat[ 5]; m12 = mat[ 6]; m13 = mat[ 7];
-    m20 = mat[ 8]; m21 = mat[ 9]; m22 = mat[10]; m23 = mat[11];
-    m30 = mat[12]; m31 = mat[13]; m32 = mat[14]; m33 = mat[15];
+    //  Do this to the inverse regardless of the lights to keep stack pointers
+    // in sync
+    inverseModelview.pop();
   }
 
+
+  public void resetProjection() {
+    projection.reset();
+  }
 
   /**
    * Load identity as the transform/model matrix.
    * Same as glLoadIdentity().
    */
   public void resetMatrix() {
-    m00 = 1; m01 = 0; m02 = 0; m03 = 0;
-    m10 = 0; m11 = 1; m12 = 0; m13 = 0;
-    m20 = 0; m21 = 0; m22 = 1; m23 = 0;
-    m30 = 0; m31 = 0; m32 = 0; m33 = 1;
+    forwardTransform.reset();
+    reverseTransform.reset();
   }
 
 
   /**
    * Apply a 4x4 transformation matrix. Same as glMultMatrix().
+   * This call will be slow because it will try to calculate the
+   * inverse of the transform. So avoid it whenever possible.
    */
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
 
-    float r00 = m00*n00 + m01*n10 + m02*n20 + m03*n30;
-    float r01 = m00*n01 + m01*n11 + m02*n21 + m03*n31;
-    float r02 = m00*n02 + m01*n12 + m02*n22 + m03*n32;
-    float r03 = m00*n03 + m01*n13 + m02*n23 + m03*n33;
+    forwardTransform.applyMatrix(n00, n01, n02, n03,
+                          n10, n11, n12, n13,
+                          n20, n21, n22, n23,
+                          n30, n31, n32, n33);
 
-    float r10 = m10*n00 + m11*n10 + m12*n20 + m13*n30;
-    float r11 = m10*n01 + m11*n11 + m12*n21 + m13*n31;
-    float r12 = m10*n02 + m11*n12 + m12*n22 + m13*n32;
-    float r13 = m10*n03 + m11*n13 + m12*n23 + m13*n33;
-
-    float r20 = m20*n00 + m21*n10 + m22*n20 + m23*n30;
-    float r21 = m20*n01 + m21*n11 + m22*n21 + m23*n31;
-    float r22 = m20*n02 + m21*n12 + m22*n22 + m23*n32;
-    float r23 = m20*n03 + m21*n13 + m22*n23 + m23*n33;
-
-    float r30 = m30*n00 + m31*n10 + m32*n20 + m33*n30;
-    float r31 = m30*n01 + m31*n11 + m32*n21 + m33*n31;
-    float r32 = m30*n02 + m31*n12 + m32*n22 + m33*n32;
-    float r33 = m30*n03 + m31*n13 + m32*n23 + m33*n33;
-
-    m00 = r00; m01 = r01; m02 = r02; m03 = r03;
-    m10 = r10; m11 = r11; m12 = r12; m13 = r13;
-    m20 = r20; m21 = r21; m22 = r22; m23 = r23;
-    m30 = r30; m31 = r31; m32 = r32; m33 = r33;
+    reverseTransform.invApplyMatrix(n00, n01, n02, n03,
+                                      n10, n11, n12, n13,
+                                      n20, n21, n22, n23,
+                                      n30, n31, n32, n33);
   }
 
 
@@ -2203,44 +2343,7 @@ public class PGraphics3 extends PGraphics {
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    int big = (int) Math.abs(max(max(max(max(abs(m00), abs(m01)),
-                                         max(abs(m02), abs(m03))),
-                                     max(max(abs(m10), abs(m11)),
-                                         max(abs(m12), abs(m13)))),
-                                 max(max(max(abs(m20), abs(m21)),
-                                         max(abs(m22), abs(m23))),
-                                     max(max(abs(m30), abs(m31)),
-                                         max(abs(m32), abs(m33))))));
-
-    // avoid infinite loop
-    if (Float.isNaN(big) || Float.isInfinite(big)) {
-      big = 1000000; // set to something arbitrary
-    }
-
-    int d = 1;
-    while ((big /= 10) != 0) d++;  // cheap log()
-
-    System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                       PApplet.nfs(m01, d, 4) + " " +
-                       PApplet.nfs(m02, d, 4) + " " +
-                       PApplet.nfs(m03, d, 4));
-
-    System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                       PApplet.nfs(m11, d, 4) + " " +
-                       PApplet.nfs(m12, d, 4) + " " +
-                       PApplet.nfs(m13, d, 4));
-
-    System.out.println(PApplet.nfs(m20, d, 4) + " " +
-                       PApplet.nfs(m21, d, 4) + " " +
-                       PApplet.nfs(m22, d, 4) + " " +
-                       PApplet.nfs(m23, d, 4));
-
-    System.out.println(PApplet.nfs(m30, d, 4) + " " +
-                       PApplet.nfs(m31, d, 4) + " " +
-                       PApplet.nfs(m32, d, 4) + " " +
-                       PApplet.nfs(m33, d, 4));
-
-    System.out.println();
+    modelview.print();
   }
 
 
@@ -2260,26 +2363,23 @@ public class PGraphics3 extends PGraphics {
    * Note that this setting gets nuked if resize() is called.
    */
   public void cameraMode(int mode) {
+    resetProjection();
+    modelview.identity();
+    inverseModelview.identity();
+
     if (mode == PERSPECTIVE) {
       //System.out.println("setting camera to perspective");
       //System.out.println("  " + cameraFOV + " " + cameraAspect);
-      beginCamera();
-      resetMatrix();
       perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
       lookat(cameraX, cameraY, cameraZ,
              cameraX, cameraY, 0,
              0, 1, 0);
-      endCamera();
 
     } else if (mode == ORTHOGRAPHIC) {
-      beginCamera();
-      resetMatrix();
       ortho(0, width, 0, height, -10, 10);
-      endCamera();
     }
 
-    cameraMode = mode;
-    //System.out.println("camera mode is now " + cameraMode);
+    cameraMode = mode;  // this doesn't do much
   }
 
 
@@ -2288,12 +2388,22 @@ public class PGraphics3 extends PGraphics {
    * the current transformation matrix). This means applyMatrix,
    * resetMatrix, etc. will affect the camera.
    *
-   * You'll need to call resetMatrix() if you want to
-   * completely change the camera's settings.
+   * This loads identity into the projection matrix, so if you want
+   * to start with a resonable default projection, you may want to
+   * call cameraMode(PERSPECTIVE); or something between begin and end.
    */
   public void beginCamera() {
-    // this will be written over by cameraMode() if necessary
+    if (manipulatingCamera) {
+      throw new RuntimeException("cannot call beginCamera while already "+
+                                 "in camera manipulation mode");
+    }
+    else {
+      projection.identity();
+      manipulatingCamera = true;
+      forwardTransform = inverseModelview;
+      reverseTransform = modelview;
     cameraMode = CUSTOM;
+  }
   }
 
 
@@ -2306,11 +2416,15 @@ public class PGraphics3 extends PGraphics {
    * translate() to your scene.
    */
   public void endCamera() {
-    p00 = m00; p01 = m01; p02 = m02; p03 = m03;
-    p10 = m10; p11 = m11; p12 = m12; p13 = m13;
-    p20 = m20; p21 = m21; p22 = m22; p23 = m23;
-    p30 = m30; p31 = m31; p32 = m32; p33 = m33;
-    resetMatrix();
+    if (!manipulatingCamera) {
+      throw new RuntimeException("cannot call endCamera while not "+
+                                 "in camera manipulation mode");
+    }
+    else {
+      manipulatingCamera = false;
+      forwardTransform = modelview;
+      reverseTransform = inverseModelview;
+    }
   }
 
   /**
@@ -2327,7 +2441,7 @@ public class PGraphics3 extends PGraphics {
     float ty = -(top + bottom) / (top - bottom);
     float tz = -(far + near) / (far - near);
 
-    applyMatrix(x, 0, 0, tx,
+    projection.applyMatrix(x, 0, 0, tx,
                 0, y, 0, ty,
                 0, 0, z, tz,
                 0, 0, 0, 1);
@@ -2358,7 +2472,7 @@ public class PGraphics3 extends PGraphics {
                       float top, float znear, float zfar) {
     //System.out.println("frustum: " + left + " " + right + "  " +
     //               bottom + " " + top + "  " + znear + " " + zfar);
-    applyMatrix((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
+    projection.applyMatrix((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
                 0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
                 0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
                 0, 0, -1, 0);
@@ -2368,6 +2482,9 @@ public class PGraphics3 extends PGraphics {
   /**
    * Same as gluLookat(). Implementation based on Mesa's glu.c
    */
+
+  // TODO: deal with this. Lookat must ALWAYS apply to the modelview
+  // regardless of the camera manipulation mode.
   public void lookat(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
@@ -2408,11 +2525,17 @@ public class PGraphics3 extends PGraphics {
       y2 /= mag;
     }
 
-    applyMatrix(x0, x1, x2, 0,
+    modelview.invApplyMatrix(x0, x1, x2, 0,
+                             y0, y1, y2, 0,
+                             z0, z1, z2, 0,
+                             0,  0,  0,  1);
+    modelview.invTranslate(eyeX, eyeY, eyeZ);
+
+    inverseModelview.applyMatrix(x0, x1, x2, 0,
                 y0, y1, y2, 0,
                 z0, z1, z2, 0,
                 0,  0,  0,  1);
-    translate(-eyeX, -eyeY, -eyeZ);
+    inverseModelview.translate(eyeX, eyeY, eyeZ);
   }
 
 
@@ -2421,44 +2544,7 @@ public class PGraphics3 extends PGraphics {
    * Print the current camera (or "perspective") matrix.
    */
   public void printCamera() {
-    int big = (int) Math.abs(max(max(max(max(abs(p00), abs(p01)),
-                                         max(abs(p02), abs(p03))),
-                                     max(max(abs(p10), abs(p11)),
-                                         max(abs(p12), abs(p13)))),
-                                 max(max(max(abs(p20), abs(p21)),
-                                         max(abs(p22), abs(p23))),
-                                     max(max(abs(p30), abs(p31)),
-                                         max(abs(p32), abs(p33))))));
-
-    // avoid infinite loop
-    if (Float.isNaN(big) || Float.isInfinite(big)) {
-      big = 1000000; // set to something arbitrary
-    }
-
-    int d = 1;
-    while ((big /= 10) != 0) d++;  // cheap log()
-
-    System.out.println(PApplet.nfs(p00, d, 4) + " " +
-                       PApplet.nfs(p01, d, 4) + " " +
-                       PApplet.nfs(p02, d, 4) + " " +
-                       PApplet.nfs(p03, d, 4));
-
-    System.out.println(PApplet.nfs(p10, d, 4) + " " +
-                       PApplet.nfs(p11, d, 4) + " " +
-                       PApplet.nfs(p12, d, 4) + " " +
-                       PApplet.nfs(p13, d, 4));
-
-    System.out.println(PApplet.nfs(p20, d, 4) + " " +
-                       PApplet.nfs(p21, d, 4) + " " +
-                       PApplet.nfs(p22, d, 4) + " " +
-                       PApplet.nfs(p23, d, 4));
-
-    System.out.println(PApplet.nfs(p30, d, 4) + " " +
-                       PApplet.nfs(p31, d, 4) + " " +
-                       PApplet.nfs(p32, d, 4) + " " +
-                       PApplet.nfs(p33, d, 4));
-
-    System.out.println();
+    projection.print();
   }
 
 
@@ -2479,13 +2565,13 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenX(float x, float y, float z) {
-    float ax = m00*x + m01*y + m02*z + m03;
-    float ay = m10*x + m11*y + m12*z + m13;
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
+    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
 
-    float ox = p00*ax + p01*ay + p02*az + p03*aw;
-    float ow = p30*ax + p31*ay + p32*az + p33*aw;
+    float ox = projection.m00*ax + projection.m01*ay + projection.m02*az + projection.m03*aw;
+    float ow = projection.m30*ax + projection.m31*ay + projection.m32*az + projection.m33*aw;
 
     if (ow != 0) ox /= ow;
     return width * (1 + ox) / 2.0f;
@@ -2493,13 +2579,13 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenY(float x, float y, float z) {
-    float ax = m00*x + m01*y + m02*z + m03;
-    float ay = m10*x + m11*y + m12*z + m13;
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
+    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
 
-    float oy = p10*ax + p11*ay + p12*az + p13*aw;
-    float ow = p30*ax + p31*ay + p32*az + p33*aw;
+    float oy = projection.m10*ax + projection.m11*ay + projection.m12*az + projection.m13*aw;
+    float ow = projection.m30*ax + projection.m31*ay + projection.m32*az + projection.m33*aw;
 
     if (ow != 0) oy /= ow;
     return height * (1 + oy) / 2.0f;
@@ -2507,13 +2593,13 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenZ(float x, float y, float z) {
-    float ax = m00*x + m01*y + m02*z + m03;
-    float ay = m10*x + m11*y + m12*z + m13;
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
+    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
 
-    float oz = p20*ax + p21*ay + p22*az + p23*aw;
-    float ow = p30*ax + p31*ay + p32*az + p33*aw;
+    float oz = projection.m20*ax + projection.m21*ay + projection.m22*az + projection.m23*aw;
+    float ow = projection.m30*ax + projection.m31*ay + projection.m32*az + projection.m33*aw;
 
     if (ow != 0) oz /= ow;
     return (oz + 1) / 2.0f;
@@ -2521,22 +2607,22 @@ public class PGraphics3 extends PGraphics {
 
 
   public float objectX(float x, float y, float z) {
-    float ax = m00*x + m01*y + m02*z + m03;
-    float aw = m30*x + m31*y + m32*z + m33;
+    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? ax / aw : ax;
   }
 
 
   public float objectY(float x, float y, float z) {
-    float ay = m10*x + m11*y + m12*z + m13;
-    float aw = m30*x + m31*y + m32*z + m33;
+    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? ay / aw : ay;
   }
 
 
   public float objectZ(float x, float y, float z) {
-    float az = m20*x + m21*y + m22*z + m23;
-    float aw = m30*x + m31*y + m32*z + m33;
+    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? az / aw : az;
   }
 
@@ -2628,16 +2714,16 @@ public class PGraphics3 extends PGraphics {
 
 
   public void lightPosition(int num, float x, float y, float z) {
-    lightX[num] = x;
-    lightY[num] = y;
-    lightZ[num] = z;
+    lightX[num] = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    lightY[num] = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    lightZ[num] = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
   }
 
   public void lightAmbient(int num, float x, float y, float z) {
     calc_color(x, y, z);
-    lightAmbientR[num] = calcR;
-    lightAmbientG[num] = calcG;
-    lightAmbientB[num] = calcB;
+    lightDiffuseR[num] = calcR;
+    lightDiffuseG[num] = calcG;
+    lightDiffuseB[num] = calcB;
   }
 
   public void lightDiffuse(int num, float x, float y, float z) {
@@ -2654,7 +2740,33 @@ public class PGraphics3 extends PGraphics {
     lightSpecularB[num] = calcB;
   }
 
+  public void lightDirection(int num, float x, float y, float z) {
+    // Multiply by inverse transpose.
+    lightNX[num] = inverseModelview.m00*x + inverseModelview.m10*y + inverseModelview.m20*z + inverseModelview.m30;
+    lightNY[num] = inverseModelview.m01*x + inverseModelview.m11*y + inverseModelview.m21*z + inverseModelview.m31;
+    lightNZ[num] = inverseModelview.m02*x + inverseModelview.m12*y + inverseModelview.m22*z + inverseModelview.m32;
+    float norm = mag(lightNX[num], lightNY[num], lightNZ[num]);
+    if (norm == 0 || norm == 1) return;
+    lightNX[num] /= norm;
+    lightNY[num] /= norm;
+    lightNZ[num] /= norm;
+  }
 
+
+  public void lightFalloff(int num, float constant, float linear, float quadratic) {
+    lightConstantFalloff[num] = constant;
+    lightLinearFalloff[num] = linear;
+    lightQuadraticFalloff[num] = quadratic;
+  }
+
+  public void lightSpotAngle(int num, float spotAngle) {
+    lightSpotAngle[num] = spotAngle;
+    lightCosSpotAngle[num] = max(0, cos(spotAngle));
+  }
+
+  public void lightSpotConcentration(int num, float concentration) {
+    lightSpotConcentration[num] = concentration;
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -2676,6 +2788,372 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+
+  public void fill(int rgb) {
+    super.fill(rgb);
+    calc_ambient();
+  }
+
+  public void fill(float gray) {
+    super.fill(gray);
+    calc_ambient();
+  }
+
+
+  public void fill(float gray, float alpha) {
+    super.fill(gray, alpha);
+    calc_ambient();
+  }
+
+
+  public void fill(float x, float y, float z) {
+    super.fill(x, y, z);
+    calc_ambient();
+  }
+
+
+  public void fill(float x, float y, float z, float a) {
+    super.fill(x, y, z, a);
+    calc_ambient();
+  }
+
+  private void calc_ambient() {
+    ambientR = calcR;
+    ambientG = calcG;
+    ambientB = calcB;
+    ambientRi = calcRi;
+    ambientGi = calcGi;
+    ambientBi = calcBi;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  /*
+  public void diffuse(int rgb) {
+    super.fill(rgb);
+  }
+
+  public void diffuse(float gray) {
+    super.fill(gray);
+  }
+
+
+  public void diffuse(float gray, float alpha) {
+    super.fill(gray, alpha);
+  }
+
+
+  public void diffuse(float x, float y, float z) {
+    super.fill(x, y, z);
+  }
+
+
+  public void diffuse(float x, float y, float z, float a) {
+    super.fill(x, y, z, a);
+  }
+  */
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void ambient(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      ambient((float) rgb);
+
+    } else {
+      calc_color_from(rgb);
+      calc_ambient();
+    }
+  }
+
+  public void ambient(float gray) {
+    calc_color(gray);
+    calc_ambient();
+  }
+
+  public void ambient(float x, float y, float z) {
+    calc_color(x, y, z);
+    calc_ambient();
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void specular(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      specular((float) rgb);
+
+    } else {
+      calc_color_from(rgb);
+      calc_specular();
+    }
+  }
+
+  public void specular(float gray) {
+    calc_color(gray);
+    calc_specular();
+  }
+
+
+  public void specular(float gray, float alpha) {
+    calc_color(gray, alpha);
+    calc_specular();
+  }
+
+
+  public void specular(float x, float y, float z) {
+    calc_color(x, y, z);
+    calc_specular();
+  }
+
+
+  public void specular(float x, float y, float z, float a) {
+    calc_color(x, y, z, a);
+    calc_specular();
+  }
+
+
+  protected void calc_specular() {
+    specularR = calcR;
+    specularG = calcG;
+    specularB = calcB;
+    specularA = calcA;
+    specularRi = calcRi;
+    specularGi = calcGi;
+    specularBi = calcBi;
+    specularAi = calcAi;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void emissive(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      emissive((float) rgb);
+
+    } else {
+      calc_color_from(rgb);
+      calc_emissive();
+    }
+  }
+
+  public void emissive(float gray) {
+    calc_color(gray);
+    calc_emissive();
+  }
+
+  public void emissive(float x, float y, float z) {
+    calc_color(x, y, z);
+    calc_emissive();
+  }
+
+  protected void calc_emissive() {
+    emissiveR = calcR;
+    emissiveG = calcG;
+    emissiveB = calcB;
+    emissiveRi = calcRi;
+    emissiveGi = calcGi;
+    emissiveBi = calcBi;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void shininess(float shine) {
+    shininess = shine;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public int createAmbientLight(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      return createAmbientLight((float) rgb);
+    } else {
+      if (lightCount >= MAX_LIGHTS) {
+        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+      }
+      calc_color_from(rgb);
+      return internalCreateAmbientLight(calcR, calcG, calcB);
+    }
+  }
+
+  public int createAmbientLight(float gray) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(gray);
+    return internalCreateAmbientLight(calcR, calcG, calcB);
+  }
+
+  public int createAmbientLight(float lr, float lg, float lb) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(lr, lg, lb);
+    return internalCreateAmbientLight(calcR, calcG, calcB);
+  }
+
+  protected int internalCreateAmbientLight(float lr, float lg, float lb) {
+    lightDiffuseR[lightCount] = lr;
+    lightDiffuseG[lightCount] = lg;
+    lightDiffuseB[lightCount] = lb;
+    light[lightCount] = true;
+    lightType[lightCount] = AMBIENT;
+    lightConstantFalloff[lightCount] = 1;
+    lightLinearFalloff[lightCount] = 0;
+    lightQuadraticFalloff[lightCount] = 0;
+    lightPosition(lightCount, 0, 0, 0);
+    lightCount++;
+    return lightCount-1;
+  }
+
+  public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      return createDirectionalLight((float) rgb, nx, ny, nz);
+    } else {
+      if (lightCount >= MAX_LIGHTS) {
+        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+      }
+      calc_color_from(rgb);
+      return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
+    }
+  }
+
+  public int createDirectionalLight(float gray, float nx, float ny, float nz) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(gray);
+    return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
+  }
+
+  public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(lr, lg, lb);
+    return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
+  }
+
+  protected int internalCreateDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
+    lightDiffuseR[lightCount] = lr;
+    lightDiffuseG[lightCount] = lg;
+    lightDiffuseB[lightCount] = lb;
+    light[lightCount] = true;
+    lightType[lightCount] = DIRECTIONAL;
+    lightConstantFalloff[lightCount] = 1;
+    lightLinearFalloff[lightCount] = 0;
+    lightQuadraticFalloff[lightCount] = 0;
+    lightSpecularR[lightCount] = 0;
+    lightSpecularG[lightCount] = 0;
+    lightSpecularB[lightCount] = 0;
+    lightDirection(lightCount, nx, ny, nz);
+    lightCount++;
+    return lightCount-1;
+  }
+
+  public int createPointLight(int rgb, float x, float y, float z) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      return createPointLight((float) rgb, x, y, z);
+    } else {
+      if (lightCount >= MAX_LIGHTS) {
+        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+      }
+      calc_color_from(rgb);
+      return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
+    }
+  }
+
+  public int createPointLight(float gray, float x, float y, float z) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(gray);
+    return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
+  }
+
+  public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(lr, lg, lb);
+    return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
+  }
+
+  protected int internalCreatePointLight(float lr, float lg, float lb, float x, float y, float z) {
+    lightDiffuseR[lightCount] = lr;
+    lightDiffuseG[lightCount] = lg;
+    lightDiffuseB[lightCount] = lb;
+    light[lightCount] = true;
+    lightType[lightCount] = POINT;
+    lightConstantFalloff[lightCount] = 1;
+    lightLinearFalloff[lightCount] = 0;
+    lightQuadraticFalloff[lightCount] = 0;
+    lightSpecularR[lightCount] = 0;
+    lightSpecularG[lightCount] = 0;
+    lightSpecularB[lightCount] = 0;
+    lightPosition(lightCount, x, y, z);
+    lightCount++;
+    return lightCount-1;
+  }
+
+  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      return createSpotLight((float) rgb, x, y, z, nx, ny, nz, angle);
+    } else {
+      if (lightCount >= MAX_LIGHTS) {
+        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+      }
+      calc_color_from(rgb);
+      return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
+    }
+  }
+
+  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(gray);
+    return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
+  }
+
+  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    if (lightCount >= MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    }
+    calc_color(lr, lg, lb);
+    return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
+  }
+
+  protected int internalCreateSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    lightDiffuseR[lightCount] = lr;
+    lightDiffuseG[lightCount] = lg;
+    lightDiffuseB[lightCount] = lb;
+    light[lightCount] = true;
+    lightType[lightCount] = SPOT;
+    lightConstantFalloff[lightCount] = 1;
+    lightLinearFalloff[lightCount] = 0;
+    lightQuadraticFalloff[lightCount] = 0;
+    lightSpecularR[lightCount] = 0;
+    lightSpecularG[lightCount] = 0;
+    lightSpecularB[lightCount] = 0;
+    lightPosition(lightCount, x, y, z);
+    lightDirection(lightCount, nx, ny, nz);
+    lightSpotAngle(lightCount, angle);
+    lightSpotConcentration[lightCount] = 1;
+    lightCount++;
+    return lightCount-1;
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -2688,6 +3166,10 @@ public class PGraphics3 extends PGraphics {
 
   private final float mag(float a, float b, float c) {
     return (float)Math.sqrt(a*a + b*b + c*c);
+  }
+
+  private final float min(float a, float b) {
+    return (a < b) ? a : b;
   }
 
   private final float max(float a, float b) {
@@ -2704,6 +3186,10 @@ public class PGraphics3 extends PGraphics {
 
   private final float sqrt(float a) {
     return (float)Math.sqrt(a);
+  }
+
+  private final float pow(float a, float b) {
+    return (float)Math.pow(a, b);
   }
 
   private final float abs(float a) {

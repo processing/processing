@@ -185,21 +185,33 @@ public class PGraphicsGL extends PGraphics3 {
   // this sets up the positions of the two base lights
   // not sure if this needs to be enabled in opengl
 
-
-  public void beginFrame() {
-    super.beginFrame();
-    //resetMatrix();
-    //normal(0, 0, 1);
-    //System.out.println("beginFrame() start error " + PApplet.hex(gl.glGetError()));
-
-    report("top beginFrame()");
+  private void syncMatrices()
+  {
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glLoadMatrixf(new float[] {
+      projection.m00, projection.m10, projection.m20, projection.m30,
+      projection.m01, projection.m11, projection.m21, projection.m31,
+      projection.m02, projection.m12, projection.m22, projection.m32,
+      projection.m03, projection.m13, projection.m23, projection.m33
+    });
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
-    // gl coordinates are reversed
-    gl.glTranslatef(0, height, 0);
     gl.glScalef(1, -1, 1);
-    //gl.glPushMatrix();
+  }
+
+
+  protected void resetLights() {
+    super.resetLights();
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+      lightDisable(i);
+    }
+  }
+
+  public void beginFrame() {
+    super.beginFrame();
+    syncMatrices();
+    report("top beginFrame()");
 
     // these are necessary for alpha (i.e. fonts) to work
     gl.glEnable(GL.GL_BLEND);
@@ -224,9 +236,12 @@ public class PGraphicsGL extends PGraphics3 {
 
     // these tend to make life easier
     // (but sometimes at the expense of a little speed)
-    gl.glEnable(GL.GL_NORMALIZE);
-    gl.glEnable(GL.GL_AUTO_NORMAL); // I think this is OpenGL 1.2 only
-    gl.glEnable(GL.GL_RESCALE_NORMAL);
+
+    // Not using them right now because we're doing our own lighting.
+    //gl.glEnable(GL.GL_NORMALIZE);
+    //gl.glEnable(GL.GL_AUTO_NORMAL); // I think this is OpenGL 1.2 only
+    //gl.glEnable(GL.GL_RESCALE_NORMAL);
+    //gl.GlLightModeli(GL.GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
     report("bot beginFrame()");
     // are there other things to do here?
@@ -254,6 +269,21 @@ public class PGraphicsGL extends PGraphics3 {
     report("bot endFrame()");
   }
 
+  // For now we do our own lighting (so sum the specular and diffuse light colors...)
+  protected void handle_lighting() {
+    super.handle_lighting();
+    for (int i = vertex_start; i < vertex_end; i++) {
+      float v[] = vertices[i];
+      v[R] = min(ONE, v[R] + v[SPR]);
+      v[G] = min(ONE, v[G] + v[SPG]);
+      v[B] = min(ONE, v[B] + v[SPB]);
+    }
+
+  }
+
+  private final float min(float a, float b) {
+    return (a < b) ? a : b;
+  }
 
   protected void render_triangles() {
   //public void render_triangles() {
@@ -384,14 +414,17 @@ public class PGraphicsGL extends PGraphics3 {
 
         gl.glColor4f(a[R], a[G], a[B], a[A]);
         gl.glTexCoord2f(a[U] * uscale, a[V] * vscale);
+        gl.glNormal3f(a[NX], a[NY], a[NZ]);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
         gl.glColor4f(b[R], b[G], b[B], b[A]);
         gl.glTexCoord2f(b[U] * uscale, b[V] * vscale);
+        gl.glNormal3f(b[NX], b[NY], b[NZ]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
         gl.glColor4f(c[R], c[G], c[B], c[A]);
         gl.glTexCoord2f(c[U] * uscale, c[V] * vscale);
+        gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         gl.glEnd();
@@ -403,12 +436,15 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glBegin(GL.GL_TRIANGLES);
 
         gl.glColor4f(a[R], a[G], a[B], a[A]);
+        gl.glNormal3f(a[NX], a[NY], a[NZ]);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
         gl.glColor4f(b[R], b[G], b[B], b[A]);
+        gl.glNormal3f(b[NX], b[NY], b[NZ]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
         gl.glColor4f(c[R], c[G], c[B], c[A]);
+        gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         gl.glEnd();
@@ -420,6 +456,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void render_lines() {
     //System.out.println("into lines error " + PApplet.hex(gl.glGetError()));
+
     int i = 0;
     for (int j = 0; j < pathCount; j++) {
       //report("render_lines 1");
@@ -432,6 +469,7 @@ public class PGraphicsGL extends PGraphics3 {
       float a[] = vertices[lines[i][VERTEX1]];
       gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
+      //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
       // on this and subsequent lines, only draw the second point
       for (int k = 0; k < pathLength[j]; k++) {
@@ -655,15 +693,19 @@ public class PGraphicsGL extends PGraphics3 {
     super.textMode(mode);
   }
 
+  public void cameraMode(int mode) {
+    super.cameraMode(mode);
+    syncMatrices();
+  }
 
   //////////////////////////////////////////////////////////////
-
+/*
 
   public void endCamera() {
     //System.out.println("PGraphicsGL.endCamera() 1");
     super.endCamera();
 
-    report("begin endCamera");
+    System.out.println("begin endCamera");
     //System.out.println("PGraphicsGL.endCamera() " + width + " " + height);
     //System.exit(0);
 
@@ -674,18 +716,11 @@ public class PGraphicsGL extends PGraphics3 {
     //System.out.println("camera should be");
     //printCamera();
 
-    /*
-    gl.glLoadMatrixf(new float[] { p00, p01, p02, p03,
-                                   p10, p11, p12, p13,
-                                   p20, p21, p22, p23,
-                                   p30, p31, p32, p33 } );
-    */
-
     // opengl matrices are rotated from processing's
-    gl.glLoadMatrixf(new float[] { p00, p10, p20, p30,
-                                   p01, p11, p21, p31,
-                                   p02, p12, p22, p32,
-                                   p03, p13, p23, p33 } );
+    gl.glLoadMatrixf(new float[] { projection.m00, projection.m10, projection.m20, projection.m30,
+        projection.m01, projection.m11, projection.m21, projection.m31,
+        projection.m02, projection.m12, projection.m22, projection.m32,
+        projection.m03, projection.m13, projection.m23, projection.m33 } );
     //gl.glScalef(1, -1, 1);
 
     //System.out.println("trying " + height);
@@ -697,30 +732,60 @@ public class PGraphicsGL extends PGraphics3 {
     gl.glTranslatef(0, height, 0);
     gl.glScalef(1, -1, 1);
 
-    /*
-    float proj[] = new float[16];
-    gl.glGetFloatv(GL.GL_PROJECTION_MATRIX, proj);
-
-    //float mod[] = new float[16];
-    //gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, mod);
-
-    for (int i = 0; i < 16; i++) {
-      if ((i % 4) == 0) System.out.println();
-      System.out.print(PApplet.nfs(proj[i], 3, 4) + " ");
-    }
-    System.out.println();
-    */
-
     report("out of endCamera");
   }
-
+*/
 
   //////////////////////////////////////////////////////////////
 
+  protected int internalCreateAmbientLight(float lr, float lg, float lb) {
+    int num = super.internalCreateAmbientLight(lr, lg, lb);
+    lightEnable(num);
+    glLightAmbient(num);
+    glLightPosition(num);
+    glLightFalloff(num);
+    return num;
+  }
 
+  protected int internalCreateDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
+    int num = super.internalCreateDirectionalLight(lr, lg, lb, nx, ny, nz);
+    lightEnable(num);
+    glLightNoAmbient(num);
+    glLightDirection(num);
+    glLightDiffuse(num);
+    glLightSpecular(num);
+    glLightFalloff(num);
+    return num;
+  }
+
+  protected int internalCreatePointLight(float lr, float lg, float lb, float x, float y, float z) {
+    int num = super.internalCreatePointLight(lr, lg, lb, x, y, z);
+    glLightNoAmbient(num);
+    glLightPosition(num);
+    glLightDiffuse(num);
+    glLightSpecular(num);
+    glLightFalloff(num);
+    return num;
+  }
+
+  protected int internalCreateSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
+    int num = super.internalCreateSpotLight(lr, lg, lb, x, y, z, nx, ny, nz, angle);
+    glLightNoAmbient(num);
+    glLightPosition(num);
+    glLightDirection(num);
+    glLightDiffuse(num);
+    glLightSpecular(num);
+    glLightFalloff(num);
+    glLightSpotAngle(num);
+    glLightSpotConcentration(num);
+    return num;
+  }
+
+  // We're not actually turning on GL lights right now
+  // because our home-grown ones work better for now.
   public void lights() {
     super.lights();
-    gl.glEnable(GL.GL_LIGHTING);
+    //gl.glEnable(GL.GL_LIGHTING);
   }
 
   public void noLights() {
@@ -743,35 +808,236 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void lightPosition(int num, float x, float y, float z) {
     super.lightPosition(num, x, y, z);
-    gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_POSITION, new float[] { x, y, z });
+    glLightPosition(num);
   }
 
+  public void glLightPosition(int num) {
+    gl.glLightfv(GL.GL_LIGHT0 + num,
+                 GL.GL_POSITION, new float[] { lightX[num], lightY[num], lightZ[num] });
+  }
+
+  public void lightDirection(int num, float x, float y, float z) {
+    super.lightDirection(num, x, y, z);
+    glLightDirection(num);
+  }
+
+  public void glLightDirection(int num) {
+    if (lightType[num] == DIRECTIONAL) {
+      gl.glLightfv(GL.GL_LIGHT0 + num,
+                   GL.GL_POSITION, new float[] { lightNX[num], lightNY[num], lightNZ[num], 1 });
+
+    } else {  // Spot light
+      gl.glLightfv(GL.GL_LIGHT0 + num,
+          GL.GL_SPOT_DIRECTION, new float[] { lightNX[num], lightNY[num], lightNZ[num] });
+    }
+  }
 
   public void lightAmbient(int num, float x, float y, float z) {
     super.lightAmbient(num, x, y, z);
+    glLightAmbient(num);
+  }
+
+  public void glLightNoAmbient(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_AMBIENT, new float[] { lightAmbientR[num],
-                                              lightAmbientG[num],
-                                              lightAmbientB[num] });
+                 GL.GL_AMBIENT, new float[] { 0, 0, 0 });
+  }
+
+  public void glLightAmbient(int num) {
+    gl.glLightfv(GL.GL_LIGHT0 + num,
+                 GL.GL_AMBIENT, new float[] { lightDiffuseR[num], lightDiffuseG[num], lightDiffuseB[num] });
   }
 
 
   public void lightDiffuse(int num, float x, float y, float z) {
     super.lightDiffuse(num, x, y, z);
+    glLightDiffuse(num);
+  }
+
+  public void glLightDiffuse(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
                  GL.GL_DIFFUSE, new float[] { lightDiffuseR[num],
                                               lightDiffuseG[num],
                                               lightDiffuseB[num] });
   }
 
-
   public void lightSpecular(int num, float x, float y, float z) {
     super.lightSpecular(num, x, y, z);
+    glLightSpecular(num);
+  }
+
+  public void glLightSpecular(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
                  GL.GL_SPECULAR, new float[] { lightSpecularR[num],
                                                lightSpecularG[num],
                                                lightSpecularB[num] });
+  }
+
+  public void lightFalloff(int num, float constant, float linear, float quadratic) {
+    super.lightFalloff(num, constant, linear, quadratic);
+    glLightFalloff(num);
+  }
+
+  public void glLightFalloff(int num) {
+    gl.glLightf(GL.GL_LIGHT0 + num, GL.GL_CONSTANT_ATTENUATION, lightConstantFalloff[num]);
+    gl.glLightf(GL.GL_LIGHT0 + num, GL.GL_LINEAR_ATTENUATION, lightLinearFalloff[num]);
+    gl.glLightf(GL.GL_LIGHT0 + num, GL.GL_QUADRATIC_ATTENUATION, lightQuadraticFalloff[num]);
+  }
+
+  public void lightSpotAngle(int num, float spotAngle) {
+    super.lightSpotAngle(num, spotAngle);
+    glLightSpotAngle(num);
+  }
+
+  public void glLightSpotAngle(int num) {
+    gl.glLightf(GL.GL_LIGHT0 + num, GL.GL_SPOT_CUTOFF, lightSpotAngle[num]);
+  }
+
+  public void lightSpotConcentration(int num, float concentration) {
+    super.lightSpotConcentration(num, concentration);
+    glLightSpotConcentration(num);
+  }
+
+  public void glLightSpotConcentration(int num) {
+    gl.glLightf(GL.GL_LIGHT0 + num, GL.GL_SPOT_EXPONENT, lightSpotConcentration[num]);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  /*
+  public void fill(int rgb) {
+    super.fill(rgb);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void fill(float gray) {
+    super.fill(gray);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void fill(float gray, float alpha) {
+    super.fill(gray, alpha);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+
+  public void fill(float x, float y, float z) {
+    super.fill(x, y, z);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void fill(float x, float y, float z, float a) {
+    super.fill(x, y, z, a);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+  */
+
+  protected void calc_fill() {
+    super.calc_fill();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
+                    new float[] { calcR, calcG, calcB, calcA });
+  }
+
+  /*
+  public void diffuse(int rgb) {
+    super.diffuse(rgb);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void diffuse(float gray) {
+    super.diffuse(gray);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void diffuse(float gray, float alpha) {
+    super.diffuse(gray, alpha);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void diffuse(float x, float y, float z) {
+    super.diffuse(x, y, z);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+
+  public void diffuse(float x, float y, float z, float a) {
+    super.diffuse(x, y, z, a);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
+  }
+  */
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void ambient(int rgb) {
+    super.ambient(rgb);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void ambient(float gray) {
+    super.ambient(gray);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void ambient(float x, float y, float z) {
+    super.ambient(x, y, z);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void specular(int rgb) {
+    super.specular(rgb);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void specular(float gray) {
+    super.specular(gray);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+
+  public void specular(float gray, float alpha) {
+    super.specular(gray, alpha);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+
+  public void specular(float x, float y, float z) {
+    super.specular(x, y, z);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+
+  public void specular(float x, float y, float z, float a) {
+    super.specular(x, y, z, a);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  public void emissive(int rgb) {
+    super.emissive(rgb);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void emissive(float gray) {
+    super.emissive(gray);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void emissive(float x, float y, float z) {
+    super.emissive(x, y, z);
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, new float[] {calcR, calcG, calcB, calcA});
+  }
+
+  public void shininess(float shine) {
+    super.shininess(shine);
+    gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, shine);
   }
 
 

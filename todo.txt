@@ -1,8 +1,17 @@
 0082 pde
 X shut off text anti-aliasing in the about box
 X implemented ryan alexander's grow box design
+o when centering applet on-screen, needs to check for multiple screens
+o   this is both for PApplet and PdeRuntime
+o   PApplet screen size constant is no good
+X   nope, because centers on default screen
+
+_ external apps don't stop at all when 'stop' is hit
+_ moving an external window around a lot will halt the parent
+_ external apps also seem to not do newlines properly
 
 _ make a linux version of this release
+_   need to fix up the make/dist scripts for linux
 
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
@@ -13,10 +22,7 @@ _ make note that changing screen config requires restart of processing
 _   static { checkScreens(); }
 _   static void PApplet.checkScreens() { } 
 _   to run explicitly later
-
-_ when centering applet on-screen, needs to check for multiple screens
-_   this is both for PApplet and PdeRuntime
-_   PApplet screen size constant is no good
+_   this seems too complicated.. just make people restart
 
 _ ability to select monitor via preferences panel
 _ check current present code with multiple monitors

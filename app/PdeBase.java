@@ -62,7 +62,7 @@ public class PdeBase {
 
     // make sure that this is running on java 1.4
 
-    if (PApplet.javaVersion < 1.4) {
+    if (PApplet.javaVersion < 1.4f) {
       //System.err.println("no way man");
       PdeBase.showError("Need to install Java 1.4",
                         "This version of Processing requires    \n" +
