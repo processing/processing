@@ -171,7 +171,8 @@ follow their bizarre instructions. on my machine, i'm using a keyspan
 28X dual port adapter, and the selection i use on the serial port menu
 reads "/dev/cu.USA28X21P1.1". your mileage may vary.
 
-linux.. haven't tested but you'll need rxtx and elbow grease.
+linux.. haven't tested but it's the ibm vm and their own
+implementation, so it may just work.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
