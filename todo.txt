@@ -81,6 +81,7 @@ X update the readme to note that macos9 is suspended
 X why doesn't processing.app work anymore
 X   machine was screwy
 X perlin noise 1D. noise() 
+X double-check to see if wheel mouse is working
 
 
 dh X save last-used serial to sketch.properties on quit
@@ -106,27 +107,22 @@ BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
 macosx
+
+X macosx quit handler takes over ctrl-q
+X   so file->quit doesn't get called on close
+X   so sketch.properties doesn't get saved
+X handlers for basic events
+b _   MRJAboutHandler (just show splash screen)
+b _     image for 'about processing'
+X   MRJPrefsHandler (open pde.properties in a text editor)
+X   MRJQuitHandler (confirm quit, may need to be in another thread)
+
 b _ why do command keys / menu shortcuts get passed through?
 b _   cmd-s drops an s into the text area (grr)
 b _   only happened on java 1.3 if the cmd-key was unused
 b _ change Proce55ing.app to Processing.app
 b _   should cvs be changed or just do this as a renaming step?
-b _ double-check to see if wheel mouse is working
-b _ macosx quit handler takes over ctrl-q
-b _   so file->quit doesn't get called on close
-b _   so sketch.properties doesn't get saved
-b _ handlers for basic events
-b _   MRJAboutHandler (just show splash screen)
-b _     image for 'about processing'
-b _   MRJPrefsHandler (open pde.properties in a text editor)
-b _   MRJQuitHandler (confirm quit, may need to be in another thread)
-b _   MRJOpenApplicationHandler and MRJOpenDocumentHandler
-b _     especially the open document fella
-b _     under osx, app won't get doc unless app already launched
 b _ build gl4java for java 1.4
-b _ rxtx is a problem in general.. how to improve installation
-b _   report of a problem with the rxtx installer being bad
-b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
 b _ remove 'quit' from file menu (osx only)
 b _ Event.consume() doesn't work on entry fields 
 b _   manifests itself in sketch naming, can't be constrained
@@ -137,18 +133,36 @@ b _ splash screen
 b _ select all (apple-a) on azerty keyboard is quitting the app
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
 b _ why are the end of text messages under osx getting chopped?
-
 _ set nice background for disk image on macosx
-_ try installing serial adapter with p5
+_ mac 1.4 crashes when attempting to stop applets (pcho definitely)
+_   doesn't seem to do this with the .app, or at least in prev release
+_     (although prev release was running 1.3 by default)
+_   locking up on my machine after hitting stop
+_   is this only a problem when run from run.sh?
+
+_ rxtx is a problem in general.. how to improve installation
+_   try installing serial adapter with p5
+_   report of a problem with the rxtx installer being bad
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
 _   tom igoe is using rxtx 2.1.6, patch that into p5
 _   libs from 2.1.6 download for osx seem to work
 _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
-_ mac 1.4 crashes when attempting to stop applets (pcho definitely)
-_   doesn't seem to do this with the .app, or at least in prev release
-_   locking up on my machine after hitting stop
-_   is this only a problem when run from run.sh?
+
+
+bf b _ tweak video to get it working
+bf b _   beginVideo(int, int, int) not found
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
+bf b _   how does the syntax work?
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
+
+
+bf b _ net not closing, dispose() not getting called
+bf b _   make sure dispose() gets called? that way people can override?
+bf b _   or add another function for people to override?
+bf b _   netEvent doesn't seem to be working in server mode
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
 
 
 additional console fixes
@@ -227,17 +241,14 @@ bf _     more info about use is in package.html
 bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
 
-bf _ history
-bf _   oooh.. combine in app to show diffs
 
 language stuff
 bf _ write p5 language spec
 bf _ actionscript has nice hastables.. as does perl/python
 bf _   would be nice to get better implementation in there
 
-bf _ look into eclipse ide a little more
 
-bf _ too many frames drawn before window visible - especially on mac
+bf 1 _ too many frames drawn before window visible - especially on mac
 
 bf b _ if sketchbook.dir is set, makes new sketchbook folder
 bf b _   reads sketchbook properly from other folder
@@ -250,24 +261,17 @@ bf b _   macos9: hd:Users?, linux: ~/sketchbook
 bf b _ move examples to folder that goes w/ p5 app
 bf b _   set examples somehow read-only
 
-bf b _ tweak video to get it working
-bf b _   beginVideo(int, int, int) not found
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
-bf b _   how does the syntax work?
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
-
-bf b _ net not closing, dispose() not getting called
-bf b _   make sure dispose() gets called? that way people can override?
-bf b _   or add another function for people to override?
-bf b _   netEvent doesn't seem to be working in server mode
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
-
 bf b _ cartesian/polar conversion
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
 bf b _   thread includes code for the 2D case
 
 ks b _ background(BImage)
 ks b _   also creating background image inside setup()
+
+
+random todos
+bf _ history.. add my diffs sketch
+bf _ look into eclipse ide a little more
 
 
 ////////////////////////////////////////////////////////////////////
@@ -835,17 +839,26 @@ How the environment gets packed up, downloaded, and installed.
 
 DISTRIBUTION / General 
 
+1 _ make a preference panel to set pde.properties stuff
+
 b _ need more comprehensive list of 'known bugs'
 b _  need to purge 55 spelling from lots of things
 b _   window title code, name of .exe and .app files
 b _ people like downloadable reference + net isn't cheap everywhere
-b _ need document icons  
 b _ beta release will include source code
 b _ write notes about running p5 on another platforms 
 b _   this was some feedback from running on bsd:
 b _   /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
 b _   need to use the 1.3 vm, and get a fake platform name
 b _   otherwise, goes looking for lib/pde_.properties or something
+b _ tie .pde files as documents of the application
+b _   figure out proper registry key for windows
+b _     can be handled when the app first run (jni?)
+b _   write handler for main() to take document names
+b _   need document icons
+b _   add MRJOpenApplicationHandler and MRJOpenDocumentHandler
+b _       especially the open document fella
+b _       under osx, app won't get doc unless app already launched
 
 
 DISTRIBUTION / Windows

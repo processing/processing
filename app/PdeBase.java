@@ -36,8 +36,19 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
+#ifdef MACOS
+import com.apple.mrj.*;
+#endif
 
-public class PdeBase extends Frame implements ActionListener {
+
+public class PdeBase extends Frame 
+  implements ActionListener
+#ifdef MACOS
+             , MRJAboutHandler
+             , MRJQuitHandler
+             , MRJPrefsHandler
+#endif
+{
   static Properties properties;
   static Properties keywords; // keyword -> reference html lookup
 
@@ -151,28 +162,7 @@ public class PdeBase extends Frame implements ActionListener {
 
   public PdeBase() {
     super(WINDOW_TITLE);
-    //#ifdef JDK14
-    //    try {
-      //#endif
-    /*
-    frame = new Frame(WINDOW_TITLE) {
-        public Dimension getMinimumSize() {
-          return new Dimension(300, 300);
-        }
-      };
-    */
     frame = this;  // clean this up later
-    //#ifdef JDK14
-
-    /*
-    this.addComponentListener(new ComponentAdapter() {
-        public void componentResized(ComponentEvent e) {
-          System.out.println("frame listener: " + e);
-        }
-      });
-    */
-
-    //#endif
 
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
@@ -181,8 +171,7 @@ public class PdeBase extends Frame implements ActionListener {
 
     windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-        //System.exit(0);
-        editor.doQuit();
+        handleQuit();
       }
     };
     frame.addWindowListener(windowListener);
@@ -265,13 +254,24 @@ public class PdeBase extends Frame implements ActionListener {
     item.setEnabled(false);
     menu.add(item);
 
-    menu.addSeparator();
-    menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
-    menu.add(new MenuItem("Reference", new MenuShortcut('F')));
-    menu.addSeparator();
-    menu.add(new MenuItem("Quit", new MenuShortcut('Q')));
+    if (platform != MACOSX) {
+      menu.add(new MenuItem("Preferences"));
+      menu.addSeparator();
+      menu.add(new MenuItem("Quit", new MenuShortcut('Q')));
+
+    } else {
+#ifdef MACOS
+      // #@$*(@#$ apple.. always gotta think different
+      MRJApplicationUtils.registerAboutHandler(this);
+      MRJApplicationUtils.registerPrefsHandler(this);
+      MRJApplicationUtils.registerQuitHandler(this);
+#endif
+    }
     menu.addActionListener(this);
     menubar.add(menu);
+
+
+    // edit menu
 
     menu = new Menu("Edit");
     
@@ -311,8 +311,6 @@ public class PdeBase extends Frame implements ActionListener {
       });
     menu.add(item);
 
-    menu.addSeparator();
-
     item = new MenuItem("Select All", new MenuShortcut('A'));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -339,6 +337,9 @@ public class PdeBase extends Frame implements ActionListener {
 
     Document document = editor.textarea.getDocument();
     document.addUndoableEditListener(new MyUndoableEditListener());
+
+
+    // sketch menu
 
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Run", new MenuShortcut('R')));
@@ -409,6 +410,23 @@ public class PdeBase extends Frame implements ActionListener {
     menu.addActionListener(this);
     menubar.add(menu);  // add the sketch menu
 
+
+    // help menu
+
+    menu = new Menu("Help");
+    menu.add(new MenuItem("Help"));
+    menu.add(new MenuItem("Reference", new MenuShortcut('F')));
+    menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
+
+    // macosx already has its own about menu
+    if (platform != MACOSX) {
+      menu.addSeparator();
+      menu.add(new MenuItem("About Processing"));
+    }
+    menu.addActionListener(this);
+    menubar.setHelpMenu(menu);
+
+
     frame.setMenuBar(menubar);
 
     Insets insets = frame.getInsets();
@@ -423,7 +441,6 @@ public class PdeBase extends Frame implements ActionListener {
     buildSerialMenu();
     frame.show();  // added back in for pde
   }
-
 
   /*
     PdeEditorTextPane
@@ -844,6 +861,29 @@ public class PdeBase extends Frame implements ActionListener {
   }
 
 
+  // interfaces for MRJ Handlers, but naming is fine 
+  // so used internally for everything else
+
+  public void handleAbout() {
+    System.out.println("the about box will now be shown");
+  }
+
+  public void handlePrefs() {
+    JOptionPane.showMessageDialog(frame,
+                                  "Preferences are in the 'lib' folder\n" +
+                                  "inside text files named pde.properties\n" +
+                                  "and pde_" + platforms[platform] + 
+                                  ".properties",
+                                  "Preferences",
+                                  JOptionPane.INFORMATION_MESSAGE);
+    //System.out.println("now showing preferences");
+  }
+
+  public void handleQuit() {
+    editor.doQuit();
+  }
+
+
   public void actionPerformed(ActionEvent event) {
     String command = event.getActionCommand();
     //System.out.println(command);
@@ -861,34 +901,20 @@ public class PdeBase extends Frame implements ActionListener {
     } else if (command.equals("Rename...")) {
       editor.skSaveAs(true);
 
-      /*
-    } else if (command.equals("Rename")) {
-      editor.skDuplicateRename(true);
-
-    } else if (command.equals("Duplicate")) {
-      editor.skDuplicateRename(false);
-      */
-
     } else if (command.equals("Export to Web")) {
       editor.skExport();
 
-    } else if (command.equals("Proce55ing.net")) {
-      openURL("http://Proce55ing.net/");
-
-    } else if (command.equals("Reference")) {
-      openURL(System.getProperty("user.dir") + File.separator + 
-              "reference" + File.separator + "index.html");
+    } else if (command.equals("Preferences")) {
+      handlePrefs();
 
     } else if (command.equals("Quit")) {
-      editor.doQuit();
-      //editor.initiate(Editor.QUIT);
+      handleQuit();
 
     } else if (command.equals("Run")) {
       editor.doRun(false);
 
     } else if (command.equals("Present")) {
       editor.doRun(true);
-      //editor.doPresent();
 
     } else if (command.equals("Stop")) {    
       if (editor.presenting) {
@@ -896,21 +922,21 @@ public class PdeBase extends Frame implements ActionListener {
       } else {
         editor.doStop();
       }
-
-    } else if (command.equals("Refresh")) {    
-      //System.err.println("got refresh");
-      rebuildSketchbookMenu(sketchbookMenu);      
-
     } else if (command.equals("Beautify")) {
       editor.doBeautify();
 
-      //} else if (command.equals("Use External Editor")) {
-      //boolean external = externalEditorItem.getState();
-      //external = !external;
-      //editor.setExternalEditor(external);
+    } else if (command.equals("Help")) {
+      openURL(System.getProperty("user.dir") + 
+              File.separator + "reference" + 
+              File.separator + "environment" +
+              File.separator + "index.html");
 
-      // disable save, save as menus
-      
+    } else if (command.equals("Proce55ing.net")) {
+      openURL("http://Proce55ing.net/");
+
+    } else if (command.equals("Reference")) {
+      openURL(System.getProperty("user.dir") + File.separator + 
+              "reference" + File.separator + "index.html");
     }
   }
 
@@ -923,14 +949,19 @@ public class PdeBase extends Frame implements ActionListener {
   }
 
 
+  /**
+   * Implements the cross-platform headache of opening URLs
+   */
   static public void openURL(String url) { 
+    //System.out.println("opening url " + url);
     try {
       if (platform == WINDOWS) {
         // this is not guaranteed to work, because who knows if the 
         // path will always be c:\progra~1 et al. also if the user has
         // a different browser set as their default (which would 
         // include me) it'd be annoying to be dropped into ie.
-        //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "+ currentDir 
+        //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore " 
+        // + currentDir 
 
 	// the following uses a shell execute to launch the .html file
         // note that under cygwin, the .html files have to be chmodded +x
@@ -939,8 +970,17 @@ public class PdeBase extends Frame implements ActionListener {
         // permissions. without the chmod, the command prompt says 
         // "Access is denied" in both cygwin and the "dos" prompt.
         //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" + 
-        //                        referenceFile + ".html");
-        Runtime.getRuntime().exec("cmd /c " + url);
+        //                    referenceFile + ".html");
+        if (url.startsWith("http://")) {
+          // open dos prompt, give it 'start' command, which will
+          // open the url properly. start by itself won't work since
+          // it appears to need cmd
+          Runtime.getRuntime().exec("cmd /c start " + url);
+        } else {
+          // just launching the .html file via the shell works
+          // but make sure to chmod +x the .html files first
+          Runtime.getRuntime().exec("cmd /c " + url);
+        }
 
 #ifdef MACOS
       } else if (platform == MACOSX) {
@@ -954,9 +994,10 @@ public class PdeBase extends Frame implements ActionListener {
 #endif
 
       } else if (platform == LINUX) {
+        //String currentDir = System.getProperty("user.dir");
+        //Runtime.getRuntime().exec("mozilla "+ currentDir + 
+        //                          "/reference/index.html");
         // another wild ass guess
-        String currentDir = System.getProperty("user.dir");
-        //Runtime.getRuntime().exec("mozilla "+ currentDir + "/reference/index.html");
         Runtime.getRuntime().exec("mozilla " + url);
 
       } else {
