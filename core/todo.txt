@@ -8,6 +8,13 @@ X beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 X screenX(x, y) and screenY(x, y) added for noDepth()
 
+_ image loading bug is huge
+
+_ pmouseX is broken again
+_   maintain things a bit different
+
+_ need timer in as part of the api
+_   or at least include an example that uses it
 
 _ beginFrame() around setup()
 _   draw mode stuff happens inside setup.. 
@@ -27,9 +34,6 @@ _   or not even drawn.. what a mess.
 
 _ only allocate stencil and zbuffer on first call to depth()
 _   this will require changes to PTriangle and PLine inside their loops
-
-_ pmouseX is broken again
-
 
 _ add TRIANGLE_FAN
 
