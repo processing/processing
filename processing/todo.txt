@@ -30,30 +30,43 @@ X adding files to data folder that are already in the data folder
 X   makes the file zero, because of internal error
 X   added something to check to make sure they weren't the same
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358515
+X implement read-only sketch folder
+X   examples are sort of there but need to be debugged
+X   read-only files should be checked
+X check if file is read-only, and if so, ask where to put sketch
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149564;start=0
+X how to handle examples: read only, somewhere inside lib
+X move examples to folder that goes w/ p5 app
+X   set examples somehow read-only
+X 'save as' from examples puts into examples dir.. :(
+X   make it default to the user's sketch dir
 
-_ after using sketchbook menu as popup, disappears from file menu
+_ dashes shouldn't be allowed in filenames for sketches
+_   actually, lost the naming stuff because now using FileDialog
+_   can this requirement just be on the pde file, not the directory?
+_ bug: after using sketchbook menu as popup, disappears from file menu
 _ re-implement history
 _ write sketchbook.clean()
 _ write 'new text file'
 _ implement hide/unhide
-_ implement read-only sketch folder
-_   examples are sort of there but need to be debugged
-_   read-only files should be checked
+_ export is badly broken
 _ get the console working again
 _   appendText is disabled due to NullPointerEx on startup
 _ ctrl-5 (confirmed on xp) is marking the current sketch as modified
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
 _ if 'applet.html' is in sketch folder, use that as the template
-_ comments -> embedding in applet text? (ala javadoc)
-_   would this help casey with the examples?
 
+
+now implemented for [url=http://processing.org/discourse/yabb/YaBB.cgi?board=Collaboration;action=display;num=1084285917]megabucket[/url].
 
 
 discuss with casey
 _ is the sketch folder something that is never seen by the user?
 _   i.e. flash programs 'import' all data, etc
 _   same with how imovie works
+_ comments -> embedding in applet text? (ala javadoc)
+_   would this help casey with the examples?
 
 
 _ NullPointerException when alt is pressed
@@ -119,16 +132,6 @@ _   and just open an empty sketch in the sketchbook folder
 _ when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
 _ warn about writing non-1.1 code. 
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
-
-
-EXAMPLES
-_ check if file is read-only, and if so, ask where to put sketch
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149564;start=0
-_ how to handle examples: read only, somewhere inside lib
-_ move examples to folder that goes w/ p5 app
-_   set examples somehow read-only
-_ 'save as' from examples puts into examples dir.. :(
-_   make it default to the user's sketch dir
 
 
 LIBRARIES
