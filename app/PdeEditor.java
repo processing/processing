@@ -59,15 +59,24 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     //left.setLayout(new BorderLayout());
 
     Panel top = new Panel();
+    top.setBackground(buttonBgColor);
     top.setLayout(new BorderLayout());
 
     boolean privileges = PdeApplet.hasFullPrivileges();
     boolean courseware = PdeApplet.get("save_as") != null;
     buttons = new PdeEditorButtons(this, privileges, courseware, 
-				   (privileges & !courseware), true);
+				   (privileges & !courseware), false);
     buttons.setBackground(buttonBgColor);
     //add("North", buttons);
-    top.add("North", buttons);
+    //top.add("North", buttons);
+    top.add("West", buttons);
+
+    Label buttonStatus = 
+      new Label(PdeEditorButtons.EMPTY_STATUS, Label.RIGHT);
+    buttonStatus.setBackground(buttonBgColor);
+    top.add("East", buttonStatus);
+
+    buttons.status = buttonStatus;
 
     /*
     graphics = new PdeGraphics(gwidth, gheight, bgColor);
@@ -585,7 +594,8 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     if (e.line >= 0) highlightLine(e.line); 
     //dbcp.repaint(); // button should go back to 'play'
     //System.err.println(e.getMessage());
-    message("Problem: " + e.getMessage());
+    //message("Problem: " + e.getMessage());
+    message(e.getMessage());
     buttons.clearPlay();
     //showStatus(e.getMessage());
   }
