@@ -35,6 +35,7 @@ import javax.swing.text.*;
 import javax.swing.undo.*;
 
 import com.apple.mrj.*;
+import com.ice.jni.registry.*;
 
 
 /**
@@ -185,8 +186,8 @@ public class PdeBase {
       } catch (FileNotFoundException e) {
         //e.printStackTrace();
         //System.exit(1);
-        showError("Problem getting Library folder",
-                  "Error getting the Processing library folder.", e);
+        showError("Problem getting data folder",
+                  "Error getting the Processing data folder.", e);
       }
 
     } else if (platform == WINDOWS) {
@@ -200,16 +201,23 @@ public class PdeBase {
       // Value Type: REG_SZ
       // Value Data: path
 
-      /*
-      RegistryKey topKey = Registry.getTopLevelKey("HKCU");
-      String localKeyPath =
-        "\\Software\\Microsoft\\Windows\\CurrentVersion" +
-        "\\Explorer\\Shell Folders";
-      RegistryKey localKey = topKey.openSubkey(topKey, localKeyPath);
-      String appDataPath = localKey.getStringValue("AppData");
-      return new File(appDataPath, "Processing");
-      */
-      return null;
+      try {
+        //RegistryKey topKey = Registry.getTopLevelKey("HKCU");
+        RegistryKey topKey = Registry.HKEY_CURRENT_USER;
+
+        String localKeyPath =
+          "Software\\Microsoft\\Windows\\CurrentVersion" +
+          "\\Explorer\\Shell Folders";
+        RegistryKey localKey = topKey.openSubKey(localKeyPath);
+        String appDataPath = localKey.getStringValue("AppData");
+        System.out.println("app data path is " + appDataPath);
+        System.exit(0);
+        return new File(appDataPath, "Processing");
+      } catch (Exception e) {
+        showError("Problem getting data folder",
+                  "Error getting the Processing data folder.", e);
+      }
+      //return null;
 
     } else {
       // otherwise make a .processing directory int the user's home dir
