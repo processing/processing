@@ -7,6 +7,13 @@ X   projectSize() should work the same way
 X   screenX instead of projectX
 X   modelX or objectX could do the amit style thing
 X     creas says object
+X smooth() and noSmooth()
+X possible dist() and constrain() functions
+X   reas: I like people making these themselves and then later 
+X         they can be added to their code libraries
+X join() like split
+X   also add additional item for NaN data
+X   add doubles and longs for genome stuff
 
 _ camera work
 _   beginCamera, endCamera -> does glMatrixMode style swapping
@@ -16,20 +23,16 @@ _   lookAt->lookat, frustum, perspective should be public too
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 
-_ join() like split
-_   also add additional item for NaN data
-_   add doubles and longs for genome stuff
-_   more advanced splitting of files into rows/cols uses another class
-_     other class also has concept for random access of lines
-_     by storing the line positions, can access without loading all
-_     into memory because some files will be too large
+_ more advanced splitting of files into rows/cols uses another class
+_   other class also has concept for random access of lines
+_   by storing the line positions, can access without loading all
+_   into memory because some files will be too large
 
 _ numberFormat (formerly zeroPad)
 _   numberFormat(float num, int left, int right) 
 _     zero means any number of digits, don't pad
 _   numberFormat(int num, int left) for 27 -> 0027
 
-_ smooth() and noSmooth()
 
 _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
@@ -177,9 +180,6 @@ _ strokeWidth - too buggy to document currently
 _ clear/noClear
 _   just use background, and make people fill a rect 
 _   if they need a bg with noBackground()
-_ possible dist() and constrain() functions
-_   reas: I like people making these themselves and then later 
-_         they can be added to their code libraries
 _ lights - not much happening
   // What is your current thinking on fonts? VLW for 1.0?
 _ fonts - api should be improved as part of additions and rewrite
