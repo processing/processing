@@ -1,3 +1,5 @@
+// Ben, I have made some notes within the document as comments
+
 0049
 _ disappearing text caret on win2k
 _   works in 'insert' mode
@@ -6,9 +8,10 @@ _ pmouseX and pmouseX should be colored with mouseX and mouseY
 _ several examples broken (note from creas) in bugs.txt
 _ pmouseX problem reported by casey (in bugs.txt)
 
-
 ................................................................
 
+// Is this portion of the list something that needs to be prioritized
+// into Beta, 1.0, 2.0?
 
 bagel / bugs
 _ getting mouse movement outside the window
@@ -36,7 +39,7 @@ _ also using bagel as separate component, being able to grab its BImage
 pde / bugs
 _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
-_ images don't load during setup [reas]
+x images don't load during setup [reas] //This is not a problem -- Casey
 _ weird comments bug (external file)
 _ if image doesn't exist, spews null pointer exception and freaks
 _   locking up environment/machine
@@ -93,7 +96,7 @@ _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
 macosx
-_ reference doesn't launch on mac (mKoser)
+_ reference doesn't launch on mac (mKoser)  //Yes, confirmed
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
 _   may not be the case under swing?
@@ -125,10 +128,12 @@ _ test it a little more to make sure it works (cygwin x sucks)
 
 
 docs/faq
+  // I don't understand this
 _ make clear that setup is just for setup
 _   but should also in the future allow to create static image
 _ notes on debugging
 _   run with java -Xint blahblah (turns off jit)
+  // I don't know where this should live, on BBS? What do you think
 _ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
 _   also 'why p5' message from amit pitaru on 12/15/02
 _     and p5 versus flash stuff
@@ -139,9 +144,9 @@ OTHER NOTES / API TO ADD
 _ copyArea, copyImage
 _ method of collapsing history for useful versions
 _   archive associated files as well.. data/etc
-_ text editor - color coding is the big issue
-_ ceil/floor
-_ perlin
+x text editor - color coding is the big issue
+_ ceil/floor  // Important
+_ perlin  // Not necessary for 1.0
 _ strokeWidth - too buggy to document currently
 _ update/noUpdate
 _   instead use void update() as a function like loop and draw
@@ -150,9 +155,12 @@ _ clear/noClear
 _   just use background, and make people fill a rect 
 _   if they need a bg with noBackground()
 _ use syntax coloring to highlight BApplet's class variables and functions
+  // I like people making these themselves and then later they can be added
+  // to their code libraries
 _ possible dist() and constrain() functions
 _ lights - not much happening
 _ camera - wait for someone to implement
+  // What is your current thinking on fonts? VLW for 1.0?
 _ fonts - api should be improved as part of additions and rewrite
 _ does a[3] == Float.NaN work?
 
@@ -206,7 +214,7 @@ b _   currently calling slower image routine
 BAGEL / high & time consuming
 b _ implement clipping planes and clipping of objects
 b _   things are flying into the camera and halting apps
-b _ color won't set for fonts
+b X color won't set for fonts //This works
 b _ alpha
 b _ concave/complex polygon shtuff
 b _   eventually POLYGON auto-detects convex/concave polygon
@@ -257,6 +265,8 @@ b _   lines become 2 pixels thick after a 3D transform
 b _   better handling of single-pixel special case
 b _   box is not filling properly
 b _     problem is using single pixel, flat line with no z
+// Maybe picking and vector export is for 2.0?
+// What do you think?
 b _ illustrator exporting
 b _   version of Illustrator.java that uses bagel api
 b _   sorting of polygons/lines on simple painters algorithm
@@ -373,7 +383,7 @@ _ lastKey and lastKeyCode -- not as useful as the mouse stuff
 
 
 PDE / high
-a _ text editor? jedit's textarea class? hmm? hmm? 
+a x text editor? jedit's textarea class? hmm? hmm?  // Yeah for jedit! 
 b _ for 'java' mode, try run using external vm
 b _   would need to get error output stream from app.. argh
 b _   only allow under win/osx/linux
@@ -386,6 +396,7 @@ b _   but makes no error.. peditorconsole probably swallowing it
 b _ change writeJava/start functions to be combined in kjc
 b _   but the rest inside PdeEditor that takes care of launching/placing
 b _ online signup cgi for people to add themselves to the list
+// We can use sourceforge for bug tracking...
 b _ see about setting up simple bug tracker/feature system
 b _   queue for people reporting things externally
 b _   bugzilla but simpler
@@ -398,8 +409,8 @@ PDE / medium
 b _ 'save as' from examples puts into examples dir.. :(
 b _ option to delete current project (trickier)
 b _   also needs to have method for verify.. blech
-b _ beautify is broken
-b _ sketch: sketch-000 is dumb
+b x beautify is broken // I think this is fixed
+b _ sketch: sketch-000 is dumb  // Just number successively 0001, 0002 like a digital camera
 b _ check logs to see where we're getting traffic from
 b _ event to explorer to open 'parts' directory of project
 b _ option to toggle console on/off (not just in properties, but realtime)
@@ -495,7 +506,7 @@ _ dbn2p5 converter.. ooh!
 
 
 PDE / dist
-b _ need document icons
+b _ need document icons  // I need to improve these
 b _ figure out about distributing source
 b _   kjc is gnu, so source needs to be available
 
