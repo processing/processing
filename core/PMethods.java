@@ -22,7 +22,7 @@ public interface PMethods {
 
   public void copy(PImage src, int dx, int dy);
 
-  public void copy(int sx1, int sy1, int sx2, int sy2, 
+  public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2);
 
   public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
@@ -32,10 +32,10 @@ public interface PMethods {
 
   public void blend(int sx, int sy, int dx, int dy, int mode);
 
-  public void blend(int sx1, int sy1, int sx2, int sy2, 
+  public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode);
 
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode);
 
   public PImage get();
@@ -272,14 +272,14 @@ public interface PMethods {
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33);
 
-  public void colorMode(int icolorMode);
+  public void colorMode(int mode);
 
-  public void colorMode(int icolorMode, float max);
+  public void colorMode(int mode, float max);
 
-  public void colorMode(int icolorMode,
+  public void colorMode(int mode,
                         float maxX, float maxY, float maxZ);
 
-  public void colorMode(int icolorMode,
+  public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA);
 
   public void noTint();

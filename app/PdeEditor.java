@@ -178,7 +178,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
-    textarea.setHorizontalOffset(4);
+    textarea.setHorizontalOffset(5);
     //textarea.setBorder(new EmptyBorder(0, 20, 0, 0));
     //textarea.setBackground(Color.white);
 
