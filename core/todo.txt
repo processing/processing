@@ -32,6 +32,10 @@ _   or maybe need to get better at size() inside of draw() ?
 _   make this consistent with the regular PApplet
 _     otherwise things are going to be weird/difficult for debugging
 
+_ still threading issues with running opengl 
+_   first run hangs until quit 
+_   though doesn't seem to replicate when p5 is restarted
+
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
 _ fix endian ordering issues so that things work properly

@@ -35,7 +35,7 @@ import com.oroinc.text.regex.*;
 
 
 public class PdeSketch {
-  static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
+  //static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
   static File tempBuildFolder;
 
   PdeEditor editor;
@@ -100,6 +100,7 @@ public class PdeSketch {
     // exist when the application is started, then java will remove
     // the entry from the CLASSPATH, causing PdeRuntime to fail.
     //
+    /*
     tempBuildFolder = new File(TEMP_BUILD_PATH);
     if (!tempBuildFolder.exists()) {
       tempBuildFolder.mkdirs();
@@ -109,6 +110,9 @@ public class PdeSketch {
                         "It has now been replaced, please restart    \n" +
                         "the application to complete the repair.", null);
     }
+    */
+    tempBuildFolder = PdeBase.getBuildFolder();
+    //PdeBase.addBuildFolderToClassPath();
 
     folder = new File(new File(path).getParent());
     //System.out.println("sketch dir is " + folder);
@@ -912,7 +916,9 @@ public class PdeSketch {
        "_" + String.valueOf((int) (Math.random() * 10000)));
 
     // handle preprocessing the main file's code
-    mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
+    //mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
+    mainClassName =
+      build(tempBuildFolder.getAbsolutePath(), suggestedClassName);
     // externalPaths is magically set by build()
 
     if (!externalRuntime) {  // only if not running externally already
@@ -1048,12 +1054,16 @@ public class PdeSketch {
       //PApplet.printarr(codeFolderPackages);
 
     } else {
+      /*
       // check to see if multiple files that include a .java file
       externalRuntime = false;
       for (int i = 0; i < codeCount; i++) {
         if (code[i].flavor == JAVA) externalRuntime = true;
       }
-      //externalRuntime = (codeCount > 1);  // may still be set true later
+      */
+      // since using the special classloader,
+      // run externally whenever there are extra classes defined
+      externalRuntime = (codeCount > 1);
       //codeFolderPackages = null;
       libraryPath = "";
     }
@@ -1081,6 +1091,12 @@ public class PdeSketch {
       }
     }
 
+    // since using the special classloader,
+    // run externally whenever there are extra classes defined
+    if ((bigCode.indexOf(" class ") != -1) ||
+        (bigCode.indexOf("\nclass ") != -1)) {
+      externalRuntime = true;
+    }
 
     // 2. run preproc on that code using the sugg class name
     //    to create a single .java file and write to buildpath
@@ -1092,8 +1108,6 @@ public class PdeSketch {
       // if (i != 0) preproc will fail if a pde file is not
       // java mode, since that's required
       String className =
-      //  preprocessor.write(bigCode.toString(), buildPath,
-      //                   suggestedClassName);
         preprocessor.write(bigCode.toString(), buildPath,
                            suggestedClassName, codeFolderPackages);
       if (className == null) {

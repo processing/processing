@@ -17,42 +17,60 @@ X   is PdeEditorHeader one pixel too tall
 X   move the tabs over just slightly
 X resize box intrudes on the scroller for the console area
 X   need to set grow boxes intruding to false
-X   1.3 version (deprecated): -Dcom.apple.mrj.application.growbox.intrudes=false
-X   1.4 version: -Dapple.awt.showGrowBox=false
+X   1.3 version (deprecated): 
+X     -Dcom.apple.mrj.application.growbox.intrudes=false
+X   1.4 version (much nicer): -Dapple.awt.showGrowBox=false
 X add mkdmg script to macosx build process
 X   could significantly speed things up
 
-X put 'play' on a SwingWorker thread
-_   test this on a pc to see how it goes, especially with opengl
-
 sketchbook/prefs location
-_ read from registry key to get the proper name for these folders
-_   also find some way to do this on the mac
-_   on non-english windows (or at the broad) these will be named differently
-_   http://support.microsoft.com/?kbid=221837&sd=RMVP
-_   or is there a proper way to do this with java params?
-_ move to ~/Application Data/Processing for windows
-_   and ~/Library/Processing for macosx
-_   and ~/.processing for linux
-_   if it can't write prefs here, try creating a subfolder inside p5
-_     and if that fails, then tell the user that they suck
-_ prompt for sketchbook location on linux
-_   or on mac/pc if it can't write anywhere else
-_ creating sketchbook / lab situations
-_   test to see if it's possible to write to "My Documents"
-_   if not, should bring up a prompt asking where to put sketchbook
-_   also put something in lib/preferences.txt for default location
-_     this way a course admin can change the default location
-_ need to check if volume is read-only, notify and quit if it is
-_   people are trying to run off the disk image
-_   actually that should be fine.. 
-_     but make sure the prefs location can be written
-_   need to pay attention to when running from read-only drive
-_     reported by brandenberg
-_    "p5 will launch from the disk image, but will 
-_     not draw the sketch name bar doesn't appear"
-_ includes preferences.txt option to write to p5 folder first
-_   this can be altered by instructors and re-packaged
+X read from registry key to get the proper name for these folders
+X   also find some way to do this on the mac
+X   on non-english windows (or at the broad) these will be named differently
+X   http://support.microsoft.com/?kbid=221837&sd=RMVP
+X   or is there a proper way to do this with java params?
+X move to ~/Application Data/Processing for windows
+X   and ~/Library/Processing for macosx
+X   and ~/.processing for linux
+X   if it can't write prefs here, try creating a subfolder inside p5
+X     and if that fails, then tell the user that they suck
+X prompt for sketchbook location on linux
+X   or on mac/pc if it can't write anywhere else
+X creating sketchbook / lab situations
+X   test to see if it's possible to write to "My Documents"
+X   if not, should bring up a prompt asking where to put sketchbook
+X   also put something in lib/preferences.txt for default location
+X     this way a course admin can change the default location
+o need to check if volume is read-only, notify and quit if it is
+o   people are trying to run off the disk image
+o   actually that should be fine.. 
+o     but make sure the prefs location can be written
+o   need to pay attention to when running from read-only drive
+o     reported by brandenberg
+o    "p5 will launch from the disk image, but will 
+o     not draw the sketch name bar doesn't appear"
+X include preferences.txt option to write to p5 folder first
+X   this can be altered by instructors and re-packaged
+X fixed a couple bugs causing the jnilib stuff to crash
+
+X put 'play' on a SwingWorker thread
+X   test this on a pc to see how it goes, especially with opengl
+X   doesn't seem to help anything
+X PdeRuntime -> SystemOutSiphon, removed MIN_PRIORITY setting
+o hack to not use console on the code folder 
+o   no errors will propogate, but it should run fine
+
+X lib/build should not be a subfolder of p5
+X   p5 environment installed to /Applications on lab machines
+X   instead use a temp folder
+X   maybe when running on lab machines in that case, always java mode?
+X   or is it possible to add to java.class.path while app is running?
+X     have to use a special class loader
+X new class loader for single files 
+X   if more than one class defined, forces it to run externally
+X     (basically any time it sees "class" in the code..
+X     may be subject to errors, but errs on side of just running ext)
+X   runs out of processing data folder
 
 _ bring back "rename" ?
 
@@ -60,7 +78,8 @@ _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
 
-_ opening up sketch folder may be extremely slow 
+_ scanning sketchbook folder may be extremely slow 
+_   not sure why this would be the case
 
 _ preproc: making all functions public that have no specifier
 _   this will make draw() etc all much easier
@@ -70,14 +89,6 @@ _   focusGained/focusLost was added..
 _ basic sample audio playback needed for p5
 
 _ what's up with int() -> toInt() conversion?
-
-_ hack to not use console on the code folder 
-_   no errors will propogate, but it should run fine
-
-_ lib/build should not be a subfolder of p5
-_   p5 environment installed to /Applications on lab machines
-_   instead use a temp folder
-_   maybe when running on lab machines in that case, always java mode?
 
 
 //
