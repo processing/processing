@@ -371,7 +371,8 @@ public class PdeBase extends Frame implements ActionListener {
       undo.addEdit(e.getEdit());
       undoAction.updateUndoState();
       redoAction.updateRedoState();
-      if (!editor.sketchModified) editor.setSketchModified(true);
+      //System.out.println("setting sketch to modified");
+      //if (!editor.sketchModified) editor.setSketchModified(true);
     }
   }
 

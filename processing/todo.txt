@@ -1,17 +1,12 @@
 0046 
 X install new swing-based textarea with syntax highlighting
-_   set better defaults for coloring
-_   improve the flicker problems (re-enable backing store?)
-_   implement edit menu
-
-bagel
-_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
-_ images don't load during setup()
-_ finish fill mode of flat circle function
-_ 'image' is too generic a variable to have inside BApplet
-_   check for others that shouldn't be used (pixels? width? height?)
-_ these boxes overlap but shouldn't:
-_   may be simple <= instead of <, leftover from dbn
+X   improve the flicker problems (re-enable backing store?)
+X   set better defaults for coloring
+X   implement edit menu
+X   implement undo/redo
+X   re-implement sketchModified
+X these boxes overlap but shouldn't:
+X   may be simple <= instead of <, leftover from dbn
 int thick = 36;
 size(200, 200);
 background(0);
@@ -20,12 +15,29 @@ fill(153, 163, 0.0);
 rect(80, 0, thick, height/2);
 fill(102, 112, 0.0);
 rect(100, height/2, thick, height/2);
+X re-implement sketchModified yet again (using keylistener)
+
+
+
+bagel
+_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+_ images don't load during setup()
+_ finish fill mode of flat circle function
+_   make into oval function
+_ 'image' is too generic a variable to have inside BApplet
+_   check for others that shouldn't be used (pixels? width? height?)
+_   or have a way to syntax color them
+_ make bagel usable on its own w/o applet
+_   but retain functionality, ie. image i/o
 
 pde
+_ auto indent on next line no longer works
+_ tabs no longer convert to 2 spaces
+_ balance parens is no longer available
+
 _ need examples to work for submenus (casey's got too many)
 _ "color.jpg" or "int.jpg" causes trouble
-_ locking up on run (under win2k? others?) 
-_   rare but present, every 100th time or so
+_ better default size than 300x300 when starting up first time
 _ subst Image -> BImage, Font -> BFont
 _ better message for PortInUseException (full explanation)
 _ split KjcEngine into three parts
@@ -33,6 +45,7 @@ _ move build directory to root in cvs (on server)
 _   and update scripts accordingly
 _ When renaming a sketch, select the text in the field, 
     so you can type the new name immediately. 
+_ talk to casey about better default colors
 
 windows
 _ windows 95/98/ME seems to be broken
@@ -83,7 +96,13 @@ _ long list from frederik (fdb)
   selection when pressed twice. It also selects the line under the
   current line. 
 
-suggestions
+
+KEEP AN EYE OUT...
+_ locking up on run (under win2k? others?) 
+_   rare but present, every 100th time or so
+
+
+SUGGESTIONS
 _ make versions available w/o fonts and jre
 _ lock feature for present mode (part of export to application?)
 _ error messages with link to what's wrong
@@ -761,22 +780,17 @@ BUILDING P5
    because of all the CVS directories that it makes
 cvs co processing
 cd processing
-cvs co bagel
-cd bagel
-rm -rf jgl
-rm -rf cpp
-cd ..
-rm -rf web (optional, if you're only doing java dev)
-cvs update -P (prune empty directories)
+cvs update -P
+# optional, if you're only doing java dev
+rm -rf web 
 
-need to have comm.jar in the CLASSPATH to build bagel
-just gotta be that way, it's too messy otherwise
-
+need to have rt.jar from jdk 1.1 and comm.jar in the CLASSPATH 
+to build bagel.. just gotta be that way, it's too messy otherwise
 
 need cygwin: zip, unzip, perl
 little guys: rm, cp, mv, tcsh
 
-build jikes for cygwin
+build jikes for cygwin, use version 1.14, later than that has bugs
 ./configure, make, make install
 add $cygwin/usr/local/bin to path
 
