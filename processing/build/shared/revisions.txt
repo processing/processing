@@ -7,6 +7,17 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0071 
+
+api changes
+
+- 'online' is now a boolean instead of a function that returns a
+  boolean. this was actually in 0070 but i forgot to mention it
+
+- also from 70, people who used triangle_count, it's now called
+  triangleCount.
+
+
 ABOUT REV 0070 - MEGABUCKET - 29 September 2004
 
 YOUR CODE WILL ALMOST CERTAINLY BREAK IN THIS RELEASE, READ THE
