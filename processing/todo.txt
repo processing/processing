@@ -106,10 +106,11 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 X maybe bring back the prompt option for "new sketch"
 X   sometimes nice just to have it create an unnamed sketch quickly
 X   shift-new will always prompt with filedialog
+X dashes shouldn't be allowed in filenames for sketches
+X   actually, lost the naming stuff because now using FileDialog
+X   this also needs to be checked when building the sketch menu 
 
-_ dashes shouldn't be allowed in filenames for sketches
-_   actually, lost the naming stuff because now using FileDialog
-_   this also needs to be checked when building the sketch menu 
+_ write sketchbook.clean()
 
 _ don't force everything into a single .jar on export
 
@@ -120,7 +121,6 @@ _   ( ) rename enclosing or ( ) add a subfolder
 _   it's useful to have loose .pde files be runnable..
 _   i.e. when double-clicking on them.. downloaded off web.. 
 _     but need to deal with simply, not providing a new exception case
-_ write sketchbook.clean()
 _ write 'new text file'
 _ implement hide/unhide
 
@@ -144,6 +144,9 @@ _ how to handle .pde vs .java
 _   how to determine what the 'main' file is
 _   sun won't want us to say things are .java when they aren't
 _ .pde files opened on their own
+_ what should the prefs file be named?
+_ horizontal buttons? need final decision
+_ remove underscores from the tab title?
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing

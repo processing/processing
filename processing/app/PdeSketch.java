@@ -321,6 +321,7 @@ public class PdeSketch {
 
     // user cancelled selection
     if (newName == null) return false;
+    newName = PdeSketchbook.sanitizeName(newName);
 
     // new sketch folder
     File newFolder = new File(newParentDir, newName);
