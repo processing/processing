@@ -390,6 +390,11 @@ public class PApplet extends Applet
   public void noLoop() {
     if (looping) {
       looping = false;
+
+      // reset framerate delay times
+      fpsLastDelayTime = 0;
+      fpsLastMillis = 0;
+
       if (thread != null) {
         thread.interrupt();  // wake from sleep
       }
