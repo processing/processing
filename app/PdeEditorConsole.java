@@ -59,7 +59,21 @@ public class PdeEditorConsole extends JScrollPane {
   public PdeEditorConsole(PdeEditor editor) {
     this.editor = editor;
 
-    consoleTextPane = new JTextPane();
+    consoleTextPane = new JTextPane() {
+        public void paint(Graphics g) {
+#ifdef JDK13
+          if (PdeBase.platform == PdeBase.MACOSX) {
+            if (PdeBase.getBoolean("editor.console.antialias", 
+                                   false) == false) {
+              Graphics2D g2 = (Graphics2D) g; 
+              g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                                  RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            }
+          }
+#endif
+          super.paint(g);
+        }
+      };
     consoleTextPane.setEditable(false);
     consoleDoc = consoleTextPane.getStyledDocument();
 
