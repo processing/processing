@@ -38,30 +38,33 @@ X   err, it's slower. that sucks.
 X fixed bug with typography reported by creas
 X   alpha images were 0xAAAAAAAA b/c of javagl
 X images were broken with noSmooth
+X color is ugly for 'use external editor' with new color scheme
+X   now uses color for current line
 
+
+FIXED, BUT NEEDS POST TO BBOARD ON RELEASE
 X 'color[] c' doesn't work, neither does 'color c[] = new color[10]'
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045052913
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045675678
 X several examples broken (note from creas) in bugs.txt
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
 X   drawing02, input09, input08, transform05, others?
-
-_ export to .pde file rather than java
-_   or at least link to that from the web page
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
-
-_ add a note to revisions.txt that says "not for use as a reference"
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
-
-_ color is ugly for 'use external editor' with new color scheme
-
 X if image doesn't exist, spews null pointer exception and freaks
 X   locks up environment/machine, have to restart
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
-
 X disable image cache (setUseCaches?)
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
+X add a note to revisions.txt that says "not for use as a reference"
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1046191616;start=0
+
+
+_ fix all the random line types to support alpha
+_ write code for line joins.. continuous lines should become polygon snake
+
+_ export to .pde file rather than java
+_   or at least link to that from the web page
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
 
 _ add manifest.mf to exported applets so that applications will work
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
@@ -73,9 +76,6 @@ _ text caret goes missing
 _   removing extra jre's, uninstalling java apps fixed it
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
-
-_ fix all the random line types to support alpha
-_ write code for line joins.. continuous lines should become polygon snake
 
 _ image of 256x256 doesn't draw the last line of pixels
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
