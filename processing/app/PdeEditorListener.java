@@ -4,17 +4,21 @@ import java.awt.event.*;
 
 public class PdeEditorListener extends KeyAdapter implements FocusListener {
   static final String spaces = "                                                                              ";
-  String tabString;
   String newline = System.getProperty("line.separator");
 
   PdeEditor editor;
 
   boolean expandTabs;
   int tabSize;
+  String tabString;
+
   boolean autoIndent;
 
   boolean balanceParens;
   boolean balancing = false;
+
+  boolean fakeArrowKeys;
+
   TextArea tc;
   int selectionStart, selectionEnd;
   int position;
@@ -28,6 +32,8 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
     tabString = spaces.substring(0, tabSize);
     autoIndent = PdeBase.getBoolean("editor.auto_indent", true);
     balanceParens = PdeBase.getBoolean("editor.balance_parens", false);
+    fakeArrowKeys = PdeBase.getBoolean("editor.fake_arrow_keys", 
+				       PdeBase.platform == PdeBase.MACOSX);
   }
 
 
@@ -40,14 +46,81 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
     tc = (TextArea) event.getSource();
     deselect();
     char c = event.getKeyChar();
-    //System.err.println((int) c + " " + event.getKeyCode());
+    int code = event.getKeyCode();
+    //System.out.println(event);
 
     if (!editor.sketchModified) {
-      int code = event.getKeyCode();
       if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) || 
 	  (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
 	//editor.sketchModified = true;
 	editor.setSketchModified(true);
+      }
+    }
+
+    if (fakeArrowKeys && (c == 65535) && 
+	(code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT || 
+	 code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN)) {
+      position = tc.getCaretPosition();
+      switch (code) {
+
+      case KeyEvent.VK_LEFT:
+	tc.setCaretPosition(Math.max(0, position - 1));
+	break;
+
+      case KeyEvent.VK_RIGHT:
+	tc.setCaretPosition(position + 1);
+	break;
+
+      case KeyEvent.VK_UP:
+	char contents[] = tc.getText().toCharArray();
+	for (int i = 0; i < 20; i++) System.out.print((int)contents[i] + " ");
+	// figure out how far left to the newline
+	int howfar = 0;
+	int p = position;
+	//System.out.println(p);
+	while ((p > 0) && (contents[p] != 13) && (contents[p] != 10)) {
+	  p--; howfar++;
+	}
+	howfar--;
+	System.out.println("howfar = " + howfar);
+	// step over the newline
+	while ((p > 0) && ((contents[p] == 13) || (contents[p] == 10))) {
+	  p--; 
+	}
+	if (p == 0) return; // nothing above
+	// look for the next
+	int howlong = 0;
+	while ((p > 0) && (contents[p] != 13) && (contents[p] != 10)) {
+	  p--; howlong++;
+	}
+	System.out.println("next line is " + howlong);
+	tc.setCaretPosition(p + 1 + Math.min(howfar, howlong));
+	break;
+      case KeyEvent.VK_DOWN:
+	contents = tc.getText().toCharArray();
+	// figure out how far left to the newline
+	howfar = 0;
+	p = position;
+	while ((p > 0) && (contents[p] != 13) && (contents[p] != 10)) {
+	  p--; howfar++;
+	}
+	// step forward and find the next newline
+	p = position;
+	int last = contents.length - 1;
+	//System.out.println("howfar = " + howfar);
+	//int howlong = 0;
+	while ((p < last) && (contents[p] != 13) && (contents[p] != 10)) 
+	  p++;
+	if (p == last) return; // nothing below
+	while ((p < last) && ((contents[p] == 13) || (contents[p] == 10)))
+	  p++;
+	int newline = p;
+
+	// see if enough room on this line
+	while ((p < last) && (p < newline + howfar-1) &&
+	       (contents[p] != 13) && (contents[p] != 10)) p++;
+	tc.setCaretPosition(p);
+	break;
       }
     }
 
