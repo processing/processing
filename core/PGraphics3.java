@@ -684,7 +684,7 @@ public class PGraphics3 extends PGraphics {
 
         case TRIANGLES:
         {
-          for (int i = vertex_start; i < vertex_end; i += 3) {
+          for (int i = vertex_start; i < vertex_end-2; i += 3) {
             add_path();
             counter = i - vertex_start;
             add_line(i+0, i+1);
@@ -748,6 +748,14 @@ public class PGraphics3 extends PGraphics {
 
         case QUAD_STRIP:
         {
+          for (int i = vertex_start; i < vertex_end - 3; i += 2) {
+            add_path();
+            add_line(i+0, i+2);
+            add_line(i+2, i+3);
+            add_line(i+3, i+1);
+            add_line(i+1, i+0);
+          }
+          /*
           // first draw all vertices as a line strip
           stop = vertex_end - 1;
 
@@ -765,6 +773,7 @@ public class PGraphics3 extends PGraphics {
           for (int i = vertex_start; i < stop; i += increment) {
             add_line(i, i+3);
           }
+          */
         }
         break;
 
@@ -814,16 +823,25 @@ public class PGraphics3 extends PGraphics {
         break;
 
         case QUADS:
-        case QUAD_STRIP:
         {
           stop = vertexCount-3;
-          increment = (shape == QUADS) ? 4 : 2;
-
-          for (int i = vertex_start; i < stop; i += increment) {
+          for (int i = vertex_start; i < stop; i += 4) {
             // first triangle
             add_triangle(i, i+1, i+2);
             // second triangle
             add_triangle(i, i+2, i+3);
+          }
+        }
+        break;
+
+        case QUAD_STRIP:
+        {
+          stop = vertexCount-3;
+          for (int i = vertex_start; i < stop; i += 2) {
+            // first triangle
+            add_triangle(i+0, i+2, i+1);
+            // second triangle
+            add_triangle(i+2, i+3, i+1);
           }
         }
         break;
@@ -929,7 +947,7 @@ public class PGraphics3 extends PGraphics {
 
 
   protected final void add_triangle(int a, int b, int c) {
-    System.out.println("adding triangle " + triangleCount);
+    //System.out.println("adding triangle " + triangleCount);
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
@@ -957,7 +975,7 @@ public class PGraphics3 extends PGraphics {
   protected void render_triangles() {
   //public void render_triangles() {
     //System.out.println("PGraphics3 render triangles");
-    System.out.println("rendering " + triangleCount + " triangles");
+    //System.out.println("rendering " + triangleCount + " triangles");
 
     for (int i = 0; i < triangleCount; i ++) {
       float a[] = vertices[triangles[i][VERTEX1]];
@@ -1016,14 +1034,21 @@ public class PGraphics3 extends PGraphics {
    * from code by john w. ratcliff (jratcliff at verant.com)
    */
   private void triangulate_polygon() {
+    /*
     System.out.println("triangulating polygon " +
                        vertex_start + " " + vertex_end);
+    for (int i = vertex_start; i < vertex_end; i++) {
+      System.out.println(i + " " + vertices[i][X] + " " + vertices[i][Y]);
+    }
+    */
 
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0.0f;
     for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
-      area += (vertices[q][X] * vertices[p][Y] -
-               vertices[p][X] * vertices[q][Y]);
+      area += (vertices[q][MX] * vertices[p][MY] -
+               vertices[p][MX] * vertices[q][MY]);
+      //area += (vertices[q][X] * vertices[p][Y] -
+      //       vertices[p][X] * vertices[q][Y]);
     }
 
     // then sort the vertices so they are always in a counterclockwise order
@@ -1061,12 +1086,21 @@ public class PGraphics3 extends PGraphics {
       // triangle A B C
       //float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
 
+      float Ax = -vertices[vertex_order[u]][MX];
+      float Ay =  vertices[vertex_order[u]][MY];
+      float Bx = -vertices[vertex_order[v]][MX];
+      float By =  vertices[vertex_order[v]][MY];
+      float Cx = -vertices[vertex_order[w]][MX];
+      float Cy =  vertices[vertex_order[w]][MY];
+
+      /*
       float Ax = -vertices[vertex_order[u]][X];
       float Ay =  vertices[vertex_order[u]][Y];
       float Bx = -vertices[vertex_order[v]][X];
       float By =  vertices[vertex_order[v]][Y];
       float Cx = -vertices[vertex_order[w]][X];
       float Cy =  vertices[vertex_order[w]][Y];
+      */
 
       // first we check if <u,v,w> continues going ccw
       if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
@@ -1081,8 +1115,10 @@ public class PGraphics3 extends PGraphics {
           continue;
         }
 
-        float Px = -vertices[vertex_order[p]][X];
-        float Py =  vertices[vertex_order[p]][Y];
+        //float Px = -vertices[vertex_order[p]][X];
+        //float Py =  vertices[vertex_order[p]][Y];
+        float Px = -vertices[vertex_order[p]][MX];
+        float Py =  vertices[vertex_order[p]][MY];
 
         float ax  = Cx - Bx;  float ay  = Cy - By;
         float bx  = Ax - Cx;  float by  = Ay - Cy;
