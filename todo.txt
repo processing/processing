@@ -38,6 +38,12 @@ X   add reference lookup option to the edit menu
 X saveBytes, saveStrings
 X   file output, save strings or pile of bytes
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1056311967;start=0
+X make sure all linefeeds are consistent (unix)
+X post to bboard about history
+X console: scroll to most current line, or scroll as changing
+X windows tabbedpane separator is too small
+X   added line to pde_windows.properties
+X store divider location to sketch.properties
 
 
 macosx
@@ -74,6 +80,7 @@ X   currently the only fix is to switch to java 1.3
 X update the readme to note that macos9 is suspended
 X why doesn't processing.app work anymore
 X   machine was screwy
+X perlin noise 1D. noise() 
 
 
 dh X save last-used serial to sketch.properties on quit
@@ -90,13 +97,6 @@ dh o     this may have been fixed
 dh o   exception when trying to write to stdout
 dh X   may need horizontal scroller, or text wrap
 dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1050328811;start=0
-
-
-additional console fixes
-dh b _   clear console each time 'run' gets hit
-dh b _     don't actually clear, just advance by the number of lines visible
-dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
-dh b _   can't copy text from console directly
 
 
 ..................................................................
@@ -150,33 +150,42 @@ _   doesn't seem to do this with the .app, or at least in prev release
 _   locking up on my machine after hitting stop
 _   is this only a problem when run from run.sh?
 
-windows
-_ tabbedpane separator is too small
+
+additional console fixes
+dh b _   clear console each time 'run' gets hit
+dh b _     don't actually clear, just advance by the number of lines visible
+dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051540041;start=0
+dh b _   can't copy text from console directly
+bf 1 _ console -> should be using JEditTextArea not TextPane
+bf b _   set decent fonts (probably same as editor above), looks bad on mac
+bf b _   remove the border around the edge
+bf b o   what's with the 2 blank lines on startup?
+
 
 linux
 _ bring linux up to 1.4
 _   grab rxtx for linux and include with distribution
 
 
-_ examples should be read-only
-_   stored in a separate folder from the sketchbook
-
-_ error message dialog?
-_   maybe something that shows stack trace 
-_   with an 'email this' button? (include source code too?)
+dist
+b _ need note about setting classpath on platforms when using expert
+b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+1 _ examples should be read-only
+1 _   stored in a separate folder from the sketchbook
+1 _ error message dialog?
+1 _   maybe something that shows stack trace 
+1 _   with an 'email this' button? (include source code too?)
 
 
 thesis / acg
-
-bf b _ curves
-bf b _   curveMode(), curveMode to tweak the s parameter of catmullrom
-bf b _   setting accuracy of curve segments
-bf b _     right now it's hardwired at 20, should be adjustable
-bf b _   function to evaluate bezier or catmullrom points
-bf b _     used heavily in genome valence, asked about on the bboard
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
-
+bf _ curves
+bf _   curveMode(), curveMode to tweak the s parameter of catmullrom
+bf _   setting accuracy of curve segments
+bf _     right now it's hardwired at 20, should be adjustable
+bf _   function to evaluate bezier or catmullrom points
+bf _     used heavily in genome valence, asked about on the bboard
+bf _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
+bf _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
 bf _ make bagel more usable as standalone
 bf _   #ifdef to remove client and server code as well
 bf _   breakout BGraphics (have its own BImage)
@@ -190,25 +199,20 @@ bf _   exports pixels or a BImage or does MemoryImageSource itself
 bf _   move math functions into utility library associated
 bf _     with bagel, because those will be useful on other bagel platforms
 bf _     pApplet will call BagelMath.whatever, so still looks like cos()
+bf _   p5 classes into packages (bagel especially)
+bf _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
 bf _ break out BSerial as separate object like BVideo
 bf _   include rxtx and the rest of that setup in subfolder
 bf _   BSerial.flush and BSerial.available in object
-
 bf _ need to resolve issues between rendering screen/file
 bf _   illustrator-based rendering needs to work for ars projects
 bf _   screen may be 400x400 pixels, but file be 36x36"
 bf _ opengl export / rendering mode
 bf _   currently implemented, but somewhat broken
 bf _   finish this once all the line code is done
-
-bf b _ perlin noise 1D. noise() 
-
-bf b _ some flag to know whether applet is online or not
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
-bf b _   fix link() and loadStream code once that's fixed
-
-_ need note about setting classpath on platforms when using expert
-o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+bf _ some flag to know whether applet is online or not
+bf _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+bf _   fix link() and loadStream code once that's fixed
 
 
 licensing
@@ -223,19 +227,8 @@ bf _     more info about use is in package.html
 bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
 
-bf _ make sure all linefeeds are consistent (unix)
-bf _ write notes about p5 code spec
-
 bf _ history
-bf X   post something on the bboard about it
 bf _   oooh.. combine in app to show diffs
-
-X console: scroll to most current line, or scroll as changing
-
-_ console -> should be using JEditTextArea not TextPane
-_   set decent fonts (probably same as editor above), looks bad on mac
-_   remove the border around the edge
-_   what's with the 2 blank lines on startup?
 
 language stuff
 bf _ write p5 language spec
@@ -437,8 +430,6 @@ bf b _ make zbuffer available instead of g.zbuffer
    b _   rather than app being enclosed in beginFrame/endFrame loop
    b _ images drawn from center don't work for simage()
    b _   currently calling slower image routine
-bf b _ p5 classes into packages (bagel especially)
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
    b _ inside draw() mode, delay() does nothing
    b _   delay might be a good way to signal drawing to the screen/updating
 
@@ -845,7 +836,7 @@ How the environment gets packed up, downloaded, and installed.
 DISTRIBUTION / General 
 
 b _ need more comprehensive list of 'known bugs'
-b _ need to purge 55 spelling from lots of things
+b _  need to purge 55 spelling from lots of things
 b _   window title code, name of .exe and .app files
 b _ people like downloadable reference + net isn't cheap everywhere
 b _ need document icons  
