@@ -236,7 +236,7 @@ public class PdeEditor extends JPanel {
     presentationWindow.setBackground(presentationBgColor);
 
     // windowActivated doesn't seem to do much, so focus listener better
-    presentationWindow.addFocusListener(new FocusAdapter() {
+    /*presentationWindow.addFocusListener(new FocusAdapter() {
         public void focusGained(FocusEvent e) {
           //System.out.println("presentationWindow focusGained: " + e);
             try {
@@ -244,7 +244,7 @@ public class PdeEditor extends JPanel {
               pdeRuntime.window.toFront();
             } catch (Exception ex) { }
           }
-      });
+      }); */
 
     textarea.addFocusListener(new FocusAdapter() {
         public void focusGained(FocusEvent e) {
@@ -252,6 +252,7 @@ public class PdeEditor extends JPanel {
           if (presenting == true) {
             try {
               presentationWindow.toFront();
+			  pdeRuntime.applet.requestFocus();
             } catch (Exception ex) { }
           }
         }
@@ -264,6 +265,7 @@ public class PdeEditor extends JPanel {
             try {
             //System.out.println("moving presentation window to front");
               presentationWindow.toFront();
+			  pdeRuntime.applet.requestFocus();
             } catch (Exception ex) { }
           }
         }
@@ -271,7 +273,10 @@ public class PdeEditor extends JPanel {
     
     // if user clicks on background presentationWindow, restore applet window
     // ("engine.window") to the front immediately
-    presentationWindow.addMouseListener(new MouseAdapter() {
+	
+	// toxi_030903: temporarily removed, don't seem to need those anymore
+	
+    /*presentationWindow.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         //System.out.println("mouseClicked: " + e.toString());
         try {
@@ -293,6 +298,20 @@ public class PdeEditor extends JPanel {
           pdeRuntime.window.toFront();
           } catch (Exception ex) { }
       }
+    }); */
+	
+	// toxi_030903: moved this from the PDERuntime window to our main presentation window
+	presentationWindow.addKeyListener(new KeyAdapter() {
+              public void keyPressed(KeyEvent e) {
+                //System.out.println("window got " + e);
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                  pdeRuntime.stop();
+                  doClose();
+                } else {
+					// toxi_030903: pass on the event to the applet
+					pdeRuntime.applet.keyPressed(e);
+				}
+              }
     });
   }
 
@@ -891,6 +910,9 @@ public class PdeEditor extends JPanel {
     //if (buildPath != null) {
     cleanTempFiles(); //buildPath);
     //}
+    
+  	// toxi_030903: focus the PDE again after quitting presentation mode
+	base.toFront();
   }
 
 

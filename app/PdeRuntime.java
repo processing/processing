@@ -96,18 +96,10 @@ public class PdeRuntime implements PdeMessageConsumer {
         applet.start();
 
         if (editor.presenting) {
-          window = new Window(new Frame());
-          window.addKeyListener(new KeyAdapter() {
-              public void keyPressed(KeyEvent e) {
-                //System.out.println("window got " + e);
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                  //editor.doClose();
-                  //new DelayedClose(editor);
-                  stop();
-                  editor.doClose();
-                }
-              }
-            });
+          //window = new Window(new Frame());
+		  // toxi_030903: attach applet window to editor's presentation window
+		  window = new Window(editor.presentationWindow);
+		  // toxi_030903: moved keyListener to PdeEditor's presentationWindow
 
         } else {
           window = new Frame(editor.sketchName); // gonna use ugly windows instead
@@ -121,10 +113,9 @@ public class PdeRuntime implements PdeMessageConsumer {
                 editor.doClose();
               }
             });
-        }
-        if (!(window instanceof Frame)) y1 += parentInsets.top;
-        window.add(applet);
-
+		
+		// toxi_030903: only attach keyListener if not in presentation mode
+		// else events are coming directly from editor.presentationWindow
         applet.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
               //System.out.println("applet got " + e);
@@ -136,6 +127,13 @@ public class PdeRuntime implements PdeMessageConsumer {
               }
             }
           });
+
+		  y1 += parentInsets.top;
+        }
+		// toxi_030903: moved this in the above else branch
+	    // if (!(window instanceof Frame)) y1 += parentInsets.top;
+
+        window.add(applet);
 
         // @#$((* java 1.3
         // removed because didn't seem to be needed anymore
