@@ -205,6 +205,7 @@ cd ../..
 CLASSPATH="..\\..\\build\\windows\\work\\lib\\core.jar;..\\..\\build\\windows\\work\\java\\lib\\rt.jar"
 
 
+# SERIAL LIBRARY
 cd ../../lib/serial
 ../../build/windows/work/jikes +D -classpath "RXTXcomm.jar;$CLASSPATH" -d . *.java 
 zip -r0q serial.jar processing
@@ -212,6 +213,14 @@ rm -rf processing
 #cp serial.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\rxtx_work\\code"
 
 
+# NET LIBRARY
+cd ../../lib/net
+../../build/windows/work/jikes +D -d . *.java 
+zip -r0q net.jar processing
+rm -rf processing
+
+
+# VIDEO LIBRARY
 QTJAVA="$WINDIR\\system32\\QTJava.zip"
 if test -f "${QTJAVA}"
 then
@@ -228,4 +237,3 @@ zip -r0q video.jar processing
 rm -rf processing
 #cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\new_camera_action\\code"
 #cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\Processing\\sketchbook\\movie_action\\code"
-
