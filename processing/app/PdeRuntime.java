@@ -50,15 +50,18 @@ public class PdeRuntime implements PdeMessageConsumer {
   Process process;
   OutputStream processOutput;
   boolean externalRuntime;
+  String codeFolderPath;
   String externalPaths;
 
 
   public PdeRuntime(PdeEditor editor, String className,
-                    boolean externalRuntime, String externalPaths) {
+                    boolean externalRuntime, 
+                    String codeFolderPath, String externalPaths) {
     this.editor = editor;
     this.className = className;
 
     this.externalRuntime = externalRuntime;
+    this.codeFolderPath = codeFolderPath;
     this.externalPaths = externalPaths;
   }
 
@@ -94,7 +97,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         }
         */
       } catch (Exception e) { 
-        System.err.println("PdeSystemOutSiphon error " + e);
+        System.err.println("SystemOutSiphon error " + e);
         e.printStackTrace();
       }
     }
@@ -115,7 +118,8 @@ public class PdeRuntime implements PdeMessageConsumer {
     try {
       if (externalRuntime) {
         String command[] = new String[] { 
-          "java", 
+          "java",
+          "-Djava.library.path=" + codeFolderPath,
           "-cp",
           externalPaths,
           "BApplet",
