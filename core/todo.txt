@@ -116,7 +116,7 @@ _   because some confusion with mixing types of curves
 _ how to force PGraphics() instead of PGraphics2()
 
 _ color channels seem to be swapped on windows in displaying image example
-_   check on the mac to see what it looks like
+X   check on the mac to see what it looks like
 
 _ get text working again
 _   partially the problem is with ALPHA images
@@ -127,17 +127,19 @@ _ move textMode and textSpace back out of PFont
 _   use die() to fail in font situations
 _   can't, just use a RuntimeException
 
-_ also have a simple way to hook in triangle leeches to PGraphics3
-
-_ implement PGraphics2.curveVertex()
-
-_ get PGraphics.java engine working again
-
 _ default to single byte input from serial port
 _   and add serial.setBuffer() for message length as alternative
 _   or serial.setDelimiter() to fire message on delim
 
 _ die() may need to throw a RuntimeException
+
+//
+
+_ also have a simple way to hook in triangle leeches to PGraphics3
+
+_ implement PGraphics2.curveVertex()
+
+_ get PGraphics.java engine working again
 
 //
 
