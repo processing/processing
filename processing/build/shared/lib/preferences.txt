@@ -1,8 +1,10 @@
 # !!!!!!!! UNLIKE PREVIOUS VERSIONS OF PROCESSING !!!!!!!!!!
 # DO NOT MODIFY THIS FILE, OR DELETE SETTINGS FROM THIS FILE
 
-# These are the default preferences. They will be copied 
-# to your home folder into a file called "Processing Preferences.txt"
+# These are the default preferences. They will be copied to:
+# My Documents -> Processing -> preferences.txt (on windows)
+# Documents -> Processing -> preferences.txt (on macosx)
+# ~/.processing/preferences.txt (on linux)
 # where you can make changes for your machine.
 
 # You'll have problems running Processing if you incorrectly 

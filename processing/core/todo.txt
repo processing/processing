@@ -44,16 +44,52 @@ _   why is the first one failing?
 _ minimum texture size may be 64x64
 _   might need to enforce it as a minimum
 
+_ named colors.. have a method for a full color lookup table
+_   addcolor("blah blah blah", colornum);
+_   fill("blah blah blah");
+_   maybe this is bad practice--too slow, should use variables
+_ text() with \n is semi-broken
+_ font encoding issues
+_   java seems to force straight windows encoding.. (problem for pi fonts)
+_   opentype/cff fonts don't work with live loading from the app
+_   many (all?) opentype fonts won't show up or aren't supported
+_     this may be only cff fonts that have trouble
+_   when encoding with something besides the standard encoding, problematic
+_     so sonata otf and sonata don't seem to have any chars at all
 _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _ implement fullscreen().. this takes over the screen as best it can
 _   really more like present mode.. 
 _   that if applet is 500x500, centers on a 800x600 window
+
+scripting
+_ on exceptions, use die to just kill the applet
+_ make the file i/o stuff work more cleanly
+_   if people want to use their own file i/o they can do that too
+_ how to make a long setup() sleep so that things don't lock way up
+_   this could also be contributing to the hanging bug
+_ make properly exit after things are finished
+_ static applets need to be able to resize themselves on 'play'
+_ figure out what to do with static apps exported as application
+_   needs to just hang there
+_ scripts (w/ no graphics) will need to call exit() explicitly
+_   actually.. just override the default draw() to say exit()
+_ may need a fileOutput() and fileInput() function
+_   to take care of exception handling
+_ or maybe scripts are just handled with a different method? (yech)
+_   or maybe setup() can actually throw and Exception?
+_   but that's inserted by the parser, and hidden from the user?
+
+_ beginFrame() around setup()
+_   draw mode stuff happens inside setup.. 
+_   or maybe need to get better at size() inside of draw() ? 
 
 opengl documentation
 _ lights cannot be enabled/disabled throughout 
 _   lighting will be based on what's left at endFrame()
 _ images should be a power of 2, or call modified()
 
+_ need to make sure that components can be resized properly via size()
+_   or that it properly responds to a setBounds() call
 
 _ also when drawing an image, sense whether drawn rotated
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
@@ -94,10 +130,6 @@ _   email the beta@ list to see how people are using pmouseX
 
 _ need timer in as part of the api
 _   or at least include an example that uses it
-
-_ beginFrame() around setup()
-_   draw mode stuff happens inside setup.. 
-_   or maybe need to get better at size() inside of draw() ? 
 
 _ depth testing of lines vs text is problematic
 _   probably need to patch in an older version of the line code

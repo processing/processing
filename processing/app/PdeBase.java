@@ -131,6 +131,8 @@ public class PdeBase {
 
     File phome = null;
 
+    // NOTE if this location changes, be sure to note the change
+    // in the default preferences.txt because it mentions this path
     if (PdeBase.platform == PdeBase.MACOSX) {
       // on macosx put the sketchbook in the "Documents" folder
       phome = new File(home, "Documents" + File.separator + "Processing");
