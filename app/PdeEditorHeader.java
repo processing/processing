@@ -148,10 +148,12 @@ public class PdeEditorHeader extends JComponent /*implements MouseListener*/ {
   }
 
 
+  /*
   public void reset() {
     sketchLeft = 0;
     repaint();
   }
+  */
 
 
   public void paintComponent(Graphics screen) {

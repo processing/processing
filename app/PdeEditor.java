@@ -144,9 +144,7 @@ public class PdeEditor extends JFrame
 #endif
 
     // set the window icon
-
     try {
-      //icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
       icon = PdeBase.getImage("icon.gif", this);
       setIconImage(icon);
     } catch (Exception e) { } // fail silently, no big whup
@@ -174,6 +172,9 @@ public class PdeEditor extends JFrame
     menubar.add(buildHelpMenu());
 
     setJMenuBar(menubar);
+
+    // doesn't matter when this is created, just make it happen at some point
+    find = new PdeEditorFind(PdeEditor.this);
 
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
@@ -430,6 +431,10 @@ public class PdeEditor extends JFrame
     }
 
 
+    // in case tab expansion stuff has changed
+    listener.applyPreferences();
+
+
     // in case library option has been enabled or disabled
 
     //buildExportMenu();
@@ -528,8 +533,6 @@ public class PdeEditor extends JFrame
           buttons.clear();
         }
       });
-    //exportMenu = buildExportMenu();
-    //menu.add(exportMenu);
 
     menu.addSeparator();
 
@@ -565,37 +568,6 @@ public class PdeEditor extends JFrame
     }
     return menu;
   }
-
-
-  /*
-  protected JMenu buildExportMenu() {
-    if (exportMenu == null) {
-      exportMenu = new JMenu("Export");
-    } else {
-      exportMenu.removeAll();
-    }
-    JMenuItem item;
-
-    item = newJMenuItem("Applet", 'E');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          skExport();
-        }
-      });
-    exportMenu.add(item);
-
-    item = newJMenuItem("Application", 'E', true);
-    item.setEnabled(false);
-    exportMenu.add(item);
-
-    if (PdePreferences.getBoolean("export.library")) {
-      item = new JMenuItem("Library");
-      item.setEnabled(false);
-      exportMenu.add(item);
-    }
-    return exportMenu;
-  }
-  */
 
 
   protected JMenu buildSketchMenu() {
@@ -788,11 +760,7 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (find == null) { 
-            find = new PdeEditorFind(PdeEditor.this);
-          } else {
-            find.show();
-          }
+          find.show();
         }
       });
     menu.add(item);
@@ -800,7 +768,9 @@ public class PdeEditor extends JFrame
     item = newJMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (find != null) find.find();
+          // TODO find next should only be enabled after a 
+          // search has actually taken place
+          find.find();
         }
       });
     menu.add(item);
@@ -840,12 +810,10 @@ public class PdeEditor extends JFrame
   // This one listens for edits that can be undone.
   protected class PdeUndoableEditListener implements UndoableEditListener {
     public void undoableEditHappened(UndoableEditEvent e) {
-      //Remember the edit and update the menus.
+      // Remember the edit and update the menus.
       undo.addEdit(e.getEdit());
       undoAction.updateUndoState();
       redoAction.updateRedoState();
-      //System.out.println("setting sketch to modified");
-      //if (!editor.sketchModified) editor.setSketchModified(true);
     }
   }
 
@@ -1094,10 +1062,11 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void setSketchModified(boolean what) {
-    header.sketchModified = what;
+  public void setModified(boolean what) {
+    //header.sketchModified = what;
+    sketch.setModified(what);
     header.repaint();
-    sketchModified = what;
+    //sketchModified = what;
   }
 
 
@@ -1113,9 +1082,11 @@ public class PdeEditor extends JFrame
     openingPath = path;
     openingName = name;
 
-    if (sketchModified) {
+    if (sketch.isModified()) {
       String prompt = "Save changes to " + sketch.name + "?  ";
 
+      // if the user selected quit, then this has to be done with
+      // a JOptionPane instead of internally in the editor
       if (checking == DO_QUIT) {
         int result = 0;
 
@@ -1153,7 +1124,8 @@ public class PdeEditor extends JFrame
         if (result == JOptionPane.YES_OPTION) {
           //System.out.println("yes");
           //System.out.println("saving");
-          doSave();
+          //doSave();
+          sketch.save();
           //System.out.println("done saving");
           checkModified2();
 
@@ -1419,7 +1391,7 @@ public class PdeEditor extends JFrame
       sketchFile = file;
       setSketchModified(false);
       message("Done saving " + filename + ".");
-
+      
     } catch (IOException e) {
       e.printStackTrace();
       //message("Did not write file.");
@@ -1510,82 +1482,6 @@ public class PdeEditor extends JFrame
   }
 
 
-  /*
-  public void skExport() {
-    doStop();
-    message("Exporting for the web...");
-    File appletDir = new File(sketchDir, "applet");
-    handleExport(appletDir, sketchName, new File(sketchDir, "data"));
-  }
-  */
-
-
-  /*
-  public void doExport() {
-    message("Exporting for the web...");
-    String s = textarea.getText();
-    FileDialog fd = new FileDialog(new Frame(), 
-                                   "Create applet project named...", 
-                                   FileDialog.SAVE);
-
-    String directory = sketchFile.getPath(); //lastDirectory;
-    String project = sketchFile.getName(); //lastFile;
-
-    fd.setDirectory(directory);
-    fd.setFile(project);
-    fd.show();
-
-    directory = fd.getDirectory();
-    project = fd.getFile();
-    if (project == null) {   // user cancelled
-      message(EMPTY);
-      buttons.clear();
-      return;
-
-    } else if (project.indexOf(' ') != -1) {  // space in filename
-      message("Project name cannot have spaces.");
-      buttons.clear();
-      return;
-    }
-    handleExport(new File(directory), project, null);
-  }
-  */
-
-
-  public void doPrint() {
-    /*
-    Frame frame = new Frame(); // bullocks
-    int screenWidth = getToolkit().getScreenSize().width;
-    frame.reshape(screenWidth + 20, 100, screenWidth + 100, 200);
-    frame.show();
-
-    Properties props = new Properties();
-    PrintJob pj = getToolkit().getPrintJob(frame, "PDE", props);
-    if (pj != null) {
-      Graphics g = pj.getGraphics();
-      // awful way to do printing, but sometimes brute force is
-      // just the way. java printing across multiple platforms is
-      // outrageously inconsistent.
-      int offsetX = 100;
-      int offsetY = 100;
-      int index = 0;
-      for (int y = 0; y < graphics.height; y++) {
-        for (int x = 0; x < graphics.width; x++) {
-          g.setColor(new Color(graphics.pixels[index++]));
-          g.drawLine(offsetX + x, offsetY + y,
-                     offsetX + x, offsetY + y);
-        }
-      }
-      g.dispose();
-      g = null;
-      pj.end();
-    }
-    frame.dispose();
-    buttons.clear();
-    */
-  }
-
-
   public void doQuit() {
     // stop isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
@@ -1607,21 +1503,6 @@ public class PdeEditor extends JFrame
     //System.out.println("exiting here");
     System.exit(0);
   }
-
-
-  /*
-  public void find() {
-    if (find == null) { 
-      find = new PdeEditorFind(this);
-    } else {
-      find.show();
-    }
-  }
-
-  public void findNext() {
-    if (find != null) find.find();
-  }
-  */
 
 
   public void doBeautify() {
