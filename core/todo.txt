@@ -160,6 +160,16 @@ X printarr instead of print/println for arrays
 X   println(Object o) conflicts with println(int a[])
 X   but println(Object o) is very needed
 
+040919
+X loop/noLoop setup
+_ add redraw() function
+_   call redraw() on the first time through (to force initial draw)
+_   otherwise noLoop() in setup means no drawing happens at all
+_ defaults for PApplet and PGraphics are different
+_   PGraphics has none.. PApplet has fill/stroke
+_ set PImage.format as RGB by default? 
+_   this was problem with rendering an image from PGraphics on board
+
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
 _   move to new graphics engine

@@ -89,11 +89,12 @@ public class PApplet extends Applet
   protected long fpsLastDelayTime = 0;
   protected float fpsTarget = 0;
 
-  boolean drawMethod;
-  boolean loopMethod;
+  //boolean drawMethod;
+  //boolean loopMethod;
+  boolean looping;
 
   // true if inside the loop method
-  boolean insideLoop;
+  //boolean insideLoop;
 
   // used for mouse tracking so that pmouseX doesn't get
   // updated too many times while still inside the loop
@@ -168,8 +169,9 @@ public class PApplet extends Applet
     firstFrame = true;
 
     // this will be cleared by loop() if it is not overridden
-    drawMethod = true;
-    loopMethod = true;
+    //drawMethod = true;
+    //loopMethod = true;
+    looping = true;
     firstMouseEvent = true;
 
     /*
@@ -285,12 +287,26 @@ public class PApplet extends Applet
 
 
   public void draw() {
-    drawMethod = false;
+    //drawMethod = false;
   }
 
 
   public void loop() {
-    loopMethod = false;
+    if (!looping) {
+      looping = true;
+      if (thread != null) {
+        thread.interrupt();  // wake from sleep
+      }
+    }
+  }
+
+  public void noLoop() {
+    if (looping) {
+      looping = false;
+      if (thread != null) {
+        thread.interrupt();  // wake from sleep
+      }
+    }
   }
 
 
@@ -373,7 +389,7 @@ public class PApplet extends Applet
         updated = false;
 
         if (PApplet.THREAD_DEBUG) println("nextFrame()");
-        nextFrame();
+        if (looping) nextFrame();
 
         // moving this to update() (for 0069+) for linux sync problems
         //if (firstFrame) firstFrame = false; 
@@ -388,7 +404,9 @@ public class PApplet extends Applet
             // windows doesn't like 'yield', so have to sleep at least
             // for some small amount of time.
             if (PApplet.THREAD_DEBUG) System.out.println("gonna sleep");
-            Thread.sleep(1);  // sleep to make OS happy
+            // can't remember when/why i changed that to '1'..
+            // i have a feeling that some applets aren't gonna like that
+            Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
             if (PApplet.THREAD_DEBUG) System.out.println("outta sleep");
           } catch (InterruptedException e) { }
         }
@@ -422,6 +440,7 @@ public class PApplet extends Applet
 
     if (fpsTarget != 0) framerate_delay();
 
+    /*
     // attempt to draw a static image using draw()
     if (!drawn) {
       //synchronized (g.image) {
@@ -438,37 +457,38 @@ public class PApplet extends Applet
         drawn = true;
       }  // end synch
     }
+    */
 
     // if not a static app, run the loop
-    if (!drawMethod) {
-      synchronized (g) {
-        g.beginFrame();
-        //mouseUpdated = false;
-        insideLoop = true;
-        loop();
-        insideLoop = false;
+    //if (!drawMethod) {
+    synchronized (g) {
+      g.beginFrame();
+      //mouseUpdated = false;
+      //insideLoop = true;
+      draw();
+      //insideLoop = false;
 
-        // these are called *after* loop so that valid
-        // drawing commands can be run inside them. it can't
-        // be before, since a call to background() would wipe
-        // out anything that had been drawn so far.
-        if (qmouseMoved) {
-          mouseMoved();
-          qmouseMoved = false;
-        }
-        if (qmouseDragged) {
-          mouseDragged();
-          qmouseDragged = false;
-        }
-        g.endFrame();
-      }  // end synch
-      update();
-    }
+      // these are called *after* loop so that valid
+      // drawing commands can be run inside them. it can't
+      // be before, since a call to background() would wipe
+      // out anything that had been drawn so far.
+      if (qmouseMoved) {
+        mouseMoved();
+        qmouseMoved = false;
+      }
+      if (qmouseDragged) {
+        mouseDragged();
+        qmouseDragged = false;
+      }
+      g.endFrame();
+    }  // end synch
+    update();
+    //}
 
     // takedown
-    if (!loopMethod) {
-      finished = true;
-    }
+    //if (!loopMethod) {
+    //finished = true;
+    //}
 
     pmouseX = mouseX;
     pmouseY = mouseY;
@@ -789,6 +809,20 @@ public class PApplet extends Applet
       System.err.println("Could not open " + here);
       e.printStackTrace();
     }
+  }
+
+
+  // ------------------------------------------------------------
+
+
+  /**
+   * Explicitly exit the applet. Inserted as a call for static
+   * mode apps, but is generally necessary because apps no longer
+   * have draw/loop separation.
+   */
+  public void exit() {
+    stop();
+    // TODO if not running as an applet, do a System.exit() here
   }
 
 
