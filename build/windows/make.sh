@@ -58,6 +58,9 @@ fi
 
 cd bagel
 
+# clear jikespath to avoid problems if it is defined elsewhere 
+unset JIKESPATH
+
 if test -d /cygdrive/c/WINNT
 then
   # windows 2000 or nt
@@ -71,15 +74,14 @@ fi
 
 CLASSPATH=../build/windows/work/java/lib/rt.jar:../build/windows/work/java/lib/ext/comm.jar:${QT_JAVA_PATH}
 
-
 ### --- make version with serial for the application
-echo Building bagel with serial and video support
-perl make.pl SERIAL VIDEO
+echo Building bagel with serial, sonic and video support
+perl make.pl SERIAL SONIC VIDEO
 cp classes/*.class ../build/windows/work/classes/
 
 ### --- make version without serial for applet exporting
-echo Building bagel for export
-perl make.pl
+echo Building bagel for export with sonic support
+perl make.pl SONIC
 cp classes/*.class ../build/windows/work/lib/export/
 
 cd ..
