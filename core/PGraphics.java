@@ -699,21 +699,24 @@ public class PGraphics extends PImage implements PConstants {
   // STROKE/FILL/DRAW
 
 
-  protected void fill_shape(Shape s) {
+  //protected void fill_shape(Shape s) {
+  protected void fill_shape(Path s) {
     if (fill) {
       //graphics.setColor(fillColorObject);
       //graphics.fill(s);
     }
   }
 
-  protected void stroke_shape(Shape s) {
+  //protected void stroke_shape(Shape s) {
+  protected void stroke_shape(Path s) {
     if (stroke) {
       //graphics.setColor(strokeColorObject);
       //graphics.draw(s);
     }
   }
 
-  protected void draw_shape(Shape s) {
+  //protected void draw_shape(Shape s) {
+  protected void draw_shape(Path s) {
     if (fill) {
       //graphics.setColor(fillColorObject);
       //graphics.fill(s);
@@ -1558,7 +1561,7 @@ public class PGraphics extends PImage implements PConstants {
       if (y2 < y1) {
         float temp = y1; y1 = y2; y2 = temp;
       }
-      textFont.text(s, x1, y1, z, x2, y2, this);
+      textFont.text(s, x1, y1, x2, y2, this);
 
     } else {
       System.err.println("text(): first set a font before drawing text");
@@ -1695,7 +1698,7 @@ public class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("too many calls to pop() " +
                                  "(and not enough to push)");
       //message(COMPLAINT, "matrix stack underflow, to many popmatrix");
-      return;
+      //return;
     }
     matrixStackDepth--;
     float mat[] = matrixStack[matrixStackDepth];
@@ -2570,7 +2573,7 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  class Shape extends Path {
-  }
+  //class Shape extends Path {
+  //}
 }
 
