@@ -353,12 +353,17 @@ public class PdeBase implements ActionListener {
       String entries[] = new File(userPath).list();
       boolean added = false;
       for (int j = 0; j < entries.length; j++) {
-	if ((entries[j].equals(".")) || 
-	    (entries[j].equals(".."))) continue;
+	if (entries[j].equals(".") || 
+	    entries[j].equals("..") ||
+	    entries[j].equals("CVS") ||
+	    entries[j].equals(".cvsignore")) continue;
 	added = true;
-	MenuItem item = new MenuItem(entries[j]);
-	item.addActionListener(userMenuListener);
-	menu.add(item);
+	if (new File(userPath, entries[j] + File.separator + 
+		     entries[j] + ".pde").exists()) {
+	  MenuItem item = new MenuItem(entries[j]);
+	  item.addActionListener(userMenuListener);
+	  menu.add(item);
+	}
 	//submenu.add(entries[j]);
       }
       if (!added) {
@@ -373,9 +378,11 @@ public class PdeBase implements ActionListener {
       String toplevel[] = sketchbookFolder.list();
       added = false;
       for (int i = 0; i < toplevel.length; i++) {
-	if ((toplevel[i].equals(editor.userName)) ||
-	    (toplevel[i].equals(".")) ||
-	    (toplevel[i].equals(".."))) continue;
+	if (toplevel[i].equals(editor.userName) ||
+	    toplevel[i].equals(".") ||
+	    toplevel[i].equals("..") ||
+	    toplevel[i].equals("CVS") ||
+	    toplevel[i].equals(".cvsignore")) continue;
 
 	added = true;
 	Menu subMenu = new Menu(toplevel[i]);
@@ -387,12 +394,17 @@ public class PdeBase implements ActionListener {
 	entries = subFolder.list();
 	if (entries != null) {
 	  for (int j = 0; j < entries.length; j++) {
-	    if ((entries[j].equals(".")) || 
-		(entries[j].equals(".."))) continue;
+	    if (entries[j].equals(".") || 
+		entries[j].equals("..") ||
+		entries[j].equals("CVS") ||
+		entries[j].equals(".cvsignore")) continue;
 	    //subMenu.add(entries[j]);
-	    MenuItem item = new MenuItem(entries[j]);
-	    item.addActionListener(subMenuListener);
-	    subMenu.add(item);
+	    if (new File(subFolder, entries[j] + File.separator + 
+			 entries[j] + ".pde").exists()) {
+	      MenuItem item = new MenuItem(entries[j]);
+	      item.addActionListener(subMenuListener);
+	      subMenu.add(item);
+	    }
 	  }
 	}
 
