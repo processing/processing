@@ -241,9 +241,23 @@ public class PApplet extends Applet
   }
 
 
-  // public void destroy() is another one that gets called as the
-  // applet viewer is shutting down the applet. stop() is called
-  // first, and then destroy() to really get rid of things.
+  /**
+   * This also calls stop(), in case there was an inadvertent 
+   * override of the stop() function by a user.
+   *
+   * destroy() supposedly gets called as the applet viewer 
+   * is shutting down the applet. stop() is called
+   * first, and then destroy() to really get rid of things.
+   * no guarantees on when they're run (on browser quit, or
+   * when moving between pages), though.
+   */
+  public void destroy() {
+    if (thread != null) {
+      // call stop since this prolly means someone 
+      // over-rode the stop() function
+      stop();  
+    }
+  }
 
 
   public Dimension getPreferredSize() {
