@@ -114,7 +114,7 @@ public class PdeSketchbook {
     if (!startup) {
       // prompt for the filename and location for the new sketch
 
-      FileDialog fd = new FileDialog(new Frame(), 
+      FileDialog fd = new FileDialog(editor, //new Frame(), 
                                      //"Create new sketch named", 
                                      "Create sketch folder named:", 
                                      FileDialog.SAVE);
