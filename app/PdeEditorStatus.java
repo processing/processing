@@ -156,8 +156,9 @@ public class PdeEditorStatus extends Panel
     response = 0;
     okButton.setVisible(true);
     cancelButton.setVisible(true);
-    editField.setText(dflt);
     editField.setVisible(true);
+    editField.setText(dflt);
+    editField.selectAll();
     editField.requestFocus();
 
     update();

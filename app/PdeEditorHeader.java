@@ -64,7 +64,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 	  //System.out.println("got mouse");
 	  if ((sketchRight != 0) &&
 	      (e.getX() > sketchLeft) && (e.getX() < sketchRight)) {
-	    editor.skSaveAs();
+	    editor.skSaveAs(true);
 	  }
 	}
       });
