@@ -71,7 +71,7 @@ public class PdeEditor extends Panel {
   Point appletLocation; //= new Point(0, 0);
   Point presentLocation; // = new Point(0, 0);
 
-  Frame frame;
+  //Frame frame;
   Window presentationWindow;
 
   RunButtonWatcher watcher;
@@ -313,7 +313,7 @@ public class PdeEditor extends Panel {
 
 #ifdef JDK13
 	  // move editor to front in case it was hidden
-	  frame.setState(Frame.NORMAL);
+	  PdeBase.frame.setState(Frame.NORMAL);
 #endif
 	}});
 
