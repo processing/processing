@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BPolygon - zbuffer polygon rendering object for BGraphics
+  PPolygon - zbuffer polygon rendering object for BGraphics
   Part of the Processing project - http://Proce55ing.net
 
   Copyright (c) 2001-03 
@@ -24,8 +24,10 @@
   Boston, MA  02111-1307  USA
 */
 
+package processing.core;
 
-public class BPolygon implements BConstants {
+
+public class PPolygon implements PConstants {
   static final int DEFAULT_SIZE = 64; // this is needed for spheres
   float vertices[][] = new float[DEFAULT_SIZE][VERTEX_FIELD_COUNT];
   int vertexCount;
@@ -55,7 +57,7 @@ public class BPolygon implements BConstants {
   float zbuffer[];
   boolean noDepthTest;
 
-  BGraphics parent;
+  PGraphics parent;
   int pixels[];
 
   // the parent's width/height, 
@@ -64,7 +66,7 @@ public class BPolygon implements BConstants {
   int width, height; 
   int width1, height1;
 
-  BImage timage;
+  PImage timage;
   int tpixels[];
   int theight, twidth;
   int theight1, twidth1;
@@ -95,7 +97,7 @@ public class BPolygon implements BConstants {
   }
 
 
-  public BPolygon(BGraphics iparent) {
+  public PPolygon(PGraphics iparent) {
     parent = iparent;
     reset(0);
   }
@@ -130,7 +132,7 @@ public class BPolygon implements BConstants {
   }
 
 
-  public void texture(BImage image) {
+  public void texture(PImage image) {
     this.timage = image;
     this.tpixels = image.pixels;
     this.twidth = image.width;

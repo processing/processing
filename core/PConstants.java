@@ -1,12 +1,11 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  BConstants - numbers shared throughout the bagel engine
-  Part of the Processing project - http://Proce55ing.net
+  PConstants - numbers shared throughout processing.core
+  Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03 
-  Ben Fry, Massachusetts Institute of Technology and 
-  Casey Reas, Interaction Design Institute Ivrea
+  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,11 +23,13 @@
   Boston, MA  02111-1307  USA
 */
 
+package processing.core;
+
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 
 
-public interface BConstants {
+public interface PConstants {
 
   // for better parity between c++ version (at no speed cost)
 
