@@ -146,12 +146,11 @@ public class PdePreferences extends JComponent {
     //File home = new File(System.getProperty("user.home"));
     //File processingHome = new File(home, "Processing");
     //preferencesFile = new File(home, PREFS_FILE);
-    preferencesFile = new File(getProcessingHome(), PREFS_FILE);
+    preferencesFile = PdeBase.getProcessingHome(PREFS_FILE);
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
-      getProcessingHome().mkdirs();
       save();  
 
     } else {
@@ -260,7 +259,7 @@ public class PdePreferences extends JComponent {
 
     // [ ] Enable export to "Library"
 
-    exportLibraryBox = new JCheckBox("Enable export to \"Library\"");
+    exportLibraryBox = new JCheckBox("Enable advanced \"Library\" features");
     pain.add(exportLibraryBox);
     d = exportLibraryBox.getPreferredSize();
     exportLibraryBox.setBounds(left, top, d.width, d.height);
@@ -295,13 +294,15 @@ public class PdePreferences extends JComponent {
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
     */
-    label = new JLabel("More preferences can be edited directly");
+    label = new JLabel("More preferences can be edited directly in the file");
+    label.setForeground(Color.GRAY);
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
     top += d.height; // + GUI_SMALL;
 
-    label = new JLabel("in the file " + preferencesFile.getAbsolutePath());
+    label = new JLabel(preferencesFile.getAbsolutePath());
+    label.setForeground(Color.GRAY);
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
@@ -349,6 +350,15 @@ public class PdePreferences extends JComponent {
     wide = right + GUI_BIG;
     high = top + GUI_BIG;
     setSize(wide, high);
+
+
+    // closing the window is same as hitting cancel button
+
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          disposeFrame();
+        }
+      });
 
     Container content = frame.getContentPane();
     content.setLayout(new BorderLayout());
@@ -509,26 +519,6 @@ public class PdePreferences extends JComponent {
       PdeBase.showWarning(null, "Error while saving the settings file", ex);
       //e.printStackTrace();
     }
-  }
-
-
-  // .................................................................
-
-
-  static public File getProcessingHome() {
-    File home = new File(System.getProperty("user.home"));
-
-    if (PdeBase.platform == PdeBase.MACOSX) {
-      // on macosx put the sketchbook in the "Documents" folder
-      return new File(home, "Documents" + File.separator + "Processing");
-
-    } else if (PdeBase.platform == PdeBase.WINDOWS) {
-      // on windows put the sketchbook in the "My Documents" folder
-      return new File(home, "My Documents" + File.separator + "Processing");
-    }
-
-    // all others, just say home directory
-    return new File(home, "processing");
   }
 
 

@@ -370,7 +370,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       e.printStackTrace();  // this would be odd
     }
     //System.out.println("included path is " + abuffer.toString());
-    makeImportsFromClassPath(abuffer.toString());
+    packageListFromClassPath(abuffer.toString());
     return abuffer.toString();
   }
 
@@ -383,7 +383,7 @@ public class PdeCompiler implements PdeMessageConsumer {
    * @param path the input classpath
    * @return array of possible package names
    */
-  static public String[] makeImportsFromClassPath(String path) {
+  static public String[] packageListFromClassPath(String path) {
     Hashtable table = new Hashtable();
     String pieces[] = 
       PApplet.split(path, File.pathSeparatorChar);
@@ -394,12 +394,12 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       if (pieces[i].toLowerCase().endsWith(".jar") || 
           pieces[i].toLowerCase().endsWith(".zip")) {
-        makeImportsFromZip(pieces[i], table);
+        packageListFromZip(pieces[i], table);
 
       } else {  // it's another type of file or directory
         File dir = new File(pieces[i]);
         if (dir.exists() && dir.isDirectory()) {
-          makeImportsFromFolder(dir, null, table);
+          packageListFromFolder(dir, null, table);
           //importCount = magicImportsRecursive(dir, null, 
           //                                  table); 
                                               //imports, importCount);
@@ -418,7 +418,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   }
 
 
-  static public void makeImportsFromZip(String filename, Hashtable table) {
+  static private void packageListFromZip(String filename, Hashtable table) {
     try {
       ZipFile file = new ZipFile(filename);
       Enumeration entries = file.entries();
@@ -452,8 +452,8 @@ public class PdeCompiler implements PdeMessageConsumer {
    * of folders to the package list. If another folder is found, 
    * walk down into that folder and continue.
    */
-  static public void makeImportsFromFolder(File dir, String sofar, 
-                                           Hashtable table) {
+  static private void packageListFromFolder(File dir, String sofar, 
+                                            Hashtable table) {
                                           //String imports[], 
                                           //int importCount) {
     //System.err.println("checking dir '" + dir + "'");
@@ -467,7 +467,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       if (sub.isDirectory()) {
         String nowfar = 
           (sofar == null) ? files[i] : (sofar + "." + files[i]);
-        makeImportsFromFolder(sub, nowfar, table);
+        packageListFromFolder(sub, nowfar, table);
         //System.out.println(nowfar);
         //imports[importCount++] = nowfar;
         //importCount = magicImportsRecursive(sub, nowfar, 
