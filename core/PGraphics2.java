@@ -37,7 +37,7 @@ import java.awt.image.*;
 public class PGraphics2 extends PGraphics {
 
   Graphics2D graphics;
-  GeneralPath path;
+  GeneralPath gpath;
 
   int transformCount;
   AffineTransform transformStack[] =
@@ -102,8 +102,7 @@ public class PGraphics2 extends PGraphics {
   // broken out because of subclassing for opengl
   protected void allocate() {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-    Graphics2D graphics = (Graphics2D) image.getGraphics();
+    graphics = (Graphics2D) image.getGraphics();
   }
 
 
@@ -158,10 +157,10 @@ public class PGraphics2 extends PGraphics {
     case LINE_STRIP:
     case LINE_LOOP:
       if (vertexCount == 1) {
-        path = new GeneralPath();
-        path.moveTo(x, y);
+        gpath = new GeneralPath();
+        gpath.moveTo(x, y);
       } else {
-        path.lineTo(x, y);
+        gpath.lineTo(x, y);
       }
       break;
 
@@ -181,16 +180,16 @@ public class PGraphics2 extends PGraphics {
                  vertices[1][MX], vertices[1][MY],
                  x, y);
       } else if (vertexCount > 3) {
-        path = new GeneralPath();
+        gpath = new GeneralPath();
         // when vertexCount == 4, draw an un-closed triangle
         // for indices 2, 3, 1
-        path.moveTo(vertices[vertexCount - 2][MX],
-                    vertices[vertexCount - 2][MY]);
-        path.lineTo(vertices[vertexCount - 1][MX],
-                    vertices[vertexCount - 1][MY]);
-        path.lineTo(vertices[vertexCount - 3][MX],
-                    vertices[vertexCount - 3][MY]);
-        draw_shape(path);
+        gpath.moveTo(vertices[vertexCount - 2][MX],
+                     vertices[vertexCount - 2][MY]);
+        gpath.lineTo(vertices[vertexCount - 1][MX],
+                     vertices[vertexCount - 1][MY]);
+        gpath.lineTo(vertices[vertexCount - 3][MX],
+                     vertices[vertexCount - 3][MY]);
+        draw_shape(gpath);
       }
       break;
 
@@ -200,15 +199,15 @@ public class PGraphics2 extends PGraphics {
                  vertices[1][MX], vertices[1][MY],
                  x, y);
       } else if (vertexCount > 3) {
-        path = new GeneralPath();
+        gpath = new GeneralPath();
         // when vertexCount > 3, draw an un-closed triangle
         // for indices 0 (center), previous, current
-        path.moveTo(vertices[0][MX],
+        gpath.moveTo(vertices[0][MX],
                     vertices[0][MY]);
-        path.lineTo(vertices[vertexCount - 2][MX],
+        gpath.lineTo(vertices[vertexCount - 2][MX],
                     vertices[vertexCount - 2][MY]);
-        path.lineTo(x, y);
-        draw_shape(path);
+        gpath.lineTo(x, y);
+        draw_shape(gpath);
       }
       break;
 
@@ -236,17 +235,17 @@ public class PGraphics2 extends PGraphics {
              vertices[1][MX], vertices[1][MY]);
 
       } else if (vertexCount > 4) {
-        path = new GeneralPath();
+        gpath = new GeneralPath();
         // when vertexCount == 5, draw an un-closed triangle
         // for indices 2, 4, 5, 3
-        path.moveTo(vertices[vertexCount - 3][MX],
-                    vertices[vertexCount - 3][MY]);
-        path.lineTo(vertices[vertexCount - 1][MX],
-                    vertices[vertexCount - 1][MY]);
-        path.lineTo(x, y);
-        path.lineTo(vertices[vertexCount - 2][MX],
-                    vertices[vertexCount - 2][MY]);
-        draw_shape(path);
+        gpath.moveTo(vertices[vertexCount - 3][MX],
+                     vertices[vertexCount - 3][MY]);
+        gpath.lineTo(vertices[vertexCount - 1][MX],
+                     vertices[vertexCount - 1][MY]);
+        gpath.lineTo(x, y);
+        gpath.lineTo(vertices[vertexCount - 2][MX],
+                     vertices[vertexCount - 2][MY]);
+        draw_shape(gpath);
       }
       break;
 
@@ -254,10 +253,10 @@ public class PGraphics2 extends PGraphics {
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
       if (vertexCount == 1) {
-        path = new GeneralPath();
-        path.moveTo(x, y);
+        gpath = new GeneralPath();
+        gpath.moveTo(x, y);
       } else {
-        path.lineTo(x, y);
+        gpath.lineTo(x, y);
       }
       break;
     }
@@ -289,14 +288,14 @@ public class PGraphics2 extends PGraphics {
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
       if (splineVertexCount == 1) {
-        path.moveTo(x, y);
+        gpath.moveTo(x, y);
 
       } else if (splineVertexCount >= 4) {
-        path.curveTo(splineVertices[splineVertexCount-3][MX],
-                     splineVertices[splineVertexCount-3][MY],
-                     splineVertices[splineVertexCount-2][MX],
-                     splineVertices[splineVertexCount-2][MY],
-                     x, y);
+        gpath.curveTo(splineVertices[splineVertexCount-3][MX],
+                      splineVertices[splineVertexCount-3][MY],
+                      splineVertices[splineVertexCount-2][MX],
+                      splineVertices[splineVertexCount-2][MY],
+                      x, y);
       }
       break;
     }
@@ -313,19 +312,19 @@ public class PGraphics2 extends PGraphics {
 
     switch (shape) {
     case LINE_STRIP:
-      stroke_shape(path);
+      stroke_shape(gpath);
       break;
 
     case LINE_LOOP:
-      path.closePath();
-      stroke_shape(path);
+      gpath.closePath();
+      stroke_shape(gpath);
       break;
 
     case POLYGON:
     case CONCAVE_POLYGON:
     case CONVEX_POLYGON:
-      path.closePath();
-      draw_shape(path);
+      gpath.closePath();
+      draw_shape(gpath);
       break;
     }
   }
@@ -380,13 +379,13 @@ public class PGraphics2 extends PGraphics {
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-    GeneralPath gp = new GeneralPath();
-    gp.moveTo(x1, y1);
-    gp.lineTo(x2, y2);
-    gp.lineTo(x3, y3);
-    gp.closePath();
+    gpath = new GeneralPath();
+    gpath.moveTo(x1, y1);
+    gpath.lineTo(x2, y2);
+    gpath.lineTo(x3, y3);
+    gpath.closePath();
 
-    draw_shape(gp);
+    draw_shape(gpath);
   }
 
 
