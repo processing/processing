@@ -222,7 +222,7 @@ else
   exit 1;
 fi
 cd ../../lib/video
-../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . PCamera.java 
+../../build/windows/work/jikes +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
 zip -r0q video.jar processing
 rm -rf processing
 cp video.jar "C:\\Documents and Settings\\fry\\My Documents\\sketchbook\\new_camera_action\\code"

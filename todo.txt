@@ -265,6 +265,12 @@ X   is it possible to check if new frames are available?
 X   properly synchronize() the pixels
 X   may need to always copy to a new array? (or does it already?)
 
+040709 later evening
+X working on movie setup
+
+040710
+
+_ get movie working again
 _ provide a useful error message when winvdig not installed (for capture)
 _   also be able to set one in particular
 
