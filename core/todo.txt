@@ -9,6 +9,9 @@ _   use depth()/noDepth() to handle depth test
 
 _ y2 position of rectangles not same as y2 position of lines
 
+_ screenX/Y aren't properly working for 2D points against a 3D matrix
+_   (ryan alexander rounding bug)
+
 text issues
 _ need to resolve SCREEN_SPACE vs OBJECT_SPACE
 _   can this be auto-detected with noDepth()? 
@@ -20,6 +23,7 @@ _   without setting the font, SCREEN_SPACE comes out weird
 _   move SCREEN_SPACE into ScreenFont() class?
 _     probably not, casey thinks screen space text is prolly more useful
 _     that way can clear up some of the general confusion in the code
+_   check into symbol font encoding with create font
 
 text wish list
 _ look into fixing the texture mapping to not squash fonts
