@@ -6,6 +6,187 @@ about to enjoy is extremely hot.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0069 - 28 march 2004
+
+this is yet another bug fix release, which repairs several things, 
+mostly things that i've run into over the past few as i've been doing
+a lot of coding with processing, and some things that were really
+causing trouble for folks on the board. basically i was bummed out to
+see bug reports on things that i had fixed, or could fix semi-easily.
+
+i'm not releasing linux for this one for lack of time. it will also
+not be listed (at least not initially) as the default download on the
+page, since it hasn't been tested heavily: this release might not be
+particularly stable, i threw it together because i've been working
+with p5 a lot lately and had several fixes, but didn't have the time
+to do the usual "vetting" process with the testers. if you have any
+weird problems, just use 0068.
+
+it's likely that a handful of the examples are also broken because of
+the api changes.. my apologies.. 
+
+there will likely be a couple more releases before the "big" 
+release that i still need a better name for than "the big release".
+suggestions are welcome.
+
+
+[ ide fixes / changes ] 
+
+- fixed the ever-annoying problem of using video with a 'code' folder.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077900024
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1069724180;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073523928;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076679293;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076649501;start=0
+
+- added an option to pde.properties so that users can set the amount
+  of memory to for java mode applications. currently it's set to:
+  run.external.memory=128
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078699341;start=0
+
+- wheel mouse should now be working when using java 1.4 on the mac.
+  thanks to jonathan feinberg for the fix!
+
+- lots of fixes to the font builder. remembers previous settings,
+  doesn't die on small fonts
+
+- added CFBundleIdentifier to mac version so that it's more osx savvy.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1078739015
+
+- *temporarily* disabled "replace all" because it's doing more harm
+  than good as of now. it will be back in the next release, i just
+  didn't have time to repair it for this one, and since it's
+  destructive, that's bad.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076740626
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080213711
+
+
+[ bug fixes ] 
+
+- macosx was flickering several times on startup, no more. this was
+  also the cause of some other threading weirdness across other
+  platforms. this probably still needs a little work, but it's better.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073111031
+
+- some internal fixes to how camera modes worked.. screenX was
+  slightly broken for some circumstances
+
+- min() and max() with three variables were broken. no longer.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076804172
+
+- the constant for CONTROL wasn't set properly 
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058788
+
+- fixed a bug when using non-ascii chars with fonts
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077475307;start=0
+
+- fixed a bug where split() would throw an Exception on an empty string
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077664736
+
+- fix bug where single pixel points were ignoring their alpha values
+
+
+[ api changes & additions ] 
+
+- loadStream() has become openStream(), for better consistency. 
+
+- toInt(), toFloat(), to String() functions.. 
+  ** the naming of these are subject to change..     **
+  ** we haven't decided on a proper naming for them! **
+
+- splitStrings() becomes just split().. splitInts() goes away. 
+  splitInts becomes -> toInt(split(someString, ','));
+
+- split() now handles multiple chars, i.e. 
+  split(someString, ", ") will split on any number of comma or space
+  chars in between (sort of a regexp but not really).
+  to split on commas and any amount of whitespace between, use:
+  split(someString, "," + WHITESPACE);
+
+- WHITESPACE is a String constant that includes the normal whitespace
+  chars (space, tab, linefeed, carriage return, etc) plus the unicode
+  "non breaking space" char.
+
+- chop() function that also handles the unicode non-breaking space
+  character (found commonly on the mac)
+
+- text(x, y, z) instead of just text(x, y)
+
+- printMatrix() and printCamera() print the current (object space)
+  transformation matrix and the camera (perspective) matrix. 
+
+- nf() and nfs() now work on whole arrays of numbers
+
+- nfp() is like nfs() but shows a plus sign instead of a space
+
+- code from toxi to support .tga files in loadImage()
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078459847;start=0
+
+- bagel code is getting less 1.1 vs. 1.3 specific, thanks to additions
+  from jonathan feinberg.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0068 - 2 february 2004
+
+this is a bug fix release, not the planned version of 68 that supports 
+multiple files and all sorts of amazing magic. it will be the last release 
+for the next two months while ben finishes his dissertation. 
+
+
+[ bug fixes ]
+
+- concave/convex polygons are now handled properly. just don't make
+  the last point of the polygon be the same as the first, otherwise
+  you'll confuse the tesselator. however! there is a bug (that showed
+  up during the release process.. ugh) that when smoothing is enabled,
+  sometimes thin lines will be visible within a concave polygon. this
+  will just have to be fixed in a future release. however, as long as 
+  stroke() is enabled on the polygon, the lines should not be visible.
+
+- fixed a bug that made the p5 environment freeze when an applet crashed
+
+- fixed problem with the environment locking up when the console got
+  too full. the console now has a maximum number of lines, set to 500 
+  by default. the console is also cleared on each run, so that doesn't 
+  cause trouble anymore. you can change both settings in pde.properties.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1075759355
+
+- fixed a find/replace bug that made the thing lock up when changing
+  case on a search. oops.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1075416670
+  http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1075416741
+
+- fix to the noise() function by toxi (thanks toxi!)
+
+- fix to the sphere() function by toxi (yay toxi!)
+
+- font builder should update when the size for the font is changed
+  (so long as the size itself is valid)
+
+- font builder bug, was cutting off parts of letters
+
+- better loadStream support when bagel is used by itself
+
+
+[ features ] 
+
+- added support for non-ascii characters in the font builder
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1067596427
+
+- added an option to disable smoothing on font creator
+
+- better support for international characters inside the development
+  environment. 
+
+- toxi added sphereDetail(), to set the level of accuracy on spheres
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0067 - 28 october 2003
 
 another bug fix release. high importance for people using 'java' 

@@ -33,7 +33,7 @@ changed in the future, but for now, they're not actually 'broken'.
 
 - 'preferences' will get better in a future release
 
-- the error message:
+- on macosx, the error message:
   ## Component Manager: attempting to find symbols in a component
   alias of type (regR/carP/x!bt)
   is not something from processing, it is a bug in toast 5.2's video
@@ -77,6 +77,26 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
   you can also upgrade to panther (macosx 10.3) which doesn't have
   this problem.
 
+- video sometimes likes to crash the application completely on
+  windows. this seems to be due to problems with quicktime for java
+  (since we shouldn't be able to write code that crashes using
+  java.. heh right). so this is probably outside of our control.
+
+
+..................................................................
+
+
+NETWORKING API BUGS
+
+- net is fairly horked, you should probably just use the java networking 
+  api until we get a chance to fix it.
+
+- network examples haven't been updated for the latest api, so they
+  will likely break in releases 60 and higher.
+
+- net needs work, it's currently sending unicode, instead of ascii or
+  UTF-8, data. this can cause problems with other programs.
+
 
 ..................................................................
 
@@ -86,46 +106,35 @@ the real deal, keeping us awake at night.. this is only a partial
 list, see the bboard for more, and inside ben's head for others.
 
 
-- haven't yet modified the default html to make changes for the eolas
-  case. we have the code (thanks to toxi), but i haven't gotten it in
-  there yet. 
-
 - beautify doesn't retain the *exact* position of the caret within the
   text. 
 
 - beautify has problems with indenting when lines with a brace are
   commented out, and also ignores switch statements.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-
-- network examples haven't been updated for the latest api, so they
-  will likely break in releases 60 and higher.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
 
 - clipping planes are not yet implemented. meaning that objects may
   sometimes fly into the camera and turn upside down or do other tricks.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
 
-- concave polygons still don't work, meaning that lots of irregular
-  polygons won't draw properly.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062469819;start=0
-
-- a lot of println() commands will make the environment really slow or
-  even lock up completely. it's because the console can't keep
-  up. we're working on a fix.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064182823
+- there is a bug that when smoothing is enabled, sometimes thin lines 
+  will be visible within a concave polygon. this will just have to be 
+  fixed in a future release. however, as long as stroke() is enabled 
+  on the polygon, the lines should not be visible.
 
 - the app doesn't provide an option to 'cancel' when it so politely asks
   if you want to "save changes before quitting?". this is because of
   java weirdness that we're trying to straighten out. the vm seems to
   be force quitting itself, even if cancel is selected. 
 
-- lines with stroke weights that aren't 1 are probably broken.
+- lines with stroke weights that aren't 1 are sometimes strange.
 
 - single pixel lines still have some problems with drawing over things.
 
-- the size of exported applets has jumped in this release. this will
-  get smaller again in a future release. we're in the middle of
+- the size of exported applets has jumped in recent releases. this will
+  get smaller again in a future release. we're in the midst of
   transitioning between two different sets of rendering/graphics code.
 
 - curveTangent() is not yet implemented. contributions welcome.
@@ -133,26 +142,24 @@ list, see the bboard for more, and inside ben's head for others.
 - strokeMiter() and strokeJoin() exist but are not implemented.
 
 - textures warp in strange ways due to perspective problems.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
 
 - smooth() is not completely implemented. there will be quirks in how
   it draws (like a weird flat line at the end of a shape, or areas
   that are less than smooth).
 
-- on windows, processing can't be run from a folder that has non-ascii
-  characters in its name. for instance, a folder named with japanese
-  characters or one with umlauts or accents:
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
-
-- video examples sometimes crash the whole environment on windows
+- on windows, if you hit 'run' and no display window comes up, it probably
+  means that you have processing inside a folder with non-ascii characters
+  in its name. for instance, if the name of your user folder uses japanese
+  text, or it has an umlaut or cedilla or anything else fancy, and processing 
+  is on the desktop, or somewhere inside that folder, you're gonna
+  have trouble. the fix is to place processing inside the root level of 
+  your C:\ drive (or whatever drive you use) and it'll be ok again.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
 
 - jikes is ~9 megabytes in size, which is a bit obnoxious. it doesn't
   hurt anything but we plan to put it on a diet for a future release.
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
-
-- net needs work, it's currently sending unicode, instead of ascii or
-  UTF-8, data. this can cause problems with other programs.
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062581723
 
 - sound doesn't always stop when the 'stop' button is hit (i.e. the
   mixer example seems broken). for now, you have to first quit
@@ -164,7 +171,7 @@ list, see the bboard for more, and inside ben's head for others.
 - using saveFrame() or saveBytes() or some of those things will cause
   trouble inside applets. we'll try to do better error trapping soon
   so that your applet doesn't crash when this happens. 
-  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
+  http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
 
 
 ..................................................................
@@ -177,8 +184,3 @@ these are things that are out of our control
 - "create font" crashes sometimes on windows, bringing down the whole
   environment. this seems to be a jdk bug, because it's not a java
   exception, but a full crash.
-
-- video sometimes likes to crash the application completely on
-  windows. this seems to be due to problems with quicktime for java
-  (since we shouldn't be able to write code that crashes using
-  java.. heh right). so this is probably outside of our control.

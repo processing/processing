@@ -69,12 +69,12 @@ export CLASSPATH
 
 ### --- make version with serial for the application
 echo Building bagel with serial and sonic support
-perl make.pl JIKES=../build/linux/work/jikes SERIAL RXTX SONIC JDK13
+perl make.pl JIKES=../build/linux/work/jikes SERIAL NETWORK RXTX SONIC JDK13
 cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting
 echo Building bagel for export with sonic
-perl make.pl JIKES=../build/linux/work/jikes SONIC
+perl make.pl JIKES=../build/linux/work/jikes SONIC NETWORK
 cp classes/*.class ../build/linux/work/lib/export/
 
 cd ..
