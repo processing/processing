@@ -196,7 +196,9 @@ glance through them should help clear things up.
 
 [ known problems, pardon our dust ]
 
-- stroke widths that aren't 1 are probably broken.
+- lines with stroke weights that aren't 1 are probably broken.
+
+- single pixel lines still have some problems with drawing over things.
 
 - the size of exported applets has jumped in this release. this will
   get smaller again in a future release. we're in the middle of
