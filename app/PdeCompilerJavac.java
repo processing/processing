@@ -2,7 +2,7 @@
 
 /*
   PdeCompilerJavac - compiler interface to kjc.. someday this will go away
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
