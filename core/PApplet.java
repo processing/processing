@@ -4180,7 +4180,7 @@ public class PApplet extends Applet
   }
 
 
-  public void copy(int sx1, int sy1, int sx2, int sy2, 
+  public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
      g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
   }
@@ -4207,13 +4207,13 @@ public class PApplet extends Applet
   }
 
 
-  public void blend(int sx1, int sy1, int sx2, int sy2, 
+  public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 
 
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
      g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
@@ -4753,25 +4753,25 @@ public class PApplet extends Applet
   }
 
 
-  public void colorMode(int icolorMode) {
-     g.colorMode(icolorMode);
+  public void colorMode(int mode) {
+     g.colorMode(mode);
   }
 
 
-  public void colorMode(int icolorMode, float max) {
-     g.colorMode(icolorMode, max);
+  public void colorMode(int mode, float max) {
+     g.colorMode(mode, max);
   }
 
 
-  public void colorMode(int icolorMode,
+  public void colorMode(int mode,
                         float maxX, float maxY, float maxZ) {
-     g.colorMode(icolorMode, maxX, maxY, maxZ);
+     g.colorMode(mode, maxX, maxY, maxZ);
   }
 
 
-  public void colorMode(int icolorMode,
+  public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
-     g.colorMode(icolorMode, maxX, maxY, maxZ, maxA);
+     g.colorMode(mode, maxX, maxY, maxZ, maxA);
   }
 
 
