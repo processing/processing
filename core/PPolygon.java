@@ -136,6 +136,7 @@ public class PPolygon implements PConstants {
    * Return true if this vertex is redundant. If so, will also
    * decrement the vertex count.
    */
+  /*
   public boolean redundantVertex(float x, float y, float z) {
     // because vertexCount will be 2 when setting vertex[1]
     if (vertexCount < 2) return false;
@@ -150,6 +151,7 @@ public class PPolygon implements PConstants {
     }
     return false;
   }
+  */
 
 
   public void texture(PImage image) {

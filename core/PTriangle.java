@@ -320,7 +320,7 @@ public class PTriangle implements PConstants
       m_drawFlags&=~R_GOURAUD;
     }
 
-    // push values to arrays.. some extra scaling is added 
+    // push values to arrays.. some extra scaling is added
     // to prevent possible color "overflood" due to rounding errors
     r_array[0] = (r0 * 253f + 1.0f) * 65536f;
     r_array[1] = (r1 * 253f + 1.0f) * 65536f;
@@ -2165,7 +2165,8 @@ public class PTriangle implements PConstants
         // get texture pixel color
         try
         {
-          if (iz < m_zbuffer[xstart]) {
+          //if (iz < m_zbuffer[xstart]) {
+          if (iz <= m_zbuffer[xstart]) {  // [fry 041114]
             //m_zbuffer[xstart] = iz;
 
             // blend
@@ -2440,7 +2441,8 @@ public class PTriangle implements PConstants
         // get texture pixel color
         try
         {
-          if (iz < m_zbuffer[xstart]) {
+          //if (iz < m_zbuffer[xstart]) {
+          if (iz <= m_zbuffer[xstart]) {  // [fry 041114]
             //m_zbuffer[xstart] = iz;
 
             // blend

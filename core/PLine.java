@@ -348,7 +348,7 @@ public class PLine implements PConstants
     }
 
     z0 = z_array[o0];
-    z0 += -0.001f; // [rocha] ugly fix for z buffer precision
+    //z0 += -0.001f; // [rocha] ugly fix for z buffer precision
 
     if (INTERPOLATE_Z) {
       dz = (z_array[o1] - z_array[o0]) / length;
