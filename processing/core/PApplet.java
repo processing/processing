@@ -2045,6 +2045,39 @@ public class PApplet extends Applet
   // ARRAY UTILITIES
 
 
+  static public boolean[] expand(boolean list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public boolean[] expand(boolean list[], int newSize) {
+    boolean temp[] = new boolean[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+
+  static public byte[] expand(byte list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public byte[] expand(byte list[], int newSize) {
+    byte temp[] = new byte[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+
+  static public char[] expand(char list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public char[] expand(char list[], int newSize) {
+    char temp[] = new char[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+
   static public int[] expand(int list[]) {
     return expand(list, list.length << 1);
   }
@@ -2078,27 +2111,211 @@ public class PApplet extends Applet
     return temp;
   }
 
+  // 
 
-  /* 
-
-  // this appears to be worthless, because it will always 
-  // throw a ClassCastException
-
-  // maybe this could be done with reflection?
-
-  static public Object[] expand(Object list[]) {
-    return expand(list, list.length << 1);
+  static public boolean[] contract(boolean list[], int newSize) {
+    return expand(list, newSize);
   }
 
-  static public Object[] expand(Object list[], int newSize) {
-    Object temp[] = new Object[newSize];
-    // in case the new size is smaller than list.length
-    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
-    return temp;
+  static public byte[] contract(byte list[], int newSize) {
+    return expand(list, newSize);
   }
 
-  */
+  static public char[] contract(char list[], int newSize) {
+    return expand(list, newSize);
+  }
 
+  static public int[] contract(int list[], int newSize) {
+    return expand(list, newSize);
+  }
+
+  static public float[] contract(float list[], int newSize) {
+    return expand(list, newSize);
+  }
+
+  static public String[] contract(String list[], int newSize) {
+    return expand(list, newSize);
+  }
+
+  //
+
+  static public void append(byte b[], byte value) {
+    b = expand(b, b.length + 1);
+    b[b.length-1] = value;
+  }
+
+  static public void append(char b[], char value) {
+    b = expand(b, b.length + 1);
+    b[b.length-1] = value;
+  }
+
+  static public void append(int b[], int value) {
+    b = expand(b, b.length + 1);
+    b[b.length-1] = value;
+  }
+
+  static public void append(float b[], float value) {
+    b = expand(b, b.length + 1);
+    b[b.length-1] = value;
+  }
+
+  static public void append(String b[], String value) {
+    b = expand(b, b.length + 1);
+    b[b.length-1] = value;
+  }
+
+  //
+
+  static public boolean[] shorten(boolean list[]) {
+    return contract(list, list.length-1);
+  }
+
+  static public byte[] shorten(byte list[]) {
+    return contract(list, list.length-1);
+  }
+
+  static public char[] shorten(char list[]) {
+    return contract(list, list.length-1);
+  }
+
+  static public int[] shorten(int list[]) {
+    return contract(list, list.length-1);
+  }
+
+  static public float[] shorten(float list[]) {
+    return contract(list, list.length-1);
+  }
+
+  static public String[] shorten(String list[]) {
+    return contract(list, list.length-1);
+  }
+
+  //
+
+  static final public boolean[] splice(boolean list[], 
+                                       boolean v, int index) {
+    boolean outgoing[] = new boolean[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = v;
+    System.arraycopy(list, index, outgoing, index + 1, 
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public boolean[] splice(boolean list[], 
+                                       boolean v[], int index) {
+    boolean outgoing[] = new boolean[list.length + v.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(v, 0, outgoing, index, v.length);
+    System.arraycopy(list, index, outgoing, index + v.length, 
+                     list.length - index);
+    return outgoing;
+  }
+
+
+  static final public byte[] splice(byte list[], 
+                                    byte v, int index) {
+    byte outgoing[] = new byte[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = v;
+    System.arraycopy(list, index, outgoing, index + 1, 
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public byte[] splice(byte list[], 
+                                    byte v[], int index) {
+    byte outgoing[] = new byte[list.length + v.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(v, 0, outgoing, index, v.length);
+    System.arraycopy(list, index, outgoing, index + v.length, 
+                     list.length - index);
+    return outgoing;
+  }
+
+
+  static final public char[] splice(char list[], 
+                                    char v, int index) {
+    char outgoing[] = new char[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = v;
+    System.arraycopy(list, index, outgoing, index + 1, 
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public char[] splice(char list[], 
+                                    char v[], int index) {
+    char outgoing[] = new char[list.length + v.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(v, 0, outgoing, index, v.length);
+    System.arraycopy(list, index, outgoing, index + v.length, 
+                     list.length - index);
+    return outgoing;
+  }
+
+
+  static final public int[] splice(int list[], 
+                                   int v, int index) {
+    int outgoing[] = new int[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = v;
+    System.arraycopy(list, index, outgoing, index + 1, 
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public int[] splice(int list[], 
+                                   int v[], int index) {
+    int outgoing[] = new int[list.length + v.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(v, 0, outgoing, index, v.length);
+    System.arraycopy(list, index, outgoing, index + v.length, 
+                     list.length - index);
+    return outgoing;
+  }
+
+
+  static final public float[] splice(float list[], 
+                                     float v, int index) {
+    float outgoing[] = new float[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = v;
+    System.arraycopy(list, index, outgoing, index + 1, 
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public float[] splice(float list[], 
+                                     float v[], int index) {
+    float outgoing[] = new float[list.length + v.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(v, 0, outgoing, index, v.length);
+    System.arraycopy(list, index, outgoing, index + v.length, 
+                     list.length - index);
+    return outgoing;
+  }
+
+
+  static final public String[] splice(String list[], 
+                                      String v, int index) {
+    String outgoing[] = new String[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = v;
+    System.arraycopy(list, index, outgoing, index + 1, 
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public String[] splice(String list[], 
+                                      String v[], int index) {
+    String outgoing[] = new String[list.length + v.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(v, 0, outgoing, index, v.length);
+    System.arraycopy(list, index, outgoing, index + v.length, 
+                     list.length - index);
+    return outgoing;
+  }
 
   //
 
@@ -2134,17 +2351,105 @@ public class PApplet extends Applet
     return output;
   }
 
+  //
 
-  static public Object[] subset(Object list[], int start) {
-    return subset(list, start, list.length - start);
+  static public boolean[] concat(boolean a[], boolean b[]) {
+    boolean c[] = new boolean[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
   }
 
-  static public Object[] subset(Object list[], int start, int count) {
-    Object output[] = new Object[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
+  static public byte[] concat(byte a[], byte b[]) {
+    byte c[] = new byte[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
   }
 
+  static public char[] concat(char a[], char b[]) {
+    char c[] = new char[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  static public int[] concat(int a[], int b[]) {
+    int c[] = new int[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  static public float[] concat(float a[], float b[]) {
+    float c[] = new float[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  static public String[] concat(String a[], String b[]) {
+    String c[] = new String[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  // 
+
+  static public boolean[] reverse(boolean list[]) {
+    boolean outgoing[] = new boolean[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public byte[] reverse(byte list[]) {
+    byte outgoing[] = new byte[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public char[] reverse(char list[]) {
+    char outgoing[] = new char[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public int[] reverse(int list[]) {
+    int outgoing[] = new int[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public float[] reverse(float list[]) {
+    float outgoing[] = new float[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public String[] reverse(String list[]) {
+    String outgoing[] = new String[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -2293,6 +2598,58 @@ public class PApplet extends Applet
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+
+  static final public int toInt(boolean what) {
+    return what ? 1 : 0;
+  }
+
+  static final public int[] toInt(boolean what[]) {
+    int list[] = new int[what.length];
+    for (int i = 0; i < what.length; i++) {
+      list[i] = what[i] ? 1 : 0;
+    }
+    return list;
+  }
+
+  static final public int toInt(byte what) {
+    return what;
+  }
+
+  static final public int[] toInt(byte what[]) {
+    int list[] = new int[what.length];
+    for (int i = 0; i < what.length; i++) {
+      list[i] = what[i];
+    }
+    return list;
+  }
+
+  static final public int toInt(char what) {
+    return what;
+  }
+
+  static final public int[] toInt(char what[]) {
+    int list[] = new int[what.length];
+    for (int i = 0; i < what.length; i++) {
+      list[i] = what[i];
+    }
+    return list;
+  }
+
+  static final public int toInt(float what) {
+    return (int) what;
+  }
+
+  static public int[] toInt(float what[]) {
+    int inties[] = new int[what.length];
+    for (int i = 0; i < what.length; i++) {
+      inties[i] = (int)what[i];
+    }
+    return inties;
+  }
+
+
   /**
    * Wrapper for tedious Integer.parseInt function
    */
@@ -2353,24 +2710,7 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Cast a float to an int.
-   */
-  static public int toInt(float what) {
-    return (int) what;
-  }
-
-
-  /**
-   * Create an array of ints that correspond to an array of floats.
-   */
-  static public int[] toInt(float what[]) {
-    int inties[] = new int[what.length];
-    for (int i = 0; i < what.length; i++) {
-      inties[i] = (int)what[i];
-    }
-    return inties;
-  }
+  // ...........................................................
 
 
   /**
