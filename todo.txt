@@ -73,10 +73,9 @@ X when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
 X if a "save as" is forced, make sure that the sketchbook menu is updated
 X sort sketch names in the open menu
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
-
-_ warn about writing non-1.1 code. 
-_   will jikes do it if the -source is set to 1.1?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
+X code folder was causing mega-crashes
+X rewrite magic import methods to only use packages where classes found
+X   was adding all folders in the classpath
 
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
@@ -89,7 +88,7 @@ _ implement hide/unhide
 _ export is badly broken
 _ get the console working again
 _   appendText is disabled due to NullPointerEx on startup
-_ ctrl-5 (confirmed on xp) is marking the current sketch as modified
+_ ctrl-5 (at least on xp) is marking the current sketch as modified
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
 _ if 'applet.html' is in sketch folder, use that as the template
@@ -431,11 +430,19 @@ PDE / Details
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
 
 
+PDE / Compiler
+
+1 _ warn about writing non-1.1 code. 
+1 X   will jikes do it if the -source is set to 1.1? nope.. 
+1 X     notes inside PdeCompiler
+1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
+
+
 PDE / Font Builder
 
    1 _ close/hide window on 'ESC'
    1 _ loading is very slow on the first time (getting all font names)
-   1 _   show a progress/status bar while it's happening
+   1 _   show a progress/status bar while it's happening?
    1 _ font builder chopping off parts of letters
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
 

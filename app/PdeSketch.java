@@ -648,17 +648,24 @@ public class PdeSketch {
     throws PdeException {
 
     String importPackageList[] = null;
-    classPath = buildPath + File.pathSeparator + 
-      System.getProperty("java.class.path");
+
+    String javaClassPath = System.getProperty("java.class.path");
+    // remove quotes if any.. this is an annoying thing on windows
+    if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
+      javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
+    }
+
+    classPath = buildPath + File.pathSeparator + javaClassPath;
+    //System.out.println("cp = " + classPath);
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
     //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
-      classPath += File.separator + 
+      classPath += File.pathSeparator + 
         PdeCompiler.contentsToClassPath(codeFolder);
-      importPackageList = PdeCompiler.magicImports(classPath);
+      importPackageList = PdeCompiler.makeImportsFromClassPath(classPath);
       //libraryPath = codeFolder.getCanonicalPath();
       libraryPath = codeFolder.getAbsolutePath();
     } else {
