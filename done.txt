@@ -1,3 +1,18 @@
+0025
+X change 'rect' to 'plane' (point/line/plane)
+X   also rectMode to planeMode
+X change QUADS to PLANES, QUAD_STRIP to PLANE_STRIP
+X delay wasn't working for casey
+X   works fine on pc.. maybe a mac problem
+X   turned out to be a misunderstanding for loop()
+X curve and bezier behave differently for indexing points
+X   change bezier to act the same (each addl point)
+X allow ui to be colored/skinned so creas can tweak
+X make macintosh release
+X   font file names are getting mangled on mac (too long)
+X   new set of fonts, make sure the names are ok
+
+
 0024 
 X bug fixes (lighting was broken)
 
