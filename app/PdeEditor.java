@@ -128,7 +128,7 @@ public class PdeEditor extends JFrame
   PdeHistory history;
   PdeSketchbook sketchbook;
   PdePreferences preferences;
-  static Properties keywords; // keyword -> reference html lookup
+  //static Properties keywords; // keyword -> reference html lookup
 
 
   public PdeEditor() {  //PdeBase base) {
@@ -161,6 +161,7 @@ public class PdeEditor extends JFrame
     //this.addWindowListener(windowListener);
 
 
+    PdeKeywords keywords = new PdeKeywords();
     history = new PdeHistory(this);
     sketchbook = new PdeSketchbook(this);
     preferences = new PdePreferences();
@@ -196,7 +197,7 @@ public class PdeEditor extends JFrame
 
     textarea = new JEditTextArea();
     textarea.setRightClickPopup(new TextAreaPopup(this));
-    textarea.setTokenMarker(new PdeTokenMarker());
+    textarea.setTokenMarker(new PdeKeywords());
 
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
@@ -326,6 +327,9 @@ public class PdeEditor extends JFrame
           }
         }
       });
+
+    // can this happen here?
+    restorePreferences();
   }
 
 
@@ -788,7 +792,7 @@ public class PdeEditor extends JFrame
               message("First select a word to find in the reference.");
 
             } else {
-              String referenceFile = (String) PdeBase.keywords.get(text);
+              String referenceFile = PdeKeywords.getReference(text);
               if (referenceFile == null) {
                 message("No reference available for \"" + text + "\"");
               } else {
@@ -2511,7 +2515,7 @@ public class PdeEditor extends JFrame
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
 
-        referenceFile = PdeBase.keywords.get(getSelectedText());
+        referenceFile = PdeKeywords.get(getSelectedText());
         if (referenceFile != null) {
           referenceItem.setEnabled(true);
         }

@@ -89,7 +89,6 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     // build the editor object
 
     editor = new PdeEditor();
-    editor.pack();
 
 
     // figure out which operating system
@@ -141,6 +140,7 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     // read in the keywords for the reference
 
     //final String KEYWORDS = "pde_keywords.properties";
+    /*
     keywords = new Properties();
 
     try {
@@ -157,11 +157,12 @@ public class PdeBase /*extends JFrame implements ActionListener*/
       System.err.println(e.toString());
       e.printStackTrace();
     }
-
+    */
 
     // get things rawkin
 
-    editor.restorePreferences();
+    //editor.restorePreferences();  // done at end of constructor
+    editor.pack();
     editor.show();
 
 
@@ -306,16 +307,21 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     }
   }
 
-  //
 
+  /**
+   * "No cookie for you" type messages. Nothing fatal or all that
+   * much of a bummer, but something to notify the user about.
+   */
   static public void showMessage(String title, String message) {
     if (title == null) title = "Message";
     JOptionPane.showMessageDialog(new Frame(), message, title,
                                   JOptionPane.INFORMATION_MESSAGE);
   }
 
-  //
 
+  /**
+   * Non-fatal error message with optional stack trace side dish.
+   */
   static public void showWarning(String title, String message, 
                                  Exception e) {
     if (title == null) title = "Warning";
@@ -326,8 +332,12 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     if (e != null) e.printStackTrace();
   }
 
-  //
 
+  /**
+   * Show an error message that's actually fatal to the program.
+   * This is an error that can't be recovered. Use showWarning()
+   * for errors that allow P5 to continue running.
+   */
   static public void showError(String title, String message, 
                                Exception e) {
     if (title == null) title = "Error";
@@ -335,19 +345,19 @@ public class PdeBase /*extends JFrame implements ActionListener*/
                                   JOptionPane.ERROR_MESSAGE);
 
     if (e != null) e.printStackTrace();
+    System.exit(1);
   }
 
-  //
+
+  // ...................................................................
+
 
   static public Image getImage(String name, Component who) {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    if (PdeBase.platform == PdeBase.MACOSX) {
-      //String pkg = "Proce55ing.app/Contents/Resources/Java/";
-      //image = tk.getImage(pkg + name);
-      image = tk.getImage("lib/" + name);
-    } else if (PdeBase.platform == PdeBase.MACOS9) {
+    if ((PdeBase.platform == PdeBase.MACOSX) ||
+        (PdeBase.platform == PdeBase.MACOS9)) {
       image = tk.getImage("lib/" + name);
     } else {
       image = tk.getImage(who.getClass().getResource(name));
@@ -366,9 +376,9 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     return image;
   }
 
-  //
 
-  public InputStream getStream(String filename) throws IOException {
+  static public InputStream getStream(/*Class cls,*/ String filename) 
+    throws IOException {
     if ((PdeBase.platform == PdeBase.MACOSX) || 
         (PdeBase.platform == PdeBase.MACOS9)) {
       // macos doesn't seem to think that files in the lib folder
@@ -380,7 +390,8 @@ public class PdeBase /*extends JFrame implements ActionListener*/
     } 
 
     // all other, more reasonable operating systems
-    return getClass().getResource(filename).openStream();
+    //return cls.getResource(filename).openStream();
+    return PdeBase.class.getResource(filename).openStream();
   }
 
 
