@@ -219,15 +219,17 @@ X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X history is not implemented in this version
 
 X update build instructions for cvs
-
-_ macosx
-_   check to see if new linemetrics stuff is working better (it's not)
-_   enable the "use screen menubar" stuff (finch?)
-_   check to see if it's running ok with new java update
+X macosx
+X   check to see if new linemetrics stuff is working better (it's not)
+X     redo setFont() in PdeEditorHeader
+X   enable the "use screen menubar" stuff (finch?)
+X   check to see if it's running ok with new java update
+X   update to new shell runner (old mrj guy was ancient)
 
 with casey
 _ figure out what to include for examples/libraries
 _ let's not call it 'expert', let's just say w/o java
+_ "draw" is not highlighted as a keyword
 
 
 ......................................................................
