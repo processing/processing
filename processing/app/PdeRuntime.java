@@ -49,10 +49,19 @@ public class PdeRuntime implements PdeMessageConsumer {
   boolean newMessage;
   int messageLineCount;
 
-  public PdeRuntime(PdeEditor editor, String className) {
+  boolean externalRuntime;
+  String externalPaths;
+
+
+  public PdeRuntime(PdeEditor editor, String className,
+                    boolean externalRuntime, String externalPaths) {
     this.editor = editor;
     this.className = className;
+
+    this.externalRuntime = externalRuntime;
+    this.externalPaths = externalPaths;
   }
+
 
   public void start(Point windowLocation, PrintStream leechErr)
     throws PdeException {
@@ -66,13 +75,23 @@ public class PdeRuntime implements PdeMessageConsumer {
     int x1 = parentLoc.x - 20;
     int y1 = parentLoc.y;
 
+    //externalPaths = 
+    //externalPaths + PdeCompiler.calcClassPath();
     try {
-      if (PdeBase.getBoolean("play.external", false)) {
-        String cmd = PdeBase.get("play.external.command");
-        // "cmd /c " +   not helpful?
-        process = Runtime.getRuntime().exec(cmd + " " + className + 
-                                            " " + className +
-                                            " " + x1 + " " + y1);
+      //if (PdeBase.getBoolean("play.external", false)) {
+      //System.out.println(externalPaths);      
+
+      if (externalRuntime) {
+        //System.out.println("going external");
+        String command[] = new String[] { 
+          "java", 
+          "-cp",
+          externalPaths,
+          "BApplet",
+          className
+        };
+
+        process = Runtime.getRuntime().exec(command);
         new PdeMessageSiphon(process.getInputStream(), this);
         new PdeMessageSiphon(process.getErrorStream(), this);
 

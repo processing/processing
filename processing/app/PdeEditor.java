@@ -100,6 +100,7 @@ public class PdeEditor extends JPanel {
 
   PdeRuntime runtime;
   boolean externalRuntime;
+  String externalPaths;
   File externalCode;
 
   static final int GRID_SIZE  = 33;
@@ -548,66 +549,91 @@ public class PdeEditor extends JPanel {
     // true if this should extend BApplet instead of BAppletGL
     boolean extendsNormal = base.normalItem.getState();
 
-      PdePreprocessor preprocessor = null;
-      if (PdeBase.getBoolean("preprocessor.antlr", true)) {
-        preprocessor = new PdePreprocessor(program, buildPath);
-        try {
-          className = 
-            preprocessor.writeJava(className, extendsNormal, false);
+    externalRuntime = false;
+    externalPaths = null;
 
-        } catch (antlr.RecognitionException ae) {
-          // this even returns a column
-          throw new PdeException(ae.getMessage(), 
-                                 ae.getLine() - 1, ae.getColumn());
+    externalCode = new File(sketchDir, "code");
+    if (externalCode.exists()) {
+      externalRuntime = true;
+      externalPaths = PdeCompiler.includeFolder(externalCode);
 
-        } catch (PdeException pe) {
-          throw pe;
-        } catch (Exception ex) {
-          System.err.println("Uncaught exception type:" + ex.getClass());
-          ex.printStackTrace();
-          throw new PdeException(ex.toString());
-        }
-      } else {  // use the old oro processor (yech)
-        preprocessor = new PdePreprocessorOro(program, buildPath);
+    } else {
+      externalCode = null;
+    }
+
+    // add the includes from the external code dir
+    //
+    String imports[] = null;
+    if (externalCode != null) {
+      //String includePaths = PdeCompiler.includeFolder(externalCode);
+      //imports = PdeCompiler.magicImports(includePaths);
+      imports = PdeCompiler.magicImports(externalPaths);
+      /*
+      StringBuffer buffer = new StringBuffer();
+      for (int i = 0; i < imports.length; i++) {
+        buffer.append("import ");
+        buffer.append(imports[i]);
+        buffer.append(".*; ");
+      }
+      */
+      //buffer.append(program);
+      //program = buffer.toString();
+    }
+    //System.out.println("imports is " + imports);
+
+    PdePreprocessor preprocessor = null;
+    if (PdeBase.getBoolean("preprocessor.antlr", true)) {
+      preprocessor = new PdePreprocessor(program, buildPath);
+      try {
         className = 
-          preprocessor.writeJava(className, extendsNormal, false);
+          preprocessor.writeJava(className, imports, 
+                                 extendsNormal, false);
+
+      } catch (antlr.RecognitionException ae) {
+        // this even returns a column
+        throw new PdeException(ae.getMessage(), 
+                               ae.getLine() - 1, ae.getColumn());
+
+      } catch (PdeException pe) {
+        throw pe;
+      } catch (Exception ex) {
+        System.err.println("Uncaught exception type:" + ex.getClass());
+        ex.printStackTrace();
+        throw new PdeException(ex.toString());
       }
+    } else {  // use the old oro processor (yech)
+      preprocessor = new PdePreprocessorOro(program, buildPath);
+      className = 
+        preprocessor.writeJava(className, imports, 
+                               extendsNormal, false);
+    }
 
-      externalRuntime = false;
-      if (PdePreprocessor.programType == PdePreprocessor.ADVANCED) {
-        externalRuntime = true; // we in advanced mode now, boy
-      }
+    if (PdePreprocessor.programType == PdePreprocessor.ADVANCED) {
+      externalRuntime = true; // we in advanced mode now, boy
+    }
 
-      externalCode = new File(sketchDir, "code");
-      if (externalCode.exists()) {
-        externalRuntime = true;
-      } else {
-        externalCode = null;
-      }
+    // compile the program
+    //
+    PdeCompiler compiler = 
+      new PdeCompiler(buildPath, className, externalCode, this);
+    // macos9 now officially broken.. see PdeCompilerJavac
+    //PdeCompiler compiler = 
+    //  ((PdeBase.platform == PdeBase.MACOS9) ? 
+    //   new PdeCompilerJavac(buildPath, className, this) :
+    //   new PdeCompiler(buildPath, className, this));
 
-      // compile the program
-      //
-      File includeFolder = null;
-      PdeCompiler compiler = 
-        new PdeCompiler(buildPath, className, includeFolder, this);
-      // macos9 now officially broken.. see PdeCompilerJavac
-      //PdeCompiler compiler = 
-      //  ((PdeBase.platform == PdeBase.MACOS9) ? 
-      //   new PdeCompilerJavac(buildPath, className, this) :
-      //   new PdeCompiler(buildPath, className, this));
+    // run the compiler, and funnel errors to the leechErr
+    // which is a wrapped around 
+    // (this will catch and parse errors during compilation
+    // the messageStream will call message() for 'compiler')
+    messageStream = new PdeMessageStream(compiler);
+    //PrintStream leechErr = new PrintStream(messageStream);
+    //boolean result = compiler.compileJava(leechErr);
+    //return compiler.compileJava(leechErr);
+    boolean success = 
+      compiler.compileJava(new PrintStream(messageStream));
 
-      // run the compiler, and funnel errors to the leechErr
-      // which is a wrapped around 
-      // (this will catch and parse errors during compilation
-      // the messageStream will call message() for 'compiler')
-      messageStream = new PdeMessageStream(compiler);
-      //PrintStream leechErr = new PrintStream(messageStream);
-      //boolean result = compiler.compileJava(leechErr);
-      //return compiler.compileJava(leechErr);
-      boolean success = 
-        compiler.compileJava(new PrintStream(messageStream));
-
-      return success ? className : null;
+    return success ? className : null;
   }
 
 
@@ -689,16 +715,26 @@ public class PdeEditor extends JPanel {
       int numero2 = (int) (Math.random() * 10000);
       String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
 
-      
       // handle building the code
       className = build(program, className, tempBuildPath, false);
-
 
       // if the compilation worked, run the applet
       if (className != null) {
 
+        if (externalPaths == null) {
+          externalPaths = 
+            PdeCompiler.calcClassPath(null) + File.pathSeparator + 
+            tempBuildPath;
+        } else {
+          externalPaths = 
+            tempBuildPath + File.pathSeparator +
+            PdeCompiler.calcClassPath(null) + File.pathSeparator +
+            externalPaths;
+        }
+
         // create a runtime object
-        runtime = new PdeRuntime(this, className);
+        runtime = new PdeRuntime(this, className,
+                                 externalRuntime, externalPaths);
 
         // if programType is ADVANCED
         //   or the code/ folder is not empty -> or just exists (simpler)

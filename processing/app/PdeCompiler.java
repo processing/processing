@@ -24,6 +24,8 @@
 */
 
 import java.io.*;
+import java.util.*;
+import java.util.zip.*;
 import javax.swing.*;
 
 
@@ -130,9 +132,9 @@ public class PdeCompiler implements PdeMessageConsumer {
       Process process = Runtime.getRuntime().exec(command);
       new PdeMessageSiphon(process.getInputStream(), this);
       new PdeMessageSiphon(process.getErrorStream(), this);
-      
-      // wait for the process to finish.  if we get interrupted before waitFor
-      // returns, continue waiting
+
+      // wait for the process to finish.  if interrupted 
+      // before waitFor returns, continue waiting
       //
       boolean compiling = true;
       while (compiling) {
@@ -298,6 +300,11 @@ public class PdeCompiler implements PdeMessageConsumer {
       abuffer.append(sep);
       abuffer.append(path);
 
+      if (!path.endsWith(File.separator)) {
+        path += File.separator;
+      }
+      //System.out.println("path is " + path);
+
       String list[] = folder.list();
       for (int i = 0; i < list.length; i++) {
         if (list[i].toLowerCase().endsWith(".jar") ||
@@ -310,6 +317,83 @@ public class PdeCompiler implements PdeMessageConsumer {
     } catch (IOException e) { 
       e.printStackTrace();  // this would be odd
     }
+    //System.out.println("included path is " + abuffer.toString());
+    magicImports(abuffer.toString());
     return abuffer.toString();
+  }
+
+
+  static public String[] magicImports(String path) {
+    String imports[] = new String[100];
+    int importCount = 0;
+
+    String pieces[] = 
+      BApplet.splitStrings(path, File.pathSeparatorChar);
+
+    for (int i = 0; i < pieces.length; i++) {
+      //System.out.println("checking piece " + pieces[i]);
+      if (pieces[i].length() == 0) continue;
+
+      if (pieces[i].toLowerCase().endsWith(".jar") || 
+          pieces[i].toLowerCase().endsWith(".zip")) {
+        try {
+          ZipFile file = new ZipFile(pieces[i]);
+          Enumeration entries = file.entries();
+          while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            if (entry.isDirectory()) {
+              String name = entry.getName();
+              if (name.equals("META-INF/")) continue;
+              name = name.substring(0, name.length() - 1);
+              name = name.replace('/', '.');
+
+              if (importCount == imports.length) {
+                String temp[] = new String[importCount << 1];
+                System.arraycopy(imports, 0, temp, 0, importCount);
+                imports = temp;
+              }
+              imports[importCount++] = name;
+              //System.out.println("import " + name + ".*;");
+            }
+            //System.out.print(entry.isDirectory() ? "D " : "c ");
+            //System.out.println(entry.getName());
+          }
+        } catch (IOException e) {
+          System.err.println("Error in file " + pieces[i]);
+        }
+      } else {
+        File dir = new File(pieces[i]);
+        if (dir.exists()) {
+          importCount = magicImportsRecursive(dir, null,
+                                              imports, importCount);
+        }
+      }
+    }
+    //return null;
+    String output[] = new String[importCount];
+    System.arraycopy(imports, 0, output, 0, importCount);
+    return output;
+  }
+
+
+  static public int magicImportsRecursive(File dir, String sofar, 
+                                          String imports[], 
+                                          int importCount) {
+    String files[] = dir.list();
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+
+      File sub = new File(dir, files[i]);
+      if (sub.isDirectory()) {
+        String nowfar = (sofar == null) ? 
+          files[i] : (sofar + "." + files[i]);
+        //System.out.println(nowfar);
+        imports[importCount++] = nowfar;
+
+        importCount = magicImportsRecursive(sub, nowfar, 
+                                            imports, importCount);
+      }
+    }
+    return importCount;
   }
 }
