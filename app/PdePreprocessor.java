@@ -177,9 +177,15 @@ public class PdePreprocessor {
 
     } while (true);
 
-    int importsCount = imports.size();
-    extraImports = new String[importsCount];
+    extraImports = new String[imports.size()];
     imports.copyInto(extraImports);
+
+    // if using opengl, add it to the special imports
+    if (PdePreferences.get("renderer").equals("opengl")) {
+      extraImports = new String[imports.size() + 1];
+      imports.copyInto(extraImports);
+      extraImports[extraImports.length - 1] = "processing.opengl.*";
+    }
 
     /*
     if (codeFolderPackages != null) {
@@ -340,9 +346,20 @@ public class PdePreprocessor {
       }
     }
 
+    boolean opengl = PdePreferences.get("renderer").equals("opengl");
+    if (opengl) {
+      out.println("import processing.opengl.*; ");
+    }
+
     if (programType < JAVA) {
       // open the class definition
-      out.print("public class " + className + " extends PApplet {");
+      out.print("public class " + className + " extends ");
+      if (opengl) {
+        out.print("PAppletGL");
+      } else {
+        out.print("PApplet");
+      }
+      out.print(" {");
 
       if (programType == STATIC) {
         // now that size() and background() can go inside of draw()
