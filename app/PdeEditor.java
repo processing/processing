@@ -117,86 +117,30 @@ public class PdeEditor extends Panel {
 
     add("West", leftPanel);
 
-    //Panel rightPanel = new Panel();
     Panel rightPanel = new Panel();
-    //rightPanel.setLayout(new BorderLayout());
     rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 
     header = new PdeEditorHeader(this);
     rightPanel.add("North", header);
 
-    //textarea = new PdeEditorTextPane();
     textarea = new JEditTextArea();
-    //textarea.setTokenMarker(new JavaTokenMarker());
     textarea.setTokenMarker(new PdeTokenMarker());
-
-    /*  PREVIOUS.. uses PdeEditorTextPane
-    JScrollPane scroller = new JScrollPane();
-    //scroller.setDoubleBuffered(true);
-    JViewport viewport = scroller.getViewport();
-    viewport.setDoubleBuffered(true);
-
-    //textarea = new JEditorPane("text/java", "");
-    viewport.add(textarea);
-    //    viewport.setScrollMode(JViewport.BLIT_SCROLL_MODE);
-
-    // hack to set the font using the style, at least until i 
-    // can figure out something better to do with styles/coloring
-    textarea.setFont(PdeBase.getFont("editor.program.default.style",
-				     new Font("Monospaced", 
-					      Font.PLAIN, 12)));
-    */
-
-    /*
-      // doesn't work
-    String farbe = PdeBase.get("editor.program.default.style");
-    farbe = farbe.substring(farbe.indexOf("#") + 1, farbe.lastIndexOf(","));
-    try {
-      int v = Integer.parseInt(farbe, 16);
-      textarea.setBackground(new Color(v));
-      System.out.println(new Color(v));
-    } catch (Exception e) {  
-      e.printStackTrace();
-    }  // oh well
-    */
-
-    /*
-    textarea.setFont(PdeBase.getFont("editor.program.font",
-    			       new Font("Monospaced", 
-    					Font.PLAIN, 12)));
-    textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
-    			    Color.black));
-    */
-
-    /*  PREVIOUS.. uses PdeEditorTextPane
-    textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
-    				    Color.white));
-
-    rightPanel.add("Center", scroller);
-    */
 
     rightPanel.add("Center", textarea);
 
     Panel statusPanel = new Panel();
-    //statusPanel.setLayout(new BorderLayout());
     statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
-    ///statusPanel.setLayout(new BorderLayout());
-    
-    //statusPanel.setLayout(new FlowLayout(FlowLayout.VERTICAL));
-    
+
     status = new PdeEditorStatus(this);
     statusPanel.add("Center", status);
-    ///statusPanel.add(BorderLayout.NORTH, status);
-    
+
     console = new PdeEditorConsole(this);
     statusPanel.add("South", console);
-    ///statusPanel.add(BorderLayout.NORTH, console);
-    
+
     rightPanel.add("South", statusPanel);
-    //statusPanel.setMaximumSize(new Dimension(300, 50));
     
 
-/* not sure why this doesn't work, probably a heavy vs. lightweight component issue
+    /* not sure why this doesn't work, probably a heavy vs. lightweight component issue
     Panel consolePanel = new Panel();
     consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
 
@@ -218,98 +162,12 @@ public class PdeEditor extends Panel {
         bottom.setMinimumSize(minimumSize);
 */
 
-    /*
-    //pain = statusPanel;
-    textarea.addComponentListener(new ComponentAdapter() {
-	public void componentResized(ComponentEvent e) {
-	    //System.out.println("textarea: " + e);
-	    System.out.println("attempting to force layout");
-	    //PdeBase.frame.doLayout();
-	    pain.doLayout();
-	}
-      });
-    */
-
     add("Center", rightPanel);
 
     // hopefully these are no longer needed w/ swing
     // (that was wishful thinking, they still are, until we switch to jedit)
     PdeEditorListener listener = new PdeEditorListener(this, textarea);
     textarea.pdeEditorListener = listener;
-    //textarea.addKeyListener(listener);
-    //textarea.addFocusListener(listener);
-
-    /*
-    textarea.addKeyListener(new KeyAdapter() {
-	public void keyPressed(KeyEvent event) {
-	  // don't do things if the textarea isn't editable
-	  if (externalEditor) return;
-
-	  // only works with TextArea, because it needs 'insert'
-	  //tc = (TextArea) event.getSource();
-	  //deselect();
-	  char c = event.getKeyChar();
-	  int code = event.getKeyCode();
-	  //System.out.println(event);
-
-	  if (!sketchModified) {
-	    if ((code == KeyEvent.VK_BACK_SPACE) || 
-		(code == KeyEvent.VK_TAB) || 
-		(code == KeyEvent.VK_ENTER) || 
-		((c >= 32) && (c < 128))) {
-	      setSketchModified(true);
-	    }
-	  }
-
-
-    case 9:  // expand tabs
-      if (expandTabs) {
-	//System.out.println("start = " + tc.getSelectionStart());
-	//System.out.println("end = " + tc.getSelectionEnd());
-	//System.out.println("pos = " + tc.getCaretPosition());
-	tc.replaceRange(tabString, tc.getSelectionStart(),
-			tc.getSelectionEnd());
-	event.consume();
-      }
-      break;
-
-    case 10:  // auto-indent
-    case 13:
-      if (autoIndent) {
-	//System.err.println("auto indenting");
-	char contents[] = tc.getText().toCharArray();
-	// back up until \r \r\n or \n.. @#($* cross platform
-	//index = contents.length-1;
-	int index = tc.getCaretPosition() - 1;
-	int spaceCount = 0;
-	boolean finished = false;
-	while ((index != -1) && (!finished)) {
-	  if ((contents[index] == '\r') ||
-	      (contents[index] == '\n')) {
-	    finished = true;
-	  } else {
-	    spaceCount = (contents[index] == ' ') ?
-	      (spaceCount + 1) : 0;
-	  }
-	  index--;
-	}
-
-	// !@#$@#$ MS VM doesn't move the caret position to the
-	// end of an insertion after it happens, even though sun does
-	String insertion = newline + spaces.substring(0, spaceCount);
-	int oldCarrot = tc.getSelectionStart();
-	tc.replaceRange(insertion, oldCarrot, tc.getSelectionEnd());
-	// microsoft vm version:
-	//tc.setCaretPosition(oldCarrot + insertion.length() - 1);
-	// sun vm version:
-	tc.setCaretPosition(oldCarrot + insertion.length());
-	event.consume();
-      }
-      break;
-
-	}
-      });
-    */
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
@@ -785,7 +643,9 @@ afterwards, some of these steps need a cleanup function
       //
       PdePreprocessor preprocessorOro =
         new PdePreprocessorOro(program, buildPath);
-      className = preprocessorOro.writeJava(className, true);
+      className = preprocessorOro.writeJava(className, 
+                                            base.normalItem.getState(),
+                                            false);
 
       // compile the program
       //
@@ -1507,10 +1367,11 @@ afterwards, some of these steps need a cleanup function
       //
       PdePreprocessor preprocessorOro =
         new PdePreprocessorOro(program, appletDir.getPath());
-      exportSketchName = preprocessorOro.writeJava(exportSketchName, false);
-
-      PdeCompiler compilerKjc = new PdeCompilerKjc(appletDir.getPath(),
-                                                   exportSketchName, this);
+      exportSketchName = 
+        preprocessorOro.writeJava(exportSketchName, 
+                                  base.normalItem.getState(), true);
+      PdeCompiler compilerKjc = 
+        new PdeCompilerKjc(appletDir.getPath(), exportSketchName, this);
 
       // this will catch and parse errors during compilation
       messageStream = new PdeMessageStream(this, compilerKjc);
