@@ -1015,6 +1015,7 @@ public class PGraphics2 extends PGraphics {
    * even if noDepth() was called before draw() exited.
    */
   public void clear() {
+    //System.out.println("clearing " + PApplet.hex(backgroundColor));
     g2.setColor(new Color(backgroundColor));
     g2.fillRect(0, 0, width, height);
   }

@@ -52,8 +52,11 @@ class PdeMessageSiphon implements Runnable {
       String currentLine;
       while ((currentLine = streamReader.readLine()) != null) {
         // \n is added again because readLine() strips it out
+        //PdeEditorConsole.systemOut.println("messaging in");
         consumer.message(currentLine + "\n");
+        //PdeEditorConsole.systemOut.println("messaging out");
       }
+      //PdeEditorConsole.systemOut.println("messaging thread done");
       thread = null;
 
     } catch (NullPointerException npe) {
