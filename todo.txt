@@ -43,15 +43,7 @@ _ weird exception crap/messages.. erroneous shite
 _ erroneous errors from kjc regarding 'var not inited'
 _   is there any way to disable this message?
 _ z coordinates are backwards from gl (at least from mazo)
-
-
-for 0013 
-_ actually fix the bug with extends
-_   wasn't included in previous release
-_ option to set full screen background color
-_ remove 'colorScale' from the default program in pde
-_ screenGrab() code (single frame to tif)
-_ externally loaded files are off by 1 line for errors
+_ look into using serialporteventlistener for simpleserial
 
 
 for 0014
@@ -64,9 +56,6 @@ _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
 _ include stdout/stderr in the processing window
 _   option to toggle window on/off (not just in properties, but realtime)
 _   set # of lines in properties
-_ fix color cube applet 
-_   make it run in current version of processing
-_   fix background from showing up black
 _ remove .java and .class files for compiled classes
 
 
@@ -339,6 +328,20 @@ String binary(int value) {
 
 
 ---------------------------------------------
+
+
+0013 
+X ellipse draws in the opposite direction of the origin
+X actually fix the bug with extends
+X   wasn't included in previous release
+X option to set full screen background color
+X   uses fullscreen.bgcolor in lib/pde.properties
+X remove 'colorScale' from the default program in pde
+X fix color cube applet 
+X   make it run in current version of processing
+X   fix background from showing up black
+X screenGrab() code (single frame to tif)
+X externally loaded files are off by 1 line for errors
 
 
 0012

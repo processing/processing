@@ -353,6 +353,69 @@ public class ProcessingApplet extends Applet
   // ------------------------------------------------------------
 
 
+  static byte tiffHeader[] = {
+    77, 77, 0, 42, 0, 0, 0, 8, 0, 9, 0, -2, 0, 4, 0, 0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0, 0, 1, 
+    0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 3, 0, 0, 0, 122, 1, 6, 0, 3, 0, 
+    0, 0, 1, 0, 2, 0, 0, 1, 17, 0, 4, 0, 0, 0, 1, 0, 0, 3, 0, 1, 21, 
+    0, 3, 0, 0, 0, 1, 0, 3, 0, 0, 1, 22, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 
+    1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
+  };
+
+  static byte[] makeTiffData(int pixels[], int width, int height) {
+    byte tiff[] = new byte[768 + width*height*3];
+    System.arraycopy(tiffHeader, 0, tiff, 0, tiffHeader.length);
+    tiff[30] = (byte) ((width >> 8) & 0xff);
+    tiff[31] = (byte) ((width) & 0xff);
+    tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
+    tiff[43] = tiff[103] = (byte) ((height) & 0xff);
+    int count = width*height*3;
+    tiff[114] = (byte) ((count >> 24) & 0xff);
+    tiff[115] = (byte) ((count >> 16) & 0xff);
+    tiff[116] = (byte) ((count >> 8) & 0xff);
+    tiff[117] = (byte) ((count) & 0xff);
+    int index = 768;
+    for (int i = 0; i < pixels.length; i++) {
+      tiff[index++] = (byte) ((pixels[i] >> 16) & 0xff);
+      tiff[index++] = (byte) ((pixels[i] >> 8) & 0xff);
+      tiff[index++] = (byte) ((pixels[i] >> 0) & 0xff);
+    }
+    return tiff;
+  }
+
+  static String pad4(int what) {
+    if (what < 10) return "000" + what;
+    else if (what < 100) return "00" + what;
+    else if (what < 1000) return "0" + what;
+    else return String.valueOf(what);
+  }
+
+
+  int screenGrabCount = -1;
+
+  public void screenGrab() {
+    if (screenGrabCount == -1) {
+      File f = null;
+      do {
+	screenGrabCount++;
+	f = new File("screen-" + pad4(screenGrabCount) + ".tif");
+      } while (f.exists());
+    }
+    try {
+      FileOutputStream fos = 
+	new FileOutputStream("screen-" + pad4(screenGrabCount++) + ".tif");
+      fos.write(makeTiffData(pixels, width, height));
+      fos.flush();
+      fos.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  // ------------------------------------------------------------
+
+
   public void print(boolean what) {
     System.out.print(what);
   }
