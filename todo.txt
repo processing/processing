@@ -1,10 +1,9 @@
 0073 pde
 X change horizontal offset to 5 instead of 4
 X yet another tweak to the message() function in PdeRuntime
+X add -target 1.1 to all the library make entries
 
 _ basic sample audio playback needed for p5
-
-_ add -target 1.1 to all the library make entries
 
 _ what's up with int() -> toInt() conversion?
 

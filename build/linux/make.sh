@@ -112,7 +112,7 @@ CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/r
 # SERIAL LIBRARY
 echo Build serial library...
 cd ../../lib/serial
-../../build/linux/work/jikes +D -classpath "code/RXTXcomm.jar:$CLASSPATH" -d . *.java 
+../../build/linux/work/jikes -target 1.1 +D -classpath "code/RXTXcomm.jar:$CLASSPATH" -d . *.java 
 rm -f library/serial.jar
 zip -r0q library/serial.jar processing
 rm -rf processing
@@ -123,7 +123,7 @@ cp library/serial.jar ../../build/linux/work/libraries/serial/library/
 # NET LIBRARY
 echo Build net library...
 cd ../../lib/net
-../../build/linux/work/jikes +D -d . *.java 
+../../build/linux/work/jikes -target 1.1 +D -d . *.java 
 rm -f library/net.jar
 zip -r0q library/net.jar processing
 rm -rf processing
@@ -134,7 +134,7 @@ cp library/net.jar ../../build/linux/work/libraries/net/library/
 # PARTICLES LIBRARY
 echo Build particles library...
 cd ../../lib/particles
-../../build/linux/work/jikes +D -d . *.java 
+../../build/linux/work/jikes -target 1.1 +D -d . *.java 
 rm -f library/particles.jar
 zip -r0q library/particles.jar simong
 rm -rf simong
