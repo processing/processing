@@ -69,8 +69,15 @@ X   on application open, override 'open' mode
 X   and just open an empty sketch in the sketchbook folder
 X when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
 
+040622 monday afternoon
+X if a "save as" is forced, make sure that the sketchbook menu is updated
+X sort sketch names in the open menu
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
 
-_ if a "save as" is forced, make sure that the sketchbook menu is updated
+_ warn about writing non-1.1 code. 
+_   will jikes do it if the -source is set to 1.1?
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
+
 _ dashes shouldn't be allowed in filenames for sketches
 _   actually, lost the naming stuff because now using FileDialog
 _   can this requirement just be on the pde file, not the directory?
@@ -97,7 +104,9 @@ _   i.e. flash programs 'import' all data, etc
 _   same with how imovie works
 _ comments -> embedding in applet text? (ala javadoc)
 _   would this help casey with the examples?
-
+_ how to handle .pde vs .java
+_   how to determine what the 'main' file is
+_   sun won't want us to say things are .java when they aren't
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing
@@ -135,13 +144,6 @@ _ launcher.cpp broke serial.. see versions in processing.notcvs
 
 _ include 'netscape.javascript' as a library to be added
 _   but don't export it.. ugh..
-
-
-SKETCHBOOK
-_ sort sketch names in the open menu
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
-_ warn about writing non-1.1 code. 
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
 
 
 LIBRARIES
