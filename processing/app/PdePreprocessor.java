@@ -60,9 +60,12 @@ public class PdePreprocessor {
    * so grab them here on construction.
    */
   public PdePreprocessor() { 
-    defaultImports[JDK11] = PdePreferences.get("compiler.imports.jdk11");
-    defaultImports[JDK13] = PdePreferences.get("compiler.imports.jdk13");
-    defaultImports[JDK14] = PdePreferences.get("compiler.imports.jdk14");
+    defaultImports[JDK11] = 
+      BApplet.splitStrings(PdePreferences.get("compiler.imports.jdk11"), ',');
+    defaultImports[JDK13] = 
+      BApplet.splitStrings(PdePreferences.get("compiler.imports.jdk13"), ',');
+    defaultImports[JDK14] = 
+      BApplet.splitStrings(PdePreferences.get("compiler.imports.jdk14"), ',');
   }
 
 
