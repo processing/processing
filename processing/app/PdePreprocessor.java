@@ -44,10 +44,6 @@ public class PdePreprocessor {
   static final int JAVA   = 2;  // formerly ADVANCED
   static int programType = -1;
 
-  //String tempClass;
-  //String tempFilename;
-  //String tempClassFilename;
-
   Reader programReader;
   String buildPath;
 
@@ -77,11 +73,10 @@ public class PdePreprocessor {
 
   /**
    * preprocesses a pde file and write out a java file
-   *
    * @return the classname of the exported Java
    */
   public String write(String program, String buildPath,
-                      String name, String imports[]) throws java.lang.Exception {
+                      String name, String extraImports[]) throws java.lang.Exception {
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
@@ -146,7 +141,7 @@ public class PdePreprocessor {
     PrintStream stream = new PrintStream(
       new FileOutputStream(buildPath + File.separator + name + ".java"));
 
-    writeHeader(stream, imports, name);
+    writeHeader(stream, extraImports, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
@@ -206,34 +201,13 @@ public class PdePreprocessor {
       }
     }
 
-    /*
-    // Spew out a semi-standard set of java imports.
-    // 
-    // Prior to 68, these were only done when not in JAVA mode, 
-    // but these won't hurt, and may be helpful in cases where the user 
-    // can't be bothered to add imports to the top of their classes.
-    //
-    if (!exporting) {  // if running in environment, or exporting an app
-      for (int i = 0; i < application_imports.length; i++) {
-        out.print("import " + application_imports[i] + ".*; ");
-      }
-    } else {  // exporting an applet
-      for (int i = 0; i < applet_imports.length; i++) {
-        out.print("import " + applet_imports[i] + ".*; ");
-      }
-    }
-    */
-
     if (programType < JAVA) {
+      // open the class definition
       out.print("public class " + className + " extends BApplet {");
 
       if (programType == STATIC) {
-        // XXXdmose need to actually deal with size / background info here
-        String sizeInfo = "";
-        String backgroundInfo = "";
-
-        out.print("void setup() { " + sizeInfo + backgroundInfo + "} " 
-                  + "void draw() {");
+        // now that size() and background() can go inside of draw()
+        out.print("void draw() {");
       }
     }
   }
@@ -255,6 +229,7 @@ public class PdePreprocessor {
       out.print("}");
     }
   }
+
 
   static String advClassName = "";
 
