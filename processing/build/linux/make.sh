@@ -36,7 +36,6 @@ else
   #chmod +x work/librxtxSerial.so
 
   # get jikes and depedencies
-  #gunzip < dist/jikes.gz > work/jikes
   cp dist/jikes work/
   chmod +x work/jikes
 
@@ -66,18 +65,16 @@ fi
 cd bagel
 
 CLASSPATH=../build/linux/work/java/lib/rt.jar
-#CLASSPATH=/opt/java/lib/rt.jar:/opt/java/lib/ext/comm.jar
-#CLASSPATH=../app/build/linux/work/java/lib/rt.jar:../app/build/linux/work/java/lib/ext/comm.jar
 export CLASSPATH
 
 ### --- make version with serial for the application
 echo Building bagel with serial and sonic support
-perl make.pl SERIAL RXTX SONIC JDK13
+perl make.pl JIKES=../build/linux/work/jikes SERIAL RXTX SONIC JDK13
 cp classes/*.class ../build/linux/work/classes/
 
 ### --- make version without serial for applet exporting
 echo Building bagel for export with sonic
-perl make.pl SONIC
+perl make.pl JIKES=../build/linux/work/jikes SONIC
 cp classes/*.class ../build/linux/work/lib/export/
 
 cd ..
@@ -91,17 +88,20 @@ echo Building PDE for JDK 1.3
 cd preprocessor
 
 # first build the default java goop
-java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.g
+# long path is to avoid requiring java to be in your PATH
+
+../../build/linux/work/java/bin/java \
+  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.g
 
 # now build the pde stuff that extends the java classes
-java -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
-    -glib java.g pde.g
+../../build/linux/work/java/bin/java \
+  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
 
 cd ..
 
 CLASSPATH=../build/linux/work/classes:../build/linux/work/lib/kjc.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/java/lib/rt.jar:../build/linux/work/lib/RXTXcomm.jar
 
-perl ../bagel/buzz.pl "jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
+perl ../bagel/buzz.pl "../build/linux/work/jikes +D -classpath $CLASSPATH -d ../build/linux/work/classes" -dJDK13 -dRXTX *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
