@@ -2,6 +2,45 @@
 X bring back pmouseX/Y using a tricky method of storing separate
 X   values for inside draw() versus inside the event handler versions
 
+covered in previous
+X before graphics engine change, attach jogl stuff
+X   need to try jogl to make sure no further changes
+X   and the illustrator stuff
+o massive graphics engine changes
+o   move to new graphics engine
+o     test with rgb cube, shut off smoothing
+o   make sure line artifacts are because of smoothing
+o   implement 2x oversampling for anti-aliasing
+o renderers can plug in:
+o   at direct api level
+o     taking over all color() functions and vertex collection
+o   at endShape() level
+o     where vertices are collected by core and blit on endShape()
+o     (takes polygons and lines)
+o   at post tesselation level
+o     takes only line segments and triangles to blit (dxf writer)
+o api for file-based renderers
+o   need to work this out since it will affect other api changes
+o   size(0, 0) and then ai.size(10000, 20000)
+o     size 0 is code for internal to not show any window
+o   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+o   saveFrame gets called at the beginning of loop()
+o     or is just a message to save the next frame (problem for anim)
+X vertices max out at 512.. make it grow
+X add gzipInput and gzipOutput
+
+_ get regular graphics engine working again
+
+_ look for size() method to determine default size of applet
+_ when using core graphics, don't show applet frame until first frame
+_   (in opengl, open frame early, make sure this isn't inhibited)
+
+_ light(x, y, z, c1, c2, c3, TYPE)
+_   also BLight with same constructor, and on() and off() fxn
+
+
+// 
+
 _ be consistent about getXxx() methods
 
 _ basic sample audio playback needed for p5
@@ -11,14 +50,15 @@ _ on start, mouseX is 0.. how to avoid?
 _   use firstMouse variable.. figure out naming
 
 _ image loading bug is huge
+_ figure out how to handle cached images, multiple images
+_   MediaTracker blocking is prolly making jar download really slow
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
 
 _ arc with stroke only draws the arc shape itself
 _   may need a 'wedge' function to draw a stroke around the whole thing
 
 _ explicitly state depth()/nodepth()
 _   don't allocate zbuffer & stencil until depth() is called
-
-_ add gzipInput and gzipOutput
 
 _ image(String name) and textFont(String name)
 _   do we change to font(arial, 12) ?
@@ -33,21 +73,15 @@ _   that if applet is 500x500, centers on a 800x600 window
 _   though how do you get the screen size? 
 _     screen.width and screen.height? 
 
+//
+
+0078
+
 _ when running externally, applets don't always get placed properly
 _   if size is never set, then doesn't always layout
 _   problem is in gl and in core, and is inconsistent
 _   move more logic for layout into PApplet.. maybe a static method?
 _   this way can avoid duplicating / breaking things
-
-_ when using core graphics, don't show applet frame until first frame
-_   (in opengl, open frame early, make sure this isn't inhibited)
-
-_ light(x, y, z, c1, c2, c3, TYPE)
-_   also BLight with same constructor, and on() and off() fxn
-
-//
-
-0078
 
 opengl
 _ fix non-bound textures from mangling everything else
@@ -77,8 +111,6 @@ _ should image i/o and sound i/o be moved into PImage and PSound?
 _   how to load external encoders/decoders
 
 scripting
-_ document the use of "die" 
-_   can override the method to do your own handling
 _ on exceptions, use die to just kill the applet
 _ make the file i/o stuff work more cleanly
 _   if people want to use their own file i/o they can do that too
@@ -99,12 +131,6 @@ _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _   too abstract, just have draw() call exit by default
 _   so if nothing inside draw, just quits
 
-documentation
-_ must call depth() for 3D applications
-_ lights cannot be enabled/disabled throughout 
-_   lighting will be based on what's left at endFrame()
-_ images should be a power of 2, or call modified()
-
 _ need to make sure that components can be resized properly via size()
 _   or that it properly responds to a setBounds() call
 
@@ -114,16 +140,9 @@ _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 
-_ massive graphics engine changes
-_   move to new graphics engine
-_     test with rgb cube, shut off smoothing
-_   make sure line artifacts are because of smoothing
-_   implement 2x oversampling for anti-aliasing
-_ before graphics engine change, attach jogl stuff
-_   need to try jogl to make sure no further changes
-_   and the illustrator stuff
-
 postscript
+_ keep hints about type of geometry used to reconstruct
+_   no special class, just uses public vars from PGraphics
 _ how to hook into curve rendering so that curve segments are drawn
 _   maybe lines are rendered and sorted, 
 _   but they point to an original version of the curve geometry 
@@ -159,17 +178,6 @@ _   this will require changes to PTriangle and PLine inside their loops
 
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code
-
-_ renderers can plug in:
-_   at direct api level
-_     taking over all color() functions and vertex collection
-_   at endShape() level
-_     where vertices are collected by core and blit on endShape()
-_     (takes polygons and lines)
-_   at post tesselation level
-_     takes only line segments and triangles to blit (dxf writer)
-
-_ vertices max out at 512.. make it grow
 
 _ go through and figure out what stuff to make public
 
@@ -223,13 +231,6 @@ _   maybe this is bad practice--too slow, should use variables
 _ write java 1.3 code for full screen version of PApplet
 _   this might be used for presentation mode
 
-o api for file-based renderers
-o   need to work this out since it will affect other api changes
-o   size(0, 0) and then ai.size(10000, 20000)
-o     size 0 is code for internal to not show any window
-o   saveFrame(PRenderer) or saveFrame("name", PRenderer)
-o   saveFrame gets called at the beginning of loop()
-o     or is just a message to save the next frame (problem for anim)
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
 _   update illustrator code to use core api
@@ -238,10 +239,6 @@ _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
 o   version of BApplet that replaces g. with ai. or pdf.
-
-_ figure out how to handle cached images, multiple images
-_   MediaTracker blocking is prolly making jar download really slow
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
 
 _ mkoser wish list
 _   filled polygons working with smooth()
