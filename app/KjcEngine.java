@@ -673,6 +673,7 @@ public class KjcEngine extends PdeEngine {
 	} else {
 	  window = new Frame(); // gonna use ugly windows instead
 	  ((Frame)window).setResizable(false);
+	  if (PdeBase.icon != null) ((Frame)window).setIconImage(PdeBase.icon);
 	  window.pack(); // to get a peer, size set later, need for insets
 
 	  window.addWindowListener(new WindowAdapter() {
@@ -749,6 +750,7 @@ public class KjcEngine extends PdeEngine {
 	window.show();
 	applet.requestFocus();  // necessary for key events
       }
+      //System.out.println("KJC RUNNING");
       running = true;
 
       //need to parse this code to give a decent error message
@@ -803,6 +805,7 @@ public class KjcEngine extends PdeEngine {
 
   public void stop() {  // part of PdeEngine
     //System.out.println("PdeEngine.stop");
+    //System.out.println("KJC NOT RUNNING");
     running = false;
 
     //System.out.println();

@@ -1,10 +1,23 @@
 0042
 X fixed ArrayIndexOutOfBoundsException in texture use
+X added icon to replace the coffee cup
+X see if play being highlighted can be implemented again
+X   especially important because of speed issues
 
+0042 BUGS
+X this code is not performing correctly (triangle strip)
+X   (see example in reference for expected output)
+X   -> turns out it's correct, but not great
+beginShape(TRIANGLE_STRIP);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
 
-pde
-a _ see if play being highlighted can be implemented again
-a _   especially important because of speed issues
 
 macosx
 a _ arrow keys don't work in the textarea
@@ -17,17 +30,6 @@ a _ document serial a bit more in release notes
 a _ how do we encourage/point to updates?
 a _   auto updater? check for releases page in menu?
 
-a _ this code is not performing correctly
-a _   (see example in reference for expected output)
-beginShape(TRIANGLE_STRIP);
-vertex(30, 75);
-vertex(40, 20);
-vertex(50, 75);
-vertex(60, 20);
-vertex(70, 75);
-vertex(80, 20);
-vertex(90, 75);
-endShape();
 
 
 
@@ -203,6 +205,7 @@ b _   queue for people reporting things externally
 b _   bugzilla but simpler
 b _   would also be nice for people to be able to vote on features
 b _ save serial port on close
+b _ probably should doClose() on new/open instead of doStop()
 
 
 PDE / medium
