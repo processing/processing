@@ -22,6 +22,17 @@ X added constructor in BImage that takes java.awt.Image
 X added FileInputStream version of loadStream for locally running code
 X transparent gif images don't retain transparency (oy)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
+X screenGrab(filename), not just screenGrab()
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1056481749
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1056558368;start=0
+X versions of loadStream/loadBytes etc that use streams and/or urls
+X getting current fill color and stroke color
+X   stroke(), fill(), background()
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
+X add keyCode to BApplet (quick addition)
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
+
 
 other folks
 dm X patch to fix last line highlight bug in highlightLine()
@@ -36,12 +47,7 @@ ks X   fixed again for scale() issues
 ..................................................................
 
 
-bf b _ screenGrab(filename), not just screenGrab()
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1056481749
-
-bf b _ getting current fill color and stroke color
-bf b _   stroke() with no params?
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
+bf b _ perlin noise 1D. noise() 
 
 bf b _ saveBytes, saveStrings
 bf b _   file output, save strings or pile of bytes
@@ -67,16 +73,9 @@ bf b _   or add another function for people to override?
 bf b _   netEvent doesn't seem to be working in server mode
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
 
-bf b _ add keyCode to BApplet (quick addition)
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1051285219
-bf b _ perlin noise 1D. noise() 
 bf b _ cartesian/polar conversion
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
 bf b _   thread includes code for the 2D case
-
-bf b _ inside draw() mode, delay() does nothing
-bf b _   delay might be a good way to signal drawing to the screen/updating
 
 
 ////////////////////////////////////////////////////////////////////
@@ -223,7 +222,6 @@ bf b _   version of ProcessingApplet that replaces g. with ai. or pdf.
 BAGEL / Data API
 
 bf b _ split to take strings (ie. for ", ")
-bf b _ versions of loadStream/loadBytes etc that use streams and/or urls
 bf b _ quicksort should probably just be made into 'sort' class
 bf b _   it's the only one ever used
 bf b _   can this be done using an inner class?
@@ -267,6 +265,8 @@ bf b _ make zbuffer available instead of g.zbuffer
    b _   currently calling slower image routine
 bf b _ p5 classes into packages (bagel especially)
 bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
+   b _ inside draw() mode, delay() does nothing
+   b _   delay might be a good way to signal drawing to the screen/updating
 
 
 BAGEL / Future
