@@ -1,8 +1,69 @@
+ABOUT REV 0046 - 20 november 2002
+
+[ major release, new features ]
+
+- now uses a fancy, swing-based text area. things should behave 
+  much better for most platforms, particularly on the mac. 
+
+- undo/redo, cut/copy/paste/select all are all supported.
+
+- added 'rename' function, because 'save as' leaves behind
+  too many boogers sometimes. this is now the default when clicking
+  on the sketch title, instead of 'save as'.
+
+- better error messages for serial port--actul notification if
+  the port is unavailable or not properly installed.
+
+- javax.sound is imported by default, so when running inside the
+  editor, it's possible to use these classes to play audio files 
+  and control midi devices. doesn't work for exporting to applet.
+
+- on windows, sun's xml classes are included as part of the imports,
+  so at least from inside the editor, it's possible to use the built
+  in xml support from jdk 1.4.
+
+- support for 3D curves in the graphics api. this means new versions
+  of curve(), bezier(), curveVertex() and bezierVertex().
+
+- sketch tweaks: naming for sketches is no longer random, but uses the
+  date. also, during a run, the window is now named after the current
+  sketch.
+
+
+[ bug fixes ]
+
+- mouse: pmouseX and pmouseY behave more like people expect 
+  (they're set at the end of loop() instead of whenever there is 
+  new mouse movement)
+
+- macosx: the status bar now resizes with the rest of the 
+  window.. this was a workaround for some apple java weirdness.
+
+- fixed more of the issues that cause the random freezes when
+  hitting play
+
+- textarea shouldn't spew so many exceptions anymore
+
+- rectangles were drawn one pixel too large
+
+
+[ a few of the known issues ]
+
+- download size for windows is getting enormous. in the future will
+- switch to having people download and install java 1.4 separately.
+
+- mouse wheel only works on windows, because jdk 1.4 
+  is required for mouse wheel, and osx is behind the times.
+
+- it's possible to undo past where it's truly possible, so if you
+  undo too many times, your program might disappear. just redo. 
+
+
 ABOUT REV 0045 - 20 october 2002
 
 [ internal release only ]
 
-- major tweak to fix lots of the random freezing and crashing that
+- major tweak to fix some of the random freezing and crashing that
   occurred when hitting the 'run' button.
 
 - changes to sketch menu: no more CVS and .cvsignore entries and
