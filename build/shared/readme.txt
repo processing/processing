@@ -1,4 +1,4 @@
-PROCE55ING DEVELOPMENT ENVIRONMENT
+PROCESSING DEVELOPMENT ENVIRONMENT
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -26,7 +26,7 @@ that we have.
 
 GETTING STARTED
 
-double click the 'Proce55ing' application, and select something from
+double click the 'Processing' application, and select something from
 the examples menu: File -> Open -> Examples. hit the 'run' button
 (which looks like the play button on a vcr or tape deck). 
 
@@ -85,19 +85,20 @@ make sure it isn't a known issue or that there isn't a simple fix.
 second, check the bboard to see if something related has been
 reported, or if there is already a workaround.
 
-you can either post to the bulletin board at:
+best method is to post to the bulletin board at:
 http://proce55ing.net/discourse/
-or send email to bugs@proce55ing.net. the bboard is probably the
-better way to go, because more people will be watching it. the email
-goes straight to the developers, but their schedules are erratic and
-it could be anywhere from two minutes to two months before you receive
-a response. if you want to go straight to the bugs page, it's:
+we prefer for you to use the bboard for bugs, since:
+- we like to use the bboard as a way to track bugs and get feedback
+- casey and ben can't always respond quickly to email 
+- and there are several knowledgeable people on the bboard
+if you want to go straight to the bugs page, it's: 
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 when reporting this "bug" please include information about
 1. the revision number (i.e. 0048)
 2. what operating system you're using, on what kind of hardware
-3. a copy of your code
+3. a copy of your code--the smallest possible piece of code that will
+   produce the error you're having trouble with. 
 4. details of the error, which may be the last few lines from 
    the files stdout.txt or stderr.txt from the 'lib' folder. 
 
@@ -129,14 +130,14 @@ out what's going on. useful things when reporting:
 GENERAL NOTES / COMMON ISSUES
 
 - size() must use numbers, not variables. this is because of how
-  the size command is interpreted by proce55ing. 
+  the size command is interpreted by processing. 
 
 - size() must also be the first thing inside setup(). we hope to fix
   this in the future, but the issue is pricklier than might be expected.
 
 - when using draw() mode, background() must also use only numbers, and
   no variables. this is similar to the issue with the size command,
-  because in both cases, Proce55ing needs to know the size and
+  because in both cases, processing needs to know the size and
   background color of the app before it starts, so since variables
   are determined while the program is running, things break. 
 
@@ -313,7 +314,7 @@ the download is far smaller, however you need to install java before
 processing will work. visit http://java.sun.com/getjava to download.
 
 out of memory? try adjusting the parameters in the file 'run.bat' and
-use that to run instead of Proce55ing.exe. short instructions can be
+use that to run instead of Processing.exe. short instructions can be
 found inside that file.
 
 mouse issues: by default, windows seems to skip every other pixel on
@@ -337,7 +338,7 @@ WHAT IS SKETCHBOOK?
 
 we think most "integrated development environments" (microsoft visual
 studio, codewarrior, jbuilder) tend to be overkill for the type of
-audience we're targeting with Proce55ing. for this reason, we've
+audience we're targeting with Processing. for this reason, we've
 introduced the 'sketchbook' which is a more lightweight way to
 organize projects. as trained designers, we'd like the process of
 coding to be a lot more like sketching. the sketchbook and the
@@ -385,39 +386,37 @@ implementation, but it may just work.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-WHY IS IT CALLED "PROCE55ING"?
+WHY IS IT CALLED "PROCESSING"?
 
-"Proce55ing" is a combination of numbers and letters but is simply
-pronounced "processing." 
 
 at their core, computers are processing machines. they modify, move,
 and combine symbols at a low level to construct higher level
-representations. Proce55ing allows people to control these actions and
-representations through writing their own programs. The spelling
-"Proce55ing" makes reference to the encoding that is necessary for
-transferring ideas into a machine readable form. 
+representations. Processing allows people to control these actions and
+representations through writing their own programs. 
 
 the project also focuses on the "process" of creation rather than end
 results. the design of the software supports and encourages sketching
 and the website presents fragments of projects and exposes the
 concepts behind finished software.
 
-honestly, had the URL "www.processing.net" been available, the project
-would have been called "Processing" and not "Proce55ing." 
+"Proce55ing" is the spelling we use for the url (processing.net being
+unavailable) and while it's a combination of numbers and letters but
+is simply pronounced "processing." you also might see "p5" used as a
+shortened version of the name. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-PROCE55ING IS FREE TO DOWNLOAD / FREE TO USE
+PROCESSING IS FREE TO DOWNLOAD / FREE TO USE
 
-we think it's important to have Proce55ing freely available, rather
+we think it's important to have Processing freely available, rather
 than selling it for a million dollars under some godawful yearly
 contract update scheme. to that end, we encourage people to distribute
 the word widely and refer them to the site: http://Proce55ing.net
 
 on most of our own projects, we usually list them as "Built with
-Proce55ing" or something similar, with a link back to the site. of
+Processing" or something similar, with a link back to the site. of
 course this isn't a necessity, but it makes us happy when you do.
 
 
@@ -433,10 +432,10 @@ tandem with it. we can't promise, since we're still working on getting
 the licensing taken care of with our employers, but we think this
 should likely happen soon.
 
-the export libraries (also known as 'bagel') will probably be LGPL,
-which means they can be used as a library and included in your project
-without you having to open up your code (though we encourage people to
-share anyway). 
+the export libraries (internally known as 'bagel') will probably be
+LGPL, which means they can be used as a library and included in your
+project without you having to open up your code (though we encourage
+people to share anyway). 
 
 more information about the gnu public license can be found here:
 http://www.gnu.org/copyleft/gpl.html
