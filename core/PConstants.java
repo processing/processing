@@ -249,8 +249,9 @@ public interface PConstants {
   static final int DISABLE_TEXT_SMOOTH     = 3;
   static final int DISABLE_SMOOTH_HACK     = 4;
   static final int NO_DEPTH_TEST           = 5;
+  static final int NO_FLYING_POO           = 6;
 
-  static final int HINT_COUNT              = 6;
+  static final int HINT_COUNT              = 7;
 
 
   //////////////////////////////////////////////////////////////

@@ -254,6 +254,24 @@ public class PLine implements PConstants
       m_drawFlags &= ~R_SMOOTH;
     }
 
+    // line hack
+    if (parent.hints[NO_FLYING_POO]) {
+      float nwidth2 = -SCREEN_WIDTH;
+      float nheight2 = -SCREEN_HEIGHT;
+      float width2 = SCREEN_WIDTH * 2;
+      float height2 = SCREEN_HEIGHT * 2;
+      if ((x_array[1] < nwidth2) ||
+          (x_array[1] > width2) ||
+          (x_array[0] < nwidth2) ||
+          (x_array[0] > width2) ||
+          (y_array[1] < nheight2) ||
+          (y_array[1] > height2) ||
+          (y_array[0] < nheight2) ||
+          (y_array[0] > height2)) {
+        return;  // this is a bad line
+      }
+    }
+
     ///////////////////////////////////////
     // line clipping
     visible = lineClipping();
