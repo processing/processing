@@ -29,71 +29,72 @@ X   is there anything better that can be done for osx java 1.3
 X   setInsets() to zero or something?
 X font.stringWidth -> font.width(char c) or width(String s) 
 X removed extra push()/pop() in text(String s) that may save time
-
-fixes because of dmose parser
-X move to antlr
-X float z= float(x) + float(y); 
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062471182;start=0
-X compiler barfs on: float[] moo = new int[10];  
-X   although no error comes through to p5 (benelek)
-X   this was a kjc error, so it's fixed with jikes
-X int() doesn't work inside other functions
-X   argh, need a real parser
-X something about the line println("4"); turns things to mush:
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461664;start=0
-X two int(random(5)) on the same line caused problem
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461786;start=0
-X setup( ){} has an error, setup(){} does not
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461971;start=0
-X weird comments bug (// on last line causes oro trouble)
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
-
-
--> BImage/BGraphics -> BLayer/Pixels ?
-
-- In the config file, the sketchbook path works if you use forward
-slashes, but not if you use unescaped backslashes.
-- The web page for ellipse (reference/ellipse_.html) talks about
-rectangles in the parameter list instead of ellipses.
-
-- If you name a class the same name as the sketch project, you get an
-error about contained classes with duplicate names when you try to
-export for web.
-
-
-ed
-quality of compiler errors + multiple errors
-additional class files.. .java or .pde
-* find/replace
-
-j
-documenting how the environment works / is set up
-
-amit
-* find/replace
-println speed improvements
-'debug' that shows a variable (rather than many many println)
-tabs for multiple files
-
-zach
-setting breakpoints / stepping through
-useful as understanding for how program works
-tracing like director
-
-schoenerwissen
-tracing variables
-bspace object
-7 day search on discourse board
-
-_ bezier error, goes up at the end
-_   but when using bezierMode, doesn't draw the first vertex
+X bezier error, goes up at the end
+X   but when using bezierMode, doesn't draw the first vertex
 size(300,200);
 bezier(0,100,width/3,100,2*width/3,100,3*width/3,100); 
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063240719
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063240719
+X add note to tga spec
+X   http://organicbit.com/closecombat/formats/tga.html
+X screenGrab() shouldn't allocate a new pixel buffer
+X   just write things out directly
+X   also fix for the new targa code
+X added a note about needing forward slashes
+X   In the config file, the sketchbook path works if you use forward
+X   slashes, but not if you use unescaped backslashes.
+X draw mode issues.. size and background must be int/float constants
+X   might be a better 'mode' for bagel so bkg and size cmds work
+X   rather than app being enclosed in beginFrame/endFrame loop
+X modify background() to actually clear the screen
+X   modify readme.txt regarding background() requiring constants
+X remove notes from reference about size/background
+X remove notes from readme about size/background
+X change the naming of the two versions of calc_color
+X The web page for ellipse (reference/ellipse_.html) talks about
+X   rectangles in the parameter list instead of ellipses.
+
+
+fixes because of dmose parser
+dm X move to antlr
+dm X float z= float(x) + float(y); 
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062471182;start=0
+dm X compiler barfs on: float[] moo = new int[10];  
+dm X   although no error comes through to p5 (benelek)
+dm X   this was a kjc error, so it's fixed with jikes
+dm X int() doesn't work inside other functions
+dm X   argh, need a real parser
+dm X something about the line println("4"); turns things to mush:
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461664;start=0
+dm X two int(random(5)) on the same line caused problem
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461786;start=0
+dm X setup( ){} has an error, setup(){} does not
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461971;start=0
+dm X weird comments bug (// on last line causes oro trouble)
+dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
+dm X unexpected token 'void' in letters sketch.. 
+dm X   being parsed as static mode app
+dm _ extra parens confusing things (toxi message)
+
+
+code from the madman
+ks X perlin noise is broken
+ks X targa export for images
+
+
+assigned to dan haskovec, but instead completed by toxi
+ks X present mode, click background window and front window hides
+ks X   wasn't present in jdk 1.3, focus manager changed in 1.4
+kx X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
+ks X focus not properly set in present mode
+ks X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
+ks X escape key not quitting presentation mode
+ks X   no events seem to be coming through at all
+
 
 api changes in progress -> COLORING FOR ALL THESE
 _ color(x, y, z) has become swatch(x, y, z) 
 _   because of conflicts with the new parser
+_   though this may have been changed again
 _ textureImage() -> texture()
 _ textureMode() IMAGE_SPACE or NORMAL_SPACE
 _ vertexNormal() -> normal();
@@ -107,8 +108,10 @@ _ BFont.drawChar, BFont.drawString -> BFont.text()
 _ bezierMode -> bezierSegments
 _ curveMode -> curveSegments, curveTightness
 
-_ add note to tga spec
-_   http://organicbit.com/closecombat/formats/tga.html
+
+..................................................................
+
+
 _ mousePressed, keyPressed, others.. queue them all
 _   queue multiple times
 _ update() mode should be finished before beta
@@ -121,159 +124,56 @@ _ resize should call background again to set color
 _   if background was set before the resize
 _   and the background is not an image (or should it just stretch?)
 
-_ windows fresh checkout still has problems
-_ colorMode is defaulting to 255, 255, 255, 1.. oops
-_   though setting it differently hoses everything (clears everything)
-_ screenGrab() shouldn't allocate a new pixel buffer
-_   just write things out directly
-_ need to change all the copyrights over to mit
 
-..
-.. the big stuff:
-.. 
-
-API MODS: tint/size/background/lights/toxi imaging mods
-
-
-LOADING CODE FROM CLASSES DIR
-
-
-"JAVA MODE" (VIA EXTERNAL VM?)
-
-
-API NAMING
-
-
-NEW PARSER
-dm X unexpected token 'void' in letters sketch.. 
-dm X   being parsed as static mode app
-dm _ extra parens confusing things (toxi message)
-
-
-..
-.. the slipping stuff:
-..
-
-NEW GRAPHICS
-_ stroke not set on flat_rect
-_ when drawing fonts w/ sami's code, left edge has problem
-_   8-bit (alpha) textures not blending 
-_ near-plane clipping currently disabled for triangles, enabled for lines
-_   (but culling offscreen triangles works.. but may have been
-_   commented out by carlos)
-_ sphere code needs only front face polygon 
-_   all triangles must be counter-clockwise (front-facing)
-
-FONT SUCKAGE
-_ change .vlw.gz fonts to just .vlw but still gzip compress
-_   reader code should just catch the exception if they're not gzipped
-_   and try to re-download them
-
-..
-
-_ QTJAVA path and CLASSPATH are weird if java not first installed
-_   or just get set improperly, reinstalling quicktime doesn't help
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
-
-_ non-ascii filenames seem to be causing trouble
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
-
-_ net problems
-_   when you stop the client, it freezes 
-_     until you quit the processing running the server
-_   The server starts and stops fine.
-
-_ do not delete sketch folder if empty sketch but non-empty data dir
-_   maybe needs to be a holding area for the current sketch
-_   this is how the read-only examples would be used
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062875454;start=0
-
-_ resize() name is bad because it overrides component..
-_   resize is maybe goofy, so just size() for all?
-
-_ ide: type-ahead/teaching functions -> how useful for learning?
-
+API
+_ tint() colors images, not fill()
 _ toxi image code (!) 
 _   need background(BImage) and scaling, copy area, etc.
-
-_ multiple error messages from jikes, little turner to scroll thru
-
 _ param() function 
 _   also include code to read from properties file
 _   for application mode or while inside the environment
 _   these properties will be written to html on export
+_ implement text(int something) and text(float something)
+_   and perhaps others?
+_ BGraphics, BVideo both subclass BImage
+_   inherits all image manipulation and image use methods
+_ BImage/BGraphics -> BLayer/Pixels ?
+_ some flag to know whether applet is online or not
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+_   fix link, loadStrings, saveBytes code once that's fixed
 
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else?
 
-X when exporting applet, line numbers will be off.. 
-_   when not exporting with new preproc code, imports all on same line
-_   make preproc keep track of how many lines were added
+INTERNAL
+_ add constants for building NET, move stuff around in bagel dir
+_ internal naming of _fill, image_mode, textureOrientation
+_   these all need to jive better with one another
+_   ie. perhaps just 'fill', so that it can be used for a get
 
+
+HIGH
+_ resize() name is bad because it overrides component..
+_   resize is maybe goofy, so just size() for all?
+_ no time to ask for "save changes" before quit
+_   PdeEditor, around line 910.. not blocking until input 
+_   read up on how to properly block for input in a java app
+_ do not delete sketch folder if empty sketch but non-empty data dir
+_   maybe needs to be a holding area for the current sketch
+_   this is how the read-only examples would be used
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062875454;start=0
+_ QTJAVA path and CLASSPATH are weird if java not first installed
+_   or just get set improperly, reinstalling quicktime doesn't help
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063012751;start=0
+_ windows fresh checkout still has problems
 _ if size() not found in export/compile, ask the user
 _   size(myWidth, myHeight) -> set static var in BGraphics
 _     for the last size that was used, use as default when 
 _ setup (200, 200) causes the default size to be used 
 _   need to use oro matcher when trying to grab the applet size (export?)
 
-_ check what other functions require BGraphics to exist but shouldn't
-_ color has to be called inside or after setup
-_ loadImage must be used inside or after setup
-_   either document this and/or provide a better error message
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
-
-_ be able to draw something inside setup (?)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
-
-_ draw mode issues.. size and background must be int/float constants
-_   might be a better 'mode' for bagel so bkg and size cmds work
-_   rather than app being enclosed in beginFrame/endFrame loop
-
-X modify background() to actually clear the screen
-_   modify readme.txt regarding background() requiring constants
-_ remove notes from reference about size/background
-_ remove notes from readme about size/background
-
-_ fix the problem causing all the "couldn't delete" messages
-
-_ help->reference and find in reference don't work on some machines
-_   complaints from osx and windows..
-
-_ tint() colors images, not fill()
-
-_ don't allow apostrophe (i.e. casey's_cells) when naming sketch!
-
-_ implement text(int something) and text(float something)
-_   and perhaps others?
-
-_ BGraphics, BVideo both subclass BImage
-_   inherits all image manipulation and image use methods
-
-_ no time to ask for "save changes" before quit
-_   PdeEditor, around line 910.. not blocking until input 
-_   read up on how to properly block for input in a java app
-
-X when exporting applet, line numbers will be off.. 
-_   when not exporting with new preproc code, imports all on same line
-_   make preproc keep track of how many lines were added
-
-o modify antlr stuff to conditionally recompile in make.sh
-_   compile antlr inside the initial setup of the work dir
-X     done for macosx
-_     fix this for windows and linux
-o   only recompile if asked or if changes
-
-internal structural stuff
-_ add constants for building NET, move stuff around in bagel dir
-_ change the naming of the two versions of calc_color
-_ internal naming of _fill, image_mode, textureOrientation
-_   these all need to jive better with one another
-_   ie. perhaps just 'fill', so that it can be used for a get
-
-bf b _ BApplet.main(new String[] { "flashcards3" });
-bf b _   or even BApplet.main(new String[] { getClass().getName() });
-bf b _   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
-bf b _   main sticking point will be serial/qtjava in exports
+bf b _   BApplet.main(new String[] { "flashcards3" });
+bf b _     or even BApplet.main(new String[] { getClass().getName() });
+bf b _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+bf b _     main sticking point will be serial/qtjava in exports
 dh b _ ability to export 'applications' (not just applets)
 dh b _   lock feature for present mode (part of export to application?)
 dh b _   application can still do serial (qt, other stuff?) 
@@ -288,6 +188,90 @@ dh b _   add manifest.mf to exported applets so that applications will work
 dh b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
 
 
+MEDIUM
+_ net problems
+_   when you stop the client, it freezes 
+_     until you quit the processing running the server
+_   The server starts and stops fine.
+_ colorMode is defaulting to 255, 255, 255, 1.. oops
+_   though setting it differently hoses everything (clears everything)
+_ be able to draw something inside setup (?)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+o modify antlr stuff to conditionally recompile in make.sh
+_   compile antlr inside the initial setup of the work dir
+X     done for macosx
+_     fix this for windows and linux
+o   only recompile if asked or if changes
+_ modify build instructions for the many changes
+_   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+_   usually need to remove the 'work' dir
+_ saveBytes not in proper dir is annoying
+_ better 1.3/1.4 support.. properly detect vm
+_   use when deciding which classes to import
+
+
+LOWER (post beta tweaks, non-structural)
+_ remove .DS_Store boogers, especially from win/linux distributions
+_ NullPointerException when alt is pressed
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_ check what other functions require BGraphics to exist but shouldn't
+_ color has to be called inside or after setup
+_ loadImage must be used inside or after setup
+_   either document this and/or provide a better error message
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else?
+_ don't allow apostrophe (i.e. casey's_cells) when naming sketch!
+_ screenGrab() at the end of a draw mode program is problematic
+_   app might exit before the file has finished writing to disk
+_   need to block other activity inside screenGrab until finished
+_ non-ascii filenames seem to be causing trouble
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
+_ need to change all the copyrights over to mit "except where noted"
+X when exporting applet, line numbers will be off.. 
+_   when not exporting with new preproc code, imports all on same line
+_   make preproc keep track of how many lines were added
+_ fix the problem causing all the "couldn't delete" messages
+_ help->reference and find in reference don't work on some machines
+_   complaints from osx and windows..
+X when exporting applet, line numbers will be off.. 
+_   when not exporting with new preproc code, imports all on same line
+_   make preproc keep track of how many lines were added
+_ class naming from dan
+_   If you name a class the same name as the sketch project, 
+_   you get an error about contained classes with duplicate names 
+_   when you try to export for web.
+_ catch security exceptions around applet i/o calls
+_   not just for saving files, but provide better error msgs when
+_     attempting to download from another server
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
+java.security.AccessControlException: access denied (java.io.FilePermission screen-0000.tif read) 
+ at java.security.AccessControlContext.checkPermission(Unknown Source) 
+ at java.security.AccessController.checkPermission(Unknown Source) 
+ at java.lang.SecurityManager.checkPermission(Unknown Source) 
+ at java.lang.SecurityManager.checkRead(Unknown Source) 
+ at java.io.File.exists(Unknown Source) 
+ at BApplet.screenGrab(BApplet.java:1047) 
+ at gravity_giger_00.loop(gravity_giger_00.java:58) 
+ at BApplet.nextFrame(BApplet.java:298) 
+ at BApplet.run(BApplet.java:256) 
+ at java.lang.Thread.run(Unknown Source) 
+_ change .vlw.gz fonts to just .vlw but still gzip compress
+_   reader code should just catch the exception if they're not gzipped
+_   and try to re-download them
+
+
+NEW GRAPHICS
+_ stroke not set on flat_rect
+_ when drawing fonts w/ sami's code, left edge has problem
+_   8-bit (alpha) textures not blending 
+_ near-plane clipping currently disabled for triangles, enabled for lines
+_   (but culling offscreen triangles works.. but may have been
+_   commented out by carlos)
+_ sphere code needs only front face polygon 
+_   all triangles must be counter-clockwise (front-facing)
+
+
 awaiting verification
 b _ windows 95/98/ME seems to be broken
 b _   ME doesn't seem to like the .exe, but run.bat worked ok
@@ -298,28 +282,11 @@ b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 b _ getting mouse movement outside the window
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
 
-cosmetic
-_ remove .DS_Store boogers, especially from win/linux distributions
-_ NullPointerException when alt is pressed
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
-
 
 ..................................................................
 
 
 Volunteers / Possible tasks 
-
-_ perlin noise is broken
-
-thought this was complete, but it's totally broken
-dh b _ present mode, click background window and front window hides
-dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
-dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
-dh b _ focus not properly set in present mode
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
-   b _ escape key not quitting presentation mode
-   b _   no events seem to be coming through at all
 
 _ building releases from scratch 
 _   this is a useful developer task before release
@@ -340,34 +307,6 @@ leonhard@rathner.com
 
 FRY PILE
 
-b _ some flag to know whether applet is online or not
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
-b _   fix link, loadStrings, saveBytes code once that's fixed
-b _ saveBytes not in proper dir is annoying
-
-b _ modify build instructions for the many changes
-b _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
-b _   usually need to remove the 'work' dir
-
-b _ better 1.3/1.4 support.. properly detect vm
-b _   use when deciding which classes to import
-b _ set a better ctrl-key for reference (anything but 'F')
-b _   probably need to use mac or pc specific keys?
-b _ catch security exceptions around applet i/o calls
-b _   not just for saving files, but provide better error msgs when
-b _     attempting to download from another server
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
-java.security.AccessControlException: access denied (java.io.FilePermission screen-0000.tif read) 
- at java.security.AccessControlContext.checkPermission(Unknown Source) 
- at java.security.AccessController.checkPermission(Unknown Source) 
- at java.lang.SecurityManager.checkPermission(Unknown Source) 
- at java.lang.SecurityManager.checkRead(Unknown Source) 
- at java.io.File.exists(Unknown Source) 
- at BApplet.screenGrab(BApplet.java:1047) 
- at gravity_giger_00.loop(gravity_giger_00.java:58) 
- at BApplet.nextFrame(BApplet.java:298) 
- at BApplet.run(BApplet.java:256) 
- at java.lang.Thread.run(Unknown Source) 
 
 
 sketchbook 
@@ -499,6 +438,39 @@ things for post-beta, to be sorted through later
 1 _   or use setUseCaches(false)
 1 _ multi-line errors a mess in jikes
 1 _   maybe a dropdown list thing, with the first just shown?
+
+
+..................................................................
+
+
+
+_ ide: type-ahead/teaching functions -> how useful for learning?
+_ multiple error messages from jikes, little turner to scroll thru
+
+
+ed
+_ quality of compiler errors + multiple errors
+_ additional class files.. .java or .pde
+_ find/replace
+
+juha
+_ documenting how the environment works / is set up
+
+amit
+_ find/replace
+_ println speed improvements
+_ 'debug' that shows a variable (rather than many many println)
+_ tabs for multiple files
+
+zach
+_ setting breakpoints / stepping through
+_ useful as understanding for how program works
+_ tracing like director
+
+schoenerwissen
+_ tracing variables
+_ bspace object
+_ 7 day search on discourse board
 
 
 ..................................................................
@@ -911,7 +883,7 @@ Possible?
   block. but that wouldn't seem to work either.
 
 
-Pde / Runtime (includes classloading)
+PDE / Runtime (includes classloading)
 
 dh b _ environment locks up when error stream isn't for the class
 dh b _   this happens when it's another thread (i.e. image fetcher)
@@ -941,6 +913,8 @@ if you dream it, you can do it.
 dh b _ find/replace
 dh b _   ctrl-f for find, g for find next, h for next occurrence of selected
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
+_ set a better ctrl-key for reference (anything but 'F')
+_   probably need to use mac or pc specific keys?
 
 
 PDE / Details

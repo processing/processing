@@ -133,18 +133,6 @@ out what's going on. useful things when reporting:
 
 GENERAL NOTES / COMMON ISSUES
 
-- size() must use numbers, not variables. this is because of how
-  the size command is interpreted by processing. 
-
-- size() must also be the first thing inside setup(). we hope to fix
-  this in the future, but the issue is pricklier than might be expected.
-
-- when using draw() mode, background() must also use only numbers, and
-  no variables. this is similar to the issue with the size command,
-  because in both cases, processing needs to know the size and
-  background color of the app before it starts, so since variables
-  are determined while the program is running, things break. 
-
 - names of sketches cannot start with a number, or have spaces
   inside. this is mostly because of a restriction on the naming of
   java classes. i suppose if lots of people find this upsetting, we
