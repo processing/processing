@@ -23,11 +23,42 @@ changed in the future, but for now, they're not actually 'broken'.
 
 - 'preferences' will get better in a future release
 
+
+..................................................................
+
+
+QUICKTIME FOR JAVA PROBLEMS
+
 - quicktime for java is still required on windows. it's required on
   macosx too, but it's installed there by default. the requirement
   will be removed in a later release for people who don't want to use
   video, but the fix is more difficult than anticipated, so it will
-  probably happen after the initial beta release.
+  probably happen after the initial beta release. 
+
+- on windows, if you can't install quicktime for java yourself, all
+  you really need is a copy of QTJava.zip from the quicktime install,
+  which needs to be at %WINDIR%\system32\QTJava.zip. WINDIR is an
+  environment variable on windows, open up a DOS prompt and type 
+  echo %WINDIR% 
+  to find out what it's set to (prolly something like C:\windows on
+  windows xp/me/98 or c:\winnt on windows 2000).
+
+- quicktime for java is missing from quicktime 6.4 on the mac. this is
+  the version of quicktime that was released with the windows version
+  of itunes and all that other bunk. it's apple's fault, unfortunately:
+  http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C26893096&kbhost=kbase.info.apple.com%3a80%2f
+  you can download a reinstaller for quicktime 6.3 if the upgrade is
+  making you sad and has just broken all your applets:
+  http://docs.info.apple.com/article.html?artnum=120255
+  the discovery and diagnosis of this particular headache comes from
+  Jerronimo: http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
+
+- for the mac, a workaround for the 6.4 bug if you don't actually 
+  need to use video, is to put a copy of QTJava.zip into
+  /System/Library/Java/Extensions, which is where it's normally
+  installed (you'll have to use 'sudo' to move it in there). 
+  this will pacify Processing and at least allow you to run programs
+  until apple has released a fix.
 
 
 ..................................................................
