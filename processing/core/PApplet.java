@@ -49,6 +49,7 @@ public class PApplet extends Applet
     //toFloat(System.getProperty("java.version").substring(0,3));
 
   public PGraphics g;
+  public Frame frame;
 
   /** Command line options passed in from main() */
   public String args[];
@@ -226,6 +227,7 @@ public class PApplet extends Applet
     libraries = new PLibrary[10];
     libraryCalls = new boolean[10][PLibrary.CALL_COUNT];
 
+    /*
     // call the applet's setup method
     setup();
 
@@ -233,6 +235,7 @@ public class PApplet extends Applet
     this.pixels = g.pixels;
     this.width = g.width;
     this.height = g.height;
+    */
 
     try {
       getAppletContext();
@@ -240,14 +243,14 @@ public class PApplet extends Applet
     } catch (NullPointerException e) {
       online = false;
     }
+
+    start();
   }
 
 
   // override for subclasses (i.e. opengl)
   // so that init() doesn't have to be replicated
   public void initGraphics() {
-    g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
     // 0073: moved here so that can be overridden for PAppletGL
     addMouseListener(this);
     addMouseMotionListener(this);
@@ -256,7 +259,19 @@ public class PApplet extends Applet
   }
 
 
+  public void createGraphics() {
+    g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+  }
+
+
+  /**
+   * Called via the first call to PApplet.paint(),
+   * because PAppletGL needs to have a usable screen
+   * before getting things rolling.
+   */
   public void start() {
+    if (thread != null) return;
+
     thread = new Thread(this);
     thread.start();
   }
@@ -407,9 +422,7 @@ public class PApplet extends Applet
 
 
   public void size(int iwidth, int iheight) {
-    //width = iwidth;
-    //height = iheight;
-    //if (g != null) return; // would this ever happen? is this a good idea?
+    if (g == null) return;
     g.resize(iwidth, iheight);
 
     this.pixels = g.pixels;
@@ -420,6 +433,23 @@ public class PApplet extends Applet
       if (libraryCalls[i][PLibrary.SIZE]) {
         libraries[i].size(width, height);  // endNet/endSerial etc
       }
+    }
+
+    if (frame != null) {
+      Insets insets = frame.getInsets();
+
+      // msft windows has a limited minimum size for frames
+      int minW = 120;
+      int minH = 120;
+      int winW = Math.max(width, minW) + insets.left + insets.right;
+      int winH = Math.max(height, minH) + insets.top + insets.bottom;
+      frame.setSize(winW, winH);
+
+      setBounds((winW - width)/2,
+                insets.top + ((winH - insets.top - insets.bottom) - height)/2,
+                winW, winH);
+    } else {
+      setBounds(0, 0, width, height);
     }
 
     // set this here, and if not inside browser, getDocumentBase()
@@ -444,6 +474,7 @@ public class PApplet extends Applet
   */
 
   public void update(Graphics screen) {
+    //System.out.println("PApplet.update()");
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "    4 update() external");
     paint(screen);
@@ -451,13 +482,24 @@ public class PApplet extends Applet
 
   //synchronized public void paint(Graphics screen) {
   public void paint(Graphics screen) {
+    //System.out.println("PApplet.paint()");
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "     5a enter paint");
 
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
     //if (firstFrame) return;
-    if (frameCount == 0) return;
+    if (frameCount == 0) {
+      // paint() may be called more than once before things
+      // are finally painted to the screen and the thread gets going
+      /*
+      if (thread == null) {
+        initGraphics();
+        start();
+      }
+      */
+      return;
+    }
 
     // without ignoring the first call, the first several frames
     // are confused because paint() gets called in the midst of
@@ -498,6 +540,16 @@ public class PApplet extends Applet
 
   public void run() {
     try {
+      /*
+      // first time around, call the applet's setup method
+      setup();
+
+      // these are the same things as get run inside a call to size()
+      this.pixels = g.pixels;
+      this.width = g.width;
+      this.height = g.height;
+      */
+
       while ((Thread.currentThread() == thread) && !finished) {
       //while (!finished) {
         //updated = false;
@@ -508,6 +560,10 @@ public class PApplet extends Applet
         if (looping || redraw) {
           if (fpsTarget != 0) framerate_delay();
 
+          if (frameCount == 0) {  // needed here for the sync
+            createGraphics();
+          }
+
           synchronized (g) {
             if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 1a beginFrame");
@@ -515,23 +571,33 @@ public class PApplet extends Applet
             if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " 1b draw");
 
-            for (int i = 0; i < libraryCount; i++) {
-              if (libraryCalls[i][PLibrary.PRE]) libraries[i].pre();
-            }
+            if (frameCount == 0) {
+              //initGraphics();
+              //createGraphics();
+              setup();
 
-            draw();
+              this.pixels = g.pixels;
+              this.width = g.width;
+              this.height = g.height;
 
-            // these are called *after* loop so that valid
-            // drawing commands can be run inside them. it can't
-            // be before, since a call to background() would wipe
-            // out anything that had been drawn so far.
-            dequeueMouseEvents();
-            dequeueKeyEvents();
-            if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " 2b endFrame");
+            } else {
+              for (int i = 0; i < libraryCount; i++) {
+                if (libraryCalls[i][PLibrary.PRE]) libraries[i].pre();
+              }
+              draw();
 
-            for (int i = 0; i < libraryCount; i++) {
-              if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
+              // these are called *after* loop so that valid
+              // drawing commands can be run inside them. it can't
+              // be before, since a call to background() would wipe
+              // out anything that had been drawn so far.
+              dequeueMouseEvents();
+              dequeueKeyEvents();
+              if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                                        " 2b endFrame");
+
+              for (int i = 0; i < libraryCount; i++) {
+                if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
+              }
             }
 
             g.endFrame();
@@ -3938,6 +4004,7 @@ public class PApplet extends Applet
 
     Thread ethread = new Thread() {  //new Runnable() {
         public void run() {
+          // this fixes the "code folder hanging bug" (mostly)
           setPriority(Thread.MIN_PRIORITY);
 
           while ((Thread.currentThread() == this) && !finished) {
@@ -4034,9 +4101,10 @@ public class PApplet extends Applet
       Frame frame = new Frame();
       frame.setResizable(false);  // remove the grow box
       frame.pack();  // get insets. get more.
-      //frame.show();  // gl hack
+      frame.show();  // gl hack
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
+      applet.frame = frame;
 
       // these are needed before init/start
       applet.folder = folder;
@@ -4044,16 +4112,14 @@ public class PApplet extends Applet
       applet.args = new String[argc];
       System.arraycopy(args, argc, applet.args, 0, argc);
 
+      System.out.println("calling applet.init");
       applet.init();
-      applet.start();
-
-      System.out.println("applet inited, started");
+      //applet.start();
+      System.out.println("done calling applet.init");
 
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       if (external) {
-        System.out.println("applet is external");
-
         Insets insets = frame.getInsets();  // does pack() first above
         //System.out.println(insets);
 
@@ -4125,13 +4191,12 @@ public class PApplet extends Applet
             }
           });
       }
-      System.out.println("showing frame");
+      //System.out.println("showing frame");
 
       frame.show();
-      System.out.println("applet requesting focus");
+      //System.out.println("applet requesting focus");
       applet.requestFocus(); // ask for keydowns
-
-      System.out.println("exiting main()");
+      //System.out.println("exiting main()");
 
     } catch (Exception e) {
       e.printStackTrace();

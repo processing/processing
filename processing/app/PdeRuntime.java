@@ -333,18 +333,18 @@ public class PdeRuntime implements PdeMessageConsumer {
       //System.out.println("killing external process");
 
       try {
-        System.out.println("writing to stop process");
+        //System.out.println("writing to stop process");
         processOutput.write('s');
-        System.out.println("written");
+        //System.out.println("written");
         processOutput.flush();
-        System.out.println("flushing");
+        //System.out.println("flushing");
 
       } catch (IOException e) {
         //System.err.println("error stopping external applet");
         //e.printStackTrace();
         close();
       }
-      System.out.println("out");
+      //System.out.println("out");
     }
   }
 
@@ -411,6 +411,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     // always shove out the mesage, since it might not fall under
     // the same setup as we're expecting
     System.err.print(s);
+    System.err.flush();
 
     // if s.length <=2, ignore it because that probably means
     // that it's just the platform line-terminators.

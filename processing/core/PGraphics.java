@@ -924,6 +924,14 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     vertex_end = vertex_count;
 
+    // don't try to draw if there are no vertices
+    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
+    if (vertex_count == 0) {
+      shape = 0;
+      return;
+    }
+
+
     // ------------------------------------------------------------------
     // CREATE LINES
 
