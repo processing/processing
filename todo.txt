@@ -1,5 +1,39 @@
 0044
+X added optimized flat circle (not ellipse) function
+X added additional file i/o functions to bagel
+X   loadStrings and splitInts, splitFloats, etc
+X getStream is now loadStream
 
+language
+
+foreach String line (lines)
+foreach (String line = lines)
+foreach (String line, lines)
+foreach (String line) of lines
+..would translate to..
+for (int i = 0; i < lines.length; i++) {
+    String line = lines[i];
+}
+
+for (int i = 0..10)  or  for (int i, 0..10)
+foreach (int i) of 0..10
+for (int i = start..stop)
+..translating to..
+for (int i = 0; i < 10; i++)   
+for (int i = start; i < stop; i++)
+
+emit(arrayImageX) or printvar? or vprint?
+..would translate to..
+println("arrayImageX = " + arrayImageX);
+
+emit(arrayImageX, arrayImageY)
+..would translate to..
+println("arrayImageX, arrayImageY = " + arrayImageX + ", " + arrayImageY)
+
+
+bagel
+_ 'image' is too generic a variable to have inside BApplet
+_   check for others that shouldn't be used
 
 suggestions
 _ lock feature for present mode (part of export to application?)
@@ -208,6 +242,29 @@ _     color c = #67aa78
 _   keyDown(), mouseDown(), lastMouseX, lastMouseY
 _   degrees(), radians()
 _ fill, background, stroke all with int version for packed rgb
+
+_ why won't glut shut up about modifiers?
+_ add millis() to bappletgl that returns glut millis
+
+_ BGL_PATH should turn paths into os9 ready paths for os9
+_ or whatever else for the other platforms
+_ macos9: font = loadFont(":fonts:Univers55.vlw");
+_ or could use a "File" style object
+_   or do all path conversions internally:
+_   loadFont, loadImage.. already do gz decoding
+
+_ makingmovie/screengrab should be moved into bapplet, 
+_ along with the stuff for making an ai screen grab
+
+_ mouseX/lastMouseX should be handled automatically
+_ mousePressed() function may not need vars passed in
+_ or maybe the only vars are alt/left-right/ctrl/shift
+
+_ maybe mouseevent is passed in, but not used in the
+_ function unless people want advanced features
+_ mouseX/mouseY/lastMouseX/lastMouseY all set by parent class
+
+_ lastKey and lastKeyCode -- not as useful as the mouse stuff
 
 
 ////////////////////////////////////////////////////////////////////
