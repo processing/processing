@@ -1,6 +1,40 @@
 future things that we'd like to do but may never get to
 
 
+PRIORITIES
+
+ed
+_ quality of compiler errors + multiple errors
+X additional class files.. .java or .pde
+X find/replace
+
+juha
+_ documenting how the environment works / is set up
+
+amit
+X find/replace
+X println speed improvements
+_ 'debug' that shows a variable (rather than many many println)
+X tabs for multiple files
+
+zach
+2 _ setting breakpoints / stepping through
+2 _   useful as understanding for how program works
+2 _ tracing like director
+
+schoenerwissen
+2 _ tracing variables
+2 _ bspace object
+b X 7 day search on discourse board
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+
+
 2 _ colorMode(CMYK)
 2 _   just does 1-r/1-g/1-b inside 
 2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
@@ -13,8 +47,18 @@ CORE / Fonts
 2 _   both reading and building sbit fonts
 
 
-2 _ materials and shading
-2 _ nice, usable camera object 
+CORE / PGraphics3 
+
+   2 _ picking
+   2 _   what is the API for picking?
+   2 _   ability to write data other than image into the buffer
+   2 _   user can introduce new kinds of buffers at will (!)
+   2 _   lists of names of objects, or the 'line number' buffer
+   2 _   but how to determine *where* on object the hit occurs
+   2 _ materials and shading
+   2 _ nicer/simpler api for moving the camera around
+
+
 2 _ cartesian/polar conversion
 2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
 2 _   thread includes code for the 2D case
@@ -25,12 +69,7 @@ CORE / Fonts
 2 _   search java faq for info about getting around it
 2 _ drawMode() for MULTIPLY and ADD
 2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051208333
-2 _ nicer/simpler api for moving the camera around
 2 _ better api for fonts
-2 _ fixed fonts are screwed, should only work at screen resolution
-2 _   getStream for the filename doesn't work for directories
-2 _     getfont("fonts/blah.fbf") refers to blah.raw, but that
-2 _     also needs to be searched for in the fonts/ dir..
 2 _ try with 1.4 frame buffer stuff to see if it's faster
 2 _ write shearing function
 2 _ optimize rotation functions
@@ -53,7 +92,6 @@ CORE / Fonts
 2 _   but leaves out many features
 2 _ setting a fill color when drawing an image should affect the image
 2 _   or maybe image.setColor or setTone to mix a specific color in
-
 
 
 PDE / see you next year
