@@ -62,6 +62,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   int checkModifiedMode;
   String handleOpenPath; 
   boolean handleNewShift;
+  boolean handleNewLibrary;
   //String handleSaveAsPath;
   //String openingName;
 
@@ -90,9 +91,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   //String externalPaths;
   //File externalCode;
 
+  JMenuItem exportAppItem;
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
-  JMenuItem beautifyMenuItem;
+  //JMenuItem beautifyMenuItem;
 
   // 
 
@@ -148,6 +150,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     menubar.add(buildFileMenu());
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
+    menubar.add(buildToolsMenu());
     // what platform has their help menu way on the right?
     //if ((PdeBase.platform == PdeBase.WINDOWS) || 
     //menubar.add(Box.createHorizontalGlue());
@@ -400,7 +403,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
     saveAsMenuItem.setEnabled(!external);
-    beautifyMenuItem.setEnabled(!external);
+    //beautifyMenuItem.setEnabled(!external);
 
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
@@ -462,13 +465,32 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     JMenuItem item;
     JMenu menu = new JMenu("File");
 
-    item = newJMenuItem("New sketch", 'N');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleNew(false);
-        }
-      });
-    menu.add(item);
+    if (!PdePreferences.getBoolean("export.library")) {
+      item = newJMenuItem("New", 'N');
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleNew(false);
+          }
+        });
+      menu.add(item);
+
+    } else {
+      item = newJMenuItem("New Sketch", 'N');
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleNew(false);
+          }
+        });
+      menu.add(item);
+
+      item = new JMenuItem("New Library");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleNewLibrary();
+          }
+        });
+      menu.add(item);
+    }
 
     /*
     item = newJMenuItem("New code", 'N', true);
@@ -498,7 +520,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       });
     menu.add(saveMenuItem);
 
-    saveAsMenuItem = newJMenuItem("Save as...", 'S', true);
+    saveAsMenuItem = newJMenuItem("Save As...", 'S', true);
     saveAsMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleSaveAs();
@@ -513,6 +535,14 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         }
       });
     menu.add(item);
+
+    exportAppItem = newJMenuItem("Export Application", 'E', true);
+    exportAppItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleExportApp();
+        }
+      });
+    menu.add(exportAppItem); 
 
     menu.addSeparator();
 
@@ -591,19 +621,11 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     menu.add(sketchbook.getAddLibraryMenu());
 
-    item = new JMenuItem("Create font...");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          new PdeFontBuilder().show(sketch.dataFolder);
-        }
-      });
-    menu.add(item);
-
     if ((PdeBase.platform == PdeBase.WINDOWS) || 
         (PdeBase.platform == PdeBase.MACOSX)) {
       // no way to do an 'open in file browser' on other platforms
       // since there isn't any sort of standard
-      item = new JMenuItem("Show sketch folder");
+      item = new JMenuItem("Show Sketch Folder");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           //PdeBase.openFolder(sketchDir);
@@ -615,6 +637,30 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     // TODO re-enable history
     //history.attachMenu(menu);
+    return menu;
+  }
+
+
+  protected JMenu buildToolsMenu() {
+    JMenuItem item;
+    JMenu menu = new JMenu("Tools");
+
+    item = new JMenuItem("Auto Format");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleBeautify();
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Create Font...");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          new PdeFontBuilder().show(sketch.dataFolder);
+        }
+      });
+    menu.add(item);
+
     return menu;
   }
 
@@ -735,14 +781,6 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         }
       });
     menu.add(item);
-
-    beautifyMenuItem = newJMenuItem("Beautify", 'B');
-    beautifyMenuItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleBeautify();
-        }
-      });
-    menu.add(beautifyMenuItem);
 
     menu.addSeparator();
 
@@ -1176,6 +1214,20 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   public void handleNew(boolean shift) {
     doStop();
     handleNewShift = shift;
+    handleNewLibrary = false;
+    checkModified(HANDLE_NEW);
+  }
+
+
+  /**
+   * User selected "New Library", this will act just like handleNew
+   * but internally set a flag that the new guy is a library, 
+   * meaning that a "library" subfolder will be added.
+   */
+  public void handleNewLibrary() {
+    doStop();
+    handleNewShift = false;
+    handleNewLibrary = true;
     checkModified(HANDLE_NEW);
   }
 
@@ -1187,7 +1239,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    */
   protected void handleNew2(boolean startup) {
     try {
-      String pdePath = sketchbook.handleNew(startup, handleNewShift);
+      String pdePath = 
+        sketchbook.handleNew(startup, handleNewShift, handleNewLibrary);
       if (pdePath != null) handleOpen2(pdePath);
 
     } catch (IOException e) {
@@ -1298,6 +1351,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       }
 
       sketch = new PdeSketch(this, path);
+      exportAppItem.setEnabled(!sketch.isLibrary());
+      buttons.disableRun(sketch.isLibrary());
       header.rebuild();
       if (PdePreferences.getBoolean("console.auto_clear")) {
         console.clear();
@@ -1362,9 +1417,28 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * hitting export twice, quickly, and horking things up.
    */
   synchronized public void handleExport() {
-    message("Exporting code...");
+    String what = sketch.isLibrary() ? "Applet" : "Library";
+    message("Exporting " + what + "...");
     try {
-      if (sketch.export()) {
+      boolean success = sketch.isLibrary() ? 
+        sketch.exportLibrary() : sketch.exportApplet();
+      if (success) {
+        message("Done exporting.");
+      } else {
+        // error message will already be visible
+      }
+    } catch (Exception e) {
+      message("Error during export.");
+      e.printStackTrace();
+    }
+    buttons.clear();
+  }
+
+
+  synchronized public void handleExportApp() {
+    message("Exporting application...");
+    try {
+      if (sketch.exportApplication()) {
         message("Done exporting.");
       } else {
         // error message will already be visible

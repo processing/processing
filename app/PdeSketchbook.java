@@ -108,7 +108,7 @@ public class PdeSketchbook {
     }
     menu = new JMenu("Sketchbook");
     popup = new JMenu("Sketchbook");
-    addlib = new JMenu("Add Library");
+    addlib = new JMenu("Import Library");
   }
 
 
@@ -117,7 +117,8 @@ public class PdeSketchbook {
    * or null if the operation was cancelled.
    */
   public String handleNew(boolean startup, 
-                          boolean shift) throws IOException {
+                          boolean shift, 
+                          boolean library) throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
@@ -169,13 +170,18 @@ public class PdeSketchbook {
     // make the directory for the new sketch
     newbieDir.mkdirs();
 
+    // if it's a library, make a library subfolder to tag it as such
+    if (library) {
+      new File(newbieDir, "library").mkdirs();
+    }
+
     // make an empty pde file
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
 
     // TODO this wouldn't be needed if i could figure out how to 
     // associate document icons via a dot-extension/mime-type scenario
-    // help me steve jobs. you're my only hope
+    // help me steve jobs, you're my only hope.
 
     // jdk13 on osx, or jdk11
     // though apparently still available for 1.4
