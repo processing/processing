@@ -26,13 +26,13 @@ X   also rectMode to planeMode
 X change QUADS to PLANES, QUAD_STRIP to PLANE_STRIP
 X delay wasn't working for casey
 X   works fine on pc.. maybe a mac problem
-
+X   turned out to be a misunderstanding for loop()
+X curve and bezier behave differently for indexing points
+X   change bezier to act the same (each addl point)
+_ allow ui to be colored/skinned so creas can tweak
 _ make macintosh release
+_   font file names are getting mangled on mac (too long)
 _   new set of fonts, make sure the names are ok
-
-a _ curve and bezier behave differently for indexing points
-a _   change bezier to act the same (each addl point)
-a _ font file names are getting mangled on mac (too long)
 
 biggest problems from french workshop
 _ syntax more difficult than expected: semicolons and braces
