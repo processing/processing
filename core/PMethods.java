@@ -155,8 +155,8 @@ public interface PMethods {
 
   //public void arcMode(int mode);
 
-  public void arc(float start, float stop,
-                  float x, float y, float radius);
+  //public void arc(float start, float stop,
+  //              float x, float y, float radius);
 
   public void arc(float start, float stop,
                   float x, float y, float hr, float vr);
