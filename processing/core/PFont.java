@@ -4,7 +4,7 @@
   BFont - font object for text rendering
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-04 Massachusetts Institute of Technology 
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
   (Except where noted that the author is not Ben Fry)
 
   This library is free software; you can redistribute it and/or
@@ -17,9 +17,9 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General 
-  Public License along with this library; if not, write to the 
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 */
 
@@ -29,34 +29,66 @@ import java.io.*;
 import java.util.*;
 
 
-// value[] could be used to build a char to byte mapping table
-// as the font is loaded..
-// when generating, use the native char mapping. 
+// where is the font point size embedded in the font?
+//   not sizing properly relative to how the platforms work
+
+// ascent = height of lowercase d
+// descent = depth of lowercase p
+// get the leading calculation in there properly
+
+// how do we handle kerning
+
+/*
+  awful ascii (non)art for how this works
+  |
+  |                   height is the full used height of the image
+  |
+  |   ..XX..       }
+  |   ..XX..       }  
+  |   ......       }
+  |   XXXX..       }  topExtent (top y is baseline - topExtent)
+  |   ..XX..       }
+  |   ..XX..       }  dotted areas are where the image data
+  |   ..XX..       }  is actually located for the character
+  +---XXXXXX----   }  (it extends to the right & down for pow of 2 textures)
+  |
+  ^^^^ leftExtent (amount to move over before drawing the image
+
+  ^^^^^^^^^^^^^^ setWidth (width displaced by char)
+*/
 
 public class PFont implements PConstants {
 
   //int firstChar = 33; // always
-  int charCount;
+  public int charCount;
   public PImage images[];
 
   // image width, a power of 2
   // note! these will always be the same
-  public int iwidth, iheight; 
+  public int iwidth, iheight;
   // float versions of the above
-  float iwidthf, iheightf;
+  //float iwidthf, iheightf;
+
+  // formerly iwidthf, iheightf.. but that's wrong
+  // actually should be mbox, the font size
+  float fwidth, fheight;
 
   // mbox is just the font size (i.e. 48 for most vlw fonts)
-  int mbox;
+  public int mbox2; // next power of 2
+  public int mbox;  // font size
 
-  int value[];  // char code
+  public int value[];  // char code
   public int height[]; // height of the bitmap data
   public int width[];  // width of bitmap data
   public int setWidth[];  // width displaced by the char
   public int topExtent[];  // offset for the top
   public int leftExtent[];  // offset for the left
 
+  public int ascent;
+  public int descent;
+
   // scaling, for convenience
-  float size; 
+  public float size;
   public float leading;
 
   int ascii[];  // quick lookup for the ascii chars
@@ -69,31 +101,54 @@ public class PFont implements PConstants {
   public PFont(InputStream input) throws IOException {
     DataInputStream is = new DataInputStream(input);
 
-    charCount   = is.readInt();
+    // number of character images stored in this font
+    charCount = is.readInt();
+
+    // bit count is ignored since this is always 8
     int numBits = is.readInt();
-    int mboxX   = is.readInt();  // not used, just fontsize (48)
-    int mboxY   = is.readInt();  // also just fontsize (48)
+
+    // this was formerly ignored, now it's the actual font size
+    mbox = is.readInt();
+    // this was formerly mboxY, the one that was used
+    // this will make new fonts downward compatible
+    mbox2 = is.readInt();
+
+    //int mboxX   = is.readInt();  // not used, just fontsize (48)
+    //int mboxY   = is.readInt();  // also just fontsize (48)
 
     // only store this one for leading calc
-    mbox = mboxY;  
+    //mbox = mboxY;
+    fwidth = mbox;
+    fheight = mbox;
 
     // size for image ("texture") is next power of 2
     // over the font size. for most vlw fonts, the size is 48
-    // so the next power of 2 is 64. 
-    iwidth = (int) 
+    // so the next power of 2 is 64.
+    // (actually that wasn't quite right, since mboxX/Y were both 64,
+    //  and the font builder was already setting it as the next pow of 2)
+    /*
+    iwidth = (int)
       Math.pow(2, Math.ceil(Math.log(mboxX) / Math.log(2)));
-    iheight = (int) 
+    iheight = (int)
       Math.pow(2, Math.ceil(Math.log(mboxY) / Math.log(2)));
+    */
+    // size for the texture is stored in the font
+    iwidth = iheight = mbox2;
 
-    iwidthf = (float) iwidth;
-    iheightf = (float) iheight;
+    //iwidthf = (float) iwidth;
+    //iheightf = (float) iheight;
 
     // font size is 48, so default leading is 48 * 1.2
     // this is same as what illustrator uses for the default
     //defaultLeading = ((float)mboxY / iheightf) * 1.2f;
 
-    int baseHt = is.readInt(); // zero, ignored
-    is.readInt(); // ignore 4 for struct padding
+    //int baseHt = is.readInt(); // zero, ignored
+    //is.readInt(); // ignore 4 for struct padding
+    ascent  = is.readInt();  // formerly zero/ignored
+    descent = is.readInt();  // formerly ignored struct padding
+
+    //System.out.println("found mbox = " + mbox);
+    //System.out.println("found ascent/descent = " + ascent + " " + descent);
 
     // allocate enough space for the character info
     value       = new int[charCount];
@@ -116,11 +171,51 @@ public class PFont implements PConstants {
       leftExtent[i] = is.readInt();
 
       // pointer in the c version, ignored
-      is.readInt(); 
+      is.readInt();
 
       // cache locations of the ascii charset
       if (value[i] < 128) ascii[value[i]] = i;
+
+      //if (value[i] == 'd') 
+      //System.out.println("calc ascent is " + topExtent[i]);
+      //if (value[i] == 'p')
+      //System.out.println("calc descent is " + (-topExtent[i] + height[i]));
+
+      // the values for getAscent() and getDescent() from FontMetrics
+      // seem to be way too large.. perhaps they're the max? 
+      // as such, use a more traditional marker for ascent/descent
+      if (value[i] == 'd') {
+        ascent = topExtent[i];
+      }
+      if (value[i] == 'p') {
+        descent = -topExtent[i] + height[i];
+      }
     }
+
+    // foreign font, so just make ascent the max topExtent
+    // or maybe just throw an exception and say to re-export?
+    if ((ascent == 0) && (descent == 0)) {
+      for (int i = 0; i < charCount; i++) {
+        char cc = (char) value[i];
+        if (Character.isWhitespace(cc) ||
+            (cc == '\u00A0') || (cc == '\u2007') || (cc == '\u202F')) {
+          continue;
+        }
+
+        if (topExtent[i] > ascent) {
+          ascent = topExtent[i];
+        }
+        int d = -topExtent[i] + height[i];
+        if (d > descent) {
+            descent = d;
+            //System.out.println("big d is on " + PApplet.hex(value[i])
+            //                 + " " + ((char) value[i]));
+        }
+        //System.out.println("max top now: " + ascent +
+        //                 " for " + PApplet.hex(value[i]) + "  ");
+      }
+    }
+    //System.out.println("a/d = " + ascent + " " + descent);
 
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
@@ -136,12 +231,12 @@ public class PFont implements PConstants {
       // convert the bitmap to an alpha channel
       int w = width[i];
       int h = height[i];
-      for (int x = 0; x < w; x++) {
-        for (int y = 0; y < h; y++) {
+      for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
           int valu = temp[y*w + x] & 0xff;
           //images[i].pixels[y*64 + x] = valu;
           images[i].pixels[y * iwidth + x] = valu;
-          // the following makes javagl more happy.. 
+          // the following makes javagl more happy..
           // not sure what's going on
           //(valu << 24) | (valu << 16) | (valu << 8) | valu; //0xffffff;
           //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
@@ -155,16 +250,21 @@ public class PFont implements PConstants {
     resetLeading(); // ??
   }
 
+    //static boolean isSpace(int c) {
+    //return (Character.isWhitespace((char) c) ||
+    //      (c == '\u00A0') || (c == '\u2007') || (c == '\u202F'));
+    //}
+
 
   public void write(OutputStream output) throws IOException {
     DataOutputStream os = new DataOutputStream(output);
 
-    os.writeInt(charCount); 
-    os.writeInt(8);     // numBits
-    os.writeInt(mbox);  // mboxX (font size)
-    os.writeInt(mbox);  // mboxY (font size)
-    os.writeInt(0);     // baseHt, ignored
-    os.writeInt(0);     // struct padding for c version
+    os.writeInt(charCount);
+    os.writeInt(8);       // numBits
+    os.writeInt(mbox);    // formerly mboxX (was 64, now 48)
+    os.writeInt(mbox2);    // formerly mboxY (was 64, still 64)
+    os.writeInt(ascent);  // formerly baseHt (was ignored)
+    os.writeInt(descent); // formerly struct padding for c version
 
     for (int i = 0; i < charCount; i++) {
       os.writeInt(value[i]);
@@ -219,10 +319,10 @@ public class PFont implements PConstants {
     if (c == value[pivot]) return pivot;
 
     // char doesn't exist, otherwise would have been the pivot
-    //if (start == stop) return -1; 
+    //if (start == stop) return -1;
     if (start >= stop) return -1;
 
-    // if it's in the lower half, continue searching that 
+    // if it's in the lower half, continue searching that
     if (c < value[pivot]) return index_hunt(c, start, pivot-1);
 
     // if it's in the upper half, continue there
@@ -230,7 +330,7 @@ public class PFont implements PConstants {
   }
 
 
-  public float kern(char a, char b) { 
+  public float kern(char a, char b) {
     return 0;  // * size, but since zero..
   }
 
@@ -246,12 +346,22 @@ public class PFont implements PConstants {
 
 
   public void resetLeading() {
-    leading = size * ((float)mbox / iheightf) * 1.2f;
+    leading = size * ((float)mbox / fheight) * 1.2f;
   }
 
 
   public void leading(float ileading) {
     leading = ileading;
+  }
+
+
+  public float ascent() {
+    return ((float)ascent / fheight) * size;
+  }
+
+
+  public float descent() {
+    return ((float)descent / fheight) * size;
   }
 
 
@@ -264,7 +374,7 @@ public class PFont implements PConstants {
     int cc = index(c);
     if (cc == -1) return 0;
 
-    return ((float)setWidth[cc] / iwidthf) * size;
+    return ((float)setWidth[cc] / fwidth) * size;
   }
 
 
@@ -315,10 +425,10 @@ public class PFont implements PConstants {
     }
 
     if (parent.text_space == OBJECT_SPACE) {
-      float high    = (float) height[glyph]     / iheightf;
-      float bwidth  = (float) width[glyph]      / iwidthf;
-      float lextent = (float) leftExtent[glyph] / iwidthf;
-      float textent = (float) topExtent[glyph]  / iheightf;
+      float high    = (float) height[glyph]     / fheight;
+      float bwidth  = (float) width[glyph]      / fwidth;
+      float lextent = (float) leftExtent[glyph] / fwidth;
+      float textent = (float) topExtent[glyph]  / fheight;
 
       int savedTextureMode = parent.texture_mode;
       //boolean savedSmooth = parent.smooth;
@@ -402,8 +512,8 @@ public class PFont implements PConstants {
           int p1 = pixels1[row * width[glyph] + col];
           int p2 = pixels2[(yy + row-y0)*parent.width + (xx+col-x0)];
 
-          pixels2[(yy + row-y0)*parent.width + xx+col-x0] = 
-            (0xff000000 | 
+          pixels2[(yy + row-y0)*parent.width + xx+col-x0] =
+            (0xff000000 |
              (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
              (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
              (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
@@ -437,6 +547,7 @@ public class PFont implements PConstants {
       if (c[index] == '\n') {
         x = startX;
         y += leading;
+        //y += ascent();
         previous = 0;
       } else {
         text(c[index], x, y, z, parent);
@@ -453,22 +564,24 @@ public class PFont implements PConstants {
   /**
    * Same as below, just without a z coordinate.
    */
-  public void text(String str, float x, float y, 
+  public void text(String str, float x, float y,
                    float w, float h, PGraphics parent) {
     text(str, x, y, 0, w, h, parent);
   }
 
 
   /**
-   * Draw text in a text both that is constrained to a 
+   * Draw text in a text both that is constrained to a
    * particular width and height
    */
-  public void text(String str, float x, float y, float z, 
+  public void text(String str, float x, float y, float z,
                    float w, float h, PGraphics parent) {
     float space = width(' ');
     float xx = x;
     float yy = y;
     float right = x + w;
+
+    yy += ascent();
 
     String paragraphs[] = PApplet.split(str, '\n');
     for (int i = 0; i < paragraphs.length; i++) {
@@ -478,15 +591,15 @@ public class PFont implements PConstants {
         float size = width(words[j]);
         if (xx + size > right) {
           // this goes on the next line
-          xx = 0; 
-          yy += leading;
+          xx = x;
+          yy += ascent() + descent(); //leading;
           if (yy > h) return;  // too big for box
         }
         text(words[j], xx, yy, z, parent);
         xx += size + space;
       }
       // end of paragraph, move to left and increment leading
-      xx = 0; 
+      xx = 0;
       yy += leading;
       if (yy > h) return;  // too big for box
     }
