@@ -425,13 +425,14 @@ public class PdeBase {
 
   static public void copyDir(File sourceDir, 
                              File targetDir) throws IOException {
+    targetDir.mkdirs();
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File source = new File(sourceDir, files[i]);
       File target = new File(targetDir, files[i]);
       if (source.isDirectory()) {
-        target.mkdirs();
+        //target.mkdirs();
         copyDir(source, target);
 #ifdef JDK13
         target.setLastModified(source.lastModified());
