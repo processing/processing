@@ -41,6 +41,12 @@ X   "color.jpg" -> "int.jpg" causes trouble
 X why does this line cause an error?
 // String url = "http:\u002f\u002fwww.Proce55ing.net"; 
 X   it's not in the preprocessor, but kopi seems to be having trouble
+X seems that file i/o may be picking up lots of extra \r 
+X   perhaps when doing setText, it's goobering things up
+X when renaming a sketch, select the text in the field, 
+X   so you can type the new name immediately. 
+X added 'rename' command
+X   also the default for clicking on the sketch's title
 
 bagel
 _ images don't load during setup()
@@ -53,12 +59,8 @@ _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
-_ seems that file i/o may be picking up lots of extra \r 
-_   perhaps when doing setText, it's goobering things up
-_ better default size than 300x300 when starting up first time
 _ set frame title of launched window to the name of the sketch
-_ when renaming a sketch, select the text in the field, 
-    so you can type the new name immediately. 
+_ option to rename when doing a 'save as' (remove old files)
 _ remove .class files on save as [dimitre]
 When I am working in a project and I save it with another name, 
 all the old files are copyied to new directory, and some of the old 
@@ -66,9 +68,6 @@ unused .class files and images remains inside new project JAR files.
 _ use date in the sketch name sketch_021104 
 _   with a _2 if needed or '021104a' '021104b' etc
 _   when using save as, allow to remove the old (numbered) sketch
-
-_ preprocessor problems -> switch to java cup (one day's work)
-_   subst Image -> BImage, Font -> BFont
 _ serial port
 _   better message for PortInUseException (full explanation)
 _   better message for when serial port code not available/not installed
@@ -76,11 +75,17 @@ _ lots of problems with the console [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
+
+_ support 'classes' folder, through the use of a classloader
+_   could also be done by launching external java app
+_   all .jar files etc are added from this folder automatically
 _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
-_ support 'classes' folder, through the use of a classloader
-_   all .jar files etc are added from this folder automatically
-
+_ preprocessor problems -> switch to java cup (one day's work)
+_   subst Image -> BImage, Font -> BFont
+_ line endings joy
+_   is setText goobering up on beautify?
+_   how are line endings working during save?
 _ get syntax coloring debugged?
 _   talk to casey about better default colors
 
@@ -91,7 +96,14 @@ _   ME seems to be very broken
 _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
+
+macos9
+_ update build/dist scripts to work with new layout
+_ check to see if swing is working properly
+
+
 macosx 
+_ better default size than 300x300 when starting up first time
 _ update build/dist scripts to work with new layout
 _ check to see if swing is working properly
 _ put mac rxtx inside the p5 folder (hide it?)
