@@ -4,18 +4,25 @@ _ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
 _ should we use jdk 1.3 or msft vm?
 
 
-void loop() {
-  noStroke();
-  lights();
-  translate(58, 48, -50);
-  rotateY(0.5f);
-  box(40);
-}
+BXSocket, BXServerSocket
+  BXNetwork
+
+BXSerial
+
+BXMovieInput/Output or BXVideo or BXQuickTimeOutput/Input
+  BXMovie and BXCamera?
+
+BXImageIO, BXTiffImage
+
+BXDataFile (csv or tab separated data)
+  BXDataMatrix
+
+BXDatabase, BXDatabaseCache (keeps queries to fill out table)
 
 
 BAGEL / high
-a _ better access to projX et al
-a _   what's a better name? calcX? or write to an array?
+b _ better access to projX et al
+b _   what's a better name? calcX? or write to an array?
 
 
 BAGEL / high & time consuming
@@ -102,6 +109,7 @@ _ live video editing, wanting things more procedural
 PDE / high
 X get rid of 'kill' button
 X int version of min and abs
+X introduce pImage, pFont, pGraphics, pConstants (pSound)
 
 a _ add frame to launched window
 a _   add maximize event catcher to make fullscreen
@@ -114,9 +122,9 @@ a _   make size() work for draw() mode
 a _     inside Engine, reach in and grab calls to 'size'
 a _     if call is not using a constant number, then punt
 a _ lines being highlighted for errors are off
+a _   test this on other platforms as well
 a _ use a vm that won't destroy the screen like sun/ibm does
 a _   this means msft or newer version of jdk
-a _ introduce pImage, pFont, pGraphics, pConstants (pSound)
 a _ importing images doesn't work
 
 
