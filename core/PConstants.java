@@ -195,7 +195,7 @@ public interface PConstants {
   static final int CAP_MASK = SQUARE | ROUND | PROJECTED;
 
   static final int MITERED     = 1 << 3;
-  static final int ROUND       = 1 << 4;
+  //static final int ROUND       = 1 << 4;
   static final int BEVELED     = 1 << 5;
   static final int JOIN_MASK = MITERED | ROUND | BEVELED;
 
