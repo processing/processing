@@ -70,8 +70,8 @@ _ fix command keys for menus (broken since switching to swing)
 
 _ option for having multiple files open
 X   need ui for tabs from casey
-_   tabbed interface for multiple files
-_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
+X   tabbed interface for multiple files
+X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800;start=0
 _   "new text java/pde file" menu item
 
 
