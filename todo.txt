@@ -1,5 +1,15 @@
 0078 pde
 
+_ PdeRuntime/PApplet cleanup
+_   run as external whenever using present mode
+_   significantly limit range of cases.. if presenting ext is ok
+_   uses internal pretty much only when single class, etc
+
+_ include "you need to install java" text on default export page
+
+_ if a .pde isn't contained in a properly named folder
+_   offer to rename the parent folder, rather than placing in a new folder
+
 create a new sketch
 create a new tab named "a"
 create a new tab named "a_2"

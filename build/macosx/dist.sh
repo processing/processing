@@ -1,15 +1,17 @@
 #!/bin/sh
 
 
+# or maybe should die if /sw not installed?
 if test -f /sw/bin/head
 then
   # old 4 char version.. osx only uses the two chars
   #REVISION=`head -c 4 ../../todo.txt`
   # a more useful version of head than what's included with osx
-  SHORT_REVISION=`head -c 4 ../../todo.txt | tail -c 2`
-  REVISION=`head -c 4 ../../todo.txt`
+  SHORT_REVISION=`/sw/bin/head -c 4 ../../todo.txt | tail -c 2`
+  REVISION=`/sw/bin/head -c 4 ../../todo.txt`
 else
   # can't get four bytes of head (osx doesn't support -c)
+  SHORT_REVISION=00
   REVISION=0000
 fi
 
