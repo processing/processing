@@ -5,8 +5,10 @@
 
 if test -d work
 then
+  BUILD_PREPROC=false
 else
   echo Setting up directories to build P5...
+  BUILD_PREPROC=true
   cp -r ../shared work
   rm -rf work/CVS
   rm -f work/.DS_Store 
@@ -87,13 +89,16 @@ zip -rq ../build/windows/work/lib/core.jar processing
 # back to base processing dir
 cd ..
 
-#################### TEMPORARY #####################
-# set to true to re-enable building the preprocessor
-if true
-then
-#################### TEMPORARY #####################
-
 ### -- BUILD PREPROC ---------------------------------------------
+
+# i suck at shell scripting
+#if [ $1 = "preproc" ] 
+#then 
+#BUILD_PREPROC=true
+#fi
+
+if $BUILD_PREPROC
+then
 
 echo Building PDE for JDK 1.4
 
@@ -111,9 +116,7 @@ cd app/preprocessor
 # back to base processing dir
 cd ../..
 
-#################### TEMPORARY #####################
 fi
-#################### TEMPORARY #####################
 
 
 ### -- BUILD PDE ------------------------------------------------
