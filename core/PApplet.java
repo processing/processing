@@ -952,6 +952,11 @@ public class PApplet extends Applet
   // ------------------------------------------------------------
 
 
+  static public void print(byte what) {
+    System.out.print(what);
+    System.out.flush();
+  }
+
   static public void print(boolean what) {
     System.out.print(what);
     System.out.flush();
@@ -988,6 +993,11 @@ public class PApplet extends Applet
   //}
 
   //
+
+  static public void print(byte what[]) {
+    for (int i = 0; i < what.length; i++) System.out.print(what[i]);
+    System.out.flush();
+  }
 
   static public void print(boolean what[]) {
     for (int i = 0; i < what.length; i++) System.out.print(what[i]);
@@ -1026,6 +1036,10 @@ public class PApplet extends Applet
 
   //
 
+  static public void println(byte what) {
+    print(what); System.out.println();
+  }
+
   static public void println(boolean what) {
     print(what); System.out.println();
   }
@@ -1059,6 +1073,11 @@ public class PApplet extends Applet
   }
 
   //
+
+  static public void println(byte what[]) {
+    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
+    System.out.flush();
+  }
 
   static public void println(boolean what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
