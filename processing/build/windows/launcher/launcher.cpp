@@ -108,8 +108,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
     FILE *fp = fopen(env_qtjava, "rb");
     if (fp != NULL) {
-      // found it, all set to go
-      fclose(fp);
+      fclose(fp);  // found it, all set
+      strcat(env_qtjava, ";"); // add path separator
 
     } else {
       strcpy(env_qtjava, getenv("WINDIR"));
@@ -117,10 +117,12 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
       fp = fopen(env_qtjava, "rb");
       if (fp != NULL) {
-        fclose(fp);
+        fclose(fp);  // found it, all set
+        strcat(env_qtjava, ";"); // add path separator
 
       } else {
-        // serious problem, but will be caught by the pde
+        // doesn't seem to be installed, which is a problem.
+        // but the error will be reported by the pde
         env_qtjava[0] = 0;
       }
     }
