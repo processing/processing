@@ -53,6 +53,9 @@ X   remove .jar, .class, and .java files from the 'applet' dir
 When I am working in a project and I save it with another name, 
 all the old files are copyied to new directory, and some of the old 
 unused .class files and images remains inside new project JAR files. 
+X serial port
+X   better message for PortInUseException (full explanation)
+X   better message for when serial port code not available/not installed
 
 bagel
 _ images don't load during setup()
@@ -69,9 +72,6 @@ _ set frame title of launched window to the name of the sketch
 _ use date in the sketch name sketch_021104 
 _   with a _2 if needed or '021104a' '021104b' etc
 _   when using save as, allow to remove the old (numbered) sketch
-_ serial port
-_   better message for PortInUseException (full explanation)
-_   better message for when serial port code not available/not installed
 _ lots of problems with the console [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14

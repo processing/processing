@@ -741,6 +741,14 @@ public class KjcEngine extends PdeEngine {
 	// has to be before init
 	applet.serialProperties(PdeBase.properties);
 	applet.init();
+	if (applet.exception != null) {
+	  if (applet.exception instanceof javax.comm.PortInUseException) {
+	    throw new PdeException("Another program is already " +
+				   "using the serial port.");
+	  } else {
+	    throw new PdeException(applet.exception.getMessage());
+	  }
+	}
 	applet.start();
 
 	if (editor.presenting) {

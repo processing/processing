@@ -105,7 +105,7 @@ public class PdeBase extends Frame implements ActionListener {
 
   // hack for #@#)$(* macosx
   public Dimension getMinimumSize() {
-    return new Dimension(300, 300);
+    return new Dimension(500, 500);
   }
 
 
@@ -719,11 +719,15 @@ public class PdeBase extends Frame implements ActionListener {
     String defaultName = get("serial.port", "unspecified");
     boolean problem = false;
 
+    // if this is failing, it may be because
+    // lib/javax.comm.properties is missing
     try {
+      //System.out.println("building port list");
       Enumeration portList = CommPortIdentifier.getPortIdentifiers();
       while (portList.hasMoreElements()) {
 	CommPortIdentifier portId = 
 	  (CommPortIdentifier) portList.nextElement();
+	//System.out.println(portId);
 	
 	if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 	  //if (portId.getName().equals(port)) {
@@ -745,8 +749,7 @@ public class PdeBase extends Frame implements ActionListener {
     }
 
     // only warn them if this is the first time
-    //if (getInteger("window.x", 0) == 0) {
-    if (firstTime) {
+    if (problem && firstTime) {
       JOptionPane.showMessageDialog(frame,
 				    "Serial port support not installed.\n" +
 				    "Check the readme for instructions if you " +
