@@ -16,16 +16,11 @@ X   video integration (need to work with dist.sh for it)
 X   how to get qtjava into the classpath on windows runner
 X   incorporate second set of code for file i/o
 
+_ linux version doesn't work on rh9.. update the jvm
+
 _ writeBytes, writeStrings (actually saveBytes/saveStrings)
 
-_ something about the second line of this turns things to mush
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051654054;start=0
-println("3"); 
-println("4"); 
-println("5"); 
-
-_ background of menus on winxp is white
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
+_ kill video, net, etc on closing applet
 
 _ some flag to know whether applet is online or not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
@@ -68,6 +63,10 @@ _   aliased and anti-aliased images don't line up
 _     text (text04) marching around strangely
 _ problems with u/v are likely to also be there for colors
 _   u/v should be affected by w for proper perspective
+_ nonsmooth frame around circle gets drawn 8x away
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050451728
+_ texture weirdness at 90 degree angles
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050650262
 
 _ sphere() and other polygons don't connect flush with one another
 _   could hack by making each slightly larger than necessary
@@ -145,6 +144,7 @@ BAGEL / Graphics API Additions
    b _     right now it's hardwired at 20, should be adjustable
    b _   function to evaluate bezier or catmullrom points
    b _     used heavily in genome valence, asked about on the bboard
+   b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
 
    b _ background(BImage)
    b _   also creating background image inside setup()
@@ -207,6 +207,7 @@ ca b _   eventually POLYGON auto-detects convex/concave polygon
 ca b _   also add POLYGON_CONVEX and POLYGON_CONCAVE
 
 ca b _ clipping objects (clipping planes?)
+ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
 ca b _   things are flying into the camera and halting apps
 ca b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
 ca b _   NullPointerException apparently when things way offscreen
@@ -244,9 +245,15 @@ bf b _   better lighting model to show darkness at various depths
 bf b _     maybe just ultra-high res bitmaps from gl
 bf b _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
+   b _ getting current fill color and stroke color
+   b _   stroke() with no params?
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1053002041;start=0
+
 
 BAGEL / Details
 
+   b _ cartesian/polar conversion
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
    b _ make zbuffer available instead of g.zbuffer
    b _ getting mouse movement outside the window
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
@@ -266,6 +273,9 @@ BAGEL / Details
    b _ why is every other pixel missing from mouse events?
    b _ images drawn from center don't work for simage()
    b _   currently calling slower image routine
+
+   b _ p5 classes into packages (bagel especially)
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
 
    2 _ keypressed is not persistent
    2 _   key repeat in os vs. how java handles it
@@ -354,9 +364,6 @@ PDE - PROCESSING DEVELOPMENT ENVIRONMENT
 
 PDE / General 
 
-bf b _ separate compiler from other kjc-specific code
-bf b _   change writeJava/start functions to be combined in kjc
-bf b _   but the rest inside PdeEditor that takes care of launching/placing
    b _ be able to draw something inside setup (?)
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
 
@@ -365,20 +372,29 @@ PDE / Pre-preprocessor
 Currently using Oro for search and replace preprocessor.
 Future plans to use Javacup for preprocessor and Jikes for compiler.
 
+bf b _ separate compiler from other kjc-specific code
+bf b _   change writeJava/start functions to be combined in kjc
+bf b _   but the rest inside PdeEditor that takes care of launching/placing
+
 _ setup( ){} has an error, setup(){} does not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
 _   setup (200, 200) causes the default size to be used but setup(200, 200) works fine
 _ no longer require size() to come first.
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
-_ separate preprocessor from other kjc-specific code 
 _ compiler barfs on: float[] moo = new int[10];  
 _   although no error comes through to p5 (benelek)
 _ int() doesn't work inside other functions
 _   argh, need a real parser
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1052994613
+_ something about the second line of this turns things to mush
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051654054;start=0
+println("3"); 
+println("4"); 
+println("5"); 
 _ switch to java cup (one day's work)
-_   subst Image -> BImage, Font -> BFont
-_ syntax coloring of built-in java objects.. i.e. String
+_ subst Image -> BImage, Font -> BFont
+_ contextual syntax highlighting based on grammar
 _   probably want to include everything that's in java.lang and maybe others
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
 
@@ -416,25 +432,6 @@ most of these items can be removed if kjc is dropped
    b _     probably just remove it for now
 
 
-PDE / Export
-
-   b _ export to .pde file rather than java
-   b _   or at least link to that from the web page
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
-   b _ add manifest.mf to exported applets so that applications will work
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
-   b _ ability to export 'applications' (not just applets)
-   b _   lock feature for present mode (part of export to application?)
-   b _   application can still do serial (qt, other stuff?) 
-   b _   applet runs in browser, though applet on cbagel is everything..
-   b _   include main class info for executable jar file with jdk > 1.2
-   b _   not difficult to do, just some tweaking once applet export works
-   b _   wrapper that invokes the applet using a copy of the jre
-   b _   main() method needs to set layout manager if jexegen is to be used
-   b _     (msft vm defaults to null layout manager)
-   b _   also make sure pack() is happening
-
-
 PDE / Runtime (includes classloading)
 
 _ environment locks up when error stream isn't for the class
@@ -460,8 +457,50 @@ _ ability to include other code from sketchbook directory
 _   compile entire sketchbook on startup, check for new files on compile?
 
 
+PDE / Export
+
+   b _ export to .pde file rather than java
+   b _   or at least link to that from the web page
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1046250912
+   b _ add manifest.mf to exported applets so that applications will work
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
+   b _ ability to export 'applications' (not just applets)
+   b _   lock feature for present mode (part of export to application?)
+   b _   application can still do serial (qt, other stuff?) 
+   b _   applet runs in browser, though applet on cbagel is everything..
+   b _   include main class info for executable jar file with jdk > 1.2
+   b _   not difficult to do, just some tweaking once applet export works
+   b _   wrapper that invokes the applet using a copy of the jre
+   b _   main() method needs to set layout manager if jexegen is to be used
+   b _     (msft vm defaults to null layout manager)
+   b _   also make sure pack() is happening
+
+
+PDE / Editor
+if you dream it, you can do it.
+
+b _ find/replace
+b _   ctrl-f for find, g for find next, h for next occurrence of selected
+b _   "look up in reference" function for selecting keywords
+? _ context menu cut/copy/paste
+? _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
+
+2 _ features asked for on the bboard
+2 _   line numbers like bbedit
+2 _   command to comment-out the current selection
+2 _   syntax coloring
+2 _   split screen
+2 _   collapsable functions, or quick access to functions
+2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
+
+
 PDE / Details
 
+b _ background of menus on winxp is white
+b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051303115
+b _   SystemColor doesn't differentiate between menu background and top
+b _   probably fixed in swing, but we're using java.awt.Menu
+b _   test by rewriting with java.awt.Menu
 b _ improve the console
 b _   clear console each time 'run' gets hit
 b _     don't actually clear, just advance by the number of lines visible
@@ -534,9 +573,6 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PDE / features
 
-b _ find/replace
-b _   ctrl-f for find, g for find next, h for next occurrence of selected
-b _   "look up in reference" function for selecting keywords
 b _ some notion of plugins for pde
 b _   color picker or other things written by folks
 b _   add all .jar files in lib/plugins on startup
@@ -582,42 +618,6 @@ b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 2 _ some ui stuff from fdb
 2 _   rename the button options to verbs
 2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986
-
-
-PDE / editor
-if you dream it, you can do it.
-
-2 _ features asked for on the bboard
-2 _   line numbers like bbedit
-2 _   command to comment-out the current selection
-2 _   syntax coloring
-2 _   split screen
-2 _   collapsable functions, or quick access to functions
-2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
-2 _ features fry wants
-2 _   emacs indents and key commands
-2 _     ctrl-s for inline search, ctrl-s again to skip to next occurence (ctrl-g to cancel)
-2 _     ctrl-x ctrl-f to open a file (with tab completion for filename)
-2 _     ctrl-x ctrl-w to save a file (with tab completion for filename)
-2 _     ctrl-v/esc-v for page up/down
-2 _     ctrl-g to cancel an action
-2 _     ctrl-a, ctrl-e for beginning/end of line
-2 _     ctrl-x ctrl-s to save
-2 _     ctrl-x k to kill buffer
-2 _     ctrl-x ctrl-c to quit
-2 _     ctrl-up, ctrl-down to jump between paragraphs
-2 _     ctrl-left, ctrl-right to jump between words (skips whitespace)
-2 _     ctrl-space for set mark, esc-w to copy, ctrl-w to cut
-2 _     ctrl-shift-dash (or ctrl-underscore) for undo
-2 _     ctrl-y to unyank a piece of text (just paste?)
-2 _     ctrl-x 2 to split the screen horizontally
-2 _       ctrl-x 1 to make a single buffer
-2 _       ctrl-x o to switch between split buffers
-2 _     wheel mouse
-2 _     missing from jedit: 
-2 _       esc-w doesn't work (no esc for key commands)
-2 _       open/save files brings up ugly dialog with no caret
-2 _   want emacs-style editor that's faster loading than emacs
 
 
 PDE / science fiction
