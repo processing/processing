@@ -6,6 +6,7 @@ X repaired smoothing so that it doesn't crush the last line
 X bresenham ellipses/circle ignore alpha
 X   strokeWeight != 1 then shouldn't use flat_rect or flat_ellipse
 X   alpha didn't work either b/c some pixels seem to draw more than once
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499939;start=0
 X fixed bug where font wouldn't create if data dir exists
 X font builder: changes to font selection don't always update properly
 X more toxi image fixes to make things more stable/idiot-proof
@@ -14,38 +15,37 @@ X   http://www.cs.uml.edu/~jzhou/previous/91.541/hw1_applet/my_cellular_automata
 X new code from toxi for changes to how image api functions are laid out
 X runtime exceptions are killing the environment
 X play button stays stuck on runtime exceptions
-X   rewrote pieces of the code
+X   rewrote pieces of the codProbleme
 X   also the thread wasn't exiting properly, could cause slowdowns
 X rename bug is destroying files
 X   if saveas/rename names match, use renameTo
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065306548
-
-_ macosx open sketch folder problems.. spaces in filename problem?
-_   also seems to be problem for reference?
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066495952;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066497131;start=0
+X include JSObject with p5's pde.jar
+X   jaws.jar is already included on mac.. 
+_   check to see if ok on pc (empty project -> new JSObject())
+X   files are in jaws.jar: JSObject, JSException and JSUtil
+X curvePoint not initializing
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499669;start=0
+X semicolons bug in preproc
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499812;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066498153;start=0
 
 _ placement in the history menu of new items doesn't work
 _   the clear history thing gets in the way
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065493721
 
-_ curvePoint not initializing
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065383874
+_ macosx open sketch folder problems.. spaces in filename problem?
+_   also seems to be problem for reference?
 
 _ new html code for eolas patent case
 _   move html to external file in the lib folder
 
-_ include JSObject with p5's pde.jar
-_   files are in jaws.jar: JSObject, JSException and JSUtil
-
 _ included code is not packaged in the outgoing jar file on export
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066008067;start=0
-_   JSObject should be included with p5
 
 _ after hitting replace, dim the replace button
 _   otherwise it causes another replace to happen
-
-_ semicolons bug in preproc
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066012865;start=0
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066073171;start=0
 
 ................
 
@@ -89,6 +89,7 @@ ellipse(mouseX, mouseY, 20, 20);
 0067
 _ BImage.smooth() ?
 _ mouse wheel not working on macosx, need to dynamically load 1.4 code
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065826758;start=0
 _ simong interested in helping
 
 _ dll and jnilib files have to be in the p5 folder (confirmed by amit)
@@ -108,6 +109,9 @@ _   auto-create code and data folder when doing the 'add files to sketch..'
 
 
 lotsa video issues
+_ quicktime 6.4 update breaks p5 on the mac
+_   "Type quicktime.std.stdQTConstants was not found"
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
 _ split classes to BVideo and BMovie ? 
 _ things will freeze if winvdig not installed
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
