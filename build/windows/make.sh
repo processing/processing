@@ -9,6 +9,14 @@ else
   echo Setting up directories to build P5...
   #mkdir work
   cp -r ../shared work
+
+  echo Extracting examples...
+  cd work/sketchbook
+  unzip -q examples.zip
+  rm examples.zip
+  cd ../..
+
+  echo Extracting big ass JRE...
   unzip -q -d work jre.zip
 
   mkdir work/lib/export
