@@ -75,9 +75,9 @@ X macosx is using /Library instead of ~/Library.. get this fixed
 X   domain version wasn't in the stubs.. grr
 X   or maybe it's an int or something?
 X   just use reflection to call the function instead
-
-_ "use external editor" is broken
-_   throws exception on load()
+X "use external editor" is broken
+X   throws exception on load()
+X make preproc only build once (across osx, windows, linux)
 
 _ if a data file is in the sketch (not data) folder export breaks
 _   works fine in the editor, but on export gets a nullpointer ex

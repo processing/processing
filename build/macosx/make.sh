@@ -5,7 +5,7 @@
 
 if test -d work 
 then
-  echo 
+  BUILD_PREPROC=false
 else
   if test -f /sw/bin/cp
   then
@@ -16,6 +16,8 @@ else
   fi
 
   echo Setting up directories to build under Mac OS X
+  BUILD_PREPROC=true
+
   cp -r ../shared work
 
   cp -r ../../lib work/libraries
@@ -79,7 +81,8 @@ cd ../app
 #echo Removing preproc code so it will regenerate
 #rm preprocessor/expandedpde.g
 
-if test -f preprocessor/expandedpde.g
+if $BUILD_PREPROC
+#if test -f preprocessor/expandedpde.g
 then
   echo
 else
