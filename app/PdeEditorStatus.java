@@ -75,24 +75,16 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
     if (bgcolor == null) {
       bgcolor = new Color[4];
-      bgcolor[0] = PdePreferences.getColor("editor.status.notice.bgcolor");
-      //new Color(102, 102, 102));
-      bgcolor[1] = PdePreferences.getColor("editor.status.error.bgcolor");
-      //new Color(102, 26, 0));
-      bgcolor[2] = PdePreferences.getColor("editor.status.prompt.bgcolor");
-      //new Color(204, 153, 0));
-      bgcolor[3] = PdePreferences.getColor("editor.status.prompt.bgcolor");
-      //new Color(204, 153, 0));
+      bgcolor[0] = PdePreferences.getColor("status.notice.bgcolor");
+      bgcolor[1] = PdePreferences.getColor("status.error.bgcolor");
+      bgcolor[2] = PdePreferences.getColor("status.prompt.bgcolor");
+      bgcolor[3] = PdePreferences.getColor("status.prompt.bgcolor");
 
       fgcolor = new Color[4];
-      fgcolor[0] = PdePreferences.getColor("editor.status.notice.fgcolor");
-      //new Color(255, 255, 255));
-      fgcolor[1] = PdePreferences.getColor("editor.status.error.fgcolor");
-      //new Color(255, 255, 255));
-      fgcolor[2] = PdePreferences.getColor("editor.status.prompt.fgcolor");
-      //new Color(0, 0, 0));
-      fgcolor[3] = PdePreferences.getColor("editor.status.prompt.fgcolor");
-      //new Color(0, 0, 0));
+      fgcolor[0] = PdePreferences.getColor("status.notice.fgcolor");
+      fgcolor[1] = PdePreferences.getColor("status.error.fgcolor");
+      fgcolor[2] = PdePreferences.getColor("status.prompt.fgcolor");
+      fgcolor[3] = PdePreferences.getColor("status.prompt.fgcolor");
     }
   }
 
@@ -100,14 +92,16 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   public void empty() {
     mode = NOTICE;
     message = NO_MESSAGE;
-    update();
+    //update();
+    repaint();
   }
 
 
   public void notice(String message) {
     mode = NOTICE;
     this.message = message;
-    update();
+    //update();
+    repaint();
   }
 
   public void unnotice(String unmessage) {
@@ -118,7 +112,8 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   public void error(String message) {
     mode = ERROR;
     this.message = message;
-    update();
+    //update();
+    repaint();
   }
 
 
@@ -135,7 +130,8 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     cancelButton.setVisible(true);
     yesButton.requestFocus();
 
-    update();
+    //update();
+    repaint();
 
     /*
     Point upperLeft = new Point(getLocation());
@@ -343,7 +339,8 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     editField.selectAll();
     editField.requestFocus();
 
-    update();
+    repaint(); 
+    //update();
   }
 
   public void unedit() {
@@ -354,7 +351,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   }
 
 
-#ifdef SWINGSUCKS
+  /*
   public void update() {
     Graphics g = this.getGraphics();
     try {
@@ -366,19 +363,14 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   public void update(Graphics g) {
     paint(g);
   }
-#else
-  public void update() { repaint(); }
-#endif
+  */
 
 
-#ifndef SWINGSUCKS
-  public void paintComponent(Graphics screen) 
-#else
-  public void paint(Graphics screen) 
-#endif
-  {
+  public void paintComponent(Graphics screen) {
     //if (screen == null) return;
     if (yesButton == null) setup();
+
+    System.out.println("status.paintComponent");
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -429,7 +421,6 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
   protected void setup() {
     if (yesButton == null) {
-
       yesButton    = new JButton(PdePreferences.PROMPT_YES);
       noButton     = new JButton(PdePreferences.PROMPT_NO);
       cancelButton = new JButton(PdePreferences.PROMPT_CANCEL);
