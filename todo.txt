@@ -317,6 +317,19 @@ bf b _ separate compiler from other kjc-specific code
 bf b _   change writeJava/start functions to be combined in kjc
 bf b _   but the rest inside PdeEditor that takes care of launching/placing
 
+b _ foreach implementation, via java 1.5
+b _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html
+
+for (String s : c) {
+  ...
+}
+
+// Similarly, the following code could be used 
+// to calculate the sum of an int array. 
+int sum = 0;
+for (int e : a)  // e is short for element; i would be confusing
+  sum += e;
+
 _ setup( ){} has an error, setup(){} does not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
 _   setup (200, 200) causes the default size to be used but setup(200, 200) works fine
