@@ -9,6 +9,18 @@ o   test by rewriting with java.awt.Menu
 X beautify is ignoring the setting for number of spaces on tabs
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083708360;start=0
 X clean up PdeTokenMarker, probably just alphabetize
+X saving issues (all the same bug, as it turns out)
+X   save changes to null
+X   sketch is changing before the "save changes?" is complete
+X     as a result, 'cancel' does nothing
+X   always ask save changes, even if nothing changed
+
+
+mangling and mess
+_ remove the 'sketchbook.prompt' mess
+_ re-implement history
+_ write sketchbook.clean()
+_ write 'new text file'
 
 
 _ NullPointerException when alt is pressed

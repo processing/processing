@@ -1126,7 +1126,10 @@ public class PdeEditor extends JFrame
 
     //if (!sketch.isModified()) {
     //if (sketch.modified) checkModified2();
-    if (!sketch.modified) checkModified2();
+    if (!sketch.modified) {
+      checkModified2();
+      return;
+    }
 
     String prompt = "Save changes to " + sketch.name + "?  ";
 
