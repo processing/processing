@@ -53,6 +53,16 @@ X   function to evaluate bezier or catmullrom points
 X     used heavily in genome valence, asked about on the bboard
 X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
 X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
+X tweak video to get it working
+o   beginVideo(int, int, int) not found
+X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
+X   how does the syntax work?
+X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
+X net not closing, dispose() not getting called
+X   make sure dispose() gets called? that way people can override?
+X   or add another function for people to override?
+X   netEvent doesn't seem to be working in server mode
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
 
 
 macosx
@@ -128,6 +138,10 @@ dh b _ present mode, click background window and front window hides
 dh b _   wasn't present in jdk 1.3, focus manager changed in 1.4
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
 dh b _   file://localhost/D:/jdk-1.4.1_02/docs/api/java/awt/doc-files/FocusSpec.html
+dh b _ focus not properly set in present mode
+dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
+   b _ escape key not quitting presentation mode
+   b _   no events seem to be coming through at all
 
 
 this should get completed before 57.. it's annoying
@@ -142,15 +156,13 @@ dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
-_ runtime exceptions not coming through on either mac or windows
-_   when array wasn't large enough for curveMode, blank red line
-
-
 macosx
-X could it be audio that's hanging the application? -> nope
+_ what's hanging the application on start in 1.4?
 _   duh.. do println() statements to see where it's hanging
 _   (or hanging on start)
 _   could also be connected to compiling process, though it seems runtime
+_   try disabling Toolkit.sync()
+X   could it be audio that's hanging the application? -> nope
 _ change Proce55ing.app to Processing.app
 _   should cvs be changed or just do this as a renaming step?
 _ jikes is not properly wired to Proce55ing.app
@@ -161,8 +173,6 @@ _   manifests itself in sketch naming, can't be constrained
 _   may not be the case under swing?
 _   it's probably because of keyTyped() being the important one
 _     so instead trap for keyTyped events
-_ escape key not quitting presentation mode
-_   no events seem to be coming through at all
 _ set nice background for disk image on macosx
 _ mac 1.4 crashes when attempting to stop applets (pcho definitely)
 _   doesn't seem to do this with the .app, or at least in prev release
@@ -172,6 +182,13 @@ _   is this only a problem when run from run.sh?
 _ do objects need to be swing components to draw properly?
 _   macosx has update weirdness for non JComponent items
 _   probably why end of text messages under osx getting chopped?
+
+X remove finished in favor of just setting thread to null in BApplet
+_ Thread.stop is deprecated (and has been since 1.2)
+_   http://java.sun.com/products/jdk/1.2/docs/guide/misc/threadPrimitiveDeprecation.html
+_ check to see if setting threads to null works on windows 
+_   the multiple thread killing code was in there for a reason
+_   not tested on macos9.. 
 
 _ rxtx is a problem in general.. how to improve installation
 _   try installing serial adapter with p5
@@ -183,20 +200,10 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
 
-1 _ open button stays stuck if no sketch is selected from popup
+
+57 _ runtime exceptions not coming through on either mac or windows
+57 _   when array wasn't large enough for curveMode, blank red line
 57 _ perlin noise should be tested for 1d case
-
-_ tweak video to get it working
-o   beginVideo(int, int, int) not found
-_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054283460
-_   how does the syntax work?
-_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054111292
-
-_ net not closing, dispose() not getting called
-_   make sure dispose() gets called? that way people can override?
-_   or add another function for people to override?
-_   netEvent doesn't seem to be working in server mode
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055044714
 
 
 additional console fixes
@@ -214,6 +221,7 @@ linux
 _ make mention that linux is i386
 _ bring linux up to 1.4
 _   grab rxtx for linux and include with distribution
+_ make sure a copy of jikes is included
 
 
 dist
@@ -224,7 +232,6 @@ b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 
 thesis / acg
 bf _ make bagel more usable as standalone
-bf _   #ifdef to remove client and server code as well
 bf _   breakout BGraphics (have its own BImage)
 bf _   breakout BApplet into BComponent ? (fix out-of-bounds mouse)
 bf _   possible use of BUtils ?
@@ -236,6 +243,7 @@ bf _   exports pixels or a BImage or does MemoryImageSource itself
 bf _   move math functions into utility library associated
 bf _     with bagel, because those will be useful on other bagel platforms
 bf _     pApplet will call BagelMath.whatever, so still looks like cos()
+bf _   #ifdef to remove client and server code as well
 bf _   p5 classes into packages (bagel especially)
 bf _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052908285;start=0
 bf _ break out BSerial as separate object like BVideo
@@ -249,7 +257,21 @@ bf _   currently implemented, but somewhat broken
 bf _   finish this once all the line code is done
 bf _ some flag to know whether applet is online or not
 bf _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
-bf _   fix link() and loadStream code once that's fixed
+bf _   fix link, loadStrings, saveBytes code once that's fixed
+
+bf b _ if sketchbook.dir is set, makes new sketchbook folder
+bf b _   reads sketchbook properly from other folder
+bf b _   but creates a new folder for new sketches to go into
+bf b _ install sketchbook into another location on person's machine
+bf b _   remove the 'default' for sketchbook
+bf b _   bring this up on bboard and get votes
+bf b _   win2k: my documents, macosx: ~/Documents, 
+bf b _   macos9: hd:Users?, linux: ~/sketchbook
+bf b _ move examples to folder that goes w/ p5 app
+bf b _   set examples somehow read-only
+
+ks b _ background(BImage)
+ks b _   also creating background image inside setup()
 
 
 licensing
@@ -265,36 +287,12 @@ bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/j
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
 
 
-language stuff
-bf _ write p5 language spec
-bf _ actionscript has nice hastables.. as does perl/python
-bf _   would be nice to get better implementation in there
-
-
-bf 1 _ too many frames drawn before window visible - especially on mac
-
-bf b _ if sketchbook.dir is set, makes new sketchbook folder
-bf b _   reads sketchbook properly from other folder
-bf b _   but creates a new folder for new sketches to go into
-bf b _ remove the 'default' for sketchbook
-bf b _ install sketchbook into another location on person's machine
-bf b _   bring this up on bboard and get votes
-bf b _   win2k: my documents, macosx: ~/Documents, 
-bf b _   macos9: hd:Users?, linux: ~/sketchbook
-bf b _ move examples to folder that goes w/ p5 app
-bf b _   set examples somehow read-only
-
-bf b _ cartesian/polar conversion
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
-bf b _   thread includes code for the 2D case
-
-ks b _ background(BImage)
-ks b _   also creating background image inside setup()
-
-
 random todos
 bf _ history.. add my diffs sketch
 bf _ look into eclipse ide a little more
+bf _ write p5 language spec
+bf _ actionscript has nice hastables.. as does perl/python
+bf _   would be nice to get better implementation in there
 
 
 ////////////////////////////////////////////////////////////////////
@@ -464,6 +462,9 @@ bf b _ make zbuffer available instead of g.zbuffer
 
 BAGEL / Future
 
+   2 _ cartesian/polar conversion
+   2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053354853
+   2 _   thread includes code for the 2D case
    2 _ alter strokeWidth in LINE_STRIP
    2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053795842;start=0
    2 _ keypressed is not persistent
@@ -648,8 +649,6 @@ PDE / Runtime (includes classloading)
 dh b _ environment locks up when error stream isn't for the class
 dh b _   this happens when it's another thread (i.e. image fetcher)
 dh b _   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
-dh b _ focus not properly set in present mode
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
 dh b _ for 'java' mode, try run using external vm
 dh b _   would need to get error output stream from app.. argh
 dh b _   only allow under win/osx/linux
@@ -745,6 +744,7 @@ dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software
 dh 1 _ scroll bar has some painting weirdness with jedit textarea
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
 
+   1 _ too many frames drawn before window visible - especially on mac
    1 _ examples should be read-only
    1 _   stored in a separate folder from the sketchbook
    1 _ error message dialog?
@@ -861,6 +861,7 @@ How the environment gets packed up, downloaded, and installed.
 DISTRIBUTION / General 
 
 1 _ make a preference panel to set pde.properties stuff
+1 _ open button stays stuck if no sketch is selected from popup
 
 b _ need more comprehensive list of 'known bugs'
 b _  need to purge 55 spelling from lots of things
