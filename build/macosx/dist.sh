@@ -10,8 +10,7 @@ echo Creating P5 distribution for revision $REVISION...
 
 # remove any old boogers
 rm -rf processing 
-rm -rf processing-0000-macosx
-rm -f processing-*.hqx
+rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
