@@ -126,11 +126,31 @@ public class PdeEditor extends Panel {
     viewport.add(textarea);
     //    viewport.setScrollMode(JViewport.BLIT_SCROLL_MODE);
 
+    // hack to set the font using the style, at least until i 
+    // can figure out something better to do with styles/coloring
+    textarea.setFont(PdeBase.getFont("editor.program.default.style",
+				     new Font("Monospaced", 
+					      Font.PLAIN, 12)));
+    /*
+      // doesn't work
+    String farbe = PdeBase.get("editor.program.default.style");
+    farbe = farbe.substring(farbe.indexOf("#") + 1, farbe.lastIndexOf(","));
+    try {
+      int v = Integer.parseInt(farbe, 16);
+      textarea.setBackground(new Color(v));
+      System.out.println(new Color(v));
+    } catch (Exception e) {  
+      e.printStackTrace();
+    }  // oh well
+    */
+
+    /*
     textarea.setFont(PdeBase.getFont("editor.program.font",
     			       new Font("Monospaced", 
     					Font.PLAIN, 12)));
     textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
     			    Color.black));
+    */
     textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
     				    Color.white));
 
@@ -988,7 +1008,13 @@ afterwards, some of these steps need a cleanup function
 	//setSketchModified(false); 
 
       } else {
+	//System.out.println("new guy, so setting empty");
+	// style info only gets set if there's text
 	textarea.editorSetText("");
+	//textarea.editorSetText(" ");
+	// now set to now text. yay hack!
+	//textarea.editorSetText(""); // this doesn't work. oh well
+	//textarea.setCaretPosition(0); // next best thing
       }
       //System.out.println("should be done opening");
       sketchName = isketchName;
@@ -1684,15 +1710,19 @@ afterwards, some of these steps need a cleanup function
     //System.out.println(lnum);
     String s = textarea.getText();
     int len = s.length();
-    //int lnum = .line;
-    int st = -1, end = -1;
+    int st = -1;
+    int ii = 0;
+    int end = -1;
     int lc = 0;
     if (lnum == 0) st = 0;
     for (int i = 0; i < len; i++) {
+      ii++;
       //if ((s.charAt(i) == '\n') || (s.charAt(i) == '\r')) {
       boolean newline = false;
       if (s.charAt(i) == '\r') {
-	if ((i != len-1) && (s.charAt(i+1) == '\n')) i++;
+	if ((i != len-1) && (s.charAt(i+1) == '\n')) {
+	  i++; //ii--;
+	}
 	lc++;
 	newline = true;
       } else if (s.charAt(i) == '\n') {
@@ -1701,16 +1731,18 @@ afterwards, some of these steps need a cleanup function
       }
       if (newline) {
 	if (lc == lnum)
-	  st = i+1;
+	  //st = i+1;
+	  st = ii;
 	else if (lc == lnum+1) {
-	  end = i;
+	  //end = i;
+	  end = ii;
 	  break;
 	}
       }
     }
     if (end == -1) end = len;
     //System.out.println("st/end: "+st+"/"+end);
-    textarea.select(st, end+1);
+    textarea.select(st, end);
     //if (iexplorerp) {
     //textarea.invalidate();
     //textarea.repaint();
