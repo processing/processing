@@ -37,9 +37,19 @@ public class PGraphics extends PImage
 
   // ........................................................
 
-  public int width1, height1;    // minus 1
-  int pixelCount;
-  public int stencil[];        // stencil buffer used to antialias polygons
+  /// width minus one (useful for many calculations)
+  public int width1;
+
+  /// height minus one (useful for many calculations)
+  public int height1;
+
+  /// width * height (useful for many calculations)
+  public int pixelCount;
+
+  /// the stencil buffer (only for NEW_GRAPHICS)
+  public int stencil[];
+
+  /// zbuffer (only when 3D is in use)
   public float zbuffer[];
 
   // ........................................................
@@ -54,73 +64,87 @@ public class PGraphics extends PImage
   // needs to happen before background() is called
   // and resize.. so it's gotta be outside
   boolean hints[] = new boolean[HINT_COUNT];
-  //static {
-    //hints[NEW_GRAPHICS] = true;
-  //}
 
 
   // ........................................................
 
   // underscored_names are used for private functions or variables
 
-  // internal values.. i.e. the var set by colorMode()
-  // becomes color_mode
-  // if it's a one-word feller like 'fill' or 'stroke'
-  // then an underscore is placed in front: _fill
+  /** The current colorMode */
+  public int colorMode;
 
-  int color_mode;
-  // color_scale is for *internal* scaling, true if colorMode(1)
-  // since that's what's easiest for the internal stuff..
-  boolean color_scale;
-  boolean color_rgb255;
-  // color parameters
-  // internally, colors are 0..1 for the floats
-  // this makes the lighting computations clearer
-  float colorMaxX;
-  float colorMaxY;
-  float colorMaxZ;
-  float colorMaxA;
+  /** Max value for red (or hue) set by colorMode */
+  public float colorModeX;
 
-  // tint color
-  boolean _tint, tint_alpha;
-  float tintR, tintG, tintB, tintA;
-  int tintRi, tintGi, tintBi, tintAi;
-  int tint;
+  /** Max value for green (or saturation) set by colorMode */
+  public float colorModeY;
+
+  /** Max value for blue (or value) set by colorMode */
+  public float colorModeZ;
+
+  /** Max value for alpha set by colorMode */
+  public float colorModeA;
+
+  /** True if colors are not in the range 0..1 */
+  boolean colorScale;
+
+  /** True if colorMode(RGB, 255) */
+  boolean colorRgb255;
+
+  /** True if tint() is enabled, read-only */
+  public boolean tint;
+
+  /** Tint that was last set, read-only */
+  public int tintColor;
+
+  /** True if the tint has an alpha value */
+  boolean tintAlpha;
+
+  public float tintR, tintG, tintB, tintA;
+  public int tintRi, tintGi, tintBi, tintAi;
 
   // fill color
-  boolean _fill, fill_alpha;
+  public boolean fill;
+  public int fillColor;
+  public boolean fillAlpha;
   public float fillR, fillG, fillB, fillA;
   public int fillRi, fillGi, fillBi, fillAi;
-  public int fill;
 
   // stroke color
-  boolean _stroke, stroke_alpha;
-  float strokeR, strokeG, strokeB, strokeA;
-  int strokeRi, strokeGi, strokeBi, strokeAi;
-  int stroke;
+  public boolean stroke;
+  boolean strokeAlpha;
+  public float strokeR, strokeG, strokeB, strokeA;
+  public int strokeRi, strokeGi, strokeBi, strokeAi;
+  public int strokeColor;
 
-  float strokeWeight;
-  int strokeJoin;
-  int strokeMiter;
-
-  // background color
-  boolean _background;
-  float backR, backG, backB;
-  int backRi, backGi, backBi;
-  int background;
+  //public boolean background;
+  /** Last background color that was set */
+  public int backgroundColor;
+  public float backgroundR, backgroundG, backgroundB;
+  public int backgroundRi, backgroundGi, backgroundBi;
 
   // internal color for setting/calculating
   float calcR, calcG, calcB, calcA;
   int calcRi, calcGi, calcBi, calcAi;
-  int calci;
-  boolean calc_alpha;
+  int calcColor;
+  boolean calcAlpha;
 
-  /** The last rgb value converted to hsb */
+  /** The last rgb value converted to HSB */
   int cacheHsbKey;
-  /** Result of the last conversion to hsb */
+  /** Result of the last conversion to HSB */
   float cacheHsbValue[] = new float[3]; // inits to zero
 
-  boolean depth;
+  /** True if depth() is enabled, read-only */
+  public boolean depth;
+
+  /** Set by strokeWeight(), read-only */
+  public float strokeWeight;
+
+  /** Set by strokeJoin(), read-only */
+  public int strokeJoin;
+
+  /** Set by strokeMiter(), read-only */
+  public int strokeMiter;
 
   // lighting
   static final int MAX_LIGHTS = 10;
@@ -128,13 +152,6 @@ public class PGraphics extends PImage
   float lightR[], lightG[], lightB[];
   float lightX[], lightY[], lightZ[];
   int lightKind[];
-
-  // inherited from PImage
-  //boolean smooth = false;  // antialiasing
-
-  // projection
-  //float prevProjX, prevProjY, prevProjZ;
-  //float projX,  projY,  projZ;
 
   // ........................................................
 
@@ -234,9 +251,9 @@ public class PGraphics extends PImage
 
   // texture images
 
-  int texture_mode;
-  float textureU, textureV;
-  float normalX, normalY, normalZ;
+  public int textureMode;
+  public float textureU, textureV;
+  public float normalX, normalY, normalZ;
 
   // used by NEW_GRAPHICS, or by OLD_GRAPHICS simply as a boolean
   private PImage textureImage;
@@ -359,7 +376,7 @@ public class PGraphics extends PImage
     allocate();
 
     // clear the screen with the old background color
-    background(background);
+    background(backgroundColor);
 
     // init perspective projection based on new dimensions
     fov = 60; // at least for now
@@ -493,7 +510,7 @@ public class PGraphics extends PImage
     lightG[1] = ONE;
     lightB[1] = ONE;
 
-    texture_mode = IMAGE_SPACE;
+    textureMode = IMAGE_SPACE;
     rect_mode    = CORNER;
     ellipse_mode = CENTER;
     angle_mode   = RADIANS;
@@ -690,13 +707,13 @@ public class PGraphics extends PImage
 
     // index -1 means line is a normal stroke
     // other values indicate special blender mode
-    if(smooth && !_stroke) {
+    if (smooth && !stroke) {
       lines[lines_count][LI] = shape_index;
     } else {
       lines[lines_count][LI] = -1;
     }
 
-    lines[lines_count][SM] = strokeMiter | strokeJoin; //_strokeMode;
+    lines[lines_count][SM] = strokeMiter | strokeJoin;
 
     lines_count ++;
 
@@ -1004,8 +1021,8 @@ public class PGraphics extends PImage
    * set texture mode to either IMAGE_SPACE (more intuitive
    * for new users) or NORMAL_SPACE (better for advanced chaps)
    */
-  public void textureMode(int texture_mode) {
-    this.texture_mode = texture_mode;
+  public void textureMode(int textureMode) {
+    this.textureMode = textureMode;
   }
 
 
@@ -1026,7 +1043,7 @@ public class PGraphics extends PImage
                 "after beginShape() and before vertexTexture()");
         return;
       }
-      if (texture_mode == IMAGE_SPACE) {
+      if (textureMode == IMAGE_SPACE) {
         textureU = (u < textureImage.width) ? u : textureImage.width;
         if (textureU < 0) textureU = 0;
         textureV = (v < textureImage.height) ? v : textureImage.height;
@@ -1049,7 +1066,7 @@ public class PGraphics extends PImage
                 "after beginShape() and before vertex()");
         return;
       }
-      if (texture_mode == IMAGE_SPACE) {
+      if (textureMode == IMAGE_SPACE) {
         textureU = (u < polygon.twidth) ? u : polygon.twidth;
         if (textureU < 0) textureU = 0;
 
@@ -1156,14 +1173,14 @@ public class PGraphics extends PImage
     vertex[MY] = y;
     vertex[MZ] = z;
 
-    if (_fill) {
+    if (fill) {
       vertex[R] = fillR;
       vertex[G] = fillG;
       vertex[B] = fillB;
       vertex[A] = fillA;
     }
 
-    if (_stroke) {
+    if (stroke) {
       vertex[SR] = strokeR;
       vertex[SG] = strokeG;
       vertex[SB] = strokeB;
@@ -1215,14 +1232,14 @@ public class PGraphics extends PImage
     vertex[MY] = y;
     vertex[MZ] = z;
 
-    if (_fill) {
+    if (fill) {
       vertex[R] = fillR;
       vertex[G] = fillG;
       vertex[B] = fillB;
       vertex[A] = fillA;
     }
 
-    if (_stroke) {
+    if (stroke) {
       vertex[SR] = strokeR;
       vertex[SG] = strokeG;
       vertex[SB] = strokeB;
@@ -1367,7 +1384,7 @@ public class PGraphics extends PImage
 
     // make lines for both stroke triangles
     // and antialiased triangles
-    boolean check = _stroke || smooth;
+    boolean check = stroke || smooth;
 
     // quick fix [rocha]
     // antialiasing fonts with lines causes some artifacts
@@ -1475,7 +1492,7 @@ public class PGraphics extends PImage
     // ------------------------------------------------------------------
     // CREATE TRIANGLES
 
-    if (_fill) {
+    if (fill) {
       switch (shapeKind) {
         case TRIANGLES:
         case TRIANGLE_STRIP:
@@ -1621,21 +1638,21 @@ public class PGraphics extends PImage
       for (int i = vertex_start; i < vertex_end; i++) {
         float v[] = vertices[i];
         if (normalChanged) {
-          if (_fill) {
+          if (fill) {
             calc_lighting(v[R],  v[G], v[B], v[MX], v[MY], v[MZ],
                        v[NX], v[NY], v[NZ], v, R);
           }
 
-          if (_stroke) {
+          if (stroke) {
             calc_lighting(v[SR], v[SG], v[SB], v[MX], v[MY], v[MZ],
                        v[NX], v[NY], v[NZ], v, SR);
           }
         } else {
-          if (_fill) {
+          if (fill) {
             calc_lighting(v[R],  v[G], v[B], v[MX], v[MY], v[MZ],
                        f[NX], f[NY], f[NZ], v, R);
           }
-          if (_stroke) {
+          if (stroke) {
             calc_lighting(v[SR], v[SG], v[SB], v[MX], v[MY], v[MZ],
                        f[NX], f[NY], f[NZ], v, SR);
           }
@@ -1688,8 +1705,7 @@ public class PGraphics extends PImage
     }
 
     // render all triangles in current shape
-    if (_fill) {
-
+    if (fill) {
       for (int i = 0; i < triangleCount; i ++) {
         float a[] = vertices[triangles[i][VA]];
         float b[] = vertices[triangles[i][VB]];
@@ -1718,7 +1734,7 @@ public class PGraphics extends PImage
     // DRAW POINTS, LINES AND SHAPE STROKES
 
     // draw all lines in current shape
-    if (_stroke || smooth) {
+    if (stroke || smooth) {
 
       for (int i = 0; i < lines_count; i ++) {
         float a[] = vertices[lines[i][PA]];
@@ -2012,23 +2028,23 @@ public class PGraphics extends PImage
       for (int i = 0; i < vertexCount; i++) {
         float v[] = polygon.vertices[i];
         if (normalChanged) {
-          if (_fill) {
+          if (fill) {
             calc_lighting(v[R],  v[G],  v[B],
                        v[MX], v[MY], v[MZ],
                        v[NX], v[NY], v[NZ],  v, R);
           }
-          if (_stroke) {
+          if (stroke) {
             calc_lighting(v[SR], v[SG], v[SB],
                        v[MX], v[MY], v[MZ],
                        v[NX], v[NY], v[NZ],  v, SR);
           }
         } else {
-          if (_fill) {
+          if (fill) {
             calc_lighting(v[R],  v[G],  v[B],
                        v[MX], v[MY], v[MZ],
                        f[NX], f[NY], f[NZ],  v, R);
           }
-          if (_stroke) {
+          if (stroke) {
             calc_lighting(v[SR], v[SG], v[SB],
                        v[MX], v[MY], v[MZ],
                        f[NX], f[NY], f[NZ],  v, SR);
@@ -2054,7 +2070,7 @@ public class PGraphics extends PImage
         if (!strokeChanged) {
           for (int i = 0; i < vertexCount; i++) {
             thin_point((int) vertices[i][X], (int) vertices[i][Y],
-                       0, stroke);
+                       0, strokeColor);
           }
         } else {
           for (int i = 0; i < vertexCount; i++) {
@@ -2093,7 +2109,7 @@ public class PGraphics extends PImage
     case LINES:
     case LINE_STRIP:
     case LINE_LOOP:
-      if (!_stroke) return;
+      if (!stroke) return;
 
       // if it's a line loop, copy the vertex data to the last element
       if (shapeKind == LINE_LOOP) {
@@ -2116,7 +2132,7 @@ public class PGraphics extends PImage
       increment = (shapeKind == TRIANGLES) ? 3 : 1;
       // do fill and stroke separately because otherwise
       // the lines will be stroked more than necessary
-      if (_fill) {
+      if (fill) {
         fpolygon.vertexCount = 3;
         for (int i = 0; i < vertexCount-2; i += increment) {
           for (int j = 0; j < 3; j++) {
@@ -2137,7 +2153,7 @@ public class PGraphics extends PImage
           fpolygon.render();
         }
       }
-      if (_stroke) {
+      if (stroke) {
         // first draw all vertices as a line strip
         if (shapeKind == TRIANGLE_STRIP) {
           draw_lines(vertices, vertexCount-1, 1, 1, 0);
@@ -2156,7 +2172,7 @@ public class PGraphics extends PImage
     case QUAD_STRIP:
       //System.out.println("pooping out a quad");
       increment = (shapeKind == QUADS) ? 4 : 2;
-      if (_fill) {
+      if (fill) {
         fpolygon.vertexCount = 4;
         for (int i = 0; i < vertexCount-3; i += increment) {
           for (int j = 0; j < 4; j++) {
@@ -2177,7 +2193,7 @@ public class PGraphics extends PImage
           fpolygon.render();
         }
       }
-      if (_stroke) {
+      if (stroke) {
         // first draw all vertices as a line strip
         if (shapeKind == QUAD_STRIP) {
           draw_lines(vertices, vertexCount-1, 1, 1, 0);
@@ -2192,17 +2208,17 @@ public class PGraphics extends PImage
 
     case POLYGON:
     case CONCAVE_POLYGON:
-      if (_fill) {
+      if (fill) {
         // the triangulator produces polygons that don't align
         // when smoothing is enabled. but if there is a stroke around
         // the polygon, then smoothing can be temporarily disabled.
         boolean smoov = smooth;
-        if (_stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = false;
+        if (stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = false;
         concave_render();
-        if (_stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = smoov;
+        if (stroke && !hints[DISABLE_SMOOTH_HACK]) smooth = smoov;
       }
 
-      if (_stroke) {
+      if (stroke) {
         draw_lines(vertices, vertexCount-1, 1, 1, 0);
         // draw the last line connecting back
         // to the first point in poly
@@ -2213,12 +2229,12 @@ public class PGraphics extends PImage
       break;
 
     case CONVEX_POLYGON:
-      if (_fill) {
+      if (fill) {
         polygon.render();
-        if (_stroke) polygon.unexpand();
+        if (stroke) polygon.unexpand();
       }
 
-      if (_stroke) {
+      if (stroke) {
         draw_lines(vertices, vertexCount-1, 1, 1, 0);
         // draw the last line connecting back to the first point in poly
         svertices[0] = vertices[vertexCount-1];
@@ -2601,7 +2617,7 @@ public class PGraphics extends PImage
       if (ny1>ny2) { int ty=ny1; ny1=ny2; ny2=ty; }
       int offset=ny1*width+nx1;
       for(int j=ny1; j<=ny2; j++) {
-        thin_pointAtIndex(offset,0,stroke);
+        thin_pointAtIndex(offset, 0, strokeColor);
         offset+=width;
       }
       return;
@@ -2609,34 +2625,34 @@ public class PGraphics extends PImage
       // special case: horizontal line
       if (nx1>nx2) { int tx=nx1; nx1=nx2; nx2=tx; }
       int offset=ny1*width+nx1;
-      for(int j=nx1; j<=nx2; j++) thin_pointAtIndex(offset++,0,stroke);
+      for(int j=nx1; j<=nx2; j++) thin_pointAtIndex(offset++,0,strokeColor);
       return;
     } else if (yLonger) {
       if (longLen>0) {
         longLen+=ny1;
         for (int j=0x8000+(nx1<<16);ny1<=longLen;++ny1) {
-          thin_pointAt(j>>16, ny1, 0, stroke);
+          thin_pointAt(j>>16, ny1, 0, strokeColor);
           j+=decInc;
         }
         return;
       }
       longLen+=ny1;
       for (int j=0x8000+(nx1<<16);ny1>=longLen;--ny1) {
-        thin_pointAt(j>>16, ny1, 0, stroke);
+        thin_pointAt(j>>16, ny1, 0, strokeColor);
         j-=decInc;
       }
       return;
     } else if (longLen>0) {
       longLen+=nx1;
       for (int j=0x8000+(ny1<<16);nx1<=longLen;++nx1) {
-        thin_pointAt(nx1, j>>16, 0, stroke);
+        thin_pointAt(nx1, j>>16, 0, strokeColor);
         j+=decInc;
       }
       return;
     }
     longLen+=nx1;
     for (int j=0x8000+(ny1<<16);nx1>=longLen;--nx1) {
-      thin_pointAt(nx1, j>>16, 0, stroke);
+      thin_pointAt(nx1, j>>16, 0, strokeColor);
       j-=decInc;
     }
   }
@@ -2677,10 +2693,10 @@ public class PGraphics extends PImage
     if ((strokeWeight < TWO) && (!hints[SCALE_STROKE_WIDTH])) {
       //if (abs(lwidth) < 1.5f) {
       //System.out.println("flat line retribution " + r1 + " " + g1 + " " + b1);
-      int strokeSaved = stroke;
-      stroke = float_color(r1, g1, b1);
+      int strokeSaved = strokeColor;
+      strokeColor = float_color(r1, g1, b1);
       thin_flat_line((int)x1, (int)y1, (int)x2, (int)y2);
-      stroke = strokeSaved;
+      strokeColor = strokeSaved;
       return true;
     }
     return false;
@@ -2913,7 +2929,7 @@ public class PGraphics extends PImage
       int a2 = (color >> 24) & 0xff;
       int a1 = a2 ^ 0xff;
 
-      int p2 = stroke;
+      int p2 = strokeColor;
       int p1 = pixels[index];
 
       int r = (a1 * ((p1 >> 16) & 0xff) + a2 * ((p2 >> 16) & 0xff)) & 0xff00;
@@ -2951,7 +2967,7 @@ public class PGraphics extends PImage
     if ((x1 > width1) || (x2 < 0) ||
         (y1 > height1) || (y2 < 0)) return;
 
-    if (_fill) {
+    if (fill) {
       int fx1 = x1;
       int fy1 = y1;
       int fx2 = x2;
@@ -2969,7 +2985,7 @@ public class PGraphics extends PImage
       int ww = fx2 - fx1;
       int hh = fy2 - fy1;
       int[] row = new int[ww];
-      for (int i = 0; i < ww; i++) row[i] = fill;
+      for (int i = 0; i < ww; i++) row[i] = fillColor;
       int idx = fy1 * width + fx1;
       for (int y = 0; y < hh; y++) {
         System.arraycopy(row, 0, pixels, idx, ww);
@@ -2980,7 +2996,7 @@ public class PGraphics extends PImage
 
     // broken in the new graphics engine
     if (!hints[NEW_GRAPHICS]) {
-      if (_stroke) {
+      if (stroke) {
         if (strokeWeight == 1) {
           thin_flat_line(x1, y1, x2, y1);
           thin_flat_line(x2, y1, x2, y2);
@@ -3007,8 +3023,8 @@ public class PGraphics extends PImage
       centerX = (int) screenX(centerX, centerY, 0);
       centerY = (int) screenY(centerX, centerY, 0);
     }
-    if (_fill) flat_circle_fill(centerX, centerY, radius);
-    if (_stroke) flat_circle_stroke(centerX, centerY, radius);
+    if (fill) flat_circle_fill(centerX, centerY, radius);
+    if (stroke) flat_circle_stroke(centerX, centerY, radius);
   }
 
 
@@ -3039,10 +3055,10 @@ public class PGraphics extends PImage
   private void flat_circle_stroke(int xC, int yC, int r) {
     int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
     while (x < y) {
-      thin_point(xC + x, yC + y, 0, stroke); // NNE
-      thin_point(xC + y, yC - x, 0, stroke); // ESE
-      thin_point(xC - x, yC - y, 0, stroke); // SSW
-      thin_point(xC - y, yC + x, 0, stroke); // WNW
+      thin_point(xC + x, yC + y, 0, strokeColor); // NNE
+      thin_point(xC + y, yC - x, 0, strokeColor); // ESE
+      thin_point(xC - x, yC - y, 0, strokeColor); // SSW
+      thin_point(xC - y, yC + x, 0, strokeColor); // WNW
 
       x++; E += u; u += 2;
       if (v < 2 * E) {
@@ -3050,10 +3066,10 @@ public class PGraphics extends PImage
       }
       if (x > y) break;
 
-      thin_point(xC + y, yC + x, 0, stroke); // ENE
-      thin_point(xC + x, yC - y, 0, stroke); // SSE
-      thin_point(xC - y, yC - x, 0, stroke); // WSW
-      thin_point(xC - x, yC + y, 0, stroke); // NNW
+      thin_point(xC + y, yC + x, 0, strokeColor); // ENE
+      thin_point(xC + x, yC - y, 0, strokeColor); // SSE
+      thin_point(xC - y, yC - x, 0, strokeColor); // WSW
+      thin_point(xC - x, yC + y, 0, strokeColor); // NNW
     }
   }
 
@@ -3073,16 +3089,16 @@ public class PGraphics extends PImage
     int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
     while (x < y) {
       for (int xx = xc; xx < xc + x; xx++) {  // NNE
-        thin_point(xx, yc + y, 0, fill);
+        thin_point(xx, yc + y, 0, fillColor);
       }
       for (int xx = xc; xx < xc + y; xx++) {  // ESE
-        thin_point(xx, yc - x, 0, fill);
+        thin_point(xx, yc - x, 0, fillColor);
       }
       for (int xx = xc - x; xx < xc; xx++) {  // SSW
-        thin_point(xx, yc - y, 0, fill);
+        thin_point(xx, yc - y, 0, fillColor);
       }
       for (int xx = xc - y; xx < xc; xx++) {  // WNW
-        thin_point(xx, yc + x, 0, fill);
+        thin_point(xx, yc + x, 0, fillColor);
       }
 
       x++; E += u; u += 2;
@@ -3092,16 +3108,16 @@ public class PGraphics extends PImage
       if (x > y) break;
 
       for (int xx = xc; xx < xc + y; xx++) {  // ENE
-        thin_point(xx, yc + x, 0, fill);
+        thin_point(xx, yc + x, 0, fillColor);
       }
       for (int xx = xc; xx < xc + x; xx++) {  // SSE
-        thin_point(xx, yc - y, 0, fill);
+        thin_point(xx, yc - y, 0, fillColor);
       }
       for (int xx = xc - y; xx < xc; xx++) {  // WSW
-        thin_point(xx, yc - x, 0, fill);
+        thin_point(xx, yc - x, 0, fillColor);
       }
       for (int xx = xc - x; xx < xc; xx++) {  // NNW
-        thin_point(xx, yc + y, 0, fill);
+        thin_point(xx, yc + y, 0, fillColor);
       }
     }
   }
@@ -3114,14 +3130,14 @@ public class PGraphics extends PImage
                                            boolean filling) {
     if (filling) {
       for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
-        thin_point(i, centerY - ellipseY, 0, fill);
-        thin_point(i, centerY + ellipseY, 0, fill);
+        thin_point(i, centerY - ellipseY, 0, fillColor);
+        thin_point(i, centerY + ellipseY, 0, fillColor);
       }
     } else {
-      thin_point(centerX - ellipseX, centerY + ellipseY, 0, stroke);
-      thin_point(centerX + ellipseX, centerY + ellipseY, 0, stroke);
-      thin_point(centerX - ellipseX, centerY - ellipseY, 0, stroke);
-      thin_point(centerX + ellipseX, centerY - ellipseY, 0, stroke);
+      thin_point(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
+      thin_point(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
+      thin_point(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
+      thin_point(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
     }
   }
 
@@ -3177,8 +3193,8 @@ public class PGraphics extends PImage
       centerX = (int) screenX(centerX, centerY, 0);
       centerY = (int) screenY(centerX, centerY, 0);
     }
-    if (_fill) flat_ellipse_internal(centerX, centerY, a, b, true);
-    if (_stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
+    if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
+    if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
   }
 
 
@@ -3250,7 +3266,7 @@ public class PGraphics extends PImage
         for (int x = sx1; x < sx2; x++) {
           pixels[target + x] =
             _blend(pixels[target + x],
-                   fill,
+                   fillColor,
                    image.pixels[source + tx++]);
         }
         source += image.width;
@@ -3366,7 +3382,7 @@ public class PGraphics extends PImage
       y1 -= vradius;
     }
 
-    if ((dimensions == 0) && !lighting && !fill_alpha) {
+    if ((dimensions == 0) && !lighting && !fillAlpha) {
       // draw in 2D
       flat_rect((int) x1, (int) y1, (int) x2, (int) y2);
 
@@ -3428,7 +3444,7 @@ public class PGraphics extends PImage
 
     boolean plain =
       !lighting && !smooth && (strokeWeight == 1) &&
-      !fill_alpha && !stroke_alpha;
+      !fillAlpha && !strokeAlpha;
 
     boolean flat = (dimensions == 0) ||
       ((dimensions == 2) && (m00 == m11) && (m00 == 1));
@@ -4082,22 +4098,32 @@ public class PGraphics extends PImage
 
 
   public void image(PImage image, float x1, float y1) {
-    if ((dimensions == 0) && !lighting && !_tint &&
+    if ((dimensions == 0) && !lighting && !tint &&
         (image_mode != CENTER_RADIUS)) {
       // if drawing a flat image with no warping,
       // use faster routine to draw direct to the screen
       flat_image(image, (int)x1, (int)y1);
 
     } else {
+      int savedTextureMode = textureMode;
+      textureMode(IMAGE_SPACE);
+
       image(image, x1, y1, image.width, image.height,
             0, 0, image.width, image.height);
+
+      textureMode(savedTextureMode);
     }
   }
 
 
   public void image(PImage image,
                     float x1, float y1, float x2, float y2) {
+    int savedTextureMode = textureMode;
+    textureMode(IMAGE_SPACE);
+
     image(image, x1, y1, x2, y2, 0, 0, image.width, image.height);
+
+    textureMode(savedTextureMode);
   }
 
 
@@ -4128,18 +4154,18 @@ public class PGraphics extends PImage
     // stroke should be set to false or it gets confusing
     // (and annoying) because one has to keep disabling stroke
 
-    boolean savedStroke = _stroke;
-    boolean savedFill = _fill;
+    boolean savedStroke = stroke;
+    boolean savedFill = fill;
 
     float savedFillR = fillR;
     float savedFillG = fillG;
     float savedFillB = fillB;
     float savedFillA = fillA;
 
-    _stroke = false;
-    _fill = true;
+    stroke = false;
+    fill = true;
 
-    if (_tint) {
+    if (tint) {
       fillR = tintR;
       fillG = tintG;
       fillB = tintB;
@@ -4150,15 +4176,15 @@ public class PGraphics extends PImage
     }
 
     beginShape(QUADS);
-    texture(image); // moved outside.. make javagl happier?
+    texture(image); // move outside to make java gl happier?
     vertex(x1, y1, u1, v1);
     vertex(x1, y2, u1, v2);
     vertex(x2, y2, u2, v2);
     vertex(x2, y1, u2, v1);
     endShape();
 
-    _stroke = savedStroke;
-    _fill = savedFill;
+    stroke = savedStroke;
+    fill = savedFill;
 
     fillR = savedFillR;
     fillG = savedFillG;
@@ -4900,7 +4926,7 @@ public class PGraphics extends PImage
 
 
   public void colorMode(int icolorMode) {
-    color_mode = icolorMode;
+    colorMode = icolorMode;
   }
 
 
@@ -4915,28 +4941,28 @@ public class PGraphics extends PImage
 
   public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ) {
-    colorMode(icolorMode, maxX, maxY, maxZ, colorMaxA); //maxX); //ONE);
+    colorMode(icolorMode, maxX, maxY, maxZ, colorModeA); //maxX); //ONE);
   }
 
 
   public void colorMode(int icolorMode,
                         float maxX, float maxY, float maxZ, float maxA) {
-    color_mode = icolorMode;
+    colorMode = icolorMode;
 
-    colorMaxX = maxX;  // still needs to be set for hsb
-    colorMaxY = maxY;
-    colorMaxZ = maxZ;
-    colorMaxA = maxA;
+    colorModeX = maxX;  // still needs to be set for hsb
+    colorModeY = maxY;
+    colorModeZ = maxZ;
+    colorModeA = maxA;
 
     // if color max values are all 1, then no need to scale
-    color_scale = ((maxA != ONE) || (maxX != maxY) ||
+    colorScale = ((maxA != ONE) || (maxX != maxY) ||
                    (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
     // red() green() etc functions
-    color_rgb255 = (color_mode == RGB) &&
-      (colorMaxA == 255) && (colorMaxX == 255) &&
-      (colorMaxY == 255) && (colorMaxZ == 255);
+    colorRgb255 = (colorMode == RGB) &&
+      (colorModeA == 255) && (colorModeX == 255) &&
+      (colorModeY == 255) && (colorModeZ == 255);
   }
 
 
@@ -4944,63 +4970,63 @@ public class PGraphics extends PImage
 
 
   protected void calc_color(float gray) {
-    calc_color(gray, colorMaxA);
+    calc_color(gray, colorModeA);
   }
 
 
   protected void calc_color(float gray, float alpha) {
-    if (gray > colorMaxX) gray = colorMaxX;
-    if (alpha > colorMaxA) alpha = colorMaxA;
+    if (gray > colorModeX) gray = colorModeX;
+    if (alpha > colorModeA) alpha = colorModeA;
 
     if (gray < 0) gray = 0;
     if (alpha < 0) alpha = 0;
 
-    calcR = color_scale ? (gray / colorMaxX) : gray;
+    calcR = colorScale ? (gray / colorModeX) : gray;
     calcG = calcR;
     calcB = calcR;
-    calcA = color_scale ? (alpha / colorMaxA) : alpha;
+    calcA = colorScale ? (alpha / colorModeA) : alpha;
 
     calcRi = (int)(calcR*255); calcGi = (int)(calcG*255);
     calcBi = (int)(calcB*255); calcAi = (int)(calcA*255);
-    calci = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
-    calc_alpha = (calcAi != 255);
+    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+    calcAlpha = (calcAi != 255);
   }
 
 
   protected void calc_color(float x, float y, float z) {
-    calc_color(x, y, z, colorMaxA);
+    calc_color(x, y, z, colorModeA);
   }
 
 
   protected void calc_color(float x, float y, float z, float a) {
-    if (x > colorMaxX) x = colorMaxX;
-    if (y > colorMaxY) y = colorMaxY;
-    if (z > colorMaxZ) z = colorMaxZ;
-    if (a > colorMaxA) a = colorMaxA;
+    if (x > colorModeX) x = colorModeX;
+    if (y > colorModeY) y = colorModeY;
+    if (z > colorModeZ) z = colorModeZ;
+    if (a > colorModeA) a = colorModeA;
 
     if (x < 0) x = 0;
     if (y < 0) y = 0;
     if (z < 0) z = 0;
     if (a < 0) a = 0;
 
-    switch (color_mode) {
+    switch (colorMode) {
     case RGB:
-      if (color_scale) {
-        calcR = x / colorMaxX;
-        calcG = y / colorMaxY;
-        calcB = z / colorMaxZ;
-        calcA = a / colorMaxA;
+      if (colorScale) {
+        calcR = x / colorModeX;
+        calcG = y / colorModeY;
+        calcB = z / colorModeZ;
+        calcA = a / colorModeA;
       } else {
         calcR = x; calcG = y; calcB = z; calcA = a;
       }
       break;
 
     case HSB:
-      x /= colorMaxX; // h
-      y /= colorMaxY; // s
-      z /= colorMaxZ; // b
+      x /= colorModeX; // h
+      y /= colorModeY; // s
+      z /= colorModeZ; // b
 
-      calcA = color_scale ? (a/colorMaxA) : a;
+      calcA = colorScale ? (a/colorModeA) : a;
 
       if (y == 0) {  // saturation == 0
         calcR = calcG = calcB = z;
@@ -5025,8 +5051,8 @@ public class PGraphics extends PImage
     }
     calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
     calcBi = (int)(255*calcB); calcAi = (int)(255*calcA);
-    calci = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
-    calc_alpha = (calcAi != 255);
+    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+    calcAlpha = (calcAi != 255);
   }
 
 
@@ -5041,7 +5067,7 @@ public class PGraphics extends PImage
    * (note: no need for bounds check since it's a 32 bit number)
    */
   protected void unpack_for_calc(int rgb) {
-    calci = rgb;
+    calcColor = rgb;
     calcAi = (rgb >> 24) & 0xff;
     calcRi = (rgb >> 16) & 0xff;
     calcGi = (rgb >> 8) & 0xff;
@@ -5050,12 +5076,12 @@ public class PGraphics extends PImage
     calcR = (float)calcRi / 255.0f;
     calcG = (float)calcGi / 255.0f;
     calcB = (float)calcBi / 255.0f;
-    calc_alpha = (calcAi != 255);
+    calcAlpha = (calcAi != 255);
   }
 
 
   protected void calc_tint() {
-    _tint = true;
+    tint = true;
     tintR = calcR;
     tintG = calcG;
     tintB = calcB;
@@ -5064,13 +5090,13 @@ public class PGraphics extends PImage
     tintGi = calcGi;
     tintBi = calcBi;
     tintAi = calcAi;
-    tint = calci;
-    tint_alpha = calc_alpha;
+    tintColor = calcColor;
+    tintAlpha = calcAlpha;
   }
 
 
   protected void calc_fill() {
-    _fill = true;
+    fill = true;
     fillChanged = true;
     fillR = calcR;
     fillG = calcG;
@@ -5080,13 +5106,13 @@ public class PGraphics extends PImage
     fillGi = calcGi;
     fillBi = calcBi;
     fillAi = calcAi;
-    fill = calci;
-    fill_alpha = calc_alpha;
+    fillColor = calcColor;
+    fillAlpha = calcAlpha;
   }
 
 
   protected void calc_stroke() {
-    _stroke = true;
+    stroke = true;
     strokeChanged = true;
     strokeR = calcR;
     strokeG = calcG;
@@ -5096,20 +5122,19 @@ public class PGraphics extends PImage
     strokeGi = calcGi;
     strokeBi = calcBi;
     strokeAi = calcAi;
-    stroke = calci;
-    stroke_alpha = calc_alpha;
+    strokeColor = calcColor;
+    strokeAlpha = calcAlpha;
   }
 
 
   protected void calc_background() {
-    _background = true;
-    backR = calcR;
-    backG = calcG;
-    backB = calcB;
-    backRi = calcRi;
-    backGi = calcGi;
-    backBi = calcBi;
-    background = calci;
+    backgroundR = calcR;
+    backgroundG = calcG;
+    backgroundB = calcB;
+    backgroundRi = calcRi;
+    backgroundGi = calcGi;
+    backgroundBi = calcBi;
+    backgroundColor = calcColor;
   }
 
 
@@ -5117,7 +5142,7 @@ public class PGraphics extends PImage
 
 
   public void noTint() {
-    _tint = false;
+    tint = false;
   }
 
 
@@ -5127,12 +5152,12 @@ public class PGraphics extends PImage
   // zero alpha.. which would be kooky but not unlikely
   // (i.e. if it were in a loop) so in addition to checking the high
   // bit, check to see if the value is at least just below the
-  // colorMaxX (i.e. 0..255). can't just check the latter since
+  // colorModeX (i.e. 0..255). can't just check the latter since
   // if the high bit is > 0x80 then the int value for rgb will be
   // negative. yay for no unsigned types in java!
 
   public void tint(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorMaxX)) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
       tint((float) rgb);
 
     } else {
@@ -5169,12 +5194,12 @@ public class PGraphics extends PImage
 
 
   public void noFill() {
-    _fill = false;
+    fill = false;
   }
 
 
   public void fill(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorMaxX)) {  // see above
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       fill((float) rgb);
 
     } else {
@@ -5226,12 +5251,12 @@ public class PGraphics extends PImage
 
 
   public void noStroke() {
-    _stroke = false;
+    stroke = false;
   }
 
 
   public void stroke(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorMaxX)) {  // see above
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       stroke((float) rgb);
 
     } else {
@@ -5269,7 +5294,7 @@ public class PGraphics extends PImage
 
 
   public void background(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorMaxX)) {  // see above
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       background((float) rgb);
 
     } else {
@@ -5335,7 +5360,7 @@ public class PGraphics extends PImage
     //if (zbufferTainted) {
       //System.out.println("clearing zbuffer");
     for (int i = 0; i < pixelCount; i++) {
-      pixels[i] = background;
+      pixels[i] = backgroundColor;
       zbuffer[i] = MAX_FLOAT;
     }
     //zbufferTainted = false;
@@ -5436,23 +5461,23 @@ public class PGraphics extends PImage
 
 
   public final int color(int gray) {  // ignore
-    if (color_rgb255) {
+    if (colorRgb255) {
       // bounds checking to make sure the numbers aren't to high or low
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       return 0xff000000 | (gray << 16) | (gray << 8) | gray;
     }
     calc_color(gray);
-    return calci;
+    return calcColor;
   }
 
   public final int color(float gray) {  // ignore
     calc_color(gray);
-    return calci;
+    return calcColor;
   }
 
 
   public final int color(int gray, int alpha) {  // ignore
-    if (color_rgb255) {
+    if (colorRgb255) {
       // bounds checking to make sure the numbers aren't to high or low
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
@@ -5460,17 +5485,17 @@ public class PGraphics extends PImage
       return ((alpha & 0xff) << 24) | (gray << 16) | (gray << 8) | gray;
     }
     calc_color(gray, alpha);
-    return calci;
+    return calcColor;
   }
 
   public final int color(float gray, float alpha) {  // ignore
     calc_color(gray, alpha);
-    return calci;
+    return calcColor;
   }
 
 
   public final int color(int x, int y, int z) {  // ignore
-    if (color_rgb255) {
+    if (colorRgb255) {
       // bounds checking to make sure the numbers aren't to high or low
       if (x > 255) x = 255; else if (x < 0) x = 0;
       if (y > 255) y = 255; else if (y < 0) y = 0;
@@ -5479,17 +5504,17 @@ public class PGraphics extends PImage
       return 0xff000000 | (x << 16) | (y << 8) | z;
     }
     calc_color(x, y, z);
-    return calci;
+    return calcColor;
   }
 
   public final int color(float x, float y, float z) {  // ignore
     calc_color(x, y, z);
-    return calci;
+    return calcColor;
   }
 
 
   public final int color(int x, int y, int z, int a) {  // ignore
-    if (color_rgb255) {
+    if (colorRgb255) {
       // bounds checking to make sure the numbers aren't to high or low
       if (a > 255) a = 255; else if (a < 0) a = 0;
       if (x > 255) x = 255; else if (x < 0) x = 0;
@@ -5499,37 +5524,37 @@ public class PGraphics extends PImage
       return (a << 24) | (x << 16) | (y << 8) | z;
     }
     calc_color(x, y, z, a);
-    return calci;
+    return calcColor;
   }
 
   public final int color(float x, float y, float z, float a) {  // ignore
     calc_color(x, y, z, a);
-    return calci;
+    return calcColor;
   }
 
 
   public final float alpha(int what) {
     float c = (what >> 24) & 0xff;
-    if (colorMaxA == 255) return c;
-    return (c / 255.0f) * colorMaxA;
+    if (colorModeA == 255) return c;
+    return (c / 255.0f) * colorModeA;
   }
 
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
-    if (color_rgb255) return c;
-    return (c / 255.0f) * colorMaxX;
+    if (colorRgb255) return c;
+    return (c / 255.0f) * colorModeX;
   }
 
   public final float green(int what) {
     float c = (what >> 8) & 0xff;
-    if (color_rgb255) return c;
-    return (c / 255.0f) * colorMaxY;
+    if (colorRgb255) return c;
+    return (c / 255.0f) * colorModeY;
   }
 
   public final float blue(int what) {
     float c = (what) & 0xff;
-    if (color_rgb255) return c;
-    return (c / 255.0f) * colorMaxZ;
+    if (colorRgb255) return c;
+    return (c / 255.0f) * colorModeZ;
   }
 
 
@@ -5539,7 +5564,7 @@ public class PGraphics extends PImage
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
-    return cacheHsbValue[0] * colorMaxX;
+    return cacheHsbValue[0] * colorModeX;
   }
 
   public final float saturation(int what) {
@@ -5548,7 +5573,7 @@ public class PGraphics extends PImage
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
-    return cacheHsbValue[1] * colorMaxY;
+    return cacheHsbValue[1] * colorModeY;
   }
 
   public final float brightness(int what) {
@@ -5557,7 +5582,7 @@ public class PGraphics extends PImage
                      what & 0xff, cacheHsbValue);
       cacheHsbKey = what;
     }
-    return cacheHsbValue[2] * colorMaxZ;
+    return cacheHsbValue[2] * colorModeZ;
   }
 
 
