@@ -79,6 +79,10 @@ o   prolly need to stuff in 4 blank lines
 o runtime exceptions not coming through on either mac or windows
 X   works fine on windows
 X   when array wasn't large enough for curveMode, blank red line
+X hide renderer menu item
+X test to make sure cursor code works in vm
+X   modify bagel building to include JDK13 flag
+o   and behaves properly in a browser
 
 
 [dh] X export to .pde file rather than java
@@ -162,10 +166,8 @@ dh X     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software
 BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
 
 
-X hide renderer menu item
-X test to make sure cursor code works in vm
-X   modify bagel building to include JDK13 flag
-o   and behaves properly in a browser
+_ is there a way to check the registry for java installations?
+
 _ do objects need to be swing components to draw properly?
 _   macosx has update weirdness for non JComponent items
 _   probably why end of text messages under osx getting chopped?
@@ -191,21 +193,21 @@ X   should cvs be changed or just do this as a renaming step?
 X     changed in cvs
 _ jikes is not properly wired to Proce55ing.app
 _   puts a couple dots on random lines
+_ modify build scripts for rxtx on osx
+_   libs from 2.1.6 download for osx seem to work
+_   write script to handle installation, etc.
+_     (maybe do this from inside p5?) 
 
 
 serial port work
-_ modify build scripts for rxtx on osx
-_ modify windows build scripts for javacomm in p5 folders
-_   remove additional javacomm from othe p5 folders
+X modify windows build scripts for javacomm in p5 folders
+X   remove additional javacomm from othe p5 folders
 X checkin serial stuff for bagel
 X rxtx is a problem in general.. how to improve installation
 X   try installing serial adapter with p5
 X   report of a problem with the rxtx installer being bad
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
 X   tom igoe is using rxtx 2.1.6, patch that into p5
-_   libs from 2.1.6 download for osx seem to work
-_     write script to handle installation, etc.
-_     (maybe do this from inside p5?) 
 o     will need to be done for gl4java as well
 o if dimming serial menu, put up another message
 X remove serial folder for windows
@@ -231,7 +233,6 @@ b o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 
 
 POST-57
-
 
 _ perlin noise is broken
 
