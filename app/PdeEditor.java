@@ -138,8 +138,9 @@ public class PdeEditor extends Panel {
     Properties skprops = new Properties();
     try {
       if (PdeBase.platform == PdeBase.MACOSX) {
-	String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	skprops.load(new FileInputStream(pkg + "sketch.properties"));
+	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	//skprops.load(new FileInputStream(pkg + "sketch.properties"));
+	skprops.load(new FileInputStream("lib/pde.properties"));
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
 	skprops.load(new FileInputStream("lib/pde.properties"));
@@ -352,10 +353,10 @@ public class PdeEditor extends Panel {
 
       //if (program.length() != 0) {
       String buildPath = "lib" + File.separator + "build";  // TEMPORARY
-      if (PdeBase.platform == PdeBase.MACOSX) {
-	String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	buildPath = pkg + "build";
-      }
+      //if (PdeBase.platform == PdeBase.MACOSX) {
+	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	//buildPath = pkg + "build";
+      //}
 
       File buildDir = new File(buildPath);
       if (!buildDir.exists()) buildDir.mkdirs();
@@ -1246,8 +1247,9 @@ public class PdeEditor extends Panel {
       FileOutputStream output = null;
 
       if (PdeBase.platform == PdeBase.MACOSX) {
-	String pkg = "Proce55ing.app/Contents/Resources/Java/";
-	output = new FileOutputStream(pkg + "sketch.properties");
+	//String pkg = "Proce55ing.app/Contents/Resources/Java/";
+	//output = new FileOutputStream(pkg + "sketch.properties");
+	output = new FileOutputStream("lib/pde.properties");
 
       } else if (PdeBase.platform == PdeBase.MACOS9) {
 	output = new FileOutputStream("lib/pde.properties");
