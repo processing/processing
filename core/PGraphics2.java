@@ -24,12 +24,9 @@
 
 package processing.core;
 
-//import java.applet.*;
 import java.awt.*;
-//import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-//import java.io.*;
 
 
 // Graphics, GeneralPath, AffineTransform, BasicStroke, Graphics2D
@@ -48,6 +45,11 @@ public class PGraphics2 extends PGraphics {
   Ellipse2D.Float ellipse = new Ellipse2D.Float();
   Rectangle2D.Float rect = new Rectangle2D.Float();
   Arc2D.Float arc = new Arc2D.Float();
+
+  protected Color tintColorObject;
+  protected Color fillColorObject;
+  protected Color strokeColorObject;
+
 
 
   //////////////////////////////////////////////////////////////
@@ -333,15 +335,15 @@ public class PGraphics2 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // SHAPES
 
-
+  /*
   protected void fill_shape(Shape s) {
     if (fill) {
       graphics.setColor(fillColorObject);
       graphics.fill(s);
     }
   }
+  */
 
   protected void stroke_shape(Shape s) {
     if (stroke) {
@@ -362,9 +364,10 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+
   public void point(float x, float y) {
-    //graphics.setColor(strokeColorObject);
-    //graphics.drawLine(x1, y1, x2, y2);
     line(x, y, x, y);
   }
 
@@ -389,7 +392,24 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void rect(float x1, float y1, float x2, float y2) {
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+    GeneralPath gp = new GeneralPath();
+    gp.moveTo(x1, y1);
+    gp.lineTo(x2, y2);
+    gp.lineTo(x3, y3);
+    gp.lineTo(x4, y4);
+    gp.closePath();
+
+    draw_shape(gp);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  protected void rectImpl(float x1, float y1, float x2, float y2) {
+    /*
     switch (rectMode) {
     case CORNERS:
       rect.setFrameFromDiagonal(x1, y1, x2, y2);
@@ -404,23 +424,13 @@ public class PGraphics2 extends PGraphics {
       rect.setFrame(x1 - x2/2.0f, y1 - y2/2.0f, x1 + x2/2.0f, y1 + y2/2.0f);
       break;
     }
+    */
+    rect.setFrame(x1, y1, x2-x1, y2-y1);
     draw_shape(rect);
   }
 
 
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4) {
-    GeneralPath gp = new GeneralPath();
-    gp.moveTo(x1, y1);
-    gp.lineTo(x2, y2);
-    gp.lineTo(x3, y3);
-    gp.lineTo(x4, y4);
-    gp.closePath();
-
-    draw_shape(gp);
-  }
-
-
+  /*
   public void ellipse(float a, float b, float c, float d) {
     float x = a;
     float y = b;
@@ -445,45 +455,22 @@ public class PGraphics2 extends PGraphics {
     ellipse.setFrame(x, y, w, h);
     draw_shape(ellipse);
   }
-
-  /*
-  public void arc(float start, float stop,
-                  float x, float y, float radius) {
-    arc(start, stop, x, y, radius, radius);
-  }
   */
 
+  protected void ellipseImpl(float x, float y, float w, float h) {
+    ellipse.setFrame(x, y, w, h);
+    draw_shape(ellipse);
+  }
 
-  public void arc(float start, float stop,
-                  float a, float b, float c, float d) {
-    float x = a;
-    float y = b;
-    float w = c;
-    float h = d;
 
-    if (ellipseMode == CORNERS) {
-      w = c - a;
-      h = d - b;
-
-    } else if (ellipseMode == CENTER_RADIUS) {
-      x = a - c;
-      y = b - d;
-      w = c * 2;
-      h = d * 2;
-
-    } else if (ellipseMode == CENTER) {
-      x = a - c/2f;
-      y = b - d/2f;
-    }
-
+  public void arcImpl(float start, float stop,
+                      float x, float y, float w, float h) {
     arc.setArc(x, y, w, h, start, stop-start, Arc2D.PIE);
     draw_shape(arc);
   }
 
 
-  //public void circle(float x, float y, float radius) {
-  //ellipse(x, y, radius, radius);
-  //}
+  //////////////////////////////////////////////////////////////
 
 
   public void bezier(float x1, float y1,
@@ -524,40 +511,10 @@ public class PGraphics2 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // IMAGES
 
-
-  protected void draw_image(PImage image,
-                            float x1, float y1, float x2, float y2,
+  protected void imageImpl(PImage who,
+                            float x, float y, float w, float h,
                             int u1, int v1, int u2, int v2) {
-    graphics.drawImage((Image) image.cache,
-                       (int) x1, (int) y1, (int) x2, (int) y2,
-                       u1, v1, u2, v2, null);
-  }
-
-
-  public void image(PImage image, float x1, float y1) {
-    check_image_cache(image);
-    super.image(image, x1, y1);
-  }
-
-
-  public void image(PImage image,
-                    float a, float b, float c, float d) {
-    check_image_cache(image);
-    super.image(image, a, b, c, d);
-  }
-
-
-  public void image(PImage image,
-                    float a, float b, float c, float d,
-                    int u1, int v1, int u2, int v2) {
-    check_image_cache(image);
-    super.image(image, a, b, c, d, u1, v1, u2, v2);
-  }
-
-
-  protected void check_image_cache(PImage who) {
     if (who.cache == null) {
       who.cache = new BufferedImage(who.width, who.height,
                                     BufferedImage.TYPE_INT_ARGB);
@@ -577,50 +534,17 @@ public class PGraphics2 extends PGraphics {
                 who.width);  // scan size
       who.pixelsUpdated();
     }
+
+    int x2 = (int) (x + w);
+    int y2 = (int) (y + h);
+
+    graphics.drawImage((Image) who.cache,
+                       (int) x, (int) y, x2, y2,
+                       u1, v1, u2, v2, null);
   }
 
 
   //////////////////////////////////////////////////////////////
-
-
-  /*
-  public void textFont(PFont which);
-
-  public void textSize(float size);
-
-  public void textFont(PFont which, float size);
-
-  public void textLeading(float leading);
-
-  public void textMode(int mode);
-
-  public void textSpace(int space);
-
-  public void text(char c, float x, float y);
-
-  public void text(char c, float x, float y, float z);
-
-  public void text(String s, float x, float y);
-
-  public void text(String s, float x, float y, float z);
-
-  public void text(String s, float x, float y, float w, float h);
-
-  public void text(String s, float x1, float y1, float z, float x2, float y2);
-
-  public void text(int num, float x, float y);
-
-  public void text(int num, float x, float y, float z);
-
-  public void text(float num, float x, float y);
-
-  public void text(float num, float x, float y, float z);
-  */
-
-
-  //////////////////////////////////////////////////////////////
-
-  // MATRIX
 
 
   public void translate(float tx, float ty) {
@@ -641,6 +565,9 @@ public class PGraphics2 extends PGraphics {
   public void scale(float sx, float sy) {
     graphics.scale(sx, sy);
   }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   public void push() {
@@ -701,31 +628,48 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-
   //////////////////////////////////////////////////////////////
 
-  // STROKE
+
+  protected void calc_tint() {
+    super.calc_tint();
+    // TODO actually implement tinted images
+    tintColorObject = new Color(tintColor);
+  }
+
+  protected void calc_fill() {
+    super.calc_fill();
+    fillColorObject = new Color(fillColor);
+  }
+
+  protected void calc_stroke() {
+    super.calc_stroke();
+    strokeColorObject = new Color(strokeColor);
+  }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   public void strokeWeight(float weight) {
     super.strokeWeight(weight);
-    setStroke();
+    set_stroke();
   }
 
 
   public void strokeJoin(int join) {
     super.strokeJoin(join);
-    setStroke();
+    set_stroke();
   }
 
 
   public void strokeCap(int cap) {
     super.strokeCap(cap);
-    setStroke();
+    set_stroke();
   }
 
 
-  protected void setStroke() {
+  protected void set_stroke() {
     int cap = BasicStroke.CAP_BUTT;
     if (strokeCap == ROUND) {
       cap = BasicStroke.CAP_ROUND;
@@ -744,33 +688,7 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-
   //////////////////////////////////////////////////////////////
-
-  // STROKE/FILL/BACKGROUND
-
-
-  protected Color tintColorObject;
-  protected Color fillColorObject;
-  protected Color strokeColorObject;
-
-  protected void calc_tint() {
-    super.calc_tint();
-    // TODO actually implement tinted images
-    tintColorObject = new Color(tintColor);
-  }
-
-  protected void calc_fill() {
-    super.calc_fill();
-    //graphics.setPaint(new Color(fillColor));
-    fillColorObject = new Color(fillColor);
-  }
-
-  protected void calc_stroke() {
-    super.calc_stroke();
-    ///graphics.setStroke(new Color(fillColor));
-    strokeColorObject = new Color(strokeColor);
-  }
 
 
   public void background(PImage image) {
@@ -783,10 +701,10 @@ public class PGraphics2 extends PGraphics {
     }
 
     // make sure it's been properly updated
-    check_image_cache(image);
-
+    //check_image_cache(image);
     // blit image to the screen
-    graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
+    //graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
+    imageImpl(image, 0, 0, width, height, 0, 0, width, height);
   }
 
 
@@ -809,21 +727,40 @@ public class PGraphics2 extends PGraphics {
   // FROM PIMAGE
 
 
-  public void alpha(int alpha[]) {
-    // does nothing in PGraphics
+  public void smooth() {
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                              RenderingHints.VALUE_ANTIALIAS_ON);
   }
 
-  public void alpha(PImage alpha) {
-    // does nothing in PGraphics
+
+  public void noSmooth() {
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                              RenderingHints.VALUE_ANTIALIAS_OFF);
   }
 
-  public void filter(int kind) {
-    // TODO
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void loadPixels() {
+    ((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
   }
 
-  public void filter(int kind, float param) {
-    // TODO
+
+  public void updatePixels() {
+    updatePixels(0, 0, width, height);
   }
+
+
+  public void updatePixels(int x, int y, int c, int d) {
+    ((BufferedImage) image).setRGB(x, y,
+                                   (imageMode == CORNER) ? c : (c - x),
+                                   (imageMode == CORNER) ? d : (d - y),
+                                   pixels, 0, width);
+  }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   public int get(int x, int y) {
@@ -838,59 +775,12 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void set(int x, int y, int c) {
-    ((BufferedImage) image).setRGB(x, y, c);
-  }
-
-
-  public void copy(PImage src, int dx, int dy) {
-    // TODO if this image is not ARGB or RGB, needs to behave differently
-    //      (if it's gray, need to copy gray pixels)
-    //      for alpha, just leave it be.. copy() doesn't composite
-    ((BufferedImage) image).setRGB(dx, dy, src.width, src.height,
-                                   src.pixels, 0, src.width);
-  }
-
-
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    // TODO
-  }
-
-
-  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    // TODO
-  }
-
-
-  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
-    // TODO
-  }
-
-
-  public void blend(int sx, int sy, int dx, int dy, int mode) {
-    // TODO
-  }
-
-
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    // TODO
-  }
-
-
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    // TODO
-  }
-
-
   /**
    * This is used to both set the pixels[] array so that it can be
    * manipulated, and it also returns a PImage object that can be
    * messed with directly.
    */
+  /*
   public PImage get() {
     //PImage outgoing = new PImage(width, height);
     // int[] getRGB(int startX, int startY, int w, int h,
@@ -901,23 +791,83 @@ public class PGraphics2 extends PGraphics {
     ((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
     return new PImage(pixels, width, height, RGB);
   }
+  */
+
+
+  public void set(int x, int y, int argb) {
+    ((BufferedImage) image).setRGB(x, y, argb);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void filter(int kind) {
+    loadPixels();
+    super.filter(kind);
+    updatePixels();
+  }
+
+
+  public void filter(int kind, float param) {
+    loadPixels();
+    super.filter(kind, param);
+    updatePixels();
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void copy(PImage src, int dx, int dy) {
+    loadPixels();
+    super.copy(src, dx, dy);
+    updatePixels();
+  }
+
+
+  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2) {
+    loadPixels();
+    super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    updatePixels();
+  }
+
+
+  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
+    loadPixels();
+    super.blend(src, sx, sy, dx, dy, mode);
+    updatePixels();
+  }
+
+
+  public void blend(int sx, int sy, int dx, int dy, int mode) {
+    loadPixels();
+    super.blend(sx, sy, dx, dy, mode);
+    updatePixels();
+  }
+
+
+  public void blend(int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode) {
+    loadPixels();
+    super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    updatePixels();
+  }
+
+
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode) {
+    loadPixels();
+    super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    updatePixels();
+  }
 
 
   public void save(String filename) {
-    //static boolean write(RenderedImage im, String formatName, File output)
-    // maybe use ImageIO.save(File file) here if it's available?
-    get().save(filename);
-  }
+    loadPixels();
+    super.save(filename);
 
-
-  public void smooth() {
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_ON);
-  }
-
-
-  public void noSmooth() {
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
+    //boolean ImageIO.write(RenderedImage im, String formatName, File output)
   }
 }
