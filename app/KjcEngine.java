@@ -6,30 +6,6 @@ import java.net.*; // the start of a bad joke
 
 import com.oroinc.text.regex.*;
 
-/*
-
-this needs to be reworked. there are three essential parts
-
-(0. if not java, then use another 'engine'.. i.e. python)
-
-1. do the p5 language preprocessing
-   -> this creates a working .java file in a specific location
-
-2. compile the code from that location
-   -| catching errors along the way
-   -| currently done with kjc, but would be nice to use jikes
-   -> placing it in a ready classpath, or .. ?
-
-3. run the code 
-   needs to communicate location for window 
-     and maybe setup presentation space as well
-   -> currently done internally
-   -> would be nice to use external (at least on non-os9)
-
-afterwards, some of these steps need a cleanup function
-
- */
-
 
 // always compile to lib directory
 // always make .java in current directory
@@ -239,9 +215,9 @@ public class KjcEngine extends PdeEngine {
 	for (int i = 0; i < imports.length; i++) {
 	  writer.print("import " + imports[i] + ".*; ");
 	  // add serial if running inside pde
-	  if (kjc) writer.print("import javax.comm.*;");
 	  if (!kjc) writer.println();
 	}
+	if (kjc) writer.print("import javax.comm.*;");
 	if (!kjc) writer.println();
 
 	writer.print("public class " + name + " extends " +
@@ -490,7 +466,10 @@ public class KjcEngine extends PdeEngine {
   int messageLineCount;
 
   public void message(String s) {
-    //System.out.println(messageMode + " " + "msg: " + s);
+    // as in: lib\build\Temporary_5476_6442.java:88: caution:Assignment of an expression to itself [KOPI]
+    if (s.indexOf("caution") != -1) return;
+
+    System.out.println(messageMode + " " + "msg: " + s);
 
     if (messageMode == COMPILING) {
       //System.out.println("leech2: " + new String(b, offset, length));
