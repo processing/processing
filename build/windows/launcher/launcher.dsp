@@ -121,15 +121,15 @@ SOURCE=.\StdAfx.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\res\application.ico
+SOURCE=.\application.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\document.ico
+SOURCE=.\document.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\other.rc2
+SOURCE=.\resources.rc2
 # End Source File
 # End Group
 # End Target

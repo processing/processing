@@ -9,8 +9,10 @@
 // 2) if the user has a long path, and it gets copied five times over for the
 // classpath, the program runs the risk of crashing. Bad bad.
 
-#define STACKSIZE_ARGS "-mx60m -ms60m "
-#define STACKSIZE_MATCH " -mx"
+//#define STACKSIZE_ARGS "-mx60m -ms60m "
+//#define STACKSIZE_MATCH " -mx"
+#define JAVA_ARGS ""
+#define JAVA_MAIN_CLASS "PdeBase"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,6 +62,7 @@ BOOL CImagerApp::InitInstance()
 	
 	// prepend the args for -mx and -ms if they weren't
 	// specified on the command line by the user
+	/*
 	if (strstr(incoming_cmdline, STACKSIZE_MATCH)) {
 		// need to split stack args and documents
 		while (true) {
@@ -82,6 +85,8 @@ BOOL CImagerApp::InitInstance()
 	} else {
 		strcpy(outgoing_cmdline, STACKSIZE_ARGS);
 	}
+	*/
+	strcpy(outgoing_cmdline, JAVA_ARGS);
 
 	// append the classpath and imager.Application
 	char *cp = (char *)malloc(1024 * sizeof(char));
@@ -96,18 +101,19 @@ BOOL CImagerApp::InitInstance()
 	// because %s might have spaces in it.
     sprintf(cp, 
 		"-cp \""
-        "%s\\lib\\imager.jar;"
-	    "%s\\lib\\swing.zip;"
-        "%s\\lib\\rt.jar;"
-	    "%s\\lib\\i18n.jar;"
-	    "%s\\lib\\classes.zip"
+        "%s\\lib;"
+        "%s\\lib\\build;"
+        "%s\\lib\\pde.jar;"
+	    "%s\\lib\\kjc.jar;"
+	    "%s\\lib\\oro.jar"
 		"\" ",
 	    loaddir, loaddir, loaddir, loaddir, loaddir);
-	//buildClassPath(cp);
 	strcat(outgoing_cmdline, cp);
 
 	// add the name of the class to execute
-	strcat(outgoing_cmdline, "imager.Application ");
+	//strcat(outgoing_cmdline, "imager.Application ");
+	strcat(outgoing_cmdline, JAVA_MAIN_CLASS);
+	strcat(outgoing_cmdline, " "); // space between next arg
 
 	// append additional incoming stuff (document names), if any
 	strcat(outgoing_cmdline, incoming_cmdline);
@@ -118,15 +124,16 @@ BOOL CImagerApp::InitInstance()
 	// loaddir is the name path to the current application
 	strcpy(executable, loaddir);
 	// copy in the path for jrew, relative to imager.exe
-	strcat(executable, "\\bin\\jrew");
+	//strcat(executable, "\\bin\\jrew");
+	strcat(executable, "\\java\\bin\\javaw");
 	
 	//AfxMessageBox(executable);
 
+	// code to add the lib directory to the path, in case that's needed
+	/*
 	char *path = (char *)malloc(1024 * sizeof(char));
 	char *old_path = (char *)malloc(1024 * sizeof(char));
 	strcpy(old_path, getenv("PATH"));
-	// need to add the lib directory to the path, because it contains the
-	// dll for the dongle, and eventually will also contain magician
 	strcpy(path, "PATH=");
 	strcat(path, old_path);
 	strcat(path, ";");
@@ -134,6 +141,7 @@ BOOL CImagerApp::InitInstance()
 	strcat(path, "\\lib");
 	//AfxMessageBox(path);
 	putenv(path);
+	*/
 
 	HINSTANCE result;
 	result = ShellExecute(NULL, "open", executable,
@@ -144,15 +152,15 @@ BOOL CImagerApp::InitInstance()
 		switch ((int)result) {
 			case ERROR_FILE_NOT_FOUND:
 			case ERROR_PATH_NOT_FOUND:
-				AfxMessageBox("A required file could not be found, please re-install Imager.");
+				AfxMessageBox("A required file could not be found, please re-install.");
 				break;
 			case 0:
 			case SE_ERR_OOM:
-				AfxMessageBox("Not enough memory or resources to run Imager at this time.");
+				AfxMessageBox("Not enough memory or resources to run at this time.");
 				break;
 			default:
-				AfxMessageBox("There is a problem with your Imager installation.\n"
-					          "If the problem persists, re-install Imager.");
+				AfxMessageBox("There is a problem with your installation.\n"
+					          "If the problem persists, re-install the program.");
 				break;
 		}
 	}
