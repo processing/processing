@@ -229,6 +229,10 @@ java applications on classic mac os are in a bad state, as apple has
 decided (rightfully so) to abandon further development of their java
 runtime under OS 9.
 
+the most recent release (revision 46), does not run under Mac OS 9. 
+this is due to a few issues that were found just before release, and
+i didn't want to hold up the release on the other platforms.
+
 speed: this version runs very slowly. the first time you hit the 'run'
 button, it might take a while to bring up the actual
 program. hopefully after that, things will improve.
