@@ -1,208 +1,141 @@
-// Launcher.cpp : Defines the class behaviors for the application.
-//
+// -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-
 
-#include "stdafx.h"
-#include "launcher.h"
+// launcher.cpp : Defines the class behaviors for the application.
+//
 
 // The size of all of the strings was made sort of ambiguously large, since
 // 1) nothing is hurt by allocating an extra few bytes temporarily and
 // 2) if the user has a long path, and it gets copied five times over for the
 // classpath, the program runs the risk of crashing. Bad bad.
 
-//#define STACKSIZE_ARGS "-mx60m -ms60m "
-//#define STACKSIZE_MATCH " -mx"
 #define JAVA_ARGS "-Xms64m -Xmx64m "
 #define JAVA_MAIN_CLASS "PdeBase"
-//#define JAVA_CLASS_PATH "lib;lib\\build;lib\\pde.jar;lib\\kjc.jar;lib\\oro.jar;lib\\ext\\comm.jar"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-/////////////////////////////////////////////////////////////////////////////
-// CLauncherApp
-
-BEGIN_MESSAGE_MAP(CLauncherApp, CWinApp)
-	//{{AFX_MSG_MAP(CLauncherApp)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CLauncherApp construction
-
-CLauncherApp::CLauncherApp()
+int STDCALL
+WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 {
-	// TODO: add construction code here,
-	// Place all significant initialization in InitInstance
-}
+  // all these malloc statements... things may need to be larger.
 
-/////////////////////////////////////////////////////////////////////////////
-// The one and only CLauncherApp object
+  // what was passed to this application
+  char *incoming_cmdline = (char *)malloc(256 * sizeof(char));
+  strcpy (incoming_cmdline, lpCmd);
 
-CLauncherApp theApp;
+  // what gets put together to pass to jre
+  char *outgoing_cmdline = (char *)malloc(16384 * sizeof(char));
+        
+  // prepend the args for -mx and -ms
+  strcpy(outgoing_cmdline, JAVA_ARGS);
 
-/////////////////////////////////////////////////////////////////////////////
-// CLauncherApp initialization
+  // append the classpath and launcher.Application
+  char *loaddir = (char *)malloc(MAX_PATH * sizeof(char));
+  *loaddir = 0;
 
-BOOL CLauncherApp::InitInstance()
-{
-	// all these malloc statements... things may need to be larger.
+  GetModuleFileName(NULL, loaddir, MAX_PATH);
+  // remove the application name
+  *(strrchr(loaddir, '\\')) = '\0';
 
-	// what was passed to this application
-	char *incoming_cmdline = (char *)malloc(256 * sizeof(char));
-	strcpy (incoming_cmdline, this->m_lpCmdLine);
+  char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
+  // put quotes around contents of cp, 
+  // because %s might have spaces in it.
 
-	// what gets put together to pass to jre
-	char *outgoing_cmdline = (char *)malloc(16384 * sizeof(char));
-	char *p = outgoing_cmdline;
-	
-	// prepend the args for -mx and -ms if they weren't
-	// specified on the command line by the user
-	/*
-	if (strstr(incoming_cmdline, STACKSIZE_MATCH)) {
-		// need to split stack args and documents
-		while (true) {
-			char c = *incoming_cmdline++;
-			if (c == ' ') {
-				if (*incoming_cmdline != '-') {
-					break;
-				} else {
-					*p++ = ' ';
-				}
-			} else if (c == 0) {
-				incoming_cmdline--;
-				*p++ = ' ';
-				break;
-			} else {
-				*p++ = c;
-			}
-		}
-		*p++ = 0;
-	} else {
-		strcpy(outgoing_cmdline, STACKSIZE_ARGS);
-	}
-	*/
-	strcpy(outgoing_cmdline, JAVA_ARGS);
+  // test to see if running with a java runtime nearby or not
 
-	// append the classpath and launcher.Application
-	//char *cp = (char *)malloc(1024 * sizeof(char));
-	char *loaddir = (char *)malloc(MAX_PATH * sizeof(char));
-    *loaddir = 0;
+  char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
+  *testpath = 0;
+  strcpy(testpath, loaddir);
+  strcat(testpath, "\\java\\bin\\java.exe");
+  FILE *fp = fopen(testpath, "rb");
+  int localJreInstalled = (fp != NULL);
 
-    GetModuleFileName(NULL, loaddir, MAX_PATH);
-    // remove the application name
-	*(strrchr(loaddir, '\\')) = '\0';
+  const char *envClasspath = getenv("CLASSPATH");
+  sprintf(cp,	
+          "%s"
+          "%s"
+          "%s"
+          "%s\\lib;"
+          "%s\\lib\\build;"
+          "%s\\lib\\pde.jar;"
+          "%s\\lib\\kjc.jar;"
+          "%s\\lib\\oro.jar;"
+          "%s\\lib\\comm.jar;"
+          "C:\\WINNT\\system32\\QTJava.zip;"
+          "C:\\WINDOWS\\system32\\QTJava.zip;"
+          "\" ",
+          localJreInstalled ? "java\\lib\\rt.jar;" : "", 
+          envClasspath ? envClasspath : "",
+          envClasspath ? ";" : "",
+          loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
 
-    char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
-	// put quotes around contents of cp, 
-	// because %s might have spaces in it.
+  if (!SetEnvironmentVariable("CLASSPATH", cp)) {
+    MessageBox(NULL, "Could not set CLASSPATH environment variable",
+               "Proce55ing Error", MB_OK);
+    return 0;
+  }
 
-	// test to see if running with a java runtime nearby or not
+  // add the name of the class to execute and a space before the next arg
+  strcat(outgoing_cmdline, JAVA_MAIN_CLASS " ");
 
-	char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
-    *testpath = 0;
-	strcpy(testpath, loaddir);
-	strcat(testpath, "\\java\\bin\\java.exe");
-	FILE *fp = fopen(testpath, "rb");
-	int localJreInstalled = (fp != NULL);
-	/*
-	if (fp == NULL) {
-		AfxMessageBox("no java runtime");
-	} else {
-		AfxMessageBox("found java runtime");
-	}
-	*/
+  // append additional incoming stuff (document names), if any
+  strcat(outgoing_cmdline, incoming_cmdline);
 
-    sprintf(cp, 
-	    "-cp \""
-	    "%s\\lib;"
-	    "%s\\lib\\build;"
-	    "%s\\lib\\pde.jar;"
-	    "%s\\lib\\kjc.jar;"
-	    "%s\\lib\\oro.jar;"
-	    "%s\\lib\\comm.jar;"
-	    "C:\\WINNT\\system32\\QTJava.zip;"
-	    "C:\\WINDOWS\\system32\\QTJava.zip;"
-	    "\" ",
-	    loaddir, loaddir, loaddir, loaddir, loaddir, loaddir);
-		
-	//sprintf(cp, "-cp ");
-	//strcat(cp, JAVA_CLASSPATH);
-	//strcat(cp, " ");
-	strcat(outgoing_cmdline, cp);
-	//strcat(outgoing_cmdline, "-cp ");
-	//strcat(outgoing_cmdline, JAVA_CLASS_PATH);
-	//strcat(outgoing_cmdline, " ");
+  char *executable = (char *)malloc(256 * sizeof(char));
+  // loaddir is the name path to the current application
 
-	// add the name of the class to execute
-	//strcat(outgoing_cmdline, "launcher.Application ");
-	strcat(outgoing_cmdline, JAVA_MAIN_CLASS);
-	strcat(outgoing_cmdline, " "); // space between next arg
+  if (localJreInstalled) {
+    strcpy(executable, loaddir);
+    // copy in the path for javaw, relative to launcher.exe
+    strcat(executable, "\\java\\bin\\javaw.exe");
+  } else {
+    strcpy(executable, "javaw.exe");
+  }
 
-	// append additional incoming stuff (document names), if any
-	strcat(outgoing_cmdline, incoming_cmdline);
+  SHELLEXECUTEINFO ShExecInfo;
 
-	//AfxMessageBox(outgoing_cmdline);
+  // set up the execution info
+  ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+  ShExecInfo.fMask = 0;
+  ShExecInfo.hwnd = 0;
+  ShExecInfo.lpVerb = "open";
+  ShExecInfo.lpFile = executable;
+  ShExecInfo.lpParameters = outgoing_cmdline;
+  ShExecInfo.lpDirectory = loaddir;
+  ShExecInfo.nShow = SW_SHOWNORMAL;
+  ShExecInfo.hInstApp = NULL;
 
-	char *executable = (char *)malloc(256 * sizeof(char));
-	// loaddir is the name path to the current application
+  if (!ShellExecuteEx(&ShExecInfo)) {
+    MessageBox(NULL, "Error calling ShellExecuteEx()", 
+               "Proce55ing Error", MB_OK);
+    return 0;
+  }
 
-	if (localJreInstalled) {
-		strcpy(executable, loaddir);
-		// copy in the path for jrew, relative to launcher.exe
-		//strcat(executable, "\\bin\\jrew");
-		strcat(executable, "\\java\\bin\\javaw");
-	} else {
-		strcpy(executable, "javaw");
-	}
+  if (reinterpret_cast<int>(ShExecInfo.hInstApp) <= 32) {
 
-	//AfxMessageBox(executable);
+    // some type of error occurred
+    switch (reinterpret_cast<int>(ShExecInfo.hInstApp)) {
+    case ERROR_FILE_NOT_FOUND:
+    case ERROR_PATH_NOT_FOUND:
+	    MessageBox(NULL, "A required file could not be found. \n"
+                 "You may need to install a Java runtime\n"
+                 "or re-install Proce55ing.",
+                 "Proce55ing Error", MB_OK);
+	    break;
+    case 0:
+    case SE_ERR_OOM:
+	    MessageBox(NULL, "Not enough memory or resources to run at"
+                 " this time.", "Proce55ing Error", MB_OK);
+	    
+	    break;
+    default:
+	    MessageBox(NULL, "There is a problem with your installation.\n"
+                 "If the problem persists, re-install the program.", 
+                 "Proce55ing Error", MB_OK);
+	    break;
+    }
+  }
 
-	// code to add the lib directory to the path, in case that's needed
-	/*
-	char *path = (char *)malloc(1024 * sizeof(char));
-	char *old_path = (char *)malloc(1024 * sizeof(char));
-	strcpy(old_path, getenv("PATH"));
-	strcpy(path, "PATH=");
-	strcat(path, old_path);
-	strcat(path, ";");
-	strcat(path, loaddir);
-	strcat(path, "\\lib");
-	//AfxMessageBox(path);
-	putenv(path);
-	*/
-
-	HINSTANCE result;
-	result = ShellExecute(NULL, "open", executable,
-		                  outgoing_cmdline, loaddir, SW_SHOWNORMAL);
-//		                  outgoing_cmdline, NULL, SW_SHOWNORMAL);
-
-	if ((int)result <= 32) {
-		// some type of error occurred
-		switch ((int)result) {
-			case ERROR_FILE_NOT_FOUND:
-			case ERROR_PATH_NOT_FOUND:
-				AfxMessageBox("A required file could not be found. \n"
-							  "You may need to install a Java runtime\n"
-							  "or re-install Proce55ing.");
-				break;
-			case 0:
-			case SE_ERR_OOM:
-				AfxMessageBox("Not enough memory or resources to run at this time.");
-				break;
-			default:
-				AfxMessageBox("There is a problem with your installation.\n"
-					          "If the problem persists, re-install the program.");
-				break;
-		}
-	}
-
-	// Since the dialog has been closed, return FALSE so that we exit the
-	//  application, rather than start the application's message pump.
-	return TRUE;
+  return 0;
 }
