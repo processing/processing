@@ -551,81 +551,6 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-  // MEMORY HANDLING (NEW_GRAPHICS)
-
-
-  protected final float[] next_vertex() {
-    if (vertex_count == vertices.length) {
-      float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertex_count);
-      vertices = temp;
-      message(CHATTER, "allocating more vertices " + vertices.length);
-    }
-
-    return vertices[vertex_count++];
-  }
-
-
-  protected final void add_texture(PImage image) {
-
-    if (texture_index == textures.length - 1) {
-      PImage temp[] = new PImage[texture_index<<1];
-      System.arraycopy(textures, 0, temp, 0, texture_index);
-      textures = temp;
-      message(CHATTER, "allocating more textures " + textures.length);
-    }
-
-    if (textures[0] != null) {  // wHY?
-      texture_index++;
-    }
-
-    textures[texture_index] = image;
-  }
-
-
-  protected final void add_line(int a, int b) {
-
-    if (lineCount == lines.length) {
-      int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
-      System.arraycopy(lines, 0, temp, 0, lineCount);
-      lines = temp;
-      message(CHATTER, "allocating more lines " + lines.length);
-    }
-
-    lines[lineCount][PA] = a;
-    lines[lineCount][PB] = b;
-    lines[lineCount][LI] = -1;
-
-    lines[lineCount][SM] = strokeMiter | strokeJoin;
-    lineCount++;
-  }
-
-
-  protected final void add_triangle(int a, int b, int c) {
-
-    if (triangleCount == triangles.length) {
-      int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
-      System.arraycopy(triangles, 0, temp, 0, triangleCount);
-      triangles = temp;
-      message(CHATTER, "allocating more triangles " + triangles.length);
-    }
-
-    triangles[triangleCount][VA] = a;
-    triangles[triangleCount][VB] = b;
-    triangles[triangleCount][VC] = c;
-
-    if (textureImage == null) {
-      triangles[triangleCount][TEX] = -1;
-    } else {
-      triangles[triangleCount][TEX] = texture_index;
-    }
-
-    triangles[triangleCount][TI] = shape_index;
-    triangleCount++;
-  }
-
 
   //////////////////////////////////////////////////////////////
 
@@ -877,16 +802,27 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   /**
-   *  set texture image for current shape
-   *  needs to be called between @see beginShape and @see endShape
+   * set texture image for current shape
+   * needs to be called between @see beginShape and @see endShape
    *
-   * @param  image  reference to a PImage object
+   * @param image reference to a PImage object
    */
   public void texture(PImage image) {
     textureImage = image;
 
-    //if (z_order == true) {
-    add_texture(image);
+    //add_texture(image);
+    if (texture_index == textures.length - 1) {
+      PImage temp[] = new PImage[texture_index<<1];
+      System.arraycopy(textures, 0, temp, 0, texture_index);
+      textures = temp;
+      message(CHATTER, "allocating more textures " + textures.length);
+    }
+
+    if (textures[0] != null) {  // wHY?
+      texture_index++;
+    }
+
+    textures[texture_index] = image;
     //} else {
     //triangle.setTexture(image);
     //}
@@ -986,6 +922,17 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     //unchangedZ = false;
     //dimensions = 3;
     setup_vertex(next_vertex(), x, y, z);
+  }
+
+
+  private final float[] next_vertex() {
+    if (vertex_count == vertices.length) {
+      float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertex_count);
+      vertices = temp;
+      message(CHATTER, "allocating more vertices " + vertices.length);
+    }
+    return vertices[vertex_count++];
   }
 
 
@@ -1542,6 +1489,48 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     //System.out.println("leaving endShape");
     //shapeKind = 0;
     shape = 0;
+  }
+
+
+  protected final void add_line(int a, int b) {
+
+    if (lineCount == lines.length) {
+      int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
+      System.arraycopy(lines, 0, temp, 0, lineCount);
+      lines = temp;
+      message(CHATTER, "allocating more lines " + lines.length);
+    }
+
+    lines[lineCount][PA] = a;
+    lines[lineCount][PB] = b;
+    lines[lineCount][LI] = -1;
+
+    lines[lineCount][SM] = strokeMiter | strokeJoin;
+    lineCount++;
+  }
+
+
+  protected final void add_triangle(int a, int b, int c) {
+
+    if (triangleCount == triangles.length) {
+      int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
+      System.arraycopy(triangles, 0, temp, 0, triangleCount);
+      triangles = temp;
+      message(CHATTER, "allocating more triangles " + triangles.length);
+    }
+
+    triangles[triangleCount][VA] = a;
+    triangles[triangleCount][VB] = b;
+    triangles[triangleCount][VC] = c;
+
+    if (textureImage == null) {
+      triangles[triangleCount][TEX] = -1;
+    } else {
+      triangles[triangleCount][TEX] = texture_index;
+    }
+
+    triangles[triangleCount][TI] = shape_index;
+    triangleCount++;
   }
 
 
