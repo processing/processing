@@ -25,19 +25,21 @@ X     autosave, replace text, mark as edited
 X     if there have been no edits, and last thing was hist change, 
 X       should *not* do another autosave
 X       ensure this by historyLast being set on change.. heh. nice.
+X write message to people who signed up for p5 alpha
+
+
+0038
+
 
 dammit we need a text editor.
-i'm gonna get sick of people bitching about it.
-also an interesting possibility-->
+gonna get sick of people bitching about it.
+also an interesting possibility (for tech-minded only)
   use terminal emulator, and run iostream from process
   use pooterm stuff for the emulation window
   key commands would conflict
   but could use emacs under osx, linux
   use nano (maybe emacs?) under windows
   and nothing for macos9  
-
-class unloading, or "full java mode" will be beta
-  or only be allowed under the 'use external editor' scenario
 
 bagel
 a _ do some serial testing
@@ -52,10 +54,10 @@ a _ make scrollbar for console
 a _ remove projects if created but nothing happens to them
 a _ option to delete current project
 a _ see if play being highlighted can be implemented again
-a _ class unloading not happening
-a _   when doing an extends ProcessingApplet
-a _   need to add randomizer to even non-self gen'd classes
-a _   or figure out how to unload old classes.. grr
+a _ for 'java' mode, try run using external vm
+a _   would need to get error output stream from app.. argh
+a _   only allow under win/osx/linux
+a _   not clear how to kill the process.. does that work w/ 1.3?
 
 windows
 _ figure out how to do do simple .exe with icons
@@ -112,7 +114,6 @@ release
 a _ small script to remove CVS directories from a tree
 a _ get icon in macos9/macosx/windows formats
 a _ check osname under win98 and linux
-a _ write message to people who signed up for p5 alpha
 a _ figure out about distributing source
 a _   kjc is gnu, so source needs to be available
 a _   make it simpler to build the code.. 
@@ -282,6 +283,10 @@ _ fill, background, stroke all with int version for packed rgb
 
 
 PDE / high
+b _ class unloading not happening
+b _   when doing an extends ProcessingApplet
+b _   need to add randomizer to even non-self gen'd classes
+b _   or figure out how to unload old classes.. grr
 
 
 PDE / medium
