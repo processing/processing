@@ -55,7 +55,8 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get jikes and depedencies
-gunzip < dist/jikes.gz > processing/jikes.exe
+#gunzip < dist/jikes.gz > processing/jikes.exe
+cp dist/jikes.exe processing/
 chmod +x processing/jikes.exe
 
 # get platform-specific goodies from the dist dir
