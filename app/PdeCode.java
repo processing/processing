@@ -73,9 +73,9 @@ public class PdeCode {
     //history.record(s, PdeHistory.SAVE);
 
     try {
-      System.out.println("saving to " + file);
-      System.out.println("stuff to save: " + program);
-      System.out.println("-------");
+      //System.out.println("saving to " + file);
+      //System.out.println("stuff to save: " + program);
+      //System.out.println("-------");
       PdeBase.saveFile(program, file);
 
     } catch (Exception e) {
