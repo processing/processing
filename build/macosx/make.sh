@@ -156,5 +156,16 @@ mkdir -p ../../build/macosx/work/libraries/video/library/
 cp library/video.jar ../../build/macosx/work/libraries/video/library/
 
 
+# PARTICLES LIBRARY
+echo Build particles library...
+cd ../../lib/particles
+../../build/macosx/work/jikes +D -d . *.java 
+rm -f library/particles.jar
+zip -r0q library/particles.jar simong
+rm -rf simong
+mkdir -p ../../build/macosx/work/libraries/particles/library/
+cp library/particles.jar ../../build/macosx/work/libraries/particles/library/
+
+
 echo
 echo Done.
