@@ -16,65 +16,6 @@ again, after i moved my sketches over it broke permanently...
 /   spaces in the dir name?
 o is sketch.properties getting mangled on the mac?
 
-
-_ if image doesn't exist, spews null pointer exception and freaks
-_   locking up environment/machine
-Uncaught error fetching image: 
-java.lang.NullPointerException 
- at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
- at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
- at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java :251) 
- at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
- at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
-
-_ delay() should sleep the thread [glen murphy]
-_   it's sucking cpu and won't open a window until the delay is up
-_ reference doesn't launch on mac (mKoser)
-_ add -Xmx128m -Xms128m because people running out of memory (pitaru)
-_   tried with a 3k x 1k image and things broke
-_   maybe command line read properties from a file in lib
-_ make a note that size() has to come first [nluken]
-_ extra linefeeds is getting annoying for folks
-_   line endings joy
-_   is setText goobering up on beautify?
-_   how are line endings working during save?
-
-_ reported by brandenberg
-_    need to pay attention to when running from read-only drive
-p5 will launch from the disk image, but will not draw the sketch name bar doesn't appear (possibly b/c the image is read-only)... 
-
-_ ctrl-f for find, g for find next, h for next occurrence of selected
-_   using external files
-
-_ bug in comments
-sometimes (never when creating a new sketch, only when an old one has been loaded), if I try to add a comment to identify the end of a method class, ie like 
- 
-void Sample () 
-{ 
-  <basic code here> 
-} // end of Sample handler 
- 
-P5 return me an unexpected 'handler' token error! 
-And when I change this comment to  
-} /* end of Sample handler */ 
-everything comes back to normal?! 
- 
-This don't happen everytimes.. but once it started, the error stay there!  
-Just try it in your next sketchbook, add some comments at the end of your methods, and see what happen 
- 
-(0046, w2k)
-
-
-jikes -classpath /cygdrive/d/fry/processing/build/windows/work/lib/pde.jar:/cygdrive/d/fry/processing/build/windows/work/java/lib/rt.jar:/cygdrive/d/fry/processing/build/windows/work/java/lib/ext/comm.jar:$CLASSPATH *.java
-
-
-_ will need doubles for genomics work. ugh.
-_   this is just enable/disable float stuff
-_ splitints, et al.. have another version to specify what to use
-_   when the value gets a NumberFormatException.. ie.
-_   splitInts("blah blah blah", ' ', 0);
-_   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
-
 _ crashes while starting
 LaunchRunner Error] PdeBase.main(String[]) threw an exception:
 java.lang.NullPointerException
@@ -94,86 +35,87 @@ java.lang.NullPointerException
   at com.apple.buckyball.app.LaunchRunner.callMain(LaunchRunner.java:44)
   at com.apple.buckyball.app.CarbonLibApp.main(CarbonLibApp.java:76)
 
-_ known issues
-_   random freezes.. especially under windows
+_ jedit text area
+_   get settings from PdeBase
+_   need to take care of auto-indent etc
+_   better defaults for syntax highlighting
+_     comments should be gray and not italicized
+_     disable end of line marker by default
+_     highlight p5 keywords
+_       setup, draw, loop as one class
+_       rect, line etc as another
+_       width, height, pixels as a third
+_   enable wheel mouse
+_   jump to top of document on load
+_   change style of ~ at end of document for unused area
+_ extra linefeeds is getting annoying for folks
+_   line endings joy
+_   is setText goobering up on beautify?
+_   how are line endings working during save?
+
+
+MENTION IN DOCS
 _ notes on debugging
 _   look at the code that's created in build/
 _   run with java -Xint blahblah (turns off jit)
-_ join, source code is online
-
-_ noCursor()
-_ getting mouse movement outside the window
-_ no longer require size() to come first?
-_ beginQuads() beginLineStrip() ?
+_ known issues
+_   random freezes.. especially under windows
+_ make a note that size() has to come first [nluken]
+_ doesn't yet run under java 1.4
 
 _ p5 faq items: re midi support, msgs w/ adam hoyle in mail folder
 _   also 'why p5' message from amit pitaru on 12/15/02
+_     and p5 versus flash stuff
 _   lists the main arguments, could be a useful document
 
-_ is quad strip broken or not behaving as expected? (me)
-_   may be correct, it worked for nik
 
-_ images don't load during setup [reas]
-
-While I've used random() in other projects often without fail, if I uncomment the 'float r = random(50);', the applet window fails to appear, with no error messages. 
-
-_ can't used random() inside constructor.. (Glen Murphy)
-_   maybe related to problems loading images in constructors
-_   check output from file that's created.. seems to fail silently(?)
-(this code is a mutilated version of working code, just to show the error). 
-int WIDTH = 500; 
-int HEIGHT = 500; 
-int NUMMINES = 6; 
-Mine mine[] = new Mine[NUMMINES]; 
-class Mine { 
-  int NUMSPOKES = 12; 
-  float x, y, size; 
-  Spoke spoke[] = new Spoke[NUMSPOKES]; 
-  Mine(float xIn, float yIn, float sizeIn) { 
-    x = xIn; 
-    y = yIn; 
-    size = sizeIn; 
-    for(int i = 0; i < NUMSPOKES; i++) { 
- //float r = random(50); 
- spoke[i] = new Spoke(size+i, i*5, i); 
- } 
-    } 
-  } 
-
-class Spoke { 
-  float dist, dir, dirVel; 
-  Spoke(float distIn, float dirIn, float dirVelIn) { 
-    } 
-  } 
-
-void setup() { 
-  size(500,500); 
-  ellipseMode(CENTER_DIAMETER); 
-   
-  for(int i = 0; i < NUMMINES; i++) { 
-    mine[i] = new Mine(random(0,WIDTH), random(0,HEIGHT), random(10,30)); 
-    } 
-  } 
-  
-void loop() { 
-  } 
+................................................................
 
 
 bagel
+_ getting mouse movement outside the window
+_ delay() should sleep the thread [glen murphy]
+_   it's sucking cpu and won't open a window until the delay is up
 _ make bagel usable on its own as a drawing surface
 _   needs to be used as a component, without applet 
 _   but retain functionality, ie. image i/o
 _ finish fill mode of flat circle function
 _   make into oval function
-_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 _ when trying to use serial, provide error if things not installed
+_ no longer require size() to come first?
+_ beginQuads() beginLineStrip() ?
+_ noCursor()
+
+
+bagel / bugs
+_ is quad strip broken or not behaving as expected? (me)
+_   may be correct, it worked for nik
+_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 
 pde / bugs
+_ can't used random() inside constructor.. (Glen Murphy)
+_   maybe related to problems loading images in constructors
+_ images don't load during setup [reas]
+_ weird comments bug (external file)
+_ reported by brandenberg
+_    need to pay attention to when running from read-only drive
+_    "p5 will launch from the disk image, but will 
+_     not draw the sketch name bar doesn't appear"
 _ undo/redo
 _   should enable/disable as available
 _   undo-ing too much will empty the text area
 _     the setText is an undoable thing. grr.
+_ if image doesn't exist, spews null pointer exception and freaks
+_   locking up environment/machine
+Uncaught error fetching image: 
+java.lang.NullPointerException 
+ at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
+ at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
+ at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
+ at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
+ at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+
 
 pde / stability
 _ need to check if volume is read-only, notify and quit if it is
@@ -194,15 +136,30 @@ _ get syntax coloring debugged?
 _   talk to casey about better default colors
 _ scroll to beginning after setText()
 
+
 pde / features
 _ method to set a folder for the sketchbook
+_ splitints, et al.. have another version to specify what to use
+_   when the value gets a NumberFormatException.. ie.
+_   splitInts("blah blah blah", ' ', 0);
+_   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
 _ shortcut to walk through history, ala photoshop (ctrl-alt-z)
+_ ctrl-f for find, g for find next, h for next occurrence of selected
+_   using external files
+_ "look up in reference" function for selecting keywords
 _ support 'classes' folder, through the use of a classloader
 _   could also be done by launching external java app
 _   all .jar files etc are added from this folder automatically
+_ will need doubles for genomics work. ugh.
+_   this is just enable/disable float stuff
+_ may need to start putting properties somewhere besides lib
+_   home directory  (or preferences folder under macos9)
 
 
 windows
+_ add -Xmx128m -Xms128m because people running out of memory (pitaru)
+_   tried with a 3k x 1k image and things broke
+_   maybe command line read properties from a file in lib
 _ need splash screen, startup takes a long time
 _ windows 95/98/ME seems to be broken
 _   ME seems to be very broken
@@ -210,6 +167,7 @@ _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
 macosx
+_ reference doesn't launch on mac (mKoser)
 _ is sketch.properties saving properly under macosx?
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
@@ -218,6 +176,7 @@ _ escape key not quitting presentation mode
 _   no events seem to be coming through at all
 
 macos9
+_ reference doesn't launch on mac (mKoser)
 _ check to see if swing is working properly
 _ get new release out, remove 1.3 specific stuff from textpane
 
@@ -247,6 +206,28 @@ _ locking up on run (under win2k? others?)
 _   rare but present, every 100th time or so
 
 
+OTHER NOTES / API TO ADD
+_ copyArea, copyImage
+_ method of collapsing history for useful versions
+_   archive associated files as well.. data/etc
+_ text editor - color coding is the big issue
+_ ceil/floor
+_ perlin
+_ strokeWidth - too buggy to document currently
+_ update/noUpdate
+_   instead use void update() as a function like loop and draw
+_   third kind of applet for interactive apps that have to be queried
+_ clear/noClear
+_   just use background, and make people fill a rect 
+_   if they need a bg with noBackground()
+_ use syntax coloring to highlight BApplet's class variables and functions
+_ possible dist() and constrain() functions
+_ lights - not much happening
+_ camera - wait for someone to implement
+_ fonts - api should be improved as part of additions and rewrite
+_ does a[3] == Float.NaN work?
+
+
 SUGGESTIONS
 _ make versions available w/o fonts and jre
 _ lock feature for present mode (part of export to application?)
@@ -259,81 +240,6 @@ _ Rename the button options to verbs, e.g. instead of "Do you want to
   save? yes/no", change it to "Document Has been modified -- Save
   changes? Save/Cancel/Don't Save". Look at Aqua Human Interface
   guidelines (http://developer.apple.com/ue/switch/windows.html, tip 9) 
-
-
-OTHER NOTES
-
-_ method of collapsing history for useful versions
-_   archive associated files as well.. data/etc
-
-text editor - color coding is the big issue
-
-ceil/floor
-
-perlin
-
-strokeWidth - too buggy to document currently
-
-copyArea, copyImage
-
-update/noUpdate
-  instead use void update() as a function like loop and draw
-  third kind of applet for interactive apps that have to be queried
-
-clear/noClear
-  just use background, and make people fill a rect if they need a bg with
-noBackground()
-
-use syntax coloring to highlight BApplet's class variables and functions
-
-possible dist() and constrain() functions
-
-lights - not much happening
-camera - wait for someone to implement
-fonts - api should be improved as part of additions and rewrite
-does a[3] == Float.NaN work?
-
-
-//FILE
-New Open (works like standard open for most programs and pops up window)
-Open Recent
-Save
-Save as
-Export
------
-Proce55ing.net
-Reference
------
-Quit
-
-//CONTROL (this is the terminology of Flash for these items)
-Run
-Present
-Stop
------
-Step Forward (farway future)
-Step Backware (faraway future)
-
-//CODE or Program
-History
-Clear History
-Beautify
-Use External Editor
------
-Serial Port
-
-//SKETCHES or SKETCHBOOK
-(Default items in a list)
-Examples >
-
-The "open" button on the toolbar then becomes an "open sketch" button and it acts just as is
-currently does.
-
-there could also be a menu:
-
-ENVIRONMENT
-Serial Port
-Use External Editor
 
 
 ////////////////////////////////////////////////////////////////////
@@ -981,6 +887,54 @@ _   resource fork goodness for the mac
 _   hhmmm
 _ for jgl version of bagel, jgl.jar needs to be in classpath
 
+
+
+////////////////////////////////////////////////////////////////////
+
+
+//FILE
+New Open (works like standard open for most programs and pops up window)
+Open Recent
+Save
+Save as
+Export
+-----
+Proce55ing.net
+Reference
+-----
+Quit
+
+//CONTROL (this is the terminology of Flash for these items)
+Run
+Present
+Stop
+-----
+Step Forward (farway future)
+Step Backware (faraway future)
+
+//CODE or Program
+History
+Clear History
+Beautify
+Use External Editor
+-----
+Serial Port
+
+//SKETCHES or SKETCHBOOK
+(Default items in a list)
+Examples >
+
+The "open" button on the toolbar then becomes an "open sketch" button and it acts just as is
+currently does.
+
+there could also be a menu:
+
+ENVIRONMENT
+Serial Port
+Use External Editor
+
+
+////////////////////////////////////////////////////////////////////
 
 
 jdk 1.3 packages
