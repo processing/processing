@@ -662,6 +662,9 @@ public class PApplet extends Applet
    * Note that you cannot change the renderer once outside of setup().
    * You can call size() to give it a new size, but you need to always
    * ask for the same renderer, otherwise you're gonna run into trouble.
+   * <P>
+   * Also note that this calls defaults(), which will reset any
+   * settings for colorMode or lights or whatever.
    */
   public void size(int iwidth, int iheight, String renderer) {
     String currentRenderer = (g == null) ? null : g.getClass().getName();
@@ -672,6 +675,10 @@ public class PApplet extends Applet
           // all set, the renderer was queued up last time
           // before throwing the exception
           //System.out.println("ignoring additional size()");
+          // but this time set the defaults
+          //g.defaults();
+          //System.out.println("defaults set");
+          g.defaults();
           return;
         }
       } else {
@@ -707,9 +714,10 @@ public class PApplet extends Applet
       g = (PGraphics)
         constructor.newInstance(constructorValues);
 
-      //System.out.println("setting size to
       this.width = iwidth;
       this.height = iheight;
+      // can't do this here because of gl
+      //g.defaults();
 
       //width = g.width;
       //height = g.height;
@@ -745,12 +753,18 @@ public class PApplet extends Applet
       die("Could not start because of a problem with size()", e);
     }
 
-    // throw an exception so that setup() is called again
-    // but with a properly sized render
     if ((currentRenderer != null) &&
         !currentRenderer.equals(renderer)) {
+        // throw an exception so that setup() is called again
+        // but with a properly sized render
+        // this is for opengl, which needs a valid, properly sized
+        // display before calling anything inside setup().
       throw new RuntimeException(NEW_RENDERER);
     }
+
+    // if the default renderer is just being resized,
+    // restore it to its default values
+    g.defaults();
 
     /*
     if (g == null) return;
@@ -958,12 +972,13 @@ public class PApplet extends Applet
                                       " 1b draw");
 
             if (frameCount == 0) {
-              g.defaults();
 
               try {
                 //System.out.println("attempting setup");
                 //System.out.println("into try");
                 setup();
+                //g.defaults();
+
                 //System.out.println("done attempting setup");
                 //System.out.println("out of try");
                 g.postSetup();  // FIXME
@@ -4530,6 +4545,7 @@ v              PApplet.this.stop();
           setPriority(Thread.MIN_PRIORITY);
     */
     final Worker worker = new Worker();
+    worker.start();
 
     /*
     final SwingWorker worker = new SwingWorker() {
@@ -4566,12 +4582,10 @@ v              PApplet.this.stop();
 
     parentFrame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
-          //System.out.println(e);
           Point where = ((Frame) e.getSource()).getLocation();
-          //System.out.println(e);
           System.err.println(PApplet.EXTERNAL_MOVE + " " +
                              where.x + " " + where.y);
-          System.err.flush();
+          System.err.flush();  // doesn't seem to help or hurt
         }
       });
 
