@@ -23,13 +23,59 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+import java.io.*;
+
 public class PdePreprocessor {
 
-  public PdePreprocessor() {
+  static final String applet_imports[] = {
+    "java.applet", "java.awt", "java.awt.image", "java.awt.event",
+    "java.io", "java.net", "java.text", "java.util", "java.util.zip"
+  };
+
+  static final String application_imports[] = {
+    "java.applet", "java.awt", "java.awt.image", "java.awt.event",
+    "java.io", "java.net", "java.text", "java.util", "java.util.zip",
+    "javax.comm",
+
+    // if jdk14 defined, jdk13 will be as well
+#ifdef JDK13
+    "javax.sound.midi", "javax.sound.midi.spi",
+    "javax.sound.sampled", "javax.sound.sampled.spi",
+#endif
+
+#ifdef JDK14
+    "javax.xml.parsers", "javax.xml.transform", 
+    "javax.xml.transform.dom", "javax.xml.transform.sax",
+    "javax.xml.transform.stream", "org.xml.sax",
+    "org.xml.sax.ext", "org.xml.sax.helpers"
+#endif
+  };
+
+  static final int BEGINNER     = 0;
+  static final int INTERMEDIATE = 1;
+  static final int ADVANCED     = 2;
+
+  String tempClass;
+  String tempFilename;
+  String tempClassFilename;
+
+  Reader programReader;
+  String buildPath;
+
+  boolean usingExternal; // use an external process to display the applet?
+
+  public PdePreprocessor(String program, String buildPath) {
+    this.programReader = new StringReader(program);
+    this.buildPath = buildPath;
+
+    usingExternal = PdeBase.getBoolean("play.external", false);
   }
 
   public String writeJava(String name, boolean extendsNormal,
-                          boolean exporting) {
-    return "This class is currently purely abstract";
+                          boolean exporting) throws java.lang.Exception {
+
+    String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+
+    return "";
   }
 }
