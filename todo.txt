@@ -53,15 +53,17 @@ X make built-in libraries read-only
 X several menu changes as discussed with casey 
 X   (capitalization, export/export app, tools)
 X add preference for showing library stuff
-X figure out why user libraries not being added
-_ in lib mode, show internal libraries as part of the 'open' menu 
-_ make a note that p5 has to be restarted for libs
-_ after export of library, rebuild "import library" menu
-_ import all libraries into classpath
-_   all libs found during sketchbook build + all libs in libraries
-_   this means sketchbook menu will need to be rebuilt after lib build
-_   append the user's classpath to the end of that
 
+040913
+X figure out why user libraries not being added
+X in lib mode, show internal libraries as part of the 'open' menu 
+X make a note that p5 has to be restarted for libs
+X import all libraries into classpath
+X   all libs found during sketchbook build + all libs in libraries
+X   this means sketchbook menu will need to be rebuilt after lib build
+X   append the user's classpath to the end of that
+_ when running externally, build into sketch folder
+_ after export of library, rebuild "import library" menu
 
 _ libraries: static and non-static init for libs
 _   final stop() for static shutdown of lib
@@ -73,6 +75,10 @@ _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ where do libraries for distribution go?
 _   libraries subfolder of p5
+
+_ exception in setup() on external app doesn't kill run button 
+_   also doesn't kill external vm
+_ make preferences a modal dialog
 
 _ get export working again
 _   make multiple jar files thing work as an option

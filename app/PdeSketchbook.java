@@ -434,6 +434,7 @@ public class PdeSketchbook {
           list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
+      File lib = new File(subfolder, "library");
       File entry = new File(subfolder, list[i] + ".pde");
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
