@@ -12,6 +12,10 @@ X eyeX, eyeY etc have been renamed cameraX/Y/Z, and cameraNear/Far
 X modify targa and tiff writing routines to break into header writing
 X   writeTIFF, writeHeaderTIFF, writeTGA, writeHeaderTGA
 
+_ remove need to use depth() at the beginning
+_ and cameraMode(PERSPECTIVE) on each frame
+_ reverse y coordinates
+
 _ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _ implement fullscreen().. this takes over the screen as best it can
 _   really more like present mode.. 

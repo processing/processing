@@ -191,11 +191,10 @@ public class PFont implements PConstants {
       for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
           int valu = temp[y*w + x] & 0xff;
-          //images[i].pixels[y*64 + x] = valu;
-          images[i].pixels[y * twidth + x] = valu;
-          // the following makes javagl more happy..
-          // not sure what's going on
-          //(valu << 24) | (valu << 16) | (valu << 8) | valu; //0xffffff;
+          //images[i].pixels[y * twidth + x] = valu;
+
+          images[i].pixels[y * twidth + x] =
+            (valu << 24) | (valu << 16) | (valu << 8) | valu;
           //System.out.print((images[i].pixels[y*64+x] > 128) ? "*" : ".");
         }
         //System.out.println();

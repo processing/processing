@@ -85,7 +85,9 @@ public class PImage implements PConstants, Cloneable {
   public boolean smooth = false;
 
   /** for gl subclass / hardware accel */
-  public int cacheIndex;
+  public int tindex;
+  public int tpixels[];
+  public int twidth, theight;
 
   // private fields
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
@@ -108,7 +110,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage() {
     format = RGB;  // makes sure that this guy is useful
-    cacheIndex = -1;
+    tindex = -1;
   }
 
 
@@ -136,7 +138,7 @@ public class PImage implements PConstants, Cloneable {
     this.width = width;
     this.height = height;
     this.format = format;
-    this.cacheIndex = -1;
+    this.tindex = -1;
   }
 
 
@@ -148,7 +150,39 @@ public class PImage implements PConstants, Cloneable {
     this.height = height;
     this.pixels = new int[width*height];
     this.format = format;
-    this.cacheIndex = -1;
+    this.tindex = -1;
+  }
+
+
+  public void modified() {
+    tindex = -1;
+
+    int width2 = (int) Math.pow(2, Math.ceil(Math.log(width) / Math.log(2)));
+    int height2 = (int) Math.pow(2, Math.ceil(Math.log(height) / Math.log(2)));
+
+    if ((width2 == width) && (height2 == height)) {
+      // image can be used by itself as the texture image
+      tpixels = pixels;
+
+    } else {
+      if ((width2 > twidth) || (height2 > theight)) {
+        // either twidth/theight are zero, or size has changed
+        tpixels = null;
+      }
+      if (tpixels == null) {
+        twidth = width2;
+        theight = height2;
+        tpixels = new int[twidth * theight];
+      }
+      // copy image data into the texture
+      int p = 0;
+      int t = 0;
+      for (int y = 0; y < height; y++) {
+        System.arraycopy(pixels, p, tpixels, t, width);
+        p += width;
+        t += twidth;
+      }
+    }
   }
 
 
@@ -171,7 +205,7 @@ public class PImage implements PConstants, Cloneable {
     } catch (InterruptedException e) { }
 
     format = RGB;
-    cacheIndex = -1;
+    tindex = -1;
   }
 
 

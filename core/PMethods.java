@@ -6,6 +6,8 @@ package processing.core;
 
 public interface PMethods {
 
+  public void modified();
+
   public void alpha(int alpha[]);
 
   public void alpha(PImage alpha);
