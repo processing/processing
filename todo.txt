@@ -1,5 +1,6 @@
 0060
 X gaps in lines for pmouseX, mouseX
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166777;start=0
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
 X only allow one pmouseX update outside of loop
 X   to avoid jumping lines (drawing -> continuous_lines)
@@ -30,10 +31,10 @@ X   setInsets() to zero or something?
 X font.stringWidth -> font.width(char c) or width(String s) 
 X removed extra push()/pop() in text(String s) that may save time
 X bezier error, goes up at the end
-X   but when using bezierMode, doesn't draw the first vertex
-size(300,200);
-bezier(0,100,width/3,100,2*width/3,100,3*width/3,100); 
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1063240719
+X   also when using bezierMode, doesn't draw the first vertex
+X   size(300,200);
+X   bezier(0,100,width/3,100,2*width/3,100,3*width/3,100); 
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166242;start=0
 X add note to tga spec
 X   http://organicbit.com/closecombat/formats/tga.html
 X screenGrab() shouldn't allocate a new pixel buffer
@@ -100,12 +101,29 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 X no time to ask for "save changes" before quit
 X   PdeEditor, around line 910.. not blocking until input 
 X   read up on how to properly block for input in a java app
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061659700
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165653;start=0
 X do not delete sketch folder if empty sketch but non-empty data dir
 X   maybe needs to be a holding area for the current sketch
 X   this is how the read-only examples would be used
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064160655;start=0
+X NullPointerException on setFont was confusing people
+X   add better error messages
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165591;start=0
+X color() method now works inside setup
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166837;start=0
+X color method with alpha now works
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166915;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167640;start=0
+X error message when trying to do a screengrab from inside a browser
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167220;start=0
 
+
+carlos line code for single pixel lines
+ca X single pixel lines have z and alpha
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165816;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165995;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166034;start=0
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064167337;start=0
 
 fixes because of dmose parser
 dm X move to antlr
@@ -126,8 +144,10 @@ dm X weird comments bug (// on last line causes oro trouble)
 dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
 dm X unexpected token 'void' in letters sketch.. 
 dm X   being parsed as static mode app
-dm _ extra parens confusing things (toxi message)
-
+dm X extra parens confusing things (toxi message)
+bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165730;start=0
+bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165923;start=0
+bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166659;start=0
 
 code from the madman
 ks X perlin noise is broken
@@ -144,11 +164,12 @@ ks X getPixel() and other fxns for BImage
 assigned to dan haskovec, but instead completed by toxi
 ks X present mode, click background window and front window hides
 ks X   wasn't present in jdk 1.3, focus manager changed in 1.4
-kx X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050163961
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166198;start=0
 ks X focus not properly set in present mode
-ks X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048069821
+bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166151;start=0
 ks X escape key not quitting presentation mode
 ks X   no events seem to be coming through at all
+
 
 
 from carlos' contract, but implemented by fry
@@ -190,6 +211,7 @@ X textSpace SCREEN_SPACE and OBJECT_SPACE
 X strokeMode/strokeWidth -> 
 X   strokeWeight, strokeJoin, strokeMiter  
 X param(), online(), and status() functions
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166444;start=0
 
   // imaging API keywords	  	  
   pdeKeywords.add("REPLACE", Token.LITERAL1);
@@ -292,18 +314,6 @@ _   when you try to export for web.
 _ catch security exceptions around applet i/o calls
 _   not just for saving files, but provide better error msgs when
 _     attempting to download from another server
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1059928189;start=0
-java.security.AccessControlException: access denied (java.io.FilePermission screen-0000.tif read) 
- at java.security.AccessControlContext.checkPermission(Unknown Source) 
- at java.security.AccessController.checkPermission(Unknown Source) 
- at java.lang.SecurityManager.checkPermission(Unknown Source) 
- at java.lang.SecurityManager.checkRead(Unknown Source) 
- at java.io.File.exists(Unknown Source) 
- at BApplet.screenGrab(BApplet.java:1047) 
- at gravity_giger_00.loop(gravity_giger_00.java:58) 
- at BApplet.nextFrame(BApplet.java:298) 
- at BApplet.run(BApplet.java:256) 
- at java.lang.Thread.run(Unknown Source) 
 _ change .vlw.gz fonts to just .vlw but still gzip compress
 _   reader code should just catch the exception if they're not gzipped
 _   and try to re-download them
