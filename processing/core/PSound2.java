@@ -33,7 +33,7 @@ import javax.sound.sampled.*;
 // for this class: http://javaalmanac.com/egs/javax.sound.sampled/pkg.html
 
 public class PSound2 extends PSound {
-  PApplet parent;
+  //PApplet parent;
   Method soundEventMethod;
 
   Clip clip;
@@ -47,12 +47,11 @@ public class PSound2 extends PSound {
       AudioInputStream stream =
         AudioSystem.getAudioInputStream(input);
 
-      // *** this code appears as though it may just be faulty ***
-
       // At present, ALAW and ULAW encodings must be converted
       // to PCM_SIGNED before it can be played
       AudioFormat format = stream.getFormat();
       if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
+        // *** this code appears as though it may just be faulty ***
         format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
                                  format.getSampleRate(),
                                  format.getSampleSizeInBits()*2,
@@ -61,7 +60,7 @@ public class PSound2 extends PSound {
                                  format.getFrameRate(),
                                  true);  // big endian
         stream = AudioSystem.getAudioInputStream(format, stream);
-        //} else {
+      //} else {
         //System.out.println("no conversion necessary");
       }
 
@@ -201,6 +200,7 @@ public class PSound2 extends PSound {
     float dB = (float)(Math.log(v)/Math.log(10.0)*20.0);
     gainControl.setValue(dB);
   }
+
 
   /** mute */
   /*
