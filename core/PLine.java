@@ -225,7 +225,6 @@ public class PLine implements PConstants
       m_drawFlags |= R_SMOOTH;
 
     } else {
-
       SMOOTH = false;
       m_drawFlags &= ~R_SMOOTH;
     }

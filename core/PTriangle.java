@@ -257,8 +257,8 @@ public class PTriangle implements PConstants
    * Sets vertex coordinates for the triangle
    */
   public void setVertices(float x0, float y0, float z0,
-      float x1, float y1, float z1,
-      float x2, float y2, float z2) {
+                          float x1, float y1, float z1,
+                          float x2, float y2, float z2) {
     x_array[0] = x0;
     x_array[1] = x1;
     x_array[2] = x2;
@@ -276,8 +276,8 @@ public class PTriangle implements PConstants
    * Sets the UV coordinates of the texture
    */
   public void setUV(float u0, float v0,
-      float u1, float v1,
-      float u2, float v2) {
+                    float u1, float v1,
+                    float u2, float v2) {
     // sets & scales uv texture coordinates to center of the pixel
     u_array[0] = (u0 * F_TEX_WIDTH + 0.5f) * 65536f;
     u_array[1] = (u1 * F_TEX_WIDTH + 0.5f) * 65536f;
@@ -320,7 +320,8 @@ public class PTriangle implements PConstants
       m_drawFlags&=~R_GOURAUD;
     }
 
-    // push values to arrays.. some extra scaling is added to prevent possible color "overflood" due to rounding errors
+    // push values to arrays.. some extra scaling is added 
+    // to prevent possible color "overflood" due to rounding errors
     r_array[0] = (r0 * 253f + 1.0f) * 65536f;
     r_array[1] = (r1 * 253f + 1.0f) * 65536f;
     r_array[2] = (r2 * 253f + 1.0f) * 65536f;
