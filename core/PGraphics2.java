@@ -526,7 +526,7 @@ public class PGraphics2 extends PGraphics {
 
   public void image(PImage image,
                     float a, float b, float c, float d,
-                    float u1, float v1, float u2, float v2) {
+                    int u1, int v1, int u2, int v2) {
     check_image_cache(image);
     super.image(image, a, b, c, d, u1, v1, u2, v2);
   }
