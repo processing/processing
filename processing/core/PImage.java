@@ -71,7 +71,8 @@ public class PImage implements PConstants, Cloneable {
   // would scan line be useful? maybe for pow of 2 gl textures
 
   // note! inherited by PGraphics
-  boolean smooth = false; //true;  // for now.. how to fix?
+  int image_mode = CORNER;
+  boolean smooth = false;
 
   // for gl subclass / hardware accel
   int cacheIndex;
@@ -215,7 +216,7 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
 
-  // GETTING PIXELS
+  // GET/SET PIXELS
 
 
   public int get(int x, int y) {
@@ -245,32 +246,61 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // SETTING PIXELS
-
-
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
   }
 
 
-  // not all variables here are needed.. fix it up later
 
-  public void set(int x, int y, PImage image) {
+  //////////////////////////////////////////////////////////////
+  
+  // REPLICATING & BLENDING (AREAS) OF PIXELS
+
+
+  /**
+   * Copies a pixel from place to another (in the same image)
+   * this function is excluded from using any blend modes because
+   * it always replaces/overwrites the target pixel value.
+   */
+  /*
+  public void copy(int sx, int sy, int dx, int dy) {
+    // In PGraphics, should this copy the zbuffer and stencil too?
+    if ((sx >= 0) && (sx < width) && (dx >= 0) && (dx < width) &&
+        (sy >= 0) && (sy < height) && (dy >= 0) && (dy < height)) {
+      pixels[dy * width + dx] = pixels[sy * width + sx];
+    }
+  }
+  */
+
+
+  /**
+   * Copies a pixel from place to another (in different images)
+   * this function is excluded from using any blend modes
+   * it always replaces/overwrites the target pixel value
+   */
+  /*
+  public void copy(PImage src, int sx, int sy, int dx, int dy) {
+    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
+        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
+      pixels[dy * width + dx] = src.pixels[sy * src.width + sx];
+    }
+  }
+  */
+
+
+  public void copy(PImage src, int dx, int dy) {
     // source
     int sx = 0; 
     int sy = 0;
-    int sw = image.width; 
-    int sh = image.height;
+    int sw = src.width; 
+    int sh = src.height;
 
     // target
-    int tx = x; // < 0 ? 0 : x;
-    int ty = y; // < 0 ? 0 : y;
-    int tw = image.width;
-    int th = image.height;
+    int tx = dx; // < 0 ? 0 : x;
+    int ty = dy; // < 0 ? 0 : y;
+    int tw = width;
+    int th = height;
 
     if (tx < 0) {  // say if target x were -3
       sx -= tx;    // source x -(-3) (or add 3)
@@ -296,49 +326,38 @@ public class PImage implements PConstants, Cloneable {
     }
 
     for (int row = sy; row < sy + sh; row++) {
-      System.arraycopy(image.pixels, row*image.width + sx, 
-                       pixels, (y+row)*width + tx, sw);
-    }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-  
-  // REPLICATING & BLENDING (AREAS) OF PIXELS
-
-
-  // copies a pixel from place to another (in the same image)
-  // this function is excluded from using any blend modes
-  // it always replaces/overwrites the target pixel value
-
-  // should this copy the zbuffer and stencil for this pixel?
-
-  public void copy(int sx, int sy, int dx, int dy) {
-    if ((sx >= 0) && (sx < width) && (dx >= 0) && (dx < width) &&
-        (sy >= 0) && (sy < height) && (dy >= 0) && (dy < height)) {
-      pixels[dy * width + dx] = pixels[sy * width + sx];
-    }
-  }
-
-
-  // copies a pixel from place to another (in different images)
-  // this function is excluded from using any blend modes
-  // it always replaces/overwrites the target pixel value
-
-  public void copy(PImage src, int sx, int sy, int dx, int dy) {
-    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
-        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
-            pixels[dy * width + dx] = src.pixels[sy * src.width + sx];
+      System.arraycopy(src.pixels, row*src.width + sx, 
+                       pixels, (dy+row)*width + tx, sw);
     }
   }
 
 
   /**
-   * Copy things from one area of this image to another area in the same image
+   * Copy things from one area of this image 
+   * to another area in the same image.
    */
   public void copy(int sx1, int sy1, int sx2, int sy2, 
-                        int dx1, int dy1, int dx2, int dy2) {
+                   int dx1, int dy1, int dx2, int dy2) {
+    switch (image_mode) {
+      //case CORNERS: 
+      //break;
+    case CORNER: 
+      sx2 += sx1; sy2 += sy1; 
+      dx2 += dx1; dy2 += dy1; 
+      break;
+    case CENTER:
+      sx2 /= 2f; sy2 /= 2f;
+      dx2 /= 2f; dy2 /= 2f;
+      break;
+    case CENTER_RADIUS:
+      int hr, vr;
+      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
+      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
+      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
+      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
+      break;
+    }
+
     if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
       blit_resize(this.get(sx1, sy1, sx2 - sx1, sy2 - sy1), 
                   0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
@@ -351,12 +370,32 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Copies area of one image into another PImage object
+   * Copies area of one image into another PImage object.
    */
   public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
-                        int dx1, int dy1, int dx2, int dy2) {
+                   int dx1, int dy1, int dx2, int dy2) {
+    switch (image_mode) {
+      //case CORNERS: 
+      //break;
+    case CORNER: 
+      sx2 += sx1; sy2 += sy1; 
+      dx2 += dx1; dy2 += dy1; 
+      break;
+    case CENTER:
+      sx2 /= 2f; sy2 /= 2f;
+      dx2 /= 2f; dy2 /= 2f;
+      break;
+    case CENTER_RADIUS:
+      int hr, vr;
+      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
+      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
+      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
+      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
+      break;
+    }
+
     blit_resize(src, sx1, sy1, sx2, sy2,
-                 pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+                pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
   }
 
 
@@ -367,7 +406,8 @@ public class PImage implements PConstants, Cloneable {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
       pixels[dy * width + dx] = 
-        blendColor(pixels[dy * width + dx], src.pixels[sy * src.width + sx], mode);
+        blendColor(pixels[dy * width + dx], 
+                   src.pixels[sy * src.width + sx], mode);
     }
   }
 
@@ -378,12 +418,32 @@ public class PImage implements PConstants, Cloneable {
         blendColor(pixels[dy * width + dx], pixels[sy * width + sx], mode);
     }
   }
-  
+
   /**
    * Copy things from one area of this image to another area
    */
   public void blend(int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
+    switch (image_mode) {
+      //case CORNERS: 
+      //break;
+    case CORNER: 
+      sx2 += sx1; sy2 += sy1; 
+      dx2 += dx1; dy2 += dy1; 
+      break;
+    case CENTER:
+      sx2 /= 2f; sy2 /= 2f;
+      dx2 /= 2f; dy2 /= 2f;
+      break;
+    case CENTER_RADIUS:
+      int hr, vr;
+      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
+      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
+      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
+      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
+      break;
+    }
+
     if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
       blit_resize(this.get(sx1, sy1, sx2 - sx1, sy2 - sy1), 
                   0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
@@ -400,6 +460,26 @@ public class PImage implements PConstants, Cloneable {
    */
   public void blend(PImage src, int sx1, int sy1, int sx2, int sy2, 
                     int dx1, int dy1, int dx2, int dy2, int mode) {
+    switch (image_mode) {
+      //case CORNERS: 
+      //break;
+    case CORNER: 
+      sx2 += sx1; sy2 += sy1; 
+      dx2 += dx1; dy2 += dy1; 
+      break;
+    case CENTER:
+      sx2 /= 2f; sy2 /= 2f;
+      dx2 /= 2f; dy2 /= 2f;
+      break;
+    case CENTER_RADIUS:
+      int hr, vr;
+      hr = sx2; sx2 = sx1 + hr; sx1 -= hr; 
+      vr = sy2; sy2 = sy1 + vr; sy1 -= vr;
+      hr = dx2; dx2 = dx1 + hr; dx1 -= hr; 
+      vr = dy2; dy2 = dy1 + vr; dy1 -= vr;
+      break;
+    }
+
     blit_resize(src, sx1, sy1, sx2, sy2,
                 pixels, width, height, dx1, dy1, dx2, dy2, mode);
   }
@@ -410,6 +490,11 @@ public class PImage implements PConstants, Cloneable {
   
   // COPYING IMAGE DATA
 
+  /**
+   * Duplicate an image, returns new PImage object.
+   * The pixels[] array for the new object will be unique
+   * and recopied from the source image.
+   */
   public Object clone() throws CloneNotSupportedException {
     PImage c = (PImage) super.clone();
 
@@ -997,5 +1082,20 @@ public class PImage implements PConstants, Cloneable {
     }
   }
   */
+
+
+  public void smooth() {
+    smooth = true;
+  }
+
+  public void noSmooth() {
+    smooth = false;
+  }
+
+
+  public void imageMode(int mode) {
+    image_mode = mode;
+  }
+
 }
 
