@@ -1187,6 +1187,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     lines[lineCount][INDEX] = -1;
 
     lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
+    lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
     lineCount++;
 
     // mark this piece as being part of the current path
