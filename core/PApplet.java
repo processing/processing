@@ -263,10 +263,12 @@ public class PApplet extends Applet
     Dimension size = getSize();
 
     if (PApplet.jdkVersion >= 1.3) {
-      g = new PGraphics2(size.width, size.height);
+      g = new PGraphics2(INITIAL_WIDTH, INITIAL_HEIGHT);
+      //g = new PGraphics2(size.width, size.height);
       //DEFAULT_WIDTH, DEFAULT_HEIGHT);
     } else {
-      g = new PGraphics(size.width, size.height);
+      g = new PGraphics(INITIAL_WIDTH, INITIAL_HEIGHT);
+      //g = new PGraphics(size.width, size.height);
       //g = new PGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
   }
