@@ -1169,11 +1169,12 @@ public class PImage implements PConstants, Cloneable {
         index -= width;
       }
       output.flush();
+      return true;
 
     } catch (IOException e) {
       e.printStackTrace();
-      return false;
     }
+    return false;
   }
 
 

@@ -134,7 +134,7 @@ public class PGraphics2 extends PGraphics {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
-      message(CHATTER, "allocating more vertices " + vertices.length);
+      //message(CHATTER, "allocating more vertices " + vertices.length);
     }
     // not everyone needs this, but just easier to store rather
     // than adding another moving part to the code...
@@ -430,17 +430,17 @@ public class PGraphics2 extends PGraphics {
 
   public void arc(float start, float stop,
                   float x, float y, float w, float h) {
-    if (arcMode == CORNERS) {
+    if (ellipseMode == CORNERS) {
       w -= x;
       h -= y;
 
-    } else if (arcMode == CENTER_RADIUS) {
+    } else if (ellipseMode == CENTER_RADIUS) {
       x -= w;
       y -= h;
       w *= 2;
       h *= 2;
 
-    } else if (arcMode == CENTER) {
+    } else if (ellipseMode == CENTER) {
       x -= w;
       y -= h;
     }
@@ -456,9 +456,9 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void circle(float x, float y, float radius) {
-    ellipse(x, y, radius, radius);
-  }
+  //public void circle(float x, float y, float radius) {
+  //ellipse(x, y, radius, radius);
+  //}
 
 
   public void bezier(float x1, float y1,

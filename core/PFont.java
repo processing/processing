@@ -87,7 +87,7 @@ public class PFont implements PConstants {
   public int space;
 
   int ascii[];  // quick lookup for the ascii chars
-  boolean cached;
+  //boolean cached;
 
   // used by the text() functions to avoid over-allocation of memory
   private char textBuffer[] = new char[8 * 1024];
@@ -208,7 +208,7 @@ public class PFont implements PConstants {
       }
       //System.out.println();
     }
-    cached = false;
+    ///cached = false;
 
     resetSize();
     //resetLeading(); // ??
@@ -414,11 +414,13 @@ public class PFont implements PConstants {
     int glyph = index(c);
     if (glyph == -1) return;
 
+    /*
     if (!cached) {
       // cache on first run, to ensure a graphics context exists
       parent.cache(images);
       cached = true;
     }
+    */
 
     if (space == OBJECT_SPACE) {
       float high    = (float) height[glyph]     / fheight;
