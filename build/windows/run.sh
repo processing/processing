@@ -14,4 +14,7 @@ fi
 
 CLASSPATH=java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\oro.jar\;java\\lib\\ext\\comm.jar\;${QT_JAVA_PATH}
 
+# version for javac/1.1 testing
+#CLASSPATH=java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\oro.jar\;java\\lib\\ext\\comm.jar\;${QT_JAVA_PATH}\;..\\..\\macos9\\JDKClasses.zip\;..\\..\\macos9\\JDKToolsClasses.zip
+
 cd work && ./java/bin/java -cp ${CLASSPATH} PdeBase
