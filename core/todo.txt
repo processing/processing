@@ -93,6 +93,7 @@ _ image(String name) and textFont(String name)
 _   do we change to font(arial, 12) ?
 
 scripting
+_ document the use of "die" 
 _ on exceptions, use die to just kill the applet
 _ make the file i/o stuff work more cleanly
 _   if people want to use their own file i/o they can do that too
