@@ -32,24 +32,30 @@ X   splitInts("blah blah blah", ' ', 0);
 X   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
 X remove groupings of NumberFormat
 X change NumberFormat to nf
-
 X use System.arraycopy for clear().. could be way fast
-_   test to see how much faster the new arraycopy version is
+X   test to see how much faster the new arraycopy version is
+X   err, it's slower. that sucks.
 
-   b _ if image doesn't exist, spews null pointer exception and freaks
-   b _   locks up environment/machine, have to restart
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
-          Uncaught error fetching image: 
-          java.lang.NullPointerException 
-           at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
-           at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
-           at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
-           at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
-           at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+X if image doesn't exist, spews null pointer exception and freaks
+X   locks up environment/machine, have to restart
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045828000;start=0
+
+X disable image cache (setUseCaches?)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
+
+_ text caret goes missing
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1041962296
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043614133
+
+_ fix all the random line types to support alpha
+_ write code for line joins.. continuous lines should become polygon snake
+
 
 _ image of 256x256 doesn't draw the last line of pixels
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
+_ weird line in showing in the center of an image
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
 
 _ syntax coloring of built-in java objects.. i.e. String
 _   probably want to include everything that's in java.lang and maybe others
@@ -62,11 +68,16 @@ _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
 
-_ disable image cache (setUseCaches?)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1043895082;start=0
+_ versions of loadStream/loadBytes etc that use streams and/or urls
+
+_ environment locks up when error stream isn't for the class
+_   this happens when it's another thread (i.e. image fetcher)
+_   exceptions in KjcEngine (formerly 'ex found in run') should be cleaner
 
 _ several examples broken (note from creas) in bugs.txt
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042222429
+_   drawing02, input09, input08, transform05, others?
+
 
 _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
@@ -148,6 +159,10 @@ BAGEL / Rendering
 
    b _ alpha. fill(r, g, b, a), stroke(r, g, b, a),
 
+   b _ shape.. non-homogenous colors for beginShape()
+   b _   currently disabled b/c homogenousColors not set false for vertices
+   b _   and code not written for curve vertices
+
    b _ picking
    b _   what is the API for picking?
    b _   ability to write data other than image into the buffer
@@ -173,10 +188,6 @@ BAGEL / Rendering
    b _   create a simple generator for grayscale bdf fonts
    b _     document the change and make several of them
    b _   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
-
-   b _ shape.. non-homogenous colors for beginShape()
-   b _   currently disabled b/c homogenousColors not set false for vertices
-   b _   and code not written for curve vertices
 
    b _ lines
    b _   rewrite line and stroke code, it's a buggy mess
