@@ -26,6 +26,10 @@ X   -> seems to have fixed itself (?)
 X test presentation mode for window sizing status on macos
 X serial port code needs to be implemented
 X   something that docks better to java serial api
+X implement menuitem to load ref and to launch p5.net
+X   MRJFileUtils.openURL(String url) throws IOException
+X   also, ref should go to index page, not environment
+X check to see if lines for error messages are off in macos
 
 
 pde
@@ -39,17 +43,9 @@ a _ text editor? jedit's textarea class? hmm? hmm?
 a _ make win/linux write stderr to stderr.txt like the mac
 a _   this will be useful until i implement scrollbar
 
-macos9
-a _ set file type/creator for .pde files.. TEXTPde1
 
 macosx
 a _ arrow keys don't work in the textarea
-
-macos
-a _ implement menuitem to load ref and to launch p5.net
-a _   MRJFileUtils.openURL(String url) throws IOException
-a _   also, ref should go to index page, not environment
-a _ check to see if lines for error messages are off
 
 windows
 a _ splash screen.. check win95 book for simple code
@@ -59,6 +55,8 @@ a _ finish writing 'readme.txt'
 a _ change download/index.html to not describe dates but process
 a _   "this is alpha, we're heading to beta with series of sm releases"
 a _ document serial a bit more in release notes
+a _ how do we encourage/point to updates?
+a _   auto updater? check for releases page in menu?
 
 
 a _ this code is not performing correctly
@@ -389,6 +387,13 @@ b _     under osx, app won't get doc unless app already launched
 b _ dataInputStream, setUseCaches on the url to false
 b _   URLConnection.setUseCaches(false)
 b _   parent.obj.close() on the url
+b _ set file type/creator for .pde files.. TEXTPde1
+b _   also for .jar and .html for files on export
+b _   not sure whether to enable this for osx or not.. 
+
+
+PDE / macos9
+b _ make sure editor window is front so that error line highlights
 
 
 PDE / macosx
@@ -398,6 +403,7 @@ b _ remove 'quit' from file menu
 
 PDE / linux
 b _ splash screen
+b _ test serial with ibm vm and all
 
 
 PDE / features

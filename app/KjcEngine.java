@@ -231,12 +231,14 @@ public class KjcEngine extends PdeEngine {
 	PatternCompiler compiler = new Perl5Compiler();
 	Pattern pattern = null;
 
+
+	///////// grab (first) reference to size()
+
+
 	// hack so that the regexp below works
 	if (program.indexOf("size(") == 0) program = " " + program;
 
 	try {
-	  //pattern = compiler.compile("\ssize\(\d+),\s*(\d+)\)\;");
-	  //pattern = compiler.compile("^[^A-Za-z0-9_]+size\\(\\s*(\\d+),\\s*(\\d+)\\s*\\);");
 	  pattern = 
 	    compiler.compile("^([^A-Za-z0-9_]+)(size\\(\\s*\\d+,\\s*\\d+\\s*\\);)");
 
@@ -255,10 +257,15 @@ public class KjcEngine extends PdeEngine {
 	  //int wide = Integer.parseInt(result.group(1).toString());
 	  //int high = Integer.parseInt(result.group(2).toString());
 	  sizeInfo = "void setup() { " + result.group(0) + " } ";
+	  //sizeInfo = result.group(0);
 
 	} else {
 	  // no size() defined, make it 100x100
 	}
+
+	
+	// grab (first) reference to background()
+
 
 	// remove references to size()
 	// this winds up removing every reference to size()
