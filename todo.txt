@@ -96,6 +96,26 @@ X   errorMessage in PSerial/PClient/PServer are all using System.out
 X write handler for loop() error, warning user to rename loop to draw
 X   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6:29:11: Semantic Error: The method "void loop();" with default access cannot replace the accessible method "void loop();" with public access declared in type "processing.core.PApplet".
 
+hanging bug
+* it may be something to do with the editor consoles. try shutting off
+output to the console and see if it'll still crash.
+* most likely related to io streams to the external java process. when
+run via a disconnected process, using "cmd /c start java", the thing
+will never hang. in that instance, the process terminates almost
+immediately, and no i/o needs to happen (since it's a cmd prompt that
+never shows up). 
+* it could also be a graphics sync bug that just gets more testy
+because the environment, a second java process, is running at the same
+time. mis.newPixels() may hork since it's over in the applet's thread,
+and it might be calling repaint() or Toolkit.sync() to update the
+image on-screen. 
+* shows up on key presses.. not sure if this is because of the actual
+key press, or if it's because they're often accompanied by a println()
+* blank spaces in filenames/parent folder often cause trouble.. not
+sure if related. same for PATH and CLASSPATH.
+* some virus scanning software, particularly older NAV versions cause
+the trouble. 
+
 _ be able to link against, but not export, certain parts of lib
 _   jsyn.jar not needed on export, netscape libs not needed on export
 _ netscape.javascript not properly working in 1.4

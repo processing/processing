@@ -179,9 +179,6 @@ public class PdeEditorConsole extends JScrollPane {
     }
     */
 
-    // to console display
-    appendText(what, err);
-
     if (err) {
       systemErr.print(what);
     } else {
@@ -196,10 +193,14 @@ public class PdeEditorConsole extends JScrollPane {
         systemOut.println();
       }
     }
+
+    // to console display
+    appendText(what, err);
+    // moved down here since something is punting
   }
 
 
-  private void appendText(String text, boolean err) {
+  synchronized private void appendText(String text, boolean err) {
     //if (true) return;
 
     try {
