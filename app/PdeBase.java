@@ -608,12 +608,12 @@ public class PdeBase {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    if ((PdeBase.platform == PdeBase.MACOSX) ||
-        (PdeBase.platform == PdeBase.MACOS9)) {
-      image = tk.getImage("lib/" + name);
-    } else {
-      image = tk.getImage(who.getClass().getResource(name));
-    }
+    //if ((PdeBase.platform == PdeBase.MACOSX) ||
+    //(PdeBase.platform == PdeBase.MACOS9)) {
+    image = tk.getImage("lib/" + name);
+    //} else {
+    //image = tk.getImage(who.getClass().getResource(name));
+    //}
 
     //image =  tk.getImage("lib/" + name);
     //URL url = PdeApplet.class.getResource(name);
@@ -629,20 +629,18 @@ public class PdeBase {
   }
 
 
-  static public InputStream getStream(String filename)
-    throws IOException {
-    if ((PdeBase.platform == PdeBase.MACOSX) ||
-        (PdeBase.platform == PdeBase.MACOS9)) {
-      // macos doesn't seem to think that files in the lib folder
-      // are part of the resources, unlike windows or linux.
-      // actually, this is only the case when running as a .app,
-      // since it works fine from run.sh, but not Processing.app
-      return new FileInputStream("lib/" + filename);
-    }
+  static public InputStream getStream(String filename) throws IOException {
+    //if (PdeBase.platform == PdeBase.MACOSX) {
+    // macos doesn't seem to think that files in the lib folder
+    // are part of the resources, unlike windows or linux.
+    // actually, this is only the case when running as a .app,
+    // since it works fine from run.sh, but not Processing.app
+    return new FileInputStream("lib/" + filename);
+    //}
 
     // all other, more reasonable operating systems
     //return cls.getResource(filename).openStream();
-    return PdeBase.class.getResource(filename).openStream();
+    //return PdeBase.class.getResource(filename).openStream();
   }
 
 
