@@ -24,7 +24,24 @@ rm -rf processing/reference/images/CVS
 rm -rf processing/sketchbook/CVS
 rm -rf processing/sketchbook/default/CVS
 rm -f processing/sketchbook/default/.cvsignore
-# will need to add a zillion of these for the reference..
+
+rm -rf processing/sketchbook/examples/CVS
+rm -rf processing/sketchbook/examples/form00/CVS
+rm -rf processing/sketchbook/examples/form01/CVS
+rm -rf processing/sketchbook/examples/form02/CVS
+rm -rf processing/sketchbook/examples/form03/CVS
+rm -rf processing/sketchbook/examples/form04/CVS
+rm -rf processing/sketchbook/examples/motion00/CVS
+rm -rf processing/sketchbook/examples/motion01/CVS
+rm -rf processing/sketchbook/examples/motion02/CVS
+rm -rf processing/sketchbook/examples/response00/CVS
+rm -rf processing/sketchbook/examples/response01/CVS
+rm -rf processing/sketchbook/examples/response02/CVS
+rm -rf processing/sketchbook/examples/response03/CVS
+rm -rf processing/sketchbook/examples/response04/CVS
+rm -rf processing/sketchbook/examples/response05/CVS
+rm -rf processing/sketchbook/examples/response06/CVS
+rm -rf processing/sketchbook/examples/response07/CVS
 
 # add java (jre) files
 #tar --extract --verbose --file=jre.tgz --ungzip --directory=processing
