@@ -1,3 +1,47 @@
+_ delay wasn't working for casey
+_ why is every other pixel missing from mouse events?
+_ curve and bezier behave differently for indexing points
+
+_ sketch.properties contains the last program run
+_   also the window positions, etc
+_   if it doesn't exist, starts with a new project
+_     for a new project, name it untitled-0001 or as appropriate
+_       so that previous projects aren't written over
+
+_ 'open' button is a switch-to button
+_   pops up list of everything in the sketchbook
+_   first item is 'new sketch', followed by delimeter
+_   next is list of subdirs other than current user, then delim
+_   the rest are the items in the current user's folder
+
+
+X need 'new' button on the toolbar --> NOPE, first item on 'open' menu
+_   the zero looking one might be good (instead of export)
+_   export could be three circles in a row, overlapping
+
+_ need double-clickable application version for the mac
+_   if os9, this is a no-brainer.. for osx may take a little time
+
+_ everything is a project.. what about short snippets of code?
+_   this version won't be able to access everything from scrapbook
+_   (that requires a more robust class loader)
+
+_ verify save when
+_   closing p5 window
+_   moving to other sketch
+
+** need not be implemented **
+_ write function to swap different names for Proce55ing
+_   use for window title
+_   simple app that does swapping of letters as an animation
+_ project name is changed by clicking on the name and typing
+_ user name is changed by clicking and typing
+_   after user hits 'enter', checks to see if user exists
+_     if not, pops up message asking if they want to change
+_       message goes in same spot as error/status label (turns yellow?)
+_     if user says 'no', then 
+
+
 QUESTIONS
 _ is it necessary to have fullscreen option on toolbar anymore?
 _ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
@@ -113,15 +157,17 @@ X int version of min and abs
 X introduce pImage, pFont, pGraphics, pConstants (pSound)
 
 a _ add frame to launched window
-a _   add maximize event catcher to make fullscreen
+a X   add maximize event catcher to make fullscreen
+a _     doesn't work, because of screen sizing stupidity
 a _   shift-click on play to go directly into this 'presentation mode'
 a _ lines being highlighted for errors are off
 a _   test this on other platforms as well
-a _ move everything to new bagel api names
+a X move everything to new bagel api names
 a _ draw mode needs to be better for workshops
 a _   make size() work for draw() mode
 a _     inside Engine, reach in and grab calls to 'size'
 a _     if call is not using a constant number, then punt
+a _   better yet, just make size() available throughout
 a _ importing images doesn't work
 
 b _ serial.messageReceived extra long crap in demo.pde (clean up?)

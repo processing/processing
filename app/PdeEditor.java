@@ -11,8 +11,13 @@ import java.util.zip.*;
 // play, stop, open, save, courseware, print, beautify
 // height of button panel is 35
 
-public class PdeEditor extends Panel implements PdeEnvironment {
+public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
+
   static final String DEFAULT_PROGRAM = "// type program here\n";
+
+  static final String NEW_SKETCH_ITEM = "( new sketch )";
+  static final String SKETCH_PREFIX_NAME = "sketch-";
+  static final String CODE_FILENAME = "sketch.pde";
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
@@ -20,14 +25,21 @@ public class PdeEditor extends Panel implements PdeEnvironment {
   PdeApplet app;
 
   PdeEditorButtons buttons;
+  PdeEditorHeader header;
+  PdeEditorStatus status;
+  PdeEditorOutput output;
+
+  //Label status;
+  TextArea textarea;
+
   //PdeGraphics graphics;
   PdeRunner runner;
 
   Frame frame;
   Window fullScreenWindow;
 
-  Label status;
-  TextArea textarea;
+  static final int GRID_SIZE  = 33;
+  static final int INSET_SIZE = 5;
 
   String lastDirectory;
   String lastFile;
@@ -37,8 +49,8 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
   public PdeEditor(PdeApplet app, String program) {
     this.app = app;
-    setLayout(new BorderLayout());
 
+    /*
     Color bgColor = 
       PdeApplet.getColor("editor.bgcolor", new Color(51, 102, 153));
     Color tickColor = 
@@ -49,26 +61,49 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       PdeApplet.getColor("editor.button_bgcolor", new Color(153, 153, 153));
     Color statusBgColor = 
       PdeApplet.getColor("editor.status_bgcolor", new Color(204, 204, 204));
+    */
 
-    //int gwidth = PdeApplet.getInteger("graphics_width", 101);
-    //int gheight = PdeApplet.getInteger("graphics_height", 101);
+    setLayout(new BorderLayout());
 
-    //add("North", new PdeEditorLicensePlate());
+    Panel leftPanel = new Panel();
+    leftPanel.setLayout(new BorderLayout());
 
-    //Panel left = new Panel();
-    //left.setLayout(new BorderLayout());
+    Color buttonBgColor = 
+      PdeApplet.getColor("editor.button_bgcolor", new Color(153, 0, 0));
+    buttons = new PdeEditorButtons(this);
+    buttons.setBackground(buttonBgColor);
+    leftPanel.add("North", buttons);
 
+    Label dummy = new Label();
+    dummy.setBackground(buttonBgColor);
+    //dummy.setBackground(new Color(0, 100, 0));
+    leftPanel.add("Center", dummy);
+
+    add("West", leftPanel);
+
+    Panel rightPanel = new Panel();
+    rightPanel.setLayout(new BorderLayout());
+
+    /*
+    PdeEditorLabel sketchLabel = new PdeEditorLabel(1);
+    Color sketchBgColor = new Color(51, 51, 51);
+    Color sketchPrimaryTextColor = Color.white;
+    Color sketchSecondaryTextColor = new Color(153, 153, 153);
+    sketchLabel.setForeground(sketchPrimaryTextColor);
+    sketchLabel.setBackground(sketchBgColor);
+    rightPanel.add("North", sketchLabel);
+    */
+
+    header = new PdeEditorHeader(this, "untitled", "default");
+    rightPanel.add("North", header);
+
+    /*
     Panel top = new Panel();
     top.setBackground(buttonBgColor);
     top.setLayout(new BorderLayout());
 
-    //boolean privileges = PdeApplet.hasFullPrivileges();
-    //boolean courseware = PdeApplet.get("save_as") != null;
-    buttons = new PdeEditorButtons(this); //, privileges, courseware, 
-                                //(privileges & !courseware), false);
+    buttons = new PdeEditorButtons(this);
     buttons.setBackground(buttonBgColor);
-    //add("North", buttons);
-    //top.add("North", buttons);
     top.add("West", buttons);
 
     Label buttonStatus = 
@@ -77,30 +112,9 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     top.add("East", buttonStatus);
 
     buttons.status = buttonStatus;
-
-    /*
-    graphics = new PdeGraphics(gwidth, gheight, bgColor);
-#ifndef OPENGL
-    graphics = new PdeEditorGraphics(gwidth, gheight, tickColor,
-				     bgColor, bgStippleColor, this);
-#else
-    if (PdeApplet.getBoolean("graphics_3D", false)) {
-      graphics = new PdeEditorGraphics3D(gwidth, gheight, tickColor,
-					 bgColor, bgStippleColor, this);
-    } else {
-      graphics = new PdeEditorGraphics(gwidth, gheight, tickColor,
-				       bgColor, bgStippleColor, this);
-    }
-#endif
     */
 
-    //left.add("Center", graphics);
-
-    //left.setBackground(gutterBgColor);
-
-    //Panel right = new Panel();
-    //right.setLayout(new BorderLayout());
-
+    /*
     Panel statusPanel = new Panel();
     statusPanel.setBackground(statusBgColor);
     statusPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -109,13 +123,42 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     top.add("South", statusPanel);
 
     add("North", top);
+    */
 
     if (program == null) program = DEFAULT_PROGRAM;
-    textarea = new TextArea(program, 20, 48, 
-			    TextArea.SCROLLBARS_VERTICAL_ONLY );
+    textarea = new TextArea(program, 20, 60,
+			    TextArea.SCROLLBARS_VERTICAL_ONLY);
     textarea.setFont(PdeApplet.getFont("editor"));
     //right.add("Center", textarea);
-    add("Center", textarea);
+    rightPanel.add("Center", textarea);
+
+    Panel statusPanel = new Panel();
+    statusPanel.setLayout(new BorderLayout());
+
+    /*
+    PdeEditorLabel errorLabel = new PdeEditorLabel(1);
+    //errorLabel.setBackground(errorBgColor);
+    errorLabel.setBackground(statusBgColor);
+    errorLabel.setForeground(errorFgColor);
+    errorLabel.setText("Cannot find method \"bbackground(int)\"");
+    statusPanel.add("North", errorLabel);
+    */
+    status = new PdeEditorStatus(this);
+    statusPanel.add("North", status);    
+
+    PdeEditorLabel stdoutLabel = new PdeEditorLabel(2);
+    Color stdoutBgColor = new Color(26, 26, 26);
+    Color stdoutFgColor = new Color(153, 153, 153);
+    stdoutLabel.setBackground(stdoutBgColor);
+    stdoutLabel.setForeground(stdoutFgColor);
+    stdoutLabel.setFont(new Font("monospaced", Font.PLAIN, 11));
+    //stdoutLabel.setText("Test the print");
+    //stdoutLabel.setInsets(new Insets(4, 4, 4, 4));
+    statusPanel.add("South", stdoutLabel);
+
+    rightPanel.add("South", statusPanel);
+
+    add("Center", rightPanel);
 
     /*
     TextArea console = new TextArea("welcome to pr0[3551ng", 5, 48,
@@ -186,6 +229,112 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     } catch (Exception e) { }
     buttons.clear();
   }
+
+
+  /*
+  public void doOpen(Component comp, int compX, int compY) {
+    // first get users/top-level entries in sketchbook
+    try {
+      File sketchbookDir = new File("sketchbook");
+      String toplevel[] = sketchbookDir.list();
+
+      PopupMenu menu = new PopupMenu();
+
+      menu.add(NEW_SKETCH_ITEM);
+      menu.addSeparator();
+
+      // header knows what the current user is
+      for (int i = 0; i < toplevel; i++) {
+	if ((toplevel[i].equals(header.user)) ||
+	    (toplevel[i].equals(".")) ||
+	    (toplevel[i].equals(".."))) continue;
+
+	Menu submenu = new Menu(toplevel[i]);
+	File subdir = new File(sketchbookDir, toplevel[i]);
+
+	String path = subdir.getCanonicalPath();
+	submenu.addActionListener(new OpenMenuListener(this, path));
+	//submenu.addActionListener(new ActionAdapter() {
+	//});
+
+	String entries[] = subdir.list();
+	for (int j = 0; j < entries.length; j++) {
+	  if ((entries[j].equals(".")) || 
+	      (entries[j].equals(".."))) continue;
+	  submenu.add(entries[j]);
+	}
+
+	menu.add(submenu);
+      }
+      menu.addSeparator();
+
+      // this might trigger even if a submenu isn't selected, 
+      // but hopefully not
+      String mypath = path + File.separator + header.user;
+      menu.addActionListener(new OpenMenuListener(this, mypath));
+
+      String entries[] = new File(mypath).list();
+      for (int j = 0; j < entries.length; j++) {
+	if ((entries[j].equals(".")) || 
+	    (entries[j].equals(".."))) continue;
+	submenu.add(entries[j]);
+      }      
+
+      // show the feller and get psyched for a selection
+      menu.show(comp, compX, compY);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    buttons.clear();
+  }
+
+
+  public void handleNew() {
+    try {
+      // does all the plumbing to create a new project
+      // then calls handleOpen to load it up
+
+      File sketchDir = new File("sketchbook", header.user);
+      int index = 0;
+      File newguy = null;
+      while (new File(sketchDir, SKETCH_PREFIX_NAME + pad4(index)).exists()) {
+	index++;
+      }
+      String path = new File(sketchDir, 
+			     SKETCH_PREFIX_NAME + 
+			     pad4(index)).getCanonicalPath();
+      // mkdir for new project name
+      File newDir = new File(path);
+      newDir.mkdirs();
+
+      // make 'data' 'applet' dirs inside that
+      // actually, don't, that way can avoid too much extra mess
+
+      // make empty pde file
+      new FileOutputStream(new File(newDir, CODE_FILENAME));
+
+      // now open it up
+      handleOpen(path);
+
+    } catch (IOException e) {
+      // NEED TO DO SOME ERROR REPORTING HERE ***
+      e.printStackTrace();
+    }
+  }
+
+  static String pad4(int what) {
+    if (what < 10) return "000" + what;
+    else if (what < 100) return "00" + what;
+    else if (what < 1000) return "0" + what;
+    else return String.valueOf(what);
+  }
+
+
+  public void handleOpen(String path) {
+    System.out.println("gonna open " + path);
+  }
+  */
 
 
   public void doOpen() {
@@ -857,8 +1006,12 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     //dbcp.repaint(); // button should go back to 'play'
     //System.err.println(e.getMessage());
     //message("Problem: " + e.getMessage());
-    message(e.getMessage());
+
+    status.error(e.getMessage());
+    //message(e.getMessage());
+
     buttons.clearPlay();
+
     //showStatus(e.getMessage());
   }
 
@@ -874,14 +1027,41 @@ public class PdeEditor extends Panel implements PdeEnvironment {
 
 
   public void message(String msg) {  // part of PdeEnvironment
-    status.setText(msg);
+    //status.setText(msg);
+    //System.out.println("PdeEditor.message " + msg);
+    status.notice(msg);
   }
   
   
   public void messageClear(String msg) {
-    if (status.getText().equals(msg)) status.setText(EMPTY);
+    //if (status.getText().equals(msg)) status.setText(EMPTY);
+    //System.out.println("PdeEditor.messageClear " + msg);
+    status.unnotice(msg);
   }
 }
+
+
+/*
+class OpenMenuListener implements ActionListener {
+  PdeEditor editor;
+  String path;
+
+  public OpenMenuListener(PdeEditor editor, String path) {
+    this.editor = editor;
+    this.path = path;
+  }
+
+  public void actionPerformed(ActionEvent e) {
+    if (e.getActionCommand().equals(NEW_SKETCH_ITEM)) {
+      editor.handleNew();
+
+    } else {
+      editor.handleOpen(path + File.separator + e.getActionCommand());
+    }
+  }
+}
+*/
+
 
 #endif
 
