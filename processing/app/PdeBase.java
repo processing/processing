@@ -86,18 +86,19 @@ public class PdeBase implements ActionListener {
     MenuItem item;
 
     menu = new Menu("File");
-    menu.add(new MenuItem("New"));
+    menu.add(new MenuItem("New", new MenuShortcut('N')));
     Menu openMenu = new Menu("Open");
     rebuildSketchbookMenu(openMenu);
     menu.add(openMenu);
-    menu.add(new MenuItem("Save"));
-    menu.add(new MenuItem("Duplicate"));
-    menu.add(new MenuItem("Export"));
+    menu.add(new MenuItem("Save", new MenuShortcut('S')));
+    menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
+    menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
+    menu.add(new MenuItem("Export Application", new MenuShortcut('E', true)));
     menu.addSeparator();
-    menu.add(new MenuItem("Proce55ing.net"));
-    menu.add(new MenuItem("Reference"));
+    menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
+    menu.add(new MenuItem("Reference", new MenuShortcut('R')));
     menu.addSeparator();
-    menu.add(new MenuItem("Quit"));
+    menu.add(new MenuItem("Quit", new MenuShortcut('Q')));
     menu.addActionListener(this);
     menubar.add(menu);
 
@@ -116,11 +117,11 @@ public class PdeBase implements ActionListener {
     menubar.add(menu);
 
     menu = new Menu("Sketch");
-    menu.add(new MenuItem("Play"));
-    menu.add(new MenuItem("Present"));
+    menu.add(new MenuItem("Play", new MenuShortcut('P')));
+    menu.add(new MenuItem("Present", new MenuShortcut('P', true)));
     menu.add(new MenuItem("Stop"));
     menu.addSeparator();
-    menu.add(new MenuItem("Beautify"));    
+    menu.add(new MenuItem("Beautify", new MenuShortcut('B')));
     menu.addActionListener(this);
     menubar.add(menu);
 
@@ -141,6 +142,8 @@ public class PdeBase implements ActionListener {
     Insets insets = frame.getInsets();
     Toolkit tk = Toolkit.getDefaultToolkit();
     Dimension screen = tk.getScreenSize();
+
+    // THESE CAN BE REMOVED TO SOME EXTENT
     int frameX = getInteger("window.x", (screen.width - width) / 2);
     int frameY = getInteger("window.y", (screen.height - height) / 2);
 
@@ -152,10 +155,11 @@ public class PdeBase implements ActionListener {
 
     // i don't like this being here, but..
     //((PdeEditor)environment).graphics.frame = frame;
-    //((PdeEditor)environment).frame = frame;
-    editor.frame = frame;
+    //((PdeEditor)environment).frame = frame
+    frame.pack();  // maybe this should be before the setBounds call
 
-    frame.pack();
+    editor.frame = frame;  // no longer really used
+    editor.init();
     frame.show();  // added back in for pde
   }
 
