@@ -45,6 +45,11 @@ public class PdeSketchbook {
 
   JMenu menu;
   JMenu popup;
+
+  // set to true after the first time it's built.
+  // so that the errors while building don't show up again.
+  boolean builtOnce;
+
   //File sketchbookFolder;
   //String sketchbookPath;  // canonical path
 
@@ -133,6 +138,7 @@ public class PdeSketchbook {
       newbieName = fd.getFile();
       if (newbieName == null) return null;
 
+      newbieName = sanitizeName(newbieName);
       newbieDir = new File(newbieParentDir, newbieName);
 
     } else {
@@ -180,6 +186,53 @@ public class PdeSketchbook {
     //handleOpen(newbieName, newbieFile, newbieDir);
     //return newSketch;
     return newbieFile.getAbsolutePath();
+  }
+
+
+  /**
+   * Convert to sanitized name and alert the user 
+   * if changes were made.
+   */
+  static public String sanitizeName(String origName) {
+    String newName = sanitizedName(origName);
+
+    if (!newName.equals(origName)) {
+      PdeBase.showMessage("Naming issue",
+                          "The sketch name had to be modified.\n" +
+                          "You can only use basic letters and numbers\n" + 
+                          "to name a sketch (ascii only and no spaces,\n" +
+                          "and it can't start with a number)");
+    }
+    return newName;
+  }
+
+
+  /**
+   * Java classes are pretty limited about what you can use
+   * for their naming. This helper function replaces everything 
+   * but A-Z, a-z, and 0-9 with underscores. Also disallows
+   * starting the sketch name with a digit.
+   */
+  static public String sanitizedName(String origName) {
+    char c[] = origName.toCharArray();
+    StringBuffer buffer = new StringBuffer();
+
+    // can't lead with a digit, so start with an underscore
+    if ((c[0] >= '0') && (c[0] <= '9')) {
+      buffer.append('_');
+    }
+    for (int i = 0; i < c.length; i++) {
+      if (((c[i] >= '0') && (c[i] <= '9')) ||
+          ((c[i] >= 'a') && (c[i] <= 'z')) ||
+          ((c[i] >= 'A') && (c[i] <= 'Z'))) {
+        buffer.append(c[i]);
+
+      } else {
+        buffer.append('_');
+      }
+    }
+    //return buffer.toString();
+    return buffer.toString();
   }
 
 
@@ -249,14 +302,18 @@ public class PdeSketchbook {
       popup.add(item);
       popup.addSeparator();
 
-      addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+      // identical to below
       addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
-
-      menu.addSeparator();
       popup.addSeparator();
-
-      addSketches(menu, examplesFolder);
       addSketches(popup, examplesFolder);
+
+      // disable error messages while loading
+      builtOnce = true;
+
+      // identical to above
+      addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
+      menu.addSeparator();
+      addSketches(menu, examplesFolder);
 
     } catch (IOException e) {
       PdeBase.showWarning("Problem while building sketchbook menu",
@@ -308,7 +365,20 @@ public class PdeSketchbook {
 
       File subfolder = new File(folder, list[i]);
       File entry = new File(subfolder, list[i] + ".pde");
+      // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
+        String sanityCheck = sanitizedName(list[i]);
+        if (!sanityCheck.equals(list[i])) {
+          if (!builtOnce) {
+            String mess = 
+              "The sketch \"" + list[i] + "\" cannot be used.\n" +
+              "Sketch names must contain only basic letters and numbers.\n" + 
+              "(ascii only and no spaces, and it cannot start with a number)";
+            PdeBase.showMessage("Ignoring bad sketch name", mess);
+          }
+          continue;
+        }
+
         JMenuItem item = new JMenuItem(list[i]);
         item.addActionListener(listener);
         item.setActionCommand(entry.getAbsolutePath());
