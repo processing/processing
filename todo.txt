@@ -238,21 +238,27 @@ X find serial example from tom igoe, include with new examples
 X remove sketchbook -> libraries until it works
 X serial_setup.command is missing from osx distribution
 X   fix the note in the readme about it
+X properly import qtjava from processing.exe
 
-_ properly import qtjava from processing.exe
+_ fix the default network, camera, serial examples
 
 
 with casey
-_ figure out what to include for examples/libraries
+X figure out what to include for examples/libraries
 _ let's not call it 'expert', let's just say w/o java
 _ "draw" is not highlighted as a keyword.. other keywords?
 _   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
 _   PClient(), PClient.available(), PClient.read(), 
 _   PServer(), PServer.dispose(), PServer.write(), attach(), length
+_ sketches no longer require a "data" folder
 
 
 ......................................................................
 
+
+_ run library destroy after hitting 'stop'
+_   quicktime audio doesn't stop after hitting 'stop'
+_   weirdness external stop not calling stop(), just finished = true
 
 _ properly handle non-ascii chars in p5 folder name
 _   or at least warn the user to install somehwere else
