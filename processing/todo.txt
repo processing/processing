@@ -5,6 +5,11 @@ _ should we use jdk 1.3 or msft vm?
 
 
 BAGEL / high
+_ box is not filling properly
+_   if fill(), need to draw several non-stroked planes
+_   if stroke(), then draw single lines for each edge
+_     do not duplicate edges for lines
+_ also problem filling on beginShape() triangle stuff
 
 
 BAGEL / high & time consuming
@@ -91,11 +96,9 @@ _ serial.messageReceived extra long crap in demo.pde (clean up?)
 _ NullPointerException on startup in pde editor buttons
 _   shows up on slower machines, probably images not loaded yet
 _ int version of min and abs
-_ fix bugs from the 'bugs' file
-_   then remove the file from cvs
 _ draw mode needs to be better for workshops
 _   make size() work for draw() mode
-_     inside KjcEngine, reach in and grab calls to 'size'
+_     inside Engine, reach in and grab calls to 'size'
 _     if call is not using a constant number, then punt
 _ lines being highlighted for errors are off
 _ use a vm that won't destroy the screen like sun/ibm does
@@ -365,6 +368,8 @@ _   i.e. are line and point working in 3D?
 
 
 0020
+o fix bugs from the 'bugs' file
+o   then remove the file from cvs
 
 
 (first semi-public release)
