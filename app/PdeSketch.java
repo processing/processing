@@ -1063,7 +1063,8 @@ public class PdeSketch {
       //System.out.println("primary class " + primaryClassName);
 
       // check if the 'main' file is in java mode
-      if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
+      if ((PdePreprocessor.programType == PdePreprocessor.JAVA) || 
+          (preprocessor.extraImports.length != 0)) {
         externalRuntime = true; // we in advanced mode now, boy
       }
 

@@ -41,10 +41,10 @@ import com.apple.mrj.*;
 public class PdeSketchbook {
   PdeEditor editor;
 
-  JMenu popup;
-  JMenu menu;
-  JMenu examples;
-  JMenu addlib;
+  JMenu openMenu;
+  JMenu popupMenu;
+  //JMenu examples;
+  JMenu importMenu;
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
@@ -112,9 +112,14 @@ public class PdeSketchbook {
 
       if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
     }
-    menu = new JMenu("Sketchbook");
-    popup = new JMenu("Sketchbook");
-    addlib = new JMenu("Import Library");
+    openMenu = new JMenu("Sketchbook");
+    popupMenu = new JMenu("Sketchbook");
+    importMenu = new JMenu("Import Library");
+  }
+
+
+  static public String getSketchbookPath() {
+    return PdePreferences.get("sketchbook.path");
   }
 
 
@@ -149,7 +154,7 @@ public class PdeSketchbook {
                                      //"Create new sketch named", 
                                      "Create sketch folder named:", 
                                      FileDialog.SAVE);
-      fd.setDirectory(PdePreferences.get("sketchbook.path"));
+      fd.setDirectory(getSketchbookPath());
       fd.show();
 
       String newbieParentDir = fd.getDirectory();
@@ -161,7 +166,7 @@ public class PdeSketchbook {
 
     } else {
       // use a generic name like sketch_031008a, the date plus a char
-      String newbieParentDir = PdePreferences.get("sketchbook.path");
+      String newbieParentDir = getSketchbookPath();
 
       int index = 0;
       SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
@@ -201,7 +206,7 @@ public class PdeSketchbook {
     }
 
     // make a note of a newly added sketch in the sketchbook menu
-    rebuildMenu();
+    rebuildMenus();
 
     // now open it up
     //handleOpen(newbieName, newbieFile, newbieDir);
@@ -263,11 +268,8 @@ public class PdeSketchbook {
     FileDialog fd = new FileDialog(editor, //new Frame(), 
                                    "Open a Processing sketch...", 
                                    FileDialog.LOAD);
-    //if (handleOpenDirectory == null) {
-    //  handleOpenDirectory = PdePreferences.get("sketchbook.path");
-    //}
-    //fd.setDirectory(handleOpenDirectory);
-    fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    //fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    fd.setDirectory(getSketchbookPath());
 
     // only show .pde files as eligible bachelors
     // TODO this doesn't seem to ever be used. AWESOME.
@@ -296,16 +298,6 @@ public class PdeSketchbook {
   }
 
 
-  public JPopupMenu getPopupMenu() {
-    return popup.getPopupMenu();
-  }
-
-
-  public JMenu getAddLibraryMenu() {
-    return addlib;
-  }
-
-
   /**
    * Rebuild the menu full of sketches based on the 
    * contents of the sketchbook. 
@@ -314,62 +306,20 @@ public class PdeSketchbook {
    * because it seems that after calling "getPopupMenu" 
    * the menu will disappear from its original location.
    */
-  public JMenu rebuildMenu() {
+  public void rebuildMenus() {
     try {
-      // rebuild the popup menu
-      popup.removeAll();
-
-      JMenuItem item = new JMenuItem("Open...");
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            editor.handleOpen(null);
-          }
-        });
-      popup.add(item);
-      popup.addSeparator();
-
-      boolean sketches = 
-        addSketches(popup, new File(PdePreferences.get("sketchbook.path")));
-      if (sketches) popup.addSeparator();
-      JMenu ex = new JMenu("Examples");
-      addSketches(ex, examplesFolder);
-      popup.add(ex);
-      if (PdePreferences.getBoolean("export.library")) {
-        JMenu m = new JMenu("Libraries");
-        addSketches(m, librariesFolder);
-        popup.add(m);
-      }
-
-      // disable error messages while loading
-      builtOnce = true;
-
-
-      // rebuild the open menu
-      menu.removeAll();
-
-      /*
-      if (sketches) {
-        addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
-        menu.addSeparator();
-      }
-      examples = new JMenu("Examples");
-      addSketches(examples, examplesFolder);
-      menu.add(examples);
-      */
-      if (sketches) {
-        addSketches(menu, new File(PdePreferences.get("sketchbook.path")));
-      }
-      examples = new JMenu("Examples");
-      addSketches(examples, examplesFolder);
-      //menu.add(examples);
+      // rebuild file/open and the toolbar popup menus
+      buildMenu(openMenu);
+      builtOnce = true;  // disable error messages while loading
+      buildMenu(popupMenu);
 
       // rebuild the "import library" menu
-      addlib.removeAll();
+      importMenu.removeAll();
       librariesClassPath = "";
-      boolean libs = 
-        addLibraries(addlib, new File(PdePreferences.get("sketchbook.path")));
-      if (libs) addlib.addSeparator();
-      addLibraries(addlib, librariesFolder);
+      if (addLibraries(importMenu, new File(getSketchbookPath()))) {
+        importMenu.addSeparator();
+      }
+      addLibraries(importMenu, librariesFolder);
       //System.out.println("libraries cp is now " + librariesClassPath);
 
     } catch (IOException e) {
@@ -378,12 +328,67 @@ public class PdeSketchbook {
                           "sketchbook menu. Things might get a little\n" +
                           "kooky around here.", e);
     }
-    return menu;
   }
 
 
-  protected JMenu getExamplesMenu() {
-    return examples;
+  public void buildMenu(JMenu menu) {
+    JMenuItem item;
+
+    // rebuild the popup menu
+    menu.removeAll();
+
+    item = new JMenuItem("Open...");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.handleOpen(null);
+        }
+      });
+    menu.add(item);
+    menu.addSeparator();
+
+    try {
+      boolean sketches = 
+        addSketches(menu, new File(getSketchbookPath()));
+      if (sketches) menu.addSeparator();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      JMenu examplesMenu = new JMenu("Examples");
+      addSketches(examplesMenu, examplesFolder);
+      menu.add(examplesMenu);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      if (PdePreferences.getBoolean("export.library")) {
+        JMenu librariesMenu = new JMenu("Libraries");
+        addSketches(librariesMenu, librariesFolder);
+        menu.add(librariesMenu);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+
+  public JMenu getOpenMenu() {
+    if (openMenu == null) rebuildMenus();
+    return openMenu;
+  }
+
+
+  public JPopupMenu getPopupMenu() {
+    if (popupMenu == null) rebuildMenus();
+    return popupMenu.getPopupMenu();
+  }
+
+
+  public JMenu getImportMenu() {
+    return importMenu;
   }
 
 
@@ -551,7 +556,7 @@ public class PdeSketchbook {
   public void clean() {
     //if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
 
-    File sketchbookFolder = new File(PdePreferences.get("sketchbook.path"));
+    File sketchbookFolder = new File(getSketchbookPath());
     if (!sketchbookFolder.exists()) return;
 
     //String entries[] = new File(userPath).list();
