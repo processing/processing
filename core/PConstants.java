@@ -221,14 +221,27 @@ public interface PConstants {
   // if people need more esoteric keys, they can learn about
   // the esoteric java KeyEvent api and of virtual keys
 
-  static final int UP      = KeyEvent.VK_UP;
-  static final int DOWN    = KeyEvent.VK_DOWN;
-  static final int LEFT    = KeyEvent.VK_LEFT;
-  static final int RIGHT   = KeyEvent.VK_RIGHT;
+  // both key and keyCode will equal these values
+  static final int BACKSPACE = 8;
+  static final int TAB       = 9;
+  static final int ENTER     = 10;
+  static final int RETURN    = 13;
+  static final int ESC       = 27;
+  static final int DELETE    = 127;
 
-  static final int ALT     = KeyEvent.VK_ALT;
-  static final int CONTROL = KeyEvent.VK_CONTROL;
-  static final int SHIFT   = KeyEvent.VK_SHIFT;
+  // i.e. if ((key == CODED) && (keyCode == UP))
+  static final int CODED     = 0xffff;
+
+  // key will be CODED and keyCode will be this value
+  static final int UP        = KeyEvent.VK_UP;
+  static final int DOWN      = KeyEvent.VK_DOWN;
+  static final int LEFT      = KeyEvent.VK_LEFT;
+  static final int RIGHT     = KeyEvent.VK_RIGHT;
+
+  // key will be CODED and keyCode will be this value
+  static final int ALT       = KeyEvent.VK_ALT;
+  static final int CONTROL   = KeyEvent.VK_CONTROL;
+  static final int SHIFT     = KeyEvent.VK_SHIFT;
 
 
   // cursor types
