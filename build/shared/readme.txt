@@ -48,6 +48,10 @@ numbers for the release. we're calling revision "0043" the first
 be used by early adopters". later revisions (like this one) will
 simply be numbered.
 
+the numbered releases aren't heavily tested, so don't be surprised
+if/when something breaks.. just report the problem and go back to the
+previous numbered release until there's a fix.
+
 there will be a few more numbered releases leading up to a beta
 release. beta means that all the features are in, but not all the bugs
 are out. there are several known issues with the alpha release (thin
