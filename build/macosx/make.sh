@@ -1,6 +1,26 @@
 #!/bin/sh
 
 
+### -- CHECK TO MAKE SURE BAGEL EXISTS -------------------------
+
+# move to base 'processing' directory
+cd ../..
+
+# make sure bagel exists, if not, check it out of cvs
+if test -d bagel
+then 
+  echo
+else
+  echo Doing CVS checkout of bagel...
+  cvs co bagel
+  cd bagel
+  cvs update -P
+  cd ..
+fi
+
+cd build/macosx
+
+
 ### -- SETUP WORK DIR -------------------------------------------
 
 if test -d work 
@@ -56,23 +76,12 @@ fi
 
 ### -- START BUILDING -------------------------------------------
 
-# move to 'app' directory
+# move to root 'processing' directory
 cd ../..
 
 
 ### -- BUILD BAGEL ----------------------------------------------
 
-# make sure bagel exists, if not, check it out of cvs
-if test -d bagel
-then 
-  echo
-else
-  echo Doing CVS checkout of bagel...
-  cvs co bagel
-  cd bagel
-  cvs update -P
-  cd ..
-fi
 cd bagel
 
 # old comm.jar
