@@ -35,6 +35,7 @@ public class PdeCode {
   //PdeHistory history;  // TODO add history information
 
   String preprocName;  // name of .java file after preproc
+  int lineOffset;  // where this code starts relative to the concat'd code
 
 
   public PdeCode(String name, File file, int flavor) {
