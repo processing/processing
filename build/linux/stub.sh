@@ -6,7 +6,8 @@ export CLASSPATH
 # put the directory where this file lives in the front of the path, because
 # that directory also contains jikes, which we will need at runtime.
 #
-PATH=`pwd`/`dirname $0`:${PATH}
+PATH=`pwd`/`dirname $0`:`pwd`/java/bin:${PATH}
 export PATH
- 
-exec java/bin/java PdeBase
+
+#exec java/bin/java PdeBase
+java PdeBase
