@@ -21,6 +21,12 @@ X     and also more open to being resized when not in applet mode
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062482781;start=0
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062482895;start=0
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062483060;start=0
+X if there's a bug in bagel, PdeRuntime.message() ignores it
+X   just says "NullPointerException" but provides no info
+X   now at least spews the exception 
+X removed ugly white borders from ui on macosx java 1.3
+X   is there anything better that can be done for osx java 1.3
+X   setInsets() to zero or something?
 
 fixes because of dmose parser
 X move to antlr
@@ -40,51 +46,69 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X weird comments bug (// on last line causes oro trouble)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
 
-in progress
+api changes in progress
 _ color(x, y, z) has become swatch(x, y, z) 
 _   because of conflicts with the new parser
+_ textureImage() -> texture()
+_ textureMode() IMAGE_SPACE or NORMAL_SPACE
+_ vertexNormal() -> normal();
+_ vertexTexture -> vertex(... u, v);
+_ bezier(... t) -> bezierPoint() 
+_ curve(... t) -> curvePoint()
+_ setFont -> textFont(font) or textFont(font, size)
+_ textSize(size), textLeading(leading)
+_ BFont.charWidth, BFont.stringWidth -> BFont.width()
+_ BFont.drawChar, BFont.drawString -> BFont.text()
 
 
-the big stuff:
+_ textMode alignments
+_ need bezierTangent() code
 
-NEW PARSER
 
-API MODS: tint/size/background/lights
+..
+.. the big stuff:
+.. 
+
+API MODS: tint/size/background/lights/toxi imaging mods
+
 
 LOADING CODE FROM CLASSES DIR
 
+
 "JAVA MODE" (VIA EXTERNAL VM?)
+
 
 API NAMING
 
-.. 
 
-the slipping stuff:
+NEW PARSER
+dm _ unexpected token 'void' in letters sketch.. 
+dm _   being parsed as static mode app
 
-new code from sami/carlos
+
+..
+.. the slipping stuff:
+..
+
+NEW GRAPHICS
+_ stroke not set on flat_rect
+_ when drawing fonts w/ sami's code, left edge has problem
+_   8-bit (alpha) textures not blending 
+_ near-plane clipping currently disabled for triangles, enabled for lines
+_   (but culling offscreen triangles works.. but may have been
+_   commented out by carlos)
+_ sphere code needs only front face polygon 
+_   all triangles must be counter-clockwise (front-facing)
 
 FONT SUCKAGE
 
+
 ..
 
-_ Be able to draw something inside setup (?)
-_   at the end of setup: BImage bg = copy(); loop() { background(bg); }
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
 
-_ if there's a bug in bagel, PdeRuntime.message() ignores it
-_   just says "NullPointerException" but provides no info
-
-_ is draw() mode broken?
-
-_ draw mode issues.. size and background must be int/float constants
-_   might be a better 'mode' for bagel so bkg and size cmds work
-_   rather than app being enclosed in beginFrame/endFrame loop
-
-X modify background() to actually clear the screen
-_   modify readme.txt regarding background() requiring constants
-
-_ remove notes from reference about size/background
-_ remove notes from readme about size/background
+X when exporting applet, line numbers will be off.. 
+_   when not exporting with new preproc code, imports all on same line
+_   make preproc keep track of how many lines were added
 
 _ if size() not found in export/compile, ask the user
 _   size(myWidth, myHeight) -> set static var in BGraphics
@@ -92,13 +116,23 @@ _     for the last size that was used, use as default when
 _ setup (200, 200) causes the default size to be used 
 _   need to use oro matcher when trying to grab the applet size (export?)
 
-..
-
 _ check what other functions require BGraphics to exist but shouldn't
-_   color has to be called inside or after setup
-_   loadImage must be used inside or after setup
-_     either document this and/or provide a better error message
-_     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+_ color has to be called inside or after setup
+_ loadImage must be used inside or after setup
+_   either document this and/or provide a better error message
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+
+_ be able to draw something inside setup (?)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+
+_ draw mode issues.. size and background must be int/float constants
+_   might be a better 'mode' for bagel so bkg and size cmds work
+_   rather than app being enclosed in beginFrame/endFrame loop
+
+X modify background() to actually clear the screen
+_   modify readme.txt regarding background() requiring constants
+_ remove notes from reference about size/background
+_ remove notes from readme about size/background
 
 _ fix the problem causing all the "couldn't delete" messages
 
@@ -118,13 +152,17 @@ _   inherits all image manipulation and image use methods
 
 _ no time to ask for "save changes" before quit
 _   PdeEditor, around line 910.. not blocking until input 
+_   read up on how to properly block for input in a java app
 
 X when exporting applet, line numbers will be off.. 
 _   when not exporting with new preproc code, imports all on same line
 _   make preproc keep track of how many lines were added
 
-_ modify antlr stuff to conditionally recompile in make.sh
-_   only recompile if asked or if changes
+o modify antlr stuff to conditionally recompile in make.sh
+_   compile antlr inside the initial setup of the work dir
+X     done for macosx
+_     fix this for windows and linux
+o   only recompile if asked or if changes
 
 internal structural stuff
 _ add constants for building NET, move stuff around in bagel dir
@@ -211,6 +249,8 @@ b _ saveBytes not in proper dir is annoying
 
 b _ modify build instructions for the many changes
 b _   i.e. buzz.pl requires jdk13+ set for JDK13 flag, used by p5
+b _   usually need to remove the 'work' dir
+
 b _ better 1.3/1.4 support.. properly detect vm
 b _   use when deciding which classes to import
 b _ set a better ctrl-key for reference (anything but 'F')
@@ -521,6 +561,8 @@ BAGEL / Rendering
    b _   lists of names of objects, or the 'line number' buffer
    b _   but how to determine *where* on object the hit occurs
 
+   1 _ toxi ellipses don't adapt for larger sizes
+
 ca b _ lines
 ca b X   rewrite line and stroke code, it's a buggy mess
 ca b X     lines become 2 pixels thick after a 3D transform 
@@ -823,6 +865,7 @@ dh 1 _ size() has memory limitations (pitaru)
 dh 1 _   catch OutOfMemoryError inside size() and let the user know
 dh 1 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
 dh 1 _ verify editor buttons working properly
+   1 _   they're not.. mostly unresponsive, and often get stuck
 dh 1 _   is play button properly unhighlighting? 
 dh 1 _     does it unhighlight after compile or runtime errors?
 dh 1 _     also when using draw() instead of loop()
@@ -996,6 +1039,9 @@ b _ splash screen
 DISTRIBUTION / Mac OS X
 1 _ set file type/creator for .pde files of examples
 1 _ would be nice to have macosx packaged up as a single .app file
+1 _ is there a way to set the color of the Frame growbox?
+1 _   currently it's white instead of dark gray like the ui
+1 _   setBackground(Color) didn't seem to help inside PdeBase.<init>
 
 
 DISTRIBUTION / Mac OS 9
