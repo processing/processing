@@ -27,6 +27,12 @@ import java.awt.*; // for window
 import java.awt.event.*; // also for window
 import java.io.*;
 
+#ifndef RXTX
+import javax.comm.*;
+#else
+import gnu.io.*;
+#endif
+
 
 public class PdeRuntime implements PdeMessageConsumer {
 
@@ -83,7 +89,7 @@ public class PdeRuntime implements PdeMessageConsumer {
         applet.serialProperties(PdeBase.properties);
         applet.init();
         if (applet.exception != null) {
-          if (applet.exception instanceof javax.comm.PortInUseException) {
+          if (applet.exception instanceof PortInUseException) {
             throw new PdeException("Another program is already " +
                                    "using the serial port.");
           } else {
