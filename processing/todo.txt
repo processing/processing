@@ -23,12 +23,11 @@ o background() not working
 X   checked but couldn't duplicate
 X change editorlistener properties to use underscores
 X imageMode() was gone.. now replaced
-
-_ collapse pdeengine/pderunner/kjcengine
-_   remove 'extends' from kjcengine, make an instance of Main
-_     may need to subclass at.dms.kjc.Main to override the exit()
-_   make pdeengine a class
-_   remove pderunner, collapse into pdeengine
+X collapse pdeengine/pderunner/kjcengine
+X   remove 'extends' from kjcengine, make an instance of Main
+X     may need to subclass at.dms.kjc.Main to override the exit()
+X   make pdeengine a class
+X   remove pderunner, collapse into pdeengine
 
 _ save window position (only during session) of sketch run window
 _ present mode should hide editor frame

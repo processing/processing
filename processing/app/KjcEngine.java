@@ -16,7 +16,7 @@ import com.oroinc.text.regex.*;
 // doesn't really need to extend kjc.Main anymore, 
 // since reportTrouble doesn't actually do any good
 
-public class KjcEngine implements PdeEngine {
+public class KjcEngine extends PdeEngine {
   static String TEMP_CLASS = "Temporary";
   static final String EXTENDS = "extends BApplet ";
   static final String EXTENDS_KJC = "extends KjcApplet ";
@@ -39,7 +39,7 @@ public class KjcEngine implements PdeEngine {
   KjcMessageStream messageStream;
 
   String program;
-  PdeEditor editor;
+  //PdeEditor editor;
   String buildPath;
 
   boolean running;
@@ -52,12 +52,15 @@ public class KjcEngine implements PdeEngine {
   boolean usingExternal;
 
 
-  public KjcEngine(String program, String buildPath, 
-		   String dataPath, PdeEditor editor) {
+  public KjcEngine(PdeEditor editor, 
+		   String program, String buildPath, 
+		   String dataPath) {
+    super(editor);
+
     this.program = program;
     this.buildPath = buildPath;
     //this.buildPath = "lib" + File.separator + "build";
-    this.editor = editor;
+    //this.editor = editor;
     
     // only run cleanup if using the applications temp dir
     //if (buildPath.endsWith("build")) cleanup();
@@ -561,7 +564,7 @@ public class KjcEngine implements PdeEngine {
   }
 
 
-  public void start() throws PdeException {
+  public void start() throws PdeException {  // part of PdeEngine
     int numero1 = (int) (Math.random() * 10000);
     int numero2 = (int) (Math.random() * 10000);
     tempClass = TEMP_CLASS + "_" + numero1 + "_" + numero2;
@@ -820,7 +823,12 @@ public class KjcEngine implements PdeEngine {
   }
 
 
-  public void cleanup() {
+  public void front() {  // part of PdeEngine
+    window.toFront();
+  }
+
+
+  protected void cleanup() {
     File buildDir = new File(buildPath);
     if (!buildDir.exists()) buildDir.mkdirs();
 
@@ -854,7 +862,8 @@ public class KjcEngine implements PdeEngine {
   }
 
 
-  public void stop() {
+  public void stop() {  // part of PdeEngine
+    //System.out.println("PdeEngine.stop");
     running = false;
 
     //System.out.println();
@@ -901,7 +910,7 @@ public class KjcEngine implements PdeEngine {
   }
 
 
-  public void close() {
+  public void close() {  // part of PdeEngine
     //if (window != null) window.hide();
     if (window != null) {
       //System.err.println("disposing window");
@@ -911,9 +920,9 @@ public class KjcEngine implements PdeEngine {
   }
 
 
-  public void inform(String message) { 
-    System.out.println("informing: " + message);
-  }
+  //public void inform(String message) { 
+  //System.out.println("informing: " + message);
+  //}
 }
 
 

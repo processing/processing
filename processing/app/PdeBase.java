@@ -400,11 +400,13 @@ public class PdeBase implements ActionListener {
 
 
   // does this do anything useful?
+  /*
   public void destroy() {
     if (editor != null) {
       editor.terminate();
     }
   }
+  */
 
   /*
   public void paint(Graphics g) {
