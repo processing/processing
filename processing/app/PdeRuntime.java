@@ -37,7 +37,6 @@ import gnu.io.*;
 
 public class PdeRuntime implements PdeMessageConsumer {
 
-  Process process;
   BApplet applet;
   PdeException exception;
   Window window;
@@ -48,6 +47,8 @@ public class PdeRuntime implements PdeMessageConsumer {
   boolean newMessage;
   int messageLineCount;
 
+  Process process;
+  OutputStream processOutput;
   boolean externalRuntime;
   String externalPaths;
 
@@ -85,13 +86,14 @@ public class PdeRuntime implements PdeMessageConsumer {
           "-cp",
           externalPaths,
           "BApplet",
-          "--location=" + x1 + "," + y1,
+          "--external=" + x1 + "," + y1,
           className
         };
 
         process = Runtime.getRuntime().exec(command);
         new PdeMessageSiphon(process.getInputStream(), this);
         new PdeMessageSiphon(process.getErrorStream(), this);
+        processOutput = process.getOutputStream();
 
       } else {
         Class c = Class.forName(className);
@@ -305,23 +307,33 @@ public class PdeRuntime implements PdeMessageConsumer {
 
   public void stop() {
     //System.out.println();
-    //System.out.println("* stopping");
+    //System.out.println("PdeRuntime.stop()");
 
     // check for null in case stop is called during compilation
-    if (applet != null) applet.stop();
-    //if (window != null) window.hide();
+    if (applet != null) {
+      applet.stop();
+      //if (window != null) window.hide();
 
-    // above avoids NullPointerExceptions 
-    // but still threading is too complex, and so
-    // some boogers are being left behind
+      // above avoids NullPointerExceptions 
+      // but still threading is too complex, and so
+      // some boogers are being left behind
 
-    applet = null;
-    //window = null;
+      applet = null;
+      //window = null;
 
-    if (process != null) {  // running externally
+    } else if (process != null) {  // running externally
       //System.out.println("killing external process");
-      process.destroy();
-      process = null;
+
+      try {
+        //System.out.println("writing to stop process");
+        processOutput.write('s');
+        processOutput.flush();
+
+      } catch (IOException e) {
+        System.err.println("error stopping external applet");
+        e.printStackTrace();
+        close();
+      }
 
       /*
       try {
@@ -349,10 +361,27 @@ public class PdeRuntime implements PdeMessageConsumer {
       window.dispose();
       window = null;
     }
+
+    if (process != null) {
+      try {
+        process.destroy();
+      } catch (Exception e) {
+        System.err.println("(ignored) error while destroying");
+        e.printStackTrace();
+      }
+      process = null;
+    }
   }
 
 
   public void message(String s) {
+    if (s.indexOf(BApplet.EXTERNAL_QUIT) == 0) {
+      //close();
+      System.out.println("got proper quit message");
+      editor.doClose();
+      return;
+    }
+
     //System.err.println("message " + s.length() + ":" + s);
     if (s.length() > 2) System.err.println(s);
 
