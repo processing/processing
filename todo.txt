@@ -98,6 +98,7 @@ X export is badly broken, fix it.. file names were backwards
 X if 'applet.html' is in sketch folder, use that as the template
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1083935144
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082124454;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1074240197;start=0
 X get the console working again
 X   appendText is disabled due to NullPointerEx on startup
 X empty the console when a new sketch is opened
@@ -187,16 +188,14 @@ o   after using the popup menu once, it stops working
 X jikes errors are missing newline/linefeed ?
 o using run-expert.bat on 62 causes NullPointerException weirdness (?)
 
-_ bring this up for discussion on the board
-_   will splitting actually help.. can jars come from multiple places?
-_ add .java to file name in the tab
+040707 wednesday morning and early afternoon
+X bring this up for discussion on the board
+X   will splitting actually help.. can jars come from multiple places?
+X spend a bunch of time tracking down more issues on the board
+X add .java to file name in the tab
+
+_ api name changes for imaging functions
 _ change name of prefs to Processing Preferences.txt
-_ implement horizontal version of PdeEditorButtons
-o   is PdeEditorHeader one pixel too tall?
-_ write export-to-application
-_ write export-to-library
-_   need to be able to produce the serial, video, etc libs
-_   see if sonia project can compile
 _ put bagel into its own package
 _   processing.app -> PdeBase, PdeEditor..
 _   processing.core -> PApplet, PGraphics, PLine, PTriangle, PPolygon
@@ -208,6 +207,16 @@ _   otherwise old prefs and new p5 will cause trouble
 _ api for file-based renderers
 _   size(0, 0) and then ai.size(10000, 20000)
 _   saveFrame(PRenderer) or saveFrame("name", PRenderer)
+_ make dynamically loaded plugins and "tools" menu
+_   break out beautify as its own plugin
+
+_ write export-to-application
+_ write export-to-library
+_   need to be able to produce the serial, video, etc libs
+_   see if sonia project can compile
+_ implement horizontal version of PdeEditorButtons
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076707944
+o   is PdeEditorHeader one pixel too tall?
 
 medium
 _ menu option for Renderer > to "Core" or "OpenGL"
@@ -233,6 +242,7 @@ _   what to do about anti-aliasing.. oversample 2x?
 
 waiting
 _ don't force everything into a single .jar on export
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
 _ need showError/Message/Warning design from casey
 _   then implement new design (with exception trace)
 
@@ -252,6 +262,7 @@ _ texture mapping bugs in graphics engine
 1 _   java3d classes for vec3f and matrix
 
 2 _ comments -> embedding in applet text? (ala javadoc)
+2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1076967353
 2 _   would this help casey with the examples?
 2 _ physics library
 2 _   look at the 'havoc' physics library
@@ -389,6 +400,7 @@ _ only first 20 entries visible?
 _ get code from revisionist in there
 _ zlib file becoming corrupt (not flushed after close?)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
 
 
 licensing
@@ -541,6 +553,8 @@ PDE / Details
    1 _   ignores colons for case statements
    1 _   need to tie this to the parser instead
    1 _ do a better job of maintaining cursor during beautify 
+   1 _ only beautify a particular section of code
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
    1 _ find/replace
    1 _   add support for hitting 'ESC'
