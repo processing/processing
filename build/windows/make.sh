@@ -25,9 +25,9 @@ else
   unzip -q reference.zip
   # necessary for launching reference from shell/command prompt
   # which is done internally to view reference
-  chmod +x reference/*.html
+  #chmod +x reference/*.html
   # needed by 'help' menu
-  chmod +x reference/environment/*.html
+  #chmod +x reference/environment/*.html
   # chmod -R +x *.html doesn't seem to work
 
   rm reference.zip
@@ -38,8 +38,8 @@ else
   # cygwin requires this because of unknown weirdness
   # it was not formerly this anal retentive
   cd work/java/bin/
-  chmod +x *.exe *.dll 
-  chmod +x client/*.dll
+  #chmod +x *.exe *.dll 
+  #chmod +x client/*.dll
   cd ../../..
 
   mkdir work/lib/build
@@ -52,7 +52,12 @@ else
 
   # get jikes and depedencies
   cp dist/jikes.exe work/
-  chmod +x work/jikes.exe
+  #chmod +x work/jikes.exe
+
+  # chmod +x the crew
+  find work -name "*.dll" -exec chmod +x {} ';'
+  find work -name "*.exe" -exec chmod +x {} ';'
+  find work -name "*.html" -exec chmod +x {} ';'
 fi
 
 cd ../..
