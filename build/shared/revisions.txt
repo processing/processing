@@ -4,6 +4,15 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0054 - 11 april 2003
+
+[ ok, so 53 was a bit of a dog ]
+
+- fixed problem with web colors being broken
+
+- turned off error message spew
+
+
 ABOUT REV 0053 - 4 april 2003
 
 [ major bug fixes ]
