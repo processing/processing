@@ -1,6 +1,7 @@
 0045
 X no more CVS and .cvsignore entries in sketchbook menu
 X only put things in the menu if in proper structure
+X TWO_CORNERS -> CORNERS
 
 
 bagel
