@@ -26,6 +26,9 @@ X   switch to PImage, PApplet, etc
 X bug in BImage.smooth() when resizing an image
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077669847
 X shut off the automatic gunzipping of streams, keep for fonts
+X fix for duplicated points in polygons that foiled the tesselator
+X cleaned up texture() code between NEW/OLD graphics
+X   not quite so much duplicated in cases etc.
 
 
 cleaning up

@@ -1,6 +1,9 @@
 0070 pde
 X run java mode when large 'data' folder is in use
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
+X fixed one bug in PdeRuntime error message stuff 
+X   was this the big one? a big one?
+
 
 _ line fade out gradient bug.. is this an easy fix?
 
