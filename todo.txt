@@ -1,9 +1,14 @@
 0053
 X add smooth() noSmooth() to the keywords
 X image of 256x256 doesn't draw the last line of pixels
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
 X weird line in showing in the center of an image
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
+
+_ color() should work for alpha.. 
+_   also #aarrggbb
+
+_ crap, something i'm forgetting
 
 _ smooth images drawing strangely (missing first line of pixels)
 _   also smoothed even if not distorted
