@@ -1,6 +1,6 @@
 PROCE55ING DEVELOPMENT ENVIRONMENT
 
-RELEASE 0052 - 5 MARCH 2003
+RELEASE 0052 - 4 APRIL 2003
 
 (c) 2001-03 Massachusetts Institute of Technology 
 and Interaction Design Institute Ivrea
@@ -11,9 +11,13 @@ and Interaction Design Institute Ivrea
 
 RELEASE NOTES & DEVELOPER SOAPBOX
 
-herein follows lots of random notes about this release. you'll have to
-pardon the chatty detail in some spots, as this will also serve as a
-response to many of the 'frequently asked questions' that we have. 
+herein follows lots of random notes about the alpha releases of
+processing. more up-to-date details can be found in "revisions.txt"
+which has notes about individual releases.
+
+you'll have to pardon the chatty detail in some spots, as this will
+also serve as a response to many of the 'frequently asked questions'
+that we have.  
 
 if you've already read all this crap for a previous release, you might
 skip to the section on the various platforms to see what's been
