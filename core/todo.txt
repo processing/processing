@@ -4,17 +4,14 @@ X make cursor() commands public
 X ltext and rtext for screen space stuff
 X ltext is broken when it goes y < 0 or y > height
 X ltext & rtext completely working
-
-_ make sure font creator is making fonts properly fixed width
-_   probably not using java charwidth for the char's width
-
-_ now that it's actually a key, should it be a char? (what's keyChar?)
-_   that way println(c) would work a little better..
+X make sure font creator is making fonts properly fixed width
+X   probably not using java charwidth for the char's width
+X   probably wasn't using textFont() properly
+X now that it's actually a key, should it be a char? (what's keyChar?)
+X   that way println(c) would work a little better..
+X libraryCalls() not properly working for pre, post, or draw()
 
 _ y2 position of rectangles not same as y2 position of lines
-
-_ write PApplet2, a full screen version of PApplet
-_   this might be used for presentation mode
 
 text fixes
 _ make text rect use rectMode for placement
@@ -44,6 +41,9 @@ _   and the illustrator stuff
 _ 404 error because first searches applet directory on zipdecode
 _ image(String name) and textFont(String name)
 
+_ write PApplet2, a full screen version of PApplet
+_   this might be used for presentation mode
+
 _ before graphics engine change, attach jogl stuff?
 _ massive graphics engine changes
 _   explicitly state depth()/nodepth()
@@ -51,8 +51,6 @@ _   move to new graphics engine
 _     test with rgb cube, shut off smoothing
 _   make sure line artifacts are because of smoothing
 _   implement 2x oversampling for anti-aliasing
-
-_ make PApplet2 that handles full screen 1.4 mode drawing
 
 _ api for file-based renderers
 _   need to work this out since it will affect other api changes
