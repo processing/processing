@@ -41,21 +41,21 @@ public class PLine implements PConstants
   static final int R_THICK   = 0x4;
   static final int R_SMOOTH  = 0x10;
 
-  private int     SCREEN_WIDTH;
-  private int     SCREEN_HEIGHT;
-  private int     SCREEN_WIDTH1;
-  private int     SCREEN_HEIGHT1;
+  private int SCREEN_WIDTH;
+  private int SCREEN_HEIGHT;
+  private int SCREEN_WIDTH1;
+  private int SCREEN_HEIGHT1;
 
-  public  boolean   INTERPOLATE_RGB;
-  public  boolean   INTERPOLATE_ALPHA;
-  public  boolean   INTERPOLATE_Z;
-  public  boolean   INTERPOLATE_THICK;
+  public boolean INTERPOLATE_RGB;
+  public boolean INTERPOLATE_ALPHA;
+  public boolean INTERPOLATE_Z;
+  public boolean INTERPOLATE_THICK;
 
   // antialias
-  private boolean   SMOOTH;
+  private boolean SMOOTH;
 
   // blender
-  private boolean   BLENDER;
+  private boolean BLENDER;
 
   // stroke color
   private int m_stroke;
@@ -94,25 +94,11 @@ public class PLine implements PConstants
   private float db;
   private float da;
 
-  //points
-  //int x[] = new int[2];
-  //int y[] = new int[2];
-
   private PGraphics parent;
 
 
-  public PLine(PGraphics g)
-  {
-    //SCREEN_WIDTH = g.width;
-    //SCREEN_HEIGHT = g.height;
-    //SCREEN_WIDTH1 = SCREEN_WIDTH-1;
-    //SCREEN_HEIGHT1 = SCREEN_HEIGHT-1;
-
-    //m_pixels = g.pixels;
-    //m_stencil = g.stencil;
-    //m_zbuffer = g.zbuffer;
-
-	INTERPOLATE_Z = false;
+  public PLine(PGraphics g) {
+    INTERPOLATE_Z = false;
 
     x_array = new float[2];
     y_array = new float[2];
@@ -125,10 +111,9 @@ public class PLine implements PConstants
     this.parent = g;
   }
 
-  public void reset()
-  {
-    // reset these in case PGraphics was resized
 
+  public void reset() {
+    // reset these in case PGraphics was resized
     SCREEN_WIDTH = parent.width;
     SCREEN_HEIGHT = parent.height;
     SCREEN_WIDTH1 = SCREEN_WIDTH-1;
@@ -148,18 +133,15 @@ public class PLine implements PConstants
     BLENDER = false;
   }
 
+
   public void setVertices(float x0, float y0, float z0,
-      float x1, float y1, float z1)
-  {
+                          float x1, float y1, float z1) {
     // [rocha] fixed z drawing, so whenever a line turns on
     // z interpolation, all the lines are z interpolated
-    if (z0 != z1 || z0!=0.0f || z1!=0.0f ||INTERPOLATE_Z) {
-
+    if (z0 != z1 || z0!=0.0f || z1!=0.0f || INTERPOLATE_Z) {
       INTERPOLATE_Z = true;
       m_drawFlags |= R_SPATIAL;
-
     } else {
-
       INTERPOLATE_Z = false;
       m_drawFlags &= ~R_SPATIAL;
     }
@@ -175,9 +157,7 @@ public class PLine implements PConstants
   }
 
   public void setIntensities(float r0, float g0, float b0, float a0,
-      float r1, float g1, float b1, float a1)
-  {
-
+                             float r1, float g1, float b1, float a1) {
     a_array[0] = (a0 * 253f + 1.0f) * 65536f;
     a_array[1] = (a1 * 253f + 1.0f) * 65536f;
 
@@ -202,22 +182,18 @@ public class PLine implements PConstants
 
     // check if we need to interpolate the intensity values
     if (r0 != r1) {
-
       INTERPOLATE_RGB = true;
       m_drawFlags |= R_COLOR;
 
     } else if (g0 != g1) {
-
       INTERPOLATE_RGB = true;
       m_drawFlags |= R_COLOR;
 
     } else if (b0 != b1) {
-
       INTERPOLATE_RGB = true;
       m_drawFlags |= R_COLOR;
 
     } else {
-
       // when plain we use the stroke color of the first vertex
       m_stroke = 0xFF000000 |
         ((int)(255*r0) << 16) | ((int)(255*g0) << 8) | (int)(255*b0);
@@ -225,6 +201,7 @@ public class PLine implements PConstants
       m_drawFlags &= ~R_COLOR;
     }
   }
+
 
   public void setIndex(int index) {
     m_index = index;
@@ -236,12 +213,11 @@ public class PLine implements PConstants
     }
   }
 
-  public void draw()
-  {
 
+  public void draw() {
     int xi;
     int yi;
-    int lenght;
+    int length;
     boolean visible = true;
 
     if (parent.smooth) {
@@ -291,10 +267,10 @@ public class PLine implements PConstants
     // HACK for drawing lines left-to-right for rev 0069
     // some kind of bug exists with the line-stepping algorithm
     // that causes strange patterns in the anti-aliasing.
-    // [040228 fry] 
+    // [040228 fry]
     //
-    // swap rgba as well as the coords.. oops 
-    // [040712 fry] 
+    // swap rgba as well as the coords.. oops
+    // [040712 fry]
     //
     if (x_array[1] < x_array[0]) {
       float t;
@@ -309,13 +285,12 @@ public class PLine implements PConstants
       t = a_array[1]; a_array[1] = a_array[0]; a_array[0] = t;
     }
 
-    // important - dont change the casts
+    // important - don't change the casts
     // is needed this way for line drawing algorithm
     longLen  = (int)x_array[1] - (int)x_array[0];
     shortLen = (int)y_array[1] - (int)y_array[0];
 
-    if (Math.abs(shortLen) > Math.abs(longLen))
-    {
+    if (Math.abs(shortLen) > Math.abs(longLen)) {
       int swap = shortLen;
       shortLen = longLen;
       longLen = swap;
@@ -324,8 +299,7 @@ public class PLine implements PConstants
 
     // now we sort points so longLen is always positive
     // and we always start drawing from x[0], y[0]
-    if (longLen < 0)
-    {
+    if (longLen < 0) {
       // swap order
       o0 = 1;
       o1 = 0;
@@ -333,21 +307,20 @@ public class PLine implements PConstants
       xi = (int) x_array[1];
       yi = (int) y_array[1];
 
-      lenght = -longLen;
+      length = -longLen;
 
     } else {
-
       o0 = 0;
       o1 = 1;
 
       xi = (int) x_array[0];
       yi = (int) y_array[0];
 
-      lenght = longLen;
+      length = longLen;
     }
 
     // calculate dt
-    if (lenght== 0) {
+    if (length == 0) {
       dt = 0;
     } else {
       dt = (shortLen << 16) / longLen;
@@ -358,9 +331,9 @@ public class PLine implements PConstants
     b0 = b_array[o0];
 
     if (INTERPOLATE_RGB) {
-      dr = (r_array[o1] - r_array[o0]) / lenght;
-      dg = (g_array[o1] - g_array[o0]) / lenght;
-      db = (b_array[o1] - b_array[o0]) / lenght;
+      dr = (r_array[o1] - r_array[o0]) / length;
+      dg = (g_array[o1] - g_array[o0]) / length;
+      db = (b_array[o1] - b_array[o0]) / length;
     } else {
       dr = 0;
       dg = 0;
@@ -370,7 +343,7 @@ public class PLine implements PConstants
     a0 = a_array[o0];
 
     if (INTERPOLATE_ALPHA) {
-      da = (a_array[o1] - a_array[o0]) / lenght;
+      da = (a_array[o1] - a_array[o0]) / length;
     } else {
       da = 0;
     }
@@ -378,18 +351,18 @@ public class PLine implements PConstants
     z0 = z_array[o0];
     z0 += -0.001f; // [rocha] ugly fix for z buffer precision
 
-    if(INTERPOLATE_Z) {
-      dz = (z_array[o1] - z_array[o0]) / lenght;
+    if (INTERPOLATE_Z) {
+      dz = (z_array[o1] - z_array[o0]) / length;
     } else {
       dz = 0;
     }
 
     // draw thin points
-    if (lenght == 0) {
+    if (length == 0) {
       if (INTERPOLATE_ALPHA) {
-          drawPoint_alpha(xi, yi);
+        drawPoint_alpha(xi, yi);
       } else {
-          drawPoint(xi, yi);
+        drawPoint(xi, yi);
       }
       return;
     }
@@ -407,43 +380,32 @@ public class PLine implements PConstants
 
     // draw normal strokes
     if (SMOOTH) {
-
-      //drawPoint_alpha(x1, y1);
-      drawLine_smooth(xi, yi, dt, lenght, yLonger);
+      drawLine_smooth(xi, yi, dt, length, yLonger);
 
     } else {
-
       if (m_drawFlags == 0) {
-
-        drawLine_plain(xi, yi, dt, lenght, yLonger);
+        drawLine_plain(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == R_ALPHA) {
-
-        drawLine_plain_alpha(xi, yi, dt, lenght, yLonger);
+        drawLine_plain_alpha(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == R_COLOR) {
-
-        drawLine_color(xi, yi, dt, lenght, yLonger);
+        drawLine_color(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == (R_COLOR + R_ALPHA)) {
-
-        drawLine_color_alpha(xi, yi, dt, lenght, yLonger);
+        drawLine_color_alpha(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == R_SPATIAL) {
-
-        drawLine_plain_spatial(xi, yi, dt, lenght, yLonger);
+        drawLine_plain_spatial(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == (R_SPATIAL + R_ALPHA)) {
-
-        drawLine_plain_alpha_spatial(xi, yi, dt, lenght, yLonger);
+        drawLine_plain_alpha_spatial(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == (R_SPATIAL + R_COLOR)) {
-
-        drawLine_color_spatial(xi, yi, dt, lenght, yLonger);
+        drawLine_color_spatial(xi, yi, dt, length, yLonger);
 
       } else if (m_drawFlags == (R_SPATIAL + R_COLOR + R_ALPHA)) {
-
-        drawLine_color_alpha_spatial(xi, yi, dt, lenght, yLonger);
+        drawLine_color_alpha_spatial(xi, yi, dt, length, yLonger);
       }
     }
   }
@@ -465,10 +427,10 @@ public class PLine implements PConstants
       // now calculate the clipped points
       float a0 = 0, a1 = 1, a = 0;
 
-      for (int i=0;i<4;i++) {
+      for (int i = 0; i < 4; i++) {
         if (((dip>>i)%2)==1){
           a = lineSlope(x_array[0], y_array[0], x_array[1], y_array[1], i+1);
-          if (((code1>>i)%2)==1) {
+          if (((code1 >> i) % 2) == 1) {
             a0 = (a>a0)?a:a0; // max(a,a0)
           } else {
             a1 = (a<a1)?a:a1; // min(a,a1)
@@ -512,58 +474,44 @@ public class PLine implements PConstants
 
 
   private int lineClipCode(float xi, float yi) {
-    int  xmin = 0;
-    int  ymin = 0;
-    int  xmax = SCREEN_WIDTH1;
-    int  ymax = SCREEN_HEIGHT1;
+    int xmin = 0;
+    int ymin = 0;
+    int xmax = SCREEN_WIDTH1;
+    int ymax = SCREEN_HEIGHT1;
 
     return ((yi < ymin ? 8 : 0) | (yi > ymax ? 4 : 0) |
-        (xi < xmin ? 2 : 0) | (xi > xmax ? 1 : 0));
+            (xi < xmin ? 2 : 0) | (xi > xmax ? 1 : 0));
   }
 
-  private float lineSlope(float x1, float y1, float x2, float y2, int border) {
-    int  xmin = 0;
-    int  ymin = 0;
-    int  xmax = SCREEN_WIDTH1;
-    int  ymax = SCREEN_HEIGHT1;
 
-    switch (border)
-    {
-    case 4:
-    {
-      return (ymin-y1)/(y2-y1);
-    }
-    case 3:
-    {
-      return (ymax-y1)/(y2-y1);
-    }
-    case 2:
-    {
-      return (xmin-x1)/(x2-x1);
-    }
-    case 1:
-    {
-      return (xmax-x1)/(x2-x1);
-    }
+  private float lineSlope(float x1, float y1, float x2, float y2, int border) {
+    int xmin = 0;
+    int ymin = 0;
+    int xmax = SCREEN_WIDTH1;
+    int ymax = SCREEN_HEIGHT1;
+
+    switch (border) {
+    case 4: return (ymin-y1)/(y2-y1);
+    case 3: return (ymax-y1)/(y2-y1);
+    case 2: return (xmin-x1)/(x2-x1);
+    case 1: return (xmax-x1)/(x2-x1);
     }
     return -1f;
   }
 
 
   private void drawPoint(int x0, int y0) {
+    float iz = z0;
+    int offset = y0 * SCREEN_WIDTH + x0;
 
-      float iz = z0;
-      int offset = y0 * SCREEN_WIDTH + x0;
-
-      if (iz <= m_zbuffer[offset])  {
-
-        m_pixels[offset] = m_stroke;
-        m_zbuffer[offset] = iz;
-      }
+    if (iz <= m_zbuffer[offset]) {
+      m_pixels[offset] = m_stroke;
+      m_zbuffer[offset] = iz;
+    }
   }
 
-  private void drawPoint_alpha(int x0, int y0) {
 
+  private void drawPoint_alpha(int x0, int y0) {
     int ia = (int) a_array[0];
     int pr = m_stroke & 0xFF0000;
     int pg = m_stroke & 0xFF00;
@@ -572,12 +520,12 @@ public class PLine implements PConstants
     int offset = y0 * SCREEN_WIDTH + x0;
 
     if (iz <= m_zbuffer[offset]) {
-
       int alpha = ia >> 16;
       int r0 = m_pixels[offset];
       int g0 = r0 & 0xFF00;
       int b0 = r0 & 0xFF;
-      r0&=0xFF0000;
+      r0 &= 0xFF0000;
+
       r0 = r0 + (((pr - r0) * alpha) >> 8);
       g0 = g0 + (((pg - g0) * alpha) >> 8);
       b0 = b0 + (((pb - b0) * alpha) >> 8);
@@ -590,8 +538,7 @@ public class PLine implements PConstants
 
 
   private void drawLine_plain(int x0, int y0, int dt,
-      int length, boolean vertical) {
-
+                              int length, boolean vertical) {
     // new "extremely fast" line code
     // adapted from http://www.edepot.com/linee.html
     // first version modified by [toxi]
@@ -603,36 +550,30 @@ public class PLine implements PConstants
     int offset = 0;
 
     if (vertical) {
-
       // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
         m_pixels[offset] = m_stroke;
         m_zbuffer[offset] = z0;
         j+=dt;
       }
-      return;
 
     } else {
-
       // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = m_stroke;
         m_zbuffer[offset] = z0;
         j+=dt;
       }
-      return;
     }
   }
 
-  private void drawLine_plain_alpha(int x0, int y0, int dt,
-      int length, boolean vertical)  {
 
+  private void drawLine_plain_alpha(int x0, int y0, int dt,
+                                    int length, boolean vertical)  {
     int offset = 0;
 
     int pr = m_stroke & 0xFF0000;
@@ -642,18 +583,15 @@ public class PLine implements PConstants
     int ia = (int) (a0);
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
         int alpha = ia >> 16;
         int r0 = m_pixels[offset];
         int g0 = r0 & 0xFF00;
         int b0 = r0 & 0xFF;
-        r0&=0xFF0000;
+        r0 &= 0xFF0000;
         r0 = r0 + (((pr - r0) * alpha) >> 8);
         g0 = g0 + (((pg - g0) * alpha) >> 8);
         b0 = b0 + (((pb - b0) * alpha) >> 8);
@@ -662,17 +600,13 @@ public class PLine implements PConstants
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
         m_zbuffer[offset] = z0;
 
-        ia+= da;
-        j+=dt;
+        ia += da;
+        j += dt;
       }
-      return;
 
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
         int alpha = ia >> 16;
@@ -688,16 +622,15 @@ public class PLine implements PConstants
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
         m_zbuffer[offset] = z0;
 
-        ia+= da;
-        j+=dt;
+        ia += da;
+        j += dt;
       }
-      return;
     }
   }
 
-  private void drawLine_color(int x0, int y0, int dt,
-      int length, boolean vertical)  {
 
+  private void drawLine_color(int x0, int y0, int dt,
+                              int length, boolean vertical)  {
     int offset = 0;
 
     int ir = (int) r0;
@@ -705,11 +638,8 @@ public class PLine implements PConstants
     int ib = (int) b0;
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
         m_pixels[offset] = 0xFF000000 |
           ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
@@ -719,14 +649,10 @@ public class PLine implements PConstants
         ib+= db;
         j+=dt;
       }
-      return;
 
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = 0xFF000000 |
           ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
@@ -736,14 +662,12 @@ public class PLine implements PConstants
         ib+= db;
         j+=dt;
       }
-      return;
     }
   }
 
 
   private void drawLine_color_alpha(int x0, int y0, int dt,
-      int length, boolean vertical)  {
-
+                                    int length, boolean vertical)  {
     int offset = 0;
 
     int ir = (int) r0;
@@ -752,11 +676,8 @@ public class PLine implements PConstants
     int ia = (int) (a0);
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
         int pr = ir & 0xFF0000;
@@ -784,14 +705,10 @@ public class PLine implements PConstants
         ia+= da;
         j+=dt;
       }
-      return;
 
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
         int pr = ir & 0xFF0000;
@@ -819,58 +736,45 @@ public class PLine implements PConstants
         ia+= da;
         j+=dt;
       }
-      return;
     }
   }
 
 
   private void drawLine_plain_spatial(int x0, int y0, int dt,
-      int length, boolean vertical)  {
-
+                                      int length, boolean vertical)  {
     int offset = 0;
     float iz = z0;
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           m_pixels[offset] = m_stroke;
           m_zbuffer[offset] = iz;
         }
         iz+=dz;
         j+=dt;
       }
-      return;
 
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           m_pixels[offset] = m_stroke;
           m_zbuffer[offset] = iz;
         }
         iz+=dz;
         j+=dt;
       }
-      return;
     }
   }
 
+
   private void drawLine_plain_alpha_spatial(int x0, int y0, int dt,
-      int length, boolean vertical)  {
-
+                                            int length, boolean vertical) {
     int offset = 0;
-
     float iz = z0;
 
     int pr = m_stroke & 0xFF0000;
@@ -880,21 +784,16 @@ public class PLine implements PConstants
     int ia = (int) (a0);
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
-        if (iz <= m_zbuffer[offset])
-        {
-
+        if (iz <= m_zbuffer[offset]) {
           int alpha = ia >> 16;
           int r0 = m_pixels[offset];
           int g0 = r0 & 0xFF00;
           int b0 = r0 & 0xFF;
-          r0&=0xFF0000;
+          r0 &= 0xFF0000;
           r0 = r0 + (((pr - r0) * alpha) >> 8);
           g0 = g0 + (((pg - g0) * alpha) >> 8);
           b0 = b0 + (((pb - b0) * alpha) >> 8);
@@ -903,24 +802,17 @@ public class PLine implements PConstants
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
           //m_zbuffer[offset] = iz;
         }
-
-        iz+=dz;
-        ia+= da;
-        j+=dt;
+        iz +=dz;
+        ia += da;
+        j += dt;
       }
-      return;
 
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
-        if (iz <= m_zbuffer[offset])
-        {
-
+        if (iz <= m_zbuffer[offset]) {
           int alpha = ia >> 16;
           int r0 = m_pixels[offset];
           int g0 = r0 & 0xFF00;
@@ -934,20 +826,17 @@ public class PLine implements PConstants
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
           //m_zbuffer[offset] = iz;
         }
-
-        iz+=dz;
-        ia+= da;
-        j+=dt;
+        iz += dz;
+        ia += da;
+        j += dt;
       }
-      return;
     }
   }
 
+
   private void drawLine_color_spatial(int x0, int y0, int dt,
-      int length, boolean vertical)  {
-
+                                      int length, boolean vertical)  {
     int offset = 0;
-
     float iz = z0;
 
     int ir = (int) r0;
@@ -955,45 +844,35 @@ public class PLine implements PConstants
     int ib = (int) b0;
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           m_pixels[offset] = 0xFF000000 |
             ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
           m_zbuffer[offset] = iz;
         }
-        iz+=dz;
-        ir+= dr;
-        ig+= dg;
-        ib+= db;
-        j+=dt;
+        iz +=dz;
+        ir += dr;
+        ig += dg;
+        ib += db;
+        j += dt;
       }
-      return;
-
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           m_pixels[offset] = 0xFF000000 |
             ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
           m_zbuffer[offset] = iz;
         }
-        iz+=dz;
-        ir+= dr;
-        ig+= dg;
-        ib+= db;
-        j+=dt;
+        iz += dz;
+        ir += dr;
+        ig += dg;
+        ib += db;
+        j += dt;
       }
       return;
     }
@@ -1001,10 +880,8 @@ public class PLine implements PConstants
 
 
   private void drawLine_color_alpha_spatial(int x0, int y0, int dt,
-      int length, boolean vertical)  {
-
+                                            int length, boolean vertical)  {
     int offset = 0;
-
     float iz = z0;
 
     int ir = (int) r0;
@@ -1013,15 +890,11 @@ public class PLine implements PConstants
     int ia = (int) (a0);
 
     if (vertical) {
-
-      // vertical
       length += y0;
-      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0)
-      {
+      for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           int pr = ir & 0xFF0000;
           int pg = (ig >> 8) & 0xFF00;
           int pb = (ib >> 16);
@@ -1048,18 +921,13 @@ public class PLine implements PConstants
         ia+= da;
         j+=dt;
       }
-      return;
 
-    } else {
-
-      // horizontal
+    } else {  // horizontal
       length += x0;
-      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0)
-      {
+      for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           int pr = ir & 0xFF0000;
           int pg = (ig >> 8) & 0xFF00;
           int pb = (ib >> 16);
@@ -1067,7 +935,7 @@ public class PLine implements PConstants
           int r0 = m_pixels[offset];
           int g0 = r0 & 0xFF00;
           int b0 = r0 & 0xFF;
-          r0&=0xFF0000;
+          r0 &= 0xFF0000;
 
           int alpha = ia >> 16;
 
@@ -1079,21 +947,19 @@ public class PLine implements PConstants
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
           m_zbuffer[offset] = iz;
         }
-        iz+=dz;
-        ir+= dr;
-        ig+= dg;
-        ib+= db;
-        ia+= da;
-        j+=dt;
+        iz += dz;
+        ir += dr;
+        ig += dg;
+        ib += db;
+        ia += da;
+        j += dt;
       }
-      return;
     }
   }
 
 
   void drawLine_smooth(int x0, int y0, int dt,
-      int length, boolean vertical) {
-
+                       int length, boolean vertical) {
     int xi, yi; // these must be >=32 bits
     int offset = 0;
     int temp;
@@ -1107,8 +973,6 @@ public class PLine implements PConstants
     int ia = (int) (a0);
 
     if (vertical) {
-
-      // vertical
       xi = x0 << 16;
       yi = y0 << 16;
 
@@ -1122,8 +986,7 @@ public class PLine implements PConstants
         int pg = (ig >> 8) & 0xFF00;
         int pb = (ib >> 16);
 
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           int alpha = (((~xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1152,14 +1015,13 @@ public class PLine implements PConstants
 
         offset = (yi>>16) * SCREEN_WIDTH + temp;
 
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           int alpha = (((xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
           int g0 = r0 & 0xFF00;
           int b0 = r0 & 0xFF;
-          r0&=0xFF0000;
+          r0 &= 0xFF0000;
 
           r0 = r0 + (((pr - r0) * alpha) >> 8);
           g0 = g0 + (((pg - g0) * alpha) >> 8);
@@ -1180,32 +1042,25 @@ public class PLine implements PConstants
         ia+= da;
       }
 
-    } else {
-
-      // horizontal
-
+    } else {  // horizontal
       xi = x0 << 16;
       yi = y0 << 16;
-
       end = length + x0;
 
       while ((xi >> 16) < end) {
-
         offset = (yi>>16) * SCREEN_WIDTH + (xi>>16);
 
         int pr = ir & 0xFF0000;
         int pg = (ig >> 8) & 0xFF00;
         int pb = (ib >> 16);
 
-        if (iz <= m_zbuffer[offset])
-        {
-
+        if (iz <= m_zbuffer[offset]) {
           int alpha = (((~yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
           int g0 = r0 & 0xFF00;
           int b0 = r0 & 0xFF;
-          r0&=0xFF0000;
+          r0 &= 0xFF0000;
 
           r0 = r0 + (((pr - r0) * alpha) >> 8);
           g0 = g0 + (((pg - g0) * alpha) >> 8);
@@ -1226,8 +1081,7 @@ public class PLine implements PConstants
 
         offset = temp * SCREEN_WIDTH + (xi>>16);
 
-        if (iz <= m_zbuffer[offset])
-        {
+        if (iz <= m_zbuffer[offset]) {
           int alpha = (((yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1256,9 +1110,10 @@ public class PLine implements PConstants
     }
   }
 
+
   /**
-   * Special "blender" line code, used for anti-aliasing polygon edges
-   * by [sami]
+   * Special "blender" line code by sami,
+   * used for anti-aliasing polygon edges
    */
   private void drawline_blender(double x0, double y0, double x1, double y1)
   {
@@ -1276,11 +1131,9 @@ public class PLine implements PConstants
     int pxl;
 
     // vaakaviiva
-    if (adx > ady)
-    {
+    if (adx > ady) {
       // flip if x0 > x1
-      if (x0 > x1)
-      {
+      if (x0 > x1) {
         tmp = x0;
         x0 = x1;
         x1 = tmp;
@@ -1305,24 +1158,17 @@ public class PLine implements PConstants
       double delta = (ix0 + PIXEL_CENTER) - x0;
       double ys = y0 + delta * addy;
 
-      for (int a = ix0; a < ix1; a++,ys+=addy)
-      {
+      for (int a = ix0; a < ix1; a++,ys+=addy) {
         int iy = (int) (ys - PIXEL_CENTER);
-        if ((iy >= 0) && (iy < SCREEN_HEIGHT1))
-        {
+        if ((iy >= 0) && (iy < SCREEN_HEIGHT1)) {
           int ofs1 = iy * SCREEN_WIDTH + a;
           int ofs2 = ofs1 + SCREEN_WIDTH;
 
-          if (m_stencil[ofs1] == m_index)
-          {
+          if (m_stencil[ofs1] == m_index) {
             pxl = m_pixels[ofs1];
-          }
-          else
-          if (m_stencil[ofs2] == m_index)
-          {
+          } else if (m_stencil[ofs2] == m_index) {
             pxl = m_pixels[ofs2];
-          }
-          else {
+          } else {
             //m_pixels[ofs1] = 0xFFFFFF;
             //m_pixels[ofs2] = 0xFFFFFF;
             continue;
@@ -1360,13 +1206,9 @@ public class PLine implements PConstants
           //m_pixels[ofs2] = 0xFFFF00;
         }
       }
-    }
-    else
-    // pystyviiva
-    {
+    } else {  // pystyviiva
       // flip if y1 > y0
-      if (y0 > y1)
-      {
+      if (y0 > y1) {
         tmp = x0;
         x0 = x1;
         x1 = tmp;
@@ -1390,24 +1232,17 @@ public class PLine implements PConstants
 
       iy0*=SCREEN_WIDTH;
       iy1*=SCREEN_WIDTH;
-      for (int a = iy0; a < iy1; a+=SCREEN_WIDTH,xs+=addx)
-      {
+      for (int a = iy0; a < iy1; a+=SCREEN_WIDTH,xs+=addx) {
         int ix = (int) (xs - PIXEL_CENTER);
-        if ((ix >= 0) && (ix < SCREEN_WIDTH1))
-        {
+        if ((ix >= 0) && (ix < SCREEN_WIDTH1)) {
           int ofs1 = a + ix;
           int ofs2 = ofs1+1;
 
-          if (m_stencil[ofs1] == m_index)
-          {
+          if (m_stencil[ofs1] == m_index) {
             pxl = m_pixels[ofs1];
-          }
-          else
-          if (m_stencil[ofs2] == m_index)
-          {
+          } else if (m_stencil[ofs2] == m_index) {
             pxl = m_pixels[ofs2];
-          }
-          else {
+          } else {
             //m_pixels[ofs1] = 0xFFFFFF;
             //m_pixels[ofs2] = 0xFFFFFF;
             continue;
@@ -1443,8 +1278,8 @@ public class PLine implements PConstants
           //m_pixels[ofs2] = 0x00FFFF;
         }
       }
-        }
-      }
+    }
+  }
 }
 
 
