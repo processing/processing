@@ -71,6 +71,7 @@ cp -r work/lib/export processing/lib/
 rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
+cp `which jikes` processing
 #cp dist/Proce55ing processing/
 cp dist/lib/pde_macosx.properties processing/lib/
 #cp dist/lib/comm.jar processing/lib/
