@@ -84,9 +84,13 @@ public class PdeEditorConsole extends JScrollPane {
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
 
-    // todo: don't think this does anything
-    //XXX the initial size should be from properties file
-    this.setPreferredSize(new Dimension(200, 50));
+    // calculate height of a line of text in pixels and size window accordingly
+    FontMetrics metrics = this.getFontMetrics(font);
+    int height = metrics.getAscent() + metrics.getDescent();
+    int lines = PdeBase.getInteger("editor.console.lines", 6);
+    int sizeFudge = 10; // unclear why this is necessary, but it is
+    Dimension prefDimension = new Dimension(1024, (height * lines) + sizeFudge);
+    setPreferredSize(prefDimension);
 
     if (systemOut == null) {
       systemOut = System.out;
@@ -183,6 +187,9 @@ public class PdeEditorConsole extends JScrollPane {
     catch(Exception e) {}
     }
 
+/*
+// no longer needed because setPreferredSize is used
+
   public Dimension getPreferredSize() {
     return getMinimumSize();
   }
@@ -194,7 +201,7 @@ public class PdeEditorConsole extends JScrollPane {
   public Dimension getMaximumSize() {
     return new Dimension(3000, PdeEditor.GRID_SIZE * 3);    
 }
-
+*/
   
 }
 

@@ -13,7 +13,8 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 
-public class PdeEditor extends Panel {
+//public class PdeEditor extends Panel {
+public class PdeEditor extends JPanel {
 
   static final String DEFAULT_PROGRAM = "// type program here\n";
 
@@ -45,9 +46,11 @@ public class PdeEditor extends Panel {
   PdeEditorHeader header;
   PdeEditorStatus status;
   PdeEditorConsole console;
+  
+  // new swing jpanel/console
+  JSplitPane splitPane;
+  JPanel consolePanel;
 
-  //JEditorPane textarea;
-  //public PdeEditorTextPane textarea;
   JEditTextArea textarea;
 
   boolean externalEditor;
@@ -117,6 +120,8 @@ public class PdeEditor extends Panel {
 
     add("West", leftPanel);
 
+
+/* pre-swing version
     Panel rightPanel = new Panel();
     rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 
@@ -138,29 +143,39 @@ public class PdeEditor extends Panel {
     statusPanel.add("South", console);
 
     rightPanel.add("South", statusPanel);
+*/
+    // swing version from danh
     
+    JPanel rightPanel = new JPanel();
+    rightPanel.setLayout(new BorderLayout());
 
-    /* not sure why this doesn't work, probably a heavy vs. lightweight component issue
-    Panel consolePanel = new Panel();
-    consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
+    header = new PdeEditorHeader(this);
+    rightPanel.add(header, BorderLayout.NORTH);
+
+    textarea = new JEditTextArea();
+    textarea.setTokenMarker(new PdeTokenMarker());
+ 
+    // assemble console panel, consisting of status area and the console itself
+    consolePanel = new JPanel();
+    consolePanel.setLayout(new BorderLayout());
 
     status = new PdeEditorStatus(this);
-    consolePanel.add("North",status);
+    consolePanel.add(status, BorderLayout.NORTH);
     console = new PdeEditorConsole(this);
-    consolePanel.add("South",console);
+    consolePanel.add(console, BorderLayout.CENTER);
 
-///
-        JSplitPane splitPane = new JSplitPane(
-                                       JSplitPane.VERTICAL_SPLIT,
-///                                       textarea, consolePanel);
-        //splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(100);
+    splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                               textarea, consolePanel);
+                                       
+    splitPane.setOneTouchExpandable(true);
+    // repaint child panes while resizing
+    splitPane.setContinuousLayout(true);
+    // if window increases in size, give all of increase to textarea (top pane)
+    splitPane.setResizeWeight(1D);
 
-        //Provide minimum sizes for the two components in the split pane
-        Dimension minimumSize = new Dimension(200, 300);
-        top.setMinimumSize(minimumSize);
-        bottom.setMinimumSize(minimumSize);
-*/
+    rightPanel.add(splitPane, BorderLayout.CENTER);
+
+    // end swing version from danh
 
     add("Center", rightPanel);
 
