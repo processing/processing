@@ -177,3 +177,14 @@ zip -r0q library/video.jar processing
 rm -rf processing
 mkdir -p ../../build/windows/work/libraries/video/library/
 cp library/video.jar ../../build/windows/work/libraries/video/library/
+
+
+# PARTICLES LIBRARY
+echo Build particles library...
+cd ../../lib/particles
+../../build/windows/work/jikes +D -d . *.java 
+rm -f library/particles.jar
+zip -r0q library/particles.jar simong
+rm -rf simong
+mkdir -p ../../build/windows/work/libraries/particles/library/
+cp library/particles.jar ../../build/windows/work/libraries/particles/library/

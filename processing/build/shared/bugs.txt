@@ -146,6 +146,14 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
   you can also upgrade to maosx 10.3.x (panther) which doesn't have
   this problem.
 
+- mac os x.. if you get the following error:
+  Exception in thread "main" java.lang.NoClassDefFoundError: 
+  com/apple/mrj/macos/carbon/CarbonLock 
+  then it means you need to update and/or reinstall quicktime. there
+  was some monkey business about quicktime for java updates being out
+  of sync with the java vm releases, and this is one of the leftovers
+  of that scenario. blame canada. blame apple.
+
 
 ..................................................................
 
