@@ -115,7 +115,6 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   }
 
 
-
   public void prompt(String message) {
     mode = PROMPT;
     this.message = message;

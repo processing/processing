@@ -701,9 +701,10 @@ public class PGraphicsGL extends PGraphics3 {
     syncMatrices();
   }
 
-  //////////////////////////////////////////////////////////////
-/*
 
+  //////////////////////////////////////////////////////////////
+
+/*
   public void endCamera() {
     //System.out.println("PGraphicsGL.endCamera() 1");
     super.endCamera();
@@ -936,8 +937,8 @@ public class PGraphicsGL extends PGraphics3 {
   }
   */
 
-  protected void calc_fill() {
-    super.calc_fill();
+  protected void colorFill() {
+    super.colorFill();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
                     new float[] { calcR, calcG, calcB, calcA });
   }
