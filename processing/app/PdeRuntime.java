@@ -408,7 +408,10 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     // if s.length <=2, ignore it because that probably means
     // that it's just the platform line-terminators.
-    if (newMessage && s.length() > 2) {
+    if (s.length() < 2) return;
+
+    //if (newMessage && s.length() > 2) {
+    if (newMessage) {
       exception = new PdeException(s);  // type of java ex
       exception.hideStackTrace = true;
       //System.out.println("setting ex type to " + s);

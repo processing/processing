@@ -1,11 +1,8 @@
-0072 core
-X make m00, m01 etc public
-X hack to make loadImage() work 
-X   cache settings are ignored, may be slow as hell
-X make hints[] no longer static
-X   they weren't properly resetting
+0074 core
+X removed zbuffer precision hack in PLine to improve z ordering
+X no longer set g.dimensions = 3 when using vertex(x, y, 0)
 
-_ loadImage() is mostly broken
+_ image("blah.jpg"); 
 
 _ uv coords > 1 shouldn't clamp, they should just repeat ala opengl
 _   actually i think opengl has a setting for it
@@ -47,6 +44,7 @@ _   screenX/Y and also using the 3 arg version of translate -
 _   ie translate(hw,hh,0) instead of just translate(hw,hh). 
 
 text issues
+_ textMode ALIGN_CENTER _LEFT _RIGHT -> CENTER, LEFT, RIGHT ? 
 _ need to resolve SCREEN_SPACE vs OBJECT_SPACE
 _   can this be auto-detected with noDepth()? 
 _   how does rotated text work?

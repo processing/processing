@@ -166,10 +166,10 @@ public class PGraphics extends PImage
   float eyeDist, nearDist, farDist;
   float aspect;
 
-  float p00, p01, p02, p03; // projection matrix
-  float p10, p11, p12, p13;
-  float p20, p21, p22, p23;
-  float p30, p31, p32, p33;
+  public float p00, p01, p02, p03; // projection matrix
+  public float p10, p11, p12, p13;
+  public float p20, p21, p22, p23;
+  public float p30, p31, p32, p33;
 
   // ........................................................
 
@@ -1128,7 +1128,7 @@ public class PGraphics extends PImage
     //if (polygon.redundantVertex(x, y, z)) return;
     //cvertexIndex = 0;
     unchangedZ = false;
-    dimensions = 3;
+    if (z != 0) dimensions = 3;
     setup_vertex(next_vertex(), x, y, z);
   }
 
@@ -1139,7 +1139,7 @@ public class PGraphics extends PImage
     //cvertexIndex = 0;
     vertex_texture(u, v);
     unchangedZ = false;
-    dimensions = 3;
+    if (z != 0) dimensions = 3;
     setup_vertex(next_vertex(), x, y, z);
   }
 
@@ -2506,6 +2506,7 @@ public class PGraphics extends PImage
   // get scaled properly if the pt is way in back
   private void thick_point(float x, float y, float z, // note floats
                            float r, float g, float b, float a) {
+    //System.out.println("thick point");
     spolygon.reset(4);
     spolygon.interpRGBA = false;  // no changes for vertices of a point
 
@@ -2896,6 +2897,7 @@ public class PGraphics extends PImage
 
 
   private void thin_point(int x, int y, float z, int color) {
+    //System.out.println("thin point");
     // necessary? [fry] yes! [toxi]
     if (x<0 || x>width1 || y<0 || y>height1) return;
 

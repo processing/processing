@@ -190,8 +190,8 @@ public class PApplet extends Applet
           Component.class.getMethod("setFocusTraversalKeysEnabled",
                                     new Class[] { Boolean.TYPE });
         defocus.invoke(this, new Object[] { Boolean.FALSE });
-      } else {
-        System.out.println(jdkVersion);
+      //} else {
+        //System.out.println(jdkVersion);
       }
     } catch (Exception e) { }  // oh well
 
@@ -915,12 +915,19 @@ public class PApplet extends Applet
   // and i run the block.
 
 
+  public void focusGained() { }
+
   public void focusGained(FocusEvent e) {
     focused = true;
+    focusGained();
   }
+
+
+  public void focusLost() { }
 
   public void focusLost(FocusEvent e) {
     focused = false;
+    focusLost();
   }
 
 
@@ -1812,60 +1819,6 @@ public class PApplet extends Applet
   // IMAGE I/O
 
 
-  /*
-  private Image gimmeImage(URL url, boolean force) {
-    Toolkit tk = Toolkit.getDefaultToolkit();
-
-    URLConnection conn = null;
-    try {
-      //conn = new URLConnection(url);
-      conn = url.openConnection();
-
-      // i don't think this does anything,
-      // but just set the fella for good measure
-      conn.setUseCaches(false);
-      // also had a note from zach about parent.obj.close() on url
-      // but that doesn't seem to be needed anymore...
-
-      // throws an exception if it doesn't exist
-      conn.connect();
-
-      if (!force) {
-        // how do you close the bastard?
-        conn = null;
-        // close connection and just use regular method
-        return tk.getImage(url);
-      }
-
-      // slurp contents of that stream
-      InputStream stream = conn.getInputStream();
-
-      BufferedInputStream bis = new BufferedInputStream(stream);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-      try {
-        int c = bis.read();
-        while (c != -1) {
-          out.write(c);
-          c = bis.read();
-        }
-      } catch (IOException e) {
-        return null;
-      }
-      bis.close();  // will this help?
-      //byte bytes[] = out.toByteArray();
-
-      // build an image out of it
-      //return tk.createImage(bytes);
-      return tk.createImage(out.toByteArray());
-
-    } catch (Exception e) {  // null pointer or i/o ex
-      //System.err.println("error loading image: " + url);
-      return null;
-    }
-  }
-  */
-
   public PImage loadImage(String filename) {
     if (filename.toLowerCase().endsWith(".tga")) {
       return loadTargaImage(filename);
@@ -1873,44 +1826,53 @@ public class PApplet extends Applet
     return loadImage(filename, true);
   }
 
+
+  public PImage loadImage(String file, boolean ignored) {
+    try {
+      byte[] imgarray = loadBytes(file);
+      java.awt.Image awtimage =
+        Toolkit.getDefaultToolkit().createImage(imgarray);
+      MediaTracker tracker = new MediaTracker(this);
+      tracker.addImage(awtimage, 0);
+      try {
+        tracker.waitForAll();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      int w = awtimage.getWidth(null);
+      int h = awtimage.getHeight(null);
+      int[] pix = new int[w*h];
+
+      PixelGrabber pg = new PixelGrabber(awtimage, 0, 0, w, h, pix, 0, w);
+      try {
+        pg.grabPixels();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      PImage img = new PImage(pix,w,h,RGB);
+
+      if (file.toLowerCase().endsWith(".gif")) {
+        for (int i = 0; i < pix.length; i++) {
+          if ((pix[i] & 0xff000000) != 0xff000000) {
+            img.format=RGBA;
+            break;
+          }
+        }
+      }
+      return img;
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  /*
   // returns null if no image of that name is found
   public PImage loadImage(String filename, boolean force) {
     Image awtimage = null;
     //String randomizer = "?" + nf((int) (random()*10000), 4);
-
-    /*
-    if (filename.startsWith("http://")) {
-      try {
-        URL url = new URL(filename);
-        awtimage = gimmeImage(url, force);
-
-      } catch (MalformedURLException e) {
-        System.err.println("error loading image from " + filename);
-        e.printStackTrace();
-        return null;
-      }
-
-    } else {
-      //System.out.println(getClass().getName());
-      //System.out.println(getClass().getResource(filename));
-      awtimage = gimmeImage(getClass().getResource(filename), force);
-      if (awtimage == null) {
-        awtimage =
-          gimmeImage(getClass().getResource("data/" + filename), force);
-      }
-      if (awtimage == null) {
-        try {
-          //FileInputStream fis =
-          //new FileInputStream(folder + "data/" + filename);
-          String url = "file:/" + folder + "/data/" + filename;
-            //URL url = new URL("file:/" + folder + "data/" + filename);
-          awtimage = gimmeImage(new URL(url), force);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    */
 
     awtimage = Toolkit.getDefaultToolkit().createImage(loadBytes(filename));
 
@@ -1961,6 +1923,7 @@ public class PApplet extends Applet
     }
     return new PImage(jpixels, jwidth, jheight, RGB);
   }
+  */
 
 
   /**
@@ -3930,15 +3893,21 @@ public class PApplet extends Applet
 
     Thread ethread = new Thread() {  //new Runnable() {
         public void run() {
+          setPriority(Thread.MIN_PRIORITY);
 
           while ((Thread.currentThread() == this) && !finished) {
             try {
               // is this what's causing all the trouble?
               int anything = System.in.read();
               if (anything == EXTERNAL_STOP) {
+                //System.out.println("********** STOPPING");
+
+                // adding this for 0073.. need to stop libraries
+                // when the stop button is hit.
+                PApplet.this.stop();
+
+                //System.out.println("********** REALLY");
                 finished = true;
-                //stop();
-                //thread = null;  // kill self
               }
             } catch (IOException e) {
               // not tested (needed?) but seems correct

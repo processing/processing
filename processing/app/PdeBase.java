@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -39,11 +39,11 @@ import com.apple.mrj.*;
 
 /**
  * Primary role of this class is for platform identification and
- * general interaction with the system (launching URLs, loading 
+ * general interaction with the system (launching URLs, loading
  * files and images, etc) that comes from that.
  */
 public class PdeBase {
-  static final String VERSION = "0071 Alpha";
+  static final String VERSION = "0074 Alpha";
 
   PdeEditor editor;
 
@@ -104,7 +104,7 @@ public class PdeBase {
       } else {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
-    } catch (Exception e) { 
+    } catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -159,13 +159,13 @@ public class PdeBase {
 
 
   /**
-   * Given the reference filename from the keywords list, 
+   * Given the reference filename from the keywords list,
    * builds a URL and passes it to openURL.
    */
   static public void showReference(String referenceFile) {
     String currentDir = System.getProperty("user.dir");
-    openURL(currentDir + File.separator + 
-            "reference" + File.separator + 
+    openURL(currentDir + File.separator +
+            "reference" + File.separator +
             referenceFile + ".html");
   }
 
@@ -173,24 +173,24 @@ public class PdeBase {
   /**
    * Implements the cross-platform headache of opening URLs
    */
-  static public void openURL(String url) { 
+  static public void openURL(String url) {
     //System.out.println("opening url " + url);
     try {
       if (platform == WINDOWS) {
-        // this is not guaranteed to work, because who knows if the 
+        // this is not guaranteed to work, because who knows if the
         // path will always be c:\progra~1 et al. also if the user has
-        // a different browser set as their default (which would 
+        // a different browser set as their default (which would
         // include me) it'd be annoying to be dropped into ie.
-        //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore " 
-        // + currentDir 
+        //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "
+        // + currentDir
 
-	// the following uses a shell execute to launch the .html file
+        // the following uses a shell execute to launch the .html file
         // note that under cygwin, the .html files have to be chmodded +x
         // after they're unpacked from the zip file. i don't know why,
-        // and don't understand what this does in terms of windows 
-        // permissions. without the chmod, the command prompt says 
+        // and don't understand what this does in terms of windows
+        // permissions. without the chmod, the command prompt says
         // "Access is denied" in both cygwin and the "dos" prompt.
-        //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" + 
+        //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" +
         //                    referenceFile + ".html");
         if (url.startsWith("http://")) {
           // open dos prompt, give it 'start' command, which will
@@ -248,13 +248,13 @@ public class PdeBase {
     } catch (IOException e) {
       PdeBase.showWarning("Could not open URL",
                           "An error occurred while trying to open\n" + url, e);
-                          
+
       //e.printStackTrace();
     }
   }
 
 
-  /** 
+  /**
    * Implements the other cross-platform headache of opening
    * a folder in the machine's native file browser.
    */
@@ -296,7 +296,7 @@ public class PdeBase {
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
-  static public void showWarning(String title, String message, 
+  static public void showWarning(String title, String message,
                                  Exception e) {
     if (title == null) title = "Warning";
     JOptionPane.showMessageDialog(new Frame(), message, title,
@@ -312,7 +312,7 @@ public class PdeBase {
    * This is an error that can't be recovered. Use showWarning()
    * for errors that allow P5 to continue running.
    */
-  static public void showError(String title, String message, 
+  static public void showError(String title, String message,
                                Exception e) {
     if (title == null) title = "Error";
     JOptionPane.showMessageDialog(new Frame(), message, title,
@@ -346,21 +346,21 @@ public class PdeBase {
     tracker.addImage(image, 0);
     try {
       tracker.waitForAll();
-    } catch (InterruptedException e) { }      
+    } catch (InterruptedException e) { }
     return image;
   }
 
 
-  static public InputStream getStream(String filename) 
+  static public InputStream getStream(String filename)
     throws IOException {
-    if ((PdeBase.platform == PdeBase.MACOSX) || 
+    if ((PdeBase.platform == PdeBase.MACOSX) ||
         (PdeBase.platform == PdeBase.MACOS9)) {
       // macos doesn't seem to think that files in the lib folder
       // are part of the resources, unlike windows or linux.
-      // actually, this is only the case when running as a .app, 
+      // actually, this is only the case when running as a .app,
       // since it works fine from run.sh, but not Processing.app
       return new FileInputStream("lib/" + filename);
-    } 
+    }
 
     // all other, more reasonable operating systems
     //return cls.getResource(filename).openStream();
@@ -411,7 +411,7 @@ public class PdeBase {
   /**
    * Grab the contents of a file as a string.
    */
-  static public String loadFile(File file) throws IOException {  
+  static public String loadFile(File file) throws IOException {
     // empty code file.. no worries, might be getting filled up later
     if (file.length() == 0) return "";
 
@@ -432,7 +432,7 @@ public class PdeBase {
   /**
    * Spew the contents of a String object out to a file.
    */
-  static public void saveFile(String str, 
+  static public void saveFile(String str,
                               File file) throws IOException {
 
     ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
@@ -451,7 +451,7 @@ public class PdeBase {
   }
 
 
-  static public void copyDir(File sourceDir, 
+  static public void copyDir(File sourceDir,
                              File targetDir) throws IOException {
     targetDir.mkdirs();
     String files[] = sourceDir.list();
@@ -482,9 +482,9 @@ public class PdeBase {
 
 
   /**
-   * Recursively remove all files within a directory, 
+   * Recursively remove all files within a directory,
    * used with removeDir(), or when the contents of a dir
-   * should be removed, but not the directory itself. 
+   * should be removed, but not the directory itself.
    * (i.e. when cleaning temp files from lib/build)
    */
   static public void removeDescendants(File dir) {
@@ -510,8 +510,8 @@ public class PdeBase {
 
 
   /**
-   * Calculate the size of the contents of a folder. 
-   * Used to determine whether sketches are empty or not. 
+   * Calculate the size of the contents of a folder.
+   * Used to determine whether sketches are empty or not.
    * Note that the function calls itself recursively.
    */
   static public int calcFolderSize(File folder) {
