@@ -2,14 +2,29 @@
 X BImage.replicate for straight 1:1 copy, blend() for blended version
 X   remove the blendMode function because it's confusing 
 X big changes to image code from toxi
+X repaired smoothing so that it doesn't crush the last line
+X bresenham ellipses/circle ignore alpha
+X   strokeWeight != 1 then shouldn't use flat_rect or flat_ellipse
+X   alpha didn't work either b/c some pixels seem to draw more than once
+X fixed bug where font wouldn't create if data dir exists
+X font builder: changes to font selection don't always update properly
 
-_ bresenham ellipses/circle ignore alpha
-_ strokeWeight != 1 then shouldn't use flat_rect or flat_ellipse
+_ problems for beautify:
+_   //for (int i = 0; i < 10; i++) {
+_   } catch (IOException e) { }
+_   need to ignore comments.. but not those inside quotes.. oog
+_ add ESC to font builder, and find
+_ font builder should open back up with the same selection
+_   maybe just hide it, just like find
+_ font builder should update when the size for the font is changed
+_  (so long as the size itself is valid)
+_ why aren't cursors working on the mac
+_ clearing the text area on the mac
 
 
 DEVELOPERS
 _ try ariel's Thread.yield() suggestion
-_ set default framerate of 24? 30?
+_ set default framerate of 24? 30? 2x that?
 
 
 MEDIUM
@@ -18,6 +33,8 @@ _ jikes errors are missing newline/linefeed ?
 _ using run-expert.bat on 62 causes NullPointerException weirdness (?)
 _ network/shared_canvas, network/value has old code
 _ write script to remove .DS_Store and CVS folders from dist
+_   # remove DS_Store files
+_   sudo find . -name ".DS_Store" -depth -exec rm {} \;
 _ change run.bat, run-expert.bat to use 128m
 _ ability to include other .java and .pde code from sketchbook folder
 _   'add files' for .java or .pde pulls into the folder
@@ -35,6 +52,8 @@ _ multi-line errors a mess in jikes
 _   maybe a dropdown list thing, with the first just shown?
 _ processing.exe: problem if expert version is run, and no java installed
 _   call the person a genius and tell them to install java
+_ update illustrator code to use bagel api
+_   even if not actually working properly.. just in naming of things
 
 
 application export

@@ -127,23 +127,29 @@ public class PdeFontBuilder extends JFrame {
     fontSelector = new JList(list); //families); 
     fontSelector.addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
-          //System.out.println(e.getFirstIndex());
-          selection = e.getFirstIndex();
-          okButton.setEnabled(true);
+          if (e.getValueIsAdjusting() == false) {
+            //System.out.println(e);
+            //System.out.println(e.getFirstIndex());
+            //selection = e.getFirstIndex();
+            selection = fontSelector.getSelectedIndex();
+            okButton.setEnabled(true);
 
-          int fontsize = 0;
-          try {
-            fontsize = Integer.parseInt(sizeSelector.getText().trim());
-            //System.out.println("'" + sizeSelector.getText() + "'");
-          } catch (NumberFormatException e2) { }
+            int fontsize = 0;
+            try {
+              fontsize = Integer.parseInt(sizeSelector.getText().trim());
+              //System.out.println("'" + sizeSelector.getText() + "'");
+            } catch (NumberFormatException e2) { }
 
-          if (fontsize != 0) {
-            font = new Font(list[selection], Font.PLAIN, fontsize);
-            //System.out.println("setting font to " + font);
-            sample.setFont(font);
+            if (fontsize != 0) {
+              font = new Font(list[selection], Font.PLAIN, fontsize);
+              //System.out.println("setting font to " + font);
+              sample.setFont(font);
 
-            String filenameSuggestion = list[selection].replace(' ', '_');
-            filenameField.setText(filenameSuggestion);
+              String filenameSuggestion = list[selection].replace(' ', '_');
+              filenameField.setText(filenameSuggestion);
+            }
+            //filenameField.paintComponent(filenameField.getGraphics());
+            //getContentPane().repaint();
           }
         }
       });
@@ -280,6 +286,10 @@ public class PdeFontBuilder extends JFrame {
     try {
       font = new Font(list[selection], Font.PLAIN, fontsize);
       BFont f = new BFont(font, true);
+
+      // make sure the 'data' folder exists
+      if (!targetFolder.exists()) targetFolder.mkdirs();
+
       f.write(new FileOutputStream(new File(targetFolder, filename)));
 
     } catch (IOException e) {
