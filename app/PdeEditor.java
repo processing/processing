@@ -115,9 +115,13 @@ public class PdeEditor extends Panel {
     textarea = new PdeEditorTextPane();
 
     JScrollPane scroller = new JScrollPane();
+    //scroller.setDoubleBuffered(true);
     JViewport viewport = scroller.getViewport();
+    viewport.setDoubleBuffered(true);
+
     //textarea = new JEditorPane("text/java", "");
     viewport.add(textarea);
+    //    viewport.setScrollMode(JViewport.BLIT_SCROLL_MODE);
 
     //textarea.setFont(PdeBase.getFont("editor.program.font",
     //			       new Font("Monospaced", 
@@ -397,7 +401,7 @@ public class PdeEditor extends Panel {
 	}
 	if (found) {
 	  // read lines until the next separator
-	  //textarea.setText("");
+	  //textarea.editorSetText("");
 	  line = reader.readLine(); // ignored
 	  String sep = System.getProperty("line.separator");
 	  StringBuffer buffer = new StringBuffer();
@@ -407,7 +411,7 @@ public class PdeEditor extends Panel {
 	    buffer.append(line + sep);
 	    //System.out.println("'" + line + "'");
 	  }
-	  textarea.setText(buffer.toString());
+	  textarea.editorSetText(buffer.toString());
 	  historyLast = textarea.getText();
 	  setSketchModified(false);
 
@@ -779,18 +783,18 @@ public class PdeEditor extends Panel {
 
 	// once read all the bytes, convert it to the proper
 	// local encoding for this system.
-	//textarea.setText(app.languageEncode(data));
+	//textarea.editorSetText(app.languageEncode(data));
 	// what the hell was i thinking when i wrote this code
 	//if (app.encoding == null)
 	program = new String(data);
-	//textarea.setText(new String(data));
-	textarea.setText(program);
+	//textarea.editorSetText(new String(data));
+	textarea.editorSetText(program);
 	//System.out.println(" loading program = " + new String(data));
 	//else 
-	//textarea.setText(new String(data, app.encoding));
+	//textarea.editorSetText(new String(data, app.encoding));
 
       } else {
-	textarea.setText("");
+	textarea.editorSetText("");
       }
       //System.out.println("should be done opening");
       sketchName = isketchName;
@@ -922,7 +926,7 @@ public class PdeEditor extends Panel {
     handleOpen(newSketchName, newSketchFile, newSketchDir);
 
     // update with the new junk and save that as the new code
-    textarea.setText(textareaContents);
+    textarea.editorSetText(textareaContents);
     textarea.setCaretPosition(textareaPosition);
     doSave();
   }
@@ -1426,7 +1430,7 @@ public class PdeEditor extends Panel {
 	gotBlankLine = false;
       }
     }
-    textarea.setText(buffer.toString());
+    textarea.editorSetText(buffer.toString());
     setSketchModified(true);
     buttons.clear();
   }
