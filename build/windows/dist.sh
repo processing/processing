@@ -88,6 +88,11 @@ find processing -name "*~" -exec rm -f {} ';'
 find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
 
+# chmod +x the crew
+find processing -name "*.dll" -exec chmod +x {} ';'
+find processing -name "*.exe" -exec chmod +x {} ';'
+find processing -name "*.html" -exec chmod +x {} ';'
+
 # zip it all up for release
 echo Packaging standard release...
 echo
@@ -101,13 +106,15 @@ zip -rq $P5.zip $P5
 echo Packaging expert release...
 echo
 
+cp -a $P5 $P5-expert
+
 # can't use the run.bat that's tied to a local jre
-rm $P5/run.bat
-cp dist/run-expert.bat $P5/
+rm $P5-expert/run.bat
+cp dist/run-expert.bat $P5-expert/
 
 # remove enormous java runtime
-rm -rf $P5/java
-zip -rq $P5-expert.zip $P5
+rm -rf $P5-expert/java
+zip -rq $P5-expert.zip $P5-expert
 
 echo Done.
 
