@@ -159,7 +159,6 @@ public class PGraphics2 extends PGraphics {
     case LINE_STRIP:
     case LINE_LOOP:
       if (gpath == null) {
-        //if (vertexCount == 1) {
         gpath = new GeneralPath();
         gpath.moveTo(x, y);
       } else {
@@ -273,8 +272,8 @@ public class PGraphics2 extends PGraphics {
       break;
 
     case POLYGON:
-    case CONCAVE_POLYGON:
-    case CONVEX_POLYGON:
+      //case CONCAVE_POLYGON:
+      //case CONVEX_POLYGON:
       //if (vertexCount == 1) {
       if (gpath == null) {
         //System.out.println("starting poly path " + x + " " + y);
@@ -289,7 +288,39 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void bezierVertex(float x, float y) {
+  public void bezierVertex(float x1, float y1,
+                           float x2, float y2,
+                           float x3, float y3) {
+    //if (vertexCount == 0) {
+    if (gpath == null) {
+      throw new RuntimeException("Must call vertex() at least once " +
+                                 "before using bezierVertex()");
+    }
+
+    switch (shape) {
+      case LINE_LOOP:
+      case LINE_STRIP:
+      case POLYGON:
+        gpath.curveTo(x1, y1, x2, y2, x3, y3);
+        break;
+
+    default:
+      throw new RuntimeException("bezierVertex() can only be used with " +
+                                 "LINE_STRIP, LINE_LOOP, or POLYGON");
+    }
+  }
+
+
+  float curveX[] = new float[4];
+  float curveY[] = new float[4];
+
+  public void curveVertex(float x, float y) {
+    if ((shape != LINE_LOOP) && (shape != LINE_STRIP) && (shape != POLYGON)) {
+      throw new RuntimeException("curveVertex() can only be used with " +
+                                 "LINE_LOOP, LINE_STRIP, and POLYGON shapes");
+    }
+
+    if (!curve_inited) curve_init();
     vertexCount = 0;
 
     if (splineVertices == null) {
@@ -304,35 +335,41 @@ public class PGraphics2 extends PGraphics {
                        splineVertices[1], 0, VERTEX_FIELD_COUNT);
       splineVertexCount = 3;
     }
+
+    // this new guy will be the fourth point (or higher),
+    // which means it's time to draw segments of the curve
+    if (splineVertexCount >= 3) {
+      curveX[0] = splineVertices[splineVertexCount-3][MX];
+      curveY[0] = splineVertices[splineVertexCount-3][MY];
+
+      curveX[1] = splineVertices[splineVertexCount-2][MX];
+      curveY[1] = splineVertices[splineVertexCount-2][MY];
+
+      curveX[2] = splineVertices[splineVertexCount-1][MX];
+      curveY[2] = splineVertices[splineVertexCount-1][MY];
+
+      curveX[3] = x;
+      curveY[3] = y;
+
+      curveToBezierMatrix.mult(curveX, curveX);
+      curveToBezierMatrix.mult(curveY, curveY);
+
+      // since the paths are continuous,
+      // only the first point needs the actual moveto
+      if (gpath == null) {
+        gpath = new GeneralPath();
+        gpath.moveTo(curveX[0], curveY[0]);
+      }
+
+      gpath.curveTo(curveX[1], curveY[1],
+                    curveX[2], curveY[2],
+                    curveX[3], curveY[3]);
+    }
+
+    // add the current point to the list
     splineVertices[splineVertexCount][MX] = x;
     splineVertices[splineVertexCount][MY] = y;
     splineVertexCount++;
-
-    switch (shape) {
-    case LINE_LOOP:
-    case POLYGON:
-    case CONCAVE_POLYGON:
-    case CONVEX_POLYGON:
-      //if (splineVertexCount == 1) {
-      if (gpath == null) {
-        gpath = new GeneralPath();
-        gpath.moveTo(x, y);
-
-      } else if (splineVertexCount >= 4) {
-        gpath.curveTo(splineVertices[splineVertexCount-3][MX],
-                      splineVertices[splineVertexCount-3][MY],
-                      splineVertices[splineVertexCount-2][MX],
-                      splineVertices[splineVertexCount-2][MY],
-                      x, y);
-      }
-      break;
-    }
-  }
-
-
-  public void curveVertex(float x, float y) {
-    // TODO handle inverse matrix action
-    throw new RuntimeException("curveVertex() not yet implemented");
   }
 
 
@@ -361,8 +398,8 @@ public class PGraphics2 extends PGraphics {
       break;
 
     case POLYGON:
-    case CONCAVE_POLYGON:
-    case CONVEX_POLYGON:
+      //case CONCAVE_POLYGON:
+      //case CONVEX_POLYGON:
       //System.out.println("finishing polygon");
       gpath.closePath();
       draw_shape(gpath);
@@ -377,14 +414,12 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  /*
   protected void fill_shape(Shape s) {
     if (fill) {
-      graphics.setColor(fillColorObject);
-      graphics.fill(s);
+      g2.setColor(fillColorObject);
+      g2.fill(s);
     }
   }
-  */
 
   protected void stroke_shape(Shape s) {
     if (stroke) {
@@ -507,16 +542,74 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void arcImpl(float x, float y, float w, float h,
-                      float start, float stop) {
-    arc.setArc(x, y, w, h, start, stop-start, Arc2D.PIE);
-    draw_shape(arc);
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop) {
+    // 0 to 90 in java would be 0 to -90 for p5 renderer
+    // but that won't work, so -90 to 0?
+
+    if (stop - start >= TWO_PI) {
+      start = 0;
+      stop = 360;
+
+    } else {
+      start = -start * RAD_TO_DEG;
+      stop = -stop * RAD_TO_DEG;
+
+      // ok to do this because already checked for NaN
+      //while (start < 0) start += 360;
+      //while (stop < 0) stop += 360;
+      while (start < 0) {
+        start += 360;
+        stop += 360;
+      }
+      /*
+      while (stop < 0) {
+        start += 360;
+        stop += 360;
+      }
+      */
+      if (start > stop) {
+        float temp = start;
+        start = stop;
+        stop = temp;
+      }
+    }
+    float span = stop - start;
+
+    /*
+    float span = stop - start;
+    start -= span;
+
+    start *= RAD_TO_DEG;
+    span *= RAD_TO_DEG;
+    */
+
+    //start %= 360;
+    //System.out.println(RAD_TO_DEG*start + " " + RAD_TO_DEG*span);
+    //System.out.println(start + " " + span);
+
+    // start is int proper place, but the stop is the wrong way
+    //float stop = start;
+    //float start =
+
+    // stroke as Arc2D.OPEN, fill as Arc2D.PIE
+    if (fill) {
+      //System.out.println("filla");
+      arc.setArc(x, y, w, h, start, span, Arc2D.PIE);
+      fill_shape(arc);
+    }
+    if (stroke) {
+      //System.out.println("strokey");
+      arc.setArc(x, y, w, h, start, span, Arc2D.OPEN);
+      stroke_shape(arc);
+    }
   }
 
 
   //////////////////////////////////////////////////////////////
 
 
+  /*
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
@@ -528,6 +621,7 @@ public class PGraphics2 extends PGraphics {
 
     draw_shape(gp);
   }
+  */
 
 
   public void bezierDetail(int detail) {
@@ -539,6 +633,7 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  /*
   public void curveTightness(float tightness) {
     // TODO
   }
@@ -549,8 +644,9 @@ public class PGraphics2 extends PGraphics {
                     float x3, float y3,
                     float x4, float y4) {
     // TODO need inverse catmull rom to bezier matrix
-  }
 
+  }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -621,10 +717,9 @@ public class PGraphics2 extends PGraphics {
 
     public ImageCache(PImage source) {
       this.source = source;
-      // if RGB, set the image type to RGB,
-      // otherwise it's ALPHA or ARGB, and use an ARGB bimage
-      int type = (source.format == RGB) ?
-        BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+      // even if RGB, set the image type to ARGB, because the
+      // image may have an alpha value for its tint().
+      int type = BufferedImage.TYPE_INT_ARGB;
       image = new BufferedImage(source.width, source.height, type);
     }
 
@@ -641,21 +736,42 @@ public class PGraphics2 extends PGraphics {
           int r2 = (tintColor >> 16) & 0xff;
           int g2 = (tintColor >> 8) & 0xff;
           int b2 = (tintColor) & 0xff;
+          //System.out.println("a2 is " + a2);
 
           // multiply each of the color components into tintedPixels
-          for (int i = 0; i < tintedPixels.length; i++) {
-            int argb1 = source.pixels[i];
-            int a1 = (argb1 >> 24) & 0xff;
-            int r1 = (argb1 >> 16) & 0xff;
-            int g1 = (argb1 >> 8) & 0xff;
-            int b1 = (argb1) & 0xff;
+          // if straight RGB image, don't bother multiplying
+          // (also avoids problems if high bits not set)
+          if (source.format == RGB) {
+            int alpha = a2 << 24;
 
-            tintedPixels[i] =
-              (((a2 * a1) & 0xff00) << 16) |
-              (((r2 * r1) & 0xff00) << 8) |
-              ((g2 * g1) & 0xff00) |
-              (((b2 * b1) & 0xff00) >> 8);
+            for (int i = 0; i < tintedPixels.length; i++) {
+              int argb1 = source.pixels[i];
+              int r1 = (argb1 >> 16) & 0xff;
+              int g1 = (argb1 >> 8) & 0xff;
+              int b1 = (argb1) & 0xff;
+
+              tintedPixels[i] = alpha |
+                (((r2 * r1) & 0xff00) << 8) |
+                ((g2 * g1) & 0xff00) |
+                (((b2 * b1) & 0xff00) >> 8);
+            }
+
+          } else {
+            for (int i = 0; i < tintedPixels.length; i++) {
+              int argb1 = source.pixels[i];
+              int a1 = (argb1 >> 24) & 0xff;
+              int r1 = (argb1 >> 16) & 0xff;
+              int g1 = (argb1 >> 8) & 0xff;
+              int b1 = (argb1) & 0xff;
+
+              tintedPixels[i] =
+                (((a2 * a1) & 0xff00) << 16) |
+                (((r2 * r1) & 0xff00) << 8) |
+                ((g2 * g1) & 0xff00) |
+                (((b2 * b1) & 0xff00) >> 8);
+            }
           }
+
           tinted = true;
           tintedColor = tintColor;
 
@@ -665,6 +781,7 @@ public class PGraphics2 extends PGraphics {
 
         } else {  // no tint
           // just do a setRGB like before
+          // (and we'll just hope that the high bits are set)
           image.setRGB(0, 0, source.width, source.height,
                        source.pixels, 0, source.width);
         }
@@ -849,12 +966,12 @@ public class PGraphics2 extends PGraphics {
     int cap = BasicStroke.CAP_BUTT;
     if (strokeCap == ROUND) {
       cap = BasicStroke.CAP_ROUND;
-    } else if (strokeCap == PROJECTED) {
+    } else if (strokeCap == PROJECT) {
       cap = BasicStroke.CAP_SQUARE;
     }
 
     int join = BasicStroke.JOIN_BEVEL;
-    if (strokeJoin == MITERED) {
+    if (strokeJoin == MITER) {
       join = BasicStroke.JOIN_MITER;
     } else if (strokeJoin == ROUND) {
       join = BasicStroke.JOIN_ROUND;
@@ -952,8 +1069,28 @@ public class PGraphics2 extends PGraphics {
 
 
   public PImage get(int x, int y, int w, int h) {
+    if (imageMode == CORNERS) {  // if CORNER, do nothing
+      //x2 += x1; y2 += y1;
+      // w/h are x2/y2 in this case, bring em down to size
+      w = (w - x);
+      h = (h - x);
+    }
+
+    if (x < 0) {
+      w += x; // clip off the left edge
+      x = 0;
+    }
+    if (y < 0) {
+      h += y; // clip off some of the height
+      y = 0;
+    }
+
+    if (x + w > width) w = width - x;
+    if (y + h > height) h = height - y;
+
     PImage output = new PImage(w, h);
-    ((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, width);
+    // oops, the last parameter is the scan size of the *target* buffer
+    ((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
     return output;
   }
 

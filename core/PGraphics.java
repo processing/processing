@@ -189,6 +189,14 @@ public class PGraphics extends PImage implements PConstants {
     { -3,  3,  0,  0},
     {  1,  0,  0,  0}
   };
+
+  protected PMatrix bezierBasis =
+    new PMatrix(RADIANS,
+                -1,  3, -3,  1,
+                 3, -6,  3,  0,
+                -3,  3,  0,  0,
+                 1,  0,  0,  0);
+
   protected float bezier_forward[][]; // = new float[4][4];
   protected float bezier_draw[][]; // = new float[4][4];
 
@@ -201,6 +209,9 @@ public class PGraphics extends PImage implements PConstants {
   protected float curve_basis[][]; // = new float[4][4];
   protected float curve_forward[][]; // = new float[4][4];
   protected float curve_draw[][];
+
+  protected PMatrix bezierBasisInverse;
+  protected PMatrix curveToBezierMatrix;
 
   // ........................................................
 
@@ -369,7 +380,11 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
+
     strokeWeight(ONE);
+    strokeCap(SQUARE);
+    strokeJoin(MITER);
+
     background(204);
 
     // init shape stuff
@@ -588,8 +603,8 @@ public class PGraphics extends PImage implements PConstants {
       break;
 
     case POLYGON:
-    case CONCAVE_POLYGON:
-    case CONVEX_POLYGON:
+      //case CONCAVE_POLYGON:
+      //case CONVEX_POLYGON:
       if (vertexCount == 1) {
         path = new Path();
         path.moveTo(x, y);
@@ -619,7 +634,15 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void bezierVertex(float x, float y) {
+  public void bezierVertex(float x1, float y1,
+                           float x2, float y2,
+                           float x3, float y3) {
+    // if there hasn't yet been a call to vertex(), throw an error
+
+    // otherwise, draw a bezier segment to this point
+  }
+
+  protected void bezier_vertex(float x, float y) {
     vertexCount = 0;
 
     if (splineVertices == null) {
@@ -640,9 +663,8 @@ public class PGraphics extends PImage implements PConstants {
 
     switch (shape) {
     case LINE_LOOP:
+    case LINE_STRIP:
     case POLYGON:
-    case CONCAVE_POLYGON:
-    case CONVEX_POLYGON:
       if (splineVertexCount == 1) {
         path.moveTo(x, y);
 
@@ -662,10 +684,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * See notes with the bezier() function.
-   */
-  public void bezierVertex(float x, float y, float z) {
+  public void bezierVertex(float x1, float y1, float z1,
+                           float x2, float y2, float z2,
+                           float x3, float y3, float z3) {
     throw new RuntimeException("bezierVertex(x, y, z) can only be used with " +
                                "depth(), use bezierVertex(x, y) instead.");
   }
@@ -703,8 +724,8 @@ public class PGraphics extends PImage implements PConstants {
       break;
 
     case POLYGON:
-    case CONCAVE_POLYGON:
-    case CONVEX_POLYGON:
+      //case CONCAVE_POLYGON:
+      //case CONVEX_POLYGON:
       path.closePath();
       draw_shape(path);
       break;
@@ -924,14 +945,13 @@ public class PGraphics extends PImage implements PConstants {
     if (angleMode == DEGREES) {
       start = start * DEG_TO_RAD;
       stop = stop * DEG_TO_RAD;
-
-      // before running a while loop like this,
-      // make sure it will exit at some point.
-      if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
-      while (stop < start) stop += TWO_PI;
     }
+    // before running a while loop like this,
+    // make sure it will exit at some point.
+    if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
+    while (stop < start) stop += TWO_PI;
 
-    arcImpl(start, stop, x, y, w, h);
+    arcImpl(x, y, w, h, start, stop);
   }
 
 
@@ -979,8 +999,8 @@ public class PGraphics extends PImage implements PConstants {
    * b and c are the control points. this can be done once with the
    * x coordinates and a second time with the y coordinates to get
    * the location of a bezier curve at t.
-   *
-   * for instance, to convert the following example:<code>
+   * <P>
+   * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
    * line(85, 20, 10, 10);
    * line(90, 90, 15, 80);
@@ -994,11 +1014,11 @@ public class PGraphics extends PImage implements PConstants {
    * beginShape(LINE_STRIP);
    * for (int i = 0; i <= 10; i++) {
    *   float t = i / 10.0f;
-   *   float x = bezier(85, 10, 90, 15, t);
-   *   float y = bezier(20, 10, 90, 80, t);
+   *   float x = bezierPoint(85, 10, 90, 15, t);
+   *   float y = bezierPoint(20, 10, 90, 80, t);
    *   vertex(x, y);
    * }
-   * endShape();</code>
+   * endShape();</PRE>
    */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
@@ -1030,51 +1050,28 @@ public class PGraphics extends PImage implements PConstants {
    * Draw a bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
-   *
+   * <P>
    * Identical to typing:
-   * beginShape();
-   * bezierVertex(x1, y1);
-   * bezierVertex(x2, y2);
-   * bezierVertex(x3, y3);
-   * bezierVertex(x4, y4);
-   * endShape();
+   * <PRE>beginShape();
+   * vertex(x1, y1);
+   * bezierVertex(x2, y2, x3, y3, x4, y4);
+   * endShape();</PRE>
    *
    * In Postscript-speak, this would be:
-   * moveto(x1, y1);
-   * curveto(x2, y2, x3, y3, x4, y4);
+   * <PRE>moveto(x1, y1);
+   * curveto(x2, y2, x3, y3, x4, y4);</PRE>
    * If you were to try and continue that curve like so:
-   * curveto(x5, y5, x6, y6, x7, y7);
-   * This would be done in bagel by adding these statements:
-   * curveVertex(x4, y4);
-   * curveVertex(x5, y5);
-   * curveVertex(x6, y6);
-   * curveVertex(x7, y7);
-   * Note that x4/y4 are being pulled from the previous
-   * curveto and used again.
-   *
-   * The solution here may be a bit more verbose than Postscript,
-   * but in general, decisions opted for maximum flexibility,
-   * since these beginShape() commands are intended as a bit lower-level.
-   * Rather than having many types of curveto (curve to corner,
-   * and several others described in the Postscript and Illustrator specs)
-   * let someone else implement a nice moveto/lineto/curveto library on top.
-   * In fact, it's tempting that we may put one in there ourselves.
-   *
-   * Another method for bezier (though not implemented this way)
-   * 1. first start with a call to vertex()
-   * 2. every three calls to bezierVertex produce a new segment
-   * This option seemed no good because of the confusion of mixing
-   * vertex and bezierVertex calls.
+   * <PRE>curveto(x5, y5, x6, y6, x7, y7);</PRE>
+   * This would be done in processing by adding these statements:
+   * <PRE>bezierVertex(x5, y5, x6, y6, x7, y7)</PRE>
    */
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
     beginShape(LINE_STRIP);
-    bezierVertex(x1, y1);
-    bezierVertex(x2, y2);
-    bezierVertex(x3, y3);
-    bezierVertex(x4, y4);
+    vertex(x1, y1);
+    bezierVertex(x2, y2, x3, y3, x4, y4);
     endShape();
   }
 
@@ -1131,7 +1128,7 @@ public class PGraphics extends PImage implements PConstants {
    * curve, and setting the s parameter, which defines how tightly
    * the curve fits to each vertex. Catmull-Rom curves are actually
    * a subset of this curve type where the s is set to zero.
-   *
+   * <P>
    * (This function is not optimized, since it's not expected to
    * be called all that often. there are many juicy and obvious
    * opimizations in here, but it's probably better to keep the
@@ -1163,6 +1160,18 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
     setup_spline_forward(segments, curve_forward);
+
+    if (bezierBasisInverse == null) {
+      bezierBasisInverse = new PMatrix(bezierBasis).invert();
+    }
+
+    // hack here to get PGraphics2 working
+    curveToBezierMatrix = new PMatrix(RADIANS,
+                                      c[0][0], c[0][1], c[0][2], c[0][3],
+                                      c[1][0], c[1][1], c[1][2], c[1][3],
+                                      c[2][0], c[2][1], c[2][2], c[2][3],
+                                      c[3][0], c[3][1], c[3][2], c[3][3]);
+    curveToBezierMatrix.preApplyMatrix(bezierBasisInverse);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
@@ -1199,18 +1208,19 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Draws a segment of Catmull-Rom curve.
-   *
-   * Identical to typing out:
+   * <P>
+   * As of 0070, this function no longer doubles the first and
+   * last points. The curves are a bit more boring, but it's more
+   * mathematically correct, and properly mirrored in curvePoint().
+   * <P>
+   * Identical to typing out:<PRE>
    * beginShape();
    * curveVertex(x1, y1);
    * curveVertex(x2, y2);
    * curveVertex(x3, y3);
    * curveVertex(x4, y4);
    * endShape();
-   *
-   * As of 0070, this function no longer doubles the first and
-   * last points. The curves are a bit more boring, but it's more
-   * mathematically correct, and properly mirrored in curvePoint().
+   * </PRE>
    */
   public void curve(float x1, float y1,
                     float x2, float y2,
@@ -2286,16 +2296,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // if high bit isn't set, then it's not a #ffcc00 style web color
-  // so redirect to the float version, b/c they want a gray.
-  // only danger is that someone would try to set the color to a
-  // zero alpha.. which would be kooky but not unlikely
-  // (i.e. if it were in a loop) so in addition to checking the high
-  // bit, check to see if the value is at least just below the
-  // colorModeX (i.e. 0..255). can't just check the latter since
-  // if the high bit is > 0x80 then the int value for rgb will be
-  // negative. yay for no unsigned types in java!
-
+  /**
+   * Set the tint to either a grayscale or ARGB value. See notes
+   * attached to the fill() function.
+   */
   public void tint(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
       tint((float) rgb);
@@ -2338,6 +2342,26 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Set the fill to either a grayscale value or an ARGB int.
+   * <P>
+   * The problem with this code is that it has to detect between
+   * these two situations automatically. This is done by checking
+   * to see if the high bits (the alpha for 0xAA000000) is set,
+   * and if not, whether the color value that follows is less than
+   * colorModeX (the first param passed to colorMode).
+   * <P>
+   * This auto-detect would break in the following situation:
+   * <PRE>size(256, 256);
+   * for (int i = 0; i < 256; i++) {
+   *   color c = color(0, 0, 0, i);
+   *   stroke(c);
+   *   line(i, 0, i, 256);
+   * }</PRE>
+   * ...on the first time through the loop, where (i == 0),
+   * since the color itself is zero (black) then it would appear
+   * indistinguishable from someone having written fill(0).
+   */
   public void fill(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       fill((float) rgb);
@@ -2396,6 +2420,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Set the tint to either a grayscale or ARGB value. See notes
+   * attached to the fill() function.
+   */
   public void stroke(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       stroke((float) rgb);
@@ -2441,7 +2469,7 @@ public class PGraphics extends PImage implements PConstants {
    * before drawing.
    */
   public void background(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
       background((float) rgb);
 
     } else {
@@ -2467,12 +2495,12 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Takes an RGB or RGBA image and sets it as the background.
-   *
+   * Takes an RGB or ARGB image and sets it as the background.
+   * <P>
    * Note that even if the image is set as RGB, the high 8 bits of
    * each pixel must be set (0xFF000000), because the image data will
    * be copied directly to the screen.
-   *
+   * <P>
    * Also clears out the zbuffer and stencil buffer if they exist.
    */
   public void background(PImage image) {
@@ -2490,13 +2518,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Clears pixel buffer. Also clears the stencil and zbuffer
+   * Clears pixel buffer. Subclasses (PGraphics3) will also clear the
+   * stencil and zbuffer
    * if they exist. Their existence is more accurate than using 'depth'
    * to test whether to clear them, because if they're non-null,
    * it means that depth() has been called somewhere in the program,
    * even if noDepth() was called before draw() exited.
    */
-  public void clear() {
+  //public void clear() {
+  protected void clear() {
     for (int i = 0; i < pixelCount; i++) {
       pixels[i] = backgroundColor;
     }
