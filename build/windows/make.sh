@@ -87,7 +87,7 @@ cd ..
 
 #################### TEMPORARY #####################
 # set to true to re-enable building the preprocessor
-if false
+if true
 then
 #################### TEMPORARY #####################
 
