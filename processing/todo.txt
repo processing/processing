@@ -116,6 +116,11 @@ X font builder
 X   properly update the font on new selection
 X   update when smooth is sel/desel
 X   don't allow negative font sizes
+X "create font" not working well with postscript font names
+X   need to remap the postscript name back to the java font name
+X   or keep a list of font objects, not just the names
+X     since already have the list, can use deriveFont
+X tabs on macosx are stinking.. need to use line metrics class
 
 _ double-check library stuff to make sure they're using the new system
 _ add "archive" option since history is gone
@@ -124,13 +129,7 @@ _ fix dist.sh for mac, pc, linux
 _ write better handler for compiler error:
 _   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63:1:70: Semantic Error: You need to modify your classpath, sourcepath, bootclasspath, and/or extdirs setup. Package "poo/shoe" could not be found in:
 
-_ "create font" not working well with postscript font names
-_   need to remap the postscript name back to the java font name
-_   or keep a list of font objects, not just the names
-_     since already have the list, can use deriveFont
-
-_ tabs on macosx are stinking.. need to use line metrics class
-_ macosx.. use better font metrics to get width for tab names
+_ macosx - check to see if new linemetrics stuff is working better
 
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
