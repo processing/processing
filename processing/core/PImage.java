@@ -488,15 +488,24 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Options to filter an image in place.
+   * RGB set all the high bits in the image to opaque
+   *     and sets the format to RGB
+   * FIND_EDGES (no params) .. high pass filter
+   * BLUR (no params)
+   * GAUSSIAN_BLUR (one param)
+   * BLACK_WHITE? (param for midpoint)
+   * GRAYSCALE
+   * POSTERIZE (int num of levels)
    */
-  // FIND_EDGES (no params) .. high pass filter
-  // BLUR (no params)
-  // GAUSSIAN_BLUR (one param)
-  // BLACK_WHITE? (param for midpoint)
-  // GRAYSCALE
-  // POSTERIZE (int num of levels)
   public void filter(int kind) {
     switch (kind) {
+
+      case RGB:
+        for (int i = 0; i < pixels.length; i++) {
+          pixels[i] |= 0xff000000;
+        }
+        format = RGB;
+        break;
 
       case BLACK_WHITE:
         filter(BLACK_WHITE, 0.5f);
