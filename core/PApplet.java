@@ -113,7 +113,7 @@ public class PApplet extends Applet
   // used for mouse tracking so that pmouseX doesn't get
   // updated too many times while still inside the loop
   // instead, it's updated only before/after the loop()
-  int qmouseX, qmouseY;
+  //int qmouseX, qmouseY;
 
   // queue for whether to call the simple mouseDragged or
   // mouseMoved functions. these are called after beginFrame
@@ -479,8 +479,8 @@ public class PApplet extends Applet
 
 
   public void nextFrame() {
-    mouseX = qmouseX;   // only if updated?
-    mouseY = qmouseY;
+    //mouseX = qmouseX;   // only if updated?
+    //mouseY = qmouseY;
 
     if (fpsTarget != 0) framerate_delay();
 
