@@ -24,6 +24,7 @@ X   that way other font types can properly extend PFont
 o font char widths from orator were not fixed width
 o   may just need to regenerate. if not, widths may be set wrong.
 
+
 _ depth testing of lines vs text is problematic
 _   use depth()/noDepth() to handle depth test
 
