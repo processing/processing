@@ -7,7 +7,7 @@ if test -d work
 then
 
 else
-  echo Setting up directories to build P5...
+  echo Setting up directories to build for linux...
   mkdir work
   tar --extract --verbose --file=jre.tgz --ungzip --directory=work
   cp -r ../shared/lib work/
