@@ -262,25 +262,6 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  public void defaults() {
-    super.defaults();
-
-    cameraMode(PERSPECTIVE);
-
-    //System.out.println("PGraphics3.defaults()");
-    // easiest for beginners
-    textureMode(IMAGE_SPACE);
-
-    // better to leave this turned off by default
-    noLights();
-
-    lightEnable(0);
-    lightAmbient(0, 0, 0, 0);
-
-    light(1, cameraX, cameraY, cameraZ, 255, 255, 255);
-  }
-
-
   public void beginFrame() {
     super.beginFrame();
 
@@ -323,6 +304,28 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  public void defaults() {
+    super.defaults();
+
+    cameraMode(PERSPECTIVE);
+
+    //System.out.println("PGraphics3.defaults()");
+    // easiest for beginners
+    textureMode(IMAGE_SPACE);
+
+    // better to leave this turned off by default
+    noLights();
+
+    lightEnable(0);
+    lightAmbient(0, 0, 0, 0);
+
+    light(1, cameraX, cameraY, cameraZ, 255, 255, 255);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
   public void beginShape(int kind) {
     shape = kind;
 
@@ -350,6 +353,62 @@ public class PGraphics3 extends PGraphics {
     textureImage = null;
 
     splineVertexCount = 0;
+  }
+
+
+  /**
+   * Sets the current normal. Mostly will apply to vertices
+   * inside a beginShape/endShape block.
+   */
+  public void normal(float nx, float ny, float nz) {
+    // if drawing a shape and the normal hasn't changed yet,
+    // then need to set all the normal for each vertex so far
+    /*
+    if ((shape != 0) && !normalChanged) {
+      for (int i = vertex_start; i < vertex_end; i++) {
+        vertices[i][NX] = normalX;
+        vertices[i][NY] = normalY;
+        vertices[i][NZ] = normalZ;
+      }
+      normalChanged = true;
+    }
+    */
+    normalX = nx;
+    normalY = ny;
+    normalZ = nz;
+  }
+
+
+  /**
+   * set texture mode to either IMAGE_SPACE (more intuitive
+   * for new users) or NORMAL_SPACE (better for advanced chaps)
+   */
+  public void textureMode(int mode) {
+    this.textureMode = mode;
+  }
+
+
+  /**
+   * set texture image for current shape
+   * needs to be called between @see beginShape and @see endShape
+   *
+   * @param image reference to a PImage object
+   */
+  public void texture(PImage image) {
+    textureImage = image;
+
+    if (texture_index == textures.length - 1) {
+      PImage temp[] = new PImage[texture_index<<1];
+      System.arraycopy(textures, 0, temp, 0, texture_index);
+      textures = temp;
+      //message(CHATTER, "allocating more textures " + textures.length);
+    }
+
+    if (textures[0] != null) {  // wHY?
+      texture_index++;
+    }
+
+    textures[texture_index] = image;
   }
 
 
@@ -564,62 +623,6 @@ public class PGraphics3 extends PGraphics {
    */
   public void curveVertex(float x, float y, float z) {
     spline_vertex(x, y, z, false);
-  }
-
-
-  /**
-   * Sets the current normal. Mostly will apply to vertices
-   * inside a beginShape/endShape block.
-   */
-  public void normal(float nx, float ny, float nz) {
-    // if drawing a shape and the normal hasn't changed yet,
-    // then need to set all the normal for each vertex so far
-    /*
-    if ((shape != 0) && !normalChanged) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        vertices[i][NX] = normalX;
-        vertices[i][NY] = normalY;
-        vertices[i][NZ] = normalZ;
-      }
-      normalChanged = true;
-    }
-    */
-    normalX = nx;
-    normalY = ny;
-    normalZ = nz;
-  }
-
-
-  /**
-   * set texture mode to either IMAGE_SPACE (more intuitive
-   * for new users) or NORMAL_SPACE (better for advanced chaps)
-   */
-  public void textureMode(int mode) {
-    this.textureMode = mode;
-  }
-
-
-  /**
-   * set texture image for current shape
-   * needs to be called between @see beginShape and @see endShape
-   *
-   * @param image reference to a PImage object
-   */
-  public void texture(PImage image) {
-    textureImage = image;
-
-    if (texture_index == textures.length - 1) {
-      PImage temp[] = new PImage[texture_index<<1];
-      System.arraycopy(textures, 0, temp, 0, texture_index);
-      textures = temp;
-      //message(CHATTER, "allocating more textures " + textures.length);
-    }
-
-    if (textures[0] != null) {  // wHY?
-      texture_index++;
-    }
-
-    textures[texture_index] = image;
   }
 
 
@@ -1082,12 +1085,6 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // LIGHTS AND COLOR
-
-
   /**
    * This method handles the transformation, lighting, and clipping
    * operations for the shapes. Broken out as a separate function
@@ -1480,12 +1477,12 @@ public class PGraphics3 extends PGraphics {
   // PLACED SHAPES
 
 
-  public void draw_rect(float x1, float y1, float x2, float y2) {
+  protected void rectImpl(float x1, float y1, float x2, float y2) {
     quad(x1, y1,  x2, y1,  x2, y2,  x1, y2);
   }
 
 
-  protected void draw_ellipse(float x, float y, float hradius, float vradius) {
+  protected void ellipseImpl(float x, float y, float hradius, float vradius) {
     // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
     // now uses current scale factors to determine "real" transformed radius
 
@@ -1520,8 +1517,8 @@ public class PGraphics3 extends PGraphics {
    * This is so that an arc can be drawn that crosses zero mark,
    * and the user will still collect $200.
    */
-  protected void draw_arc(float start, float stop,
-                          float x, float y, float w, float h) {
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop) {
     float hr = w / 2f;
     float vr = h / 2f;
 
@@ -1573,25 +1570,6 @@ public class PGraphics3 extends PGraphics {
 
       fill = savedFill;
     }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // CURVES
-
-
-  public void bezier(float x1, float y1, float z1,
-                     float x2, float y2, float z2,
-                     float x3, float y3, float z3,
-                     float x4, float y4, float z4) {
-    beginShape(LINE_STRIP);
-    bezierVertex(x1, y1, z1);
-    bezierVertex(x2, y2, z2);
-    bezierVertex(x3, y3, z3);
-    bezierVertex(x4, y4, z4);
-    endShape();
   }
 
 
@@ -1794,6 +1772,114 @@ public class PGraphics3 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // CURVES
+
+
+  public void bezier(float x1, float y1,
+                     float x2, float y2,
+                     float x3, float y3,
+                     float x4, float y4) {
+    bezier(x1, y1, 0,
+           x2, y2, 0,
+           x3, y3, 0,
+           x4, y4, 0);
+  }
+
+
+  public void bezier(float x1, float y1, float z1,
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3,
+                     float x4, float y4, float z4) {
+    beginShape(LINE_STRIP);
+    bezierVertex(x1, y1, z1);
+    bezierVertex(x2, y2, z2);
+    bezierVertex(x3, y3, z3);
+    bezierVertex(x4, y4, z4);
+    endShape();
+  }
+
+
+  public void curve(float x1, float y1,
+                    float x2, float y2,
+                    float x3, float y3,
+                    float x4, float y4) {
+    curve(x1, y1, 0,
+          x2, y2, 0,
+          x3, y3, 0,
+          x4, y4, 0);
+  }
+
+
+  public void curve(float x1, float y1, float z1,
+                    float x2, float y2, float z2,
+                    float x3, float y3, float z3,
+                    float x4, float y4, float z4) {
+    beginShape(LINE_STRIP);
+    curveVertex(x1, y1, z1);
+    curveVertex(x2, y2, z2);
+    curveVertex(x3, y3, z3);
+    curveVertex(x4, y4, z4);
+    endShape();
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  protected void imageImpl(PImage image,
+                           float x1, float y1, float w, float h,
+                           int u1, int v1, int u2, int v2) {
+
+    float x2 = x1 + w;
+    float y2 = y1 + h;
+
+    boolean savedStroke = stroke;
+    boolean savedFill = fill;
+    int savedTextureMode = textureMode;
+
+    stroke = false;
+    fill = true;
+    textureMode = IMAGE_SPACE;
+
+    float savedFillR = fillR;
+    float savedFillG = fillG;
+    float savedFillB = fillB;
+    float savedFillA = fillA;
+
+    if (tint) {
+      fillR = tintR;
+      fillG = tintG;
+      fillB = tintB;
+      fillA = tintA;
+
+    } else {
+      fillR = 1;
+      fillG = 1;
+      fillB = 1;
+      fillA = 1;
+    }
+
+    beginShape(QUADS);
+    texture(image);
+    vertex(x1, y1, u1, v1);
+    vertex(x1, y2, u1, v2);
+    vertex(x2, y2, u2, v2);
+    vertex(x2, y1, u2, v1);
+    endShape();
+
+    stroke = savedStroke;
+    fill = savedFill;
+    textureMode = savedTextureMode;
+
+    fillR = savedFillR;
+    fillG = savedFillG;
+    fillB = savedFillB;
+    fillA = savedFillA;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // MATRIX TRANSFORMATIONS
 
 
@@ -1810,25 +1896,6 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  // OPT could save several multiplies for the 0s and 1s by just
-  //     putting the multMatrix code here and removing uneccessary terms
-
-  public void rotateX(float angle) {
-    //dimensions = 3;
-    float c = cos(angle);
-    float s = sin(angle);
-    applyMatrix(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
-  }
-
-
-  public void rotateY(float angle) {
-    //dimensions = 3;
-    float c = cos(angle);
-    float s = sin(angle);
-    applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
-  }
-
-
   /**
    * Two dimensional rotation. Same as rotateZ (this is identical
    * to a 3D rotation along the z-axis) but included for clarity --
@@ -1840,6 +1907,23 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  // OPT could save several multiplies for the 0s and 1s by just
+  //     putting the multMatrix code here and removing uneccessary terms
+
+  public void rotateX(float angle) {
+    float c = cos(angle);
+    float s = sin(angle);
+    applyMatrix(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
+  }
+
+
+  public void rotateY(float angle) {
+    float c = cos(angle);
+    float s = sin(angle);
+    applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
+  }
+
+
   /**
    * Rotate in the XY plane by an angle.
    *
@@ -1848,8 +1932,6 @@ public class PGraphics3 extends PGraphics {
    * 2D rotate in the XY plane.
    */
   public void rotateZ(float angle) {
-    //rotate(angle, 0, 0, 1);
-    //if (dimensions == 0) dimensions = 2;  // otherwise already 2 or higher
     float c = cos(angle);
     float s = sin(angle);
     applyMatrix(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
@@ -1882,19 +1964,26 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * This will scale in all three dimensions, but not set the
-   * dimensions higher than two, in case this is still 2D mode.
+   * Same as scale(s, s, s);
    */
   public void scale(float s) {
     applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
   }
 
 
+  /**
+   * Not recommended for use in 3D, because the z-dimension is just
+   * scaled by 1, since there's no way to know what else to scale it by.
+   * Equivalent to scale(sx, sy, 1);
+   */
   public void scale(float sx, float sy) {
     applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
+  /**
+   * Scale in three dimensions.
+   */
   public void scale(float x, float y, float z) {
     applyMatrix(x, 0, 0, 0,  0, y, 0, 0,  0, 0, z, 0,  0, 0, 0, 1);
   }
@@ -2235,6 +2324,12 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // SCREEN AND OBJECT COORDINATES
+
+
   public float screenX(float x, float y) {
     return screenX(x, y, 0);
   }
@@ -2425,7 +2520,28 @@ public class PGraphics3 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // MATH
+  // SMOOTH (not available, throws error)
+
+  // although should this bother throwing an error?
+  // could be a pain in the ass when trying to debug with opengl
+
+
+  public void smooth() {
+    String msg = "smooth() not available when used with depth()";
+    throw new RuntimeException(msg);
+  }
+
+
+  public void noSmooth() {
+    String msg = "noSmooth() not available when used with depth()";
+    throw new RuntimeException(msg);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATH (internal use only)
 
 
   private final float mag(float a, float b) {
