@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -313,6 +314,9 @@ public class PdeEditor extends Panel {
   public void init() {
     // load the last program that was in use
 
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    int windowX = -1, windowY = 0, windowW = 0, windowH = 0;
+
     Properties skprops = new Properties();
     try {
       if (PdeBase.platform == PdeBase.MACOSX) {
@@ -327,21 +331,22 @@ public class PdeEditor extends Panel {
 	skprops.load(getClass().getResource("sketch.properties").openStream());
       }
 
-      int windowX = Integer.parseInt(skprops.getProperty("window.x", "-1"));
-      int windowY = Integer.parseInt(skprops.getProperty("window.y", "-1"));
-      int windowW = Integer.parseInt(skprops.getProperty("window.w", "-1"));
-      int windowH = Integer.parseInt(skprops.getProperty("window.h", "-1"));
+      windowX = Integer.parseInt(skprops.getProperty("window.x", "-1"));
+      windowY = Integer.parseInt(skprops.getProperty("window.y", "-1"));
+      windowW = Integer.parseInt(skprops.getProperty("window.w", "-1"));
+      windowH = Integer.parseInt(skprops.getProperty("window.h", "-1"));
 
       // if screen size has changed, the window coordinates no longer
       // make sense, so don't use them unless they're identical
       int screenW = Integer.parseInt(skprops.getProperty("screen.w", "-1"));
       int screenH = Integer.parseInt(skprops.getProperty("screen.h", "-1"));
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-      if ((windowX != -1) &&
-	  (screen.width == screenW) && (screen.height == screenH)) {
-	//System.out.println("setting bounds of frame");
-	PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
+      //if ((windowX != -1) &&
+      //  (screen.width == screenW) && (screen.height == screenH)) {
+      //} else {
+      if ((screen.width != screenW) || (screen.height != screenH)) {
+	// not valid for this machine, so invalidate sizing
+	windowX = -1;
       }
 
       String name = skprops.getProperty("sketch.name");
@@ -378,6 +383,15 @@ public class PdeEditor extends Panel {
       // doesn't exist, not available, make my own
       skNew();
     }
+
+    if (windowX == -1) {
+      //System.out.println("using defaults for window size");
+      windowW = PdeBase.getInteger("window.width", 500);
+      windowH = PdeBase.getInteger("window.height", 500);
+      windowX = (screen.width - windowW) / 2;
+      windowY = (screen.height - windowH) / 2;
+    }
+    PdeBase.frame.setBounds(windowX, windowY, windowW, windowH);
     //rebuildSketchbookMenu(PdeBase.sketchbookMenu);
   }
 
@@ -777,10 +791,16 @@ afterwards, some of these steps need a cleanup function
       File sketchDir = null;
       String sketchName = null;
 
+      int index = 0;
+      //Calendar now = Calendar.getInstance();
+      SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+      String purty = formatter.format(new Date());
       do {
-	int index = (int) (Math.random() * 1000);
-	sketchName = "sketch_" + pad3(index);
+	sketchName = "sketch_" + purty + ((char) ('a' + index));
+	//int index = (int) (Math.random() * 1000);
+	//sketchName = "sketch_" + pad3(index);
 	sketchDir = new File(sketchbookDir, sketchName);
+	index++;
       } while (sketchDir.exists());
 
       // mkdir for new project name
@@ -817,13 +837,18 @@ afterwards, some of these steps need a cleanup function
     }
   }
 
+  /*
+  static String pad2(int what) {
+    if (what < 10) return "0" + what;
+    else return String.valueOf(what);
+  }
+
   static String pad3(int what) {
     if (what < 10) return "00" + what;
     else if (what < 100) return "0" + what;
     else return String.valueOf(what);
   }
 
-  /*
   static String pad4(int what) {
     if (what < 10) return "000" + what;
     else if (what < 100) return "00" + what;
