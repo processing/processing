@@ -75,6 +75,14 @@ public class PdeCompiler implements PdeMessageConsumer {
       ((PdeBase.platform != PdeBase.MACOSX) ? "jikes" :
        System.getProperty("user.dir") + File.separator + "jikes"),
 
+      // this doesn't help much.. also java 1.4 seems to not support
+      // -source 1.1 for javac, and jikes seems to also have dropped it.
+      // for versions of jikes that don't complain, "final int" inside
+      // a function doesn't throw an error, so it could just be a 
+      // ms jvm error that this sort of thing doesn't work. blech.
+      //"-source",
+      //"1.1",
+
       // necessary to make output classes compatible with 1.1
       // i.e. so that exported applets can work with ms jvm on the web
       "-target",
@@ -314,76 +322,125 @@ public class PdeCompiler implements PdeMessageConsumer {
       e.printStackTrace();  // this would be odd
     }
     //System.out.println("included path is " + abuffer.toString());
-    magicImports(abuffer.toString());
+    makeImportsFromClassPath(abuffer.toString());
     return abuffer.toString();
   }
 
 
   /**
-   * Generate a list of packages for an import list 
-   * based on the contents of a classpath.
+   * A classpath, separated by the path separator, will contain
+   * a series of .jar/.zip files or directories containing .class
+   * files, or containing subdirectories that have .class files.
+   *
    * @param path the input classpath
    * @return array of possible package names
    */
-  static public String[] magicImports(String path) {
-    String imports[] = new String[100];
-    int importCount = 0;
-
+  static public String[] makeImportsFromClassPath(String path) {
+    Hashtable table = new Hashtable();
     String pieces[] = 
       BApplet.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
-      //System.out.println("checking piece " + pieces[i]);
+      //System.out.println("checking piece '" + pieces[i] + "'");
       if (pieces[i].length() == 0) continue;
 
       if (pieces[i].toLowerCase().endsWith(".jar") || 
           pieces[i].toLowerCase().endsWith(".zip")) {
-        try {
-          ZipFile file = new ZipFile(pieces[i]);
-          Enumeration entries = file.entries();
-          while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            if (entry.isDirectory()) {
-              String name = entry.getName();
-              if (name.equals("META-INF/")) continue;
-              name = name.substring(0, name.length() - 1);
-              name = name.replace('/', '.');
+        makeImportsFromZip(pieces[i], table);
 
-              if (importCount == imports.length) {
-                String temp[] = new String[importCount << 1];
-                System.arraycopy(imports, 0, temp, 0, importCount);
-                imports = temp;
-              }
-              imports[importCount++] = name;
-              //System.out.println("import " + name + ".*;");
-            }
-            //System.out.print(entry.isDirectory() ? "D " : "c ");
-            //System.out.println(entry.getName());
-          }
-        } catch (IOException e) {
-          System.err.println("Error in file " + pieces[i]);
-          e.printStackTrace();
-        }
-      } else {
+      } else {  // it's another type of file or directory
         File dir = new File(pieces[i]);
-        if (dir.exists()) {
-          importCount = magicImportsRecursive(dir, null,
-                                              imports, importCount);
+        if (dir.exists() && dir.isDirectory()) {
+          makeImportsFromFolder(dir, null, table);
+          //importCount = magicImportsRecursive(dir, null, 
+          //                                  table); 
+                                              //imports, importCount);
         }
       }
     }
-    String output[] = new String[importCount];
-    System.arraycopy(imports, 0, output, 0, importCount);
+    int tableCount = table.size();
+    String output[] = new String[tableCount];
+    int index = 0;
+    Enumeration e = table.keys();
+    while (e.hasMoreElements()) {
+      output[index++] = ((String) e.nextElement()).replace('/', '.');
+    }
+    //System.arraycopy(imports, 0, output, 0, importCount);
     return output;
   }
 
 
+  static public void makeImportsFromZip(String filename, Hashtable table) {
+    try {
+      ZipFile file = new ZipFile(filename);
+      Enumeration entries = file.entries();
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = (ZipEntry) entries.nextElement();
+
+        if (!entry.isDirectory()) {
+          String name = entry.getName();
+
+          if (name.endsWith(".class")) {
+            int slash = name.lastIndexOf('/');
+            if (slash == -1) continue; 
+
+            String pname = name.substring(0, slash);
+            if (table.get(pname) == null) {
+              table.put(pname, new Object());
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
+      //e.printStackTrace();
+    }
+  }
+
+
   /**
-   * Support function for magicImports()
+   * Make list of package names by traversing a directory hierarchy.
+   * Each time a class is found in a folder, add its containing set 
+   * of folders to the package list. If another folder is found, 
+   * walk down into that folder and continue.
    */
+  static public void makeImportsFromFolder(File dir, String sofar, 
+                                           Hashtable table) {
+                                          //String imports[], 
+                                          //int importCount) {
+    //System.err.println("checking dir '" + dir + "'");
+    boolean foundClass = false;
+    String files[] = dir.list();
+
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].equals(".") || files[i].equals("..")) continue;
+
+      File sub = new File(dir, files[i]);
+      if (sub.isDirectory()) {
+        String nowfar = 
+          (sofar == null) ? files[i] : (sofar + "." + files[i]);
+        makeImportsFromFolder(sub, nowfar, table);
+        //System.out.println(nowfar);
+        //imports[importCount++] = nowfar;
+        //importCount = magicImportsRecursive(sub, nowfar, 
+        //                                  imports, importCount);
+      } else if (!foundClass) {  // if no classes found in this folder yet
+        if (files[i].endsWith(".class")) {
+          //System.out.println("unique class: " + files[i] + " for " + sofar);
+          table.put(sofar, new Object());
+          foundClass = true;
+        }
+      }
+    }
+    //return importCount;
+  }
+
+  /*
   static public int magicImportsRecursive(File dir, String sofar, 
-                                          String imports[], 
-                                          int importCount) {
+                                          Hashtable table) {
+                                          //String imports[], 
+                                          //int importCount) {
+    System.err.println("checking dir '" + dir + "'");
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") || files[i].equals("..")) continue;
@@ -401,4 +458,5 @@ public class PdeCompiler implements PdeMessageConsumer {
     }
     return importCount;
   }
+  */
 }
