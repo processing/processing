@@ -27,9 +27,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import sun.awt.AppContext;  // from java.awt.Dialog, for blocking
+
 
 #ifndef SWINGSUCKS
-public class PdeEditorStatus extends JPanel 
+public class PdeEditorStatus extends JPanel
 #else
 public class PdeEditorStatus extends Panel 
 #endif
@@ -85,7 +87,7 @@ public class PdeEditorStatus extends Panel
 #endif
 
   //boolean editRename;
-  //Thread promptThread;
+  Thread promptThread;
   int response;
 
 
@@ -141,26 +143,6 @@ public class PdeEditorStatus extends Panel
   }
 
 
-  /*
-  public void run() {
-    while (Thread.currentThread() == promptThread) {
-      if (response != 0) {
-        //System.out.println("stopping prompt thread");
-        //promptThread.stop();
-        //System.out.println("exiting prompt loop");
-        unprompt();
-        break;
-
-      } else {
-        try {
-          //System.out.println("inside prompt thread " + 
-          //System.currentTimeMillis());
-          Thread.sleep(100);
-        } catch (InterruptedException e) { }
-      }
-    }
-  }
-  */
 
   public void prompt(String message) {
     //System.out.println("prompting...");
@@ -176,10 +158,65 @@ public class PdeEditorStatus extends Panel
 
     update();
 
-    //promptThread = new Thread(this);
-    //promptThread.start();
+    /*
+    Point upperLeft = new Point(getLocation());
+    //Point lowerRight = new Point(upperLeft.x + getBounds().width,
+    //                           upperLeft.y + getBounds().height);
+    SwingUtilities.convertPointToScreen(upperLeft, this);
+
+    //Dialog dialog = new JDialog(editor.base, "none", true);
+    Dialog dialog = new Dialog(editor.base, "none", true);
+    //System.out.println(dialog.isDisplayable());
+    //System.out.println(dialog.isDisplayable());
+    dialog.setBounds(upperLeft.x, upperLeft.y, 
+                     getBounds().width, getBounds().height);
+
+    //System.out.println(dialog.isDisplayable());
+    //dialog.setModal(true);
+    //dialog.undecorated = true;
+    dialog.setUndecorated(true);
+
+    System.out.println("showing");
+
+    dialog.show();
+    System.out.println(dialog.isDisplayable());
+    */
+
+    /*
+    //System.out.println(pt);
+    System.out.println(Thread.currentThread());
+
+    promptThread = new Thread(this);
+    promptThread.start();
+    */
   }
 
+
+  /*
+  public void run() {
+    //while (Thread.currentThread() == promptThread) {
+    synchronized (promptThread) {
+    while (promptThread != null) {
+      if (response != 0) {
+        System.out.println("stopping prompt thread");
+        //promptThread.stop();
+        promptThread = null;
+        System.out.println("exiting prompt loop");
+        unprompt();
+        break;
+
+      } else {
+        try {
+          System.out.println("inside prompt thread " + 
+          System.currentTimeMillis());
+          Thread.sleep(10);
+        } catch (InterruptedException e) { }
+      }
+    }
+    System.out.println("exiting prompt thread");
+    }
+  }
+  */
 
 
   /**
@@ -201,10 +238,13 @@ public class PdeEditorStatus extends Panel
    * @see java.awt.Dialog#isModal
    */
 
+
   /*
   // Stores the app context on which event dispatch thread the dialog
   // is being shown. Initialized in show(), used in hideAndDisposeHandler()
   private AppContext showAppContext;
+  
+  private boolean keepBlocking = false;
 
 
   public void show() {
@@ -222,7 +262,7 @@ public class PdeEditorStatus extends Panel
     // we wake it by any event from hideAndDisposeHandler().
     showAppContext = AppContext.getAppContext();
 
-    if (conditionalShow()) {
+    //if (conditionalShow()) {
       // We have two mechanisms for blocking: 1. If we're on the
       // EventDispatchThread, start a new event pump. 2. If we're
       // on any other thread, call wait() on the treelock.
@@ -259,19 +299,21 @@ public class PdeEditorStatus extends Panel
         windowClosingException.fillInStackTrace();
         throw windowClosingException;
       }
-    }
+      //}
   }
   //}
 
   void interruptBlocking() {
+    hideAndDisposeHandler(); // this is what impl did
+
     //if (modal) {
     //disposeImpl();
-    } else if (windowClosingException != null) {
-            windowClosingException.fillInStackTrace();
-            windowClosingException.printStackTrace();
-            windowClosingException = null;
-        }
-    }
+    //} else if (windowClosingException != null) {
+    //      windowClosingException.fillInStackTrace();
+    //      windowClosingException.printStackTrace();
+    //      windowClosingException = null;
+    //  }
+  }
 
   final static class WakingRunnable implements Runnable {
     public void run() {
