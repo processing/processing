@@ -201,26 +201,34 @@ X   constant SUBSTRACT -> SUBTRACT
 040707 afternoon
 X minor bug with when setting sketchbook to a bad location
 X add export back to the file menu
+X long discussion about how to put things together
+X working on debugging thread weirdness on casey's machine
 
-before next release
+040707 night
+X change "add file" to import
+X change "new" to "new file"
+X CENTER instead of CENTER_DIAMETER
+o make CENTER default for ellipses
+X move imageMode() to BImage
+X put bagel into its own package
+X   processing.core -> PApplet, PGraphics, PLine, PTriangle, PPolygon
+X rename replicate() as copy()
+X what is set(x, y, image) -> remove it, make a copy() instead
+X modify image functions to use imageMode
 
-_ put export back into the file menu
-_ change "add file" to import
-_ change "new" to "new file"
-_ CENTER instead of CENTER_DIAMETER
-_ make CENTER default for ellipses
-_ move imageMode() to BImage
-_   modify image functions to use imageMode
-_ rename replicate() as copy()
-_ what is set(x, y, image)
+040707 late
 
-_ put bagel into its own package
-_   processing.app -> PdeBase, PdeEditor..
-_   processing.core -> PApplet, PGraphics, PLine, PTriangle, PPolygon
-_   processing.serial -> PSerial, [PUsb]
-_   processing.video -> PMovie (file), PCamera (capture)
-_   processing.net -> PClient, PServer
+_ casting working properly.. int() maps to toInt()? 
+_   what is performance hit for this thing?
+_ modify make.sh to build processing.core
+_ processing.app -> PdeBase, PdeEditor..
+_ processing.serial -> PSerial, [PUsb]
+_ processing.video -> PMovie (file), PCamera (capture)
+_ processing.net -> PClient, PServer
 _ rewrite video, net, serial libraries to be separate
+
+_ remove more (all?) ifdefs from code base
+_ ask creas about src or dest in image functions
 
 not necessarily before release
 _ check into open-source paperwork for p5
