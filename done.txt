@@ -1,3 +1,13 @@
+0043
+o arrow keys don't work in the textarea.. known issue
+X   add note to release notes
+X finish writing 'readme.txt'
+X change download/index.html to not describe dates but process
+X   "this is alpha, we're heading to beta with series of sm releases"
+X document serial a bit more in release notes
+X how do we encourage/point to updates?
+X   auto updater? check for releases page in menu?
+
 0042
 X fixed ArrayIndexOutOfBoundsException in texture use
 X added icon to replace the coffee cup
