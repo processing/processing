@@ -22,6 +22,10 @@ else
   rm reference.zip
   cd ..
 
+  # copy gl4java libs and jar file
+  cp ../../bagel/opengl/gl4java.jar work/lib/
+  cp ../../bagel/opengl/macosx/libGL4JavaJauGljJNI13.jnilib work/
+
   mkdir work/lib/export
   mkdir work/lib/build
 
@@ -39,6 +43,7 @@ else
 #  echo Copying comm.jar into the machine's classpath
   sudo cp comm.jar /System/Library/Frameworks/JavaVM.framework/Home/lib/ext/
 fi
+
 
 ### -- START BUILDING -------------------------------------------
 
@@ -65,10 +70,9 @@ MACOSX_CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar
 
 CLASSPATH=$MACOSX_CLASSPATH
 
-### --- make version with serial for the application
+### --- make version with all the goodies for the application
 echo Building bagel with serial, video, and audio support
-perl make.pl SERIAL VIDEO SONIC
-#pwd
+perl make.pl SERIAL VIDEO SONIC OPENGL
 cp classes/*.class ../build/macosx/work/classes/
 
 ### --- make version without serial for applet exporting

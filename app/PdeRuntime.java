@@ -9,7 +9,8 @@ import java.io.*;
 public class PdeRuntime implements PdeMessageConsumer {
 
   Process process;
-  KjcApplet applet;
+  //KjcApplet applet;
+  BApplet applet;
   PdeException exception;
   Window window;
   PdeEditor editor;
@@ -48,19 +49,16 @@ public class PdeRuntime implements PdeMessageConsumer {
                              this);
 
       } else {
-        // temporarily disabled
-        //KjcClassLoader loader = new KjcClassLoader(buildPath);
-        //Class c = loader.loadClass(tempClass);
         Class c = Class.forName(className);
 
-        //try {
-        applet = (KjcApplet) c.newInstance();
-        //} catch (Exception e) {
-        //  e.printStackTrace();
-        //}
-        //System.out.println(c + " " + applet);
-        //((KjcApplet)applet).errStream = leechErr;
-        applet.setRuntime(this);
+        // to get rid of KjcEngine [fry]
+        //applet = (KjcApplet) c.newInstance();
+        applet = (BApplet) c.newInstance();
+
+        // replaces setRuntime with BApplet having leechErr [fry]
+        //applet.setRuntime(this);
+        applet.leechErr = leechErr;
+
         // has to be before init
         applet.serialProperties(PdeBase.properties);
         applet.init();
@@ -201,7 +199,10 @@ public class PdeRuntime implements PdeMessageConsumer {
     } catch (Exception e) {
       // this will pass through to the first part of message
       // this handles errors that happen inside setup()
-      newMessage = true;
+
+      // mod by fry for removal of KjcEngine
+      //newMessage = true;
+      leechErr.println(BApplet.LEECH_WAKEUP);
       e.printStackTrace(this.leechErr);
       //if (exception != null) throw exception;
     }
@@ -259,10 +260,10 @@ public class PdeRuntime implements PdeMessageConsumer {
   }
 
   public void message(String s) {
-
-    //if (s.indexOf("MAKE WAY") != -1) {
-    //System.out.println("new message coming");
-    //newMessage = true;
+    if (s.indexOf(BApplet.LEECH_WAKEUP) == 0) {
+      newMessage = true;
+      return;  // this line ignored
+    }
 
     //} else {
     if (newMessage) {

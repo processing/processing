@@ -1,6 +1,7 @@
 // special subclass only used inside the pde environment
 // while the kjc engine is in use. takes care of error handling.
 
+#ifdef KJCAPPLET
 public class KjcApplet extends BApplet {
     PdeRuntime pdeRuntime;
 
@@ -21,6 +22,7 @@ public class KjcApplet extends BApplet {
     }
   }  
 }
+#endif
 
 
 /*
