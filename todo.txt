@@ -28,6 +28,7 @@ _ maybe stop/kill button should only be a stop btn
 
 
 for 0013
+_ remove 'colorScale' from the default program in pde
 _ examples - setting background using a full screen image
 _   uses System.arraycopy for speed
 _ write code to bind/convert java fonts
