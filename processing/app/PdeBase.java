@@ -6,8 +6,10 @@ import java.util.*;
 import java.util.zip.*;
 import javax.comm.*;
 
-// for getStyle method (may be temporary)
+import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.text.*;
+import javax.swing.undo.*;
 
 
 public class PdeBase extends Frame implements ActionListener {
@@ -15,6 +17,10 @@ public class PdeBase extends Frame implements ActionListener {
   static Frame frame;  // now 'this'
   static String encoding;
   static Image icon;
+
+  protected UndoAction undoAction;
+  protected RedoAction redoAction;
+  protected UndoManager undo = new UndoManager();
 
   boolean errorState;
   PdeEditor editor;
@@ -218,7 +224,7 @@ public class PdeBase extends Frame implements ActionListener {
     item = new MenuItem("Export Application", new MenuShortcut('E', true));
     item.setEnabled(false);
     menu.add(item);
-    //menu.add(new MenuItem("Export Application", new MenuShortcut('E', true)));
+
     menu.addSeparator();
     menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
     menu.add(new MenuItem("Reference", new MenuShortcut('F')));
@@ -227,21 +233,38 @@ public class PdeBase extends Frame implements ActionListener {
     menu.addActionListener(this);
     menubar.add(menu);
 
-    // beautify, open, print, play save were key commands
-
-    // completely un-functional edit menu
-    /*
+    createActionTable(editor.textarea);
     menu = new Menu("Edit");
-    menu.add(new MenuItem("Undo"));
-    menu.addSeparator();    
-    menu.add(new MenuItem("Cut"));
-    menu.add(new MenuItem("Copy"));
-    menu.add(new MenuItem("Paste"));
+    //undoAction = new UndoAction();
+    //menu.add(undoAction);
+    item = new MenuItem("Undo", new MenuShortcut('Z'));
+    item.addActionListener(undoAction = new UndoAction());
+    menu.add(item);
+    item = new MenuItem("Redo", new MenuShortcut('Y'));
+    item.addActionListener(redoAction = new RedoAction());
+    menu.add(item);
     menu.addSeparator();
-    menu.add(new MenuItem("Select all"));
-    menu.setEnabled(false);
+
+    item = new MenuItem("Cut", new MenuShortcut('X'));
+    //Action act = getActionByName(DefaultEditorKit.cutAction);
+    //System.out.println("act is " + act);
+    item.addActionListener(getActionByName(DefaultEditorKit.cutAction));
+    menu.add(item);
+    item = new MenuItem("Copy", new MenuShortcut('C'));
+    item.addActionListener(getActionByName(DefaultEditorKit.copyAction));
+    menu.add(item);
+    item = new MenuItem("Paste", new MenuShortcut('V'));
+    item.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
+    menu.add(item);
+    menu.addSeparator();
+    item = new MenuItem("Select All", new MenuShortcut('A'));
+    item.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
+    menu.add(item);
     menubar.add(menu);
-    */
+
+    // i hear a cs prof or a first year student screaming somewhere
+    Document document = editor.textarea.document;
+    document.addUndoableEditListener(new MyUndoableEditListener());
 
     menu = new Menu("Sketch");
     menu.add(new MenuItem("Run", new MenuShortcut('R')));
@@ -319,6 +342,96 @@ public class PdeBase extends Frame implements ActionListener {
     rebuildSketchbookMenu(sketchbookMenu);
     frame.show();  // added back in for pde
   }
+
+
+  Hashtable actions;
+
+  //The following two methods allow us to find an
+  //action provided by the editor kit by its name.
+  private void createActionTable(JTextComponent textComponent) {
+    actions = new Hashtable();
+    Action[] actionsArray = textComponent.getActions();
+    for (int i = 0; i < actionsArray.length; i++) {
+      Action a = actionsArray[i];
+      actions.put(a.getValue(Action.NAME), a);
+    }
+  }
+
+  private Action getActionByName(String name) {
+    //System.out.println(name);
+    //System.out.println(name + " " + actions);
+    return (Action)(actions.get(name));
+  }
+
+
+  //This one listens for edits that can be undone.
+  protected class MyUndoableEditListener implements UndoableEditListener {
+    public void undoableEditHappened(UndoableEditEvent e) {
+      //Remember the edit and update the menus.
+      undo.addEdit(e.getEdit());
+      undoAction.updateUndoState();
+      redoAction.updateRedoState();
+      if (!editor.sketchModified) editor.setSketchModified(true);
+    }
+  }
+
+
+  class UndoAction extends AbstractAction {
+    public UndoAction() {
+      super("Undo");
+      this.setEnabled(false);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      try {
+	undo.undo();
+      } catch (CannotUndoException ex) {
+	System.out.println("Unable to undo: " + ex);
+	ex.printStackTrace();
+      }
+      updateUndoState();
+      redoAction.updateRedoState();
+    }
+
+    protected void updateUndoState() {
+      if (undo.canUndo()) {
+	this.setEnabled(true);
+	putValue(Action.NAME, undo.getUndoPresentationName());
+      } else {
+	this.setEnabled(false);
+	putValue(Action.NAME, "Undo");
+      }
+    }      
+  }    
+
+
+  class RedoAction extends AbstractAction {
+    public RedoAction() {
+      super("Redo");
+      this.setEnabled(false);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      try {
+	undo.redo();
+      } catch (CannotRedoException ex) {
+	System.out.println("Unable to redo: " + ex);
+	ex.printStackTrace();
+      }
+      updateRedoState();
+      undoAction.updateUndoState();
+    }
+
+    protected void updateRedoState() {
+      if (undo.canRedo()) {
+	this.setEnabled(true);
+	putValue(Action.NAME, undo.getRedoPresentationName());
+      } else {
+	this.setEnabled(false);
+	putValue(Action.NAME, "Redo");
+      }
+    }
+  }    
 
 
   // listener for sketchbk items uses getParent() to figure out
