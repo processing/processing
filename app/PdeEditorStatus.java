@@ -7,18 +7,20 @@ public class PdeEditorStatus extends Panel
   static Color bgColor[];
   static Color fgColor[];
 
-
   static final int NOTICE = 0;
   static final int ERROR  = 1;
   static final int PROMPT = 2;
+  static final int EDIT   = 3;
 
   static final int YES    = 1;
   static final int NO     = 2;
   static final int CANCEL = 3;
+  static final int OK     = 4;
 
   static final String PROMPT_YES     = "yes";
   static final String PROMPT_NO      = "no";
   static final String PROMPT_CANCEL  = "cancel";
+  static final String PROMPT_OK      = "ok";
   static final String NO_MESSAGE     = "";
 
   static final int BUTTON_WIDTH  = 66;
@@ -40,6 +42,9 @@ public class PdeEditorStatus extends Panel
   Button yesButton;
   Button noButton;
   Button cancelButton;
+  Button okButton;
+  TextField editField;
+  boolean editRename;
   //Thread promptThread;
   int response;
 
@@ -49,20 +54,24 @@ public class PdeEditorStatus extends Panel
     empty();
 
     if (bgColor == null) {
-      bgColor = new Color[3];
+      bgColor = new Color[4];
       bgColor[0] = PdeBase.getColor("editor.status.notice.bgcolor",
-				      new Color(102, 102, 102));
+				    new Color(102, 102, 102));
       bgColor[1] = PdeBase.getColor("editor.status.error.bgcolor",
-				      new Color(102, 26, 0));
+				    new Color(102, 26, 0));
       bgColor[2] = PdeBase.getColor("editor.status.prompt.bgcolor",
-				      new Color(204, 153, 0));
-      fgColor = new Color[3];
+				    new Color(204, 153, 0));
+      bgColor[3] = PdeBase.getColor("editor.status.prompt.bgcolor",
+				    new Color(204, 153, 0));
+      fgColor = new Color[4];
       fgColor[0] = PdeBase.getColor("editor.status.notice.fgcolor",
-				      new Color(255, 255, 255));
+				    new Color(255, 255, 255));
       fgColor[1] = PdeBase.getColor("editor.status.error.fgcolor",
-				      new Color(255, 255, 255));
+				    new Color(255, 255, 255));
       fgColor[2] = PdeBase.getColor("editor.status.prompt.fgcolor",
-				      new Color(0, 0, 0));
+				    new Color(0, 0, 0));
+      fgColor[3] = PdeBase.getColor("editor.status.prompt.fgcolor",
+				    new Color(0, 0, 0));
     }
   }
 
@@ -139,6 +148,28 @@ public class PdeEditorStatus extends Panel
   }
 
 
+  public void edit(String message, String dflt, boolean rename) {
+    mode = EDIT;
+    this.message = message;
+    this.editRename = rename;
+
+    response = 0;
+    okButton.setVisible(true);
+    cancelButton.setVisible(true);
+    editField.setText(dflt);
+    editField.setVisible(true);
+    editField.requestFocus();
+
+    update();
+  }
+
+  public void unedit() {
+    okButton.setVisible(false);
+    cancelButton.setVisible(false);
+    editField.setVisible(false);
+    empty();
+  }
+
   public void update() {
     Graphics g = this.getGraphics();
     if (g != null) paint(g);
@@ -154,19 +185,97 @@ public class PdeEditorStatus extends Panel
       yesButton = new Button(PROMPT_YES);
       noButton = new Button(PROMPT_NO);
       cancelButton = new Button(PROMPT_CANCEL);
+      okButton = new Button(PROMPT_OK);
       setLayout(null);
 
       yesButton.addActionListener(this);
       noButton.addActionListener(this);
       cancelButton.addActionListener(this);
+      okButton.addActionListener(this);
 
       add(yesButton);
       add(noButton);
       add(cancelButton);
+      add(okButton);
 
       yesButton.setVisible(false);
       noButton.setVisible(false);
       cancelButton.setVisible(false);
+      okButton.setVisible(false);
+
+      editField = new TextField();
+      editField.addActionListener(this);
+      editField.addKeyListener(new KeyAdapter() {
+	  public void keyPressed(KeyEvent event) {
+	    int c = event.getKeyChar();
+	    int code = event.getKeyCode();
+	    
+	    if (code == KeyEvent.VK_ENTER) {
+	      // accept the input
+	      editor.skDuplicateRename2(editField.getText(), editRename);
+	      unedit();
+	      event.consume();
+
+	    } else if ((code == KeyEvent.VK_BACK_SPACE) ||
+		       (code == KeyEvent.VK_DELETE) || 
+		       (code == KeyEvent.VK_RIGHT) || 
+		       (code == KeyEvent.VK_LEFT) || 
+		       (code == KeyEvent.VK_UP) || 
+		       (code == KeyEvent.VK_DOWN) || 
+		       (code == KeyEvent.VK_HOME) || 
+		       (code == KeyEvent.VK_END) || 
+		       (code == KeyEvent.VK_SHIFT)) {
+
+	    } else if (code == KeyEvent.VK_ESCAPE) {
+	      unedit();
+	      editor.buttons.clear();
+	      event.consume();
+
+	    } else if (c == ' ') {
+	      // if a space, insert an underscore
+	      //editField.insert("_", editField.getCaretPosition());
+	      /* tried to play nice and see where it got me
+	      editField.dispatchEvent(new KeyEvent(editField, 
+						   KeyEvent.KEY_PRESSED,
+						   System.currentTimeMillis(),
+						   0, 45, '_'));
+	      */
+	      //System.out.println("start/end = " + 
+	      //		 editField.getSelectionStart() + " " +
+	      //		 editField.getSelectionEnd());
+	      String t = editField.getText();
+	      //int p = editField.getCaretPosition();
+	      //editField.setText(t.substring(0, p) + "_" + t.substring(p));
+	      //editField.setCaretPosition(p+1);
+	      int start = editField.getSelectionStart();
+	      int end = editField.getSelectionEnd();
+	      editField.setText(t.substring(0, start) + "_" +
+				t.substring(end));
+	      event.consume();
+
+	    } else if (c == '_') {
+		// everything fine
+
+	    } else if (((code >= 'A') && (code <= 'Z')) &&
+		       (((c >= 'A') && (c <= 'Z')) ||
+			((c >= 'a') && (c <= 'z')))) {
+		// everything fine, catches upper and lower
+	      
+	    } else if ((c >= '0') && (c <= '9')) {
+	      if (editField.getCaretPosition() == 0) {
+		// number not allowed as first digit
+		//System.out.println("bad number bad");
+		event.consume();
+	      }
+	    } else {
+	      event.consume();
+	      //System.out.println("code is " + code + "  char = " + c);
+	    }
+	    //System.out.println("code is " + code + "  char = " + c);
+	  }
+	});
+      add(editField);
+      editField.setVisible(false);
     }
 
     Dimension size = getSize();
@@ -224,6 +333,10 @@ public class PdeEditorStatus extends Panel
     yesButton.setBounds(yesLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
     noButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
     cancelButton.setBounds(cancelLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+
+    editField.setBounds(yesLeft-BUTTON_WIDTH, top, 
+			BUTTON_WIDTH*2, BUTTON_HEIGHT);
+    okButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
   }
 
 
@@ -250,7 +363,16 @@ public class PdeEditorStatus extends Panel
       editor.checkModified2();
 
     } else if (e.getSource() == cancelButton) { 
-      unprompt();
+      if (mode == PROMPT) unprompt();
+      if (mode == EDIT) unedit();
+      editor.buttons.clear();
+
+    } else if (e.getSource() == okButton) {
+      editor.skDuplicateRename2(editField.getText(), editRename);
+      unedit();
+
+    } else if (e.getSource() == editField) {
+      System.out.println("editfield: " + e);
     }
   }
 }
