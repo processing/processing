@@ -233,8 +233,9 @@ public interface PConstants {
   static final int NEW_GRAPHICS            = 2;
   static final int DISABLE_TEXT_SMOOTH     = 3;
   static final int DISABLE_SMOOTH_HACK     = 4;
+  static final int NO_DEPTH_TEST           = 5;
 
-  static final int HINT_COUNT              = 5;
+  static final int HINT_COUNT              = 6;
 
 
   //////////////////////////////////////////////////////////////
