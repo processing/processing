@@ -175,6 +175,7 @@ public class PdeEditor extends JFrame
     JMenuBar menubar = new JMenuBar();
     menubar.add(buildFileMenu());
     menubar.add(buildEditMenu());
+    menubar.add(buildSketchMenu());
     // what platform has their help menu way on the right?
     //if ((PdeBase.platform == PdeBase.WINDOWS) || 
     //menubar.add(Box.createHorizontalGlue());
@@ -467,7 +468,6 @@ public class PdeEditor extends JFrame
 
     // in case moved to a new location
 
-    //rebuildSketchbookMenu(sketchbookMenu);
     sketchbook.rebuildMenu();
   }
 
@@ -697,6 +697,26 @@ public class PdeEditor extends JFrame
         }
       });
     menu.add(item);
+    item = newMenuItem("Find in Reference", 'F', true);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          if (textarea.isSelectionActive()) {
+            String text = textarea.getSelectedText();
+            if (text.length() == 0) {
+              message("First select a word to find in the reference.");
+
+            } else {
+              String referenceFile = PdeKeywords.getReference(text);
+              if (referenceFile == null) {
+                message("No reference available for \"" + text + "\"");
+              } else {
+                PdeBase.showReference(referenceFile);
+              }
+            }
+          }
+        }
+      });
+    menu.add(item);
 
     item = newMenuItem("Proce55ing.net", '5');
     item.addActionListener(new ActionListener() {
@@ -803,6 +823,7 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
+    /*
     item = newMenuItem("Find in Reference", 'F', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) { 
@@ -823,6 +844,7 @@ public class PdeEditor extends JFrame
         }
       });
     menu.add(item);
+    */
 
     return menu;
   }
@@ -1956,36 +1978,6 @@ public class PdeEditor extends JFrame
 
       reader.close();
 
-      /*
-      ps.println("<html>");
-      ps.println("<head>");
-      ps.println("<title>" + exportSketchName + " : Built with Processing</title>");
-      ps.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
-      ps.println("<BODY BGCOLOR=\"#666666\" text=\"#FFFFFF\" link=\"#CCCC00\" vlink=\"#CCCC00\" alink=\"#999900\">");
-      ps.println("<center>");
-      ps.println("  <table width=\"400\" border=\"0\" cellspacing=\"0\" cellpadding=\"10\">");
-      ps.println("    <tr>");
-      ps.println("      <td>&nbsp;</td>");
-      ps.println("    </tr>");
-      ps.println("    <tr>");
-      ps.println("      <td><applet code=\"" + exportSketchName + "\" archive=\"" + exportSketchName + ".jar\" width=" + wide + " height=" + high + ">");
-      ps.println("        </applet></td>");
-      ps.println("    </tr>");
-      ps.println("    <tr>");
-      ps.println("      <td>&nbsp;</td>");
-      ps.println("    </tr>");
-      ps.println("    <tr>");
-      ps.println("      <td><a href=\"" + exportSketchName + ".pde\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\">Source code</font></a></td>");
-      ps.println("    </tr>");
-      ps.println("    <tr>");
-      ps.println("      <td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">Built with <a href=\"http://Proce55ing.net\">Processing</a></font></td>");
-      ps.println("    </tr>");
-      ps.println("  </table>");
-      ps.println("</center>");
-      ps.println("</body>");
-      ps.println("</html>");
-      */
-
       ps.flush();
       ps.close();
 
@@ -1997,7 +1989,7 @@ public class PdeEditor extends JFrame
       // (but it's not here since macos9 isn't supported for beta)
 
       /*
-      // thank you apple, for changing this
+      // thank you apple, for changing this *@#$*&
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
 
       // jdk13 on osx, or jdk11
@@ -2297,6 +2289,10 @@ public class PdeEditor extends JFrame
       if (!codeFolder.exists()) codeFolder.mkdirs();
       destFile = new File(codeFolder, filename);
 
+    } else if (filename.toLowerCase().endsWith(".pde") ||
+               filename.toLowerCase().endsWith(".java")) {
+      destFile = new File(sketchDir, filename);
+
     } else {
       File dataFolder = new File(sketchDir, "data");
       if (!dataFolder.exists()) dataFolder.mkdirs();
@@ -2501,8 +2497,7 @@ public class PdeEditor extends JFrame
     */
 
     // if no text is selected, disable copy and cut menu items
-    public void show(Component component, int x, int y)
-    {
+    public void show(Component component, int x, int y) {
       if (textarea.isSelectionActive()) {
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
@@ -2517,92 +2512,7 @@ public class PdeEditor extends JFrame
         referenceItem.setEnabled(false);
       }
       super.show(component, x, y);
-
-      /*
-      //popup.setEnabledCut(selectionIsActive);
-      //popup.setEnabledCopy(selectionIsActive);
-
-      String file = null;
-      if (selectionIsActive) {
-        file = (String) PdeBase.keywords.get(getSelectedText());
-      }
-      popup.setReferenceLookup(file);
-      
-      super.show(invoker, x, y);
-      */
     }
   }
 }
 
-
-  /**
-   * Handle menu selections.
-   */
-  /*
-  public void actionPerformed(ActionEvent event) {
-    String command = event.getActionCommand();
-    //System.out.println(command);
-
-    if (command.equals("New")) {
-      editor.skNew();
-
-    } else if (command.equals("Save")) {
-      editor.doSave();
-
-    } else if (command.equals("Save as...")) {
-      editor.skSaveAs(false);
-
-    } else if (command.equals("Rename...")) {
-      editor.skSaveAs(true);
-
-    } else if (command.equals("Export to Web")) {
-      editor.skExport();
-
-    } else if (command.equals("Preferences")) {
-      handlePrefs();
-
-    } else if (command.equals("Quit")) {
-      handleQuit();
-
-    } else if (command.equals("Run")) {
-      editor.doRun(false);
-
-    } else if (command.equals("Present")) {
-      editor.doRun(true);
-
-    } else if (command.equals("Stop")) {    
-      if (editor.presenting) {
-        editor.doClose();
-      } else {
-        editor.doStop();
-      }
-    } else if (command.equals("Beautify")) {
-      editor.doBeautify();
-
-    } else if (command.equals("Add file...")) {
-      editor.addFile();
-
-    } else if (command.equals("Create font...")) {
-      new PdeFontBuilder(new File(editor.sketchDir, "data"));
-
-    } else if (command.equals("Show sketch folder")) {
-      openFolder(editor.sketchDir);
-
-    } else if (command.equals("Help")) {
-      openURL(System.getProperty("user.dir") + 
-              File.separator + "reference" + 
-              File.separator + "environment" +
-              File.separator + "index.html");
-
-    } else if (command.equals("Proce55ing.net")) {
-      openURL("http://Proce55ing.net/");
-
-    } else if (command.equals("Reference")) {
-      openURL(System.getProperty("user.dir") + File.separator + 
-              "reference" + File.separator + "index.html");
-
-    } else if (command.equals("About Processing")) {
-      handleAbout();
-    }
-  }
-  */
