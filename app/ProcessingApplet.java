@@ -9,6 +9,7 @@ public class ProcessingApplet extends Applet
   implements BagelConstants, Runnable, 
 	     MouseListener, MouseMotionListener, KeyListener {
   public Bagel g;
+  public int pixels[];
 
   public int mouseX, mouseY;
   public boolean mousePressed;
@@ -109,7 +110,9 @@ public class ProcessingApplet extends Applet
   // this is where screen grab could attach itself
   public void update() {
     Graphics g = this.getGraphics();
-    if (g != null) paint(g);
+    if (g != null) {
+      paint(g);
+    }
   }
 
   public void update(Graphics screen) {
@@ -221,6 +224,7 @@ public class ProcessingApplet extends Applet
     this.height = height;
 
     g = new Bagel(width, height);
+    pixels = g.pixels;
 
     // do all the defaults down here, because
     // subclasses need to go through this function
@@ -433,16 +437,17 @@ public class ProcessingApplet extends Applet
     pixels[y*width + x] = c;
   }
 
-  /*
-  public void setPixel(int x, int y, int r, int g, int b) {
-    pixels[y*width + x] = color(r, g, b);
-  }
-  */
+  //public void setPixel(int x, int y, int r, int g, int b) {
+  //pixels[y*width + x] = color(r, g, b);
+  //}
 
   //public final int color(int r, int g, int b) {
   //return 0xff000000 | (r << 16) | (g << 8) | b;
   //}
 
+
+  /*
+  // IMPLEMENT THIS FOR 0012 OR SOON!
   public final int color(float x) {
     // this is for gray
   }
@@ -451,6 +456,8 @@ public class ProcessingApplet extends Applet
     // fix this when processingapplet has a more general mode of
     // creating colors based on current settings
   }
+  */
+
 
   public final int red(int what) {
     return (what >> 16) & 0xff;
@@ -728,7 +735,7 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public Image loadImage(String filename) {
+  public BagelImage loadImage(String filename) {
    return g.loadImage(filename);
   }
 
@@ -751,12 +758,12 @@ public class ProcessingApplet extends Applet
   }
 
 
-  public int loadFont(String name) {
+  public BagelFont loadFont(String name) {
    return g.loadFont(name);
   }
 
 
-  public void setFont(int which) {
+  public void setFont(BagelFont which) {
     g.setFont(which);
   }
 

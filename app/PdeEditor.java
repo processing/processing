@@ -123,15 +123,9 @@ public class PdeEditor extends Panel implements PdeEnvironment {
     TextArea console = new TextArea("welcome to pr0[3551ng", 5, 48,
 				    TextArea.SCROLLBARS_VERTICAL_ONLY);
     console.setBackground(Color.gray);
+    console.setFont(PdeApplet.getFont("editor"));
     add("South", console);
     */
-
-    //#ifdef FANCY
-    //    right.add("South", PdeFancy.makeDescription());
-    //#endif
-
-    //this.add("West", left);
-    //this.add("Center", right);
 
     if (!PdeApplet.isMacintosh()) {  // this still relevant?
       PdeEditorListener listener = new PdeEditorListener();
@@ -140,7 +134,7 @@ public class PdeEditor extends Panel implements PdeEnvironment {
       textarea.addKeyListener(new PdeKeyListener(this));
     }
 
-    runner = new PdeRunner(/*graphics,*/ this);
+    runner = new PdeRunner(this);
   }
 
 
