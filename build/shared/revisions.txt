@@ -4,7 +4,7 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
-ABOUT REV 0060 - 
+ABOUT REV 0060 - 22 september 2003
 
 IMPORTANT NOTE! ACHTUNG!
 YOUR OLD CODE WILL PROBABLY BE BROKEN WITH THIS RELEASE.
