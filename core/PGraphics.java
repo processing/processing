@@ -23,56 +23,6 @@
   Boston, MA  02111-1307  USA
 */
 
-/*
-
-if depth buffer sorting turned on?
-
-no anti-aliasing enabled with depth()
-
-with depth(), stroke() *or* fill() but not both
-  -> bad policy, just allow them to look shitty
-
-
-circles/ellipses can use a general conic algorithm
-
-single pixel lines can use PLine
-
-thick lines and filled polygon shapes (triangle, rect, etc)
-can do some kind of general polygon fill.
-
-images and text should be based on an affine image compositing algorithm
-that handles the affine transform and keeps things smooth
-
-
-point
-  depth
-    strokeWeight < 2
-      rough single pixel dot with a z value
-        rgb
-        rgba
-    strokeWeight >= 2
-      round endcap
-        rough filled circle with a z value
-          rgb
-          rgba
-      square endcap
-        rough filled square with a z value
-          rgb
-          rgba
-  noDepth
-    strokeWeight < 2
-      rough single pixel dot (no z value)
-    strokeWeight >= 2
-
-
-quad
-  depth
-    strokeWeight < 2
-      series of single pixel lines that surround
-    strokeWeight >= 2
-
-*/
-
 package processing.core;
 
 import java.applet.*;
@@ -211,32 +161,17 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // NEW_GRAPHICS
-
   /**
    * Type of shape passed to beginShape(),
    * zero if no shape is currently being drawn.
    */
-  int shape;
-
+  protected int shape;
   //int shape_index;
 
   // vertices
   static final int DEFAULT_VERTICES = 512;
   public float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
-  int vertex_count; // total number of vertices
-
-  // pos of first vertex of current shape in vertices array
-  protected int vertex_start;
-
-  // i think vertex_end is actually the last vertex in the current shape
-  // and is separate from vertex_count for occasions where drawing happens
-  // on endFrame with all the triangles being depth sorted
-  protected int vertex_end;   // total number of vertex in current shape
-
-  // used for sorting points when triangulating a polygon
-  // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
-  int vertex_order[] = new int[DEFAULT_VERTICES];
+  int vertexCount; // total number of vertices
 
 
   // ........................................................
@@ -244,8 +179,8 @@ public class PGraphics extends PImage implements PConstants {
   // spline vertices
 
   static final int SPLINE_VERTEX_ALLOC = 128;
-  float spline_vertex[][];
-  int spline_vertex_index;
+  protected float spline_vertex[][];
+  protected int spline_vertex_index;
   //boolean spline_vertices_flat;
 
 
@@ -259,7 +194,8 @@ public class PGraphics extends PImage implements PConstants {
   // [toxi 031031]
   // changed table's precision to 0.5 degree steps
   // introduced new vars for more flexible code
-  static final float sinLUT[], cosLUT[];
+  static final float sinLUT[];
+  static final float cosLUT[];
   static final float SINCOS_PRECISION = 0.5f;
   static final int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
   static {
@@ -279,17 +215,10 @@ public class PGraphics extends PImage implements PConstants {
   public int ellipseMode;
   public int arcMode;
 
-  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
-  // will be set by sphereDetail() or 1st call to sphere()
-  public int sphereDetail = 0;
-  float sphereX[], sphereY[], sphereZ[];
-
   //int text_mode;
   //int text_space;
   public PFont textFont;
 
-  // used by PFont/PGraphics.. forces higher quality texture rendering
-  //boolean drawing_text = false;  // used by PFont
 
 
   //////////////////////////////////////////////////////////////
@@ -408,9 +337,7 @@ public class PGraphics extends PImage implements PConstants {
     resetMatrix(); // reset model matrix
 
     // reset vertices
-    vertex_count = 0;
-    vertex_start = 0;
-    vertex_end = 0;
+    vertexCount = 0;
   }
 
 
@@ -451,7 +378,7 @@ public class PGraphics extends PImage implements PConstants {
 
     // reset vertex, line and triangle information
     // every shape is rendered at endShape();
-    vertex_count = 0;
+    vertexCount = 0;
 
     spline_vertex_index = 0;
     //spline_vertices_flat = true;
@@ -463,11 +390,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void endShape() {
-    vertex_end = vertex_count;
+    int vertex_end = vertexCount;
 
     // don't try to draw if there are no vertices
     // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-    if (vertex_count == 0) {
+    if (vertexCount == 0) {
       shape = 0;
       return;
     }
@@ -643,7 +570,7 @@ public class PGraphics extends PImage implements PConstants {
         case QUADS:
         case QUAD_STRIP:
         {
-          stop = vertex_count-3;
+          stop = vertexCount-3;
           increment = (shape == QUADS) ? 4 : 2;
 
           for (int i = vertex_start; i < stop; i += increment) {
@@ -699,13 +626,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void vertex(float x, float y) {
-    if (vertex_count == vertices.length) {
-      float temp[][] = new float[vertex_count<<1][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertex_count);
+    if (vertexCount == vertices.length) {
+      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
       message(CHATTER, "allocating more vertices " + vertices.length);
     }
-    float vertex[] = vertices[vertex_count++];
+    float vertex[] = vertices[vertexCount++];
 
     //if (polygon.redundantVertex(x, y, z)) return;
 
@@ -2204,8 +2131,7 @@ public class PGraphics extends PImage implements PConstants {
    * }
    * endShape();</code>
    */
-  public float bezierPoint(float a, float b, float c, float d,
-                           float t) {
+  public float bezierPoint(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
 
     // quadratic bezier
@@ -2221,8 +2147,7 @@ public class PGraphics extends PImage implements PConstants {
    * Provide the tangent at the given point on the bezier curve.
    * Based on code from v3ga's wordstree sketch.
    */
-  public float bezierTangent(float a, float b, float c, float d,
-                             float t) {
+  public float bezierTangent(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
 
     return (a *  3 * t*t +
@@ -2394,8 +2319,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @param t Value between zero and one for how far along the segment
    */
-  public float curvePoint(float a, float b, float c, float d,
-                          float t) {
+  public float curvePoint(float a, float b, float c, float d, float t) {
     if (!curve_inited) curve_init();
 
     float tt = t * t;
