@@ -5,7 +5,7 @@
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -276,7 +276,7 @@ public class PdeSketch {
   /**
    * Return true if any of the items are modified.
    */
-  public void isModified() {
+  public boolean isModified() {
     for (int i = 0; i < codeCount; i++) {
       if (code[i].modified) return true;
     }
@@ -1065,4 +1065,3 @@ public class PdeSketch {
     return code[0].file.getAbsolutePath();
   }
 }
-
