@@ -357,12 +357,6 @@ public class PGraphics2 extends PGraphics {
       return;
     }
 
-    // set smoothing mode
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              smooth ?
-                              RenderingHints.VALUE_ANTIALIAS_ON :
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-
     if (fill) render_triangles();
     if (stroke) render_lines();
 
@@ -373,17 +367,20 @@ public class PGraphics2 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // POINT
+  // SHAPES
 
 
   public void point(float x, float y) {
+    graphics.drawLine(x1, y1, x2, y2);
   }
 
   public void line(float x1, float y1, float x2, float y2) {
+    graphics.drawLine(x1, y1, x2, y2);
   }
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
+
   }
 
   public void rect(float x1, float y1, float x2, float y2) {
@@ -422,20 +419,11 @@ public class PGraphics2 extends PGraphics {
                   float x, float y, float hr, float vr) {
   }
 
-  //public void ellipseMode(int mode) {
-  //}
-
   public void ellipse(float x, float y, float hradius, float vradius) {
   }
 
   public void circle(float x, float y, float radius) {
   }
-
-  //public float bezierPoint(float a, float b, float c, float d,
-  //                       float t);
-
-  //public float bezierTangent(float a, float b, float c, float d,
-  //                       float t);
 
   public void bezier(float x1, float y1,
                      float x2, float y2,
@@ -455,16 +443,13 @@ public class PGraphics2 extends PGraphics {
     // TODO
   }
 
-  //public float curvePoint(float a, float b, float c, float d, float t);
-
-  //public float curveTangent(float a, float b, float c, float d, float t);
-
   public void curve(float x1, float y1,
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
     // TODO
   }
+
 
   /*
   public void textFont(PFont which);
@@ -499,6 +484,12 @@ public class PGraphics2 extends PGraphics {
 
   public void text(float num, float x, float y, float z);
   */
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX
 
 
   public void translate(float tx, float ty) {
@@ -579,5 +570,211 @@ public class PGraphics2 extends PGraphics {
   public float screenY(float x, float y) {
     graphics.getTransform().getMatrix(transform);
     return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // STROKE
+
+
+  public void strokeWeight(float weight) {
+    super.strokeWeight(weight);
+    setStroke();
+  }
+
+
+  public void strokeJoin(int join) {
+    super.strokeJoin(join);
+    setStroke();
+  }
+
+
+  public void strokeCap(int cap) {
+    super.strokeCap(cap);
+    setStroke();
+  }
+
+
+  protected void setStroke() {
+    int cap = BasicStroke.CAP_BUTT;
+    if (strokeCap == ROUND) {
+      cap = BasicStroke.CAP_ROUND;
+    } else if (strokeCap == PROJECTED) {
+      cap = BasicStroke.CAP_SQUARE;
+    }
+
+    int join = BasicStroke.JOIN_BEVEL;
+    if (strokeJoin == MITERED) {
+      join = BasicStroke.JOIN_MITER;
+    } else if (strokeJoin == ROUND) {
+      join = BasicStroke.JOIN_ROUND;
+    }
+
+    graphics.setStroke(new BasicStroke(strokeWeight, cap, join));
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // STROKE/FILL/BACKGROUND
+
+
+  protected void calc_tint() {
+    super.calc_tint();
+    // ??? how to do this
+  }
+
+  protected void calc_fill() {
+    super.calc_fill();
+    graphics.setPaint(new Color(fillColor));
+  }
+
+  protected void calc_stroke() {
+    super.calc_stroke();
+    ///graphics.setStroke(new Color(fillColor));
+  }
+
+  public void noTint() {
+  }
+
+  public void noFill() {
+  }
+
+  public void noStroke() {
+  }
+
+
+  public void background(PImage image) {
+    if ((image.width != width) || (image.height != height)) {
+      die("background image must be the same size " +
+          "as your application");
+    }
+    if ((image.format != RGB) && (image.format != ARGB)) {
+      die("background images should be RGB or ARGB");
+    }
+
+    // blit image to the screen
+    //System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
+    graphics.drawImage((BufferedImage) image.cache, 0, 0);
+  }
+
+
+  /**
+   * Clears pixel buffer. Also clears the stencil and zbuffer
+   * if they exist. Their existence is more accurate than using 'depth'
+   * to test whether to clear them, because if they're non-null,
+   * it means that depth() has been called somewhere in the program,
+   * even if noDepth() was called before draw() exited.
+   */
+  public void clear() {
+    graphics.setColor(new Color(backgroundColor));
+    graphics.fillRect(0, 0, width, height);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // FROM PIMAGE
+
+
+  public void alpha(int alpha[]) {
+    // TODO
+  }
+
+  public void alpha(PImage alpha) {
+    // TODO
+  }
+
+  public void filter(int kind) {
+    // TODO
+  }
+
+  public void filter(int kind, float param) {
+    // TODO
+  }
+
+
+  public int get(int x, int y) {
+    ((BufferedImage) image).getRGB(x, y);
+  }
+
+
+  public PImage get(int x, int y, int w, int h) {
+    PImage output = new PImage(w, h);
+    ((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, width);
+  }
+
+
+  public void set(int x, int y, int c) {
+    ((BufferedImage) image).setRGB(x, y, c);
+  }
+
+
+  public void copy(PImage src, int dx, int dy) {
+    // TODO if this image is not RGB, needs to behave differently
+    //      (if it's gray, need to copy gray pixels)
+    //      for alpha, just leave it be.. copy() doesn't composite
+    ((BufferedImage) image).setRGB(dx, dy, src.width, src.height,
+                                   src.pixels, 0, src.width);
+  }
+
+
+  public void copy(int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2) {
+    // TODO
+  }
+
+
+  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2) {
+    // TODO
+  }
+
+
+  public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
+    // TODO
+  }
+
+
+  public void blend(int sx, int sy, int dx, int dy, int mode) {
+    // TODO
+  }
+
+
+  public void blend(int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode) {
+    // TODO
+  }
+
+
+  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode) {
+    // TODO
+  }
+
+
+  public PImage get() {
+    // TODO
+  }
+
+
+  public void save(String filename) {
+    // TODO
+  }
+
+
+  public void smooth() {
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                              RenderingHints.VALUE_ANTIALIAS_ON);
+  }
+
+
+  public void noSmooth() {
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                              RenderingHints.VALUE_ANTIALIAS_OFF);
   }
 }
