@@ -73,7 +73,7 @@ public class PdeRuntime implements PdeMessageConsumer {
   public void start(Point windowLocation, PrintStream leechErr)
     throws PdeException {
 
-    this.leechErr = leechErr;
+    this.leechErr = new PrintStream(new PdeMessageStream(this));
 
     Point parentLoc = editor.getLocation();
     Insets parentInsets = editor.getInsets();
@@ -85,7 +85,7 @@ public class PdeRuntime implements PdeMessageConsumer {
       if (externalRuntime) {
         String command[] = new String[] { 
           "java",
-          "-Djava.library.path=" + libraryPath,
+          "-Djava.library.path=" + libraryPath,  // might be ""
           "-cp",
           classPath,
           "BApplet",

@@ -31,7 +31,7 @@ public class PdeSketch {
   String path;  // path to 'main' file for this sketch
 
   // the sketch folder
-  File directory;
+  File folder;
 
   static final int PDE = 0;
   static final int JAVA = 1; 
@@ -43,6 +43,9 @@ public class PdeSketch {
   int hiddenCount;
   PdeCode hidden[];
 
+  // all these set each time build() is called
+  boolean externalRuntime;
+  String mainClassName;
   String classPath;
   String libraryPath;
 
@@ -66,8 +69,8 @@ public class PdeSketch {
     }
     */
 
-    directory = new File(path.getParent());
-    System.out.println("sketch dir is " + directory);
+    folder = new File(path.getParent());
+    System.out.println("sketch dir is " + folder);
 
     load();
   }
@@ -86,7 +89,7 @@ public class PdeSketch {
    */
   public void load() {
     // get list of files in the sketch folder
-    String list[] = directory.list();
+    String list[] = folder.list();
 
     for (int i = 0; i < list.length; i++) {
       if (list[i].endsWith(".pde")) fileCount++;
@@ -105,25 +108,25 @@ public class PdeSketch {
       if (list[i].endsWith(".pde")) {
         code[fileCounter++] = 
           new PdeCode(list[i].substring(0, list[i].length() - 4), 
-                      new File(directory, list[i]), 
+                      new File(folder, list[i]), 
                       PDE);
 
       } else if (list[i].endsWith(".java")) {
         code[fileCounter++] = 
           new PdeCode(list[i].substring(0, list[i].length() - 5),
-                      new File(directory, list[i]),
+                      new File(folder, list[i]),
                       JAVA);
 
       } else if (list[i].endsWith(".pde.x")) {
         hidden[hiddenCounter++] = 
           new PdeCode(list[i].substring(0, list[i].length() - 6),
-                      new File(directory, list[i]),
+                      new File(folder, list[i]),
                       PDE);
 
       } else if (list[i].endsWith(".java.x")) {
         hidden[hiddenCounter++] = 
           new PdeCode(list[i].substring(0, list[i].length() - 7),
-                      new File(directory, list[i]),
+                      new File(folder, list[i]),
                       JAVA);
       }      
     }
@@ -175,6 +178,53 @@ public class PdeSketch {
 
 
   /**
+   * Prompt the user for a new file to the sketch. 
+   * This could be .class or .jar files for the code folder,
+   * .pde or .java files for the project,
+   * or .dll, .jnilib, or .so files for the code folder
+   */
+  public void addFile() {
+    // get a dialog, select a file to add to the sketch
+    String prompt = 
+      "Select an image or other data file to copy to your sketch";
+    FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
+    fd.show();
+
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+    if (filename == null) return;
+
+    // copy the file into the folder. if people would rather 
+    // it move instead of copy, they can do it by hand
+    File sourceFile = new File(directory, filename);
+
+    File destFile = null;
+
+    // if the file appears to be code related, drop it 
+    // into the code folder, instead of the data folder
+    if (filename.toLowerCase().endsWith(".class") || 
+        filename.toLowerCase().endsWith(".jar") || 
+        filename.toLowerCase().endsWith(".dll") || 
+        filename.toLowerCase().endsWith(".jnilib") || 
+        filename.toLowerCase().endsWith(".so")) {
+      File codeFolder = new File(this.folder, "code");
+      if (!codeFolder.exists()) codeFolder.mkdirs();
+      destFile = new File(codeFolder, filename);
+
+    } else if (filename.toLowerCase().endsWith(".pde") ||
+               filename.toLowerCase().endsWith(".java")) {
+      destFile = new File(this.folder, filename);
+
+    } else {
+      File dataFolder = new File(this.folder, "data");
+      if (!dataFolder.exists()) dataFolder.mkdirs();
+      destFile = new File(dataFolder, filename);
+    }
+    PdeBase.copyFile(sourceFile, destFile);
+  }
+
+
+  /**
    * Change what file is currently being edited. 
    * 1. store the String for the text of the current file.
    * 2. retrieve the String for the text of the new file.
@@ -207,109 +257,107 @@ public class PdeSketch {
    * or if more than one file is in the project
    *
    */
-  public void run() {
-    try {
-      current.program = textarea.getText();
+  public void run() throws PdeException {
+    current.program = textarea.getText();
 
-      // TODO record history here
-      //current.history.record(program, PdeHistory.RUN);
+    // TODO record history here
+    //current.history.record(program, PdeHistory.RUN);
 
-      // if an external editor is being used, need to grab the
-      // latest version of the code from the file.
-      if (PdePreferences.getBoolean("editor.external")) {
-        // history gets screwed by the open..
-        //String historySaved = history.lastRecorded;
-        //handleOpen(sketch);
-        //history.lastRecorded = historySaved;
+    // if an external editor is being used, need to grab the
+    // latest version of the code from the file.
+    if (PdePreferences.getBoolean("editor.external")) {
+      // history gets screwed by the open..
+      //String historySaved = history.lastRecorded;
+      //handleOpen(sketch);
+      //history.lastRecorded = historySaved;
 
-        // nuke previous files and settings, just get things loaded
-        load();
-      }
+      // nuke previous files and settings, just get things loaded
+      load();
+    }
 
-      // temporary build folder is inside 'lib'
-      // this is added to the classpath by default
-      tempBuildPath = "lib" + File.separator + "build";
-      File buildDir = new File(tempBuildPath);
-      if (!buildDir.exists()) {
-        buildDir.mkdirs();
-      }
+    // temporary build folder is inside 'lib'
+    // this is added to the classpath by default
+    tempBuildPath = "lib" + File.separator + "build";
+    File buildDir = new File(tempBuildPath);
+    if (!buildDir.exists()) {
+      buildDir.mkdirs();
+    }
 
-      // copy contents of data dir into lib/build
-      // TODO write a file sync procedure here.. if the files 
-      //      already exist in the target, or haven't been modified
-      //      don't' bother. this can waste a lot of time when running.
-      File dataDir = new File(directory, "data");
-      if (dataDir.exists()) {
-        // just drop the files in the build folder (pre-68)
-        //PdeBase.copyDir(dataDir, buildDir);
-        // drop the files into a 'data' subfolder of the build dir
-        PdeBase.copyDir(dataDir, new File(buildDir, "data"));
-      }
+    // copy contents of data dir into lib/build
+    // TODO write a file sync procedure here.. if the files 
+    //      already exist in the target, or haven't been modified
+    //      don't' bother. this can waste a lot of time when running.
+    File dataDir = new File(folder, "data");
+    if (dataDir.exists()) {
+      // just drop the files in the build folder (pre-68)
+      //PdeBase.copyDir(dataDir, buildDir);
+      // drop the files into a 'data' subfolder of the build dir
+      PdeBase.copyDir(dataDir, new File(buildDir, "data"));
+    }
 
-      // start with the main 
+    // start with the main 
 
-      // make up a temporary class name to suggest
-      // only used if the code is not in ADVANCED mode
-      String suggestedClassName = 
-        ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
-         "_" + String.valueOf((int) (Math.random() * 10000)));
+    // make up a temporary class name to suggest
+    // only used if the code is not in ADVANCED mode
+    String suggestedClassName = 
+      ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
+       "_" + String.valueOf((int) (Math.random() * 10000)));
 
-      // handle preprocessing the main file's code
-      String mainClassName = build(tempBuildPath, suggestedClassName);
-      // externalPaths is magically set by build()
+    // handle preprocessing the main file's code
+    String mainClassName = build(tempBuildPath, suggestedClassName);
+    // externalPaths is magically set by build()
 
-      // if the compilation worked, run the applet
-      if (mainClassName != null) {
+    // if the compilation worked, run the applet
+    if (mainClassName != null) {
 
-        if (externalPaths == null) {
-          externalPaths = 
-            PdeCompiler.calcClassPath(null) + File.pathSeparator + 
-            tempBuildPath;
-        } else {
-          externalPaths = 
-            tempBuildPath + File.pathSeparator +
-            PdeCompiler.calcClassPath(null) + File.pathSeparator +
-            externalPaths;
-        }
-
-        // get a useful folder name for the 'code' folder
-        // so that it can be included in the java.library.path
-        String codeFolderPath = "";
-        if (externalCode != null) {
-          libraryPath = externalCode.getCanonicalPath();
-        }
-
-        // create a runtime object
-        runtime = new PdeRuntime(this, className,
-                                 externalRuntime, 
-                                 libraryPath, classPath);
-                                 //codeFolderPath, externalPaths);
-
-        // if programType is ADVANCED
-        //   or the code/ folder is not empty -> or just exists (simpler)
-        // then set boolean for external to true
-        // include path to build in front, then path for code folder
-        //   when passing the classpath through
-        //   actually, build will already be in there, just prepend code
-
-        // use the runtime object to consume the errors now
-        //messageStream.setMessageConsumer(runtime);
-        // no need to bother recycling the old guy
-        PdeMessageStream messageStream = new PdeMessageStream(runtime);
-
-        // start the applet
-        runtime.start(presenting ? presentLocation : appletLocation,
-                         new PrintStream(messageStream));
-                         //leechErr);
-
-        // spawn a thread to update PDE GUI state
-        watcher = new RunButtonWatcher();
-
+      if (externalPaths == null) {
+        externalPaths = 
+          PdeCompiler.calcClassPath(null) + File.pathSeparator + 
+          tempBuildPath;
       } else {
-        // [dmose] throw an exception here?
-        // [fry] iirc the exception will have already been thrown
-        cleanTempFiles(); //tempBuildPath);
+        externalPaths = 
+          tempBuildPath + File.pathSeparator +
+          PdeCompiler.calcClassPath(null) + File.pathSeparator +
+          externalPaths;
       }
+
+      // get a useful folder name for the 'code' folder
+      // so that it can be included in the java.library.path
+      String codeFolderPath = "";
+      if (externalCode != null) {
+        libraryPath = externalCode.getCanonicalPath();
+      }
+
+      // create a runtime object
+      runtime = new PdeRuntime(this, className,
+                               externalRuntime, 
+                               libraryPath, classPath);
+
+      // if programType is ADVANCED
+      //   or the code/ folder is not empty -> or just exists (simpler)
+      // then set boolean for external to true
+      // include path to build in front, then path for code folder
+      //   when passing the classpath through
+      //   actually, build will already be in there, just prepend code
+
+      // use the runtime object to consume the errors now
+      // no need to bother recycling the old guy
+      //PdeMessageStream messageStream = new PdeMessageStream(runtime);
+
+      // start the applet
+      runtime.start(presenting ? presentLocation : appletLocation); //,
+      //new PrintStream(messageStream));
+
+      // spawn a thread to update PDE GUI state
+      watcher = new RunButtonWatcher();
+
+    } else {
+      // [dmose] throw an exception here?
+      // [fry] iirc the exception will have already been thrown
+      cleanTempFiles(); //tempBuildPath);
+    }
+
+    /*
     } catch (PdeException e) { 
       // if it made it as far as creating a Runtime object, 
       // call its stop method to unwind its thread
@@ -331,6 +379,48 @@ public class PdeSketch {
 
       cleanTempFiles(); //tempBuildPath);
     } 
+    */
+  }
+
+
+  class RunButtonWatcher implements Runnable {
+    Thread thread;
+
+    public RunButtonWatcher() {
+      thread = new Thread(this);
+      thread.start();
+    }
+
+    public void run() {
+      while (Thread.currentThread() == thread) {
+        if (runtime == null) {
+          stop();
+
+        } else {
+          if (runtime.applet != null) {
+            if (runtime.applet.finished) {
+              stop();
+            }
+            //buttons.running(!runtime.applet.finished);
+
+          } else if (runtime.process != null) {
+            //buttons.running(true);  // ??
+
+          } else {
+            stop();
+          }
+        } 
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException e) { }
+        //System.out.println("still inside runner thread");
+      }
+    }
+
+    public void stop() {
+      buttons.running(false);
+      thread = null;
+    }
   }
 
 
@@ -349,27 +439,27 @@ public class PdeSketch {
    *
    * In an advanced program, the returned classname could be different,
    * which is why the className is set based on the return value.
-   * @return null if compilation failed, className if not
+   * @return null if compilation failed, main class name if not
    */
   protected String build(String buildPath, String suggestedClassName)
     throws PdeException, Exception {
 
-    String classPath;
-    String libraryPath;
-
-    boolean externalRuntime = false;
-    //externalPaths = null;
     String additionalImports[] = null;
-    //String additionalClassPath = null;
+    classPath = buildPath;
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
     File codeFolder = new File(sketchDir, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
-      classPath = PdeCompiler.contentsToClassPath(codeFolder);
-      additionalImports = PdeCompiler.magicImports(additionalClassPath);
-      libraryPath = codeFolder.
+      classPath += File.separator + 
+        PdeCompiler.contentsToClassPath(codeFolder);
+      additionalImports = PdeCompiler.magicImports(classPath);
+      libraryPath = codeFolder.getCanonicalPath();
+    } else {
+      externalRuntime = (codeCount > 1);  // at least for now
+      additionalImports = null;
+      libraryPath = "";
     }
 
     // first run preproc on the 'main' file, using the sugg class name
@@ -379,8 +469,21 @@ public class PdeSketch {
     //     if no class def'd for the pde file, then complain
 
     for (int i = 0; i < codeCount; i++) {
+      if (code[i].flavor == JAVA) {
+        // no pre-processing services necessary for java files
+        // just write the the contents of 'program' to a .java file 
+        // into the build directory. uses byte stream and reader/writer
+        // shtuff so that unicode bunk is properly handled
+        String filename = code[i].name + ".java";
+        PdeBase.saveFile(code[i].program, new File(buildPath, filename));
+        code[i].preprocName = filename;
+        continue;
+      }
+
       PdePreprocessor preprocessor = new PdePreprocessor();
       try {
+        // if (i != 0) preproc will fail if a pde file is not 
+        // java mode, since that's required
         String className = 
           preprocessor.write(code[i].program, buildPath,
                              (i == 0) ? suggestedClassName : null, 
@@ -394,7 +497,11 @@ public class PdeSketch {
           code[i].preprocName = className + ".java";
         }
 
-        if (i == 0) {  // check if the 'main' file is in java mode
+        if (i == 0) {
+          // store this for the compiler and the runtime
+          mainClassName = className;
+
+          // check if the 'main' file is in java mode
           if (PdePreprocessor.programType == PdePreprocessor.JAVA) {
             externalRuntime = true; // we in advanced mode now, boy
           }
@@ -439,14 +546,11 @@ public class PdeSketch {
       }
     }
 
-    if (codeCount > 1) {
-      externalRuntime = true;
-    }
-
     // compile the program
     //
-    PdeCompiler compiler = 
-      new PdeCompiler(buildPath, mainClassName, externalCode, this);
+    //PdeCompiler compiler = 
+      //new PdeCompiler(buildPath, mainClassName, externalCode, this);
+    PdeCompiler compiler = new PdeCompiler(this);
 
     // run the compiler, and funnel errors to the leechErr
     // which is a wrapped around 
