@@ -184,10 +184,13 @@ public class KjcEngine extends PdeEngine {
       if (PdeBase.getBoolean("compiler.color_datatype", true)) {
 	// so that regexp works correctly in this strange edge case
 	if (program.indexOf("color") == 0) program = " " + program;
+	// swap 'color' with 'int' when used as a datatype
 	program = substipoot(program, 
 			     "([;\\s])color([\\s])", "$1int$2");
 			     //"([^A-Za-z0-9_.])color([^A-Za-z0-9_\\(.])", "$1int$2");
-	program = substipoot(program, "([^A-Za-z0-9_])color\\((.*)\\)", "$1(int)($2)");
+	// color(something) like int() and the rest is no good
+	// because there is already a function called 'color' in BGraphics
+	//program = substipoot(program, "([^A-Za-z0-9_])color\\((.*)\\)", "$1(int)($2)");
       }
 
       if (PdeBase.getBoolean("compiler.inline_web_colors", true)) {

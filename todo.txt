@@ -98,15 +98,12 @@ X bug report from the site
 resizing the editor window in Mac OS X leaves the status bar in
 place. The result is an editor window with a grey bar layered on top,
 obscuring the editable text. 
+X fix default fonts, font size on mac
+X fix lots of annoying crap about highlighting lines on errors
+X re-enable console, add synchronized (hrmph)
 
 
 FINISH for 46
-
-pde
-_ lots of problems with the console [maybe this needs to be a textarea?]
-_   long lines seem to be trouble
-_   also printing of objects, esp when null, in jdk 14
-_   exception when trying to write to stdout
 
 macosx
 _ update dist script for new layout
@@ -136,6 +133,14 @@ _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
+_ lots of problems with the console 
+_   [maybe this needs to be a textarea?]
+_   long lines seem to be trouble
+_   also printing of objects, esp when null, in jdk 14
+_   exception when trying to write to stdout
+_ color not set for default text area with empty text
+_   color not set on 'new', setForeground won't do it
+_   probably reasonably simple fix, but not in time
 _ support 'classes' folder, through the use of a classloader
 _   could also be done by launching external java app
 _   all .jar files etc are added from this folder automatically
@@ -148,6 +153,11 @@ _   is setText goobering up on beautify?
 _   how are line endings working during save?
 _ get syntax coloring debugged?
 _   talk to casey about better default colors
+_ scroll to beginning after setText()
+_ undo/redo
+_   should enable/disable as available
+_   undo-ing too much will empty the text area
+_     the setText is an undoable thing. grr.
 
 windows
 _ need splash screen, startup takes a long time
