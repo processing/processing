@@ -15,14 +15,14 @@ rm -rf processing-*
 cp -r ../shared processing
 rm -rf processing/CVS
 rm -rf processing/lib/CVS
-rm -rf processing/lib/netscape/CVS
-rm -rf processing/lib/netscape/javascript/CVS
-rm -rf processing/fonts/CVS
+#rm -rf processing/lib/netscape/CVS
+#rm -rf processing/lib/netscape/javascript/CVS
+#rm -rf processing/fonts/CVS
 rm -rf processing/reference/CVS
 rm -rf processing/reference/images/CVS
-rm -rf processing/sketchbook/CVS
-rm -rf processing/sketchbook/default/CVS
-rm -f  processing/sketchbook/default/.cvsignore
+#rm -rf processing/sketchbook/CVS
+#rm -rf processing/sketchbook/default/CVS
+#rm -f  processing/sketchbook/default/.cvsignore
 
 # new style examples thing ala reas
 cd processing
