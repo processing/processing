@@ -1207,7 +1207,14 @@ public class PdeBase extends Frame
       String folder = file.getCanonicalPath();
 
       if (platform == WINDOWS) {
-        Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
+        // doesn't work
+        //Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
+
+        // works fine on winxp, prolly win2k as well
+        Runtime.getRuntime().exec("explorer \"" + folder + "\"");
+
+        // not tested
+        //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
 
 #ifdef MACOS
       } else if (platform == MACOSX) {

@@ -4,7 +4,8 @@
 if test -f /sw/bin/head
 then
   # a more useful version of head than what's included with osx
-  REVISION=`head -c 4 ../../todo.txt`
+  #REVISION=`head -c 4 ../../todo.txt`
+  REVISION=`head -c 4 ../../todo.txt | tail -c 2`
 else
   # can't get four bytes of head (osx doesn't support -c)
   REVISION=0000
@@ -16,10 +17,15 @@ echo Creating P5 distribution for revision $REVISION...
 
 # remove any old boogers
 rm -rf processing 
-rm -rf processing-*
+rm -rf Processing*
+#rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
+
+# get rid of any boogers
+rm -f processing/*~
+
 rm -rf processing/CVS
 rm -rf processing/lib/CVS
 rm -rf processing/fonts/CVS
@@ -89,12 +95,8 @@ cp dist/lib/pde_macosx.properties processing/lib/
 #unix2dos processing/lib/pde.properties_macosx 2> /dev/null
 
 # zip it all up for release
-#echo Zipping and finishing...
-P5=processing-$REVISION
-mv processing $P5-macosx
-#zip -rq $P5.zip $P5
-# nah, keep the new directory around
-#rm -rf $P5
+mv processing "Processing $REVISION"
+
 # if there is a command line tool to make a dmg from this dir.. hmm
 
 echo Done.
