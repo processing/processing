@@ -35,6 +35,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+import com.oroinc.text.regex.*;
+
 #ifdef MACOS
 import com.apple.mrj.*;
 #endif
@@ -1272,6 +1274,56 @@ public class PdeEditor extends JPanel {
       int wide = BApplet.DEFAULT_WIDTH;
       int high = BApplet.DEFAULT_HEIGHT;
 
+      try {
+        PatternMatcher matcher = new Perl5Matcher();
+        PatternCompiler compiler = new Perl5Compiler();
+
+        // don't just use this version, since it only grabs the numbers
+        //String sizing = "[\\s\\;]size\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\);";
+
+        // this matches against any uses of the size() function, whether they
+        // contain numbers of variables or whatever. this way, no warning is 
+        // shown if size() isn't actually used in the applet, which is the case 
+        // especially for beginners that are cutting/pasting from the reference.
+        String sizing = "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
+
+        Pattern pattern = compiler.compile(sizing);
+
+        PatternMatcherInput input = new PatternMatcherInput(program);
+        if (matcher.contains(input, pattern)) {
+          MatchResult result = matcher.getMatch();
+          try {
+            wide = Integer.parseInt(result.group(1).toString());
+            high = Integer.parseInt(result.group(2).toString());
+
+            System.out.println("width " + wide + " high " + high);
+
+          } catch (NumberFormatException e) {
+
+            // found a reference to size, but it didn't seem to contain numbers
+            final String message = 
+              "The size of this applet could not automatically be\n" +
+              "determined from your code. You'll have to edit the\n" + 
+              "HTML file to set the size of the applet.";
+
+            JOptionPane.showMessageDialog(this, message, 
+                                          "Could not find applet size",
+                                          JOptionPane.WARNING_MESSAGE);
+          }
+        }
+          //} else {
+          // no size() defined, make it default
+          //sizeInfo = "size(" + BApplet.DEFAULT_WIDTH + ", " + 
+          //BApplet.DEFAULT_HEIGHT + "); ";
+          //}
+
+      } catch (MalformedPatternException e){
+        e.printStackTrace();
+        //System.err.println("Bad pattern.");
+        //System.err.println(e.getMessage());
+      }
+
+        /*
       int index = program.indexOf("size(");  // space in size ( problem!
       if (index != -1) {
         try {
@@ -1284,6 +1336,7 @@ public class PdeEditor extends JPanel {
           e.printStackTrace();
         }
       }
+        */
 
       File htmlOutputFile = new File(appletDir, "index.html");
       FileOutputStream fos = new FileOutputStream(htmlOutputFile);
