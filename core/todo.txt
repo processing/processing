@@ -5,6 +5,13 @@ X   cache settings are ignored, may be slow as hell
 
 _ loadImage() is mostly broken
 
+_ vertices max out at 512.. make it grow
+
+_ getAllFonts() not quite working for many fonts
+_   i.e. Orator Std on windows.. macosx seems to be ok
+_   is getFamilyNames() any different/better?
+_   when did this break? 1.4.1? 1.4.x vs 1.3?
+
 _ go through and figure out what stuff to make public
 
 _ depth testing of lines vs text is problematic
@@ -15,6 +22,9 @@ _ y2 position of rectangles not same as y2 position of lines
 
 _ screenX/Y aren't properly working for 2D points against a 3D matrix
 _   (ryan alexander rounding bug)
+_   Just to clarify, it works completely correctly with rounding
+_   screenX/Y and also using the 3 arg version of translate - 
+_   ie translate(hw,hh,0) instead of just translate(hw,hh). 
 
 text issues
 _ need to resolve SCREEN_SPACE vs OBJECT_SPACE
