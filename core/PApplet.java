@@ -4640,6 +4640,16 @@ public class PApplet extends Applet
   }
 
 
+  public float screenX(float x, float y) {
+    return g.screenX(x, y);
+  }
+
+
+  public float screenY(float x, float y) {
+    return g.screenY(x, y);
+  }
+
+
   public float screenX(float x, float y, float z) {
     return g.screenX(x, y, z);
   }
