@@ -532,7 +532,8 @@ public class PGraphics2 extends PGraphics {
                 who.pixels,
                 who.my1*who.width + who.mx1,  // offset for copy
                 who.width);  // scan size
-      who.pixelsUpdated();
+      //who.pixelsUpdated();
+      who.modified = false;
     }
 
     int x2 = (int) (x + w);

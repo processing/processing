@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -43,7 +43,7 @@ class PdeMessageSiphon implements Runnable {
   }
 
 
-  public void run() {    
+  public void run() {
     try {
       // process data until we hit EOF; this will happily block
       // (effectively sleeping the thread) until new data comes in.
@@ -51,7 +51,7 @@ class PdeMessageSiphon implements Runnable {
       //
       String currentLine;
       while ((currentLine = streamReader.readLine()) != null) {
-        consumer.message(currentLine);
+        consumer.message(currentLine + "\n");
       }
       thread = null;
 
@@ -59,12 +59,12 @@ class PdeMessageSiphon implements Runnable {
       // Fairly common exception during shutdown
       thread = null;
 
-    } catch (Exception e) { 
-      // On Linux and sometimes on Mac OS X, a "bad file descriptor" 
+    } catch (Exception e) {
+      // On Linux and sometimes on Mac OS X, a "bad file descriptor"
       // message comes up when closing an applet that's run externally.
       // That message just gets supressed here..
       String mess = e.getMessage();
-      if ((mess != null) && 
+      if ((mess != null) &&
           (mess.indexOf("Bad file descriptor") != -1)) {
         //if (e.getMessage().indexOf("Bad file descriptor") == -1) {
         //System.err.println("PdeMessageSiphon err " + e);
