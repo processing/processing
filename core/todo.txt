@@ -12,10 +12,16 @@ _   x, y not setting with processing
 _   y reversed in openGL 
 
 _ fix messages referring to depth()
+_   route all of them through a single function rather than current waste
+
+_ gl alpha on images when flipped around backwards
+_   will sorting based on depth help this? also ask simon for ideas
 
 tweaking up simong light code
 _ why does diffuse just mirror fill()?
-X   just removed it
+_   seems to cover just diffuse, not ambient_and_diffuse like fill
+_   maybe fill() should set diffuse, and sep call to ambient() sets ambient?
+X   removed it
 _ remove/rename postSetup() stuff from PGraphics/PApplet
 _ what's up with resetLights?
 _ angleMode stuff is kinda overkill

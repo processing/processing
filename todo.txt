@@ -13,6 +13,8 @@ X   windows version was smashing it at the bottom when new prefs
 X don't allow saved window position to be outside the current display
 X change to how keywords are loaded
 
+_ runtime exceptions have stopped coming through
+
 _ moving an external window around a lot will halt the parent
 _   does move even need to be called? could just wait till stop?
 _   PdeMessageSiphon has problems with message()
