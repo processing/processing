@@ -167,6 +167,23 @@ QUICKTIME FOR JAVA / VIDEO PROBLEMS
 ..................................................................
 
 
+OPENGL PROBLEMS
+
+- if you're getting this error: 
+  "net.java.games.jogl.GLException: Unable to enumerate pixel formats 
+  of window using wglGetPixelFormatAttribivARB: 0" 
+  and your machine has built in "intel" graphics (this is the case for 
+  many dell machines, for instance) you may just need an updated version 
+  of your driver, which can be found here: 
+  http://downloadfinder.intel.com/scripts-df/Detail_Desc.asp?sType=prev&agr=N&ProductID=865&DwnldID=7919 
+  of course, read the page closely and make sure that you in fact
+  have this graphics chipset on your machine before installing.
+  (thanks to Daniel Shiffman for finding this fix!)
+
+
+..................................................................
+
+
 KNOWN BUGS
 the real deal, keeping us awake at night.. this is only a partial
 list, see the bboard for more, and inside ben's head for others.

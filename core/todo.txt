@@ -1,5 +1,8 @@
 0077 core
 
+_ bring back pmouseX/Y using a tricky method of storing separate
+_   values for inside draw() versus inside the event handler versions
+
 _ metaballs example dies when using box()
 _   long string of exceptions, which are also missing their newlines
 
@@ -35,6 +38,7 @@ _ figure out min/max texture sizes when binding to avoid problems
 _   minimum texture size may be 64x64
 _   might need to enforce it as a minimum
 _ what should the update image function be called?
+_ box and sphere are broken in gl
 
 _ get loop, noLoop, redraw, and framerate all working in opengl
 _   needs custom animator thread..
