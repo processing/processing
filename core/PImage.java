@@ -163,6 +163,8 @@ public class PImage implements PConstants, Cloneable {
     if ((width2 == width) && (height2 == height)) {
       // image can be used by itself as the texture image
       tpixels = pixels;
+      twidth = width;
+      theight = height;
 
     } else {
       if ((width2 > twidth) || (height2 > theight)) {
