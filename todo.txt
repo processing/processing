@@ -2,27 +2,8 @@ iprocessing todo list // last updated 28 september 2001
 (most up-to-date version of this file is in processing cvs)
 
 
-for 0009
-X bagel fixes
-X   beginShape(POINTS) is not working, no marks are appearing 
-X     this was a pain in the ass to fix
-X   beginShape(LINE_LOOP) is not looping around 
-X   stroked POLYGON should emulate a LINE_LOOP
-X   fill white, stroke black, background white default in bagel
-X   remove duplicates: LINE/LINES etc
-X 'draw mode' applet support
-X 'advanced' applet support
-X   write documentation about having to use 'extends KjcProcessingApplet'
-X add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
-X   also add note about paren balancing doing strange things
-X   leave the others turned on, but parens off by default
-X enable/disable full screen leaves windows in back
-X   (may just require two toFront() calls)
-X   whenever background is frontmost, have it call tofront on editor
-
-
 for 0010
-_ option to enable/disable frame
+_ option to enable/disable frame on running applets
 _ compiling .java files leaves the .class files next to the .java
 _   make sure all the dirs in sketchbook added to classpath on startup
 _   if new dir added, must restart processing (this is acceptable)
@@ -170,6 +151,25 @@ String binary(int value) {
 ---------------------------------------------
 
 
+0009
+X bagel fixes
+X   beginShape(POINTS) is not working, no marks are appearing 
+X     this was a pain in the ass to fix
+X   beginShape(LINE_LOOP) is not looping around 
+X   stroked POLYGON should emulate a LINE_LOOP
+X   fill white, stroke black, background white default in bagel
+X   remove duplicates: LINE/LINES etc
+X 'draw mode' applet support
+X 'advanced' applet support
+X   write documentation about having to use 'extends KjcProcessingApplet'
+X add a note about editor.expandTabs,balanceParens,tabSize,autoIndent
+X   also add note about paren balancing doing strange things
+X   leave the others turned on, but parens off by default
+X enable/disable full screen leaves windows in back
+X   (may just require two toFront() calls)
+X   whenever background is frontmost, have it call tofront on editor
+
+
 0008
 X ctrl-s does 'save', button on toolbar does 'save as'
 X fixed auto-indent bug for editor
@@ -194,6 +194,7 @@ X get serial i/o code working in processing
 X   how to kill serial when applet stopped
 X     finalizer prolly not getting called
 
+
 0005
 X running out of memory, presumably b/c applets not being cleared
 X   happens inside init() of applet (at new Bagel())
@@ -202,12 +203,15 @@ X   disassociate processing applet with a window on stop?
 X   possible to maintain bagel, but kill applet?
 X   or copy bagel's image, and kill that too?
 
+
 0004
 X put debugging stuff back into Kjc (i disabled some stuff) 
+
 
 0001
 X convert documentation to html
 o setup imrf linux machine?
+
 
 DISCARD
 o get proce55ing.net, make that the target launch site
