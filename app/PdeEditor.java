@@ -1072,6 +1072,15 @@ afterwards, some of these steps need a cleanup function
     // (important!) has to be done before opening, 
     // otherwise the new dir is set to sketchDir.. 
 
+    // remove .jar, .class, and .java files from the applet dir
+    File appletDir = new File(newSketchDir, "applet");
+    File oldjar = new File(appletDir, sketchName + ".jar");
+    if (oldjar.exists()) oldjar.delete();
+    File oldjava = new File(appletDir, sketchName + ".java");
+    if (oldjava.exists()) oldjava.delete();
+    File oldclass = new File(appletDir, sketchName + ".class");
+    if (oldclass.exists()) oldclass.delete();
+
     base.rebuildSketchbookMenu();
 
     // open the new guy
