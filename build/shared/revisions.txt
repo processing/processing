@@ -7,14 +7,21 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0070 - MEGABUCKET - 28 September 2004
+ABOUT REV 0070 - MEGABUCKET - 29 September 2004
 
 YOUR CODE WILL ALMOST CERTAINLY BREAK IN THIS RELEASE, READ THE
 "MAJOR CHANGES" SECTION BELOW TO SEE HOW TO FIX IT. this is one of the
 most major releases to date in terms of things that have been changed,
-fixed, or revised. however, we've tried to make all the api and setup
-changes that we'll need to before beta so that we only massively break
-your code once.
+fixed, or revised. unfortunately, there will still be api changes
+before beta. if you don't want to deal with your code breaking, then
+wait until the beta. 
+
+as of this release, we're also returning to more truly "alpha" status
+for releases. from 70 until beta, releases will happen more frequently
+(hopefully) and increment more quickly. however, we won't be
+announcing a new release to the greater public until beta, at which
+time we'll be done breaking everyone's code. more details here:
+http://processing.org/discourse/yabb/YaBB.cgi?board=Collaboration;action=display;num=1096489132
 
 
 major changes: (things that break your code) 
