@@ -119,6 +119,11 @@ public class PdeEditor extends JPanel {
 
   static final String TEMP_CLASS = "Temporary";
 
+  // undo fellers
+  protected UndoAction undoAction;
+  protected RedoAction redoAction;
+  static public UndoManager undo = new UndoManager(); // editor needs this guy
+
 
   public PdeEditor(PdeBase base) {
     this.base = base;
@@ -187,6 +192,10 @@ public class PdeEditor extends JPanel {
     // (that was wishful thinking, they still are, until we switch to jedit)
     PdeEditorListener listener = new PdeEditorListener(this, textarea);
     textarea.pdeEditorListener = listener;
+
+    // set the undo stuff for this feller
+    Document document = textarea.getDocument();
+    document.addUndoableEditListener(new PdeUndoableEditListener());
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     if ((PdeBase.platform == PdeBase.MACOSX) ||
@@ -278,12 +287,14 @@ public class PdeEditor extends JPanel {
   /**
    * Post-constructor setup for the editor area. Loads the last
    * sketch that was used (if any), and restores other Editor settings.
+   * The complement to "storePreferences", this is called when the 
+   * application is first launched.
    */
-  public void initPreferences() {
-    // load the last program that was in use
+  public void restorePreferences() {
+    // last sketch that was in use
 
     String sketchName = PdePreferences.get("last.sketch.name");
-    String sketchDir = PdePreferences.get("last.sketch.directory");
+    String sketchDir = PdePreferences.get("last.sketch.path");
 
     if (sketchName != null) {
       if (new File(sketchDir + File.separator + sketchName).exists()) {
@@ -294,19 +305,20 @@ public class PdeEditor extends JPanel {
       }
     }
 
-    // get the location for the console/editor area divider
-
+    // location for the console/editor area divider
     int location = PdePreferences.getInteger("last.divider.location");
     splitPane.setDividerLocation(location);
 
     // read the preferences that are settable in the preferences window
-
     applyPreferences()
   }
 
 
+  /**
+   * Apply changes to preferences that come from changes 
+   * by the user in the preferences window.
+   */
   public void applyPreferences() {
-
     // apply the setting for 'use external editor' 
 
     boolean external = getBoolean("editor.external");
@@ -329,10 +341,196 @@ public class PdeEditor extends JPanel {
       painter.lineHighlight = PdePreferences.getBoolean("editor.program.linehighlight");
       textarea.setCaretVisible(true);
     }
-
-
-    // 
   }
+
+
+  /**
+   * Store preferences about the editor's current state.
+   * Called when the application is quitting.
+   */
+  public void storePreferences() {
+    // last sketch that was in use
+    PdePreferences.put("last.sketch.name", sketchName);
+    PdePreference.put("last.sketch.path", sketchDir.getAbsolutePath());
+
+    // location for the console/editor area divider
+    int location = splitPane.getDividerLocation();    
+    PdePreferences.setInteger("last.divider.location", location);
+  }
+
+
+  // ...................................................................
+
+
+  public JMenu buildEditMenu() {
+    JMenu menu = new JMenu("Edit");
+    JMenuItem item; 
+
+    undoItem = PdeBase.newMenuItem("Undo", 'Z');
+    undoItem.addActionListener(undoAction = new UndoAction());
+    menu.add(undoItem);
+
+    redoItem = PdeBase.newMenuItem("Redo", 'Y');
+    redoItem.addActionListener(redoAction = new RedoAction());
+    menu.add(redoItem);
+
+    menu.addSeparator();
+
+    // "cut" and "copy" should really only be enabled 
+    // if some text is currently selected
+    item = PdeBase.newMenuItem("Cut", 'X');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.cut();
+        }
+      });
+    menu.add(item);
+
+    item = PdeBase.newMenuItem("Copy", 'C');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.copy();
+        }
+      });
+    menu.add(item);
+
+    item = PdeBase.newMenuItem("Paste", 'V');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.paste();
+        }
+      });
+    menu.add(item);
+
+    item = PdeBase.newMenuItem("Select All", 'A');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textarea.selectAll();
+        }
+      });
+    menu.add(item);
+
+    beautifyMenuItem = PdeBase.newMenuItem("Beautify", 'B');
+    beautifyMenuItem.addActionListener(this);
+    menu.add(beautifyMenuItem);
+
+    menu.addSeparator();
+
+    item = PdeBase.newMenuItem("Find...", 'F');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          find();
+        }
+      });
+    menu.add(item);
+
+    item = PdeBase.newMenuItem("Find Next", 'G');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          findNext();
+        }
+      });
+    menu.add(item);
+
+    item = PdeBase.newMenuItem("Find in Reference", 'F', true);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) { 
+          if (textarea.isSelectionActive()) {
+            String text = textarea.getSelectedText();
+            if (text.length() == 0) {
+              message("First select a word to find in the reference.");
+
+            } else {
+              String referenceFile = (String) keywords.get(text);
+              if (referenceFile == null) {
+                message("No reference available for \"" + text + "\"");
+              } else {
+                showReference(referenceFile);
+              }
+            }
+          }
+        }
+      });
+    menu.add(item);
+  }
+
+
+  // This one listens for edits that can be undone.
+  protected class PdeUndoableEditListener implements UndoableEditListener {
+    public void undoableEditHappened(UndoableEditEvent e) {
+      //Remember the edit and update the menus.
+      undo.addEdit(e.getEdit());
+      undoAction.updateUndoState();
+      redoAction.updateRedoState();
+      //System.out.println("setting sketch to modified");
+      //if (!editor.sketchModified) editor.setSketchModified(true);
+    }
+  }
+
+
+  class UndoAction extends AbstractAction {
+    public UndoAction() {
+      super("Undo");
+      this.setEnabled(false);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      try {
+        undo.undo();
+      } catch (CannotUndoException ex) {
+        //System.out.println("Unable to undo: " + ex);
+        //ex.printStackTrace();
+      }
+      updateUndoState();
+      redoAction.updateRedoState();
+    }
+
+    protected void updateUndoState() {
+      if (undo.canUndo()) {
+        this.setEnabled(true);
+        undoItem.setEnabled(true);
+        putValue(Action.NAME, undo.getUndoPresentationName());
+      } else {
+        this.setEnabled(false);
+        undoItem.setEnabled(false);
+        putValue(Action.NAME, "Undo");
+      }
+    }      
+  }    
+
+
+  class RedoAction extends AbstractAction {
+    public RedoAction() {
+      super("Redo");
+      this.setEnabled(false);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      try {
+        undo.redo();
+      } catch (CannotRedoException ex) {
+        //System.out.println("Unable to redo: " + ex);
+        //ex.printStackTrace();
+      }
+      updateRedoState();
+      undoAction.updateUndoState();
+    }
+
+    protected void updateRedoState() {
+      if (undo.canRedo()) {
+        this.setEnabled(true);
+        redoItem.setEnabled(true);
+        putValue(Action.NAME, undo.getRedoPresentationName());
+      } else {
+        this.setEnabled(false);
+        redoItem.setEnabled(false);
+        putValue(Action.NAME, "Redo");
+      }
+    }
+  }    
+
+
+  // ...................................................................
 
 
   protected void changeText(String what, boolean emptyUndo) {
@@ -1683,10 +1881,10 @@ public class PdeEditor extends JPanel {
         }
       }
     }
-    PdePreferences.save();
+    //PdePreferences.save();
 
     //System.out.println("exiting here");
-    System.exit(0);
+    //System.exit(0);
   }
 
 
