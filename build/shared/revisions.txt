@@ -6,6 +6,37 @@ about to enjoy is extremely hot.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0067 - 27 october 2003
+
+another bug fix release. medium importance, this release..
+
+
+[ bug fixes ]
+
+- actually set the correct version number for the about dialog. also
+  added code to prevent the wrong release number from being used on a
+  release.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135202;start=0
+
+- fixed IllegalArgumentException when using run.bat or run-expert.bat
+  martin gomez was kind enough to track down the cause of this bug.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132725
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067132753
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135344;start=0
+
+- updated to a new version of jikes, the compiler that's used behind
+  the scenes. fixes a couple issues where code wouldn't compile.
+
+
+[ changes ]
+
+- apple has updated quicktime for java on the mac for 6.4
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1067135162;start=0
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0066 - 19 october 2003
 
 several important bug fixes in this release, strongly recommended. 
