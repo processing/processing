@@ -105,12 +105,15 @@ public class PdeRunner implements Runnable {
 #endif
 
       } else {
+	/*
 	forceStop = true;
 	engine = new PythonEngine(program);
 	engine.start();
 	forceStop = false;
+	*/
 
-	
+	engine = new KjcEngine(program);
+	engine.start();
       }
       //System.out.println("finished");
       state = RUNNER_FINISHED;
