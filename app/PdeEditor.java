@@ -66,6 +66,8 @@ public class PdeEditor extends JFrame
   String openingPath; 
   String openingName;
 
+  PdeEditorListener listener;
+
   PdeEditorButtons buttons;
   PdeEditorHeader header;
   PdeEditorStatus status;
@@ -238,7 +240,7 @@ public class PdeEditor extends JFrame
 
     // hopefully these are no longer needed w/ swing
     // (that was wishful thinking, they still are, until we switch to jedit)
-    PdeEditorListener listener = new PdeEditorListener(this, textarea);
+    listener = new PdeEditorListener(this, textarea);
     textarea.pdeEditorListener = listener;
 
     // set the undo stuff for this feller
@@ -422,6 +424,7 @@ public class PdeEditor extends JFrame
 
     boolean external = PdePreferences.getBoolean("editor.external");
 
+    listener.setExternalEditor(external);
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
     saveAsMenuItem.setEnabled(!external);
@@ -616,11 +619,7 @@ public class PdeEditor extends JFrame
     menu.add(newMenuItem("Stop", 'T'));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (presenting) {
-            doClose();
-          } else {
-            doStop();
-          }
+          handleStop();
         }
       });
     menu.addSeparator();
@@ -1301,6 +1300,15 @@ public class PdeEditor extends JFrame
     public void stop() {
       buttons.running(false);
       thread = null;
+    }
+  }
+
+
+  public void handleStop() {  // called by menu or buttons
+    if (presenting) {
+      doClose();
+    } else {
+      doStop();
     }
   }
 
@@ -2124,24 +2132,6 @@ public class PdeEditor extends JFrame
     //if (!checkModified()) return;
     checkModified(DO_QUIT);
     //System.out.println("exiting doquit");
-  }
-
-  protected int calcFolderSize(File folder) {
-    int size = 0;
-
-    //System.out.println("calcFolderSize " + folder);
-    String files[] = folder.list();
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || (files[i].equals("..")) ||
-          files[i].equals(".DS_Store")) continue;
-      File fella = new File(folder, files[i]);
-      if (fella.isDirectory()) {
-        size += calcFolderSize(fella);
-      } else {
-        size += (int) fella.length();
-      }
-    }
-    return size;
   }
 
 
