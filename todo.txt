@@ -28,11 +28,13 @@ _ maybe stop/kill button should only be a stop btn
 
 
 for 0010
-_ add java.* to top of processingapplet default base class used by kjc
+X add java.* to top of processingapplet default base class used by kjc
 X KjcProcessingApplet is dumb, kjc should make subst itself
 o   give warning when compiling w/o kjcprocessingapplet
-_ z=0 shit, 2D stuff needs to draw over z=0 plane
-_   new objects draw behind old objects with noBackground()
+X random bug with an extra line being added in beginner mode
+X   (threw off error markings)
+X z=0 shit, 2D stuff needs to draw over z=0 plane
+X   new objects draw behind old objects with noBackground()
 X fix crappy way of determining if inside a class--ignores comments
 X   hope this fis works.. not tested much
 X make acu fonts work again
