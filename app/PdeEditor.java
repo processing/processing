@@ -44,6 +44,7 @@ import com.apple.mrj.*;
 
 public class PdeEditor extends JFrame
 #ifdef MACOS
+  // TODO dynamically load these handlers via introspection
   implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 #endif 
 {
@@ -182,29 +183,29 @@ public class PdeEditor extends JFrame
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
 
-    System.out.println("here 1");
+    System.out.println("PdeEditor: here 1");
 
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
     //System.out.println(consolePanel.getInsets());
     consolePanel.setLayout(new BorderLayout());
 
-    System.out.println("here 1a");
+    System.out.println("PdeEditor: here 1a");
 
     status = new PdeEditorStatus(this);
     consolePanel.add(status, BorderLayout.NORTH);
 
-    System.out.println("here 1b");
+    System.out.println("PdeEditor: here 1b");
 
     console = new PdeEditorConsole(this);
     consolePanel.add(console, BorderLayout.CENTER);
 
-    System.out.println("here 1c");
+    System.out.println("PdeEditor: here 1c");
 
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                textarea, consolePanel);
 
-    System.out.println("here 2");
+    System.out.println("PdeEditor: here 2");
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
@@ -224,7 +225,7 @@ public class PdeEditor extends JFrame
       splitPane.setDividerSize(dividerSize);
     }
 
-    System.out.println("here 3");
+    System.out.println("PdeEditor: here 3");
 
     rightPanel.add(splitPane, BorderLayout.CENTER);
 
@@ -1699,6 +1700,8 @@ public class PdeEditor extends JFrame
     // TODO re-enable history
     //history.record(prog, PdeHistory.BEAUTIFY);
 
+    int tabSize = PdePreferences.getInteger("editor.tabs.size");
+
     char program[] = prog.toCharArray();
     StringBuffer buffer = new StringBuffer();
     boolean gotBlankLine = false;
@@ -1735,7 +1738,7 @@ public class PdeEditor extends JFrame
           gotBlankLine = true;
         }
       } else {
-        //System.out.println(level);
+        System.out.println(level);
         int idx = -1;
         String myline = line.substring(0);
         while (myline.lastIndexOf('}') != idx) {
@@ -1744,7 +1747,12 @@ public class PdeEditor extends JFrame
           level--;
         }
         //for (int i = 0; i < level*2; i++) {
-        for (int i = 0; i < level; i++) {
+        // TODO i've since forgotten how i made this work (maybe it's even
+        //      a bug) but for now, level is incrementing/decrementing in
+        //      steps of two. in the interest of getting a release out, 
+        //      i'm just gonna roll with that since this function will prolly
+        //      be replaced entirely and there are other things to worry about.
+        for (int i = 0; i < tabSize * level / 2; i++) {
           buffer.append(' ');
         }
         buffer.append(line);
