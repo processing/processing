@@ -46,12 +46,12 @@ rm reference.zip
 cd ..
 
 # get package from the dist dir
-cp -r dist/Proce55ing.app processing/
-rm -rf processing/Proce55ing.app/CVS
-rm -rf processing/Proce55ing.app/Contents/CVS
-rm -rf processing/Proce55ing.app/Contents/MacOS/CVS
-rm -rf processing/Proce55ing.app/Contents/Resources/CVS
-rm -rf processing/Proce55ing.app/Contents/Resources/Java/CVS
+cp -r dist/Processing.app processing/
+rm -rf processing/Processing.app/CVS
+rm -rf processing/Processing.app/Contents/CVS
+rm -rf processing/Processing.app/Contents/MacOS/CVS
+rm -rf processing/Processing.app/Contents/Resources/CVS
+rm -rf processing/Processing.app/Contents/Resources/Java/CVS
 
 cp -r dist/serial processing/
 rm -rf processing/serial/CVS
@@ -61,7 +61,7 @@ rm -rf processing/serial/RXTX.pkg/Contents/Resources/CVS
 rm -rf processing/serial/RXTX.pkg/Contents/Resources/English.lproj/CVS
 
 # put jar files into the resource dir, leave the rest in lib
-RES=processing/Proce55ing.app/Contents/Resources/Java/
+RES=processing/Processing.app/Contents/Resources/Java/
 mv processing/lib/*.jar $RES/
 #cp comm.jar $RES/
 #cp ../shared/dist/lib/*.jar $RES/
@@ -78,7 +78,6 @@ rm -rf processing/lib/export/CVS
 
 # get platform-specific goodies from the dist dir
 cp `which jikes` processing
-#cp dist/Proce55ing processing/
 cp dist/lib/pde_macosx.properties processing/lib/
 #cp dist/lib/comm.jar processing/lib/
 
