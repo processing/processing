@@ -3,8 +3,10 @@
 
 ..................................................................
 
-
-
+_ Integer.parseInt / Integer.toString / String.valueOf..
+_   need a better syntax for this stuff
+_   int(something), float(somthing), String(something) ?
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1060940705
 
 lotsa video issues
 _ just locks up after running examples, then does the 'can't delete' thing
@@ -408,55 +410,99 @@ SOUND / Bagel Standard Extension by Carlos
 PDE - Processing Development Environment
 
 
-
 PDE / General 
 
    b _ be able to draw something inside setup (?)
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+   b _ be able to set size() later in the program
+   b _   but still maintain other features like background
+   b _   make the BGraphics constructor less fragile
+   b _     and also more open to being resized when not in applet mode
 
 
 PDE / Pre-preprocessor 
-Currently using Oro for search and replace preprocessor.
-Future plans to use Javacup for preprocessor and Jikes for compiler.
+Currently using Oro for search and replace preprocessor,
+but Dan Mosedale is moving us to ANTLR
 
-bf b _ separate compiler from other kjc-specific code
-bf b _   change writeJava/start functions to be combined in kjc
-bf b _   but the rest inside PdeEditor that takes care of launching/placing
+dm b _ move to antlr
+dm b _ additional data conversions to avoid this syntax:
+dm b _   Integer.toString(), Integer.parseInt()
+dm b _   works like class casting: int(23.4) same as ((int) 23.4) 
+dm b _   String(1234) -> translates to String.valueOf(1234);
+dm b _     works for all data types that support valueOf
+dm b _     i.e. valueOf(Object) returns null or Object.toString() 
+dm b _   int("1234") -> Integer.parseInt("1234")
+dm b _   float("1234.35") -> (new Float("1234.35").floatValue())
+dm b _ subst Image -> BImage, Font -> BFont
+dm b _   this should be optional until we get the naming down
+dm b _ foreach implementation, ala java 1.5 spec
+dm b _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html
+dm b _   for (String s : c) { ... }
+dm b _   or example for sum of int array:
+dm b _   int sum = 0; for (int e : a) { sum += e; }
+
+dm b _ contextual syntax highlighting based on grammar
+dm b _   everything that's in java.lang plus more is too much for keywords
+dm b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
+
+   b _ allow import blahblah.blah.blah to get passed through
+   b _   and included with the imports list.
+
+Current Preprocessor Subsitutions:
+
+"compiler.substitute_floats" (currently "substitute_f")
+- treat doubles as floats, i.e. 12.3 becomes 12.3f so that people
+  don't have to add f after their numbers all the time. this is
+  confusing for beginners.
+
+"compiler.enhanced_casting"
+- byte(), char(), int(), float() works for casting. this is basic in
+  the current implementation, but should be expanded as described
+  above. color() works similarly to int(), however there is also a
+  *function* called color(r, g, b) in p5. will this cause trouble?
+
+"compiler.color_datattype"
+- 'color' is aliased to 'int' as a datatype to represent ARGB packed
+  into a single int, commonly used in p5 for pixels[] and other color
+  operations. this is just a search/replace type thing, and it can be
+  used interchangeably with int.
+
+"compiler.web_colors" (currently "inline_web_colors")
+- color c = #cc0080; should unpack to 0xffcc0080 (the ff at the top is
+  so that the color is opaque), which is just an int. 
+
+Other preprocessor functionality
+
+- detects what 'mode' the program is in: static (no function brackets
+  at all, just assumes everything is in draw), active (setup plus draw
+  or loop), and java mode (full java support). 
+  http://proce55ing.net/reference/environment/index.html
+
+- size and background are pulled from draw mode programs and placed
+  into setup(). this has a problem if size() is based on a variable,
+  which we try to avoid people doing, but would like to be able to
+  support it (perhaps by requiring the size() to be final?)
+
+- currently does a godawful scrambling of the comments so that the
+  substitution doesn't try to run on them. this also causes lots of
+  bizarro bugs.
+
+Possible?
+
+- would be nice to just type code wherever, mixing a 'static' style
+  app with a few functions. would be simpler for starting out. but it
+  seems that the declarations would have to be pulled out, but that
+  all seems problematic. or maybe it could all be inside a static { } 
+  block. but that wouldn't seem to work either.
 
 
-   b _ bug in comments 
-sometimes (never when creating a new sketch, only when an old one has been loaded), if I try to add a comment to identify the end of a method class, ie like 
+PDE / PreprocessorOro bugs (will go away with new preproc)
 
-void Sample () 
-{ 
-  <basic code here> 
-} // end of Sample handler 
- 
-P5 return me an unexpected 'handler' token error! 
-And when I change this comment to  
-} /* end of Sample handler */ 
-everything comes back to normal?! 
- 
-This don't happen everytimes.. but once it started, the error stay there!  
-Just try it in your next sketchbook, add some comments at the end of your methods, and see what happen 
-
-
-b _ foreach implementation, via java 1.5
-b _   http://jcp.org/aboutJava/communityprocess/jsr/tiger/enhanced-for.html
-
-for (String s : c) {
-  ...
-}
-
-// Similarly, the following code could be used 
-// to calculate the sum of an int array. 
-int sum = 0;
-for (int e : a)  // e is short for element; i would be confusing
-  sum += e;
-
+_ weird comments bug (// on last line causes oro trouble)
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1040466898
 _ setup( ){} has an error, setup(){} does not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
-_   setup (200, 200) causes the default size to be used but setup(200, 200) works fine
+_   also, setup (200, 200) causes the default size to be used 
 _ no longer require size() to come first.
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
@@ -468,53 +514,8 @@ _   argh, need a real parser
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1052994613
 _ more int() troubles
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1056479871;start=0
-_ something about the second line of this turns things to mush
+_ something about the line println("4"); turns things to mush:
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051654054;start=0
-println("3"); 
-println("4"); 
-println("5"); 
-_ switch to java cup (one day's work)
-_ subst Image -> BImage, Font -> BFont
-_ contextual syntax highlighting based on grammar
-_   probably want to include everything that's in java.lang and maybe others
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045665326
-
-dm b _ additional data conversions to avoid this syntax:
-dm b _   Integer.toString()
-dm b _   Integer.parseInt()
-
-
-PDE / Compiler
-
-   b _ see if newer javac forces a System.exit() or if it can be avoided
-   b _ wire-in jikes as another compiler
-   b _   write handlers for jikes-style of error messages
-
-
-PDE / KJC Compiler
-most of these items can be removed if kjc is dropped
-
-   b _ another kjc bug
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1048025370;start=0
-   b _ when missing a closed brace, often has compiler error
-   b _   Jordan J message in email and bugs list
-   b _ can't used random() inside constructor.. (Glen Murphy)
-   b _   maybe related to problems loading images in constructors
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039411135
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038807934
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1029289775
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1047649496;start=0
-   b _ weird comments bug (external file)
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1040466898
-   b _ kjc is really frustrating about some of its error/warning msgs
-   b _   erroneous errors from kjc regarding 'var not inited'
-   b _     is there any way to disable this message?
-   b _   talk to simon about error streams and kjc
-   b _     better piping of output from kjc
-   b _     modify kjc to take a PrintWriter, instead of current hacks
-   b _   might be able to set default values for vars using perl5subst
-   b _   Compiler.disable() message is weird and doesn't always work
-   b _     probably just remove it for now
 
 
 PDE / Runtime (includes classloading)
