@@ -301,10 +301,12 @@ public class PLine implements PConstants
 
       t = x_array[1]; x_array[1] = x_array[0]; x_array[0] = t;
       t = y_array[1]; y_array[1] = y_array[0]; y_array[0] = t;
+      t = z_array[1]; z_array[1] = z_array[0]; z_array[0] = t;
+
       t = r_array[1]; r_array[1] = r_array[0]; r_array[0] = t;
       t = g_array[1]; g_array[1] = g_array[0]; g_array[0] = t;
       t = b_array[1]; b_array[1] = b_array[0]; b_array[0] = t;
-      t = z_array[1]; z_array[1] = z_array[0]; z_array[0] = t;
+      t = a_array[1]; a_array[1] = a_array[0]; a_array[0] = t;
     }
 
     // important - dont change the casts
