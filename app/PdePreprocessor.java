@@ -74,13 +74,13 @@ public class PdePreprocessor {
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
 
-  boolean usingExternal; // use an external process to display the applet?
+  //boolean usingExternal; // use an external process to display the applet?
 
   public PdePreprocessor(String program, String buildPath) {
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
-    usingExternal = PdePreferences.getBoolean("run.external"); //, false);
+    //usingExternal = PdePreferences.getBoolean("run.external"); //, false);
   }
 
   /**
