@@ -456,7 +456,6 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-
   /**
    * Blend a two colors based on a particular mode.
    */
@@ -926,7 +925,7 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  private float frac(float x) {
+  private static float frac(float x) {
     return (x - (int) x);
   }
 
@@ -1032,9 +1031,8 @@ public class PImage implements PConstants, Cloneable {
     1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
   };
 
-  static void write_tiff(OutputStream output, int pixels[],
-                         int width, int height) throws IOException {
-
+  static public void saveHeaderTIFF(OutputStream output,
+                                    int width, int height) throws IOException {
     byte tiff[] = new byte[768];
     System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
 
@@ -1050,7 +1048,12 @@ public class PImage implements PConstants, Cloneable {
     tiff[117] = (byte) ((count) & 0xff);
 
     output.write(tiff);
+  }
 
+
+  static public void saveTIFF(OutputStream output, int pixels[],
+                              int width, int height) throws IOException {
+    saveHeaderTIFF(output, width, height);
     for (int i = 0; i < pixels.length; i++) {
       output.write((pixels[i] >> 16) & 0xff);
       output.write((pixels[i] >> 8) & 0xff);
@@ -1067,11 +1070,11 @@ public class PImage implements PConstants, Cloneable {
    * [fry 030917]
    * Modified to write directly to OutputStream, because of
    * memory issues with first making an array of the data.
+   *
    * tga spec: http://organicbit.com/closecombat/formats/tga.html
    */
-  static void write_targa(OutputStream output, int pixels[],
-                          int width, int height) throws IOException {
-
+  static void saveHeaderTGA(OutputStream output,
+                            int width, int height) throws IOException {
     byte header[] = new byte[18];
 
     // set header info
@@ -1084,6 +1087,12 @@ public class PImage implements PConstants, Cloneable {
     header[17] = 8;  // bits per colour component
 
     output.write(header);
+  }
+
+
+  static public void saveTGA(OutputStream output, int pixels[],
+                             int width, int height) throws IOException {
+    saveHeaderTGA(output, width, height);
 
     int index = (height-1) * width;
 
@@ -1107,7 +1116,7 @@ public class PImage implements PConstants, Cloneable {
 
       if (filename.toLowerCase().endsWith(".tga")) {
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        write_targa(os, pixels, width, height);
+        saveTGA(os, pixels, width, height);
 
       } else {
         if (!filename.toLowerCase().endsWith(".tif") &&
@@ -1116,7 +1125,7 @@ public class PImage implements PConstants, Cloneable {
           filename += ".tif";
         }
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        write_tiff(os, pixels, width, height);
+        saveTIFF(os, pixels, width, height);
       }
       os.flush();
       os.close();
@@ -1125,6 +1134,12 @@ public class PImage implements PConstants, Cloneable {
       e.printStackTrace();
     }
   }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // INHERITED BY PGRAPHICS
 
 
   public void smooth() {
