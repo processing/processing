@@ -101,17 +101,20 @@ X   resetLeading and resetSize are the things
 X embed all available chars from a font, so japanese, etc works
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1083598817;start=3
 X fix a bunch of font bugs regarding charsets and lookup
+X array operations: boolean, byte, char, int, float, String
+X   expand/contract
+X   append, shorten
+o   shift/unshift
+o   slice
+X   splice
+X   reverse
+X   concat
 
+_ full casting operations on primitives and arrays of them
 
-_ array operations: byte, char, int, float, String, Object
-_   expand/contract
-_   append/unappend.. (no push/pop) add/remove put/unput
-_   shift/unshift
-_   slice, splice
-_   reverse, concat, split
-_   expand() on Object[] is worthless.. fix it with reflection?
-_     also, should it be named resize() instead?
-_     see if reflection will allow expand for all class types
+_ array utiles on Object[] are worthless.. fix it with reflection?
+_   also, should it be named resize() instead?
+_   see if reflection will allow expand for all class types
 
 megabucket
 _ move to new graphics engine
