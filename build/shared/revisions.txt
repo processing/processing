@@ -6,6 +6,71 @@ about to enjoy is extremely hot.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0066 - 19 october 2003
+
+several important bug fixes in this release, strongly recommended. 
+lots of things have been repaired, though this release hasn't been
+heavily tested, which might necessitate a 67 sometime later this week.
+
+
+[ bug fixes ]
+
+- smooth() no longer smooshes the last line of objects.
+
+- stroke on smoothed polygons was drawing at 8x. no more.
+
+- runtime exceptions no longer lock up the environment. also fixed
+  situation that was making the play button stick.
+
+- files from the 'code' folder are now packaged with applets on export.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066586882;start=0
+
+- re-capitalizing the name of a file on macosx or windows would
+  formerly destroy your sketch. this has been fixed.
+   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066495952;start=0
+   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066497131;start=0
+
+- circles/ellipses do a better job of handling alpha
+
+- tweaks to the font builder for better updating/better stability
+
+- curvePoint didn't work when used without curve(), fixed.
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499669;start=0
+
+- double semicolons bug in preproc, fixed by dan the preproc man
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066499812;start=0
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066498153;start=0
+
+- placement of new items in the history menu was incorrect
+  http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066501376;start=0
+
+- fixed bug with "open sketch folder" on macosx
+
+- fixed bug with help->reference and "find in reference" on macosx
+
+- dimmed 'replace' button after 'find' to disallow double-replacing. 
+
+- added notes about quicktime 6.4 problems on the mac to bugs.txt
+
+- modification to ignore dotfiles on export, i.e. so that .DS_Store
+  files aren't included in your .jar with an exported applet.
+
+
+[ changes ] 
+
+- netscape.javascript is now included in the default imports, no
+  longer any need to put JSObject et al. into your 'code' folder if
+  you're using javascript/java integration.
+
+- many changes to the BImage api by toxi
+
+- macosx is disabled from running until qtjava is properly
+  installed. see bugs.txt for info.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0065 - 30 september 2003
 
 one major bug fix that repairs nastiness in drawing text that showed
