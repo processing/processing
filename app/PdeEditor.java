@@ -98,7 +98,9 @@ public class PdeEditor extends JPanel {
 
   RunButtonWatcher watcher;
 
-  PdeRuntime pdeRuntime;
+  PdeRuntime runtime;
+  boolean externalRuntime;
+  File externalCode;
 
   static final int GRID_SIZE  = 33;
   static final int INSET_SIZE = 5;
@@ -238,7 +240,7 @@ public class PdeEditor extends JPanel {
           if (presenting == true) {
             try {
               presentationWindow.toFront();
-              pdeRuntime.applet.requestFocus();
+              runtime.applet.requestFocus();
             } catch (Exception ex) { }
           }
         }
@@ -249,7 +251,7 @@ public class PdeEditor extends JPanel {
           if (presenting == true) {
             try {
               presentationWindow.toFront();
-              pdeRuntime.applet.requestFocus();
+              runtime.applet.requestFocus();
             } catch (Exception ex) { }
           }
         }
@@ -261,11 +263,11 @@ public class PdeEditor extends JPanel {
         public void keyPressed(KeyEvent e) {
           //System.out.println("window got " + e);
           if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            pdeRuntime.stop();
+            runtime.stop();
             doClose();
           } else {
             // pass on the event to the applet [toxi 030903]
-            pdeRuntime.applet.keyPressed(e);
+            runtime.applet.keyPressed(e);
           }
         }
       });
@@ -571,10 +573,23 @@ public class PdeEditor extends JPanel {
           preprocessor.writeJava(className, extendsNormal, false);
       }
 
+      externalRuntime = false;
+      if (PdePreprocessor.programType == PdePreprocessor.ADVANCED) {
+        externalRuntime = true; // we in advanced mode now, boy
+      }
+
+      externalCode = new File(sketchDir, "code");
+      if (externalCode.exists()) {
+        externalRuntime = true;
+      } else {
+        externalCode = null;
+      }
+
       // compile the program
       //
+      File includeFolder = null;
       PdeCompiler compiler = 
-        new PdeCompiler(buildPath, className, this);
+        new PdeCompiler(buildPath, className, includeFolder, this);
       // macos9 now officially broken.. see PdeCompilerJavac
       //PdeCompiler compiler = 
       //  ((PdeBase.platform == PdeBase.MACOS9) ? 
@@ -683,15 +698,22 @@ public class PdeEditor extends JPanel {
       if (className != null) {
 
         // create a runtime object
-        pdeRuntime = new PdeRuntime(this, className);
+        runtime = new PdeRuntime(this, className);
+
+        // if programType is ADVANCED
+        //   or the code/ folder is not empty -> or just exists (simpler)
+        // then set boolean for external to true
+        // include path to build in front, then path for code folder
+        //   when passing the classpath through
+        //   actually, build will already be in there, just prepend code
 
         // use the runtime object to consume the errors now
-        //messageStream.setMessageConsumer(pdeRuntime);
+        //messageStream.setMessageConsumer(runtime);
         // no need to bother recycling the old guy
-        PdeMessageStream messageStream = new PdeMessageStream(pdeRuntime);
+        PdeMessageStream messageStream = new PdeMessageStream(runtime);
 
         // start the applet
-        pdeRuntime.start(presenting ? presentLocation : appletLocation,
+        runtime.start(presenting ? presentLocation : appletLocation,
                          new PrintStream(messageStream));
                          //leechErr);
 
@@ -705,7 +727,7 @@ public class PdeEditor extends JPanel {
       }
     } catch (PdeException e) { 
       // if we made it to the runtime stage, unwind that thread
-      if (pdeRuntime != null) pdeRuntime.stop();
+      if (runtime != null) runtime.stop();
       cleanTempFiles(); //tempBuildPath);
 
       // printing the stack trace may be overkill since it happens
@@ -718,7 +740,7 @@ public class PdeEditor extends JPanel {
       e.printStackTrace();
 
       // if we made it to the runtime stage, unwind that thread
-      if (pdeRuntime != null) pdeRuntime.stop();
+      if (runtime != null) runtime.stop();
 
       cleanTempFiles(); //tempBuildPath);
     }        
@@ -740,9 +762,9 @@ public class PdeEditor extends JPanel {
 
     public void run() {
       while (Thread.currentThread() == thread) {
-        if ((pdeRuntime != null) && (pdeRuntime.applet != null)) {
-          //System.out.println(pdeRuntime.applet.finished);
-          buttons.running(!pdeRuntime.applet.finished);
+        if ((runtime != null) && (runtime.applet != null)) {
+          //System.out.println(runtime.applet.finished);
+          buttons.running(!runtime.applet.finished);
           //} else {
           //System.out.println("still pooping");
         }
@@ -759,7 +781,7 @@ public class PdeEditor extends JPanel {
 
 
   public void doStop() {
-    if (pdeRuntime != null) pdeRuntime.stop();
+    if (runtime != null) runtime.stop();
     if (watcher != null) watcher.stop();
     //System.out.println("stop2");
     message(EMPTY);
@@ -784,7 +806,7 @@ public class PdeEditor extends JPanel {
 
     } else {
       try {
-        appletLocation = pdeRuntime.window.getLocation();
+        appletLocation = runtime.window.getLocation();
       } catch (NullPointerException e) { }
     }
     //System.out.println("doclose2");
@@ -796,9 +818,9 @@ public class PdeEditor extends JPanel {
 
     //System.out.println("doclose3");
     try {
-      if (pdeRuntime != null) {
-        pdeRuntime.close();  // kills the window
-        pdeRuntime = null; // will this help?
+      if (runtime != null) {
+        runtime.close();  // kills the window
+        runtime = null; // will this help?
       }
     } catch (Exception e) { }
     //System.out.println("doclose4");

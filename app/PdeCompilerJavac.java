@@ -42,9 +42,9 @@ import java.io.*;
 
 public class PdeCompilerJavac extends PdeCompiler {
 
-  public PdeCompilerJavac(String buildPath, 
-                          String className, PdeEditor editor) {
-    super(buildPath, className, editor);
+  public PdeCompilerJavac(String buildPath, String className, 
+                          File includeFolder, PdeEditor editor) {
+    super(buildPath, className, includeFolder, editor);
   }
 
   public boolean compileJava(PrintStream leechErr) {
