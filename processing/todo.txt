@@ -7,15 +7,21 @@ X make buttons taller by 4 pixels (looking bad on macos9/macosx)
 X   change to uppercase (looks dumb on mac, and casey doesn't like)
 X set background color of buttons in EditorStatus
 X check splash screen and icons into cvs
+X macosx.. editor.status.font needs to be size 12
+X   same under windows, just wasn't being set properly before
+X   header font needed to be set each time as well
+X introduce pde.properties_OSNAME
+X   tested to make sure it joins with the other pde.properties ok
+X setPixel(i, j, #99CC00);  
+X   not working anymore Syntax error: unexpected token: CC00
+X   problem was substitute only worked along with = 
 
 _ get icon in macos9/macosx/windows formats
-_ macosx.. editor.status.font needs to be size 12
-_   introduce pde.properties_OSNAME
-
+_ check osname under win98 and linux
+_ should fix paren balancing bug.. or disable by default for alpha
 _ background() not working
 _ imageMode() is gone
-_ setPixel(i, j, #99CC00); 
-_   not working anymore Syntax error: unexpected token: CC00
+
 _ mouse coords coming from window when outside applet.. bad!
 void setup() { 
   size(100,100); 
@@ -44,6 +50,7 @@ _ box is not opaque
 
 _ size() not being called in setup is gonna cause lots of headaches
 
+b _ option to delete current project
 _ save window position (only during session) of sketch run window
 _ present mode should hide editor frame
 _ present mode doesn't work for draw()
@@ -116,6 +123,7 @@ a _   see if possible to set background of button object
 a _   or maybe just background of the awt object it sits on
 a _ use type/creator Pde1
 a _ crashes when people click on help in top bar (same in DBN) [macos9]
+a _ use osx utilities to setfileinfo for .jar files etc
 
 macosx
 a _ how to make double-clickable version for osx

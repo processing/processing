@@ -122,7 +122,6 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      //font = new Font("SansSerif", Font.PLAIN, 12);
       font = PdeBase.getFont("editor.header.font",
 			       new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
@@ -158,6 +157,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
     boolean boringUser = editor.userName.equals("default");
 
+    g.setFont(font); // needs to be set each time
     g.setColor(secondaryColor);
     g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);
     if (sketchModified) g.drawString("\u00A7", modifiedLeft, baseline);
