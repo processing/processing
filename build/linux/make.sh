@@ -9,6 +9,12 @@ then
 else
   echo Setting up directories to build for linux...
   cp -r ../shared work
+
+  cd work/sketchbook
+  unzip -q examples.zip
+  rm examples.zip
+  cd ../..
+
   tar --extract --file=jre.tgz --ungzip --directory=work
 
   mkdir work/lib/export

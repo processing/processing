@@ -1,14 +1,15 @@
 0049
-X add url support for loadImage
+X add http url support for loadImage and loadStream
 X ceil/floor/round
+X new set of examples
+X   remove old examples from cvs
+X pmouseX and pmouseX should be colored with mouseX and mouseY
 
-_ new set of examples
 _ new html for export
 _ new colors chosen by casey
 
 _ disappearing text caret on win2k
 _   works in 'insert' mode
-_ pmouseX and pmouseX should be colored with mouseX and mouseY
 _ pmouseX problem reported by casey (in bugs.txt)
 _ weirdness with mac swiss-german keyboard on []{}|
 _ framerate() and framerate(15)
