@@ -45,6 +45,8 @@ import com.apple.mrj.*;
 public class PdeBase {
   static final String VERSION = "0075 Alpha";
 
+  static String openedAtStartup;
+
   PdeEditor editor;
 
   static final int WINDOWS = 1;
@@ -61,6 +63,22 @@ public class PdeBase {
 
 
   static public void main(String args[]) {
+    if (args.length == 1) {
+      PdeBase.openedAtStartup = args[0];
+    }
+
+    MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
+        public void handleOpenFile(File file) {
+          // this will only get set once.. later will be handled
+          // by the PdeEditor version of this fella
+          if (PdeBase.openedAtStartup == null) {
+            //System.out.println("handling outside open file: " + file);
+            PdeBase.openedAtStartup = file.getAbsolutePath();
+          }
+        }
+      };
+    MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
+
     PdeBase app = new PdeBase();
   }
 
@@ -126,6 +144,146 @@ public class PdeBase {
   // .................................................................
 
 
+  static final int kDocumentsFolderType =
+    ('d' << 24) | ('o' << 16) | ('c' << 8) | 's';
+  static final int kPreferencesFolderType =
+    ('p' << 24) | ('r' << 16) | ('e' << 8) | 'f';
+  static final int kDomainLibraryFolderType =
+    ('d' << 24) | ('l' << 16) | ('i' << 8) | 'b';
+  static final short kUserDomain = -32763;
+
+
+  static public File getProcessingDataFolder() {
+    File dataFolder = null;
+
+    if (platform == MACOSX) {
+      // carbon folder constants
+      // http://developer.apple.com/documentation/Carbon/Reference
+      //   /Folder_Manager/folder_manager_ref/constant_6.html#/
+      //   /apple_ref/doc/uid/TP30000238/C006889
+
+      // additional information found int the local file:
+      // /System/Library/Frameworks/CoreServices.framework
+      //   /Versions/Current/Frameworks/CarbonCore.framework/Headers/
+
+      // this is the 1.4 version.. but using 1.3 since i have the stubs
+      // import com.apple.eio.*
+      //println(FileManager.findFolder(kUserDomain,
+      //        kDomainLibraryFolderType));
+
+      // not clear if i can write to this folder tho..
+      try {
+        if (false) {
+          new FileInputStream("ignored");
+        }
+
+        MRJOSType domainLibrary = new MRJOSType("dlib");
+        File libraryFolder = MRJFileUtils.findFolder(domainLibrary);
+          //MRJFileUtils.findFolder(kUserDomain, domainLibrary);
+        dataFolder = new File(libraryFolder, "Processing");
+
+      } catch (FileNotFoundException e) {
+        //e.printStackTrace();
+        //System.exit(1);
+        showError("Problem getting Library folder",
+                  "Error getting the Processing library folder.", e);
+      }
+
+    } else if (platform == WINDOWS) {
+      // looking for Documents and Settings/blah/Application Data/Processing
+
+      // this is just based on the other documentation, and eyeballing
+      // that part of the registry.. not confirmed by any msft/msdn docs.
+      // HKEY_CURRENT_USER\Software\Microsoft
+      //   \Windows\CurrentVersion\Explorer\Shell Folders
+      // Value Name: AppData
+      // Value Type: REG_SZ
+      // Value Data: path
+
+      /*
+      RegistryKey topKey = Registry.getTopLevelKey("HKCU");
+      String localKeyPath =
+        "\\Software\\Microsoft\\Windows\\CurrentVersion" +
+        "\\Explorer\\Shell Folders";
+      RegistryKey localKey = topKey.openSubkey(topKey, localKeyPath);
+      String appDataPath = localKey.getStringValue("AppData");
+      return new File(appDataPath, "Processing");
+      */
+      return null;
+
+    } else {
+      // otherwise make a .processing directory int the user's home dir
+      File home = new File(System.getProperty("user.home"));
+      dataFolder = new File(home, ".processing");
+    }
+
+    // create the folder if it doesn't exist already
+    if (!dataFolder.exists()) dataFolder.mkdirs();
+
+    return dataFolder;
+  }
+
+
+  static public File getProcessingDataFile(String filename) {
+    return new File(getProcessingDataFolder(), filename);
+  }
+
+
+  static public File getDefaultSketchbookFolder() {
+    if (platform == MACOSX) {
+      // looking for /Users/blah/Documents/Processing
+
+      // carbon folder constants
+      // http://developer.apple.com/documentation/Carbon/Reference/Folder_Manager/folder_manager_ref/constant_6.html#//apple_ref/doc/uid/TP30000238/C006889
+
+      // additional information found int the local file:
+      // /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Headers/
+
+      // this is the 1.4 version.. but using 1.3 since i have the stubs
+      // import com.apple.eio.*
+      //println(FileManager.findFolder(kUserDomain,
+      //        kDomainLibraryFolderType));
+
+      // not clear if i can write to this folder tho..
+      try {
+        MRJOSType domainDocuments = new MRJOSType("docs");
+        File libraryFolder = MRJFileUtils.findFolder(domainDocuments);
+          //MRJFileUtils.findFolder(kUserDomain, domainDocuments);
+        return new File(libraryFolder, "Processing");
+
+      } catch (FileNotFoundException e) {
+        showError("sketch folder problem",
+                  "Could not locate default sketch folder location.", e);
+      }
+
+    } else if (platform == WINDOWS) {
+      // looking for Documents and Settings/blah/My Documents/Processing
+
+      // http://support.microsoft.com/?kbid=221837&sd=RMVP
+      // The path to the My Documents folder is stored in the
+      // following registry key, where path is the complete path
+      // to your storage location:
+      // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+      // Value Name: Personal
+      // Value Type: REG_SZ
+      // Value Data: path
+
+    }
+
+    return null;
+
+    // if it failed, or if on linux, prompt the user or quit
+
+    /*
+      File home = new File(System.getProperty("user.home"));
+      File phome = new File(home, ".processing");
+      if (!phome.exists()) phome.mkdirs();
+      return phome;
+    */
+  }
+
+
+  /*
   static public File getProcessingHome() {
     File home = new File(System.getProperty("user.home"));
 
@@ -135,7 +293,7 @@ public class PdeBase {
     // in the default preferences.txt because it mentions this path
     if (PdeBase.platform == PdeBase.MACOSX) {
       // on macosx put the sketchbook in the "Documents" folder
-      phome = new File(home, "Documents" + File.separator + "Processing");
+      //phome = new File(home, "Documents" + File.separator + "Processing");
 
     } else if (PdeBase.platform == PdeBase.WINDOWS) {
       // on windows put the sketchbook in the "My Documents" folder
@@ -150,11 +308,7 @@ public class PdeBase {
     if (!phome.exists()) phome.mkdirs();
     return phome;
   }
-
-
-  static public File getProcessingHome(String filename) {
-    return new File(getProcessingHome(), filename);
-  }
+  */
 
 
   // .................................................................

@@ -24,42 +24,46 @@ X debug why certain spots are having errors (see 'problem here' notes)
 X   INVALID_OPERATION after drawing lines for cube
 X fix noLoop bug
 X remove errors when drawing textures
+X reverse y coordinates
 
-_ figure out min/max texture sizes when binding to avoid problems
+_ beginFrame() around setup()
+_   draw mode stuff happens inside setup.. 
+_   or maybe need to get better at size() inside of draw() ? 
+_   make this consistent with the regular PApplet
+_     otherwise things are going to be weird/difficult for debugging
+
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
 _ fix endian ordering issues so that things work properly
+_ figure out min/max texture sizes when binding to avoid problems
+_   minimum texture size may be 64x64
+_   might need to enforce it as a minimum
+
+_ remove need to use depth() at the beginning
+_ and cameraMode(PERSPECTIVE) on each frame
+_   why is the first one failing?
+
+_ get loop, noLoop, redraw, and framerate all working
+_   needs custom animator thread..
+
 _ make play button un-highlight with opengl
 _   also make window move messages work properly
-_ can ALPHA fonts work using the other replace modes
+_   very necessary, since opens window at 100x100
+
+_ can ALPHA fonts work using the other replace modes?
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
 _   fonts probably need to be RGBA, not ALPHA style images
 _   there's nothing really ALPHA about them?
-_ remove need to use depth() at the beginning
-_ and cameraMode(PERSPECTIVE) on each frame
-_   why is the first one failing?
-/ reverse y coordinates
-_ minimum texture size may be 64x64
-_   might need to enforce it as a minimum
 
-_ named colors.. have a method for a full color lookup table
-_   addcolor("blah blah blah", colornum);
-_   fill("blah blah blah");
-_   maybe this is bad practice--too slow, should use variables
-_ text() with \n is semi-broken
-_ font encoding issues
-_   java seems to force straight windows encoding.. (problem for pi fonts)
-_   opentype/cff fonts don't work with live loading from the app
-_   many (all?) opentype fonts won't show up or aren't supported
-_     this may be only cff fonts that have trouble
-_   when encoding with something besides the standard encoding, problematic
-_     so sonata otf and sonata don't seem to have any chars at all
-_ implement size(0, 0) -> just doesn't bother doing a frame.show();
 _ implement fullscreen().. this takes over the screen as best it can
 _   really more like present mode.. 
 _   that if applet is 500x500, centers on a 800x600 window
+_   though how do you get the screen size? 
+_     screen.width and screen.height? 
+_ image(String name) and textFont(String name)
+_   do we change to font(arial, 12) ?
 
 scripting
 _ on exceptions, use die to just kill the applet
@@ -78,10 +82,9 @@ _   to take care of exception handling
 _ or maybe scripts are just handled with a different method? (yech)
 _   or maybe setup() can actually throw and Exception?
 _   but that's inserted by the parser, and hidden from the user?
-
-_ beginFrame() around setup()
-_   draw mode stuff happens inside setup.. 
-_   or maybe need to get better at size() inside of draw() ? 
+_ implement size(0, 0) -> just doesn't bother doing a frame.show();
+_   too abstract, just have draw() call exit by default
+_   so if nothing inside draw, just quits
 
 opengl documentation
 _ lights cannot be enabled/disabled throughout 
@@ -97,6 +100,16 @@ _ bring screen space and font size settings back in to PGraphics
 _   causing too much trouble to be stuck down in PFont
 _ don't allocate zbuffer & stencil until depth() is called
 
+_ massive graphics engine changes
+_   explicitly state depth()/nodepth()
+_   move to new graphics engine
+_     test with rgb cube, shut off smoothing
+_   make sure line artifacts are because of smoothing
+_   implement 2x oversampling for anti-aliasing
+_ before graphics engine change, attach jogl stuff
+_   need to try jogl to make sure no further changes
+_   and the illustrator stuff
+
 postscript
 _ how to hook into curve rendering so that curve segments are drawn
 _   maybe lines are rendered and sorted, 
@@ -105,9 +118,10 @@ _   that can be re-rendered
 _   also integrate catmull-rom -> bezier inverse matrices
 _   even with the general catmull-rom, to render via ai beziers
 
-libraries could handle a series of events..
-  i.e. a 'completion' event, or 'new data' event
-  these could be registered on obejcts in a general way
+libraries
+_ libraries could handle a series of events..
+_   i.e. a 'completion' event, or 'new data' event
+_   these could be registered on obejcts in a general way
 
 random tasks
 _ someone to figure out a good model for adaptive sizing of circles
@@ -167,11 +181,6 @@ _     takes only line segments and triangles to blit (dxf writer)
 
 _ vertices max out at 512.. make it grow
 
-_ getAllFonts() not quite working for many fonts
-_   i.e. Orator Std on windows.. macosx seems to be ok
-_   is getFamilyNames() any different/better?
-_   when did this break? 1.4.1? 1.4.x vs 1.3?
-
 _ go through and figure out what stuff to make public
 
 _ screenX/Y aren't properly working for 2D points against a 3D matrix
@@ -181,6 +190,19 @@ _   screenX/Y and also using the 3 arg version of translate -
 _   ie translate(hw,hh,0) instead of just translate(hw,hh). 
 
 text issues
+_ text() with \n is semi-broken
+_ font encoding issues
+_   java seems to force straight windows encoding.. (problem for pi fonts)
+_   opentype/cff fonts don't work with live loading from the app
+_   many (all?) opentype fonts won't show up or aren't supported
+_     this may be only cff fonts that have trouble
+_   when encoding with something besides the standard encoding, problematic
+_     so sonata otf and sonata don't seem to have any chars at all
+_ getAllFonts() not quite working for many fonts
+_   i.e. Orator Std on windows.. macosx seems to be ok
+_   is getFamilyNames() any different/better?
+_   when did this break? 1.4.1? 1.4.x vs 1.3?
+_   may be that cff fonts won't work?
 _ textMode ALIGN_CENTER _LEFT _RIGHT -> CENTER, LEFT, RIGHT ? 
 _ need to resolve SCREEN_SPACE vs OBJECT_SPACE
 _   can this be auto-detected with noDepth()? 
@@ -203,22 +225,15 @@ _   it could be placed at the end of the file
 _ simple way to just use java text in p5 applets? 
 _   the current text support is just so hokey
 
-_ before graphics engine change, attach jogl stuff
-_   need to try jogl to make sure no further changes
-_   and the illustrator stuff
+_ named colors.. have a method for a full color lookup table
+_   addcolor("blah blah blah", colornum);
+_   fill("blah blah blah");
+_   maybe this is bad practice--too slow, should use variables
+
 _ 404 error because first searches applet directory on zipdecode
-_ image(String name) and textFont(String name)
-_   do we change to font(arial, 12) ?
 
 _ write PApplet2, a full screen version of PApplet
 _   this might be used for presentation mode
-
-_ massive graphics engine changes
-_   explicitly state depth()/nodepth()
-_   move to new graphics engine
-_     test with rgb cube, shut off smoothing
-_   make sure line artifacts are because of smoothing
-_   implement 2x oversampling for anti-aliasing
 
 _ api for file-based renderers
 _   need to work this out since it will affect other api changes
