@@ -35,6 +35,12 @@ X pmouseX should be set at the end of loop(), not on mouse movement
 X allow 3d curves
 X   curveVertex and bezierVertex that take 3 args
 X   3d versions of bezier() and curve()
+X preprocessor tweaks
+X   "http://acg.media.mit.edu" doesn't work because of //
+X   "color.jpg" -> "int.jpg" causes trouble
+X why does this line cause an error?
+// String url = "http:\u002f\u002fwww.Proce55ing.net"; 
+X   it's not in the preprocessor, but kopi seems to be having trouble
 
 bagel
 _ images don't load during setup()
@@ -47,26 +53,22 @@ _   make into oval function
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 pde
+_ seems that file i/o may be picking up lots of extra \r 
+_   perhaps when doing setText, it's goobering things up
 _ better default size than 300x300 when starting up first time
-
 _ set frame title of launched window to the name of the sketch
 _ when renaming a sketch, select the text in the field, 
     so you can type the new name immediately. 
-_ use date in the sketch name sketch_021104 
-_   with a _2 if needed or '021104a' '021104b' etc
-_   when using save as, allow to remove the old (numbered) sketch
-_ preprocessor problems
-_   "color.jpg" or "int.jpg" causes trouble
-_   "http://acg.media.mit.edu" doesn't work because of //
-_   subst Image -> BImage, Font -> BFont
 _ remove .class files on save as [dimitre]
 When I am working in a project and I save it with another name, 
 all the old files are copyied to new directory, and some of the old 
 unused .class files and images remains inside new project JAR files. 
-_ seems that file i/o may be picking up lots of extra \r 
-_   perhaps when doing setText, it's goobering things up
+_ use date in the sketch name sketch_021104 
+_   with a _2 if needed or '021104a' '021104b' etc
+_   when using save as, allow to remove the old (numbered) sketch
 
-_ get syntax coloring debugged?
+_ preprocessor problems -> switch to java cup (one day's work)
+_   subst Image -> BImage, Font -> BFont
 _ serial port
 _   better message for PortInUseException (full explanation)
 _   better message for when serial port code not available/not installed
@@ -78,7 +80,10 @@ _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
 _ support 'classes' folder, through the use of a classloader
 _   all .jar files etc are added from this folder automatically
-_ talk to casey about better default colors
+
+_ get syntax coloring debugged?
+_   talk to casey about better default colors
+
 
 windows
 _ windows 95/98/ME seems to be broken
