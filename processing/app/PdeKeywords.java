@@ -61,37 +61,48 @@ public class PdeKeywords extends CTokenMarker {
 
         String line = null;
         while ((line = reader.readLine()) != null) {
-          int tab = line.indexOf('\t');
-          // any line with no tab is ignored
-          // meaning that a comment is any line without a tab
-          if (tab == -1) continue;
+          //System.out.println("line is " + line);
+          // in case there's any garbage on the line
+          //if (line.trim().length() == 0) continue;
 
-          String keyword = line.substring(0, tab).trim();
-          String second = line.substring(tab + 1);
-          tab = second.indexOf('\t');
-          String coloring = second.substring(0, tab).trim();
-          String htmlFilename = second.substring(tab + 1).trim();
+          String pieces[] = processing.core.PApplet.split(line, '\t');
+          if (pieces.length >= 2) {
+            //int tab = line.indexOf('\t');
+            // any line with no tab is ignored
+            // meaning that a comment is any line without a tab
+            //if (tab == -1) continue;
 
-          if (coloring.length() > 0) {
-            // text will be KEYWORD or LITERAL
-            boolean isKey = (coloring.charAt(0) == 'K');
-            // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
-            int num = coloring.charAt(coloring.length() - 1) - '1';
-            byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
-            //System.out.println("got " + (isKey ? "keyword" : "literal") +
-            //                 (num+1) + " for " + keyword);
-            keywordColoring.add(keyword, id);
-          }
+            String keyword = pieces[0].trim();
+            //String keyword = line.substring(0, tab).trim();
+            //String second = line.substring(tab + 1);
+            //tab = second.indexOf('\t');
+            //String coloring = second.substring(0, tab).trim();
+            //String htmlFilename = second.substring(tab + 1).trim();
+            String coloring = pieces[1].trim();
 
-          if (htmlFilename.length() > 0) {
-            keywordToReference.put(keyword, htmlFilename);
+            if (coloring.length() > 0) {
+              // text will be KEYWORD or LITERAL
+              boolean isKey = (coloring.charAt(0) == 'K');
+              // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
+              int num = coloring.charAt(coloring.length() - 1) - '1';
+              byte id = (byte)
+                ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+              //System.out.println("got " + (isKey ? "keyword" : "literal") +
+              //                 (num+1) + " for " + keyword);
+              keywordColoring.add(keyword, id);
+            }
+            if (pieces.length >= 3) {
+              //if (htmlFilename.length() > 0) {
+              keywordToReference.put(keyword, pieces[2]); //htmlFilename);
+              //}
+            }
           }
         }
         reader.close();
 
       } catch (Exception e) {
         PdeBase.showError("Problem loading keywords",
-                          "Could not find keywords.txt,\n" +
+                          "Could not load keywords.txt,\n" +
                           "please re-install Processing.", e);
         System.exit(1);
       }
