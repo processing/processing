@@ -730,12 +730,24 @@ public class PdeSketch {
   public void addLibrary(String jarPath) {
     String list[] = PdeCompiler.packageListFromClassPath(jarPath);
 
+    // import statements into the main sketch file (code[0])
     // if the current code is a .java file, insert into current
-    // else import statements into the main sketch file (code[0])
-    
-    for (int i = 0; i < list.length; i++) {
-      System.out.println(list[i]);
+    if (current.flavor == PDE) {
+      setCurrent(0);
     }
+    // could also scan the text in the file to see if each import
+    // statement is already in there, but if the user has the import
+    // commented out, then this will be a problem.
+    StringBuffer buffer = new StringBuffer();
+    for (int i = 0; i < list.length; i++) {
+      buffer.append("import ");
+      buffer.append(list[i]);
+      buffer.append(".*;\n");
+    }
+    buffer.append('\n');
+    buffer.append(editor.getText());
+    editor.setText(buffer.toString(), false);
+    setModified();
   }
 
 
@@ -1015,7 +1027,9 @@ public class PdeSketch {
       // java mode, since that's required
       String className = 
         preprocessor.write(bigCode.toString(), buildPath,
-                           suggestedClassName, importPackageList);
+                           suggestedClassName);
+      //preprocessor.write(bigCode.toString(), buildPath,
+      //                   suggestedClassName, importPackageList);
       if (className == null) {
         throw new PdeException("Could not find main class");
         // this situation might be perfectly fine, 
@@ -1598,13 +1612,13 @@ public class PdeSketch {
    * volumes or folders without appropraite permissions.
    */
   public boolean isReadOnly() {
-    //System.out.println("checking read only: " + folder.canWrite());
-    if (folder.getAbsolutePath().startsWith(PdeSketchbook.examplesPath)) {
+    String apath = folder.getAbsolutePath();
+    if (apath.startsWith(PdeSketchbook.examplesPath) || 
+        apath.startsWith(PdeSketchbook.librariesPath)) {
       return true;
 
       // this doesn't work on directories
-    //} else if (!folder.canWrite()) {  // is this ok for directories?
-      //System.err.println("read only directory...");
+      //} else if (!folder.canWrite()) {
     } else {
       // check to see if each modified code file can be written to
       for (int i = 0; i < codeCount; i++) {
