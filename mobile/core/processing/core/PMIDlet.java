@@ -81,6 +81,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     public static final int ALIGN_RIGHT     = 1;
     public static final int ALIGN_CENTER    = 2;    
     
+    public static final int RGB             = 0;
+    public static final int HSB             = 1;
+    
     protected int       width;
     protected int       height;
     
@@ -195,6 +198,38 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     
     public final void background(int value1, int value2, int value3) {
         canvas.background(value1, value2, value3);
+    }
+    
+    public final void colorMode(int mode) {
+        canvas.colorMode(mode);
+    }
+    
+    public final void colorMode(int mode, int range) {
+        colorMode(mode, range, range, range);
+    }
+    
+    public final void colorMode(int mode, int range1, int range2, int range3) {
+        canvas.colorMode(mode, range1, range2, range3);
+    }
+    
+    public final void colorMode(int mode, int range1, int range2, int range3, int range4) {
+        canvas.colorMode(mode, range1, range2, range3, range4);
+    }
+    
+    public final int color(int gray) {
+        return canvas.color(gray);
+    }
+    
+    public final int color(int gray, int alpha) {
+        return canvas.color(gray, alpha);
+    }
+    
+    public final int color(int value1, int value2, int value3) {
+        return canvas.color(value1, value2, value3);
+    }
+    
+    public final int color(int value1, int value2, int value3, int alpha) {
+        return canvas.color(value1, value2, value3, alpha);
     }
     
     public final void stroke(int gray) {
