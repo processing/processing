@@ -35,7 +35,7 @@ import java.util.*;
   |                   height is the full used height of the image
   |
   |   ..XX..       }
-  |   ..XX..       }  
+  |   ..XX..       }
   |   ......       }
   |   XXXX..       }  topExtent (top y is baseline - topExtent)
   |   ..XX..       }
@@ -155,7 +155,7 @@ public class PFont implements PConstants {
       if (value[i] < 128) ascii[value[i]] = i;
 
       // the values for getAscent() and getDescent() from FontMetrics
-      // seem to be way too large.. perhaps they're the max? 
+      // seem to be way too large.. perhaps they're the max?
       // as such, use a more traditional marker for ascent/descent
       if (value[i] == 'd') {
         if (ascent == 0) ascent = topExtent[i];
@@ -170,7 +170,7 @@ public class PFont implements PConstants {
     if ((ascent == 0) && (descent == 0)) {
       throw new RuntimeException("Please use \"Create Font\" to " +
                                  "re-create this font.");
-    } 
+    }
 
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
@@ -534,8 +534,8 @@ public class PFont implements PConstants {
   }
 
 
-  private void textLine(int start, int stop, 
-                        float x, float y, float z, 
+  private void textLine(int start, int stop,
+                        float x, float y, float z,
                         PGraphics parent) {
     //float startX = x;
     //int index = 0;
@@ -565,44 +565,111 @@ public class PFont implements PConstants {
 
 
   /**
-   * Draw text in a box that is constrained to a
-   * particular size. The current rectMode() determines
-   * what the coordinates mean (whether x1y1-x2y2 or x/y/w/h).
+   * Draw text in a box that is constrained to a particular size.
+   * The current rectMode() determines what the coordinates mean
+   * (whether x1/y1/x2/y2 or x/y/w/h).
    *
-   * Note that the x,y coords of the start of the box 
-   * will align with the *ascent* of the text, 
-   * not the baseline, as is the case for the other 
-   * text() functions.
+   * Note that the x,y coords of the start of the box
+   * will align with the *ascent* of the text, not the baseline,
+   * as is the case for the other text() functions.
    */
-  public void text(String str, float x, float y, float z,
-                   float w, float h, PGraphics parent) {
-    float space = width(' ');
-    float xx = x;
-    float yy = y;
-    float right = x + w;
+  public void text(String str, float boxX1, float boxY1, float boxZ,
+                   float boxX2, float boxY2, PGraphics parent) {
+    float spaceWidth = width(' ');
+    float runningX = boxX1;
+    float currentY = boxY1;
+    float boxWidth = boxX2 - boxX1;
+    //float right = x + w;
 
-    yy += ascent();
+    float lineX = boxX1;
+    if (align == ALIGN_CENTER) {
+      lineX = lineX + boxWidth/2f;
+    } else if (align == ALIGN_RIGHT) {
+      lineX = boxX2;
+    }
 
-    String paragraphs[] = PApplet.split(str, '\n');
-    for (int i = 0; i < paragraphs.length; i++) {
-      String words[] = PApplet.split(paragraphs[i], ' ');
-      float wide = 0;
-      for (int j = 0; j < words.length; j++) {
-        float size = width(words[j]);
-        if (xx + size > right) {
-          // this goes on the next line
-          xx = x;
-          yy += leading; 
-          //yy += ascent() * 1.2f;
-          if (yy > y + h) return;  // too big for box
+    // ala illustrator, the text itself must fit inside the box
+    currentY += ascent();
+    // if the box is already too small, tell em to f off
+    if (currentY > boxY2) return;
+
+    int length = str.length();
+    if (length > textBuffer.length) {
+      textBuffer = new char[length + 10];
+    }
+    str.getChars(0, length, textBuffer, 0);
+
+    int wordStart = 0;
+    int wordStop = 0;
+    int lineStart = 0;
+    int index = 0;
+    while (index < length) {
+      if ((textBuffer[index] == ' ') ||
+          (index == length-1)) {
+        // boundary of a word
+        float wordWidth = calcWidth(textBuffer, wordStart, index);
+        if (runningX + wordWidth > boxX2) {
+          if ((runningX == boxX1) &&
+              (wordWidth > boxWidth)) {
+            // if this is the first word, and its width is
+            // greater than the width of the text box,
+            // then break the word where at the max width,
+            // and send the rest of the word to the next line.
+            do {
+              index--;
+              if (index == wordStart) {
+                // not a single char will fit on this line. screw 'em.
+                return;
+              }
+              wordWidth = calcWidth(textBuffer, wordStart, index);
+            } while (wordWidth > boxWidth);
+            textLine(lineStart, index, lineX, currentY, boxZ, parent);
+
+          } else {
+            // next word is too big, output current line
+            // and advance to the next line
+            textLine(lineStart, wordStop, lineX, currentY, boxZ, parent);
+            // only increment index if a word wasn't broken inside the
+            // do/while loop above.. also, this is a while() loop too,
+            // because multiple spaces don't count for shit when they're
+            // at the end of a line like this.
+
+            //index = wordStop + 1;  // back that ass up
+            while ((index < length) &&
+                   (textBuffer[index] == ' ')) {
+              index++;
+            }
+          }
+          lineStart = index;
+          wordStart = index;
+          wordStop = index;
+          runningX = boxX1;
+          currentY += leading;
+          if (currentY > boxY2) return;  // box is now full
+
+        } else {
+          runningX += wordWidth + spaceWidth;
+          // on to the next word
+          wordStop = index;
+          wordStart = index + 1;
         }
-        text(words[j], xx, yy, z, parent);
-        xx += size + space;
+
+      } else if (textBuffer[index] == '\n') {
+        if (lineStart != index) {  // if line is not empty
+          textLine(lineStart, index, lineX, currentY, boxZ, parent);
+        }
+        lineStart = index + 1;
+        wordStart = lineStart;
+        currentY += leading;
+        if (currentY > boxY2) return;  // box is now full
       }
-      // end of paragraph, move to left and increment leading
-      xx = 0;
-      yy += leading;
-      if (yy > h) return;  // too big for box
+      index++;
+    }
+    if ((lineStart < length) &&
+        (lineStart != index)) {  // if line is not empty
+      //System.out.println("line not empty " +
+      //                 new String(textBuffer, lineStart, index));
+      textLine(lineStart, index, lineX, currentY, boxZ, parent);
     }
   }
 
@@ -627,15 +694,15 @@ public class PFont implements PConstants {
 
     while (index < length) {
       if (textBuffer[index] == '\n') {
-	y = startY;
-	x += leading;
+        y = startY;
+        x += leading;
         previous = 0;
 
       } else {
         ltext(textBuffer[index], x, y, parent);
-	y -= width(textBuffer[index]);
+        y -= width(textBuffer[index]);
         if (previous != 0)
-	  y -= kern(previous, textBuffer[index]);
+          y -= kern(previous, textBuffer[index]);
         previous = textBuffer[index];
       }
       index++;
@@ -664,7 +731,7 @@ public class PFont implements PConstants {
     // if the character is off the screen
     if ((sx >= parent.width) ||         // top of letter past width
         (sy - pw >= parent.height) ||
-	(sy + pw < 0) || 
+        (sy + pw < 0) ||
         (sx + ph < 0)) return;
 
     if (sx < 0) {  // if starting x is off screen
@@ -704,16 +771,16 @@ public class PFont implements PConstants {
     // (but they become col & row in the target image)
     for (int row = py; row < py + ph; row++) {
       for (int col = px; col < px + pw; col++) {
-	int a1 = (fa * pixels1[row * twidth + col]) >> 8;
-	int a2 = a1 ^ 0xff;
-	int p1 = pixels1[row * width[glyph] + col];
+        int a1 = (fa * pixels1[row * twidth + col]) >> 8;
+        int a2 = a1 ^ 0xff;
+        int p1 = pixels1[row * width[glyph] + col];
 
         try {
           int index = (sy + px-col)*parent.width + (sx+row-py);
           int p2 = pixels2[index];
 
-          pixels2[index] = 
-            (0xff000000 | 
+          pixels2[index] =
+            (0xff000000 |
              (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
              (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
              (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
@@ -745,15 +812,15 @@ public class PFont implements PConstants {
 
     while (index < length) {
       if (textBuffer[index] == '\n') {
-	y = startY;
-	x += leading;
+        y = startY;
+        x += leading;
         previous = 0;
 
       } else {
         rtext(textBuffer[index], x, y, parent);
-	y += width(textBuffer[index]);
+        y += width(textBuffer[index]);
         if (previous != 0)
-	  y += kern(previous, textBuffer[index]);
+          y += kern(previous, textBuffer[index]);
         previous = textBuffer[index];
       }
       index++;
@@ -825,9 +892,9 @@ public class PFont implements PConstants {
     // (but they become col & row in the target image)
     for (int row = py; row < py + ph; row++) {
       for (int col = px; col < px + pw; col++) {
-	int a1 = (fa * fpixels[row * twidth + col]) >> 8;
-	int a2 = a1 ^ 0xff;
-	int p1 = fpixels[row * width[glyph] + col];
+        int a1 = (fa * fpixels[row * twidth + col]) >> 8;
+        int a2 = a1 ^ 0xff;
+        int p1 = fpixels[row * width[glyph] + col];
 
         try {
           //int index = (yy + x0-col)*parent.width + (xx+row-y0);
@@ -836,8 +903,8 @@ public class PFont implements PConstants {
           int p2 = spixels[index];
 
           // x coord is backwards
-          spixels[index] = 
-            (0xff000000 | 
+          spixels[index] =
+            (0xff000000 |
              (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
              (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
              (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
