@@ -1,3 +1,44 @@
+0024 
+X bug fixes (lighting was broken)
+
+
+0023
+X not released, tweaks and bug fixes in paris hotel
+
+
+0022
+X not released, just working on tweaks and bug fixes
+
+
+0021
+X cosmetic ui update so that it's not so dbn-like
+X   should this instead be simple colors update (no placement)
+X move everything to new bagel api names
+X having to put 'f' after everything is a mess
+X   included oro matcher, no need to use anymore :)
+
+
+0020
+o fix bugs from the 'bugs' file
+o   then remove the file from cvs
+o   if fill(), need to draw several non-stroked planes
+o   if stroke(), then draw single lines for each edge
+o     do not duplicate edges for lines
+o also problem filling on beginShape() triangle stuff
+X z coordinates are backwards from gl (at least from mazo)
+X   looked into it, this doesn't appear to be the case..
+X   how did this happen? what's the appropriate way to fix?
+X   in gl, positive z goes into the screen 
+X   may be able to do a scale(0, 0, -1) that doesn't affect dims
+X     then when dims set to 3, will fix the z coords
+X   this will also affect zbuffer ordering
+X if BagelImage doesn't load, then image() calls arrayindexoutofbounds
+X   better solution for this (error while opening image)
+X get rid of 'kill' button
+X int version of min and abs
+X introduce pImage, pFont, pGraphics, pConstants (pSound)
+
+
 0019
 questions answered..
 X is day, month, year overkill inside processingapplet? 
