@@ -345,13 +345,13 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  public void pixelsUpdated() {
+  //public void pixelsUpdated() {
     //mx1 = Integer.MAX_VALUE;
     //my1 = Integer.MAX_VALUE;
     //mx2 = -Integer.MAX_VALUE;
     //my2 = -Integer.MAX_VALUE;
-    modified = false;
-  }
+  //modified = false;
+  //}
 
 
   //////////////////////////////////////////////////////////////
