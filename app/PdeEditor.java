@@ -988,7 +988,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     Thread thread;
 
     public RunButtonWatcher() {
-      thread = new Thread(this);
+      thread = new Thread(this, "run button watcher");
+      thread.setPriority(Thread.MIN_PRIORITY);
       thread.start();
     }
 

@@ -24,16 +24,10 @@
 
 import processing.core.*;
 
-import java.awt.*; // for window 
-import java.awt.event.*; // also for window
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
-
-//#ifndef RXTX
-//import javax.comm.*;
-//#else
-//import gnu.io.*;
-//#endif
 
 
 public class PdeRuntime implements PdeMessageConsumer {
@@ -94,25 +88,26 @@ public class PdeRuntime implements PdeMessageConsumer {
            windowLocation.x + "," + windowLocation.y) :
           (PApplet.EXT_LOCATION + x1 + "," + y1);
 
+        //java "-Djava.library.path=C:\Documents and Settings\fry\My Documents\sketchbook\image_loading_problems\code" -cp "lib\build;java\lib\rt.jar;lib;lib\build;lib\pde.jar;lib\core.jar;lib\mrj.jar;lib\antlr.jar;lib\oro.jar;C:\WINDOWS\system32\QTJava.zip;;C:\Documents and Settings\fry\My Documents\sketchbook\image_loading_problems\code" processing.core.PApplet --location=710,61 "--sketch-folder=C:\Documents and Settings\fry\My Documents\sketchbook\image_loading_problems" Temporary_6879_7583
         String command[] = new String[] { 
           "java",
           "-Djava.library.path=" + sketch.libraryPath,  // might be ""
           "-cp",
           sketch.classPath,
           "processing.core.PApplet",
-          //PApplet.EXTERNAL_FLAG + location,
           location,
           PApplet.EXT_SKETCH_FOLDER + sketch.folder.getAbsolutePath(),
           sketch.mainClassName
         };
 
-        //PApplet.println(command);
+        //PApplet.println(PApplet.join(command, " "));
         process = Runtime.getRuntime().exec(command);
-        new PdeMessageSiphon(process.getErrorStream(), this);
         new SystemOutSiphon(process.getInputStream());
+        //new PdeMessageSiphon(process.getErrorStream(), this);
+        new PdeMessageSiphon(process.getErrorStream(), this);
         processOutput = process.getOutputStream();
 
-      } else {
+      } else {  // !externalRuntime
         //Class c = Class.forName(className);
         Class c = Class.forName(sketch.mainClassName);
         applet = (PApplet) c.newInstance();
@@ -525,31 +520,60 @@ java.lang.NullPointerException
       this.input = input;
 
       thread = new Thread(this);
+      thread.setPriority(Thread.MIN_PRIORITY);
       thread.start();
     }
 
     public void run() {
       byte boofer[] = new byte[1024];
 
-      try {
-        while (true) {
-          //int count = input.available();
-          //int offset = 0; 
+      while (Thread.currentThread() == thread) {
+        // read, block until something good comes through
+        //if (input.available() > 0) {
+        try {
           int count = input.read(boofer, 0, boofer.length);
           if (count == -1) break;
-          System.out.print(new String(boofer, 0, count));
-        }
+          //System.out.print("bc" + count + " " + new String(boofer, 0, count));
+          
 
-        /*
-        int c;
-        while ((c = input.read()) != -1) {
-          System.out.print((char) c);
+        } catch (IOException e) {
+          thread = null;
         }
-        */
-      } catch (Exception e) { 
-        System.err.println("SystemOutSiphon error " + e);
-        e.printStackTrace();
+        //System.out.println("SystemOutSiphon: out");
+        //thread = null;
+      }        
+    }
+
+
+      /*
+      //while (Thread.currentThread() == thread) {
+      //try {
+      //while (true) {
+          //int count = input.available();
+            //int offset = 0; 
+          int count = input.read(boofer, 0, boofer.length);
+          if (count == -1) {
+            System.out.println("SystemOutSiphon: out");
+            thread = null;
+          }
+          //if (count != -1) {
+          if (count > 0) {
+            System.out.print(new String(boofer, 0, count));
+          }
+          //}
+            //}
+
+        } catch (Exception e) { 
+          System.err.println("SystemOutSiphon error " + e);
+          e.printStackTrace();
+        }
+        //Thread.yield();
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) { }
       }
     }
+      */
+
   }
 }
