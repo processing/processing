@@ -1,3 +1,10 @@
+0027
+X change editor.button_bgcolor -> editor.buttons.bgcolor
+X if no 0 before decimal place in a number it breaks
+X change plane to quad
+X get new casey colors and buttons
+
+
 0025
 X change 'rect' to 'plane' (point/line/plane)
 X   also rectMode to planeMode

@@ -1,8 +1,24 @@
-0027
-X change editor.button_bgcolor -> editor.buttons.bgcolor
-X if no 0 before decimal place in a number it breaks
-X change plane to quad
-X get new casey colors and buttons
+0028
+X modified pde.properties slightly for console and header
+X need stdout in p5 window b/c mac has no stdout
+X   remove class 'PdeEditorOutput' and 'PdeEditorLabel'(?)
+X   added editor.console.lines to pde.properties
+X int() and float() now work for casting
+X draw mode needs to be better for workshops
+X   make size() work for draw() mode
+X     inside Engine, reach in and grab calls to 'size'
+X     if call is not using a constant number, then punt
+X   when exporting, needs to grab this size parameter as well
+o related classes
+X   resolved, just use inner classes for everything
+o   better way to do parent and g.rect stuff in related classes
+o     implement g. passed into any function called draw()
+o     also important for things like cos, sin, max etc
+o     but maybe once you're doing more advanced code, that stuff's ok
+o       or using inner classes is better b/c class stuff works
+o   related classes also need to implement pConstants
+
+_ make scrollbar for console
 
 
 UNSORTED
@@ -17,7 +33,6 @@ _   start working on writing pdf files
 _   loading images/files from same dir as .pde file
 _   option to use jikes
 _   use external editor or write a usable one
-_ build windows app for testing bagel c++ ... -lgdi32 for cygwin
 _ write simple class for lcd panel 
 _   build adapter to plug directly into db9 serial port
 _   figure out characters used on screen by default (check web)
@@ -27,6 +42,37 @@ _   code to reprogram lcd screen
 _ look through rabbit api
 _   look into integration of cmd line compiler
 _ check out flash for its text editor
+_ write function to swap different names for Proce55ing
+_   use for window title
+_   simple app that does swapping of letters as an animation
+_ project name is changed by clicking on the name and typing
+_ user name is changed by clicking and typing
+_   after user hits 'enter', checks to see if user exists
+_     if not, pops up message asking if they want to change
+_       message goes in same spot as error/status label (turns yellow?)
+_     if user says 'no', then 
+
+
+(C)BAGEL WORK
+_ try screengrab using malloc and/or gobs of extra memory
+_   debug the version inside bagel b/c it's simpler
+_ bagel needs to be able to resize itself
+_   also to address screen as if it's another size
+_     is that simply a matter of changing the viewport?
+_   letterboxing as appropriate
+_ build windows app for testing bagel c++ ... -lgdi32 for cygwin
+
+teaching 3D
+_ expectation for 3D objects is that they begin in the center
+_   rather than a translate(W/2, H/2) then draw rotating cube
+
+things noticed while casey watched him using the software
+_ if no 0 before decimal place in a number it breaks
+_ display window should have separate close box
+_ save window positions on closing (due to crashing)
+_ title of the file should be shown
+_ needs to be a menubar
+_ text editor is quite bad (hiding cursor thing)
 
 bagel/cbagel stuff
 _ try screengrab using malloc and/or gobs of extra memory
@@ -58,46 +104,7 @@ _ would be nice to have examples for all concepts on site
 _   or in a small printed book that serves as a reference
 _ courseware not complete--difficult to collect assignments
 
-_ sketch.properties contains the last program run
-_   also the window positions, etc
-_   if it doesn't exist, starts with a new project
-_     for a new project, name it untitled-0001 or as appropriate
-_       so that previous projects aren't written over
-
-_ 'open' button is a switch-to button
-_   pops up list of everything in the sketchbook
-_   first item is 'new sketch', followed by delimeter
-_   next is list of subdirs other than current user, then delim
-_   the rest are the items in the current user's folder
-
-X need 'new' button on the toolbar --> NOPE, first item on 'open' menu
-_   the zero looking one might be good (instead of export)
-_   export could be three circles in a row, overlapping
-
-_ need double-clickable application version for the mac
-_   if os9, this is a no-brainer.. for osx may take a little time
-
-_ everything is a project.. what about short snippets of code?
-_   this version won't be able to access everything from scrapbook
-_   (that requires a more robust class loader)
-
-_ verify save when
-_   closing p5 window
-_   moving to other sketch
-
-** need not be implemented **
-_ write function to swap different names for Proce55ing
-_   use for window title
-_   simple app that does swapping of letters as an animation
-_ project name is changed by clicking on the name and typing
-_ user name is changed by clicking and typing
-_   after user hits 'enter', checks to see if user exists
-_     if not, pops up message asking if they want to change
-_       message goes in same spot as error/status label (turns yellow?)
-_     if user says 'no', then 
-
-
-QUESTIONS
+questions to resolve
 _ is it necessary to have fullscreen option on toolbar anymore?
 _ what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
 _ should we use jdk 1.3 or msft vm?
@@ -132,7 +139,8 @@ b _   clipping issues here.. but also something in scan converter
 b _   not clipping areas from offscreen
 b _     huge geometry slows things way down
 b _ adaptive sizing of circle segmenting based on rendered size
-_ stroked version of sphere is just a circle
+b _ make size() available throughout
+b _ stroked version of sphere is just a circle
 
 
 BAGEL / medium & time consuming
@@ -148,6 +156,7 @@ b _   sorting of polygons/lines on simple painters algorithm
 b _   better lighting model to show darkness at various depths
 b _     maybe just ultra-high res bitmaps from gl
 b _   version of ProcessingApplet that replaces g. with ai. or pdf.
+
 _ picking
 _   ability to write data other than image into the buffer
 _   user can introduce new kinds of buffers at will (!)
@@ -196,21 +205,30 @@ _ live video editing, wanting things more procedural
 
 
 PDE / high
-a _ need stdout in p5 window b/c mac has no stdout
 a _ add frame to launched window
 a X   add maximize event catcher to make fullscreen
-a _     doesn't work, because of screen sizing stupidity
+a o     doesn't work, because of screen sizing stupidity
 a _   shift-click on play to go directly into this 'presentation mode'
 a _ lines being highlighted for errors are off
 a _   test this on other platforms as well
-a _ draw mode needs to be better for workshops
-a _   make size() work for draw() mode
-a _     inside Engine, reach in and grab calls to 'size'
-a _     if call is not using a constant number, then punt
-a _   better yet, just make size() available throughout
 a _ importing images doesn't work
+a _ Compiler.disable() message is weird and doesn't always work
+a _   probably just remove it for now
+a _ kjc is really frustrating about some of its error/warning msgs
+a _   erroneous errors from kjc regarding 'var not inited'
+a _     is there any way to disable this message?
+a _   talk to simon about error streams and kjc
+a _     better piping of output from kjc
+a _     modify kjc to take a PrintWriter, instead of current hacks
+a _   might be able to set default values for vars using perl5subst
+a _ lib/pde.properties should be read using getResource
+a _   otherwise path issues cause trouble (likely under win98)
+a _ check logs to see where we're getting traffic from
 
 b _ serial.messageReceived extra long crap in demo.pde (clean up?)
+b _   improve simpleserial and clean up a bit
+b _   document a bit more regarding its use
+b _   should serial be an event like mouse/key
 b _ NullPointerException on startup in pde editor buttons
 b _   shows up on slower machines, probably images not loaded yet
 b _ use a vm that won't destroy the screen like sun/ibm does
@@ -243,29 +261,31 @@ a _   it's really a pain to use external files in processing
 a _     getStream sucks (zach rewrote)
 a _     should be able to work for application or applets
 a _     may want to use getResource() (to get things from .jar files)
+a _   compiling .java files leaves the .class files next to the .java
+a _     make sure all the dirs in sketchbook added to classpath on startup
+a _     if new dir added, must restart processing (this is acceptable)
+a _   ability to include other code from sketchbook directory
+a _     compile entire sketchbook on startup, check for new files on compile?
+a _ sketch.properties contains the last program run
+a _   also the window positions, etc
+a _   if it doesn't exist, starts with a new project
+a _     for a new project, name it untitled-0001 or as appropriate
+a _       so that previous projects aren't written over
+a _ 'open' button is a switch-to button
+a _   pops up list of everything in the sketchbook
+a _   first item is 'new sketch', followed by delimeter
+a _   next is list of subdirs other than current user, then delim
+a _   the rest are the items in the current user's folder
+a X need 'new' button on the toolbar --> NOPE, first item on 'open' menu
+a _   the zero looking one might be good (instead of export)
+a _   export could be three circles in a row, overlapping
+a _ everything is a project.. what about short snippets of code?
+a _   this version won't be able to access everything from scrapbook
+a _   (that requires a more robust class loader)
+a _ verify save when
+a _   closing p5 window
+a _   moving to other sketch
 
-a _ Compiler.disable() message is weird and doesn't always work
-a _   probably just remove it for now
-a _ kjc is really frustrating about some of its error/warning msgs
-a _   erroneous errors from kjc regarding 'var not inited'
-a _     is there any way to disable this message?
-a _   talk to simon about error streams and kjc
-a _     better piping of output from kjc
-a _     modify kjc to take a PrintWriter, instead of current hacks
-
-b _ related classes
-b _   better way to do parent and g.rect stuff in related classes
-b _     implement g. passed into any function called draw()
-b _     also important for things like cos, sin, max etc
-b _     but maybe once you're doing more advanced code, that stuff's ok
-b _       or using inner classes is better b/c class stuff works
-b _   related classes also need to implement pConstants
-b _ sketchbook
-b _   compiling .java files leaves the .class files next to the .java
-b _     make sure all the dirs in sketchbook added to classpath on startup
-b _     if new dir added, must restart processing (this is acceptable)
-b _   ability to include other code from sketchbook directory
-b _     compile entire sketchbook on startup, check for new files on compile?
 b _ serial works poorly for starting/stopping applets
 b _   this is behaving strangely
 b _   breaks on every 2nd run when using serial apps (or others?)
@@ -277,9 +297,6 @@ b _   or figure out how to unload old classes.. grr
 
 
 PDE / medium
-a _ lib/pde.properties should be read using getResource
-a _   otherwise path issues cause trouble (likely under win98)
-a _ check logs to see where we're getting traffic from
 b _ include stdout/stderr in the processing window
 b _   option to toggle window on/off (not just in properties, but realtime)
 b _   set # of lines in properties
@@ -300,11 +317,6 @@ b _   java freetype? jni freetype to build texmap fonts?
 b _   look at flash file format? (does it have kerning?)
 
 
-PDE / ui
-a _ basic ui for sketchbook/projects
-b _ real ui for sketchbook/projects handling
-
-
 PDE / macos
 a _ how to make double-clickable version for osx
 a _ crashes when people click on help in top bar (same in DBN) [macos9]
@@ -313,6 +325,8 @@ a _   URLConnection.setUseCaches(false)
 a _ parent.obj.close() on the url
 b _ serial port code needs to be implemented
 b _   something that docks better to java serial api
+b _ need double-clickable application version for the mac
+a _   if os9, this is a no-brainer.. for osx may take a little time
 
 
 PDE / low
