@@ -1,14 +1,20 @@
 0072 core
+X make m00, m01 etc public
+
+_ go through and figure out what stuff to make public
 
 _ depth testing of lines vs text is problematic
+_   probably need to patch in an older version of the line code
 _   use depth()/noDepth() to handle depth test
 
 _ y2 position of rectangles not same as y2 position of lines
 
 text issues
 _ need to resolve SCREEN_SPACE vs OBJECT_SPACE
+_   can this be auto-detected with noDepth()? 
 _   how does rotated text work?
 _     PFont.rotate(180) rotate(PI)
+_     or can this be detected from the matrix?
 _   does the font or PApplet control the size? (the font, ala java)
 _   without setting the font, SCREEN_SPACE comes out weird
 _   move SCREEN_SPACE into ScreenFont() class?
