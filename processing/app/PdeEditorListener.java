@@ -1,6 +1,3 @@
-#ifdef EDITOR
-
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -9,6 +6,8 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
   static final String spaces = "                                                                              ";
   String tabString;
   String newline = System.getProperty("line.separator");
+
+  PdeEditor editor;
 
   boolean expandTabs;
   int tabSize;
@@ -21,7 +20,9 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
   int position;
 
 
-  public PdeEditorListener() {
+  public PdeEditorListener(PdeEditor editor) {
+    this.editor = editor;
+
     expandTabs = PdeBase.getBoolean("editor.expandTabs", false);
     tabSize = PdeBase.getInteger("editor.tabSize", 2);
     tabString = spaces.substring(0, tabSize);
@@ -36,7 +37,17 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
     tc = (TextArea) event.getSource();
     deselect();
     char c = event.getKeyChar();
-	
+    //System.err.println((int) c + " " + event.getKeyCode());
+
+    if (!editor.sketchModified) {
+      int code = event.getKeyCode();
+      if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) || 
+	  (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
+	//editor.sketchModified = true;
+	editor.setSketchModified(true);
+      }
+    }
+
     //System.err.println((int)c);
     switch ((int) c) {
     case ')':
@@ -89,6 +100,7 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
       break;
 
     case 10:  // auto-indent
+    case 13:
       if (autoIndent) {
 	//System.err.println("auto indenting");
 	char contents[] = tc.getText().toCharArray();
@@ -143,6 +155,3 @@ public class PdeEditorListener extends KeyAdapter implements FocusListener {
     deselect();
   }
 }
-
-
-#endif

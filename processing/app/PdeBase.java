@@ -16,6 +16,7 @@ public class PdeBase implements ActionListener {
 
   WindowAdapter windowListener;
 
+  Menu sketchbookMenu;
   File sketchbookFolder;
   String sketchbookPath;
 
@@ -87,16 +88,16 @@ public class PdeBase implements ActionListener {
 
     menu = new Menu("File");
     menu.add(new MenuItem("New", new MenuShortcut('N')));
-    Menu openMenu = new Menu("Open");
-    rebuildSketchbookMenu(openMenu);
-    menu.add(openMenu);
+    sketchbookMenu = new Menu("Open");
+    //rebuildSketchbookMenu(openMenu);
+    menu.add(sketchbookMenu);
     menu.add(new MenuItem("Save", new MenuShortcut('S')));
     menu.add(new MenuItem("Duplicate", new MenuShortcut('D')));
     menu.add(new MenuItem("Export to Web", new MenuShortcut('E')));
     menu.add(new MenuItem("Export Application", new MenuShortcut('E', true)));
     menu.addSeparator();
     menu.add(new MenuItem("Proce55ing.net", new MenuShortcut('5')));
-    menu.add(new MenuItem("Reference", new MenuShortcut('R')));
+    menu.add(new MenuItem("Reference", new MenuShortcut('F')));
     menu.addSeparator();
     menu.add(new MenuItem("Quit", new MenuShortcut('Q')));
     menu.addActionListener(this);
@@ -117,8 +118,8 @@ public class PdeBase implements ActionListener {
     menubar.add(menu);
 
     menu = new Menu("Sketch");
-    menu.add(new MenuItem("Play", new MenuShortcut('P')));
-    menu.add(new MenuItem("Present", new MenuShortcut('P', true)));
+    menu.add(new MenuItem("Run", new MenuShortcut('R')));
+    menu.add(new MenuItem("Present", new MenuShortcut('P')));
     menu.add(new MenuItem("Stop"));
     menu.addSeparator();
     menu.add(new MenuItem("Beautify", new MenuShortcut('B')));
@@ -126,7 +127,6 @@ public class PdeBase implements ActionListener {
     menubar.add(menu);
 
     frame.setMenuBar(menubar);
-
 
     /*
     Menu fileMenu = new Menu("File");
@@ -137,7 +137,6 @@ public class PdeBase implements ActionListener {
     menubar.add(goodies);
     frame.setMenuBar(menubar);
     */
-
 
     Insets insets = frame.getInsets();
     Toolkit tk = Toolkit.getDefaultToolkit();
@@ -160,6 +159,7 @@ public class PdeBase implements ActionListener {
 
     editor.frame = frame;  // no longer really used
     editor.init();
+    rebuildSketchbookMenu(sketchbookMenu);
     frame.show();  // added back in for pde
   }
 
@@ -184,7 +184,8 @@ public class PdeBase implements ActionListener {
       //editor.sketchbookOpen(path + File.separator + e.getActionCommand());
       //}
       String name = e.getActionCommand();
-      editor.skOpen(path, name); // + File.separator + name + 
+      editor.skOpen(path, name);
+      //editor.skOpen(path, name); // + File.separator + name + 
       //File.separator + name + ".pde");
     }
   }
@@ -225,24 +226,33 @@ public class PdeBase implements ActionListener {
 	new SketchbookMenuListener(userPath);
 
       String entries[] = new File(userPath).list();
+      boolean added = false;
       for (int j = 0; j < entries.length; j++) {
 	if ((entries[j].equals(".")) || 
 	    (entries[j].equals(".."))) continue;
+	added = true;
 	MenuItem item = new MenuItem(entries[j]);
 	item.addActionListener(userMenuListener);
 	menu.add(item);
 	//submenu.add(entries[j]);
+      }
+      if (!added) {
+	MenuItem item = new MenuItem("No sketches");
+	item.setEnabled(false);
+	menu.add(item);
       }
       menu.addSeparator();
 
       // other available subdirectories
 
       String toplevel[] = sketchbookFolder.list();
+      added = false;
       for (int i = 0; i < toplevel.length; i++) {
 	if ((toplevel[i].equals(editor.userName)) ||
 	    (toplevel[i].equals(".")) ||
 	    (toplevel[i].equals(".."))) continue;
 
+	added = true;
 	Menu subMenu = new Menu(toplevel[i]);
 	File subFolder = new File(sketchbookFolder, toplevel[i]);
 	String subPath = subFolder.getCanonicalPath();
@@ -261,7 +271,11 @@ public class PdeBase implements ActionListener {
 
 	menu.add(subMenu);
       }
-      //menu.addSeparator();
+      if (added) menu.addSeparator();
+
+      MenuItem item = new MenuItem("Refresh");
+      item.addActionListener(this);
+      menu.add(item);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -275,6 +289,7 @@ public class PdeBase implements ActionListener {
 
     if (command.equals("New")) {
       editor.skNew();
+      //editor.initiate(Editor.NEW);
 
     } else if (command.equals("Save")) {
       editor.doSave();
@@ -300,10 +315,11 @@ public class PdeBase implements ActionListener {
 
     } else if (command.equals("Quit")) {
       editor.doQuit();
+      //editor.initiate(Editor.QUIT);
 
 
-    } else if (command.equals("Play")) {
-      editor.doPlay();
+    } else if (command.equals("Run")) {
+      editor.doRun();
 
     } else if (command.equals("Present")) {
       //editor.doPresent();
@@ -311,6 +327,8 @@ public class PdeBase implements ActionListener {
     } else if (command.equals("Stop")) {    
       editor.doStop();
 
+    } else if (command.equals("Refresh")) {    
+      rebuildSketchbookMenu(sketchbookMenu);      
     }
     //if (command.equals("Save QuickTime movie...")) {
     //  ((PdeEditor)environment).doRecord();
