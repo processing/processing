@@ -33,8 +33,13 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 X text(x, y, z)
 _ make sure applet.html uses processing.org
 
+X min() and max() with three values were broken (now fixed)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076804172
 X CONTROL wasn't properly set in BConstants
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058788
+
+_ last vertex on LINE_LOOP fades out
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076911893
 
 //_ framerate() has a bug that seems to
 _ rotated text has a bug for when it goes offscreen
