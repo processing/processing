@@ -105,6 +105,24 @@ public class PdeCompiler implements PdeMessageConsumer {
       //buildPath + File.separator + className + ".java" // file to compile
     };
 
+    // make list of code files that need to be compiled
+    // (some files are skipped if they contain no class)
+    String preprocNames[] = new String[sketch.codeCount];
+    int preprocCount = 0;
+    for (int i = 0; i < sketch.codeCount; i++) {
+      if (sketch.code[i].preprocName != null) {
+        preprocNames[preprocCount++] = sketch.code[i].preprocName;
+      }
+    }
+    String command[] = new String[baseCommand.length + preprocCount];
+    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
+    // append each of the files to the command string
+    for (int i = 0; i < preprocCount; i++) {
+      command[baseCommand.length + i] = 
+        buildPath + File.separator + preprocNames[i];
+    }
+
+    /*
     String command[] = new String[baseCommand.length + sketch.codeCount];
     System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
     // append each of the files to the command string
@@ -112,6 +130,11 @@ public class PdeCompiler implements PdeMessageConsumer {
       command[baseCommand.length + i] = 
         buildPath + File.separator + sketch.code[i].preprocName;
     }
+    */
+
+    //for (int i = 0; i < command.length; i++) {
+      //System.out.println("cmd " + i + "  " + command[i]);
+    //}
 
     firstErrorFound = false;  // haven't found any errors yet
     secondErrorFound = false;
@@ -132,6 +155,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       while (compiling) {
         try {
           result = process.waitFor();
+          //System.out.println("result is " + result);
           compiling = false;
         } catch (InterruptedException ignored) { }
       }
@@ -169,6 +193,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       throw new PdeException(SUPER_BADNESS);
     }
 
+    // success would mean that 'result' is set to zero
     return (result == 0); // ? true : false;
   }
 
