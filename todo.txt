@@ -18,6 +18,14 @@ X   bagel complaint: could not load font Univerx76.vlw.gz
 X   why the x? what's going on?
 X try using serial on macosx
 X   works, but about as well as the windows version used to
+X try using serial on macos9..
+X   works well! shockingly well
+X os9: apple control keys register as edit events in buffer
+X   use Toolkit.getShortcutKeymask() to figure out what's up
+X   -> seems to have fixed itself (?)
+X test presentation mode for window sizing status on macos
+X serial port code needs to be implemented
+X   something that docks better to java serial api
 
 
 pde
@@ -26,28 +34,21 @@ a _ click on project name to quickly go to rename mode
 a _ make scrollbar for console
 a _ remove projects if created but nothing happens to them
 a _ see if play being highlighted can be implemented again
+a _   especially important because of speed issues
 a _ text editor? jedit's textarea class? hmm? hmm? 
 a _ make win/linux write stderr to stderr.txt like the mac
 a _   this will be useful until i implement scrollbar
 
 macos9
-a _ apple control keys register as edit events in buffer
-a _   use Toolkit.getShortcutKeymask() to figure out what's up
 a _ set file type/creator for .pde files.. TEXTPde1
-a _ try using serial
 
 macosx
-a _ test presentation mode for window sizing status
+a _ arrow keys don't work in the textarea
 
 macos
 a _ implement menuitem to load ref and to launch p5.net
 a _   MRJFileUtils.openURL(String url) throws IOException
 a _   also, ref should go to index page, not environment
-a _ serial port code needs to be implemented
-a _   something that docks better to java serial api
-a _ dataInputStream, setUseCaches on the url to false
-a _   URLConnection.setUseCaches(false)
-a _   parent.obj.close() on the url
 a _ check to see if lines for error messages are off
 
 windows
@@ -385,6 +386,9 @@ b _   MRJQuitHandler (confirm quit, may need to be in another thread)
 b _   MRJOpenApplicationHandler and MRJOpenDocumentHandler
 b _     especially the open document fella
 b _     under osx, app won't get doc unless app already launched
+b _ dataInputStream, setUseCaches on the url to false
+b _   URLConnection.setUseCaches(false)
+b _   parent.obj.close() on the url
 
 
 PDE / macosx

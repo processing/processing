@@ -36,17 +36,22 @@ public class PdeBase implements ActionListener {
   static final String WINDOW_TITLE = "Proce55ing";
 
   // the platforms
-  static final int WINDOWS = 0;
-  static final int MACOS9  = 1;
-  static final int MACOSX  = 2;
-  static final int LINUX   = 3;
+  static final int WINDOWS = 1;
+  static final int MACOS9  = 2;
+  static final int MACOSX  = 3;
+  static final int LINUX   = 4;
   static int platform;
 
   static final String platforms[] = {
     "windows", "macos9", "macosx", "linux"
   };
 
-  static {
+
+  static public void main(String args[]) {
+    //System.getProperties().list(System.out);
+    //System.out.println(System.getProperty("java.class.path"));
+
+    // should be static though the mac is acting sketchy
     if (System.getProperty("mrj.version") != null) {  // running on a mac
       //System.out.println(UIManager.getSystemLookAndFeelClassName());
       //System.out.println(System.getProperty("mrj.version"));
@@ -70,12 +75,7 @@ public class PdeBase implements ActionListener {
 	System.out.println("unhandled osname: " + osname);
       }
     }
-  }
 
-
-  static public void main(String args[]) {
-    //System.getProperties().list(System.out);
-    //System.out.println(System.getProperty("java.class.path"));
     PdeBase app = new PdeBase();
   }
 
@@ -542,18 +542,62 @@ public class PdeBase implements ActionListener {
       editor.skExport();
 
     } else if (command.equals("Proce55ing.net")) {
-      try {
-	Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore http://Proce55ing.net");
-	//Runtime.getRuntime().exec("start http://Proce55ing.net");
-      } catch (IOException e) {
-	e.printStackTrace();
+      if (platform == WINDOWS) {
+	try {
+	  Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore http://Proce55ing.net");
+	  //Runtime.getRuntime().exec("start http://Proce55ing.net");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+
+      } else if ((platform == MACOS9) || (platform == MACOSX)) {
+#ifdef MACOS
+	try {
+	  MRJFileUtils.openURL("http://Proce55ing.net");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+#endif
+
+      } else if (platform == LINUX) {
+	try {
+	  // wild ass guess
+	  Runtime.getRuntime().exec("mozilla http://Proce55ing.net");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+
+      } else {
+	System.err.println("unspecified platform");
       }
 
     } else if (command.equals("Reference")) {
-      try {
-	Runtime.getRuntime().exec("cmd /c reference\\environment.html");
-      } catch (IOException e) {
-	e.printStackTrace();
+      if (platform == WINDOWS) {
+	try {
+	  Runtime.getRuntime().exec("cmd /c reference\\index.html");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+
+      } else if ((platform == MACOSX) || (platform == MACOS9)) {
+#ifdef MACOS
+	try {
+	  MRJFileUtils.openURL("http://Proce55ing.net/reference/");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+#endif
+
+      } else if (platform == LINUX) {
+	try {
+	  // another wild ass guess
+	  Runtime.getRuntime().exec("mozilla reference/index.html");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+
+      } else {
+	System.err.println("unspecified platform");
       }
 
     } else if (command.equals("Quit")) {
