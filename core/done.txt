@@ -1,0 +1,66 @@
+0069 bagel
+X text(x, y, z)
+X fixed camera modes / replaced how isometric is handled
+X whoa.. BGraphics.screenX() et al had the camera stuff shut off
+X   and that's what shipped in 67. shite.
+X   need to get things fixed up properly so camera is properly set
+X   ISOMETRIC was completely broken.. need to implement properly
+X     also, the default camera is perspective
+X cameraMode(PERSPECTIVE) and cameraMode(ORTHOGRAPHIC) setup basic cameras
+X   if the user wants a custom camera, call cameraMode(CUSTOM); before begin()
+X printMatrix() and printCamera() to output the matrices for each
+X more functions made static (loadStrings, loadBytes) that could be
+X   print() commands in BApplet were among these
+X die() command to exit an application or just stall out an applet
+X   die(String error) and die(String error, Exception e) 
+X more documentation in comments for functions
+X chop() function that properly also handles nbsp
+X join() was handled weird
+X run nf() and nfs() on arrays
+X nfp() to show plus sign
+X toInt, toFloat, toDouble (nf is for toString.. inconsistent)
+o split() function splits strings instead of splitStrings()
+o   ints() converts an array of strings/doubles/floats to an int array
+o split() should also use StringTokenizer
+o   to do countTokens() and then stuff into an array
+o shave() or chomp() or trim() method to remove whitespace on either side
+o   including unicode nbsp
+X min() and max() with three values were broken (now fixed)
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076804172
+X CONTROL wasn't properly set in BConstants
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058788
+X macosx.. flickering several times on startup
+X   fixed this, along with other sluggishness related threading issues
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073111031
+X bug with charset table on older fonts
+X   index_hunt was look through the table, not what was in the font
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077475307;start=0
+X seems to be some difficult threading problems still present
+X   fixed many threading issues across macosx and linux
+X side-porting changes
+X   new(er) line code is not in the main 'processing'
+X   making perlin non-static not in the main bagel
+X   polygon stroking hack code from the end of 68
+X erikb found a bug inside split(), it would die on empty strings
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077664736
+X   fixed it, also modified behavior of split() with a delimeter
+X   previously, it would remove the final delimeter and an empty entry
+X   but that's now disabled, since the split cmd is very specific
+X code from toxi to support .tga files in loadImage
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078459847;start=0
+X fix bug where single pixel points were ignoring their alpha values
+X static loadStrings and loadBytes aren't being added to BApplet
+X   (the versions that use an inputstream)
+X   added support for handling static functions in make.pl
+X threading is broken again on windows
+X   windows needs a sleep(1) instead of the yield()
+X random(3) should be non-inclusive of the 3
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1079935258;start=5
+
+api changes
+X loadStream -> openStream for better consistency
+
+jdf
+X dynamic loading of code for setting cursor (removed JDK13 ifdef)
+X why aren't cursors working on the mac?
+X   fix from jdf to just set size to 0,0
