@@ -54,6 +54,9 @@ X   switched to ibm java vm
 _ add preferredsize to processingapplet
 _ add method for exporting applications with processing
 _   wrapper that invokes the applet using a copy of the jre
+_ move MemoryImageSource out of bagel and into ProcessingApplet
+_   need to be able to run bagel to just render to a large internal buffer
+_ version of ProcessingApplet that replaces g. with ai. or pdf.
 
 on macOSX, the screen needs to be explicitly refreshed. the kludge for this
 is to include the line
