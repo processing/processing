@@ -92,7 +92,8 @@ public class PdePreprocessor {
    *
    * @return the classname of the exported Java
    */
-  public String writeJava(String name, boolean extendsNormal,
+  public String writeJava(String name, String imports[],
+                          boolean extendsNormal,
                           boolean exporting) throws java.lang.Exception {
 
     // create a lexer with the stream reader, and tell it to handle 
@@ -156,7 +157,7 @@ public class PdePreprocessor {
     PrintStream stream = new PrintStream(
       new FileOutputStream(buildPath + File.separator + name + ".java"));
 
-    writeHeader(stream, extendsNormal, exporting, name);
+    writeHeader(stream, imports, extendsNormal, exporting, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
@@ -192,12 +193,18 @@ public class PdePreprocessor {
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
    */
-  void writeHeader(PrintStream out, boolean extendsNormal, boolean exporting,
+  void writeHeader(PrintStream out, String imports[], 
+                   boolean extendsNormal, boolean exporting,
                    String name) {
 
-    if (programType < ADVANCED) {
+    if (imports != null) {
+      //System.out.println("imports not null");
+      for (int i = 0; i < imports.length; i++) {
+        out.print("import " + imports[i] + ".*; ");
+      }      
+    }
 
-      String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
+    if (programType < ADVANCED) {
 
       // spew out a bunch of java imports 
       //
@@ -210,6 +217,8 @@ public class PdePreprocessor {
           out.print("import " + applet_imports[i] + ".*; ");
         }
       }
+
+      String extendsWhat = extendsNormal ? "BApplet" : "BAppletGL";
 
       out.print("public class " + name + " extends " +
                 extendsWhat + " {");
