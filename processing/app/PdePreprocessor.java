@@ -106,6 +106,7 @@ public class PdePreprocessor {
 
     // create the filter for hidden tokens and specify which tokens to 
     // hide and which to copy to the hidden text
+    //
     filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
     filter.hide(PdeRecognizer.SL_COMMENT);
     filter.hide(PdeRecognizer.ML_COMMENT);
@@ -129,7 +130,7 @@ public class PdePreprocessor {
 
     // start parsing at the compilationUnit non-terminal
     //
-    parser.compilationUnit();
+    parser.pdeProgram();
 
     // get ready to traverse the AST
     //
