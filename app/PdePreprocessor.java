@@ -7,7 +7,7 @@
   Except where noted, code is written by Ben Fry and
   Copyright (c) 2001-03 Massachusetts Institute of Technology
 
-  ANTLR-generated parser and several supporting classes written 
+  ANTLR-generated parser and several supporting classes written
   by Dan Mosedale via funding from the Interaction Institute IVREA.
 
   This program is free software; you can redistribute it and/or modify
@@ -20,8 +20,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -50,11 +50,15 @@ public class PdePreprocessor {
   // it to produce a package name consistently.
   String extraImports[];
 
+  // imports just from the code folder, treated differently
+  // than the others, since the imports are auto-generated.
+  String codeFolderImports[];
+
   static final int STATIC = 0;  // formerly BEGINNER
   static final int ACTIVE = 1;  // formerly INTERMEDIATE
   static final int JAVA   = 2;  // formerly ADVANCED
   // static to make it easier for the antlr preproc to get at it
-  static int programType = -1;  
+  static int programType = -1;
 
   Reader programReader;
   String buildPath;
@@ -67,12 +71,12 @@ public class PdePreprocessor {
    * These may change in-between (if the prefs panel adds this option)
    * so grab them here on construction.
    */
-  public PdePreprocessor() { 
-    defaultImports[JDK11] = 
+  public PdePreprocessor() {
+    defaultImports[JDK11] =
       PApplet.split(PdePreferences.get("preproc.imports.jdk11"), ',');
-    defaultImports[JDK13] = 
+    defaultImports[JDK13] =
       PApplet.split(PdePreferences.get("preproc.imports.jdk13"), ',');
-    defaultImports[JDK14] = 
+    defaultImports[JDK14] =
       PApplet.split(PdePreferences.get("preproc.imports.jdk14"), ',');
   }
 
@@ -87,9 +91,10 @@ public class PdePreprocessor {
    * preprocesses a pde file and write out a java file
    * @return the classname of the exported Java
    */
-  //public String write(String program, String buildPath, String name, 
+  //public String write(String program, String buildPath, String name,
   //                  String extraImports[]) throws java.lang.Exception {
-  public String write(String program, String buildPath, String name) 
+  public String write(String program, String buildPath,
+                      String name, String codeFolderPackages[])
     throws java.lang.Exception {
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
@@ -107,7 +112,7 @@ public class PdePreprocessor {
       }
       // if non-ascii chars are in there, convert to unicode escapes
       if (unicodeCount != 0) {
-        // add unicodeCount * 5.. replacing each unicode char 
+        // add unicodeCount * 5.. replacing each unicode char
         // with six digit uXXXX sequence (xxxx is in hex)
         // (except for nbsp chars which will be a replaced with a space)
         int index = 0;
@@ -135,7 +140,7 @@ public class PdePreprocessor {
       }
     }
 
-    // if this guy has his own imports, need to remove them 
+    // if this guy has his own imports, need to remove them
     // just in case it's not an advanced mode sketch
     PatternMatcher matcher = new Perl5Matcher();
     PatternCompiler compiler = new Perl5Compiler();
@@ -163,7 +168,7 @@ public class PdePreprocessor {
       int len = piece.length();
 
       //imports.add(piece);
-      imports.add(piece2); 
+      imports.add(piece2);
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
@@ -172,26 +177,43 @@ public class PdePreprocessor {
 
     } while (true);
 
-    //if (imports.size() > 0) {
-    extraImports = new String[imports.size()];
+    int importsCount = imports.size();
+    extraImports = new String[importsCount];
     imports.copyInto(extraImports);
-    //} 
 
-    //
+    /*
+    if (codeFolderPackages != null) {
+      extraImports = new String[importsCount + codeFolderPackages.length];
+      imports.copyInto(extraImports);
+      for (int i = 0; i < codeFolderPackages.length; i++) {
+        extraImports[importsCount + i] = codeFolderPackages[i] + ".*";
+      }
+      codeFolderImports = null;
+    }
+    */
+
+    if (codeFolderPackages != null) {
+      codeFolderImports = new String[codeFolderPackages.length];
+      for (int i = 0; i < codeFolderPackages.length; i++) {
+        codeFolderImports[i] = codeFolderPackages[i] + ".*";
+      }
+    } else {
+      codeFolderImports = null;
+    }
 
     // do this after the program gets re-combobulated
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
-    // create a lexer with the stream reader, and tell it to handle 
+    // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
     // match those that will be highlighted in the PDE IDE
-    // 
+    //
     PdeLexer lexer  = new PdeLexer(programReader);
     lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
 
-    // create the filter for hidden tokens and specify which tokens to 
+    // create the filter for hidden tokens and specify which tokens to
     // hide and which to copy to the hidden text
     //
     filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
@@ -238,9 +260,9 @@ public class PdePreprocessor {
       name = getFirstClassName(parserAST);
     }
 
-    // if 'null' was passed in for the name, but this isn't 
+    // if 'null' was passed in for the name, but this isn't
     // a 'java' mode class, then there's a problem, so punt.
-    // 
+    //
     if (name == null) return null;
 
     // output the code
@@ -281,7 +303,7 @@ public class PdePreprocessor {
 
   /**
    * Write any required header material (eg imports, class decl stuff)
-   * 
+   *
    * @param out                 PrintStream to write it to.
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
@@ -297,13 +319,12 @@ public class PdePreprocessor {
         out.print("import " + extraImports[i] + "; ");
       }
     }
-    /*
-    if (imports != null) {
-      for (int i = 0; i < imports.length; i++) {
-        out.print(imports[i]);
-      }      
+
+    if (codeFolderImports != null) {
+      for (int i = 0; i < codeFolderImports.length; i++) {
+        out.print("import " + codeFolderImports[i] + "; ");
+      }
     }
-    */
 
     // emit standard imports (read from pde.properties)
     // for each language level that's being used.
@@ -315,7 +336,7 @@ public class PdePreprocessor {
 
     for (int i = 0; i <= jdkVersion; i++) {
       for (int j = 0; j < defaultImports[i].length; j++) {
-        out.print("import " + defaultImports[i][j] + ".*; ");        
+        out.print("import " + defaultImports[i][j] + ".*; ");
       }
     }
 
@@ -336,7 +357,7 @@ public class PdePreprocessor {
 
   /**
    * Write any necessary closing text.
-   * 
+   *
    * @param out         PrintStream to write it to.
    */
   void writeFooter(PrintStream out) {
