@@ -15,7 +15,7 @@ Los cos <awumpus2000@yahoo.com>
 Michael Davis <shyfter@imsa.edu>
 Marco Dinkel <marco@do-com.de>
 <ezDAC@free.fr>
-fmainzer@gmx.net
+Andreas Friedrich <a.o.friedrich@web.de>
 Edward George <edward@suppose.co.uk>
 Andrej Jungnickel <andrej@nickelz-bros.de>
 Kay Koester <mail@ekay.de>
@@ -25,6 +25,7 @@ Kevin Lahoda <kevin@m.parsons.edu>
 Roger Langley <galahad@uslink.net>
 Isaac Levy <ike@visuallistening.com>
 Roy Macarthur <roy@mcarthur.com>
+fmainzer@gmx.net
 Oddur Snær Magnússon <oddur@magnusson.is>
 Roland Megnet <rmegnet@attglobal.net>
 Daniel Mendelsohn <dan@heads4sale.com>
@@ -49,32 +50,90 @@ andres <moscoca@bigpond.com>
 
 
 QUESTIONS
-_ is day, month, year overkill inside processingapplet?
+X is day, month, year overkill inside processingapplet? 
+X   decided no
+X loadImage or getImage? 
+X   loadImage sounds better to ben and casey
+X circle/square functions
+X   doesn't seem necessary
+X   main problem is that with ellipse, points aren't inside shape
+X should the default be 100x100
+X   yes, casey won
+X default background color: 204
+X   casey prevails again
+X maybe stop/kill button should only be a stop btn - yes
+
 _ PImage, PFont or how to name?
-_ loadImage or getImage?
+
 _ bezierVertex/catmullRomVertex poorly named (based on algo used)
 _   instead curveVertex/fitCurveVertex/etc.
-_ circle/square functions
-_ should the default be 100x100
-_ maybe stop/kill button should only be a stop btn
 
+_ what to call 'pouch' directory?
 
-RANDOM UNSORTED MESS
-_ check out interface builder for interesting tidbits
+X function name to toggle drawing from center: ellipseMode(), rectMode()
+
 _ 'rot' example not working in release 18
-_ line() should make sure that fill() isn't set
+
+_ ui for sketchbook/projects handling
+
+_ online bug reporting system
+_   bugzilla but simpler
+
+
+QUESTIONS
+_ is it necessary to have fullscreen option on toolbar
+
+
+BAGEL
+_ add ellipseMode(), rectMode()
+_   CENTER_RADIUS, CENTER_DIAMETER, CORNER
+_ make default size be 100x100
+_ make default background color 204
+
+
+ENV
+_ get rid of 'kill' button
+_ add frame to launched window
+_   add maximize event catcher to make fullscreen
+
+
 _ having to put 'f' after everything is a mess
 _ better way to do parent and g.rect stuff in related classes
 _   implement g. passed into any function called draw()
 _   also important for things like cos, sin, max etc
 _   but maybe once you're doing more advanced code, that stuff's ok
 _     or using inner classes is better b/c class stuff works
+
+_ exporting to applet/.jar file
+_   include other .class files built besides the main one
+_   include referenced image and font files (can't do if numbered)
+
+
+TECHNOTES
+_ technote: using runtime.exec to run .ai files
+_   code to automatically open generated .ai files (exec(..ai))
+_ technote: debugging serial code
+_   hyperterminal - watching for binary garbage vs ascii text
+_   first debug (maybe even using ascii) and watch in hyperterminal
+_     or ship pooterm along with processing
+_   flicker - often ascii instead of binary
+_   timing of sleep, size of message, timing of write
+_   starting processing first, then stamp
+_ technote: using transformPoint
+_ technote: using curves
+_ technote: making things faster
+_ technote: memory running out, using ms and mx
+_   noBackground() if you're covering everything
+
+
+RANDOM UNSORTED MESS
+_ check out interface builder for interesting tidbits
+_ line() should make sure that fill() isn't set
 _ make an executable jar file for 1.3 stuff 
 _ lightsOff() seems dumb with noStroke and noFill
 _ make close() work to kill applet in kjc
-_ code to automatically open generated .ai files (exec(..ai))
 
-_ technote: using runtime.exec to run .ai files
+
 _ stop() method in applet should stop kjc environment
 _   should be able to call stop() to 'quit' an applet
 _ add method for exporting applications with processing
@@ -90,16 +149,7 @@ _   document fixed width font format as technote
 _   write code for reading uncompressed b/w tiff images
 _ maybe turn the external applet stuff off again
 _ garbage created when color values out of range
-_ exporting to applet/.jar file
-_   include other .class files built besides the main one
-_   include referenced image and font files (can't do if numbered)
-_ technote: debugging serial code
-_   hyperterminal - watching for binary garbage vs ascii text
-_   first debug (maybe even using ascii) and watch in hyperterminal
-_     or ship pooterm along with processing
-_   flicker - often ascii instead of binary
-_   timing of sleep, size of message, timing of write
-_   starting processing first, then stamp
+
 _ serial.messageReceived extra long crap in demo.pde
 _ NullPointerException on startup in pde editor buttons
 _ exporting applets that have custom name problems:
@@ -107,11 +157,7 @@ _   if extends processingapplet, the name user types must be same
 _   gets confused about paths and puts boogers in weird places
 _   doesn't compile correctly (must first compile with play)
 _   doesn't include additional (private) classes
-_ technote: using transformPoint
-_ technote: using curves
-_ technote: making things faster
-_ technote: memory running out, using ms and mx
-_   noBackground() if you're covering everything
+
 _ class unloading not happening
 _   when doing an extends ProcessingApplet
 _   need to add randomizer to even non-self gen'd classes
