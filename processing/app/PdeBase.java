@@ -513,7 +513,7 @@ public class PdeBase extends Frame implements ActionListener {
       menu.addSeparator();
 
       // other available subdirectories
-
+      /*
       String toplevel[] = sketchbookFolder.list();
       added = false;
       for (int i = 0; i < toplevel.length; i++) {
@@ -550,13 +550,49 @@ public class PdeBase extends Frame implements ActionListener {
 	menu.add(subMenu);
       }
       if (added) menu.addSeparator();
+      */
+      addSketches(menu, sketchbookFolder, true);
 
+      /*
+	// doesn't seem that refresh is worthy of its own menu item
+	// people can stop and restart p5 if they want to muck with it
+      menu.addSeparator();
       MenuItem item = new MenuItem("Refresh");
       item.addActionListener(this);
       menu.add(item);
+      */
 
     } catch (IOException e) {
       e.printStackTrace();
+    }
+  }
+
+
+  protected void addSketches(Menu menu, File folder, boolean root) 
+    throws IOException {
+    String list[] = folder.list();
+    SketchbookMenuListener listener = 
+      new SketchbookMenuListener(folder.getCanonicalPath());
+
+    for (int i = 0; i < list.length; i++) {
+      if (list[i].equals(editor.userName) && root) continue;
+	  
+      if (list[i].equals(".") ||
+	  list[i].equals("..") ||
+	  list[i].equals("CVS") ||
+	  list[i].equals(".cvsignore")) continue;
+
+      File subfolder = new File(folder, list[i]);
+      if (new File(subfolder, list[i] + ".pde").exists()) {
+	MenuItem item = new MenuItem(list[i]);
+	item.addActionListener(listener);
+	menu.add(item);
+
+      } else {  // might contain other dirs, get recursive
+	Menu submenu = new Menu(list[i]);
+	menu.add(submenu);
+	addSketches(submenu, subfolder, false);
+      }
     }
   }
 

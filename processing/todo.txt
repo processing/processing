@@ -16,8 +16,10 @@ rect(80, 0, thick, height/2);
 fill(102, 112, 0.0);
 rect(100, height/2, thick, height/2);
 X re-implement sketchModified yet again (using keylistener)
+X set font on textarea in case things break
+X need examples to work for submenus (casey's got too many)
 
-
+_ exception when trying to write to stdout
 
 bagel
 _ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
@@ -35,9 +37,8 @@ _ auto indent on next line no longer works
 _ tabs no longer convert to 2 spaces
 _ balance parens is no longer available
 
-_ need examples to work for submenus (casey's got too many)
-_ "color.jpg" or "int.jpg" causes trouble
 _ better default size than 300x300 when starting up first time
+_ "color.jpg" or "int.jpg" causes trouble
 _ subst Image -> BImage, Font -> BFont
 _ better message for PortInUseException (full explanation)
 _ split KjcEngine into three parts

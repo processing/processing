@@ -125,13 +125,13 @@ public class PdeEditor extends Panel {
     viewport.add(textarea);
     //    viewport.setScrollMode(JViewport.BLIT_SCROLL_MODE);
 
-    //textarea.setFont(PdeBase.getFont("editor.program.font",
-    //			       new Font("Monospaced", 
-    //					Font.PLAIN, 12)));
-    //textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
-    //			    Color.black));
-    //textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
-    //				    Color.white));
+    textarea.setFont(PdeBase.getFont("editor.program.font",
+    			       new Font("Monospaced", 
+    					Font.PLAIN, 12)));
+    textarea.setForeground(PdeBase.getColor("editor.program.fgcolor",
+    			    Color.black));
+    textarea.setBackground(PdeBase.getColor("editor.program.bgcolor",
+    				    Color.white));
 
     rightPanel.add("Center", scroller);
     //rightPanel.add("Center", textarea);
