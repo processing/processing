@@ -125,15 +125,28 @@ X     in which case, default to that (maybe show a message?)
 X   it's useful to have loose .pde files be runnable..
 X   i.e. when double-clicking on them.. downloaded off web.. 
 X     but need to deal with simply, not providing a new exception case
+X begin writing 'new text file'
 
-_ write 'new text file' (ctrl-t)
+040623 tuesday morning
+X write 'new text file' (ctrl-t)
+X hitting return/enter on the status.edit() not always working
+X   it had been disabled, now re-enabled
+X also update status after "add file" of a .pde or .java
+
+_ implement delete
 _ implement hide/unhide
 
+_ see if multiple files are actually compiling
+_   nope, they aren't properly.. need to figure this out
+_   empty files = no class name found.. that's a problem
+_ see if sonia project can compile
 _ write export-to-application
 _ write export-to-library
 _   need to be able to produce the serial, video, etc libs
 _ put bagel into its own package
 _ don't force everything into a single .jar on export
+_ ctrl-t doesn't always work
+_   after using the popup menu once, it stops working
 
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
@@ -158,6 +171,7 @@ _ what should the prefs file be named?
 _ horizontal buttons? need final decision
 _ remove underscores from the tab title?
 _ need nice yes/no dialog boxes, also showError/Message/Warning
+_ does "Open" go at the beginning or end of the sketch popup
 
 _ NullPointerException when alt is pressed
 _   might be something to do with the applet frame being an awt not swing
