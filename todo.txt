@@ -242,6 +242,8 @@ X properly import qtjava from processing.exe
 X fix the default network, camera, serial examples
 X   extra libraries for libs not being imported
 X fix threading issue, don't call "break"
+X fixed a bunch of weird chmod stuff for windows
+X update with other examples
 
 
 with casey
