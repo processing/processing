@@ -68,7 +68,7 @@ class PdeMessageSiphon implements Runnable {
           (mess.indexOf("Bad file descriptor") != -1)) {
         //if (e.getMessage().indexOf("Bad file descriptor") == -1) {
         //System.err.println("PdeMessageSiphon err " + e);
-        e.printStackTrace();
+        //e.printStackTrace();
       }
       thread = null;
     }

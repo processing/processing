@@ -143,12 +143,33 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   /** Set by strokeCap(), read-only */
   public int strokeCap;
 
-  // lighting
-  static final int MAX_LIGHTS = 10;
+  // ........................................................
+
+  /** Maximum lights by default is 8, which is arbitrary,
+      but is the minimum defined by OpenGL */
+  static final int MAX_LIGHTS = 8;
+
+  /** True if lights are enabled */
   public boolean lights;
-  public float lightR[], lightG[], lightB[];
+
+  /** True if this light is enabled */
+  public boolean light[];
+
+  /** Light positions */
   public float lightX[], lightY[], lightZ[];
-  public int lightType[];
+
+  /** Ambient colors for lights.
+      Internally these are stored as numbers between 0 and 1. */
+  public float lightAmbientR[], lightAmbientG[], lightAmbientB[];
+
+  /** Diffuse colors for lights.
+      Internally these are stored as numbers between 0 and 1. */
+  public float lightDiffuseR[], lightDiffuseG[], lightDiffuseB[];
+
+  /** Specular colors for lights.
+      Internally these are stored as numbers between 0 and 1. */
+  public float lightSpecularR[], lightSpecularG[], lightSpecularB[];
+
 
   // ........................................................
 
@@ -169,10 +190,8 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   // ........................................................
 
-  // current 3D transformation matrix
-
   public int cameraMode;
-  public int dimensions;  // 0, 2 (affine 2d), 3 (perspective/isometric)
+  //public int dimensions;  // 0, 2 (affine 2d), 3 (perspective/isometric)
 
   // perspective setup
   public float cameraFOV;
@@ -420,6 +439,21 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
     line = new PLine(this);
     triangle = new PTriangle(this);
+
+    // init lights
+    light = new boolean[MAX_LIGHTS];
+    lightX = new float[MAX_LIGHTS];
+    lightY = new float[MAX_LIGHTS];
+    lightZ = new float[MAX_LIGHTS];
+    lightAmbientR = new float[MAX_LIGHTS];
+    lightAmbientG = new float[MAX_LIGHTS];
+    lightAmbientB = new float[MAX_LIGHTS];
+    lightDiffuseR = new float[MAX_LIGHTS];
+    lightDiffuseG = new float[MAX_LIGHTS];
+    lightDiffuseB = new float[MAX_LIGHTS];
+    lightSpecularR = new float[MAX_LIGHTS];
+    lightSpecularG = new float[MAX_LIGHTS];
+    lightSpecularB = new float[MAX_LIGHTS];
   }
 
 
@@ -445,34 +479,10 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     // init matrices (must do before lights)
     matrixStackDepth = 0;
 
-    // init lights
-    lightR = new float[MAX_LIGHTS];
-    lightG = new float[MAX_LIGHTS];
-    lightB = new float[MAX_LIGHTS];
-    lightX = new float[MAX_LIGHTS];
-    lightY = new float[MAX_LIGHTS];
-    lightZ = new float[MAX_LIGHTS];
-    lightType = new int[MAX_LIGHTS];
+    lightEnable(0);
+    lightAmbient(0, 0, 0, 0);
 
-    lightType[0] = AMBIENT;
-    lightR[0] = 0;
-    lightG[0] = 0;
-    lightB[0] = 0;
-    lightX[0] = 0;
-    lightY[0] = 0;
-    lightZ[0] = 0;
-
-    lightType[1] = DIFFUSE;
-    lightX[1] = cameraEyeX;
-    lightY[1] = cameraEyeY;
-    lightZ[1] = cameraEyeDist;
-    lightR[1] = ONE;
-    lightG[1] = ONE;
-    lightB[1] = ONE;
-
-    for (int i = 2; i < MAX_LIGHTS; i++) {
-      lightType[i] = DISABLED;
-    }
+    light(1, cameraEyeX, cameraEyeY, cameraEyeDist, 255, 255, 255);
 
     textureMode = IMAGE_SPACE;
     rectMode    = CORNER;
@@ -499,10 +509,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    */
   public void beginFrame() {
     resetMatrix(); // reset model matrix
-
-    normalX = 0;
-    normalY = 0;
-    normalZ = ONE;
+    normal(0, 0, 1);
 
     // reset shapes
     shape_index = 0;
@@ -1581,7 +1588,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     //float specular_b = 0;
 
     for (int i = 1; i < MAX_LIGHTS; i++) {
-      if (lightType[i] == DISABLED) break;
+      if (!light[i]) continue;
 
       //Light light = (Light) list.value;
       //Ii = light.color;
@@ -1603,9 +1610,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
       //if (N_dot_Li > 0.0) {
       if (n_dot_li > 0) {
         //System.out.println("n_dot_li = " + n_dot_li);
-        diffuse_r += lightR[i] * n_dot_li;
-        diffuse_g += lightG[i] * n_dot_li;
-        diffuse_b += lightB[i] * n_dot_li;
+        diffuse_r += lightDiffuseR[i] * n_dot_li;
+        diffuse_g += lightDiffuseG[i] * n_dot_li;
+        diffuse_b += lightDiffuseB[i] * n_dot_li;
 
         /*
           // not doing any specular for now
@@ -1644,9 +1651,9 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     //System.out.println(lights[0].r + " " + lights[0].g + " " +
     //               lights[0].b);
 
-    target[toffset+0] = lightR[0] + (r * diffuse_r);
-    target[toffset+1] = lightG[0] + (g * diffuse_g);
-    target[toffset+2] = lightB[0] + (b * diffuse_b);
+    target[toffset+0] = lightAmbientR[0] + (r * diffuse_r);
+    target[toffset+1] = lightAmbientG[0] + (g * diffuse_g);
+    target[toffset+2] = lightAmbientB[0] + (b * diffuse_b);
 
     if (target[toffset+0] > ONE) target[toffset+0] = ONE;
     if (target[toffset+1] > ONE) target[toffset+1] = ONE;
@@ -2237,7 +2244,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void image(PImage image, float x1, float y1) {
-    if ((dimensions == 0) && !lights && !tint &&
+    if (!depth && !lights && !tint &&
         (imageMode != CENTER_RADIUS)) {
       // if drawing a flat image with no warping,
       // use faster routine to draw direct to the screen
@@ -3283,7 +3290,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
 
     //unchangedZ = false;
-    dimensions = 3;
+    //dimensions = 3;
 
     // vertex() will reset spline_vertex_index, so save it
     int cvertexSaved = spline_vertex_index;
@@ -3670,22 +3677,20 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void translate(float tx, float ty) {
-    if (dimensions == 3) {
-      translate(tx, ty, 0);
-
-    } else {
-      if (dimensions == 0) dimensions = 2;  // otherwise already 2 or higher
-
+    if (depth) {
       m03 += tx*m00 + ty*m01 + m02;
       m13 += tx*m10 + ty*m11 + m12;
       m23 += tx*m20 + ty*m21 + m22;
       m33 += tx*m30 + ty*m31 + m32;
+
+    } else {
+      translate(tx, ty, 0);
     }
   }
 
 
   public void translate(float tx, float ty, float tz) {
-    dimensions = 3;
+    //dimensions = 3;
 
     m03 += tx*m00 + ty*m01 + tz*m02;
     m13 += tx*m10 + ty*m11 + tz*m12;
@@ -3698,7 +3703,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   //     putting the multMatrix code here and removing uneccessary terms
 
   public void rotateX(float angle) {
-    dimensions = 3;
+    //dimensions = 3;
     float c = cos(angle);
     float s = sin(angle);
     applyMatrix(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
@@ -3706,7 +3711,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void rotateY(float angle) {
-    dimensions = 3;
+    //dimensions = 3;
     float c = cos(angle);
     float s = sin(angle);
     applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
@@ -3733,7 +3738,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
    */
   public void rotateZ(float angle) {
     //rotate(angle, 0, 0, 1);
-    if (dimensions == 0) dimensions = 2;  // otherwise already 2 or higher
+    //if (dimensions == 0) dimensions = 2;  // otherwise already 2 or higher
     float c = cos(angle);
     float s = sin(angle);
     applyMatrix(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
@@ -3750,7 +3755,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
     // based on 15-463 code, but similar to opengl ref p.443
 
     //modelMatrixIsIdentity = false;
-    dimensions = 3;
+    //dimensions = 3;
 
     // TODO should make sure this vector is normalized
 
@@ -3772,7 +3777,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   public void scale(float s) {
     //if (dimensions == 3) {
     applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
-    if (dimensions < 2) dimensions = 2;
+    //if (dimensions < 2) dimensions = 2;
 
     //} else {
     //dimensions = 2;
@@ -3785,7 +3790,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
 
   public void scale(float sx, float sy) {
-    if (dimensions == 0) dimensions = 2;
+    //if (dimensions == 0) dimensions = 2;
     applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
@@ -3793,7 +3798,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   // OPTIMIZE: same as above
   public void scale(float x, float y, float z) {
     //modelMatrixIsIdentity = false;
-    dimensions = 3;
+    //dimensions = 3;
     applyMatrix(x, 0, 0, 0,  0, y, 0, 0,  0, 0, z, 0,  0, 0, 0, 1);
   }
 
@@ -3802,7 +3807,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
                         float n10, float n11, float n12, float n13,
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33) {
-    dimensions = 3;
+    //dimensions = 3;
     applyMatrix(n00, n01, n02, n03,  n10, n11, n12, n13,
                 n20, n21, n22, n23,  n30, n31, n32, n33);
   }
@@ -3845,7 +3850,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
         (m10 == 0) && (m11 == 1) && (m12 == 0) && (m13 == 0) &&
         (m20 == 0) && (m21 == 0) && (m22 == 1) && (m23 == 0) &&
         (m30 == 0) && (m31 == 0) && (m32 == 0) && (m33 == 1)) {
-      dimensions = 0;
+      //dimensions = 0;
     }
   }
 
@@ -4723,7 +4728,7 @@ public class PGraphics extends PImage implements PMethods, PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // DEPTH and LIGHTS
+  // DEPTH
 
 
   /** semi-placeholder */
@@ -4740,12 +4745,70 @@ public class PGraphics extends PImage implements PMethods, PConstants {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // LIGHTS
+
+
   public void lights() {
     lights = true;
   }
 
   public void noLights() {
     lights = false;
+  }
+
+
+  /**
+   * Simpler macro for setting up a diffuse light at a position.
+   * Turns on a diffuse light with the color passed in,
+   * and sets that light's ambient and specular components to zero.
+   */
+  public void light(int num, float x, float y, float z,
+                    float r, float g, float b) {
+    lightPosition(num, x, y, z);
+    lightAmbient(num, 0, 0, 0);
+    lightDiffuse(num, r, g, b);
+    lightSpecular(num, 0, 0, 0);
+    lightEnable(num);
+  }
+
+
+  public void lightEnable(int num) {
+    light[num] = true;
+  }
+
+  public void lightDisable(int num) {
+    light[num] = false;
+  }
+
+
+  public void lightPosition(int num, float x, float y, float z) {
+    lightX[num] = x;
+    lightY[num] = y;
+    lightZ[num] = z;
+  }
+
+  public void lightAmbient(int num, float x, float y, float z) {
+    calc_color(x, y, z);
+    lightAmbientR[num] = calcR;
+    lightAmbientG[num] = calcG;
+    lightAmbientB[num] = calcB;
+  }
+
+  public void lightDiffuse(int num, float x, float y, float z) {
+    calc_color(x, y, z);
+    lightDiffuseR[num] = calcR;
+    lightDiffuseG[num] = calcG;
+    lightDiffuseB[num] = calcB;
+  }
+
+  public void lightSpecular(int num, float x, float y, float z) {
+    calc_color(x, y, z);
+    lightSpecularR[num] = calcR;
+    lightSpecularG[num] = calcG;
+    lightSpecularB[num] = calcB;
   }
 
 

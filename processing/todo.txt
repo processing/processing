@@ -1,10 +1,37 @@
 0073 pde
 X change horizontal offset to 5 instead of 4
+X yet another tweak to the message() function in PdeRuntime
+
+_ basic sample audio playback needed for p5
+
+_ add -target 1.1 to all the library make entries
+
+_ what's up with int() -> toInt() conversion?
+
+_ hack to not use console on the code folder 
+_   no errors will propogate, but it should run fine
+
+_ lib/build should not be a subfolder of p5
+_   p5 environment installed to /Applications on lab machines
+_   instead use a temp folder
+_   maybe when running on lab machines in that case, always java mode?
 
 
 //
 
+
+PROBLEMS FOR NEW USERS (workshop)
+_ making it easier to draw shapes
+_ missing semicolons - better error message
+_ "unexpected token void" -> "You're mixing dynamic and static mode"
+_ forgetting the quotes around strings
+_ separate reference for /dev version
+_ angleMode(DEGREES) -> mistyped keywords, caps being wrong
+
+
 MESS TO SORT
+
+_ subfolders in the 'data' directory don't work
 
 _ make sure that the preproc stuff gets built once
 _   especially straight out of cvs
