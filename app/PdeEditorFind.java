@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -27,7 +27,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-public class PdeEditorFind extends JFrame implements ActionListener {
+public class PdeEditorFind extends JFrame
+  implements ActionListener, KeyListener {
+
   static final int BIG = 13;
   static final int SMALL = 6;
 
@@ -36,12 +38,14 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   JTextField findField;
   JTextField replaceField;
 
-  JButton replaceButton; 
-  JButton replaceAllButton; 
+  JButton replaceButton;
+  JButton replaceAllButton;
   JButton findButton;
 
   JCheckBox ignoreCaseBox;
   boolean ignoreCase;
+
+  KeyStroke windowClose;
 
   boolean found;
 
@@ -69,15 +73,15 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     // +1 since it's better to tend downwards
     int yoff = (1 + d2.height - d1.height) / 2;
 
-    findLabel.setBounds(BIG + (d1.width-d0.width) + yoff, BIG, 
-			d1.width, d1.height);
+    findLabel.setBounds(BIG + (d1.width-d0.width) + yoff, BIG,
+                        d1.width, d1.height);
     replaceLabel.setBounds(BIG, BIG + d2.height + SMALL + yoff,
-			   d1.width, d1.height);
+                           d1.width, d1.height);
 
     ignoreCase = true;
     ignoreCaseBox = new JCheckBox("Ignore Case");
     ignoreCaseBox.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
           ignoreCase = ignoreCaseBox.isSelected();
         }
       });
@@ -90,8 +94,8 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     buttons.setLayout(new FlowLayout());
 
     // ordering is different on mac versus pc
-    if ((PdeBase.platform == PdeBase.MACOSX) || 
-	(PdeBase.platform == PdeBase.MACOS9)) {
+    if ((PdeBase.platform == PdeBase.MACOSX) ||
+        (PdeBase.platform == PdeBase.MACOS9)) {
       buttons.add(replaceButton = new JButton("Replace"));
       buttons.add(replaceAllButton = new JButton("Replace All"));
       buttons.add(findButton = new JButton("Find"));
@@ -106,25 +110,25 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     // 0069 TEMPORARILY DISABLED!
     //replaceAllButton.setEnabled(false);
 
-    // to fix ugliness.. normally macosx java 1.3 puts an 
+    // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
     if (PdeBase.platform == PdeBase.MACOSX) {
       buttons.setBorder(null);
     }
 
     Dimension d3 = buttons.getPreferredSize();
-    //buttons.setBounds(BIG, BIG + d2.height*2 + SMALL + BIG, 
-    buttons.setBounds(BIG, BIG + d2.height*3 + SMALL*2 + BIG, 
-		      d3.width, d3.height);
+    //buttons.setBounds(BIG, BIG + d2.height*2 + SMALL + BIG,
+    buttons.setBounds(BIG, BIG + d2.height*3 + SMALL*2 + BIG,
+                      d3.width, d3.height);
 
     //
 
-    findField.setBounds(BIG + d1.width + SMALL, BIG, 
-			d3.width - (d1.width + SMALL), d2.height);
-    replaceField.setBounds(BIG + d1.width + SMALL, BIG + d2.height + SMALL, 
-			   d3.width - (d1.width + SMALL), d2.height);
+    findField.setBounds(BIG + d1.width + SMALL, BIG,
+                        d3.width - (d1.width + SMALL), d2.height);
+    replaceField.setBounds(BIG + d1.width + SMALL, BIG + d2.height + SMALL,
+                           d3.width - (d1.width + SMALL), d2.height);
 
-    ignoreCaseBox.setBounds(BIG + d1.width + SMALL, 
+    ignoreCaseBox.setBounds(BIG + d1.width + SMALL,
                             BIG + d2.height*2 + SMALL*2,
                             d3.width, d2.height);
 
@@ -147,12 +151,56 @@ public class PdeEditorFind extends JFrame implements ActionListener {
 
     int wide = d3.width + BIG*2;
     Rectangle butt = buttons.getBounds();  // how big is your butt?
-    int high = butt.y + butt.height + BIG*2;
+    int high = butt.y + butt.height + BIG*2 + SMALL;
 
     setBounds((screen.width - wide) / 2,
-	      (screen.height - high) / 2, wide, high);
-    //show();
+              (screen.height - high) / 2, wide, high);
+
+    // add key listener to trap esc and ctrl/cmd-w
+    findField.addKeyListener(this);
+    replaceField.addKeyListener(this);
+    addKeyListener(this);
+
+    // hack to to get first field to focus properly on osx
+    // though this still doesn't seem to work
+    addWindowListener(new WindowAdapter() {
+        public void windowActivated(WindowEvent e) {
+          //System.out.println("activating");
+          findField.requestFocus();
+          findField.selectAll();
+        }
+      });
   }
+
+
+  /**
+   * Handle window closing commands for ctrl/cmd-W or hitting ESC.
+   */
+  public void keyPressed(KeyEvent e) {
+    if (windowClose == null) {
+      int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+      windowClose = KeyStroke.getKeyStroke('W', modifiers);
+    }
+    if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+        (KeyStroke.getKeyStrokeForEvent(e).equals(windowClose))) {
+      hide();
+    //} else {
+      //System.out.println("event " + e);
+    }
+  }
+
+  public void keyReleased(KeyEvent e) { }
+
+  public void keyTyped(KeyEvent e) { }
+
+
+  /*
+  public void show() {
+    super.show();
+    findField.selectAll();
+    findField.requestFocus();
+  }
+  */
 
 
   public void actionPerformed(ActionEvent e) {
@@ -176,13 +224,13 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   // once found, select it (and go to that line)
 
   public void find(boolean wrap) {
-    // in case search len is zero, 
+    // in case search len is zero,
     // otherwise replace all will go into an infinite loop
     found = false;
 
     String search = findField.getText();
     // this will catch "find next" being called when no search yet
-    if (search.length() == 0) return;  
+    if (search.length() == 0) return;
 
     String text = editor.textarea.getText();
 
@@ -202,10 +250,10 @@ public class PdeEditorFind extends JFrame implements ActionListener {
       }
 
       if (nextIndex == -1) {
-	found = false;
-	replaceButton.setEnabled(false);
-	//Toolkit.getDefaultToolkit().beep();
-	return;
+        found = false;
+        replaceButton.setEnabled(false);
+        //Toolkit.getDefaultToolkit().beep();
+        return;
       }
     }
     found = true;
@@ -214,7 +262,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
   }
 
 
-  // replace the current selection with whatever's in the 
+  // replace the current selection with whatever's in the
   // replacement text field
 
   public void replace() {
@@ -224,7 +272,7 @@ public class PdeEditorFind extends JFrame implements ActionListener {
     // otherwise this will cause an infinite loop
     String sel = editor.textarea.getSelectedText();
     if (sel.equals(replaceField.getText())) {
-      found = false; 
+      found = false;
       replaceButton.setEnabled(false);
       return;
     }
