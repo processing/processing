@@ -49,15 +49,7 @@ public class PdeEditorStatus extends Panel
   static final int CANCEL = 3;
   static final int OK     = 4;
 
-  static final String PROMPT_YES     = "Yes";
-  static final String PROMPT_NO      = "No";
-  static final String PROMPT_CANCEL  = "Cancel";
-  static final String PROMPT_OK      = "Ok";
-  static final String NO_MESSAGE     = "";
-
-  // mac needs it to be 70, windows needs 66, linux needs 76
-  static final int BUTTON_WIDTH  = 76;
-  static final int BUTTON_HEIGHT = 24;
+  static final String NO_MESSAGE = "";
 
   PdeEditor editor;
 
@@ -595,17 +587,21 @@ public class PdeEditorStatus extends Panel
   protected void setButtonBounds() {
     int top = (sizeH - BUTTON_HEIGHT) / 2;
 
-    int cancelLeft = sizeW - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
-    int noLeft = cancelLeft - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
-    int yesLeft = noLeft - PdeEditor.INSET_SIZE - BUTTON_WIDTH;
+    int cancelLeft = sizeW - PdeEditor.INSET_SIZE - PdePreferences.BUTTON_WIDTH;
+    int noLeft = cancelLeft - PdeEditor.INSET_SIZE - PdePreferences.BUTTON_WIDTH;
+    int yesLeft = noLeft - PdeEditor.INSET_SIZE - PdePreferences.BUTTON_WIDTH;
 
-    yesButton.setBounds(yesLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
-    noButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
-    cancelButton.setBounds(cancelLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    yesButton.setBounds(yesLeft, top, 
+                        PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    noButton.setBounds(noLeft, top, 
+                       PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    cancelButton.setBounds(cancelLeft, top, 
+                           PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
 
-    editField.setBounds(yesLeft-BUTTON_WIDTH, top, 
-                        BUTTON_WIDTH*2, BUTTON_HEIGHT);
-    okButton.setBounds(noLeft, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    editField.setBounds(yesLeft - PdePreferences.BUTTON_WIDTH, top, 
+                        PdePreferences.BUTTON_WIDTH*2, PdePreferences.BUTTON_HEIGHT);
+    okButton.setBounds(noLeft, top, 
+                       PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
   }
 
 

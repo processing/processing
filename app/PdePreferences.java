@@ -62,11 +62,29 @@ import gnu.io.*;
  */
 public class PdePreferences extends JComponent {
 
+  // prompt text stuff
+
+  static final String PROMPT_YES     = "Yes";
+  static final String PROMPT_NO      = "No";
+  static final String PROMPT_CANCEL  = "Cancel";
+  static final String PROMPT_OK      = "OK";
+
+  // mac needs it to be 70, windows needs 66, linux needs 76
+
+  static final int BUTTON_WIDTH  = 76;
+  static final int BUTTON_HEIGHT = 24;
+
+  // value for the size bars, buttons, etc
+
+  static final int GRID_SIZE     = 33;
+
   // gui variables
 
-  static final int BIG = 13;
-  static final int BETWEEN = 13;
-  static final int SMALL = 6;
+  static final int GUI_BIG     = 13;
+  static final int GUI_BETWEEN = 13;
+  static final int GUI_SMALL   = 6;
+
+  // gui elements
 
   JFrame frame;
   int wide, high;
@@ -78,7 +96,7 @@ public class PdePreferences extends JComponent {
 
   // data model
 
-  static Hashtable table;
+  static Hashtable table = new Hashtable();;
 
   File preferencesFile;
   //boolean firstTime;  // first time this feller has been run
@@ -86,57 +104,30 @@ public class PdePreferences extends JComponent {
 
   public PdePreferences() {
 
-    // getting started
+    // start by loading the defaults, in case something
+    // important was deleted from the user prefs
 
-    properties = new Properties();
+    try {
+      if ((PdeBase.platform == PdeBase.MACOSX) ||
+          (PdeBase.platform == PdeBase.MACOS9)) {
+        load(new FileInputStream("lib/pde.properties"));
 
-
-    // load user preferences file
-
-    String home = System.getProperty("user.home");
-    preferencesFile = new File(home, ".processing");
-
-
-    if (!preferencesFile.exists()) {
-      // create a new preferences file if none exists
-
-      try {
-        if ((PdeBase.platform == PdeBase.MACOSX) ||
-            (PdeBase.platform == PdeBase.MACOS9)) {
-          load(new FileInputStream("lib/pde.properties"));
-
-        } else {  
-          // under win95, current dir not set properly
-          // so using a relative url like "lib/" won't work
-          load(getClass().getResource("pde.properties").openStream());
-        }
-
-      } catch (Exception e) {
-        showError(null, "Could not read default settings.\n" + 
-                  "You'll need to reinstall Processing.", e);
-        System.exit(1);
-        //System.err.println("Error reading default settings");
-        //e.printStackTrace();
+      } else {  
+        // under win95, current dir not set properly
+        // so using a relative url like "lib/" won't work
+        load(getClass().getResource("pde.properties").openStream());
       }
 
-      firstTime = true;
-
-    } else {
-      // load the previous preferences file
-
-      try {
-        load(new FileInputStream(preferencesFile));
-
-      } catch (Exception e) {
-        showError("Error reading preferences", 
-                  "Error reading the preferences file. Please delete\n" +
-                  perferencesFile.getCanonicalPath() + "\n" + 
-                  "and restart Processing.", e);
-      }
+    } catch (Exception e) {
+      showError(null, "Could not read default settings.\n" + 
+                "You'll need to reinstall Processing.", e);
+      System.exit(1);
+      //System.err.println("Error reading default settings");
+      //e.printStackTrace();
     }
 
 
-    // check for platform-specific properties
+    // check for platform-specific properties in the defaults
 
     String platformExtension = "." + PdeBase.platforms[PdeBase.platform];
     int extensionLength = platformExtension.length();
@@ -157,6 +148,31 @@ public class PdePreferences extends JComponent {
     }
 
 
+    // next load user preferences file
+
+    String home = System.getProperty("user.home");
+    preferencesFile = new File(home, ".processing");
+
+    if (!preferencesFile.exists()) {
+      // create a new preferences file if none exists
+      //firstTime = true;
+      save();  // will save the defaults out to the file
+
+    } else {
+      // load the previous preferences file
+
+      try {
+        load(new FileInputStream(preferencesFile));
+
+      } catch (Exception e) {
+        showError("Error reading preferences", 
+                  "Error reading the preferences file. Please delete\n" +
+                  perferencesFile.getCanonicalPath() + "\n" + 
+                  "and restart Processing.", e);
+      }
+    }
+
+
     // setup frame for the prefs
 
     frame = new JFrame("Preferences");
@@ -166,12 +182,12 @@ public class PdePreferences extends JComponent {
     //Container pain = frame.getContentPane();
     pain.setLayout(null);
 
-    int top = BIG;
-    int left = BIG;
+    int top = GUI_BIG;
+    int left = GUI_BIG;
     int right = 0;
 
     JLabel label;
-    JButton button;
+    JButton button, button2;
     JComboBox combo;
     Dimension d, d2, d3;
     int h, v, vmax;
@@ -206,15 +222,15 @@ public class PdePreferences extends JComponent {
     vmax = Math.max(Math.max(d.height, d2.height), d3.height);
     label.setBounds(left, top + (vmax-d.height)/2, 
                     d.width, d.height);
-    h = left + d.width + BETWEEN;
+    h = left + d.width + GUI_BETWEEN;
     sketchbookLocation.setBounds(h, top + (vmax-d2.height)/2, 
                                  d2.width, d2.height);
-    h += d2.width + BETWEEN;
+    h += d2.width + GUI_BETWEEN;
     button.setBounds(h, top + (vmax-d3.height)/2, 
                      d3.width, d3.height);
 
-    right = Math.max(right, h + d3.width + BIG);
-    top += vmax + BETWEEN;
+    right = Math.max(right, h + d3.width + GUI_BIG);
+    top += vmax + GUI_BETWEEN;
 
 
     // Default serial port:  [ COM1 + ]
@@ -276,8 +292,31 @@ public class PdePreferences extends JComponent {
     textarea.setBounds(left, top, d.width, d.height);
     top += d.height + BETWEEN;
 
-    // OK Cancel
+    // OK Cancel  maybe these should be next to the message?
 
+    button = new JButton(PROMPT_OK);
+    button.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          apply();
+          hideFrame();
+        }
+      });
+    pain.add(button);
+    button.setBounds(LEFT, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+    h = LEFT + BUTTON_WIDTH + GUI_BETWEEN;
+
+    //d = button.getPreferredSize();
+
+    button = new JButton(PROMPT_CANCEL);
+    button.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          hideFrame();
+        }
+      });
+    pain.add(button);
+    button.setBounds(h, top, BUTTON_WIDTH, BUTTON_HEIGHT);
+
+    top += BUTTON_HEIGHT + BETWEEN;
 
     //
 
@@ -305,16 +344,40 @@ public class PdePreferences extends JComponent {
   }
 
 
+  // .................................................................
+
+
+  public Dimension getPreferredSize() {
+    return new Dimension(wide, high);
+  }
+
+
+  public void hideFrame() {
+    frame.hide();
+  }
+
+
   public void showFrame() {
+    // reset all settings to their actual status
+
+    newSketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
+
+    sketchbookLocation.setText(get("sketchbook.path"));
+
+    newSketchPromptBox.setSelected(getBoolean("editor.external"));
+
     frame.show();
   }
+
+
+  // .................................................................
 
 
   public void load(InputStream input) {
     BufferedReader reader = 
       new BufferedReader(new InputStreamReader(input));
 
-    table = new Hashtable();
+    //table = new Hashtable();
     String line = null;
     while ((line = reader.readLine()) != null) {
       if (line.charAt(0) == '#') continue;
@@ -328,22 +391,11 @@ public class PdePreferences extends JComponent {
   }
 
 
-
-  // change settings based on what was chosen in the prefs
-
-  public void apply() {
-    //editor.setExternalEditor(getBoolean("editor.external"));
-    // put each of the settings into the table
-  }
-
-
   // open the last-used sketch, etc
 
-  public void init() {
+  //public void init() {
 
     //String what = path + File.separator + name + ".pde";
-
-    // 
 
     ///String serialPort = skprops.getProperty("serial.port");
     //if (serialPort != null) {
@@ -368,27 +420,19 @@ public class PdePreferences extends JComponent {
       // doesn't exist, not available, make my own
       //skNew();
       //}
+  //}
+
+
+
+  // change settings based on what was chosen in the prefs
+
+  public void apply() {
+    //editor.setExternalEditor(getBoolean("editor.external"));
+    // put each of the settings into the table
   }
 
-  /*
-    externalEditorItem = new CheckboxMenuItem("Use External Editor");
-    externalEditorItem.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        //System.out.println(e);
-        if (e.getStateChange() == ItemEvent.SELECTED) {
-          editor.setExternalEditor(true);
-        } else {
-          editor.setExternalEditor(false);
-        }
-      }
-    });
-    menu.add(externalEditorItem);
-  */
 
-
-  public Dimension getPreferredSize() {
-    return new Dimension(wide, high);
-  }
+  // .................................................................
 
 
   public void save() {
@@ -458,6 +502,10 @@ public class PdePreferences extends JComponent {
       //e.printStackTrace();
     }
   }
+
+
+  // .................................................................
+
 
   // all the information from pde.properties
 
@@ -555,85 +603,4 @@ public class PdePreferences extends JComponent {
 
     return new SyntaxStyle(color, italic, bold);
   }
-
-
-  /*
-  class SerialMenuListener implements ItemListener {
-    //public SerialMenuListener() { }
-
-    public void itemStateChanged(ItemEvent e) {
-      int count = serialMenu.getItemCount();
-      for (int i = 0; i < count; i++) {
-        ((CheckboxMenuItem)serialMenu.getItem(i)).setState(false);
-      }
-      CheckboxMenuItem item = (CheckboxMenuItem)e.getSource();
-      item.setState(true);
-      String name = item.getLabel();
-      //System.out.println(item.getLabel());
-      PdeBase.properties.put("serial.port", name);
-      //System.out.println("set to " + get("serial.port"));
-    }
-  }
-  */
-
-
-  /*
-  protected Vector buildPortList() {
-    // get list of names for serial ports
-    // have the default port checked (if present)
-    Vector list = new Vector();
-
-    //SerialMenuListener listener = new SerialMenuListener();
-    boolean problem = false;
-
-    // if this is failing, it may be because
-    // lib/javax.comm.properties is missing.
-    // java is weird about how it searches for java.comm.properties
-    // so it tends to be very fragile. i.e. quotes in the CLASSPATH
-    // environment variable will hose things.
-    try {
-      //System.out.println("building port list");
-      Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-      while (portList.hasMoreElements()) {
-        CommPortIdentifier portId = 
-          (CommPortIdentifier) portList.nextElement();
-        //System.out.println(portId);
-
-        if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-          //if (portId.getName().equals(port)) {
-          String name = portId.getName();
-          //CheckboxMenuItem mi = 
-          //new CheckboxMenuItem(name, name.equals(defaultName));
-
-          //mi.addItemListener(listener);
-          //serialMenu.add(mi);
-          list.addElement(name);
-        }
-      }
-    } catch (UnsatisfiedLinkError e) {
-      e.printStackTrace();
-      problem = true;
-
-    } catch (Exception e) {
-      System.out.println("exception building serial menu");
-      e.printStackTrace();
-    }
-
-    //if (serialMenu.getItemCount() == 0) {
-      //System.out.println("dimming serial menu");
-    //serialMenu.setEnabled(false);
-    //}
-
-    // only warn them if this is the first time
-    if (problem && PdeBase.firstTime) {
-      JOptionPane.showMessageDialog(this, //frame,
-                                    "Serial port support not installed.\n" +
-                                    "Check the readme for instructions\n" +
-                                    "if you need to use the serial port.    ",
-                                    "Serial Port Warning",
-                                    JOptionPane.WARNING_MESSAGE);
-    }
-    return list;
-  }
-  */
 }
