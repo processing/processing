@@ -1,11 +1,7 @@
-HOW TO BUILD PROCESSING
+HOW TO BUILD PROCESSING ON YOUR FAVORITE PLATFORM
 
 
 ////////////////////////////////////////////////////////////////////
-
-
-BUILDING THE WINDOWS OR LINUX VERSIONS
-
 
 //// Steps for First Time Setup 
 
@@ -54,12 +50,6 @@ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co processi
 # gonna do a few things in the p5 folder
 cd processing
 
-# if you're not doing web development, you won't need those folders
-rm -rf web web_gen
-
-# this is actually done by the build script, but you may as well do it now
-cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co bagel
-
 # a quick cleanup, removes empty (dead/old) folders
 cvs update -P
 
@@ -71,6 +61,9 @@ cd ..
 
 * you'll also need to install quicktime for java. grab a quicktime
   installer from: http://www.apple.com/quicktime/download/
+  don't try to be sly & use the itunes installer. we all love itunes
+  but it doesn't include quicktime for java by default. or if you were
+  sly, you might need to read the point below about using the updater:
 
 * if you already have quicktime installed, just make sure that
   quicktime for java has already been installed, use the quicktime
@@ -87,6 +80,9 @@ cd /path/to/processing/build/windows
 # or if you're on linux
 cd /path/to/processing/build/linux
 
+# for the followers of goatee man
+cd /path/to/processing/build/macosx
+
 # and then..
 ./make.sh
 
@@ -100,8 +96,10 @@ cd /path/to/processing/build/linux
 # and run to get it up and running. 
 
 
+////////////////////////////////////////////////////////////////////
 
 //// Updating to the Latest Version
+
 
 5a. Each time you want to update to latest version from cvs:
 
@@ -110,204 +108,21 @@ cvs -z3 update
 # -z3 means make it snappy (using compression)
 
 
-5b. Or if new folders have been added, use:
+5b. If new folders have been added, or you're gettin odd errors, use:
 
 cd /path/to/processing
 cvs -z3 update -d -P
 # -d grabs new directories and -P cleans out old (empty) ones
 # cvs is a little brain dead about this stuff
 
-# if you've removed web/ and web_dev/, then do the update -d -P 
-# from inside app/ and bagel/ (rather than from the just the 
-# processing/ folder) otherwise -d will grab web and web_dev again
-
-# unfortunately there isn't a way to know (?) if new folders have
-# since been added. but if you're getting "class not found" errors
-# while building, then that's a good indicator that something is
-# missing from a subfolder.
-
-
-5c. If there have been significant changes, or you get weird build
-    errors, try deleting (or renaming, if you need sketches from
-    inside) your 'work' folder. This will create a fresh build.
-    This includes any changes to the reference, the examples, the
-    bagel serial libraries, jikes, or just about any time you
-    have to use -d -P with the update.
-
-
-/////////////////////////////////////////////////////////////////
-
-
-
-HOW TO BUILD PROCESSING FOR THE MAC PLATFORM
-
-
-// if you have any corrections/additions/suggestions:
-// send email to tmohn@sbcglobal.net
-
-// note: the macos9 instructions are a little crusty since things 
-// have changed since we suspended support for macos9.
-
-
-
-1. GRAB THE CODE FROM SOURCEFORGE
-
-// this grabs the code as an anonymous user. if you have a sourceforge
-// account, you should know how to grab the code as yourself.
-
-// first do this
-
-cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing login
-
-// just hit enter when it asks for a password
-// then do this (may take a while)
-
-cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co processing
-
-// (maybe even a long while for you dialup and international folks)
-
-// PERFORM MAINT ON FOLDERS FROM SOURCEFORGE
-// gonna do a few things in the p5 folder
-
-cd processing
-
-// if you're not doing web development, you won't need those folders
-
-rm -rf web web_gen
-
-// this is actually done by the build script, but you may as well 
-// do it now
-
-cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co bagel
-
-// a quick cleanup, removes empty (dead/old) folders
-
-cvs update -P
-
-// get back to the processing/ folder
-
-cd ..
-
-
-
-2. BUILD IT
-
-// first lets get bagel (the make.sh script does this as well if you're 
-// feeling lazy).
-
-cd [processing folder]
-
-// grab off of sourceforge (should be logged in anon still)
-
-cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co bagel
-
-// now we need to unmacbinarize the proce55ing.bin file in the dist 
-// folder.  we are currently using MacBinary II+ 1.0.2 (stuffit
-// expander doesn't seem to work properly).  you can just install 
-// the app under OS X and drag/drop-- but you need OS 9 installed
-// on your box to do this (newer machines may not allow this now, 
-// thanks to stevie's great ideas).  this should drop the Proce55ing 
-// application unpacked into the dist folder.
-
-// set permissions so you can execute the make.sh file.  not sure why 
-// these permissions aren't set like the macosx build?
-
-chmod +x make.sh
-
-// now to build for the first time:
-
-cd /path/to/processing/build/[mac os desc]
-
-./make.sh
-
-// any errors that might happen are obvious here.
-
-// to create the distributable:
-
-./dist.sh
-
-// if everything went well, you'll have no errors.  this will
-// drop a folder in your build directory named processing-0000-macosx/9
-
-///// (need more doc here on common problems..)
-
-
-4.  PACKAGE THINGS UP
-
-//// MAC OS X
-
-// make a copy of the new folder just built.  this folder lives here: 
-// /build/processing-0000-macosx
-// this copy is what you will use to clean things up and package.
-
-// do some house cleaning!  poke through the structure making sure no 
-// CVS folders are hanging around, etc.  command line works best 
-// for this.
-
-// to keep things simple and clean, create a folder called 
-// processing-00##.  
-// within this folder create two separate folders:  (drag the folder 
-// above to Applications) and Processing 00##.  open the parent folder 
-// and clean things up (ie lineup folders etc.).  now just drop the 
-// parent folder into your disk utility app in os x (applications/
-// utilities) to create the dmg that will be uploaded to the site.
-
-
-//// MAC OS 9
-
-// NOTE: make sure you setup stuffit to compress as .hqx files not 
-// .sit.  also make sure that you zip up the folder under mac os 9 
-// for max compatibility.
-
-// make a copy of the new folder just built.  this folder lives here: 
-// /build/processing-0000-macos9
-// this copy is what you will use to clean things up and package.
-
-// do some house cleaning!  poke through the structure making sure 
-// no CVS folders are hanging around, etc.  pay close attention for 
-// the .DS_Store files in any folders.  command line works best 
-// for this.
-
-// now just copy this clean folder to the folder that houses 
-// your os 9.2 desktop.
-
-// in order to finish packaging the os 9 build, you must reboot 
-// into os 9.2.  once there we need to do some minor house cleaning 
-// in this folder (ie make sure no .DS_Store files are hanging 
-// around again, etc.)
-
-// to keep things simple, just rename the folder to processing-00##.
-// where ## is the revision number.  then zip it up with stuffit.
-
-
-5. UPDATING TO THE LATEST VERSION
-
-// Each time you want to update to latest version from cvs:
-
-# -z3 means make it snappy (using compression)
-cd /path/to/processing
-cvs -z3 update
-
-// Or if new folders have been added, use:
-
-# -d grabs new directories and -P cleans out old (empty) ones
-# cvs is a little brain dead about this stuff
-
-cd /path/to/processing
-cvs -z3 update -d -P
-
-# if you've removed web/ and web_dev/, then do the update -d -P 
-# from inside app/ and bagel/ (rather than from the just the 
-# processing/ folder) otherwise -d will grab web and web_dev again
-
-# unfortunately there isn't a way to know (?) if new folders have
-# since been added. but if you're getting "class not found" errors
-# while building, then that's a good indicator that something is
-# missing from a subfolder.
+unfortunately there isn't a way to know (?) if new folders have
+since been added. but if you're getting "class not found" errors
+while building, then that's a good indicator that something is
+missing from a subfolder.
 
 If there have been significant changes, or you get weird build
-errors, try deleting (or renaming, if you need sketches from
-inside) your 'work' folder. This will create a fresh build.
-This includes any changes to the reference, the examples, the
-bagel serial libraries, jikes, or just about any time you
+errors, try deleting your 'work' folder. This will create a 
+fresh build. This includes any changes to the reference, 
+the examples, the libraries, jikes, or just about any time you
 have to use -d -P with the update.
+
