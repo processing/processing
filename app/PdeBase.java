@@ -85,7 +85,12 @@ public class PdeBase implements ActionListener {
   }
 
   public PdeBase() {
-    frame = new Frame(WINDOW_TITLE);
+    frame = new Frame(WINDOW_TITLE) {
+	// hack for #@#)$(* macosx
+	public Dimension getMinimumSize() {
+	  return new Dimension(300, 300);
+	}
+      };
 
     try {
       icon = Toolkit.getDefaultToolkit().getImage("lib/icon.gif");
@@ -281,6 +286,8 @@ public class PdeBase implements ActionListener {
     //((PdeEditor)environment).graphics.frame = frame;
     //((PdeEditor)environment).frame = frame
     frame.pack();  // maybe this should be before the setBounds call
+
+    //System.out.println(frame.getMinimumSize() + " " + frame.getSize());
 
     editor.frame = frame;  // no longer really used
     editor.init();
