@@ -30,80 +30,10 @@ X splitints, et al.. have another version to specify what to use
 X   when the value gets a NumberFormatException.. ie.
 X   splitInts("blah blah blah", ' ', 0);
 X   and splitFloats("blah bl ah blaha ", ' ', Float.NaN);
-
-o online signup cgi for people to add themselves to the list
-o probably should doClose() on new/open instead of doStop()
-o option to delete current project (trickier)
-o   also needs to have method for verify.. blech
-o check logs to see where we're getting traffic from
-o option to toggle console on/off (not just in properties, but realtime)
-o look into using serialporteventlistener for simpleserial
-o   may help with problems due to threading/synchronizing
-o font usage/substition solution
-o   write code to bind/convert java fonts
-o     best would be freetype or jdk 1.3/1.4
-o   java freetype? jni freetype to build texmap fonts?
-o   look at flash file format? (does it have kerning?)
-o may want to throw exceptions from bagel
-o   but catch them inside bapplet--as part of making things easier
-o file i/o utility classes
-o   read as set of lines, read as cells in grid, read num sequence
-o   then methods for writing all of the same
-o stop() method in applet should stop kjc environment
-o   should be able to call stop() to 'quit' an applet
-X make versions available w/o fonts and jre
-o moving sketchbook folder for lab environments
-o adding lights
-o   control of position/color of default lights
-o controlling camera movements
-o   mcguffin sent some notes about this
-o multmatrix/identity
-o constants besides PI, TWO_PI
-o min/max with 3 parameters
-o if (a) ? 3 : 4
-o formatting printf-style things
-o audio input
-o audio synthesis
-X stringutils.split is a useful one
-X readFileLines et al
-o translateMiddle() ? to move to the middle of the screen?
-o perlin noise function
-o delayUntil would be nice to have
-o   but at some point there has to be a cutoff
-o   have a library of useful code that people can add to programs
-o   otherwise things are too simple, and env is a crutch
-o example: multi-user server app (shared whiteboard)
-o example: basic network app
-o bug in sun vm for freaking out
-o   also happened with ibm vm.. grr.. (or was it a path problem?)
-X is it necessary to have fullscreen option on toolbar anymore?
-o what's better than POLYGON_CONVEX and POLYGON_CONCAVE?
-o should we use jdk 1.3 or msft vm?
-
-_ use System.arraycopy for clear().. could be way fast
-
-_ need some model for i/o that makes more sense
-_   getting whole words from serial, network, and files
-_   or buffers of specific length with a sync byte
-
-_ file output, save strings or pile of bytes
-
-_ read table/csv formatted data into a matrix
-_   pseudo-database format version of this that stores indexes to file
-_     rather than loading the whole thing at once
-_ quicksort should probably just be made into 'sort' class
-_   it's the only one ever used
-_   can this be done using an inner class?
-
-_ does a[3] == Float.NaN work? (for testing with splitFloats)
+X use System.arraycopy for clear().. could be way fast
 
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
-
-_ more advanced splitting of files into rows/cols uses another class
-_   other class also has concept for random access of lines
-_   by storing the line positions, can access without loading all
-_   into memory because some files will be too large
 
 _ add keyCode to BApplet
 http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=post;num=1043834995;title=Post+reply;start=
@@ -117,16 +47,27 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 _ setup( ){} has an error, setup(){} does not
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045059758;start=0
-
-_ setup (200, 200) causes the default size to be used but setup(200, 200) works fine
+_   setup (200, 200) causes the default size to be used but setup(200, 200) works fine
 
 _ merge bboard groupings (syntax + programs)
 _   separate bboard and environment
 
-_ running p5 on another platform (bsd)
-_   /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
-_   need to use the 1.3 vm, and get a fake platform name
-_   otherwise, goes looking for lib/pde_.properties or something
+data things for my own work, but also generally useful
+_ need some model for i/o that makes more sense
+_   getting whole words from serial, network, and files
+_   or buffers of specific length with a sync byte
+_ file output, save strings or pile of bytes
+_ quicksort should probably just be made into 'sort' class
+_   it's the only one ever used
+_   can this be done using an inner class?
+_ read table/csv formatted data into a matrix
+_   pseudo-database format version of this that stores indexes to file
+_     rather than loading the whole thing at once
+_ more advanced splitting of files into rows/cols uses another class
+_   other class also has concept for random access of lines
+_   by storing the line positions, can access without loading all
+_   into memory because some files will be too large
+_ does a[3] == Float.NaN work? (for testing with splitFloats)
 
 
 
@@ -142,33 +83,8 @@ The graphics library is called Bagel, which is an internal name.
 
 BAGEL / Bugs
 
-   b _ gaps in lines for pmouseX, mouseX
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
-   b _ if image doesn't exist, spews null pointer exception and freaks
-   b _   locks up environment/machine, have to restart
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
-          Uncaught error fetching image: 
-          java.lang.NullPointerException 
-           at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
-           at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
-           at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
-           at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
-           at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
    b _ bezier is broken for > 4 points
    b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042201137
-   b _ getting mouse movement outside the window
-   b _ too many push() will silently stop the applet inside a loop
-   b _ transparent gif images don't retain transparency (oy)
-   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
-   b _ images drawn from center don't work for simage()
-   b _   currently calling slower image routine
-
-   2 _ keypressed is not persistent
-   2 _   key repeat in os vs. how java handles it
-   2 _   search java faq for info about getting around it
-
-
-   b _ why is every other pixel missing from mouse events?
 
 
 BAGEL / Graphics API Additions
@@ -260,6 +176,8 @@ BAGEL / Rendering
    b _   lists of names of objects, or the 'line number' buffer
    b _   but how to determine *where* on object the hit occurs?
 
+   b _ opengl export / rendering mode
+
 bf b _ illustrator export / rendering mode
 bf b _   also postscript or pdf export?
 bf b _   version of Illustrator.java that uses bagel api
@@ -268,18 +186,40 @@ bf b _   better lighting model to show darkness at various depths
 bf b _     maybe just ultra-high res bitmaps from gl
 bf b _   version of ProcessingApplet that replaces g. with ai. or pdf.
 
-   b _ opengl export / rendering mode
 
-   b _ nitty gritty and testing things
+BAGEL / Details
+
+   b _ getting mouse movement outside the window
+   b _ transparent gif images don't retain transparency (oy)
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=general;action=display;num=1044908359;start=0
+   b _ gaps in lines for pmouseX, mouseX
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044438078;start=0
+   b _ if image doesn't exist, spews null pointer exception and freaks
+   b _   locks up environment/machine, have to restart
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039409900
+          Uncaught error fetching image: 
+          java.lang.NullPointerException 
+           at sun.awt.image.URLImageSource.getConnection(URLImageSource.java:99) 
+           at sun.awt.image.URLImageSource.getDecoder(URLImageSource.java:10 
+           at sun.awt.image.InputStreamImageSource.doFetch(InputStreamImageSource.java)
+           at sun.awt.image.ImageFetcher.fetchloop(ImageFetcher.java:16 
+           at sun.awt.image.ImageFetcher.run(ImageFetcher.java:136) 
+   b _ too many push() will silently stop the applet inside a loop
    b _   test winding polygons in different directions
    b _   test lighting to see how it compares with gl
    b _   better lockout inside beginShape() to keep other things from happening
    b _   is quad strip broken or not behaving as expected?
    b _     may be correct, it worked for nik
-
    b _ draw mode issues.. size and background must be int/float constants
    b _   might be a better 'mode' for bagel so bkg and size cmds work
    b _   rather than app being enclosed in beginFrame/endFrame loop
+   b _ why is every other pixel missing from mouse events?
+   b _ images drawn from center don't work for simage()
+   b _   currently calling slower image routine
+
+   2 _ keypressed is not persistent
+   2 _   key repeat in os vs. how java handles it
+   2 _   search java faq for info about getting around it
 
 
 BAGEL / Future
@@ -361,16 +301,21 @@ SOUND / Bagel Standard Extension by Carlos
 
 PDE - PROCESSING DEVELOPMENT ENVIRONMENT
 
+
+
+PDE / General 
+
+bf b _ separate compiler from other kjc-specific code
+bf b _   change writeJava/start functions to be combined in kjc
+bf b _   but the rest inside PdeEditor that takes care of launching/placing
+   b _ be able to draw something inside setup (?)
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
+
+
+PDE / Pre-preprocessor 
 Currently using Oro for search and replace preprocessor.
-Future plans to use Java CUP for preprocessor and Jikes for compiler.
+Future plans to use Javacup for preprocessor and Jikes for compiler.
 
-
-PDE / general 
-_ be able to draw something inside setup
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
-
-
-PDE / preprocessor 
 _ no longer require size() to come first.
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038368420
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1028560140
@@ -383,35 +328,41 @@ _ switch to java cup (one day's work)
 _   subst Image -> BImage, Font -> BFont
 
 
-PDE / compiler
-_ separate compiler from other kjc code
-_ when missing a closed brace, often has compiler error
-_   Jordan J message in email and bugs list
-_ can't used random() inside constructor.. (Glen Murphy)
-_   maybe related to problems loading images in constructors
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039411135
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038807934
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1029289775
-_ weird comments bug (external file)
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1040466898
-_ kjc is really frustrating about some of its error/warning msgs
-_   erroneous errors from kjc regarding 'var not inited'
-_     is there any way to disable this message?
-_   talk to simon about error streams and kjc
-_     better piping of output from kjc
-_     modify kjc to take a PrintWriter, instead of current hacks
-_   might be able to set default values for vars using perl5subst
-_   Compiler.disable() message is weird and doesn't always work
-_     probably just remove it for now
+PDE / Compiler
+
+   b _ see if newer javac forces a System.exit() or if it can be avoided
+   b _ wire-in jikes as another compiler
+   b _   write handlers for jikes-style of error messages
 
 
-PDE / runtime (includes classloading)
+PDE / KJC Compiler
+most of these items can be removed if kjc is dropped
+
+   b _ when missing a closed brace, often has compiler error
+   b _   Jordan J message in email and bugs list
+   b _ can't used random() inside constructor.. (Glen Murphy)
+   b _   maybe related to problems loading images in constructors
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1039411135
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038807934
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1029289775
+   b _ weird comments bug (external file)
+   b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1040466898
+   b _ kjc is really frustrating about some of its error/warning msgs
+   b _   erroneous errors from kjc regarding 'var not inited'
+   b _     is there any way to disable this message?
+   b _   talk to simon about error streams and kjc
+   b _     better piping of output from kjc
+   b _     modify kjc to take a PrintWriter, instead of current hacks
+   b _   might be able to set default values for vars using perl5subst
+   b _   Compiler.disable() message is weird and doesn't always work
+   b _     probably just remove it for now
+
+
+PDE / Runtime (includes classloading)
 _ for 'java' mode, try run using external vm
 _   would need to get error output stream from app.. argh
 _   only allow under win/osx/linux
 _   not clear how to kill the process.. does that work w/ 1.3?
-_ change writeJava/start functions to be combined in kjc
-_   but the rest inside PdeEditor that takes care of launching/placing
 _ support 'classes' folder, through the use of a classloader
 _   could also be done by launching external java app
 _   all .jar files etc are added from this folder automatically
@@ -424,14 +375,12 @@ _ ability to include other code from sketchbook directory
 _   compile entire sketchbook on startup, check for new files on compile?
 
 
-PDE / console 
-_ [maybe this needs to be a textarea?]
-_ also printing of objects, esp when null, in jdk 14
-_ exception when trying to write to stdout
-_ can't copy text from console directly
-
-
-PDE / testing and nitty-gritty
+PDE / Details
+_ improve the console
+_   maybe it needs to be a textarea?
+_   printing of objects, esp when null, in jdk 14 seems to crash
+_   exception when trying to write to stdout
+_   can't copy text from console directly
 _ need to check if volume is read-only, notify and quit if it is
 _   people are trying to run off the disk image
 _   need to pay attention to when running from read-only drive
@@ -441,10 +390,6 @@ _     not draw the sketch name bar doesn't appear"
 _ p5 becomes a memory hog (benelek and glen murphy)
 _   even without sketches open, perhaps not gc'ing properly
 _ save last-used serial to sketch.properties on quit
-_ sketches can't be named starting with numbers (D.YOO)
-_   either provide an error message or explanation for this
-_   or allow the sketch name to be separte from the class/folder names
-_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
 _ size() has memory limitations (pitaru)
 _   catch OutOfMemoryError inside size() and let the user know
 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
@@ -467,9 +412,14 @@ _   the program resize(200, 200); just does nothing (doesn't complain)
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
+_ sketches can't be named starting with numbers (D.YOO)
+_   either provide an error message or explanation for this
+_   or allow the sketch name to be separte from the class/folder names
+_   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1033674118
 
 
-PDE / testing & nitty gritty - lower priority
+PDE / Details (low priority)
+
 _ menu weirdness (benelek)
 _   when u've got a menu open, move a cursor over the text area
 _   and back over the menu, the text-area cursor type remains. 
@@ -479,6 +429,7 @@ _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 
 PDE / features
+
 b _ some notion of plugins for pde
 b _   color picker or other things written by folks
 b _   add all .jar files in lib/plugins on startup
@@ -508,6 +459,7 @@ b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;ac
 b _ event to explorer to open 'parts' directory of project
 b _ expose access to oro api, perhaps as a plugin
 b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
+
 
 2 _ menu option to change username/login
 2 _   if new user, offer to rename 'default' if it contains things
@@ -543,6 +495,8 @@ b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 
 
 PDE / science fiction
+features to be implemented by 2048
+
 3 _ toggle for showing a function name each time its hit
 3 _ toggle for showing line numbers within a function
 3 _   i'm here messages, tie in with breakpoints for debugger
@@ -579,6 +533,11 @@ How the environment gets packed up, downloaded, and installed.
 DISTRIBUTION / General 
 b _ need document icons  
 b _ beta release will include source code
+b _ write notes about running p5 on another platforms 
+b _   this was some feedback from running on bsd:
+b _   /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
+b _   need to use the 1.3 vm, and get a fake platform name
+b _   otherwise, goes looking for lib/pde_.properties or something
 
 
 DISTRIBUTION / Windows
@@ -998,14 +957,9 @@ Run
 Present
 Stop
 -----
-<<<<<<< todo.txt
-Step Forward (farway future)
-Step Backward (faraway future)
-=======
 Step Forward  (farway future)
 Step Backward (faraway future)
 
->>>>>>> 1.195
 
 // Sketch
 History
