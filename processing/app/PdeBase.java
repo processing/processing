@@ -228,21 +228,55 @@ public class PdeBase extends Frame
       //System.exit(1);
     }
 
-    // check to see if quicktime for java is installed on windows
-    // since it's temporarily required for 0058
-    if (platform == WINDOWS) {
-      // location for 95/98/ME/XP
-      File qt1 = new File("C:\\WINDOWS\\system32\\QTJava.zip");
-      // location for win2k
-      File qt2 = new File("C:\\WINNT\\system32\\QTJava.zip");
 
-      if (!qt1.exists() && !qt2.exists()) {
+    // 0058 check to see if quicktime for java is installed on windows
+    // 0058 since it's temporarily required for 0058
+    // 0059 still required for 0059, since BApplet uses it when
+    // 0059 compiled with video enabled. the fix for this ain't easy.
+
+    if (platform == WINDOWS) {
+      //println(System.getenv("QTJAVA"));
+      //Process p = Runtime.getRuntime().exec("c:\\windows\\system32\\cmd.exe /C set");
+      /*
+      try {
+        Process p = Runtime.getRuntime().exec("cmd /C echo %QTJAVA%");
+        InputStream is = p.getInputStream();
+        StringBuffer sb = new StringBuffer();
+        int c;
+        while ((c = is.read()) != '\r') {
+          if (c == '\"') continue;
+          //println(c);
+          sb.append((char)c);
+        }
+        is.close();
+        println(">>" + sb.toString() + "<<");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      */
+
+      // location for 95/98/ME/XP
+      //File qt1 = new File("C:\\WINDOWS\\system32\\QTJava.zip");
+      // location for win2k
+      //File qt2 = new File("C:\\WINNT\\system32\\QTJava.zip");
+
+      //if (!qt1.exists() && !qt2.exists()) {
+      //System.out.println("jcp = " + System.getProperty("java.class.path"));
+
+      try {
+        Class c = Class.forName("quicktime.std.StdQTConstants");
+        //System.out.println("class is " + c);
+
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+
         final String message = 
           "QuickTime for Java could not be found.\n" +
           "Please download QuickTime from Apple at:\n" + 
           "http://www.apple.com/quicktime/download\n" + 
           "and use the 'Custom' install to make sure\n" +
-          "that QuickTime for Java is included.";
+          "that QuickTime for Java is included." +
+          "If it's already installed, try reinstalling.";
 
         JOptionPane.showMessageDialog(this, message, 
                                       "Could not find QuickTime for Java",
