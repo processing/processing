@@ -27,7 +27,8 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
   PdeEditorButtons buttons;
   PdeEditorHeader header;
   PdeEditorStatus status;
-  PdeEditorOutput output;
+  //PdeEditorOutput output;
+  PdeEditorConsole console;
 
   //Label status;
   TextArea textarea;
@@ -137,20 +138,24 @@ public class PdeEditor extends Panel /*implements PdeEnvironment*/ {
     status = new PdeEditorStatus(this);
     statusPanel.add("North", status);
 
-    PdeEditorLabel stdoutLabel = new PdeEditorLabel(2);
-    Color stdoutBgColor = 
+    //int lineCount = PdeApplet.getInteger("editor.console.lines", 4);
+    console = new PdeEditorConsole(this); //, lineCount);
+
+    /*
+    Color consoleBgColor = 
       PdeApplet.getColor("editor.console.bgcolor", new Color(26, 26, 26));
-    Color stdoutFgColor = 
+    Color consoleFgColor = 
       PdeApplet.getColor("editor.console.fgcolor", new Color(153, 153, 153));
-    stdoutLabel.setBackground(stdoutBgColor);
-    stdoutLabel.setForeground(stdoutFgColor);
-    Font stdoutFont = 
+    //console.setBackground(consoleBgColor);
+    //console.setForeground(consoleFgColor);
+    Font consoleFont = 
       PdeApplet.getFont("editor.console.font", 
 			new Font("monospaced", Font.PLAIN, 11));
-    stdoutLabel.setFont(stdoutFont);
-    //stdoutLabel.setText("Test the print");
-    //stdoutLabel.setInsets(new Insets(4, 4, 4, 4));
-    statusPanel.add("South", stdoutLabel);
+    console.setFont(consoleFont);
+    */
+    //console.setText("Test the print");
+    //console.setInsets(new Insets(4, 4, 4, 4));
+    statusPanel.add("South", console);
 
     rightPanel.add("South", statusPanel);
 

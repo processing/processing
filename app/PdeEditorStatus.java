@@ -25,7 +25,7 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
   Font font;
   FontMetrics metrics;
-  int fontAscent;
+  int ascent;
 
   Image offscreen;
   int sizeW, sizeH;
@@ -101,7 +101,8 @@ public class PdeEditorStatus extends Panel implements ActionListener {
 
 
   public void update() {
-    paint(this.getGraphics());
+    Graphics g = this.getGraphics();
+    if (g != null) paint(g);
   }
 
   public void update(Graphics g) {
@@ -109,8 +110,7 @@ public class PdeEditorStatus extends Panel implements ActionListener {
   }
 
   public void paint(Graphics screen) {
-    if (screen == null) return;
-
+    //if (screen == null) return;
     if (yesButton == null) {
       yesButton = new Button(PROMPT_YES);
       noButton = new Button(PROMPT_NO);
@@ -158,14 +158,14 @@ public class PdeEditorStatus extends Panel implements ActionListener {
       //font = new Font("SansSerif", Font.PLAIN, 10);
       g.setFont(font);
       metrics = g.getFontMetrics();
-      fontAscent = metrics.getAscent();
+      ascent = metrics.getAscent();
     }
 
     g.setColor(bgColor[mode]);
     g.fillRect(0, 0, imageW, imageH);
 
     g.setColor(fgColor[mode]);
-    g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + fontAscent) / 2);
+    g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + ascent) / 2);
 
     screen.drawImage(offscreen, 0, 0, null);
   }
