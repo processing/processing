@@ -4,6 +4,36 @@ for older releases will be super crusty. caution: the beverage you're
 about to enjoy is extremely hot.
 
 
+ABOUT REV 0062 - 
+
+this release primarily introduces new features.
+
+
+[ changes & additions ] 
+
+- all the formerly included fonts have been removed, in favor of a
+  built-in font creator, available from the sketch menu. the font
+  creator will allow you to create your own fonts, and add them
+  directly to your sketch.
+
+- "add files" menu command as a simpler way to add files to your
+  sketch folder than navigating through the explorer.
+
+- no more digging for sketches.. "show sketch folder" opens up the
+  folder of the current sketch using the finder on the mac or the
+  windows explorer on windows. 
+
+- some modification to the menu layouts, i.e. "clear history" is now
+  part of the history menu itself.
+
+
+[ bug fixes ] 
+
+- finally found the problem with showing reference on macosx and fixed
+  it. this had eluded me for a while since it was working ok on my own
+  machine, but thanks to timothy mohn for harrassing me into fixing it.
+
+
 ABOUT REV 0061 - 23 september 2003
 
 this is a brief addendum release to revision 60, that fixes a few

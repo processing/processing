@@ -216,13 +216,6 @@ dh o   this happens when it's another thread (i.e. image fetcher)
 dh o KjcEngine exceptions (formerly 'ex found in run') should be cleaner
 
 
-from carlos' contract, but implemented by fry
-ca o get font things sewn up 
-ca o  create a simple generator for grayscale bdf fonts
-ca o     document the change and make several of them
-ca o   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
-
-
 carlos line code for single pixel lines
 ca X single pixel lines have z and alpha
 bf X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165816;start=0

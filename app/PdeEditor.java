@@ -1448,6 +1448,7 @@ public class PdeEditor extends JPanel {
       sketchWriter.close();
 
       message("Done exporting.");
+      PdeBase.openFolder(appletDir);
 
     } catch (Exception e) {
       message("Error during export.");
