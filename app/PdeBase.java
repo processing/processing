@@ -1049,6 +1049,34 @@ public class PdeBase extends Frame
     }
   }
 
+  //
+
+  // could also do showMessage with JOptionPane.INFORMATION_MESSAGE
+
+  //
+
+  static public void showWarning(String title, String message, 
+                                 Exception e) {
+    if (title == null) title = "Warning";
+    JOptionPane.showMessageDialog(this, message, title,
+                                  JOptionPane.WARNING_MESSAGE);
+
+    //System.err.println(e.toString());
+    if (e != null) e.printStackTrace();
+  }
+
+  //
+
+  static public void showError(String title, String message, 
+                               Exception e) {
+    if (title == null) title = "Error";
+    JOptionPane.showMessageDialog(this, message, title,
+                                  JOptionPane.ERROR_MESSAGE);
+
+    if (e != null) e.printStackTrace();
+  }
+
+  //
 
   // used by PdeEditorButtons, but probably more later
   static public Image getImage(String name, Component who) {
