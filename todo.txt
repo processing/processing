@@ -15,7 +15,7 @@ X   sketch is changing before the "save changes?" is complete
 X     as a result, 'cancel' does nothing
 X   always ask save changes, even if nothing changed
 
-040621 sunday 
+040620 sunday 
 X remove 'sketchbook.prompt' (comment it out)
 X   not really needed
 X   remove prompt stuff from the preferences panel
@@ -24,7 +24,7 @@ X   to use JLabel instead of JTextArea
 X   font was wrong on windows
 X start working on "save as"
 
-040622 monday morning
+040621 monday morning
 X finish "save as"
 X adding files to data folder that are already in the data folder
 X   makes the file zero, because of internal error
@@ -41,7 +41,7 @@ X   set examples somehow read-only
 X 'save as' from examples puts into examples dir.. :(
 X   make it default to the user's sketch dir
 
-040622 monday mid-day
+040621 monday mid-day
 X see if changing the sketchbook location actually works
 X   after changing sketchbook location, need to rebuild the menu
 X hide the editor window while prefs is open
@@ -69,7 +69,7 @@ X   on application open, override 'open' mode
 X   and just open an empty sketch in the sketchbook folder
 X when 'skNew' is cancelled in 'open' mode, nullpointerex at the top
 
-040622 monday afternoon
+040621 monday afternoon
 X if a "save as" is forced, make sure that the sketchbook menu is updated
 X sort sketch names in the open menu
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074981609
@@ -79,7 +79,7 @@ X   was adding all folders in the classpath
 X workaround for the // causing an OutOfMemoryError
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067717095
 
-040622 monday evening/night
+040621 monday evening/night
 X jikes errors have no newlines because it's a buffered reader
 X   and the newlines are removed when read
 X make the filedialog come up with the p5 window on handlenew
@@ -127,7 +127,7 @@ X   i.e. when double-clicking on them.. downloaded off web..
 X     but need to deal with simply, not providing a new exception case
 X begin writing 'new text file'
 
-040623 tuesday morning / early afternoon
+040622 tuesday morning / early afternoon
 X write 'new text file' (ctrl-t)
 X hitting return/enter on the status.edit() not always working
 X   it had been disabled, now re-enabled
@@ -138,10 +138,17 @@ X see if multiple files are actually compiling
 X   nope, they aren't properly.. need to figure this out
 X   empty files = no class name found.. that's a problem
 
-040623 tuesday afternoon
+040623 wednesday afternoon
 _ continue work on multi-file compile
+X test that .java files can be created
+X   allow user to type a period '.' when entering filename
+X   but remove it again if it's not .pde or .java
+X clean up error handling for empty files (quiet error)
+
+_ errors in other files aren't bubbling up
 
 _ see if sonia project can compile
+_ write options dialog for export
 _ write export-to-application
 _ write export-to-library
 _   need to be able to produce the serial, video, etc libs
@@ -152,7 +159,7 @@ _   after using the popup menu once, it stops working
 
 _ running present mode with a bug in the program hoses things
 _   make sure the program compiles before starting present mode
-
+_ make some fancy extendo things because the tabs get too big
 
 now implemented for [url=http://processing.org/discourse/yabb/YaBB.cgi?board=Collaboration;action=display;num=1084285917]megabucket[/url].
 
