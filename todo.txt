@@ -66,6 +66,24 @@ X   wheel mouse is gone again, to return later
 X describe rundown of constants pulled from pde.properties
 X   coloring for syntax
 X   sketchbook.path, very preliminary, still creates 'default'
+X macos9 stuff
+X   check to see if swing is working properly
+X   get new release out, remove 1.3 specific stuff from textpane
+X get syntax coloring debugged?
+X   talk to casey about better default colors
+X scroll to beginning after setText()
+X color not set for default text area with empty text
+X   color not set on 'new', setForeground won't do it
+X   probably reasonably simple fix, but not in time
+X undo/redo
+X   should enable/disable as available
+X   undo-ing too much will empty the text area
+X     the setText is an undoable thing. grr.
+X method to set a folder for the sketchbook
+X when trying to use serial, provide error if things not installed
+
+
+0048
 
 
 ................................................................
@@ -81,25 +99,24 @@ _     and p5 versus flash stuff
 _   lists the main arguments, could be a useful document
 
 
-bagel
+bagel / bugs
 _ getting mouse movement outside the window
 _ delay() should sleep the thread [glen murphy]
 _   it's sucking cpu and won't open a window until the delay is up
+_ is quad strip broken or not behaving as expected? (me)
+_   may be correct, it worked for nik
+_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
+
+
+bagel / features
 _ make bagel usable on its own as a drawing surface
 _   needs to be used as a component, without applet 
 _   but retain functionality, ie. image i/o
 _ finish fill mode of flat circle function
 _   make into oval function
-_ when trying to use serial, provide error if things not installed
 _ no longer require size() to come first?
 _ beginQuads() beginLineStrip() ?
 _ noCursor()
-
-
-bagel / bugs
-_ is quad strip broken or not behaving as expected? (me)
-_   may be correct, it worked for nik
-_ font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
 
 
 pde / bugs
@@ -108,14 +125,6 @@ _ can't used random() inside constructor.. (Glen Murphy)
 _   maybe related to problems loading images in constructors
 _ images don't load during setup [reas]
 _ weird comments bug (external file)
-_ reported by brandenberg
-_    need to pay attention to when running from read-only drive
-_    "p5 will launch from the disk image, but will 
-_     not draw the sketch name bar doesn't appear"
-_ undo/redo
-_   should enable/disable as available
-_   undo-ing too much will empty the text area
-_     the setText is an undoable thing. grr.
 _ if image doesn't exist, spews null pointer exception and freaks
 _   locking up environment/machine
 Uncaught error fetching image: 
@@ -135,20 +144,17 @@ _   [maybe this needs to be a textarea?]
 _   long lines seem to be trouble
 _   also printing of objects, esp when null, in jdk 14
 _   exception when trying to write to stdout
-_ color not set for default text area with empty text
-_   color not set on 'new', setForeground won't do it
-_   probably reasonably simple fix, but not in time
 _ split KjcEngine into three parts
 _   how to communicate with other applet/jre when it's been launched
 _ preprocessor problems -> switch to java cup (one day's work)
 _   subst Image -> BImage, Font -> BFont
-_ get syntax coloring debugged?
-_   talk to casey about better default colors
-_ scroll to beginning after setText()
+_ need to pay attention to when running from read-only drive
+_   reported by brandenberg
+_  "p5 will launch from the disk image, but will 
+_   not draw the sketch name bar doesn't appear"
 
 
 pde / features
-_ method to set a folder for the sketchbook
 _ splitints, et al.. have another version to specify what to use
 _   when the value gets a NumberFormatException.. ie.
 _   splitInts("blah blah blah", ' ', 0);
@@ -177,8 +183,8 @@ _ lockup/freezes (mKoser and zeitgeist)
 _   jre icon not appearing in the systray
 
 macosx
-_ reference doesn't launch on mac (mKoser)
 _ is sketch.properties saving properly under macosx?
+_ reference doesn't launch on mac (mKoser)
 _ Event.consume() doesn't work on entry fields 
 _   manifests itself in sketch naming, can't be constrained
 _   may not be the case under swing?
@@ -195,34 +201,14 @@ public void paint(Graphics g)
 }
 
 macos9
+_ set file type for html files
+_   why is bbedit the type for the other files? make simpletext
 _ reference doesn't launch on mac (mKoser)
-_ check to see if swing is working properly
-_ get new release out, remove 1.3 specific stuff from textpane
 
 linux
 _ look for jdk 1.4 to use instead of 1.3
 _   make sure javacomm gets in there
 _ test it a little more to make sure it works (cygwin x sucks)
-
-
-FURTHER AHEAD
-_ 'image' is too generic a variable to have inside BApplet
-_   check for others that shouldn't be used (pixels? width? height?)
-_   or have a way to syntax color them
-_ put processing/bagel into sourceforge cvs FOR BETA
-_   probably after kjc/engine stuff restructured
-_ bring cbagel up to par
-_ modify cbagel for opie
-_ would be interesting to build pre-processor for java p5
-_   but that converts into cpp version of bagel apps.. mmm
-_ update cbagel to current bagel status
-_ add update() style application (called once at start, then only when queued)
-_   still a threaded app? just doesn't update inside loop
-_ get gcc tied into processing
-_ java disassembly inside p5
-_   and assmebling it back again
-_ locking up on run (under win2k? others?) 
-_   rare but present, every 100th time or so
 
 
 OTHER NOTES / API TO ADD
@@ -247,6 +233,26 @@ _ fonts - api should be improved as part of additions and rewrite
 _ does a[3] == Float.NaN work?
 
 
+FURTHER AHEAD
+_ 'image' is too generic a variable to have inside BApplet
+_   check for others that shouldn't be used (pixels? width? height?)
+_   or have a way to syntax color them
+_ put processing/bagel into sourceforge cvs FOR BETA
+_   probably after kjc/engine stuff restructured
+_ bring cbagel up to par
+_ modify cbagel for opie
+_ would be interesting to build pre-processor for java p5
+_   but that converts into cpp version of bagel apps.. mmm
+_ update cbagel to current bagel status
+_ add update() style application (called once at start, then only when queued)
+_   still a threaded app? just doesn't update inside loop
+_ get gcc tied into processing
+_ java disassembly inside p5
+_   and assmebling it back again
+_ locking up on run (under win2k? others?) 
+_   rare but present, every 100th time or so
+
+
 SUGGESTIONS
 _ make versions available w/o fonts and jre
 _ lock feature for present mode (part of export to application?)
@@ -268,6 +274,7 @@ BAGEL / high
 b _ better access to projX et al
 b _   what's a better name? calcX? or write to an array?
 b _   projectX, projectY, .. or projectedX ? 
+b _   also projectSize should just be project()
 b _ images drawn from center don't work for simage()
 b _   currently calling slower image routine
 
