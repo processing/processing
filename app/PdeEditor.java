@@ -85,7 +85,7 @@ public class PdeEditor extends Panel {
   PdeBase base;
 
     // hack while fixing layout issues
-    Component pain;
+    //Component pain;
 
   public PdeEditor(PdeBase base) {
     this.base = base;
