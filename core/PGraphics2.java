@@ -556,7 +556,8 @@ public class PGraphics2 extends PGraphics {
     ImageCache cash = (ImageCache) who.cache;
     // if image previously was tinted, or the color changed
     // or the image was tinted, and tint is now disabled
-    if ((tint && (!cash.tinted || (cash.tintedColor != tintColor))) ||
+    if ((tint && !cash.tinted) ||
+        (tint && (cash.tintedColor != tintColor)) ||
         (!tint && cash.tinted)) {
       // for tint change, mark all pixels as needing update
       who.updatePixels();

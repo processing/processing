@@ -51,13 +51,14 @@ changes/important notes:
 
   PGraphics2    2D rendering for systems using Java 1.3+ 
                 this is used dynamically whenever the applet detects
-                that it is running on a Java 1.3+ system.
+                that it is running on a Java 1.3+ system. 
                 it is an entirely new, and *complete* renderer based
                 on Java2D. this was a shortcut to get a renderer that
                 worked properly on the vast majority of machines in
                 our target audience (courses, beginners, developers) 
 	        until i have time to complete the 1.1 renderer (so
-                that exporting to the web works again).
+                that exporting to the web works again). basically, 
+		i've sold out, in hope of ever reaching 1.0.
 
   PGraphics3    3D rendering in Java 1.1
                 this is loaded when the depth() command is executed
@@ -67,9 +68,12 @@ changes/important notes:
                 renderer, although it's using sumea sami's newer
                 triangle rendering, meaning that things are much
                 faster than before (although textures are a little
-                fuggly). smooth() and noSmooth() will not be
-                supported in this mode. for smoothing, use the OpenGL
-                renderer.
+                fuggly). there are no plans to support smooth() in 
+		this mode. for smoothing, use the OpenGL renderer.
+		stroke caps/joins will also probably not work in this 
+		mode (lines are 2D objects, how do you put a stroke
+ 		on a 3D object?), but that hasn't yet been fully
+		determined.
 
   PGraphicsGL   OpenGL renderer for use in Java 1.3+ 
                 jogl requires java 1.3, and this rendering option can
@@ -86,7 +90,30 @@ changes/important notes:
 		which will echo all rendering calls to that
                 class until the end of the frame. this handles
                 writing to files, we won't be supporting plug-in
-                visual renderers in Processing 1.0.
+                visual renderers in Processing 1.0 (unless you want
+		to use this to open up a separate window or something
+		weird like that)
+
+  if you're curious, or filing a bug report, you can always check what
+  the current rendering engine is by using: println(g.getClass());
+
+- very exciting: strokeWeight(), strokeCap(), strokeJoin() et al 
+  now work when using 2D and using Java 1.3 or higher. these will 
+  eventually work in Java 1.1 for 2D as well. 
+
+- the new renderers may change the speed of some things significantly. 
+  for instance, using text on java 1.3 when depth() hasn't been called
+  (PGraphics2) may be far slower than before. or using images in the same
+  situation may require much more RAM. on the other hand, smoothed shapes
+  and general drawing in the same situation might be much faster.
+
+- i'm trying to think of a means to switch between the java 1.3 version 
+  of the 2D api and the 1.1 version in case people want to force use of
+  the old one (once it's working again). we'll see.
+
+- presumably the separation of the rendering engines also means that
+  one could post a web applet that doesn't include the 3D rendering
+  code if your applet is only 2D (or vice versa).
 
 - pmouseX and pmouseY have returned and are better than ever.
 
@@ -133,7 +160,8 @@ changes/important notes:
 ide fun
 
 - forgot to mention in rev 75 that double-clicking a .pde file on the
-mac will now launch processing with that sketch running
+  mac will now launch processing with that sketch. someday windows will
+  do this too. someday...
 
 - i've replaced the cvs version of jikes that we'd been using with
   jikes 1.22, a real release, and the very latest. it's only 2 or 3MB
@@ -143,7 +171,30 @@ mac will now launch processing with that sketch running
   essential for p5).
 
 
-bugs
+serial library
+
+- serialEvents are now fired after each byte has been received. 
+
+- added buffer(int count) method to Serial to set the number of
+  bytes to receive before firing a serialEvent.
+
+- added bufferUntil(int whatByte) method to Serial that will buffer 
+  until that byte has been received and then call serialEvent().
+
+- these changes were simple code but haven't been tested, so they
+  may be prone to errors. let me know.
+
+- just one function (prompt() which will bring up a list of serial 
+  ports in a nice window) remains to finish the Serial library, 
+  everything else is considered complete (barring a revolt by the 
+  itp physical computing guys). 
+
+
+known bugs
+
+- the examples have not been updated. they're getting pretty crufty, 
+  but i've been making such a mess of the api that i've made casey
+  hold off until things settle down a bit before updating.
 
 - curveVertex() is temporarily broken in this release.
 
@@ -151,18 +202,31 @@ bugs
   that don't have the java plug-in installed. this includes 60% of
   Windows users on the web, and anyone using Mac OS 8 or 9. the applet
   will export, but will turn up mostly blank on machines with Java 1.1.
+  to publish things to the web, you might want to use an earlier
+  release, or force people to upgrade their java vm somehow.
 
 - windows coming up at the wrong size or with the wrong placement:
   make sure you're using size(nnn, nnn) where nnn are actual
   numbers. if you're doing that and still seeing trouble, please
   report how to reproduce.
 
-- "Using ATI workaround..." error message isn't really an error, it's
-  just something that jogl spits out. fret not.
+- on macosx (maybe windows too?) applets sometimes come up with their
+  top 20 pixels or so missing. working on a fix.
+
+- when using opengl, the "Using ATI workaround..." error message isn't 
+  really an error, it's just something that jogl spits out. fret not.
+  same with that "can't get focus" error that often shows up on the
+  mac. i don't think there's anything i can do about either.
 
 - lighting is fuggly. i have a feeling that normals aren't being set
   up properly, partly because that code has gotten no love for a long
   time and everything around it has changed.
+
+- several reported ide bugs with "save as", "hide" and others remain. 
+  i hope to fix these in the next release.
+
+- tint() does not work properly in depth() mode and using the 
+  processing renderer (PGraphics3).
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -83,12 +83,12 @@ public interface PConstants {
 
   // filter/convert types
 
-  static final int BLACK_WHITE   = 0;
-  static final int GRAYSCALE     = 1;
-  static final int BLUR          = 2;
-  static final int GAUSSIAN_BLUR = 3;
-  static final int POSTERIZE     = 4;
-  static final int FIND_EDGES    = 5;
+  static final int BLACK_WHITE   = 10;
+  static final int GRAYSCALE     = 11;
+  static final int BLUR          = 12;
+  static final int GAUSSIAN_BLUR = 13;
+  static final int POSTERIZE     = 14;
+  static final int FIND_EDGES    = 15;
 
 
   // blend mode keyword definitions
