@@ -16,6 +16,9 @@ X reference not being unzipped
 X   fix scripts for dist / make
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054222236
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1054886548
+X print(char) and println(char) didn't exist. whoops.
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1055940673
+X added constructor in BImage that takes java.awt.Image
 
 _ inside draw() mode, delay() does nothing
 _   delay might be a good way to signal drawing to the screen/updating
