@@ -41,8 +41,11 @@ public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
+  static final String jdkVersionStr = 
+    System.getProperty("java.version").substring(0,3);
   static final double jdkVersion = 
-    toFloat(System.getProperty("java.version").substring(0,3));
+    new Double(jdkVersionStr).doubleValue();
+    //toFloat(System.getProperty("java.version").substring(0,3));
 
   public PGraphics g;
 
@@ -52,7 +55,7 @@ public class PApplet extends Applet
   /** Path to sketch folder */
   public String folder; // = System.getProperty("user.dir");
 
-  static final boolean THREAD_DEBUG = false; //true;
+  static final boolean THREAD_DEBUG = false; //true; 
 
   public int pixels[];
 
@@ -63,8 +66,18 @@ public class PApplet extends Applet
   public boolean mousePressed;
   public MouseEvent mouseEvent;
 
+  /**
+   * Last key pressed. If it's a coded key 
+   * (arrows or ctrl/shift/alt, this will be set to 0xffff or 65535).
+   */
   public int key;
-  //public int keyCode;
+
+  /**
+   * If the key is a coded key, i.e. up/down/ctrl/shift/alt
+   * the 'key' comes through as 0xffff (65535)
+   */
+  public int keyCode;
+
   public boolean keyPressed;
   public KeyEvent keyEvent;
 
@@ -92,6 +105,7 @@ public class PApplet extends Applet
   //boolean drawMethod;
   //boolean loopMethod;
   boolean looping;
+  boolean redraw;
 
   // true if inside the loop method
   //boolean insideLoop;
@@ -105,8 +119,8 @@ public class PApplet extends Applet
   // mouseMoved functions. these are called after beginFrame
   // but before loop() is called itself, to avoid problems
   // in synchronization.
-  boolean qmouseDragged;
-  boolean qmouseMoved;
+  //boolean qmouseDragged;
+  //boolean qmouseMoved;
 
   // used to set pmouseX/Y to mouseX/Y the first time
   // mouseX/Y are used, otherwise pmouseX/Y would always
@@ -119,7 +133,7 @@ public class PApplet extends Applet
   // true if the feller has spun down
   public boolean finished;
 
-  boolean drawn;
+  //boolean drawn;
   Thread thread;
 
   public Exception exception; // the last exception thrown
@@ -161,17 +175,32 @@ public class PApplet extends Applet
     addMouseMotionListener(this);
     addKeyListener(this);
     addFocusListener(this);
-    //timing = true;
+
+    // send tab keys through to the PApplet
+    try {
+      if (jdkVersion >= 1.4) {
+        System.out.println("hello");
+        //setFocusTraversalKeysEnabled(false);  // 1.4-only function
+        Method defocus = 
+          Component.class.getMethod("setFocusTraversalKeysEnabled",
+                                    new Class[] { Boolean.TYPE });
+        defocus.invoke(this, new Object[] { Boolean.FALSE });
+      } else {
+        System.out.println(jdkVersion);
+      }
+    } catch (Exception e) { }  // oh well
+
     millisOffset = System.currentTimeMillis();
 
     finished = false; // just for clarity
-    drawn = false;
+    //drawn = false;
     firstFrame = true;
 
     // this will be cleared by loop() if it is not overridden
     //drawMethod = true;
     //loopMethod = true;
     looping = true;
+    redraw = true;  // draw this guy once
     firstMouseEvent = true;
 
     /*
@@ -291,10 +320,21 @@ public class PApplet extends Applet
   }
 
 
+  public void redraw() {
+    if (!looping) {
+      redraw = true;
+      if (thread != null) {
+        thread.interrupt();  // wake from sleep
+      }
+    }
+  }
+
   public void loop() {
     if (!looping) {
       looping = true;
       if (thread != null) {
+        //println(Thread.currentThread().getName());
+        //println("loop wakeup");
         thread.interrupt();  // wake from sleep
       }
     }
@@ -389,7 +429,9 @@ public class PApplet extends Applet
         updated = false;
 
         if (PApplet.THREAD_DEBUG) println("nextFrame()");
-        if (looping) nextFrame();
+        //println(looping + " " + redraw);
+        if (looping || redraw) nextFrame();
+        redraw = false;
 
         // moving this to update() (for 0069+) for linux sync problems
         //if (firstFrame) firstFrame = false; 
@@ -400,6 +442,7 @@ public class PApplet extends Applet
         // before the update/paint is completed
         while (!updated) { 
           try {
+            if (PApplet.THREAD_DEBUG) System.out.println(looping + " " + redraw);
             //Thread.yield();
             // windows doesn't like 'yield', so have to sleep at least
             // for some small amount of time.
@@ -408,7 +451,9 @@ public class PApplet extends Applet
             // i have a feeling that some applets aren't gonna like that
             Thread.sleep(looping ? 1 : 10000);  // sleep to make OS happy
             if (PApplet.THREAD_DEBUG) System.out.println("outta sleep");
-          } catch (InterruptedException e) { }
+          } catch (InterruptedException e) { 
+            break;
+          }
         }
       }
     } catch (Exception e) {
@@ -472,6 +517,10 @@ public class PApplet extends Applet
       // drawing commands can be run inside them. it can't
       // be before, since a call to background() would wipe
       // out anything that had been drawn so far.
+      dequeueMouseEvents();
+      dequeueKeyEvents();
+
+      /*
       if (qmouseMoved) {
         mouseMoved();
         qmouseMoved = false;
@@ -480,6 +529,7 @@ public class PApplet extends Applet
         mouseDragged();
         qmouseDragged = false;
       }
+      */
       g.endFrame();
     }  // end synch
     update();
@@ -501,120 +551,274 @@ public class PApplet extends Applet
   // ------------------------------------------------------------
 
 
-  public void mousePressed() { } // for beginners
+  MouseEvent mouseEventQueue[] = new MouseEvent[10];
+  int mouseEventCount;
 
-  // this needn't set mouseX/Y
-  // since mouseMoved will have already set it
+  protected void enqueueMouseEvent(MouseEvent e) {
+    synchronized (mouseEventQueue) {
+      if (mouseEventCount == mouseEventQueue.length) {
+        MouseEvent temp[] = new MouseEvent[mouseEventCount << 1];
+        System.arraycopy(mouseEventQueue, 0, temp, 0, mouseEventCount);
+        mouseEventQueue = temp;
+      }
+      mouseEventQueue[mouseEventCount++] = e;
+    }
+  }
+
+  protected void dequeueMouseEvents() {
+    synchronized (mouseEventQueue) {
+      for (int i = 0; i < mouseEventCount; i++) {
+        mouseEvent = mouseEventQueue[i];
+        handleMouseEvent(mouseEvent);
+      }
+      mouseEventCount = 0;
+    }    
+  }
+
+
+  /**
+   * Actually take action based on a mouse event.
+   * Internally updates mouseX, mouseY, mousePressed, and mouseEvent.
+   * Then it calls the event type with no params, 
+   * i.e. mousePressed() or mouseReleased() that the user may have
+   * overloaded to do something more useful.
+   */
+  protected void handleMouseEvent(MouseEvent event) {
+    mouseX = event.getX();
+    mouseY = event.getY();
+    mouseEvent = event;
+
+    // this used to only be called on mouseMoved and mouseDragged 
+    // change it back if people run into trouble
+    if (firstMouseEvent) {
+      pmouseX = mouseX;
+      pmouseY = mouseY;
+      firstMouseEvent = false;
+    }
+
+    switch (event.getID()) {
+    case MouseEvent.MOUSE_PRESSED: 
+      mousePressed = true;
+      mousePressed();
+      break;
+    case MouseEvent.MOUSE_RELEASED:
+      mousePressed = false;
+      mouseReleased();
+      break;
+    case MouseEvent.MOUSE_CLICKED:
+      mouseClicked();
+      break;
+    case MouseEvent.MOUSE_DRAGGED:
+      mouseDragged();
+      break;
+    case MouseEvent.MOUSE_MOVED:
+      mouseMoved();
+      break;
+    }
+  }
+
+
+  /**
+   * Figure out how to process a mouse event. When loop() has been 
+   * called, the events will be queued up until drawing is complete.
+   * If noLoop() has been called, then events will happen immediately.
+   */
+  protected void checkMouseEvent(MouseEvent event) {
+    if (looping) {
+      enqueueMouseEvent(event);
+    } else {
+      handleMouseEvent(event);
+    }
+  }
+
+
+  /** 
+   * If you override this or any function that takes a "MouseEvent e"
+   * without calling its super.mouseXxxx() then mouseX, mouseY, 
+   * mousePressed, and mouseEvent will no longer be set.
+   */
   public void mousePressed(MouseEvent e) {
-    mouseEvent = e;
-    mousePressed = true;
-    mousePressed();
+    checkMouseEvent(e);
   }
 
-  public void mouseReleased() { }  // for beginners
-
-  // this needn't set mouseX/Y
-  // since mouseReleased will have already set it
   public void mouseReleased(MouseEvent e) {
-    mouseEvent = e;
-    mousePressed = false;
-    mouseReleased();
+    checkMouseEvent(e);
   }
 
-  public void mouseClicked() { }
-
-  public void mouseClicked(MouseEvent e) {  // can this be removed?
-    mouseClicked();
+  public void mouseClicked(MouseEvent e) {
+    checkMouseEvent(e);
   }
 
-  public void mouseEntered(MouseEvent e) { }
+  public void mouseEntered(MouseEvent e) { 
+    checkMouseEvent(e);
+  }
 
-  public void mouseExited(MouseEvent e) { }
-
-  public void mouseDragged() { } // for beginners
+  public void mouseExited(MouseEvent e) { 
+    checkMouseEvent(e);
+  }
 
   public void mouseDragged(MouseEvent e) {
-    mouseEvent = e;
-    qmouseX = e.getX();
-    qmouseY = e.getY();
-    if (firstMouseEvent) {
-      // set valid coordinates for pmouseX/Y so that they don't
-      // default to zero which would make them draw from the corner.
-      pmouseX = qmouseX;
-      pmouseY = qmouseY;
-      firstMouseEvent = false;
-    }
-    mousePressed = true;
-
-    // call mouseDragged() on next trip through loop
-    qmouseDragged = true;
-    //mouseDragged();
+    checkMouseEvent(e);
   }
-
-  public void mouseMoved() { }   // for beginners
 
   public void mouseMoved(MouseEvent e) {
-    mouseEvent = e;
-    qmouseX = e.getX();
-    qmouseY = e.getY();
-    if (firstMouseEvent) {
-      // set valid coordinates for pmouseX/Y so that they don't
-      // default to zero which would make them draw from the corner.
-      pmouseX = qmouseX;
-      pmouseY = qmouseY;
-      firstMouseEvent = false;
-    }
-    mousePressed = false;
-
-    // call mouseMoved() on next trip through loop
-    qmouseMoved = true;
-    //mouseMoved();
+    checkMouseEvent(e);
   }
+
+
+  /**
+   * Mouse has been pressed, and should be considered "down"
+   * until mouseReleased() is called. If you must, use
+   * int button = mouseEvent.getButton();
+   * to figure out which button was clicked. It will be one of:
+   * MouseEvent.BUTTON1, MouseEvent.BUTTON2, MouseEvent.BUTTON3
+   * Note, however, that this is completely inconsistent across
+   * platforms.
+   */
+  public void mousePressed() { }
+
+  /**
+   * Mouse button has been released.
+   */
+  public void mouseReleased() { }
+
+  /**
+   * When the mouse is clicked, mousePressed() will be called, 
+   * then mouseReleased(), then mouseClicked(). Note that 
+   * mousePressed is already false inside of mouseClicked().
+   */
+  public void mouseClicked() { }
+
+  /**
+   * Mouse button is pressed and the mouse has been dragged.
+   */
+  public void mouseDragged() { }
+
+  /**
+   * Mouse button is not pressed but the mouse has changed locations.
+   */
+  public void mouseMoved() { }
 
 
   // ------------------------------------------------------------
 
 
-  // if the key is a coded key, i.e. up/down/ctrl/shift/alt
-  // the 'key' comes through as 0xffff (65535)
-  // to make this simpler for beginners, just set the
-  // value for key as the code, so that the code looks like:
-  // keyPressed() {   if (key == UP) { ... }  }
-  // instead of
-  // keyPressed() {   if (keyCode = 0xffff) { if (key == UP) { .. } } }
-  // or something else more difficult
+  KeyEvent keyEventQueue[] = new KeyEvent[10];
+  int keyEventCount;
 
+  protected void enqueueKeyEvent(KeyEvent e) {
+    synchronized (keyEventQueue) {
+      if (keyEventCount == keyEventQueue.length) {
+        KeyEvent temp[] = new KeyEvent[keyEventCount << 1];
+        System.arraycopy(keyEventQueue, 0, temp, 0, keyEventCount);
+        keyEventQueue = temp;
+      }
+      keyEventQueue[keyEventCount++] = e;
+    }
+  }
+
+  protected void dequeueKeyEvents() {
+    synchronized (keyEventQueue) {
+      for (int i = 0; i < keyEventCount; i++) {
+        keyEvent = keyEventQueue[i];
+        handleKeyEvent(keyEvent);
+      }
+      keyEventCount = 0;
+    }    
+  }
+
+
+  protected void handleKeyEvent(KeyEvent event) {
+    keyEvent = event;
+    key = event.getKeyChar();
+    keyCode = event.getKeyCode();
+
+    switch (event.getID()) {
+    case KeyEvent.KEY_PRESSED:  keyPressed();  break;
+    case KeyEvent.KEY_RELEASED: keyReleased(); break;
+    case KeyEvent.KEY_TYPED:    keyTyped();    break;
+    }
+  }
+
+
+  protected void checkKeyEvent(KeyEvent event) {
+    if (looping) {
+      enqueueKeyEvent(event);
+    } else {
+      handleKeyEvent(event);
+    }
+  }
+
+
+  /** 
+   * Overriding keyXxxxx(KeyEvent e) functions will cause the 'key', 
+   * 'keyCode', and 'keyEvent' variables to no longer work; 
+   * key events will no longer be queued until the end of draw();
+   * and the keyPressed(), keyReleased() and keyTyped() methods
+   * will no longer be called.
+   */
+  public void keyPressed(KeyEvent e) { checkKeyEvent(e); }
+  public void keyReleased(KeyEvent e) { checkKeyEvent(e); }
+  public void keyTyped(KeyEvent e) { checkKeyEvent(e); }
+
+
+  /**
+   * Called each time a single key on the keyboard is pressed. 
+   *
+   * Examples for key handling: 
+   * (Tested on Windows XP, please notify if different on other
+   * platforms, I have a feeling Mac OS and Linux may do otherwise)
+   * 
+   * 1. Pressing 'a' on the keyboard:
+   *    keyPressed  with key == 'a' and keyCode == 'A'
+   *    keyTyped    with key == 'a' and keyCode ==  0
+   *    keyReleased with key == 'a' and keyCode == 'A'
+   *    
+   * 2. Pressing 'A' on the keyboard:
+   *    keyPressed  with key == 'A' and keyCode == 'A'
+   *    keyTyped    with key == 'A' and keyCode ==  0
+   *    keyReleased with key == 'A' and keyCode == 'A'
+   *
+   * 3. Pressing 'shift', then 'a' on the keyboard (caps lock is off):
+   *    keyPressed  with key == CODED and keyCode == SHIFT
+   *    keyPressed  with key == 'A'   and keyCode == 'A'
+   *    keyTyped    with key == 'A'   and keyCode == 0
+   *    keyReleased with key == 'A'   and keyCode == 'A'
+   *    keyReleased with key == CODED and keyCode == SHIFT
+   * 
+   * 4. Holding down the 'a' key.
+   *    The following will happen several times, 
+   *    depending on your machine's "key repeat rate" settings:
+   *    keyPressed  with key == 'a' and keyCode == 'A'
+   *    keyTyped    with key == 'a' and keyCode ==  0
+   *    When you finally let go, you'll get:  
+   *    keyReleased with key == 'a' and keyCode == 'A'
+   *
+   * 5. Pressing and releasing the 'shift' key
+   *    keyPressed  with key == CODED and keyCode == SHIFT
+   *    keyReleased with key == CODED and keyCode == SHIFT
+   *    (note there is no keyTyped)
+   * 
+   * 6. Pressing the tab key in an applet with Java 1.4 will 
+   *    normally do nothing, but PApplet dynamically shuts
+   *    this behavior off if Java 1.4 is in use (tested 1.4.2_05 Windows). 
+   *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
+   *    Not tested on other platforms or for 1.3.
+   */
   public void keyPressed() { }
 
-  public void keyPressed(KeyEvent e) {
-    keyEvent = e;
-    keyPressed = true;
-    key = e.getKeyChar();
-    if (key == 0xffff) key = e.getKeyCode();
-    //keyCode = e.getKeyCode();
-    keyPressed();
-  }
 
+  /**
+   * See keyPressed().
+   */
   public void keyReleased() { }
 
-  public void keyReleased(KeyEvent e) {
-    keyEvent = e;
-    keyPressed = false;
-    key = e.getKeyChar();
-    if (key == 0xffff) key = e.getKeyCode();
-    //keyCode = e.getKeyCode();
-    keyReleased();
-  }
 
+  /** 
+   * Only called for "regular" keys like letters, 
+   * see keyPressed() for full documentation. 
+   */
   public void keyTyped() { }
-
-  public void keyTyped(KeyEvent e) {
-    keyEvent = e;
-    key = e.getKeyChar();
-    if (key == 0xffff) key = e.getKeyCode();
-    //keyCode = e.getKeyCode();
-    keyTyped();
-  }
 
 
   // ------------------------------------------------------------
@@ -945,7 +1149,7 @@ public class PApplet extends Applet
       System.err.println("cursor() error: Java 1.2 or higher is " + 
                          "required to set cursors");
       System.err.println("                (You're using version " + 
-                         nf((float) jdkVersion, 1, 1) + ")");
+                         jdkVersionStr + ")");
       return;
     }
 

@@ -37,11 +37,11 @@ public class PFont implements PConstants {
 
   //int firstChar = 33; // always
   int charCount;
-  PImage images[];
+  public PImage images[];
 
   // image width, a power of 2
   // note! these will always be the same
-  int iwidth, iheight; 
+  public int iwidth, iheight; 
   // float versions of the above
   float iwidthf, iheightf;
 
@@ -49,15 +49,15 @@ public class PFont implements PConstants {
   int mbox;
 
   int value[];  // char code
-  int height[]; // height of the bitmap data
-  int width[];  // width of bitmap data
-  int setWidth[];  // width displaced by the char
-  int topExtent[];  // offset for the top
-  int leftExtent[];  // offset for the left
+  public int height[]; // height of the bitmap data
+  public int width[];  // width of bitmap data
+  public int setWidth[];  // width displaced by the char
+  public int topExtent[];  // offset for the top
+  public int leftExtent[];  // offset for the left
 
   // scaling, for convenience
   float size; 
-  float leading;
+  public float leading;
 
   int ascii[];  // quick lookup for the ascii chars
   boolean cached;
@@ -230,7 +230,7 @@ public class PFont implements PConstants {
   }
 
 
-  float kern(char a, char b) { 
+  public float kern(char a, char b) { 
     return 0;  // * size, but since zero..
   }
 
