@@ -26,6 +26,7 @@
 import java.awt.*; // for window 
 import java.awt.event.*; // also for window
 import java.io.*;
+import java.lang.reflect.*;
 
 #ifndef RXTX
 import javax.comm.*;
@@ -74,6 +75,7 @@ public class PdeRuntime implements PdeMessageConsumer {
                                             " " + x1 + " " + y1);
         new PdeMessageSiphon(process.getInputStream(), this);
         new PdeMessageSiphon(process.getErrorStream(), this);
+
       } else {
         Class c = Class.forName(className);
         applet = (BApplet) c.newInstance();
@@ -94,6 +96,29 @@ public class PdeRuntime implements PdeMessageConsumer {
           }
         }
         applet.start();
+
+        // check to see if it's a draw mode applet
+        boolean drawMode = false;
+        try {
+          Method meth[] = c.getDeclaredMethods();
+          for (int i = 0; i < meth.length; i++) {
+            //System.out.println(meth[i].getName());
+            if (meth[i].getName().equals("draw")) drawMode = true;
+          }
+        } catch (SecurityException e) { 
+          e.printStackTrace();
+        }
+        // if it's a draw mode app, don't even show on-screen
+        // until it's finished rendering, otherwise the width/height
+        // may not have been properly set.
+        if (drawMode) {
+          while (applet.frame != 1) {
+            try {
+              //System.out.println("waiting to complete drawing");
+              Thread.sleep(5);
+            } catch (InterruptedException e) { }
+          }
+        }
 
         if (editor.presenting) {
           //window = new Window(new Frame());
@@ -150,7 +175,15 @@ public class PdeRuntime implements PdeMessageConsumer {
 
         //System.out.println(SystemColor.windowBorder.toString());
 
-        //window.setLayout(new BorderLayout());
+        /*
+        int appletWidth = applet.width;
+        int appletHeight = applet.height;
+        if ((appletWidth == 0) || (appletHeight == 0)) {
+          appletWidth = BApplet.DEFAULT_WIDTH;
+          appletWidth = BApplet.DEFAULT_HEIGHT;
+        }
+        */
+
         window.setLayout(null);
         if (editor.presenting) {
           window.setBounds((screen.width - applet.width) / 2,
