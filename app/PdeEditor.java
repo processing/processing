@@ -87,10 +87,10 @@ public class PdeEditor extends JFrame
 
   RunButtonWatcher watcher;
 
-  PdeRuntime runtime;
-  boolean externalRuntime;
-  String externalPaths;
-  File externalCode;
+  //PdeRuntime runtime;
+  //boolean externalRuntime;
+  //String externalPaths;
+  //File externalCode;
 
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
@@ -626,7 +626,7 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Add file...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          addFile();
+          sketch.addFile();
         }
       });
     menu.add(item);
@@ -701,10 +701,10 @@ public class PdeEditor extends JFrame
       });
     menu.add(item);
 
-    item = newMenuItem("Proce55ing.net", '5');
+    item = newMenuItem("Visit processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL("http://Proce55ing.net/");
+          PdeBase.openURL("http://processing.org/");
         }
       });
     menu.add(item);
@@ -1110,12 +1110,8 @@ public class PdeEditor extends JFrame
    *    X. afterwards, some of these steps need a cleanup function
    */
   public void doRun(boolean present) {
-    //System.out.println(System.getProperty("java.class.path"));
-
-    //doStop();
     doClose();
     running = true;
-    //System.out.println("RUNNING");
     buttons.run();
 
     // spew some blank lines so it's clear what's new on the console
@@ -1137,120 +1133,8 @@ public class PdeEditor extends JFrame
     } catch (Exception e) {
       e.printStackTrace();
     }
+    sketch.cleanup();
   }
-
-      /*
-      String program = textarea.getText();
-      history.record(program, PdeHistory.RUN);
-
-      // if an external editor is being used, need to grab the
-      // latest version of the code from the file.
-      if (PdePreferences.getBoolean("editor.external")) {
-        // history gets screwed by the open..
-        String historySaved = history.lastRecorded;
-        //handleOpen(sketchName, sketchFile, sketchDir);
-        //handleOpen(sketch.name, sketch.file, sketch.directory);
-        handleOpen(sketch);
-        history.lastRecorded = historySaved;
-      }
-
-      // temporary build folder is inside 'lib'
-      // this is added to the classpath by default
-      tempBuildPath = "lib" + File.separator + "build";
-      File buildDir = new File(tempBuildPath);
-      if (!buildDir.exists()) {
-        buildDir.mkdirs();
-      }
-      // copy (changed) files from data directory into build folder
-      sketch.updateDataDirectory(buildDir);
-
-      // make up a temporary class name to suggest
-      int numero1 = (int) (Math.random() * 10000);
-      int numero2 = (int) (Math.random() * 10000);
-      //String className = TEMP_CLASS + "_" + numero1 + "_" + numero2;
-      String className = "Temporary_" + numero1 + "_" + numero2;
-
-      // handle building the code
-      className = build(program, className, tempBuildPath, false);
-
-      // if the compilation worked, run the applet
-      if (className != null) {
-
-        if (externalPaths == null) {
-          externalPaths = 
-            PdeCompiler.calcClassPath(null) + File.pathSeparator + 
-            tempBuildPath;
-        } else {
-          externalPaths = 
-            tempBuildPath + File.pathSeparator +
-            PdeCompiler.calcClassPath(null) + File.pathSeparator +
-            externalPaths;
-        }
-
-        // get a useful folder name for the 'code' folder
-        // so that it can be included in the java.library.path
-        String codeFolderPath = "";
-        if (externalCode != null) {
-          codeFolderPath = externalCode.getCanonicalPath();
-        }
-
-        // create a runtime object
-        runtime = new PdeRuntime(this, className,
-                                 externalRuntime, 
-                                 codeFolderPath, externalPaths);
-
-        // if programType is ADVANCED
-        //   or the code/ folder is not empty -> or just exists (simpler)
-        // then set boolean for external to true
-        // include path to build in front, then path for code folder
-        //   when passing the classpath through
-        //   actually, build will already be in there, just prepend code
-
-        // use the runtime object to consume the errors now
-        //messageStream.setMessageConsumer(runtime);
-        // no need to bother recycling the old guy
-        PdeMessageStream messageStream = new PdeMessageStream(runtime);
-
-        // start the applet
-        runtime.start(presenting ? presentLocation : appletLocation,
-                         new PrintStream(messageStream));
-                         //leechErr);
-
-        // spawn a thread to update PDE GUI state
-        watcher = new RunButtonWatcher();
-
-      } else {
-        // [dmose] throw an exception here?
-        // [fry] iirc the exception will have already been thrown
-        cleanTempFiles(); //tempBuildPath);
-      }
-    } catch (PdeException e) { 
-      // if it made it as far as creating a Runtime object, 
-      // call its stop method to unwind its thread
-      if (runtime != null) runtime.stop();
-      cleanTempFiles(); //tempBuildPath);
-
-      // printing the stack trace may be overkill since it happens
-      // even on a simple parse error
-      //e.printStackTrace();
-
-      error(e);
-
-    } catch (Exception e) {  // something more general happened
-      e.printStackTrace();
-
-      // if it made it as far as creating a Runtime object, 
-      // call its stop method to unwind its thread
-      if (runtime != null) runtime.stop();
-
-      cleanTempFiles(); //tempBuildPath);
-    }        
-      */
-
-    //engine = null;
-    //System.out.println("out of doRun()");
-    // required so that key events go to the panel and <key> works
-    //graphics.requestFocus();  // removed for pde    
 
 
   public void handleStop() {  // called by menu or buttons
@@ -1268,16 +1152,13 @@ public class PdeEditor extends JFrame
   public void doStop() {
     if (runtime != null) runtime.stop();
     if (watcher != null) watcher.stop();
-    //System.out.println("stop2");
     message(EMPTY);
 
-    // the buttons are still null during the constructor
+    // the buttons are sometimes still null during the constructor
+    // is this still true? are people still hitting this error?
     /*if (buttons != null)*/ buttons.clear();
 
-    //System.out.println("stop4");
     running = false;
-    //System.out.println("NOT RUNNING");
-    //System.out.println("stop5");
   }
 
 
@@ -1286,11 +1167,8 @@ public class PdeEditor extends JFrame
    * mode, this will always be called instead of doStop().
    */
   public void doClose() {
-    //System.out.println("doclose1");
     if (presenting) {
       presentationWindow.hide();
-      //if ((presentationWindow == null) || 
-      //(!presentationWindow.isVisible())) {
 
     } else {
       try {
@@ -1303,26 +1181,20 @@ public class PdeEditor extends JFrame
         }
       } catch (NullPointerException e) { }
     }
-    //System.out.println("doclose2");
 
     if (running) {
-      //System.out.println("was running, will call doStop()");
       doStop();
     }
 
-    //System.out.println("doclose3");
     try {
       if (runtime != null) {
         runtime.close();  // kills the window
         runtime = null; // will this help?
       }
     } catch (Exception e) { }
-    //System.out.println("doclose4");
     //buttons.clear();  // done by doStop
 
-    //if (buildPath != null) {
-    cleanTempFiles(); //buildPath);
-    //}
+    sketch.cleanup();
 
     // toxi_030903: focus the PDE again after quitting presentation mode
     toFront();
@@ -1947,51 +1819,6 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void addFile() {
-    // get a dialog, select a file to add to the sketch
-    String prompt = "Select an image or other data file to copy to your sketch";
-    FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
-    //if (sketchFile != null) {
-    //fd.setDirectory(sketchFile.getPath());
-    //}
-    fd.show();
-
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-    if (filename == null) return;
-
-    // copy the file into the folder
-    // if people don't want it to copy, they can do it by hand
-    File sourceFile = new File(directory, filename);
-
-    File destFile = null;
-
-    // if the file appears to be code related, drop it 
-    // into the code folder, instead of the data folder
-    if (filename.toLowerCase().endsWith(".class") || 
-        filename.toLowerCase().endsWith(".jar") || 
-        filename.toLowerCase().endsWith(".dll") || 
-        filename.toLowerCase().endsWith(".jnilib") || 
-        filename.toLowerCase().endsWith(".so")) {
-      File codeFolder = new File(sketchDir, "code");
-      if (!codeFolder.exists()) codeFolder.mkdirs();
-      destFile = new File(codeFolder, filename);
-
-    } else if (filename.toLowerCase().endsWith(".pde") ||
-               filename.toLowerCase().endsWith(".java")) {
-      destFile = new File(sketchDir, filename);
-
-    } else {
-      File dataFolder = new File(sketchDir, "data");
-      if (!dataFolder.exists()) dataFolder.mkdirs();
-      destFile = new File(dataFolder, filename);
-    }
-    //System.out.println("copying from " + sourceFile);
-    //System.out.println("copying to " + destFile);
-    PdeBase.copyFile(sourceFile, destFile);
-  }
-
-
   // TODO iron out bugs with this code under
   //      different platforms, especially macintosh
   public void highlightLine(int lnum) {
@@ -2046,7 +1873,7 @@ public class PdeEditor extends JFrame
   // ...................................................................
 
 
-  public void error(PdeException e) {   // part of PdeEnvironment
+  public void error(PdeException e) {
     if (e.line >= 0) highlightLine(e.line); 
 
     status.error(e.getMessage());
@@ -2054,14 +1881,14 @@ public class PdeEditor extends JFrame
   }
 
 
-  public void finished() {  // part of PdeEnvironment
+  public void finished() {
     running = false;
     buttons.clearRun();
     message("Done.");
   }
 
 
-  public void message(String msg) {  // part of PdeEnvironment
+  public void message(String msg) {
     status.notice(msg);
   }
   
@@ -2072,31 +1899,6 @@ public class PdeEditor extends JFrame
 
 
   // ...................................................................
-
-
-  /**
-   * Cleanup temporary files
-   */
-  protected void cleanTempFiles() {
-    if (tempBuildPath == null) return;
-
-    // if the java runtime is holding onto any files in the build dir, we
-    // won't be able to delete them, so we need to force a gc here
-    //
-    System.gc();
-
-    //File dirObject = new File(buildPath);
-    File dirObject = new File(tempBuildPath);
-
-    // note that we can't remove the builddir itself, otherwise
-    // the next time we start up, internal runs using PdeRuntime won't
-    // work because the build dir won't exist at startup, so the classloader
-    // will ignore the fact that that dir is in the CLASSPATH in run.sh
-    //
-    if (dirObject.exists()) {
-      PdeBase.removeDescendants(dirObject);
-    }
-  }
 
 
   /**
