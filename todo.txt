@@ -6,6 +6,7 @@ X test build macos9 version with JDK13 flag turned off
 X make buttons taller by 4 pixels (looking bad on macos9/macosx)
 X   change to uppercase (looks dumb on mac, and casey doesn't like)
 X set background color of buttons in EditorStatus
+X   modify to only change it under aqua.. does screwy things for windows
 X check splash screen and icons into cvs
 X macosx.. editor.status.font needs to be size 12
 X   same under windows, just wasn't being set properly before
@@ -15,12 +16,23 @@ X   tested to make sure it joins with the other pde.properties ok
 X setPixel(i, j, #99CC00);  
 X   not working anymore Syntax error: unexpected token: CC00
 X   problem was substitute only worked along with = 
+X perl should be ok to be cygwin perl.. try deinstalling activestate
+o should fix paren balancing bug.. 
+X   just disable by default for alpha
+o background() not working
+X   checked but couldn't duplicate
+X change editorlistener properties to use underscores
+X imageMode() was gone.. now replaced
 
-_ get icon in macos9/macosx/windows formats
-_ check osname under win98 and linux
-_ should fix paren balancing bug.. or disable by default for alpha
-_ background() not working
-_ imageMode() is gone
+_ collapse pdeengine/pderunner/kjcengine
+_   remove 'extends' from kjcengine, make an instance of Main
+_     may need to subclass at.dms.kjc.Main to override the exit()
+_   make pdeengine a class
+_   remove pderunner, collapse into pdeengine
+
+_ save window position (only during session) of sketch run window
+_ present mode should hide editor frame
+_ present mode doesn't work for draw()
 
 _ mouse coords coming from window when outside applet.. bad!
 void setup() { 
@@ -48,23 +60,6 @@ _ box is not opaque
 > rotateY(0.5);
 > box(40);
 
-_ size() not being called in setup is gonna cause lots of headaches
-
-b _ option to delete current project
-_ save window position (only during session) of sketch run window
-_ present mode should hide editor frame
-_ present mode doesn't work for draw()
-
-_ get macutils to build under cygwin. argh.
-_   get to build under macosx?
-
-_ macos may be superior platform for building
-_   retain unix file permissions for linux
-_   resource fork goodness for the mac
-_   hhmmm
-_ for jgl version of bagel, jgl.jar needs to be in classpath
-_ perl should be ok to be cygwin perl.. try deinstalling activestate
-
 bagel
 a _ fold simpleserial into BApplet
 a _   set serial properties inside bagel in kjcengine
@@ -78,6 +73,7 @@ a _   serial works poorly for starting/stopping applets
 a _     this is behaving strangely
 a _     breaks on every 2nd run when using serial apps (or others?)
 a _       try calling gc on stop as well
+a _ size() not being called in setup is gonna cause lots of headaches
 
 ui
 a _ saving to gzipped 'versions' file
@@ -89,6 +85,7 @@ a _ console work
 a _   make scrollbar for console
 a _   convert tabs to 8 spaces
 a o   line wrapping (but save info for resize? noo..)
+a _ option to delete current project
 
 play
 a _ shouldn't substitute f's for: "Univers76.vlw.gz";
@@ -124,6 +121,8 @@ a _   or maybe just background of the awt object it sits on
 a _ use type/creator Pde1
 a _ crashes when people click on help in top bar (same in DBN) [macos9]
 a _ use osx utilities to setfileinfo for .jar files etc
+a _ get macutils to build under cygwin. argh.
+a _   get to build under macosx?
 
 macosx
 a _ how to make double-clickable version for osx
@@ -156,8 +155,9 @@ a _   something that docks better to java serial api
 a _ check to see if lines for error messages are off
 
 release
+a _ get icon in macos9/macosx/windows formats
+a _ check osname under win98 and linux
 a _ write message to people who signed up for p5 alpha
-a _ collapse pdeengine/pderunner/kjcengine a bit
 a _ figure out about distributing source
 a _   kjc is gnu, so source needs to be available
 a _   make it simpler to build the code.. 
@@ -165,6 +165,9 @@ a _     buzz.pl actually no longer needed (no ifdefs)
 a _     use a regular makefile for everything
 a _ get all of casey's examples into the sketchbook
 a _   these should become the standard test cases for everything
+a _ faq on where the project is going
+a _   information on how to submit bugs to p5-bugs@proce55ing.net
+a _     include release number, platform, and a copy of the code
 
 web
 a _ online discussion/talk system (gets people using the site too)
@@ -374,6 +377,9 @@ b _ ability to include other code from sketchbook directory
 b _   compile entire sketchbook on startup, check for new files on compile?
 b _ Compiler.disable() message is weird and doesn't always work
 b _   probably just remove it for now
+b _ bug in paren balancing
+b _   paren problems comes from overusing parens (too many closing)
+b _   image[first[i], 0, 0) hitting last paren causes jump to top
 
 cosmetic [lower priority]
 b _ run button can be highlighted to show how long thread is alive
@@ -406,9 +412,6 @@ _   mode for when no full animation taking place
 _   otherwise machine is continually maxed out while app is running
 _ quicktime exporter or image sequence export
 _   fairly quick--just use code from dbn
-_ bug in paren balancing
-_   paren problems comes from overusing parens (too many closing)
-_   image[first[i], 0, 0) hitting last paren causes jump to top
 _ stop() method in applet should stop kjc environment
 _   should be able to call stop() to 'quit' an applet
 _ run java code besides processing applets 
@@ -660,3 +663,8 @@ dist directories contain only the files specific to that platform
   3) files are lf converted (i.e. notes.txt)
 _ comm.jar now needs to be in CLASSPATH for build environment
 
+_ macos may be superior platform for building
+_   retain unix file permissions for linux
+_   resource fork goodness for the mac
+_   hhmmm
+_ for jgl version of bagel, jgl.jar needs to be in classpath

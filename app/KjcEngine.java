@@ -521,6 +521,8 @@ public class KjcEngine extends at.dms.kjc.Main implements PdeEngine {
 	}
 	//System.out.println("got it " + s);
       }
+    } else {
+      System.out.println("message mode not set");
     }
   }
 
@@ -567,7 +569,7 @@ public class KjcEngine extends at.dms.kjc.Main implements PdeEngine {
     int numero1 = (int) (Math.random() * 10000);
     int numero2 = (int) (Math.random() * 10000);
     tempClass = TEMP_CLASS + "_" + numero1 + "_" + numero2;
-    //System.err.println("KjcEngine.started");
+    //System.out.println("KjcEngine.started");
     writeJava(tempClass, true);
     //System.err.println("KjcEngine wrote java");
     //System.out.println("thread active count is " + Thread.activeCount());

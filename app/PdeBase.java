@@ -378,7 +378,6 @@ public class PdeBase implements ActionListener {
       editor.doQuit();
       //editor.initiate(Editor.QUIT);
 
-
     } else if (command.equals("Run")) {
       editor.doRun(false);
 

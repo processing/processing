@@ -2,7 +2,7 @@ import java.io.*;
 //import java.util.*;
 
 
-public class PdeRunner implements Runnable {
+public class PdeRunner /*implements Runnable*/ {
   //DbnGraphics graphics;
   //PdeEnvironment env;
   PdeEditor editor;
@@ -55,9 +55,13 @@ public class PdeRunner implements Runnable {
   public void run() {
     state = RUNNER_STARTED;
     //graphics.reset();  // remove for pde
+    //System.out.println("running");
 
     try {
       if (program.length() == 0) {
+	// hotspot vm or jikes 1.16 requires something
+	// to be here.. bad code getting compiled somewhere
+	System.out.println("no program");
 
 	/*
       } else if (program.indexOf('#') < 2) { //charAt(0) == '#') {
@@ -97,6 +101,7 @@ public class PdeRunner implements Runnable {
 	engine.start();
 	forceStop = false;
 	*/
+	//System.out.println("over here");
 
 	//engine = new KjcEngine(program, "lib", editor);
 	//this.buildPath = "lib" + File.separator + "build";  // TEMPORARY
@@ -119,8 +124,11 @@ public class PdeRunner implements Runnable {
 	System.out.println("out: " + cp2);
 	System.setProperties(props);
 	*/
+	//System.out.println("over here2");
 
 	engine = new KjcEngine(program, buildPath, dataPath, editor);
+	//System.out.println("over here3");
+
 	engine.start();
 
 	/*
@@ -148,6 +156,7 @@ public class PdeRunner implements Runnable {
       state = RUNNER_ERROR;
       forceStop = false;
       this.stop();
+      e.printStackTrace();
       editor.error(e);
 
     } catch (Exception e) {
