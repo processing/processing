@@ -590,7 +590,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Create font...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new PdeFontBuilder(sketch.dataFolder);
+          new PdeFontBuilder().show(sketch.dataFolder);
         }
       });
     menu.add(item);
