@@ -53,7 +53,7 @@ public class PdeSketch {
 
   boolean library;  // true if it's a library
 
-  File folder; //sketchFolder;
+  public File folder; //sketchFolder;
   File dataFolder;
   File codeFolder;
 
