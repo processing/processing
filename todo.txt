@@ -18,16 +18,62 @@ X   modify build/dist to use processing.exe
 X upgrade windows to jre 1.4.2
 X ask on bboard about macosx 1.3 vs 1.4 experiences
 X modified millis() to always update
-X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635;start=
+X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1058465635;start=
+X decision to pull macos9 support
+X   look into macos9 version of javac
+X get proper tab comments into source files
+X   http://www.jwz.org/doc/tabs-vs-spaces.html
+X get proper licensing info into source files
+
+macosx
+X had to disable MRJFileUtils stuff on osx at last minute before 53
+X   seems that file names changed between 1.3 and 1.4
+X   sorted this issue out, now it's re-enabled
+X change default font for jdk 1.4
+X reference launching working properly
+X reference doesn't launch on mac (mKoser) 
+X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038424448
+X tweak for java 1.4 
+X   need to add a line to the properties file
+o   include a note about this in the readme, include url for download
+o     connect.apple.com
+X   bug on p5 bboard: http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1037829938;start=0
+running 1.4 from the command line:
+/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Commands/java 
+Info.plist, setting JVMVersion
+* 1.3.1 - only use JDK 1.3.1, even if later versions are available. 
+* 1.3* - use any version of JDK 1.3.x. Do not use JDK 1.4 even if it's dflt.
+* 1.3+ - use the latest JDK version from JDK 1.3 onward, up to default JDK. 
+* 1.4+ - use JDK 1.4 or later, even if an earlier JDK is the default. 
+X control-click (right-click?) for macosx doesn't show popup
+X   in jedittextarea.. so added isPopupTrigger to events as well
 
 dh X save last-used serial to sketch.properties on quit
 dh X rename sketch 'can't rename' error (file being kept open)
 dh X   open sketch, make a change, save, run, rename -> error
+dh X context menu cut/copy/paste
+dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
+dh X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800
 
 
 ..................................................................
 
 
+BEN'S PILE OF NEAR-IMMEDIACY (assume there's a bf next to all these)
+
+bf _ horizontal scroller on the mac has enormous range
+bf _ make a note about macosx problems with 1.4
+bf _   currently the only fix is to switch to java 1.3
+
+_ horizontal scroller 
+
+_ error message dialog?
+_   maybe something that shows stack trace 
+_   with an 'email this' button? (include source code too?)
+
+mac
+_ update the readme to note that macos9 is suspended
+_ set nice background for disk image on macosx
 _ try installing serial adapter with p5
 _   tom igoe is using rxtx 2.1.6, patch that into p5
 _   libs from 2.1.6 download for osx seem to work
@@ -35,17 +81,24 @@ _     write script to handle installation, etc.
 _     (maybe do this from inside p5?) 
 _     will need to be done for gl4java as well
 
-bf _ bring linux up to 1.4
-bf _ pde_keywords.properties isn't getting copied into work/lib
+linux
+_ bring linux up to 1.4
+_   grab rxtx for linux and include with distribution
+_ pde_keywords.properties isn't getting copied into work/lib
 
-mac stuff
-bf _ set nice background for disk image on macosx
 
-language stuff
-bf _ actionscript has nice hastables.. as does perl/python
-bf _   would be nice to get better implementation in there
+thesis / acg
+bf _ fix bezier curve issues
+bf _   take a look at sourceforge bugs
 
-bf _ write p5 language spec
+bf b _ curves
+bf b _   curveMode(), curveMode to tweak the s parameter of catmullrom
+bf b _   setting accuracy of curve segments
+bf b _     right now it's hardwired at 20, should be adjustable
+bf b _   function to evaluate bezier or catmullrom points
+bf b _     used heavily in genome valence, asked about on the bboard
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
+bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
 
 bf _ make bagel more usable as standalone
 bf _   breakout BGraphics (have its own BImage)
@@ -53,19 +106,31 @@ bf _   breakout BApplet into BComponent ? (fix out-of-bounds mouse)
 bf _   possible use of BUtils ?
 bf _   write documentation on general use
 bf _     along with how to download from sourceforge (anonpass is blank)
-
+bf _   needs to be used as a component, without applet 
+bf _   but retain functionality, ie. image i/o
+bf _   exports pixels or a BImage or does MemoryImageSource itself
+bf _   move math functions into utility library associated
+bf _     with bagel, because those will be useful on other bagel platforms
+bf _     pApplet will call BagelMath.whatever, so still looks like cos()
 bf _ need to resolve issues between rendering screen/file
 bf _   illustrator-based rendering needs to work for ars projects
 bf _   screen may be 400x400 pixels, but file be 36x36"
+bf _ opengl export / rendering mode
+bf _   currently implemented, but somewhat broken
+bf _   finish this once all the line code is done
 
-bf _ horizontal scroller on the mac has enormous range
-bf _ make a note about macosx problems with 1.4
-bf _   currently the only fix is to switch to java 1.3
+bf b _ perlin noise 1D. noise() 
 
-bf _ look into macos9 version of javac
+bf b _ saveBytes, saveStrings
+bf b _   file output, save strings or pile of bytes
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1056311967;start=0
 
-bf _ need note about setting classpath on platforms when using expert
-bf _ jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
+bf b _ some flag to know whether applet is online or not
+bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
+bf b _   fix link() and loadStream code once that's fixed
+
+_ need note about setting classpath on platforms when using expert
+o   jikes prolly needs cygwin1.dll, and maybe cygiconv-2.dll
 
 
 licensing
@@ -80,10 +145,6 @@ bf _     more info about use is in package.html
 bf _     http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jedit/jEdit/org/gjt/sp/jedit/syntax/
 bf _     http://community.jedit.org/modules.php?op=modload&name=news&file=article&sid=225&mode=thread&order=0&thold=0
 
-bf _ get proper tab comments into source files
-bf _   http://www.jwz.org/doc/tabs-vs-spaces.html
-
-bf _ get proper licensing info into source files
 bf _ make sure all linefeeds are consistent (unix)
 bf _ write notes about p5 code spec
 
@@ -97,40 +158,14 @@ _   set decent fonts (probably same as editor above), looks bad on mac
 _   remove the border around the edge
 _   what's with the 2 blank lines on startup?
 
-bf b _ make bagel usable on its own as a drawing surface
-bf b _   needs to be used as a component, without applet 
-bf b _   but retain functionality, ie. image i/o
-bf b _   exports pixels or a BImage or does MemoryImageSource itself
-bf b _   move math functions into utility library associated
-bf b _     with bagel, because those will be useful on other bagel platforms
-bf b _     pApplet will call BagelMath.whatever, so still looks like cos()
-
-bf b _ opengl export / rendering mode
-bf b _   currently implemented, but somewhat broken
-bf b _   finish this once all the line code is done
+language stuff
+bf _ write p5 language spec
+bf _ actionscript has nice hastables.. as does perl/python
+bf _   would be nice to get better implementation in there
 
 bf _ look into eclipse ide a little more
 
 bf _ too many frames drawn before window visible - especially on mac
-
-bf b _ curves
-bf b _   curveMode(), curveMode to tweak the s parameter of catmullrom
-bf b _   setting accuracy of curve segments
-bf b _     right now it's hardwired at 20, should be adjustable
-bf b _   function to evaluate bezier or catmullrom points
-bf b _     used heavily in genome valence, asked about on the bboard
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1053449577;start=0
-bf b _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1057393989;start=0
-
-bf b _ perlin noise 1D. noise() 
-
-bf b _ saveBytes, saveStrings
-bf b _   file output, save strings or pile of bytes
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1056311967;start=0
-
-bf b _ some flag to know whether applet is online or not
-bf b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
-bf b _   fix link() and loadStream code once that's fixed
 
 bf b _ if sketchbook.dir is set, makes new sketchbook folder
 bf b _   reads sketchbook properly from other folder
@@ -161,8 +196,6 @@ bf b _   thread includes code for the 2D case
 
 ks b _ background(BImage)
 ks b _   also creating background image inside setup()
-
-_ save console output to a file?
 
 
 ////////////////////////////////////////////////////////////////////
@@ -569,9 +602,6 @@ dh b _ find/replace
 dh b _   ctrl-f for find, g for find next, h for next occurrence of selected
 dh b _   "look up in reference" function for selecting keywords
 dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1055003940
-dh b _ context menu cut/copy/paste
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052447215;start=0
-dh b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1052077800
 
 
 PDE / Details
@@ -769,13 +799,8 @@ b _   jre icon not appearing in the systray
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
 
 
-DISTRIBUTION / Mac OS
-b _ is video working (qtjava in path) on macos9?
+DISTRIBUTION / Mac OS X
 b _ double-check to see if wheel mouse is working
-b _ had to disable MRJFileUtils stuff on osx at last minute before 53
-b _   seems that file names changed between 1.3 and 1.4
-b _ reference doesn't launch on mac (mKoser) 
-b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038424448
 b _ handlers for basic events
 b _   MRJAboutHandler (just show splash screen)
 b _     image for 'about processing'
@@ -787,22 +812,13 @@ b _     under osx, app won't get doc unless app already launched
 b _ dataInputStream, setUseCaches on the url to false
 b _   URLConnection.setUseCaches(false)
 b _   parent.obj.close() on the url
-b _ set file type/creator for .pde files.. TEXTPde1
-b _   also for .jar and .html for files on export
-b _   not sure whether to enable this for osx or not.. 
+b X set file type/creator for .pde files.. TEXTPde1
 
-
-DISTRIBUTION / Mac OS 9
-b _ make sure editor window is front so that error line highlights
-b _ set file type for html files
-b _   why is bbedit the type for the other files? make simpletext
-
-
-DISTRIBUTION / Mac OS X
+b _ build gl4java for java 1.4
 b _ rxtx is a problem in general.. how to improve installation
 b _ report of a problem with the rxtx installer being bad
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1048517796;start=0
-b _ remove 'quit' from file menu
+b _ remove 'quit' from file menu (osx only)
 b _ Event.consume() doesn't work on entry fields 
 b _   manifests itself in sketch naming, can't be constrained
 b _   may not be the case under swing?
@@ -811,18 +827,20 @@ b _   no events seem to be coming through at all
 b _ splash screen 
 b _ select all (apple-a) on azerty keyboard is quitting the app
 b _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986;start=0
-b _ tweak for java 1.4 
-b _   need to add a line to the properties file
-b _   include a note about this in the readme, include url for download
-b _     connect.apple.com
-b _   bug on p5 bboard: http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1037829938;start=0
-running 1.4 from the command line:
-/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Commands/java 
-Info.plist, setting JVMVersion
-* 1.3.1 - only use JDK 1.3.1, even if later versions are available. 
-* 1.3* - use any version of JDK 1.3.x. Do not use JDK 1.4 even if it's dflt.
-* 1.3+ - use the latest JDK version from JDK 1.3 onward, up to default JDK. 
-* 1.4+ - use JDK 1.4 or later, even if an earlier JDK is the default. 
+
+
+DISTRIBUTION / Mac OS 9
+
+todo
+_ set file type for jar and html files on export
+_   (not done on osx, safari doesn't set for html files)
+_   why is bbedit the type for the other files? make simpletext
+
+untested/likely broken
+_ reference launching
+_ control/right-click for edit area context menu
+_ make sure editor window is front so that error line highlights
+_ is video working (qtjava in path) on macos9?
 
 
 DISTRIBUTION / Linux

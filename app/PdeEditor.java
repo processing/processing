@@ -35,6 +35,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+#ifdef MACOS
+import com.apple.mrj.*;
+#endif
 
 //public class PdeEditor extends Panel {
 public class PdeEditor extends JPanel {
@@ -933,14 +936,19 @@ afterwards, some of these steps need a cleanup function
       // make empty pde file
       File sketchFile = new File(sketchDir, sketchName + ".pde");
       new FileOutputStream(sketchFile);
+
 #ifdef MACOS
-      /*
-      if (PdeBase.platform == PdeBase.MACOS9) {
-        MRJFileUtils.setFileTypeAndCreator(sketchFile, 
+      // thank you apple, for changing this
+      //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
+
+      // jdk13 on osx, or jdk11
+      // though apparently still available for 1.4
+      if ((PdeBase.platform == PdeBase.MACOS9) ||
+          (PdeBase.platform == PdeBase.MACOSX)) {
+        MRJFileUtils.setFileTypeAndCreator(sketchFile,
                                            MRJOSType.kTypeTEXT,
                                            new MRJOSType("Pde1"));
       }
-      */
 #endif
 
       // make 'data' 'applet' dirs inside that
@@ -1520,8 +1528,16 @@ afterwards, some of these steps need a cleanup function
       ps.close();
 
 #ifdef MACOS
+      // this chunk left disabled, because safari doesn't actually
+      // set the type/creator of html files it makes
       /*
-      if (PdeBase.platform == PdeBase.MACOS9) {
+      // thank you apple, for changing this
+      //com.apple.eio.setFileTypeAndCreator(String filename, int, int);
+
+      // jdk13 on osx, or jdk11
+      // though apparently still available for 1.4
+      if ((PdeBase.platform == PdeBase.MACOS9) ||
+          (PdeBase.platform == PdeBase.MACOSX)) {
         MRJFileUtils.setFileTypeAndCreator(sketchFile, 
                                            MRJOSType.kTypeTEXT,
                                            new MRJOSType("MSIE"));
