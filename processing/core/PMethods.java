@@ -65,6 +65,7 @@ public interface PMethods {
 
   //
 
+  /*
   // WOULD LIKE A NICER NAME
   static public boolean saveHeaderTIF(OutputStream output,
                                       int width, int height);
@@ -78,6 +79,7 @@ public interface PMethods {
 
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height);
+  */
 
   public void save(String filename);
 
