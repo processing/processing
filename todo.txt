@@ -33,6 +33,7 @@ _ finish color function inside applet
 _   do by simplifying stroke/fill/background inside bagel
 _     these should be done w/ a switch (STROKE, FILL, BK, OTHER)
 _ font support
+_   use gzip to compress bitmaps (made 115k vlw font -> 16k)
 _   loadImage/loadFont or getImage/getFont?
 _   text(char c), text(string s)
 _   current acu fonts are broken
