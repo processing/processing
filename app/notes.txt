@@ -1,3 +1,27 @@
+ABOUT REV 0023
+
+- versions 21 through 23 dealt with getting the beast to work smoothly
+  for the numer workshop
+
+
+ABOUT REV 0020
+
+major release, significant, code-destroying changes
+
+- largeish handful of api changes (see docs for update)
+
+- naming of api for BagelImage and others changed to BImage
+
+- ProcessingApplet is now BApplet
+
+- doesn't work on the mac due to update problem
+
+- new user interface (not all features work yet)
+
+- no longer need to use 'f' with floats
+  in fact, don't ever use f with floats b/c you'll get an error
+
+
 ABOUT REV 0019
 
 noticeable changes:

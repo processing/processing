@@ -16,7 +16,8 @@ public class PdeApplet extends Applet
 
 #ifndef PLAYER
   String encoding;
-  PdeEnvironment environment;
+  //PdeEnvironment environment;
+  PdeEditor editor;
 #endif
 
   public void init() {
@@ -37,7 +38,7 @@ public class PdeApplet extends Applet
       PdePlayer player = 
 	((PdePlayer) Class.forName(program).newInstance());
       add(player);
-      //environment = player;
+      //editor = player;
       player.init(this);
       player.start();
     } catch (Exception e) {
@@ -82,12 +83,13 @@ public class PdeApplet extends Applet
 	}
       } 
       //add(hostess = new PdeEditor(this, program));
-      PdeEditor editor = new PdeEditor(this, program);
+      //PdeEditor editor = new PdeEditor(this, program);
+      editor = new PdeEditor(this, program);
       //if (beautify) editor.doBeautify(); 
 
       setLayout(new BorderLayout());
       add("Center", editor);
-      environment = editor;
+      //editor = editor;
 
       //convert();
 #endif
@@ -125,8 +127,8 @@ public class PdeApplet extends Applet
 
 #ifndef PLAYER
   public void destroy() {
-    if (environment != null) {
-      environment.terminate();
+    if (editor != null) {
+      editor.terminate();
     }
   }
 #endif
