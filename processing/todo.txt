@@ -128,12 +128,12 @@ X make BVideo subclass BImage
 o   make sure the high bits are getting set as opaque
 X   get() now sets high bits, reference will explain PVideo.pixels[]
 X video keeps running, cpu load high, even after app killed
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086800853
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302179;start=0
 X just locks up after running examples, then does the 'can't delete' thing
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060313779
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302509;start=0
 X problems with hanging video when not in the root of the c drive
 X   is this because of the LIBRARY_PATH having spaces?
-X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084464062;start=0
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302580;start=0
 X first row of video pixels are black
 X   casey says it may only be his camera (verified to be ok on my machine)
 X selecting input source (wintv board and quickcam installed.. problem)
@@ -185,25 +185,28 @@ X   c:/fry/processing/build/windows/work/lib/build/Temporary_8501_3382.java:1:63
 X fix dist.sh for macosx
 X include some of the simong libraries
 X move libraries around in distribution to resemble sketchbook
+X things will freeze if winvdig not installed (todo over in core)
+X   video hanging without a camera installed
+X   provide a useful error message when winvdig not installed (for capture)
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096294414;start=0
 
 040926 later
 X add "archive" option since history is gone
 
+040927 morning
+X change how library path is setup (make simpler)
+
 _ macosx - check to see if new linemetrics stuff is working better
 
 
-VIDEO
-_ things will freeze if winvdig not installed (todo over in core)
-_   video hanging without a camera installed
-_   provide a useful error message when winvdig not installed (for capture)
-_     also be able to set one in particular
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1065185464
-
 README
+if you're having trouble with video examples crashing processing or locking up your system, you should try placing the processing folder into the root level of your C:\ drive, or at least inside a set of folders that have no spaces in the name. we haven't determined if this is a quicktime for java or processing bug yet, but it's been a problem for lots of people.
 _ write revisions.txt and readme.txt
 _   go through the board and move messages
 _ make the whole thing an html file?
 _ cut out some of the chatter
+_ a garbage filled classpath can cause trouble
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302833;start=0
 _ processing won't start..
 _   people with non-ascii chars in the folder name 
 _     at least try to catch this? is that possible?
@@ -346,6 +349,10 @@ _ exception in setup() on external app doesn't kill run button
 _   also doesn't kill external vm
 _ make preferences a modal dialog
 _ package processing.app for PdeBase, PdeEditor..
+
+
+_ video - try to replicate bug that causes hang with camera
+_   happens when winvdig, camera or quicktime are not properly installed
 
 
 0071 or later
