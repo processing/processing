@@ -578,7 +578,7 @@ b _   regexps: http://javaregex.com/cgi-bin/pat/tutorial.asp
 2 _   use numbered versioning? 
 2 _   give updater feedback (progress dialog, error msg)
 2 _ error messages with link to what's wrong
-2 _ lots of ui ideas from adrien in the bboard
+2 _ lots of ui ideas from adrien in the bbedit
 2 _ some ui stuff from fdb
 2 _   rename the button options to verbs
 2 _   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1032909986
@@ -596,6 +596,27 @@ if you dream it, you can do it.
 2 _     http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051301511
 2 _ features fry wants
 2 _   emacs indents and key commands
+2 _     ctrl-s for inline search, ctrl-s again to skip to next occurence (ctrl-g to cancel)
+2 _     ctrl-x ctrl-f to open a file (with tab completion for filename)
+2 _     ctrl-x ctrl-w to save a file (with tab completion for filename)
+2 _     ctrl-v/esc-v for page up/down
+2 _     ctrl-g to cancel an action
+2 _     ctrl-a, ctrl-e for beginning/end of line
+2 _     ctrl-x ctrl-s to save
+2 _     ctrl-x k to kill buffer
+2 _     ctrl-x ctrl-c to quit
+2 _     ctrl-up, ctrl-down to jump between paragraphs
+2 _     ctrl-left, ctrl-right to jump between words (skips whitespace)
+2 _     ctrl-space for set mark, esc-w to copy, ctrl-w to cut
+2 _     ctrl-shift-dash (or ctrl-underscore) for undo
+2 _     ctrl-y to unyank a piece of text (just paste?)
+2 _     ctrl-x 2 to split the screen horizontally
+2 _       ctrl-x 1 to make a single buffer
+2 _       ctrl-x o to switch between split buffers
+2 _     wheel mouse
+2 _     missing from jedit: 
+2 _       esc-w doesn't work (no esc for key commands)
+2 _       open/save files brings up ugly dialog with no caret
 2 _   want emacs-style editor that's faster loading than emacs
 
 
