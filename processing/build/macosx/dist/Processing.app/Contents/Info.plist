@@ -3,7 +3,7 @@
 <plist version="0.9">
 <dict>
 	<key>CFBundleName</key>
-	<string>finch</string>
+	<string>Processing</string>
 	<key>CFBundleVersion</key>
 	<string>10.2</string>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -44,7 +44,7 @@
 			<string>true</string>
 			<key>com.apple.hwaccel</key>
 			<string>true</string>
-			<key>com.apple.macos.use-file-dialog-packages</key>
+			<key>apple.awt.use-file-dialog-packages</key>
 			<string>false</string>
 		</dict>
 	</dict>

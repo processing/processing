@@ -296,14 +296,14 @@ public class PdePreferences extends JComponent {
     pain.add(textarea);
     */
     label = new JLabel("More preferences can be edited directly in the file");
-    label.setForeground(Color.GRAY);
+    label.setForeground(Color.gray);
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
     top += d.height; // + GUI_SMALL;
 
     label = new JLabel(preferencesFile.getAbsolutePath());
-    label.setForeground(Color.GRAY);
+    label.setForeground(Color.gray);
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
