@@ -101,6 +101,8 @@ public class PdeBase implements ActionListener {
     menu.addActionListener(this);
     menubar.add(menu);
 
+    // beautify, open, print, play save were key commands
+
     // completely un-functional edit menu
     menu = new Menu("Edit");
     menu.add(new MenuItem("Undo"));
@@ -117,6 +119,8 @@ public class PdeBase implements ActionListener {
     menu.add(new MenuItem("Play"));
     menu.add(new MenuItem("Present"));
     menu.add(new MenuItem("Stop"));
+    menu.addSeparator();
+    menu.add(new MenuItem("Beautify"));    
     menu.addActionListener(this);
     menubar.add(menu);
 
@@ -226,7 +230,6 @@ public class PdeBase implements ActionListener {
 	//submenu.add(entries[j]);
       }
       menu.addSeparator();
-
 
       // other available subdirectories
 
