@@ -1,3 +1,12 @@
+ABOUT REV 0030
+
+- fix bug where comments were being removed from exported files
+
+- new 'color' datatype, the following are now valid:
+  color c = color(23, 45, 99);
+  color c = #ff00cc;
+
+
 ABOUT REV 0029
 
 - actually updated pde.jar, export, pde.properties, BApplet.java 
