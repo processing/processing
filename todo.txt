@@ -1,23 +1,22 @@
-0040
-X fix problem with pde.properties
+0041
+X fill(#ffcc00) wasn't working for rect, calci not being set
+X   also affected background and stroke
+X export was failing if no data dir
+X move background() out of draw() for draw mode apps
+X click on project name to quickly go to rename mode
 
 
 pde
-a _ move background() out of draw() for draw mode apps
-a _ click on project name to quickly go to rename mode
+a _ make win/linux write stderr to stderr.txt like the mac
+a _   this will be useful until i implement scrollbar
 a _ make scrollbar for console
 a _ remove projects if created but nothing happens to them
 a _ see if play being highlighted can be implemented again
 a _   especially important because of speed issues
 a _ text editor? jedit's textarea class? hmm? hmm? 
-a _ make win/linux write stderr to stderr.txt like the mac
-a _   this will be useful until i implement scrollbar
 
 macosx
 a _ arrow keys don't work in the textarea
-
-windows
-a _ splash screen.. check win95 book for simple code
 
 web / docs
 a _ finish writing 'readme.txt'
