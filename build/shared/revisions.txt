@@ -1,3 +1,22 @@
+ABOUT REV 0038 - 30 july 2002
+
+[ the excitement doesn't stop ]
+
+- fancy new packaging for all platforms... all four platforms now have
+  double-clickable applications, with icons and everything. macos9
+  even has a splash screen. linux doesn't have an icon because icons
+  only slow unix people down. would like to have splash screen on
+  other platforms but probably no time to implement before alpha.
+
+- lots of work in getting macosx and macos9 versions cleaner, stabler,
+  and prettier. os9 is still super slow (at least on my poopy
+  powerbook) but it runs. 
+
+- serial port code now working (well) under windows
+
+- examples are now included in the sketchbook
+
+
 ABOUT REV 0037 - 27 july 2002
 
 [ a few great things ] 
