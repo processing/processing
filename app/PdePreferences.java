@@ -136,7 +136,7 @@ public class PdePreferences extends JComponent {
         }
 
       } catch (Exception e) {
-        System.err.println("Error reading pde.properties");
+        System.err.println("Error reading default settings");
         e.printStackTrace();
       }
     }
@@ -238,13 +238,13 @@ public class PdePreferences extends JComponent {
 
     externalEditorBox = new JCheckBox("Use external editor");
     pain.add(externalEditorBox);
-    d = newSketchPromptBox.getPreferredSize();
-    newSketchPromptBox.setBounds(left, top, d.width, d.height);
+    d = externalEditorBox.getPreferredSize();
+    externalEditorBox.setBounds(left, top, d.width, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + BETWEEN;
 
 
-    // 
+    // More preferences are in the ...
 
     String blather = 
       "More preferences are in the 'lib' folder inside text files\n" +
@@ -260,6 +260,9 @@ public class PdePreferences extends JComponent {
     d = textarea.getPreferredSize();
     textarea.setBounds(left, top, d.width, d.height);
     top += d.height + BETWEEN;
+
+    // OK Cancel
+
 
     //
 
@@ -338,12 +341,6 @@ public class PdePreferences extends JComponent {
         windowX = -1;
       }
 
-      String name = skprops.getProperty("sketch.name");
-      String path = skprops.getProperty("sketch.directory");
-      String user = skprops.getProperty("user.name");
-
-      String what = path + File.separator + name + ".pde";
-
       if (windowX != -1) {
         String dividerLocation = 
           skprops.getProperty("editor.divider.location");
@@ -351,6 +348,14 @@ public class PdePreferences extends JComponent {
           splitPane.setDividerLocation(Integer.parseInt(dividerLocation));
         }
       }
+
+      // 
+
+      String name = skprops.getProperty("sketch.name");
+      String path = skprops.getProperty("sketch.directory");
+      //String user = skprops.getProperty("user.name");
+
+      String what = path + File.separator + name + ".pde";
 
       if (new File(what).exists()) {
         userName = user;
@@ -360,6 +365,8 @@ public class PdePreferences extends JComponent {
         userName = "default";
         skNew();
       }
+
+      // 
 
       String serialPort = skprops.getProperty("serial.port");
       if (serialPort != null) {

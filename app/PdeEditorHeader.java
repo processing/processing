@@ -30,7 +30,7 @@ import java.io.*;
 
 public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   static final String SKETCH_TITLER = "sketch";
-  static final String USER_TITLER = "user";
+  //static final String USER_TITLER = "user";
 
   //static final Color primaryColor = Color.white;
   //static final Color secondaryColor = new Color(153, 153, 153);
@@ -50,9 +50,9 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
   boolean sketchModified;
 
   //private String user;
-  int userLeft;
-  int userRight;
-  int userTitleLeft;
+  //int userLeft;
+  //int userRight;
+  //int userTitleLeft;
 
   Font font;
   FontMetrics metrics;
@@ -89,7 +89,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
 
   public void reset() {
     sketchLeft = 0;
-    userLeft = 0;
+    //userLeft = 0;
     update();
   }
 
@@ -132,14 +132,14 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
         // who cares, just resize
         sizeW = size.width; 
         sizeH = size.height;
-        userLeft = 0; // reset
+        //userLeft = 0; // reset
       }
     }
 
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-      userLeft = 0; // reset
+      //userLeft = 0; // reset
       imageW = sizeW;
       imageH = sizeH;
       offscreen = createImage(imageW, imageH);
@@ -168,9 +168,9 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     //}
 
     //if (userLeft == 0) {
-    userLeft = sizeW - 20 - metrics.stringWidth(editor.userName);
-    userTitleLeft = userLeft - PdeEditor.INSET_SIZE - 
-      metrics.stringWidth(USER_TITLER);
+    //userLeft = sizeW - 20 - metrics.stringWidth(editor.userName);
+    //userTitleLeft = userLeft - PdeEditor.INSET_SIZE - 
+    //metrics.stringWidth(USER_TITLER);
 
     //user = editor.userName;
     //if (user == null) user = "";
@@ -181,13 +181,13 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
-    boolean boringUser = editor.userName.equals("default");
+    //boolean boringUser = editor.userName.equals("default");
 
     g.setFont(font); // needs to be set each time
     g.setColor(secondaryColor);
     g.drawString(SKETCH_TITLER, sketchTitleLeft, baseline);
     if (sketchModified) g.drawString("\u00A7", modifiedLeft, baseline);
-    if (!boringUser) g.drawString(USER_TITLER, userTitleLeft, baseline);
+    //if (!boringUser) g.drawString(USER_TITLER, userTitleLeft, baseline);
 
     g.setColor(primaryColor);
     //g.drawString(sketch, sketchLeft, baseline);
@@ -196,8 +196,7 @@ public class PdeEditorHeader extends Panel /* implements ActionListener*/ {
     //String additional = sketchModified ? " \u2022" : "";
     g.drawString(editor.sketchName, sketchLeft, baseline);
 
-    //if (!boringUser) g.drawString(user, userLeft, baseline);
-    if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
+    //if (!boringUser) g.drawString(editor.userName, userLeft, baseline);
 
     //g.setColor(fgColor[mode]);
     //g.drawString(message, PdeEditor.INSET_SIZE, (sizeH + fontAscent) / 2);
