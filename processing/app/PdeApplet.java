@@ -59,18 +59,22 @@ public class PdeApplet extends Applet
       //System.err.println("editor dammit");
       //System.exit(0);
       boolean beautify = false; 
+      boolean convertSemicolons = false;
       String program = get("program"); 
       if (program != null) { 
 	program = readFile(program);
       } else {
-        program = get("inline_program"); 
+        program = get("inline_program");
+	convertSemicolons = true;
       } 
       if (program != null) {
 	// don't beautify if it's java code
 	if (program.indexOf("extends PdePlayer") == -1) {
 	  // don't convert ; to \n if scheme  
 	  if (program.charAt(0) != ';') {  
-	    program = program.replace(';', '\n'); 
+	    if (convertSemicolons) {
+	      program = program.replace(';', '\n'); 
+	    }
 	    // not scheme, but don't beautify if it's python 
 	    if (program.charAt(0) != '#') 
 	      beautify = true; 
