@@ -43,8 +43,9 @@ class PdeMessageSiphon implements Runnable {
     thread.start();
   }
 
-  public void run() {
-    
+
+  public void run() {    
+
     String currentLine;
 
     try {
@@ -56,9 +57,8 @@ class PdeMessageSiphon implements Runnable {
       }
     } catch (Exception e) { 
       System.err.println("PdeMessageSiphon err " + e);
-      thread.stop();
+      //thread.stop();  // implicit (and no longer supported)
     }
-    
     //System.err.println("siphon thread exiting");
   }
 }

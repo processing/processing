@@ -26,6 +26,7 @@
 
 public class PdeException extends Exception {
   int line = -1;
+  int column = -1;
 
   public PdeException() { }
 
@@ -37,6 +38,13 @@ public class PdeException extends Exception {
   public PdeException(String message, int line) {
     super(massage(message));
     this.line = line;
+  }
+
+  // 0060 currently only used by the new preprocessor
+  public PdeException(String message, int line, int column) {
+    super(massage(message));
+    this.line = line;
+    this.column = column;
   }
 
   // make static so that super() can call it
