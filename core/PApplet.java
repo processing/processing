@@ -495,7 +495,7 @@ public class PApplet extends Applet
       fpsLastMillis = 0;
 
       if (thread != null) {
-        //thread.interrupt();  // wake from sleep
+        thread.interrupt();  // wake from sleep
       }
     }
   }
@@ -576,7 +576,8 @@ public class PApplet extends Applet
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "     5b enter paint sync");
 
-    synchronized (g) {
+    //synchronized (g) {
+    synchronized (glock) {
       if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                 "     5c inside paint sync");
       //System.out.println("5b paint has sync");
