@@ -1,3 +1,25 @@
+UNSORTED
+_ work towards alpha release
+_   alpha transparency
+_   line drawing problems
+_     need 3d version of bresenham
+_ image caching.. to be used as texture memory on accel platforms
+_ make processing useful/usable
+_   start working on writing pdf files
+_   loading images/files from same dir as .pde file
+_   option to use jikes
+_   use external editor or write a usable one
+_ build windows app for testing bagel c++ ... -lgdi32 for cygwin
+_ write simple class for lcd panel 
+_   build adapter to plug directly into db9 serial port
+_   figure out characters used on screen by default (check web)
+_   make unicode converter from unicode char -> lcd screen bytes
+_   hook up lcd screen to power/serial port to test
+_   code to reprogram lcd screen
+_ look through rabbit api
+_   look into integration of cmd line compiler
+
+
 0025
 X change 'rect' to 'plane' (point/line/plane)
 X   also rectMode to planeMode
