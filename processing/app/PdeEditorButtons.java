@@ -265,6 +265,10 @@ public class PdeEditorButtons extends Panel {
   }
 
   private int findSelection(int x, int y) {
+    // if app loads slowly and cursor is near the buttons 
+    // when it comes up, the app may not have time to load
+    if ((y1 == null) || (y2 == null)) return -1;
+
     for (int i = 0; i < buttonCount; i++) {
       if ((x > x1) && (y > y1[i]) &&
 	  (x < x2) && (y < y2[i])) {
