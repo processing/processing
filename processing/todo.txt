@@ -17,6 +17,7 @@ X first a syntax error, when fixed, causes NullPointerException 
 X   quitting the app makes things all better. argh.
 X   this just started with version37, it happens extrememely 
 X     frequently and should be easy to reproduce the error
+X images with imageMode set for simage() weren't working
 
 pde
 a _ see if play being highlighted can be implemented again
@@ -32,14 +33,6 @@ a _   "this is alpha, we're heading to beta with series of sm releases"
 a _ document serial a bit more in release notes
 a _ how do we encourage/point to updates?
 a _   auto updater? check for releases page in menu?
-
-
-a _ this code is not performing correctly
-BImage b;  // declare variable "b" of type BImage
-b = loadImage("image.gif");
-image(b, 0, 0);
-imageMode(CENTER);
-image(b, 0, 0);
 
 a _ this code is not performing correctly
 a _   (see example in reference for expected output)
@@ -62,6 +55,8 @@ BAGEL / high
 b _ better access to projX et al
 b _   what's a better name? calcX? or write to an array?
 b _   projectX, projectY, .. or projectedX ? 
+b _ images drawn from center don't work for simage()
+b _   currently calling slower image routine
 
 
 BAGEL / high & time consuming
