@@ -49,7 +49,7 @@ public class PSound {
 
   //int length;
   int position;
-  int data[];
+  int data[];  // 16 bit, from -32768 to +32767
 
 
   public PSound() { }  // for 1.3 subclass

@@ -1,6 +1,7 @@
 0077 core
 X bring back pmouseX/Y using a tricky method of storing separate
 X   values for inside draw() versus inside the event handler versions
+X   debug handling, and make firstMouse public
 
 covered in previous
 X before graphics engine change, attach jogl stuff
@@ -32,16 +33,20 @@ X add gzipInput and gzipOutput
 _ get regular graphics engine working again
 
 _ look for size() method to determine default size of applet
+_   (same as applet exporter function)
 _ when using core graphics, don't show applet frame until first frame
 _   (in opengl, open frame early, make sure this isn't inhibited)
+
+_ default to single byte input from serial port
+_   and add serial.setBuffer() for message length as alternative
+_   or serial.setDelimiter() to fire message on delim
 
 _ light(x, y, z, c1, c2, c3, TYPE)
 _   also BLight with same constructor, and on() and off() fxn
 
+_ be consistent about getXxx() methods
 
 // 
-
-_ be consistent about getXxx() methods
 
 _ basic sample audio playback needed for p5
 _   make separate java 1.1 and java 1.3 classes
