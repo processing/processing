@@ -908,6 +908,12 @@ public class PdeEditor extends JPanel {
 
     if (sketchModified) {
       status.prompt("Save changes to " + sketchName + "?");
+      //while ((status.mode == PdeEditorStatus.EDIT) ||
+      //     (status.mode == PdeEditorStatus.PROMPT)) {
+        //try {
+          //Thread.sleep(10);
+          //} catch (InterruptedException e) { } 
+      //}
 
     } else {
       checkModified2();
