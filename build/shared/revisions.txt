@@ -49,8 +49,12 @@ ABOUT REV 0046 - 20 november 2002
 
 [ a few of the known issues ]
 
+- this release is not available for mac os 9. there were problems
+  just before release, and there was no point in holding up the 
+  more important platforms for another week.
+
 - download size for windows is getting enormous. in the future will
-- switch to having people download and install java 1.4 separately.
+  switch to having people download and install java 1.4 separately.
 
 - mouse wheel only works on windows, because jdk 1.4 
   is required for mouse wheel, and osx is behind the times.
