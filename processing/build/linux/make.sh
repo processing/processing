@@ -26,7 +26,7 @@ else
   mkdir work/lib/build
   mkdir work/classes
 
-  cp dist/lib/pde_linux.properties work/lib/
+  #cp dist/lib/pde_linux.properties work/lib/
 
   # get the serial stuff
   echo Copying serial support from bagel dir
