@@ -5,6 +5,10 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
+#ifdef JEDIT
+import org.gjt.sp.jedit.textarea;
+#endif
+
 
 public class PdeEditor extends Panel {
 
@@ -37,7 +41,11 @@ public class PdeEditor extends Panel {
   PdeEditorHeader header;
   PdeEditorStatus status;
   PdeEditorConsole console;
+#ifndef JEDIT
   TextArea textarea;
+#else
+  JEditTextArea textarea;
+#endif
 
   // currently opened program
   String userName;   // user currently logged in
@@ -100,6 +108,7 @@ public class PdeEditor extends Panel {
     rightPanel.add("North", header);
 
     textarea = 
+#ifndef JEDIT
       new TextArea("",
 		   PdeBase.getInteger("editor.program.rows", 20),
 		   PdeBase.getInteger("editor.program.columns", 60),
@@ -112,6 +121,10 @@ public class PdeEditor extends Panel {
 	  frame.setCursor(Frame.CROSSHAIR_CURSOR);
 	}
       });
+#else
+    new JEditTextArea();
+#endif
+
     rightPanel.add("Center", textarea);
 
     Panel statusPanel = new Panel();
