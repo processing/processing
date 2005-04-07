@@ -1,4 +1,5 @@
 0083 core
+X fix double key events
 
 _ fix bezierVertex() for newer api
 
@@ -31,9 +32,6 @@ _ angleMode shouldn't be the first param
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
 
-GraphicsDevice theDevice =
-  frame.getGraphicsConfiguration().getDevice();
-
 _ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
 
 _ apply tint() to textures as well
@@ -57,6 +55,7 @@ _ make illustrator lib
 _ move really general things out of PConstants (X, Y, Z..)
 
 sound
+_ duration as an internal param, not a function
 _ When a sound is finished playing, it should return to 0 so it can play again
 _ Putting sound.loop() in draw() seemed to spawn multiple sounds threads?
 _ After a sound is paused, it will only play from where it was paused
@@ -161,6 +160,7 @@ _ Stroking a rect() leaves the upper right pixel off.
 
 
 api questions
+_ rename video.Camera to video.Video ?
 _ what to call firstMouse, implement rightMouse?
 _ should nf() handle commas as well?
 _   yes, and add nf(int what) so that non-padded version works
@@ -195,6 +195,21 @@ _   PFont.list() to return string list of all the available fonts
 _   for postscript, can grab the real font
 _   -> altho problem here is that really the fonts just need a name
 _      since needs to render to screen as well
+
+text api solutions
+_ store the font name in the vlw font file (at the end)
+o   could include multiple names for multi platforms
+_ is getFontList returning a different set of fonts from device2d?
+_   or is it only those with ps names?
+_ createFont() with a .ttf does a create font internally (1.3+ only)
+_   although the images aren't populated 
+_   until a P2D/P3D/OPENGL tries to draw them, which triggers it
+_   but if PGraphics2, just uses the built-in font
+_ how does ftgl handle tesselation? will our tesselator just work?
+_ createFont() also works for font names and just creating them
+_   if font name doesn't end with otf or ttf, then tries to create it
+_ illustrator api can get the ps name from the java font name
+_   since it's associated with the font file.. wee!
 
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
