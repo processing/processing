@@ -80,9 +80,14 @@ public class PApplet extends Applet
     // figure out which operating system
     // this has to be first, since editor needs to know
 
-    if (System.getProperty("mrj.version") != null) {  // running on a mac
-      platform = (platformName.equals("Mac OS X")) ?
-        MACOSX : MACOS9;
+    if (platformName.toLowerCase().indexOf("mac") != -1) {
+      // can only check this property if running on a mac
+      // on a pc it throws a security exception and kills the applet
+      // (but on the mac it does just fine)
+      if (System.getProperty("mrj.version") != null) {  // running on a mac
+        platform = (platformName.equals("Mac OS X")) ?
+          MACOSX : MACOS9;
+      }
 
     } else {
       String osname = System.getProperty("os.name");
@@ -4968,9 +4973,9 @@ v              PApplet.this.stop();
   }
 
 
-  public void set(int x1, int y1, PImage image) {
-    if (recorder != null) recorder.set(x1, y1, image);
-    g.set(x1, y1, image);
+  public void set(int dx, int dy, PImage src) {
+    if (recorder != null) recorder.set(dx, dy, src);
+    g.set(dx, dy, src);
   }
 
 
