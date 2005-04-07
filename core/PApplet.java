@@ -1097,6 +1097,22 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  protected boolean listenersAdded;
+
+  public void addListeners() {
+    if (!listenersAdded) {
+      addMouseListener(this);
+      addMouseMotionListener(this);
+      addKeyListener(this);
+      addFocusListener(this);
+      listenersAdded = true;
+    }
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
   MouseEvent mouseEventQueue[] = new MouseEvent[10];
   int mouseEventCount;
 
