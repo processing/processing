@@ -466,92 +466,49 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  /*
-  // properly debugged version from copy()
-  // in case the below one doesn't work
-
   public void set(int dx, int dy, PImage src) {
-    // source
     int sx = 0;
     int sy = 0;
     int sw = src.width;
     int sh = src.height;
 
-    // target
-    int tx = dx; // < 0 ? 0 : x;
-    int ty = dy; // < 0 ? 0 : y;
-    int tw = width;
-    int th = height;
-
-    if (tx < 0) {  // say if target x were -3
-      sx -= tx;    // source x -(-3) (or add 3)
-      sw += tx;    // source width -3
-      tw += tx;    // target width -3
-      tx = 0;      // target x is zero (upper corner)
+    if (dx < 0) {  // off left edge
+      sx -= dx;
+      sw += dx;
+      dx = 0;
     }
-    if (ty < 0) {
-      sy -= ty;
-      sh += ty;
-      th += ty;
-      ty = 0;
+    if (dy < 0) {  // off top edge
+      sy -= dy;
+      sh += dy;
+      dy = 0;
     }
-    if (tx + tw > width) {
-      int extra = (tx + tw) - width;
-      sw -= extra;
-      tw -= extra;
+    if (dx + sw > width) {  // off right edge
+      sw = width - dx;
     }
-    if (ty + th > height) {
-      int extra = (ty + th) - height;
-      sh -= extra;
-      sw -= extra;
+    if (dy + sh > height) {  // off bottom edge
+      sh = height - dy;
     }
 
-    for (int row = sy; row < sy + sh; row++) {
-      System.arraycopy(src.pixels, row*src.width + sx,
-                       pixels, (dy+row)*width + tx, sw);
-    }
+    // this could be nonexistant
+    if ((sw <= 0) || (sh <= 0)) return;
+
+    setImpl(dx, dy, sx, sy, sw, sh, src);
   }
-  */
 
 
-  public void set(int x1, int y1, PImage image) {
-    int x2 = x1 + image.width;
-    int y2 = y1 + image.height;
+  /**
+   * Internal function to actually handle setting a block of pixels that
+   * has already been properly cropped from the image to a valid region.
+   */
+  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+                         PImage src) {
+    int srcOffset = sy * src.width + sx;
+    int dstOffset = dy * width + dx;
 
-    // off to the top and/or left
-    if ((x2 < 0) || (y2 < 0)) return;
-
-    int ix1 = 0;
-    int iy1 = 0;
-    int ix2 = image.width;
-    int iy2 = image.height;
-
-    if (x1 < 0) {  // off left edge
-      ix1 += -x1;
-      x1 = 0;
-    }
-    if (y1 < 0) {  // off top edge
-      iy1 += - y1;
-      y1 = 0;
-    }
-    if (x2 >= width) {  // off right edge
-      ix2 -= x2 - width;
-      x2 = width;
-    }
-    if (y2 >= height) {  // off bottom edge
-      iy2 -= y2 - height;
-      y2 = height;
-    }
-
-    int src = iy1*image.width + ix1;
-    int dest = y1*width + x1;
-    int len = x2 - x1;
-
-    for (int y = y1; y < y2; y++) {
-      //for (int x = x1; x < x2; x++) {
-      System.arraycopy(image.pixels, src, pixels, dest, len);
-      src += len;
-      dest += len;
+    for (int y = sy; y < sy + sh; y++) {
+      System.arraycopy(src.pixels, srcOffset, pixels, dstOffset, sw);
+      srcOffset += src.width;
+      dstOffset += width;
     }
   }
 
