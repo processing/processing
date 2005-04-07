@@ -319,12 +319,12 @@ public class PGraphics extends PImage implements PConstants {
    * @param iheight viewport height
    */
   public PGraphics(int iwidth, int iheight, PApplet applet) {
-    if (applet != null) {
-      applet.addMouseListener(applet);
-      applet.addMouseMotionListener(applet);
-      applet.addKeyListener(applet);
-      applet.addFocusListener(applet);
-    }
+    if (applet != null) applet.addListeners();
+    //applet.addMouseListener(applet);
+    //applet.addMouseMotionListener(applet);
+    //applet.addKeyListener(applet);
+    //applet.addFocusListener(applet);
+    //}
     resize(iwidth, iheight);
   }
 
@@ -2079,7 +2079,7 @@ public class PGraphics extends PImage implements PConstants {
   public void defaultLights() {
     throw new RuntimeException("defaultLights() can only be used with depth()");
   }
-  
+
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
     throw new RuntimeException("light() can only be used with depth()");
