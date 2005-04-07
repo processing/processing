@@ -21,6 +21,7 @@ _   need to fix up the make/dist scripts for linux
 
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
+_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
 _   make sure that the applet is within the bounds of the current display?
 _   (from 0, 0 to width, height)
 
@@ -31,6 +32,8 @@ _   to run explicitly later
 _   this seems too complicated.. just make people restart
 
 _ ability to select monitor via preferences panel
+_   this applies to any applet that's run externally currently (verify)
+_   make it also work with anything that's run inside of p5 itself
 _ check current present code with multiple monitors
 _   if it's working, make it all reflection-based in PApplet
 

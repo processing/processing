@@ -85,6 +85,7 @@ public class PGraphicsGL extends PGraphics3 {
 
     //System.out.println("creating PGraphicsGL 5");
 
+    //System.out.println("adding canvas listeners");
     canvas.addMouseListener(applet);
     canvas.addMouseMotionListener(applet);
     canvas.addKeyListener(applet);
