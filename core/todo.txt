@@ -1,5 +1,20 @@
 0083 core
 X fix double key events
+X fix mrj.version security error on the pc
+X set() fixes for PGraphics2 and setImpl inside PGraphics
+
+_ make get/getImpl for PGraphics/PGraphics2
+_   make sure there's a loadPixels/updatePixels in PGraphics2
+_ rewrite getImpl/setImpl inside opengl
+_ make screen space fonts use get/set as well?
+_   too much to debug on their own
+
+_ get/set doesn't use tint at all
+
+_ apply tint() to textures as well
+_   otherwise no good way to color textures
+
+_ textMode(SCREEN) having issues
 
 _ fix bezierVertex() for newer api
 
@@ -33,9 +48,6 @@ _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
 
 _ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
-
-_ apply tint() to textures as well
-_   otherwise no good way to color textures
 
 _ cellular automata examples broken
 
@@ -206,6 +218,9 @@ _   although the images aren't populated
 _   until a P2D/P3D/OPENGL tries to draw them, which triggers it
 _   but if PGraphics2, just uses the built-in font
 _ how does ftgl handle tesselation? will our tesselator just work?
+_   main code is in FTVectoriser
+_   uses gluTessBeginContour and gluTessEndContour
+_   and then does 5 step sizes for each curveto
 _ createFont() also works for font names and just creating them
 _   if font name doesn't end with otf or ttf, then tries to create it
 _ illustrator api can get the ps name from the java font name

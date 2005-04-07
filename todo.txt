@@ -1,5 +1,8 @@
 0083 pde
 
+_ why is gl being added on export, no matter what? or is it?
+_ get both versions of size() properly detected on export
+
 _ external apps don't stop at all when 'stop' is hit
 _   worker thread is halting the app ala code folder bug
 _   could this be dealt with by using nio? 
@@ -14,7 +17,7 @@ _ external apps also seem to not do newlines properly on exceptions
 _ appendText launches a new thread for every blip of text
 _   this is totally wrong and really horks things
 
-_ fishwick library export stuff
+_ fishwick library export duplication stuff
 
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux

@@ -185,24 +185,6 @@ public class PGraphics2 extends PGraphics {
                  vertices[vertexCount - 1][MY],
                  vertices[vertexCount - 3][MX],
                  vertices[vertexCount - 3][MY]);
-        /*
-      if (vertexCount == 3) {
-        triangle(vertices[0][MX], vertices[0][MY],
-                 vertices[1][MX], vertices[1][MY],
-                 x, y);
-      } else if (vertexCount > 3) {
-        gpath = new GeneralPath();
-        // when vertexCount == 4, draw an un-closed triangle
-        // for indices 2, 3, 1
-        gpath.moveTo(vertices[vertexCount - 2][MX],
-                     vertices[vertexCount - 2][MY]);
-        gpath.lineTo(vertices[vertexCount - 1][MX],
-                     vertices[vertexCount - 1][MY]);
-        gpath.lineTo(vertices[vertexCount - 3][MX],
-                     vertices[vertexCount - 3][MY]);
-        draw_shape(gpath);
-      }
-        */
       }
       break;
 
@@ -216,7 +198,7 @@ public class PGraphics2 extends PGraphics {
         // when vertexCount > 3, draw an un-closed triangle
         // for indices 0 (center), previous, current
         gpath.moveTo(vertices[0][MX],
-                    vertices[0][MY]);
+                     vertices[0][MY]);
         gpath.lineTo(vertices[vertexCount - 2][MX],
                     vertices[vertexCount - 2][MY]);
         gpath.lineTo(x, y);
@@ -241,12 +223,6 @@ public class PGraphics2 extends PGraphics {
       // |   |   |
       // 1---3---5
       if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
-        //if (vertexCount == 4) {//
-        // note difference in winding order:
-        //quad(vertices[0][MX], vertices[0][MY],
-        //   vertices[2][MX], vertices[2][MY],
-        //   x, y,
-        //   vertices[1][MX], vertices[1][MY]);
         quad(vertices[vertexCount - 4][MX],
              vertices[vertexCount - 4][MY],
              vertices[vertexCount - 2][MX],
@@ -254,34 +230,14 @@ public class PGraphics2 extends PGraphics {
              x, y,
              vertices[vertexCount - 3][MX],
              vertices[vertexCount - 3][MY]);
-
-        /*
-      } else if ((vertexCount > 4) && ((vertexCount % 2) == 0)) {
-        gpath = new GeneralPath();
-        // when vertexCount == 6, draw an un-closed triangle
-        // for indices 2, 4, 5, 3
-        gpath.moveTo(vertices[vertexCount - 4][MX],
-                     vertices[vertexCount - 4][MY]);
-        gpath.lineTo(vertices[vertexCount - 2][MX],
-                     vertices[vertexCount - 2][MY]);
-        gpath.lineTo(x, y);
-        gpath.lineTo(vertices[vertexCount - 3][MX],
-                     vertices[vertexCount - 3][MY]);
-        draw_shape(gpath);
-        */
       }
       break;
 
     case POLYGON:
-      //case CONCAVE_POLYGON:
-      //case CONVEX_POLYGON:
-      //if (vertexCount == 1) {
       if (gpath == null) {
-        //System.out.println("starting poly path " + x + " " + y);
         gpath = new GeneralPath();
         gpath.moveTo(x, y);
       } else {
-        //System.out.println("continuing poly path " + x + " " + y);
         gpath.lineTo(x, y);
       }
       break;
@@ -292,7 +248,6 @@ public class PGraphics2 extends PGraphics {
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
-    //if (vertexCount == 0) {
     if (gpath == null) {
       throw new RuntimeException("Must call vertex() at least once " +
                                  "before using bezierVertex()");
@@ -385,9 +340,8 @@ public class PGraphics2 extends PGraphics {
     gpath = null;
   }
 
-  public void endShape() {
-    //System.out.println("endShape");
 
+  public void endShape() {
     switch (shape) {
     case LINE_STRIP:
       stroke_shape(gpath);
@@ -399,14 +353,10 @@ public class PGraphics2 extends PGraphics {
       break;
 
     case POLYGON:
-      //case CONCAVE_POLYGON:
-      //case CONVEX_POLYGON:
-      //System.out.println("finishing polygon");
       gpath.closePath();
       draw_shape(gpath);
       break;
     }
-
     shape = 0;
   }
 
@@ -424,7 +374,6 @@ public class PGraphics2 extends PGraphics {
 
   protected void stroke_shape(Shape s) {
     if (stroke) {
-      //System.out.println("stroking shape");
       g2.setColor(strokeColorObject);
       g2.draw(s);
     }
@@ -432,12 +381,10 @@ public class PGraphics2 extends PGraphics {
 
   protected void draw_shape(Shape s) {
     if (fill) {
-      //System.out.println("filling shape");
       g2.setColor(fillColorObject);
       g2.fill(s);
     }
     if (stroke) {
-      //System.out.println("stroking shape");
       g2.setColor(strokeColorObject);
       g2.draw(s);
     }
@@ -489,53 +436,10 @@ public class PGraphics2 extends PGraphics {
 
 
   protected void rectImpl(float x1, float y1, float x2, float y2) {
-    /*
-    switch (rectMode) {
-    case CORNERS:
-      rect.setFrameFromDiagonal(x1, y1, x2, y2);
-      break;
-    case CORNER:
-      rect.setFrame(x1, y1, x2, y2);
-      break;
-    case CENTER_RADIUS:
-      rect.setFrame(x1 - x2, y1 - y2, x1 + x2, y1 + y2);
-      break;
-    case CENTER:
-      rect.setFrame(x1 - x2/2.0f, y1 - y2/2.0f, x1 + x2/2.0f, y1 + y2/2.0f);
-      break;
-    }
-    */
     rect.setFrame(x1, y1, x2-x1, y2-y1);
     draw_shape(rect);
   }
 
-
-  /*
-  public void ellipse(float a, float b, float c, float d) {
-    float x = a;
-    float y = b;
-    float w = c;
-    float h = d;
-
-    if (ellipseMode == CORNERS) {
-      w = c - a;
-      h = d - b;
-
-    } else if (ellipseMode == CENTER_RADIUS) {
-      x = a - c;
-      y = b - d;
-      w = c * 2;
-      h = d * 2;
-
-    } else if (ellipseMode == CENTER) {
-      x = a - c/2f;
-      y = b - d/2f;
-    }
-
-    ellipse.setFrame(x, y, w, h);
-    draw_shape(ellipse);
-  }
-  */
 
   protected void ellipseImpl(float x, float y, float w, float h) {
     ellipse.setFrame(x, y, w, h);
@@ -557,18 +461,10 @@ public class PGraphics2 extends PGraphics {
       stop = -stop * RAD_TO_DEG;
 
       // ok to do this because already checked for NaN
-      //while (start < 0) start += 360;
-      //while (stop < 0) stop += 360;
       while (start < 0) {
         start += 360;
         stop += 360;
       }
-      /*
-      while (stop < 0) {
-        start += 360;
-        stop += 360;
-      }
-      */
       if (start > stop) {
         float temp = start;
         start = stop;
@@ -576,22 +472,6 @@ public class PGraphics2 extends PGraphics {
       }
     }
     float span = stop - start;
-
-    /*
-    float span = stop - start;
-    start -= span;
-
-    start *= RAD_TO_DEG;
-    span *= RAD_TO_DEG;
-    */
-
-    //start %= 360;
-    //System.out.println(RAD_TO_DEG*start + " " + RAD_TO_DEG*span);
-    //System.out.println(start + " " + span);
-
-    // start is int proper place, but the stop is the wrong way
-    //float stop = start;
-    //float start =
 
     // stroke as Arc2D.OPEN, fill as Arc2D.PIE
     if (fill) {
@@ -610,44 +490,14 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  public void bezier(float x1, float y1,
-                     float x2, float y2,
-                     float x3, float y3,
-                     float x4, float y4) {
-    GeneralPath gp = new GeneralPath();
-    gp.moveTo(x1, y1);
-    gp.curveTo(x2, y2, x3, y3, x4, y4);
-    gp.closePath();
-
-    draw_shape(gp);
-  }
-  */
-
-
+  /** Ignored (not needed) in Java 2D. */
   public void bezierDetail(int detail) {
-    // ignored in java2d
   }
 
+
+  /** Ignored (not needed) in Java 2D. */
   public void curveDetail(int detail) {
-    // ignored in java2d
   }
-
-
-  /*
-  public void curveTightness(float tightness) {
-    // TODO
-  }
-
-
-  public void curve(float x1, float y1,
-                    float x2, float y2,
-                    float x3, float y3,
-                    float x4, float y4) {
-    // TODO need inverse catmull rom to bezier matrix
-
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -659,9 +509,6 @@ public class PGraphics2 extends PGraphics {
                            int u1, int v1, int u2, int v2) {
     if (who.cache == null) {
       who.cache = new ImageCache(who);
-
-      //who.cache = new BufferedImage(who.width, who.height,
-      //                            BufferedImage.TYPE_INT_ARGB);
       who.updatePixels();  // mark the whole thing for update
     }
 
@@ -679,28 +526,6 @@ public class PGraphics2 extends PGraphics {
       cash.update();
       who.modified = false;
     }
-
-      /*
-    if (who.modified) {
-      ((ImageCache) who.cache).update();
-
-      // update the sub-portion of the image as necessary
-      BufferedImage bi = (BufferedImage) who.cache;
-
-      bi.setRGB(who.mx1,
-                who.my1,
-                who.mx2 - who.mx1,
-                who.my2 - who.my1,
-                who.pixels,
-                who.my1*who.width + who.mx1,  // offset for copy
-                who.width);  // scan size
-      //who.pixelsUpdated();
-      who.modified = false;
-    }
-      */
-
-    //int x2 = (int) (x + w);
-    //int y2 = (int) (y + h);
 
     g2.drawImage(((ImageCache) who.cache).image,
                        //(int) x, (int) y, x2, y2,
@@ -818,21 +643,6 @@ public class PGraphics2 extends PGraphics {
         // finally, do a setRGB based on tintedPixels
         image.setRGB(0, 0, source.width, source.height,
                      tintedPixels, 0, source.width);
-        /*
-        int argb2 = tint ? tintColor : 0xFFFFFFFF;
-        int a2 = (tintColor >> 24) & 0xff;
-        int r2 = (tintColor >> 16) & 0xff;
-        int g2 = (tintColor >> 8) & 0xff;
-        int b2 = (tintColor) & 0xff;
-
-          // multiply each of the color components into tintedPixels
-          for (int i = 0; i < tintedPixels.length; i++) {
-            int argb1 = source.pixels[i];
-            int a1 = (argb1 >> 24) & 0xff;
-            int r1 = (argb1 >> 16) & 0xff;
-            int g1 = (argb1 >> 8) & 0xff;
-            int b1 = (argb1) & 0xff;
-        */
       }
     }
   }
@@ -993,17 +803,8 @@ public class PGraphics2 extends PGraphics {
     if ((image.format != RGB) && (image.format != ARGB)) {
       throw new RuntimeException("background images should be RGB or ARGB");
     }
-
-    // make sure it's been properly updated
-    //check_image_cache(image);
-    // blit image to the screen
-    //g2.drawImage((BufferedImage) image.cache, 0, 0, null);
-    //graphics.drawImage((BufferedImage) image.cache, 0, 0, null);
+    // draw the image to screen without any transformations
     set(0, 0, image);
-    //push();
-    //resetMatrix();
-    //imageImpl(image, 0, 0, width, height, 0, 0, width, height);
-    //pop();
   }
 
 
@@ -1015,7 +816,6 @@ public class PGraphics2 extends PGraphics {
    * even if noDepth() was called before draw() exited.
    */
   public void clear() {
-    //System.out.println("clearing " + PApplet.hex(backgroundColor));
     g2.setColor(new Color(backgroundColor));
     g2.fillRect(0, 0, width, height);
   }
@@ -1086,7 +886,6 @@ public class PGraphics2 extends PGraphics {
 
   public PImage get(int x, int y, int w, int h) {
     if (imageMode == CORNERS) {  // if CORNER, do nothing
-      //x2 += x1; y2 += y1;
       // w/h are x2/y2 in this case, bring em down to size
       w = (w - x);
       h = (h - x);
@@ -1112,22 +911,14 @@ public class PGraphics2 extends PGraphics {
 
 
   /**
-   * This is used to both set the pixels[] array so that it can be
-   * manipulated, and it also returns a PImage object that can be
-   * messed with directly.
+   * Grab a copy of the current pixel buffer.
    */
-  /*
   public PImage get() {
-    //PImage outgoing = new PImage(width, height);
-    // int[] getRGB(int startX, int startY, int w, int h,
-    //              int[] rgbArray, int offset, int scansize)
-    if (pixels == null) {
-      pixels = new int[width * height];
-    }
-    ((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
-    return new PImage(pixels, width, height, RGB);
+    PImage outgoing = new PImage(width, height);
+    ((BufferedImage) image).getRGB(0, 0, width, height,
+                                   outgoing.pixels, 0, width);
+    return outgoing;
   }
-  */
 
 
   public void set(int x, int y, int argb) {
@@ -1136,14 +927,43 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  // fully debugged
+  /*
   public void set(int dx, int dy, PImage src) {
-    push();
-    imageImpl(src, 0, 0, width, height, 0, 0, width, height);
-    resetMatrix();
-    pop();
-    //loadPixels();
-    //super.set(dx, dy, src);
-    //updatePixels();
+    int sx = 0;
+    int sy = 0;
+    int sw = src.width;
+    int sh = src.height;
+
+    if (dx < 0) {  // off left edge
+      sx -= dx;
+      sw += dx;
+      dx = 0;
+    }
+    if (dy < 0) {  // off top edge
+      sy -= dy;
+      sh += dy;
+      dy = 0;
+    }
+    if (dx + sw > width) {  // off right edge
+      sw = width - dx;
+    }
+    if (dy + sh > height) {  // off bottom edge
+      sh = height - dy;
+    }
+
+    //System.out.println(dx + " " + dy + " " +
+    //                 sx + " " + sy + " " + sw + " " +  sh + " " +
+    //                 src.pixels + " " + 0 + " " + src.width);
+    BufferedImage bi = (BufferedImage) image;
+    bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
+  }
+  */
+
+  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+                         PImage src) {
+    BufferedImage bi = (BufferedImage) image;
+    bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
   }
 
 
