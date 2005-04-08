@@ -738,7 +738,8 @@ public class PApplet extends Applet
 
     } catch (InvocationTargetException ite) {
       String msg = ite.getTargetException().getMessage();
-      if (msg.indexOf("no jogl in java.library.path") != -1) {
+      if ((msg != null) &&
+          (msg.indexOf("no jogl in java.library.path") != -1)) {
         throw new RuntimeException(openglError);
       } else {
         ite.getTargetException().printStackTrace();
@@ -986,16 +987,20 @@ public class PApplet extends Applet
 
             //System.out.println("done attempting setup");
             //System.out.println("out of try");
-            g.postSetup();  // FIXME
+            //g.postSetup();  // FIXME
 
           } catch (RuntimeException e) {
+            //System.out.println("runtime extends " + e);
             //System.out.println("catching a cold " + e.getMessage());
-            if (e.getMessage().indexOf(NEW_RENDERER) != -1) {
+            String msg = e.getMessage();
+            if ((msg != null) &&
+                (e.getMessage().indexOf(NEW_RENDERER) != -1)) {
               //System.out.println("got new renderer");
               return;
               //continue;  // will this work?
 
             } else {
+              //e.printStackTrace(System.out);
               throw e;
             }
           }
@@ -2052,39 +2057,43 @@ public class PApplet extends Applet
 
 
   public final float sin(float angle) {
-    if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
+    //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   public final float cos(float angle) {
-    if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
+    //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   public final float tan(float angle) {
-    if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
+    //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 
 
   public final float asin(float value) {
-    return ((g != null) && (g.angleMode == DEGREES)) ?
-      ((float)Math.asin(value) * RAD_TO_DEG) : (float)Math.asin(value);
+    //return ((g != null) && (g.angleMode == DEGREES)) ?
+    //((float)Math.asin(value) * RAD_TO_DEG) : (float)Math.asin(value);
+    return (float)Math.asin(value);
   }
 
   public final float acos(float value) {
-    return ((g != null) && (g.angleMode == DEGREES)) ?
-      ((float)Math.acos(value) * RAD_TO_DEG) : (float)Math.acos(value);
+    //return ((g != null) && (g.angleMode == DEGREES)) ?
+    //((float)Math.acos(value) * RAD_TO_DEG) : (float)Math.acos(value);
+    return (float)Math.acos(value);
   }
 
   public final float atan(float value) {
-    return ((g != null) && (g.angleMode == DEGREES)) ?
-      ((float)Math.atan(value) * RAD_TO_DEG) : (float)Math.atan(value);
+    //return ((g != null) && (g.angleMode == DEGREES)) ?
+    // ((float)Math.atan(value) * RAD_TO_DEG) : (float)Math.atan(value);
+    return (float)Math.atan(value);
   }
 
   public final float atan2(float a, float b) {
-    return ((g != null) && (g.angleMode == DEGREES)) ?
-      ((float)Math.atan2(a, b) * RAD_TO_DEG) : (float)Math.atan2(a, b);
+    //return ((g != null) && (g.angleMode == DEGREES)) ?
+    //((float)Math.atan2(a, b) * RAD_TO_DEG) : (float)Math.atan2(a, b);
+    return (float)Math.atan2(a, b);
   }
 
 
@@ -5081,12 +5090,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void postSetup() {
-    if (recorder != null) recorder.postSetup();
-    g.postSetup();
-  }
-
-
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
@@ -5502,12 +5505,6 @@ v              PApplet.this.stop();
   public void translate(float tx, float ty, float tz) {
     if (recorder != null) recorder.translate(tx, ty, tz);
     g.translate(tx, ty, tz);
-  }
-
-
-  public void angleMode(int mode) {
-    if (recorder != null) recorder.angleMode(mode);
-    g.angleMode(mode);
   }
 
 

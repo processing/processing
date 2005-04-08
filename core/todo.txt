@@ -2,14 +2,21 @@
 X fix double key events
 X fix mrj.version security error on the pc
 X set() fixes for PGraphics2 and setImpl inside PGraphics
+X remove angleMode (also from PMatrix classes)
+
+
+_ detect problems with caps (really a problem with the ves61r kids)
+
 
 _ make get/getImpl for PGraphics/PGraphics2
 _   make sure there's a loadPixels/updatePixels in PGraphics2
 _ rewrite getImpl/setImpl inside opengl
 _ make screen space fonts use get/set as well?
 _   too much to debug on their own
+_   unfortunately tint not set with setImpl, but...
 
 _ get/set doesn't use tint at all
+_   (meaning that it's not so good for fonts)
 
 _ apply tint() to textures as well
 _   otherwise no good way to color textures
@@ -35,14 +42,12 @@ _   maybe fill() should set diffuse, and sep call to ambient() sets ambient?
 X   removed it
 _ remove/rename postSetup() stuff from PGraphics/PApplet
 _ what's up with resetLights?
-_ angleMode stuff is kinda overkill
 _ move dot() to the bottom w/ the other math
 _ add PLight object to avoid method overflow
 _ preApplyMatrix, invApplyMatrix? 
 _   applyMatrixPre and applyMatrixIn
 _   rotateXInv is ugly.. 
 _   irotateX?, papplyMatrix?
-_ angleMode shouldn't be the first param
 
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
@@ -172,6 +177,7 @@ _ Stroking a rect() leaves the upper right pixel off.
 
 
 api questions
+_ remove angleMode() ?
 _ rename video.Camera to video.Video ?
 _ what to call firstMouse, implement rightMouse?
 _ should nf() handle commas as well?
@@ -211,6 +217,8 @@ _      since needs to render to screen as well
 text api solutions
 _ store the font name in the vlw font file (at the end)
 o   could include multiple names for multi platforms
+_   danger of this setup is that it may run much nicer for the author
+_     i.e. with the font installed, and then super slow for their users
 _ is getFontList returning a different set of fonts from device2d?
 _   or is it only those with ps names?
 _ createFont() with a .ttf does a create font internally (1.3+ only)

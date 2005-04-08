@@ -32,13 +32,16 @@ import java.awt.image.*;
 public class PGraphics3 extends PGraphics {
 
   // modelview matrix
-  public PMatrix modelview = new PMatrix(RADIANS, MATRIX_STACK_DEPTH);
+  public PMatrix modelview; // = new PMatrix(MATRIX_STACK_DEPTH);
+
+  public PMatrix camera; // = new PMatrix();
+  public PMatrix inverseCamera; // = new PMatrix();
 
   // ........................................................
   // Lighting-related variables
 
   // inverse model matrix
-  public PMatrix inverseModelview = new PMatrix(RADIANS, MATRIX_STACK_DEPTH);
+  public PMatrix inverseModelview; // = new PMatrix(MATRIX_STACK_DEPTH);
 
   // store the facing direction to speed rendering
   boolean useBackfaceCulling = false;
@@ -58,7 +61,7 @@ public class PGraphics3 extends PGraphics {
 
   // ........................................................
 
-  public int cameraMode;
+  //public int cameraMode;
 
   // perspective setup
   public float cameraFOV;
@@ -66,13 +69,15 @@ public class PGraphics3 extends PGraphics {
   public float cameraNear, cameraFar;
   public float cameraAspect;
 
-  // This is turned on at beginCamera, and off at endCamera
-  // Currently we don't support nested begin/end cameras.
-  // If we wanted to, this variable would have to become a stack.
+  /**
+   * This is turned on at beginCamera, and off at endCamera
+   * Currently we don't support nested begin/end cameras.
+   * If we wanted to, this variable would have to become a stack.
+   */
   public boolean manipulatingCamera;
 
   // projection matrix
-  public PMatrix projection = new PMatrix(RADIANS);
+  public PMatrix projection = new PMatrix();
 
   // These two matrices always point to either the modelview
   // or the inverseModelview, but they are swapped during
@@ -241,6 +246,7 @@ public class PGraphics3 extends PGraphics {
     forwardTransform = modelview;
     reverseTransform = inverseModelview;
     //resize(iwidth, iheight);
+    //projection = new PMatrix();
   }
 
 
@@ -298,7 +304,23 @@ public class PGraphics3 extends PGraphics {
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
     //System.out.println("setting cameraMode to " + cameraMode);
-    if (this.cameraMode != CUSTOM) cameraMode(this.cameraMode);
+    //if (this.cameraMode != CUSTOM) cameraMode(this.cameraMode);
+
+    // making this again here because things are weird
+    projection = new PMatrix();
+    modelview = new PMatrix(MATRIX_STACK_DEPTH);
+    inverseModelview = new PMatrix(MATRIX_STACK_DEPTH);
+
+    camera = new PMatrix();
+    inverseCamera = new PMatrix();
+
+    // set up the default camera
+    camera();
+
+    // defaults to perspective, if the user has setup up their
+    // own projection, they'll need to fix it after resize anyway.
+    // this helps the people who haven't set up their own projection.
+    perspective();
   }
 
 
@@ -326,6 +348,7 @@ public class PGraphics3 extends PGraphics {
     triangle = new PTriangle(this);
   }
 
+
   public void clearLights() {
     lightCount = 0;
     light[0] = false;
@@ -333,15 +356,20 @@ public class PGraphics3 extends PGraphics {
       light[i] = false;
     }
   }
-  
+
+
   public void defaultLights() {
     clearLights();
     createAmbientLight(60);
     createDirectionalLight(80, 80, 80, 0, 0, -1);
   }
 
+
   public void beginFrame() {
     super.beginFrame();
+
+    modelview.set(camera);
+    inverseModelview.set(inverseCamera);
 
     if (lights) {
       defaultLights();
@@ -385,12 +413,14 @@ public class PGraphics3 extends PGraphics {
     super.endFrame();
   }
 
+  /*
   public void angleMode(int mode) {
     super.angleMode(mode);
     modelview.angleMode(mode);
     inverseModelview.angleMode(mode);
     projection.angleMode(mode);
   }
+  */
 
   public void defaults() {
     super.defaults();
@@ -399,7 +429,8 @@ public class PGraphics3 extends PGraphics {
     forwardTransform = modelview;
     reverseTransform = inverseModelview;
 
-    cameraMode(PERSPECTIVE);
+    //cameraMode(PERSPECTIVE);
+    perspective();
 
     //System.out.println("PGraphics3.defaults()");
     // easiest for beginners
@@ -422,10 +453,11 @@ public class PGraphics3 extends PGraphics {
   /**
    * do anything that needs doing after setup before draw
    */
-  public void postSetup() {
-    modelview.storeResetValue();
-    inverseModelview.storeResetValue();
-  }
+  //public void postSetup() {
+  //modelview.storeResetValue();
+  //inverseModelview.storeResetValue();
+  //}
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2298,23 +2330,23 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("too many calls to pop() " +
                                  "(and not enough to push)");
     }
-    //  Do this to the inverse regardless of the lights to keep stack pointers
-    // in sync
+    // Do this to the inverse regardless of the lights
+    // to keep stack pointers in sync
     inverseModelview.pop();
   }
 
 
-  public void resetProjection() {
-    projection.reset();
-  }
+  //public void resetProjection() {
+  //projection.reset();
+  //}
 
   /**
    * Load identity as the transform/model matrix.
    * Same as glLoadIdentity().
    */
   public void resetMatrix() {
-    forwardTransform.reset();
-    reverseTransform.reset();
+    forwardTransform.identity(); //reset();
+    reverseTransform.identity(); //reset();
   }
 
 
@@ -2328,15 +2360,15 @@ public class PGraphics3 extends PGraphics {
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
 
-    forwardTransform.applyMatrix(n00, n01, n02, n03,
-                          n10, n11, n12, n13,
-                          n20, n21, n22, n23,
-                          n30, n31, n32, n33);
+    forwardTransform.apply(n00, n01, n02, n03,
+                           n10, n11, n12, n13,
+                           n20, n21, n22, n23,
+                           n30, n31, n32, n33);
 
-    reverseTransform.invApplyMatrix(n00, n01, n02, n03,
-                                      n10, n11, n12, n13,
-                                      n20, n21, n22, n23,
-                                      n30, n31, n32, n33);
+    reverseTransform.invApply(n00, n01, n02, n03,
+                              n10, n11, n12, n13,
+                              n20, n21, n22, n23,
+                              n30, n31, n32, n33);
   }
 
 
@@ -2364,6 +2396,7 @@ public class PGraphics3 extends PGraphics {
    *
    * Note that this setting gets nuked if resize() is called.
    */
+  /*
   public void cameraMode(int mode) {
     resetProjection();
     modelview.identity();
@@ -2383,13 +2416,14 @@ public class PGraphics3 extends PGraphics {
 
     cameraMode = mode;  // this doesn't do much
   }
+  */
 
 
   /**
    * Set matrix mode to the camera matrix (instead of
    * the current transformation matrix). This means applyMatrix,
    * resetMatrix, etc. will affect the camera.
-   *
+   * <P>
    * This loads identity into the projection matrix, so if you want
    * to start with a resonable default projection, you may want to
    * call cameraMode(PERSPECTIVE); or something between begin and end.
@@ -2398,14 +2432,13 @@ public class PGraphics3 extends PGraphics {
     if (manipulatingCamera) {
       throw new RuntimeException("cannot call beginCamera while already "+
                                  "in camera manipulation mode");
-    }
-    else {
-      projection.identity();
+    } else {
+      //projection.identity();
       manipulatingCamera = true;
-      forwardTransform = inverseModelview;
-      reverseTransform = modelview;
-    cameraMode = CUSTOM;
-  }
+      forwardTransform = inverseCamera; //inverseModelview;
+      reverseTransform = camera; //modelview;
+      //cameraMode = CUSTOM;
+    }
   }
 
 
@@ -2429,8 +2462,19 @@ public class PGraphics3 extends PGraphics {
     }
   }
 
+
   /**
-   * Same as gluOrtho(). Implementation based on Mesa's matrix.c
+   * Calls ortho() for Processing's standard orthographic projection.
+   */
+  public void ortho() {
+    ortho(0, width, 0, height, -10, 10);
+  }
+
+
+  /**
+   * Similar to gluOrtho(), but wipes out the current projection matrix.
+   * <P>
+   * Implementation partially based on Mesa's matrix.c.
    */
   public void ortho(float left, float right,
                     float bottom, float top,
@@ -2443,10 +2487,45 @@ public class PGraphics3 extends PGraphics {
     float ty = -(top + bottom) / (top - bottom);
     float tz = -(far + near) / (far - near);
 
-    projection.applyMatrix(x, 0, 0, tx,
-                0, y, 0, ty,
-                0, 0, z, tz,
-                0, 0, 0, 1);
+    projection.set(x, 0, 0, tx,
+                   0, y, 0, ty,
+                   0, 0, z, tz,
+                   0, 0, 0, 1);
+  }
+
+
+  /**
+   * Calls camera() with Processing's standard camera setup.
+   */
+  public void camera() {
+    beginCamera();
+    resetMatrix();
+    lookat(cameraX, cameraY, cameraZ,
+           cameraX, cameraY, 0,
+           0, 1, 0);
+    endCamera();
+  }
+
+
+  /**
+   * Similar to gluLookAt(), however it first clears the current
+   * camera settings.
+   */
+  public void camera(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+    beginCamera();
+    resetMatrix();
+    lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+    endCamera();
+  }
+
+
+  /**
+   * Calls perspective() with Processing's standard coordinate setup.
+   */
+  public void perspective() {
+    perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
   }
 
 
@@ -2467,24 +2546,28 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Same as glFrustum(). Implementation based on the explanation
-   * in the OpenGL reference book.
+   * Same as glFrustum(), except that it wipes out (rather than
+   * multiplies against) the current perspective matrix.
+   * <P>
+   * Implementation based on the explanation in the OpenGL blue book.
    */
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
-    //System.out.println("frustum: " + left + " " + right + "  " +
-    //               bottom + " " + top + "  " + znear + " " + zfar);
-    projection.applyMatrix((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
-                0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
-                0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
-                0, 0, -1, 0);
+    //System.out.println(projection);
+    projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
+                   0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
+                   0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
+                   0, 0, -1, 0);
   }
 
 
   /**
-   * Same as gluLookat(). Implementation based on Mesa's glu.c
+   * Same as gluLookat().
+   * <P>
+   * This should only be called inside of a beginCamera/endCamera pair.
+   * <P>
+   * Implementation based on Mesa's glu.c
    */
-
   // TODO: deal with this. Lookat must ALWAYS apply to the modelview
   // regardless of the camera manipulation mode.
   public void lookat(float eyeX, float eyeY, float eyeZ,
@@ -2527,6 +2610,15 @@ public class PGraphics3 extends PGraphics {
       y2 /= mag;
     }
 
+    // just does an apply to the main matrix,
+    // since that'll be copied out on endCamera
+    applyMatrix(x0, x1, x2, 0,
+                y0, y1, y2, 0,
+                z0, z1, z2, 0,
+                0,  0,  0,  1);
+    translate(eyeX, eyeY, eyeZ);
+
+    /*
     modelview.invApplyMatrix(x0, x1, x2, 0,
                              y0, y1, y2, 0,
                              z0, z1, z2, 0,
@@ -2538,15 +2630,25 @@ public class PGraphics3 extends PGraphics {
                 z0, z1, z2, 0,
                 0,  0,  0,  1);
     inverseModelview.translate(eyeX, eyeY, eyeZ);
+    */
   }
 
 
 
   /**
-   * Print the current camera (or "perspective") matrix.
+   * Print the current projection matrix.
+   */
+  public void printProjection() {
+    projection.print();
+  }
+
+
+
+  /**
+   * Print the current camera matrix.
    */
   public void printCamera() {
-    projection.print();
+    camera.print();
   }
 
 
@@ -3204,17 +3306,17 @@ public class PGraphics3 extends PGraphics {
   }
 
   private final float sin(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   private final float cos(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   private final float tan(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 }
