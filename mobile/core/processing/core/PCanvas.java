@@ -749,7 +749,12 @@ public class PCanvas extends Canvas {
     }
     
     public void fill(int gray) {
-        fill(gray, gray, gray);
+        if ((gray & 0xff000000) == 0) {
+            fill(gray, gray, gray);
+        } else {
+            fill = true;
+            fillColor = gray;
+        }    
     }
     
     public void fill(int value1, int value2, int value3) {
