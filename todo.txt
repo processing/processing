@@ -1,5 +1,8 @@
 0083 pde
 
+_ npe is a runtimeex, so any npe in setup comes up weird
+_   maybe the renderer exception is something different? newrendex?
+
 _ why is gl being added on export, no matter what? or is it?
 _ get both versions of size() properly detected on export
 
