@@ -8,9 +8,6 @@ public final class PMatrix implements PConstants {
   public float m20, m21, m22, m23;
   public float m30, m31, m32, m33;
 
-  int angleMode;
-
-  //float tmpx, tmpy, tmpz, tmpw;
   float reset[];
 
   final static int DEFAULT_STACK_DEPTH = 0;
@@ -19,27 +16,23 @@ public final class PMatrix implements PConstants {
   float stack[][];
 
 
-  public PMatrix(int angleMode) {
-    this.angleMode = angleMode;
+  public PMatrix() {
     set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     maxStackDepth = DEFAULT_STACK_DEPTH;
   }
 
 
-  public PMatrix(int angleMode, int stackDepth) {
-    this.angleMode = angleMode;
+  public PMatrix(int stackDepth) {
     set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     stack = new float[stackDepth][16];
     maxStackDepth = stackDepth;
   }
 
 
-  public PMatrix(int angleMode,
-                 float m00, float m01, float m02, float m03,
+  public PMatrix(float m00, float m01, float m02, float m03,
                  float m10, float m11, float m12, float m13,
                  float m20, float m21, float m22, float m23,
                  float m30, float m31, float m32, float m33) {
-    this.angleMode = angleMode;
     set(m00, m01, m02, m03,
         m10, m11, m12, m13,
         m20, m21, m22, m23,
@@ -51,11 +44,7 @@ public final class PMatrix implements PConstants {
   // Make a copy of a matrix. We copy the stack depth,
   // but we don't make a copy of the stack or the stack pointer.
   public PMatrix(PMatrix src) {
-    angleMode = src.angleMode;
-    set(src.m00, src.m01, src.m02, src.m03,
-        src.m10, src.m11, src.m12, src.m13,
-        src.m20, src.m21, src.m22, src.m23,
-        src.m30, src.m31, src.m32, src.m33);
+    set(src);
     maxStackDepth = src.maxStackDepth;
     stack = new float[maxStackDepth][16];
   }
@@ -154,6 +143,14 @@ public final class PMatrix implements PConstants {
   }
 
 
+  public void set(PMatrix src) {
+    set(src.m00, src.m01, src.m02, src.m03,
+        src.m10, src.m11, src.m12, src.m13,
+        src.m20, src.m21, src.m22, src.m23,
+        src.m30, src.m31, src.m32, src.m33);
+  }
+
+
   public void set(float m00, float m01, float m02, float m03,
                   float m10, float m11, float m12, float m13,
                   float m20, float m21, float m22, float m23,
@@ -182,10 +179,10 @@ public final class PMatrix implements PConstants {
   }
 
   public void invTranslate(float tx, float ty, float tz) {
-    preApplyMatrix(1, 0, 0, -tx,
-                   0, 1, 0, -ty,
-                   0, 0, 1, -tz,
-                   0, 0, 0, 1);
+    preApply(1, 0, 0, -tx,
+             0, 1, 0, -ty,
+             0, 0, 1, -tz,
+             0, 0, 0, 1);
   }
 
 
@@ -195,28 +192,28 @@ public final class PMatrix implements PConstants {
   public void rotateX(float angle) {
     float c = cos(angle);
     float s = sin(angle);
-    applyMatrix(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
+    apply(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
   }
 
 
   public void invRotateX(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
-    preApplyMatrix(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
+    preApply(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
   }
 
 
   public void rotateY(float angle) {
     float c = cos(angle);
     float s = sin(angle);
-    applyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
+    apply(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
   }
 
 
   public void invRotateY(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
-    preApplyMatrix(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
+    preApply(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
   }
 
 
@@ -237,14 +234,14 @@ public final class PMatrix implements PConstants {
   public void rotateZ(float angle) {
     float c = cos(angle);
     float s = sin(angle);
-    applyMatrix(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    apply(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
   public void invRotateZ(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
-    preApplyMatrix(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    preApply(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
@@ -258,7 +255,7 @@ public final class PMatrix implements PConstants {
     float s = sin(angle);
     float t = 1.0f - c;
 
-    applyMatrix((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
+    apply((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
                 (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
                 (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
                 0, 0, 0, 1);
@@ -272,7 +269,7 @@ public final class PMatrix implements PConstants {
     float s = sin(-angle);
     float t = 1.0f - c;
 
-    preApplyMatrix((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
+    preApply((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
                    (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
                    (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
                    0, 0, 0, 1);
@@ -280,33 +277,33 @@ public final class PMatrix implements PConstants {
 
 
   public void scale(float s) {
-    applyMatrix(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
+    apply(s, 0, 0, 0,  0, s, 0, 0,  0, 0, s, 0,  0, 0, 0, 1);
   }
 
 
   public void invScale(float s) {
-    preApplyMatrix(1/s, 0, 0, 0,  0, 1/s, 0, 0,  0, 0, 1/s, 0,  0, 0, 0, 1);
+    preApply(1/s, 0, 0, 0,  0, 1/s, 0, 0,  0, 0, 1/s, 0,  0, 0, 0, 1);
   }
 
 
   public void scale(float sx, float sy) {
-    applyMatrix(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    apply(sx, 0, 0, 0,  0, sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
   public void invScale(float sx, float sy) {
-    preApplyMatrix(1/sx, 0, 0, 0,  0, 1/sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+    preApply(1/sx, 0, 0, 0,  0, 1/sy, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
   // OPTIMIZE: same as above
   public void scale(float x, float y, float z) {
-    applyMatrix(x, 0, 0, 0,  0, y, 0, 0,  0, 0, z, 0,  0, 0, 0, 1);
+    apply(x, 0, 0, 0,  0, y, 0, 0,  0, 0, z, 0,  0, 0, 0, 1);
   }
 
 
   public void invScale(float x, float y, float z) {
-    preApplyMatrix(1/x, 0, 0, 0,  0, 1/y, 0, 0,  0, 0, 1/z, 0,  0, 0, 0, 1);
+    preApply(1/x, 0, 0, 0,  0, 1/y, 0, 0,  0, 0, 1/z, 0,  0, 0, 0, 1);
   }
 
 
@@ -314,13 +311,13 @@ public final class PMatrix implements PConstants {
                         float n10, float n11, float n12, float n13,
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33) {
-    applyMatrix(n00, n01, n02, n03,  n10, n11, n12, n13,
+    apply(n00, n01, n02, n03,  n10, n11, n12, n13,
                 n20, n21, n22, n23,  n30, n31, n32, n33);
   }
 
 
-  public void preApplyMatrix(PMatrix lhs) {
-    preApplyMatrix(lhs.m00, lhs.m01, lhs.m02, lhs.m03,
+  public void preApply(PMatrix lhs) {
+    preApply(lhs.m00, lhs.m01, lhs.m02, lhs.m03,
                    lhs.m10, lhs.m11, lhs.m12, lhs.m13,
                    lhs.m20, lhs.m21, lhs.m22, lhs.m23,
                    lhs.m30, lhs.m31, lhs.m32, lhs.m33);
@@ -328,7 +325,7 @@ public final class PMatrix implements PConstants {
 
 
   // for inverse operations, like multiplying the matrix on the left
-  public void preApplyMatrix(float n00, float n01, float n02, float n03,
+  public void preApply(float n00, float n01, float n02, float n03,
                              float n10, float n11, float n12, float n13,
                              float n20, float n21, float n22, float n23,
                              float n30, float n31, float n32, float n33) {
@@ -360,43 +357,42 @@ public final class PMatrix implements PConstants {
   }
 
 
-  public boolean invApplyMatrix(PMatrix rhs) {
+  public boolean invApply(PMatrix rhs) {
     PMatrix copy = new PMatrix(rhs);
     PMatrix inverse = copy.invert();
     if (inverse == null) return false;
-    preApplyMatrix(inverse);
+    preApply(inverse);
     return true;
   }
 
 
-  public boolean invApplyMatrix(float n00, float n01, float n02, float n03,
+  public boolean invApply(float n00, float n01, float n02, float n03,
                                 float n10, float n11, float n12, float n13,
                                 float n20, float n21, float n22, float n23,
                                 float n30, float n31, float n32, float n33) {
-    PMatrix copy = new PMatrix(0,
-                               n00, n01, n02, n03,
+    PMatrix copy = new PMatrix(n00, n01, n02, n03,
                                n10, n11, n12, n13,
                                n20, n21, n22, n23,
                                n30, n31, n32, n33);
     PMatrix inverse = copy.invert();
     if (inverse == null) return false;
-    preApplyMatrix(inverse);
+    preApply(inverse);
     return true;
   }
 
 
-  public void applyMatrix(PMatrix rhs) {
-    applyMatrix(rhs.m00, rhs.m01, rhs.m02, rhs.m03,
+  public void apply(PMatrix rhs) {
+    apply(rhs.m00, rhs.m01, rhs.m02, rhs.m03,
                 rhs.m10, rhs.m11, rhs.m12, rhs.m13,
                 rhs.m20, rhs.m21, rhs.m22, rhs.m23,
                 rhs.m30, rhs.m31, rhs.m32, rhs.m33);
   }
 
 
-  public void applyMatrix(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33) {
+  public void apply(float n00, float n01, float n02, float n03,
+                    float n10, float n11, float n12, float n13,
+                    float n20, float n21, float n22, float n23,
+                    float n30, float n31, float n32, float n33) {
 
     float r00 = m00*n00 + m01*n10 + m02*n20 + m03*n30;
     float r01 = m00*n01 + m01*n11 + m02*n21 + m03*n31;
@@ -617,10 +613,6 @@ public final class PMatrix implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  public void angleMode(int angleMode) {
-    this.angleMode = angleMode;
-  }
-
   private final float max(float a, float b) {
     return (a > b) ? a : b;
   }
@@ -630,12 +622,10 @@ public final class PMatrix implements PConstants {
   }
 
   private final float sin(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   private final float cos(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 }

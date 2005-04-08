@@ -158,7 +158,7 @@ public class PGraphics extends PImage implements PConstants {
   public float m00, m01, m02;
   public float m10, m11, m12;
 
-  public int angleMode;
+  //public int angleMode;
 
   static final int MATRIX_STACK_DEPTH = 32;
   float matrixStack[][] = new float[MATRIX_STACK_DEPTH][16];
@@ -196,8 +196,7 @@ public class PGraphics extends PImage implements PConstants {
   };
 
   protected PMatrix bezierBasis =
-    new PMatrix(RADIANS,
-                -1,  3, -3,  1,
+    new PMatrix(-1,  3, -3,  1,
                  3, -6,  3,  0,
                 -3,  3,  0,  0,
                  1,  0,  0,  0);
@@ -435,7 +434,7 @@ public class PGraphics extends PImage implements PConstants {
     rectMode(CORNER);
     ellipseMode(CENTER);
     //arcMode(CENTER);
-    angleMode(RADIANS);
+    //angleMode(RADIANS);
 
     // no current font
     textFont = null;
@@ -449,8 +448,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * do anything that needs doing after setup before draw
    */
-  public void postSetup() {
-  }
+  //public void postSetup() {
+  //}
 
 
   //////////////////////////////////////////////////////////////
@@ -985,10 +984,10 @@ public class PGraphics extends PImage implements PConstants {
       y = b - d/2f;
     }
 
-    if (angleMode == DEGREES) {
-      start = start * DEG_TO_RAD;
-      stop = stop * DEG_TO_RAD;
-    }
+    //if (angleMode == DEGREES) {
+    //start = start * DEG_TO_RAD;
+    //stop = stop * DEG_TO_RAD;
+    //}
     // before running a while loop like this,
     // make sure it will exit at some point.
     if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
@@ -1209,12 +1208,11 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     // hack here to get PGraphics2 working
-    curveToBezierMatrix = new PMatrix(RADIANS,
-                                      c[0][0], c[0][1], c[0][2], c[0][3],
+    curveToBezierMatrix = new PMatrix(c[0][0], c[0][1], c[0][2], c[0][3],
                                       c[1][0], c[1][1], c[1][2], c[1][3],
                                       c[2][0], c[2][1], c[2][2], c[2][3],
                                       c[3][0], c[3][1], c[3][2], c[3][3]);
-    curveToBezierMatrix.preApplyMatrix(bezierBasisInverse);
+    curveToBezierMatrix.preApply(bezierBasisInverse);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
@@ -1806,9 +1804,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void angleMode(int mode) {
-    angleMode = mode;
-  }
+  //public void angleMode(int mode) {
+  //angleMode = mode;
+  //}
 
 
   /**
@@ -1818,7 +1816,7 @@ public class PGraphics extends PImage implements PConstants {
    * And they might kick our a-- for the confusion.
    */
   public void rotate(float angle) {
-    if (angleMode == DEGREES) angle *= DEG_TO_RAD;
+    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
 
     float c = (float) Math.cos(angle);
     float s = (float) Math.sin(angle);
