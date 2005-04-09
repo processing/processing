@@ -3,9 +3,55 @@ X fix double key events
 X fix mrj.version security error on the pc
 X set() fixes for PGraphics2 and setImpl inside PGraphics
 X remove angleMode (also from PMatrix classes)
+X remove/rename postSetup() stuff from PGraphics/PApplet
+X camera(), perspective(), ortho()
+X matrix set by the camera on each beginFrame
+
+lighting stuff
+X make fill() cover ambient and diffuse
+X   provide separate call for ambient to shut it off
+o why does diffuse just mirror fill()?
+o   seems to cover just diffuse, not ambient_and_diffuse like fill
+o   maybe fill() should set diffuse, and sep call to ambient() sets ambient?
+X   removed it
+X move dot() to the bottom w/ the other math
+
+already done
+X remove PMethods as actual class, use recordFrame(PGraphics)
+X   size(200, 200, "processing.illustrator.PGraphicsAI");
+
+_ make the 1.4 code in PApplet load via reflection
+
+tweaking up simong light code
+_ what's up with resetLights?
+_ add PLight object to avoid method overflow
+_ preApplyMatrix, invApplyMatrix? 
+_   applyMatrixPre and applyMatrixIn
+_   rotateXInv is ugly.. 
+_   irotateX?, papplyMatrix?
+
+_ fix bezierVertex() for newer api
+
+_ fix messages referring to depth()
+_   route all of them through a single function rather than current waste
+
+_ fix the flicker in java2d mode
+X   is it because the lock was taken off (g) in PApplet?
+
+_ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
+
+_ track loadImage() with filenames that are inconsistent
+_   really a problem with the ves61r kids
+_   i.e. mixed case filename in sketch is different in windows
+_   but when uploaded to a unix server causes a serious problem
+_   use canonicalPath to flag possible problems
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 
-_ detect problems with caps (really a problem with the ves61r kids)
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+NOT NECESSARY BEFORE BETA
 
 
 _ make get/getImpl for PGraphics/PGraphics2
@@ -23,36 +69,12 @@ _   otherwise no good way to color textures
 
 _ textMode(SCREEN) having issues
 
-_ fix bezierVertex() for newer api
-
 _ set(x, y, image)
 _   x, y not setting with processing
 _   y reversed in openGL 
 
-_ fix messages referring to depth()
-_   route all of them through a single function rather than current waste
-
 _ gl alpha on images when flipped around backwards
 _   will sorting based on depth help this? also ask simon for ideas
-
-tweaking up simong light code
-_ why does diffuse just mirror fill()?
-_   seems to cover just diffuse, not ambient_and_diffuse like fill
-_   maybe fill() should set diffuse, and sep call to ambient() sets ambient?
-X   removed it
-_ remove/rename postSetup() stuff from PGraphics/PApplet
-_ what's up with resetLights?
-_ move dot() to the bottom w/ the other math
-_ add PLight object to avoid method overflow
-_ preApplyMatrix, invApplyMatrix? 
-_   applyMatrixPre and applyMatrixIn
-_   rotateXInv is ugly.. 
-_   irotateX?, papplyMatrix?
-
-_ fix the flicker in java2d mode
-X   is it because the lock was taken off (g) in PApplet?
-
-_ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
 
 _ cellular automata examples broken
 
@@ -81,12 +103,6 @@ _ The ref in PSound2 says volume accepts vals from 0...1
 _   but values larger than one increase the volume.
 _ SoundEvent // is sound finished?? Can't access now. 
 
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-BETA
-
 _ get PGraphics.java engine working again
 
 _ don't grab pixels of java2d images unless asked
@@ -97,8 +113,6 @@ _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
 
-_ remove PMethods as actual class, use recordFrame(PGraphics)
-_   size(200, 200, "processing.illustrator.PGraphicsAI");
 _ make vertexCount etc properly accessible in PGraphics3
 _   so that people can do things like the dxf renderer
 
@@ -130,12 +144,6 @@ _   don't include a class, just make it similar to the light functions
 _ sphere() and box() should set normals and take textures
 _ background color seems to be wrong?
 _   check this once lighting actually works
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-NOT NECESSARY BEFORE BETA
 
 
 PApplet

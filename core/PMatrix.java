@@ -8,7 +8,7 @@ public final class PMatrix implements PConstants {
   public float m20, m21, m22, m23;
   public float m30, m31, m32, m33;
 
-  float reset[];
+  //float reset[];
 
   final static int DEFAULT_STACK_DEPTH = 0;
   int maxStackDepth;
@@ -50,7 +50,7 @@ public final class PMatrix implements PConstants {
   }
 
 
-  public void identity() {
+  public void reset() {
     set(1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -58,6 +58,7 @@ public final class PMatrix implements PConstants {
   }
 
 
+  /*
   public void reset() {
     if (reset == null) {
       identity();
@@ -80,6 +81,7 @@ public final class PMatrix implements PConstants {
     reset[8]  = m20; reset[9]  = m21; reset[10] = m22; reset[11] = m23;
     reset[12] = m30; reset[13] = m31; reset[14] = m32; reset[15] = m33;
   }
+  */
 
 
   public void clearStack() {
@@ -311,24 +313,26 @@ public final class PMatrix implements PConstants {
                         float n10, float n11, float n12, float n13,
                         float n20, float n21, float n22, float n23,
                         float n30, float n31, float n32, float n33) {
-    apply(n00, n01, n02, n03,  n10, n11, n12, n13,
-                n20, n21, n22, n23,  n30, n31, n32, n33);
+    apply(n00, n01, n02, n03,
+          n10, n11, n12, n13,
+          n20, n21, n22, n23,
+          n30, n31, n32, n33);
   }
 
 
   public void preApply(PMatrix lhs) {
     preApply(lhs.m00, lhs.m01, lhs.m02, lhs.m03,
-                   lhs.m10, lhs.m11, lhs.m12, lhs.m13,
-                   lhs.m20, lhs.m21, lhs.m22, lhs.m23,
-                   lhs.m30, lhs.m31, lhs.m32, lhs.m33);
+             lhs.m10, lhs.m11, lhs.m12, lhs.m13,
+             lhs.m20, lhs.m21, lhs.m22, lhs.m23,
+             lhs.m30, lhs.m31, lhs.m32, lhs.m33);
   }
 
 
   // for inverse operations, like multiplying the matrix on the left
   public void preApply(float n00, float n01, float n02, float n03,
-                             float n10, float n11, float n12, float n13,
-                             float n20, float n21, float n22, float n23,
-                             float n30, float n31, float n32, float n33) {
+                       float n10, float n11, float n12, float n13,
+                       float n20, float n21, float n22, float n23,
+                       float n30, float n31, float n32, float n33) {
 
     float r00 = n00*m00 + n01*m10 + n02*m20 + n03*m30;
     float r01 = n00*m01 + n01*m11 + n02*m21 + n03*m31;
@@ -367,9 +371,9 @@ public final class PMatrix implements PConstants {
 
 
   public boolean invApply(float n00, float n01, float n02, float n03,
-                                float n10, float n11, float n12, float n13,
-                                float n20, float n21, float n22, float n23,
-                                float n30, float n31, float n32, float n33) {
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
     PMatrix copy = new PMatrix(n00, n01, n02, n03,
                                n10, n11, n12, n13,
                                n20, n21, n22, n23,
@@ -383,9 +387,9 @@ public final class PMatrix implements PConstants {
 
   public void apply(PMatrix rhs) {
     apply(rhs.m00, rhs.m01, rhs.m02, rhs.m03,
-                rhs.m10, rhs.m11, rhs.m12, rhs.m13,
-                rhs.m20, rhs.m21, rhs.m22, rhs.m23,
-                rhs.m30, rhs.m31, rhs.m32, rhs.m33);
+          rhs.m10, rhs.m11, rhs.m12, rhs.m13,
+          rhs.m20, rhs.m21, rhs.m22, rhs.m23,
+          rhs.m30, rhs.m31, rhs.m32, rhs.m33);
   }
 
 
@@ -510,13 +514,11 @@ public final class PMatrix implements PConstants {
     float determinant = determinant();
 
     if (determinant != 0) {
-      /*
-       * m00 m01 m02 m03
-       * m10 m11 m12 m13
-       * m20 m21 m22 m23
-       * m30 m31 m32 m33
-       */
-      float determinant_inv = 1f/determinant;
+      // m00 m01 m02 m03
+      // m10 m11 m12 m13
+      // m20 m21 m22 m23
+      // m30 m31 m32 m33
+      float determinant_inv = 1f / determinant;
 
       // first row
       float t00 =  determinant3x3(m11, m12, m13, m21, m22, m23, m31, m32, m33);
