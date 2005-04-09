@@ -4,8 +4,8 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
   by Dan Mosedale via funding from the Interaction Institute IVREA.
@@ -25,6 +25,9 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app.preproc;
+
+import processing.app.*;
 import processing.core.*;
 
 import java.io.*;
@@ -48,17 +51,17 @@ public class PdePreprocessor {
   // might be at the end instead of .* whcih would make trouble
   // other classes using this can lop of the . and anything after
   // it to produce a package name consistently.
-  String extraImports[];
+  public String extraImports[];
 
   // imports just from the code folder, treated differently
   // than the others, since the imports are auto-generated.
-  String codeFolderImports[];
+  public String codeFolderImports[];
 
-  static final int STATIC = 0;  // formerly BEGINNER
-  static final int ACTIVE = 1;  // formerly INTERMEDIATE
-  static final int JAVA   = 2;  // formerly ADVANCED
+  static public final int STATIC = 0;  // formerly BEGINNER
+  static public final int ACTIVE = 1;  // formerly INTERMEDIATE
+  static public final int JAVA   = 2;  // formerly ADVANCED
   // static to make it easier for the antlr preproc to get at it
-  static int programType = -1;
+  static public int programType = -1;
 
   Reader programReader;
   String buildPath;

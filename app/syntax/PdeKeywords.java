@@ -2,10 +2,10 @@
 
 /*
   PdeKeywords - handles text coloring and links to html reference
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
   along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+package processing.app.syntax;
+
+import processing.app.*;
 
 import java.io.*;
 import java.util.*;
