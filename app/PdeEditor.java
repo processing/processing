@@ -22,6 +22,11 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app;
+
+import processing.app.syntax.*;
+import processing.app.tools.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -53,7 +58,7 @@ public class PdeEditor extends JFrame
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
-  static final String EMPTY =
+  static public final String EMPTY =
     "                                                                     " +
     "                                                                     " +
     "                                                                     ";
@@ -345,14 +350,14 @@ public class PdeEditor extends JFrame
       // disable line highlight and turn off the caret when disabling
       Color color = PdePreferences.getColor("editor.external.bgcolor");
       painter.setBackground(color);
-      painter.lineHighlight = false;
+      painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
 
     } else {
       Color color = PdePreferences.getColor("editor.bgcolor");
       painter.setBackground(color);
-      painter.lineHighlight =
-        PdePreferences.getBoolean("editor.linehighlight");
+      boolean highlight = PdePreferences.getBoolean("editor.linehighlight");
+      painter.setLineHighlightEnabled(highlight);
       textarea.setCaretVisible(true);
     }
 
@@ -585,7 +590,8 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Create Font...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new PdeFontBuilder().show(sketch.dataFolder);
+          //new CreateFont().show(sketch.dataFolder);
+          new CreateFont(PdeEditor.this).show();
         }
       });
     menu.add(item);
@@ -593,9 +599,10 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Archive Sketch");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Archiver archiver = new Archiver();
-          archiver.setup(PdeEditor.this);
-          archiver.show();
+          new Archiver(PdeEditor.this).show();
+          //Archiver archiver = new Archiver();
+          //archiver.setup(PdeEditor.this);
+          //archiver.show();
         }
       });
     menu.add(item);

@@ -22,6 +22,9 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app;
+
+import processing.app.preproc.*;
 import processing.core.*;
 
 import java.awt.FileDialog;
@@ -54,13 +57,13 @@ public class PdeSketch {
   boolean library;  // true if it's a library
 
   public File folder; //sketchFolder;
-  File dataFolder;
-  File codeFolder;
+  public File dataFolder;
+  public File codeFolder;
 
   static final int PDE = 0;
   static final int JAVA = 1;
 
-  PdeCode current;
+  public PdeCode current;
   int codeCount;
   PdeCode code[];
 
@@ -1462,7 +1465,6 @@ public class PdeSketch {
       int wide = PApplet.DEFAULT_WIDTH;
       int high = PApplet.DEFAULT_HEIGHT;
 
-      //try {
       PatternMatcher matcher = new Perl5Matcher();
       PatternCompiler compiler = new Perl5Compiler();
 
@@ -1471,8 +1473,10 @@ public class PdeSketch {
       // this way, no warning is shown if size() isn't actually
       // used in the applet, which is the case especially for
       // beginners that are cutting/pasting from the reference.
+      // modified for 83 to match size(XXX, ddd
       String sizing =
-        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
+        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
+        //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
       Pattern pattern = compiler.compile(sizing);
 
       // adds a space at the beginning, in case size() is the very
@@ -1498,25 +1502,10 @@ public class PdeSketch {
         }
       }  // else no size() command found
 
-      /*
-      // try to get / ** blah * / stuff
-      // the plus gets / ***** and **** / if that's what they used
-      matcher = new Perl5Matcher();
-      compiler = new Perl5Compiler();
-      String description = "";
-      //pattern = compiler.compile("\\/\\*\\*+(.*)\\*\\/");
-      pattern = compiler.compile("\\/\\*\\*+(.+)");
-      //pattern = compiler.compile("\\/\\*\\*+(.*)\\*+\\/");
-      System.out.println("this compiled");
-      input = new PatternMatcherInput(" " + code[0].program);
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
-        System.out.println("contains " + result.group(0));
-        String stuff = result.group(1).toString();
-        String lines[] = PApplet.split(stuff, '\n');
-        PApplet.printarr(lines);
-      }
-      */
+      // originally tried to grab this with a regexp matcher,
+      // but it wouldn't span over multiple lines for the match.
+      // this could prolly be forced, but since that's the case
+      // better just to parse by hand.
       StringBuffer dbuffer = new StringBuffer();
       String lines[] = PApplet.split(code[0].program, '\n');
       for (int i = 0; i < lines.length; i++) {
