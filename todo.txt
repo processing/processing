@@ -1,63 +1,19 @@
 0083 pde
+X move everything to packages, and start auto-javadoc
+X how to get preproc to automatically prepend packages
+o   only build preproc from preproc/make.sh? 
+o   and check in the preproc'd code to cvs?
+X need to add classes dir to cp for jikes make (on win and linux)
+X get both versions of size() properly detected on export
 
-_ need to add classes dir to cp for jikes make (on win and linux)
-_ how to get preproc to automatically prepend packages
-_   only build preproc from preproc/make.sh? 
-_   and check in the preproc'd code to cvs?
+fixed in 82
+X border weirdness in PdeEditor panels on windows
 
-_ npe is a runtimeex, so any npe in setup comes up weird
-_   maybe the renderer exception is something different? newrendex?
 
-_ why is gl being added on export, no matter what? or is it?
-_ get both versions of size() properly detected on export
-
-_ external apps don't stop at all when 'stop' is hit
-_   worker thread is halting the app ala code folder bug
-_   could this be dealt with by using nio? 
-_     host environment will be running 1.4 so...
-
-_ runtime exceptions have stopped coming through (on pc only?)
-
-_ moving an external window around a lot will halt the parent
-_   does move even need to be called? could just wait till stop?
-_   PdeMessageSiphon has problems with message()
-_ external apps also seem to not do newlines properly on exceptions
-_ appendText launches a new thread for every blip of text
-_   this is totally wrong and really horks things
-
-_ fishwick library export duplication stuff
+_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux
-
-_ saved window positions.. if displays has changed, becomes a problem
-_   record the display that it was on?
-_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
-_   make sure that the applet is within the bounds of the current display?
-_   (from 0, 0 to width, height)
-
-_ make note that changing screen config requires restart of processing
-_   static { checkScreens(); }
-_   static void PApplet.checkScreens() { } 
-_   to run explicitly later
-_   this seems too complicated.. just make people restart
-
-_ ability to select monitor via preferences panel
-_   this applies to any applet that's run externally currently (verify)
-_   make it also work with anything that's run inside of p5 itself
-_ check current present code with multiple monitors
-_   if it's working, make it all reflection-based in PApplet
-
-_ first pass on full screen
-_   exceptions in full screen mode will quit the app completely
-_   (can't keep window open because things are hosed)
-_   default is that full screen app doesn't cover multiple displays
-_     this is fine since opengl can't usually go across both
-_     but include an example for how to use full in gl 
-_     (use toolkit.getscreensize)
-
-_ move everything to packages, and start auto-javadoc
-_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -79,31 +35,6 @@ _     and queue events by registering for draw or whatever they'd like
 _   lib could call queueEvent with the args
 _   then call them inside post()
 _ scrubbing all the code to include proper license and copyright info
-
-Not sure what triggers it, possibly scrolling with mousewheel?, but
-sometimes Processing output window gets stuck thinking it should
-scroll to the top, so if you have an output larger than the allowable
-space, it will show you the last line, but then pops the scrollbar
-back to the top.  I think the only way to stop it is to quit out of
-processing and relaunch. 
-
-_ update checker (can be turned off in prefs)
-_   send unique id, and information about person's java vm/platform
-_   using timezone would be an interesting method for tracking location
-
-_ border weirdness in PdeEditor panels on windows
-
-_ stop() not working very well
-_   doesn't seem to actually be stopping things
-_ closing window w/o first hitting stop() causes freak out
-_   opengl gives an OutOfMemoryError
-_   java2d just goes into a lock
-_   could also be code that's in an infinite loop (i.e. text error) 
-_     which then causes a full lock
-_ something really bad happened with println() in this release
-_   perhaps only without a code folder and/or running in java2d mode?
-_   this may also be what's hosing 
-
 
 //
 
@@ -143,6 +74,76 @@ saving a project over an already existing project does not get rid of the .pde f
 
 
 NOT NECESSARY BEFORE BETA
+
+_ update checker (can be turned off in prefs)
+_   send unique id, and information about person's java vm/platform
+_   using timezone would be an interesting method for tracking location
+
+_ stop() not working very well
+_   doesn't seem to actually be stopping things
+_ closing window w/o first hitting stop() causes freak out
+_   opengl gives an OutOfMemoryError
+_   java2d just goes into a lock
+_   could also be code that's in an infinite loop (i.e. text error) 
+_     which then causes a full lock
+_ something really bad happened with println() in this release
+_   perhaps only without a code folder and/or running in java2d mode?
+_   this may also be what's hosing 
+
+Not sure what triggers it, possibly scrolling with mousewheel?, but
+sometimes Processing output window gets stuck thinking it should
+scroll to the top, so if you have an output larger than the allowable
+space, it will show you the last line, but then pops the scrollbar
+back to the top.  I think the only way to stop it is to quit out of
+processing and relaunch. 
+
+_ saved window positions.. if displays has changed, becomes a problem
+_   record the display that it was on?
+_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
+_   make sure that the applet is within the bounds of the current display?
+_   (from 0, 0 to width, height)
+
+_ make note that changing screen config requires restart of processing
+_   static { checkScreens(); }
+_   static void PApplet.checkScreens() { } 
+_   to run explicitly later
+_   this seems too complicated.. just make people restart
+
+_ ability to select monitor via preferences panel
+_   this applies to any applet that's run externally currently (verify)
+_   make it also work with anything that's run inside of p5 itself
+_ check current present code with multiple monitors
+
+_ first pass on full screen
+_   exceptions in full screen mode will quit the app completely
+_   (can't keep window open because things are hosed)
+_   default is that full screen app doesn't cover multiple displays
+_     this is fine since opengl can't usually go across both
+_     but include an example for how to use full in gl 
+_     (use toolkit.getscreensize)
+
+_ fishwick library export duplication stuff
+
+_ runtime exceptions have stopped coming through (on pc only?)
+
+_ npe is a runtimeex, so any npe in setup comes up weird
+_   maybe the renderer exception is something different? newrendex?
+
+_ why is gl being added on export, no matter what? or is it?
+_   sketch folder not really being emptied on export
+_   so old libs will just perpetuate themselves
+
+_ external apps don't stop at all when 'stop' is hit
+_   worker thread is halting the app ala code folder bug
+_   could this be dealt with by using nio? 
+_     host environment will be running 1.4 so...
+
+_ moving an external window around a lot will halt the parent
+_   does move even need to be called? could just wait till stop?
+_   PdeMessageSiphon has problems with message()
+_ external apps also seem to not do newlines properly on exceptions
+_ appendText launches a new thread for every blip of text
+_   this is totally wrong and really horks things
 
 _ split Preferences and PreferencesFrame ?
 
@@ -209,12 +210,6 @@ _ subfolders in the 'data' directory don't work
 
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-
-_ track loadImage() with filenames that are inconsistent
-_   i.e. mixed case filename in sketch is different in windows
-_   but when uploaded to a unix server causes a serious problem
-_   use canonicalPath to flag possible problems
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
 
