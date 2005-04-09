@@ -91,7 +91,13 @@ cp dist/jikes processing/
 chmod a+x processing/jikes
 
 chmod a+x processing/Processing.app/Contents/MacOS/JavaApplicationStub
- 
+
+cd ../..
+javadoc -public -d doc app/*.java app/preproc/*.java app/syntax/*.java core/*.java opengl/*.java net/*.java video/*.java serial/*.java
+cd build/macosx
+pwd
+exit
+
 #cp dist/lib/pde_macosx.properties processing/lib/
 
 # convert notes.txt to windows LFs

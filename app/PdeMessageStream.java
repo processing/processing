@@ -17,19 +17,21 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+package processing.app;
 
 import java.io.*;
 
 
-/** 
- * this is used by PdeEditor, System.err is set to 
+/**
+ * this is used by PdeEditor, System.err is set to
  * new PrintStream(new PdeMessageStream())
  *
- * it's also used by PdeCompiler 
+ * it's also used by PdeCompiler
  */
 class PdeMessageStream extends OutputStream {
 
@@ -50,7 +52,7 @@ class PdeMessageStream extends OutputStream {
 
   public void flush() { }
 
-  public void write(byte b[]) { 
+  public void write(byte b[]) {
     // this never seems to get called
     System.out.println("leech1: " + new String(b));
   }

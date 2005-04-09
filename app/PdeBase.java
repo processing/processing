@@ -22,6 +22,8 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -47,7 +49,7 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class PdeBase {
-  static final String VERSION = "0082 Alpha";
+  static final String VERSION = "0083 Alpha";
 
   /**
    * Path of filename opened on the command line,

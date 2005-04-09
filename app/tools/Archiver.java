@@ -4,8 +4,7 @@
   Archiver - plugin tool for archiving sketches
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,12 +16,14 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//package processing.app.tools;  // for 0071+
+package processing.app.tools;
+
+import processing.app.*;
 
 import java.io.*;
 import java.text.*;
@@ -41,7 +42,7 @@ public class Archiver {
   SimpleDateFormat dateFormat;
 
 
-  public void setup(PdeEditor editor) {
+  public Archiver(PdeEditor editor) {
     this.editor = editor;
 
     numberFormat = NumberFormat.getInstance();
@@ -65,15 +66,15 @@ public class Archiver {
     int index = 0;
     do {
       if (useDate) {
-	String purty = dateFormat.format(new Date());
-	String stamp = purty + ((char) ('a' + index));
-	namely = name + "-" + stamp;
-	newbie = new File(parent, namely + ".zip");
+        String purty = dateFormat.format(new Date());
+        String stamp = purty + ((char) ('a' + index));
+        namely = name + "-" + stamp;
+        newbie = new File(parent, namely + ".zip");
 
       } else {
-	String diggie = numberFormat.format(index + 1);
-	namely = name + "-" + diggie;
-	newbie = new File(parent, namely + ".zip");
+        String diggie = numberFormat.format(index + 1);
+        namely = name + "-" + diggie;
+        newbie = new File(parent, namely + ".zip");
       }
       index++;
     } while (newbie.exists());
@@ -98,31 +99,31 @@ public class Archiver {
   }
 
 
-  public void buildZip(File dir, String sofar, 
-		       ZipOutputStream zos) throws IOException {
+  public void buildZip(File dir, String sofar,
+                       ZipOutputStream zos) throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || 
-	  files[i].equals("..")) continue;
+      if (files[i].equals(".") ||
+          files[i].equals("..")) continue;
 
       File sub = new File(dir, files[i]);
-      String nowfar = (sofar == null) ? 
+      String nowfar = (sofar == null) ?
         files[i] : (sofar + "/" + files[i]);
 
       if (sub.isDirectory()) {
-	// directories are empty entries and have / at the end
-	ZipEntry entry = new ZipEntry(nowfar + "/");
-	//System.out.println(entry);
-	zos.putNextEntry(entry);
-	zos.closeEntry();
-	buildZip(sub, nowfar, zos);
+        // directories are empty entries and have / at the end
+        ZipEntry entry = new ZipEntry(nowfar + "/");
+        //System.out.println(entry);
+        zos.putNextEntry(entry);
+        zos.closeEntry();
+        buildZip(sub, nowfar, zos);
 
       } else {
-	ZipEntry entry = new ZipEntry(nowfar);
-	entry.setTime(sub.lastModified());
-	zos.putNextEntry(entry);
-	zos.write(PdeBase.grabFile(sub));
-	zos.closeEntry();
+        ZipEntry entry = new ZipEntry(nowfar);
+        entry.setTime(sub.lastModified());
+        zos.putNextEntry(entry);
+        zos.write(PdeBase.grabFile(sub));
+        zos.closeEntry();
       }
     }
   }
