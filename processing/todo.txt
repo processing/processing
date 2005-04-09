@@ -1,5 +1,10 @@
 0083 pde
 
+_ need to add classes dir to cp for jikes make (on win and linux)
+_ how to get preproc to automatically prepend packages
+_   only build preproc from preproc/make.sh? 
+_   and check in the preproc'd code to cvs?
+
 _ npe is a runtimeex, so any npe in setup comes up weird
 _   maybe the renderer exception is something different? newrendex?
 

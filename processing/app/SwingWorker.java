@@ -1,3 +1,5 @@
+package processing.app;
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -5,7 +7,7 @@ import javax.swing.SwingUtilities;
  * SwingWorker 3), an abstract class that you subclass to
  * perform GUI-related work in a dedicated thread.  For
  * instructions on and examples of using this class, see:
- * 
+ *
  * http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html
  *
  * Note that the API changed slightly in the 3rd version:
@@ -15,7 +17,7 @@ import javax.swing.SwingUtilities;
 public abstract class SwingWorker {
     private Object value;  // see getValue(), setValue()
 
-    /** 
+    /**
      * Class to maintain reference to current worker thread
      * under separate synchronization control.
      */
@@ -28,23 +30,23 @@ public abstract class SwingWorker {
 
     private ThreadVar threadVar;
 
-    /** 
-     * Get the value produced by the worker thread, or null if it 
+    /**
+     * Get the value produced by the worker thread, or null if it
      * hasn't been constructed yet.
      */
-    protected synchronized Object getValue() { 
-        return value; 
+    protected synchronized Object getValue() {
+        return value;
     }
 
-    /** 
-     * Set the value produced by worker thread 
+    /**
+     * Set the value produced by worker thread
      */
-    private synchronized void setValue(Object x) { 
-        value = x; 
+    private synchronized void setValue(Object x) {
+        value = x;
     }
 
-    /** 
-     * Compute the value to be returned by the <code>get</code> method. 
+    /**
+     * Compute the value to be returned by the <code>get</code> method.
      */
     public abstract Object construct();
 
@@ -68,14 +70,14 @@ public abstract class SwingWorker {
     }
 
     /**
-     * Return the value created by the <code>construct</code> method.  
+     * Return the value created by the <code>construct</code> method.
      * Returns null if either the constructing thread or the current
      * thread was interrupted before a value was produced.
-     * 
+     *
      * @return the value created by the <code>construct</code> method
      */
     public Object get() {
-        while (true) {  
+        while (true) {
             Thread t = threadVar.get();
             if (t == null) {
                 return getValue();
@@ -100,7 +102,7 @@ public abstract class SwingWorker {
            public void run() { finished(); }
         };
 
-        Runnable doConstruct = new Runnable() { 
+        Runnable doConstruct = new Runnable() {
             public void run() {
                 try {
                     setValue(construct());

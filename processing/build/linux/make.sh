@@ -11,6 +11,11 @@ else
   BUILD_PREPROC=true
   cp -r ../shared work
 
+  # needs to make the dir because of packaging goofiness
+  mkdir -p work/classes/processing/app/preproc
+  mkdir -p work/classes/processing/app/syntax
+  mkdir -p work/classes/processing/app/tools
+
   cp -r ../../lib work/libraries
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -97,7 +102,7 @@ cd app
 
 CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
 
-../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar

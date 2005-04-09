@@ -14,6 +14,11 @@ else
   rm -f work/.DS_Store 
   # in case one of those little mac poopers show up
 
+  # needs to make the dir because of packaging goofiness
+  mkdir -p work/classes/processing/app/preproc
+  mkdir -p work/classes/processing/app/syntax
+  mkdir -p work/classes/processing/app/tools
+
   cp -r ../../lib work/libraries
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -132,7 +137,7 @@ CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib
 # compile the code as java 1.3, so that the application will run and
 # show the user an error, rather than crapping out with some strange
 # "class not found" crap
-../build/windows/work/jikes -target 1.3 +D -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+../build/windows/work/jikes -target 1.3 +D -classpath "$CLASSPATH;..\\build\\windows\\work/classes" -d ..\\build\\windows\\work/classes *.java preproc/*.java syntax/*.java tools/*.java
 #/cygdrive/c/jdk-1.4.2_05/bin/javac.exe -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/windows/work/classes
