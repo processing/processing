@@ -1462,10 +1462,6 @@ public class PGraphics3 extends PGraphics {
     //}
   }
 
-  private float dot(float ax, float ay, float az, float bx, float by, float bz) {
-    return ax * bx + ay * by + az * bz;
-  }
-
 
   /**
    * lighting calculation of final color.
@@ -2038,7 +2034,7 @@ public class PGraphics3 extends PGraphics {
     }
 
     int v1,v11,v2;
-    push();
+    pushMatrix();
     if (x!=0f && y!=0f && z!=0f) translate(x,y,z);
     scale(r);
 
@@ -2097,7 +2093,7 @@ public class PGraphics3 extends PGraphics {
     normal(0, 1, 0);
     vertex(0, 1, 0);
     endShape();
-    pop();
+    popMatrix();
 
     if (triangle != null) {  // triangle is null in gl
       triangle.setCulling(false);
@@ -2315,20 +2311,20 @@ public class PGraphics3 extends PGraphics {
   // TRANSFORMATION MATRIX
 
 
-  public void push() {
+  public void pushMatrix() {
     if (!modelview.push()) {
-      throw new RuntimeException("too many calls to push()");
+      throw new RuntimeException("too many calls to pushMatrix()");
     }
-    // Do this to the inverse regardless of the lights to keep stack pointers
-    // in sync
+    // Do this to the inverse regardless of the lights
+    // to keep stack pointers in sync
     inverseModelview.push();
   }
 
 
-  public void pop() {
+  public void popMatrix() {
     if (!modelview.pop()) {
-      throw new RuntimeException("too many calls to pop() " +
-                                 "(and not enough to push)");
+      throw new RuntimeException("too many calls to popMatrix() " +
+                                 "(and not enough to pushMatrix)");
     }
     // Do this to the inverse regardless of the lights
     // to keep stack pointers in sync
@@ -2336,17 +2332,13 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  //public void resetProjection() {
-  //projection.reset();
-  //}
-
   /**
    * Load identity as the transform/model matrix.
    * Same as glLoadIdentity().
    */
   public void resetMatrix() {
-    forwardTransform.identity(); //reset();
-    reverseTransform.identity(); //reset();
+    forwardTransform.reset();
+    reverseTransform.reset();
   }
 
 
@@ -2967,10 +2959,12 @@ public class PGraphics3 extends PGraphics {
     }
   }
 
+
   public void ambient(float gray) {
     colorCalc(gray);
     colorAmbient();
   }
+
 
   public void ambient(float x, float y, float z) {
     colorCalc(x, y, z);
@@ -3000,6 +2994,7 @@ public class PGraphics3 extends PGraphics {
       colorSpecular();
     }
   }
+
 
   public void specular(float gray) {
     colorCalc(gray);
@@ -3264,6 +3259,7 @@ public class PGraphics3 extends PGraphics {
     return lightCount-1;
   }
 
+
   //////////////////////////////////////////////////////////////
 
   // MATH (internal use only)
@@ -3318,6 +3314,11 @@ public class PGraphics3 extends PGraphics {
   private final float tan(float angle) {
     //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
+  }
+
+  private float dot(float ax, float ay, float az,
+                    float bx, float by, float bz) {
+    return ax * bx + ay * by + az * bz;
   }
 }
 
