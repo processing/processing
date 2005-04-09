@@ -674,9 +674,9 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  public void push() {
+  public void pushMatrix() {
     if (transformCount == transformStack.length) {
-      throw new RuntimeException("push() cannot use push more than " +
+      throw new RuntimeException("pushMatrix() cannot use push more than " +
                                  transformStack.length + " times");
     }
     transformStack[transformCount] = g2.getTransform();
@@ -684,9 +684,10 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void pop() {
+  public void popMatrix() {
     if (transformCount == 0) {
-      throw new RuntimeException("missing a pop() to go with that push()");
+      throw new RuntimeException("missing a popMatrix() " +
+                                 "to go with that pushMatrix()");
     }
     transformCount--;
     g2.setTransform(transformStack[transformCount]);

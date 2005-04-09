@@ -5556,15 +5556,15 @@ v              PApplet.this.stop();
   }
 
 
-  public void push() {
-    if (recorder != null) recorder.push();
-    g.push();
+  public void pushMatrix() {
+    if (recorder != null) recorder.pushMatrix();
+    g.pushMatrix();
   }
 
 
-  public void pop() {
-    if (recorder != null) recorder.pop();
-    g.pop();
+  public void popMatrix() {
+    if (recorder != null) recorder.popMatrix();
+    g.popMatrix();
   }
 
 

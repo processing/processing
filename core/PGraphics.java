@@ -1872,11 +1872,9 @@ public class PGraphics extends PImage implements PConstants {
   // TRANSFORMATION MATRIX
 
 
-  public void push() {
+  public void pushMatrix() {
     if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
-      throw new RuntimeException("too many calls to push()");
-      //message(COMPLAINT, "matrix stack overflow, to much pushmatrix");
-      //return;
+      throw new RuntimeException("too many calls to pushMatrix()");
     }
     float mat[] = matrixStack[matrixStackDepth];
     mat[0] = m00; mat[1] = m01; mat[2] = m02;
@@ -1885,12 +1883,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void pop() {
+  public void popMatrix() {
     if (matrixStackDepth == 0) {
-      throw new RuntimeException("too many calls to pop() " +
-                                 "(and not enough to push)");
-      //message(COMPLAINT, "matrix stack underflow, to many popmatrix");
-      //return;
+      throw new RuntimeException("too many calls to popMatrix() " +
+                                 "(and not enough to pushMatrix)");
     }
     matrixStackDepth--;
     float mat[] = matrixStack[matrixStackDepth];
