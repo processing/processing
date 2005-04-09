@@ -20,6 +20,11 @@ else
 
   cp -r ../shared work
 
+  # needs to make the dir because of packaging goofiness
+  mkdir -p work/classes/processing/app/preproc
+  mkdir -p work/classes/processing/app/syntax
+  mkdir -p work/classes/processing/app/tools
+
   cp -r ../../lib work/libraries
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -81,9 +86,11 @@ cd ../app
 
 ### -- BUILD PARSER ---------------------------------------------
 
+#BUILD_PREPROC=true
+
 if $BUILD_PREPROC
 then
-  cd preprocessor
+  cd preproc
   # build classes/grammar for preprocessor
   echo Building antlr grammar code...
   # first build the default java goop
@@ -93,7 +100,6 @@ then
   cd ..
 fi
 
-
 ### -- BUILD PDE ------------------------------------------------
 
 echo Building the PDE...
@@ -101,12 +107,19 @@ echo Building the PDE...
 # compile the code as java 1.3, so that the application will run and
 # show the user an error, rather than crapping out with some strange
 # "class not found" crap
-../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+#../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes *.java syntax/*.java preproc/*.java tools/*.java
+../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes tools/*.java preproc/*.java syntax/*.java  *.java 
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
 zip -0rq ../lib/pde.jar .
 cd ../..
+
+# i fought the packages and the packages won
+#cd ../..
+#WORKLIB=processing/build/macosx/work/lib
+#./processing/build/macosx/work/jikes -d . -target 1.3 +D -classpath $WORKLIB/core.jar:$WORKLIB/antlr.jar:$WORKLIB/oro.jar:$WORKLIB/registry.jar:$CLASSPATH -d . processing/app/*.java processing/app/preproc/*.java processing/app/syntax/*.java processing/app/tools/*.java
+#zip -rq $WORKLIB/pde.jar processing/app/*.class processing/app/preproc/*.class processing/app/syntax/*.class processing/app/tools/*.class
 
 # get the libs
 mkdir -p work/Processing.app/Contents/Resources/Java/

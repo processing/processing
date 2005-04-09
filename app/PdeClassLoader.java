@@ -17,6 +17,8 @@
  * OF USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
  */
 
+package processing.app;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;

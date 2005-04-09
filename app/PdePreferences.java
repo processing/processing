@@ -22,6 +22,10 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app;
+
+import processing.app.syntax.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;

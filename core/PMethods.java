@@ -1,3 +1,4 @@
+/*
 package processing.core;
 
 
@@ -318,13 +319,13 @@ public interface PMethods {
   public void lightDiffuse(int num, float x, float y, float z);
 
   public void lightSpecular(int num, float x, float y, float z);
-  
+
   public void lightDirection(int num, float x, float y, float z);
 
   public void lightFalloff(int num, float constant, float linear, float quadratic);
-  
+
   public void lightSpotAngle(int num, float spotAngle);
-  
+
   public void lightSpotConcentration(int num, float concentration);
 
   //
@@ -488,22 +489,6 @@ public interface PMethods {
 
   //
 
-  /*
-  // WOULD LIKE TO THINK OF NICER NAMES FOR ALL THESE
-
-  static public boolean saveHeaderTIFF(OutputStream output,
-                                       int width, int height);
-
-  static public boolean saveTIFF(OutputStream output, int pixels[],
-                                 int width, int height);
-
-  static public boolean saveHeaderTGA(OutputStream output,
-                                      int width, int height);
-
-  static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height);
-  */
-
   public void save(String filename);
 
   public void postSetup();
@@ -542,7 +527,7 @@ public interface PMethods {
   public void specular(float x, float y, float z, float a);
 
   public void shininess(float shine);
-  
+
   public void emissive(int rgb);
 
   public void emissive(float gray);
@@ -576,3 +561,4 @@ public interface PMethods {
   public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle);
 }
 
+*/
