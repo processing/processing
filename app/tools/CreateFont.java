@@ -1,11 +1,11 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeFontBuilder - gui interface to font creation heaven/hell
+  CreateFont - gui interface to font creation heaven/hell
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app.tools;
+
+import processing.app.*;
 import processing.core.*;
 
 import java.awt.*;
@@ -34,7 +37,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 
-public class PdeFontBuilder extends JFrame {
+public class CreateFont extends JFrame {
   File targetFolder;
 
   Dimension windowSize;
@@ -62,8 +65,10 @@ public class PdeFontBuilder extends JFrame {
   };
 
 
-  public PdeFontBuilder() {
+  public CreateFont(PdeEditor editor) {
     super("Create Font");
+
+    targetFolder = editor.sketch.dataFolder;
 
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
@@ -347,10 +352,12 @@ public class PdeFontBuilder extends JFrame {
   }
 
 
+  /*
   public void show(File targetFolder) {
     this.targetFolder = targetFolder;
     show();
   }
+  */
 
 
   public void update() {
