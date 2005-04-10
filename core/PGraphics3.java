@@ -2626,21 +2626,19 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  /**
+   * Print the current camera matrix.
+   */
+  public void printCamera() {
+    camera.print();
+  }
+
 
   /**
    * Print the current projection matrix.
    */
   public void printProjection() {
     projection.print();
-  }
-
-
-
-  /**
-   * Print the current camera matrix.
-   */
-  public void printCamera() {
-    camera.print();
   }
 
 

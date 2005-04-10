@@ -6,11 +6,14 @@ o   and check in the preproc'd code to cvs?
 X need to add classes dir to cp for jikes make (on win and linux)
 X get both versions of size() properly detected on export
 
+_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
+
+_ update .exe to use new class package
+_ update .app to use new package
+_ update linux shell script for new package
+
 fixed in 82
 X border weirdness in PdeEditor panels on windows
-
-
-_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux
