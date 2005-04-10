@@ -4,7 +4,7 @@
   PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004- Ben Fry and Casey Reas
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -508,15 +508,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void normal(float nx, float ny, float nz) {
-    throw new RuntimeException("normal() can only be used with depth()");
+    depthError("normal");
   }
 
   public void textureMode(int mode) {
-    throw new RuntimeException("textureMode() can only be used with depth()");
+    depthError("textureMode");
   }
 
   public void texture(PImage image) {
-    throw new RuntimeException("texture() can only be used with depth()");
+    depthError("texture");
   }
 
 
@@ -659,20 +659,19 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void vertex(float x, float y, float z) {
-    throw new RuntimeException("vertex(x, y, z) can only be used with " +
-                               "depth(), use vertex(x, y) instead.");
+    depthErrorXYZ("vertex");
   }
 
 
   public void vertex(float x, float y, float u, float v) {
     throw new RuntimeException("vertex() with u, v coordinates " +
-                               "can only be used with depth()");
+                               "can only be used with OPENGL or P3D");
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
     throw new RuntimeException("vertex() with u, v coordinates " +
-                               "can only be used with depth()");
+                               "can only be used with OPENGL or P3D");
   }
 
 
@@ -683,6 +682,7 @@ public class PGraphics extends PImage implements PConstants {
 
     // otherwise, draw a bezier segment to this point
   }
+
 
   protected void bezier_vertex(float x, float y) {
     vertexCount = 0;
@@ -729,8 +729,7 @@ public class PGraphics extends PImage implements PConstants {
   public void bezierVertex(float x1, float y1, float z1,
                            float x2, float y2, float z2,
                            float x3, float y3, float z3) {
-    throw new RuntimeException("bezierVertex(x, y, z) can only be used with " +
-                               "depth(), use bezierVertex(x, y) instead.");
+    depthErrorXYZ("bezierVertex");
   }
 
 
@@ -747,8 +746,7 @@ public class PGraphics extends PImage implements PConstants {
    * See notes with the curve() function.
    */
   public void curveVertex(float x, float y, float z) {
-    throw new RuntimeException("curveVertex(x, y, z) can only be used with " +
-                               "depth(), use curveVertex(x, y) instead.");
+    depthErrorXYZ("curveVertex");
   }
 
 
@@ -766,8 +764,6 @@ public class PGraphics extends PImage implements PConstants {
       break;
 
     case POLYGON:
-      //case CONCAVE_POLYGON:
-      //case CONVEX_POLYGON:
       path.closePath();
       draw_shape(path);
       break;
@@ -822,8 +818,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void point(float x, float y, float z) {
-    throw new RuntimeException("point(x, y, z) can only be used with " +
-                               "depth(), use point(x, y) instead.");
+    depthErrorXYZ("point");
   }
 
 
@@ -834,8 +829,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
-    throw new RuntimeException("line(x1, y1, z1, x2, y2, z2) " +
-                               "can only be used with depth()");
+    depthErrorXYZ("line");
   }
 
 
@@ -1009,24 +1003,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void box(float size) {
-    throw new RuntimeException("box() can only be used with depth()");
+    depthError("box");
   }
 
   public void box(float w, float h, float d) {
-    throw new RuntimeException("box() can only be used with depth()");
+    depthError("box");
   }
 
   public void sphereDetail(int res) {
-    throw new RuntimeException("sphereDetail() can only be used with depth()");
+    depthError("sphereDetail");
   }
 
   public void sphere(float r) {
-    throw new RuntimeException("sphere() can only be used with depth()");
+    depthError("sphere");
   }
-
-  //public void sphere(float x, float y, float z, float r) {
-  //throw new RuntimeException("sphere() can only be used with depth()");
-  //}
 
 
 
@@ -1064,12 +1054,6 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
-
-    // quadratic bezier
-    //return a*t1*t1 + 2*b*t*t1 + c*t*t;
-
-    // cubic bezier
-    //return a*t*t*t + 3*b*t*t*t1 + 3*c*t*t1*t1 + d*t1*t1*t1;
     return a*t1*t1*t1 + 3*b*t*t1*t1 + 3*c*t*t*t1 + d*t*t*t;
   }
 
@@ -1089,7 +1073,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Draw a bezier curve. The first and last points are
+   * Draw a quadratic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
    * <P>
@@ -1097,15 +1081,19 @@ public class PGraphics extends PImage implements PConstants {
    * <PRE>beginShape();
    * vertex(x1, y1);
    * bezierVertex(x2, y2, x3, y3, x4, y4);
-   * endShape();</PRE>
-   *
+   * endShape();
+   * </PRE>
    * In Postscript-speak, this would be:
    * <PRE>moveto(x1, y1);
    * curveto(x2, y2, x3, y3, x4, y4);</PRE>
    * If you were to try and continue that curve like so:
    * <PRE>curveto(x5, y5, x6, y6, x7, y7);</PRE>
    * This would be done in processing by adding these statements:
-   * <PRE>bezierVertex(x5, y5, x6, y6, x7, y7)</PRE>
+   * <PRE>bezierVertex(x5, y5, x6, y6, x7, y7)
+   * </PRE>
+   * To draw a cubic (instead of quadratic) curve,
+   * use the control point twice by doubling it:
+   * <PRE>bezier(x1, y1, cx, cy, cx, cy, x2, y2);</PRE>
    */
   public void bezier(float x1, float y1,
                      float x2, float y2,
@@ -1122,14 +1110,12 @@ public class PGraphics extends PImage implements PConstants {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    throw new RuntimeException("bezier() with z coordinates " +
-                               "can only be used with depth()");
+    depthErrorXYZ("bezier");
   }
 
 
   protected void bezier_init() {
-    bezierDetail(bezier_detail); //BEZIER_DETAIL);
-    //bezier_inited = true;
+    bezierDetail(bezier_detail);
   }
 
 
@@ -1280,8 +1266,7 @@ public class PGraphics extends PImage implements PConstants {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    throw new RuntimeException("curve() with z coordinates " +
-                               "can only be used with depth()");
+    depthErrorXYZ("curve");
   }
 
 
@@ -1329,7 +1314,7 @@ public class PGraphics extends PImage implements PConstants {
    * Draw a segment of spline (bezier or catmull-rom curve)
    * using the matrix m, which is the basis matrix already
    * multiplied with the forward differencing matrix.
-   *
+   * <P>
    * the x0, y0, z0 points are the point that's being used as
    * the start, and also as the accumulator. for bezier curves,
    * the x1, y1, z1 are the first point drawn, and added to.
@@ -1337,7 +1322,7 @@ public class PGraphics extends PImage implements PConstants {
    * is the first drawn point, and is accumulated to.
    */
   protected void spline2_segment(int offset, int start,
-                               float m[][], int segments) {
+                                 float m[][], int segments) {
     float x1 = splineVertices[offset][MX];
     float y1 = splineVertices[offset][MY];
 
@@ -1374,7 +1359,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void spline3_segment(int offset, int start,
-                               float m[][], int segments) {
+                                 float m[][], int segments) {
     float x1 = splineVertices[offset+0][MX];
     float y1 = splineVertices[offset+0][MY];
     float z1 = splineVertices[offset+0][MZ];
@@ -1406,9 +1391,6 @@ public class PGraphics extends PImage implements PConstants {
     float zplot1 = m[1][0]*z1 + m[1][1]*z2 + m[1][2]*z3 + m[1][3]*z4;
     float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
     float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
-
-    //unchangedZ = false;
-    //dimensions = 3;
 
     // vertex() will reset splineVertexCount, so save it
     int cvertexSaved = splineVertexCount;
@@ -1472,15 +1454,6 @@ public class PGraphics extends PImage implements PConstants {
       imageImpl(image,
                 a, b, c, d,
                 u1, v1, u2, v2);
-
-      /*
-    } else if ((imageMode == CENTER) ||
-               (imageMode == CENTER_RADIUS)) {
-      imageImpl(image,
-                a - c/2f, b - d/2f,
-                a + c/2f, b + d/2f,
-                u1, v1, u2, v2);
-      */
     }
   }
 
@@ -1540,7 +1513,6 @@ public class PGraphics extends PImage implements PConstants {
       textSize = size;
       textLeading = textSize *
         ((textFont.ascent() + textFont.descent()) * 1.275f);
-      //textLeadingReset();
 
     } else {
       throw new RuntimeException("use textFont() before textSize()");
@@ -1553,14 +1525,6 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void textLeading(float leading) {
     textLeading = leading;
-    /*
-    if (textFont != null) {
-      textFont.leading(leading);
-
-    } else {
-      throw new RuntimeException("use textFont() before textLeading()");
-    }
-    */
   }
 
 
@@ -1662,8 +1626,6 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
-    //throw new RuntimeException("text() with a z coordinate is " +
-    //                         "only supported when depth() is used");
   }
 
 
@@ -1694,8 +1656,6 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
-    //throw new RuntimeException("text() with a z coordinate is " +
-    //                         "only supported when depth() is used");
   }
 
 
@@ -1703,11 +1663,11 @@ public class PGraphics extends PImage implements PConstants {
    * Draw text in a box that is constrained to a particular size.
    * The current rectMode() determines what the coordinates mean
    * (whether x1/y1/x2/y2 or x/y/w/h).
-   *
+   * <P>
    * Note that the x,y coords of the start of the box
    * will align with the *ascent* of the text, not the baseline,
    * as is the case for the other text() functions.
-   *
+   * <P>
    * Newlines that are \n (unix newline or linefeed char, ascii 10)
    * are honored, and \r (carriage return, windows and mac) are
    * ignored.
@@ -1752,8 +1712,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    throw new RuntimeException("text() with a z coordinate is " +
-                               "only supported when depth() is used");
+    depthErrorXYZ("text");
   }
 
 
@@ -1764,8 +1723,6 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(int num, float x, float y, float z) {
     text(String.valueOf(num), x, y, z);
-    //throw new RuntimeException("text() with a z coordinate is " +
-    //                         "only supported when depth() is used");
   }
 
 
@@ -1799,14 +1756,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void translate(float tx, float ty, float tz) {
-    throw new RuntimeException("translate() with a z coordinate " +
-                               "can only be used with depth()");
+    depthErrorXYZ("translate");
   }
-
-
-  //public void angleMode(int mode) {
-  //angleMode = mode;
-  //}
 
 
   /**
@@ -1816,8 +1767,6 @@ public class PGraphics extends PImage implements PConstants {
    * And they might kick our a-- for the confusion.
    */
   public void rotate(float angle) {
-    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
-
     float c = (float) Math.cos(angle);
     float s = (float) Math.sin(angle);
 
@@ -1826,15 +1775,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void rotateX(float angle) {
-    throw new RuntimeException("rotateX() can only be used with depth()");
+    depthError("rotateX");
   }
 
   public void rotateY(float angle) {
-    throw new RuntimeException("rotateX() can only be used with depth()");
+    depthError("rotateY");
   }
 
   public void rotateZ(float angle) {
-    throw new RuntimeException("rotateX() can only be used with depth()");
+    depthError("rotateZ");
   }
 
 
@@ -1861,8 +1810,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void scale(float x, float y, float z) {
-    throw new RuntimeException("scale() with a z coordinate " +
-                               "can only be used with depth()");
+    depthErrorXYZ("scale");
   }
 
 
@@ -1972,40 +1920,45 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void cameraMode(int mode) {
-    throw new RuntimeException("cameraMode() can only be used with depth()");
+    depthError("cameraMode");
   }
 
   public void beginCamera() {
-    throw new RuntimeException("beginCamera() can only be used with depth()");
+    depthError("beginCamera");
   }
 
   public void endCamera() {
-    throw new RuntimeException("endCamera() can only be used with depth()");
+    depthError("endCamera");
   }
 
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    throw new RuntimeException("ortho() can only be used with depth()");
+    depthError("ortho");
   }
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    throw new RuntimeException("perspective() can only be used with depth()");
+    depthError("perspective");
   }
 
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
-    throw new RuntimeException("frustum() can only be used with depth()");
+    depthError("frustum");
   }
 
   public void lookat(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-    throw new RuntimeException("lookat() can only be used with depth()");
+    depthError("lookat");
   }
 
   public void printCamera() {
-    throw new RuntimeException("printCamera() can only be used with depth()");
+    depthError("printCamera");
+  }
+
+
+  public void printProjection() {
+    depthError("printCamera");
   }
 
 
@@ -2026,29 +1979,27 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public float screenX(float x, float y, float z) {
-    throw new RuntimeException("screenX(x, y, z) can only be used " +
-                               "with depth(), use screenX(x, y) instead");
+    depthErrorXYZ("screenX");
   }
 
   public float screenY(float x, float y, float z) {
-    throw new RuntimeException("screenY(x, y, z) can only be used " +
-                               "with depth(), use screenY(x, y) instead");
+    depthErrorXYZ("screenY");
   }
 
   public float screenZ(float x, float y, float z) {
-    throw new RuntimeException("screenZ() can only be used with depth()");
+    depthErrorXYZ("screenZ");
   }
 
   public float objectX(float x, float y, float z) {
-    throw new RuntimeException("objectX() can only be used with depth()");
+    depthErrorXYZ("objectX");
   }
 
   public float objectY(float x, float y, float z) {
-    throw new RuntimeException("objectY() can only be used with depth()");
+    depthErrorXYZ("objectY");
   }
 
   public float objectZ(float x, float y, float z) {
-    throw new RuntimeException("objectZ() can only be used with depth()");
+    depthErrorXYZ("objectZ");
   }
 
 
@@ -2059,73 +2010,65 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void lights() {
-    throw new RuntimeException("lights() can only be used with depth()");
+    depthError("lights");
   }
 
   public void noLights() {
-    throw new RuntimeException("noLights() can only be used with depth()");
+    depthError("noLights");
   }
 
   public void clearLights() {
-    throw new RuntimeException("clearLights() can only be used with depth()");
+    depthError("clearLights");
   }
 
   public void defaultLights() {
-    throw new RuntimeException("defaultLights() can only be used with depth()");
+    depthError("defaultLights");
   }
 
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
-    throw new RuntimeException("light() can only be used with depth()");
+    depthError("light");
   }
 
   public void lightEnable(int num) {
-    throw new RuntimeException("lightEnable() can only be used with depth()");
+    depthError("lightEnable");
   }
 
   public void lightDisable(int num) {
-    throw new RuntimeException("lightDisable() can only be used with depth()");
+    depthError("lightDisable");
   }
 
   public void lightPosition(int num, float x, float y, float z) {
-    throw new RuntimeException("lightPosition() " +
-                               "can only be used with depth()");
+    depthError("lightPosition");
   }
 
   public void lightAmbient(int num, float x, float y, float z) {
-    throw new RuntimeException("lightAmbient() " +
-                               "can only be used with depth()");
+    depthError("lightAmbient");
   }
 
   public void lightDiffuse(int num, float x, float y, float z) {
-    throw new RuntimeException("lightDiffuse() " +
-                               "can only be used with depth()");
+    depthError("lightDiffuse");
   }
 
   public void lightSpecular(int num, float x, float y, float z) {
-    throw new RuntimeException("lightSpecular() " +
-                               "can only be used with depth()");
+    depthError("lightSpecular");
   }
 
   public void lightDirection(int num, float x, float y, float z) {
-    throw new RuntimeException("lightDirection() " +
-                               "can only be used with depth()");
+    depthError("lightDirection");
   }
 
   public void lightFalloff(int num, float constant,
                            float linear, float quadratic) {
-    throw new RuntimeException("lightFalloff() " +
-                               "can only be used with depth()");
+    depthError("lightFalloff");
   }
 
   public void lightSpotAngle(int num, float spotAngle) {
-    throw new RuntimeException("lightSpotAngle() " +
-                               "can only be used with depth()");
+    depthError("lightSpotAngle");
   }
 
   public void lightSpotConcentration(int num, float concentration) {
-    throw new RuntimeException("lightSpotConcentration() " +
-                               "can only be used with depth()");
+    depthError("lightSpotConcentration");
   }
 
 
@@ -2459,45 +2402,16 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  public void diffuse(int rgb) {
-    throw new RuntimeException("diffuse() can only be used with depth()");
-  }
-
-  public void diffuse(float gray) {
-    throw new RuntimeException("diffuse() can only be used with depth()");
-  }
-
-
-  public void diffuse(float gray, float alpha) {
-    throw new RuntimeException("diffuse() can only be used with depth()");
-  }
-
-
-  public void diffuse(float x, float y, float z) {
-    throw new RuntimeException("diffuse() can only be used with depth()");
-  }
-
-
-  public void diffuse(float x, float y, float z, float a) {
-    throw new RuntimeException("diffuse() can only be used with depth()");
-  }
-  */
-
-
-  //////////////////////////////////////////////////////////////
-
-
   public void ambient(int rgb) {
-    throw new RuntimeException("ambient() can only be used with depth()");
+    depthError("ambient");
   }
 
   public void ambient(float gray) {
-    throw new RuntimeException("ambient() can only be used with depth()");
+    depthError("ambient");
   }
 
   public void ambient(float x, float y, float z) {
-    throw new RuntimeException("ambient() can only be used with depth()");
+    depthError("ambient");
   }
 
 
@@ -2505,27 +2419,27 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void specular(int rgb) {
-    throw new RuntimeException("specular() can only be used with depth()");
+    depthError("specular");
   }
 
   public void specular(float gray) {
-    throw new RuntimeException("specular() can only be used with depth()");
+    depthError("specular");
   }
 
   public void specular(float gray, float alpha) {
-    throw new RuntimeException("specular() can only be used with depth()");
+    depthError("specular");
   }
 
   public void specular(float x, float y, float z) {
-    throw new RuntimeException("specular() can only be used with depth()");
+    depthError("specular");
   }
 
   public void specular(float x, float y, float z, float a) {
-    throw new RuntimeException("specular() can only be used with depth()");
+    depthError("specular");
   }
 
   public void shininess(float shine) {
-    throw new RuntimeException("shininess() can only be used with depth()");
+    depthError("shininess");
   }
 
 
@@ -2533,15 +2447,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void emissive(int rgb) {
-    throw new RuntimeException("emissive() can only be used with depth()");
+    depthError("emissive");
   }
 
   public void emissive(float gray) {
-    throw new RuntimeException("emissive() can only be used with depth()");
+    depthError("emissive");
   }
 
   public void emissive(float x, float y, float z ) {
-    throw new RuntimeException("emissive() can only be used with depth()");
+    depthError("emissive");
   }
 
 
@@ -2549,51 +2463,51 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public int createAmbientLight(int rgb) {
-    throw new RuntimeException("createAmbientLight() can only be used with depth()");
+    depthError("createAmbientLight");
   }
 
   public int createAmbientLight(float gray) {
-    throw new RuntimeException("createAmbientLight() can only be used with depth()");
+    depthError("createAmbientLight");
   }
 
   public int createAmbientLight(float lr, float lg, float lb) {
-    throw new RuntimeException("createAmbientLight() can only be used with depth()");
+    depthError("createAmbientLight");
   }
 
   public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
-    throw new RuntimeException("createDirectionalLight() can only be used with depth()");
+    depthError("createDirectionalLight");
   }
 
   public int createDirectionalLight(float gray, float nx, float ny, float nz) {
-    throw new RuntimeException("createDirectionalLight() can only be used with depth()");
+    depthError("createDirectionalLight");
   }
 
   public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
-    throw new RuntimeException("createDirectionalLight() can only be used with depth()");
+    depthError("createDirectionalLight");
   }
 
   public int createPointLight(int rgb, float x, float y, float z) {
-    throw new RuntimeException("createPointLight() can only be used with depth()");
+    depthError("createPointLight");
   }
 
   public int createPointLight(float gray, float x, float y, float z) {
-    throw new RuntimeException("createPointLight() can only be used with depth()");
+    depthError("createPointLight");
   }
 
   public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
-    throw new RuntimeException("createPointLight() can only be used with depth()");
+    depthError("createPointLight");
   }
 
   public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    throw new RuntimeException("createSpotLight() can only be used with depth()");
+    depthError("createSpotLight");
   }
 
   public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    throw new RuntimeException("createSpotLight() can only be used with depth()");
+    depthError("createSpotLight");
   }
 
   public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    throw new RuntimeException("createSpotLight() can only be used with depth()");
+    depthError("createSpotLight");
   }
 
 
@@ -2663,7 +2577,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Note that background() must be called before any
+   * Set the background to a gray or ARGB color.
+   * <P>
+   * Note that background() should be called before any
    * transformations occur, because some implementations may
    * require the current transformation matrix to be identity
    * before drawing.
@@ -2680,6 +2596,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Set the background to a grayscale value, based on the
+   * current colorMode.
+   */
   public void background(float gray) {
     colorCalc(gray);
     colorBackground();
@@ -2687,6 +2607,10 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Set the background to an r, g, b or h, s, b value,
+   * based on the current colorMode.
+   */
   public void background(float x, float y, float z) {
     colorCalc(x, y, z);
     colorBackground();
@@ -2698,10 +2622,13 @@ public class PGraphics extends PImage implements PConstants {
    * Takes an RGB or ARGB image and sets it as the background.
    * <P>
    * Note that even if the image is set as RGB, the high 8 bits of
-   * each pixel must be set (0xFF000000), because the image data will
-   * be copied directly to the screen.
+   * each pixel should be set opaque (0xFF000000), because the image data
+   * will be copied directly to the screen, and non-opaque background
+   * images may have strange behavior. Using image.filter(OPAQUE)
+   * will handle this easily.
    * <P>
-   * Also clears out the zbuffer and stencil buffer if they exist.
+   * When using 3D, this will also clear out the zbuffer and
+   * stencil buffer if they exist.
    */
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
@@ -2721,14 +2648,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Clears pixel buffer. Subclasses (PGraphics3) will also clear the
-   * stencil and zbuffer
-   * if they exist. Their existence is more accurate than using 'depth'
-   * to test whether to clear them, because if they're non-null,
-   * it means that depth() has been called somewhere in the program,
-   * even if noDepth() was called before draw() exited.
+   * Clears pixel buffer.
+   * <P>
+   * Subclasses (PGraphics3) will also clear the
+   * stencil and zbuffer if they exist.
    */
-  //public void clear() {
   protected void clear() {
     for (int i = 0; i < pixelCount; i++) {
       pixels[i] = backgroundColor;
@@ -2742,26 +2666,16 @@ public class PGraphics extends PImage implements PConstants {
   // MESSAGES / ERRORS / LOGGING
 
 
-  /*
-  public void message(int level, String message) {  // ignore
-    switch (level) {
-    case CHATTER:
-      //System.err.println("bagel chatter: " + message);
-      break;
-    case COMPLAINT:
-      System.err.println("bagel complaint: " + message);
-      break;
-    case PROBLEM:
-      System.err.println("bagel problem: " + message);
-      break;
-    }
+  protected void depthError(String method) {
+    throw new RuntimeException(method + "() can only be used " +
+                               "with P3D or OPENGL.");
   }
 
-  public void message(int level, String message, Exception e) {  // ignore
-    message(level, message);
-    e.printStackTrace();
+  protected void depthErrorXYZ(String method) {
+    throw new RuntimeException(method + "(x, y, z) can only be used with " +
+                               "OPENGL or P3D, use " +
+                               method + "(x, y) instead.");
   }
-  */
 
 
   //////////////////////////////////////////////////////////////
