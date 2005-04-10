@@ -6,6 +6,7 @@ X remove angleMode (also from PMatrix classes)
 X remove/rename postSetup() stuff from PGraphics/PApplet
 X camera(), perspective(), ortho()
 X matrix set by the camera on each beginFrame
+X push/pop are now pushMatrix/popMatrix
 
 lighting stuff
 X make fill() cover ambient and diffuse

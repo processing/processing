@@ -281,6 +281,8 @@ public interface PMethods {
 
   public void printCamera();
 
+  public void printProjection();
+
   //
 
   public float screenX(float x, float y);
