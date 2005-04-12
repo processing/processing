@@ -7,6 +7,7 @@ X remove/rename postSetup() stuff from PGraphics/PApplet
 X camera(), perspective(), ortho()
 X matrix set by the camera on each beginFrame
 X push/pop are now pushMatrix/popMatrix
+o get PGraphics.java engine working again
 
 lighting stuff
 X make fill() cover ambient and diffuse
@@ -21,7 +22,37 @@ already done
 X remove PMethods as actual class, use recordFrame(PGraphics)
 X   size(200, 200, "processing.illustrator.PGraphicsAI");
 
+api questions
+o image(String name) and textFont(String name)
+o   do we change to font(arial, 12) ?
+X remove angleMode() ?
+X be consistent about getXxx() methods
+_   just use the variable names.. don't do overkill on fillR et al
+_   or just what functions are actually made public
+_   is fillRi needed? it's pretty goofy..
+X how to handle full screen (opengl especially) or no screen (for scripts)
+_ expose api to launch files, folders, URLs
+X   use with/in place of link()
+_   call it open()
+X what to call firstMouse
+_ implement rightMouse?
+_   mouseButton = LEFT, CENTER, or RIGHT
+
+_ should we include a from and to for the directional light?
+
+_ rename video.Camera to video.Video ?
+_   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
+_ should nf() handle commas as well?
+_   yes, and add nf(int what) so that non-padded version works
+_   but don't put commas into the zero-padded version
+_   make nf/nfs/nfp not so weird
+_   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
+
 _ make the 1.4 code in PApplet load via reflection
+_ noCursor seems to be broken on the mac?
+_ error when running on 1.1... 
+_   You need to install Java 1.3 or later to view this content.
+_   Click here to visit java.com and install.
 
 tweaking up simong light code
 _ what's up with resetLights?
@@ -54,6 +85,10 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 NOT NECESSARY BEFORE BETA
 
+_ bit shifting in opengl, get down to 2 ops by using other image modes
+_   i.e. ABGR_EXT might allow for just two shifts instead of 4
+_ allow access to native pixel buffer in opengl and power of 2
+_   so that no need to copy/update everything
 
 _ make get/getImpl for PGraphics/PGraphics2
 _   make sure there's a loadPixels/updatePixels in PGraphics2
@@ -103,8 +138,6 @@ _   to its end and will not loop again
 _ The ref in PSound2 says volume accepts vals from 0...1
 _   but values larger than one increase the volume.
 _ SoundEvent // is sound finished?? Can't access now. 
-
-_ get PGraphics.java engine working again
 
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
@@ -185,23 +218,6 @@ _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _ Stroking a rect() leaves the upper right pixel off.
 
 
-api questions
-_ remove angleMode() ?
-_ rename video.Camera to video.Video ?
-_ what to call firstMouse, implement rightMouse?
-_ should nf() handle commas as well?
-_   yes, and add nf(int what) so that non-padded version works
-_   but don't put commas into the zero-padded version
-_   make nf/nfs/nfp not so weird
-_ image(String name) and textFont(String name)
-_   do we change to font(arial, 12) ?
-_ be consistent about getXxx() methods
-_   just use the variable names.. don't do overkill on fillR et al
-_   or just what functions are actually made public
-_   is fillRi needed? it's pretty goofy..
-_ how to handle full screen (opengl especially) or no screen (for scripts)
-_ expose api to launch files, folders, URLs
-_   use with/in place of link()
 _ might be able to do a typed expand()
 public Object growArray(Object array, int size) {
     Class type = array.getClass().getComponentType();
@@ -369,6 +385,7 @@ _   move SCREEN_SPACE into ScreenFont() class?
 _     probably not, casey thinks screen space text is prolly more useful
 _     that way can clear up some of the general confusion in the code
 _   check into symbol font encoding with create font
+_ create font with user-specified charsets
 
 text wish list
 _ look into fixing the texture mapping to not squash fonts

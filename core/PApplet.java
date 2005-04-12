@@ -5649,6 +5649,12 @@ v              PApplet.this.stop();
   }
 
 
+  public void printProjection() {
+    if (recorder != null) recorder.printProjection();
+    g.printProjection();
+  }
+
+
   public float screenX(float x, float y) {
     return g.screenX(x, y);
   }
@@ -5686,98 +5692,6 @@ v              PApplet.this.stop();
 
   public float objectZ(float x, float y, float z) {
     return g.objectZ(x, y, z);
-  }
-
-
-  public void lights() {
-    if (recorder != null) recorder.lights();
-    g.lights();
-  }
-
-
-  public void noLights() {
-    if (recorder != null) recorder.noLights();
-    g.noLights();
-  }
-
-
-  public void clearLights() {
-    if (recorder != null) recorder.clearLights();
-    g.clearLights();
-  }
-
-
-  public void defaultLights() {
-    if (recorder != null) recorder.defaultLights();
-    g.defaultLights();
-  }
-
-
-  public void light(int num, float x, float y, float z,
-                    float red, float green, float blue) {
-    if (recorder != null) recorder.light(num, x, y, z, red, green, blue);
-    g.light(num, x, y, z, red, green, blue);
-  }
-
-
-  public void lightEnable(int num) {
-    if (recorder != null) recorder.lightEnable(num);
-    g.lightEnable(num);
-  }
-
-
-  public void lightDisable(int num) {
-    if (recorder != null) recorder.lightDisable(num);
-    g.lightDisable(num);
-  }
-
-
-  public void lightPosition(int num, float x, float y, float z) {
-    if (recorder != null) recorder.lightPosition(num, x, y, z);
-    g.lightPosition(num, x, y, z);
-  }
-
-
-  public void lightAmbient(int num, float x, float y, float z) {
-    if (recorder != null) recorder.lightAmbient(num, x, y, z);
-    g.lightAmbient(num, x, y, z);
-  }
-
-
-  public void lightDiffuse(int num, float x, float y, float z) {
-    if (recorder != null) recorder.lightDiffuse(num, x, y, z);
-    g.lightDiffuse(num, x, y, z);
-  }
-
-
-  public void lightSpecular(int num, float x, float y, float z) {
-    if (recorder != null) recorder.lightSpecular(num, x, y, z);
-    g.lightSpecular(num, x, y, z);
-  }
-
-
-  public void lightDirection(int num, float x, float y, float z) {
-    if (recorder != null) recorder.lightDirection(num, x, y, z);
-    g.lightDirection(num, x, y, z);
-  }
-
-
-  public void lightFalloff(int num, float constant,
-                           float linear, float quadratic) {
-    if (recorder != null) recorder.lightFalloff(num, constant, linear, quadratic);
-    g.lightFalloff(num, constant, linear, quadratic);
-  }
-
-
-  public void lightSpotAngle(int num, float spotAngle) {
-    if (recorder != null) recorder.lightSpotAngle(num, spotAngle);
-    g.lightSpotAngle(num, spotAngle);
-  }
-
-
-  public void lightSpotConcentration(int num, float concentration) {
-    if (recorder != null) recorder.lightSpotConcentration(num, concentration);
-    g.lightSpotConcentration(num, concentration);
   }
 
 
@@ -5951,63 +5865,49 @@ v              PApplet.this.stop();
   }
 
 
-  public int createAmbientLight(int rgb) {
-    return g.createAmbientLight(rgb);
+  public void lights() {
+    if (recorder != null) recorder.lights();
+    g.lights();
   }
 
 
-  public int createAmbientLight(float gray) {
-    return g.createAmbientLight(gray);
+  public void ambientLight(float red, float green, float blue) {
+    if (recorder != null) recorder.ambientLight(red, green, blue);
+    g.ambientLight(red, green, blue);
   }
 
 
-  public int createAmbientLight(float lr, float lg, float lb) {
-    return g.createAmbientLight(lr, lg, lb);
+  public void directionalLight(float red, float green, float blue,
+                               float nx, float ny, float nz) {
+    if (recorder != null) recorder.directionalLight(red, green, blue, nx, ny, nz);
+    g.directionalLight(red, green, blue, nx, ny, nz);
   }
 
 
-  public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
-    return g.createDirectionalLight(rgb, nx, ny, nz);
+  public void pointLight(float red, float green, float blue,
+                         float x, float y, float z) {
+    if (recorder != null) recorder.pointLight(red, green, blue, x, y, z);
+    g.pointLight(red, green, blue, x, y, z);
   }
 
 
-  public int createDirectionalLight(float gray, float nx, float ny, float nz) {
-    return g.createDirectionalLight(gray, nx, ny, nz);
+  public void spotLight(float red, float green, float blue,
+                        float x, float y, float z,
+                        float nx, float ny, float nz, float angle) {
+    if (recorder != null) recorder.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle);
+    g.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle);
   }
 
 
-  public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
-    return g.createDirectionalLight(lr, lg, lb, nx, ny, nz);
+  public void lightFalloff(float constant, float linear, float quadratic) {
+    if (recorder != null) recorder.lightFalloff(constant, linear, quadratic);
+    g.lightFalloff(constant, linear, quadratic);
   }
 
 
-  public int createPointLight(int rgb, float x, float y, float z) {
-    return g.createPointLight(rgb, x, y, z);
-  }
-
-
-  public int createPointLight(float gray, float x, float y, float z) {
-    return g.createPointLight(gray, x, y, z);
-  }
-
-
-  public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
-    return g.createPointLight(lr, lg, lb, x, y, z);
-  }
-
-
-  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    return g.createSpotLight(rgb, x, y, z, nx, ny, nz, angle);
-  }
-
-
-  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    return g.createSpotLight(gray, x, y, z, nx, ny, nz, angle);
-  }
-
-
-  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    return g.createSpotLight(lr, lg, lb, x, y, z, nx, ny, nz, angle);
+  public void lightSpecular(float x, float y, float z) {
+    if (recorder != null) recorder.lightSpecular(x, y, z);
+    g.lightSpecular(x, y, z);
   }
 
 
