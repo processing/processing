@@ -8,15 +8,20 @@ X get both versions of size() properly detected on export
 
 _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
+_ remove particles from current processing
+_ move netscape library out of libs and into build/shared
+
 _ update .exe to use new class package
 _ update .app to use new package
 _ update linux shell script for new package
 
-fixed in 82
-X border weirdness in PdeEditor panels on windows
+_ get latest sonia from amit
 
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux
+
+fixed in 82
+X border weirdness in PdeEditor panels on windows
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -243,22 +248,27 @@ _   println() for debugging
 
 
 TALK TO CASEY ABOUT...
-_ must call depth() for 3D applications
+o no transformations before background() is called
+o   implementation specific, may cause trouble
+o must call depth() for 3D applications
 _ lights cannot be enabled/disabled throughout 
 _   lighting will be based on what's left at endFrame()
-_ images should be a power of 2, or call modified()
-_ document the use of "die" 
-_   can override the method to do your own handling
-_ sketches no longer require a "data" folder
-_ example that uses loop/noLoop, or redraw?
+X images should be a power of 2, or call modified()
+X document the use of "die" 
+X   can override the method to do your own handling
+X sketches no longer require a "data" folder
+X example that uses loop/noLoop, or redraw?
 _ talk to creas about making html files for bugs, readme, revisions.
 _   or how they should relate to the 'faq'.. readme -> faq? 
 _ make a sketch that shows loading from the web
 _ make another sketch that shows loading from a file
 _ make notes about preproc
+_   move the readme stuff for each file into the files themselves
+_   also put a general rundown of the preproc into Preprocessor.java
 _   subclasses need to use "public void keyPressed" not "void keyPressed"
 _ write a threading example
-_   or handle this some more intelligent way, super.stop() is needed.
+X   or handle this some more intelligent way, super.stop() is needed.
+X   registerDispose() does the trick
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ write an example that uses Hashtable
@@ -266,9 +276,7 @@ _ and another that uses Vector
 _ beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 _ make a note that u/v coordinates clamp at 0 and 1
-_ no transformations before background() is called
-_   implementation specific, may cause trouble
-_ get an xml library in there
+_ get an xml library and example in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
 
@@ -301,9 +309,9 @@ _   need to ignore comments.. but not those inside quotes.. oog
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
 _   ignores colons for case statements
 _   need to tie this to the parser instead
-_ do a better job of maintaining cursor during beautify 
-_ only beautify a particular section of code
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+_   do a better job of maintaining cursor during beautify 
+_   only beautify a particular section of code
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 _ color picker or other things written by folks
 _   add all .jar files in lib/plugins on startup
 _ make some kind of internal color picker
@@ -371,11 +379,8 @@ PDE / Details
 
    1 _ exception in setup() on external app doesn't kill run button 
    1 _   also doesn't kill external vm
+   1 _ quitting from present mode doesn't kill run button
    1 _ package processing.app for PdeBase, PdeEditor..
-
-   1 _ save caret position when switching tabs
-   1 _ ctrl-tab to switch between tabs
-   1 _ maintain tab scroll and caret positions
 
    1 _ add mnemonics for menus (alt-f to open 'file')
 
@@ -444,6 +449,10 @@ PDE / Find & Replace
 PDE / Editor Header
 
    1 _ make some fancy extendo things because the tabs get too big
+   1 _   either condense or popdown menu thingy
+   1 _ save caret position when switching tabs
+   1 _ ctrl-tab to switch between tabs
+   1 _ maintain tab scroll and caret positions
 
 
 PDE / Sketch & Sketchbook

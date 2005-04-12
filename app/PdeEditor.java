@@ -582,6 +582,7 @@ public class PdeEditor extends JFrame
     item = new JMenuItem("Auto Format");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          //new AutoFormat(PdeEditor.this).show();
           handleBeautify();
         }
       });
