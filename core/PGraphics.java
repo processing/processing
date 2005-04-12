@@ -1980,95 +1980,32 @@ public class PGraphics extends PImage implements PConstants {
 
   public float screenX(float x, float y, float z) {
     depthErrorXYZ("screenX");
+    return 0;
   }
 
   public float screenY(float x, float y, float z) {
     depthErrorXYZ("screenY");
+    return 0;
   }
 
   public float screenZ(float x, float y, float z) {
     depthErrorXYZ("screenZ");
+    return 0;
   }
 
   public float objectX(float x, float y, float z) {
     depthErrorXYZ("objectX");
+    return 0;
   }
 
   public float objectY(float x, float y, float z) {
     depthErrorXYZ("objectY");
+    return 0;
   }
 
   public float objectZ(float x, float y, float z) {
     depthErrorXYZ("objectZ");
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // LIGHTS
-
-
-  public void lights() {
-    depthError("lights");
-  }
-
-  public void noLights() {
-    depthError("noLights");
-  }
-
-  public void clearLights() {
-    depthError("clearLights");
-  }
-
-  public void defaultLights() {
-    depthError("defaultLights");
-  }
-
-  public void light(int num, float x, float y, float z,
-                    float red, float green, float blue) {
-    depthError("light");
-  }
-
-  public void lightEnable(int num) {
-    depthError("lightEnable");
-  }
-
-  public void lightDisable(int num) {
-    depthError("lightDisable");
-  }
-
-  public void lightPosition(int num, float x, float y, float z) {
-    depthError("lightPosition");
-  }
-
-  public void lightAmbient(int num, float x, float y, float z) {
-    depthError("lightAmbient");
-  }
-
-  public void lightDiffuse(int num, float x, float y, float z) {
-    depthError("lightDiffuse");
-  }
-
-  public void lightSpecular(int num, float x, float y, float z) {
-    depthError("lightSpecular");
-  }
-
-  public void lightDirection(int num, float x, float y, float z) {
-    depthError("lightDirection");
-  }
-
-  public void lightFalloff(int num, float constant,
-                           float linear, float quadratic) {
-    depthError("lightFalloff");
-  }
-
-  public void lightSpotAngle(int num, float spotAngle) {
-    depthError("lightSpotAngle");
-  }
-
-  public void lightSpotConcentration(int num, float concentration) {
-    depthError("lightSpotConcentration");
+    return 0;
   }
 
 
@@ -2459,56 +2396,44 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
+  // LIGHTS
 
-  public int createAmbientLight(int rgb) {
-    depthError("createAmbientLight");
+
+  public void lights() {
+    depthError("lights");
   }
 
-  public int createAmbientLight(float gray) {
-    depthError("createAmbientLight");
+  public void ambientLight(float red, float green, float blue) {
+    depthError("ambientLight");
   }
 
-  public int createAmbientLight(float lr, float lg, float lb) {
-    depthError("createAmbientLight");
+  public void directionalLight(float red, float green, float blue,
+                               float nx, float ny, float nz) {
+    depthError("directionalLight");
   }
 
-  public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
-    depthError("createDirectionalLight");
+  public void pointLight(float red, float green, float blue,
+                         float x, float y, float z) {
+    depthError("pointLight");
   }
 
-  public int createDirectionalLight(float gray, float nx, float ny, float nz) {
-    depthError("createDirectionalLight");
+  public void spotLight(float red, float green, float blue,
+                        float x, float y, float z,
+                        float nx, float ny, float nz, float angle) {
+    depthError("spotLight");
   }
 
-  public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
-    depthError("createDirectionalLight");
+  public void lightFalloff(float constant, float linear, float quadratic) {
+    depthError("lightFalloff");
   }
 
-  public int createPointLight(int rgb, float x, float y, float z) {
-    depthError("createPointLight");
+  public void lightSpecular(float x, float y, float z) {
+    depthError("lightSpecular");
   }
 
-  public int createPointLight(float gray, float x, float y, float z) {
-    depthError("createPointLight");
-  }
-
-  public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
-    depthError("createPointLight");
-  }
-
-  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    depthError("createSpotLight");
-  }
-
-  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    depthError("createSpotLight");
-  }
-
-  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    depthError("createSpotLight");
-  }
 
 
   //////////////////////////////////////////////////////////////

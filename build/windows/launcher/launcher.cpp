@@ -10,7 +10,7 @@
 
 //#define JAVA_ARGS "-Xms64m -Xmx64m "
 #define JAVA_ARGS "-Xms128m -Xmx128m "
-#define JAVA_MAIN_CLASS "PdeBase"
+#define JAVA_MAIN_CLASS "processing.app.PdeBase"
 
 #include <windows.h>
 #include <stdio.h>
