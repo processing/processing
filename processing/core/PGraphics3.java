@@ -61,8 +61,6 @@ public class PGraphics3 extends PGraphics {
 
   // ........................................................
 
-  //public int cameraMode;
-
   // perspective setup
   public float cameraFOV;
   public float cameraX, cameraY, cameraZ;
@@ -100,13 +98,13 @@ public class PGraphics3 extends PGraphics {
       but is the minimum defined by OpenGL */
   protected static final int MAX_LIGHTS = 8;
 
-  int lightCount = 0;
+  public int lightCount = 0;
 
   /** True if lights are enabled */
-  public boolean lights;
+  //public boolean lights;
 
   /** True if this light is enabled */
-  public boolean light[];
+  //public boolean light[];
 
   /** Light types */
   public int lightType[];
@@ -114,17 +112,19 @@ public class PGraphics3 extends PGraphics {
   /** Light positions */
   public float lightX[], lightY[], lightZ[];
 
-  /** Light direction */
+  /** Light direction (normalized vector) */
   public float lightNX[], lightNY[], lightNZ[];
 
   /** Light falloff */
-  public float lightConstantFalloff[], lightLinearFalloff[], lightQuadraticFalloff[];
+  public float lightConstantFalloff[];
+  public float lightLinearFalloff[];
+  public float lightQuadraticFalloff[];
 
   /** Light spot angle */
   public float lightSpotAngle[];
 
   /** Cosine of light spot angle */
-  public float lightCosSpotAngle[];
+  public float lightSpotAngleCos[];
 
   /** Light spot concentration */
   public float lightSpotConcentration[];
@@ -279,8 +279,9 @@ public class PGraphics3 extends PGraphics {
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float)width / (float)height;
 
-    // init lights (here instead of allocate b/c needed by opengl)
-    light = new boolean[MAX_LIGHTS];
+    // init lights (in resize() instead of allocate() b/c needed by opengl)
+    //lights = new PLight[MAX_LIGHTS];
+    //light = new boolean[MAX_LIGHTS];
     lightX = new float[MAX_LIGHTS];
     lightY = new float[MAX_LIGHTS];
     lightZ = new float[MAX_LIGHTS];
@@ -298,7 +299,7 @@ public class PGraphics3 extends PGraphics {
     lightLinearFalloff   = new float[MAX_LIGHTS];
     lightQuadraticFalloff = new float[MAX_LIGHTS];
     lightSpotAngle        = new float[MAX_LIGHTS];
-    lightCosSpotAngle        = new float[MAX_LIGHTS];
+    lightSpotAngleCos        = new float[MAX_LIGHTS];
     lightSpotConcentration = new float[MAX_LIGHTS];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
@@ -349,6 +350,7 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  /*
   public void clearLights() {
     lightCount = 0;
     light[0] = false;
@@ -356,13 +358,7 @@ public class PGraphics3 extends PGraphics {
       light[i] = false;
     }
   }
-
-
-  public void defaultLights() {
-    clearLights();
-    createAmbientLight(60);
-    createDirectionalLight(80, 80, 80, 0, 0, -1);
-  }
+  */
 
 
   public void beginFrame() {
@@ -371,9 +367,11 @@ public class PGraphics3 extends PGraphics {
     modelview.set(camera);
     inverseModelview.set(inverseCamera);
 
-    if (lights) {
-      defaultLights();
-    }
+    // clear out the lights, they'll have to be turned on again
+    lightCount = 0;
+    //if (lights) {
+    //defaultLights();
+    //}
 
     // reset lines
     lineCount = 0;
@@ -437,7 +435,8 @@ public class PGraphics3 extends PGraphics {
     textureMode(IMAGE);
 
     // better to leave this turned off by default
-    noLights();
+    //noLights();
+    //lightCount = 0;
 
     //lightEnable(0);
     //lightAmbient(0, 0, 0, 0);
@@ -1415,7 +1414,7 @@ public class PGraphics3 extends PGraphics {
     // if no lights enabled, then all the values for r, g, b
     // have been set with calls to vertex() (no need to re-calculate here)
 
-    if (lights) {
+    if (lightCount > 0) {
       // The assumption here is that we are only using vertex normals
       // I think face normals may be necessary to offer also. We'll see.
       //float f[] = vertices[vertex_start];
@@ -1494,7 +1493,7 @@ public class PGraphics3 extends PGraphics {
                              float target[], int toffset) {
     //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
 
-    if (!lights) {
+    if (lightCount == 0) {
       target[toffset + 0] = min(1.0f, er+dr);
       target[toffset + 1] = min(1.0f, eg+dg);
       target[toffset + 2] = min(1.0f, eb+db);
@@ -1530,8 +1529,9 @@ public class PGraphics3 extends PGraphics {
     float specular_g = 0;
     float specular_b = 0;
 
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-      if (!light[i]) continue;
+    //for (int i = 0; i < MAX_LIGHTS; i++) {
+    //if (!light[i]) continue;
+    for (int i = 0; i < lightCount; i++) {
 
       float denom = lightConstantFalloff[i];
       float spotTerm = 1;
@@ -1581,7 +1581,7 @@ public class PGraphics3 extends PGraphics {
 
           if (lightType[i] == SPOT) {
             lightDir_dot_li = -(lightNX[i]*lix + lightNY[i]*liy + lightNZ[i]*liz);
-            if (lightDir_dot_li <= lightCosSpotAngle[i]) {
+            if (lightDir_dot_li <= lightSpotAngleCos[i]) {
               continue;
             }
             spotTerm = pow(lightDir_dot_li, lightSpotConcentration[i]);
@@ -2770,6 +2770,7 @@ public class PGraphics3 extends PGraphics {
   // LIGHTS
 
 
+  /*
   public void lights() {
     lights = true;
     defaultLights();
@@ -2778,6 +2779,7 @@ public class PGraphics3 extends PGraphics {
   public void noLights() {
     lights = false;
   }
+  */
 
 
   /**
@@ -2789,6 +2791,7 @@ public class PGraphics3 extends PGraphics {
    * because otherwise the compiler gets stuck on g.light() inside
    * the auto-generated section of PApplet)
    */
+  /*
   public void light(int num, float x, float y, float z,
                     float red, float green, float blue) {
     lightPosition(num, x, y, z);
@@ -2806,7 +2809,6 @@ public class PGraphics3 extends PGraphics {
   public void lightDisable(int num) {
     light[num] = false;
   }
-
 
   public void lightPosition(int num, float x, float y, float z) {
     lightX[num] = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
@@ -2856,12 +2858,14 @@ public class PGraphics3 extends PGraphics {
 
   public void lightSpotAngle(int num, float spotAngle) {
     lightSpotAngle[num] = spotAngle;
-    lightCosSpotAngle[num] = max(0, cos(spotAngle));
+    lightSpotAngleCos[num] = max(0, cos(spotAngle));
   }
 
   public void lightSpotConcentration(int num, float concentration) {
     lightSpotConcentration[num] = concentration;
   }
+  */
+
 
   //////////////////////////////////////////////////////////////
 
@@ -3077,81 +3081,62 @@ public class PGraphics3 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  public int createAmbientLight(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      return createAmbientLight((float) rgb);
-    } else {
-      if (lightCount >= MAX_LIGHTS) {
-        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-      }
-      colorFrom(rgb);
-      return internalCreateAmbientLight(calcR, calcG, calcB);
-    }
+  /**
+   * Sets up an ambient and directional light.
+   * <P>
+   * The directional light is setup second, so that it can be modified
+   * via lightSpecular() or lightFalloff() if needed.
+   */
+  public void lights() {
+    // need to make sure colorMode is RGB 255 here
+    int colorModeSaved = colorMode;
+    colorMode = RGB;
+
+    ambientLight(colorModeX * 0.23f,
+                 colorModeY * 0.23f,
+                 colorModeZ * 0.23f);
+    directionalLight(colorModeX * 0.31f,
+                     colorModeY * 0.31f,
+                     colorModeZ * 0.31f,
+                     0, 0, -1);
+
+    colorMode = colorModeSaved;
   }
 
-  public int createAmbientLight(float gray) {
-    if (lightCount >= MAX_LIGHTS) {
+
+  /**
+   * Add an ambient light based on the current color mode.
+   */
+  public void ambientLight(float r, float g, float b) {
+    if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    colorCalc(gray);
-    return internalCreateAmbientLight(calcR, calcG, calcB);
-  }
+    colorCalc(r, g, b);
+    lightDiffuseR[lightCount] = calcR;
+    lightDiffuseG[lightCount] = calcG;
+    lightDiffuseB[lightCount] = calcB;
 
-  public int createAmbientLight(float lr, float lg, float lb) {
-    if (lightCount >= MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-    }
-    colorCalc(lr, lg, lb);
-    return internalCreateAmbientLight(calcR, calcG, calcB);
-  }
-
-  protected int internalCreateAmbientLight(float lr, float lg, float lb) {
-    lightDiffuseR[lightCount] = lr;
-    lightDiffuseG[lightCount] = lg;
-    lightDiffuseB[lightCount] = lb;
-    light[lightCount] = true;
     lightType[lightCount] = AMBIENT;
     lightConstantFalloff[lightCount] = 1;
     lightLinearFalloff[lightCount] = 0;
     lightQuadraticFalloff[lightCount] = 0;
     lightPosition(lightCount, 0, 0, 0);
     lightCount++;
-    return lightCount-1;
+    //return lightCount-1;
   }
 
-  public int createDirectionalLight(int rgb, float nx, float ny, float nz) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      return createDirectionalLight((float) rgb, nx, ny, nz);
-    } else {
-      if (lightCount >= MAX_LIGHTS) {
-        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-      }
-      colorFrom(rgb);
-      return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
-    }
-  }
 
-  public int createDirectionalLight(float gray, float nx, float ny, float nz) {
-    if (lightCount >= MAX_LIGHTS) {
+  public void directionalLight(float r, float g, float b,
+                               float nx, float ny, float nz) {
+    if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    colorCalc(gray);
-    return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
-  }
+    colorCalc(r, g, b);
+    lightDiffuseR[lightCount] = calcR;
+    lightDiffuseG[lightCount] = calcG;
+    lightDiffuseB[lightCount] = calcB;
 
-  public int createDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
-    if (lightCount >= MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-    }
-    colorCalc(lr, lg, lb);
-    return internalCreateDirectionalLight(calcR, calcG, calcB, nx, ny, nz);
-  }
-
-  protected int internalCreateDirectionalLight(float lr, float lg, float lb, float nx, float ny, float nz) {
-    lightDiffuseR[lightCount] = lr;
-    lightDiffuseG[lightCount] = lg;
-    lightDiffuseB[lightCount] = lb;
-    light[lightCount] = true;
+    //light[lightCount] = true;
     lightType[lightCount] = DIRECTIONAL;
     lightConstantFalloff[lightCount] = 1;
     lightLinearFalloff[lightCount] = 0;
@@ -3161,42 +3146,21 @@ public class PGraphics3 extends PGraphics {
     lightSpecularB[lightCount] = 0;
     lightDirection(lightCount, nx, ny, nz);
     lightCount++;
-    return lightCount-1;
+    //return lightCount-1;
   }
 
-  public int createPointLight(int rgb, float x, float y, float z) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      return createPointLight((float) rgb, x, y, z);
-    } else {
-      if (lightCount >= MAX_LIGHTS) {
-        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-      }
-      colorFrom(rgb);
-      return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
-    }
-  }
 
-  public int createPointLight(float gray, float x, float y, float z) {
-    if (lightCount >= MAX_LIGHTS) {
+  public void pointLight(float r, float g, float b,
+                         float x, float y, float z) {
+    if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    colorCalc(gray);
-    return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
-  }
+    colorCalc(r, g, b);
+    lightDiffuseR[lightCount] = calcR;
+    lightDiffuseG[lightCount] = calcG;
+    lightDiffuseB[lightCount] = calcB;
 
-  public int createPointLight(float lr, float lg, float lb, float x, float y, float z) {
-    if (lightCount >= MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-    }
-    colorCalc(lr, lg, lb);
-    return internalCreatePointLight(calcR, calcG, calcB, x, y, z);
-  }
-
-  protected int internalCreatePointLight(float lr, float lg, float lb, float x, float y, float z) {
-    lightDiffuseR[lightCount] = lr;
-    lightDiffuseG[lightCount] = lg;
-    lightDiffuseB[lightCount] = lb;
-    light[lightCount] = true;
+    //light[lightCount] = true;
     lightType[lightCount] = POINT;
     lightConstantFalloff[lightCount] = 1;
     lightLinearFalloff[lightCount] = 0;
@@ -3206,42 +3170,22 @@ public class PGraphics3 extends PGraphics {
     lightSpecularB[lightCount] = 0;
     lightPosition(lightCount, x, y, z);
     lightCount++;
-    return lightCount-1;
+    //return lightCount-1;
   }
 
-  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      return createSpotLight((float) rgb, x, y, z, nx, ny, nz, angle);
-    } else {
-      if (lightCount >= MAX_LIGHTS) {
-        throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-      }
-      colorFrom(rgb);
-      return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
-    }
-  }
 
-  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    if (lightCount >= MAX_LIGHTS) {
+  public void spotLight(float r, float g, float b,
+                        float x, float y, float z,
+                        float nx, float ny, float nz, float angle) {
+    if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
-    colorCalc(gray);
-    return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
-  }
+    colorCalc(r, g, b);
+    lightDiffuseR[lightCount] = calcR;
+    lightDiffuseG[lightCount] = calcG;
+    lightDiffuseB[lightCount] = calcB;
 
-  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    if (lightCount >= MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
-    }
-    colorCalc(lr, lg, lb);
-    return internalCreateSpotLight(calcR, calcG, calcB, x, y, z, nx, ny, nz, angle);
-  }
-
-  protected int internalCreateSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle) {
-    lightDiffuseR[lightCount] = lr;
-    lightDiffuseG[lightCount] = lg;
-    lightDiffuseB[lightCount] = lb;
-    light[lightCount] = true;
+    //light[lightCount] = true;
     lightType[lightCount] = SPOT;
     lightConstantFalloff[lightCount] = 1;
     lightLinearFalloff[lightCount] = 0;
@@ -3251,11 +3195,82 @@ public class PGraphics3 extends PGraphics {
     lightSpecularB[lightCount] = 0;
     lightPosition(lightCount, x, y, z);
     lightDirection(lightCount, nx, ny, nz);
-    lightSpotAngle(lightCount, angle);
+    lightSpotAngle[lightCount] = angle;
+    lightSpotAngleCos[lightCount] = max(0, cos(angle));
     lightSpotConcentration[lightCount] = 1;
     lightCount++;
-    return lightCount-1;
+    //return lightCount-1;
   }
+
+
+  /**
+   * Set the light falloff rates for the last light that was created.
+   * Default is lightFalloff(1, 0, 0).
+   */
+  public void lightFalloff(float constant, float linear, float quadratic) {
+    if (lightCount < 1) {
+      throw new RuntimeException("Must create a light before " +
+                                 "calling lightFalloff()");
+    }
+    lightConstantFalloff[lightCount-1] = constant;
+    lightLinearFalloff[lightCount-1] = linear;
+    lightQuadraticFalloff[lightCount-1] = quadratic;
+  }
+
+
+  /**
+   * Set the specular color of the last light created.
+   */
+  public void lightSpecular(float x, float y, float z) {
+    if (lightCount < 1) {
+      throw new RuntimeException("Must create a light before " +
+                                 "calling lightSpecular().");
+    }
+    colorCalc(x, y, z);
+    lightSpecularR[lightCount-1] = calcR;
+    lightSpecularG[lightCount-1] = calcG;
+    lightSpecularB[lightCount-1] = calcB;
+  }
+
+
+  /**
+   * internal function to set the light position
+   * based on the current modelview matrix.
+   */
+  protected void lightPosition(int num, float x, float y, float z) {
+    lightX[num] =
+      modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    lightY[num] =
+      modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    lightZ[num] =
+      modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+  }
+
+
+  /**
+   * internal function to set the light direction
+   * based on the current modelview matrix.
+   */
+  protected void lightDirection(int num, float x, float y, float z) {
+    // Multiply by inverse transpose.
+    lightNX[num] =
+      inverseModelview.m00*x + inverseModelview.m10*y +
+      inverseModelview.m20*z + inverseModelview.m30;
+    lightNY[num] =
+      inverseModelview.m01*x + inverseModelview.m11*y +
+      inverseModelview.m21*z + inverseModelview.m31;
+    lightNZ[num] =
+      inverseModelview.m02*x + inverseModelview.m12*y +
+      inverseModelview.m22*z + inverseModelview.m32;
+
+    float norm = mag(lightNX[num], lightNY[num], lightNZ[num]);
+    if (norm == 0 || norm == 1) return;
+
+    lightNX[num] /= norm;
+    lightNY[num] /= norm;
+    lightNZ[num] /= norm;
+  }
+
 
 
   //////////////////////////////////////////////////////////////

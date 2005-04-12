@@ -54,7 +54,7 @@ else
   cd ../../..
 
   mkdir work/lib/build
-  mkdir work/classes
+  #mkdir work/classes
 
   echo Compiling processing.exe
   cd launcher
@@ -111,7 +111,7 @@ then
 
 echo Building PDE for JDK 1.4
 
-cd app/preprocessor
+cd app/preproc
 
 # first build the default java goop
 ../../build/windows/work/java/bin/java \

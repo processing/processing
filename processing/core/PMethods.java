@@ -305,6 +305,17 @@ public interface PMethods {
 
   public void lights();
 
+  public PLight createAmbient();
+
+  public PLight createDiffuse();
+
+  public PLight createSpecular();
+
+  public PLight createSpotlight();
+
+  public void light(myLight);
+
+
   public void noLights();
 
   public void light(int num, float x, float y, float z,
