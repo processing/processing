@@ -5,17 +5,16 @@ o   only build preproc from preproc/make.sh?
 o   and check in the preproc'd code to cvs?
 X need to add classes dir to cp for jikes make (on win and linux)
 X get both versions of size() properly detected on export
+X get latest sonia from amit
 
 _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ remove particles from current processing
 _ move netscape library out of libs and into build/shared
 
-_ update .exe to use new class package
-_ update .app to use new package
-_ update linux shell script for new package
-
-_ get latest sonia from amit
+_ update .exe to use new class/package
+_ update .app to use new class/package
+_ update linux build and shell scripts for new package
 
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux
@@ -43,6 +42,11 @@ _     and queue events by registering for draw or whatever they'd like
 _   lib could call queueEvent with the args
 _   then call them inside post()
 _ scrubbing all the code to include proper license and copyright info
+
+things that will be broken for beta
+_ opengl set() functions.. though get() probably ok
+_ stop button with external apps
+_ java 1.1 support
 
 //
 
@@ -82,6 +86,9 @@ saving a project over an already existing project does not get rid of the .pde f
 
 
 NOT NECESSARY BEFORE BETA
+
+_ println() can hose the app for the first 20-30 frames
+_   need to figure out threading etc
 
 _ update checker (can be turned off in prefs)
 _   send unique id, and information about person's java vm/platform
