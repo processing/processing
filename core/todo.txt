@@ -36,7 +36,7 @@ X   use with/in place of link()
 _   call it open()
 X what to call firstMouse
 _ implement rightMouse?
-_   mouseButton = LEFT, CENTER, or RIGHT
+_   yes, mouseButton = LEFT, CENTER, or RIGHT
 
 _ should we include a from and to for the directional light?
 
@@ -50,27 +50,29 @@ _   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 
 _ make the 1.4 code in PApplet load via reflection
 _ noCursor seems to be broken on the mac?
+
+_ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
 _ error when running on 1.1... 
 _   You need to install Java 1.3 or later to view this content.
 _   Click here to visit java.com and install.
 
 tweaking up simong light code
-_ what's up with resetLights?
-_ add PLight object to avoid method overflow
-_ preApplyMatrix, invApplyMatrix? 
-_   applyMatrixPre and applyMatrixIn
-_   rotateXInv is ugly.. 
-_   irotateX?, papplyMatrix?
+o what's up with resetLights?
+o add PLight object to avoid method overflow
+o preApplyMatrix, invApplyMatrix? 
+o   applyMatrixPre and applyMatrixIn
+o   rotateXInv is ugly.. 
+o   irotateX?, papplyMatrix?
+_ make inverseCamera into cameraInv
 
-_ fix bezierVertex() for newer api
+_ fix bezierVertex() in P3D for newer api
+_ fix shapes in P3D
 
 _ fix messages referring to depth()
 _   route all of them through a single function rather than current waste
 
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
-
-_ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
 
 _ track loadImage() with filenames that are inconsistent
 _   really a problem with the ves61r kids
