@@ -25,7 +25,7 @@ else
   mkdir -p work/classes/processing/app/syntax
   mkdir -p work/classes/processing/app/tools
 
-  cp -r ../../lib work/libraries
+  #cp -r ../../lib work/libraries
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
   cp -r ../../serial work/libraries/
