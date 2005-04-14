@@ -6,11 +6,13 @@ o   and check in the preproc'd code to cvs?
 X need to add classes dir to cp for jikes make (on win and linux)
 X get both versions of size() properly detected on export
 X get latest sonia from amit
+X remove particles from current processing
+X move netscape library out of libs and into build/shared
 
 _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
-_ remove particles from current processing
-_ move netscape library out of libs and into build/shared
+_ placement of 100x100 items is odd
+_   happens with P3D and maybe also P2D?
 
 _ update .exe to use new class/package
 _ update .app to use new class/package

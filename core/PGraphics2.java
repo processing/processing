@@ -809,13 +809,6 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  /**
-   * Clears pixel buffer. Also clears the stencil and zbuffer
-   * if they exist. Their existence is more accurate than using 'depth'
-   * to test whether to clear them, because if they're non-null,
-   * it means that depth() has been called somewhere in the program,
-   * even if noDepth() was called before draw() exited.
-   */
   public void clear() {
     g2.setColor(new Color(backgroundColor));
     g2.fillRect(0, 0, width, height);

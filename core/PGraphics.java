@@ -1789,7 +1789,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void rotate(float angle, float vx, float vy, float vz) {
     throw new RuntimeException("rotate(angle, x, y, z) " +
-                               "can only be used with depth()");
+                               "can only be used with P3D or OPENGL");
   }
 
 
@@ -1877,7 +1877,7 @@ public class PGraphics extends PImage implements PConstants {
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
     throw new RuntimeException("applyMatrix() with a 4x4 matrix " +
-                               "can only be used with depth()");
+                               "can only be used with OPENGL or P3D");
   }
 
 
