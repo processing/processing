@@ -1,0 +1,261 @@
+LIBRARIES IN PROCESSING
+
+these instructions are now out of date, and will be fixed hopefully soon...
+(2 april 2005)
+
+Some basic instructions on how libraries work with Processing. 
+(I'm also adding to this as people have trouble with it.. Pretty soon
+it's gonna be an outrageous mess!)
+
+Libraries are a new feature that are present only in revisions 70 
+and higher. Before revision 70, users could place any sort of code
+inside the 'code' folder of their sketch, but this meant making
+several copies of each library. The code folder is still an option in
+revisions 70 and higher, but the use of the new "library" system is
+encouraged where that makes sense for your project.
+
+A Processing library can be any sort of Java code that's been 
+given a package name and packed into a jar file. It can also 
+implement the "PLibrary" interface, and register itself with 
+a PApplet to get notification of when events happen in the sketch, 
+for instance whenever draw() is called or a key is pressed.
+
+Most libraries may not need that much functionality, but they 
+may want to implement the DISPOSE call, which is called as the 
+applet is closed (this isn't totally working in 71 but it will 
+be soon). Many libraries, especially those with native code, 
+need this to properly shut down. 
+
+
+...
+
+LIBRARY METHODS
+
+public void stop()
+can be called by users, for instance movie.stop() will shut down
+a movie that's being played, or camera.stop() stops capturing 
+video. server.stop() will shut down the server and shut it down
+completely, which is identical to its "dispose" function.
+
+public void dispose() 
+this should only be called by PApplet. dispose() is what gets 
+called when the host applet is stopped, so this should shut down
+any threads, disconnect from the net, unload memory, etc. 
+
+...
+
+Structure of a Library
+
+The Sonia library by Amit Pitaru is a good example here. To make a
+library called sonia, you create a folder called "sonia" and within
+that, a subfolder named "library". The sonia folder should be placed
+inside the Processing "libraries" folder, or a user can place it
+inside their sketchbook folder. 
+
+Inside "library", you'll find "sonia.jar". Anything that is found 
+inside library will be exported with your sketch. 
+
+If different sets of files should be exported with applets versus
+applications, a file called "export.txt" should be included. For
+sonia, this looks like:
+
+# only export the jar file for applets.. 
+# everything else is installed as a separate browser plugin
+applet=sonia.jar
+# application needs everything
+application=sonia.jar,JSynClasses.jar,JSynV142.dll,libJSynV142.jnilib
+
+This will include sonia.jar for applets, because in a web browser, the
+DLL files must be installed separately along with JSynClasses.jar. 
+
+...
+
+Using Other Java Code As A Library
+
+So long as the code is inside a package, it can be set up for use as 
+a library. For instance, if you want to make a library called 'poopy'
+set up a folder as follows:
+
+poopy -> 
+  library ->
+    poopy.jar
+
+Then, the folder should be placed in the Processing 'libraries' folder
+or inside the user's sketch folder to be recognized by Processing and
+its "Import Library" menu. As of now, you may need to restart
+Processing in order to get the library to show up. 
+
+While this process may sound a little complicated, the intent is to
+make it easier for users than a typical Java IDE. A little added
+complexity for the developers of library code (who will generally be
+more advanced users) is traded for great simplicity by the users,
+since Processing is intended to target beginning programmers.
+
+...
+
+Import Statements and How They Work
+
+If your library is sonia.jar, found at sonia/library/sonia.jar, all
+the packages found in sonia.jar will be added as imports into the
+user's sketch when they selected "Import Library". 
+
+In the case of Sonia, an additional .jar file can be found in the
+sonia/library/ folder, jsyn.jar. The contents of jsyn.jar will not be
+added to the import statements. This is to avoid every library having
+a ridiculously large number of import statements. For instance, if you
+want to use the "video" library, you don't want all 15-20 packages for
+the QuickTime libraries listed there to confuse your users. 
+
+Bottom line, if you want packages from the other .jar to be loaded by
+Processing, then you need to put those .class files into the main .jar
+file for the library (sonia/library/sonia.jar in this case).
+
+... 
+
+Import Statements and the Code Folder
+
+The code folder works differently, and every package inside every .jar
+found in the code folder is simply added to the import statements by
+the preprocessor. The user never sees this, it just happens magically.
+
+...
+
+Creating .jar Files For Your Library
+
+Since your code is inside a package, you need to make sure that its
+inside subfolders in the .jar file. It should be noted that jar files
+are simply .zip files (they can be opened with WinZip or Stuffit) with
+a "manifest" file. 
+
+In the past, you may have used:
+javac *.java
+to compile your files. Once they're inside a packages, you must use:
+javac -d . *.java
+which will create folders and subfolders for the packages. For
+instance, for all the stuff in processing.core.* it would create:
+
+processing/ ->
+  core/ ->
+    PApplet.class
+    PGraphics.class
+    ..etc
+
+then you can jar that stuff up using:
+jar -cf core.jar processing
+or with the command line info-zip utility:
+zip -r core.jar processing
+
+...
+
+The "Import Library" Menu Item
+
+All this does is add the "import yourlibrary.*;" statement to the top
+of your sketch. If you've handwritten the import statements, then
+there's no need to use "Import Library".
+
+...
+
+Getting a UnsupportedClassVersionError? (especially with Java 1.5)
+
+When I compiled blah.jar (using the successful method mentioned
+earlier) under Java 1.5, I get the following error from Processing:
+
+java.lang.UnsupportedClassVersionError: blah/SomeClass
+ (Unsupported major.minor version 49.0) 
+
+This is because more recent versions of Java like to use their own
+class file format that's not backwards compatible. Pretty annoying,
+since it's rare that newer language features are actually used (and
+shouldn't be with Processing anyway, since most likely you want to
+make things work on Java 1.1)
+
+The fix is to compile with "-target 1.1" which will create class
+files that are compatible with Java 1.1. This is absolutely necessary
+for any code that will run in a browser, since approximately
+two-thirds of average web users are still using Microsoft's Java 1.1.4
+JVM (as of November 2004).
+
+
+.....................................................................
+
+
+Example Library
+
+This is a skeleton for how a library sets itself up and registers a
+few calls. See PLibrary.java for more details on specific callbacks
+that are used by libraries.
+
+
+/**
+ * All libraries must be inside a package to be used with Processing. 
+ * Packages can be somewhat annoying, but they're necessary in later
+ * versions of Java and it's a useful way to keep track of what's used
+ * by a Processing sketch.
+ */
+package your.library.name;
+
+
+// needed for the PApplet and PLibrary objects
+import processing.core.*;
+
+
+/**
+ * Skeleton class for a library implementation, intends to show
+ * how constructors, setup(), attach(), and a couple calls work.
+ *
+ * Reference for each specific function can be found in PLibrary.java.
+ */ 
+public class AmazingIO implements PLibrary {
+
+  PApplet parent;
+
+
+  /**
+   * Used when an app uses Class.forName() to invoke this feller.
+   * If so, the subsequent newInstance() call will need to be
+   * followed by setup(PApplet parent) or PApplet.attach().
+   * in order to properly connect this guy.
+   */
+  public AmazingIO() { }
+
+
+  /**
+   * Use instead of calling attach() explicitly.
+   */
+  public AmazingIO(PApplet iparent) {
+    iparent.attach(this);
+  }
+
+
+  /**
+   * Called by PApplet.attach() or explicitly by the user
+   * who thinks they're more important than that.
+   */
+  public void setup(PApplet parent) {
+    this.parent = parent;  // useful to keep track of
+
+    parent.registerCall(this, PRE);
+    parent.registerCall(this, POST);
+  }
+
+
+  public void pre() { 
+    // do something cool
+  }
+
+
+  public void draw() {
+    // do something cooler
+  }
+
+
+  public void size(int w, int h) { }
+
+  public void post() { }
+
+  public void mouse(MouseEvent event) { }
+
+  public void key(KeyEvent e) { }
+
+  public void dispose() { }
+}
