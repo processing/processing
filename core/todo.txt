@@ -53,6 +53,15 @@ X   Click here to visit java.com and install.
 X make inverseCamera into cameraInv
 X fix messages referring to depth()
 X   route all of them through a single function rather than current waste
+X fix bezierVertex() in P3D for newer api
+
+wednesday late
+X track loadImage() with filenames that are inconsistent
+X   really a problem with the ves61r kids
+X   i.e. mixed case filename in sketch is different in windows
+X   but when uploaded to a unix server causes a serious problem
+X   use canonicalPath to flag possible problems
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
@@ -63,18 +72,10 @@ _   make nf/nfs/nfp not so weird
 _   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 _ should we include a from and to for the directional light?
 
-_ fix bezierVertex() in P3D for newer api
 _ fix shapes in P3D (line loop, polygons, etc)
 
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
-
-_ track loadImage() with filenames that are inconsistent
-_   really a problem with the ves61r kids
-_   i.e. mixed case filename in sketch is different in windows
-_   but when uploaded to a unix server causes a serious problem
-_   use canonicalPath to flag possible problems
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -951,8 +951,8 @@ public class PApplet extends Applet
       // note that this will not catch errors inside setup()
       // those are caught by the PdeRuntime
 
-      System.out.println("exception occurred (if you don't see a stack " +
-                         "trace below this message, we've got a bug)");
+      //System.out.println("exception occurred (if you don't see a stack " +
+      //                 "trace below this message, we've got a bug)");
       finished = true;
       exception = e;
       //e.printStackTrace(System.out);
@@ -2815,9 +2815,38 @@ public class PApplet extends Applet
 
 
   public InputStream openStream(String filename) {
-    try {
-      InputStream stream = null;
+    InputStream stream = null;
 
+    if (!online) {
+      try {
+        String location = folder + File.separator + "data";
+        File file = new File(location, filename);
+
+        try {
+          String path = file.getCanonicalPath();
+          String filenameActual = new File(path).getName();
+          //System.out.println(filename + " " + filenameActual);
+          if (!filenameActual.equals(filename)) {
+            throw new RuntimeException("This file is named " +
+                                       filenameActual + " not " +
+                                       filename + ".");
+            //System.err.println("This image file is named " +
+            //                 filenameActual + " not " + filename + ".");
+            //System.err.println("Use loadImage(\"" +
+            //                 filenameActual + "\") instead.");
+            //return null;
+            //System.out.println("found the wrong case");
+            //throw new RuntimeException("wrong case");
+          }
+        } catch (IOException e) { }
+
+        stream = new FileInputStream(file);
+        if (stream != null) return stream;
+
+      } catch (IOException e) { }  // ignored
+    }
+
+    try {
       if (filename.startsWith("http://")) {
         try {
           URL url = new URL(filename);
@@ -2837,14 +2866,6 @@ public class PApplet extends Applet
       if (stream != null) return stream;
 
       try {
-        try {
-          String location = folder + File.separator + "data";
-          File file = new File(location, filename);
-          stream = new FileInputStream(file);
-          if (stream != null) return stream;
-
-        } catch (Exception e) { }  // ignored
-
         try {
           File file = new File(folder, filename);
           stream = new FileInputStream(file);
