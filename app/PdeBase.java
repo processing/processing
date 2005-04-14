@@ -425,34 +425,6 @@ public class PdeBase {
   }
 
 
-  /*
-  static public File getProcessingHome() {
-    File home = new File(System.getProperty("user.home"));
-
-    File phome = null;
-
-    // NOTE if this location changes, be sure to note the change
-    // in the default preferences.txt because it mentions this path
-    if (PdeBase.platform == PdeBase.MACOSX) {
-      // on macosx put the sketchbook in the "Documents" folder
-      //phome = new File(home, "Documents" + File.separator + "Processing");
-
-    } else if (PdeBase.platform == PdeBase.WINDOWS) {
-      // on windows put the sketchbook in the "My Documents" folder
-      phome = new File(home, "My Documents" + File.separator + "Processing");
-
-    } else {
-      // for linux et al, make a dot folder
-      // if people don't like things being buried, they can move the sketches
-      // but the prefs will stay hidden in the dot folder
-      phome = new File(home, ".processing");
-    }
-    if (!phome.exists()) phome.mkdirs();
-    return phome;
-  }
-  */
-
-
   // .................................................................
 
 
@@ -527,11 +499,7 @@ public class PdeBase {
             url = sb.toString();
           }
         }
-        //System.out.println("trying to open " + url);
         com.apple.mrj.MRJFileUtils.openURL(url);
-
-        //} else if (platform == MACOS9) {
-        //com.apple.mrj.MRJFileUtils.openURL(url);
 
       } else if (PdeBase.isLinux()) {
         // how's mozilla sound to ya, laddie?
@@ -546,8 +514,6 @@ public class PdeBase {
     } catch (IOException e) {
       PdeBase.showWarning("Could not open URL",
                           "An error occurred while trying to open\n" + url, e);
-
-      //e.printStackTrace();
     }
   }
 
