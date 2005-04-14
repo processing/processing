@@ -669,8 +669,8 @@ public class PdeSketch {
     // make sure the paths aren't the same
     if (newFolder.equals(folder)) {
       PdeBase.showWarning("You can't fool me",
-                          "The new sketch name and location are the same\n" +
-                          "as the old. I ain't not doin nuthin'.", null);
+                          "The new sketch name and location are the same as\n" +
+                          "the old. I ain't not doin nuthin' not now.", null);
       return false;
     }
 
