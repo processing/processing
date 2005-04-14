@@ -35,13 +35,13 @@ public class PGraphics3 extends PGraphics {
   public PMatrix modelview; // = new PMatrix(MATRIX_STACK_DEPTH);
 
   public PMatrix camera; // = new PMatrix();
-  public PMatrix inverseCamera; // = new PMatrix();
+  public PMatrix cameraInv; // = new PMatrix();
 
   // ........................................................
   // Lighting-related variables
 
   // inverse model matrix
-  public PMatrix inverseModelview; // = new PMatrix(MATRIX_STACK_DEPTH);
+  public PMatrix modelviewInv; // = new PMatrix(MATRIX_STACK_DEPTH);
 
   // store the facing direction to speed rendering
   boolean useBackfaceCulling = false;
@@ -78,7 +78,7 @@ public class PGraphics3 extends PGraphics {
   public PMatrix projection = new PMatrix();
 
   // These two matrices always point to either the modelview
-  // or the inverseModelview, but they are swapped during
+  // or the modelviewInv, but they are swapped during
   // when in camera maniuplation mode. That way camera transforms
   // are automatically accumulated in inverse on the modelview matrix.
   public PMatrix forwardTransform;
@@ -227,7 +227,7 @@ public class PGraphics3 extends PGraphics {
    */
   public PGraphics3() {
     forwardTransform = modelview;
-    reverseTransform = inverseModelview;
+    reverseTransform = modelviewInv;
   }
 
 
@@ -244,7 +244,7 @@ public class PGraphics3 extends PGraphics {
     // super will add the listeners to the applet, and call resize()
     super(iwidth, iheight, parent);
     forwardTransform = modelview;
-    reverseTransform = inverseModelview;
+    reverseTransform = modelviewInv;
     //resize(iwidth, iheight);
     //projection = new PMatrix();
   }
@@ -310,10 +310,10 @@ public class PGraphics3 extends PGraphics {
     // making this again here because things are weird
     projection = new PMatrix();
     modelview = new PMatrix(MATRIX_STACK_DEPTH);
-    inverseModelview = new PMatrix(MATRIX_STACK_DEPTH);
+    modelviewInv = new PMatrix(MATRIX_STACK_DEPTH);
 
     camera = new PMatrix();
-    inverseCamera = new PMatrix();
+    cameraInv = new PMatrix();
 
     // set up the default camera
     camera();
@@ -365,7 +365,7 @@ public class PGraphics3 extends PGraphics {
     super.beginFrame();
 
     modelview.set(camera);
-    inverseModelview.set(inverseCamera);
+    modelviewInv.set(cameraInv);
 
     // clear out the lights, they'll have to be turned on again
     lightCount = 0;
@@ -415,7 +415,7 @@ public class PGraphics3 extends PGraphics {
   public void angleMode(int mode) {
     super.angleMode(mode);
     modelview.angleMode(mode);
-    inverseModelview.angleMode(mode);
+    modelviewInv.angleMode(mode);
     projection.angleMode(mode);
   }
   */
@@ -425,7 +425,7 @@ public class PGraphics3 extends PGraphics {
 
     manipulatingCamera = false;
     forwardTransform = modelview;
-    reverseTransform = inverseModelview;
+    reverseTransform = modelviewInv;
 
     //cameraMode(PERSPECTIVE);
     perspective();
@@ -454,7 +454,7 @@ public class PGraphics3 extends PGraphics {
    */
   //public void postSetup() {
   //modelview.storeResetValue();
-  //inverseModelview.storeResetValue();
+  //modelviewInv.storeResetValue();
   //}
 
 
@@ -694,13 +694,6 @@ public class PGraphics3 extends PGraphics {
       splineVertexCount = 3;
     }
 
-    // 'flat' may be a misnomer here because it's actually just
-    // calculating whether z is zero for all the spline points,
-    // so that it knows whether to calculate all three params,
-    // or just two for x and y.
-    //if (spline_vertices_flat) {
-    //if (z != 0) spline_vertices_flat = false;
-    //}
     float vertex[] = splineVertices[splineVertexCount];
 
     vertex[MX] = x;
@@ -722,17 +715,14 @@ public class PGraphics3 extends PGraphics {
       vertex[SW] = strokeWeight;
     }
 
-    // this complicated "if" construct may defeat the purpose
     if (textureImage != null) {
       vertex[U] = textureU;
       vertex[V] = textureV;
     }
 
-    //if (normalChanged) {
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
-    //}
 
     splineVertexCount++;
 
@@ -760,16 +750,37 @@ public class PGraphics3 extends PGraphics {
   /**
    * See notes with the bezier() function.
    */
-  public void bezierVertex(float x, float y) {
-    spline_vertex(x, y, 0, true);
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+    bezierVertex(x2, y2, 0, x3, y3, 0, x4, y4, 0);
   }
+
 
   /**
    * See notes with the bezier() function.
    */
-  public void bezierVertex(float x, float y, float z) {
-    spline_vertex(x, y, z, true);
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    if (splineVertexCount > 0) {
+      float vertex[] = splineVertices[splineVertexCount-1];
+      spline_vertex(vertex[MX], vertex[MY], vertex[MZ], true);
+
+    } else if (vertexCount > 0) {
+      // make sure there's at least a call to vertex()
+      float vertex[] = vertices[vertexCount-1];
+      spline_vertex(vertex[MX], vertex[MY], vertex[MZ], true);
+
+    } else {
+      throw new RuntimeException("A call to vertex() must be used " +
+                                 "before bezierVertex()");
+    }
+    spline_vertex(x2, y2, z2, true);
+    spline_vertex(x3, y3, z3, true);
+    spline_vertex(x4, y4, z4, true);
   }
+
 
   /**
    * See notes with the curve() function.
@@ -1388,10 +1399,10 @@ public class PGraphics3 extends PGraphics {
       //    Multiply by TRANSPOSE!
       // It's just one of those things. Model normals should be multiplied by the
       // inverse transpose of the modelview matrix to get world normals.
-      float nx = inverseModelview.m00*v[NX] + inverseModelview.m10*v[NY] + inverseModelview.m20*v[NZ] + inverseModelview.m30;
-      float ny = inverseModelview.m01*v[NX] + inverseModelview.m11*v[NY] + inverseModelview.m21*v[NZ] + inverseModelview.m31;
-      float nz = inverseModelview.m02*v[NX] + inverseModelview.m12*v[NY] + inverseModelview.m22*v[NZ] + inverseModelview.m32;
-      float nw = inverseModelview.m03*v[NX] + inverseModelview.m13*v[NY] + inverseModelview.m23*v[NZ] + inverseModelview.m33;
+      float nx = modelviewInv.m00*v[NX] + modelviewInv.m10*v[NY] + modelviewInv.m20*v[NZ] + modelviewInv.m30;
+      float ny = modelviewInv.m01*v[NX] + modelviewInv.m11*v[NY] + modelviewInv.m21*v[NZ] + modelviewInv.m31;
+      float nz = modelviewInv.m02*v[NX] + modelviewInv.m12*v[NY] + modelviewInv.m22*v[NZ] + modelviewInv.m32;
+      float nw = modelviewInv.m03*v[NX] + modelviewInv.m13*v[NY] + modelviewInv.m23*v[NZ] + modelviewInv.m33;
 
       v[NX] = nx;
       v[NY] = ny;
@@ -2123,10 +2134,10 @@ public class PGraphics3 extends PGraphics {
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
     beginShape(LINE_STRIP);
-    bezierVertex(x1, y1, z1);
-    bezierVertex(x2, y2, z2);
-    bezierVertex(x3, y3, z3);
-    bezierVertex(x4, y4, z4);
+    vertex(x1, y1, z1);
+    bezierVertex(x2, y2, z2,
+                 x3, y3, z3,
+                 x4, y4, z4);
     endShape();
   }
 
@@ -2317,7 +2328,7 @@ public class PGraphics3 extends PGraphics {
     }
     // Do this to the inverse regardless of the lights
     // to keep stack pointers in sync
-    inverseModelview.push();
+    modelviewInv.push();
   }
 
 
@@ -2328,7 +2339,7 @@ public class PGraphics3 extends PGraphics {
     }
     // Do this to the inverse regardless of the lights
     // to keep stack pointers in sync
-    inverseModelview.pop();
+    modelviewInv.pop();
   }
 
 
@@ -2392,7 +2403,7 @@ public class PGraphics3 extends PGraphics {
   public void cameraMode(int mode) {
     resetProjection();
     modelview.identity();
-    inverseModelview.identity();
+    modelviewInv.identity();
 
     if (mode == PERSPECTIVE) {
       //System.out.println("setting camera to perspective");
@@ -2427,7 +2438,7 @@ public class PGraphics3 extends PGraphics {
     } else {
       //projection.identity();
       manipulatingCamera = true;
-      forwardTransform = inverseCamera; //inverseModelview;
+      forwardTransform = cameraInv; //modelviewInv;
       reverseTransform = camera; //modelview;
       //cameraMode = CUSTOM;
     }
@@ -2450,7 +2461,7 @@ public class PGraphics3 extends PGraphics {
     else {
       manipulatingCamera = false;
       forwardTransform = modelview;
-      reverseTransform = inverseModelview;
+      reverseTransform = modelviewInv;
     }
   }
 
@@ -2617,11 +2628,11 @@ public class PGraphics3 extends PGraphics {
                              0,  0,  0,  1);
     modelview.invTranslate(eyeX, eyeY, eyeZ);
 
-    inverseModelview.applyMatrix(x0, x1, x2, 0,
+    modelviewInv.applyMatrix(x0, x1, x2, 0,
                 y0, y1, y2, 0,
                 z0, z1, z2, 0,
                 0,  0,  0,  1);
-    inverseModelview.translate(eyeX, eyeY, eyeZ);
+    modelviewInv.translate(eyeX, eyeY, eyeZ);
     */
   }
 
@@ -2839,9 +2850,9 @@ public class PGraphics3 extends PGraphics {
 
   public void lightDirection(int num, float x, float y, float z) {
     // Multiply by inverse transpose.
-    lightNX[num] = inverseModelview.m00*x + inverseModelview.m10*y + inverseModelview.m20*z + inverseModelview.m30;
-    lightNY[num] = inverseModelview.m01*x + inverseModelview.m11*y + inverseModelview.m21*z + inverseModelview.m31;
-    lightNZ[num] = inverseModelview.m02*x + inverseModelview.m12*y + inverseModelview.m22*z + inverseModelview.m32;
+    lightNX[num] = modelviewInv.m00*x + modelviewInv.m10*y + modelviewInv.m20*z + modelviewInv.m30;
+    lightNY[num] = modelviewInv.m01*x + modelviewInv.m11*y + modelviewInv.m21*z + modelviewInv.m31;
+    lightNZ[num] = modelviewInv.m02*x + modelviewInv.m12*y + modelviewInv.m22*z + modelviewInv.m32;
     float norm = mag(lightNX[num], lightNY[num], lightNZ[num]);
     if (norm == 0 || norm == 1) return;
     lightNX[num] /= norm;
@@ -3254,14 +3265,14 @@ public class PGraphics3 extends PGraphics {
   protected void lightDirection(int num, float x, float y, float z) {
     // Multiply by inverse transpose.
     lightNX[num] =
-      inverseModelview.m00*x + inverseModelview.m10*y +
-      inverseModelview.m20*z + inverseModelview.m30;
+      modelviewInv.m00*x + modelviewInv.m10*y +
+      modelviewInv.m20*z + modelviewInv.m30;
     lightNY[num] =
-      inverseModelview.m01*x + inverseModelview.m11*y +
-      inverseModelview.m21*z + inverseModelview.m31;
+      modelviewInv.m01*x + modelviewInv.m11*y +
+      modelviewInv.m21*z + modelviewInv.m31;
     lightNZ[num] =
-      inverseModelview.m02*x + inverseModelview.m12*y +
-      inverseModelview.m22*z + inverseModelview.m32;
+      modelviewInv.m02*x + modelviewInv.m12*y +
+      modelviewInv.m22*z + modelviewInv.m32;
 
     float norm = mag(lightNX[num], lightNY[num], lightNZ[num]);
     if (norm == 0 || norm == 1) return;

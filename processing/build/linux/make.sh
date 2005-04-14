@@ -191,14 +191,14 @@ LIBRARIES=../../build/$PLATFORM/work/libraries
 
 
 # PARTICLES LIBRARY
-echo Build particles library...
-cd ../lib/particles
-$JIKES -target 1.1 +D -d . *.java 
-rm -f library/particles.jar
-zip -r0q library/particles.jar simong
-rm -rf simong
-mkdir -p $LIBRARIES/particles/library/
-cp library/particles.jar $LIBRARIES/particles/library/
+#echo Build particles library...
+#cd ../lib/particles
+#$JIKES -target 1.1 +D -d . *.java 
+#rm -f library/particles.jar
+#zip -r0q library/particles.jar simong
+#rm -rf simong
+#mkdir -p $LIBRARIES/particles/library/
+#cp library/particles.jar $LIBRARIES/particles/library/
 
 pwd 
 
