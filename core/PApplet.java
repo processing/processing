@@ -61,7 +61,6 @@ public class PApplet extends Applet
   public static final float javaVersion =
     new Float(javaVersionName).floatValue();
 
-
   /**
    * Current platform in use, one of the
    * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
@@ -209,6 +208,15 @@ public class PApplet extends Applet
    * may not be called until a couple frames into things.
    */
   public boolean firstMouse;
+
+  /**
+   * Last mouse button pressed, one of LEFT, CENTER, or RIGHT.
+   * <P>
+   * If running on Mac OS, a ctrl-click will be interpreted as
+   * the righthand mouse button (unlike Java, which reports it as
+   * the left mouse).
+   */
+  public int mouseButton;
 
   public boolean mousePressed;
   public MouseEvent mouseEvent;
@@ -655,8 +663,8 @@ public class PApplet extends Applet
           return;
 
         } catch (ClassNotFoundException e) { }
+        size(iwidth, iheight, P2D);  // fall-through case
       }
-      size(iwidth, iheight, P2D);  // fall-through case
     }
   }
 
@@ -812,8 +820,21 @@ public class PApplet extends Applet
     paint(screen);
   }
 
-  //synchronized public void paint(Graphics screen) {
   public void paint(Graphics screen) {
+    if (javaVersion < 1.3f) {
+      screen.setColor(new Color(64, 64, 64));
+      Dimension size = getSize();
+      screen.fillRect(0, 0, size.width, size.height);
+      screen.setColor(Color.white);
+      screen.setFont(new Font("Dialog", Font.PLAIN, 9));
+      screen.drawString("You need to install", 5, 15);
+      screen.drawString("Java 1.3 or later", 5, 25);
+      screen.drawString("to view this content.", 5, 35);
+      screen.drawString("Click here to visit", 5, 50);
+      screen.drawString("java.com and install.", 5, 60);
+      return;
+    }
+
     //System.out.println("PApplet.paint()");
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "     5a enter paint");
@@ -1163,6 +1184,21 @@ public class PApplet extends Applet
     mouseY = event.getY();
     mouseEvent = event;
 
+    int button = event.getButton();
+    if (button == 1) {
+      mouseButton = LEFT;
+    } else if (button == 2) {
+      mouseButton = CENTER;
+    } else if (button == 3) {
+      mouseButton = RIGHT;
+    }
+    // if running on macos, allow ctrl-click as right mouse
+    if ((platform == MACOSX) || (platform == MACOS9)) {
+      if (mouseEvent.isPopupTrigger()) {
+        mouseButton = RIGHT;
+      }
+    }
+
     mouseEventMethods.handle(new Object[] { event });
     /*
     for (int i = 0; i < libraryCount; i++) {
@@ -1226,6 +1262,9 @@ public class PApplet extends Applet
    * mousePressed, and mouseEvent will no longer be set.
    */
   public void mousePressed(MouseEvent e) {
+    if (javaVersion < 1.3f) {
+      link("http://java.com/");
+    }
     checkMouseEvent(e);
   }
 
@@ -1572,42 +1611,130 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Link to an external page without all the muss. Currently
-   * only works for applets, but eventually should be implemented
-   * for applications as well, using code from PdeBase.
-   */
   public void link(String here) {
-    if (!online) {
-      System.err.println("Can't open " + here);
-      System.err.println("link() only works inside a web browser");
-      return;
-    }
+    link(here, null);
+  }
 
-    try {
-      getAppletContext().showDocument(new URL(here));
 
-    } catch (Exception e) {
-      System.err.println("Could not open " + here);
-      e.printStackTrace();
+  /**
+   * Link to an external page without all the muss.
+   * <P>
+   * When run with an applet, uses the browser to open the url,
+   * for applications, attempts to launch a browser with the url.
+   * <P>
+   * Works on Mac OS X and Windows. For Linux, use:
+   * <PRE>open(new String[] { "firefox", url });</PRE>
+   * or whatever you want as your browser, since Linux doesn't
+   * yet have a standard method for launching URLs.
+   */
+  public void link(String url, String frame) {
+    if (online) {
+      try {
+        if (frame == null) {
+          getAppletContext().showDocument(new URL(url));
+        } else {
+          getAppletContext().showDocument(new URL(url), frame);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("Could not open " + url);
+      }
+    } else {
+      try {
+        if (platform == WINDOWS) {
+          // the following uses a shell execute to launch the .html file
+          // note that under cygwin, the .html files have to be chmodded +x
+          // after they're unpacked from the zip file. i don't know why,
+          // and don't understand what this does in terms of windows
+          // permissions. without the chmod, the command prompt says
+          // "Access is denied" in both cygwin and the "dos" prompt.
+          //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" +
+          //                    referenceFile + ".html");
+
+          // open dos prompt, give it 'start' command, which will
+          // open the url properly. start by itself won't work since
+          // it appears to need cmd
+          Runtime.getRuntime().exec("cmd /c start " + url);
+
+        } else if ((platform == MACOSX) || (platform == MACOS9)) {
+          //com.apple.mrj.MRJFileUtils.openURL(url);
+          try {
+            Class mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+            Method openMethod =
+              mrjFileUtils.getMethod("openURL", new Class[] { String.class });
+            openMethod.invoke(null, new Object[] { url });
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        } else {
+          throw new RuntimeException("Can't open URLs for this platform");
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException("Could not open " + url);
+      }
     }
   }
 
-  public void link(String here, String there) {
-    if (!online) {
-      System.err.println("Can't open " + here);
-      System.err.println("link() only works inside a web browser");
-      return;
-    }
 
-    try {
-      getAppletContext().showDocument(new URL(here), there);
+  /**
+   * Attempt to open a file using the platform's shell.
+   */
+  public void open(String filename) {
+    if (platform == WINDOWS) {
+      // just launching the .html file via the shell works
+      // but make sure to chmod +x the .html files first
+      // also place quotes around it in case there's a space
+      // in the user.dir part of the url
+      try {
+        Runtime.getRuntime().exec("cmd /c \"" + filename + "\"");
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException("Could not open " + filename);
+      }
 
-    } catch (Exception e) {
-      System.err.println("Could not open " + here);
-      e.printStackTrace();
+    } else if ((platform == MACOSX) || (platform == MACOS9)) {
+      // prepend file:// on this guy since it's a file
+      String url = "file://" + filename;
+
+      // replace spaces with %20 for the file url
+      // otherwise the mac doesn't like to open it
+      // can't just use URLEncoder, since that makes slashes into
+      // %2F characters, which is no good. some might say "useless"
+      if (url.indexOf(' ') != -1) {
+        StringBuffer sb = new StringBuffer();
+        char c[] = url.toCharArray();
+        for (int i = 0; i < c.length; i++) {
+          if (c[i] == ' ') {
+            sb.append("%20");
+          } else {
+            sb.append(c[i]);
+          }
+        }
+        url = sb.toString();
+      }
+      link(url);
+
+    } else {
+      open(new String[] { filename });
     }
   }
+
+
+  /**
+   * Launch a process using a platforms shell, and an array of
+   * args passed on the command line.
+   */
+  public Process open(String args[]) {
+    try {
+      return Runtime.getRuntime().exec(args);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Could not open " + join(args, ' '));
+    }
+  }
+
+
 
 
   //////////////////////////////////////////////////////////////
