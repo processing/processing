@@ -51,7 +51,7 @@
 		<key>VMOptions</key>
 		<string>-Xms128M -Xmx256M</string>
 		<key>MainClass</key>
-		<string>PdeBase</string>
+		<string>processing.app.Base</string>
 		<key>JVMVersion</key>
 		<string>1.4+</string>
 		<key>ClassPath</key>

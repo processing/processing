@@ -8,9 +8,8 @@
 // 2) if the user has a long path, and it gets copied five times over for the
 // classpath, the program runs the risk of crashing. Bad bad.
 
-//#define JAVA_ARGS "-Xms64m -Xmx64m "
 #define JAVA_ARGS "-Xms128m -Xmx128m "
-#define JAVA_MAIN_CLASS "processing.app.PdeBase"
+#define JAVA_MAIN_CLASS "processing.app.Base"
 
 #include <windows.h>
 #include <stdio.h>
