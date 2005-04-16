@@ -1466,6 +1466,7 @@ public class PGraphics extends PImage implements PConstants {
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
     // TODO blit an image to the screen
+    System.err.println("unimplemented imageImpl() in PGraphics");
   }
 
 
@@ -1743,6 +1744,134 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  //font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
+
+  protected void textImpl(char ch, float x, float y, float z) {
+    int index = textFont.index(ch);
+    if (index == -1) return;
+
+    PImage glyph = textFont.images[index];
+
+    if (textMode == OBJECT) {
+      float high    = (float) textFont.height[index]     / textFont.fheight;
+      float bwidth  = (float) textFont.width[index]      / textFont.fwidth;
+      float lextent = (float) textFont.leftExtent[index] / textFont.fwidth;
+      float textent = (float) textFont.topExtent[index]  / textFont.fheight;
+
+      float x1 = x + lextent * textSize;
+      float y1 = y - textent * textSize;
+      float x2 = x1 + bwidth * textSize;
+      float y2 = y1 + high * textSize;
+
+      textImplObject(glyph,
+                     x1, y1, z, x2, y2, z,
+                     textFont.width[index], textFont.height[index]);
+
+    } else if (textMode == SCREEN) {
+      int xx = (int) x + textFont.leftExtent[index];;
+      int yy = (int) y - textFont.topExtent[index];
+
+      int w0 = textFont.width[index];
+      int h0 = textFont.height[index];
+
+      textImplScreen(glyph, xx, yy, w0, h0);
+    }
+  }
+
+
+  protected void textImplObject(PImage glyph,
+                                float x1, float y1, float z1,
+                                float x2, float y2, float z2,
+                                int u2, int v2) {
+    boolean savedTint = tint;
+    int savedTintColor = tintColor;
+    float savedTintR = tintR;
+    float savedTintG = tintG;
+    float savedTintB = tintB;
+    float savedTintA = tintA;
+    boolean savedTintAlpha = tintAlpha;
+
+    tint = true;
+    tintColor = fillColor;
+    tintR = fillR;
+    tintG = fillG;
+    tintB = fillB;
+    tintA = fillA;
+    tintAlpha = fillAlpha;
+
+    imageImpl(glyph, x1, y1, x2, y2, 0, 0, u2, v2);
+
+    tint = savedTint;
+    tintColor = savedTintColor;
+    tintR = savedTintR;
+    tintG = savedTintG;
+    tintB = savedTintB;
+    tintA = savedTintA;
+    tintAlpha = savedTintAlpha;
+  }
+
+
+  // should take image, int x1, int y1, and x2, y2
+
+  protected void textImplScreen(PImage glyph,
+                                int xx, int yy, //int x2, int y2,
+                                int w0, int h0) {
+    /*
+    System.out.println("textimplscreen");
+    rectMode(CORNER);
+    stroke(255);
+    rect(xx, yy, w0, h0);
+    */
+
+    int x0 = 0;
+    int y0 = 0;
+
+    if ((xx >= width) || (yy >= height) ||
+        (xx + w0 < 0) || (yy + h0 < 0)) return;
+
+    if (xx < 0) {
+      x0 -= xx;
+      w0 += xx;
+      xx = 0;
+    }
+    if (yy < 0) {
+      y0 -= yy;
+      h0 += yy;
+      yy = 0;
+    }
+    if (xx + w0 > width) {
+      w0 -= ((xx + w0) - width);
+    }
+    if (yy + h0 > height) {
+      h0 -= ((yy + h0) - height);
+    }
+
+    int fr = fillRi;
+    int fg = fillGi;
+    int fb = fillBi;
+    int fa = fillAi;
+
+    int pixels1[] = glyph.pixels; //images[glyph].pixels;
+
+    // TODO this can be optimized a bit
+    for (int row = y0; row < y0 + h0; row++) {
+      for (int col = x0; col < x0 + w0; col++) {
+        int a1 = (fa * pixels1[row * textFont.twidth + col]) >> 8;
+        int a2 = a1 ^ 0xff;
+        //int p1 = pixels1[row * textFont.width[glyph] + col];
+        int p1 = pixels1[row * glyph.width + col];
+        int p2 = pixels[(yy + row-y0)*width + (xx+col-x0)];
+
+        pixels[(yy + row-y0)*width + xx+col-x0] =
+          (0xff000000 |
+           (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
+           (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
+           (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
+      }
+    }
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1931,10 +2060,18 @@ public class PGraphics extends PImage implements PConstants {
     depthError("endCamera");
   }
 
+  public void ortho() {
+    depthError("ortho");
+  }
+
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     depthError("ortho");
+  }
+
+  public void perspective() {
+    depthError("perspective");
   }
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {

@@ -4026,6 +4026,11 @@ public class PApplet extends Applet
     return what & 0xff;
   }
 
+  /**
+   * Note that toInt('5') is unlike String in the sense that it
+   * won't return 5, but the ascii value. This is because ((int) someChar)
+   * returns the ascii value, and toInt() is just longhand for the cast.
+   */
   static final public int toInt(char what) {
     return what;
   }
@@ -5762,11 +5767,23 @@ v              PApplet.this.stop();
   }
 
 
+  public void ortho() {
+    if (recorder != null) recorder.ortho();
+    g.ortho();
+  }
+
+
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     if (recorder != null) recorder.ortho(left, right, bottom, top, near, far);
     g.ortho(left, right, bottom, top, near, far);
+  }
+
+
+  public void perspective() {
+    if (recorder != null) recorder.perspective();
+    g.perspective();
   }
 
 

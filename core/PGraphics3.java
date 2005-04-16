@@ -2449,7 +2449,7 @@ public class PGraphics3 extends PGraphics {
    * Record the current settings into the camera matrix.
    * And set the matrix mode back to the current
    * transformation matrix.
-   *
+   * <P>
    * Note that this will destroy any settings to scale(),
    * translate() to your scene.
    */
@@ -2458,11 +2458,16 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("cannot call endCamera while not "+
                                  "in camera manipulation mode");
     }
-    else {
-      manipulatingCamera = false;
-      forwardTransform = modelview;
-      reverseTransform = modelviewInv;
-    }
+    // reset the modelview to use this new camera matrix
+    modelview.set(camera);
+    modelviewInv.set(cameraInv);
+
+    // set matrix mode back to modelview
+    forwardTransform = modelview;
+    reverseTransform = modelviewInv;
+
+    // all done
+    manipulatingCamera = false;
   }
 
 
@@ -2740,11 +2745,11 @@ public class PGraphics3 extends PGraphics {
 
   /**
    * Takes an RGB or RGBA image and sets it as the background.
-   *
+   * <P>
    * Note that even if the image is set as RGB, the high 8 bits of
    * each pixel must be set (0xFF000000), because the image data will
    * be copied directly to the screen.
-   *
+   * <P>
    * Also clears out the zbuffer and stencil buffer if they exist.
    */
   public void background(PImage image) {
@@ -2758,11 +2763,9 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Clears pixel buffer. Also clears the stencil and zbuffer
-   * if they exist. Their existence is more accurate than using 'depth'
-   * to test whether to clear them, because if they're non-null,
-   * it means that depth() has been called somewhere in the program,
-   * even if noDepth() was called before draw() exited.
+   * Clears pixel buffer.
+   * <P>
+   * With P3D and OPENGL, this also clears the stencil and zbuffer.
    */
   public void clear() {
     //System.out.println("PGraphics3.clear(" +
@@ -2887,13 +2890,13 @@ public class PGraphics3 extends PGraphics {
 
 
   public void smooth() {
-    String msg = "smooth() not available when used with depth()";
+    String msg = "smooth() not available with P3D";
     throw new RuntimeException(msg);
   }
 
 
   public void noSmooth() {
-    String msg = "noSmooth() not available when used with depth()";
+    String msg = "noSmooth() not available with P3D";
     throw new RuntimeException(msg);
   }
 

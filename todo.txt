@@ -9,7 +9,11 @@ X get latest sonia from amit
 X remove particles from current processing
 X move netscape library out of libs and into build/shared
 
+_ add serial.stop() just like client/server
+
 _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
+
+_ fix macos readme about how to boost memory size, and 1.3 vs 1.4
 
 _ placement of 100x100 items is odd
 _   happens with P3D and maybe also P2D?
@@ -20,6 +24,11 @@ _ update linux build and shell scripts for new package
 
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux
+
+_ if in full java mode
+_   if extends PApplet.. or rather, put PApplet cast into a 
+_   try/catch block.. if it doesn't work, try applet. if that
+_   doesn't work, try using the class' main() to run it
 
 fixed in 82
 X border weirdness in PdeEditor panels on windows
@@ -194,6 +203,7 @@ _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 
 camera
+_ pause and framerate aren't working
 _ when passing in 'null' as the camera, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
 _ list() should return full list with all sub-components
@@ -517,6 +527,23 @@ PDE / Create Font
    1 _ font builder chopping off parts of letters
    1 _   this may be fixed?
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
+   1 _ font encoding issues 
+   1 _   java seems to force straight windows encoding.. (problem for pi fonts)
+   1 _   opentype/cff fonts don't work with live loading from the app
+   1 _   many (all?) opentype fonts won't show up or aren't supported
+   1 _     this may be only cff fonts that have trouble
+   1 _   when encoding with something besides the standard encoding, problematic
+   1 _     so sonata otf and sonata don't seem to have any chars at all
+   1 _ available font issues
+   1 _   is getFontList returning a different set of fonts from device2d?
+   1 _     try it out on java 1.3 versus 1.4
+   1 _   getAllFonts() not quite working for many fonts
+   1 _   i.e. Orator Std on windows.. macosx seems to be ok
+   1 _   is getFamilyNames() any different/better?
+   1 _   when did this break? 1.4.1? 1.4.x vs 1.3?
+   1 _   may be that cff fonts won't work?
+   1 _   or is it only those with ps names?
+   1 _ create font with user-specified charsets
 
 
 PDE / Editor Status
