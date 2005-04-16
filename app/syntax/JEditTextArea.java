@@ -1588,12 +1588,12 @@ public class JEditTextArea extends JComponent
    * This is slightly faster than using a KeyListener
    * because some Swing overhead is avoided.
    */
-  public PdeEditorListener editorListener;
+  public EditorListener editorListener;
 
   /**
    * The component that tracks the current line number.
    */
-  public PdeEditorLineStatus editorLineStatus;
+  public EditorLineStatus editorLineStatus;
 
 
   public void processKeyEvent(KeyEvent evt) {

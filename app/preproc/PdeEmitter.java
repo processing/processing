@@ -236,7 +236,7 @@ public class PdeEmitter implements PdeTokenTypes
    * @param ast The AST to print
    * @returns true iff anything was printed
    */
-  private boolean printChildren(AST ast) throws PdeException {
+  private boolean printChildren(AST ast) throws RunnerException {
     boolean ret = false;
     AST child = ast.getFirstChild();
     while (child != null) {
@@ -326,7 +326,7 @@ public class PdeEmitter implements PdeTokenTypes
   /**
    * Prints a binary operator
    */
-  private void printBinaryOperator(AST ast) throws PdeException {
+  private void printBinaryOperator(AST ast) throws RunnerException {
     print(ast.getFirstChild());
     out.print(name(ast));
     dumpHiddenAfter(ast);
@@ -339,7 +339,7 @@ public class PdeEmitter implements PdeTokenTypes
    * It works by making recursive calls to print children.
    * So the code below is one big "switch" statement on the passed AST type.
    */
-  public void print (AST ast) throws PdeException {
+  public void print (AST ast) throws RunnerException {
     if (ast == null) {
       return;
     }
@@ -755,10 +755,10 @@ public class PdeEmitter implements PdeTokenTypes
     case IDENT:
       /*
       if (ast.getText().equals("Image") &&
-          PdePreferences.getBoolean("preproc.substitute_image")) { //, true)) {
+          Preferences.getBoolean("preproc.substitute_image")) { //, true)) {
         out.print("BImage");
       } else if (ast.getText().equals("Font") &&
-                 PdePreferences.getBoolean("preproc.substitute_font")) { //, true)) {
+                 Preferences.getBoolean("preproc.substitute_font")) { //, true)) {
         out.print("BFont");
       } else {
       */
@@ -847,7 +847,7 @@ public class PdeEmitter implements PdeTokenTypes
           break;
 
         default:
-          throw new PdeException(PdeCompiler.SUPER_BADNESS);
+          throw new RunnerException(Compiler.SUPER_BADNESS);
         }
 
         // for builtin types, use regular casting syntax
@@ -876,7 +876,7 @@ public class PdeEmitter implements PdeTokenTypes
       // making floating point literals default to floats, not doubles
     case NUM_DOUBLE:
       out.print(ast.getText());
-      if (PdePreferences.getBoolean("preproc.substitute_floats")) { //, true) ) {
+      if (Preferences.getBoolean("preproc.substitute_floats")) { //, true) ) {
         out.print("f");
       }
       dumpHiddenAfter(ast);
