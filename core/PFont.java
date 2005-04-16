@@ -411,7 +411,7 @@ public class PFont implements PConstants {
     int glyph = index(c);
     if (glyph == -1) return;
 
-    if (parent.textMode == OBJECT) {
+    if (parent.textMode == MODEL) {
       float high    = (float) height[glyph]     / fheight;
       float bwidth  = (float) width[glyph]      / fwidth;
       float lextent = (float) leftExtent[glyph] / fwidth;
@@ -1039,6 +1039,44 @@ public class PFont implements PConstants {
     } catch (Exception e) {  // catch-all for reflection stuff
       e.printStackTrace();
       throw new RuntimeException(e.getMessage());
+    }
+  }
+
+
+  /**
+   * Get a list of the fonts installed on the system.
+   * <P>
+   * Not recommended for use in applets, but this is implemented
+   * in PFont because the Java methods to access this information
+   * have changed between 1.1 and 1.4, and the 1.4 method is
+   * typical of the sort of undergraduate-level over-abstraction
+   * that the seems to have made its way into the Java API after 1.1.
+   */
+  static public String[] list() {
+    if (PApplet.javaVersion < 1.3f) {
+      return Toolkit.getDefaultToolkit().getFontList();
+    }
+
+    // getFontList is deprecated in 1.4, so this has to be used
+    try {
+      //GraphicsEnvironment ge =
+      //  GraphicsEnvironment.getLocalGraphicsEnvironment();
+      Class geClass = Class.forName("java.awt.GraphicsEnvironment");
+      Method glgeMethod =
+        geClass.getMethod("getLocalGraphicsEnvironment", null);
+      Object ge = glgeMethod.invoke(null, null);
+
+      Method gafMethod = geClass.getMethod("getAllFonts", null);
+      Font fonts[] = (Font[]) gafMethod.invoke(ge, null); //ge.getAllFonts();
+      String list[] = new String[fonts.length];
+      for (int i = 0; i < list.length; i++) {
+        list[i] = fonts[i].getName();
+      }
+      return list;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Error inside PFont.list()");
     }
   }
 }
