@@ -3033,6 +3033,18 @@ public class PApplet extends Applet
   public InputStream openStream(String filename) {
     InputStream stream = null;
 
+    try {
+      URL url = new URL(filename);
+      stream = url.openStream();
+      return stream;
+
+    } catch (MalformedURLException e) {
+      // not a url, that's fine
+
+    } catch (IOException e) {
+      throw new RuntimeException("Error downloading from URL " + filename);
+    }
+
     if (!online) {
       try {
         String location = folder + File.separator + "data";
@@ -3063,18 +3075,6 @@ public class PApplet extends Applet
     }
 
     try {
-      if (filename.startsWith("http://")) {
-        try {
-          URL url = new URL(filename);
-          stream = url.openStream();
-          return stream;
-
-        } catch (MalformedURLException e) {
-          e.printStackTrace();
-          return null;
-        }
-      }
-
       stream = getClass().getResourceAsStream(filename);
       if (stream != null) return stream;
 
