@@ -10,6 +10,19 @@ X remove particles from current processing
 X move netscape library out of libs and into build/shared
 X add serial.stop() just like client/server
 
+camera
+_ rename video.Camera to video.Video ?
+_   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
+_ list() should return full list with all sub-components
+_   find the example code from the board
+_ add prompt() method to Camera ("" means default, null is prompt)
+_   let them pass in prompt(), not use null
+_ setting the camera should be an index from list()
+_ grabbing sub-devices from camera in the lib (via list() or whatever)
+_   actually, need to use numbered indices (multiple w/ same name)
+_     list should be: "0 - Logitech QuickCam (Blah)"
+_     and then use the indices (or the str i guess) to choose
+
 _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ fix macos readme about how to boost memory size, and 1.3 vs 1.4
@@ -205,9 +218,6 @@ camera
 _ pause and framerate aren't working
 _ when passing in 'null' as the camera, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
-_ list() should return full list with all sub-components
-_   find the example code from the board
-_ add prompt() method to Camera ("" means default, null is prompt)
 _ couldn't get req'd component also happens when the camera isn't ready
 _   may also mean that no camera is plugged in
 _   also, don't mention winvdig on the mac
@@ -216,11 +226,6 @@ _   in which case, need to return null (or ""?) for the prompt
 _   which will also just give you the last camera
 _   should it be new Camera(PROMPT);
 _ error messages from quicktime not coming through very well
-_ setting the camera should be an index from list()
-_ grabbing sub-devices from camera in the lib (via list() or whatever)
-_   actually, need to use numbered indices (multiple w/ same name)
-_     list should be: "0 - Logitech QuickCam (Blah)"
-_     and then use the indices (or the str i guess) to choose
 
 check these errors to see if they still exist
 _ odd error in System.err stream coming from running external
