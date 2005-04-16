@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeCode - data class for a single file inside a sketch
+  SketchCode - data class for a single file inside a sketch
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and is
@@ -27,20 +27,20 @@ package processing.app;
 import java.io.*;
 
 
-public class PdeCode {
+public class SketchCode {
   String name;  // pretty name (no extension), not the full file name
   File file;
   int flavor;
 
   String program;
   public boolean modified;
-  //PdeHistory history;  // TODO add history information
+  //SketchHistory history;  // TODO add history information
 
   String preprocName;  // name of .java file after preproc
   int lineOffset;  // where this code starts relative to the concat'd code
 
 
-  public PdeCode(String name, File file, int flavor) {
+  public SketchCode(String name, File file, int flavor) {
     this.name = name;
     this.file = file;
     this.flavor = flavor;
@@ -54,12 +54,12 @@ public class PdeCode {
 
 
   public void load() throws IOException {
-    program = PdeBase.loadFile(file);
+    program = Base.loadFile(file);
 
     //program = null;
     /*
     } catch (IOException e) {
-      PdeBase.showWarning("Error loading file",
+      Base.showWarning("Error loading file",
                           "Error while opening the file\n" +
                           file.getPath(), e);
       program = null;  // just in case
@@ -73,17 +73,17 @@ public class PdeCode {
 
   public void save() throws IOException {
     // TODO re-enable history
-    //history.record(s, PdeHistory.SAVE);
+    //history.record(s, SketchHistory.SAVE);
 
     //try {
       //System.out.println("saving to " + file);
       //System.out.println("stuff to save: " + program);
       //System.out.println("-------");
-    PdeBase.saveFile(program, file);
+    Base.saveFile(program, file);
     modified = false;
 
     //} catch (Exception e) {
-    //PdeBase.showWarning("Error saving file",
+    //Base.showWarning("Error saving file",
     //                    "Could not save '" + file.getName() + "'\n" +
     //                    "to '" + file.getParent() + "'\n" +
     //                    "because of an error.", e);

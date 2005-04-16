@@ -29,23 +29,23 @@ import java.util.jar.*;
  *  loading with new delegation model in Java 1.2.
  *
  */
-public class PdeClassLoader extends ClassLoader {
+public class RunnerClassLoader extends ClassLoader {
   String buildFolderPath;
 
   /*
-  PdeClassLoader(ClassLoader parent) {
+  RunnerClassLoader(ClassLoader parent) {
     super(parent);
     init();
   }
   */
 
-  PdeClassLoader() {
+  RunnerClassLoader() {
     //super();  // uses system class loader
     //init();
     //}
 
     //private void init() {
-    buildFolderPath = PdeBase.getBuildFolder().getAbsolutePath();
+    buildFolderPath = Base.getBuildFolder().getAbsolutePath();
 
     /*
     FileInputStream fi = null;
