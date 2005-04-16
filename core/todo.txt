@@ -125,14 +125,15 @@ X   actually important because the whole graphicsdevice crap is silly
 X     and we need a 1.1 versus 1.3/1.4 version
 X implement printarr() as println() ?
 X   actually deal with all the array types.. oy
+X should nf() handle commas as well?
+X   just add a basic nfc() version for ints and floats
+o   yes, and add nf(int what) so that non-padded version works
+o   but don't put commas into the zero-padded version
+o   make nf/nfs/nfp not so weird
+o   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
-_ should nf() handle commas as well?
-_   yes, and add nf(int what) so that non-padded version works
-_   but don't put commas into the zero-padded version
-_   make nf/nfs/nfp not so weird
-_   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
