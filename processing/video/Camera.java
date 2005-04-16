@@ -35,15 +35,26 @@ import quicktime.std.sg.*;
 import quicktime.util.RawEncodedImage;
 
 
+// this is the useful ref page
+// http://developer.apple.com/documentation/Java/Reference/1.4.1/Java141API_QTJ/constant-values.html
+
 public class Camera extends PImage implements Runnable {
-                            //implements StdQTConstants, StdQTConstants4, Runnable {
+
+  // there are more, but these are all we'll provide for now
+  static public final int COMPOSITE = StdQTConstants.compositeIn;  // 0
+  static public final int SVIDEO = StdQTConstants.sVideoIn;  // 1
+  static public final int COMPONENT = StdQTConstants.rgbComponentIn;  // 2
+  static public final int TUNER = StdQTConstants.tvTunerIn;  // 6
+
+  static public final int NTSC = StdQTConstants.ntscIn;
+  static public final int PAL = StdQTConstants.palIn;
+  static public final int SECAM = StdQTConstants.secamIn;
+
   PApplet parent;
   Method cameraEventMethod;
-  String name; // keep track for error messages
+  String name; // keep track for error messages (unused)
   Thread runner;
 
-  //PImage borderImage;
-  //boolean removeBorders = true;
   boolean available = false;
 
   /** Temporary storage for the raw image data read directly from the camera */
@@ -53,18 +64,24 @@ public class Camera extends PImage implements Runnable {
   public int dataHeight;
   public int dataRowBytes;
 
+  /** True if this image is currently being cropped */
   public boolean crop;
+
   public int cropX;
   public int cropY;
   public int cropW;
   public int cropH;
 
-  int fps;
-  RawEncodedImage raw;
-  SequenceGrabber capture;
+  public int framerate;
+
+  public RawEncodedImage raw;
+  public SequenceGrabber capture;
+
+  /** the guy who's doing all the work */
+  public SGVideoChannel channel;
+
 
   static {
-    //System.out.println("Camera init");
     try {
       QTSession.open();
     } catch (QTException e) {
@@ -81,11 +98,11 @@ public class Camera extends PImage implements Runnable {
 
 
   public Camera(PApplet parent, int requestWidth, int requestHeight) {
-    this(parent, "", requestWidth, requestHeight, 30);
+    this(parent, null, requestWidth, requestHeight, 30);
   }
 
-  public Camera(PApplet parent, int reqWidth, int reqHeight, int fps) {
-    this(parent, "", reqWidth, reqHeight, fps);
+  public Camera(PApplet parent, int reqWidth, int reqHeight, int framerate) {
+    this(parent, null, reqWidth, reqHeight, framerate);
   }
 
   public Camera(PApplet parent, String name, int reqWidth, int reqHeight) {
@@ -93,26 +110,10 @@ public class Camera extends PImage implements Runnable {
   }
 
 
-  /*
-   quicktime.QTSession.open();
-  quicktime.std.sg.SequenceGrabber sg = new quicktime.std.sg.SequenceGrabber();
-  quicktime.std.sg.SGVideoChannel sc  = new quicktime.std.sg.SGVideoChannel(sg);
-  quicktime.std.sg.VideoDigitizer vd  = sc.getDigitizerComponent();
-  println( "dv.getNumberOfInputs :" ); println( vd.getNumberOfInputs() ); println();
-//change line below to set input source
-  vd.setInput(1);
-//
-  println( "dv.getInput :" ); println( vd.getInput() ); println();
-  } catch (Exception e) {
-  e.printStackTrace();
-  }
-  */
-
   /**
-   * If 'name' is the empty string, don't set a specific device,
-   * which means that QuickTime will use that last device used by
-   * a QuickTime application. If name is set to null, a prompt
-   * will show up, allowing the user to choose the good stuff.
+   * If 'name' is null or the empty string, it won't set a specific
+   * device, which means that QuickTime will use that last device
+   * used by a QuickTime application.
    * <P>
    * If the following function:
    * public void cameraEvent(Camera c)
@@ -120,82 +121,41 @@ public class Camera extends PImage implements Runnable {
    * time a new frame is available from the camera.
    */
   public Camera(PApplet parent, String name,
-                int requestWidth, int requestHeight, int fps) {
+                int requestWidth, int requestHeight, int framerate) {
     this.parent = parent;
     this.name = name;
-    this.fps = fps;
+    this.framerate = framerate;
 
     try {
-      /*
-      QTSession.open();
-      QTRuntimeException.registerHandler(new QTRuntimeHandler() {
-          public void exceptionOccurred(QTRuntimeException e,
-                                        Object obj, String s, boolean flag) {
-            System.err.println("Problem inside Camera");
-            e.printStackTrace();
-          }
-        });
-      */
-      //System.out.println("0");
-
       QDRect qdrect = new QDRect(requestWidth, requestHeight);
       QDGraphics qdgraphics = new QDGraphics(qdrect);
 
-      //System.out.println("0a");
-
       capture = new SequenceGrabber();
-      //System.out.println("0b");
       capture.setGWorld(qdgraphics, null);
 
-      //System.out.println("0c");
-
-      // CRASHING HERE ON OSX
-      SGVideoChannel channel = new SGVideoChannel(capture);
-      //System.out.println("0c1");
+      channel = new SGVideoChannel(capture);
       channel.setBounds(qdrect);
-      //System.out.println("0c2");
       channel.setUsage(2);  // what is this usage number?
-      //System.out.println("0c3");
       capture.startPreview();  // maybe this comes later?
-
-      //System.out.println("0d");
 
       PixMap pixmap = qdgraphics.getPixMap();
       raw = pixmap.getPixelData();
 
-      //System.out.println("0e");
-
+      /*
       if (name == null) {
         channel.settingsDialog();
 
       } else if (name.length() > 0) {
         channel.setDevice(name);
       }
-      //System.out.println("0f");
-      //channel.setDevice("Logitech QuickCam Express-WDM");
-      /*
-      if (showDialog) channel.settingsDialog();
-      SGDeviceList list = channel.getDeviceList(0);
-      System.out.println("count is " + list.getCount());
-      for (int i = 0; i < list.getCount(); i++) {
-        System.out.println(list.getDeviceName(i).getName());
-      }
-      //System.out.println(channel.getSettings());
       */
+      if ((name != null) && (name.length() > 0)) {
+        channel.setDevice(name);
+      }
 
-      //int grabWidthBytes = raw.getRowBytes();
       dataRowBytes = raw.getRowBytes();
       dataWidth = dataRowBytes / 4;
-
-      //System.out.println("row bytes " + raw.getRowBytes() + " " +
-      //                 (raw.getRowBytes() / 4));
-      //int extraBytes = dataRowBytes - requestWidth*4;
-      //int extraPixels = extraBytes / 4;
-      //int videoWidth = requestWidth + extraPixels;
       dataHeight = raw.getSize() / dataRowBytes;
-
-      //System.out.println("height req, actual: " + requestHeight +
-      //                 " " + dataHeight);
 
       if (dataWidth != requestWidth) {
         crop = true;
@@ -203,17 +163,6 @@ public class Camera extends PImage implements Runnable {
         cropY = 0;
         cropW = requestWidth;
         cropH = requestHeight;
-
-        /*
-        System.out.println("dataWidth is " + dataWidth +
-                           " not " + requestWidth);
-        if (removeBorders) {
-          int bpixels[] = new int[dataWidth * requestHeight];
-          borderImage = new PImage(bpixels, dataWidth, requestHeight, RGB);
-        } else {
-          requestWidth = dataWidth;
-        }
-        */
       }
       // initialize my PImage self
       super.init(requestWidth, requestHeight, RGB);
@@ -229,19 +178,17 @@ public class Camera extends PImage implements Runnable {
                                       new Class[] { Camera.class });
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
-        //e.printStackTrace();
       }
 
     } catch (StdQTException qte) {
       //qte.printStackTrace();
 
       int errorCode = qte.errorCode();
-      // where's the friggin constant for this?
-      if (errorCode == -9405) {
+      if (errorCode == Errors.couldntGetRequiredComponent) {
         // this can happen when the camera isn't available or
         // wasn't shut down properly
-        parent.die("The camera (or VDIG) is not " +
-                   "installed correctly (see readme.txt).", qte);
+        parent.die("No camera could be found, " +
+                   "or the VDIG is not installed correctly.", qte);
       } else {
         parent.die("Error while setting up Camera", qte);
       }
@@ -252,11 +199,20 @@ public class Camera extends PImage implements Runnable {
 
 
   /**
-   * True if a frame is ready to be read. Example:
+   * True if a frame is ready to be read.
+   * <PRE>
+   * // put this somewhere inside draw
    * if (camera.available()) camera.read();
-   * <P>
+   * </PRE>
    * Alternatively, you can use cameraEvent(Camera c) to notify you
-   * whenever available() is set to true.
+   * whenever available() is set to true. In which case, things might
+   * look like this:
+   * <PRE>
+   * public void cameraEvent(Camera c) {
+   *   c.read();
+   *   // do something exciting now that c has been updated
+   * }
+   * </PRE>
    */
   public boolean available() {
     return available;
@@ -291,6 +247,13 @@ public class Camera extends PImage implements Runnable {
   }
 
 
+  /**
+   * Remove the cropping (if any) of the image.
+   * <P>
+   * By default, cropping is often enabled to trim out black pixels.
+   * But if you'd rather deal with them yourself (so as to avoid
+   * an extra lag while the data is moved around) you can shut it off.
+   */
   public void noCrop() {
     crop = false;
   }
@@ -325,21 +288,7 @@ public class Camera extends PImage implements Runnable {
           sourceOffset += dataWidth;
           destOffset += width;
         }
-
-        /*
-      if (borderImage != null) {  // need to remove borders
-        raw.copyToArray(0, borderImage.pixels,
-                        0, borderImage.width * borderImage.height);
-        int borderIndex = 0;
-        int targetIndex = 0;
-        for (int i = 0; i < height; i++) {
-          System.arraycopy(borderImage.pixels, borderIndex,
-                           pixels, targetIndex, width);
-            borderIndex += borderImage.width;
-            targetIndex += width;
-        }
-        */
-      } else {  // just copy directly
+      } else {  // no crop, just copy directly
         raw.copyToArray(0, pixels, 0, width * height);
       }
       //long t2 = System.currentTimeMillis();
@@ -378,7 +327,7 @@ public class Camera extends PImage implements Runnable {
       }
 
       try {
-        Thread.sleep(1000 / fps);
+        Thread.sleep(1000 / framerate);
       } catch (InterruptedException e) { }
     }
   }
@@ -388,13 +337,13 @@ public class Camera extends PImage implements Runnable {
    * Set the framerate for how quickly new frames are read
    * from the camera.
    */
-  public void framerate(int ifps) {
-    if (ifps <= 0) {
+  public void framerate(int iframerate) {
+    if (iframerate <= 0) {
       System.err.println("Camera: ignoring bad framerate of " +
-                         ifps + " fps.");
+                         iframerate + " fps.");
       return;
     }
-    fps = ifps;
+    framerate = iframerate;
   }
 
 
@@ -436,11 +385,78 @@ public class Camera extends PImage implements Runnable {
 
 
   /**
-   * Shows the settings dialog for this channel.
+   * Set the format to ask for from the video digitizer:
+   * TUNER, COMPOSITE, SVIDEO, or COMPONENT.
+   * <P>
+   * The constants are just aliases to the constants returned from
+   * QuickTime's getInputFormat() function, so any valid constant from
+   * that will work just fine.
    */
-  //public void prompt() {
-  //channel.settingsDialog();
-  //}
+  public void source(int which) {
+    try {
+      VideoDigitizer digitizer = channel.getDigitizerComponent();
+      int count = digitizer.getNumberOfInputs();
+      for (int i = 0; i < count; i++) {
+        //System.out.println("format " + digitizer.getInputFormat(i));
+        if (digitizer.getInputFormat(i) == which) {
+          digitizer.setInput(i);
+          return;
+        }
+      }
+      throw new RuntimeException("The specified source() is not available.");
+
+    } catch (StdQTException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Could not set the video input source.");
+    }
+  }
+
+
+  /**
+   * Set the video format standard to use on the
+   * video digitizer: NTSC, PAL, or SECAM.
+   * <P>
+   * The constants are just aliases to the constants used for
+   * QuickTime's setInputStandard() function, so any valid
+   * constant from that will work just fine.
+   */
+  public void format(int which) {
+    try {
+      VideoDigitizer digitizer = channel.getDigitizerComponent();
+      digitizer.setInputStandard(which);
+    } catch (StdQTException e) {
+      e.printStackTrace();
+      //throw new RuntimeException("Could not set the video input format");
+    }
+  }
+
+
+  /**
+   * Show the settings dialog for this input device.
+   */
+  public void settings() {
+    try {
+      channel.settingsDialog();
+    } catch (StdQTException qte) {
+      int errorCode = qte.errorCode();
+      if (errorCode != Errors.userCanceledErr) {
+        qte.printStackTrace();
+        throw new RuntimeException("error inside Camera.settings()");
+      }
+    }
+  }
+
+
+  /*
+  public String[] listInputs() {
+    VideoDigitizer digitizer = channel.getDigitizerComponent();
+    int count = digitizer.getNumberOfInputs();
+
+    String outgoing[] = new String[count];
+    //digitizer.setInput(2); // or something
+    //DigitizerInfo di = digitizer.getDigitizerInfo()
+  }
+  */
 
 
   /**
