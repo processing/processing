@@ -119,11 +119,10 @@ X     but if PGraphics2, just uses the built-in font
 X   also works for font names and just creating them
 X     if font name doesn't end with otf or ttf, then tries to create it
 X change objectX/Y/Z to modelX/Y/Z
-
-_ PFont.list() to return string list of all the available fonts
+X PFont.list() to return string list of all the available fonts
 X   probably not a mode of use that we really want to encourage
-_   actually important because the whole graphicsdevice crap is silly
-_     and we need a 1.1 versus 1.3/1.4 version
+X   actually important because the whole graphicsdevice crap is silly
+X     and we need a 1.1 versus 1.3/1.4 version
 
 _ implement printarr() as println() ?
 
