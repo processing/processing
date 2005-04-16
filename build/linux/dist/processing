@@ -9,4 +9,14 @@ export CLASSPATH
 PATH=`pwd`/`dirname $0`:`pwd`/java/bin:${PATH}
 export PATH
 
-java processing.app.Base
+if test -l /usr/lib/libstdc++-libc6.2-2.so.3
+then 
+  java processing.app.Base
+else 
+  echo You need to install libstdc++-libc6.2-2.so.3
+  echo or the rpm/package for compat-libstdc++
+  echo in order to use Processing (because of jikes).
+  echo
+  echo Or if you have jikes working properly, and know
+  echo what you're doing, you should edit this script.
+fi
