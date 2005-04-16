@@ -14,9 +14,6 @@ _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 
 _ fix macos readme about how to boost memory size, and 1.3 vs 1.4
 
-_ placement of 100x100 items is odd
-_   happens with P3D and maybe also P2D?
-
 _ update .exe to use new class/package
 _ update .app to use new class/package
 _ update linux build and shell scripts for new package
@@ -91,6 +88,9 @@ saving a project over an already existing project does not get rid of the .pde f
 
 
 NOT NECESSARY BEFORE BETA
+
+_ placement of 100x100 items is odd
+_   happens with P3D and maybe also P2D?
 
 _ if in full java mode
 _   if extends PApplet.. or rather, put PApplet cast into a 
