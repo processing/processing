@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorHeader - sketch tabs at the top of the screen
+  EditorHeader - sketch tabs at the top of the screen
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
@@ -32,11 +32,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
-public class PdeEditorHeader extends JComponent {
+public class EditorHeader extends JComponent {
   static Color backgroundColor;
   static Color textColor[] = new Color[2];
 
-  PdeEditor editor;
+  Editor editor;
 
   int tabLeft[];
   int tabRight[];
@@ -76,24 +76,24 @@ public class PdeEditorHeader extends JComponent {
   int imageW, imageH;
 
 
-  public PdeEditorHeader(PdeEditor eddie) {
+  public EditorHeader(Editor eddie) {
     this.editor = eddie; // weird name for listener
 
     pieces = new Image[STATUS.length][WHERE.length];
     for (int i = 0; i < STATUS.length; i++) {
       for (int j = 0; j < WHERE.length; j++) {
-        pieces[i][j] = PdeBase.getImage("tab-" + STATUS[i] + "-" +
+        pieces[i][j] = Base.getImage("tab-" + STATUS[i] + "-" +
                                         WHERE[j] + ".gif", this);
       }
     }
 
     if (backgroundColor == null) {
       backgroundColor =
-        PdePreferences.getColor("header.bgcolor");
+        Preferences.getColor("header.bgcolor");
       textColor[SELECTED] =
-        PdePreferences.getColor("header.text.selected.color");
+        Preferences.getColor("header.text.selected.color");
       textColor[UNSELECTED] =
-        PdePreferences.getColor("header.text.unselected.color");
+        Preferences.getColor("header.text.unselected.color");
     }
 
     addMouseListener(new MouseAdapter() {
@@ -102,7 +102,7 @@ public class PdeEditorHeader extends JComponent {
           int y = e.getY();
 
           if ((x > menuLeft) && (x < menuRight)) {
-            popup.show(PdeEditorHeader.this, x, y);
+            popup.show(EditorHeader.this, x, y);
 
           } else {
             for (int i = 0; i < editor.sketch.codeCount; i++) {
@@ -120,7 +120,7 @@ public class PdeEditorHeader extends JComponent {
   public void paintComponent(Graphics screen) {
     if (screen == null) return;
 
-    PdeSketch sketch = editor.sketch;
+    Sketch sketch = editor.sketch;
     if (sketch == null) return;  // ??
 
     Dimension size = getSize();
@@ -149,7 +149,7 @@ public class PdeEditorHeader extends JComponent {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdePreferences.getFont("header.text.font");
+      font = Preferences.getFont("header.text.font");
     }
     g.setFont(font);  // need to set this each time through
     metrics = g.getFontMetrics();
@@ -173,13 +173,13 @@ public class PdeEditorHeader extends JComponent {
     // disable hide on the first tab
     hideItem.setEnabled(sketch.current != sketch.code[0]);
 
-    //int x = 0; //PdePreferences.GUI_SMALL;
-    //int x = (PdeBase.platform == PdeBase.MACOSX) ? 0 : 1;
+    //int x = 0; //Preferences.GUI_SMALL;
+    //int x = (Base.platform == Base.MACOSX) ? 0 : 1;
     int x = 6; // offset from left edge of the component
     for (int i = 0; i < sketch.codeCount; i++) {
-      PdeCode code = sketch.code[i];
+      SketchCode code = sketch.code[i];
 
-      String codeName = (code.flavor == PdeSketch.PDE) ?
+      String codeName = (code.flavor == Sketch.PDE) ?
         code.name : code.file.getName();
 
       // if modified, add the li'l glyph next to the name
@@ -259,10 +259,10 @@ public class PdeEditorHeader extends JComponent {
 
     // maybe this shouldn't have a command key anyways..
     // since we're not trying to make this a full ide..
-    //item = PdeEditor.newJMenuItem("New", 'T');
+    //item = Editor.newJMenuItem("New", 'T');
 
     /*
-    item = PdeEditor.newJMenuItem("Previous", KeyEvent.VK_PAGE_UP);
+    item = Editor.newJMenuItem("Previous", KeyEvent.VK_PAGE_UP);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           System.out.println("prev");
@@ -273,7 +273,7 @@ public class PdeEditorHeader extends JComponent {
     }
     menu.add(item);
 
-    item = PdeEditor.newJMenuItem("Next", KeyEvent.VK_PAGE_DOWN);
+    item = Editor.newJMenuItem("Next", KeyEvent.VK_PAGE_DOWN);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           System.out.println("ext");
@@ -327,7 +327,7 @@ public class PdeEditorHeader extends JComponent {
           rebuildMenu();
         }
       };
-    PdeSketch sketch = editor.sketch;
+    Sketch sketch = editor.sketch;
     if (sketch != null) {
       for (int i = 0; i < sketch.hiddenCount; i++) {
         item = new JMenuItem(sketch.hidden[i].name);
@@ -368,16 +368,16 @@ public class PdeEditorHeader extends JComponent {
   }
 
   public Dimension getMinimumSize() {
-    if (PdeBase.isMacOS()) {
-      return new Dimension(300, PdePreferences.GRID_SIZE);
+    if (Base.isMacOS()) {
+      return new Dimension(300, Preferences.GRID_SIZE);
     }
-    return new Dimension(300, PdePreferences.GRID_SIZE - 1);
+    return new Dimension(300, Preferences.GRID_SIZE - 1);
   }
 
   public Dimension getMaximumSize() {
-    if (PdeBase.isMacOS()) {
-      return new Dimension(3000, PdePreferences.GRID_SIZE);
+    if (Base.isMacOS()) {
+      return new Dimension(3000, Preferences.GRID_SIZE);
     }
-    return new Dimension(3000, PdePreferences.GRID_SIZE - 1);
+    return new Dimension(3000, Preferences.GRID_SIZE - 1);
   }
 }

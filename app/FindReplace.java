@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorFind - find/replace window for processing
+  FindReplace - find/replace window for processing
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and is
@@ -29,13 +29,13 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-public class PdeEditorFind extends JFrame
+public class FindReplace extends JFrame
   implements ActionListener, KeyListener {
 
   static final int BIG = 13;
   static final int SMALL = 6;
 
-  PdeEditor editor;
+  Editor editor;
 
   JTextField findField;
   JTextField replaceField;
@@ -52,7 +52,7 @@ public class PdeEditorFind extends JFrame
   boolean found;
 
 
-  public PdeEditorFind(PdeEditor editor) {
+  public FindReplace(Editor editor) {
     super("Find");
     setResizable(false);
     this.editor = editor;
@@ -96,7 +96,7 @@ public class PdeEditorFind extends JFrame
     buttons.setLayout(new FlowLayout());
 
     // ordering is different on mac versus pc
-    if (PdeBase.isMacOS()) {
+    if (Base.isMacOS()) {
       buttons.add(replaceButton = new JButton("Replace"));
       buttons.add(replaceAllButton = new JButton("Replace All"));
       buttons.add(findButton = new JButton("Find"));
@@ -113,8 +113,8 @@ public class PdeEditorFind extends JFrame
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    //if (PdeBase.platform == PdeBase.MACOSX) {
-    if (PdeBase.isMacOS()) {
+    //if (Base.platform == Base.MACOSX) {
+    if (Base.isMacOS()) {
       buttons.setBorder(null);
     }
 

@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeHistory - handler for storing history information about a project
+  SketchHistory - handler for storing history information about a project
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry
@@ -34,8 +34,8 @@ import java.util.zip.*;
 import javax.swing.*;
 
 
-public class PdeHistory {
-  PdeEditor editor;
+public class SketchHistory {
+  Editor editor;
 
   // why things have been saved for history
   static final int RUN      = 5;
@@ -58,11 +58,11 @@ public class PdeHistory {
   ActionListener menuListener;
 
 
-  //public PdeHistory(PdeEditor editor) {
+  //public SketchHistory(Editor editor) {
   //this.editor = editor;
   //}
 
-  public PdeHistory(Sketch sketch) {
+  public SketchHistory(Sketch sketch) {
     menu = new JMenu("History");
 
     menuListener = new ActionListener() {
@@ -85,12 +85,12 @@ public class PdeHistory {
 
 
   public void attachMenu(JMenu parent) {
-    //if (PdePreferences.getBoolean("history.recording")) {
+    //if (Preferences.getBoolean("history.recording")) {
     parent.add(menu);
 
     // should leave enabled, since can still get old history
     // even if the new stuff isn't being recorded
-    //menu.setEnabled(PdePreferences.getBoolean("history.recording"));
+    //menu.setEnabled(Preferences.getBoolean("history.recording"));
     //}
   }
 
@@ -100,7 +100,7 @@ public class PdeHistory {
   public void record(String program, int mode) {
     if (readOnlySketch) return;
 
-    if (!PdePreferences.getBoolean("history.recording")) return;
+    if (!Preferences.getBoolean("history.recording")) return;
 
     if ((lastRecorded != null) &&
         (lastRecorded.equals(program))) return;
@@ -268,7 +268,7 @@ public class PdeHistory {
   //public void rebuildHistoryMenu(Menu menu, String path) {
   public void rebuildMenu() {  //String path) {
     //if (!recordingHistory) return;
-    //if (!PdePreferences.getBoolean("history.recording")) return;
+    //if (!Preferences.getBoolean("history.recording")) return;
 
     menu.removeAll();
 
@@ -281,11 +281,11 @@ public class PdeHistory {
         public void actionPerformed(ActionEvent e) {
           if (!historyFile.delete()) {
             //System.err.println("couldn't erase history");
-            PdeBase.showWarning("History Problem", 
+            Base.showWarning("History Problem", 
                                 "Could not erase history", null);
           }
           rebuildMenu();
-          //PdeHistory.this.rebuildMenu(historyFile.getPath());
+          //SketchHistory.this.rebuildMenu(historyFile.getPath());
         }
       });
     menu.add(item);

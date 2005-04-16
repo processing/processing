@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeMessageStream - outputstream to handle stdout/stderr messages
+  MessageStream - outputstream to handle stdout/stderr messages
   Part of the Processing project - http://Proce55ing.net
 
   Except where noted, code is written by Ben Fry and
@@ -28,23 +28,23 @@ import java.io.*;
 
 
 /**
- * this is used by PdeEditor, System.err is set to
- * new PrintStream(new PdeMessageStream())
+ * this is used by Editor, System.err is set to
+ * new PrintStream(new MessageStream())
  *
- * it's also used by PdeCompiler
+ * it's also used by Compiler
  */
-class PdeMessageStream extends OutputStream {
+class MessageStream extends OutputStream {
 
-  //PdeEditor editor;
-  PdeMessageConsumer messageConsumer;
+  //Editor editor;
+  MessageConsumer messageConsumer;
 
-  public PdeMessageStream(/*PdeEditor editor,*/
-                          PdeMessageConsumer messageConsumer) {
+  public MessageStream(/*Editor editor,*/
+                          MessageConsumer messageConsumer) {
     //this.editor = editor;
     this.messageConsumer = messageConsumer;
   }
 
-  //public void setMessageConsumer(PdeMessageConsumer messageConsumer) {
+  //public void setMessageConsumer(MessageConsumer messageConsumer) {
   //this.messageConsumer = messageConsumer;
   //}
 

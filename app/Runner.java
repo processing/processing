@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeRuntime - runs a compiled java applet
+  Runner - runs a compiled java applet
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry and Casey Reas
@@ -34,16 +34,16 @@ import java.lang.reflect.*;
 import com.oroinc.text.regex.*;
 
 
-public class PdeRuntime implements PdeMessageConsumer {
+public class Runner implements MessageConsumer {
 
   PApplet applet;
-  PdeException exception;
+  RunnerException exception;
   Window window;
   PrintStream leechErr;
   //String className;
 
-  PdeEditor editor;
-  PdeSketch sketch;
+  Editor editor;
+  Sketch sketch;
 
   boolean newMessage;
   int messageLineCount;
@@ -52,18 +52,18 @@ public class PdeRuntime implements PdeMessageConsumer {
   Process process;
   SystemOutSiphon processInput;
   OutputStream processOutput;
-  PdeMessageSiphon processError;
+  MessageSiphon processError;
 
 
-  public PdeRuntime(PdeSketch sketch, PdeEditor editor) {
+  public Runner(Sketch sketch, Editor editor) {
     this.sketch = sketch;
     this.editor = editor;
   }
 
 
-  public void start(Point windowLocation) throws PdeException {
+  public void start(Point windowLocation) throws RunnerException {
     //System.out.println(" externalRuntime is " +  sketch.externalRuntime);
-    this.leechErr = new PrintStream(new PdeMessageStream(this));
+    this.leechErr = new PrintStream(new MessageStream(this));
 
     try {
       if (editor.presenting) {
@@ -97,14 +97,14 @@ public class PdeRuntime implements PdeMessageConsumer {
       sketch.libraryPath +
       File.pathSeparator + System.getProperty("java.library.path"),
       "-cp",
-      sketch.classPath + PdeSketchbook.librariesClassPath,
+      sketch.classPath + Sketchbook.librariesClassPath,
       "processing.core.PApplet",
       PApplet.ARGS_EXTERNAL,
       PApplet.ARGS_PRESENT,
       PApplet.ARGS_PRESENT_BGCOLOR + "=" +
-      PdePreferences.get("run.present.bgcolor"),
+      Preferences.get("run.present.bgcolor"),
       PApplet.ARGS_DISPLAY + "=" +
-      PdePreferences.get("run.display"),
+      Preferences.get("run.display"),
       PApplet.ARGS_SKETCH_FOLDER + "=" +
       sketch.folder.getAbsolutePath(),
       sketch.mainClassName
@@ -112,7 +112,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     process = Runtime.getRuntime().exec(command);
     processInput = new SystemOutSiphon(process.getInputStream());
-    processError = new PdeMessageSiphon(process.getErrorStream(), this);
+    processError = new MessageSiphon(process.getErrorStream(), this);
     processOutput = process.getOutputStream();
   }
 
@@ -142,11 +142,11 @@ public class PdeRuntime implements PdeMessageConsumer {
       sketch.libraryPath +
       File.pathSeparator + System.getProperty("java.library.path"),
       "-cp",
-      sketch.classPath + PdeSketchbook.librariesClassPath,
+      sketch.classPath + Sketchbook.librariesClassPath,
       "processing.core.PApplet",
       location,
       PApplet.ARGS_EXTERNAL,
-      PApplet.ARGS_DISPLAY + "=" + PdePreferences.get("run.display"),
+      PApplet.ARGS_DISPLAY + "=" + Preferences.get("run.display"),
       PApplet.ARGS_SKETCH_FOLDER + "=" + sketch.folder.getAbsolutePath(),
       sketch.mainClassName
     };
@@ -155,7 +155,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     process = Runtime.getRuntime().exec(command);
     processInput = new SystemOutSiphon(process.getInputStream());
-    processError = new PdeMessageSiphon(process.getErrorStream(), this);
+    processError = new MessageSiphon(process.getErrorStream(), this);
     processOutput = process.getOutputStream();
   }
 
@@ -167,7 +167,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     int windowX = editorLocation.x;
     int windowY = editorLocation.y + editor.getInsets().top;
 
-    PdeClassLoader loader = new PdeClassLoader();
+    RunnerClassLoader loader = new RunnerClassLoader();
     Class c = loader.loadClass(sketch.mainClassName);
     applet = (PApplet) c.newInstance();
 
@@ -180,7 +180,7 @@ public class PdeRuntime implements PdeMessageConsumer {
     while ((applet.width == 0) && !applet.finished) {
       try {
         if (applet.exception != null) {
-          throw new PdeException(applet.exception.getMessage());
+          throw new RunnerException(applet.exception.getMessage());
         }
         Thread.sleep(5);
       } catch (InterruptedException e) { }
@@ -217,8 +217,8 @@ public class PdeRuntime implements PdeMessageConsumer {
     window.setLayout(null);
     Insets insets = window.getInsets();
 
-    int minW = PdePreferences.getInteger("run.window.width.minimum");
-    int minH = PdePreferences.getInteger("run.window.height.minimum");
+    int minW = Preferences.getInteger("run.window.width.minimum");
+    int minH = Preferences.getInteger("run.window.height.minimum");
     int windowW =
       Math.max(applet.width, minW) + insets.left + insets.right;
     int windowH =
@@ -228,11 +228,11 @@ public class PdeRuntime implements PdeMessageConsumer {
       window.setBounds(windowX - windowW, windowY, windowW, windowH);
 
     } else { // if it fits inside the editor window
-      windowX = editorLocation.x + PdePreferences.GRID_SIZE * 2;  // 66
-      windowY = editorLocation.y + PdePreferences.GRID_SIZE * 2;  // 66
+      windowX = editorLocation.x + Preferences.GRID_SIZE * 2;  // 66
+      windowY = editorLocation.y + Preferences.GRID_SIZE * 2;  // 66
 
-      if ((windowX + windowW > screen.width - PdePreferences.GRID_SIZE) ||
-          (windowY + windowH > screen.height - PdePreferences.GRID_SIZE)) {
+      if ((windowX + windowW > screen.width - Preferences.GRID_SIZE) ||
+          (windowY + windowH > screen.height - Preferences.GRID_SIZE)) {
         // otherwise center on screen
         windowX = (screen.width - windowW) / 2;
         windowY = (screen.height - windowH) / 2;
@@ -240,7 +240,7 @@ public class PdeRuntime implements PdeMessageConsumer {
       window.setBounds(windowX, windowY, windowW, windowH); //ww, wh);
     }
 
-    Color windowBgColor = PdePreferences.getColor("run.window.bgcolor");
+    Color windowBgColor = Preferences.getColor("run.window.bgcolor");
     window.setBackground(windowBgColor);
 
     int usableH = windowH - insets.top - insets.bottom;
@@ -357,7 +357,7 @@ public class PdeRuntime implements PdeMessageConsumer {
 
     //if (newMessage && s.length() > 2) {
     if (newMessage) {
-      exception = new PdeException(s);  // type of java ex
+      exception = new RunnerException(s);  // type of java ex
       exception.hideStackTrace = true;
       //System.out.println("setting ex type to " + s);
       newMessage = false;
@@ -421,7 +421,7 @@ java.lang.NullPointerException
             if (codeIndex != -1) {
               // lineIndex is 1-indexed, but editor wants zero-indexed
               lineIndex = Integer.parseInt(fileAndLine.substring(colonIndex + 1));
-              exception = new PdeException(exception.getMessage(),
+              exception = new RunnerException(exception.getMessage(),
                                            codeIndex, lineIndex - 1, -1);
               exception.hideStackTrace = true;
               foundMessageSource = true;
@@ -459,7 +459,7 @@ java.lang.NullPointerException
         if (index != -1) {
           functionStr = functionStr.substring(0, index);
         }
-        exception = new PdeException(//"inside \"" + functionStr + "()\": " +
+        exception = new RunnerException(//"inside \"" + functionStr + "()\": " +
                                      exception.getMessage() +
                                      " inside " + functionStr + "() " +
                                      "[add Compiler.disable() to setup()]");
@@ -478,7 +478,7 @@ java.lang.NullPointerException
         // error, but needs to make it through anyway.
         // so if five lines have gone past, might as well signal
         messageLineCount = -100;
-        exception = new PdeException(exception.getMessage());
+        exception = new RunnerException(exception.getMessage());
         exception.hideStackTrace = true;
         editor.error(exception);
 

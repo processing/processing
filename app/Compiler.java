@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeCompiler - default compiler class that connects to jikes
+  Compiler - default compiler class that connects to jikes
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2001-03
@@ -32,24 +32,24 @@ import java.util.*;
 import java.util.zip.*;
 import javax.swing.*;
 
-public class PdeCompiler implements PdeMessageConsumer {
+public class Compiler implements MessageConsumer {
   static final String BUGS_URL =
     "http://processing.org/bugs/";
   static final String SUPER_BADNESS =
     "Compiler error, please submit this code to " + BUGS_URL;
 
-  PdeSketch sketch;
+  Sketch sketch;
   String buildPath;
 
   //String buildPath;
   //String className;
   //File includeFolder;
-  PdeException exception;
-  //PdeEditor editor;
+  RunnerException exception;
+  //Editor editor;
 
   /*
-  public PdeCompiler(String buildPath, String className,
-                     File includeFolder, PdeEditor editor) {
+  public Compiler(String buildPath, String className,
+                     File includeFolder, Editor editor) {
     this.buildPath = buildPath;
     this.includeFolder = includeFolder;
     this.className = className;
@@ -60,23 +60,23 @@ public class PdeCompiler implements PdeMessageConsumer {
   public boolean compile(PrintStream leechErr) {
   */
 
-  public PdeCompiler() { }  // consider this a warning, you werkin soon.
+  public Compiler() { }  // consider this a warning, you werkin soon.
 
 
-  public boolean compile(PdeSketch sketch, String buildPath)
-    throws PdeException {
+  public boolean compile(Sketch sketch, String buildPath)
+    throws RunnerException {
 
     this.sketch = sketch;
     this.buildPath = buildPath;
 
     // the pms object isn't used for anything but storage
-    PdeMessageStream pms = new PdeMessageStream(this);
+    MessageStream pms = new MessageStream(this);
 
     String baseCommand[] = new String[] {
       // user.dir is folder containing P5 (and therefore jikes)
       // macosx needs the extra path info. linux doesn't like it, though
       // windows doesn't seem to care. write once, headache anywhere.
-      ((!PdeBase.isMacOS()) ? "jikes" :
+      ((!Base.isMacOS()) ? "jikes" :
        System.getProperty("user.dir") + File.separator + "jikes"),
 
       // this doesn't help much.. also java 1.4 seems to not support
@@ -90,7 +90,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       // necessary to make output classes compatible with 1.1
       // i.e. so that exported applets can work with ms jvm on the web
       "-target",
-      PdePreferences.get("preproc.jdk_version"),  //"1.1",
+      Preferences.get("preproc.jdk_version"),  //"1.1",
       // let the incompatability headache begin
 
       // used when run without a vm ("expert" mode)
@@ -150,8 +150,8 @@ public class PdeCompiler implements PdeMessageConsumer {
       // with the input and error streams
       //
       Process process = Runtime.getRuntime().exec(command);
-      new PdeMessageSiphon(process.getInputStream(), this);
-      new PdeMessageSiphon(process.getErrorStream(), this);
+      new MessageSiphon(process.getInputStream(), this);
+      new MessageSiphon(process.getErrorStream(), this);
 
       // wait for the process to finish.  if interrupted
       // before waitFor returns, continue waiting
@@ -169,7 +169,7 @@ public class PdeCompiler implements PdeMessageConsumer {
       String msg = e.getMessage();
       if ((msg != null) && (msg.indexOf("jikes: not found") != -1)) {
         //System.err.println("jikes is missing");
-        PdeBase.showWarning("Compiler error",
+        Base.showWarning("Compiler error",
                             "Could not find the compiler.\n" +
                             "jikes is missing from your PATH,\n" +
                             "see readme.txt for help.", null);
@@ -182,7 +182,7 @@ public class PdeCompiler implements PdeMessageConsumer {
     }
 
     // an error was queued up by message(), barf this back to build()
-    // which will barf it back to PdeEditor. if you're having trouble
+    // which will barf it back to Editor. if you're having trouble
     // discerning the imagery, consider how cows regurgitate their food
     // to digest it, and the fact that they have five stomaches.
     //
@@ -193,10 +193,10 @@ public class PdeCompiler implements PdeMessageConsumer {
     // is fairly wrong, one possibility is that jikes has crashed.
     //
     if (result != 0 && result != 1 ) {
-      //exception = new PdeException(SUPER_BADNESS);
+      //exception = new RunnerException(SUPER_BADNESS);
       //editor.error(exception);  // this will instead be thrown
-      PdeBase.openURL(BUGS_URL);
-      throw new PdeException(SUPER_BADNESS);
+      Base.openURL(BUGS_URL);
+      throw new RunnerException(SUPER_BADNESS);
     }
 
     // success would mean that 'result' is set to zero
@@ -208,10 +208,10 @@ public class PdeCompiler implements PdeMessageConsumer {
   boolean secondErrorFound;
 
   /**
-   * Part of the PdeMessageConsumer interface, this is called
+   * Part of the MessageConsumer interface, this is called
    * whenever a piece (usually a line) of error message is spewed
    * out from the compiler. The errors are parsed for their contents
-   * and line number, which is then reported back to PdeEditor.
+   * and line number, which is then reported back to Editor.
    */
   public void message(String s) {
     // This receives messages as full lines, so a newline needs
@@ -260,7 +260,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
       if (fileIndex == 0) {  // main class, figure out which tab
         for (int i = 1; i < sketch.codeCount; i++) {
-          if (sketch.code[i].flavor == PdeSketch.PDE) {
+          if (sketch.code[i].flavor == Sketch.PDE) {
             if (sketch.code[i].lineOffset < lineNumber) {
               fileIndex = i;
               //System.out.println("i'm thinkin file " + i);
@@ -330,7 +330,7 @@ public class PdeCompiler implements PdeMessageConsumer {
 
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);
-        exception = new PdeException(description, fileIndex, lineNumber-1, -1);
+        exception = new RunnerException(description, fileIndex, lineNumber-1, -1);
 
         // NOTE!! major change here, this exception will be queued
         // here to be thrown by the compile() function
@@ -361,7 +361,7 @@ public class PdeCompiler implements PdeMessageConsumer {
   static public String calcBootClassPath() {
     if (bootClassPath == null) {
       String additional = "";
-      if (PdeBase.isMacOS()) {
+      if (Base.isMacOS()) {
         additional =
           contentsToClassPath(new File("/System/Library/Java/Extensions/"));
       }
