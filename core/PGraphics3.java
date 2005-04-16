@@ -2716,21 +2716,21 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  public float objectX(float x, float y, float z) {
+  public float modelX(float x, float y, float z) {
     float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
     float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? ax / aw : ax;
   }
 
 
-  public float objectY(float x, float y, float z) {
+  public float modelY(float x, float y, float z) {
     float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
     float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? ay / aw : ay;
   }
 
 
-  public float objectZ(float x, float y, float z) {
+  public float modelZ(float x, float y, float z) {
     float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
     float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? az / aw : az;

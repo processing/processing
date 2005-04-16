@@ -25,11 +25,6 @@ _ update linux build and shell scripts for new package
 _ make a linux version 
 _   need to fix up the make/dist scripts for linux
 
-_ if in full java mode
-_   if extends PApplet.. or rather, put PApplet cast into a 
-_   try/catch block.. if it doesn't work, try applet. if that
-_   doesn't work, try using the class' main() to run it
-
 fixed in 82
 X border weirdness in PdeEditor panels on windows
 
@@ -97,6 +92,11 @@ saving a project over an already existing project does not get rid of the .pde f
 
 
 NOT NECESSARY BEFORE BETA
+
+_ if in full java mode
+_   if extends PApplet.. or rather, put PApplet cast into a 
+_   try/catch block.. if it doesn't work, try applet. if that
+_   doesn't work, try using the class' main() to run it
 
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
