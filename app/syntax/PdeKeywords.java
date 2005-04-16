@@ -59,7 +59,7 @@ public class PdeKeywords extends CTokenMarker {
         keywordColoring = new KeywordMap(false);
         keywordToReference = new Hashtable();
 
-        InputStream input = PdeBase.getStream("keywords.txt");
+        InputStream input = Base.getStream("keywords.txt");
         InputStreamReader isr = new InputStreamReader(input);
         BufferedReader reader = new BufferedReader(isr);
 
@@ -106,7 +106,7 @@ public class PdeKeywords extends CTokenMarker {
         reader.close();
 
       } catch (Exception e) {
-        PdeBase.showError("Problem loading keywords",
+        Base.showError("Problem loading keywords",
                           "Could not load keywords.txt,\n" +
                           "please re-install Processing.", e);
         System.exit(1);

@@ -73,7 +73,7 @@ constant
 // of the form #cc008f in PDE
 webcolor_literal
     :   w:WEBCOLOR_LITERAL 
-    { PdePreferences.getBoolean("preproc.web_colors") && 
+    { Preferences.getBoolean("preproc.web_colors") && 
       w.getText().length() == 6 }?  // must be exactly 6 hex digits
     ;
 
@@ -97,7 +97,7 @@ builtInConsCastType
 builtInType
     :   builtInConsCastType
     |   "color"              // aliased to an int in PDE
-        { PdePreferences.getBoolean("preproc.color_datatype") }? 
+        { Preferences.getBoolean("preproc.color_datatype") }? 
     ;
 
 // constructor style casts.
@@ -170,7 +170,7 @@ colorMethodCall
 // alternatives
 primaryExpression
     :   (consCastTypeSpec[false] LPAREN) => constructorCast   
-            { PdePreferences.getBoolean("preproc.enhanced_casting") }?
+            { Preferences.getBoolean("preproc.enhanced_casting") }?
     |   identPrimary ( options {greedy=true;} : DOT^ "class" )?
     |   constant
     |   "true"

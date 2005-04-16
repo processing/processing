@@ -76,11 +76,11 @@ public class PdePreprocessor {
    */
   public PdePreprocessor() {
     defaultImports[JDK11] =
-      PApplet.split(PdePreferences.get("preproc.imports.jdk11"), ',');
+      PApplet.split(Preferences.get("preproc.imports.jdk11"), ',');
     defaultImports[JDK13] =
-      PApplet.split(PdePreferences.get("preproc.imports.jdk13"), ',');
+      PApplet.split(Preferences.get("preproc.imports.jdk13"), ',');
     defaultImports[JDK14] =
-      PApplet.split(PdePreferences.get("preproc.imports.jdk14"), ',');
+      PApplet.split(Preferences.get("preproc.imports.jdk14"), ',');
   }
 
 
@@ -106,7 +106,7 @@ public class PdePreprocessor {
       program += "\n";
     }
 
-    if (PdePreferences.getBoolean("preproc.substitute_unicode")) {
+    if (Preferences.getBoolean("preproc.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
       char p[] = program.toCharArray();
       int unicodeCount = 0;
@@ -185,7 +185,7 @@ public class PdePreprocessor {
 
     // if using opengl, add it to the special imports
     /*
-    if (PdePreferences.get("renderer").equals("opengl")) {
+    if (Preferences.get("renderer").equals("opengl")) {
       extraImports = new String[imports.size() + 1];
       imports.copyInto(extraImports);
       extraImports[extraImports.length - 1] = "processing.opengl.*";
@@ -296,7 +296,7 @@ public class PdePreprocessor {
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
 
-    if (PdePreferences.getBoolean("preproc.output_parse_tree")) {
+    if (Preferences.getBoolean("preproc.output_parse_tree")) {
 
       stream = new PrintStream(new FileOutputStream("parseTree.xml"));
       stream.println("<?xml version=\"1.0\"?>");
@@ -341,7 +341,7 @@ public class PdePreprocessor {
 
     // emit standard imports (read from pde.properties)
     // for each language level that's being used.
-    String jdkVersionStr = PdePreferences.get("preproc.jdk_version");
+    String jdkVersionStr = Preferences.get("preproc.jdk_version");
 
     int jdkVersion = JDK11;  // default
     if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13; };
@@ -353,7 +353,7 @@ public class PdePreprocessor {
       }
     }
 
-    //boolean opengl = PdePreferences.get("renderer").equals("opengl");
+    //boolean opengl = Preferences.get("renderer").equals("opengl");
     //if (opengl) {
     //out.println("import processing.opengl.*; ");
     //}
