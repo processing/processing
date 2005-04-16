@@ -4505,18 +4505,18 @@ public class PApplet extends Applet
   }
 
 
-  static public String[] nfc(int num[], int digits) {
+  static public String[] nfc(int num[]) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfc(num[i], digits);
+      formatted[i] = nfc(num[i]);
     }
     return formatted;
   }
 
 
-  static public String nfc(int num, int digits) {
+  static public String nfc(int num) {
     if ((int_nf != null) &&
-        (int_nf_digits == digits) &&
+        (int_nf_digits == 0) &&
         int_nf_commas) {
       return int_nf.format(num);
     }
@@ -4524,8 +4524,8 @@ public class PApplet extends Applet
     int_nf = NumberFormat.getInstance();
     int_nf.setGroupingUsed(true);
     int_nf_commas = true;
-    int_nf.setMinimumIntegerDigits(digits);
-    int_nf_digits = digits;
+    int_nf.setMinimumIntegerDigits(0);
+    int_nf_digits = 0;
     return int_nf.format(num);
   }
 
@@ -4611,19 +4611,18 @@ public class PApplet extends Applet
   }
 
 
-
-  static public String[] nfc(float num[], int left, int right) {
+  static public String[] nfc(float num[], int right) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfc(num[i], left, right);
+      formatted[i] = nfc(num[i], right);
     }
     return formatted;
   }
 
 
-  static public String nfc(float num, int left, int right) {
+  static public String nfc(float num, int right) {
     if ((float_nf != null) &&
-        (float_nf_left == left) &&
+        (float_nf_left == 0) &&
         (float_nf_right == right) &&
         float_nf_commas) {
       return float_nf.format(num);
@@ -4633,12 +4632,11 @@ public class PApplet extends Applet
     float_nf.setGroupingUsed(true);
     float_nf_commas = true;
 
-    if (left != 0) float_nf.setMinimumIntegerDigits(left);
     if (right != 0) {
       float_nf.setMinimumFractionDigits(right);
       float_nf.setMaximumFractionDigits(right);
     }
-    float_nf_left = left;
+    float_nf_left = 0;
     float_nf_right = right;
     return float_nf.format(num);
   }

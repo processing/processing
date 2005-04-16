@@ -69,6 +69,8 @@ ABOUT REV 0083 -
   using the shell, or open(String args[]) which will do the same
   with several command line args.
 
+- nfc() joins the nf() family to format integers and floats with commas.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
