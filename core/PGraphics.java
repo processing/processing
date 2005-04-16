@@ -2130,18 +2130,18 @@ public class PGraphics extends PImage implements PConstants {
     return 0;
   }
 
-  public float objectX(float x, float y, float z) {
-    depthErrorXYZ("objectX");
+  public float modelX(float x, float y, float z) {
+    depthErrorXYZ("modelX");
     return 0;
   }
 
-  public float objectY(float x, float y, float z) {
-    depthErrorXYZ("objectY");
+  public float modelY(float x, float y, float z) {
+    depthErrorXYZ("modelY");
     return 0;
   }
 
-  public float objectZ(float x, float y, float z) {
-    depthErrorXYZ("objectZ");
+  public float modelZ(float x, float y, float z) {
+    depthErrorXYZ("modelZ");
     return 0;
   }
 

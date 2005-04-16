@@ -764,7 +764,7 @@ public class PFont implements PConstants {
    * @param smooth true to enable smoothing/anti-aliasing
    */
   public PFont(Font font, char charset[], boolean smooth) {
-    if (PApplet.javaVersion < 1.3) {
+    if (PApplet.javaVersion < 1.3f) {
       throw new RuntimeException("Can only create fonts with " +
                                  "Java 1.3 or higher");
     }

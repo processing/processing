@@ -2609,6 +2609,73 @@ public class PApplet extends Applet
   }
 
 
+  public PFont createFont(String name, float size) {
+    return createFont(name, size, PFont.DEFAULT_CHARSET, true);
+  }
+
+
+  public PFont createFont(String name, float size, char charset[]) {
+    return createFont(name, size, charset, true);
+  }
+
+
+  public PFont createFont(String name, float size, boolean smooth) {
+    return createFont(name, size, PFont.DEFAULT_CHARSET, smooth);
+  }
+
+
+  /**
+   * Create a .vlw font on the fly from either a font name that's
+   * installed on the system, or from a .ttf or .otf that's inside
+   * the data folder of this sketch.
+   * <P>
+   * Only works with Java 1.3 or later.
+   */
+  public PFont createFont(String name, float size,
+                          char charset[], boolean smooth) {
+    if (PApplet.javaVersion < 1.3f) {
+      throw new RuntimeException("Can only create fonts with " +
+                                 "Java 1.3 or higher");
+    }
+
+    String lowerName = name.toLowerCase();
+    Font font = null;
+
+    try {
+      Method deriveFontMethod =
+        Font.class.getMethod("deriveFont",
+                             new Class[] { Float.TYPE });
+      Float floatSize = new Float(size);
+
+      if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
+        //font = Font.createFont(Font.TRUETYPE_FONT, openStream(name));
+        Method createFontMethod =
+          Font.class.getMethod("createFont",
+                               new Class[] { Integer.TYPE,
+                                             InputStream.class });
+        Field ttf = Font.class.getField("TRUETYPE_FONT");
+        Integer ttfInteger = new Integer(ttf.getInt(ttf));
+        Font baseFont = (Font)
+          createFontMethod.invoke(name,
+                                  new Object[] { ttfInteger,
+                                                 openStream(name) });
+        font = (Font) deriveFontMethod.invoke(baseFont,
+                                              new Object[] { floatSize });
+      } else {
+        Font baseFont = new Font(name, Font.PLAIN, 1);
+        font = (Font)
+          deriveFontMethod.invoke(font, new Object[] { floatSize });
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Problem using createFont() " +
+                                 "with the file " + name);
+    }
+    return new PFont(font, charset, smooth);
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -5845,18 +5912,18 @@ v              PApplet.this.stop();
   }
 
 
-  public float objectX(float x, float y, float z) {
-    return g.objectX(x, y, z);
+  public float modelX(float x, float y, float z) {
+    return g.modelX(x, y, z);
   }
 
 
-  public float objectY(float x, float y, float z) {
-    return g.objectY(x, y, z);
+  public float modelY(float x, float y, float z) {
+    return g.modelY(x, y, z);
   }
 
 
-  public float objectZ(float x, float y, float z) {
-    return g.objectZ(x, y, z);
+  public float modelZ(float x, float y, float z) {
+    return g.modelZ(x, y, z);
   }
 
 
