@@ -132,9 +132,6 @@ o   but don't put commas into the zero-padded version
 o   make nf/nfs/nfp not so weird
 o   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 
-_ rename video.Camera to video.Video ?
-_   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
