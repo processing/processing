@@ -123,8 +123,8 @@ X PFont.list() to return string list of all the available fonts
 X   probably not a mode of use that we really want to encourage
 X   actually important because the whole graphicsdevice crap is silly
 X     and we need a 1.1 versus 1.3/1.4 version
-
-_ implement printarr() as println() ?
+X implement printarr() as println() ?
+X   actually deal with all the array types.. oy
 
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
@@ -134,16 +134,16 @@ _   but don't put commas into the zero-padded version
 _   make nf/nfs/nfp not so weird
 _   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 
-_ fix the flicker in java2d mode
-X   is it because the lock was taken off (g) in PApplet?
-_   appears to be much worse (unfinished drawing) on macosx
-_     try turning off hw accel on the mac to see if that's the problem
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-NOT NECESSARY BEFORE BETA
+NOT COMPLETELY NECESSARY BEFORE BETA
+
+_ fix the flicker in java2d mode
+_   not clear what's happening here
+_   appears to be much worse (unfinished drawing) on macosx
+_     try turning off hw accel on the mac to see if that's the problem
 
 _ post() method to send a bunch of crap to a web url?
 _   or an example that does this?
