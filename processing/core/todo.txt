@@ -133,6 +133,10 @@ o   make nf/nfs/nfp not so weird
 o   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
 X unhex was broken for numbers bigger than 2^31
 
+saturday late afternoon
+X fix bug with openStream() and upper/lowercase stuff
+X   do a better job of handling any kind of URLs in openStream()
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
