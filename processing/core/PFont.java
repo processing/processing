@@ -59,6 +59,17 @@ public class PFont implements PConstants {
   public int charCount;
   public PImage images[];
 
+  /**
+   * Name of the font as seen by Java when it was created.
+   * If the font is available, the native version will be used.
+   */
+  public String name;
+
+  /**
+   * Postscript name of the font that this bitmap was created from.
+   */
+  public String psname;
+
   /** "natural" size of the font (most often 48) */
   public int size;
 
@@ -104,7 +115,10 @@ public class PFont implements PConstants {
     charCount = is.readInt();
 
     // bit count is ignored since this is always 8
-    int numBits = is.readInt();
+    //int numBits = is.readInt();
+    // used to be the bitCount, but now used for version number.
+    // version 8 is any font before 69, so 9 is anything from 83+
+    int version = is.readInt();
 
     // this was formerly ignored, now it's the actual font size
     //mbox = is.readInt();
@@ -199,6 +213,11 @@ public class PFont implements PConstants {
       }
       //System.out.println();
     }
+
+    if (version == 9) {  // includes the font name at the end of the file
+      name = is.readUTF();
+      psname = is.readUTF();
+    }
   }
 
 
@@ -210,7 +229,10 @@ public class PFont implements PConstants {
     DataOutputStream os = new DataOutputStream(output);
 
     os.writeInt(charCount);
-    os.writeInt(8);       // numBits
+
+    // formerly numBits, now used for version number
+    os.writeInt((name != null) ? 9 : 8);
+
     os.writeInt(size);    // formerly mboxX (was 64, now 48)
     os.writeInt(mbox2);   // formerly mboxY (was 64, still 64)
     os.writeInt(ascent);  // formerly baseHt (was ignored)
@@ -233,8 +255,12 @@ public class PFont implements PConstants {
         }
       }
     }
+
+    if (name != null) {  // version 9
+      os.writeUTF(name);
+    }
+
     os.flush();
-    //os.close();  // can/should i do this?
   }
 
 
@@ -370,7 +396,8 @@ public class PFont implements PConstants {
       x -= parent.textSize * width(c);
     }
 
-    textImpl(c, x, y, z, parent);
+    //textImpl(c, x, y, z, parent);
+    parent.textImpl(c, x, y, z);
   }
 
 
@@ -378,6 +405,7 @@ public class PFont implements PConstants {
    * Internal function to draw a character at an x, y, z position.
    * This version is called after the textM
    */
+  /*
   protected void textImpl(char c, float x, float y, float z,
                           PGraphics parent) {
     int glyph = index(c);
@@ -475,6 +503,7 @@ public class PFont implements PConstants {
       }
     }
   }
+  */
 
 
   public void text(String str, float x, float y, PGraphics parent) {
@@ -516,7 +545,8 @@ public class PFont implements PConstants {
     }
 
     for (int index = start; index < stop; index++) {
-      textImpl(textBuffer[index], x, y, z, parent);
+      //textImpl(textBuffer[index], x, y, z, parent);
+      parent.textImpl(textBuffer[index], x, y, z);
       x += parent.textSize *width(textBuffer[index]);
     }
   }
@@ -533,6 +563,7 @@ public class PFont implements PConstants {
 
   /**
    * Draw text in a box that is constrained to a particular size.
+   * <P>
    * The parent PApplet will have converted the coords based on
    * the current rectMode().
    * <P>
@@ -642,19 +673,6 @@ public class PFont implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  /**
-   * This is the union of the Mac Roman and Windows ANSI
-   * character sets. ISO Latin 1 would be Unicode characters
-   * 0x80 -> 0xFF, but in practice, it would seem that most
-   * designers using P5 would rather have the characters
-   * that they expect from their platform's fonts.
-   *
-   * This is more of an interim solution until a much better
-   * font solution can be determined. (i.e. create fonts on
-   * the fly from some sort of vector format).
-   *
-   * Not that I expect that to happen.
-   */
   static final char[] EXTRA_CHARS = {
     0x0080, 0x0081, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087,
     0x0088, 0x0089, 0x008A, 0x008B, 0x008C, 0x008D, 0x008E, 0x008F,
@@ -686,15 +704,31 @@ public class PFont implements PConstants {
     0xFB01, 0xFB02
   };
 
-  static char[] charset;
+
+  /**
+   * The default Processing character set.
+   * <P>
+   * This is the union of the Mac Roman and Windows ANSI
+   * character sets. ISO Latin 1 would be Unicode characters
+   * 0x80 -> 0xFF, but in practice, it would seem that most
+   * designers using P5 would rather have the characters
+   * that they expect from their platform's fonts.
+   * <P>
+   * This is more of an interim solution until a much better
+   * font solution can be determined. (i.e. create fonts on
+   * the fly from some sort of vector format).
+   * <P>
+   * Not that I expect that to happen.
+   */
+  static public char[] DEFAULT_CHARSET;
   static {
-    charset = new char[126-33+1 + EXTRA_CHARS.length];
+    DEFAULT_CHARSET = new char[126-33+1 + EXTRA_CHARS.length];
     int index = 0;
     for (int i = 33; i <= 126; i++) {
-      charset[index++] = (char)i;
+      DEFAULT_CHARSET[index++] = (char)i;
     }
     for (int i = 0; i < EXTRA_CHARS.length; i++) {
-      charset[index++] = EXTRA_CHARS[i];
+      DEFAULT_CHARSET[index++] = EXTRA_CHARS[i];
     }
   };
 
@@ -703,18 +737,22 @@ public class PFont implements PConstants {
    * Create a new .vlw font on the fly. See documentation with
    * the later version of this constructor.
    */
+  /*
   public PFont(String name, int fontsize) {
     this(new Font(name, Font.PLAIN, fontsize), false, true);
   }
+  */
 
 
   /**
    * Create a new .vlw font on the fly. See documentation with
    * the later version of this constructor.
    */
+  /*
   public PFont(String name, int fontsize, boolean smooth) {
     this(new Font(name, Font.PLAIN, fontsize), false, smooth);
   }
+  */
 
 
   /**
@@ -725,14 +763,19 @@ public class PFont implements PConstants {
    * @param all true to include all available characters in the font
    * @param smooth true to enable smoothing/anti-aliasing
    */
-  public PFont(Font font, boolean all, boolean smooth) {
+  public PFont(Font font, char charset[], boolean smooth) {
     if (PApplet.javaVersion < 1.3) {
       throw new RuntimeException("Can only create fonts with " +
                                  "Java 1.3 or higher");
     }
 
+    name = font.getName();
+    psname = font.getPSName();
+
     try {
-      this.charCount = all ? 65536 : charset.length;
+      // the count gets reset later based on how many of
+      // the chars are actually found inside the font.
+      this.charCount = (charset == null) ? 65536 : charset.length;
       this.size = font.getSize();
 
       fwidth = fheight = size;
@@ -847,7 +890,7 @@ public class PFont implements PConstants {
     int maxWidthHeight = 0;
     int index = 0;
     for (int i = 0; i < charCount; i++) {
-      char c = all ? (char)i : charset[i];
+      char c = (charset == null) ? (char)i : charset[i];
 
       //if (!font.canDisplay(c)) {  // skip chars not in the font
       try {
