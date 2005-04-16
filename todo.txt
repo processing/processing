@@ -31,14 +31,18 @@ o add prompt() method to Camera ("" means default, null is prompt)
 o   let them pass in prompt(), not use null
 o   null is only bringing up settings dialog, that's wrong
 
-_ move packaging around
-_   remove PdeXxx prefixes on names, make PdeBase into just "Processing"
-_   update .exe to use new class/package
-_   update .app to use new class/package
+saturday afternoon
+X move packaging around
+X   remove PdeXxx prefixes on names, make PdeBase into just "Processing"
+X   update .exe to use new class/package
+X   update .app to use new class/package
+X setup linux box and build a linux version
+X   need to fix up the make/dist scripts for linux
+X   update runner script for the new package
+X   fix linux bugs with placement
+X   lots of dist script tweaking and messing with jikes libs
+o should loadPixels be grabPixels? (nope)
 
-_ setup linux box and build a linux version
-_   need to fix up the make/dist scripts for linux
-_   update runner script for the new package
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -47,7 +51,6 @@ pending
 _ get simon's new lighting code
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
-_ should loadPixels be grabPixels?
 
 
 non-coding tasks (for beta)
