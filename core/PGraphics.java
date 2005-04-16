@@ -441,7 +441,7 @@ public class PGraphics extends PImage implements PConstants {
     textSize = 12;
     textLeading = 14;
     textAlign = LEFT;
-    textMode = OBJECT;
+    textMode = MODEL;
   }
 
 
@@ -1752,7 +1752,7 @@ public class PGraphics extends PImage implements PConstants {
 
     PImage glyph = textFont.images[index];
 
-    if (textMode == OBJECT) {
+    if (textMode == MODEL) {
       float high    = (float) textFont.height[index]     / textFont.fheight;
       float bwidth  = (float) textFont.width[index]      / textFont.fwidth;
       float lextent = (float) textFont.leftExtent[index] / textFont.fwidth;
