@@ -4706,7 +4706,8 @@ public class PApplet extends Applet
   }
 
   static final public int unhex(String what) {
-    return Integer.parseInt(what, 16);
+    // has to parse as a Long so that it'll work for numbers bigger than 2^31
+    return (int) (Long.parseLong(what, 16));
   }
 
   //

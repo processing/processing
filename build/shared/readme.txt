@@ -175,10 +175,6 @@ and we don't recommend it at all. nor do we particularly recommend
 10.2, if you can avoid it. and if you're running 10.4, processing is
 the least of your worries.
 
-mouse wheel support only works if you're using java 1.4. the latest
-version of java will be available via the software update control
-panel.
-
 serial port.. we use rxtx (version 2.1_6) to handle serial i/o, which
 is included with the processing release. unlike previous releases
 (anything before 57), it no longer requires separate installation. 
