@@ -386,6 +386,8 @@ public class Base {
     } else {
       // on linux (or elsewhere?) prompt the user for the location
       JFileChooser fc = new JFileChooser();
+      fc.setDialogTitle("Select the folder where " + 
+                        "Processing sketches should be stored...");
       //fc.setSelectedFile(new File(sketchbookLocationField.getText()));
       fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 

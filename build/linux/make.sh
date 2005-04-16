@@ -16,7 +16,7 @@ else
   mkdir -p work/classes/processing/app/syntax
   mkdir -p work/classes/processing/app/tools
 
-  cp -r ../../lib work/libraries
+  #cp -r ../../lib work/libraries
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
   cp -r ../../serial work/libraries/
@@ -36,7 +36,7 @@ else
 
   #mkdir work/lib/export
   mkdir work/lib/build
-  mkdir work/classes
+  #mkdir work/classes
 
   # get the serial stuff
   #echo Copying serial support from bagel dir
@@ -49,7 +49,7 @@ else
   cp dist/jikes work/
   chmod +x work/jikes
 
-  echo
+  install -m 755 dist/processing work/processing
 fi
 
 cd ../..
@@ -81,7 +81,7 @@ cd ..
 
 echo Building PDE for JDK 1.3
 
-cd app/preprocessor
+cd app/preproc
 
 # first build the default java goop
 # long path is to avoid requiring java to be in your PATH
@@ -102,7 +102,7 @@ cd app
 
 CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
 
-../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes *.java jeditsyntax/*.java preprocessor/*.java tools/*.java
+../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes *.java preproc/*.java syntax/*.java tools/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
@@ -110,13 +110,7 @@ zip -0rq ../lib/pde.jar .
 cd ../../../..
 
 
-
 ### -- BUILD LIBRARIES ------------------------------------------------
-
-
-echo build libs for linux is incomplete... finish it
-exit
-
 
 cd build/linux
 
@@ -154,25 +148,6 @@ mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
 
 
-# VIDEO LIBRARY
-echo Building video library...
-QTJAVA=/System/Library/Java/Extensions/QTJava.zip
-if test -f "${QTJAVA}"
-then
-  echo "Found QuickTime for Java at $QTJAVA"
-else 
-  echo "QuickTime for Java must be installed before building."
-  exit 1;
-fi
-cd ../video
-$JIKES -target 1.1 +D -classpath "$QTJAVA:$CLASSPATH" -d . *.java 
-rm -f library/video.jar
-zip -r0q library/video.jar processing
-rm -rf processing
-mkdir -p $LIBRARIES/video/library/
-cp library/video.jar $LIBRARIES/video/library/
-
-
 # OPENGL LIBRARY
 echo Building OpenGL library...
 cd ../opengl
@@ -182,30 +157,3 @@ zip -r0q library/opengl.jar processing
 rm -rf processing
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
-
-
-CLASSPATH=../$CLASSPATH
-JIKES=../../build/$PLATFORM/work/jikes
-CORE=../../build/$PLATFORM/work/lib/core.jar
-LIBRARIES=../../build/$PLATFORM/work/libraries
-
-
-# PARTICLES LIBRARY
-#echo Build particles library...
-#cd ../lib/particles
-#$JIKES -target 1.1 +D -d . *.java 
-#rm -f library/particles.jar
-#zip -r0q library/particles.jar simong
-#rm -rf simong
-#mkdir -p $LIBRARIES/particles/library/
-#cp library/particles.jar $LIBRARIES/particles/library/
-
-pwd 
-
-
-
-### -- BUILD STUB -----------------------------------------------
-
-cd ../../build/linux
-
-install -m 755 dist/processing work/processing
