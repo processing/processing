@@ -8,8 +8,7 @@ X get both versions of size() properly detected on export
 X get latest sonia from amit
 X remove particles from current processing
 X move netscape library out of libs and into build/shared
-
-_ add serial.stop() just like client/server
+X add serial.stop() just like client/server
 
 _ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
 

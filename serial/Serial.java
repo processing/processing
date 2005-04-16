@@ -4,7 +4,7 @@
   PSerial - class for serial port goodness
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry & Casey Reas
+  Copyright (c) 2004-05 Ben Fry & Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -168,6 +168,23 @@ public class Serial implements SerialPortEventListener {
   }
 
 
+  /**
+   * Stop talking to serial and shut things down.
+   * <P>
+   * Basically just a user-accessible version of dispose().
+   * For now, it just calls dispose(), but dispose shouldn't
+   * be called from applets, because in some libraries,
+   * dispose() blows shit up if it's called by a user who
+   * doesn't know what they're doing.
+   */
+  public void stop() {
+    dispose();
+  }
+
+
+  /**
+   * Used by PApplet to shut things down.
+   */
   public void dispose() {
     try {
       // do io streams need to be closed first?
