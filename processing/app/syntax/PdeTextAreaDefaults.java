@@ -47,60 +47,60 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     styles = new SyntaxStyle[Token.ID_COUNT];
 
     // comments
-    styles[Token.COMMENT1] = PdePreferences.getStyle("comment1");
-    styles[Token.COMMENT2] = PdePreferences.getStyle("comment2");
+    styles[Token.COMMENT1] = Preferences.getStyle("comment1");
+    styles[Token.COMMENT2] = Preferences.getStyle("comment2");
 
     // abstract, final, private
-    styles[Token.KEYWORD1] = PdePreferences.getStyle("keyword1");
+    styles[Token.KEYWORD1] = Preferences.getStyle("keyword1");
 
     // beginShape, point, line
-    styles[Token.KEYWORD2] = PdePreferences.getStyle("keyword2");
+    styles[Token.KEYWORD2] = Preferences.getStyle("keyword2");
 
     // byte, char, short, color
-    styles[Token.KEYWORD3] = PdePreferences.getStyle("keyword3");
+    styles[Token.KEYWORD3] = Preferences.getStyle("keyword3");
 
     // constants: null, true, this, RGB, TWO_PI
-    styles[Token.LITERAL1] = PdePreferences.getStyle("literal1");
+    styles[Token.LITERAL1] = Preferences.getStyle("literal1");
 
     // p5 built in variables: mouseX, width, pixels
-    styles[Token.LITERAL2] = PdePreferences.getStyle("literal2");
+    styles[Token.LITERAL2] = Preferences.getStyle("literal2");
 
     // ??
-    styles[Token.LABEL] = PdePreferences.getStyle("label");
+    styles[Token.LABEL] = Preferences.getStyle("label");
 
     // + - = /
-    styles[Token.OPERATOR] = PdePreferences.getStyle("operator");
+    styles[Token.OPERATOR] = Preferences.getStyle("operator");
 
     // area that's not in use by the text (replaced with tildes)
-    styles[Token.INVALID] = PdePreferences.getStyle("invalid");
+    styles[Token.INVALID] = Preferences.getStyle("invalid");
 
 
     // moved from TextAreaPainter
 
-    font = PdePreferences.getFont("editor.font");
+    font = Preferences.getFont("editor.font");
 
-    fgcolor = PdePreferences.getColor("editor.fgcolor");
-    bgcolor = PdePreferences.getColor("editor.bgcolor");
+    fgcolor = Preferences.getColor("editor.fgcolor");
+    bgcolor = Preferences.getColor("editor.bgcolor");
 
     caretVisible = true;
-    caretBlinks = PdePreferences.getBoolean("editor.caret.blink");
-    caretColor = PdePreferences.getColor("editor.caret.color");
+    caretBlinks = Preferences.getBoolean("editor.caret.blink");
+    caretColor = Preferences.getColor("editor.caret.color");
 
-    selectionColor = PdePreferences.getColor("editor.selection.color");
+    selectionColor = Preferences.getColor("editor.selection.color");
 
     lineHighlight =
-      PdePreferences.getBoolean("editor.linehighlight");
+      Preferences.getBoolean("editor.linehighlight");
     lineHighlightColor =
-      PdePreferences.getColor("editor.linehighlight.color");
+      Preferences.getColor("editor.linehighlight.color");
 
     bracketHighlight =
-      PdePreferences.getBoolean("editor.brackethighlight");
+      Preferences.getBoolean("editor.brackethighlight");
     bracketHighlightColor =
-      PdePreferences.getColor("editor.brackethighlight.color");
+      Preferences.getColor("editor.brackethighlight.color");
 
-    eolMarkers = PdePreferences.getBoolean("editor.eolmarkers");
-    eolMarkerColor = PdePreferences.getColor("editor.eolmarkers.color");
+    eolMarkers = Preferences.getBoolean("editor.eolmarkers");
+    eolMarkerColor = Preferences.getColor("editor.eolmarkers.color");
 
-    paintInvalid = PdePreferences.getBoolean("editor.invalid");
+    paintInvalid = Preferences.getBoolean("editor.invalid");
   }
 }
