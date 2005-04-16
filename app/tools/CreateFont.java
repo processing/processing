@@ -65,7 +65,7 @@ public class CreateFont extends JFrame {
   };
 
 
-  public CreateFont(PdeEditor editor) {
+  public CreateFont(Editor editor) {
     super("Create Font");
 
     targetFolder = editor.sketch.dataFolder;
@@ -271,7 +271,7 @@ public class CreateFont extends JFrame {
 
     /*
     JLabel rec = new JLabel("(Recommended size for 3D use is 48 points)");
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    if (Base.platform == Base.MACOSX) {
       rec.setFont(new Font("Dialog", Font.PLAIN, 10));
     }
     panel.add(rec);
