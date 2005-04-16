@@ -34,5 +34,5 @@ CLASSPATH=\"java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\core.jar\;lib
 export CLASSPATH
 
 #cd work && ./java/bin/java -Xint PdeBase
-cd work && ./java/bin/java processing.app.PdeBase
+cd work && ./java/bin/java processing.app.Base
 #cd work && /cygdrive/c/jdk-1.3.1_11/bin/java PdeBase
