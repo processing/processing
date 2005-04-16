@@ -32,7 +32,7 @@ import java.util.zip.*;
 
 
 public class Archiver {
-  PdeEditor editor;
+  Editor editor;
 
   // someday these will be settable
   boolean useDate = false;
@@ -42,7 +42,7 @@ public class Archiver {
   SimpleDateFormat dateFormat;
 
 
-  public Archiver(PdeEditor editor) {
+  public Archiver(Editor editor) {
     this.editor = editor;
 
     numberFormat = NumberFormat.getInstance();
@@ -122,7 +122,7 @@ public class Archiver {
         ZipEntry entry = new ZipEntry(nowfar);
         entry.setTime(sub.lastModified());
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(sub));
+        zos.write(Base.grabFile(sub));
         zos.closeEntry();
       }
     }
