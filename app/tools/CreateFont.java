@@ -150,6 +150,9 @@ public class CreateFont extends JFrame {
     */
     int index = 0;
     for (int i = 0; i < fonts.length; i++) {
+      String psname = fonts[i].getPSName();
+      if (psname == null) System.err.println("ps name is null");
+
       flist[index++] = fonts[i].getPSName();
       table.put(fonts[i].getPSName(), fonts[i]);
     }
@@ -407,7 +410,7 @@ public class CreateFont extends JFrame {
     try {
       Font instance = (Font) table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
-      PFont f = new PFont(font, all, smooth);
+      PFont f = new PFont(font, all ? null : PFont.DEFAULT_CHARSET, smooth);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();

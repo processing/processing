@@ -62,6 +62,63 @@ X   i.e. mixed case filename in sketch is different in windows
 X   but when uploaded to a unix server causes a serious problem
 X   use canonicalPath to flag possible problems
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1096508877;start=5
+o fix shapes in P3D (line loop, polygons, etc)
+o should we include a from and to for the directional light?
+X   no, cuz it doesn't do much really.. 
+X   fromX-toX etc is all that's different
+
+thursday day
+X set modelview to camera on endCamera
+X add ortho() and perspective() to PGraphics.java
+
+thursday evening
+o textMode(ALIGN_LEFT) etc, should make sure that left/center/right not used
+X   though since have to change to LEFT, should be easy to switch
+
+friday night
+o should toInt('5') return the ascii or the char? 
+X   since (int) '5' returns the ascii, that's what it does
+X   made a note in the PApplet reference
+
+text api
+X textMode ALIGN_CENTER _LEFT _RIGHT -> CENTER, LEFT, RIGHT ? 
+X use built-in font if available? yes
+o text() with \n is semi-broken
+X does the font or PApplet control the size? (the font, ala java)
+X without setting the font, SCREEN_SPACE comes out weird
+o move SCREEN_SPACE into ScreenFont() class?
+o   probably not, casey thinks screen space text is prolly more useful
+o   that way can clear up some of the general confusion in the code
+X textFont with a named font can use the renderer/os font
+X   illustrator api can get the ps name from the java font name
+X     since it's associated with the font file.. wee!
+X   for postscript, can grab the real font
+o   altho problem here is that really the fonts just need a name
+o      since needs to render to screen as well
+o      font has to be installed to get psname
+X      fine because why would you embed a ps font that you don't have?
+o need to resolve SCREEN_SPACE vs OBJECT_SPACE
+o   can this be auto-detected with noDepth()? 
+o   how does rotated text work?
+o     PFont.rotate(180) rotate(PI)
+o     or can this be detected from the matrix?
+o PFont.list() to return string list of all the available fonts
+X   probably not a mode of use that we really want to encourage
+X don't use pixels to do screen space text inside PFont
+X   add a function in PGraphics for direct pixel image impl 
+X store the font name in the vlw font file (at the end)
+o   could include multiple names for multi platforms
+X get text impl stuff working properly
+o look into fixing the texture mapping to not squash fonts
+o   NEW_GRAPHICS totally smashes everything
+
+_ implement createFont()
+_   with a .ttf does a create font internally (1.3+ only)
+_     although the images aren't populated 
+_     until a P2D/P3D/OPENGL tries to draw them, which triggers it
+_     but if PGraphics2, just uses the built-in font
+_   also works for font names and just creating them
+_     if font name doesn't end with otf or ttf, then tries to create it
 
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
@@ -70,18 +127,20 @@ _   yes, and add nf(int what) so that non-padded version works
 _   but don't put commas into the zero-padded version
 _   make nf/nfs/nfp not so weird
 _   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
-_ should we include a from and to for the directional light?
-
-_ fix shapes in P3D (line loop, polygons, etc)
 
 _ fix the flicker in java2d mode
 X   is it because the lock was taken off (g) in PApplet?
+_   appears to be much worse (unfinished drawing) on macosx
+_     try turning off hw accel on the mac to see if that's the problem
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 NOT NECESSARY BEFORE BETA
+
+_ post() method to send a bunch of crap to a web url?
+_   or an example that does this?
 
 _ bit shifting in opengl, get down to 2 ops by using other image modes
 _   i.e. ABGR_EXT might allow for just two shifts instead of 4
@@ -231,38 +290,6 @@ public Object growArray(Object array, int size) {
     return grown;
 }
 
-text api questions
-_ text should maybe use built-in font if available?
-_ don't use pixels to do screen space text inside PFont
-_   add a function in PGraphics for direct pixel image impl 
-_   in java2d, can quickly blit the image itself
-_   this way, can isolate it for gl too, which will use glBitmap
-_ textFont with a named font can use the renderer/os font
-_   PFont.list() to return string list of all the available fonts
-_   for postscript, can grab the real font
-_   -> altho problem here is that really the fonts just need a name
-_      since needs to render to screen as well
-
-text api solutions
-_ store the font name in the vlw font file (at the end)
-o   could include multiple names for multi platforms
-_   danger of this setup is that it may run much nicer for the author
-_     i.e. with the font installed, and then super slow for their users
-_ is getFontList returning a different set of fonts from device2d?
-_   or is it only those with ps names?
-_ createFont() with a .ttf does a create font internally (1.3+ only)
-_   although the images aren't populated 
-_   until a P2D/P3D/OPENGL tries to draw them, which triggers it
-_   but if PGraphics2, just uses the built-in font
-_ how does ftgl handle tesselation? will our tesselator just work?
-_   main code is in FTVectoriser
-_   uses gluTessBeginContour and gluTessEndContour
-_   and then does 5 step sizes for each curveto
-_ createFont() also works for font names and just creating them
-_   if font name doesn't end with otf or ttf, then tries to create it
-_ illustrator api can get the ps name from the java font name
-_   since it's associated with the font file.. wee!
-
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
@@ -363,42 +390,10 @@ _   just have a "thin_flat_line" option in opengl code
 
 _ go through and figure out what stuff to make public
 
-text issues
-_ text() with \n is semi-broken
-_ font encoding issues
-_   java seems to force straight windows encoding.. (problem for pi fonts)
-_   opentype/cff fonts don't work with live loading from the app
-_   many (all?) opentype fonts won't show up or aren't supported
-_     this may be only cff fonts that have trouble
-_   when encoding with something besides the standard encoding, problematic
-_     so sonata otf and sonata don't seem to have any chars at all
-_ getAllFonts() not quite working for many fonts
-_   i.e. Orator Std on windows.. macosx seems to be ok
-_   is getFamilyNames() any different/better?
-_   when did this break? 1.4.1? 1.4.x vs 1.3?
-_   may be that cff fonts won't work?
-_ textMode ALIGN_CENTER _LEFT _RIGHT -> CENTER, LEFT, RIGHT ? 
-_ need to resolve SCREEN_SPACE vs OBJECT_SPACE
-_   can this be auto-detected with noDepth()? 
-_   how does rotated text work?
-_     PFont.rotate(180) rotate(PI)
-_     or can this be detected from the matrix?
-_   does the font or PApplet control the size? (the font, ala java)
-_   without setting the font, SCREEN_SPACE comes out weird
-_   move SCREEN_SPACE into ScreenFont() class?
-_     probably not, casey thinks screen space text is prolly more useful
-_     that way can clear up some of the general confusion in the code
-_   check into symbol font encoding with create font
-_ create font with user-specified charsets
-
-text wish list
-_ look into fixing the texture mapping to not squash fonts
-_   NEW_GRAPHICS totally smashes everything
-_ not having kerning really blows
-_   could this be pulled from the OpenType font stuff? 
-_   it could be placed at the end of the file
-_ simple way to just use java text in p5 applets? 
-_   the current text support is just so hokey
+_ how does ftgl handle tesselation? will our tesselator just work?
+_   main code is in FTVectoriser
+_   uses gluTessBeginContour and gluTessEndContour
+_   and then does 5 step sizes for each curveto
 
 _ illustrator export / rendering mode
 _   also postscript or pdf export?
@@ -557,6 +552,23 @@ CORE / PGraphics
 
    1 _ add option to sort triangles back to front so alpha works
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
+
+
+CORE / PFont
+
+   1 _ optimize textMode(OBJECT) with textMode(SCREEN)
+   1 _   in PGraphics and PGraphics3, check to see if matrix is within epsilon
+   1 _   of one of the rotation matrices (many fewer steps) 
+   1 _   if identity, or just translate, or a rotate, make OBJECT into SCREEN
+   1 _ optimize fonts by using native fonts in PGraphics2
+   1 _   especially textMode(SCREEN) which is disastrously slow
+   1 _   in java2d, can quickly blit the image itself
+   1 _   this way, can isolate it for gl too, which will use glBitmap
+   1 _   danger of this setup is that it may run much nicer for the author
+   1 _     i.e. with the font installed, and then super slow for their users
+   ? _ not having kerning really blows
+   ? _   could this be pulled from the OpenType font stuff? 
+   ? _   it could be placed at the end of the file
 
 
 CORE / PSound
