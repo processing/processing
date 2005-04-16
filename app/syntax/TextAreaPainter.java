@@ -362,7 +362,7 @@ public class TextAreaPainter extends JComponent implements TabExpander
    */
   public void paint(Graphics gfx)
   {
-    if (PdeBase.isMacOS()) {
+    if (Base.isMacOS()) {
       Graphics2D g2 = (Graphics2D) gfx;
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
