@@ -4477,6 +4477,8 @@ public class PApplet extends Applet
    */
   static private NumberFormat int_nf;
   static private int int_nf_digits;
+  static private boolean int_nf_commas;
+
 
   static public String[] nf(int num[], int digits) {
     String formatted[] = new String[num.length];
@@ -4486,13 +4488,42 @@ public class PApplet extends Applet
     return formatted;
   }
 
+
   static public String nf(int num, int digits) {
-    if ((int_nf != null) && (int_nf_digits == digits)) {
+    if ((int_nf != null) &&
+        (int_nf_digits == digits) &&
+        !int_nf_commas) {
       return int_nf.format(num);
     }
 
     int_nf = NumberFormat.getInstance();
     int_nf.setGroupingUsed(false); // no commas
+    int_nf_commas = false;
+    int_nf.setMinimumIntegerDigits(digits);
+    int_nf_digits = digits;
+    return int_nf.format(num);
+  }
+
+
+  static public String[] nfc(int num[], int digits) {
+    String formatted[] = new String[num.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nfc(num[i], digits);
+    }
+    return formatted;
+  }
+
+
+  static public String nfc(int num, int digits) {
+    if ((int_nf != null) &&
+        (int_nf_digits == digits) &&
+        int_nf_commas) {
+      return int_nf.format(num);
+    }
+
+    int_nf = NumberFormat.getInstance();
+    int_nf.setGroupingUsed(true);
+    int_nf_commas = true;
     int_nf.setMinimumIntegerDigits(digits);
     int_nf_digits = digits;
     return int_nf.format(num);
@@ -4545,6 +4576,8 @@ public class PApplet extends Applet
 
   static private NumberFormat float_nf;
   static private int float_nf_left, float_nf_right;
+  static private boolean float_nf_commas;
+
 
   static public String[] nf(float num[], int left, int right) {
     String formatted[] = new String[num.length];
@@ -4554,14 +4587,51 @@ public class PApplet extends Applet
     return formatted;
   }
 
+
   static public String nf(float num, int left, int right) {
     if ((float_nf != null) &&
-        (float_nf_left == left) && (float_nf_right == right)) {
+        (float_nf_left == left) &&
+        (float_nf_right == right) &&
+        !float_nf_commas) {
       return float_nf.format(num);
     }
 
     float_nf = NumberFormat.getInstance();
-    float_nf.setGroupingUsed(false); // no commas
+    float_nf.setGroupingUsed(false);
+    float_nf_commas = false;
+
+    if (left != 0) float_nf.setMinimumIntegerDigits(left);
+    if (right != 0) {
+      float_nf.setMinimumFractionDigits(right);
+      float_nf.setMaximumFractionDigits(right);
+    }
+    float_nf_left = left;
+    float_nf_right = right;
+    return float_nf.format(num);
+  }
+
+
+
+  static public String[] nfc(float num[], int left, int right) {
+    String formatted[] = new String[num.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nfc(num[i], left, right);
+    }
+    return formatted;
+  }
+
+
+  static public String nfc(float num, int left, int right) {
+    if ((float_nf != null) &&
+        (float_nf_left == left) &&
+        (float_nf_right == right) &&
+        float_nf_commas) {
+      return float_nf.format(num);
+    }
+
+    float_nf = NumberFormat.getInstance();
+    float_nf.setGroupingUsed(true);
+    float_nf_commas = true;
 
     if (left != 0) float_nf.setMinimumIntegerDigits(left);
     if (right != 0) {
@@ -4635,7 +4705,7 @@ public class PApplet extends Applet
     return stuff;
   }
 
-  static final int unhex(String what) {
+  static final public int unhex(String what) {
     return Integer.parseInt(what, 16);
   }
 
@@ -4694,7 +4764,7 @@ public class PApplet extends Applet
    * Unpack a binary String into an int.
    * i.e. unbinary("00001000") would return 8.
    */
-  static final int unbinary(String what) {
+  static final public int unbinary(String what) {
     return Integer.parseInt(what, 2);
   }
 
