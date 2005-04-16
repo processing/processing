@@ -14,7 +14,7 @@ rm -rf processing-*
 cp -r ../shared processing
 
 # add the libraries folder with source
-cp -r ../../lib work/libraries
+#cp -r ../../lib work/libraries
 cp -r ../../net work/libraries/
 cp -r ../../opengl work/libraries/
 cp -r ../../serial work/libraries/

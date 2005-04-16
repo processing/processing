@@ -266,6 +266,10 @@ on a redhat 9 box, and sun's jre 1.4.2 is included with the
 download. replacing (or making a symlink to) the contents of the
 'java' folder will let you tie in a preferred jvm for your machine.
 
+the following message (or messages like it) on startup:
+Warning: Cannot convert string "-b&h-lucida-medium-r-normal-sans-*-140-*-*-p-*-iso8859-1" to type FontStruct
+is just a java issue, not really a problem that will affect things.
+
 serial.. this release uses rxtx-2.1_6 (just like macosx). if you're 
 having trouble getting things to run, i.e. the port menu stays grayed 
 out or you get error message spew to the console when starting the 
