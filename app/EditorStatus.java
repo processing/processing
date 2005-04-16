@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorStatus - panel containing status messages
+  EditorStatus - panel containing status messages
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
@@ -31,7 +31,7 @@ import javax.swing.*;
 import sun.awt.AppContext;  // from java.awt.Dialog, for blocking
 
 
-public class PdeEditorStatus extends JPanel implements ActionListener {
+public class EditorStatus extends JPanel implements ActionListener {
   static Color bgcolor[];
   static Color fgcolor[];
 
@@ -47,7 +47,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
   static final String NO_MESSAGE = "";
 
-  PdeEditor editor;
+  Editor editor;
 
   int mode;
   String message;
@@ -70,22 +70,22 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   int response;
 
 
-  public PdeEditorStatus(PdeEditor editor) {
+  public EditorStatus(Editor editor) {
     this.editor = editor;
     empty();
 
     if (bgcolor == null) {
       bgcolor = new Color[4];
-      bgcolor[0] = PdePreferences.getColor("status.notice.bgcolor");
-      bgcolor[1] = PdePreferences.getColor("status.error.bgcolor");
-      bgcolor[2] = PdePreferences.getColor("status.prompt.bgcolor");
-      bgcolor[3] = PdePreferences.getColor("status.prompt.bgcolor");
+      bgcolor[0] = Preferences.getColor("status.notice.bgcolor");
+      bgcolor[1] = Preferences.getColor("status.error.bgcolor");
+      bgcolor[2] = Preferences.getColor("status.prompt.bgcolor");
+      bgcolor[3] = Preferences.getColor("status.prompt.bgcolor");
 
       fgcolor = new Color[4];
-      fgcolor[0] = PdePreferences.getColor("status.notice.fgcolor");
-      fgcolor[1] = PdePreferences.getColor("status.error.fgcolor");
-      fgcolor[2] = PdePreferences.getColor("status.prompt.fgcolor");
-      fgcolor[3] = PdePreferences.getColor("status.prompt.fgcolor");
+      fgcolor[0] = Preferences.getColor("status.notice.fgcolor");
+      fgcolor[1] = Preferences.getColor("status.error.fgcolor");
+      fgcolor[2] = Preferences.getColor("status.prompt.fgcolor");
+      fgcolor[3] = Preferences.getColor("status.prompt.fgcolor");
     }
   }
 
@@ -211,7 +211,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
     Graphics g = offscreen.getGraphics();
     if (font == null) {
-      font = PdePreferences.getFont("status.font");
+      font = Preferences.getFont("status.font");
       //new Font("SansSerif", Font.PLAIN, 12));
       g.setFont(font);
       metrics = g.getFontMetrics();
@@ -225,7 +225,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
     g.setColor(fgcolor[mode]);
     g.setFont(font); // needs to be set each time on osx
-    g.drawString(message, PdePreferences.GUI_SMALL, (sizeH + ascent) / 2);
+    g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
 
     screen.drawImage(offscreen, 0, 0, null);
   }
@@ -233,14 +233,14 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
   protected void setup() {
     if (yesButton == null) {
-      yesButton    = new JButton(PdePreferences.PROMPT_YES);
-      noButton     = new JButton(PdePreferences.PROMPT_NO);
-      cancelButton = new JButton(PdePreferences.PROMPT_CANCEL);
-      okButton     = new JButton(PdePreferences.PROMPT_OK);
+      yesButton    = new JButton(Preferences.PROMPT_YES);
+      noButton     = new JButton(Preferences.PROMPT_NO);
+      cancelButton = new JButton(Preferences.PROMPT_CANCEL);
+      okButton     = new JButton(Preferences.PROMPT_OK);
 
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)(
       // os9 seems to work if bg of component is set, but x still a bastard
-      if (PdeBase.isMacOS()) {
+      if (Base.isMacOS()) {
         yesButton.setBackground(bgcolor[PROMPT]);
         noButton.setBackground(bgcolor[PROMPT]);
         cancelButton.setBackground(bgcolor[PROMPT]);
@@ -266,7 +266,7 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
       editField = new JTextField();
       editField.addActionListener(this);
 
-      //if (PdeBase.platform != PdeBase.MACOSX) {
+      //if (Base.platform != Base.MACOSX) {
       editField.addKeyListener(new KeyAdapter() {
           // no-op implemented because of a jikes bug
           //protected void noop() { }
@@ -366,8 +366,8 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
 
 
   protected void setButtonBounds() {
-    int top = (sizeH - PdePreferences.BUTTON_HEIGHT) / 2;
-    int eachButton = PdePreferences.GUI_SMALL + PdePreferences.BUTTON_WIDTH;
+    int top = (sizeH - Preferences.BUTTON_HEIGHT) / 2;
+    int eachButton = Preferences.GUI_SMALL + Preferences.BUTTON_WIDTH;
 
     int cancelLeft = sizeW      - eachButton;
     int noLeft     = cancelLeft - eachButton;
@@ -376,14 +376,14 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
     yesButton.setLocation(yesLeft, top);
     noButton.setLocation(noLeft, top);
     cancelButton.setLocation(cancelLeft, top);
-    editField.setLocation(yesLeft - PdePreferences.BUTTON_WIDTH, top);
+    editField.setLocation(yesLeft - Preferences.BUTTON_WIDTH, top);
     okButton.setLocation(noLeft, top);
 
-    yesButton.setSize(   PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
-    noButton.setSize(    PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
-    cancelButton.setSize(PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
-    okButton.setSize(    PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
-    editField.setSize( 2*PdePreferences.BUTTON_WIDTH, PdePreferences.BUTTON_HEIGHT);
+    yesButton.setSize(   Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    noButton.setSize(    Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    cancelButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    okButton.setSize(    Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    editField.setSize( 2*Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
   }
 
 
@@ -392,11 +392,11 @@ public class PdeEditorStatus extends JPanel implements ActionListener {
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, PdePreferences.GRID_SIZE);
+    return new Dimension(300, Preferences.GRID_SIZE);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, PdePreferences.GRID_SIZE);
+    return new Dimension(3000, Preferences.GRID_SIZE);
   }
 
 

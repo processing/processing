@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorButtons - run/stop/etc buttons for the ide
+  EditorButtons - run/stop/etc buttons for the ide
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004 Ben Fry and the Processing project.
@@ -34,7 +34,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
-public class PdeEditorButtons extends JComponent implements MouseInputListener {
+public class EditorButtons extends JComponent implements MouseInputListener {
 
   static final String title[] = {
     "Run", "Stop", "New", "Open", "Save", "Export"
@@ -42,8 +42,8 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   };
 
   static final int BUTTON_COUNT  = title.length;
-  static final int BUTTON_WIDTH  = 27; //PdePreferences.GRID_SIZE;
-  static final int BUTTON_HEIGHT = 32; //PdePreferences.GRID_SIZE;
+  static final int BUTTON_WIDTH  = 27; //Preferences.GRID_SIZE;
+  static final int BUTTON_HEIGHT = 32; //Preferences.GRID_SIZE;
   static final int BUTTON_GAP = 15; //BUTTON_WIDTH / 2;
 
   static final int RUN      = 0;
@@ -58,7 +58,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   static final int ROLLOVER = 1;
   static final int ACTIVE   = 2;
 
-  PdeEditor editor;
+  Editor editor;
   boolean disableRun;
   //Label status;
 
@@ -90,9 +90,9 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
   //int statusY;
 
 
-  public PdeEditorButtons(PdeEditor editor) {
+  public EditorButtons(Editor editor) {
     this.editor = editor;
-    buttons = PdeBase.getImage("buttons.gif", this);
+    buttons = Base.getImage("buttons.gif", this);
 
     buttonCount = 0;
     which = new int[BUTTON_COUNT];
@@ -107,12 +107,12 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
     currentRollover = -1;
 
-    bgcolor = PdePreferences.getColor("buttons.bgcolor");
+    bgcolor = Preferences.getColor("buttons.bgcolor");
 
     status = "";
 
-    statusFont = PdePreferences.getFont("buttons.status.font");
-    statusColor = PdePreferences.getColor("buttons.status.color");
+    statusFont = Preferences.getFont("buttons.status.font");
+    statusColor = Preferences.getColor("buttons.status.color");
 
     //statusY = (BUTTON_COUNT + 1) * BUTTON_HEIGHT;
 
@@ -383,7 +383,7 @@ public class PdeEditorButtons extends JComponent implements MouseInputListener {
 
 
   public void messageClear(String msg) {
-    //if (status.getText().equals(msg + "  ")) status.setText(PdeEditor.EMPTY);
+    //if (status.getText().equals(msg + "  ")) status.setText(Editor.EMPTY);
     if (status.equals(msg)) status = "";
   }
 

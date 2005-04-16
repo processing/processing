@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeBase - base class for the main processing application
+  Base - base class for the main processing application
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and
@@ -48,7 +48,7 @@ import processing.core.*;
  * general interaction with the system (launching URLs, loading
  * files and images, etc) that comes from that.
  */
-public class PdeBase {
+public class Base {
   static final String VERSION = "0083 Alpha";
 
   /**
@@ -57,7 +57,7 @@ public class PdeBase {
    */
   static String openedAtStartup;
 
-  PdeEditor editor;
+  Editor editor;
 
 
   static public void main(String args[]) {
@@ -66,7 +66,7 @@ public class PdeBase {
 
     if (PApplet.javaVersion < 1.4f) {
       //System.err.println("no way man");
-      PdeBase.showError("Need to install Java 1.4",
+      Base.showError("Need to install Java 1.4",
                         "This version of Processing requires    \n" +
                         "Java 1.4 or later to run properly.\n" +
                         "Please visit java.com to upgrade.", null);
@@ -76,36 +76,36 @@ public class PdeBase {
     // grab any opened file from the command line
 
     if (args.length == 1) {
-      PdeBase.openedAtStartup = args[0];
+      Base.openedAtStartup = args[0];
     }
 
 
     // register a temporary/early version of the mrj open document handler,
     // because the event may be lost (sometimes, not always) by the time
-    // that PdeEditor is properly constructed.
+    // that Editor is properly constructed.
 
     MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
         public void handleOpenFile(File file) {
           // this will only get set once.. later will be handled
-          // by the PdeEditor version of this fella
-          if (PdeBase.openedAtStartup == null) {
+          // by the Editor version of this fella
+          if (Base.openedAtStartup == null) {
             //System.out.println("handling outside open file: " + file);
-            PdeBase.openedAtStartup = file.getAbsolutePath();
+            Base.openedAtStartup = file.getAbsolutePath();
           }
         }
       };
     MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
 
-    PdeBase app = new PdeBase();
+    Base app = new Base();
   }
 
 
-  public PdeBase() {
+  public Base() {
 
     // set the look and feel before opening the window
 
     try {
-      if (PdeBase.isLinux()) {
+      if (Base.isLinux()) {
         // linux is by default (motif?) even uglier than metal
         // actually, i'm using native menus, so they're ugly and
         // motif-looking. ick. need to fix this.
@@ -119,7 +119,7 @@ public class PdeBase {
 
 
     // build the editor object
-    editor = new PdeEditor();
+    editor = new Editor();
 
     // get things rawkin
     editor.pack();
@@ -175,11 +175,11 @@ public class PdeBase {
   static public File getProcessingDataFolder() {
     File dataFolder = null;
 
-    String pref = PdePreferences.get("settings.path");
+    String pref = Preferences.get("settings.path");
     if (pref != null) {
       dataFolder = new File(pref);
 
-    } else if (PdeBase.isMacOS()) {
+    } else if (Base.isMacOS()) {
       // carbon folder constants
       // http://developer.apple.com/documentation/Carbon/Reference
       //   /Folder_Manager/folder_manager_ref/constant_6.html#/
@@ -225,7 +225,7 @@ public class PdeBase {
                   "Error getting the Processing data folder.", e);
       }
 
-    } else if (PdeBase.isWindows()) {
+    } else if (Base.isWindows()) {
       // looking for Documents and Settings/blah/Application Data/Processing
 
       // this is just based on the other documentation, and eyeballing
@@ -272,7 +272,7 @@ public class PdeBase {
 
     if (!result) {
       // try the fallback location
-      String fallback = PdePreferences.get("settings.path.fallback");
+      String fallback = Preferences.get("settings.path.fallback");
       dataFolder = new File(fallback);
       if (!dataFolder.exists()) {
         result = dataFolder.mkdirs();
@@ -318,7 +318,7 @@ public class PdeBase {
   static public File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
 
-    if (PdeBase.isMacOS()) {
+    if (Base.isMacOS()) {
       // looking for /Users/blah/Documents/Processing
 
       // carbon folder constants
@@ -408,7 +408,7 @@ public class PdeBase {
 
     if (!result) {
       // try the fallback location
-      String fallback = PdePreferences.get("sketchbook.path.fallback");
+      String fallback = Preferences.get("sketchbook.path.fallback");
       sketchbookFolder = new File(fallback);
       if (!sketchbookFolder.exists()) {
         result = sketchbookFolder.mkdirs();
@@ -446,7 +446,7 @@ public class PdeBase {
   static public void openURL(String url) {
     //System.out.println("opening url " + url);
     try {
-      if (PdeBase.isWindows()) {
+      if (Base.isWindows()) {
         // this is not guaranteed to work, because who knows if the
         // path will always be c:\progra~1 et al. also if the user has
         // a different browser set as their default (which would
@@ -475,7 +475,7 @@ public class PdeBase {
           Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
         }
 
-      } else if (PdeBase.isMacOS()) {
+      } else if (Base.isMacOS()) {
         //com.apple.eio.FileManager.openURL(url);
 
         if (!url.startsWith("http://")) {
@@ -501,10 +501,10 @@ public class PdeBase {
         }
         com.apple.mrj.MRJFileUtils.openURL(url);
 
-      } else if (PdeBase.isLinux()) {
+      } else if (Base.isLinux()) {
         // how's mozilla sound to ya, laddie?
         //Runtime.getRuntime().exec(new String[] { "mozilla", url });
-        String browser = PdePreferences.get("browser");
+        String browser = Preferences.get("browser");
         Runtime.getRuntime().exec(new String[] { browser, url });
 
       } else {
@@ -512,7 +512,7 @@ public class PdeBase {
       }
 
     } catch (IOException e) {
-      PdeBase.showWarning("Could not open URL",
+      Base.showWarning("Could not open URL",
                           "An error occurred while trying to open\n" + url, e);
     }
   }
@@ -526,7 +526,7 @@ public class PdeBase {
     try {
       String folder = file.getAbsolutePath();
 
-      if (PdeBase.isWindows()) {
+      if (Base.isWindows()) {
         // doesn't work
         //Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
 
@@ -536,7 +536,7 @@ public class PdeBase {
         // not tested
         //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
 
-      } else if (PdeBase.isMacOS()) {
+      } else if (Base.isMacOS()) {
         openURL(folder);  // handles char replacement, etc
 
       }
@@ -594,8 +594,8 @@ public class PdeBase {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    //if ((PdeBase.platform == PdeBase.MACOSX) ||
-    //(PdeBase.platform == PdeBase.MACOS9)) {
+    //if ((Base.platform == Base.MACOSX) ||
+    //(Base.platform == Base.MACOS9)) {
     image = tk.getImage("lib/" + name);
     //} else {
     //image = tk.getImage(who.getClass().getResource(name));
@@ -616,7 +616,7 @@ public class PdeBase {
 
 
   static public InputStream getStream(String filename) throws IOException {
-    //if (PdeBase.platform == PdeBase.MACOSX) {
+    //if (Base.platform == Base.MACOSX) {
     // macos doesn't seem to think that files in the lib folder
     // are part of the resources, unlike windows or linux.
     // actually, this is only the case when running as a .app,
@@ -626,7 +626,7 @@ public class PdeBase {
 
     // all other, more reasonable operating systems
     //return cls.getResource(filename).openStream();
-    //return PdeBase.class.getResource(filename).openStream();
+    //return Base.class.getResource(filename).openStream();
   }
 
 
@@ -757,7 +757,7 @@ public class PdeBase {
       if (files[i].equals(".") || files[i].equals("..")) continue;
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
-        if (!PdePreferences.getBoolean("compiler.save_build_files")) {
+        if (!Preferences.getBoolean("compiler.save_build_files")) {
           if (!dead.delete()) {
             // temporarily disabled
             //System.err.println("couldn't delete " + dead);

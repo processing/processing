@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeMessageSiphon - slurps up messages from compiler
+  MessageSiphon - slurps up messages from compiler
   Part of the Processing project - http://processing.org
 
   Earlier portions of this code are Copyright (c) 2001-04 MIT
@@ -27,13 +27,13 @@ package processing.app;
 import java.io.*;
 
 
-class PdeMessageSiphon implements Runnable {
+class MessageSiphon implements Runnable {
   BufferedReader streamReader;
   Thread thread;
-  PdeMessageConsumer consumer;
+  MessageConsumer consumer;
 
 
-  public PdeMessageSiphon(InputStream stream, PdeMessageConsumer consumer) {
+  public MessageSiphon(InputStream stream, MessageConsumer consumer) {
     this.streamReader = new BufferedReader(new InputStreamReader(stream));
     this.consumer = consumer;
 
@@ -54,11 +54,11 @@ class PdeMessageSiphon implements Runnable {
       String currentLine;
       while ((currentLine = streamReader.readLine()) != null) {
         // \n is added again because readLine() strips it out
-        //PdeEditorConsole.systemOut.println("messaging in");
+        //EditorConsole.systemOut.println("messaging in");
         consumer.message(currentLine + "\n");
-        //PdeEditorConsole.systemOut.println("messaging out");
+        //EditorConsole.systemOut.println("messaging out");
       }
-      //PdeEditorConsole.systemOut.println("messaging thread done");
+      //EditorConsole.systemOut.println("messaging thread done");
       thread = null;
 
     } catch (NullPointerException npe) {
@@ -73,7 +73,7 @@ class PdeMessageSiphon implements Runnable {
       if ((mess != null) &&
           (mess.indexOf("Bad file descriptor") != -1)) {
         //if (e.getMessage().indexOf("Bad file descriptor") == -1) {
-        //System.err.println("PdeMessageSiphon err " + e);
+        //System.err.println("MessageSiphon err " + e);
         //e.printStackTrace();
       }
       thread = null;

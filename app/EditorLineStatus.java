@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorLineStatus - li'l status bar fella that shows the line number
+  EditorLineStatus - li'l status bar fella that shows the line number
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2005 Ben Fry and Casey Reas
@@ -32,7 +32,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
-public class PdeEditorLineStatus extends JComponent {
+public class EditorLineStatus extends JComponent {
   JEditTextArea textarea;
   int start = -1, stop;
 
@@ -46,17 +46,17 @@ public class PdeEditorLineStatus extends JComponent {
   String text = "";
 
 
-  public PdeEditorLineStatus(JEditTextArea textarea) {
+  public EditorLineStatus(JEditTextArea textarea) {
     this.textarea = textarea;
     textarea.editorLineStatus = this;
 
-    background = PdePreferences.getColor("linestatus.bgcolor");
-    font = PdePreferences.getFont("linestatus.font");
-    foreground = PdePreferences.getColor("linestatus.color");
-    high = PdePreferences.getInteger("linestatus.height");
+    background = Preferences.getColor("linestatus.bgcolor");
+    font = Preferences.getFont("linestatus.font");
+    foreground = Preferences.getColor("linestatus.color");
+    high = Preferences.getInteger("linestatus.height");
 
-    if (PdeBase.isMacOS()) {
-      resize = PdeBase.getImage("resize.gif", this);
+    if (Base.isMacOS()) {
+      resize = Base.getImage("resize.gif", this);
     }
     //linestatus.bgcolor = #000000
     //linestatus.font    = SansSerif,plain,10
@@ -97,7 +97,7 @@ public class PdeEditorLineStatus extends JComponent {
     int baseline = (high + g.getFontMetrics().getAscent()) / 2;
     g.drawString(text, 6, baseline);
 
-    if (PdeBase.isMacOS()) {
+    if (Base.isMacOS()) {
       g.drawImage(resize, size.width - 20, 0, this);
     }
   }

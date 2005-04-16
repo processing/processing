@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeException - an exception with a line number attached
+  RunnerException - an exception with a line number attached
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and is
@@ -24,30 +24,30 @@
 
 package processing.app;
 
-public class PdeException extends Exception {
+public class RunnerException extends Exception {
   public int file = -1;
   public int line = -1;
   public int column = -1;
   public boolean hideStackTrace;
 
-  public PdeException() { }
+  public RunnerException() { }
 
-  public PdeException(String message) {
+  public RunnerException(String message) {
     super(massage(message));
   }
 
-  public PdeException(String message, int line) {
+  public RunnerException(String message, int line) {
     super(massage(message));
     this.line = line;
   }
 
-  public PdeException(String message, int line, int column) {
+  public RunnerException(String message, int line, int column) {
     super(massage(message));
     this.line = line;
     this.column = column;
   }
 
-  public PdeException(String message, int file, int line, int column) {
+  public RunnerException(String message, int file, int line, int column) {
     super(massage(message));
     this.file = file;
     this.line = line;

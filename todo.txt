@@ -12,6 +12,7 @@ X add serial.stop() just like client/server
 X border weirdness in PdeEditor panels on windows (fixed in 82)
 o fix macos readme about how to boost memory size, and 1.3 vs 1.4
 X   actually, this was already in there
+o add prompt() method to serial
 
 camera
 o setting the camera should be an index from list()
@@ -26,33 +27,28 @@ o     and then use the indices (or the str i guess) to choose
 X   format(NTSC) or PAL or SECAM
 X   source(COMPOSITE) or SVIDEO or COMPONENT
 X settings() brings up settings dialog
+o add prompt() method to Camera ("" means default, null is prompt)
+o   let them pass in prompt(), not use null
+o   null is only bringing up settings dialog, that's wrong
 
-_ rename video.Camera to video.Video ?
-_   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
+_ move packaging around
+_   remove PdeXxx prefixes on names, make PdeBase into just "Processing"
+_   update .exe to use new class/package
+_   update .app to use new class/package
 
-_ add prompt() method to Camera ("" means default, null is prompt)
-_   let them pass in prompt(), not use null
-_   null is only bringing up settings dialog, that's wrong
-
-_ port DbnRecorder? 
-_   do this after beta, not likely to work with java 1.4 on macosx
-
-_ add prompt() method to serial
-
-_ remove PdeXxx prefixes on names, make PdeBase into just "Processing"
-
-_ update .exe to use new class/package
-_ update .app to use new class/package
-_ update linux build and shell scripts for new package
-
-_ make a linux version 
+_ setup linux box and build a linux version
 _   need to fix up the make/dist scripts for linux
-
+_   update runner script for the new package
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-MUST BE COMPLETE FOR BETA
+pending
+_ get simon's new lighting code
+_ rename video.Camera to video.Video ?
+_   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
+_ should loadPixels be grabPixels?
+
 
 non-coding tasks (for beta)
 _ new bboard? archive the old one, remove bugs sections
@@ -68,11 +64,10 @@ _     and queue events by registering for draw or whatever they'd like
 _   lib could call queueEvent with the args
 _   then call them inside post()
 _ scrubbing all the code to include proper license and copyright info
-
-things that will be broken for beta
-_ opengl set() functions.. though get() probably ok
-_ stop button with external apps
-_ java 1.1 support
+_ documenting things that will be broken for beta
+_   opengl set() functions.. though get() probably ok
+_   stop button with external apps
+_   java 1.1 support
 
 //
 
@@ -145,6 +140,9 @@ scroll to the top, so if you have an output larger than the allowable
 space, it will show you the last line, but then pops the scrollbar
 back to the top.  I think the only way to stop it is to quit out of
 processing and relaunch. 
+
+_ saveFrame() directly to quicktime via port of DbnRecorder
+_   do this after beta, not likely to work with java 1.4 on macosx
 
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
