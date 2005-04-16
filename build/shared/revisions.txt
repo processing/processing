@@ -40,12 +40,35 @@ ABOUT REV 0083 -
   + shininess(float shiney) takes a float from 0..1 to specify
     the level of shininess for the current material
 
+- video camera api should now be finalized:
+
+  + that whole thing with passing null or "" to the camera constructor
+    was really silly. now either one will just give you the default
+    video input device. 
+
+  + added settings() which will show the settings dialog
+
+  + source() takes parameters TUNER, COMPOSITE, SVIDEO or COMPONENT
+    to select the input source.
+
+  + format() takes parameters NTSC, SECAM or PAL
+
+  + crop(x, y, w, h) (uses the current imageMode from the parent
+    applet) will crop the video before putting it into its PImage. 
+    this is almost always used internally because qt likes to add
+    black bars to the image, but you can now specify your own 
+    settings to crop things further
+
+  + noCrop() will remove any cropping, providing a speed increase.
+
+  + there may be bugs.. things were sometimes hanging on my machine 
+    when there were errors 
+
 - link() now works when running as an application. also added
   open(String filename) which will attempt to launch an application 
   using the shell, or open(String args[]) which will do the same
   with several command line args.
 
-- 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

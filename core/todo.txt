@@ -131,6 +131,7 @@ o   yes, and add nf(int what) so that non-padded version works
 o   but don't put commas into the zero-padded version
 o   make nf/nfs/nfp not so weird
 o   nf(PLUS, ...) nf(PAD, ...) nfc(PLUS, ...)
+X unhex was broken for numbers bigger than 2^31
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
