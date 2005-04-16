@@ -1998,8 +1998,85 @@ public class PApplet extends Applet
   }
 
   static public void print(Object what) {
-    System.out.print(what.toString());
-    System.out.flush();
+    if (what == null) {
+      // special case since this does fuggly things on > 1.1
+      System.out.print("null");
+
+    } else {
+      String name = what.getClass().getName();
+      if (name.charAt(0) == '[') {
+        switch (name.charAt(1)) {
+        case '[':
+          // don't even mess with multi-dimensional arrays (case '[')
+          // or anything else that's not int, float, boolean, char
+          System.out.print(what);
+          System.out.print(' ');
+          break;
+
+        case 'L':
+          // print a 1D array of objects as individual elements
+          Object poo[] = (Object[]) what;
+          for (int i = 0; i < poo.length; i++) {
+            System.out.print(poo[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        case 'Z':  // boolean
+          boolean zz[] = (boolean[]) what;
+          for (int i = 0; i < zz.length; i++) {
+            System.out.print(zz[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        case 'B':  // byte
+          byte bb[] = (byte[]) what;
+          for (int i = 0; i < bb.length; i++) {
+            System.out.print(bb[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        case 'C':  // char
+          char cc[] = (char[]) what;
+          for (int i = 0; i < cc.length; i++) {
+            System.out.print(cc[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        case 'I':  // int
+          int ii[] = (int[]) what;
+          for (int i = 0; i < ii.length; i++) {
+            System.out.print(ii[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        case 'F':  // float
+          float ff[] = (float[]) what;
+          for (int i = 0; i < ff.length; i++) {
+            System.out.print(ff[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        case 'D':  // double
+          double dd[] = (double[]) what;
+          for (int i = 0; i < dd.length; i++) {
+            System.out.print(dd[i]);
+            System.out.print(' ');
+          }
+          break;
+
+        default:
+          System.out.print(what);
+        }
+      } else {
+        System.out.print(what); //.toString());
+      }
+    }
   }
 
   //
@@ -2039,11 +2116,82 @@ public class PApplet extends Applet
   }
 
   static public void println(Object what) {
-    System.out.println(what.toString());
+    if (what == null) {
+      // special case since this does fuggly things on > 1.1
+      System.out.println("null");
+
+    } else {
+      String name = what.getClass().getName();
+      if (name.charAt(0) == '[') {
+        switch (name.charAt(1)) {
+        case '[':
+          // don't even mess with multi-dimensional arrays (case '[')
+          // or anything else that's not int, float, boolean, char
+          System.out.println(what);
+          break;
+
+        case 'L':
+          // print a 1D array of objects as individual elements
+          Object poo[] = (Object[]) what;
+          for (int i = 0; i < poo.length; i++) {
+            System.out.println(poo[i]);
+          }
+          break;
+
+        case 'Z':  // boolean
+          boolean zz[] = (boolean[]) what;
+          for (int i = 0; i < zz.length; i++) {
+            System.out.println(zz[i]);
+          }
+          break;
+
+        case 'B':  // byte
+          byte bb[] = (byte[]) what;
+          for (int i = 0; i < bb.length; i++) {
+            System.out.println(bb[i]);
+          }
+          break;
+
+        case 'C':  // char
+          char cc[] = (char[]) what;
+          for (int i = 0; i < cc.length; i++) {
+            System.out.println(cc[i]);
+          }
+          break;
+
+        case 'I':  // int
+          int ii[] = (int[]) what;
+          for (int i = 0; i < ii.length; i++) {
+            System.out.println(ii[i]);
+          }
+          break;
+
+        case 'F':  // float
+          float ff[] = (float[]) what;
+          for (int i = 0; i < ff.length; i++) {
+            System.out.println(ff[i]);
+          }
+          break;
+
+        case 'D':  // double
+          double dd[] = (double[]) what;
+          for (int i = 0; i < dd.length; i++) {
+            System.out.println(dd[i]);
+          }
+          break;
+
+        default:
+          System.out.println(what);
+        }
+      } else {
+        System.out.println(what); //.toString());
+      }
+    }
   }
 
   //
 
+  /*
   static public void printarr(byte what[]) {
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
@@ -2083,6 +2231,7 @@ public class PApplet extends Applet
     for (int i = 0; i < what.length; i++) System.out.println(what[i]);
     System.out.flush();
   }
+  */
 
   //
 
