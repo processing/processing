@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditorConsole - message console that sits below the program area
+  EditorConsole - message console that sits below the program area
   Part of the Processing project - http://Proce55ing.net
 
   Except where noted, code is written by Ben Fry and
@@ -36,8 +36,8 @@ import javax.swing.text.*;
 // while watching just System.out
 // or just write directly to systemOut or systemErr
 
-public class PdeEditorConsole extends JScrollPane {
-  PdeEditor editor;
+public class EditorConsole extends JScrollPane {
+  Editor editor;
 
   JTextPane consoleTextPane;
   StyledDocument consoleDoc;
@@ -60,10 +60,10 @@ public class PdeEditorConsole extends JScrollPane {
   static OutputStream stderrFile;
 
 
-  public PdeEditorConsole(PdeEditor editor) {
+  public EditorConsole(Editor editor) {
     this.editor = editor;
 
-    maxLineCount = PdePreferences.getInteger("console.length");
+    maxLineCount = Preferences.getInteger("console.length");
 
     consoleTextPane = new JTextPane();
     consoleTextPane.setEditable(false);
@@ -75,10 +75,10 @@ public class PdeEditorConsole extends JScrollPane {
     consoleDoc.setParagraphAttributes(0, 0, standard, true);
 
     // build styles for different types of console output
-    Color bgColor    = PdePreferences.getColor("console.color");
-    Color fgColorOut = PdePreferences.getColor("console.output.color");
-    Color fgColorErr = PdePreferences.getColor("console.error.color");
-    Font font        = PdePreferences.getFont("console.font");
+    Color bgColor    = Preferences.getColor("console.color");
+    Color fgColorOut = Preferences.getColor("console.output.color");
+    Color fgColorErr = Preferences.getColor("console.error.color");
+    Font font        = Preferences.getFont("console.font");
 
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);
@@ -105,7 +105,7 @@ public class PdeEditorConsole extends JScrollPane {
     // and size window accordingly
     FontMetrics metrics = this.getFontMetrics(font);
     int height = metrics.getAscent() + metrics.getDescent();
-    int lines = PdePreferences.getInteger("console.lines"); //, 4);
+    int lines = Preferences.getInteger("console.lines"); //, 4);
     int sizeFudge = 6; //10; // unclear why this is necessary, but it is
     setPreferredSize(new Dimension(1024, (height * lines) + sizeFudge));
     setMinimumSize(new Dimension(1024, (height * 4) + sizeFudge));
@@ -115,27 +115,27 @@ public class PdeEditorConsole extends JScrollPane {
       systemErr = System.err;
 
       try {
-        String outFileName = PdePreferences.get("console.output.file");
+        String outFileName = Preferences.get("console.output.file");
         if (outFileName != null) {
           stdoutFile = new FileOutputStream(outFileName);
         }
 
-        String errFileName = PdePreferences.get("console.error.file");
+        String errFileName = Preferences.get("console.error.file");
         if (errFileName != null) {
           stderrFile = new FileOutputStream(outFileName);
         }
       } catch (IOException e) {
-        PdeBase.showWarning("Console Error",
+        Base.showWarning("Console Error",
                             "A problem occurred while trying to open the\n" +
                             "files used to store the console output.", e);
       }
 
       consoleOut =
-        new PrintStream(new PdeEditorConsoleStream(this, false, stdoutFile));
+        new PrintStream(new EditorConsoleStream(this, false, stdoutFile));
       consoleErr =
-        new PrintStream(new PdeEditorConsoleStream(this, true, stderrFile));
+        new PrintStream(new EditorConsoleStream(this, true, stderrFile));
 
-      if (PdePreferences.getBoolean("console")) {
+      if (Preferences.getBoolean("console")) {
         try {
           System.setOut(consoleOut);
           System.setErr(consoleErr);
@@ -147,7 +147,7 @@ public class PdeEditorConsole extends JScrollPane {
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (PdeBase.isMacOS()) {
+    if (Base.isMacOS()) {
       setBorder(null);
     }
   }
@@ -172,10 +172,10 @@ public class PdeEditorConsole extends JScrollPane {
   public void message(String what, boolean err, boolean advance) {
     // under osx, suppress the spew about the serial port
     // to avoid an error every time someone loads their app
-    // (the error is dealt with in PdeBase with a message dialog)
+    // (the error is dealt with in Base with a message dialog)
     /*
     // no longer an issue. using a newer rev of rxtx
-    if (PdeBase.platform == PdeBase.MACOSX) {
+    if (Base.platform == Base.MACOSX) {
       if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
       if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
     }
@@ -205,10 +205,10 @@ public class PdeEditorConsole extends JScrollPane {
   /**
    * append a piece of text to the console.
    *
-   * Swing components are NOT thread-safe, and since the PdeMessageSiphon
+   * Swing components are NOT thread-safe, and since the MessageSiphon
    * instantiates new threads, and in those callbacks, they often print
-   * output to stdout and stderr, which are wrapped by PdeEditorConsoleStream
-   * and eventually leads to PdeEditorConsole.appendText(), which directly
+   * output to stdout and stderr, which are wrapped by EditorConsoleStream
+   * and eventually leads to EditorConsole.appendText(), which directly
    * updates the Swing text components, causing deadlock.
    *
    * A quick hack from Francis Li (who found this to be a problem)
@@ -267,13 +267,13 @@ public class PdeEditorConsole extends JScrollPane {
 }
 
 
-class PdeEditorConsoleStream extends OutputStream {
-  PdeEditorConsole parent;
+class EditorConsoleStream extends OutputStream {
+  EditorConsole parent;
   boolean err; // whether stderr or stdout
   byte single[] = new byte[1];
   OutputStream echo;
 
-  public PdeEditorConsoleStream(PdeEditorConsole parent,
+  public EditorConsoleStream(EditorConsole parent,
                                 boolean err, OutputStream echo) {
     this.parent = parent;
     this.err = err;

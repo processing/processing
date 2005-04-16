@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeSketchbook - handles sketchbook mechanics for the sketch menu
+  Sketchbook - handles sketchbook mechanics for the sketch menu
   Part of the Processing project - http://processing.org
 
   Except where noted, code is written by Ben Fry and is
@@ -40,8 +40,8 @@ import javax.swing.undo.*;
 import com.apple.mrj.*;
 
 
-public class PdeSketchbook {
-  PdeEditor editor;
+public class Sketchbook {
+  Editor editor;
 
   JMenu openMenu;
   JMenu popupMenu;
@@ -60,7 +60,7 @@ public class PdeSketchbook {
   // opted against this.. in imovie, apple always goes
   // to the "Movies" folder, even if that wasn't the last used
 
-  // these are static because they're used by PdeSketch
+  // these are static because they're used by Sketch
   static File examplesFolder;
   static String examplesPath;  // canonical path (for comparison)
 
@@ -76,7 +76,7 @@ public class PdeSketchbook {
   static String librariesClassPath;
 
 
-  public PdeSketchbook(PdeEditor editor) {
+  public Sketchbook(Editor editor) {
     this.editor = editor;
 
     // this shouldn't change throughout.. it may as well be static
@@ -87,32 +87,32 @@ public class PdeSketchbook {
     librariesFolder = new File(System.getProperty("user.dir"), "libraries");
     librariesPath = librariesFolder.getAbsolutePath();
 
-    //String sketchbookPath = PdePreferences.get("sketchbook.path");
+    //String sketchbookPath = Preferences.get("sketchbook.path");
     //if (sketchbookPath == null) {
-    if (PdePreferences.get("sketchbook.path") == null) {
+    if (Preferences.get("sketchbook.path") == null) {
       // by default, set default sketchbook path to the user's
       // home folder with 'sketchbook' as a subdirectory of that
 
       /*
       File home = new File(System.getProperty("user.home"));
 
-      if (PdeBase.platform == PdeBase.MACOSX) {
+      if (Base.platform == Base.MACOSX) {
         // on macosx put the sketchbook in the "Documents" folder
         home = new File(home, "Documents");
 
-      } else if (PdeBase.platform == PdeBase.WINDOWS) {
+      } else if (Base.platform == Base.WINDOWS) {
         // on windows put the sketchbook in the "My Documents" folder
         home = new File(home, "My Documents");
       }
       */
 
       // use a subfolder called 'sketchbook'
-      //File home = PdePreferences.getProcessingHome();
-      //String folderName = PdePreferences.get("sketchbook.name.default");
+      //File home = Preferences.getProcessingHome();
+      //String folderName = Preferences.get("sketchbook.name.default");
       //File sketchbookFolder = new File(home, folderName);
 
-      File sketchbookFolder = PdeBase.getDefaultSketchbookFolder();
-      PdePreferences.set("sketchbook.path",
+      File sketchbookFolder = Base.getDefaultSketchbookFolder();
+      Preferences.set("sketchbook.path",
                          sketchbookFolder.getAbsolutePath());
 
       if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
@@ -124,7 +124,7 @@ public class PdeSketchbook {
 
 
   static public String getSketchbookPath() {
-    return PdePreferences.get("sketchbook.path");
+    return Preferences.get("sketchbook.path");
   }
 
 
@@ -138,7 +138,7 @@ public class PdeSketchbook {
     File newbieDir = null;
     String newbieName = null;
 
-    boolean prompt = PdePreferences.getBoolean("sketchbook.prompt");
+    boolean prompt = Preferences.getBoolean("sketchbook.prompt");
     if (shift) prompt = !prompt; // reverse behavior if shift is down
 
     // no sketch has been started, don't prompt for the name if it's
@@ -201,7 +201,7 @@ public class PdeSketchbook {
 
     // jdk13 on osx, or jdk11
     // though apparently still available for 1.4
-    if (PdeBase.isMacOS()) {
+    if (Base.isMacOS()) {
       MRJFileUtils.setFileTypeAndCreator(newbieFile,
                                          MRJOSType.kTypeTEXT,
                                          new MRJOSType("Pde1"));
@@ -227,7 +227,7 @@ public class PdeSketchbook {
     String newName = sanitizedName(origName);
 
     if (!newName.equals(origName)) {
-      PdeBase.showMessage("Naming issue",
+      Base.showMessage("Naming issue",
                           "The sketch name had to be modified.\n" +
                           "You can only use basic letters and numbers\n" +
                           "to name a sketch (ascii only and no spaces,\n" +
@@ -272,7 +272,7 @@ public class PdeSketchbook {
     FileDialog fd = new FileDialog(editor, //new Frame(),
                                    "Open a Processing sketch...",
                                    FileDialog.LOAD);
-    //fd.setDirectory(PdePreferences.get("sketchbook.path"));
+    //fd.setDirectory(Preferences.get("sketchbook.path"));
     fd.setDirectory(getSketchbookPath());
 
     // only show .pde files as eligible bachelors
@@ -330,7 +330,7 @@ public class PdeSketchbook {
       //System.out.println("libraries cp is now " + librariesClassPath);
 
     } catch (IOException e) {
-      PdeBase.showWarning("Problem while building sketchbook menu",
+      Base.showWarning("Problem while building sketchbook menu",
                           "There was a problem with building the\n" +
                           "sketchbook menu. Things might get a little\n" +
                           "kooky around here.", e);
@@ -345,7 +345,7 @@ public class PdeSketchbook {
     menu.removeAll();
 
     //item = new JMenuItem("Open...");
-    item = PdeEditor.newJMenuItem("Open...", 'O', false);
+    item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.handleOpen(null);
@@ -374,7 +374,7 @@ public class PdeSketchbook {
     // don't do this until it's finished
     // libraries don't show up as proper sketches anyway
     try {
-      if (PdePreferences.getBoolean("export.library")) {
+      if (Preferences.getBoolean("export.library")) {
         JMenu librariesMenu = new JMenu("Libraries");
         addSketches(librariesMenu, librariesFolder);
         menu.add(librariesMenu);
@@ -456,7 +456,7 @@ public class PdeSketchbook {
               "The sketch \"" + list[i] + "\" cannot be used.\n" +
               "Sketch names must contain only basic letters and numbers.\n" +
               "(ascii only and no spaces, and it cannot start with a number)";
-            PdeBase.showMessage("Ignoring bad sketch name", mess);
+            Base.showMessage("Ignoring bad sketch name", mess);
           }
           continue;
         }
@@ -532,20 +532,20 @@ public class PdeSketchbook {
             "The library \"" + list[i] + "\" cannot be used.\n" +
             "Library names must contain only basic letters and numbers.\n" +
             "(ascii only and no spaces, and it cannot start with a number)";
-          PdeBase.showMessage("Ignoring bad sketch name", mess);
+          Base.showMessage("Ignoring bad sketch name", mess);
           continue;
         }
 
         // get the path for all .jar files in this code folder
         String libraryClassPath =
-          PdeCompiler.contentsToClassPath(exported);
+          Compiler.contentsToClassPath(exported);
         // grab all jars and classes from this folder,
         // and append them to the library classpath
         librariesClassPath +=
           File.pathSeparatorChar + libraryClassPath;
         // need to associate each import with a library folder
         String packages[] =
-          PdeCompiler.packageListFromClassPath(libraryClassPath);
+          Compiler.packageListFromClassPath(libraryClassPath);
         for (int k = 0; k < packages.length; k++) {
           importToLibraryTable.put(packages[k], exported);
         }
@@ -575,7 +575,7 @@ public class PdeSketchbook {
    * Clear out projects that are empty.
    */
   public void clean() {
-    //if (!PdePreferences.getBoolean("sketchbook.auto_clean")) return;
+    //if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
 
     File sketchbookFolder = new File(getSketchbookPath());
     if (!sketchbookFolder.exists()) return;
@@ -595,11 +595,11 @@ public class PdeSketchbook {
         // not a .DS_Store file or another random user folder
 
         if (pde.exists() &&
-            (PdeBase.calcFolderSize(prey) == 0)) {
+            (Base.calcFolderSize(prey) == 0)) {
           //System.out.println("i want to remove " + prey);
 
-          if (PdePreferences.getBoolean("sketchbook.auto_clean")) {
-            PdeBase.removeDir(prey);
+          if (Preferences.getBoolean("sketchbook.auto_clean")) {
+            Base.removeDir(prey);
 
           } else {  // otherwise prompt the user
             String prompt =
@@ -616,7 +616,7 @@ public class PdeSketchbook {
                                            options,
                                            options[0]);
             if (result == JOptionPane.YES_OPTION) {
-              PdeBase.removeDir(prey);
+              Base.removeDir(prey);
             }
           }
         }

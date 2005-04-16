@@ -1,7 +1,7 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdePreferences - controls user preferences and environment settings
+  Preferences - controls user preferences and environment settings
   Part of the Processing project - http://Processing.org
 
   Except where noted, code is written by Ben Fry and is
@@ -50,7 +50,7 @@ import processing.core.PApplet;
  * properties files are iso8859-1, which is highly likely to
  * be a problem when trying to save sketch folders and locations.
  */
-public class PdePreferences extends JComponent {
+public class Preferences extends JComponent {
 
   // what to call the feller
 
@@ -104,7 +104,7 @@ public class PdePreferences extends JComponent {
 
 
   // the calling editor, so updates can be applied
-  PdeEditor editor;
+  Editor editor;
 
 
   // data model
@@ -120,10 +120,10 @@ public class PdePreferences extends JComponent {
     // important was deleted from the user prefs
 
     try {
-      load(PdeBase.getStream("preferences.txt"));
+      load(Base.getStream("preferences.txt"));
 
     } catch (Exception e) {
-      PdeBase.showError(null, "Could not read default settings.\n" +
+      Base.showError(null, "Could not read default settings.\n" +
                         "You'll need to reinstall Processing.", e);
     }
 
@@ -155,7 +155,7 @@ public class PdePreferences extends JComponent {
     //File home = new File(System.getProperty("user.home"));
     //File processingHome = new File(home, "Processing");
     //preferencesFile = new File(home, PREFS_FILE);
-    preferencesFile = PdeBase.getProcessingDataFile(PREFS_FILE);
+    preferencesFile = Base.getProcessingDataFile(PREFS_FILE);
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
@@ -169,7 +169,7 @@ public class PdePreferences extends JComponent {
         load(new FileInputStream(preferencesFile));
 
       } catch (Exception ex) {
-        PdeBase.showError("Error reading preferences",
+        Base.showError("Error reading preferences",
                           "Error reading the preferences file. " +
                           "Please delete (or move)\n" +
                           preferencesFile.getAbsolutePath() +
@@ -179,7 +179,7 @@ public class PdePreferences extends JComponent {
   }
 
 
-  public PdePreferences() {
+  public Preferences() {
 
     // setup frame for the prefs
 
@@ -279,7 +279,7 @@ public class PdePreferences extends JComponent {
     pain.add(box);
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);
-    Font editorFont = PdePreferences.getFont("editor.font");
+    Font editorFont = Preferences.getFont("editor.font");
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
     top += d.height + GUI_BETWEEN;
 
@@ -316,7 +316,7 @@ public class PdePreferences extends JComponent {
       "in the file " + preferencesFile.getAbsolutePath();
       //"More preferences are in the 'lib' folder inside text files\n" +
       //"named preferences.txt and pde_" +
-      //PdeBase.platforms[PdeBase.platform] + ".properties";
+      //Base.platforms[Base.platform] + ".properties";
 
     JTextArea textarea = new JTextArea(blather);
     textarea.setEditable(false);
@@ -336,7 +336,7 @@ public class PdePreferences extends JComponent {
     label = new JLabel(preferencesFile.getAbsolutePath());
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
-          PdeBase.openURL(preferencesFile.getAbsolutePath());
+          Base.openURL(preferencesFile.getAbsolutePath());
         }
       });
     label.setForeground(new Color(51, 25, 153));
@@ -412,7 +412,7 @@ public class PdePreferences extends JComponent {
 
     addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
-          KeyStroke wc = PdeEditor.WINDOW_CLOSE_KEYSTROKE;
+          KeyStroke wc = Editor.WINDOW_CLOSE_KEYSTROKE;
           if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
               (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
             disposeFrame();
@@ -469,7 +469,7 @@ public class PdePreferences extends JComponent {
   }
 
 
-  public void showFrame(PdeEditor editor) {
+  public void showFrame(Editor editor) {
     // hide the editor window so it can't be messed with
     this.editor = editor;
     //editor.hide();
@@ -530,8 +530,8 @@ public class PdePreferences extends JComponent {
       /*
       FileOutputStream output = null;
 
-      if ((PdeBase.platform == PdeBase.MACOSX) ||
-          (PdeBase.platform == PdeBase.MACOS9)) {
+      if ((Base.platform == Base.MACOSX) ||
+          (Base.platform == Base.MACOS9)) {
         output = new FileOutputStream("lib/preferences.txt");
 
       } else { // win95/98/ME doesn't set cwd properly
@@ -548,7 +548,7 @@ public class PdePreferences extends JComponent {
 
       Properties skprops = new Properties();
 
-      //Rectangle window = PdeBase.frame.getBounds();
+      //Rectangle window = Base.frame.getBounds();
       Rectangle window = editor.getBounds();
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -571,7 +571,7 @@ public class PdePreferences extends JComponent {
 
       skprops.put("editor.external", externalEditor ? "true" : "false");
 
-      //skprops.put("serial.port", PdePreferences.get("serial.port", "unspecified"));
+      //skprops.put("serial.port", Preferences.get("serial.port", "unspecified"));
 
       // save() is deprecated, and didn't properly
       // throw exceptions when it wasn't working
@@ -583,7 +583,7 @@ public class PdePreferences extends JComponent {
       */
 
     } catch (IOException ex) {
-      PdeBase.showWarning(null, "Error while saving the settings file", ex);
+      Base.showWarning(null, "Error while saving the settings file", ex);
       //e.printStackTrace();
     }
   }
@@ -742,7 +742,7 @@ public class PdePreferences extends JComponent {
       combo.setEnabled(false);
 
     } else {
-      String defaultName = PdePreferences.get("serial.port", "unspecified");
+      String defaultName = Preferences.get("serial.port", "unspecified");
       combo.setSelectedItem(defaultName);
     }
 

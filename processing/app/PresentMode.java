@@ -72,14 +72,14 @@ public class PresentMode {
         public void actionPerformed(ActionEvent e) {
           int index = selector.getSelectedIndex();
           //device = devices[index];
-          PdePreferences.setInteger("run.present.display", index + 1);
+          Preferences.setInteger("run.present.display", index + 1);
         }
       });
   }
 
 
   static public JComboBox getSelector() {
-    int deviceIndex = PdePreferences.getInteger("run.present.display") - 1;
+    int deviceIndex = Preferences.getInteger("run.present.display") - 1;
     selector.setSelectedIndex(deviceIndex);
     return selector;
   }
@@ -89,7 +89,7 @@ public class PresentMode {
   static public JFrame create() {
     int deviceIndex = PrePreferences.getInteger("run.present.display") - 1;
     if ((deviceIndex < 0) || (deviceIndex >= devices.length)) {
-      PdeBase.showWarning("Display doesn't exist",
+      Base.showWarning("Display doesn't exist",
                           "Present Mode is set to use display " +
                           (deviceIndex+1) +
                           " but that doesn't seem to exist.    \n" +
