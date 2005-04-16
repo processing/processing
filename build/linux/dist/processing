@@ -9,5 +9,4 @@ export CLASSPATH
 PATH=`pwd`/`dirname $0`:`pwd`/java/bin:${PATH}
 export PATH
 
-#exec java/bin/java PdeBase
-java PdeBase
+java processing.app.Base
