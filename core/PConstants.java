@@ -194,7 +194,7 @@ public interface PConstants {
   // text placement modes
 
   //static final int SCREEN  = 4;  // var SCREEN exists elsewhere
-  static final int OBJECT  = 3;
+  static final int MODEL  = 3;
 
 
   // text alignment modes
@@ -334,7 +334,7 @@ public interface PConstants {
   static final int AR = 24;
   static final int AG = 25;
   static final int AB = 26;
-  
+
   // Diffuse is shared with fill.
   static final int DR = 3;
   static final int DG = 4;
@@ -347,14 +347,14 @@ public interface PConstants {
   static final int SPB = 29;
   //GL doesn't use a separate specular alpha, but we do (we're better)
   static final int SPA = 30;
-  
+
   static final int SHINE = 31;
-  
+
   //emissive (by default kept black)
   static final int ER = 32;
   static final int EG = 33;
   static final int EB = 34;
-  
+
   static final int VERTEX_FIELD_COUNT = 35;
 
   // line & triangle fields (note how these overlap)
