@@ -352,6 +352,27 @@ public class PGraphicsGL extends PGraphics3 {
       float b[] = vertices[triangles[i][VERTEX2]];
       float c[] = vertices[triangles[i][VERTEX3]];
 
+      // This is only true when not textured. We really should pass SPECULAR
+      // straight through to triangle rendering.
+      float ar = min(1, triangleColors[i][0][TRI_DIFFUSE_R] +
+                     triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = min(1, triangleColors[i][0][TRI_DIFFUSE_G] +
+                     triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = min(1, triangleColors[i][0][TRI_DIFFUSE_B] +
+                     triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = min(1, triangleColors[i][1][TRI_DIFFUSE_R] +
+                     triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = min(1, triangleColors[i][1][TRI_DIFFUSE_G] +
+                     triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = min(1, triangleColors[i][1][TRI_DIFFUSE_B] +
+                     triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = min(1, triangleColors[i][2][TRI_DIFFUSE_R] +
+                     triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = min(1, triangleColors[i][2][TRI_DIFFUSE_G] +
+                     triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
+                     triangleColors[i][2][TRI_SPECULAR_B]);
+
       int textureIndex = triangles[i][TEXTURE_INDEX];
       if (textureIndex != -1) {
         //System.out.println("texture drawing");
@@ -465,17 +486,17 @@ public class PGraphicsGL extends PGraphics3 {
 
         gl.glBegin(GL.GL_TRIANGLES);
 
-        gl.glColor4f(a[R], a[G], a[B], a[A]);
+        gl.glColor4f(ar, ag, ab, a[A]);
         gl.glTexCoord2f(a[U] * uscale, a[V] * vscale);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
-        gl.glColor4f(b[R], b[G], b[B], b[A]);
+        gl.glColor4f(br, bg, bb, b[A]);
         gl.glTexCoord2f(b[U] * uscale, b[V] * vscale);
         gl.glNormal3f(b[NX], b[NY], b[NZ]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
-        gl.glColor4f(c[R], c[G], c[B], c[A]);
+        gl.glColor4f(cr, cg, cb, c[A]);
         gl.glTexCoord2f(c[U] * uscale, c[V] * vscale);
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
@@ -488,15 +509,15 @@ public class PGraphicsGL extends PGraphics3 {
       } else {
         gl.glBegin(GL.GL_TRIANGLES);
 
-        gl.glColor4f(a[R], a[G], a[B], a[A]);
+        gl.glColor4f(ar, ag, ab, a[A]);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
-        gl.glColor4f(b[R], b[G], b[B], b[A]);
+        gl.glColor4f(br, bg, bb, b[A]);
         gl.glNormal3f(b[NX], b[NY], b[NZ]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
-        gl.glColor4f(c[R], c[G], c[B], c[A]);
+        gl.glColor4f(cr, cg, cb, c[A]);
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
