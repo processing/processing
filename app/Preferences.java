@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Preferences - controls user preferences and environment settings
-  Part of the Processing project - http://Processing.org
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -44,7 +43,7 @@ import processing.core.PApplet;
 
 
 /**
- * Preferences storage class.
+ * Storage class for user preferences and environment settings.
  * <P>
  * This class no longer uses the Properties class, since
  * properties files are iso8859-1, which is highly likely to

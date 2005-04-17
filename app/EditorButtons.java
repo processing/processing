@@ -1,13 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  EditorButtons - run/stop/etc buttons for the ide
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry and the Processing project.
-
-  The original rendition of this code was written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,11 +31,13 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
+/**
+ * run/stop/etc buttons for the ide
+ */
 public class EditorButtons extends JComponent implements MouseInputListener {
 
   static final String title[] = {
     "Run", "Stop", "New", "Open", "Save", "Export"
-    //"run", "stop", "new", "open", "save", "export"
   };
 
   static final int BUTTON_COUNT  = title.length;

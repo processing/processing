@@ -1,11 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  MessageSiphon - slurps up messages from compiler
   Part of the Processing project - http://processing.org
 
-  Earlier portions of this code are Copyright (c) 2001-04 MIT
-  Other parts are Copyright (c) 2004 Ben Fry and Casey Reas
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +26,9 @@ package processing.app;
 import java.io.*;
 
 
+/**
+ * Slurps up messages from compiler.
+ */
 class MessageSiphon implements Runnable {
   BufferedReader streamReader;
   Thread thread;

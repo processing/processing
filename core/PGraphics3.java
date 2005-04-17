@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry and Casey Reas
@@ -29,6 +28,9 @@ import java.awt.*;
 import java.awt.image.*;
 
 
+/**
+ * Subclass of PGraphics that handles 3D rendering.
+ */
 public class PGraphics3 extends PGraphics {
 
   /** The modelview matrix. */

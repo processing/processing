@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Sketchbook - handles sketchbook mechanics for the sketch menu
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -40,6 +39,9 @@ import javax.swing.undo.*;
 import com.apple.mrj.*;
 
 
+/**
+ * Handles sketchbook mechanics for the sketch menu and file I/O.
+ */
 public class Sketchbook {
   Editor editor;
 

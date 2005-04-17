@@ -4,9 +4,8 @@
   Compiler - default compiler class that connects to jikes
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03
-  Ben Fry, Massachusetts Institute of Technology and
-  Casey Reas, Interaction Design Institute Ivrea
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

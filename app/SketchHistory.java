@@ -4,8 +4,8 @@
   SketchHistory - handler for storing history information about a project
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -43,12 +43,12 @@ public class SketchHistory {
   static final int AUTOSAVE = 7;
   static final int BEAUTIFY = 8;
 
-  static final String HISTORY_SEPARATOR = 
+  static final String HISTORY_SEPARATOR =
     "#################################################";
 
   JMenu menu;
 
-  // true if the sketch is read-only, 
+  // true if the sketch is read-only,
   // meaning that no history will be recorded
   boolean readOnlySketch;
 
@@ -95,7 +95,7 @@ public class SketchHistory {
   }
 
 
-  /// Check to see if history should be recorded. 
+  /// Check to see if history should be recorded.
   /// mode is RUN, SAVE, AUTOSAVE, or BEAUTIFY
   public void record(String program, int mode) {
     if (readOnlySketch) return;
@@ -133,13 +133,13 @@ public class SketchHistory {
         noPreviousHistory = true;  // rebuild menu
       }
 
-      OutputStream historyStream = 
+      OutputStream historyStream =
         new GZIPOutputStream(new FileOutputStream(historyFile));
 
       if (old != null) {
         historyStream.write(old.toByteArray());
       }
-      PrintWriter historyWriter = 
+      PrintWriter historyWriter =
         new PrintWriter(new OutputStreamWriter(historyStream));
 
       historyWriter.println();
@@ -149,7 +149,7 @@ public class SketchHistory {
       // 2002 06 18  11 43 29
       // when listing, study for descrepancies.. if all are
       // 2002, then don't list the year and soforth.
-      // for the other end, if all minutes are unique, 
+      // for the other end, if all minutes are unique,
       // then don't show seconds
       int year = now.get(Calendar.YEAR);
       int month = now.get(Calendar.MONTH) + 1;
@@ -162,13 +162,13 @@ public class SketchHistory {
 
       String readableDate = now.getTime().toString();
 
-      // increment this so sketchbook won't be mangled 
+      // increment this so sketchbook won't be mangled
       // each time this format has to change
       String historyVersion = "1";
       //Date date = new Date();
       //String datestamp = date.toString();
 
-      historyWriter.println(historyVersion + " " + modeStr + " - " + 
+      historyWriter.println(historyVersion + " " + modeStr + " - " +
                             parseDate + " - " + readableDate);
       historyWriter.println();
       historyWriter.println(program);
@@ -183,7 +183,7 @@ public class SketchHistory {
       historyWriter.flush();
       historyWriter.close();
 
-      if (noPreviousHistory) {  
+      if (noPreviousHistory) {
         // to get add the actual menu, to get the 'clear' item in there
         //rebuildMenu(historyFile.getPath());
         rebuildMenu();
@@ -197,7 +197,7 @@ public class SketchHistory {
 
   public void retrieve(String selection) {
     //System.out.println("sel '" + selection + "'");
-    String readableDate = 
+    String readableDate =
       selection.substring(selection.indexOf("-") + 2);
 
     // make history for the current guy
@@ -241,7 +241,7 @@ public class SketchHistory {
           editor.setSketchModified(false);
 
         } else {
-          System.err.println("couldn't find history entry for " + 
+          System.err.println("couldn't find history entry for " +
                              "'" + readableDate + "'");
         }
       } catch (IOException e) {
@@ -281,7 +281,7 @@ public class SketchHistory {
         public void actionPerformed(ActionEvent e) {
           if (!historyFile.delete()) {
             //System.err.println("couldn't erase history");
-            Base.showWarning("History Problem", 
+            Base.showWarning("History Problem",
                                 "Could not erase history", null);
           }
           rebuildMenu();
@@ -307,7 +307,7 @@ public class SketchHistory {
           if (line.equals(HISTORY_SEPARATOR)) {
             // next line is the good stuff
             line = reader.readLine();
-            int version = 
+            int version =
               Integer.parseInt(line.substring(0, line.indexOf(' ')));
             if (version == 1) {
               String whysub = line.substring(2);  // after "1 "
@@ -332,7 +332,7 @@ public class SketchHistory {
 
       // add the items to the menu in reverse order
 
-      //ActionListener historyMenuListener = 
+      //ActionListener historyMenuListener =
       //  new ActionListener() {
           //  public void actionPerformed(ActionEvent e) {
             //  editor.retrieveHistory(e.getActionCommand());

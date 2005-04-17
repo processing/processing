@@ -1,14 +1,38 @@
+/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://Proce55ing.net
+
+  Copyright (c) 2005 Ben Fry and Casey Reas
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA  02111-1307  USA
+*/
+
 package processing.core;
 
 
+/**
+ * 4x4 matrix implementation.
+ */
 public final class PMatrix implements PConstants {
 
   public float m00, m01, m02, m03;
   public float m10, m11, m12, m13;
   public float m20, m21, m22, m23;
   public float m30, m31, m32, m33;
-
-  //float reset[];
 
   final static int DEFAULT_STACK_DEPTH = 0;
   int maxStackDepth;
@@ -56,32 +80,6 @@ public final class PMatrix implements PConstants {
         0, 0, 1, 0,
         0, 0, 0, 1);
   }
-
-
-  /*
-  public void reset() {
-    if (reset == null) {
-      identity();
-
-    } else {
-      set(reset[0],  reset[1],  reset[2],  reset[3],
-          reset[4],  reset[5],  reset[6],  reset[7],
-          reset[8],  reset[9],  reset[10], reset[11],
-          reset[12], reset[13], reset[14], reset[15]);
-    }
-  }
-
-
-  public void storeResetValue() {
-    if (reset == null) {
-      reset = new float[16];
-    }
-    reset[0]  = m00; reset[1]  = m01; reset[2]  = m02; reset[3]  = m03;
-    reset[4]  = m10; reset[5]  = m11; reset[6]  = m12; reset[7]  = m13;
-    reset[8]  = m20; reset[9]  = m21; reset[10] = m22; reset[11] = m23;
-    reset[12] = m30; reset[13] = m31; reset[14] = m32; reset[15] = m33;
-  }
-  */
 
 
   public void clearStack() {
@@ -258,9 +256,9 @@ public final class PMatrix implements PConstants {
     float t = 1.0f - c;
 
     apply((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
-                (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
-                (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
-                0, 0, 0, 1);
+          (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
+          (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
+          0, 0, 0, 1);
   }
 
 
@@ -272,9 +270,9 @@ public final class PMatrix implements PConstants {
     float t = 1.0f - c;
 
     preApply((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
-                   (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
-                   (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
-                   0, 0, 0, 1);
+             (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
+             (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
+             0, 0, 0, 1);
   }
 
 
