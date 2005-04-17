@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Runner - runs a compiled java applet
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry and Casey Reas
@@ -34,6 +33,10 @@ import java.lang.reflect.*;
 import com.oroinc.text.regex.*;
 
 
+/**
+ * Runs a compiled java applet, whether as an external application
+ * or internally as an applet object in a window.
+ */
 public class Runner implements MessageConsumer {
 
   PApplet applet;

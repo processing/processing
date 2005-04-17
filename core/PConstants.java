@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PConstants - numbers shared throughout processing.core
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -29,6 +28,9 @@ import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 
 
+/**
+ * Numbers shared throughout processing.core.
+ */
 public interface PConstants {
 
   // renderers known to processing.core
@@ -357,7 +359,7 @@ public interface PConstants {
 
   //has this vertex been lit yet
   static final int BEEN_LIT = 35;
-  
+
   static final int VERTEX_FIELD_COUNT = 36;
 
   // line & triangle fields (note how these overlap)
@@ -372,7 +374,7 @@ public interface PConstants {
 
   static final int LINE_FIELD_COUNT = 5;
   static final int TRIANGLE_FIELD_COUNT = 5;
-  
+
   static final int TRI_DIFFUSE_R = 0;
   static final int TRI_DIFFUSE_G = 1;
   static final int TRI_DIFFUSE_B = 2;
@@ -381,7 +383,7 @@ public interface PConstants {
   static final int TRI_SPECULAR_G = 5;
   static final int TRI_SPECULAR_B = 6;
   static final int TRI_SPECULAR_A = 7;
-  
+
   static final int TRIANGLE_COLOR_COUNT = 8;
 
   // normal modes for lighting

@@ -1,13 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PImage - storage class for pixel data
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-05
-  Ben Fry, Massachusetts Institute of Technology and
-  Casey Reas, Interaction Design Institute Ivrea
-  Additional code contributions from toxi
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -34,42 +31,13 @@ import java.io.*;
 
 
 /**
- * image class developed by toxi and fry.
- *
- * <PRE>[fry 0407XX]
- * - get() on RGB images sets the high bits to opaque
- * - modification of naming for functions
- * - inclusion of Object.clone()
- * - make get(), copy(), blend() honor imageMode
- * - lots of moving things around for new megabucket api
- *
- * [toxi 030722]
- * advanced copying/blitting code
- *
- * [fry 030918]
- * integrated and modified to fit p5 spec
- *
- * [toxi 030930]
- * - target pixel buffer doesn't loose alpha channel anymore
- *   with every blitting operation alpha values are increased now
- * - resizing by large factors (>250%) doesn't yield any rounding errors
- *   anymore, changed to 16bit precision (=65536% max or 0.000015% min)
- * - replicate() is now only using REPLACE mode to avoid semantic problems
- * - added blend() methods to use replicate()'s functionality,
- *   but with blend modes
- *
- * [toxi 031006]
- * blit_resize() is now clipping input coordinates to avoid array
- * exceptions target dimension can be larger than destination image
- * object, outside pixels will be skipped
- *
- * [toxi 031017]
- * versions of replicate() and blend() methods which use cross-image
- * blitting are now called in the destination image and expect a source
- * image object as parameter. this is to provide an easy syntax for cases
- * where the main pixel buffer is the destination. as those methods are
- * overloaded in BApplet, users can call those functions directly without
- * explicitly giving a reference to PGraphics.</PRE>
+ * Storage class for pixel data.
+ * <P>
+ * Code for copying, resizing, scaling, and blending contributed
+ * by <A HREF="http://www.toxi.co.uk">toxi</A>
+ * <P>
+ * Gaussian blur code contributed by
+ * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
  */
 public class PImage implements PConstants, Cloneable {
 

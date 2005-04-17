@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Base - base class for the main processing application
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -44,6 +43,8 @@ import processing.core.*;
 
 
 /**
+ * The base class for the main processing application
+ * <P>
  * Primary role of this class is for platform identification and
  * general interaction with the system (launching URLs, loading
  * files and images, etc) that comes from that.
@@ -386,7 +387,7 @@ public class Base {
     } else {
       // on linux (or elsewhere?) prompt the user for the location
       JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle("Select the folder where " + 
+      fc.setDialogTitle("Select the folder where " +
                         "Processing sketches should be stored...");
       //fc.setSelectedFile(new File(sketchbookLocationField.getText()));
       fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

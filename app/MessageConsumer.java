@@ -1,11 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  MessageConsumer - interface for dealing with parser/compiler output
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,14 +23,18 @@
 
 package processing.app;
 
-// Different instances of MessageStream need to do different things with
-// messages.  In particular, a stream instance used for parsing output from
-// the compiler compiler has to interpret its messages differently than one
-// parsing output from the runtime.
-//
-// Classes which consume messages and do something with them should implement
-// this interface.
-//
+
+/**
+ * Interface for dealing with parser/compiler output
+ * <P>
+ * Different instances of MessageStream need to do different things with
+ * messages.  In particular, a stream instance used for parsing output from
+ * the compiler compiler has to interpret its messages differently than one
+ * parsing output from the runtime.
+ * <P>
+ * Classes which consume messages and do something with them
+ * should implement this interface.
+ */
 public interface MessageConsumer {
 
   public void message(String s);

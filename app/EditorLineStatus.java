@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  EditorLineStatus - li'l status bar fella that shows the line number
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2005 Ben Fry and Casey Reas
@@ -32,6 +31,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
+/**
+ * Li'l status bar fella that shows the line number.
+ */
 public class EditorLineStatus extends JComponent {
   JEditTextArea textarea;
   int start = -1, stop;

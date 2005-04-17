@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PGraphics2 - graphics engine implemented via java2d
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2005 Ben Fry and Casey Reas
@@ -29,8 +28,10 @@ import java.awt.geom.*;
 import java.awt.image.*;
 
 
-// Graphics, GeneralPath, AffineTransform, BasicStroke, Graphics2D
-
+/**
+ * Subclass for PGraphics that implements the graphics API
+ * in Java 1.3+ using Java 2D.
+ */
 public class PGraphics2 extends PGraphics {
 
   public Graphics2D g2;

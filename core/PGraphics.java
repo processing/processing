@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PGraphics - main graphics and rendering context
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry and Casey Reas
@@ -32,6 +31,12 @@ import java.awt.image.*;
 import java.io.*;
 
 
+/**
+ * Main graphics and rendering context, as well as
+ * the base API implementation for processing "core".
+ * <P>
+ * As of beta, this class is semi-disabled.
+ */
 public class PGraphics extends PImage implements PConstants {
 
   /// width minus one (useful for many calculations)
@@ -2546,7 +2551,7 @@ public class PGraphics extends PImage implements PConstants {
   public void ambientLight(float red, float green, float blue) {
     depthError("ambientLight");
   }
-  
+
   public void ambientLight(float red, float green, float blue, float x, float y, float z) {
     depthError("ambientLight");
   }

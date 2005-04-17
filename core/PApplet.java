@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PApplet - applet base class for the bagel engine
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004- Ben Fry and Casey Reas
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -37,6 +36,9 @@ import java.util.*;
 import java.util.zip.*;
 
 
+/**
+ * Base class for all sketches that use processing.core.
+ */
 public class PApplet extends Applet
   implements PConstants, Runnable,
              MouseListener, MouseMotionListener, KeyListener, FocusListener

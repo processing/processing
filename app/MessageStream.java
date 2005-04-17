@@ -1,11 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  MessageStream - outputstream to handle stdout/stderr messages
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,25 +27,19 @@ import java.io.*;
 
 
 /**
- * this is used by Editor, System.err is set to
- * new PrintStream(new MessageStream())
- *
- * it's also used by Compiler
+ * OutputStream to handle stdout/stderr messages.
+ * <P>
+ * This is used by Editor, System.err is set to
+ * new PrintStream(new MessageStream()).
+ * It's also used by Compiler.
  */
 class MessageStream extends OutputStream {
 
-  //Editor editor;
   MessageConsumer messageConsumer;
 
-  public MessageStream(/*Editor editor,*/
-                          MessageConsumer messageConsumer) {
-    //this.editor = editor;
+  public MessageStream(MessageConsumer messageConsumer) {
     this.messageConsumer = messageConsumer;
   }
-
-  //public void setMessageConsumer(MessageConsumer messageConsumer) {
-  //this.messageConsumer = messageConsumer;
-  //}
 
   public void close() { }
 
