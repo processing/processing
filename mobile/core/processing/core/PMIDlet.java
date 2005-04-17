@@ -88,6 +88,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     protected int       height;
     
     protected char      key;
+    protected int       keyCode;
     protected boolean   keyPressed;
     
     public void setup() {
