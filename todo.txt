@@ -56,6 +56,11 @@ X   then call them inside post()
 saturday evening and sunday morning
 X scrubbing all the code to include proper license and copyright info
 
+sunday afternoon
+X update checker (can be turned off in prefs)
+X   send unique id, and information about person's java vm/platform
+o   using timezone would be an interesting method for tracking location
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -77,10 +82,6 @@ _     java 1.1 support
 _     code is larger than we'd like, has increased in size
 _       working to remove and optimize, also make possible to remove un-needed
 _ setup bugzilla, move legit bugs there, non-bugs to readme
-
-_ update checker (can be turned off in prefs)
-_   send unique id, and information about person's java vm/platform
-_   using timezone would be an interesting method for tracking location
 
 //
 
