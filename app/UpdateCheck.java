@@ -103,8 +103,8 @@ public class UpdateCheck implements Runnable {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      System.err.println("Error while trying to check for an update.");
+      //e.printStackTrace();
+      //System.err.println("Error while trying to check for an update.");
     }
   }
 

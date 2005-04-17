@@ -65,6 +65,8 @@ o   using timezone would be an interesting method for tracking location
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+_ create font is somewhat broken
+
 pending
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
