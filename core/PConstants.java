@@ -355,7 +355,10 @@ public interface PConstants {
   static final int EG = 33;
   static final int EB = 34;
 
-  static final int VERTEX_FIELD_COUNT = 35;
+  //has this vertex been lit yet
+  static final int BEEN_LIT = 35;
+  
+  static final int VERTEX_FIELD_COUNT = 36;
 
   // line & triangle fields (note how these overlap)
 
@@ -369,6 +372,17 @@ public interface PConstants {
 
   static final int LINE_FIELD_COUNT = 5;
   static final int TRIANGLE_FIELD_COUNT = 5;
+  
+  static final int TRI_DIFFUSE_R = 0;
+  static final int TRI_DIFFUSE_G = 1;
+  static final int TRI_DIFFUSE_B = 2;
+  static final int TRI_DIFFUSE_A = 3;
+  static final int TRI_SPECULAR_R = 4;
+  static final int TRI_SPECULAR_G = 5;
+  static final int TRI_SPECULAR_B = 6;
+  static final int TRI_SPECULAR_A = 7;
+  
+  static final int TRIANGLE_COLOR_COUNT = 8;
 
   // normal modes for lighting
   static final int AUTO_NORMAL = 0;   // normal calculated per triangle
