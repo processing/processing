@@ -14,10 +14,8 @@ HOW TO BUILD PROCESSING ON YOUR FAVORITE PLATFORM
 
 + cvs - used for version control
 
-+ g++ and gcc-mingw - used to build processing.exe
++ make, gcc-mingw, and g++ - used to build processing.exe
   (this will also pull in gcc-core)
-
-+ make
 
 + perl - use this version, activestate or other distros have trouble
   
