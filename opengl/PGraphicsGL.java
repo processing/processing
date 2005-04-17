@@ -818,6 +818,15 @@ public class PGraphicsGL extends PGraphics3 {
     //return num;
   }
 
+  public void ambientLight(float r, float g, float b, float x, float y, float z) {
+    super.ambientLight(r, g, b, x, y, z);
+    glLightEnable(lightCount - 1);
+    glLightAmbient(lightCount - 1);
+    glLightPosition(lightCount - 1);
+    glLightFalloff(lightCount - 1);
+    //return num;
+  }
+
 
   public void directionalLight(float r, float g, float b,
                                float nx, float ny, float nz) {
@@ -872,13 +881,13 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void lightFalloff(float constant, float linear, float quadratic) {
     super.lightFalloff(constant, linear, quadratic);
-    glLightFalloff(lightCount - 1);
+    glLightFalloff(lightCount);
   }
 
 
   public void lightSpecular(float x, float y, float z) {
     super.lightSpecular(x, y, z);
-    glLightSpecular(lightCount - 1);
+    glLightSpecular(lightCount);
   }
 
 
@@ -908,9 +917,9 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightAmbient(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_AMBIENT, new float[] { lightDiffuseR[num],
-                                              lightDiffuseG[num],
-                                              lightDiffuseB[num] });
+                 GL.GL_AMBIENT, new float[] { lightsDiffuseR[num],
+                                              lightsDiffuseG[num],
+                                              lightsDiffuseB[num] });
   }
 
 
@@ -922,24 +931,24 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightDiffuse(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_DIFFUSE, new float[] { lightDiffuseR[num],
-                                              lightDiffuseG[num],
-                                              lightDiffuseB[num] });
+                 GL.GL_DIFFUSE, new float[] { lightsDiffuseR[num],
+                                              lightsDiffuseG[num],
+                                              lightsDiffuseB[num] });
   }
 
 
   protected void glLightDirection(int num) {
-    if (lightType[num] == DIRECTIONAL) {
+    if (lights[num] == DIRECTIONAL) {
       gl.glLightfv(GL.GL_LIGHT0 + num,
-                   GL.GL_POSITION, new float[] { lightNX[num],
-                                                 lightNY[num],
-                                                 lightNZ[num], 1 });
+                   GL.GL_POSITION, new float[] { lightsNX[num],
+                                                 lightsNY[num],
+                                                 lightsNZ[num], 1 });
     } else {  // spotlight
       gl.glLightfv(GL.GL_LIGHT0 + num,
                    GL.GL_SPOT_DIRECTION,
-                   new float[] { lightNX[num],
-                                 lightNY[num],
-                                 lightNZ[num] });
+                   new float[] { lightsNX[num],
+                                 lightsNY[num],
+                                 lightsNZ[num] });
     }
   }
 
@@ -951,38 +960,38 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightFalloff(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_CONSTANT_ATTENUATION, lightConstantFalloff[num]);
+                GL.GL_CONSTANT_ATTENUATION, lightsFalloffConstant[num]);
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_LINEAR_ATTENUATION, lightLinearFalloff[num]);
+                GL.GL_LINEAR_ATTENUATION, lightsFalloffLinear[num]);
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_QUADRATIC_ATTENUATION, lightQuadraticFalloff[num]);
+                GL.GL_QUADRATIC_ATTENUATION, lightsFalloffQuadratic[num]);
   }
 
 
   protected void glLightPosition(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
                  GL.GL_POSITION,
-                 new float[] { lightX[num], lightY[num], lightZ[num] });
+                 new float[] { lightsX[num], lightsY[num], lightsZ[num] });
   }
 
 
   protected void glLightSpecular(int num) {
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_SPECULAR, new float[] { lightSpecularR[num],
-                                               lightSpecularG[num],
-                                               lightSpecularB[num] });
+                 GL.GL_SPECULAR, new float[] { lightsSpecularR[num],
+                                               lightsSpecularG[num],
+                                               lightsSpecularB[num] });
   }
 
 
   public void glLightSpotAngle(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_SPOT_CUTOFF, lightSpotAngle[num]);
+                GL.GL_SPOT_CUTOFF, lightsSpotAngle[num]);
   }
 
 
   public void glLightSpotConcentration(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_SPOT_EXPONENT, lightSpotConcentration[num]);
+                GL.GL_SPOT_EXPONENT, lightsSpotConcentration[num]);
   }
 
 
