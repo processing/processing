@@ -230,6 +230,7 @@ constrain	KEYWORD2	constrain_
 contract	KEYWORD2	contract_
 copy	KEYWORD2	copy_
 cos	KEYWORD2	cos_
+createFont	KEYWORD2	createFont_
 {}		curlybraces
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
@@ -299,6 +300,7 @@ lightFalloff	KEYWORD2	lightFalloff_
 lights	KEYWORD2	lights_
 lightSpecular	KEYWORD2	lightSpecular_
 line	KEYWORD2	line_
+link	KEYWORD2	link_
 loadBytes	KEYWORD2	loadBytes_
 loadFont	KEYWORD2	loadFont_
 loadImage	KEYWORD2	loadImage_
@@ -355,6 +357,7 @@ param	KEYWORD2	param_
 ()		parentheses
 perspective	KEYWORD2	perspective_
 PFont	KEYWORD1	PFont
+list	KEYWORD2	PFont_list_
 PI	LITERAL1	PI
 PImage	KEYWORD1	PImage
 alpha	KEYWORD2	PImage_alpha_
