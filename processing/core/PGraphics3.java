@@ -1407,12 +1407,21 @@ public class PGraphics3 extends PGraphics {
     float wz = v[VZ];
     float shine = v[SHINE];
 
+    float nx;
+    float ny;
+    float nz;
     if (!normalIsWorld) {
       toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
+      nx = worldNormal[X];
+      ny = worldNormal[Y];
+      nz = worldNormal[Z];
     }
-    float nx = worldNormal[X];
-    float ny = worldNormal[Y];
-    float nz = worldNormal[Z];
+    else {
+      nx = v[NX];
+      ny = v[NY];
+      nz = v[NZ];
+    }
+
 
     // Since the camera space == world space,
     // we can test for visibility by the dot product of
@@ -1725,6 +1734,7 @@ public class PGraphics3 extends PGraphics {
       vertices[vIndex][NX] = norm[X];
       vertices[vIndex][NY] = norm[Y];
       vertices[vIndex][NZ] = norm[Z];
+
       // The true at the end says the normal is already in world coordinates
       calc_lighting_contribution(vIndex, tempLightingContribution, true);
       copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
@@ -2554,7 +2564,7 @@ public class PGraphics3 extends PGraphics {
       normal(sphereX[i], sphereY[i], sphereZ[i]);
       vertex(sphereX[i], sphereY[i], sphereZ[i]);
     }
-    normal(0, -1, 0);
+    //normal(0, -1, 0);
     vertex(0, -1, 0);
     normal(sphereX[0], sphereY[0], sphereZ[0]);
     vertex(sphereX[0], sphereY[0], sphereZ[0]);
@@ -3470,12 +3480,12 @@ public class PGraphics3 extends PGraphics {
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
 
-    ambientLight(colorModeX * 0.23f,
-                 colorModeY * 0.23f,
-                 colorModeZ * 0.23f);
-    directionalLight(colorModeX * 0.31f,
-                     colorModeY * 0.31f,
-                     colorModeZ * 0.31f,
+    ambientLight(colorModeX * 0.5f,
+                 colorModeY * 0.5f,
+                 colorModeZ * 0.5f);
+    directionalLight(colorModeX * 0.5f,
+                     colorModeY * 0.5f,
+                     colorModeZ * 0.5f,
                      0, 0, -1);
 
     colorMode = colorModeSaved;
