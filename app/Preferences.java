@@ -73,12 +73,11 @@ public class Preferences extends JComponent {
 
   // mac needs it to be 70, windows needs 66, linux needs 76
 
-  static /*final*/ int BUTTON_WIDTH  = 76;
-  static /*final*/ int BUTTON_HEIGHT = 24;
+  static int BUTTON_WIDTH  = 76;
+  static int BUTTON_HEIGHT = 24;
 
   // value for the size bars, buttons, etc
 
-  //static final int INSET_SIZE    = 5;
   static final int GRID_SIZE     = 33;
 
   // gui variables
@@ -98,6 +97,7 @@ public class Preferences extends JComponent {
   JCheckBox sketchCleanBox;
   //JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
+  JCheckBox checkUpdatesBox;
 
   JTextField fontSizeField;
 
@@ -123,7 +123,7 @@ public class Preferences extends JComponent {
 
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
-                        "You'll need to reinstall Processing.", e);
+                     "You'll need to reinstall Processing.", e);
     }
 
     // check for platform-specific properties in the defaults
@@ -307,6 +307,16 @@ public class Preferences extends JComponent {
     top += d.height + GUI_BETWEEN;
 
 
+    // [ ] Check for updates on startup
+
+    checkUpdatesBox = new JCheckBox("Check for updates on startup");
+    pain.add(checkUpdatesBox);
+    d = checkUpdatesBox.getPreferredSize();
+    checkUpdatesBox.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+
     // More preferences are in the ...
 
     /*
@@ -433,9 +443,6 @@ public class Preferences extends JComponent {
    * Close the window after an OK or Cancel.
    */
   public void disposeFrame() {
-    //frame.hide();
-    //editor.applyPreferences();
-    //editor.show();
     frame.dispose();
   }
 
@@ -445,14 +452,12 @@ public class Preferences extends JComponent {
    * then send a message to the editor saying that it's time to do the same.
    */
   public void applyFrame() {
-    //editor.setExternalEditor(getBoolean("editor.external"));
     // put each of the settings into the table
-
     setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
     set("sketchbook.path", sketchbookLocationField.getText());
-    //setBoolean("export.library", exportLibraryBox.isSelected());
     setBoolean("editor.external", externalEditorBox.isSelected());
+    setBoolean("update.check", checkUpdatesBox.isSelected());
 
     String newSizeText = fontSizeField.getText();
     try {
@@ -469,16 +474,14 @@ public class Preferences extends JComponent {
 
 
   public void showFrame(Editor editor) {
-    // hide the editor window so it can't be messed with
     this.editor = editor;
-    //editor.hide();
 
     // set all settings entry boxes to their actual status
     sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
     sketchCleanBox.setSelected(getBoolean("sketchbook.auto_clean"));
     sketchbookLocationField.setText(get("sketchbook.path"));
-    //exportLibraryBox.setSelected(getBoolean("export.library"));
     externalEditorBox.setSelected(getBoolean("editor.external"));
+    checkUpdatesBox.setSelected(getBoolean("update.check"));
 
     frame.show();
   }
