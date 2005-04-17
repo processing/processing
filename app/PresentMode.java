@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PresentMode - helper class for full-screen presentation mode
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2005- Ben Fry and Casey Reas
@@ -29,6 +28,9 @@ import java.util.Vector;
 import javax.swing.*;
 
 
+/**
+ * Helper class for full-screen presentation mode.
+ */
 public class PresentMode {
 
   static GraphicsDevice devices[];

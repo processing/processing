@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Sketch - stores information about files in the current sketch
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -37,6 +36,9 @@ import javax.swing.JOptionPane;
 import com.oroinc.text.regex.*;
 
 
+/**
+ * Stores information about files in the current sketch
+ */
 public class Sketch {
   //static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
   static File tempBuildFolder;

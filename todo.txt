@@ -53,28 +53,34 @@ X     and queue events by registering for draw or whatever they'd like
 X   lib could call queueEvent with the args
 X   then call them inside post()
 
+saturday evening and sunday morning
+X scrubbing all the code to include proper license and copyright info
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 pending
-_ get simon's new lighting code
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
-
-casey tasks
-_ new bboard? archive the old one, remove bugs sections
-_ environment reference
-_ list of changes since rev 69? run through revisions.txt
+_ casey stuff
+_   new bboard? archive the old one, remove bugs sections
+_   environment reference
+_   list of changes since rev 69? run through revisions.txt
 
 non-coding tasks
-_ scrubbing all the code to include proper license and copyright info
 _ consolidate readme.txt, bugs.txt, info.html (faq)
 _   document things that will be broken for beta
 _     opengl set() functions.. though get() probably ok
 _     stop button with external apps
 _     java 1.1 support
+_     code is larger than we'd like, has increased in size
+_       working to remove and optimize, also make possible to remove un-needed
 _ setup bugzilla, move legit bugs there, non-bugs to readme
+
+_ update checker (can be turned off in prefs)
+_   send unique id, and information about person's java vm/platform
+_   using timezone would be an interesting method for tracking location
 
 //
 
@@ -126,10 +132,6 @@ _   doesn't work, try using the class' main() to run it
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
 
-_ update checker (can be turned off in prefs)
-_   send unique id, and information about person's java vm/platform
-_   using timezone would be an interesting method for tracking location
-
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
 _ closing window w/o first hitting stop() causes freak out
@@ -162,6 +164,8 @@ _   static { checkScreens(); }
 _   static void PApplet.checkScreens() { } 
 _   to run explicitly later
 _   this seems too complicated.. just make people restart
+
+_ more javadoc for the stuff inside processing.app
 
 _ ability to select monitor via preferences panel
 _   this applies to any applet that's run externally currently (verify)
@@ -210,10 +214,6 @@ _   involve adding key listeners to every friggin component
 _   ESC should fake a cancel button press
 _   ENTER should do the default option
 _   (might be a matter of setting the default action for the window?)
-
-secondary non-coding tasks (not before beta)
-_ move to new server
-_ javadoc everything
 
 _ when running as external applet, hide the editor text area
 _ drag & drop implementation to add files to sketch

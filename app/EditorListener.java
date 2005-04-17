@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  EditorListener - filter key events for tab expansion/indent/etc
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -34,6 +33,9 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 
 
+/**
+ * Filters key events for tab expansion/indent/etc.
+ */
 public class EditorListener {
   Editor editor;
   JEditTextArea textarea;
