@@ -48,10 +48,6 @@ chmod +x reference/environment/*.html
 rm reference.zip
 cd ..
 
-# clean out the cvs entries
-find processing -name "CVS" -exec rm -rf {} ';'
-#find processing -name "CVS" -exec echo {} ';'
-
 # add java (jre) files
 unzip -q -d processing jre.zip
 
@@ -78,13 +74,11 @@ cp dist/run.bat processing/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
-unix2dos processing/readme.txt 2> /dev/null
 unix2dos processing/revisions.txt 2> /dev/null
 unix2dos processing/lib/preferences.txt 2> /dev/null
 unix2dos processing/lib/keywords.txt 2> /dev/null
-rm processing/*.bak
-rm processing/lib/*.bak
-
+rm -f processing/*.bak
+rm -f processing/lib/*.bak
 
 # remove boogers
 find processing -name "*~" -exec rm -f {} ';'
@@ -95,6 +89,10 @@ find processing -name "._*" -exec rm -f {} ';'
 find processing -name "*.dll" -exec chmod +x {} ';'
 find processing -name "*.exe" -exec chmod +x {} ';'
 find processing -name "*.html" -exec chmod +x {} ';'
+
+# clean out the cvs entries
+find processing -name "CVS" -exec rm -rf {} ';'
+#find processing -name "CVS" -exec echo {} ';'
 
 # zip it all up for release
 echo Packaging standard release...
