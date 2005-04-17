@@ -137,6 +137,9 @@ saturday late afternoon
 X fix bug with openStream() and upper/lowercase stuff
 X   do a better job of handling any kind of URLs in openStream()
 
+sunday morning
+X incorporate simon's new lighting code
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
