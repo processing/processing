@@ -6327,6 +6327,12 @@ v              PApplet.this.stop();
   }
 
 
+  public void ambientLight(float red, float green, float blue, float x, float y, float z) {
+    if (recorder != null) recorder.ambientLight(red, green, blue, x, y, z);
+    g.ambientLight(red, green, blue, x, y, z);
+  }
+
+
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
     if (recorder != null) recorder.directionalLight(red, green, blue, nx, ny, nz);
