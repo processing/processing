@@ -50,7 +50,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final String VERSION = "0083 Alpha";
+  static final int VERSION = 83;
+  static final String VERSION_NAME = "0083 Alpha";
 
   /**
    * Path of filename opened on the command line,
@@ -68,9 +69,9 @@ public class Base {
     if (PApplet.javaVersion < 1.4f) {
       //System.err.println("no way man");
       Base.showError("Need to install Java 1.4",
-                        "This version of Processing requires    \n" +
-                        "Java 1.4 or later to run properly.\n" +
-                        "Please visit java.com to upgrade.", null);
+                     "This version of Processing requires    \n" +
+                     "Java 1.4 or later to run properly.\n" +
+                     "Please visit java.com to upgrade.", null);
     }
 
 
@@ -118,7 +119,6 @@ public class Base {
       e.printStackTrace();
     }
 
-
     // build the editor object
     editor = new Editor();
 
@@ -130,6 +130,11 @@ public class Base {
 
     // show the window
     editor.show();
+
+    // check for updates
+    if (Preferences.getBoolean("update.check")) {
+      new UpdateCheck(editor);
+    }
   }
 
 

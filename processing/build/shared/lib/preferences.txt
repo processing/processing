@@ -43,6 +43,12 @@ settings.path.fallback=data
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+# by default, check the processing server for any updates
+# (please avoid disabling, this also helps us know basic numbers 
+# on how many people are using Processing)
+update.check = true
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # default size for the main window
 default.window.width = 500
