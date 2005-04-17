@@ -28,11 +28,11 @@ ABOUT REV 0083 -
     sets up a spotlight at a position, with a direction and an angle
 
   + lightFalloff(constant, linear, quadratic) 
-    will change the falloff for the last light addressed. default
-    setting is lightFalloff(1, 0, 0)
+    will change the falloff for any lights that follow. 
+    default setting is lightFalloff(1, 0, 0)
 
   + lightSpecular(r, g, b) 
-    sets the specular color of this light
+    sets the specular color for any lights that follow.
 
   + ambient(), emissive(), specular() set the material properties
     of shapes. they take the same form as fill() and stroke(). 
@@ -70,6 +70,9 @@ ABOUT REV 0083 -
   with several command line args.
 
 - nfc() joins the nf() family to format integers and floats with commas.
+
+- linux version returns, with several fixes, and now handles 
+  (warns about) libstdc++ incompatabilities.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

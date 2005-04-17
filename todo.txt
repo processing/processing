@@ -43,6 +43,16 @@ X   fix linux bugs with placement
 X   lots of dist script tweaking and messing with jikes libs
 o should loadPixels be grabPixels? (nope)
 
+saturday evening
+X update processing/build/howto.txt
+X   add 'make' to list of things that should be installed
+X update libraries/howto.txt 
+o   should we queue lib events until the end of loop?
+X   nope, libraries can handle that themselves, 
+X     and queue events by registering for draw or whatever they'd like
+X   lib could call queueEvent with the args
+X   then call them inside post()
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -52,25 +62,19 @@ _ get simon's new lighting code
 _ rename video.Camera to video.Video ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
 
-
-non-coding tasks (for beta)
+casey tasks
 _ new bboard? archive the old one, remove bugs sections
 _ environment reference
-_ consolidate readme.txt, revisions.txt
-_ bugzilla: move bugs.txt and todo.txt into bugzilla
-_ update processing/build/howto.txt
-_   add 'make' to list of things that should be installed
-_ update libraries/howto.txt 
-_   should we queue lib events until the end of loop?
-_   nope, libraries can handle that themselves, 
-_     and queue events by registering for draw or whatever they'd like
-_   lib could call queueEvent with the args
-_   then call them inside post()
+_ list of changes since rev 69? run through revisions.txt
+
+non-coding tasks
 _ scrubbing all the code to include proper license and copyright info
-_ documenting things that will be broken for beta
-_   opengl set() functions.. though get() probably ok
-_   stop button with external apps
-_   java 1.1 support
+_ consolidate readme.txt, bugs.txt, info.html (faq)
+_   document things that will be broken for beta
+_     opengl set() functions.. though get() probably ok
+_     stop button with external apps
+_     java 1.1 support
+_ setup bugzilla, move legit bugs there, non-bugs to readme
 
 //
 
