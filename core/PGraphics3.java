@@ -31,17 +31,24 @@ import java.awt.image.*;
 
 public class PGraphics3 extends PGraphics {
 
-  // modelview matrix
-  public PMatrix modelview; // = new PMatrix(MATRIX_STACK_DEPTH);
+  /** The modelview matrix. */
+  public PMatrix modelview;
 
-  public PMatrix camera; // = new PMatrix();
-  public PMatrix cameraInv; // = new PMatrix();
+  /** Inverse modelview matrix, used for lighting. */
+  public PMatrix modelviewInv;
+
+  /**
+   * The camera matrix, the modelview
+   * will be set to this on beginFrame.
+   */
+  public PMatrix camera;
+
+  /** Inverse camera matrix */
+  public PMatrix cameraInv;
 
   // ........................................................
-  // Lighting-related variables
 
-  // inverse model matrix
-  public PMatrix modelviewInv; // = new PMatrix(MATRIX_STACK_DEPTH);
+  // Lighting-related variables
 
   // store the facing direction to speed rendering
   boolean useBackfaceCulling = false;
@@ -58,6 +65,25 @@ public class PGraphics3 extends PGraphics {
   public int emissiveRi, emissiveGi, emissiveBi;
 
   public float shininess;
+
+  // Whether or not we have to worry about vertex position for lighting calcs
+  private boolean lightingDependsOnVertexPosition;
+
+  static final int LIGHT_AMBIENT_R = 0;
+  static final int LIGHT_AMBIENT_G = 1;
+  static final int LIGHT_AMBIENT_B = 2;
+  static final int LIGHT_DIFFUSE_R = 3;
+  static final int LIGHT_DIFFUSE_G = 4;
+  static final int LIGHT_DIFFUSE_B = 5;
+  static final int LIGHT_SPECULAR_R = 6;
+  static final int LIGHT_SPECULAR_G = 7;
+  static final int LIGHT_SPECULAR_B = 8;
+
+  static final int LIGHT_COLOR_COUNT = 9;
+
+  // Used to shuttle lighting calcs around (no need to re-allocate all the time)
+  public float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
+  public float[] worldNormal = new float[4];
 
   // ........................................................
 
@@ -86,10 +112,10 @@ public class PGraphics3 extends PGraphics {
 
   // ........................................................
 
-  /// the stencil buffer (only for NEW_GRAPHICS)
+  /// the stencil buffer
   public int stencil[];
 
-  /// zbuffer (only when 3D is in use)
+  /// depth buffer
   public float zbuffer[];
 
   // ........................................................
@@ -100,43 +126,44 @@ public class PGraphics3 extends PGraphics {
 
   public int lightCount = 0;
 
-  /** True if lights are enabled */
-  //public boolean lights;
-
-  /** True if this light is enabled */
-  //public boolean light[];
-
   /** Light types */
-  public int lightType[];
+  public int lights[];
 
   /** Light positions */
-  public float lightX[], lightY[], lightZ[];
+  public float lightsX[], lightsY[], lightsZ[];
 
   /** Light direction (normalized vector) */
-  public float lightNX[], lightNY[], lightNZ[];
+  public float lightsNX[], lightsNY[], lightsNZ[];
 
   /** Light falloff */
-  public float lightConstantFalloff[];
-  public float lightLinearFalloff[];
-  public float lightQuadraticFalloff[];
+  public float lightsFalloffConstant[];
+  public float lightsFalloffLinear[];
+  public float lightsFalloffQuadratic[];
 
   /** Light spot angle */
-  public float lightSpotAngle[];
+  public float lightsSpotAngle[];
 
   /** Cosine of light spot angle */
-  public float lightSpotAngleCos[];
+  public float lightsSpotAngleCos[];
 
   /** Light spot concentration */
-  public float lightSpotConcentration[];
+  public float lightsSpotConcentration[];
 
   /** Diffuse colors for lights.
    *  For an ambient light, this will hold the ambient color.
    *  Internally these are stored as numbers between 0 and 1. */
-  public float lightDiffuseR[], lightDiffuseG[], lightDiffuseB[];
+  public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
 
   /** Specular colors for lights.
       Internally these are stored as numbers between 0 and 1. */
-  public float lightSpecularR[], lightSpecularG[], lightSpecularB[];
+  public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
+
+  public float lightSpecularR;
+  public float lightSpecularG;
+  public float lightSpecularB;
+  public float lightFalloffConstant;
+  public float lightFalloffLinear;
+  public float lightFalloffQuadratic;
 
   // ........................................................
 
@@ -170,8 +197,11 @@ public class PGraphics3 extends PGraphics {
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
-  PTriangle triangle; // used for rendering
-  public int triangles[][] = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
+  PTriangle triangle;
+  public int triangles[][] =
+    new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
+  public float triangleColors[][][] =
+    new float[DEFAULT_TRIANGLES][3][TRIANGLE_COLOR_COUNT];
   public int triangleCount;   // total number of triangles
 
   // cheap picking someday
@@ -180,15 +210,15 @@ public class PGraphics3 extends PGraphics {
   // ........................................................
 
   /**
-   * IMAGE or NORMALIZED, though this should probably
-   * be called textureSpace().
+   * Sets whether texture coordinates passed to
+   * vertex() calls will be based on coordinates that are
+   * based on the IMAGE or NORMALIZED.
    */
   public int textureMode;
 
   /**
-   * Current horizontal coordinate for texture,
-   * will always be between 0 and 1,
-   * even if using textureMode(IMAGE_SPACE)
+   * Current horizontal coordinate for texture, will always
+   * be between 0 and 1, even if using textureMode(IMAGE).
    */
   public float textureU;
 
@@ -282,25 +312,25 @@ public class PGraphics3 extends PGraphics {
     // init lights (in resize() instead of allocate() b/c needed by opengl)
     //lights = new PLight[MAX_LIGHTS];
     //light = new boolean[MAX_LIGHTS];
-    lightX = new float[MAX_LIGHTS];
-    lightY = new float[MAX_LIGHTS];
-    lightZ = new float[MAX_LIGHTS];
-    lightDiffuseR = new float[MAX_LIGHTS];
-    lightDiffuseG = new float[MAX_LIGHTS];
-    lightDiffuseB = new float[MAX_LIGHTS];
-    lightSpecularR = new float[MAX_LIGHTS];
-    lightSpecularG = new float[MAX_LIGHTS];
-    lightSpecularB = new float[MAX_LIGHTS];
-    lightType      = new int[MAX_LIGHTS];
-    lightNX        = new float[MAX_LIGHTS];
-    lightNY        = new float[MAX_LIGHTS];
-    lightNZ        = new float[MAX_LIGHTS];
-    lightConstantFalloff = new float[MAX_LIGHTS];
-    lightLinearFalloff   = new float[MAX_LIGHTS];
-    lightQuadraticFalloff = new float[MAX_LIGHTS];
-    lightSpotAngle        = new float[MAX_LIGHTS];
-    lightSpotAngleCos        = new float[MAX_LIGHTS];
-    lightSpotConcentration = new float[MAX_LIGHTS];
+    lightsX = new float[MAX_LIGHTS];
+    lightsY = new float[MAX_LIGHTS];
+    lightsZ = new float[MAX_LIGHTS];
+    lightsDiffuseR = new float[MAX_LIGHTS];
+    lightsDiffuseG = new float[MAX_LIGHTS];
+    lightsDiffuseB = new float[MAX_LIGHTS];
+    lightsSpecularR = new float[MAX_LIGHTS];
+    lightsSpecularG = new float[MAX_LIGHTS];
+    lightsSpecularB = new float[MAX_LIGHTS];
+    lights = new int[MAX_LIGHTS];
+    lightsNX = new float[MAX_LIGHTS];
+    lightsNY = new float[MAX_LIGHTS];
+    lightsNZ = new float[MAX_LIGHTS];
+    lightsFalloffConstant = new float[MAX_LIGHTS];
+    lightsFalloffLinear = new float[MAX_LIGHTS];
+    lightsFalloffQuadratic = new float[MAX_LIGHTS];
+    lightsSpotAngle = new float[MAX_LIGHTS];
+    lightsSpotAngleCos = new float[MAX_LIGHTS];
+    lightsSpotConcentration = new float[MAX_LIGHTS];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
@@ -350,17 +380,6 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  /*
-  public void clearLights() {
-    lightCount = 0;
-    light[0] = false;
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-      light[i] = false;
-    }
-  }
-  */
-
-
   public void beginFrame() {
     super.beginFrame();
 
@@ -369,9 +388,9 @@ public class PGraphics3 extends PGraphics {
 
     // clear out the lights, they'll have to be turned on again
     lightCount = 0;
-    //if (lights) {
-    //defaultLights();
-    //}
+    lightingDependsOnVertexPosition = false;
+    lightFalloff(1,0,0);
+    lightSpecular(0,0,0);
 
     // reset lines
     lineCount = 0;
@@ -406,19 +425,10 @@ public class PGraphics3 extends PGraphics {
         render_lines();
       }
     }
-
     // blit to screen
     super.endFrame();
   }
 
-  /*
-  public void angleMode(int mode) {
-    super.angleMode(mode);
-    modelview.angleMode(mode);
-    modelviewInv.angleMode(mode);
-    projection.angleMode(mode);
-  }
-  */
 
   public void defaults() {
     super.defaults();
@@ -427,35 +437,16 @@ public class PGraphics3 extends PGraphics {
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
 
-    //cameraMode(PERSPECTIVE);
     perspective();
 
-    //System.out.println("PGraphics3.defaults()");
     // easiest for beginners
     textureMode(IMAGE);
-
-    // better to leave this turned off by default
-    //noLights();
-    //lightCount = 0;
-
-    //lightEnable(0);
-    //lightAmbient(0, 0, 0, 0);
-
-    //light(1, cameraX, cameraY, cameraZ, 255, 255, 255);
 
     emissive(0.0f);
     specular(0.5f);
     shininess(1.0f);
 
   }
-
-  /**
-   * do anything that needs doing after setup before draw
-   */
-  //public void postSetup() {
-  //modelview.storeResetValue();
-  //modelviewInv.storeResetValue();
-  //}
 
 
   //////////////////////////////////////////////////////////////
@@ -507,10 +498,10 @@ public class PGraphics3 extends PGraphics {
     if (shape != 0) {
       if (normalCount == 0) {
         for (int i = vertex_start; i < vertexCount; i++) {
-        vertices[i][NX] = normalX;
-        vertices[i][NY] = normalY;
-        vertices[i][NZ] = normalZ;
-      }
+          vertices[i][NX] = normalX;
+          vertices[i][NY] = normalY;
+          vertices[i][NZ] = normalZ;
+        }
       }
 
       normalCount++;
@@ -527,8 +518,8 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * set texture mode to either IMAGE_SPACE (more intuitive
-   * for new users) or NORMAL_SPACE (better for advanced chaps)
+   * Set texture mode to either to use coordinates based on the IMAGE
+   * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
    */
   public void textureMode(int mode) {
     this.textureMode = mode;
@@ -536,7 +527,7 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * set texture image for current shape
+   * Set texture image for current shape
    * needs to be called between @see beginShape and @see endShape
    *
    * @param image reference to a PImage object
@@ -640,6 +631,8 @@ public class PGraphics3 extends PGraphics {
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
+
+    vertex[BEEN_LIT] = 0;
   }
 
 
@@ -656,9 +649,6 @@ public class PGraphics3 extends PGraphics {
     if (textureImage == null) {
       throw new RuntimeException("need to set an image with texture() " +
                                  "before using u and v coordinates");
-      //message(PROBLEM, "gotta use texture() " +
-      //      "after beginShape() and before vertex()");
-      //return;
     }
     if (textureMode == IMAGE) {
       u /= (float) textureImage.width;
@@ -1040,17 +1030,38 @@ public class PGraphics3 extends PGraphics {
     for (int i = vertex_start; i < vertex_end; i++) {
       float vertex[] = vertices[i];
 
-      vertex[VX] = modelview.m00*vertex[MX] + modelview.m01*vertex[MY] + modelview.m02*vertex[MZ] + modelview.m03;
-      vertex[VY] = modelview.m10*vertex[MX] + modelview.m11*vertex[MY] + modelview.m12*vertex[MZ] + modelview.m13;
-      vertex[VZ] = modelview.m20*vertex[MX] + modelview.m21*vertex[MY] + modelview.m22*vertex[MZ] + modelview.m23;
-      vertex[VW] = modelview.m30*vertex[MX] + modelview.m31*vertex[MY] + modelview.m32*vertex[MZ] + modelview.m33;
+      vertex[VX] =
+        modelview.m00*vertex[MX] + modelview.m01*vertex[MY] +
+        modelview.m02*vertex[MZ] + modelview.m03;
+      vertex[VY] =
+        modelview.m10*vertex[MX] + modelview.m11*vertex[MY] +
+        modelview.m12*vertex[MZ] + modelview.m13;
+      vertex[VZ] =
+        modelview.m20*vertex[MX] + modelview.m21*vertex[MY] +
+        modelview.m22*vertex[MZ] + modelview.m23;
+      vertex[VW] =
+        modelview.m30*vertex[MX] + modelview.m31*vertex[MY] +
+        modelview.m32*vertex[MZ] + modelview.m33;
+
+      // normalize
+      if (vertex[VW] != 0 && vertex[VW] != ONE) {
+        vertex[VX] /= vertex[VW];
+        vertex[VY] /= vertex[VW];
+        vertex[VZ] /= vertex[VW];
+      }
+      vertex[VW] = ONE;
     }
 
 
     // ------------------------------------------------------------------
     // TRANSFORM / LIGHT / CLIP
 
+    if (lightCount > 0 && fill) {
     handle_lighting();
+    }
+    else {
+      handle_no_lighting();
+    }
 
 
 
@@ -1060,12 +1071,20 @@ public class PGraphics3 extends PGraphics {
     for (int i = vertex_start; i < vertex_end; i++) {
       float vx[] = vertices[i];
 
-      float ox = projection.m00*vx[VX] + projection.m01*vx[VY] + projection.m02*vx[VZ] + projection.m03*vx[VW];
-      float oy = projection.m10*vx[VX] + projection.m11*vx[VY] + projection.m12*vx[VZ] + projection.m13*vx[VW];
-      float oz = projection.m20*vx[VX] + projection.m21*vx[VY] + projection.m22*vx[VZ] + projection.m23*vx[VW];
-      float ow = projection.m30*vx[VX] + projection.m31*vx[VY] + projection.m32*vx[VZ] + projection.m33*vx[VW];
+      float ox =
+        projection.m00*vx[VX] + projection.m01*vx[VY] +
+        projection.m02*vx[VZ] + projection.m03*vx[VW];
+      float oy =
+        projection.m10*vx[VX] + projection.m11*vx[VY] +
+        projection.m12*vx[VZ] + projection.m13*vx[VW];
+      float oz =
+        projection.m20*vx[VX] + projection.m21*vx[VY] +
+        projection.m22*vx[VZ] + projection.m23*vx[VW];
+      float ow =
+        projection.m30*vx[VX] + projection.m31*vx[VY] +
+        projection.m32*vx[VZ] + projection.m33*vx[VW];
 
-      if (ow != 0) {
+      if (ow != 0 && ow != ONE) {
         ox /= ow; oy /= ow; oz /= ow;
       }
 
@@ -1130,6 +1149,9 @@ public class PGraphics3 extends PGraphics {
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
       triangles = temp;
       //message(CHATTER, "allocating more triangles " + triangles.length);
+      float ftemp[][][] = new float[triangleCount<<1][3][TRIANGLE_COLOR_COUNT];
+      System.arraycopy(triangleColors, 0, ftemp, 0, triangleCount);
+      triangleColors = ftemp;
     }
     triangles[triangleCount][VERTEX1] = a;
     triangles[triangleCount][VERTEX2] = b;
@@ -1166,15 +1188,24 @@ public class PGraphics3 extends PGraphics {
 
       // This is only true when not textured. We really should pass SPECULAR
       // straight through to triangle rendering.
-      float ar = min(1, a[R] + a[SPR]);
-      float ag = min(1, a[G] + a[SPG]);
-      float ab = min(1, a[B] + a[SPB]);
-      float br = min(1, b[R] + b[SPR]);
-      float bg = min(1, b[G] + b[SPG]);
-      float bb = min(1, b[B] + b[SPB]);
-      float cr = min(1, c[R] + c[SPR]);
-      float cg = min(1, c[G] + c[SPG]);
-      float cb = min(1, c[B] + c[SPB]);
+      float ar = min(1, triangleColors[i][0][TRI_DIFFUSE_R] +
+                     triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = min(1, triangleColors[i][0][TRI_DIFFUSE_G] +
+                     triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = min(1, triangleColors[i][0][TRI_DIFFUSE_B] +
+                     triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = min(1, triangleColors[i][1][TRI_DIFFUSE_R] +
+                     triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = min(1, triangleColors[i][1][TRI_DIFFUSE_G] +
+                     triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = min(1, triangleColors[i][1][TRI_DIFFUSE_B] +
+                     triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = min(1, triangleColors[i][2][TRI_DIFFUSE_R] +
+                     triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = min(1, triangleColors[i][2][TRI_DIFFUSE_G] +
+                     triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
+                     triangleColors[i][2][TRI_SPECULAR_B]);
 
       if (tex > -1 && textures[tex] != null) {
         triangle.setTexture(textures[tex]);
@@ -1225,14 +1256,6 @@ public class PGraphics3 extends PGraphics {
    * from code by john w. ratcliff (jratcliff at verant.com)
    */
   private void triangulate_polygon() {
-    /*
-    System.out.println("triangulating polygon " +
-                       vertex_start + " " + vertex_end);
-    for (int i = vertex_start; i < vertex_end; i++) {
-      System.out.println(i + " " + vertices[i][X] + " " + vertices[i][Y]);
-    }
-    */
-
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0.0f;
     for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
@@ -1283,15 +1306,6 @@ public class PGraphics3 extends PGraphics {
       float By =  vertices[vertex_order[v]][MY];
       float Cx = -vertices[vertex_order[w]][MX];
       float Cy =  vertices[vertex_order[w]][MY];
-
-      /*
-      float Ax = -vertices[vertex_order[u]][X];
-      float Ay =  vertices[vertex_order[u]][Y];
-      float Bx = -vertices[vertex_order[v]][X];
-      float By =  vertices[vertex_order[v]][Y];
-      float Cx = -vertices[vertex_order[w]][X];
-      float Cy =  vertices[vertex_order[w]][Y];
-      */
 
       // first we check if <u,v,w> continues going ccw
       if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
@@ -1345,13 +1359,481 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  private void toWorldNormal(float nx, float ny, float nz, float[] out) {
+    out[0] =
+      modelviewInv.m00*nx + modelviewInv.m10*ny +
+      modelviewInv.m20*nz + modelviewInv.m30;
+    out[1] =
+      modelviewInv.m01*nx + modelviewInv.m11*ny +
+      modelviewInv.m21*nz + modelviewInv.m31;
+    out[2] =
+      modelviewInv.m02*nx + modelviewInv.m12*ny +
+      modelviewInv.m22*nz + modelviewInv.m32;
+    out[3] =
+      modelviewInv.m03*nx + modelviewInv.m13*ny +
+      modelviewInv.m23*nz + modelviewInv.m33;
+
+    if (out[3] != 0 && out[3] != ONE) {
+      // divide by perspective coordinate
+      out[0] /= out[3]; out[1] /= out[3]; out[2] /= out[3];
+    }
+    out[3] = 1;
+
+    float nlen = mag(out[0], out[1], out[2]);  // normalize
+    if (nlen != 0 && nlen != ONE) {
+      out[0] /= nlen; out[1] /= nlen; out[2] /= nlen;
+    }
+  }
+
+
+  private void calc_lighting_contribution(int vIndex,
+                                          float[] contribution) {
+    calc_lighting_contribution(vIndex, contribution, false);
+  }
+
+  private void calc_lighting_contribution(int vIndex,
+                                          float[] contribution,
+                                          boolean normalIsWorld) {
+    float[] v = vertices[vIndex];
+
+    float sr = v[SPR];
+    float sg = v[SPG];
+    float sb = v[SPB];
+
+    float wx = v[VX];
+    float wy = v[VY];
+    float wz = v[VZ];
+    float shine = v[SHINE];
+
+    if (!normalIsWorld) {
+      toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
+    }
+    float nx = worldNormal[X];
+    float ny = worldNormal[Y];
+    float nz = worldNormal[Z];
+
+    // Since the camera space == world space,
+    // we can test for visibility by the dot product of
+    // the normal with the direction from pt. to eye.
+    float dir = dot(nx, ny, nz, -wx, -wy, -wz);
+    // If normal is away from camera, choose its opposite.
+    // If we add backface culling, this will be backfacing
+    // (but since this is per vertex, it's more complicated)
+    if (dir < 0) {
+      nx = -nx;
+      ny = -ny;
+      nz = -nz;
+    }
+
+    // These two terms will sum the contributions from the various lights
+    contribution[LIGHT_AMBIENT_R] = 0;
+    contribution[LIGHT_AMBIENT_G] = 0;
+    contribution[LIGHT_AMBIENT_B] = 0;
+
+    contribution[LIGHT_DIFFUSE_R] = 0;
+    contribution[LIGHT_DIFFUSE_G] = 0;
+    contribution[LIGHT_DIFFUSE_B] = 0;
+
+    contribution[LIGHT_SPECULAR_R] = 0;
+    contribution[LIGHT_SPECULAR_G] = 0;
+    contribution[LIGHT_SPECULAR_B] = 0;
+
+    // for (int i = 0; i < MAX_LIGHTS; i++) {
+    // if (!light[i]) continue;
+    for (int i = 0; i < lightCount; i++) {
+
+      float denom = lightsFalloffConstant[i];
+      float spotTerm = 1;
+
+      if (lights[i] == AMBIENT) {
+        if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
+          // Falloff depends on distance
+          float distSq = mag(lightsX[i] - wx, lightsY[i] - wy, lightsZ[i] - wz);
+          denom += lightsFalloffQuadratic[i] * distSq + lightsFalloffLinear[i]
+              * (float) sqrt(distSq);
+        }
+        if (denom == 0)
+          denom = 1;
+        contribution[LIGHT_AMBIENT_R] += lightsDiffuseR[i] / denom;
+        contribution[LIGHT_AMBIENT_G] += lightsDiffuseG[i] / denom;
+        contribution[LIGHT_AMBIENT_B] += lightsDiffuseB[i] / denom;
+      } else {
+        // If not ambient, we must deal with direction
+
+        // li is the vector from the vertex to the light
+        float lix, liy, liz;
+        float lightDir_dot_li = 0;
+        float n_dot_li = 0;
+
+        if (lights[i] == DIRECTIONAL) {
+          lix = -lightsNX[i];
+          liy = -lightsNY[i];
+          liz = -lightsNZ[i];
+          denom = 1;
+          n_dot_li = (nx * lix + ny * liy + nz * liz);
+          // If light is lighting the face away from the camera, ditch
+          if (n_dot_li <= 0) {
+            continue;
+          }
+        } else { // Point or spot light (must deal also with light location)
+          lix = lightsX[i] - wx;
+          liy = lightsY[i] - wy;
+          liz = lightsZ[i] - wz;
+          // normalize
+          float distSq = mag(lix, liy, liz);
+          if (distSq != 0) {
+            lix /= distSq;
+            liy /= distSq;
+            liz /= distSq;
+          }
+          n_dot_li = (nx * lix + ny * liy + nz * liz);
+          // If light is lighting the face away from the camera, ditch
+          if (n_dot_li <= 0) {
+            continue;
+          }
+
+          if (lights[i] == SPOT) { // Must deal with spot cone
+            lightDir_dot_li =
+              -(lightsNX[i] * lix + lightsNY[i] * liy + lightsNZ[i] * liz);
+            // Outside of spot cone
+            if (lightDir_dot_li <= lightsSpotAngleCos[i]) {
+              continue;
+            }
+            spotTerm = pow(lightDir_dot_li, lightsSpotConcentration[i]);
+          }
+
+          if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
+            // Falloff depends on distance
+            denom += lightsFalloffQuadratic[i] * distSq +
+              lightsFalloffLinear[i] * (float) sqrt(distSq);
+          }
+        }
+        // Directional, point, or spot light:
+
+        // We know n_dot_li > 0 from above "continues"
+
+        if (denom == 0)
+          denom = 1;
+        float mul = n_dot_li * spotTerm / denom;
+        contribution[LIGHT_DIFFUSE_R] += lightsDiffuseR[i] * mul;
+        contribution[LIGHT_DIFFUSE_G] += lightsDiffuseG[i] * mul;
+        contribution[LIGHT_DIFFUSE_B] += lightsDiffuseB[i] * mul;
+
+        // SPECULAR
+
+        // If the material and light have a specular component.
+        if ((sr > 0 || sg > 0 || sb > 0) &&
+            (lightsSpecularR[i] > 0 ||
+             lightsSpecularG[i] > 0 ||
+             lightsSpecularB[i] > 0)) {
+
+          float vmag = mag(wx, wy, wz);
+          if (vmag != 0) {
+            wx /= vmag;
+            wy /= vmag;
+            wz /= vmag;
+          }
+          float sx = lix - wx;
+          float sy = liy - wy;
+          float sz = liz - wz;
+          vmag = mag(sx, sy, sz);
+          if (vmag != 0) {
+            sx /= vmag;
+            sy /= vmag;
+            sz /= vmag;
+          }
+          float s_dot_n = (sx * nx + sy * ny + sz * nz);
+
+          if (s_dot_n > 0) {
+            s_dot_n = pow(s_dot_n, shine);
+            mul = s_dot_n * spotTerm / denom;
+            contribution[LIGHT_SPECULAR_R] += lightsSpecularR[i] * mul;
+            contribution[LIGHT_SPECULAR_G] += lightsSpecularG[i] * mul;
+            contribution[LIGHT_SPECULAR_B] += lightsSpecularB[i] * mul;
+          }
+
+        }
+      }
+    }
+    /*target[toffset + 0] = min(1, er + dr * diffuse_r);
+    target[toffset + 1] = min(1, eg + dg * diffuse_g);
+    target[toffset + 2] = min(1, eb + db * diffuse_b);
+
+    target[SPR] = min(1, sr * specular_r);
+    target[SPG] = min(1, sg * specular_g);
+    target[SPB] = min(1, sb * specular_b);*/
+    return;
+  }
+
+
+  // Multiply the lighting contribution into the vertex's colors.
+  // Only do this when there is ONE lighting per vertex
+  // (MANUAL_VERTEX_NORMAL or SHAPE_NORMAL mode).
+  private void apply_lighting_contribution(int vIndex, float[] contribution) {
+    float[] v = vertices[vIndex];
+
+    v[R] = min(1, v[ER] + v[AR] * contribution[LIGHT_AMBIENT_R] +
+               v[DR] * contribution[LIGHT_DIFFUSE_R]);
+    v[G] = min(1, v[EG] + v[AG] * contribution[LIGHT_AMBIENT_G] +
+               v[DG] * contribution[LIGHT_DIFFUSE_G]);
+    v[B] = min(1, v[EB] + v[AB] * contribution[LIGHT_AMBIENT_R] +
+               v[DB] * contribution[LIGHT_DIFFUSE_B]);
+    v[A] = min(1, v[DA]);
+
+    v[SPR] = min(1, v[SPR] * contribution[LIGHT_SPECULAR_R]);
+    v[SPG] = min(1, v[SPG] * contribution[LIGHT_SPECULAR_G]);
+    v[SPB] = min(1, v[SPB] * contribution[LIGHT_SPECULAR_B]);
+    v[SPA] = min(1, v[SPA]);
+
+    v[BEEN_LIT] = 1;
+  }
+
+
+  private void light_vertex_always(int vIndex, float[] contribution) {
+    calc_lighting_contribution(vIndex, contribution);
+    apply_lighting_contribution(vIndex, contribution);
+  }
+
+
+  private void light_vertex_if_not_already_lit(int vIndex,
+                                               float[] contribution) {
+    if (vertices[vIndex][BEEN_LIT] == 0) {
+      light_vertex_always(vIndex, contribution);
+    }
+  }
+
+
+  private void copy_prelit_vertex_color_to_triangle(int triIndex, int vIndex,
+                                                    int colorIndex) {
+    float[] triColor = triangleColors[triIndex][colorIndex];
+    float[] v = vertices[vIndex];
+
+    triColor[TRI_DIFFUSE_R] = v[R];
+    triColor[TRI_DIFFUSE_G] = v[G];
+    triColor[TRI_DIFFUSE_B] = v[B];
+    triColor[TRI_DIFFUSE_A] = v[A];
+    triColor[TRI_SPECULAR_R] = v[SPR];
+    triColor[TRI_SPECULAR_G] = v[SPG];
+    triColor[TRI_SPECULAR_B] = v[SPB];
+    triColor[TRI_SPECULAR_A] = v[SPA];
+  }
+
+
+  private void copy_vertex_color_to_triangle(int triIndex,
+                                             int vIndex, int colorIndex,
+                                             float[] lightContribution) {
+    float[] triColor = triangleColors[triIndex][colorIndex];
+    float[] v = vertices[vIndex];
+
+    triColor[TRI_DIFFUSE_R] =
+      min(1, v[ER] + v[AR] * lightContribution[LIGHT_AMBIENT_R] +
+          v[DR] * lightContribution[LIGHT_DIFFUSE_R]);
+    triColor[TRI_DIFFUSE_G] =
+      min(1, v[EG] + v[AG] * lightContribution[LIGHT_AMBIENT_G] +
+          v[DG] * lightContribution[LIGHT_DIFFUSE_G]);
+    triColor[TRI_DIFFUSE_B] =
+      min(1, v[EB] + v[AB] * lightContribution[LIGHT_AMBIENT_R] +
+          v[DB] * lightContribution[LIGHT_DIFFUSE_B]);
+    triColor[TRI_DIFFUSE_A] = min(1, v[DA]);
+
+    triColor[TRI_SPECULAR_R] =
+      min(1, v[SPR] * lightContribution[LIGHT_SPECULAR_R]);
+    triColor[TRI_SPECULAR_G] =
+      min(1, v[SPG] * lightContribution[LIGHT_SPECULAR_G]);
+    triColor[TRI_SPECULAR_B] =
+      min(1, v[SPB] * lightContribution[LIGHT_SPECULAR_B]);
+    triColor[TRI_SPECULAR_A] = min(1, v[SPA]);
+  }
+
+
+  private void light_triangle(int triIndex, float[] lightContribution) {
+    int vIndex = triangles[triIndex][VERTEX1];
+    copy_vertex_color_to_triangle(triIndex, vIndex, 0, lightContribution);
+    vIndex = triangles[triIndex][VERTEX2];
+    copy_vertex_color_to_triangle(triIndex, vIndex, 1, lightContribution);
+    vIndex = triangles[triIndex][VERTEX3];
+    copy_vertex_color_to_triangle(triIndex, vIndex, 2, lightContribution);
+  }
+
+
+  private void crossProduct(float[] u, float[] v, float[] out) {
+    out[0] = u[1]*v[2] - u[2]*v[1];
+    out[1] = u[2]*v[0] - u[0]*v[2];
+    out[2] = u[0]*v[1] - u[1]*v[0];
+  }
+
+
+  private void light_triangle(int triIndex) {
+    int vIndex;
+
+    // Handle lighting on, but no lights (in this case, just use emissive)
+    // This wont be used currently because lightCount == 0 is don't use lighting
+    // at all... So. OK. If that ever changes, use the below:
+    /*
+    if (lightCount == 0) {
+      vIndex = triangles[triIndex][VERTEX1];
+      copy_emissive_vertex_color_to_triangle(triIndex, vIndex, 0);
+      vIndex = triangles[triIndex][VERTEX2];
+      copy_emissive_vertex_color_to_triangle(triIndex, vIndex, 1);
+      vIndex = triangles[triIndex][VERTEX3];
+      copy_emissive_vertex_color_to_triangle(triIndex, vIndex, 2);
+      return;
+    }
+    */
+
+    // In MANUAL_VERTEX_NORMAL mode, we have a specific normal
+    // for each vertex. In that case, we light any verts that
+    // haven't already been lit and copy their colors straight
+    // into the triangle.
+    if (normalMode == MANUAL_VERTEX_NORMAL) {
+      vIndex = triangles[triIndex][VERTEX1];
+      light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
+      copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 0);
+
+      vIndex = triangles[triIndex][VERTEX2];
+      light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
+      copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 1);
+
+      vIndex = triangles[triIndex][VERTEX3];
+      light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
+      copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 2);
+
+    }
+
+    // If the lighting doesn't depend on the vertex position, do the following:
+    // We've already dealt with MANUAL_SHAPE_NORMAL mode before we got into this
+    // function, so here we only have to deal with AUTO_NORMAL mode. So we calculate
+    // the normal for this triangle, and use that for the lighting
+    else if (!lightingDependsOnVertexPosition) {
+      vIndex = triangles[triIndex][VERTEX1];
+      int vIndex2 = triangles[triIndex][VERTEX2];
+      int vIndex3 = triangles[triIndex][VERTEX3];
+      float[] dv1 = new float[] {vertices[vIndex2][VX] - vertices[vIndex][VX],
+                               vertices[vIndex2][VY] - vertices[vIndex][VY],
+                               vertices[vIndex2][VZ] - vertices[vIndex][VZ]};
+      float[] dv2 = new float[] {vertices[vIndex3][VX] - vertices[vIndex][VX],
+                               vertices[vIndex3][VY] - vertices[vIndex][VY],
+                               vertices[vIndex3][VZ] - vertices[vIndex][VZ]};
+      float[] norm = new float[3];
+      crossProduct(dv1, dv2, norm);
+      float nMag = mag(norm[X], norm[Y], norm[Z]);
+      if (nMag != 0 && nMag != ONE) {
+        norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
+      }
+      vertices[vIndex][NX] = norm[X];
+      vertices[vIndex][NY] = norm[Y];
+      vertices[vIndex][NZ] = norm[Z];
+      // The true at the end says the normal is already in world coordinates
+      calc_lighting_contribution(vIndex, tempLightingContribution, true);
+      copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
+      copy_vertex_color_to_triangle(triIndex, vIndex2, 1, tempLightingContribution);
+      copy_vertex_color_to_triangle(triIndex, vIndex3, 2, tempLightingContribution);
+    }
+
+    // If lighting is position-dependent
+    else {
+      if (normalMode == MANUAL_SHAPE_NORMAL) {
+        vIndex = triangles[triIndex][VERTEX1];
+        vertices[vIndex][NX] = vertices[vertex_start][NX];
+        vertices[vIndex][NY] = vertices[vertex_start][NY];
+        vertices[vIndex][NZ] = vertices[vertex_start][NZ];
+        calc_lighting_contribution(vIndex, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
+
+        vIndex = triangles[triIndex][VERTEX2];
+        vertices[vIndex][NX] = vertices[vertex_start][NX];
+        vertices[vIndex][NY] = vertices[vertex_start][NY];
+        vertices[vIndex][NZ] = vertices[vertex_start][NZ];
+        calc_lighting_contribution(vIndex, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 1, tempLightingContribution);
+
+        vIndex = triangles[triIndex][VERTEX3];
+        vertices[vIndex][NX] = vertices[vertex_start][NX];
+        vertices[vIndex][NY] = vertices[vertex_start][NY];
+        vertices[vIndex][NZ] = vertices[vertex_start][NZ];
+        calc_lighting_contribution(vIndex, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 2, tempLightingContribution);
+
+      }
+      // lighting mode is AUTO_NORMAL
+      else {
+        vIndex = triangles[triIndex][VERTEX1];
+        int vIndex2 = triangles[triIndex][VERTEX2];
+        int vIndex3 = triangles[triIndex][VERTEX3];
+        float[] dv1 = new float[] {vertices[vIndex2][VX] - vertices[vIndex][VX],
+                                 vertices[vIndex2][VY] - vertices[vIndex][VY],
+                                 vertices[vIndex2][VZ] - vertices[vIndex][VZ]};
+        float[] dv2 = new float[] {vertices[vIndex3][VX] - vertices[vIndex][VX],
+                                 vertices[vIndex3][VY] - vertices[vIndex][VY],
+                                 vertices[vIndex3][VZ] - vertices[vIndex][VZ]};
+        float[] norm = new float[3];
+        crossProduct(dv1, dv2, norm);
+        float nMag = mag(norm[X], norm[Y], norm[Z]);
+        if (nMag != 0 && nMag != ONE) {
+          norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
+        }
+        vertices[vIndex][NX] = norm[X];
+        vertices[vIndex][NY] = norm[Y];
+        vertices[vIndex][NZ] = norm[Z];
+        // The true at the end says the normal is already in world coordinates
+        calc_lighting_contribution(vIndex, tempLightingContribution, true);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
+
+        vertices[vIndex2][NX] = norm[X];
+        vertices[vIndex2][NY] = norm[Y];
+        vertices[vIndex2][NZ] = norm[Z];
+        // The true at the end says the normal is already in world coordinates
+        calc_lighting_contribution(vIndex2, tempLightingContribution, true);
+        copy_vertex_color_to_triangle(triIndex, vIndex2, 1, tempLightingContribution);
+
+        vertices[vIndex3][NX] = norm[X];
+        vertices[vIndex3][NY] = norm[Y];
+        vertices[vIndex3][NZ] = norm[Z];
+        // The true at the end says the normal is already in world coordinates
+        calc_lighting_contribution(vIndex3, tempLightingContribution, true);
+        copy_vertex_color_to_triangle(triIndex, vIndex3, 2, tempLightingContribution);
+      }
+    }
+  }
+
+  protected void handle_lighting() {
+
+    // If the lighting does not depend on vertex position and there is a single
+    // normal specified for this shape, go ahead and apply the same lighting
+    // contribution to every vertex in this shape (one lighting calc!)
+    if (!lightingDependsOnVertexPosition && normalMode == MANUAL_SHAPE_NORMAL) {
+      calc_lighting_contribution(vertex_start, tempLightingContribution);
+      for (int tri = 0; tri < triangleCount; tri++) {
+        light_triangle(tri, tempLightingContribution);
+      }
+    }
+    // Otherwise light each triangle individually...
+    else {
+      for (int tri = 0; tri < triangleCount; tri++) {
+        light_triangle(tri);
+      }
+    }
+  }
+
+  protected void handle_no_lighting() {
+    int vIndex;
+    for (int tri = 0; tri < triangleCount; tri++) {
+      vIndex = triangles[tri][VERTEX1];
+      copy_prelit_vertex_color_to_triangle(tri, vIndex, 0);
+      vIndex = triangles[tri][VERTEX2];
+      copy_prelit_vertex_color_to_triangle(tri, vIndex, 1);
+      vIndex = triangles[tri][VERTEX3];
+      copy_prelit_vertex_color_to_triangle(tri, vIndex, 2);
+    }
+  }
+
   /**
    * This method handles the transformation, lighting, and clipping
    * operations for the shapes. Broken out as a separate function
    * so that other renderers can override. For instance, with OpenGL,
-   * this section is all handled on the graphics card.
+   * this section is all handled on the graphics card. (Not currently.)
    */
-  protected void handle_lighting() {
+  protected void handle_lighting_old() {
 
     // ------------------------------------------------------------------
     // CULLING
@@ -1523,7 +2005,7 @@ public class PGraphics3 extends PGraphics {
     // the normal with the direction from pt. to eye.
     float dir = dot(nx, ny, nz, -wx, -wy, -wz);
     // If normal is away from camera, choose its opposite.
-    // If we add backface culling this, will be backfacing
+    // If we add backface culling, this will be backfacing
     // (but since this is per vertex, it's more complicated)
     if (dir < 0) {
       nx = -nx;
@@ -1544,80 +2026,89 @@ public class PGraphics3 extends PGraphics {
     //if (!light[i]) continue;
     for (int i = 0; i < lightCount; i++) {
 
-      float denom = lightConstantFalloff[i];
+      float denom = lightsFalloffConstant[i];
       float spotTerm = 1;
 
-      if (lightType[i] == AMBIENT) {
-        if (lightQuadraticFalloff[i] != 0 || lightLinearFalloff[i] != 0) {
+      if (lights[i] == AMBIENT) {
+        if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
           // Falloff depends on distance
-          float distSq = mag(lightX[i] - wx, lightY[i] - wy, lightZ[i] - wz);
-          denom += lightQuadraticFalloff[i] * distSq + lightLinearFalloff[i] * (float)sqrt(distSq);
+          float distSq = mag(lightsX[i] - wx,
+                             lightsY[i] - wy, lightsZ[i] - wz);
+          denom += (lightsFalloffQuadratic[i] * distSq +
+                    lightsFalloffLinear[i] * (float)sqrt(distSq));
         }
         if (denom == 0) denom = 1;
-        diffuse_r += lightDiffuseR[i] * ar / denom;
-        diffuse_g += lightDiffuseG[i] * ag / denom;
-        diffuse_b += lightDiffuseB[i] * ab / denom;
+        diffuse_r += lightsDiffuseR[i] * ar / denom;
+        diffuse_g += lightsDiffuseG[i] * ag / denom;
+        diffuse_b += lightsDiffuseB[i] * ab / denom;
       }
       else {
-        //System.out.println("Light pos: " + lightX[i] + ", " + lightY[i] + ", " + lightZ[i]);
+        //If not ambient, we must deal with direction
 
         //li is the vector from the vertex to the light
         float lix, liy, liz;
         float lightDir_dot_li = 0;
         float n_dot_li = 0;
 
-        if (lightType[i] == DIRECTIONAL) {
-          lix = -lightNX[i];
-          liy = -lightNY[i];
-          liz = -lightNZ[i];
+        if (lights[i] == DIRECTIONAL) {
+          lix = -lightsNX[i];
+          liy = -lightsNY[i];
+          liz = -lightsNZ[i];
           denom = 1;
           n_dot_li = (nx*lix + ny*liy + nz*liz);
+          // If light is lighting the face away from the camera, ditch
           if (n_dot_li <= 0) {
             continue;
           }
         }
-        else { // Point or spot light
-          lix = lightX[i] - wx;
-          liy = lightY[i] - wy;
-          liz = lightZ[i] - wz;
+        else { // Point or spot light (must deal also with light location)
+          lix = lightsX[i] - wx;
+          liy = lightsY[i] - wy;
+          liz = lightsZ[i] - wz;
           // normalize
           float distSq = mag(lix, liy, liz);
           if (distSq != 0) {
             lix /= distSq; liy /= distSq; liz /= distSq;
           }
           n_dot_li = (nx*lix + ny*liy + nz*liz);
+          // If light is lighting the face away from the camera, ditch
           if (n_dot_li <= 0) {
             continue;
           }
 
-          if (lightType[i] == SPOT) {
-            lightDir_dot_li = -(lightNX[i]*lix + lightNY[i]*liy + lightNZ[i]*liz);
-            if (lightDir_dot_li <= lightSpotAngleCos[i]) {
+          if (lights[i] == SPOT) { // Must deal with spot cone
+            lightDir_dot_li =
+              -(lightsNX[i]*lix + lightsNY[i]*liy + lightsNZ[i]*liz);
+            // Outside of spot cone
+            if (lightDir_dot_li <= lightsSpotAngleCos[i]) {
               continue;
             }
-            spotTerm = pow(lightDir_dot_li, lightSpotConcentration[i]);
+            spotTerm = pow(lightDir_dot_li, lightsSpotConcentration[i]);
           }
 
-          if (lightQuadraticFalloff[i] != 0 || lightLinearFalloff[i] != 0) {
+          if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
             // Falloff depends on distance
-            denom += lightQuadraticFalloff[i] * distSq + lightLinearFalloff[i] * (float)sqrt(distSq);
+            denom += (lightsFalloffQuadratic[i] * distSq +
+                      lightsFalloffLinear[i] * (float)sqrt(distSq));
           }
         }
         // Directional, point, or spot light:
 
         // We know n_dot_li > 0 from above "continues"
-        //if (n_dot_li > 0) {
 
         if (denom == 0) denom = 1;
         float mul = n_dot_li * spotTerm / denom;
-        diffuse_r += lightDiffuseR[i] * mul;
-        diffuse_g += lightDiffuseG[i] * mul;
-        diffuse_b += lightDiffuseB[i] * mul;
+        diffuse_r += lightsDiffuseR[i] * mul;
+        diffuse_g += lightsDiffuseG[i] * mul;
+        diffuse_b += lightsDiffuseB[i] * mul;
 
         // SPECULAR
 
-        if ((sr > 0 || sg > 0 || sb > 0) && // If the material and light have a specular component.
-            (lightSpecularR[i] > 0 || lightSpecularG[i] > 0 || lightSpecularB[i] > 0) ) {
+        // If the material and light have a specular component.
+        if ((sr > 0 || sg > 0 || sb > 0) &&
+            (lightsSpecularR[i] > 0 ||
+             lightsSpecularG[i] > 0 ||
+             lightsSpecularB[i] > 0) ) {
 
           float vmag = mag(wx, wy, wz);
           if (vmag != 0) {
@@ -1631,13 +2122,13 @@ public class PGraphics3 extends PGraphics {
             sx /= vmag; sy /= vmag; sz /= vmag;
           }
           float s_dot_n = (sx*nx + sy*ny + sz*nz);
-          //if (Math.random() < 0.01) System.out.println("s_dot_n: " + s_dot_n);
+
           if (s_dot_n > 0) {
             s_dot_n = pow(s_dot_n, shininess);
             mul = s_dot_n * spotTerm / denom;
-            specular_r += lightSpecularR[i] * mul;
-            specular_g += lightSpecularG[i] * mul;
-            specular_b += lightSpecularB[i] * mul;
+            specular_r += lightsSpecularR[i] * mul;
+            specular_g += lightsSpecularG[i] * mul;
+            specular_b += lightsSpecularB[i] * mul;
           }
 
         }
@@ -2387,39 +2878,7 @@ public class PGraphics3 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // CAMERA
-
-
-  /**
-   * Calling cameraMode(PERSPECTIVE) will setup the standard
-   * Processing transformation.
-   *
-   * cameraMode(ORTHOGRAPHIC) will setup a straight orthographic
-   * projection.
-   *
-   * Note that this setting gets nuked if resize() is called.
-   */
-  /*
-  public void cameraMode(int mode) {
-    resetProjection();
-    modelview.identity();
-    modelviewInv.identity();
-
-    if (mode == PERSPECTIVE) {
-      //System.out.println("setting camera to perspective");
-      //System.out.println("  " + cameraFOV + " " + cameraAspect);
-      perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
-      lookat(cameraX, cameraY, cameraZ,
-             cameraX, cameraY, 0,
-             0, 1, 0);
-
-    } else if (mode == ORTHOGRAPHIC) {
-      ortho(0, width, 0, height, -10, 10);
-    }
-
-    cameraMode = mode;  // this doesn't do much
-  }
-  */
+  // CAMERA and PERSPECTIVE
 
 
   /**
@@ -2427,9 +2886,9 @@ public class PGraphics3 extends PGraphics {
    * the current transformation matrix). This means applyMatrix,
    * resetMatrix, etc. will affect the camera.
    * <P>
-   * This loads identity into the projection matrix, so if you want
-   * to start with a resonable default projection, you may want to
-   * call cameraMode(PERSPECTIVE); or something between begin and end.
+   * Note that the camera matrix is *not* the perspective matrix,
+   * it is in front of the modelview matrix (hence the name "model"
+   * and "view" for that matrix).
    */
   public void beginCamera() {
     if (manipulatingCamera) {
@@ -2451,7 +2910,8 @@ public class PGraphics3 extends PGraphics {
    * transformation matrix.
    * <P>
    * Note that this will destroy any settings to scale(),
-   * translate() to your scene.
+   * translate() to your scene, because the final camera
+   * matrix will be copied (not multiplied) into the modelview.
    */
   public void endCamera() {
     if (!manipulatingCamera) {
@@ -2675,13 +3135,21 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenX(float x, float y, float z) {
-    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
-    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
+    float ax =
+      modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float ay =
+      modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float az =
+      modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw =
+      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
 
-    float ox = projection.m00*ax + projection.m01*ay + projection.m02*az + projection.m03*aw;
-    float ow = projection.m30*ax + projection.m31*ay + projection.m32*az + projection.m33*aw;
+    float ox =
+      projection.m00*ax + projection.m01*ay +
+      projection.m02*az + projection.m03*aw;
+    float ow =
+      projection.m30*ax + projection.m31*ay +
+      projection.m32*az + projection.m33*aw;
 
     if (ow != 0) ox /= ow;
     return width * (1 + ox) / 2.0f;
@@ -2689,13 +3157,21 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenY(float x, float y, float z) {
-    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
-    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
+    float ax =
+      modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float ay =
+      modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float az =
+      modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw =
+      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
 
-    float oy = projection.m10*ax + projection.m11*ay + projection.m12*az + projection.m13*aw;
-    float ow = projection.m30*ax + projection.m31*ay + projection.m32*az + projection.m33*aw;
+    float oy =
+      projection.m10*ax + projection.m11*ay +
+      projection.m12*az + projection.m13*aw;
+    float ow =
+      projection.m30*ax + projection.m31*ay +
+      projection.m32*az + projection.m33*aw;
 
     if (ow != 0) oy /= ow;
     return height * (1 + oy) / 2.0f;
@@ -2703,13 +3179,21 @@ public class PGraphics3 extends PGraphics {
 
 
   public float screenZ(float x, float y, float z) {
-    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
-    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
+    float ax =
+      modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float ay =
+      modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float az =
+      modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw =
+      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
 
-    float oz = projection.m20*ax + projection.m21*ay + projection.m22*az + projection.m23*aw;
-    float ow = projection.m30*ax + projection.m31*ay + projection.m32*az + projection.m33*aw;
+    float oz =
+      projection.m20*ax + projection.m21*ay +
+      projection.m22*az + projection.m23*aw;
+    float ow =
+      projection.m30*ax + projection.m31*ay +
+      projection.m32*az + projection.m33*aw;
 
     if (ow != 0) oz /= ow;
     return (oz + 1) / 2.0f;
@@ -2717,22 +3201,28 @@ public class PGraphics3 extends PGraphics {
 
 
   public float modelX(float x, float y, float z) {
-    float ax = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
+    float ax =
+      modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+    float aw =
+      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? ax / aw : ax;
   }
 
 
   public float modelY(float x, float y, float z) {
-    float ay = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
+    float ay =
+      modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+    float aw =
+      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? ay / aw : ay;
   }
 
 
   public float modelZ(float x, float y, float z) {
-    float az = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
-    float aw = modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
+    float az =
+      modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+    float aw =
+      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
     return (aw != 0) ? az / aw : az;
   }
 
@@ -2777,108 +3267,6 @@ public class PGraphics3 extends PGraphics {
     }
   }
 
-
-
-  //////////////////////////////////////////////////////////////
-
-  // LIGHTS
-
-
-  /*
-  public void lights() {
-    lights = true;
-    defaultLights();
-  }
-
-  public void noLights() {
-    lights = false;
-  }
-  */
-
-
-  /**
-   * Simpler macro for setting up a diffuse light at a position.
-   * Turns on a diffuse light with the color passed in,
-   * and sets that light's ambient and specular components to zero.
-   *
-   * (The variables are named red, green, blue instead of r, g, b
-   * because otherwise the compiler gets stuck on g.light() inside
-   * the auto-generated section of PApplet)
-   */
-  /*
-  public void light(int num, float x, float y, float z,
-                    float red, float green, float blue) {
-    lightPosition(num, x, y, z);
-    lightAmbient(num, 0, 0, 0);
-    lightDiffuse(num, red, green, blue);
-    lightSpecular(num, 0, 0, 0);
-    lightEnable(num);
-  }
-
-
-  public void lightEnable(int num) {
-    light[num] = true;
-  }
-
-  public void lightDisable(int num) {
-    light[num] = false;
-  }
-
-  public void lightPosition(int num, float x, float y, float z) {
-    lightX[num] = modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    lightY[num] = modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    lightZ[num] = modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
-  }
-
-  public void lightAmbient(int num, float x, float y, float z) {
-    colorCalc(x, y, z);
-    lightDiffuseR[num] = calcR;
-    lightDiffuseG[num] = calcG;
-    lightDiffuseB[num] = calcB;
-  }
-
-  public void lightDiffuse(int num, float x, float y, float z) {
-    colorCalc(x, y, z);
-    lightDiffuseR[num] = calcR;
-    lightDiffuseG[num] = calcG;
-    lightDiffuseB[num] = calcB;
-  }
-
-  public void lightSpecular(int num, float x, float y, float z) {
-    colorCalc(x, y, z);
-    lightSpecularR[num] = calcR;
-    lightSpecularG[num] = calcG;
-    lightSpecularB[num] = calcB;
-  }
-
-  public void lightDirection(int num, float x, float y, float z) {
-    // Multiply by inverse transpose.
-    lightNX[num] = modelviewInv.m00*x + modelviewInv.m10*y + modelviewInv.m20*z + modelviewInv.m30;
-    lightNY[num] = modelviewInv.m01*x + modelviewInv.m11*y + modelviewInv.m21*z + modelviewInv.m31;
-    lightNZ[num] = modelviewInv.m02*x + modelviewInv.m12*y + modelviewInv.m22*z + modelviewInv.m32;
-    float norm = mag(lightNX[num], lightNY[num], lightNZ[num]);
-    if (norm == 0 || norm == 1) return;
-    lightNX[num] /= norm;
-    lightNY[num] /= norm;
-    lightNZ[num] /= norm;
-  }
-
-
-  public void lightFalloff(int num, float constant, float linear, float quadratic) {
-    lightConstantFalloff[num] = constant;
-    lightLinearFalloff[num] = linear;
-    lightQuadraticFalloff[num] = quadratic;
-  }
-
-  public void lightSpotAngle(int num, float spotAngle) {
-    lightSpotAngle[num] = spotAngle;
-    lightSpotAngleCos[num] = max(0, cos(spotAngle));
-  }
-
-  public void lightSpotConcentration(int num, float concentration) {
-    lightSpotConcentration[num] = concentration;
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -2931,35 +3319,6 @@ public class PGraphics3 extends PGraphics {
     super.fill(x, y, z, a);
     colorAmbient();
   }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  /*
-  public void diffuse(int rgb) {
-    super.fill(rgb);
-  }
-
-  public void diffuse(float gray) {
-    super.fill(gray);
-  }
-
-
-  public void diffuse(float gray, float alpha) {
-    super.fill(gray, alpha);
-  }
-
-
-  public void diffuse(float x, float y, float z) {
-    super.fill(x, y, z);
-  }
-
-
-  public void diffuse(float x, float y, float z, float a) {
-    super.fill(x, y, z, a);
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -3106,6 +3465,9 @@ public class PGraphics3 extends PGraphics {
     int colorModeSaved = colorMode;
     colorMode = RGB;
 
+    lightFalloff(1, 0, 0);
+    lightSpecular(0, 0, 0);
+
     ambientLight(colorModeX * 0.23f,
                  colorModeY * 0.23f,
                  colorModeZ * 0.23f);
@@ -3115,28 +3477,34 @@ public class PGraphics3 extends PGraphics {
                      0, 0, -1);
 
     colorMode = colorModeSaved;
+
+    lightingDependsOnVertexPosition = false;
   }
 
 
   /**
    * Add an ambient light based on the current color mode.
    */
-  public void ambientLight(float r, float g, float b) {
+  public void ambientLight(float r, float g, float b, float x, float y, float z) {
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseR[lightCount] = calcR;
-    lightDiffuseG[lightCount] = calcG;
-    lightDiffuseB[lightCount] = calcB;
+    lightsDiffuseR[lightCount] = calcR;
+    lightsDiffuseG[lightCount] = calcG;
+    lightsDiffuseB[lightCount] = calcB;
 
-    lightType[lightCount] = AMBIENT;
-    lightConstantFalloff[lightCount] = 1;
-    lightLinearFalloff[lightCount] = 0;
-    lightQuadraticFalloff[lightCount] = 0;
-    lightPosition(lightCount, 0, 0, 0);
+    lights[lightCount] = AMBIENT;
+    lightsFalloffConstant[lightCount] = lightFalloffConstant;
+    lightsFalloffLinear[lightCount] = lightFalloffLinear;
+    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
+    lightPosition(lightCount, x, y, z);
     lightCount++;
     //return lightCount-1;
+  }
+
+  public void ambientLight(float r, float g, float b) {
+    ambientLight(r, g, b, 0, 0, 0);
   }
 
 
@@ -3146,18 +3514,18 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseR[lightCount] = calcR;
-    lightDiffuseG[lightCount] = calcG;
-    lightDiffuseB[lightCount] = calcB;
+    lightsDiffuseR[lightCount] = calcR;
+    lightsDiffuseG[lightCount] = calcG;
+    lightsDiffuseB[lightCount] = calcB;
 
     //light[lightCount] = true;
-    lightType[lightCount] = DIRECTIONAL;
-    lightConstantFalloff[lightCount] = 1;
-    lightLinearFalloff[lightCount] = 0;
-    lightQuadraticFalloff[lightCount] = 0;
-    lightSpecularR[lightCount] = 0;
-    lightSpecularG[lightCount] = 0;
-    lightSpecularB[lightCount] = 0;
+    lights[lightCount] = DIRECTIONAL;
+    lightsFalloffConstant[lightCount] = lightFalloffConstant;
+    lightsFalloffLinear[lightCount] = lightFalloffLinear;
+    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
+    lightsSpecularR[lightCount] = lightSpecularR;
+    lightsSpecularG[lightCount] = lightSpecularG;
+    lightsSpecularB[lightCount] = lightSpecularB;
     lightDirection(lightCount, nx, ny, nz);
     lightCount++;
     //return lightCount-1;
@@ -3170,50 +3538,53 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseR[lightCount] = calcR;
-    lightDiffuseG[lightCount] = calcG;
-    lightDiffuseB[lightCount] = calcB;
+    lightsDiffuseR[lightCount] = calcR;
+    lightsDiffuseG[lightCount] = calcG;
+    lightsDiffuseB[lightCount] = calcB;
 
     //light[lightCount] = true;
-    lightType[lightCount] = POINT;
-    lightConstantFalloff[lightCount] = 1;
-    lightLinearFalloff[lightCount] = 0;
-    lightQuadraticFalloff[lightCount] = 0;
-    lightSpecularR[lightCount] = 0;
-    lightSpecularG[lightCount] = 0;
-    lightSpecularB[lightCount] = 0;
+    lights[lightCount] = POINT;
+    lightsFalloffConstant[lightCount] = lightFalloffConstant;
+    lightsFalloffLinear[lightCount] = lightFalloffLinear;
+    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
+    lightsSpecularR[lightCount] = lightSpecularR;
+    lightsSpecularG[lightCount] = lightSpecularG;
+    lightsSpecularB[lightCount] = lightSpecularB;
     lightPosition(lightCount, x, y, z);
     lightCount++;
+
+    lightingDependsOnVertexPosition = true;
     //return lightCount-1;
   }
 
 
   public void spotLight(float r, float g, float b,
                         float x, float y, float z,
-                        float nx, float ny, float nz, float angle) {
+                        float nx, float ny, float nz,
+                        float angle, float concentration) {
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightDiffuseR[lightCount] = calcR;
-    lightDiffuseG[lightCount] = calcG;
-    lightDiffuseB[lightCount] = calcB;
+    lightsDiffuseR[lightCount] = calcR;
+    lightsDiffuseG[lightCount] = calcG;
+    lightsDiffuseB[lightCount] = calcB;
 
-    //light[lightCount] = true;
-    lightType[lightCount] = SPOT;
-    lightConstantFalloff[lightCount] = 1;
-    lightLinearFalloff[lightCount] = 0;
-    lightQuadraticFalloff[lightCount] = 0;
-    lightSpecularR[lightCount] = 0;
-    lightSpecularG[lightCount] = 0;
-    lightSpecularB[lightCount] = 0;
+    lights[lightCount] = SPOT;
+    lightsFalloffConstant[lightCount] = lightFalloffConstant;
+    lightsFalloffLinear[lightCount] = lightFalloffLinear;
+    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
+    lightsSpecularR[lightCount] = lightSpecularR;
+    lightsSpecularG[lightCount] = lightSpecularG;
+    lightsSpecularB[lightCount] = lightSpecularB;
     lightPosition(lightCount, x, y, z);
     lightDirection(lightCount, nx, ny, nz);
-    lightSpotAngle[lightCount] = angle;
-    lightSpotAngleCos[lightCount] = max(0, cos(angle));
-    lightSpotConcentration[lightCount] = 1;
+    lightsSpotAngle[lightCount] = angle;
+    lightsSpotAngleCos[lightCount] = max(0, cos(angle));
+    lightsSpotConcentration[lightCount] = concentration;
     lightCount++;
-    //return lightCount-1;
+
+    lightingDependsOnVertexPosition = true;
   }
 
 
@@ -3222,13 +3593,11 @@ public class PGraphics3 extends PGraphics {
    * Default is lightFalloff(1, 0, 0).
    */
   public void lightFalloff(float constant, float linear, float quadratic) {
-    if (lightCount < 1) {
-      throw new RuntimeException("Must create a light before " +
-                                 "calling lightFalloff()");
-    }
-    lightConstantFalloff[lightCount-1] = constant;
-    lightLinearFalloff[lightCount-1] = linear;
-    lightQuadraticFalloff[lightCount-1] = quadratic;
+    lightFalloffConstant = constant;
+    lightFalloffLinear = linear;
+    lightFalloffQuadratic = quadratic;
+
+    lightingDependsOnVertexPosition = true;
   }
 
 
@@ -3236,14 +3605,12 @@ public class PGraphics3 extends PGraphics {
    * Set the specular color of the last light created.
    */
   public void lightSpecular(float x, float y, float z) {
-    if (lightCount < 1) {
-      throw new RuntimeException("Must create a light before " +
-                                 "calling lightSpecular().");
-    }
     colorCalc(x, y, z);
-    lightSpecularR[lightCount-1] = calcR;
-    lightSpecularG[lightCount-1] = calcG;
-    lightSpecularB[lightCount-1] = calcB;
+    lightSpecularR = calcR;
+    lightSpecularG = calcG;
+    lightSpecularB = calcB;
+
+    lightingDependsOnVertexPosition = true;
   }
 
 
@@ -3252,11 +3619,11 @@ public class PGraphics3 extends PGraphics {
    * based on the current modelview matrix.
    */
   protected void lightPosition(int num, float x, float y, float z) {
-    lightX[num] =
+    lightsX[num] =
       modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    lightY[num] =
+    lightsY[num] =
       modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    lightZ[num] =
+    lightsZ[num] =
       modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
   }
 
@@ -3267,22 +3634,22 @@ public class PGraphics3 extends PGraphics {
    */
   protected void lightDirection(int num, float x, float y, float z) {
     // Multiply by inverse transpose.
-    lightNX[num] =
+    lightsNX[num] =
       modelviewInv.m00*x + modelviewInv.m10*y +
       modelviewInv.m20*z + modelviewInv.m30;
-    lightNY[num] =
+    lightsNY[num] =
       modelviewInv.m01*x + modelviewInv.m11*y +
       modelviewInv.m21*z + modelviewInv.m31;
-    lightNZ[num] =
+    lightsNZ[num] =
       modelviewInv.m02*x + modelviewInv.m12*y +
       modelviewInv.m22*z + modelviewInv.m32;
 
-    float norm = mag(lightNX[num], lightNY[num], lightNZ[num]);
+    float norm = mag(lightsNX[num], lightsNY[num], lightsNZ[num]);
     if (norm == 0 || norm == 1) return;
 
-    lightNX[num] /= norm;
-    lightNY[num] /= norm;
-    lightNZ[num] /= norm;
+    lightsNX[num] /= norm;
+    lightsNY[num] /= norm;
+    lightsNZ[num] /= norm;
   }
 
 
