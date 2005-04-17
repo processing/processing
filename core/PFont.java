@@ -758,7 +758,7 @@ public class PFont implements PConstants {
    * This only works with Java 1.3 and higher.
    *
    * @param font the font object to create from
-   * @param all true to include all available characters in the font
+   * @param charset array of all unicode chars that should be included
    * @param smooth true to enable smoothing/anti-aliasing
    */
   public PFont(Font font, char charset[], boolean smooth) {
