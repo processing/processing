@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  RunnerException - an exception with a line number attached
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and is
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -24,6 +23,10 @@
 
 package processing.app;
 
+/**
+ * An exception with a line number attached that occurs
+ * during either compile time or run time.
+ */
 public class RunnerException extends Exception {
   public int file = -1;
   public int line = -1;
@@ -58,7 +61,7 @@ public class RunnerException extends Exception {
   /**
    * Nix the java.lang crap out of an exception message
    * because it scares the children.
-   *
+   * <P>
    * This function must be static to be used with super()
    * in each of the constructors above.
    */

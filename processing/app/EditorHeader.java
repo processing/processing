@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  EditorHeader - sketch tabs at the top of the screen
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -32,6 +31,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
+/**
+ * Sketch tabs at the top of the editor window.
+ */
 public class EditorHeader extends JComponent {
   static Color backgroundColor;
   static Color textColor[] = new Color[2];

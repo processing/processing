@@ -1,11 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  EditorStatus - panel containing status messages
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,9 +27,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import sun.awt.AppContext;  // from java.awt.Dialog, for blocking
 
-
+/**
+ * Panel just below the editing area that contains status messages.
+ */
 public class EditorStatus extends JPanel implements ActionListener {
   static Color bgcolor[];
   static Color fgcolor[];

@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PFont - font object for text rendering
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry & Casey Reas
@@ -35,7 +34,6 @@ import java.util.*;
  * Grayscale bitmap font class used by Processing.
  * <P>
  * Awful (and by that, I mean awesome) ascii (non)art for how this works:
- *
  * <PRE>
  *   |
  *   |                   height is the full used height of the image

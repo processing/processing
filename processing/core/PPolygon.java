@@ -1,12 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PPolygon - zbuffer polygon rendering object for BGraphics
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Copyright (c) 2001-03
-  Ben Fry, Massachusetts Institute of Technology and
-  Casey Reas, Interaction Design Institute Ivrea
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +25,11 @@
 package processing.core;
 
 
+/**
+ * zbuffer polygon rendering object for PGraphics.
+ * <P>
+ * Likely to be removed before 1.0 as it's no longer particularly used.
+ */
 public class PPolygon implements PConstants {
   static final int DEFAULT_SIZE = 64; // this is needed for spheres
   float vertices[][] = new float[DEFAULT_SIZE][VERTEX_FIELD_COUNT];
@@ -54,7 +57,6 @@ public class PPolygon implements PConstants {
   int rgba;
   int r2, g2, b2, a2, a2orig;
 
-  //float zbuffer[];
   boolean noDepthTest;
 
   PGraphics parent;

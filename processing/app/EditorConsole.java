@@ -1,11 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  EditorConsole - message console that sits below the program area
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,11 +30,13 @@ import javax.swing.*;
 import javax.swing.text.*;
 
 
-// debugging this class is tricky.. if it's throwing
-// exceptions, don't take over System.err, and debug
-// while watching just System.out
-// or just write directly to systemOut or systemErr
-
+/**
+ * Message console that sits below the editing area.
+ * <P>
+ * Debugging this class is tricky... If it's throwing exceptions,
+ * don't take over System.err, and debug while watching just System.out
+ * or just write println() or whatever directly to systemOut or systemErr.
+ */
 public class EditorConsole extends JScrollPane {
   Editor editor;
 
