@@ -129,6 +129,7 @@ public class Client implements Runnable {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    thread = null;
     input = null;
     output = null;
 
@@ -145,7 +146,8 @@ public class Client implements Runnable {
   public void run() {
     while (Thread.currentThread() == thread) {
       try {
-        while (input.available() > 0) {  // this will block
+        while ((input != null) &&
+               (input.available() > 0)) {  // this will block
           synchronized (buffer) {
             if (bufferLast == buffer.length) {
               byte temp[] = new byte[bufferLast << 1];

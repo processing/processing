@@ -2,30 +2,39 @@
 X can't edit prefs while processing is open, remove the link
 X add run.options for things run externally
 X   load options via vector because they need to be split up
+X stability improvements to processing.exe from simon
+X memory on external apps is a little broken
 
 pending
-_ rename video.Camera to video.Video ?
+_ rename video.Camera to video.Video ? Capture ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
-_ casey stuff
-_   new bboard? archive the old one, remove bugs sections
-_   environment reference
-_   list of changes since rev 69? run through revisions.txt
+_   need to straighten out for when audio comes along
 
-_ check for updates should happen only daily or weekly
+_ list of changes since rev 69? run through revisions.txt
 
-_ setup bugzilla and enter all the bugs
-
-_ create font is somewhat broken
-
-_ memory on external apps is a little broken
+_ update the message sent to people who sign up for the list
+_   change success message to read
+_     your email has been received successfully, you'll be receiving 
+_     
 
 //
 
-SAVE AS BUGS
+"SAVE AS..." BUGS
 
-Minor issue, but caused me a couple seconds of confusion.  If you rename your sketch then try to close the application without saving first, it asks you if you want to save but mentions the pre-rename name.  But I hit yes, quit, came back in, and all seemed right in the world.
+Minor issue, but caused me a couple seconds of confusion.  If you
+rename your sketch then try to close the application without saving
+first, it asks you if you want to save but mentions the pre-rename
+name.  But I hit yes, quit, came back in, and all seemed right in the
+world.
 
-Is it possible that saving with the 'save' button doesn't pay attention to where you point at the project folder from prefs?  Jeez, i phrased that horribly.  I opened preferences for Processing and made the default sketchbook location processing-0079/projects.  I then put all my older projects in that project folder.  When i opened up an old file and made changes, i then hit 'save' and quit.  I relaunched v79 and opened the aforementioned file, and none of the changes were there.  but they were in v77 project folder. 
+Is it possible that saving with the 'save' button doesn't pay
+attention to where you point at the project folder from prefs?  Jeez,
+i phrased that horribly.  I opened preferences for Processing and made
+the default sketchbook location processing-0079/projects.  I then put
+all my older projects in that project folder.  When i opened up an old
+file and made changes, i then hit 'save' and quit.  I relaunched v79
+and opened the aforementioned file, and none of the changes were
+there.  but they were in v77 project folder. 
 
 create a new sketch
 create a new tab named "a"
@@ -36,7 +45,10 @@ unhide "a_2"
 unhide "a"
 where did "a_2" go ?
 
-(v74) if a project folder is made (with save as), and then deleted while processing is still open, there is an error (of course).  but the error ('file/folder not found') is not displayed to the user, and the drop-downs don't go away / the IDE doesn't refresh.
+(v74) if a project folder is made (with save as), and then deleted
+while processing is still open, there is an error (of course).  but
+the error ('file/folder not found') is not displayed to the user, 
+and the drop-downs don't go away / the IDE doesn't refresh.
 
 (74) "save as" not actually saving properly
 File>New
@@ -50,13 +62,21 @@ can tell, is to Save As once, make at least one change, then Save.
 
 what happens if folder already exists on save as?
 
-saving a project over an already existing project does not get rid of the .pde files that arent overwritten.  not sure if this is feature or bug, but it took me by surprise.  it seemed to only overwrite .pde files with the same name, but everything else in that project folder stays as is. 
+saving a project over an already existing project does not get rid of
+the .pde files that arent overwritten.  not sure if this is feature or
+bug, but it took me by surprise.  it seemed to only overwrite .pde
+files with the same name, but everything else in that project folder
+stays as is. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 NOT NECESSARY BEFORE BETA
+
+_ check for updates should happen only daily or weekly
+
+_ setup bugzilla and enter all the bugs
 
 _ placement of 100x100 items is odd
 _   happens with P3D and maybe also P2D?

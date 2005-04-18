@@ -116,6 +116,7 @@ public class PFont implements PConstants {
     //int numBits = is.readInt();
     // used to be the bitCount, but now used for version number.
     // version 8 is any font before 69, so 9 is anything from 83+
+    // 9 was buggy so gonna increment to 10.
     int version = is.readInt();
 
     // this was formerly ignored, now it's the actual font size
@@ -212,7 +213,7 @@ public class PFont implements PConstants {
       //System.out.println();
     }
 
-    if (version == 9) {  // includes the font name at the end of the file
+    if (version == 10) {  // includes the font name at the end of the file
       name = is.readUTF();
       psname = is.readUTF();
     }
@@ -220,16 +221,21 @@ public class PFont implements PConstants {
 
 
   /**
-   * Write this PFont to an OutputStream. It is assumed that the
-   * calling class will handle closing the stream when finished.
+   * Write this PFont to an OutputStream.
+   * <p>
+   * This is used by the Create Font tool, or whatever anyone else dreams
+   * up for messing with fonts themselves.
+   * <p>
+   * It is assumed that the calling class will handle closing
+   * the stream when finished.
    */
-  public void write(OutputStream output) throws IOException {
+  public void save(OutputStream output) throws IOException {
     DataOutputStream os = new DataOutputStream(output);
 
     os.writeInt(charCount);
 
     // formerly numBits, now used for version number
-    os.writeInt((name != null) ? 9 : 8);
+    os.writeInt((name != null) ? 10 : 8);
 
     os.writeInt(size);    // formerly mboxX (was 64, now 48)
     os.writeInt(mbox2);   // formerly mboxY (was 64, still 64)
@@ -254,8 +260,9 @@ public class PFont implements PConstants {
       }
     }
 
-    if (name != null) {  // version 9
+    if (name != null) {  // version 10
       os.writeUTF(name);
+      os.writeUTF(psname);
     }
 
     os.flush();
