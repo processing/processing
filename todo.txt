@@ -9,6 +9,7 @@ X update the script for the mailing list
 save as... bugs
 X make sure that the sketch folder still exists when doing any operation
 X   otherwise editor gets into a weird state
+X remove a folder if someone tries to replace it via "save as"
 
 pending
 _ rename video.Camera to video.Video ? Capture ?
@@ -54,14 +55,6 @@ File>Open original file
 file is empty.
 the only way to make File>Save As actually save new files, as far as i
 can tell, is to Save As once, make at least one change, then Save. 
-
-what happens if folder already exists on save as?
-
-saving a project over an already existing project does not get rid of
-the .pde files that arent overwritten.  not sure if this is feature or
-bug, but it took me by surprise.  it seemed to only overwrite .pde
-files with the same name, but everything else in that project folder
-stays as is. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
