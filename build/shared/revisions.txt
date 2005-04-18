@@ -7,7 +7,13 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0083 - 
+ABOUT REV 0083 - 17 april 2005
+
+- new reference and examples in this release. please test!
+
+- readme.txt and bugs.txt have been removed in favor of a single FAQ,
+  which contains the appropriate information, and will be mirrored as
+  the FAQ on processing.org as well.
 
 - what he hope is the finalized lighting api for beta/1.0
 
@@ -42,6 +48,9 @@ ABOUT REV 0083 -
 
 - video camera api should now be finalized:
 
+  + we're still debating on whether to rename Camera to something
+    else. we just can't think of a good name.
+
   + that whole thing with passing null or "" to the camera constructor
     was really silly. now either one will just give you the default
     video input device. 
@@ -72,7 +81,16 @@ ABOUT REV 0083 -
 - nfc() joins the nf() family to format integers and floats with commas.
 
 - linux version returns, with several fixes, and now handles 
-  (warns about) libstdc++ incompatabilities.
+  (warns about) libstdc++ incompatabilities with jikes
+
+
+The last remaining things before Beta:
+
+- make sure there isn't any super badness in the current version
+
+- fix the "save as" bugs
+
+- "create font" is somewhat broken in this release
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
