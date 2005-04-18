@@ -736,6 +736,13 @@ public class Sketch {
       }
     } catch (IOException e) { }
 
+    // if the new folder already exists, then need to remove
+    // its contents before copying everything over
+    // (user will have already been warned)
+    Base.removeDir(newFolder);
+    // in fact, you can't do this on windows because it tries
+    // to go into the same folder, but it happens on osx a lot.
+
     // copy the entire contents of the sketch folder
     Base.copyDir(folder, newFolder);
 
