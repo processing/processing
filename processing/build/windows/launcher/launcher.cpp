@@ -21,7 +21,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // all these malloc statements... things may need to be larger.
 
   // what was passed to this application
-  char *incoming_cmdline = (char *)malloc(256 * sizeof(char));
+  char *incoming_cmdline = (char *)malloc(strlen(lpCmd) * sizeof(char));
   strcpy (incoming_cmdline, lpCmd);
 
   // what gets put together to pass to jre
@@ -38,7 +38,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // remove the application name
   *(strrchr(loaddir, '\\')) = '\0';
 
-  char *cp = (char *)malloc(8 * strlen(loaddir) + 200);
+  char *cp = (char *)malloc(8 * strlen(loaddir) + 4096);
 
 
   // if this code looks shitty, that's because it is. people are 
@@ -48,6 +48,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // quotes will show up. this is a guess at dealing with the things, 
   // without spending a whole day to make it overly robust. [fry]
 
+  
+  
 
   // test to see if running with a java runtime nearby or not
   char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
@@ -58,13 +60,14 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   int local_jre_installed = (fp != NULL);
   //char *rt_jar = (fp == NULL) ? "" : "java\\lib\\rt.jar;";
   if (fp != NULL) fclose(fp); // argh! this was probably causing trouble
+  
 
   //MessageBox(NULL, local_jre_installed ? 
   //         "local jre installed" : "couldn't find jre", "p5", MB_OK);
 
 
   //const char *envClasspath = getenv("CLASSPATH");
-  char *env_classpath = (char *)malloc(256 * sizeof(char));
+  char *env_classpath = (char *)malloc(16384 * sizeof(char));
 
   // ignoring CLASSPATH for now, because it's not needed
   // and causes more trouble than it's worth [0060]
@@ -94,7 +97,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
   */
 
-  char *qtjava_path = (char *)malloc(256 * sizeof(char));
+  char *qtjava_path = (char *)malloc(16384 * sizeof(char));
   qtjava_path[0] = 0;
 
   if (getenv("WINDIR") == NULL) {
@@ -126,7 +129,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
       }
     }
   }
-
+  
   // NO! put quotes around contents of cp, because %s might have spaces in it.
   // don't put quotes in it, because it's setting the environment variable
   // for CLASSPATH, not being included on the command line. so setting the
@@ -166,21 +169,22 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           loaddir, loaddir, loaddir, loaddir, 
           env_classpath);
 
-  //MessageBox(NULL, cp,
-  //         "it's twoo! it's twoo!", MB_OK);
+  //MessageBox(NULL, cp, "it's twoo! it's twoo!", MB_OK);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
                "Processing Error", MB_OK);
     return 0;
   }
+  
+  
 
   // need to add the local jre to the path for 'java mode' in the env
   if (local_jre_installed) {
-    char *env_path = (char *)malloc(512 * sizeof(char));
+    
+    char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
     strcpy(env_path, getenv("PATH"));
-
-    char *paf = (char *)malloc(1024 * sizeof(char));
+    char *paf = (char *)malloc((strlen(env_path) + strlen(loaddir) + 32) * sizeof(char));
     sprintf(paf, "%s\\java\\bin;%s", loaddir, env_path);
 
     if (!SetEnvironmentVariable("PATH", paf)) {
@@ -188,6 +192,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
                  "Processing Error", MB_OK);
       return 0;
     }
+    
+	
   }
 
   //MessageBox(NULL, cp, "whaadddup", MB_OK);
@@ -198,7 +204,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // append additional incoming stuff (document names), if any
   strcat(outgoing_cmdline, incoming_cmdline);
 
-  char *executable = (char *)malloc(256 * sizeof(char));
+  char *executable = (char *)malloc((strlen(loaddir) + 256) * sizeof(char));
   // loaddir is the name path to the current application
 
   //if (localJreInstalled) {
