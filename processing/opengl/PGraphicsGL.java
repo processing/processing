@@ -1839,4 +1839,10 @@ public class PGraphicsGL extends PGraphics3 {
       System.out.println();
     }
   }
+
+  // GL will do the clipping for us
+  protected void add_triangle(int a, int b, int c) {
+    add_triangle_no_clip(a, b, c);
+  }
+
 }
