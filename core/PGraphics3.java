@@ -309,6 +309,7 @@ public class PGraphics3 extends PGraphics {
     cameraZ = cameraY / ((float) tan(PI * cameraFOV / 360f));
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
+    
     cameraAspect = (float)width / (float)height;
 
     // init lights (in resize() instead of allocate() b/c needed by opengl)
@@ -961,6 +962,37 @@ public class PGraphics3 extends PGraphics {
 
 
     // ------------------------------------------------------------------
+    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO CAMERA SPACE (VX, VY, VZ)
+    // It is necessary to do this now because we will be clipping them on
+    // add_triangle.
+
+    for (int i = vertex_start; i < vertex_end; i++) {
+      float vertex[] = vertices[i];
+
+      vertex[VX] =
+        modelview.m00*vertex[MX] + modelview.m01*vertex[MY] +
+        modelview.m02*vertex[MZ] + modelview.m03;
+      vertex[VY] =
+        modelview.m10*vertex[MX] + modelview.m11*vertex[MY] +
+        modelview.m12*vertex[MZ] + modelview.m13;
+      vertex[VZ] =
+        modelview.m20*vertex[MX] + modelview.m21*vertex[MY] +
+        modelview.m22*vertex[MZ] + modelview.m23;
+      vertex[VW] =
+        modelview.m30*vertex[MX] + modelview.m31*vertex[MY] +
+        modelview.m32*vertex[MZ] + modelview.m33;
+
+      // normalize
+      if (vertex[VW] != 0 && vertex[VW] != ONE) {
+        vertex[VX] /= vertex[VW];
+        vertex[VY] /= vertex[VW];
+        vertex[VZ] /= vertex[VW];
+      }
+      vertex[VW] = ONE;
+    }
+    
+    
+    // ------------------------------------------------------------------
     // CREATE TRIANGLES
 
     if (fill) {
@@ -1023,35 +1055,6 @@ public class PGraphics3 extends PGraphics {
         }
         break;
       }
-    }
-
-
-    // ------------------------------------------------------------------
-    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO CAMERA SPACE (VX, VY, VZ)
-
-    for (int i = vertex_start; i < vertex_end; i++) {
-      float vertex[] = vertices[i];
-
-      vertex[VX] =
-        modelview.m00*vertex[MX] + modelview.m01*vertex[MY] +
-        modelview.m02*vertex[MZ] + modelview.m03;
-      vertex[VY] =
-        modelview.m10*vertex[MX] + modelview.m11*vertex[MY] +
-        modelview.m12*vertex[MZ] + modelview.m13;
-      vertex[VZ] =
-        modelview.m20*vertex[MX] + modelview.m21*vertex[MY] +
-        modelview.m22*vertex[MZ] + modelview.m23;
-      vertex[VW] =
-        modelview.m30*vertex[MX] + modelview.m31*vertex[MY] +
-        modelview.m32*vertex[MZ] + modelview.m33;
-
-      // normalize
-      if (vertex[VW] != 0 && vertex[VW] != ONE) {
-        vertex[VX] /= vertex[VW];
-        vertex[VY] /= vertex[VW];
-        vertex[VZ] /= vertex[VW];
-      }
-      vertex[VW] = ONE;
     }
 
 
@@ -1143,8 +1146,236 @@ public class PGraphics3 extends PGraphics {
     pathLength[pathCount-1]++;
   }
 
+  protected void add_triangle(int a, int b, int c) {
+    //add_triangle_with_clip(a, b, c);
+    add_triangle_no_clip(a, b, c);
+  }
+  
+  protected final void add_triangle_with_clip(int a, int b, int c) {
+    boolean aClipped = false;
+    boolean bClipped = false;
+    boolean cClipped = false;
+    int     clippedCount = 0;
+  
+    cameraNear = -8;
+    if (vertices[a][VZ] > cameraNear) {
+      aClipped = true;
+      clippedCount++;
+    }
+    if (vertices[b][VZ] > cameraNear) {
+      bClipped = true;
+      clippedCount++;
+    }
+    if (vertices[c][VZ] > cameraNear) {
+      cClipped = true;
+      clippedCount++;
+    }
+    if (clippedCount == 0) {
+      add_triangle_no_clip(a, b, c);
+      return;
+    }
+    else if (clippedCount == 3) {
+      return;
+    }
+    //                                                          | .
+    // In this case there is only one visible point.            |/|    
+    // So we'll have to make two new points on the clip line   <| |
+    // and add that triangle instead.                           |\|
+    //                                                          | .
+    else if (clippedCount == 2) { 
+      int ca, cb, cc, cd, ce;
+      if (!aClipped) {
+        ca = a;
+        cb = b;
+        cc = c;
+      }
+      else if (!bClipped) {
+        ca = b;
+        cb = a;
+        cc = c;
+      }
+      else { //if (!cClipped) {
+        ca = c;
+        cb = b;
+        cc = a;
+      }
+      
+      cd = interpolate_clip_vertex(ca, cb);
+      ce = interpolate_clip_vertex(ca, cc);
+      add_triangle(ca, cd, ce);
+      return;
+    }
+    
+    //                                                          . |
+    // In this case there are two visible points.               |\|    
+    // So we'll have to make two new points on the clip line    | |>
+    // and then add two new triangles.                          |/|
+    //                                                          . |
+    else { // (clippedCount == 1) {
+      int ca, cb, cc, cd, ce;
+      if (aClipped) {
+        ca = c;
+        cb = b;
+        cc = a;
+      }
+      else if (bClipped) {
+        ca = a;
+        cb = c;
+        cc = b;
+      }
+      else { //if (cClipped) {
+        ca = a;
+        cb = b;
+        cc = c;
+      }
+      
+      cd = interpolate_clip_vertex(ca, cc);
+      ce = interpolate_clip_vertex(cb, cc);
+      add_triangle(ca, cd, cb);
+      add_triangle(cb, cd, ce);
+      return;
+    }
+  }
+  
+  private final int interpolate_clip_vertex(int a, int b) {
+    float[] va;
+    float[] vb;
+    // Set up va, vb such that va[VZ] >= vb[VZ]
+    if (vertices[a][VZ] < vertices[b][VZ]) {
+      va = vertices[b];
+      vb = vertices[a];
+    }
+    else {
+      va = vertices[a];
+      vb = vertices[b];
+    }
+    float az = va[VZ];
+    float bz = vb[VZ];
+    
+    float dz = az - bz;
+    // If they have the same z, just use pt. a.
+    if (dz == 0) {
+      return a;
+    }
+    float pa = (az - cameraNear) / dz;
+    float pb = (cameraNear - bz) / dz;
+    
+    vertex(pa * va[VX] + pb * vb[VX], pa * va[VY] + pb * vb[VY], pa * az + pb * bz);
+    int irv = vertexCount - 1;
+    float[] rv = vertices[irv];
+    
+    rv[R] = pa * va[R] + pb * vb[R];
+    rv[G] = pa * va[G] + pb * vb[G];
+    rv[B] = pa * va[B] + pb * vb[B];
+    rv[A] = pa * va[A] + pb * vb[A];
+    
+    rv[U] = pa * va[U] + pb * vb[U];
+    rv[V] = pa * va[V] + pb * vb[V];
+    
+    rv[SR] = pa * va[SR] + pb * vb[SR];
+    rv[SG] = pa * va[SG] + pb * vb[SG];
+    rv[SB] = pa * va[SB] + pb * vb[SB];
+    rv[SA] = pa * va[SA] + pb * vb[SA];
+    
+    rv[NX] = pa * va[NX] + pb * vb[NX];
+    rv[NY] = pa * va[NY] + pb * vb[NY];
+    rv[NZ] = pa * va[NZ] + pb * vb[NZ];
+    
+    rv[SW] = pa * va[SW] + pb * vb[SW];
+    
+    rv[AR] = pa * va[AR] + pb * vb[AR];
+    rv[AG] = pa * va[AG] + pb * vb[AG];
+    rv[AB] = pa * va[AB] + pb * vb[AB];
+    
+    rv[SPR] = pa * va[SPR] + pb * vb[SPR];
+    rv[SPG] = pa * va[SPG] + pb * vb[SPG];
+    rv[SPB] = pa * va[SPB] + pb * vb[SPB];
+    rv[SPA] = pa * va[SPA] + pb * vb[SPA];
+    
+    rv[ER] = pa * va[ER] + pb * vb[ER];
+    rv[EG] = pa * va[EG] + pb * vb[EG];
+    rv[EB] = pa * va[EB] + pb * vb[EB];
+    
+    rv[SHINE] = pa * va[SHINE] + pb * vb[SHINE];
+    
+    rv[BEEN_LIT] = 0;
+    
+    return irv;
+  }
 
-  protected final void add_triangle(int a, int b, int c) {
+/*  
+static final int X = 0; // transformed xyzw
+  static final int Y = 1; // formerly SX SY SZ
+  static final int Z = 2;
+
+  static final int R = 3;  // actual rgb, after lighting
+  static final int G = 4;  // fill stored here, transform in place
+  static final int B = 5;
+  static final int A = 6;
+
+  // values that need no transformation
+  // but will be used in rendering
+
+  static final int U = 7; // texture
+  static final int V = 8;
+
+  // incoming values, raw and untransformed
+  // (won't be used in rendering)
+
+  static final int MX = 9; // model coords xyz
+  static final int MY = 10;
+  static final int MZ = 11;
+
+  static final int SR = 12; // stroke colors
+  static final int SG = 13;
+  static final int SB = 14;
+  static final int SA = 15;
+
+  static final int SW = 16; // stroke weight
+
+  // not used in rendering
+  // only used for calculating colors
+
+  static final int NX = 17; // normal
+  static final int NY = 18;
+  static final int NZ = 19;
+
+  static final int VX = 20; // view space coords
+  static final int VY = 21;
+  static final int VZ = 22;
+  static final int VW = 23;
+
+  // Ambient color (usually to be kept the same as diffuse)
+  // fill(_) sets both ambient and diffuse.
+  static final int AR = 24;
+  static final int AG = 25;
+  static final int AB = 26;
+
+  // Diffuse is shared with fill.
+  static final int DR = 3;
+  static final int DG = 4;
+  static final int DB = 5;
+  static final int DA = 6;
+
+  //specular (by default kept white)
+  static final int SPR = 27;
+  static final int SPG = 28;
+  static final int SPB = 29;
+  //GL doesn't use a separate specular alpha, but we do (we're better)
+  static final int SPA = 30;
+
+  static final int SHINE = 31;
+
+  //emissive (by default kept black)
+  static final int ER = 32;
+  static final int EG = 33;
+  static final int EB = 34;
+
+  //has this vertex been lit yet
+  static final int BEEN_LIT = 35;  
+  
+*/  
+  protected final void add_triangle_no_clip(int a, int b, int c) {  
     //System.out.println("adding triangle " + triangleCount);
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
