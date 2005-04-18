@@ -15,11 +15,10 @@ else
   REVISION=0000
 fi
 
-#VERSIONED=`cat ../../app/PdeBase.java | grep 00$REVISION`
-VERSIONED=`cat ../../app/PdeBase.java | grep $REVISION`
+VERSIONED=`cat ../../app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
 then
-  echo Fix the revision number in PdeBase.java
+  echo Fix the revision number in Base.java
   exit
 fi
 
@@ -55,16 +54,6 @@ unzip -q reference.zip
 rm reference.zip
 cd ..
 
-# clean out the cvs entries
-find processing -name "CVS" -exec rm -rf {} ';'
-#find processing -name "CVS" -exec echo {} ';'
-
-# get serial stuff
-#cp dist/serial_setup.command processing/
-#chmod a+x processing/serial_setup.command
-#cp ../../bagel/serial/RXTXcomm.jar processing/lib/
-#cp ../../bagel/serial/libSerial.jnilib processing/
-
 # get ds_store file (!)
 cp dist/DS_Store processing/.DS_Store
 
@@ -78,7 +67,7 @@ mkdir -p $RES
 mv processing/lib/*.jar $RES/
 
 # directories used by the app
-mkdir processing/lib/build
+#mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar $RES/
@@ -92,27 +81,19 @@ chmod a+x processing/jikes
 
 chmod a+x processing/Processing.app/Contents/MacOS/JavaApplicationStub
 
-cd ../..
-javadoc -public -d doc app/*.java app/preproc/*.java app/syntax/*.java core/*.java opengl/*.java net/*.java video/*.java serial/*.java
-cd build/macosx
-pwd
-exit
+#cd ../..
+#javadoc -public -d doc app/*.java app/preproc/*.java app/syntax/*.java core/*.java opengl/*.java net/*.java video/*.java serial/*.java
+#cd build/macosx
 
-#cp dist/lib/pde_macosx.properties processing/lib/
-
-# convert notes.txt to windows LFs
-# the 2> is because the app is a little chatty
-#unix2dos processing/notes.txt 2> /dev/null
-#unix2dos processing/lib/pde.properties 2> /dev/null
-#unix2dos processing/lib/pde.properties_macosx 2> /dev/null
-
-# something like the following might be better:
-# find / -name "*.mp3" -exec rm -f {}\;
-# and same for cvsignore, ~ files, .DS_Store
+# remove boogers
 find processing -name "*~" -exec rm -f {} ';'
-#find processing -name ".DS_Store" -exec rm -f {} ';'  # one is legit
+# need to leave ds store stuff cuz one of those is important
+#find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
-find processing -name "CVS" -exec rm -rf {} ';'
+
+# clean out the cvs entries
+find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
+find processing -name ".cvsignore" -exec rm -rf {} ';'
 
 mv processing/Processing.app "processing/Processing $SHORT_REVISION.app"
 mv processing processing-$REVISION
