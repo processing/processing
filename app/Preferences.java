@@ -169,10 +169,10 @@ public class Preferences extends JComponent {
 
       } catch (Exception ex) {
         Base.showError("Error reading preferences",
-                          "Error reading the preferences file. " +
-                          "Please delete (or move)\n" +
-                          preferencesFile.getAbsolutePath() +
-                          " and restart Processing.", ex);
+                       "Error reading the preferences file. " +
+                       "Please delete (or move)\n" +
+                       preferencesFile.getAbsolutePath() +
+                       " and restart Processing.", ex);
       }
     }
   }
@@ -343,17 +343,32 @@ public class Preferences extends JComponent {
     top += d.height; // + GUI_SMALL;
 
     label = new JLabel(preferencesFile.getAbsolutePath());
+    /*
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
+          // close the frame and ignore any changes.
+          // otherwise, any changes made to preferences.txt
+          // will be lost when the prefs window is closed,
+          // since things will be re-applied.
+          disposeFrame();
+
+          // now safe to open the text file
           Base.openURL(preferencesFile.getAbsolutePath());
         }
       });
-    label.setForeground(new Color(51, 25, 153));
+    */
+    //label.setForeground(new Color(51, 25, 153));
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
-    //textarea.setBounds(left, top, d.width, d.height);
-    //top += d.height; // + GUI_BETWEEN;
+
+    label = new JLabel("(edit only when Processing is not running)");
+
+    pain.add(label);
+    d = label.getPreferredSize();
+    label.setForeground(Color.gray);
+    label.setBounds(left, top, d.width, d.height);
+    top += d.height; // + GUI_SMALL;
 
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?

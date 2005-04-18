@@ -29,6 +29,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 import com.oroinc.text.regex.*;
 
@@ -94,24 +95,44 @@ public class Runner implements MessageConsumer {
 
 
   public void startPresenting() throws Exception {
-    String command[] = new String[] {
-      "java",
-      "-Djava.library.path=" +
-      sketch.libraryPath +
-      File.pathSeparator + System.getProperty("java.library.path"),
-      "-cp",
-      sketch.classPath + Sketchbook.librariesClassPath,
-      "processing.core.PApplet",
-      PApplet.ARGS_EXTERNAL,
-      PApplet.ARGS_PRESENT,
-      PApplet.ARGS_PRESENT_BGCOLOR + "=" +
-      Preferences.get("run.present.bgcolor"),
-      PApplet.ARGS_DISPLAY + "=" +
-      Preferences.get("run.display"),
-      PApplet.ARGS_SKETCH_FOLDER + "=" +
-      sketch.folder.getAbsolutePath(),
-      sketch.mainClassName
-    };
+    Vector params = new Vector();
+
+    params.add("java");
+
+    String options = Preferences.get("run.options");
+    if (options.length() > 0) {
+      String pieces[] = PApplet.split(options, ' ');
+      for (int i = 0; i < pieces.length; i++) {
+        String p = pieces[i].trim();
+        if (p.length() > 0) {
+          params.add(p);
+        }
+      }
+    }
+
+    params.add("-Djava.library.path=" +
+               sketch.libraryPath +
+               File.pathSeparator +
+               System.getProperty("java.library.path"));
+
+    params.add("-cp");
+    params.add(sketch.classPath + Sketchbook.librariesClassPath);
+
+    params.add("processing.core.PApplet");
+
+    params.add(PApplet.ARGS_EXTERNAL);
+    params.add(PApplet.ARGS_PRESENT);
+    params.add(PApplet.ARGS_PRESENT_BGCOLOR + "=" +
+               Preferences.get("run.present.bgcolor"));
+    params.add(PApplet.ARGS_DISPLAY + "=" +
+               Preferences.get("run.display"));
+    params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
+               sketch.folder.getAbsolutePath());
+    params.add(sketch.mainClassName);
+
+    String command[] = new String[params.size()];
+    params.copyInto(command);
+    //PApplet.println(command);
 
     process = Runtime.getRuntime().exec(command);
     processInput = new SystemOutSiphon(process.getInputStream());
@@ -134,27 +155,49 @@ public class Runner implements MessageConsumer {
       (PApplet.ARGS_EDITOR_LOCATION + "=" +
        editorLocation.x + "," + editorLocation.y);
 
-    //System.out.println("library path is " + sketch.libraryPath);
-    String command[] = new String[] {
-      // this made the code folder bug go away, but killed stdio
-      //"cmd", "/c", "start",
-      "java",
-      "-Djava.library.path=" +
-      // sketch.libraryPath might be ""
-      // librariesClassPath will always have sep char prepended
-      sketch.libraryPath +
-      File.pathSeparator + System.getProperty("java.library.path"),
-      "-cp",
-      sketch.classPath + Sketchbook.librariesClassPath,
-      "processing.core.PApplet",
-      location,
-      PApplet.ARGS_EXTERNAL,
-      PApplet.ARGS_DISPLAY + "=" + Preferences.get("run.display"),
-      PApplet.ARGS_SKETCH_FOLDER + "=" + sketch.folder.getAbsolutePath(),
-      sketch.mainClassName
-    };
-    //PApplet.printarr(command);
-    //PApplet.println(PApplet.join(command, " "));
+    // this as prefix made the code folder bug go away, but killed stdio
+    //"cmd", "/c", "start",
+
+    // all params have to be stored as separate items,
+    // so a growable array needs to be used. i.e. -Xms128m -Xmx1024m
+    // will throw an error if it's shoved into a single array element
+    Vector params = new Vector();
+
+    params.add("java");
+
+    String options = Preferences.get("run.options");
+    if (options.length() > 0) {
+      String pieces[] = PApplet.split(options, ' ');
+      for (int i = 0; i < pieces.length; i++) {
+        String p = pieces[i].trim();
+        if (p.length() > 0) {
+          params.add(p);
+        }
+      }
+    }
+    // sketch.libraryPath might be ""
+    // librariesClassPath will always have sep char prepended
+    params.add("-Djava.library.path=" +
+               sketch.libraryPath +
+               File.pathSeparator +
+               System.getProperty("java.library.path"));
+
+    params.add("-cp");
+    params.add(sketch.classPath + Sketchbook.librariesClassPath);
+
+    params.add("processing.core.PApplet");
+
+    params.add(location);
+    params.add(PApplet.ARGS_EXTERNAL);
+    params.add(PApplet.ARGS_DISPLAY + "=" +
+               Preferences.get("run.display"));
+    params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
+               sketch.folder.getAbsolutePath());
+    params.add(sketch.mainClassName);
+
+    String command[] = new String[params.size()];
+    params.copyInto(command);
+    //PApplet.println(command);
 
     process = Runtime.getRuntime().exec(command);
     processInput = new SystemOutSiphon(process.getInputStream());
