@@ -3468,9 +3468,127 @@ public class PGraphics3 extends PGraphics {
 
   /**
    * Sets up an ambient and directional light.
-   * <P>
-   * The directional light is setup second, so that it can be modified
-   * via lightSpecular() or lightFalloff() if needed.
+   * <PRE>
+   * The Lighting Skinny:
+   *
+   * The way lighting works is complicated enough that it's worth
+   * producing a document to describe it. Lighting calculations proceed
+   * pretty much exactly as described in the OpenGL red book.
+   *
+   * Light-affecting material properties:
+   *
+   *   AMBIENT COLOR
+   *   - multiplies by light's ambient component
+   *   - for believability this should match diffuse color
+   *
+   *   DIFFUSE COLOR
+   *   - multiplies by light's diffuse component
+   *
+   *   SPECULAR COLOR
+   *   - multiplies by light's specular component
+   *   - usually less colored than diffuse/ambient
+   *
+   *   SHININESS
+   *   - the concentration of specular effect
+   *   - this should be set pretty high (20-50) to see really
+   *     noticeable specularity
+   *
+   *   EMISSIVE COLOR
+   *   - constant additive color effect
+   *
+   * Light types:
+   *
+   *   AMBIENT
+   *   - one color
+   *   - no specular color
+   *   - no direction
+   *   - may have falloff (constant, linear, and quadratic)
+   *   - may have position (which matters in non-constant falloff case)
+   *   - multiplies by a material's ambient reflection
+   *
+   *   DIRECTIONAL
+   *   - has diffuse color
+   *   - has specular color
+   *   - has direction
+   *   - no position
+   *   - no falloff
+   *   - multiplies by a material's diffuse and specular reflections
+   *
+   *   POINT
+   *   - has diffuse color
+   *   - has specular color
+   *   - has position
+   *   - no direction
+   *   - may have falloff (constant, linear, and quadratic)
+   *   - multiplies by a material's diffuse and specular reflections
+   *
+   *   SPOT
+   *   - has diffuse color
+   *   - has specular color
+   *   - has position
+   *   - has direction
+   *   - has cone angle (set to half the total cone angle)
+   *   - has concentration value
+   *   - may have falloff (constant, linear, and quadratic)
+   *   - multiplies by a material's diffuse and specular reflections
+   *
+   * Normal modes:
+   *
+   * All of the primitives (rect, box, sphere, etc.) have their normals
+   * set nicely. During beginShape/endShape normals can be set by the user.
+   *
+   *   AUTO-NORMAL
+   *   - if no normal is set during the shape, we are in auto-normal mode
+   *   - auto-normal calculates one normal per triangle (face-normal mode)
+   *
+   *   SHAPE-NORMAL
+   *   - if one normal is set during the shape, it will be used for
+   *     all vertices
+   *
+   *   VERTEX-NORMAL
+   *   - if multiple normals are set, each normal applies to
+   *     subsequent vertices
+   *   - (except for the first one, which applies to previous
+   *     and subsequent vertices)
+   *
+   * Efficiency consequences:
+   *
+   *   There is a major efficiency consequence of position-dependent
+   *   lighting calculations per vertex. (See below for determining
+   *   whether lighting is vertex position-dependent.) If there is no
+   *   position dependency then the only factors that affect the lighting
+   *   contribution per vertex are its colors and its normal.
+   *   There is a major efficiency win if
+   *
+   *   1) lighting is not position dependent
+   *   2) we are in AUTO-NORMAL or SHAPE-NORMAL mode
+   *
+   *   because then we can calculate one lighting contribution per shape
+   *   (SHAPE-NORMAL) or per triangle (AUTO-NORMAL) and simply multiply it
+   *   into the vertex colors. The converse is our worst-case performance when
+   *
+   *   1) lighting is position dependent
+   *   2) we are in AUTO-NORMAL mode
+   *
+   *   because then we must calculate lighting per-face * per-vertex.
+   *   Each vertex has a different lighting contribution per face in
+   *   which it appears. Yuck.
+   *
+   * Determining vertex position dependency:
+   *
+   *   If any of the following factors are TRUE then lighting is
+   *   vertex position dependent:
+   *
+   *   1) Any lights uses non-constant falloff
+   *   2) There are any point or spot lights
+   *   3) There is a light with specular color AND there is a
+   *      material with specular color
+   *
+   * So worth noting is that default lighting (a no-falloff ambient
+   * and a directional without specularity) is not position-dependent.
+   * We should capitalize.
+   *
+   * Simon Greenwold, April 2005
    */
   public void lights() {
     // need to make sure colorMode is RGB 255 here

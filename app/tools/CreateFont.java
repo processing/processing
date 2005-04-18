@@ -415,7 +415,7 @@ public class CreateFont extends JFrame {
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();
 
-      f.write(new FileOutputStream(new File(targetFolder, filename)));
+      f.save(new FileOutputStream(new File(targetFolder, filename)));
 
     } catch (IOException e) {
       JOptionPane.showMessageDialog(this,
