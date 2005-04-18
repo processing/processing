@@ -30,6 +30,10 @@ import java.awt.event.KeyEvent;
 
 /**
  * Numbers shared throughout processing.core.
+ * <P>
+ * An attempt is made to keep the constants as short/non-verbose
+ * as possible. For instance, the constant is TIFF instead of
+ * FILE_TYPE_TIFF. We'll do this as long as we can get away with it.
  */
 public interface PConstants {
 
@@ -386,8 +390,14 @@ public interface PConstants {
 
   static final int TRIANGLE_COLOR_COUNT = 8;
 
-  // normal modes for lighting
-  static final int AUTO_NORMAL = 0;   // normal calculated per triangle
-  static final int MANUAL_SHAPE_NORMAL = 1; // one normal manually specified per shape
-  static final int MANUAL_VERTEX_NORMAL = 2; // normals specified for each shape vertex
+
+  // normal modes for lighting, these have the uglier naming
+  // because the constants are never seen by users
+
+  /// normal calculated per triangle
+  static final int AUTO_NORMAL = 0;
+  /// one normal manually specified per shape
+  static final int MANUAL_SHAPE_NORMAL = 1;
+  /// normals specified for each shape vertex
+  static final int MANUAL_VERTEX_NORMAL = 2;
 }

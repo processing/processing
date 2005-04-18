@@ -1,4 +1,7 @@
 0084 core
+X fixed create font / incremented font file version number
+X simon lighting fixes
+X added simon's lighting docs to lights() fxn in javadoc
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
