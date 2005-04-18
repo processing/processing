@@ -879,8 +879,9 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void spotLight(float r, float g, float b,
                         float x, float y, float z,
-                        float nx, float ny, float nz, float angle) {
-    super.spotLight(r, g, b, x, y, z, nx, ny, nz, angle);
+                        float nx, float ny, float nz, 
+                        float angle, float concentration) {
+    super.spotLight(r, g, b, x, y, z, nx, ny, nz, angle, concentration);
     //int num = super.internalCreateSpotLight(lr, lg, lb, x, y, z, nx, ny, nz, angle);
     glLightNoAmbient(lightCount - 1);
     glLightPosition(lightCount - 1);
