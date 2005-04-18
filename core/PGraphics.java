@@ -425,7 +425,8 @@ public class PGraphics extends PImage implements PConstants {
     stroke(0);
 
     strokeWeight(ONE);
-    strokeCap(SQUARE);
+    //strokeCap(SQUARE);
+    strokeCap(ROUND);
     strokeJoin(MITER);
 
     background(204);
@@ -2568,7 +2569,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
-                        float nx, float ny, float nz, 
+                        float nx, float ny, float nz,
                         float angle, float concentration) {
     depthError("spotLight");
   }

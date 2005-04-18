@@ -6351,7 +6351,7 @@ v              PApplet.this.stop();
 
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
-                        float nx, float ny, float nz, 
+                        float nx, float ny, float nz,
                         float angle, float concentration) {
     if (recorder != null) recorder.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle, concentration);
     g.spotLight(red, green, blue, x, y, z, nx, ny, nz, angle, concentration);
