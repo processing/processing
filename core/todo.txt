@@ -2,6 +2,9 @@
 X fixed create font / incremented font file version number
 X simon lighting fixes
 X added simon's lighting docs to lights() fxn in javadoc
+X set default stroke cap as ROUND
+X   otherwise smooth() makes points disappear
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
