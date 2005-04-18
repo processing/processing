@@ -4,6 +4,11 @@ X add run.options for things run externally
 X   load options via vector because they need to be split up
 X stability improvements to processing.exe from simon
 X memory on external apps is a little broken
+X update the script for the mailing list
+
+save as... bugs
+X make sure that the sketch folder still exists when doing any operation
+X   otherwise editor gets into a weird state
 
 pending
 _ rename video.Camera to video.Video ? Capture ?
@@ -11,11 +16,6 @@ _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
 _   need to straighten out for when audio comes along
 
 _ list of changes since rev 69? run through revisions.txt
-
-_ update the message sent to people who sign up for the list
-_   change success message to read
-_     your email has been received successfully, you'll be receiving 
-_     
 
 //
 
@@ -44,11 +44,6 @@ hide "a"
 unhide "a_2"
 unhide "a"
 where did "a_2" go ?
-
-(v74) if a project folder is made (with save as), and then deleted
-while processing is still open, there is an error (of course).  but
-the error ('file/folder not found') is not displayed to the user, 
-and the drop-downs don't go away / the IDE doesn't refresh.
 
 (74) "save as" not actually saving properly
 File>New
