@@ -151,7 +151,7 @@ as preferences.txt: <br>
 Application Data &rarr; Processing &rarr; build
 <LI> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
 Processing &rarr; build
-<LI> Linux and others: ~/.processing &rarr; preferences.txt
+<LI> Linux and others: ~/.processing &rarr; build
 </UL>
 The more details you can post, the better, because it helps us figure
 out what's going on. Useful things when reporting:
@@ -259,6 +259,29 @@ loadImage and the rest) inside of a function like setup().
       <b>
 Out Of Memory Errors
 </b> <br> <br>
+There are two types of programs in Processing. Some are run from
+inside the environment, but whenever you import a library, include a
+code folder, or use "Present" to view your sketch, it will be run
+as a separate Java program, which we sometimes call running "externally".
+<br> <br>
+To increase the amount of memory available to those programs, open
+your preferences.txt file and edit the run.options line to include
+something like:
+<PRE>-Xms128m -Xmx1024m</PRE>
+This will increase the amount of RAM to 128 megabytes of stack, and
+1024 megabytes of heap (the latter being effectively usable RAM).
+<br> <br>
+The preferences.txt file is stored in different locations on each
+platform:
+<UL>
+<LI> Windows: Documents and Settings &rarr; (your user name) &rarr;
+Application Data &rarr; Processing &rarr; preferences.txt
+<LI> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
+Processing &rarr; preferences.txt
+<LI> Linux and others: ~/.processing &rarr; preferences.txt
+</UL>
+To increase the amount of memory for Processing itself and for
+sketches that are not running externally: 
 <UL>
 <LI>On Windows, try adjusting the parameters in the file 'run.bat' and
 use that to run instead of Processing.exe. Short instructions can be
@@ -320,9 +343,9 @@ changed in the future, but for now, they're not actually 'broken'.
 <LI> &ldquo;Export to Application&rdquo; remains unimplemented, 
 though we're hoping to have it complete soon.
 
-<LI>On Mac OS X, the error message: <br>
+<LI>On Mac OS X, the error message: 
 <tt>## Component Manager: attempting to find symbols in a component
-  alias of type (regR/carP/x!bt)</tt> <br>
+  alias of type (regR/carP/x!bt)</tt> 
 is not something from processing, it is a bug in Roxio Toast 5.2's Video
   CD Support extension. To suppress the messages, move "Toast Video CD
   Support.qtx" out of /Library/QuickTime (at least until you need to

@@ -1,79 +1,7 @@
-0083 pde
-X move everything to packages, and start auto-javadoc
-X how to get preproc to automatically prepend packages
-o   only build preproc from preproc/make.sh? 
-o   and check in the preproc'd code to cvs?
-X need to add classes dir to cp for jikes make (on win and linux)
-X get both versions of size() properly detected on export
-X get latest sonia from amit
-X remove particles from current processing
-X move netscape library out of libs and into build/shared
-X add serial.stop() just like client/server
-X border weirdness in PdeEditor panels on windows (fixed in 82)
-o fix macos readme about how to boost memory size, and 1.3 vs 1.4
-X   actually, this was already in there
-o add prompt() method to serial
-
-camera
-o setting the camera should be an index from list()
-o   there might be multiple cameras with the same name
-X   no can do, the function takes a String for the device name
-o list() should return full list with all sub-components
-X   find the example code from the board
-X grabbing sub-devices from camera in the lib (via list() or whatever)
-o   actually, need to use numbered indices (multiple w/ same name)
-o     list should be: "0 - Logitech QuickCam (Blah)"
-o     and then use the indices (or the str i guess) to choose
-X   format(NTSC) or PAL or SECAM
-X   source(COMPOSITE) or SVIDEO or COMPONENT
-X settings() brings up settings dialog
-o add prompt() method to Camera ("" means default, null is prompt)
-o   let them pass in prompt(), not use null
-o   null is only bringing up settings dialog, that's wrong
-
-saturday afternoon
-X move packaging around
-X   remove PdeXxx prefixes on names, make PdeBase into just "Processing"
-X   update .exe to use new class/package
-X   update .app to use new class/package
-X setup linux box and build a linux version
-X   need to fix up the make/dist scripts for linux
-X   update runner script for the new package
-X   fix linux bugs with placement
-X   lots of dist script tweaking and messing with jikes libs
-o should loadPixels be grabPixels? (nope)
-
-saturday evening
-X update processing/build/howto.txt
-X   add 'make' to list of things that should be installed
-X update libraries/howto.txt 
-o   should we queue lib events until the end of loop?
-X   nope, libraries can handle that themselves, 
-X     and queue events by registering for draw or whatever they'd like
-X   lib could call queueEvent with the args
-X   then call them inside post()
-
-saturday evening and sunday morning
-X scrubbing all the code to include proper license and copyright info
-
-sunday afternoon
-X update checker (can be turned off in prefs)
-X   send unique id, and information about person's java vm/platform
-o   using timezone would be an interesting method for tracking location
-
-sunday evening
-X fix up dist scripts for new faq stuff, cleaning out some old crap
-X consolidate readme.txt, bugs.txt, info.html (faq)
-X   document things that will be broken for beta
-X     opengl set() functions.. though get() probably ok
-X     stop button with external apps
-X     java 1.1 support
-X     code is larger than we'd like, has increased in size
-X       working to remove and optimize, also make possible to remove un-needed
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
+0084 pde
+X can't edit prefs while processing is open, remove the link
+X add run.options for things run externally
+X   load options via vector because they need to be split up
 
 pending
 _ rename video.Camera to video.Video ?
@@ -83,9 +11,13 @@ _   new bboard? archive the old one, remove bugs sections
 _   environment reference
 _   list of changes since rev 69? run through revisions.txt
 
+_ check for updates should happen only daily or weekly
+
 _ setup bugzilla and enter all the bugs
 
 _ create font is somewhat broken
+
+_ memory on external apps is a little broken
 
 //
 
