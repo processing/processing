@@ -2568,7 +2568,8 @@ public class PGraphics extends PImage implements PConstants {
 
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
-                        float nx, float ny, float nz, float angle) {
+                        float nx, float ny, float nz, 
+                        float angle, float concentration) {
     depthError("spotLight");
   }
 
