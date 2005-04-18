@@ -61,11 +61,19 @@ X update checker (can be turned off in prefs)
 X   send unique id, and information about person's java vm/platform
 o   using timezone would be an interesting method for tracking location
 
+sunday evening
+X fix up dist scripts for new faq stuff, cleaning out some old crap
+X consolidate readme.txt, bugs.txt, info.html (faq)
+X   document things that will be broken for beta
+X     opengl set() functions.. though get() probably ok
+X     stop button with external apps
+X     java 1.1 support
+X     code is larger than we'd like, has increased in size
+X       working to remove and optimize, also make possible to remove un-needed
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-
-_ create font is somewhat broken
 
 pending
 _ rename video.Camera to video.Video ?
@@ -75,15 +83,9 @@ _   new bboard? archive the old one, remove bugs sections
 _   environment reference
 _   list of changes since rev 69? run through revisions.txt
 
-non-coding tasks
-_ consolidate readme.txt, bugs.txt, info.html (faq)
-_   document things that will be broken for beta
-_     opengl set() functions.. though get() probably ok
-_     stop button with external apps
-_     java 1.1 support
-_     code is larger than we'd like, has increased in size
-_       working to remove and optimize, also make possible to remove un-needed
-_ setup bugzilla, move legit bugs there, non-bugs to readme
+_ setup bugzilla and enter all the bugs
+
+_ create font is somewhat broken
 
 //
 

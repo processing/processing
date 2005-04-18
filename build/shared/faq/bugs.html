@@ -83,7 +83,6 @@ function gogo(dropdown) {
     <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="55"></td>
     <td width="675" valign="top"> <p>
 <a href="#010">I've found a bug!</a> <br>
-<a href="#020">Is this a bug?</a> <br>
 <a href="#030">Processing won't start! 
     Nothing happens when I click &ldquo;Run&rdquo;!</a> <br>
 <a href="#035">Out Of Memory Errors</a> <br>
@@ -92,7 +91,7 @@ function gogo(dropdown) {
 <a href="#055">Using the Serial Port</a> <br>
 <a href="#060">Problems with OpenGL</a> <br>
 <a href="#070">Things that we probably can't fix</a> <br>
-<a href="#080">Is this a bug?</a> <br>
+<a href="#080">Known Bugs</a> <br>
         <br>
         <br>
       </p></td>
@@ -615,10 +614,24 @@ really affect things.
     <td width="645"> 
       <p> </p>
       <b>
-Is this a bug?
+Known Bugs
       </b><br><br>
 <em>This section is incomplete, but will contain links to the bug
       database's Greatest Hits collection.</em>
+<br> <br>
+Some highlights to get started:
+<UL>
+<LI>Java 1.1 support has been (temporarily?) removed from this
+release. We hope to bring it back, but it will take some time and we
+didn't want to hold up beta any longer.
+<LI>The stop button often doesn't stop things (like when using
+libraries), but closing the window to shut things down works fine.
+<LI>The set() functions are somewhat broken when using OpenGL.
+<LI>The size of exported applets is larger than we would like, but
+we'll get things smaller and more optimize again. Having separated the
+2D and 3D libraries, eventually we won't have to include the 3D code
+when using 2D. 
+</UL>
       </td>
     <td width="50">&nbsp;</td>
   </tr>

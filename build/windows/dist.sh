@@ -4,10 +4,10 @@ REVISION=`head -c 4 ../../todo.txt`
 
 # check to see if the version number in the app is correct
 # so that mikkel doesn't kick my ass
-VERSIONED=`cat ../../app/PdeBase.java | grep $REVISION`
+VERSIONED=`cat ../../app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
 then
-  echo Fix the revision number in PdeBase.java
+  echo Fix the revision number in Base.java
   exit
 fi
 
@@ -24,7 +24,6 @@ rm -rf processing-*
 cp -r ../shared processing
 
 # add the libraries folder with source
-#cp -r ../../lib processing/libraries
 cp -r ../../net processing/libraries/
 cp -r ../../opengl processing/libraries/
 cp -r ../../serial processing/libraries/
@@ -52,7 +51,7 @@ cd ..
 unzip -q -d processing jre.zip
 
 # directories used by the app
-mkdir processing/lib/build
+#mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar processing/lib/
@@ -91,8 +90,8 @@ find processing -name "*.exe" -exec chmod +x {} ';'
 find processing -name "*.html" -exec chmod +x {} ';'
 
 # clean out the cvs entries
-find processing -name "CVS" -exec rm -rf {} ';'
-#find processing -name "CVS" -exec echo {} ';'
+find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
+find processing -name ".cvsignore" -exec rm -rf {} ';'
 
 # zip it all up for release
 echo Packaging standard release...
