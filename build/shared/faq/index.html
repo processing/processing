@@ -93,6 +93,7 @@ Can I distribute my sketches?</a> <br>
 <a href="#080">Why is it called &ldquo;Processing&rdquo;?</a> <br>
 <a href="#090">What is the sketchbook? What do you mean by sketches?</a> <br>
 <a href="#100">Why Java? Or why such a Java-esque programming language?</a> <br>
+<a href="#105">Why Is Processing Connecting to the Network?</a> <br>
 <a href="#110">What is that fantastic typeface used for the page headers?</a><br>
         <br>
         <br>
@@ -245,18 +246,28 @@ in the <a href="platforms.html">Platforms</a> section of this FAQ,
       at <A
       HREF="http://www.gnu.org/copyleft/gpl.html">www.gnu.org/copyleft/gpl.html</A>.
 <br> <br>
-Processing also relies on other open projects, namely the older version
-of the <A HREF="http://www.savarese.org/oro/">ORO Matcher</A>,
-the <A HREF="http://sourceforge.net/projects/jikes/">Jikes</A> compiler,
-and the <A HREF="http://syntax.jedit.org">jEdit Syntax</A> package. 
-The ORO tools are distributed under a BSD-style license as part of the 
-Apache Jakarta project, and Jikes is covered by the 
+Processing also relies on other open projects, namely:
+<UL>
+<LI>the older <A
+HREF="http://www.savarese.org/oro/">ORO Matcher</A>, 
+distributed under a BSD-style license as part of the 
+<a href="http://jakarta.apache.org/">Apache Jakarta</a> project
+<LI>the <A HREF="http://sourceforge.net/projects/jikes/">Jikes</A>
+compiler, which is covered by the 
 <A HREF="http://www.ibm.com/developerworks/library/os-ipl.html">
 IBM Public License</A>.
-<br> <br>
+<LI>the <A HREF="http://syntax.jedit.org">jEdit Syntax</A> package,
+which is public domain
+<LI>com.ice.jni.registry from the <a href="http://www.gjt.org/">Giant
+Java Tree</a> (GPL license) 
+<LI>perhaps others but that's all I can think of right now while we're
+cramming for the beta release
+</UL>
 The source code is stored on <A
-HREF="http://sourceforge.net/projects/processing/">sourceforge</A>, 
-inside the module called &ldquo;processing&rdquo;.
+HREF="http://sourceforge.net/projects/processing/">SourceForge</A>, 
+inside the module called &ldquo;processing&rdquo;. Note that we're
+only using SourceForge for CVS access, and not properly taking
+advantage of all the other features (bug database, releases, etc).
     </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -453,6 +464,40 @@ fact, the language is just Java, but with a new graphics and
 utility API along with some simplifications). Fundamentally, 
 Processing just assembles our experience in building things, 
 and trying to simplifies the parts that we felt should be easier. 
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="105"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Why Is Processing Connecting to the Network?
+      </b><br><br>
+After you double-click Processing, it will check the site for
+      updates. This is helpful so that we can keep people
+      aware of the frequent updates to Processing. 
+<br> <br>
+In so doing, it also sends a random number that identifies yours as a
+      unique machine (but sends no personal information to us). 
+This really helps us get a general idea of how many people are using the
+      software, which is really important for things like
+      writing grants so that we can keep Processing free.
+<br> <br>
+If the network connection causes you trouble, it can be shut off
+inside the Preferences window.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
