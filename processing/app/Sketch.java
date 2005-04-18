@@ -235,6 +235,9 @@ public class Sketch {
 
 
   protected void insertCode(SketchCode newCode) {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // add file to the code/codeCount list, resort the list
     if (codeCount == code.length) {
       SketchCode temp[] = new SketchCode[codeCount+1];
@@ -267,6 +270,9 @@ public class Sketch {
 
 
   public void newCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     //System.out.println("new code");
     // ask for name of new file
     // maybe just popup a text area?
@@ -276,6 +282,9 @@ public class Sketch {
 
 
   public void renameCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // don't allow rename of the main code
     //if (current == code[0]) return;
     // TODO maybe gray out the menu on setCurrent(0)
@@ -295,6 +304,9 @@ public class Sketch {
    * where they diverge.
    */
   public void nameCode(String newName) {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // if renaming to the same thing as before, just ignore.
     // also ignoring case here, because i don't want to write
     // a bunch of special stuff for each platform
@@ -323,9 +335,9 @@ public class Sketch {
     } else if (newName.endsWith(".java")) {
       if (code[0] == current) {
         Base.showWarning("Problem with rename",
-                            "The main .pde file cannot be .java file.\n" +
-                            "(It may be time for your to graduate to a\n" +
-                            "\"real\" programming environment)", null);
+                         "The main .pde file cannot be .java file.\n" +
+                         "(It may be time for your to graduate to a\n" +
+                         "\"real\" programming environment)", null);
         return;
       }
 
@@ -350,16 +362,16 @@ public class Sketch {
     File newFile = new File(folder, newFilename);
     if (newFile.exists()) {  // yay! users will try anything
       Base.showMessage("Nope",
-                          "A file named \"" + newFile + "\" already exists\n" +
-                          "in \"" + folder.getAbsolutePath() + "\"");
+                       "A file named \"" + newFile + "\" already exists\n" +
+                       "in \"" + folder.getAbsolutePath() + "\"");
       return;
     }
 
     if (renamingCode) {
       if (!current.file.renameTo(newFile)) {
         Base.showWarning("Error",
-                            "Could not rename \"" + current.file.getName() +
-                            "\" to \"" + newFile.getName() + "\"", null);
+                         "Could not rename \"" + current.file.getName() +
+                         "\" to \"" + newFile.getName() + "\"", null);
         return;
       }
 
@@ -387,8 +399,8 @@ public class Sketch {
         newFile.createNewFile();  // TODO returns a boolean
       } catch (IOException e) {
         Base.showWarning("Error",
-                            "Could not create the file \"" + newFile + "\"\n" +
-                            "in \"" + folder.getAbsolutePath() + "\"", e);
+                         "Could not create the file \"" + newFile + "\"\n" +
+                         "in \"" + folder.getAbsolutePath() + "\"", e);
         return;
       }
       SketchCode newCode = new SketchCode(newName, newFile, newFlavor);
@@ -410,6 +422,9 @@ public class Sketch {
    * Remove a piece of code from the sketch and from the disk.
    */
   public void deleteCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // don't allow delete of the main code
     // TODO maybe gray out the menu on setCurrent(0)
     /*
@@ -593,23 +608,57 @@ public class Sketch {
 
 
   /**
+   * Make sure the sketch hasn't been moved or deleted by some
+   * nefarious user. If they did, try to re-create it and save.
+   */
+  protected void ensureExistence() {
+    if (folder.exists()) return;
+
+    Base.showWarning("Sketch disappeared",
+                     "The sketch folder has disappeared (did you " +
+                     "delete it? Are you trying to f-- with me?)\n" +
+                     "Will attempt to re-save in the same location," +
+                     "but anything besides the code will be lost.", null);
+    try {
+      folder.mkdirs();
+      modified = true;
+
+      for (int i = 0; i < codeCount; i++) {
+        //code[i].modified = true;  // make sure it gets re-saved
+        code[i].save();
+      }
+      calcModified();
+
+    } catch (Exception e) {
+      Base.showWarning("Could not re-save sketch",
+                       "Could not properly re-save the sketch. " +
+                       "You may be in trouble at this point,\n" +
+                       "and it might be time to copy and paste " +
+                       "your code to another text editor.", e);
+    }
+  }
+
+
+  /**
    * Save all code in the current sketch.
    */
   public boolean save() throws IOException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // first get the contents of the editor text area
     if (current.modified) {
       current.program = editor.getText();
     }
 
-    // see if actually modified
+    // don't do anything if not actually modified
     if (!modified) return false;
 
-    // check if the files are read-only.
-    // if so, need to first do a "save as".
     if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
       Base.showMessage("Sketch is read-only",
-                          "Some files are marked \"read-only\", so you'll\n" +
-                          "need to re-save this sketch to another location.");
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save this sketch to another location.");
       // if the user cancels, give up on the save()
       if (!saveAs()) return false;
     }
@@ -652,11 +701,6 @@ public class Sketch {
     }
     fd.setFile(folder.getName());
 
-    //System.out.println("setting to " + folder.getParent());
-
-    // TODO or maybe this should default to the
-    //      parent dir of the old folder?
-
     fd.show();
     String newParentDir = fd.getDirectory();
     String newName = fd.getFile();
@@ -671,8 +715,8 @@ public class Sketch {
     // make sure the paths aren't the same
     if (newFolder.equals(folder)) {
       Base.showWarning("You can't fool me",
-                          "The new sketch name and location are the same as\n" +
-                          "the old. I ain't not doin nuthin' not now.", null);
+                       "The new sketch name and location are the same as\n" +
+                       "the old. I ain't not doin nuthin' not now.", null);
       return false;
     }
 
@@ -686,8 +730,8 @@ public class Sketch {
 
       if (newPath.indexOf(oldPath) == 0) {
         Base.showWarning("How very Borges of you",
-                            "You cannot save the sketch into a folder\n" +
-                            "inside itself. This would go on forever.", null);
+                         "You cannot save the sketch into a folder\n" +
+                         "inside itself. This would go on forever.", null);
         return false;
       }
     } catch (IOException e) { }
@@ -834,6 +878,9 @@ public class Sketch {
 
 
   public void addLibrary(String jarPath) {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     String list[] = Compiler.packageListFromClassPath(jarPath);
 
     // import statements into the main sketch file (code[0])
@@ -948,6 +995,9 @@ public class Sketch {
    */
   //public void run() throws RunnerException {
   public boolean handleRun() throws RunnerException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     current.program = editor.getText();
 
     // TODO record history here
@@ -1074,6 +1124,8 @@ public class Sketch {
    */
   protected String build(String buildPath, String suggestedClassName)
     throws RunnerException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
 
     String codeFolderPackages[] = null;
 
@@ -1429,6 +1481,9 @@ public class Sketch {
 
 
   public boolean exportApplet(/*boolean replaceHtml*/) throws Exception {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     boolean replaceHtml = true;
     //File appletDir, String exportSketchName, File dataDir) {
     //String program = textarea.getText();
@@ -1880,7 +1935,7 @@ public class Sketch {
   /**
    * Returns true if this is a read-only sketch. Used for the
    * examples directory, or when sketches are loaded from read-only
-   * volumes or folders without appropraite permissions.
+   * volumes or folders without appropriate permissions.
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
