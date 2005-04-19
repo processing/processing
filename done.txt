@@ -1,3 +1,8 @@
+0085 pde
+X list of changes since rev 69? run through revisions.txt
+X   update and finalize the faq
+
+
 0084 pde
 X can't edit prefs while processing is open, remove the link
 X add run.options for things run externally

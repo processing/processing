@@ -1,12 +1,13 @@
-0085 pde
-X list of changes since rev 69? run through revisions.txt
-X   update and finalize the faq
+0086 pde
+
+_ not slice() but subset()... get word from casey on how to resolve
+_ update faq on site? what's difference between versions?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-NOT NECESSARY BEFORE BETA
+_ move the useful serial buffering fxns into net library
 
 _ tab to just indent lines properly, 
 _   rather than having it convert to spaces
