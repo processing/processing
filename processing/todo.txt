@@ -40,6 +40,16 @@ file is empty.
 the only way to make File>Save As actually save new files, as far as i
 can tell, is to Save As once, make at least one change, then Save. 
 
+X fix hide/unhide bug... just was dumb code
+create a new sketch
+create a new tab named "a"
+create a new tab named "a_2"
+hide tab named "a_2"
+hide "a"
+unhide "a_2"
+unhide "a"
+where did "a_2" go ?
+
 
 pending
 _ rename video.Camera to video.Video ? Capture ?
@@ -52,25 +62,6 @@ _ processing vs. flash item on the faq? a "why?" page?
 
 //
 
-"SAVE AS..." BUGS
-
-Is it possible that saving with the 'save' button doesn't pay
-attention to where you point at the project folder from prefs?  Jeez,
-i phrased that horribly.  I opened preferences for Processing and made
-the default sketchbook location processing-0079/projects.  I then put
-all my older projects in that project folder.  When i opened up an old
-file and made changes, i then hit 'save' and quit.  I relaunched v79
-and opened the aforementioned file, and none of the changes were
-there.  but they were in v77 project folder. 
-
-create a new sketch
-create a new tab named "a"
-create a new tab named "a_2"
-hide tab named "a_2"
-hide "a"
-unhide "a_2"
-unhide "a"
-where did "a_2" go ?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -92,6 +83,16 @@ _   doesn't work, try using the class' main() to run it
 
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
+
+_ not confirmed to be a bug
+Is it possible that saving with the 'save' button doesn't pay
+attention to where you point at the project folder from prefs?  Jeez,
+i phrased that horribly.  I opened preferences for Processing and made
+the default sketchbook location processing-0079/projects.  I then put
+all my older projects in that project folder.  When i opened up an old
+file and made changes, i then hit 'save' and quit.  I relaunched v79
+and opened the aforementioned file, and none of the changes were
+there.  but they were in v77 project folder. 
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things

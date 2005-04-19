@@ -325,7 +325,8 @@ public class EditorHeader extends JComponent {
     JMenu unhide = new JMenu("Unhide");
     ActionListener unhideListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.unhideCode((String) (e.getActionCommand()));
+          String which = (String) e.getActionCommand();
+          editor.sketch.unhideCode(which);
           rebuildMenu();
         }
       };
