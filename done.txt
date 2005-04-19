@@ -1,3 +1,68 @@
+0084 pde
+X can't edit prefs while processing is open, remove the link
+X add run.options for things run externally
+X   load options via vector because they need to be split up
+X stability improvements to processing.exe from simon
+X memory on external apps is a little broken
+X update the script for the mailing list
+X processing vs. flash item on the faq? a "why?" page?
+X clean up faq page to use text A NAME tags
+X rename video.Camera to video.Video ? Capture ?
+X   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
+X   need to straighten out for when audio comes along
+X faq menu selection should select current page so can navigate elsewhere
+X   also missing "founders" and "interview" pages
+X   remove interview page if not already done
+X   founders page is online, just integrate - info.html
+X list of known bugs should be on the faq page
+X   a bunch of stuff from revisions.txt on 84 and 82
+o   how to deal with bugs, since there are so many known...
+
+save as... bugs
+X always make sure that the sketch folder still exists 
+X   otherwise editor gets into a weird state
+(v74) if a project folder is made (with save as), and then deleted
+while processing is still open, there is an error (of course).  but
+the error ('file/folder not found') is not displayed to the user, and
+the drop-downs don't go away / the IDE doesn't refresh.
+
+X remove a folder if someone tries to replace it via "save as"
+what happens if folder already exists on save as?
+saving a project over an already existing project does not get rid of
+the .pde files that arent overwritten.  not sure if this is feature or
+bug, but it took me by surprise.  it seemed to only overwrite .pde
+files with the same name, but everything else in that project folder
+stays as is. 
+
+X sketch renaming fixed
+X   rename, change, was asking about the old sketch name
+Minor issue, but caused me a couple seconds of confusion. If you
+rename your sketch then try to close the application without saving
+first, it asks you if you want to save but mentions the pre-rename
+name. But I hit yes, quit, came back in, and all seemed right in the
+world.
+
+X "save as" not actually saving properly
+File>New
+edit file...
+File>Save As
+File>Open some other file
+File>Open original file
+file is empty.
+the only way to make File>Save As actually save new files, as far as i
+can tell, is to Save As once, make at least one change, then Save. 
+
+X fix hide/unhide bug... just was dumb code
+create a new sketch
+create a new tab named "a"
+create a new tab named "a_2"
+hide tab named "a_2"
+hide "a"
+unhide "a_2"
+unhide "a"
+where did "a_2" go ?
+
+
 0083 pde
 X move everything to packages, and start auto-javadoc
 X how to get preproc to automatically prepend packages
