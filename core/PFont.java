@@ -402,113 +402,10 @@ public class PFont implements PConstants {
     }
 
     //textImpl(c, x, y, z, parent);
+    if (z != 0) parent.translate(0, 0, z);  // TEMPORARY HACK! SLOW!
     parent.textImpl(c, x, y, z);
+    if (z != 0) parent.translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
   }
-
-
-  /**
-   * Internal function to draw a character at an x, y, z position.
-   * This version is called after the textM
-   */
-  /*
-  protected void textImpl(char c, float x, float y, float z,
-                          PGraphics parent) {
-    int glyph = index(c);
-    if (glyph == -1) return;
-
-    if (parent.textMode == MODEL) {
-      float high    = (float) height[glyph]     / fheight;
-      float bwidth  = (float) width[glyph]      / fwidth;
-      float lextent = (float) leftExtent[glyph] / fwidth;
-      float textent = (float) topExtent[glyph]  / fheight;
-
-      float x1 = x + lextent * parent.textSize;
-      float y1 = y - textent * parent.textSize;
-      float x2 = x1 + bwidth * parent.textSize;
-      float y2 = y1 + high * parent.textSize;
-
-      boolean savedTint = parent.tint;
-      int savedTintColor = parent.tintColor;
-      float savedTintR = parent.tintR;
-      float savedTintG = parent.tintG;
-      float savedTintB = parent.tintB;
-      float savedTintA = parent.tintA;
-      boolean savedTintAlpha = parent.tintAlpha;
-
-      parent.tint = true;
-      parent.tintColor = parent.fillColor;
-      parent.tintR = parent.fillR;
-      parent.tintG = parent.fillG;
-      parent.tintB = parent.fillB;
-      parent.tintA = parent.fillA;
-      parent.tintAlpha = parent.fillAlpha;
-
-      parent.imageImpl(images[glyph],
-                       x1, y1, x2, y2, //x2-x1, y2-y1,
-                       0, 0, width[glyph], height[glyph]);
-
-      parent.tint = savedTint;
-      parent.tintColor = savedTintColor;
-      parent.tintR = savedTintR;
-      parent.tintG = savedTintG;
-      parent.tintB = savedTintB;
-      parent.tintA = savedTintA;
-      parent.tintAlpha = savedTintAlpha;
-
-    } else {  // textMode SCREEN
-      int xx = (int) x + leftExtent[glyph];;
-      int yy = (int) y - topExtent[glyph];
-
-      int x0 = 0;
-      int y0 = 0;
-      int w0 = width[glyph];
-      int h0 = height[glyph];
-
-      if ((xx >= parent.width) || (yy >= parent.height) ||
-          (xx + w0 < 0) || (yy + h0 < 0)) return;
-
-      if (xx < 0) {
-        x0 -= xx;
-        w0 += xx;
-        xx = 0;
-      }
-      if (yy < 0) {
-        y0 -= yy;
-        h0 += yy;
-        yy = 0;
-      }
-      if (xx + w0 > parent.width) {
-        w0 -= ((xx + w0) - parent.width);
-      }
-      if (yy + h0 > parent.height) {
-        h0 -= ((yy + h0) - parent.height);
-      }
-
-      int fr = parent.fillRi;
-      int fg = parent.fillGi;
-      int fb = parent.fillBi;
-      int fa = parent.fillAi;
-
-      int pixels1[] = images[glyph].pixels;
-      int pixels2[] = parent.pixels;
-
-      for (int row = y0; row < y0 + h0; row++) {
-        for (int col = x0; col < x0 + w0; col++) {
-          int a1 = (fa * pixels1[row * twidth + col]) >> 8;
-          int a2 = a1 ^ 0xff;
-          int p1 = pixels1[row * width[glyph] + col];
-          int p2 = pixels2[(yy + row-y0)*parent.width + (xx+col-x0)];
-
-          pixels2[(yy + row-y0)*parent.width + xx+col-x0] =
-            (0xff000000 |
-             (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
-             (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
-             (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
-        }
-      }
-    }
-  }
-  */
 
 
   public void text(String str, float x, float y, PGraphics parent) {
@@ -517,6 +414,8 @@ public class PFont implements PConstants {
 
 
   public void text(String str, float x, float y, float z, PGraphics parent) {
+    if (z != 0) parent.translate(0, 0, z);  // TEMPORARY HACK! SLOW!
+
     int length = str.length();
     if (length > textBuffer.length) {
       textBuffer = new char[length + 10];
@@ -536,6 +435,7 @@ public class PFont implements PConstants {
     if (start < length) {
       textLine(start, index, x, y, z, parent);
     }
+    if (z != 0) parent.translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
   }
 
 
@@ -551,7 +451,9 @@ public class PFont implements PConstants {
 
     for (int index = start; index < stop; index++) {
       //textImpl(textBuffer[index], x, y, z, parent);
-      parent.textImpl(textBuffer[index], x, y, z);
+      //parent.textImpl(textBuffer[index], x, y, z);
+      // HACK FOR Z COORDINATES.. FIX ME SOON
+      parent.textImpl(textBuffer[index], x, y, 0); //z);
       x += parent.textSize *width(textBuffer[index]);
     }
   }
@@ -578,6 +480,8 @@ public class PFont implements PConstants {
    */
   public void text(String str, float boxX1, float boxY1,
                    float boxX2, float boxY2, float boxZ, PGraphics parent) {
+    if (boxZ != 0) parent.translate(0, 0, boxZ);  // TEMPORARY HACK! SLOW!
+
     float spaceWidth = width(' ') * parent.textSize;
     float runningX = boxX1;
     float currentY = boxY1;
@@ -672,6 +576,8 @@ public class PFont implements PConstants {
     if ((lineStart < length) && (lineStart != index)) {
       textLine(lineStart, index, lineX, currentY, boxZ, parent);
     }
+
+    if (boxZ != 0) parent.translate(0, 0, -boxZ);  // TEMPORARY HACK! SLOW!
   }
 
 
