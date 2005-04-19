@@ -309,7 +309,7 @@ public class PGraphics3 extends PGraphics {
     cameraZ = cameraY / ((float) tan(PI * cameraFOV / 360f));
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
-    
+
     cameraAspect = (float)width / (float)height;
 
     // init lights (in resize() instead of allocate() b/c needed by opengl)
@@ -990,8 +990,8 @@ public class PGraphics3 extends PGraphics {
       }
       vertex[VW] = ONE;
     }
-    
-    
+
+
     // ------------------------------------------------------------------
     // CREATE TRIANGLES
 
@@ -1147,16 +1147,16 @@ public class PGraphics3 extends PGraphics {
   }
 
   protected void add_triangle(int a, int b, int c) {
-    //add_triangle_with_clip(a, b, c);
-    add_triangle_no_clip(a, b, c);
+    add_triangle_with_clip(a, b, c);
+    //add_triangle_no_clip(a, b, c);
   }
-  
+
   protected final void add_triangle_with_clip(int a, int b, int c) {
     boolean aClipped = false;
     boolean bClipped = false;
     boolean cClipped = false;
     int     clippedCount = 0;
-  
+
     cameraNear = -8;
     if (vertices[a][VZ] > cameraNear) {
       aClipped = true;
@@ -1178,11 +1178,13 @@ public class PGraphics3 extends PGraphics {
       return;
     }
     //                                                          | .
-    // In this case there is only one visible point.            |/|    
+    // In this case there is only one visible point.            |/|
     // So we'll have to make two new points on the clip line   <| |
     // and add that triangle instead.                           |\|
     //                                                          | .
-    else if (clippedCount == 2) { 
+    else if (clippedCount == 2) {
+      //System.out.println("Clipped two");
+
       int ca, cb, cc, cd, ce;
       if (!aClipped) {
         ca = a;
@@ -1199,44 +1201,51 @@ public class PGraphics3 extends PGraphics {
         cb = b;
         cc = a;
       }
-      
+
       cd = interpolate_clip_vertex(ca, cb);
       ce = interpolate_clip_vertex(ca, cc);
-      add_triangle(ca, cd, ce);
+      add_triangle_no_clip(ca, cd, ce);
       return;
     }
-    
+
     //                                                          . |
-    // In this case there are two visible points.               |\|    
+    // In this case there are two visible points.               |\|
     // So we'll have to make two new points on the clip line    | |>
     // and then add two new triangles.                          |/|
     //                                                          . |
     else { // (clippedCount == 1) {
+      //System.out.println("Clipped one");
       int ca, cb, cc, cd, ce;
       if (aClipped) {
+        //System.out.println("aClipped");
         ca = c;
         cb = b;
         cc = a;
       }
       else if (bClipped) {
+        //System.out.println("bClipped");
         ca = a;
         cb = c;
         cc = b;
       }
       else { //if (cClipped) {
+        //System.out.println("cClipped");
         ca = a;
         cb = b;
         cc = c;
       }
-      
+
       cd = interpolate_clip_vertex(ca, cc);
       ce = interpolate_clip_vertex(cb, cc);
-      add_triangle(ca, cd, cb);
-      add_triangle(cb, cd, ce);
+      add_triangle_no_clip(ca, cd, cb);
+      //System.out.println("ca: " + ca + ", " + vertices[ca][VX] + ", " + vertices[ca][VY] + ", " + vertices[ca][VZ]);
+      //System.out.println("cd: " + cd + ", " + vertices[cd][VX] + ", " + vertices[cd][VY] + ", " + vertices[cd][VZ]);
+      //System.out.println("cb: " + cb + ", " + vertices[cb][VX] + ", " + vertices[cb][VY] + ", " + vertices[cb][VZ]);
+      add_triangle_no_clip(cb, cd, ce);
       return;
     }
   }
-  
+
   private final int interpolate_clip_vertex(int a, int b) {
     float[] va;
     float[] vb;
@@ -1251,131 +1260,74 @@ public class PGraphics3 extends PGraphics {
     }
     float az = va[VZ];
     float bz = vb[VZ];
-    
+
     float dz = az - bz;
     // If they have the same z, just use pt. a.
     if (dz == 0) {
       return a;
     }
-    float pa = (az - cameraNear) / dz;
-    float pb = (cameraNear - bz) / dz;
-    
-    vertex(pa * va[VX] + pb * vb[VX], pa * va[VY] + pb * vb[VY], pa * az + pb * bz);
+    //float pa = (az - cameraNear) / dz;
+    //float pb = (cameraNear - bz) / dz;
+    float pa = (cameraNear - bz) / dz;
+    float pb = 1 - pa;
+
+    //System.out.println("az, bz, cameraNear, dz: " + az + ", " + bz + ", " + cameraNear + ", " + dz);
+    //System.out.println("PA, PB: " + pa + ", " + pb);
+
+    vertex(pa * va[MX] + pb * vb[MX], pa * va[MY] + pb * vb[MY], pa * va[MZ] + pb * vb[MZ]);
     int irv = vertexCount - 1;
+    vertex_end++;
     float[] rv = vertices[irv];
-    
+
+    rv[X] = pa * va[X] + pb * vb[X];
+    rv[Y] = pa * va[Y] + pb * vb[Y];
+    rv[Z] = pa * va[Z] + pb * vb[Z];
+
+    rv[VX] = pa * va[VX] + pb * vb[VX];
+    rv[VY] = pa * va[VY] + pb * vb[VY];
+    rv[VZ] = pa * va[VZ] + pb * vb[VZ];
+    rv[VW] = pa * va[VW] + pb * vb[VW];
+
     rv[R] = pa * va[R] + pb * vb[R];
     rv[G] = pa * va[G] + pb * vb[G];
     rv[B] = pa * va[B] + pb * vb[B];
     rv[A] = pa * va[A] + pb * vb[A];
-    
+
     rv[U] = pa * va[U] + pb * vb[U];
     rv[V] = pa * va[V] + pb * vb[V];
-    
+
     rv[SR] = pa * va[SR] + pb * vb[SR];
     rv[SG] = pa * va[SG] + pb * vb[SG];
     rv[SB] = pa * va[SB] + pb * vb[SB];
     rv[SA] = pa * va[SA] + pb * vb[SA];
-    
+
     rv[NX] = pa * va[NX] + pb * vb[NX];
     rv[NY] = pa * va[NY] + pb * vb[NY];
     rv[NZ] = pa * va[NZ] + pb * vb[NZ];
-    
+
     rv[SW] = pa * va[SW] + pb * vb[SW];
-    
+
     rv[AR] = pa * va[AR] + pb * vb[AR];
     rv[AG] = pa * va[AG] + pb * vb[AG];
     rv[AB] = pa * va[AB] + pb * vb[AB];
-    
+
     rv[SPR] = pa * va[SPR] + pb * vb[SPR];
     rv[SPG] = pa * va[SPG] + pb * vb[SPG];
     rv[SPB] = pa * va[SPB] + pb * vb[SPB];
     rv[SPA] = pa * va[SPA] + pb * vb[SPA];
-    
+
     rv[ER] = pa * va[ER] + pb * vb[ER];
     rv[EG] = pa * va[EG] + pb * vb[EG];
     rv[EB] = pa * va[EB] + pb * vb[EB];
-    
+
     rv[SHINE] = pa * va[SHINE] + pb * vb[SHINE];
-    
+
     rv[BEEN_LIT] = 0;
-    
+
     return irv;
   }
 
-/*  
-static final int X = 0; // transformed xyzw
-  static final int Y = 1; // formerly SX SY SZ
-  static final int Z = 2;
-
-  static final int R = 3;  // actual rgb, after lighting
-  static final int G = 4;  // fill stored here, transform in place
-  static final int B = 5;
-  static final int A = 6;
-
-  // values that need no transformation
-  // but will be used in rendering
-
-  static final int U = 7; // texture
-  static final int V = 8;
-
-  // incoming values, raw and untransformed
-  // (won't be used in rendering)
-
-  static final int MX = 9; // model coords xyz
-  static final int MY = 10;
-  static final int MZ = 11;
-
-  static final int SR = 12; // stroke colors
-  static final int SG = 13;
-  static final int SB = 14;
-  static final int SA = 15;
-
-  static final int SW = 16; // stroke weight
-
-  // not used in rendering
-  // only used for calculating colors
-
-  static final int NX = 17; // normal
-  static final int NY = 18;
-  static final int NZ = 19;
-
-  static final int VX = 20; // view space coords
-  static final int VY = 21;
-  static final int VZ = 22;
-  static final int VW = 23;
-
-  // Ambient color (usually to be kept the same as diffuse)
-  // fill(_) sets both ambient and diffuse.
-  static final int AR = 24;
-  static final int AG = 25;
-  static final int AB = 26;
-
-  // Diffuse is shared with fill.
-  static final int DR = 3;
-  static final int DG = 4;
-  static final int DB = 5;
-  static final int DA = 6;
-
-  //specular (by default kept white)
-  static final int SPR = 27;
-  static final int SPG = 28;
-  static final int SPB = 29;
-  //GL doesn't use a separate specular alpha, but we do (we're better)
-  static final int SPA = 30;
-
-  static final int SHINE = 31;
-
-  //emissive (by default kept black)
-  static final int ER = 32;
-  static final int EG = 33;
-  static final int EB = 34;
-
-  //has this vertex been lit yet
-  static final int BEEN_LIT = 35;  
-  
-*/  
-  protected final void add_triangle_no_clip(int a, int b, int c) {  
+  protected final void add_triangle_no_clip(int a, int b, int c) {
     //System.out.println("adding triangle " + triangleCount);
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
@@ -2069,327 +2021,6 @@ static final int X = 0; // transformed xyzw
       copy_prelit_vertex_color_to_triangle(tri, vIndex, 2);
     }
   }
-
-  /**
-   * This method handles the transformation, lighting, and clipping
-   * operations for the shapes. Broken out as a separate function
-   * so that other renderers can override. For instance, with OpenGL,
-   * this section is all handled on the graphics card. (Not currently.)
-   */
-  protected void handle_lighting_old() {
-
-    // ------------------------------------------------------------------
-    // CULLING
-
-    // simple culling
-    // if they share the same clipping code, then cull
-    /*
-    boolean clipped = true;
-    float x = vertices[vertex_start][X];
-    float y = vertices[vertex_start][Y];
-    int clipCode = ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
-            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
-    for (int i = vertex_start + 1; i < vertex_end; i++) {
-      x = vertices[i][X];
-      y = vertices[i][Y];
-      int code = ((y < 0 ? 8 : 0) | (y > height1 ? 4 : 0) |
-            (x < 0 ? 2 : 0) | (x > width1 ? 1 : 0));
-      if (code != clipCode) {
-        clipped = false;
-        break;
-      }
-    }
-    if ((clipCode != 0) && clipped) return;
-    */
-
-
-    // ------------------------------------------------------------------
-    // NORMALS
-
-    /*
-    if (!normalChanged) {
-      // fill first vertext w/ the normal
-      vertices[vertex_start][NX] = normalX;
-      vertices[vertex_start][NY] = normalY;
-      vertices[vertex_start][NZ] = normalZ;
-      // homogenousNormals saves time from below, which is expensive
-    }
-    */
-
-    // TODO: You only need to do any of this when you've got lighting and fill is on
-
-    // TODO: You only need to calculate these repeatedly when you've got VERTEX or AUTO normals
-    for (int i = vertex_start; i < vertex_end; i++) {
-      float v[] = vertices[i];
-      //    Multiply by TRANSPOSE!
-      // It's just one of those things. Model normals should be multiplied by the
-      // inverse transpose of the modelview matrix to get world normals.
-      float nx = modelviewInv.m00*v[NX] + modelviewInv.m10*v[NY] + modelviewInv.m20*v[NZ] + modelviewInv.m30;
-      float ny = modelviewInv.m01*v[NX] + modelviewInv.m11*v[NY] + modelviewInv.m21*v[NZ] + modelviewInv.m31;
-      float nz = modelviewInv.m02*v[NX] + modelviewInv.m12*v[NY] + modelviewInv.m22*v[NZ] + modelviewInv.m32;
-      float nw = modelviewInv.m03*v[NX] + modelviewInv.m13*v[NY] + modelviewInv.m23*v[NZ] + modelviewInv.m33;
-
-      v[NX] = nx;
-      v[NY] = ny;
-      v[NZ] = nz;
-      if (nw != 0) {
-        // divide by perspective coordinate
-        v[NX] /= nw; v[NY] /= nw; v[NZ] /= nw;
-      }
-
-      float nlen = mag(v[NX], v[NY], v[NZ]);  // normalize
-      if (nlen != 0 && nlen != ONE) {
-        v[NX] /= nlen; v[NY] /= nlen; v[NZ] /= nlen;
-      }
-    }
-
-
-    // ------------------------------------------------------------------
-    // LIGHTS
-
-    // if no lights enabled, then all the values for r, g, b
-    // have been set with calls to vertex() (no need to re-calculate here)
-
-    if (lightCount > 0) {
-      // The assumption here is that we are only using vertex normals
-      // I think face normals may be necessary to offer also. We'll see.
-      //float f[] = vertices[vertex_start];
-
-      for (int i = vertex_start; i < vertex_end; i++) {
-        float v[] = vertices[i];
-        float vx = v[VX];
-        float vy = v[VY];
-        float vz = v[VZ];
-        float vw = v[VW];
-        if (vw != 0 && vw != 1) {
-          vx /= vw;
-          vy /= vw;
-          vz /= vw;
-        }
-
-        if (fill) {
-          calc_lighting(v[AR],  v[AG], v[AB], v[R], v[G], v[B], v[SPR],  v[SPG], v[SPB], v[ER],  v[EG], v[EB],
-                        vx, vy, vz,
-                        v[NX], v[NY], v[NZ], v[SHINE], v, R);
-        }
-        // We're not lighting strokes now.
-        /*if (stroke) {
-          calc_lighting(v[AR],  v[AG], v[AB], v[SR], v[SG], v[SB], v[SPR],  v[SPG], v[SPB], v[ER],  v[EG], v[EB],
-                        vx, vy, vz,
-                        v[NX], v[NY], v[NZ], v[SHINE], v, SR);
-        }*/
-        }
-      }
-
-
-    // ------------------------------------------------------------------
-    // NEAR PLANE CLIPPING AND CULLING
-
-    //if ((cameraMode == PERSPECTIVE) && (dimensions == 3) && clip) {
-      //float z_plane = eyeDist + ONE;
-
-      //for (int i = 0; i < lineCount; i ++) {
-          //line3dClip();
-      //}
-
-      //for (int i = 0; i < triangleCount; i ++) {
-      //}
-    //}
-  }
-
-
-  /**
-   * lighting calculation of final color.
-   * Assumptions:
-   * camera space == world space
-   * All coordinates are in world space, including normals
-   * Normals are pre-normalized
-   * Lights are in world-space too
-   * This vertex has not yet been lit. Value changes happen in place.
-   *
-   * @param  r        red component of object's colour
-   * @param  g        green of object's colour
-   * @param  b        blue of object's colour
-   * @param  wx       x coord of world point
-   * @param  wy       y coord of world point
-   * @param  wz       z coord of world point
-   * @param  nx       x coord of normal vector
-   * @param  ny       y coord of normal vector
-   * @param  nz       z coord of normal vector
-   * @param  target   float array to store result
-   * @param  toffset  starting index in target array
-   */
-  private void calc_lighting(float ar, float ag, float ab,
-                             float dr, float dg, float db,
-                             float sr, float sg, float sb,
-                             float er, float eg, float eb,
-                             float wx, float wy, float wz,
-                             float nx, float ny, float nz,
-                             float shininess,
-                             float target[], int toffset) {
-    //System.out.println("calc_lighting normals " + nx + " " + ny + " " + nz);
-
-    if (lightCount == 0) {
-      target[toffset + 0] = min(1.0f, er+dr);
-      target[toffset + 1] = min(1.0f, eg+dg);
-      target[toffset + 2] = min(1.0f, eb+db);
-      return;
-    }
-
-    // Must pre-normalize normals
-    //float nlen = mag(nx, ny, nz);
-    //if (nlen != 0) {
-    //  nx /= nlen; ny /= nlen; nz /= nlen;
-    //}
-
-
-    // Since the camera space == world space,
-    // we can test for visibility by the dot product of
-    // the normal with the direction from pt. to eye.
-    float dir = dot(nx, ny, nz, -wx, -wy, -wz);
-    // If normal is away from camera, choose its opposite.
-    // If we add backface culling, this will be backfacing
-    // (but since this is per vertex, it's more complicated)
-    if (dir < 0) {
-      nx = -nx;
-      ny = -ny;
-      nz = -nz;
-    }
-
-    // These two terms will sum the contributions from the various lights
-    float diffuse_r = 0;
-    float diffuse_g = 0;
-    float diffuse_b = 0;
-
-    float specular_r = 0;
-    float specular_g = 0;
-    float specular_b = 0;
-
-    //for (int i = 0; i < MAX_LIGHTS; i++) {
-    //if (!light[i]) continue;
-    for (int i = 0; i < lightCount; i++) {
-
-      float denom = lightsFalloffConstant[i];
-      float spotTerm = 1;
-
-      if (lights[i] == AMBIENT) {
-        if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
-          // Falloff depends on distance
-          float distSq = mag(lightsX[i] - wx,
-                             lightsY[i] - wy, lightsZ[i] - wz);
-          denom += (lightsFalloffQuadratic[i] * distSq +
-                    lightsFalloffLinear[i] * (float)sqrt(distSq));
-        }
-        if (denom == 0) denom = 1;
-        diffuse_r += lightsDiffuseR[i] * ar / denom;
-        diffuse_g += lightsDiffuseG[i] * ag / denom;
-        diffuse_b += lightsDiffuseB[i] * ab / denom;
-      }
-      else {
-        //If not ambient, we must deal with direction
-
-        //li is the vector from the vertex to the light
-        float lix, liy, liz;
-        float lightDir_dot_li = 0;
-        float n_dot_li = 0;
-
-        if (lights[i] == DIRECTIONAL) {
-          lix = -lightsNX[i];
-          liy = -lightsNY[i];
-          liz = -lightsNZ[i];
-          denom = 1;
-          n_dot_li = (nx*lix + ny*liy + nz*liz);
-          // If light is lighting the face away from the camera, ditch
-          if (n_dot_li <= 0) {
-            continue;
-          }
-        }
-        else { // Point or spot light (must deal also with light location)
-          lix = lightsX[i] - wx;
-          liy = lightsY[i] - wy;
-          liz = lightsZ[i] - wz;
-          // normalize
-          float distSq = mag(lix, liy, liz);
-          if (distSq != 0) {
-            lix /= distSq; liy /= distSq; liz /= distSq;
-          }
-          n_dot_li = (nx*lix + ny*liy + nz*liz);
-          // If light is lighting the face away from the camera, ditch
-          if (n_dot_li <= 0) {
-            continue;
-          }
-
-          if (lights[i] == SPOT) { // Must deal with spot cone
-            lightDir_dot_li =
-              -(lightsNX[i]*lix + lightsNY[i]*liy + lightsNZ[i]*liz);
-            // Outside of spot cone
-            if (lightDir_dot_li <= lightsSpotAngleCos[i]) {
-              continue;
-            }
-            spotTerm = pow(lightDir_dot_li, lightsSpotConcentration[i]);
-          }
-
-          if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
-            // Falloff depends on distance
-            denom += (lightsFalloffQuadratic[i] * distSq +
-                      lightsFalloffLinear[i] * (float)sqrt(distSq));
-          }
-        }
-        // Directional, point, or spot light:
-
-        // We know n_dot_li > 0 from above "continues"
-
-        if (denom == 0) denom = 1;
-        float mul = n_dot_li * spotTerm / denom;
-        diffuse_r += lightsDiffuseR[i] * mul;
-        diffuse_g += lightsDiffuseG[i] * mul;
-        diffuse_b += lightsDiffuseB[i] * mul;
-
-        // SPECULAR
-
-        // If the material and light have a specular component.
-        if ((sr > 0 || sg > 0 || sb > 0) &&
-            (lightsSpecularR[i] > 0 ||
-             lightsSpecularG[i] > 0 ||
-             lightsSpecularB[i] > 0) ) {
-
-          float vmag = mag(wx, wy, wz);
-          if (vmag != 0) {
-            wx /= vmag; wy /= vmag; wz /= vmag;
-          }
-          float sx = lix - wx;
-          float sy = liy - wy;
-          float sz = liz - wz;
-          vmag = mag(sx, sy, sz);
-          if (vmag != 0) {
-            sx /= vmag; sy /= vmag; sz /= vmag;
-          }
-          float s_dot_n = (sx*nx + sy*ny + sz*nz);
-
-          if (s_dot_n > 0) {
-            s_dot_n = pow(s_dot_n, shininess);
-            mul = s_dot_n * spotTerm / denom;
-            specular_r += lightsSpecularR[i] * mul;
-            specular_g += lightsSpecularG[i] * mul;
-            specular_b += lightsSpecularB[i] * mul;
-          }
-
-        }
-      }
-    }
-
-    target[toffset+0] = min(1, er + dr * diffuse_r);
-    target[toffset+1] = min(1, eg + dg * diffuse_g);
-    target[toffset+2] = min(1, eb + db * diffuse_b);
-
-    target[SPR] = min(1, sr * specular_r);
-    target[SPG] = min(1, sg * specular_g);
-    target[SPB] = min(1, sb * specular_b);
-
-    return;
-  }
-
-
 
   //////////////////////////////////////////////////////////////
 
