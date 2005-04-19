@@ -6054,6 +6054,20 @@ v              PApplet.this.stop();
   }
 
 
+  public void camera() {
+    if (recorder != null) recorder.camera();
+    g.camera();
+  }
+
+
+  public void camera(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+    if (recorder != null) recorder.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+    g.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+  }
+
+
   public void ortho() {
     if (recorder != null) recorder.ortho();
     g.ortho();

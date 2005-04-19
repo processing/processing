@@ -1,3 +1,12 @@
+0084 core
+X fixed create font / incremented font file version number
+X simon lighting fixes
+X added simon's lighting docs to lights() fxn in javadoc
+X set default stroke cap as ROUND
+X   otherwise smooth() makes points disappear
+X hack for text with a z coordinate
+
+
 0083 core
 X fix double key events
 X fix mrj.version security error on the pc
