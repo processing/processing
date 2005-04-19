@@ -30,6 +30,17 @@ first, it asks you if you want to save but mentions the pre-rename
 name. But I hit yes, quit, came back in, and all seemed right in the
 world.
 
+X "save as" not actually saving properly
+File>New
+edit file...
+File>Save As
+File>Open some other file
+File>Open original file
+file is empty.
+the only way to make File>Save As actually save new files, as far as i
+can tell, is to Save As once, make at least one change, then Save. 
+
+
 pending
 _ rename video.Camera to video.Video ? Capture ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
@@ -60,16 +71,6 @@ hide "a"
 unhide "a_2"
 unhide "a"
 where did "a_2" go ?
-
-(74) "save as" not actually saving properly
-File>New
-edit file...
-File>Save As
-File>Open some other file
-File>Open original file
-file is empty.
-the only way to make File>Save As actually save new files, as far as i
-can tell, is to Save As once, make at least one change, then Save. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
