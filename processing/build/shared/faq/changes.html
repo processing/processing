@@ -1,0 +1,180 @@
+<html>
+<head>
+<title>Processing 1.0 (BETA)  &gt;&gt; Information</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="processing_beta.css">
+
+<script language="JavaScript">
+<!--
+
+function gogo(dropdown) {
+  var tempURL = dropdown.options[dropdown.selectedIndex].value;
+  if(tempURL!="") {
+    document.location.href = tempURL;
+  }
+}
+
+//-->
+</script>
+
+</head>
+<body bgcolor="#FFFFFF" text="#333333" link="#CC6600" vlink="#CC6600" alink="#CC6600" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#000000">
+  <tr> 
+    <td width="550" colspan="2" bgcolor="#000000" valign="top"> <img src="images/processing_beta.gif" width="500" height="50" align="top"><a name="top"></a></td>
+    <td width="50" align="right" valign="top" bgcolor="#000000"> <img src="images/1pix.gif" width="180" height="10"><br>
+      <a href="faq.html"></a></td>
+    <td width="20" bgcolor="#000000" valign="top">&nbsp;</td>
+  </tr>
+</table>
+<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td width="55"><img src="images/1pix.gif" width="55" height="40"></td>
+    <td width="675" valign="bottom">&nbsp;</td>
+    <td width="20">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="730" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="100"></td>
+    <td width="675" valign="top"> <img src="images/header_faq.gif" width="675" height="68" alt="Frequently Asked Questions. There are many questions surrounding the enigmatic and youthful Processing project and we don't have all the answers, but we have many."><br>
+    </td>
+  </tr>
+</table>
+<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td width="55"><img src="images/1pix.gif" width="55" height="20"></td>
+    <td width="695" valign="top">Select a topic from the pulldown:</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right">&nbsp;</td>
+    <td width="695" valign="middle">
+<table width="3%" border="0" cellspacing="0" cellpadding="0">
+        <form>
+          <tr> 
+            <td width="1%" align="right" valign="middle"> <select name="nav" size="1" class="inputnav" onChange="javascript:gogo(this)">
+<option value="index.html">General Information </option>
+<option value="bugs.html">Setup, Troubleshooting, and Bugs</option>
+<option value="platforms.html">Platforms (Mac OS, Windows and
+            Linux)</option>
+<option value="changes.html" selected>Changes from Alpha to Beta</option>
+<option value="people.html">Founders, Developers, and
+            Affiliates </option>
+
+              </select> </td>
+          </tr>
+        </form>
+      </table></td>
+  </tr>
+  <tr> 
+    <td width="55"><img src="images/1pix.gif" width="55" height="30"></td>
+    <td width="695">&nbsp;</td>
+  </tr>
+</table>
+
+
+<!--
+<table width="730" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="55"></td>
+    <td width="675" valign="top"> <p>
+<a href="#people">People</a> <br>
+<a href="#contact">Contact and Feedback</a> <br>
+<a href="#links">Links</a> <br>
+        <br>
+        <br>
+      </p></td>
+  </tr>
+</table>
+-->
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="people"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Changes between revision 69 (the last public alpha) and the beta release.
+      </b><br><br>
+Many, many functions have been added, and are detailed in the 
+<a href="http://processing.org/reference/index_ext.html">complete
+      reference</a>. Aside from that, this page lists functions whose
+      names have changed or fundamental API differences between the
+      two versions.
+<UL>
+<LI>The libraries for serial, video, and network have changed
+completely. Check out the examples or visit the libraries reference
+for the full details.
+<LI>loop() has been removed, and is instead called draw(). If you want
+applications to only run draw() once, use the function noLoop() inside
+of setup().
+<LI>2D and 3D graphics are no longer completely mixed. To specify
+3D graphics, instead of size(200, 200), the new way is to use
+size(200, 200, P3D). 
+<LI>To use OpenGL rendering, change that to size(200, 200, OPENGL),
+and use Sketch &rarr; Import Library &rarr; opengl. OpenGL support is
+incomplete, but allows for much larger screen sizes and accelerated
+graphics that make use of a decent graphics card. 
+<LI>When using the pixels[] array of the main window, or on an image,
+you should first call loadPixels(), and once you're done editing, call
+updatePixels().
+<LI>textureMode(NORMAL_SPACE) &rarr; textureMode(NORMALIZED)
+<LI>textureMode(IMAGE_SPACE) &rarr; textureMode(IMAGE)
+<LI>textMode(ALIGN_LEFT) &rarr; textAlign(LEFT)
+<LI>textMode(ALIGN_RIGHT) &rarr; textAlign(RIGHT)
+<LI>textMode(ALIGN_CENTER) &rarr; textAlign(CENTER)
+<LI>textSpace(SCREEN_SPACE) &rarr; textMode(SCREEN)
+<LI>textSpace(OBJECT_SPACE) &rarr; textMode(OBJECT)
+<LI>CENTER_DIAMETER &rarr; CENTER
+<LI>curveSegments() &rarr; curveDetail()
+<LI>bezierSegments() &rarr; bezierDetail()
+<LI>angleMode() has been removed. Just use radians for everything. To
+convert from degrees to radians, use something like sin(radians(90))
+<LI>four calls to bezierVertex(x, y) should instead be a single call
+to vertex(x, y), followed by bezierVertex(cx1, cy1, cx2, cy2, x2, y2)
+(two control points followed by the destination point). 
+<LI>&hellip;many other things that we've forgotten in our hastiness
+and we'll be adding over the next few days and weeks.
+</UL>
+Things that change between releases will always be documented in
+revisions.txt. The revisions file also contains the release-by-release
+information for what's incrementally changed from 68 through 85. 
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td width="55"><br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> 
+      <br /> </td>
+    <td width="20">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" height="25" bgcolor="#5A5A46" valign="top">&nbsp;</td>
+    <td width="675" valign="middle" bgcolor="#5A5A46"><font color="#ffffff">Processing 
+      is an open project initiated by</font> <a href="http://benfry.com"><font color="#ffffff">Ben 
+      Fry</font></a> <font color="#ffffff">and</font> <a href="http://reas.com"><font color="#ffffff">Casey 
+      Reas</font></a></td>
+    <td width="20" bgcolor="#5A5A46" valign="top">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" height="25" bgcolor="#000000">&nbsp;</td>
+    <td width="675" valign="middle" bgcolor="#000000"><a href="http://processing.org/copyright.html"><font color="#FFFFFF">&copy; 
+      Info</font></a></td>
+    <td width="20" bgcolor="#000000">&nbsp;</td>
+  </tr>
+</table>
+</body>
+</html>
