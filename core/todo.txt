@@ -4,12 +4,15 @@ X simon lighting fixes
 X added simon's lighting docs to lights() fxn in javadoc
 X set default stroke cap as ROUND
 X   otherwise smooth() makes points disappear
-
+X hack for text with a z coordinate
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 NOT COMPLETELY NECESSARY BEFORE BETA
+
+_ text() with a z coordinate is now using translate, very slow
+_   also puts up a weird error message about translate() in 2D mode
 
 _ fix the flicker in java2d mode
 _   not clear what's happening here
