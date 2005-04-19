@@ -177,6 +177,9 @@ public class PGraphics3 extends PGraphics {
   // on endFrame with all the triangles being depth sorted
   protected int vertex_end;
 
+  // vertices may be added during clipping against the near plane.
+  protected int vertex_end_including_clip_verts;
+
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
   int vertex_order[] = new int[DEFAULT_VERTICES];
@@ -792,6 +795,7 @@ public class PGraphics3 extends PGraphics {
 
   public void endShape() {
     vertex_end = vertexCount;
+    vertex_end_including_clip_verts = vertex_end;
 
     // don't try to draw if there are no vertices
     // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
@@ -800,6 +804,36 @@ public class PGraphics3 extends PGraphics {
       return;
     }
 
+
+    // ------------------------------------------------------------------
+    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO CAMERA SPACE (VX, VY, VZ)
+    // It is necessary to do this now because we will be clipping them on
+    // add_triangle.
+
+    for (int i = vertex_start; i < vertex_end; i++) {
+      float vertex[] = vertices[i];
+
+      vertex[VX] =
+        modelview.m00*vertex[MX] + modelview.m01*vertex[MY] +
+        modelview.m02*vertex[MZ] + modelview.m03;
+      vertex[VY] =
+        modelview.m10*vertex[MX] + modelview.m11*vertex[MY] +
+        modelview.m12*vertex[MZ] + modelview.m13;
+      vertex[VZ] =
+        modelview.m20*vertex[MX] + modelview.m21*vertex[MY] +
+        modelview.m22*vertex[MZ] + modelview.m23;
+      vertex[VW] =
+        modelview.m30*vertex[MX] + modelview.m31*vertex[MY] +
+        modelview.m32*vertex[MZ] + modelview.m33;
+
+      // normalize
+      if (vertex[VW] != 0 && vertex[VW] != ONE) {
+        vertex[VX] /= vertex[VW];
+        vertex[VY] /= vertex[VW];
+        vertex[VZ] /= vertex[VW];
+      }
+      vertex[VW] = ONE;
+    }
 
     // ------------------------------------------------------------------
     // CREATE LINES
@@ -960,38 +994,6 @@ public class PGraphics3 extends PGraphics {
       }
     }
 
-
-    // ------------------------------------------------------------------
-    // 2D or 3D POINTS FROM MODEL (MX, MY, MZ) TO CAMERA SPACE (VX, VY, VZ)
-    // It is necessary to do this now because we will be clipping them on
-    // add_triangle.
-
-    for (int i = vertex_start; i < vertex_end; i++) {
-      float vertex[] = vertices[i];
-
-      vertex[VX] =
-        modelview.m00*vertex[MX] + modelview.m01*vertex[MY] +
-        modelview.m02*vertex[MZ] + modelview.m03;
-      vertex[VY] =
-        modelview.m10*vertex[MX] + modelview.m11*vertex[MY] +
-        modelview.m12*vertex[MZ] + modelview.m13;
-      vertex[VZ] =
-        modelview.m20*vertex[MX] + modelview.m21*vertex[MY] +
-        modelview.m22*vertex[MZ] + modelview.m23;
-      vertex[VW] =
-        modelview.m30*vertex[MX] + modelview.m31*vertex[MY] +
-        modelview.m32*vertex[MZ] + modelview.m33;
-
-      // normalize
-      if (vertex[VW] != 0 && vertex[VW] != ONE) {
-        vertex[VX] /= vertex[VW];
-        vertex[VY] /= vertex[VW];
-        vertex[VZ] /= vertex[VW];
-      }
-      vertex[VW] = ONE;
-    }
-
-
     // ------------------------------------------------------------------
     // CREATE TRIANGLES
 
@@ -1073,7 +1075,7 @@ public class PGraphics3 extends PGraphics {
     // ------------------------------------------------------------------
     // POINTS FROM CAMERA SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
 
-    for (int i = vertex_start; i < vertex_end; i++) {
+    for (int i = vertex_start; i < vertex_end_including_clip_verts; i++) {
       float vx[] = vertices[i];
 
       float ox =
@@ -1126,8 +1128,33 @@ public class PGraphics3 extends PGraphics {
     pathCount++;
   }
 
+  protected void add_line(int a, int b) {
+    add_line_with_clip(a, b);
+  }
 
-  protected final void add_line(int a, int b) {
+  protected final void add_line_with_clip(int a, int b) {
+    float az = vertices[a][VZ];
+    float bz = vertices[b][VZ];
+    if (az > cameraNear) {
+      if (bz > cameraNear) {
+        return;
+      }
+      int cb = interpolate_clip_vertex(a, b);
+      add_line_no_clip(cb, b);
+      return;
+    }
+    else {
+      if (bz <= cameraNear) {
+        add_line_no_clip(a, b);
+        return;
+      }
+      int cb = interpolate_clip_vertex(a, b);
+      add_line_no_clip(a, cb);
+      return;
+    }
+  }
+
+  protected final void add_line_no_clip(int a, int b) {
     if (lineCount == lines.length) {
       int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
       System.arraycopy(lines, 0, temp, 0, lineCount);
@@ -1276,7 +1303,7 @@ public class PGraphics3 extends PGraphics {
 
     vertex(pa * va[MX] + pb * vb[MX], pa * va[MY] + pb * vb[MY], pa * va[MZ] + pb * vb[MZ]);
     int irv = vertexCount - 1;
-    vertex_end++;
+    vertex_end_including_clip_verts++;
     float[] rv = vertices[irv];
 
     rv[X] = pa * va[X] + pb * vb[X];
