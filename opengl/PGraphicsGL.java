@@ -879,7 +879,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void spotLight(float r, float g, float b,
                         float x, float y, float z,
-                        float nx, float ny, float nz, 
+                        float nx, float ny, float nz,
                         float angle, float concentration) {
     super.spotLight(r, g, b, x, y, z, nx, ny, nz, angle, concentration);
     //int num = super.internalCreateSpotLight(lr, lg, lb, x, y, z, nx, ny, nz, angle);
@@ -1838,6 +1838,11 @@ public class PGraphicsGL extends PGraphics3 {
       }
       System.out.println();
     }
+  }
+
+//GL will do the clipping for us
+  protected void add_line(int a, int b) {
+    add_line_no_clip(a, b);
   }
 
   // GL will do the clipping for us
