@@ -752,7 +752,9 @@ public class Sketch {
     // if the new folder already exists, then need to remove
     // its contents before copying everything over
     // (user will have already been warned)
-    Base.removeDir(newFolder);
+    if (newFolder.exists()) {
+      Base.removeDir(newFolder);
+    }
     // in fact, you can't do this on windows because it tries
     // to go into the same folder, but it happens on osx a lot.
 
@@ -774,7 +776,9 @@ public class Sketch {
     code[0].name = newName;
     // write the contents to the renamed file
     // (this may be resaved if the code is modified)
-    code[0].save();
+    code[0].modified = true;
+    //code[0].save();
+    //System.out.println("modified is " + modified);
 
     // change the other paths
     String oldName = name;
@@ -1968,7 +1972,9 @@ public class Sketch {
     } else {
       // check to see if each modified code file can be written to
       for (int i = 0; i < codeCount; i++) {
-        if (code[i].modified && !code[i].file.canWrite()) {
+        if (code[i].modified &&
+            !code[i].file.canWrite() &&
+            code[i].file.exists()) {
           //System.err.println("found a read-only file " + code[i].file);
           return true;
         }
