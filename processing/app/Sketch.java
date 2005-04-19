@@ -72,6 +72,8 @@ public class Sketch {
   int hiddenCount;
   SketchCode hidden[];
 
+  Hashtable zipFileContents;
+
   // all these set each time build() is called
   String mainClassName;
   String classPath;
@@ -1511,6 +1513,8 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
+    zipFileContents = new Hashtable();
+
     boolean replaceHtml = true;
     //File appletDir, String exportSketchName, File dataDir) {
     //String program = textarea.getText();
@@ -1746,6 +1750,8 @@ public class Sketch {
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
+          //System.out.println("adding zip file " +
+          //                 exportFile.getAbsolutePath());
           packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
 
         } else {  // just copy the file over.. prolly a .dll or something
@@ -1862,8 +1868,8 @@ public class Sketch {
    * Slurps up .class files from a colon (or semicolon on windows)
    * separated list of paths and adds them to a ZipOutputStream.
    */
-  static public void packClassPathIntoZipFile(String path,
-                                              ZipOutputStream zos)
+  public void packClassPathIntoZipFile(String path,
+                                       ZipOutputStream zos)
     throws IOException {
     String pieces[] = PApplet.split(path, File.pathSeparatorChar);
 
@@ -1883,10 +1889,15 @@ public class Sketch {
               // actually 'continue's for all dir entries
 
             } else {
-              String name = entry.getName();
+              String entryName = entry.getName();
               // ignore contents of the META-INF folders
-              if (name.indexOf("META-INF") == 0) continue;
-              ZipEntry entree = new ZipEntry(name);
+              if (entryName.indexOf("META-INF") == 0) continue;
+
+              // don't allow duplicate entries
+              if (zipFileContents.get(entryName) != null) continue;
+              zipFileContents.put(entryName, new Object());
+
+              ZipEntry entree = new ZipEntry(entryName);
 
               zos.putNextEntry(entree);
               byte buffer[] = new byte[(int) entry.getSize()];
