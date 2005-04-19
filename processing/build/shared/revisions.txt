@@ -7,6 +7,36 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0084 - 19 april 2005
+
+we're one release away from beta. reference and examples need another
+update, and the faq page needs a rundown of all the changes yet, but
+hopefully we're done with the code, barring any showstopper bugs.
+
+changes for this release:
+
+- added run.options to preferences that will allow you to set the
+  amount of memory allocated to sketches run externally.
+
+- stability improvements to processing.exe from simon. 
+
+- additions to the faq pages (the readme and bugs files are gone,
+  replaced with the 'faq' folder)
+
+- all the dreaded "save as" bugs are now fixed
+
+- "Create Font" works once again
+
+- more lighting fixes from simon
+
+- point() again works in 2D mode
+
+- text with a z coordinate is working again
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0083 - 17 april 2005
 
 - new reference and examples in this release. please test!
