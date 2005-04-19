@@ -53,13 +53,14 @@ unhide "a"
 where did "a_2" go ?
 
 
-
 pending
 _ rename video.Camera to video.Video ? Capture ?
 _   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
 _   need to straighten out for when audio comes along
 _ faq menu selection should select current page so can navigate elsewhere
 _   also missing "founders" and "interview" pages
+_   remove interview page if not already done
+_   founders page is online, just integrate - info.html
 _ list of changes since rev 69? run through revisions.txt
 
 _ list of known bugs should be on the faq page
