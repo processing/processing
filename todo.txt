@@ -1,7 +1,9 @@
 0086 pde
 
+X update faq on site? what's difference between versions?
+X   no difference between versions... should it be cvs based?
+
 _ not slice() but subset()... get word from casey on how to resolve
-_ update faq on site? what's difference between versions?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
