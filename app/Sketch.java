@@ -515,8 +515,8 @@ public class Sketch {
     // TODO maybe gray out the menu on setCurrent(0)
     if (current == code[0]) {
       Base.showMessage("Can't do that",
-                          "You cannot hide the main " +
-                          ".pde file from a sketch\n");
+                       "You cannot hide the main " +
+                       ".pde file from a sketch\n");
       return;
     }
 
@@ -524,8 +524,8 @@ public class Sketch {
     File newFile = new File(current.file.getAbsolutePath() + ".x");
     if (!current.file.renameTo(newFile)) {
       Base.showWarning("Error",
-                          "Could not hide " +
-                          "\"" + current.file.getName() + "\".", null);
+                       "Could not hide " +
+                       "\"" + current.file.getName() + "\".", null);
       return;
     }
     current.file = newFile;
@@ -549,10 +549,13 @@ public class Sketch {
 
   public void unhideCode(String what) {
     //System.out.println("unhide " + e);
-    int unhideIndex = -1;
+    //int unhideIndex = -1;
+    SketchCode unhideCode = null;
+
     for (int i = 0; i < hiddenCount; i++) {
       if (hidden[i].name.equals(what)) {
-        unhideIndex = i;
+        //unhideIndex = i;
+        unhideCode = hidden[i];
 
         // remove from the 'hidden' list
         for (int j = i; j < hiddenCount-1; j++) {
@@ -562,14 +565,14 @@ public class Sketch {
         break;
       }
     }
-    if (unhideIndex == -1) {
+    //if (unhideIndex == -1) {
+    if (unhideCode == null) {
       System.err.println("internal error: could find " + what + " to unhide.");
       return;
     }
-    SketchCode unhideCode = hidden[unhideIndex];
     if (!unhideCode.file.exists()) {
       Base.showMessage("Can't unhide",
-                          "The file \"" + what + "\" no longer exists.");
+                       "The file \"" + what + "\" no longer exists.");
       //System.out.println(unhideCode.file);
       return;
     }
@@ -579,8 +582,8 @@ public class Sketch {
 
     if (!unhideCode.file.renameTo(unhideFile)) {
       Base.showMessage("Can't unhide",
-                          "The file \"" + what + "\" could not be" +
-                          "renamed and unhidden.");
+                       "The file \"" + what + "\" could not be" +
+                       "renamed and unhidden.");
       return;
     }
     unhideCode.file = unhideFile;

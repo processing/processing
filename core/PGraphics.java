@@ -1601,6 +1601,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(char c, float x, float y) {
+    text(c, x, y, 0);
+    /*
     if (textFont != null) {
       if (textMode == SCREEN) loadPixels();
       textFont.text(c, x, y, this);
@@ -1609,6 +1611,7 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
+    */
   }
 
 
@@ -1637,6 +1640,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(String s, float x, float y) {
+    text(s, x, y, 0);
+    /*
+    text(s, x, y, 0);
     if (textFont != null) {
       if (textMode == SCREEN) loadPixels();
       textFont.text(s, x, y, this);
@@ -1644,6 +1650,7 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
+    */
   }
 
 
@@ -1680,6 +1687,11 @@ public class PGraphics extends PImage implements PConstants {
    * ignored.
    */
   public void text(String s, float x1, float y1, float x2, float y2) {
+    text(s, x1, y1, x2, y2, 0);
+  }
+
+
+  public void text(String s, float x1, float y1, float x2, float y2, float z) {
     if (textFont != null) {
       float hradius, vradius;
       switch (rectMode) {
@@ -1709,17 +1721,12 @@ public class PGraphics extends PImage implements PConstants {
         float temp = y1; y1 = y2; y2 = temp;
       }
       if (textMode == SCREEN) loadPixels();
-      textFont.text(s, x1, y1, x2, y2, this);
+      textFont.text(s, x1, y1, x2, y2, z, this);
       if (textMode == SCREEN) updatePixels();
 
     } else {
       throw new RuntimeException("use textFont() before text()");
     }
-  }
-
-
-  public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    depthErrorXYZ("text");
   }
 
 
