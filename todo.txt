@@ -147,8 +147,6 @@ _     this is fine since opengl can't usually go across both
 _     but include an example for how to use full in gl 
 _     (use toolkit.getscreensize)
 
-_ fishwick library export duplication stuff
-
 _ runtime exceptions have stopped coming through (on pc only?)
 
 _ npe is a runtimeex, so any npe in setup comes up weird
