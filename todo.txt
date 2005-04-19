@@ -14,11 +14,8 @@ X faq menu selection should select current page so can navigate elsewhere
 X   also missing "founders" and "interview" pages
 X   remove interview page if not already done
 X   founders page is online, just integrate - info.html
-
-_ list of changes since rev 69? run through revisions.txt
-
-_ list of known bugs should be on the faq page
-_   a bunch of stuff from revisions.txt on 84 and 82
+X list of known bugs should be on the faq page
+X   a bunch of stuff from revisions.txt on 84 and 82
 o   how to deal with bugs, since there are so many known...
 
 save as... bugs
@@ -64,6 +61,10 @@ hide "a"
 unhide "a_2"
 unhide "a"
 where did "a_2" go ?
+
+
+085 pde
+_ list of changes since rev 69? run through revisions.txt
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
