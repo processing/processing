@@ -379,7 +379,20 @@ public class Sketch {
         // if renaming the main class, now rename the folder and re-open
         File newFolder = new File(folder.getParentFile(), newName);
         boolean success = folder.renameTo(newFolder);
+        if (!success) {
+          Base.showWarning("Error",
+                           "Could not rename the sketch.", null);
+          return;
+        }
+        // if successful, set base properties for the sketch
         folder = newFolder;
+        File mainFile = new File(newFolder, newName + ".pde");
+        mainFilename = mainFile.getAbsolutePath();
+
+        // set the sketch name... used by the pde and whatnot.
+        // the name is only set in the sketch constructor,
+        // so it's important here
+        name = newName;
 
         // get the changes into the sketchbook menu
         editor.sketchbook.rebuildMenus();
