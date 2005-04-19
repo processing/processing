@@ -633,16 +633,35 @@ Known Bugs
 <br> <br>
 Some highlights to get started:
 <UL>
-<LI>Java 1.1 support has been (temporarily?) removed from this
+<LI>Java 1.1 support has been (temporarily) removed from this
 release. We hope to bring it back, but it will take some time and we
 didn't want to hold up beta any longer.
 <LI>The stop button often doesn't stop things (like when using
 libraries), but closing the window to shut things down works fine.
-<LI>The set() functions are somewhat broken when using OpenGL.
+<LI>The set() functions are fairly broken when using OpenGL.
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
 2D and 3D libraries, eventually we won't have to include the 3D code
 when using 2D. 
+<LI>println() is can be super slow and often locks things up
+<LI>Dragging the applet window around will often make Processing lock up
+<LI>2D graphics might be a bit flickery sometimes, try setting the
+framerate() to get things under control
+<LI>The placement of applets that are 100x100 is sometimes weird
+<LI>Sometimes things lock up when there are errors in code,
+for instance, when using libraries like OpenGL, video, or net.
+<LI>Errors are sometimes cryptic or don't even come through,
+particularly on the Mac. 
+<LI>int() doesn't always work
+<LI>pause() and framerate() aren't working with the video library
+<LI>The beloved(?) "History" function from previous versions is
+missing. In the meantime, "Archive Sketch" might be useful. 
+<LI>Need to complete the "Tools" menu, which will be a way for people
+to develop their own editor plug-ins.
+<LI>"Export to Application" is not yet complete
+<LI>When you have too many tabs, things get ugly
+<LI>Error messages are often too long or too weird
+<LI>Lots of little UI things like proper focus or key shortcuts
 </UL>
       </td>
     <td width="50">&nbsp;</td>
