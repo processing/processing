@@ -10,6 +10,16 @@ X clean up faq page to use text A NAME tags
 X rename video.Camera to video.Video ? Capture ?
 X   VideoInput VideoOutput, SoundInput, SoundOutput or AudioInput/AudioOutput
 X   need to straighten out for when audio comes along
+X faq menu selection should select current page so can navigate elsewhere
+X   also missing "founders" and "interview" pages
+X   remove interview page if not already done
+X   founders page is online, just integrate - info.html
+
+_ list of changes since rev 69? run through revisions.txt
+
+_ list of known bugs should be on the faq page
+_   a bunch of stuff from revisions.txt on 84 and 82
+o   how to deal with bugs, since there are so many known...
 
 save as... bugs
 X always make sure that the sketch folder still exists 
@@ -54,16 +64,6 @@ hide "a"
 unhide "a_2"
 unhide "a"
 where did "a_2" go ?
-
-X faq menu selection should select current page so can navigate elsewhere
-_   also missing "founders" and "interview" pages
-_   remove interview page if not already done
-_   founders page is online, just integrate - info.html
-_ list of changes since rev 69? run through revisions.txt
-
-_ list of known bugs should be on the faq page
-_   a bunch of stuff from revisions.txt on 84 and 82
-o   how to deal with bugs, since there are so many known...
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
