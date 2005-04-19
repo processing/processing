@@ -7,9 +7,28 @@ X memory on external apps is a little broken
 X update the script for the mailing list
 
 save as... bugs
-X make sure that the sketch folder still exists when doing any operation
+X always make sure that the sketch folder still exists 
 X   otherwise editor gets into a weird state
+(v74) if a project folder is made (with save as), and then deleted
+while processing is still open, there is an error (of course).  but
+the error ('file/folder not found') is not displayed to the user, and
+the drop-downs don't go away / the IDE doesn't refresh.
+
 X remove a folder if someone tries to replace it via "save as"
+what happens if folder already exists on save as?
+saving a project over an already existing project does not get rid of
+the .pde files that arent overwritten.  not sure if this is feature or
+bug, but it took me by surprise.  it seemed to only overwrite .pde
+files with the same name, but everything else in that project folder
+stays as is. 
+
+X sketch renaming fixed
+X   rename, change, was asking about the old sketch name
+Minor issue, but caused me a couple seconds of confusion. If you
+rename your sketch then try to close the application without saving
+first, it asks you if you want to save but mentions the pre-rename
+name. But I hit yes, quit, came back in, and all seemed right in the
+world.
 
 pending
 _ rename video.Camera to video.Video ? Capture ?
@@ -18,15 +37,11 @@ _   need to straighten out for when audio comes along
 
 _ list of changes since rev 69? run through revisions.txt
 
+_ processing vs. flash item on the faq? a "why?" page?
+
 //
 
 "SAVE AS..." BUGS
-
-Minor issue, but caused me a couple seconds of confusion.  If you
-rename your sketch then try to close the application without saving
-first, it asks you if you want to save but mentions the pre-rename
-name.  But I hit yes, quit, came back in, and all seemed right in the
-world.
 
 Is it possible that saving with the 'save' button doesn't pay
 attention to where you point at the project folder from prefs?  Jeez,
