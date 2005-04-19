@@ -3068,12 +3068,12 @@ public class PApplet extends Applet
             //System.out.println("found the wrong case");
             //throw new RuntimeException("wrong case");
           }
-        } catch (IOException e) { }
+        } catch (Exception e) { }  // ioex or security
 
         stream = new FileInputStream(file);
         if (stream != null) return stream;
 
-      } catch (IOException e) { }  // ignored
+      } catch (Exception e) { }  // ioex or security
     }
 
     try {

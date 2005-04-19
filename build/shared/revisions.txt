@@ -7,6 +7,22 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0085 - 19 april 2005
+
+could this be beta?
+
+- camera() was missing from PGraphics
+
+- tweaks to openStream() for image loading
+
+- basic triangle (but not line) clipping in P3D from simon (!)
+
+- finalized the faq listing
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0084 - 19 april 2005
 
 we're one release away from beta. reference and examples need another

@@ -1,15 +1,15 @@
-0084 core
-X fixed create font / incremented font file version number
-X simon lighting fixes
-X added simon's lighting docs to lights() fxn in javadoc
-X set default stroke cap as ROUND
-X   otherwise smooth() makes points disappear
-X hack for text with a z coordinate
+0085 core
+X camera() was missing from PGraphics
+X some tweaks to openStream() for loading images and less errors
+X basic clipping in P3D from simon
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 NOT COMPLETELY NECESSARY BEFORE BETA
+
+_ bizarre image loading error with c_Rollover.zip
 
 _ text() with a z coordinate is now using translate, very slow
 _   also puts up a weird error message about translate() in 2D mode
