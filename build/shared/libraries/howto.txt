@@ -23,6 +23,35 @@ applet is closed. Many libraries, especially those with native code,
 need this to properly shut down. 
 
 
+// Notes on Library distribution (added 19 April 2005 by REAS)
+
+There are two categories of libraries -- "core" libraries, which are 
+a part of the Processing distribution, and "contributed libraries"
+which are developed outside the core of Processing's development
+and are owned and maintained by members of the Processing community.
+Until we find a committed "librarian", this is what we can manage
+from our end. It's very possible that contributed libraries might
+make their way into the core libraries if they are well built, 
+exceedingly useful, and if this makes sense for all people involved.
+We put a strong focus on the importance of clear, documentation, so 
+please put a strong effort into communicating your library to potential 
+users by hosting a descriptive website.
+
+If you'd like to have your library posted on the Processing website
+(http://processing.org/reference/libraries) please email
+reas@processing.org and we'll make a decision about its inclusion.
+We hope moving forward in the future to have more of a dialog
+with the folks working on libraries.
+
+The contributed libraries are one of the most important aspects of 
+the Processing project and have an enormous impact on how people 
+understand Processing. Libraries have been designed into the larger 
+Processing plan to enable simple extensions of the core API in new, 
+innovative, and unexpected directions. The libraries are the future 
+of the project. We don't plan to grow the core library extensively.
+
+
+
 //////////////////////////////////////////////////////////////
 
 
