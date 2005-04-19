@@ -2073,6 +2073,16 @@ public class PGraphics extends PImage implements PConstants {
     depthError("endCamera");
   }
 
+  public void camera() {
+    depthError("camera");
+  }
+
+  public void camera(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ) {
+    depthError("camera");
+  }
+
   public void ortho() {
     depthError("ortho");
   }
@@ -2105,7 +2115,6 @@ public class PGraphics extends PImage implements PConstants {
   public void printCamera() {
     depthError("printCamera");
   }
-
 
   public void printProjection() {
     depthError("printCamera");
