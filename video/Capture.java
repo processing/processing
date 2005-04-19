@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Camera - whatchin shit on tv
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry and Casey Reas
@@ -35,10 +34,12 @@ import quicktime.std.sg.*;
 import quicktime.util.RawEncodedImage;
 
 
-// this is the useful ref page
-// http://developer.apple.com/documentation/Java/Reference/1.4.1/Java141API_QTJ/constant-values.html
-
-public class Camera extends PImage implements Runnable {
+/**
+ * whatchin shit on tv
+ * <p>
+ * The useful ref page for <a href="http://developer.apple.com/documentation/Java/Reference/1.4.1/Java141API_QTJ/constant-values.html">quicktime constants</a>
+ */
+public class Capture extends PImage implements Runnable {
 
   // there are more, but these are all we'll provide for now
   static public final int COMPOSITE = StdQTConstants.compositeIn;  // 0
@@ -51,13 +52,14 @@ public class Camera extends PImage implements Runnable {
   static public final int SECAM = StdQTConstants.secamIn;
 
   PApplet parent;
-  Method cameraEventMethod;
+  Method captureEventMethod;
   String name; // keep track for error messages (unused)
   Thread runner;
 
   boolean available = false;
 
-  /** Temporary storage for the raw image data read directly from the camera */
+  /** Temporary storage for the raw image
+      data read directly from the capture device */
   public int data[];
 
   public int dataWidth;
@@ -90,22 +92,22 @@ public class Camera extends PImage implements Runnable {
     QTRuntimeException.registerHandler(new QTRuntimeHandler() {
         public void exceptionOccurred(QTRuntimeException e,
                                       Object obj, String s, boolean flag) {
-          System.err.println("Problem inside Camera");
+          System.err.println("Problem inside Capture");
           e.printStackTrace();
         }
       });
   }
 
 
-  public Camera(PApplet parent, int requestWidth, int requestHeight) {
+  public Capture(PApplet parent, int requestWidth, int requestHeight) {
     this(parent, null, requestWidth, requestHeight, 30);
   }
 
-  public Camera(PApplet parent, int reqWidth, int reqHeight, int framerate) {
+  public Capture(PApplet parent, int reqWidth, int reqHeight, int framerate) {
     this(parent, null, reqWidth, reqHeight, framerate);
   }
 
-  public Camera(PApplet parent, String name, int reqWidth, int reqHeight) {
+  public Capture(PApplet parent, String name, int reqWidth, int reqHeight) {
     this(parent, name, reqWidth, reqHeight, 30);
   }
 
@@ -116,11 +118,11 @@ public class Camera extends PImage implements Runnable {
    * used by a QuickTime application.
    * <P>
    * If the following function:
-   * public void cameraEvent(Camera c)
+   * public void captureEvent(Capture c)
    * is defined int the host PApplet, then it will be called every
-   * time a new frame is available from the camera.
+   * time a new frame is available from the capture device.
    */
-  public Camera(PApplet parent, String name,
+  public Capture(PApplet parent, String name,
                 int requestWidth, int requestHeight, int framerate) {
     this.parent = parent;
     this.name = name;
@@ -173,9 +175,9 @@ public class Camera extends PImage implements Runnable {
       parent.registerDispose(this);
 
       try {
-        cameraEventMethod =
-          parent.getClass().getMethod("cameraEvent",
-                                      new Class[] { Camera.class });
+        captureEventMethod =
+          parent.getClass().getMethod("captureEvent",
+                                      new Class[] { Capture.class });
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
@@ -185,15 +187,15 @@ public class Camera extends PImage implements Runnable {
 
       int errorCode = qte.errorCode();
       if (errorCode == Errors.couldntGetRequiredComponent) {
-        // this can happen when the camera isn't available or
-        // wasn't shut down properly
-        parent.die("No camera could be found, " +
+        // this can happen when the capture device isn't available
+        // or wasn't shut down properly
+        parent.die("No capture could be found, " +
                    "or the VDIG is not installed correctly.", qte);
       } else {
-        parent.die("Error while setting up Camera", qte);
+        parent.die("Error while setting up Capture", qte);
       }
     } catch (Exception e) {
-      parent.die("Error while setting up Camera", e);
+      parent.die("Error while setting up Capture", e);
     }
   }
 
@@ -202,13 +204,13 @@ public class Camera extends PImage implements Runnable {
    * True if a frame is ready to be read.
    * <PRE>
    * // put this somewhere inside draw
-   * if (camera.available()) camera.read();
+   * if (capture.available()) capture.read();
    * </PRE>
-   * Alternatively, you can use cameraEvent(Camera c) to notify you
+   * Alternatively, you can use captureEvent(Capture c) to notify you
    * whenever available() is set to true. In which case, things might
    * look like this:
    * <PRE>
-   * public void cameraEvent(Camera c) {
+   * public void captureEvent(Capture c) {
    *   c.read();
    *   // do something exciting now that c has been updated
    * }
@@ -222,7 +224,7 @@ public class Camera extends PImage implements Runnable {
   /**
    * Set the video to crop from its original.
    * <P>
-   * It seems common that cameras add lines to the top or bottom
+   * It seems common that captures add lines to the top or bottom
    * of an image, so this can be useful for removing them.
    * Internally, the pixel buffer size returned from QuickTime is
    * often a different size than requested, so crop will be set
@@ -310,14 +312,14 @@ public class Camera extends PImage implements Runnable {
           //read();
           available = true;
 
-          if (cameraEventMethod != null) {
+          if (captureEventMethod != null) {
             try {
-              cameraEventMethod.invoke(parent, new Object[] { this });
+              captureEventMethod.invoke(parent, new Object[] { this });
             } catch (Exception e) {
-              System.err.println("Disabling cameraEvent() for " + name +
+              System.err.println("Disabling captureEvent() for " + name +
                                  " because of an error.");
               e.printStackTrace();
-              cameraEventMethod = null;
+              captureEventMethod = null;
             }
           }
         }
@@ -335,11 +337,11 @@ public class Camera extends PImage implements Runnable {
 
   /**
    * Set the framerate for how quickly new frames are read
-   * from the camera.
+   * from the capture device.
    */
   public void framerate(int iframerate) {
     if (iframerate <= 0) {
-      System.err.println("Camera: ignoring bad framerate of " +
+      System.err.println("Capture: ignoring bad framerate of " +
                          iframerate + " fps.");
       return;
     }
@@ -380,7 +382,7 @@ public class Camera extends PImage implements Runnable {
    * I think of something slightly more intelligent to do.
    */
   protected void errorMessage(String where, Exception e) {
-    parent.die("Error inside Camera." + where + "()", e);
+    parent.die("Error inside Capture." + where + "()", e);
   }
 
 
@@ -441,36 +443,20 @@ public class Camera extends PImage implements Runnable {
       int errorCode = qte.errorCode();
       if (errorCode != Errors.userCanceledErr) {
         qte.printStackTrace();
-        throw new RuntimeException("error inside Camera.settings()");
+        throw new RuntimeException("error inside Capture.settings()");
       }
     }
   }
 
 
-  /*
-  public String[] listInputs() {
-    VideoDigitizer digitizer = channel.getDigitizerComponent();
-    int count = digitizer.getNumberOfInputs();
-
-    String outgoing[] = new String[count];
-    //digitizer.setInput(2); // or something
-    //DigitizerInfo di = digitizer.getDigitizerInfo()
-  }
-  */
-
-
   /**
-   * Get a list of all available cameras as a String array.
-   * i.e. printarr(Camera.list()) will show you the goodies.
+   * Get a list of all available captures as a String array.
+   * i.e. println(Capture.list()) will show you the goodies.
    */
   static public String[] list() {
     try {
       SequenceGrabber grabber = new SequenceGrabber();
       SGVideoChannel channel = new SGVideoChannel(grabber);
-
-      //VideoDigitizer digitizer = channel.getDigitizerComponent();
-      //digitizer.setInput(2); // or something
-      //DigitizerInfo di = digitizer.getDigitizerInfo()
 
       SGDeviceList deviceList = channel.getDeviceList(0);  // flags is 0
       String listing[] = new String[deviceList.getCount()];
