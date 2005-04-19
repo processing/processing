@@ -1,7 +1,8 @@
-0085 core
-X camera() was missing from PGraphics
-X some tweaks to openStream() for loading images and less errors
-X basic clipping in P3D from simon
+0086 core
+
+_ is camera backwards, or staying fixed and moving the scene?
+_ createGraphics(200, 200) to create same as source
+_   createGraphics(200, 200, P2D) to create 2D from 3D
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -112,15 +112,22 @@ Many, many functions have been added, and are detailed in the
       names have changed or fundamental API differences between the
       two versions.
 <UL>
-<LI>The libraries for serial, video, and network have changed
-completely. Check out the examples or visit the libraries reference
-for the full details.
 <LI>loop() has been removed, and is instead called draw(). If you want
 applications to only run draw() once, use the function noLoop() inside
 of setup().
+<LI>size() should now be the very first thing in your setup(),
+otherwise commands that come before it may be ignored.
 <LI>2D and 3D graphics are no longer completely mixed. To specify
 3D graphics, instead of size(200, 200), the new way is to use
 size(200, 200, P3D). 
+<LI>BImage &rarr; PImage, BFont &rarr; PFont, and so on... 
+<LI>For advanced users who were making their own BGraphics objects in
+the previous release, BGraphics bg = new BGraphics(200, 200) &rarr;
+PGraphics pg = new PGraphics2(200, 200, null); We didn't realize quite
+how many people were using this, so we'll probably add a
+createGraphics() method because we realize that the PGraphics2 and
+"null" thing is pretty weird (especially because the PGraphics2 may be
+temporary)
 <LI>To use OpenGL rendering, change that to size(200, 200, OPENGL),
 and use Sketch &rarr; Import Library &rarr; opengl. OpenGL support is
 incomplete, but allows for much larger screen sizes and accelerated
@@ -128,6 +135,8 @@ graphics that make use of a decent graphics card.
 <LI>When using the pixels[] array of the main window, or on an image,
 you should first call loadPixels(), and once you're done editing, call
 updatePixels().
+<LI>push() &rarr; pushMatrix()
+<LI>pop() &rarr; popMatrix()
 <LI>textureMode(NORMAL_SPACE) &rarr; textureMode(NORMALIZED)
 <LI>textureMode(IMAGE_SPACE) &rarr; textureMode(IMAGE)
 <LI>textMode(ALIGN_LEFT) &rarr; textAlign(LEFT)
@@ -135,6 +144,7 @@ updatePixels().
 <LI>textMode(ALIGN_CENTER) &rarr; textAlign(CENTER)
 <LI>textSpace(SCREEN_SPACE) &rarr; textMode(SCREEN)
 <LI>textSpace(OBJECT_SPACE) &rarr; textMode(OBJECT)
+<LI>RGBA for images &rarr; ARGB (more technically accurate)
 <LI>CENTER_DIAMETER &rarr; CENTER
 <LI>curveSegments() &rarr; curveDetail()
 <LI>bezierSegments() &rarr; bezierDetail()
@@ -143,6 +153,9 @@ convert from degrees to radians, use something like sin(radians(90))
 <LI>four calls to bezierVertex(x, y) should instead be a single call
 to vertex(x, y), followed by bezierVertex(cx1, cy1, cx2, cy2, x2, y2)
 (two control points followed by the destination point). 
+<LI>The libraries for serial, video, and network have changed
+completely. Check out the examples or visit the libraries reference
+for the full details.
 <LI>&hellip;many other things that we've forgotten in our hastiness
 and we'll be adding over the next few days and weeks.
 </UL>

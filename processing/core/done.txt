@@ -1,3 +1,9 @@
+0085 core
+X camera() was missing from PGraphics
+X some tweaks to openStream() for loading images and less errors
+X basic clipping in P3D from simon
+
+
 0084 core
 X fixed create font / incremented font file version number
 X simon lighting fixes
