@@ -58,10 +58,10 @@ _   need to straighten out for when audio comes along
 
 _ list of changes since rev 69? run through revisions.txt
 
+_ list of known bugs should be on the faq page
+_   a bunch of stuff from revisions.txt on 84 and 82
+
 _ processing vs. flash item on the faq? a "why?" page?
-
-//
-
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
