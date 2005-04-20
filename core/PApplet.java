@@ -1067,7 +1067,9 @@ public class PApplet extends Applet
           pmouseX = dmouseX;
           pmouseY = dmouseY;
 
+          //synchronized (glock) {
           draw();
+          //}
 
           // dmouseX/Y is updated only once per frame
           dmouseX = mouseX;
@@ -2837,6 +2839,7 @@ public class PApplet extends Applet
     return inputFile("Select a file...");
   }
 
+
   public File inputFile(String prompt) {
     Frame parentFrame = null;
     Component comp = getParent();
@@ -2847,7 +2850,23 @@ public class PApplet extends Applet
       }
       comp = comp.getParent();
     }
-    //System.out.println("found frame " + frame);
+    return inputFile(prompt, parentFrame);
+  }
+
+
+  static public File inputFile(Frame parent) {
+    return inputFile("Select a file...", parent);
+  }
+
+
+  /**
+   * static version of inputFile usable by external classes.
+   * <P>
+   * The parentFrame is the Frame that will guide the placement of
+   * the prompt window. If no Frame is available, just pass in null.
+   */
+  // can't be static because it wants a host component
+  static public File inputFile(String prompt, Frame parentFrame) {
     if (parentFrame == null) parentFrame = new Frame();
     FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.LOAD);
     fd.show();
@@ -2863,19 +2882,35 @@ public class PApplet extends Applet
     return outputFile("Save as...");
   }
 
+
   public File outputFile(String prompt) {
     Frame parentFrame = null;
     Component comp = getParent();
-    //System.out.println(comp + " " + comp.getClass());
     while (comp != null) {
-      System.out.println(comp + " " + comp.getClass());
+      //System.out.println(comp + " " + comp.getClass());
       if (comp instanceof Frame) {
         parentFrame = (Frame) comp;
         break;
       }
       comp = comp.getParent();
     }
-    //System.out.println("found frame " + frame);
+    return outputFile(prompt, frame);
+  }
+
+
+
+  static public File outputFile(Frame parentFrame) {
+    return outputFile("Save as...", parentFrame);
+  }
+
+
+  /**
+   * static version of outputFile usable by external classes.
+   * <P>
+   * The parentFrame is the Frame that will guide the placement of
+   * the prompt window. If no Frame is available, just pass in null.
+   */
+  static public File outputFile(String prompt, Frame parentFrame) {
     if (parentFrame == null) parentFrame = new Frame();
     FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.SAVE);
     fd.show();
@@ -2909,18 +2944,20 @@ public class PApplet extends Applet
   /**
    * I want to read lines from a file. And I'm still annoyed.
    */
-  public BufferedReader reader(File file) {
+  static public BufferedReader reader(File file) {
     try {
       return reader(new FileInputStream(file));
 
     } catch (Exception e) {
       if (file == null) {
-        die("File object passed to reader() was null", e);
+        throw new RuntimeException("File passed to reader() was null");
       } else {
-        die("Couldn't create a reader for " + file.getAbsolutePath(), e);
+        e.printStackTrace();
+        throw new RuntimeException("Couldn't create a reader for " +
+                                   file.getAbsolutePath());
       }
     }
-    return null;
+    //return null;
   }
 
 
@@ -2928,39 +2965,37 @@ public class PApplet extends Applet
    * I want to read lines from a stream. If I have to type the
    * following lines any more I'm gonna send Sun my medical bills.
    */
-  public BufferedReader reader(InputStream input) {
-    //try {
+  static public BufferedReader reader(InputStream input) {
     InputStreamReader isr = new InputStreamReader(input);
     return new BufferedReader(isr);
-    //} catch (IOException e) {
-    //die("Couldn't create reader()", e);
-    //}
-    //return null;
   }
 
 
   /**
    * decode a gzip input stream
    */
-  public InputStream gzipInput(InputStream input) {
+  static public InputStream gzipInput(InputStream input) {
     try {
       return new GZIPInputStream(input);
     } catch (IOException e) {
-      die("Problem with gzip input", e);
+      e.printStackTrace();
+      throw new RuntimeException("Problem with gzip input");
     }
-    return null;
+    //return null;
   }
+
 
   /**
    * decode a gzip output stream
    */
-  public OutputStream gzipOutput(OutputStream output) {
+  static public OutputStream gzipOutput(OutputStream output) {
     try {
       return new GZIPOutputStream(output);
     } catch (IOException e) {
-      die("Problem with gzip output", e);
+      e.printStackTrace();
+      throw new RuntimeException("Problem with gzip output");
     }
-    return null;
+    //return null;
   }
 
 
@@ -2981,35 +3016,35 @@ public class PApplet extends Applet
     return null;
   }
 
+
   /**
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
-  public PrintWriter writer(File file) {
+  static public PrintWriter writer(File file) {
     try {
       return writer(new FileOutputStream(file));
 
     } catch (Exception e) {
       if (file == null) {
-        die("File object passed to writer() was null", e);
+        throw new RuntimeException("File passed to writer() was null");
       } else {
-        die("Couldn't create a writer for " + file.getAbsolutePath(), e);
+        e.printStackTrace();
+        throw new RuntimeException("Couldn't create a writer for " +
+                                   file.getAbsolutePath());
       }
     }
-    return null;
+    //return null;
   }
+
 
   /**
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
   static public PrintWriter writer(OutputStream output) {
-    //try {
     OutputStreamWriter osw = new OutputStreamWriter(output);
     return new PrintWriter(osw);
-    //} catch (IOException e) {
-    //die("Couldn't create writer()", e);
-    //}
   }
 
 
@@ -3018,17 +3053,15 @@ public class PApplet extends Applet
       return new FileInputStream(file);
 
     } catch (IOException e) {
-      e.printStackTrace();
-
       if (file == null) {
         throw new RuntimeException("File passed to openStream() was null");
 
       } else {
+        e.printStackTrace();
         throw new RuntimeException("Couldn't openStream() for " +
                                    file.getAbsolutePath());
       }
     }
-    //return null;
   }
 
 
@@ -3117,7 +3150,8 @@ public class PApplet extends Applet
     return loadBytes(openStream(filename));
   }
 
-  public byte[] loadBytes(InputStream input) {
+
+  static public byte[] loadBytes(InputStream input) {
     try {
       BufferedInputStream bis = new BufferedInputStream(input);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -3130,19 +3164,19 @@ public class PApplet extends Applet
       return out.toByteArray();
 
     } catch (IOException e) {
-      die("Couldn't load bytes from stream", e);
+      e.printStackTrace();
+      throw new RuntimeException("Couldn't load bytes from stream");
     }
-    return null;
+    //return null;
   }
 
 
   static public String[] loadStrings(File file) {
     InputStream is = openStream(file);
     if (is != null) return loadStrings(is);
-
-    //die("Couldn't open " + file.getAbsolutePath());
     return null;
   }
+
 
   public String[] loadStrings(String filename) {
     InputStream is = openStream(filename);
@@ -3151,6 +3185,7 @@ public class PApplet extends Applet
     die("Couldn't open " + filename);
     return null;
   }
+
 
   static public String[] loadStrings(InputStream input) {
     try {
@@ -3230,6 +3265,7 @@ public class PApplet extends Applet
     }
   }
 
+
   /**
    * Spews a buffer of bytes to an OutputStream.
    */
@@ -3298,6 +3334,7 @@ public class PApplet extends Applet
     createPath(filename);
     return filename;
   }
+
 
   /**
    * Creates in-between folders if they don't already exist.
