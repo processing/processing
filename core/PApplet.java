@@ -3586,13 +3586,11 @@ public class PApplet extends Applet
   }
 
 
-  public Object expand(Object array) {
+  static public Object expand(Object array) {
     return expand(array, Array.getLength(array) << 1);
   }
 
-  public Object expand(Object list, int newSize) {
-    System.out.println("using object expand");
-
+  static public Object expand(Object list, int newSize) {
     Class type = list.getClass().getComponentType();
     Object temp = Array.newInstance(type, newSize);
     System.arraycopy(list, 0, temp, 0,
@@ -3623,6 +3621,10 @@ public class PApplet extends Applet
   }
 
   static public String[] contract(String list[], int newSize) {
+    return expand(list, newSize);
+  }
+
+  static public Object contract(Object list, int newSize) {
     return expand(list, newSize);
   }
 
@@ -3658,6 +3660,14 @@ public class PApplet extends Applet
     return b;
   }
 
+  /*
+  static public Object append(Object b, Object value) {
+    b = expand(b, b.length + 1);
+    b[b.length-1] = value;
+    return b;
+  }
+  */
+
   //
 
   static public boolean[] shorten(boolean list[]) {
@@ -3683,6 +3693,12 @@ public class PApplet extends Applet
   static public String[] shorten(String list[]) {
     return contract(list, list.length-1);
   }
+
+  /*
+  static public Object shorten(Object list) {
+    return contract(list, list.length-1);
+  }
+  */
 
   //
 

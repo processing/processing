@@ -1,5 +1,12 @@
 0086 core
 
+X typed version of expand() and contract()
+_   need to complete for the others:
+_   append(), shorten(), splice, slice, subset, concat, reverse
+
+_ would be cool if could sort w/o the sort class..
+_   meaning use reflection to sort objects, just by implementing a few methods
+
 _ make a PException that extends RuntimeException but packages an ex?
 _ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _   they're drawn as transparent and don't have their high bits set
@@ -168,15 +175,6 @@ _   guessing it's an implementation issue in sami's renderer
 _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _ Stroking a rect() leaves the upper right pixel off.
 
-
-_ might be able to do a typed expand()
-public Object growArray(Object array, int size) {
-    Class type = array.getClass().getComponentType();
-    Object grown = Array.newInstance(type, size);
-    System.arraycopy(array, 0, grown, 0,
-        Math.min(Array.getLength(array), size));
-    return grown;
-}
 
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
