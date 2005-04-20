@@ -1535,6 +1535,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
+   */
   public void textAlign(int align) {
     textAlign = align;
   }
