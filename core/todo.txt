@@ -1,5 +1,11 @@
 0086 core
 
+_ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
+_   they're drawn as transparent and don't have their high bits set
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
+
+_ set upper bound on framerate so as not to completely hose things?
+
 _ is camera backwards, or staying fixed and moving the scene?
 _ createGraphics(200, 200) to create same as source
 _   createGraphics(200, 200, P2D) to create 2D from 3D
