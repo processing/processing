@@ -15,7 +15,7 @@
         <!-- Check if processing has been checked out and set property accordingly-->
         <available property="ischeckedout" file="processing" type="dir"/>        
         <!-- home directory of cygwin -->
-        <property name="cygwin.dir" value="C:/cygwin"/>
+        <property name="cygwin.dir" value="C:/sdk/cygwin"/>
         <!-- the absolute path of the basedir, specified here with unix slashes -->
         <property name="parent.dir" value="C:/projects/processing"/>
         <!-- the absolute path of a WTK implementation for building core files -->
@@ -23,7 +23,7 @@
         <!-- the boot classpath to use when compiling core files -->
         <property name="wtk.bootClassPath" value="${wtk.dir}/lib/cldcapi10.jar;${wtk.dir}/lib/midpapi10.jar"/>
         <!-- the tag to use when checking out processing -->
-        <property name="cvs.tag.processing" value="processing-0074"/>
+        <property name="cvs.tag.processing" value="processing-0085"/>
     </target>
        
     <!-- checks out a tagged copy of processing if it hasn't been done so already. -->
@@ -62,7 +62,9 @@
             <arg value="-c"/>
             <arg value="cd ${parent.dir}/processing/build/windows; ./make.sh"/>
         </exec>
-        <antcall target="copycore"/>
+        <antcall target="copycore">
+            <param name="target" value="work"/>
+        </antcall>
     </target>
 
     <target name="dist" depends="init, copyappsrc">        
@@ -70,8 +72,25 @@
         <exec executable="${cygwin.dir}/bin/bash.exe">
             <arg value="--login"/>
             <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/build/windows; ./make.sh"/>
+            <arg value="cd ${parent.dir}/processing/build/windows; ./dist.sh"/>
         </exec>
+        <!-- delete the zip files- we need to copy our stuff in and re-zip -->
+        <delete file="processing/build/windows/${cvs.tag.processing}.zip"/>
+        <delete file="processing/build/windows/${cvs.tag.processing}-expert.zip"/>
+        <!-- copy into standard release -->
+        <antcall target="copycore">
+            <param name="target" value="${cvs.tag.processing}"/>
+        </antcall>
+        <!-- zip up standard release -->
+        <zip destfile="processing/build/windows/${cvs.tag.processing}.zip" 
+             basedir="processing/build/windows/${cvs.tag.processing}"/>
+        <!-- copy into expert release -->
+        <antcall target="copycore">
+            <param name="target" value="${cvs.tag.processing}-expert"/>
+        </antcall>        
+        <!-- zip up expert release -->
+        <zip destfile="processing/build/windows/${cvs.tag.processing}-expert.zip" 
+             basedir="processing/build/windows/${cvs.tag.processing}-expert"/>
     </target>
     
     <target name="run" depends="init">
@@ -111,8 +130,10 @@
     
     <!-- copies core jar and manifest/jad template into processing ide build -->
     <target name="copycore" depends="makecore">
+        <!-- default target is work folder, can be overridden by call -->
+        <property name="target" value="work"/>
         <!-- copy jar and jad/manifest template into processing build -->
-        <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/windows/work/lib"/>
-        <copy file="mobile/build/windows/mobile.jar" todir="processing/build/windows/work/lib"/>
+        <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/windows/${target}/lib"/>
+        <copy file="mobile/build/windows/mobile.jar" todir="processing/build/windows/${target}/lib"/>
     </target>
 </project>
