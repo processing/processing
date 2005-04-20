@@ -3,6 +3,19 @@
 X update faq on site? what's difference between versions?
 X   no difference between versions... should it be cvs based?
 
+_ faq - known bugs
+_   1 pixel stroke weight in opengl (temporary)
+_   make clear that P2D is not working if not clear enough
+_   save/yes/no needs cancel
+X   wontstart wasn't properly linked
+
+_ make a note in the faq about sun.dc.pr.PRException
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
+
+_ preferences - second line of prefs (the file path) is smashing things
+_   righthand max isn't being updated for that second line
+_   or it's getting written over by the line below it
+
 _ "save as" not quite working
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
 Performed a "Save As" that didn't quite take. The save action
@@ -13,6 +26,18 @@ presented with an empty sketch and the renamed sketch wasn't in my
 sketch list. I dove into the my sketchbook directory and I found that
 a sketch folder was created and named properly. Inside the folder I
 found PDEs for all of my tabs except the main tab. Thoughts?
+
+_ more "save as" trouble with removing files
+However, this process doesn't work at all with Processing.  I hit delete 
+tabs to ditch the extra stuff and then do a saveAs.  And voila, as should
+be expected, the deleted tabs are gone from both folders.  Makes sense.
+I get it.  But i wonder if this will catch others off guard.  
+Not suggesting a change to the way it works... but thoughts on if this 
+might screw people in the long run?
+
+_ auto-run the javadoc in dist.sh
+_   doctor a copy of the css file to use p5 defaults
+_   and re-copy the css in after generating the doc each time
 
 _ include platform information when checking for updates
 _   send over the int as long hex number? 
