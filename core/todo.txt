@@ -1,5 +1,6 @@
 0086 core
 
+_ make a PException that extends RuntimeException but packages an ex?
 _ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _   they're drawn as transparent and don't have their high bits set
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
