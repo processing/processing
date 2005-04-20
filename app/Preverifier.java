@@ -1,12 +1,14 @@
+package processing.app;
+
 import java.io.*;
 
-public class PdePreverifier implements PdeMessageConsumer {
+public class Preverifier implements MessageConsumer {
   
-  public PdePreverifier() {    
+  public Preverifier() {    
   }
   
   public boolean preverify(File source, File output) {
-    String wtkPath = PdePreferences.get("wtk.path");
+    String wtkPath = Preferences.get("wtk.path");
     String wtkBinPath = wtkPath + File.separator + "bin" + File.separator;
     String wtkLibPath = wtkPath + File.separator + "lib" + File.separator;
     
@@ -32,8 +34,8 @@ public class PdePreverifier implements PdeMessageConsumer {
       while (running) {
         try {
           result = p.waitFor();
-          new PdeMessageSiphon(p.getInputStream(), this);
-          new PdeMessageSiphon(p.getErrorStream(), this);
+          new MessageSiphon(p.getInputStream(), this);
+          new MessageSiphon(p.getErrorStream(), this);
           
           running = false;
         } catch (InterruptedException ie) {

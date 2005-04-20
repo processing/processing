@@ -1,3 +1,5 @@
+package processing.app;
+
 import java.awt.Point;
 import java.io.*;
 
@@ -5,16 +7,16 @@ import java.io.*;
  *
  * @author  Francis Li
  */
-public class PdeEmulator extends PdeRuntime {
+public class Emulator extends Runner {
   
-  /** Creates a new instance of PdeEmulator */
-  public PdeEmulator(PdeSketch sketch, PdeEditor editor) {
+  /** Creates a new instance of Emulator */
+  public Emulator(Sketch sketch, Editor editor) {
     super(sketch, editor);
   }
   
-  public void start(Point windowLocation) throws PdeException {
+  public void start(Point windowLocation) throws RunnerException {
     try{
-      String wtkBinPath = PdePreferences.get("wtk.path") + File.separator + "bin";
+      String wtkBinPath = Preferences.get("wtk.path") + File.separator + "bin";
       
       StringBuffer command = new StringBuffer();
       command.append(wtkBinPath);
@@ -29,7 +31,7 @@ public class PdeEmulator extends PdeRuntime {
       
       process = Runtime.getRuntime().exec(command.toString(), null, new File(wtkBinPath));
       processInput = new SystemOutSiphon(process.getInputStream());
-      processError = new PdeMessageSiphon(process.getErrorStream(), this);
+      processError = new MessageSiphon(process.getErrorStream(), this);
       processOutput = process.getOutputStream();
     } catch (Exception e) {
       e.printStackTrace();
