@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeSketch - stores information about files in the current sketch
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -22,6 +21,9 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app;
+
+import processing.app.preproc.*;
 import processing.core.*;
 
 import java.awt.FileDialog;
@@ -35,11 +37,14 @@ import javax.swing.JOptionPane;
 import com.oroinc.text.regex.*;
 
 
-public class PdeSketch {
-  static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
+/**
+ * Stores information about files in the current sketch
+ */
+public class Sketch {
+  //static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
   static File tempBuildFolder;
 
-  PdeEditor editor;
+  Editor editor;
 
   // name of sketch, which is the name of main file
   // (without .pde or .java extension)
@@ -55,18 +60,20 @@ public class PdeSketch {
   boolean library;  // true if it's a library
 
   public File folder; //sketchFolder;
-  File dataFolder;
-  File codeFolder;
+  public File dataFolder;
+  public File codeFolder;
 
   static final int PDE = 0;
   static final int JAVA = 1;
 
-  PdeCode current;
+  public SketchCode current;
   int codeCount;
-  PdeCode code[];
+  SketchCode code[];
 
   int hiddenCount;
-  PdeCode hidden[];
+  SketchCode hidden[];
+
+  Hashtable zipFileContents;
 
   // all these set each time build() is called
   String mainClassName;
@@ -79,7 +86,7 @@ public class PdeSketch {
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
    */
-  public PdeSketch(PdeEditor editor, String path) throws IOException {
+  public Sketch(Editor editor, String path) throws IOException {
     this.editor = editor;
 
     File mainFile = new File(path);
@@ -99,28 +106,24 @@ public class PdeSketch {
     // lib/build must exist when the application is started
     // it is added to the CLASSPATH by default, but if it doesn't
     // exist when the application is started, then java will remove
-    // the entry from the CLASSPATH, causing PdeRuntime to fail.
+    // the entry from the CLASSPATH, causing Runner to fail.
     //
+    /*
     tempBuildFolder = new File(TEMP_BUILD_PATH);
     if (!tempBuildFolder.exists()) {
       tempBuildFolder.mkdirs();
-      PdeBase.showError("Required folder missing",
+      Base.showError("Required folder missing",
                         "A required folder was missing from \n" +
                         "from your installation of Processing.\n" +
                         "It has now been replaced, please restart    \n" +
                         "the application to complete the repair.", null);
     }
+    */
+    tempBuildFolder = Base.getBuildFolder();
+    //Base.addBuildFolderToClassPath();
 
     folder = new File(new File(path).getParent());
     //System.out.println("sketch dir is " + folder);
-
-    codeFolder = new File(folder, "code");
-    dataFolder = new File(folder, "data");
-
-    File libraryFolder = new File(folder, "library");
-    if (libraryFolder.exists()) {
-      library = true;
-    }
 
     load();
   }
@@ -134,10 +137,21 @@ public class PdeSketch {
    * a nightmare to keep track of what files went where, because
    * not all the data will be saved to disk.
    *
-   * The exception is when an external editor is in use,
+   * This also gets called when the main sketch file is renamed,
+   * because the sketch has to be reloaded from a different folder.
+   *
+   * Another exception is when an external editor is in use,
    * in which case the load happens each time "run" is hit.
    */
   public void load() {
+    codeFolder = new File(folder, "code");
+    dataFolder = new File(folder, "data");
+
+    File libraryFolder = new File(folder, "library");
+    if (libraryFolder.exists()) {
+      library = true;
+    }
+
     // get list of files in the sketch folder
     String list[] = folder.list();
 
@@ -148,8 +162,8 @@ public class PdeSketch {
       else if (list[i].endsWith(".java.x")) hiddenCount++;
     }
 
-    code = new PdeCode[codeCount];
-    hidden = new PdeCode[hiddenCount];
+    code = new SketchCode[codeCount];
+    hidden = new SketchCode[hiddenCount];
 
     int codeCounter = 0;
     int hiddenCounter = 0;
@@ -157,25 +171,25 @@ public class PdeSketch {
     for (int i = 0; i < list.length; i++) {
       if (list[i].endsWith(".pde")) {
         code[codeCounter++] =
-          new PdeCode(list[i].substring(0, list[i].length() - 4),
+          new SketchCode(list[i].substring(0, list[i].length() - 4),
                       new File(folder, list[i]),
                       PDE);
 
       } else if (list[i].endsWith(".java")) {
         code[codeCounter++] =
-          new PdeCode(list[i].substring(0, list[i].length() - 5),
+          new SketchCode(list[i].substring(0, list[i].length() - 5),
                       new File(folder, list[i]),
                       JAVA);
 
       } else if (list[i].endsWith(".pde.x")) {
         hidden[hiddenCounter++] =
-          new PdeCode(list[i].substring(0, list[i].length() - 6),
+          new SketchCode(list[i].substring(0, list[i].length() - 6),
                       new File(folder, list[i]),
                       PDE);
 
       } else if (list[i].endsWith(".java.x")) {
         hidden[hiddenCounter++] =
-          new PdeCode(list[i].substring(0, list[i].length() - 7),
+          new SketchCode(list[i].substring(0, list[i].length() - 7),
                       new File(folder, list[i]),
                       JAVA);
       }
@@ -185,7 +199,10 @@ public class PdeSketch {
     // remove any entries that didn't load properly
     int index = 0;
     while (index < codeCount) {
-      if (code[index].program == null) {
+      //System.out.println("code is " + code);
+      //System.out.println(index + " " + code[index]);
+      if ((code[index] == null) ||
+          (code[index].program == null)) {
         //hide(index);  // although will this file be hidable?
         for (int i = index+1; i < codeCount; i++) {
           code[i-1] = code[i];
@@ -204,7 +221,7 @@ public class PdeSketch {
     for (int i = 1; i < codeCount; i++) {
       if (code[i].file.getName().equals(mainFilename)) {
         //System.out.println("found main code at slot " + i);
-        PdeCode temp = code[0];
+        SketchCode temp = code[0];
         code[0] = code[i];
         code[i] = temp;
         break;
@@ -220,10 +237,13 @@ public class PdeSketch {
   }
 
 
-  protected void insertCode(PdeCode newCode) {
+  protected void insertCode(SketchCode newCode) {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // add file to the code/codeCount list, resort the list
     if (codeCount == code.length) {
-      PdeCode temp[] = new PdeCode[codeCount+1];
+      SketchCode temp[] = new SketchCode[codeCount+1];
       System.arraycopy(code, 0, temp, 0, codeCount);
       code = temp;
     }
@@ -242,7 +262,7 @@ public class PdeSketch {
         }
       }
       if (who != i) {  // swap with someone if changes made
-        PdeCode temp = code[who];
+        SketchCode temp = code[who];
         code[who] = code[i];
         code[i] = temp;
       }
@@ -253,6 +273,9 @@ public class PdeSketch {
 
 
   public void newCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     //System.out.println("new code");
     // ask for name of new file
     // maybe just popup a text area?
@@ -262,8 +285,11 @@ public class PdeSketch {
 
 
   public void renameCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // don't allow rename of the main code
-    if (current == code[0]) return;
+    //if (current == code[0]) return;
     // TODO maybe gray out the menu on setCurrent(0)
 
     // ask for new name of file (internal to window)
@@ -281,6 +307,9 @@ public class PdeSketch {
    * where they diverge.
    */
   public void nameCode(String newName) {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // if renaming to the same thing as before, just ignore.
     // also ignoring case here, because i don't want to write
     // a bunch of special stuff for each platform
@@ -289,6 +318,11 @@ public class PdeSketch {
     if (renamingCode && newName.equalsIgnoreCase(current.name)) {
       // exit quietly for the 'rename' case.
       // if it's a 'new' then an error will occur down below
+      return;
+    }
+
+    if (newName.trim().equals("")) {
+      // don't allow blank names
       return;
     }
 
@@ -302,6 +336,14 @@ public class PdeSketch {
       newFlavor = PDE;
 
     } else if (newName.endsWith(".java")) {
+      if (code[0] == current) {
+        Base.showWarning("Problem with rename",
+                         "The main .pde file cannot be .java file.\n" +
+                         "(It may be time for your to graduate to a\n" +
+                         "\"real\" programming environment)", null);
+        return;
+      }
+
       newFilename = newName;
       newName = newName.substring(0, newName.length() - 5);
       newFlavor = JAVA;
@@ -315,40 +357,69 @@ public class PdeSketch {
     // so make sure the user didn't name things poo.time.pde
     // or something like that (nothing against poo time)
     if (newName.indexOf('.') != -1) {
-      newName = PdeSketchbook.sanitizedName(newName);
+      newName = Sketchbook.sanitizedName(newName);
       newFilename = newName + ((newFlavor == PDE) ? ".pde" : ".java");
     }
 
-    // create the new file, new PdeCode object and load it
+    // create the new file, new SketchCode object and load it
     File newFile = new File(folder, newFilename);
     if (newFile.exists()) {  // yay! users will try anything
-      PdeBase.showMessage("Nope",
-                          "A file named \"" + newFile + "\" already exists\n" +
-                          "in \"" + folder.getAbsolutePath() + "\"");
+      Base.showMessage("Nope",
+                       "A file named \"" + newFile + "\" already exists\n" +
+                       "in \"" + folder.getAbsolutePath() + "\"");
       return;
     }
 
     if (renamingCode) {
       if (!current.file.renameTo(newFile)) {
-        PdeBase.showWarning("Error",
-                            "Could not rename \"" + current.file.getName() +
-                            "\" to \"" + newFile.getName() + "\"", null);
+        Base.showWarning("Error",
+                         "Could not rename \"" + current.file.getName() +
+                         "\" to \"" + newFile.getName() + "\"", null);
         return;
       }
-      current.file = newFile;
-      current.name = newName;
-      current.flavor = newFlavor;
+
+      if (current == code[0]) {
+        // if renaming the main class, now rename the folder and re-open
+        File newFolder = new File(folder.getParentFile(), newName);
+        boolean success = folder.renameTo(newFolder);
+        if (!success) {
+          Base.showWarning("Error",
+                           "Could not rename the sketch.", null);
+          return;
+        }
+        // if successful, set base properties for the sketch
+        folder = newFolder;
+        File mainFile = new File(newFolder, newName + ".pde");
+        mainFilename = mainFile.getAbsolutePath();
+
+        // set the sketch name... used by the pde and whatnot.
+        // the name is only set in the sketch constructor,
+        // so it's important here
+        name = newName;
+
+        // get the changes into the sketchbook menu
+        editor.sketchbook.rebuildMenus();
+
+        // reload the sketch
+        load();
+
+      } else {
+        // just reopen the class itself
+        current.file = newFile;
+        current.name = newName;
+        current.flavor = newFlavor;
+      }
 
     } else {  // creating a new file
       try {
         newFile.createNewFile();  // TODO returns a boolean
       } catch (IOException e) {
-        PdeBase.showWarning("Error",
-                            "Could not create the file \"" + newFile + "\"\n" +
-                            "in \"" + folder.getAbsolutePath() + "\"", e);
+        Base.showWarning("Error",
+                         "Could not create the file \"" + newFile + "\"\n" +
+                         "in \"" + folder.getAbsolutePath() + "\"", e);
         return;
       }
-      PdeCode newCode = new PdeCode(newName, newFile, newFlavor);
+      SketchCode newCode = new SketchCode(newName, newFile, newFlavor);
       insertCode(newCode);
     }
 
@@ -367,18 +438,24 @@ public class PdeSketch {
    * Remove a piece of code from the sketch and from the disk.
    */
   public void deleteCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // don't allow delete of the main code
     // TODO maybe gray out the menu on setCurrent(0)
+    /*
     if (current == code[0]) {
-      PdeBase.showMessage("Can't do that",
+      Base.showMessage("Can't do that",
                           "You cannot delete the main " +
                           ".pde file from a sketch\n");
       return;
     }
+    */
 
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
-    String prompt =
+    String prompt = (current == code[0]) ?
+      "Are you sure you want to delete this sketch?" :
       "Are you sure you want to delete \"" + current.name + "\"?";
     int result = JOptionPane.showOptionDialog(editor,
                                               prompt,
@@ -389,26 +466,38 @@ public class PdeSketch {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      // delete the file
-      if (!current.file.delete()) {
-        PdeBase.showMessage("Couldn't do it",
-                            "Could not delete \"" + current.name + "\".");
-        return;
+      if (current == code[0]) {
+        // delete the entire sketch
+        Base.removeDir(folder);
+
+        // get the changes into the sketchbook menu
+        //sketchbook.rebuildMenus();
+
+        // make a new sketch, and i think this will rebuild the sketch menu
+        editor.handleNew();
+
+      } else {
+        // delete the file
+        if (!current.file.delete()) {
+          Base.showMessage("Couldn't do it",
+                              "Could not delete \"" + current.name + "\".");
+          return;
+        }
+
+        // remove code from the list
+        removeCode(current);
+
+        // just set current tab to the main tab
+        setCurrent(0);
+
+        // update the tabs
+        editor.header.repaint();
       }
-
-      // remove code from the list
-      removeCode(current);
-
-      // just set current tab to the main tab
-      setCurrent(0);
-
-      // update the tabs
-      editor.header.repaint();
     }
   }
 
 
-  protected void removeCode(PdeCode which) {
+  protected void removeCode(SketchCode which) {
     // remove it from the internal list of files
     // resort internal list of files
     for (int i = 0; i < codeCount; i++) {
@@ -428,25 +517,25 @@ public class PdeSketch {
     // don't allow hide of the main code
     // TODO maybe gray out the menu on setCurrent(0)
     if (current == code[0]) {
-      PdeBase.showMessage("Can't do that",
-                          "You cannot hide the main " +
-                          ".pde file from a sketch\n");
+      Base.showMessage("Can't do that",
+                       "You cannot hide the main " +
+                       ".pde file from a sketch\n");
       return;
     }
 
     // rename the file
     File newFile = new File(current.file.getAbsolutePath() + ".x");
     if (!current.file.renameTo(newFile)) {
-      PdeBase.showWarning("Error",
-                          "Could not hide " +
-                          "\"" + current.file.getName() + "\".", null);
+      Base.showWarning("Error",
+                       "Could not hide " +
+                       "\"" + current.file.getName() + "\".", null);
       return;
     }
     current.file = newFile;
 
     // move it to the hidden list
     if (hiddenCount == hidden.length) {
-      PdeCode temp[] = new PdeCode[hiddenCount+1];
+      SketchCode temp[] = new SketchCode[hiddenCount+1];
       System.arraycopy(hidden, 0, temp, 0, hiddenCount);
       hidden = temp;
     }
@@ -463,10 +552,13 @@ public class PdeSketch {
 
   public void unhideCode(String what) {
     //System.out.println("unhide " + e);
-    int unhideIndex = -1;
+    //int unhideIndex = -1;
+    SketchCode unhideCode = null;
+
     for (int i = 0; i < hiddenCount; i++) {
       if (hidden[i].name.equals(what)) {
-        unhideIndex = i;
+        //unhideIndex = i;
+        unhideCode = hidden[i];
 
         // remove from the 'hidden' list
         for (int j = i; j < hiddenCount-1; j++) {
@@ -476,14 +568,14 @@ public class PdeSketch {
         break;
       }
     }
-    if (unhideIndex == -1) {
+    //if (unhideIndex == -1) {
+    if (unhideCode == null) {
       System.err.println("internal error: could find " + what + " to unhide.");
       return;
     }
-    PdeCode unhideCode = hidden[unhideIndex];
     if (!unhideCode.file.exists()) {
-      PdeBase.showMessage("Can't unhide",
-                          "The file \"" + what + "\" no longer exists.");
+      Base.showMessage("Can't unhide",
+                       "The file \"" + what + "\" no longer exists.");
       //System.out.println(unhideCode.file);
       return;
     }
@@ -492,9 +584,9 @@ public class PdeSketch {
       new File(unhidePath.substring(0, unhidePath.length() - 2));
 
     if (!unhideCode.file.renameTo(unhideFile)) {
-      PdeBase.showMessage("Can't unhide",
-                          "The file \"" + what + "\" could not be" +
-                          "renamed and unhidden.");
+      Base.showMessage("Can't unhide",
+                       "The file \"" + what + "\" could not be" +
+                       "renamed and unhidden.");
       return;
     }
     unhideCode.file = unhideFile;
@@ -535,23 +627,57 @@ public class PdeSketch {
 
 
   /**
+   * Make sure the sketch hasn't been moved or deleted by some
+   * nefarious user. If they did, try to re-create it and save.
+   */
+  protected void ensureExistence() {
+    if (folder.exists()) return;
+
+    Base.showWarning("Sketch disappeared",
+                     "The sketch folder has disappeared (did you " +
+                     "delete it? Are you trying to f-- with me?)\n" +
+                     "Will attempt to re-save in the same location," +
+                     "but anything besides the code will be lost.", null);
+    try {
+      folder.mkdirs();
+      modified = true;
+
+      for (int i = 0; i < codeCount; i++) {
+        //code[i].modified = true;  // make sure it gets re-saved
+        code[i].save();
+      }
+      calcModified();
+
+    } catch (Exception e) {
+      Base.showWarning("Could not re-save sketch",
+                       "Could not properly re-save the sketch. " +
+                       "You may be in trouble at this point,\n" +
+                       "and it might be time to copy and paste " +
+                       "your code to another text editor.", e);
+    }
+  }
+
+
+  /**
    * Save all code in the current sketch.
    */
   public boolean save() throws IOException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     // first get the contents of the editor text area
     if (current.modified) {
       current.program = editor.getText();
     }
 
-    // see if actually modified
+    // don't do anything if not actually modified
     if (!modified) return false;
 
-    // check if the files are read-only.
-    // if so, need to first do a "save as".
     if (isReadOnly()) {
-      PdeBase.showMessage("Sketch is read-only",
-                          "Some files are marked \"read-only\", so you'll\n" +
-                          "need to re-save this sketch to another location.");
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is read-only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save this sketch to another location.");
       // if the user cancels, give up on the save()
       if (!saveAs()) return false;
     }
@@ -571,12 +697,13 @@ public class PdeSketch {
 
 
   /**
-   * handles 'save as' for a sketch.. essentially duplicates
-   * the current sketch folder to a new location, and then calls
-   * 'save'. (needs to take the current state of the open files
-   * and save them to the new folder.. but not save over the old
-   * versions for the old sketch..)
-   *
+   * Handles 'save as' for a sketch.
+   * <P>
+   * This basically just duplicates the current sketch folder to
+   * a new location, and then calls 'Save'. (needs to take the current
+   * state of the open files and save them to the new folder..
+   * but not save over the old versions for the old sketch..)
+   * <P>
    * also removes the previously-generated .class and .jar files,
    * because they can cause trouble.
    */
@@ -585,14 +712,13 @@ public class PdeSketch {
     FileDialog fd = new FileDialog(editor, //new Frame(),
                                    "Save sketch folder as...",
                                    FileDialog.SAVE);
-    // always default to the sketchbook folder..
-    //fd.setDirectory(PdePreferences.get("sketchbook.path"));
-    fd.setDirectory(folder.getParent());
+    if (isReadOnly()) {
+      // default to the sketchbook folder
+      fd.setDirectory(Preferences.get("sketchbook.path"));
+    } else {
+      fd.setDirectory(folder.getParent());
+    }
     fd.setFile(folder.getName());
-    //System.out.println("setting to " + folder.getParent());
-
-    // TODO or maybe this should default to the
-    //      parent dir of the old folder?
 
     fd.show();
     String newParentDir = fd.getDirectory();
@@ -600,16 +726,16 @@ public class PdeSketch {
 
     // user cancelled selection
     if (newName == null) return false;
-    newName = PdeSketchbook.sanitizeName(newName);
+    newName = Sketchbook.sanitizeName(newName);
 
     // new sketch folder
     File newFolder = new File(newParentDir, newName);
 
     // make sure the paths aren't the same
     if (newFolder.equals(folder)) {
-      PdeBase.showWarning("You can't fool me",
-                          "The new sketch name and location are the same\n" +
-                          "as the old. I ain't not doin nuthin'.", null);
+      Base.showWarning("You can't fool me",
+                       "The new sketch name and location are the same as\n" +
+                       "the old. I ain't not doin nuthin' not now.", null);
       return false;
     }
 
@@ -622,17 +748,26 @@ public class PdeSketch {
       //System.out.println(oldPath);
 
       if (newPath.indexOf(oldPath) == 0) {
-        PdeBase.showWarning("How very Borges of you",
-                            "You cannot save the sketch into a folder\n" +
-                            "inside itself. This would go on forever.", null);
+        Base.showWarning("How very Borges of you",
+                         "You cannot save the sketch into a folder\n" +
+                         "inside itself. This would go on forever.", null);
         return false;
       }
     } catch (IOException e) { }
 
-    // copy the entire contents of the sketch folder
-    PdeBase.copyDir(folder, newFolder);
+    // if the new folder already exists, then need to remove
+    // its contents before copying everything over
+    // (user will have already been warned)
+    if (newFolder.exists()) {
+      Base.removeDir(newFolder);
+    }
+    // in fact, you can't do this on windows because it tries
+    // to go into the same folder, but it happens on osx a lot.
 
-    // change the references to the dir location in PdeCode files
+    // copy the entire contents of the sketch folder
+    Base.copyDir(folder, newFolder);
+
+    // change the references to the dir location in SketchCode files
     for (int i = 0; i < codeCount; i++) {
       code[i].file = new File(newFolder, code[i].file.getName());
     }
@@ -647,7 +782,9 @@ public class PdeSketch {
     code[0].name = newName;
     // write the contents to the renamed file
     // (this may be resaved if the code is modified)
-    code[0].save();
+    code[0].modified = true;
+    //code[0].save();
+    //System.out.println("modified is " + modified);
 
     // change the other paths
     String oldName = name;
@@ -660,9 +797,9 @@ public class PdeSketch {
     // remove the 'applet', 'application', 'library' folders
     // from the copied version.
     // otherwise their .class and .jar files can cause conflicts.
-    PdeBase.removeDir(new File(folder, "applet"));
-    PdeBase.removeDir(new File(folder, "application"));
-    PdeBase.removeDir(new File(folder, "library"));
+    Base.removeDir(new File(folder, "applet"));
+    Base.removeDir(new File(folder, "application"));
+    Base.removeDir(new File(folder, "library"));
 
     // do a "save"
     // this will take care of the unsaved changes in each of the tabs
@@ -670,12 +807,12 @@ public class PdeSketch {
 
     // get the changes into the sketchbook menu
     //sketchbook.rebuildMenu();
-    // done inside PdeEditor instead
+    // done inside Editor instead
 
     // update the tabs for the name change
     editor.header.repaint();
 
-    // let PdeEditor know that the save was successful
+    // let Editor know that the save was successful
     return true;
   }
 
@@ -729,7 +866,7 @@ public class PdeSketch {
 
     // make sure they aren't the same file
     if (!addingCode && sourceFile.equals(destFile)) {
-      PdeBase.showWarning("You can't fool me",
+      Base.showWarning("You can't fool me",
                           "This file has already been copied to the\n" +
                           "location where you're trying to add it.\n" +
                           "I ain't not doin nuthin'.", null);
@@ -740,9 +877,9 @@ public class PdeSketch {
     // to update the sketch's tabs
     if (!sourceFile.equals(destFile)) {
       try {
-        PdeBase.copyFile(sourceFile, destFile);
+        Base.copyFile(sourceFile, destFile);
       } catch (IOException e) {
-        PdeBase.showWarning("Error adding file",
+        Base.showWarning("Error adding file",
                             "Could not add '" + filename +
                             "' to the sketch.", e);
       }
@@ -761,7 +898,7 @@ public class PdeSketch {
       }
 
       // see also "nameCode" for identical situation
-      PdeCode newCode = new PdeCode(newName, destFile, newFlavor);
+      SketchCode newCode = new SketchCode(newName, destFile, newFlavor);
       insertCode(newCode);
       sortCode();
       setCurrent(newName);
@@ -771,7 +908,10 @@ public class PdeSketch {
 
 
   public void addLibrary(String jarPath) {
-    String list[] = PdeCompiler.packageListFromClassPath(jarPath);
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    String list[] = Compiler.packageListFromClassPath(jarPath);
 
     // import statements into the main sketch file (code[0])
     // if the current code is a .java file, insert into current
@@ -796,9 +936,11 @@ public class PdeSketch {
 
   /**
    * Change what file is currently being edited.
-   * 1. store the String for the text of the current file.
-   * 2. retrieve the String for the text of the new file.
-   * 3. change the text that's visible in the text area
+   * <OL>
+   * <LI> store the String for the text of the current file.
+   * <LI> retrieve the String for the text of the new file.
+   * <LI> change the text that's visible in the text area
+   * </OL>
    */
   public void setCurrent(int which) {
     // get the text currently being edited
@@ -845,13 +987,13 @@ public class PdeSketch {
     System.gc();
 
     // note that we can't remove the builddir itself, otherwise
-    // the next time we start up, internal runs using PdeRuntime won't
+    // the next time we start up, internal runs using Runner won't
     // work because the build dir won't exist at startup, so the classloader
     // will ignore the fact that that dir is in the CLASSPATH in run.sh
     //
     //File dirObject = new File(TEMP_BUILD_PATH);
-    //PdeBase.removeDescendants(dirObject);
-    PdeBase.removeDescendants(tempBuildFolder);
+    //Base.removeDescendants(dirObject);
+    Base.removeDescendants(tempBuildFolder);
   }
 
 
@@ -881,16 +1023,19 @@ public class PdeSketch {
    *
    *    X. afterwards, some of these steps need a cleanup function
    */
-  //public void run() throws PdeException {
-  public boolean handleRun() throws PdeException {
+  //public void run() throws RunnerException {
+  public boolean handleRun() throws RunnerException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
     current.program = editor.getText();
 
     // TODO record history here
-    //current.history.record(program, PdeHistory.RUN);
+    //current.history.record(program, SketchHistory.RUN);
 
     // if an external editor is being used, need to grab the
     // latest version of the code from the file.
-    if (PdePreferences.getBoolean("editor.external")) {
+    if (Preferences.getBoolean("editor.external")) {
       // history gets screwed by the open..
       //String historySaved = history.lastRecorded;
       //handleOpen(sketch);
@@ -913,20 +1058,22 @@ public class PdeSketch {
        "_" + String.valueOf((int) (Math.random() * 10000)));
 
     // handle preprocessing the main file's code
-    mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
+    //mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
+    mainClassName =
+      build(tempBuildFolder.getAbsolutePath(), suggestedClassName);
     // externalPaths is magically set by build()
 
     if (!externalRuntime) {  // only if not running externally already
       // copy contents of data dir into lib/build
       if (dataFolder.exists()) {
         // just drop the files in the build folder (pre-68)
-        //PdeBase.copyDir(dataDir, buildDir);
+        //Base.copyDir(dataDir, buildDir);
         // drop the files into a 'data' subfolder of the build dir
         try {
-          PdeBase.copyDir(dataFolder, new File(tempBuildFolder, "data"));
+          Base.copyDir(dataFolder, new File(tempBuildFolder, "data"));
         } catch (IOException e) {
           e.printStackTrace();
-          throw new PdeException("Problem copying files from data folder");
+          throw new RunnerException("Problem copying files from data folder");
         }
       }
     }
@@ -937,12 +1084,12 @@ public class PdeSketch {
       /*
       if (externalPaths == null) {
         externalPaths =
-          PdeCompiler.calcClassPath(null) + File.pathSeparator +
+          Compiler.calcClassPath(null) + File.pathSeparator +
           tempBuildPath;
       } else {
         externalPaths =
           tempBuildPath + File.pathSeparator +
-          PdeCompiler.calcClassPath(null) + File.pathSeparator +
+          Compiler.calcClassPath(null) + File.pathSeparator +
           externalPaths;
       }
       */
@@ -957,7 +1104,7 @@ public class PdeSketch {
       */
 
       // create a runtime object
-//      runtime = new PdeRuntime(this, editor);
+//      runtime = new Runner(this, editor);
 
       // if programType is ADVANCED
       //   or the code/ folder is not empty -> or just exists (simpler)
@@ -968,7 +1115,7 @@ public class PdeSketch {
 
       // use the runtime object to consume the errors now
       // no need to bother recycling the old guy
-      //PdeMessageStream messageStream = new PdeMessageStream(runtime);
+      //MessageStream messageStream = new MessageStream(runtime);
 
       // start the applet
 //      runtime.start(presenting ? presentLocation : appletLocation); //,
@@ -1001,71 +1148,96 @@ public class PdeSketch {
    *
    * In an advanced program, the returned classname could be different,
    * which is why the className is set based on the return value.
-   * A compilation error will burp up a PdeException.
+   * A compilation error will burp up a RunnerException.
    *
    * @return null if compilation failed, main class name if not
    */
   protected String build(String buildPath, String suggestedClassName)
-    throws PdeException {
-    //String importPackageList[] = null;
+    throws RunnerException {
+/*      
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    String codeFolderPackages[] = null;
+*/
     String javaClassPath = System.getProperty("java.class.path");
     // remove quotes if any.. this is an annoying thing on windows
     if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
-    javaClassPath = PdeSketchbook.librariesClassPath + File.pathSeparator +
+
+    javaClassPath = Sketchbook.librariesClassPath + File.pathSeparator +
       javaClassPath;
     
     return build(buildPath, suggestedClassName, null, null,
-                 PdeCompiler.calcBootClassPath(), javaClassPath);    
+                 Compiler.calcBootClassPath(), javaClassPath);    
   }
   
   protected String build(String buildPath, String suggestedClassName,
                          String baseClass, String[] baseImports,
                          String bootClassPath, String additionalClassPath)
-    throws PdeException {
+    throws RunnerException {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
 
     String codeFolderPackages[] = null;
-      
+
     classPath = buildPath;
     if (additionalClassPath != null) {
       classPath += File.pathSeparator + additionalClassPath;
     }
+/*
+    classPath = buildPath +
+      File.pathSeparator + Sketchbook.librariesClassPath +
+      File.pathSeparator + javaClassPath;
+ */
+    //System.out.println("cp = " + classPath);
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
     //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
-      classPath += File.pathSeparator +
-        PdeCompiler.contentsToClassPath(codeFolder);
-      //importPackageList = PdeCompiler.packageListFromClassPath(classPath);
+
+      //classPath += File.pathSeparator +
+      //Compiler.contentsToClassPath(codeFolder);
+      classPath =
+        Compiler.contentsToClassPath(codeFolder) +
+        File.pathSeparator + classPath;
+
+      //codeFolderPackages = Compiler.packageListFromClassPath(classPath);
+      //codeFolderPackages = Compiler.packageListFromClassPath(codeFolder);
       libraryPath = codeFolder.getAbsolutePath();
-      
+
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
       String codeFolderClassPath =
-        PdeCompiler.contentsToClassPath(codeFolder);
+        Compiler.contentsToClassPath(codeFolder);
       // get list of packages found in those jars
       codeFolderPackages =
-        PdeCompiler.packageListFromClassPath(codeFolderClassPath);
+        Compiler.packageListFromClassPath(codeFolderClassPath);
       //PApplet.println(libraryPath);
       //PApplet.println("packages:");
       //PApplet.printarr(codeFolderPackages);
+
     } else {
+      /*
       // check to see if multiple files that include a .java file
       externalRuntime = false;
       for (int i = 0; i < codeCount; i++) {
         if (code[i].flavor == JAVA) externalRuntime = true;
       }
-      //externalRuntime = (codeCount > 1);  // may still be set true later
-      //importPackageList = null;
+      */
+      // since using the special classloader,
+      // run externally whenever there are extra classes defined
+      externalRuntime = (codeCount > 1);
+      //codeFolderPackages = null;
       libraryPath = "";
     }
 
     // if 'data' folder is large, set to external runtime
     if (dataFolder.exists() &&
-        PdeBase.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
+        Base.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
       externalRuntime = true;
     }
 
@@ -1086,6 +1258,17 @@ public class PdeSketch {
       }
     }
 
+    // since using the special classloader,
+    // run externally whenever there are extra classes defined
+    if ((bigCode.indexOf(" class ") != -1) ||
+        (bigCode.indexOf("\nclass ") != -1)) {
+      externalRuntime = true;
+    }
+
+    // if running in opengl mode, this is gonna be external
+    //if (Preferences.get("renderer").equals("opengl")) {
+    //externalRuntime = true;
+    //}
 
     // 2. run preproc on that code using the sugg class name
     //    to create a single .java file and write to buildpath
@@ -1094,18 +1277,16 @@ public class PdeSketch {
 
     PdePreprocessor preprocessor = new PdePreprocessor();
     try {
-      // if (i != 0) preproc will fail if a pde file is not
-      // java mode, since that's required
       preprocessor.setBaseClass(baseClass);
       preprocessor.setBaseImports(baseImports);
       
+      // if (i != 0) preproc will fail if a pde file is not
+      // java mode, since that's required
       String className =
         preprocessor.write(bigCode.toString(), buildPath,
                            suggestedClassName, codeFolderPackages);
-      //preprocessor.write(bigCode.toString(), buildPath,
-      //                   suggestedClassName, importPackageList);
       if (className == null) {
-        throw new PdeException("Could not find main class");
+        throw new RunnerException("Could not find main class");
         // this situation might be perfectly fine,
         // (i.e. if the file is empty)
         //System.out.println("No class found in " + code[i].name);
@@ -1138,7 +1319,7 @@ public class PdeSketch {
       }
       errorLine -= code[errorFile].lineOffset;
 
-      throw new PdeException(re.getMessage(), errorFile,
+      throw new RunnerException(re.getMessage(), errorFile,
                              errorLine, re.getColumn());
 
     } catch (antlr.TokenStreamRecognitionException tsre) {
@@ -1154,7 +1335,7 @@ public class PdeSketch {
       try {
         pattern = compiler.compile(mess);
       } catch (MalformedPatternException e) {
-        PdeBase.showWarning("Internal Problem",
+        Base.showWarning("Internal Problem",
                             "An internal error occurred while trying\n" +
                             "to compile the sketch. Please report\n" +
                             "this online at http://processing.org/bugs", e);
@@ -1176,16 +1357,16 @@ public class PdeSketch {
         }
         errorLine -= code[errorFile].lineOffset;
 
-        throw new PdeException(tsre.getMessage(),
+        throw new RunnerException(tsre.getMessage(),
                                errorFile, errorLine, errorColumn);
 
       } else {
         // this is bad, defaults to the main class.. hrm.
-        throw new PdeException(tsre.toString(), 0, -1, -1);
+        throw new RunnerException(tsre.toString(), 0, -1, -1);
       }
 
-    } catch (PdeException pe) {
-      // PdeExceptions are caught here and re-thrown, so that they don't
+    } catch (RunnerException pe) {
+      // RunnerExceptions are caught here and re-thrown, so that they don't
       // get lost in the more general "Exception" handler below.
       throw pe;
 
@@ -1193,7 +1374,7 @@ public class PdeSketch {
       // TODO better method for handling this?
       System.err.println("Uncaught exception type:" + ex.getClass());
       ex.printStackTrace();
-      throw new PdeException(ex.toString());
+      throw new RunnerException(ex.toString());
     }
 
     // grab the imports from the code just preproc'd
@@ -1204,15 +1385,29 @@ public class PdeSketch {
       // remove things up to the last dot
       String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
       //System.out.println("found package " + entry);
-      File libFolder = (File) PdeSketchbook.importToLibraryTable.get(entry);
+      File libFolder = (File) Sketchbook.importToLibraryTable.get(entry);
+
       if (libFolder == null) {
-        //throw new PdeException("Could not find library for " + entry);
+        //throw new RunnerException("Could not find library for " + entry);
         continue;
       }
-      //System.out.println("  found lib folder " + libFolder);
-      importedLibraries.add(libFolder);
 
+      importedLibraries.add(libFolder);
       libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+
+      /*
+      String list[] = libFolder.list();
+      if (list != null) {
+        for (int j = 0; j < list.length; j++) {
+          // this might have a dll/jnilib/so packed,
+          // so add it to the library path
+          if (list[j].toLowerCase().endsWith(".jar")) {
+            libraryPath += File.pathSeparator +
+              libFolder.getAbsolutePath() + File.separator + list[j];
+          }
+        }
+      }
+      */
     }
 
 
@@ -1226,20 +1421,20 @@ public class PdeSketch {
         // shtuff so that unicode bunk is properly handled
         String filename = code[i].name + ".java";
         try {
-          PdeBase.saveFile(code[i].program, new File(buildPath, filename));
+          Base.saveFile(code[i].program, new File(buildPath, filename));
         } catch (IOException e) {
           e.printStackTrace();
-          throw new PdeException("Problem moving " + filename +
+          throw new RunnerException("Problem moving " + filename +
                                  " to the build folder");
         }
         code[i].preprocName = filename;
       }
     }
-    
-    // compile the program. errors will happen as a PdeException
+
+    // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
     //
-    PdeCompiler compiler = new PdeCompiler();    
+    Compiler compiler = new Compiler();
     boolean success = compiler.compile(this, buildPath, bootClassPath);
     //System.out.println("success = " + success + " ... " + primaryClassName);
     return success ? primaryClassName : null;
@@ -1257,7 +1452,7 @@ public class PdeSketch {
 
 
   /**
-   * Called by PdeEditor to handle someone having selected 'export'.
+   * Called by Editor to handle someone having selected 'export'.
    * Pops up a dialog box for export options, and then calls the
    * necessary function with the parameters from the window.
    *
@@ -1342,6 +1537,11 @@ public class PdeSketch {
 
 
   public boolean exportApplet(/*boolean replaceHtml*/) throws Exception {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    zipFileContents = new Hashtable();
+
     boolean replaceHtml = true;
     //File appletDir, String exportSketchName, File dataDir) {
     //String program = textarea.getText();
@@ -1370,7 +1570,7 @@ public class PdeSketch {
     // if name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!name.equals(foundName)) {
-      PdeBase.showWarning("Error during export",
+      Base.showWarning("Error during export",
                           "Sketch name is " + name + " but the sketch\n" +
                           "name in the code was " + foundName, null);
       return false;
@@ -1380,7 +1580,6 @@ public class PdeSketch {
       int wide = PApplet.DEFAULT_WIDTH;
       int high = PApplet.DEFAULT_HEIGHT;
 
-      //try {
       PatternMatcher matcher = new Perl5Matcher();
       PatternCompiler compiler = new Perl5Compiler();
 
@@ -1389,8 +1588,10 @@ public class PdeSketch {
       // this way, no warning is shown if size() isn't actually
       // used in the applet, which is the case especially for
       // beginners that are cutting/pasting from the reference.
+      // modified for 83 to match size(XXX, ddd
       String sizing =
-        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
+        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
+        //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
       Pattern pattern = compiler.compile(sizing);
 
       // adds a space at the beginning, in case size() is the very
@@ -1412,17 +1613,41 @@ public class PdeSketch {
             "determined from your code. You'll have to edit the\n" +
             "HTML file to set the size of the applet.";
 
-          PdeBase.showWarning("Could not find applet size", message, null);
+          Base.showWarning("Could not find applet size", message, null);
         }
       }  // else no size() command found
 
-      // handle this in editor instead, rare or nonexistant
-      //} catch (MalformedPatternException e) {
-      //PdeBase.showWarning("Internal Problem",
-      //                    "An internal error occurred while trying\n" +
-      //                    "to export the sketch. Please report this.", e);
-      //return false;
-      //}
+      // originally tried to grab this with a regexp matcher,
+      // but it wouldn't span over multiple lines for the match.
+      // this could prolly be forced, but since that's the case
+      // better just to parse by hand.
+      StringBuffer dbuffer = new StringBuffer();
+      String lines[] = PApplet.split(code[0].program, '\n');
+      for (int i = 0; i < lines.length; i++) {
+        if (lines[i].trim().startsWith("/**")) {  // this is our comment
+          // some smartass put the whole thing on the same line
+          //if (lines[j].indexOf("*/") != -1) break;
+
+          for (int j = i+1; j < lines.length; j++) {
+            if (lines[j].trim().endsWith("*/")) {
+              // remove the */ from the end, and any extra *s
+              // in case there's also content on this line
+              // nah, don't bother.. make them use the three lines
+              break;
+            }
+
+            int offset = 0;
+            while ((offset < lines[j].length()) &&
+                    ((lines[j].charAt(offset) == '*') ||
+                     (lines[j].charAt(offset) == ' '))) {
+              offset++;
+            }
+            // insert the return into the html to help w/ line breaks
+            dbuffer.append(lines[j].substring(offset) + "\n");
+          }
+        }
+      }
+      String description = dbuffer.toString();
 
       StringBuffer sources = new StringBuffer();
       for (int i = 0; i < codeCount; i++) {
@@ -1435,6 +1660,7 @@ public class PdeSketch {
       PrintStream ps = new PrintStream(fos);
 
       // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+      // and now @@description@@
 
       InputStream is = null;
       // if there is an applet.html file in the sketch folder, use that
@@ -1443,7 +1669,7 @@ public class PdeSketch {
         is = new FileInputStream(customHtml);
       }
       if (is == null) {
-        is = PdeBase.getStream("applet.html");
+        is = Base.getStream("applet.html");
       }
       BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
@@ -1472,6 +1698,10 @@ public class PdeSketch {
             sb.replace(index, index + "@@height@@".length(),
                        String.valueOf(high));
           }
+          while ((index = sb.indexOf("@@description@@")) != -1) {
+            sb.replace(index, index + "@@description@@".length(),
+                       description);
+          }
           line = sb.toString();
         }
         ps.println(line);
@@ -1486,7 +1716,7 @@ public class PdeSketch {
     // to encourage people to share their code
     for (int i = 0; i < codeCount; i++) {
       try {
-        PdeBase.copyFile(code[i].file,
+        Base.copyFile(code[i].file,
                          new File(appletDir, code[i].file.getName()));
       } catch (IOException e) {
 
@@ -1503,7 +1733,7 @@ public class PdeSketch {
     // unpacks all jar files
     //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
-      String includes = PdeCompiler.contentsToClassPath(codeFolder);
+      String includes = Compiler.contentsToClassPath(codeFolder);
       packClassPathIntoZipFile(includes, zos);
     }
 
@@ -1511,17 +1741,16 @@ public class PdeSketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    Enumeration enum = importedLibraries.elements();
-    while (enum.hasMoreElements()) {
+    Enumeration en = importedLibraries.elements();
+    while (en.hasMoreElements()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
-      File libraryFolder = (File)enum.nextElement();
+      File libraryFolder = (File)en.nextElement();
       //System.out.println("exporting files from " + libFolder);
       File exportSettings = new File(libraryFolder, "export.txt");
       String exportList[] = null;
       if (exportSettings.exists()) {
-        //exportList = PApplet.loadStrings(exportSettings);
-        String info[] = PApplet.loadStrings(exportSettings);
+        String info[] = Base.loadStrings(exportSettings);
         for (int i = 0; i < info.length; i++) {
           if (info[i].startsWith("applet")) {
             int idx = info[i].indexOf('=');  // get applet= or applet =
@@ -1548,10 +1777,12 @@ public class PdeSketch {
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
+          //System.out.println("adding zip file " +
+          //                 exportFile.getAbsolutePath());
           packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
 
         } else {  // just copy the file over.. prolly a .dll or something
-          PdeBase.copyFile(exportFile,
+          Base.copyFile(exportFile,
                            new File(appletDir, exportFile.getName()));
         }
       }
@@ -1559,7 +1790,7 @@ public class PdeSketch {
 
     // add the appropriate bagel to the classpath
     /*
-    String jdkVersion = PdePreferences.get("compiler.jdk_version");
+    String jdkVersion = Preferences.get("compiler.jdk_version");
     String bagelJar = "lib/export11.jar";  // default
     if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
       bagelJar = "lib/export13.jar";
@@ -1582,7 +1813,7 @@ public class PdeSketch {
         if (!bagelClasses[i].endsWith(".class")) continue;
         entry = new ZipEntry(bagelClasses[i]);
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(exportDir + bagelClasses[i])));
+        zos.write(Base.grabFile(new File(exportDir + bagelClasses[i])));
         zos.closeEntry();
       }
     */
@@ -1603,7 +1834,7 @@ public class PdeSketch {
 
         entry = new ZipEntry(dataFiles[i]);
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(dataFolder, dataFiles[i])));
+        zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
         zos.closeEntry();
       }
     }
@@ -1617,7 +1848,7 @@ public class PdeSketch {
       if (classfiles[i].endsWith(".class")) {
         entry = new ZipEntry(classfiles[i]);
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(appletDir, classfiles[i])));
+        zos.write(Base.grabFile(new File(appletDir, classfiles[i])));
         zos.closeEntry();
       }
     }
@@ -1629,7 +1860,7 @@ public class PdeSketch {
       if (classfiles[i].endsWith(".class")) {
         File deadguy = new File(appletDir, classfiles[i]);
         if (!deadguy.delete()) {
-          PdeBase.showWarning("Could not delete",
+          Base.showWarning("Could not delete",
                               classfiles[i] + " could not \n" +
                               "be deleted from the applet folder.  \n" +
                               "You'll need to remove it by hand.", null);
@@ -1641,7 +1872,7 @@ public class PdeSketch {
     zos.flush();
     zos.close();
 
-    PdeBase.openFolder(appletDir);
+    Base.openFolder(appletDir);
 
     //} catch (Exception e) {
     //e.printStackTrace();
@@ -1649,7 +1880,7 @@ public class PdeSketch {
     return true;
   }
 
-  
+
   public boolean exportApplication() {
     return true;
   }
@@ -1664,8 +1895,8 @@ public class PdeSketch {
    * Slurps up .class files from a colon (or semicolon on windows)
    * separated list of paths and adds them to a ZipOutputStream.
    */
-  static public void packClassPathIntoZipFile(String path,
-                                              ZipOutputStream zos)
+  public void packClassPathIntoZipFile(String path,
+                                       ZipOutputStream zos)
     throws IOException {
     String pieces[] = PApplet.split(path, File.pathSeparatorChar);
 
@@ -1685,10 +1916,15 @@ public class PdeSketch {
               // actually 'continue's for all dir entries
 
             } else {
-              String name = entry.getName();
+              String entryName = entry.getName();
               // ignore contents of the META-INF folders
-              if (name.indexOf("META-INF") == 0) continue;
-              ZipEntry entree = new ZipEntry(name);
+              if (entryName.indexOf("META-INF") == 0) continue;
+
+              // don't allow duplicate entries
+              if (zipFileContents.get(entryName) != null) continue;
+              zipFileContents.put(entryName, new Object());
+
+              ZipEntry entree = new ZipEntry(entryName);
 
               zos.putNextEntry(entree);
               byte buffer[] = new byte[(int) entry.getSize()];
@@ -1753,7 +1989,7 @@ public class PdeSketch {
             files[i].charAt(0) != '.') {
           ZipEntry entry = new ZipEntry(nowfar);
           zos.putNextEntry(entry);
-          zos.write(PdeBase.grabFile(sub));
+          zos.write(Base.grabFile(sub));
           zos.closeEntry();
         }
       }
@@ -1764,12 +2000,12 @@ public class PdeSketch {
   /**
    * Returns true if this is a read-only sketch. Used for the
    * examples directory, or when sketches are loaded from read-only
-   * volumes or folders without appropraite permissions.
+   * volumes or folders without appropriate permissions.
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    if (apath.startsWith(PdeSketchbook.examplesPath) ||
-        apath.startsWith(PdeSketchbook.librariesPath)) {
+    if (apath.startsWith(Sketchbook.examplesPath) ||
+        apath.startsWith(Sketchbook.librariesPath)) {
       return true;
 
       // this doesn't work on directories
@@ -1777,7 +2013,9 @@ public class PdeSketch {
     } else {
       // check to see if each modified code file can be written to
       for (int i = 0; i < codeCount; i++) {
-        if (code[i].modified && !code[i].file.canWrite()) {
+        if (code[i].modified &&
+            !code[i].file.canWrite() &&
+            code[i].file.exists()) {
           //System.err.println("found a read-only file " + code[i].file);
           return true;
         }
@@ -1798,6 +2036,11 @@ public class PdeSketch {
   /** Packages up sketch into an executable midlet with JAD descriptor.
    */
   public boolean exportMIDlet() throws Exception {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    zipFileContents = new Hashtable();
+
     boolean replaceJad = true;
 
     // create the project directory
@@ -1819,9 +2062,9 @@ public class PdeSketch {
     }
 
     // build the sketch
-    String   wtkPath     = PdePreferences.get("wtk.path");
+    String   wtkPath     = Preferences.get("wtk.path");
     if (wtkPath == null) {
-        PdeBase.showWarning("Sun Wireless Toolkit (WTK) not found",
+        Base.showWarning("Sun Wireless Toolkit (WTK) not found",
                             "Please specify the location of the WTK in your preferences.txt file. Example:\n\n" +
                             "wtk.path=C:\\WTK22", null);
     }
@@ -1843,14 +2086,14 @@ public class PdeSketch {
     // if name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!name.equals(foundName)) {
-      PdeBase.showWarning("Error during export",
+      Base.showWarning("Error during export",
                           "Sketch name is " + name + " but the sketch\n" +
                           "name in the code was " + foundName, null);
       return false;
     }
     
     //// preverify class files into temporary directory
-    PdePreverifier preverifier = new PdePreverifier();
+    Preverifier preverifier = new Preverifier();
     File tmpDir = new File(folder, "tmp");
     if (preverifier.preverify(midletDir, tmpDir) != true) {
       return false;
@@ -1871,7 +2114,7 @@ public class PdeSketch {
       is = new FileInputStream(customMf);
     }
     if (is == null) {
-      is = PdeBase.getStream("mobile.mf");
+      is = Base.getStream("mobile.mf");
     }
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
@@ -1904,7 +2147,7 @@ public class PdeSketch {
     // unpacks all jar files
     //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
-      String includes = PdeCompiler.contentsToClassPath(codeFolder);
+      String includes = Compiler.contentsToClassPath(codeFolder);
       packClassPathIntoZipFile(includes, zos);
     }
 
@@ -1912,11 +2155,11 @@ public class PdeSketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    Enumeration enum = importedLibraries.elements();
-    while (enum.hasMoreElements()) {
+    Enumeration en = importedLibraries.elements();
+    while (en.hasMoreElements()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
-      File libraryFolder = (File)enum.nextElement();
+      File libraryFolder = (File)en.nextElement();
       //System.out.println("exporting files from " + libFolder);
       File exportSettings = new File(libraryFolder, "export.txt");
       String exportList[] = null;
@@ -1952,7 +2195,7 @@ public class PdeSketch {
           packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
 
         } else {  // just copy the file over.. prolly a .dll or something
-          PdeBase.copyFile(exportFile,
+          Base.copyFile(exportFile,
                            new File(midletDir, exportFile.getName()));
         }
       }
@@ -1972,7 +2215,7 @@ public class PdeSketch {
 
         entry = new ZipEntry(dataFiles[i]);
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(dataFolder, dataFiles[i])));
+        zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
         zos.closeEntry();
       }
     }
@@ -1983,12 +2226,12 @@ public class PdeSketch {
       if (classfiles[i].endsWith(".class")) {
         entry = new ZipEntry(classfiles[i]);
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(tmpDir, classfiles[i])));
+        zos.write(Base.grabFile(new File(tmpDir, classfiles[i])));
         zos.closeEntry();
       } else if (classfiles[i].endsWith(".MF")) {
         entry = new ZipEntry("META-INF/MANIFEST.MF");
         zos.putNextEntry(entry);
-        zos.write(PdeBase.grabFile(new File(tmpDir, classfiles[i])));
+        zos.write(Base.grabFile(new File(tmpDir, classfiles[i])));
         zos.closeEntry();
       }
     }
@@ -1999,7 +2242,7 @@ public class PdeSketch {
       if (classfiles[i].endsWith(".class")) {
         File deadguy = new File(midletDir, classfiles[i]);
         if (!deadguy.delete()) {
-          PdeBase.showWarning("Could not delete",
+          Base.showWarning("Could not delete",
                               classfiles[i] + " could not \n" +
                               "be deleted from the applet folder.  \n" +
                               "You'll need to remove it by hand.", null);
@@ -2021,7 +2264,7 @@ public class PdeSketch {
     for (int i = 0; i < classfiles.length; i++) {
       File deadguy = new File(tmpDir, classfiles[i]);
       if (!deadguy.delete()) {
-        PdeBase.showWarning("Could not delete",
+        Base.showWarning("Could not delete",
                             classfiles[i] + " could not \n" +
                             "be deleted from the temporary folder.  \n" +
                             "You'll need to remove it by hand.", null);

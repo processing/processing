@@ -1,10 +1,10 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PdeEditor - main editor panel for the processing development environment
+  Editor - main editor panel for the processing development environment
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,11 @@
   along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+package processing.app;
+
+import processing.app.syntax.*;
+import processing.app.tools.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -41,21 +46,25 @@ import com.oroinc.text.regex.*;
 import com.apple.mrj.*;
 
 
-public class PdeEditor extends JFrame
-implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
+public class Editor extends JFrame
+  implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler,
+             MRJOpenDocumentHandler //, MRJOpenApplicationHandler
 {
   // yeah
-  static final String WINDOW_TITLE = "Processing Mobile";
+  static final String WINDOW_TITLE = "Processing Mobile" + " - " + Base.VERSION_NAME;
 
   // p5 icon for the window
   Image icon;
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
-  static final String EMPTY =
+  static public final String EMPTY =
     "                                                                     " +
     "                                                                     " +
     "                                                                     ";
+
+  static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
+    KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
   static final int HANDLE_NEW  = 1;
   static final int HANDLE_OPEN = 2;
@@ -64,38 +73,35 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   String handleOpenPath;
   boolean handleNewShift;
   boolean handleNewLibrary;
-  //String handleSaveAsPath;
-  //String openingName;
 
-  PdeEditorButtons buttons;
-  PdeEditorHeader header;
-  PdeEditorStatus status;
-  PdeEditorConsole console;
+  EditorButtons buttons;
+  EditorHeader header;
+  EditorStatus status;
+  EditorConsole console;
 
   JSplitPane splitPane;
   JPanel consolePanel;
 
+  JLabel lineNumberComponent;
+
   // currently opened program
-  public PdeSketch sketch;
+  public Sketch sketch;
+
+  EditorLineStatus lineStatus;
 
   public JEditTextArea textarea;
-  PdeEditorListener listener;
+  EditorListener listener;
 
   // runtime information and window placement
   Point appletLocation;
-  Point presentLocation;
-  Window presentationWindow;
+  //Point presentLocation;
+  //Window presentationWindow;
   RunButtonWatcher watcher;
-  PdeRuntime runtime;
-
-  //boolean externalRuntime;
-  //String externalPaths;
-  //File externalCode;
+  Runner runtime;
 
   JMenuItem exportAppItem;
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
-  //JMenuItem beautifyMenuItem;
 
   //
 
@@ -110,27 +116,29 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   //
 
-  //PdeHistory history;  // TODO re-enable history
-  PdeSketchbook sketchbook;
-  PdePreferences preferences;
-  PdeEditorFind find;
+  //SketchHistory history;  // TODO re-enable history
+  Sketchbook sketchbook;
+  //Preferences preferences;
+  FindReplace find;
 
   //static Properties keywords; // keyword -> reference html lookup
 
 
-  public PdeEditor() {
-    super(WINDOW_TITLE + " - " + PdeBase.VERSION);
-    // this is needed by just about everything else
-    preferences = new PdePreferences();
+  public Editor() {
+    super(WINDOW_TITLE);
 
     // #@$*(@#$ apple.. always gotta think different
     MRJApplicationUtils.registerAboutHandler(this);
     MRJApplicationUtils.registerPrefsHandler(this);
     MRJApplicationUtils.registerQuitHandler(this);
+    MRJApplicationUtils.registerOpenDocumentHandler(this);
+
+    // run static initialization that grabs all the prefs
+    Preferences.init();
 
     // set the window icon
     try {
-      icon = PdeBase.getImage("icon.gif", this);
+      icon = Base.getImage("icon.gif", this);
       setIconImage(icon);
     } catch (Exception e) { } // fail silently, no big whup
 
@@ -143,174 +151,88 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       });
 
     PdeKeywords keywords = new PdeKeywords();
-    // TODO re-enable history
-    //history = new PdeHistory(this);
-    sketchbook = new PdeSketchbook(this);
+    sketchbook = new Sketchbook(this);
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(buildFileMenu());
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
-    // what platform has their help menu way on the right?
-    //if ((PdeBase.platform == PdeBase.WINDOWS) ||
+    // what platform has their help menu way on the right? motif?
     //menubar.add(Box.createHorizontalGlue());
     menubar.add(buildHelpMenu());
 
     setJMenuBar(menubar);
 
     // doesn't matter when this is created, just make it happen at some point
-    find = new PdeEditorFind(PdeEditor.this);
+    find = new FindReplace(Editor.this);
 
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
 
-    buttons = new PdeEditorButtons(this);
-    pain.add("West", buttons);
+    Box box = Box.createVerticalBox();
+    Box upper = Box.createVerticalBox();
 
-    JPanel rightPanel = new JPanel();
-    rightPanel.setLayout(new BorderLayout());
+    buttons = new EditorButtons(this);
+    upper.add(buttons);
 
-    header = new PdeEditorHeader(this);
-    rightPanel.add(header, BorderLayout.NORTH);
+    header = new EditorHeader(this);
+    //header.setBorder(null);
+    upper.add(header);
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
-
-    textarea.setHorizontalOffset(5);
-    //textarea.setBorder(new EmptyBorder(0, 20, 0, 0));
-    //textarea.setBackground(Color.white);
+    textarea.setHorizontalOffset(6);
 
     // assemble console panel, consisting of status area and the console itself
     consolePanel = new JPanel();
-    //System.out.println(consolePanel.getInsets());
     consolePanel.setLayout(new BorderLayout());
 
-    status = new PdeEditorStatus(this);
+    status = new EditorStatus(this);
     consolePanel.add(status, BorderLayout.NORTH);
 
-    console = new PdeEditorConsole(this);
+    console = new EditorConsole(this);
+    // windows puts an ugly border on this guy
+    console.setBorder(null);
     consolePanel.add(console, BorderLayout.CENTER);
 
+    lineStatus = new EditorLineStatus(textarea);
+    consolePanel.add(lineStatus, BorderLayout.SOUTH);
+
+    upper.add(textarea);
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                               textarea, consolePanel);
+                               upper, consolePanel);
+                               //textarea, consolePanel);
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);
-    // if window increases in size, give all of increase to textarea (top pane)
+    // if window increases in size, give all of increase to
+    // the textarea in the uppper pane
     splitPane.setResizeWeight(1D);
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (PdeBase.platform == PdeBase.MACOSX) {
-      splitPane.setBorder(null);
-    }
+    splitPane.setBorder(null);
 
     // the default size on windows is too small and kinda ugly
-    int dividerSize = PdePreferences.getInteger("editor.divider.size");
+    int dividerSize = Preferences.getInteger("editor.divider.size");
     if (dividerSize != 0) {
       splitPane.setDividerSize(dividerSize);
     }
 
-    rightPanel.add(splitPane, BorderLayout.CENTER);
-
-    pain.add("Center", rightPanel);
+    splitPane.setMinimumSize(new Dimension(600, 600));
+    box.add(splitPane);
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
-    listener = new PdeEditorListener(this, textarea);
-    textarea.pdeEditorListener = listener;
+    listener = new EditorListener(this, textarea);
+    pain.add(box);
 
     // set the undo stuff for this feller
     Document document = textarea.getDocument();
     document.addUndoableEditListener(new PdeUndoableEditListener());
-
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    if ((PdeBase.platform == PdeBase.MACOSX) ||
-        (PdeBase.platform == PdeBase.MACOS9)) {
-      presentationWindow = new Frame();
-
-      // mrj is still (with version 2.2.x) a piece of shit,
-      // and doesn't return valid insets for frames
-      //presentationWindow.pack(); // make a peer so insets are valid
-      //Insets insets = presentationWindow.getInsets();
-      // the extra +20 is because the resize boxes intrude
-      Insets insets = new Insets(21, 5, 5 + 20, 5);
-
-      presentationWindow.setBounds(-insets.left, -insets.top,
-                                   screen.width + insets.left + insets.right,
-                                   screen.height + insets.top + insets.bottom);
-    } else {
-      presentationWindow = new Frame();
-      //((Frame)presentationWindow).setUndecorated(true);
-      try {
-        Method undecoratedMethod =
-          Frame.class.getMethod("setUndecorated",
-                                new Class[] { Boolean.TYPE });
-        undecoratedMethod.invoke(presentationWindow,
-                                 new Object[] { Boolean.TRUE });
-      } catch (Exception e) { }
-      //} catch (NoSuchMethodException e) { }
-      //} catch (NoSuchMethodError e) { }
-
-      presentationWindow.setBounds(0, 0, screen.width, screen.height);
-    }
-
-    Label label = new Label("stop");
-    label.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          setVisible(true);
-          doClose();
-        }});
-
-    Dimension labelSize = new Dimension(60, 20);
-    presentationWindow.setLayout(null);
-    presentationWindow.add(label);
-    label.setBounds(5, screen.height - 5 - labelSize.height,
-                    labelSize.width, labelSize.height);
-
-    Color presentationBgColor =
-      PdePreferences.getColor("run.present.bgcolor");
-    presentationWindow.setBackground(presentationBgColor);
-
-    textarea.addFocusListener(new FocusAdapter() {
-        public void focusGained(FocusEvent e) {
-          if (presenting == true) {
-            try {
-              presentationWindow.toFront();
-              runtime.applet.requestFocus();
-            } catch (Exception ex) { }
-          }
-        }
-      });
-
-    this.addFocusListener(new FocusAdapter() {
-        public void focusGained(FocusEvent e) {
-          if (presenting == true) {
-            try {
-              presentationWindow.toFront();
-              runtime.applet.requestFocus();
-            } catch (Exception ex) { }
-          }
-        }
-      });
-
-    // moved from the PdeRuntime window to the main presentation window
-    // [toxi 030903]
-    presentationWindow.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          //System.out.println("window got " + e);
-          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            runtime.stop();
-            doClose();
-          } else {
-            // pass on the event to the applet [toxi 030903]
-            runtime.applet.keyPressed(e);
-          }
-        }
-      });
   }
 
 
@@ -318,7 +240,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * Hack for #@#)$(* Mac OS X.
    */
   public Dimension getMinimumSize() {
-    return new Dimension(500, 500);
+    System.out.println("getting minimum size");
+    return new Dimension(500, 550);
   }
 
 
@@ -335,57 +258,69 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     // figure out window placement
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    boolean windowPositionInvalid = false;
+    boolean windowPositionValid = true;
 
-    if (PdePreferences.get("last.screen.height") != null) {
+    if (Preferences.get("last.screen.height") != null) {
       // if screen size has changed, the window coordinates no longer
       // make sense, so don't use them unless they're identical
-      int screenW = PdePreferences.getInteger("last.screen.width");
-      int screenH = PdePreferences.getInteger("last.screen.height");
+      int screenW = Preferences.getInteger("last.screen.width");
+      int screenH = Preferences.getInteger("last.screen.height");
 
       if ((screen.width != screenW) || (screen.height != screenH)) {
-        windowPositionInvalid = true;
+        windowPositionValid = false;
       }
+      int windowX = Preferences.getInteger("last.window.x");
+      int windowY = Preferences.getInteger("last.window.y");
+      if ((windowX < 0) || (windowY < 0) ||
+          (windowX > screenW) || (windowY > screenH)) {
+        windowPositionValid = false;
+      }
+
     } else {
-      windowPositionInvalid = true;
+      windowPositionValid = false;
     }
 
-    if (windowPositionInvalid) {
+    if (!windowPositionValid) {
       //System.out.println("using default size");
-      int windowH = PdePreferences.getInteger("default.window.height");
-      int windowW = PdePreferences.getInteger("default.window.width");
+      int windowH = Preferences.getInteger("default.window.height");
+      int windowW = Preferences.getInteger("default.window.width");
       setBounds((screen.width - windowW) / 2,
                 (screen.height - windowH) / 2,
                 windowW, windowH);
       // this will be invalid as well, so grab the new value
-      PdePreferences.setInteger("last.divider.location",
+      Preferences.setInteger("last.divider.location",
                                 splitPane.getDividerLocation());
     } else {
-      setBounds(PdePreferences.getInteger("last.window.x"),
-                PdePreferences.getInteger("last.window.y"),
-                PdePreferences.getInteger("last.window.width"),
-                PdePreferences.getInteger("last.window.height"));
+      setBounds(Preferences.getInteger("last.window.x"),
+                Preferences.getInteger("last.window.y"),
+                Preferences.getInteger("last.window.width"),
+                Preferences.getInteger("last.window.height"));
     }
 
 
-    // last sketch that was in use
+    // last sketch that was in use, or used to launch the app
 
-    //String sketchName = PdePreferences.get("last.sketch.name");
-    String sketchPath = PdePreferences.get("last.sketch.path");
-    //PdeSketch sketchTemp = new PdeSketch(sketchPath);
-
-    if ((sketchPath != null) && (new File(sketchPath)).exists()) {
-      // don't check modified because nothing is open yet
-      handleOpen2(sketchPath);
+    if (Base.openedAtStartup != null) {
+      handleOpen2(Base.openedAtStartup);
 
     } else {
-      handleNew2(true);
+      //String sketchName = Preferences.get("last.sketch.name");
+      String sketchPath = Preferences.get("last.sketch.path");
+      //Sketch sketchTemp = new Sketch(sketchPath);
+
+      if ((sketchPath != null) && (new File(sketchPath)).exists()) {
+        // don't check modified because nothing is open yet
+        handleOpen2(sketchPath);
+
+      } else {
+        handleNew2(true);
+      }
     }
 
 
     // location for the console/editor area divider
 
-    int location = PdePreferences.getInteger("last.divider.location");
+    int location = Preferences.getInteger("last.divider.location");
     splitPane.setDividerLocation(location);
 
 
@@ -403,7 +338,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   public void applyPreferences() {
 
     // apply the setting for 'use external editor'
-    boolean external = PdePreferences.getBoolean("editor.external");
+    boolean external = Preferences.getBoolean("editor.external");
 
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
@@ -413,18 +348,24 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
       // disable line highlight and turn off the caret when disabling
-      Color color = PdePreferences.getColor("editor.external.bgcolor");
+      Color color = Preferences.getColor("editor.external.bgcolor");
       painter.setBackground(color);
-      painter.lineHighlight = false;
+      painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
 
     } else {
-      Color color = PdePreferences.getColor("editor.bgcolor");
+      Color color = Preferences.getColor("editor.bgcolor");
       painter.setBackground(color);
-      painter.lineHighlight =
-        PdePreferences.getBoolean("editor.linehighlight");
+      boolean highlight = Preferences.getBoolean("editor.linehighlight");
+      painter.setLineHighlightEnabled(highlight);
       textarea.setCaretVisible(true);
     }
+
+    // apply changes to the font size for the editor
+    //TextAreaPainter painter = textarea.getPainter();
+    painter.setFont(Preferences.getFont("editor.font"));
+    //Font font = painter.getFont();
+    //textarea.getPainter().setFont(new Font("Courier", Font.PLAIN, 36));
 
     // in case tab expansion stuff has changed
     listener.applyPreferences();
@@ -443,23 +384,23 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     // window location information
     Rectangle bounds = getBounds();
-    PdePreferences.setInteger("last.window.x", bounds.x);
-    PdePreferences.setInteger("last.window.y", bounds.y);
-    PdePreferences.setInteger("last.window.width", bounds.width);
-    PdePreferences.setInteger("last.window.height", bounds.height);
+    Preferences.setInteger("last.window.x", bounds.x);
+    Preferences.setInteger("last.window.y", bounds.y);
+    Preferences.setInteger("last.window.width", bounds.width);
+    Preferences.setInteger("last.window.height", bounds.height);
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    PdePreferences.setInteger("last.screen.width", screen.width);
-    PdePreferences.setInteger("last.screen.height", screen.height);
+    Preferences.setInteger("last.screen.width", screen.width);
+    Preferences.setInteger("last.screen.height", screen.height);
 
     // last sketch that was in use
-    //PdePreferences.set("last.sketch.name", sketchName);
-    //PdePreferences.set("last.sketch.name", sketch.name);
-    PdePreferences.set("last.sketch.path", sketch.getMainFilePath());
+    //Preferences.set("last.sketch.name", sketchName);
+    //Preferences.set("last.sketch.name", sketch.name);
+    Preferences.set("last.sketch.path", sketch.getMainFilePath());
 
     // location for the console/editor area divider
     int location = splitPane.getDividerLocation();
-    PdePreferences.setInteger("last.divider.location", location);
+    Preferences.setInteger("last.divider.location", location);
   }
 
 
@@ -470,7 +411,16 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     JMenuItem item;
     JMenu menu = new JMenu("File");
 
-    if (!PdePreferences.getBoolean("export.library")) {
+    /*
+    menu.add(item = new JMenuItem("do the editor thing"));
+    item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+          textarea.getPainter().setFont(new Font("Courier", Font.PLAIN, 36));
+          }
+        });
+    */
+
+    if (!Preferences.getBoolean("export.library")) {
       item = newJMenuItem("New", 'N');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -496,28 +446,6 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         });
       menu.add(item);
     }
-
-    /*
-    item = newJMenuItem("New code", 'N', true);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleNewCode();
-        }
-      });
-    menu.add(item);
-    */
-
-    /*
-    item = newJMenuItem("Open", 'O');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleOpen(null);
-        }
-      });
-    menu.add(item);
-    menu.add(sketchbook.rebuildMenu());
-    menu.add(sketchbook.getExamplesMenu());
-    */
     menu.add(sketchbook.getOpenMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
@@ -575,10 +503,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     menu.add(item);
 
     // macosx already has its own preferences and quit menu
-    if (PdeBase.platform != PdeBase.MACOSX) {
+    if (!Base.isMacOS()) {
       menu.addSeparator();
 
-      item = new JMenuItem("Preferences");
+      item = newJMenuItem("Preferences", ',');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handlePrefs();
@@ -631,16 +559,15 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       });
     menu.add(item);
 
-    //menu.add(newJMenuItem("Stop", 'T'));
-    menu.add(new JMenuItem("Stop"));
+    item = new JMenuItem("Stop");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStop();
         }
       });
-    menu.addSeparator();
+    menu.add(item);
 
-    //
+    menu.addSeparator();
 
     item = new JMenuItem("Add File...");
     item.addActionListener(new ActionListener() {
@@ -652,15 +579,14 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
     menu.add(sketchbook.getImportMenu());
 
-    if ((PdeBase.platform == PdeBase.WINDOWS) ||
-        (PdeBase.platform == PdeBase.MACOSX)) {
+    if (Base.isWindows() || Base.isMacOS()) {
       // no way to do an 'open in file browser' on other platforms
       // since there isn't any sort of standard
       item = new JMenuItem("Show Sketch Folder");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //PdeBase.openFolder(sketchDir);
-          PdeBase.openFolder(sketch.folder);
+          //Base.openFolder(sketchDir);
+          Base.openFolder(sketch.folder);
         }
       });
       menu.add(item);
@@ -679,6 +605,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Auto Format");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          //new AutoFormat(Editor.this).show();
           handleBeautify();
         }
       });
@@ -687,7 +614,8 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Create Font...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new PdeFontBuilder().show(sketch.dataFolder);
+          //new CreateFont().show(sketch.dataFolder);
+          new CreateFont(Editor.this).show();
         }
       });
     menu.add(item);
@@ -695,10 +623,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Archive Sketch");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //new PdeFontBuilder().show(sketch.dataFolder);
-          Archiver archiver = new Archiver();
-          archiver.setup(PdeEditor.this);
-          archiver.show();
+          new Archiver(Editor.this).show();
+          //Archiver archiver = new Archiver();
+          //archiver.setup(Editor.this);
+          //archiver.show();
         }
       });
     menu.add(item);
@@ -714,7 +642,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Environment");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL(System.getProperty("user.dir") + File.separator +
+          Base.openURL(System.getProperty("user.dir") + File.separator +
                           "reference" + File.separator + "environment" +
                           File.separator + "index.html");
         }
@@ -724,7 +652,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL(System.getProperty("user.dir") + File.separator +
+          Base.openURL(System.getProperty("user.dir") + File.separator +
                           "reference" + File.separator + "index.html");
         }
       });
@@ -743,7 +671,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
               if (referenceFile == null) {
                 message("No reference available for \"" + text + "\"");
               } else {
-                PdeBase.showReference(referenceFile);
+                Base.showReference(referenceFile);
               }
             }
           }
@@ -754,13 +682,13 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     item = newJMenuItem("Visit Processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          PdeBase.openURL("http://processing.org/");
+          Base.openURL("http://processing.org/");
         }
       });
     menu.add(item);
 
     // macosx already has its own about menu
-    if (PdeBase.platform != PdeBase.MACOSX) {
+    if (!Base.isMacOS()) {
       menu.addSeparator();
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
@@ -850,8 +778,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Convenience method for the antidote to overthought
-   * swing api mess for setting accelerators.
+   * Convenience method, see below.
    */
   static public JMenuItem newJMenuItem(String title, int what) {
     return newJMenuItem(title, what, false);
@@ -860,9 +787,9 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
   /**
    * A software engineer, somewhere, needs to have his abstraction
-   * taken away. I hear they jail people in third world countries for
-   * writing the sort of crappy api that would require a four line
-   * helpher function to *set the command key* for a menu item.
+   * taken away. In some countries they jail people for writing the
+   * sort of crappy api that would require a four line helper function
+   * to set the command key for a menu item.
    */
   static public JMenuItem newJMenuItem(String title,
                                        int what, boolean shift) {
@@ -957,24 +884,20 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   // so used internally for everything else
 
   public void handleAbout() {
-    //System.out.println("the about box will now be shown");
-    final Image image = PdeBase.getImage("about.jpg", this);
+    final Image image = Base.getImage("about.jpg", this);
     int w = image.getWidth(this);
     int h = image.getHeight(this);
     final Window window = new Window(this) {
         public void paint(Graphics g) {
           g.drawImage(image, 0, 0, null);
 
-          /*
-            // does nothing..
           Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
-          */
+          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
           g.setFont(new Font("SansSerif", Font.PLAIN, 11));
           g.setColor(Color.white);
-          g.drawString(PdeBase.VERSION, 50, 30);
+          g.drawString(Base.VERSION_NAME, 50, 30);
         }
       };
     window.addMouseListener(new MouseAdapter() {
@@ -989,12 +912,15 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Show the (already created on app init) preferences window.
+   * Show the preferences window.
    */
   public void handlePrefs() {
+    Preferences preferences = new Preferences();
+    preferences.showFrame(this);
+
     // since this can't actually block, it'll hide
     // the editor window while the prefs are open
-    preferences.showFrame(this);
+    //preferences.showFrame(this);
     // and then call applyPreferences if 'ok' is hit
     // and then unhide
 
@@ -1010,7 +936,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Get the contents of the current buffer. Used by the PdeSketch class.
+   * Get the contents of the current buffer. Used by the Sketch class.
    */
   public String getText() {
     return textarea.getText();
@@ -1018,7 +944,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Called by PdeEditorHeader when the tab is changed
+   * Called by EditorHeader when the tab is changed
    * (or a new set of files are opened).
    * @param discardUndo true if undo info to this point should be ignored
    */
@@ -1041,34 +967,60 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     for (int i = 0; i < 10; i++) System.out.println();
 
     // clear the console on each run, unless the user doesn't want to
-    //if (PdeBase.getBoolean("console.auto_clear", true)) {
-    //if (PdePreferences.getBoolean("console.auto_clear", true)) {
-    if (PdePreferences.getBoolean("console.auto_clear")) {
+    //if (Base.getBoolean("console.auto_clear", true)) {
+    //if (Preferences.getBoolean("console.auto_clear", true)) {
+    if (Preferences.getBoolean("console.auto_clear")) {
       console.clear();
     }
 
     presenting = present;
+    /*
     if (presenting) {
       // wipe everything out with a bulbous screen-covering window
       presentationWindow.show();
       presentationWindow.toFront();
     }
+    */
 
     try {
       if (!sketch.handleRun()) return;
 
-      runtime = new PdeRuntime(sketch, this);
-      runtime.start(presenting ? presentLocation : appletLocation);
+      runtime = new Runner(sketch, Editor.this);
+      runtime.start(appletLocation);
       watcher = new RunButtonWatcher();
 
-    } catch (PdeException e) {
+    } catch (RunnerException e) {
       error(e);
 
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    // this doesn't seem to help much or at all
+    /*
+    final SwingWorker worker = new SwingWorker() {
+        public Object construct() {
+          try {
+            if (!sketch.handleRun()) return null;
+
+            runtime = new Runner(sketch, Editor.this);
+            runtime.start(presenting ? presentLocation : appletLocation);
+            watcher = new RunButtonWatcher();
+
+          } catch (RunnerException e) {
+            error(e);
+
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          return null;  // needn't return anything
+        }
+      };
+    worker.start();
+    */
     //sketch.cleanup();  // where does this go?
   }
+
 
   class RunButtonWatcher implements Runnable {
     Thread thread;
@@ -1099,6 +1051,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
             } catch (InterruptedException ie) {
 
             }
+
           } else {
             stop();
           }
@@ -1147,20 +1100,19 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * mode, this will always be called instead of doStop().
    */
   public void doClose() {
-    if (presenting) {
-      presentationWindow.hide();
-
-    } else {
-      try {
-        // the window will also be null the process was running
-        // externally. so don't even try setting if window is null
-        // since PdeRuntime will set the appletLocation when an
-        // external process is in use.
-        if (runtime.window != null) {
-          appletLocation = runtime.window.getLocation();
-        }
-      } catch (NullPointerException e) { }
-    }
+    //if (presenting) {
+    //presentationWindow.hide();
+    //} else {
+    try {
+      // the window will also be null the process was running
+      // externally. so don't even try setting if window is null
+      // since Runner will set the appletLocation when an
+      // external process is in use.
+      if (runtime.window != null) {
+        appletLocation = runtime.window.getLocation();
+      }
+    } catch (NullPointerException e) { }
+    //}
 
     //if (running) doStop();
     doStop();  // need to stop if runtime error
@@ -1240,7 +1192,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
-   * Called by PdeEditorStatus to complete the job.
+   * Called by EditorStatus to complete the job.
    */
   public void checkModified2() {
     switch (checkModifiedMode) {
@@ -1268,6 +1220,19 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   /**
+   * Extra public method so that Sketch can call
+   * this when a sketch is selected to be deleted,
+   * and it won't prompt for save as.
+   */
+  public void handleNew() {
+    doStop();
+    handleNewShift = false;
+    handleNewLibrary = false;
+    handleNew2(true);
+  }
+
+
+  /**
    * User selected "New Library", this will act just like handleNew
    * but internally set a flag that the new guy is a library,
    * meaning that a "library" subfolder will be added.
@@ -1283,22 +1248,33 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   /**
    * Does all the plumbing to create a new project
    * then calls handleOpen to load it up.
-   * @param startup true if the app is starting (auto-create a sketch)
+   *
+   * @param noPrompt true if the app is starting (auto-create a sketch)
    */
-  protected void handleNew2(boolean startup) {
+  protected void handleNew2(boolean noPrompt) {
     try {
       String pdePath =
-        sketchbook.handleNew(startup, handleNewShift, handleNewLibrary);
+        sketchbook.handleNew(noPrompt, handleNewShift, handleNewLibrary);
       if (pdePath != null) handleOpen2(pdePath);
 
     } catch (IOException e) {
       // not sure why this would happen, but since there's no way to
       // recover (outside of creating another new setkch, which might
       // just cause more trouble), then they've gotta quit.
-      PdeBase.showError("Problem creating a new sketch",
+      Base.showError("Problem creating a new sketch",
                         "An error occurred while creating\n" +
                         "a new sketch. Processing must now quit.", e);
     }
+  }
+
+
+  /**
+   * This is the implementation of the MRJ open document event,
+   * and the Windows XP open document will be routed through this too.
+   */
+  public void handleOpenFile(File file) {
+    //System.out.println("handling open file: " + file);
+    handleOpen(file.getAbsolutePath());
   }
 
 
@@ -1323,6 +1299,18 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    * need to be saved.
    */
   protected void handleOpen2(String path) {
+    if (sketch != null) {
+      // if leaving an empty sketch (i.e. the default) do an
+      // auto-clean right away
+      if (Base.calcFolderSize(sketch.folder) == 0) {
+        //System.err.println("removing empty poopster");
+        Base.removeDir(sketch.folder);
+        sketchbook.rebuildMenus();
+      }
+    //} else {
+      //System.err.println("sketch was null");
+    }
+
     try {
       // check to make sure that this .pde file is
       // in a folder of the same name
@@ -1346,7 +1334,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         //System.out.println("found alt file in same folder");
 
       } else if (!path.endsWith(".pde")) {
-        PdeBase.showWarning("Bad file selected",
+        Base.showWarning("Bad file selected",
                             "Processing can only open its own sketches\n" +
                             "and other files ending in .pde", null);
         return;
@@ -1374,7 +1362,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
           // create properly named folder
           File properFolder = new File(file.getParent(), properParent);
           if (properFolder.exists()) {
-            PdeBase.showWarning("Error",
+            Base.showWarning("Error",
                                 "A folder named \"" + properParent + "\" " +
                                 "already exists. Can't open sketch.", null);
             return;
@@ -1385,7 +1373,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
           // copy the sketch inside
           File properPdeFile = new File(properFolder, file.getName());
           File origPdeFile = new File(path);
-          PdeBase.copyFile(origPdeFile, properPdeFile);
+          Base.copyFile(origPdeFile, properPdeFile);
 
           // remove the original file, so user doesn't get confused
           origPdeFile.delete();
@@ -1398,13 +1386,13 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
         }
       }
 
-      sketch = new PdeSketch(this, path);
+      sketch = new Sketch(this, path);
       // TODO re-enable this once export application works
 //// mobile: exportAppItem removed from mobile      
       //exportAppItem.setEnabled(false && !sketch.isLibrary());
       buttons.disableRun(sketch.isLibrary());
       header.rebuild();
-      if (PdePreferences.getBoolean("console.auto_clear")) {
+      if (Preferences.getBoolean("console.auto_clear")) {
         console.clear();
       }
 
@@ -1501,10 +1489,10 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
   }
 
 
-  /** 
+  /**
    * Quit, but first ask user if it's ok. Also store preferences
    * to disk just in case they want to quit. Final exit() happens
-   * in PdeEditor since it has the callback from PdeEditorStatus.
+   * in Editor since it has the callback from EditorStatus.
    */
   public void handleQuit() {
     // stop isn't sufficient with external vm & quit
@@ -1523,7 +1511,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
    */
   protected void handleQuit2() {
     storePreferences();
-    preferences.save();
+    Preferences.save();
 
     sketchbook.clean();
 
@@ -1549,9 +1537,9 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     String prog = textarea.getText();
 
     // TODO re-enable history
-    //history.record(prog, PdeHistory.BEAUTIFY);
+    //history.record(prog, SketchHistory.BEAUTIFY);
 
-    int tabSize = PdePreferences.getInteger("editor.tabs.size");
+    int tabSize = Preferences.getInteger("editor.tabs.size");
 
     char program[] = prog.toCharArray();
     StringBuffer buffer = new StringBuffer();
@@ -1698,16 +1686,40 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
 
 
   public void error(Exception e) {
-    status.error(e.getMessage());
+    //System.out.println("ERORROOROROR 1");
+    //status.error(e.getMessage());
+
+    // not sure if any RuntimeExceptions will actually arrive
+    // through here, but gonna check for em just in case.
+    String mess = e.getMessage();
+    //System.out.println("MESSY: " + mess);
+    String rxString = "RuntimeException: ";
+    if (mess.indexOf(rxString) == 0) {
+      mess = mess.substring(rxString.length());
+      //System.out.println("MESS2: " + mess);
+    }
+    status.error(mess);
+
     e.printStackTrace();
   }
 
 
-  public void error(PdeException e) {
+  public void error(RunnerException e) {
+    //System.out.println("ERORROOROROR 2");
     if (e.file >= 0) sketch.setCurrent(e.file);
     if (e.line >= 0) highlightLine(e.line);
 
-    status.error(e.getMessage());
+    // remove the RuntimeException: message since it's not
+    // really all that useful to the user
+    //status.error(e.getMessage());
+    String mess = e.getMessage();
+    String rxString = "RuntimeException: ";
+    if (mess.indexOf(rxString) == 0) {
+      mess = mess.substring(rxString.length());
+      //System.out.println("MESS3: " + mess);
+    }
+    status.error(mess);
+
     buttons.clearRun();
   }
 
@@ -1788,7 +1800,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       referenceItem = new JMenuItem("Find in Reference");
       referenceItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            PdeBase.showReference(referenceFile);
+            Base.showReference(referenceFile);
           }
         });
       this.add(referenceItem);
@@ -1812,7 +1824,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       super.show(component, x, y);
     }
   }
-  
+ 
 //// mobile: exports MIDlet and executes emulator  
   public void handleRunEmulator() {
     doClose();
@@ -1825,14 +1837,14 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
     // clear the console on each run, unless the user doesn't want to 
     //if (PdeBase.getBoolean("console.auto_clear", true)) {
     //if (PdePreferences.getBoolean("console.auto_clear", true)) {
-    if (PdePreferences.getBoolean("console.auto_clear")) {
+    if (Preferences.getBoolean("console.auto_clear")) {
       console.clear();
     }
 
     try {
       if (!sketch.exportMIDlet()) return;
 
-      runtime = new PdeEmulator(sketch, this);
+      runtime = new Emulator(sketch, this);
       runtime.start(null);
       watcher = new RunButtonWatcher();
 
@@ -1848,7 +1860,7 @@ implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler
       if (sketch.exportMIDlet()) {
         message("Done exporting.");
         File midletDir = new File(sketch.folder, "midlet");
-        PdeBase.openFolder(midletDir);
+        Base.openFolder(midletDir);
       } else {
         // error message will already be visible
       }

@@ -4,10 +4,10 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Except where noted, code is written by Ben Fry and
-  Copyright (c) 2001-03 Massachusetts Institute of Technology
+  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
-  ANTLR-generated parser and several supporting classes written 
+  ANTLR-generated parser and several supporting classes written
   by Dan Mosedale via funding from the Interaction Institute IVREA.
 
   This program is free software; you can redistribute it and/or modify
@@ -20,11 +20,14 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License 
-  along with this program; if not, write to the Free Software Foundation, 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package processing.app.preproc;
+
+import processing.app.*;
 import processing.core.*;
 
 import java.io.*;
@@ -48,17 +51,17 @@ public class PdePreprocessor {
   // might be at the end instead of .* whcih would make trouble
   // other classes using this can lop of the . and anything after
   // it to produce a package name consistently.
-  String extraImports[];
+  public String extraImports[];
 
   // imports just from the code folder, treated differently
   // than the others, since the imports are auto-generated.
-  String codeFolderImports[];
-  
-  static final int STATIC = 0;  // formerly BEGINNER
-  static final int ACTIVE = 1;  // formerly INTERMEDIATE
-  static final int JAVA   = 2;  // formerly ADVANCED
+  public String codeFolderImports[];
+
+  static public final int STATIC = 0;  // formerly BEGINNER
+  static public final int ACTIVE = 1;  // formerly INTERMEDIATE
+  static public final int JAVA   = 2;  // formerly ADVANCED
   // static to make it easier for the antlr preproc to get at it
-  static int programType = -1;  
+  static public int programType = -1;
 
   Reader programReader;
   String buildPath;
@@ -82,13 +85,13 @@ public class PdePreprocessor {
    * These may change in-between (if the prefs panel adds this option)
    * so grab them here on construction.
    */
-  public PdePreprocessor() { 
-    defaultImports[JDK11] = 
-      PApplet.split(PdePreferences.get("preproc.imports.jdk11"), ',');
-    defaultImports[JDK13] = 
-      PApplet.split(PdePreferences.get("preproc.imports.jdk13"), ',');
-    defaultImports[JDK14] = 
-      PApplet.split(PdePreferences.get("preproc.imports.jdk14"), ',');
+  public PdePreprocessor() {
+    defaultImports[JDK11] =
+      PApplet.split(Preferences.get("preproc.imports.jdk11"), ',');
+    defaultImports[JDK13] =
+      PApplet.split(Preferences.get("preproc.imports.jdk13"), ',');
+    defaultImports[JDK14] =
+      PApplet.split(Preferences.get("preproc.imports.jdk14"), ',');
   }
 
 
@@ -102,9 +105,10 @@ public class PdePreprocessor {
    * preprocesses a pde file and write out a java file
    * @return the classname of the exported Java
    */
-  //public String write(String program, String buildPath, String name, 
+  //public String write(String program, String buildPath, String name,
   //                  String extraImports[]) throws java.lang.Exception {
-  public String write(String program, String buildPath, String name, String codeFolderPackages[]) 
+  public String write(String program, String buildPath,
+                      String name, String codeFolderPackages[])
     throws java.lang.Exception {
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
@@ -113,7 +117,7 @@ public class PdePreprocessor {
       program += "\n";
     }
 
-    if (PdePreferences.getBoolean("preproc.substitute_unicode")) {
+    if (Preferences.getBoolean("preproc.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
       char p[] = program.toCharArray();
       int unicodeCount = 0;
@@ -122,7 +126,7 @@ public class PdePreprocessor {
       }
       // if non-ascii chars are in there, convert to unicode escapes
       if (unicodeCount != 0) {
-        // add unicodeCount * 5.. replacing each unicode char 
+        // add unicodeCount * 5.. replacing each unicode char
         // with six digit uXXXX sequence (xxxx is in hex)
         // (except for nbsp chars which will be a replaced with a space)
         int index = 0;
@@ -150,7 +154,7 @@ public class PdePreprocessor {
       }
     }
 
-    // if this guy has his own imports, need to remove them 
+    // if this guy has his own imports, need to remove them
     // just in case it's not an advanced mode sketch
     PatternMatcher matcher = new Perl5Matcher();
     PatternCompiler compiler = new Perl5Compiler();
@@ -178,7 +182,7 @@ public class PdePreprocessor {
       int len = piece.length();
 
       //imports.add(piece);
-      imports.add(piece2); 
+      imports.add(piece2);
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
@@ -187,10 +191,17 @@ public class PdePreprocessor {
 
     } while (true);
 
-    int importsCount = imports.size();
-    extraImports = new String[importsCount];
+    extraImports = new String[imports.size()];
     imports.copyInto(extraImports);
 
+    // if using opengl, add it to the special imports
+    /*
+    if (Preferences.get("renderer").equals("opengl")) {
+      extraImports = new String[imports.size() + 1];
+      imports.copyInto(extraImports);
+      extraImports[extraImports.length - 1] = "processing.opengl.*";
+    }
+    */
 
     /*
     if (codeFolderPackages != null) {
@@ -212,21 +223,19 @@ public class PdePreprocessor {
       codeFolderImports = null;
     }
 
-    //
-
     // do this after the program gets re-combobulated
     this.programReader = new StringReader(program);
     this.buildPath = buildPath;
 
-    // create a lexer with the stream reader, and tell it to handle 
+    // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
     // match those that will be highlighted in the PDE IDE
-    // 
+    //
     PdeLexer lexer  = new PdeLexer(programReader);
     lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
 
-    // create the filter for hidden tokens and specify which tokens to 
+    // create the filter for hidden tokens and specify which tokens to
     // hide and which to copy to the hidden text
     //
     filter = new TokenStreamCopyingHiddenTokenFilter(lexer);
@@ -264,8 +273,10 @@ public class PdePreprocessor {
 
     // unclear if this actually works, but it's worth a shot
     //
-    ((CommonAST)parserAST).setVerboseStringConversion(
-      true, parser.getTokenNames());
+    //((CommonAST)parserAST).setVerboseStringConversion(
+    //  true, parser.getTokenNames());
+    // (made to use the static version because of jikes 1.22 warning)
+    CommonAST.setVerboseStringConversion(true, parser.getTokenNames());
 
     // if this is an advanced program, the classname is already defined.
     //
@@ -273,9 +284,9 @@ public class PdePreprocessor {
       name = getFirstClassName(parserAST);
     }
 
-    // if 'null' was passed in for the name, but this isn't 
+    // if 'null' was passed in for the name, but this isn't
     // a 'java' mode class, then there's a problem, so punt.
-    // 
+    //
     if (name == null) return null;
 
     // output the code
@@ -296,7 +307,7 @@ public class PdePreprocessor {
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
 
-    if (PdePreferences.getBoolean("preproc.output_parse_tree")) {
+    if (Preferences.getBoolean("preproc.output_parse_tree")) {
 
       stream = new PrintStream(new FileOutputStream("parseTree.xml"));
       stream.println("<?xml version=\"1.0\"?>");
@@ -316,7 +327,7 @@ public class PdePreprocessor {
 
   /**
    * Write any required header material (eg imports, class decl stuff)
-   * 
+   *
    * @param out                 PrintStream to write it to.
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
@@ -341,7 +352,7 @@ public class PdePreprocessor {
 
     // emit standard imports (read from pde.properties)
     // for each language level that's being used.
-    String jdkVersionStr = PdePreferences.get("preproc.jdk_version");
+    String jdkVersionStr = Preferences.get("preproc.jdk_version");
 
     int jdkVersion = JDK11;  // default
     if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13; };
@@ -360,8 +371,12 @@ public class PdePreprocessor {
       }
     }
 
+    //boolean opengl = Preferences.get("renderer").equals("opengl");
+    //if (opengl) {
+    //out.println("import processing.opengl.*; ");
+    //}
+
     if (programType < JAVA) {
-      // open the class definition
       if (baseClass != null) {
         out.print("public class " + className + " extends " + baseClass + "{");
       } else {
@@ -381,7 +396,7 @@ public class PdePreprocessor {
 
   /**
    * Write any necessary closing text.
-   * 
+   *
    * @param out         PrintStream to write it to.
    */
   void writeFooter(PrintStream out) {
