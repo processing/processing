@@ -3,7 +3,47 @@
 X update faq on site? what's difference between versions?
 X   no difference between versions... should it be cvs based?
 
+_ "save as" not quite working
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
+Performed a "Save As" that didn't quite take. The save action
+completed and the main tab was renamed, however the "Save Needed"
+notice was displaying. Attempting to do a basic save didn't clear the
+notice so I closed Processing and reopened. When I reopened P5 I was
+presented with an empty sketch and the renamed sketch wasn't in my
+sketch list. I dove into the my sketchbook directory and I found that
+a sketch folder was created and named properly. Inside the folder I
+found PDEs for all of my tabs except the main tab. Thoughts?
+
+_ include platform information when checking for updates
+_   send over the int as long hex number? 
+_   64 bits hex is gonna be 16 digits.. much cleaner
+_ get platform checker into the latest exhibition piece
 _ not slice() but subset()... get word from casey on how to resolve
+
+_ port buffering not working properly
+_   may just be a problem with thread starvation
+// the serial port:
+Serial myPort;
+
+void setup() {
+  // list all the available serial ports:
+  println(Serial.list());
+
+  /*  I know that the first port in the serial list on my mac
+  is always my  Keyspan adaptor, so I open Serial.list()[0].
+  Open whatever port is the one you're using.
+  */
+  myPort = new Serial(this, Serial.list()[0], 9600);
+}
+
+void draw() {
+  // twiddle your thumbs
+  myPort.buffer(5);
+}
+
+void serialEvent() {
+  println(myPort.readString());
+}
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
