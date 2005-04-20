@@ -3585,6 +3585,21 @@ public class PApplet extends Applet
     return temp;
   }
 
+
+  public Object expand(Object array) {
+    return expand(array, Array.getLength(array) << 1);
+  }
+
+  public Object expand(Object list, int newSize) {
+    System.out.println("using object expand");
+
+    Class type = list.getClass().getComponentType();
+    Object temp = Array.newInstance(type, newSize);
+    System.arraycopy(list, 0, temp, 0,
+                     Math.min(Array.getLength(list), newSize));
+    return temp;
+  }
+
   //
 
   static public boolean[] contract(boolean list[], int newSize) {
