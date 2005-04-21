@@ -80,23 +80,23 @@ editor.external.bgcolor=#ddddbb
 editor.comment1.style=#777755,plain
 editor.comment2.style=#777755,plain
 
-# abstract, final, private
+# e.g abstract, final, private
 editor.keyword1.style=#cc6600,plain
-# beginShape, point, line
+# e.g. beginShape, point, line
 editor.keyword2.style=#996600,plain
-# byte, char, short, color
+# e.g. byte, char, short, color
 editor.keyword3.style=#993300,bold
 
-# constants: null, true, this, RGB, TWO_PI
+# constants: e.g. null, true, this, RGB, TWO_PI
 editor.literal1.style=#cc0000,plain
-# p5 built in variables: mouseX, width, pixels
+# p5 built in variables: e.g. mouseX, width, pixels
 editor.literal2.style=#cc0000,plain
 
 # ?? maybe this is for words followed by a colon
 # like in case statements or goto
 editor.label.style=#7E7E00,bold
 
-# + - = /
+# e.g. + - = /
 editor.operator.style=#000000,plain
 
 # caret blinking and caret color
@@ -134,7 +134,7 @@ header.text.unselected.color = #ffffff
 header.text.font             = SansSerif,plain,12
 
 console                  = true
-console.color            = #1A1A00
+console.color            = #000000
 console.output.color     = #ccccbb
 console.output.file      = stdout.txt
 console.error.color      = #ff3000
