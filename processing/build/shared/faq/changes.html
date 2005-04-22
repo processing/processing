@@ -136,6 +136,19 @@ graphics that make use of a decent graphics card.
 <LI>When using the pixels[] array of the main window, or on an image,
 you should first call loadPixels(), and once you're done editing, call
 updatePixels().
+<LI>Library events are handled differently because more than one
+serial port or video input device can be used with Processing
+beta. See the documentation for 
+<a
+href="http://processing.org/reference/libraries/video/movieEvent_.html">movieEvent</a>, 
+<a
+href="http://processing.org/reference/libraries/video/captureEvent_.html">captureEvent</a>, and
+<a
+href="http://processing.org/reference/libraries/serial/serialEvent_.html">serialEvent</a>.
+Documentation for clientEvent and serverEvent for network will also
+eventually be linked from <a
+href="http://processing.org/reference/libraries/net/index.html">this page</a>.
+
 <LI>push() &rarr; pushMatrix()
 <LI>pop() &rarr; popMatrix()
 <LI>textureMode(NORMAL_SPACE) &rarr; textureMode(NORMALIZED)
@@ -145,6 +158,7 @@ updatePixels().
 <LI>textMode(ALIGN_CENTER) &rarr; textAlign(CENTER)
 <LI>textSpace(SCREEN_SPACE) &rarr; textMode(SCREEN)
 <LI>textSpace(OBJECT_SPACE) &rarr; textMode(OBJECT)
+<LI>previous default was ellipseMode(CORNER) &rarr; now it's ellipseMode(CENTER)
 <LI>RGBA for images &rarr; ARGB (more technically accurate)
 <LI>CENTER_DIAMETER &rarr; CENTER
 <LI>curveSegments() &rarr; curveDetail()

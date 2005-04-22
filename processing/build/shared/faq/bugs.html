@@ -364,6 +364,25 @@ If you're seeing this, you can fix it by visiting Control Panels
 whose name I have misplaced. if it was you, please drop me a line so
 you can be properly cited. This kind of help is huge for us, since
 we're such a small group!)
+
+<LI>Comparing a string is different in Processing (Java) than it is in
+ActionScript. For instance, while this might make sense:
+<PRE>String[] lines = loadStrings("sometext.txt");
+for (int i = 0; i < lines.length; i++) {
+  if (lines[i] == "hello") { 
+    println("hello found on line: " + i); // you'll never see this
+  }
+}</PRE>
+You'll never see the message. Because a String is an <em>object</em>
+in Java, comparing them with == will only compare whether the two
+things are pointing at the same memory, not their actual
+contents. Instead, use "equals" or one of the other String methods:
+<PRE>String[] lines = loadStrings("sometext.txt");
+for (int i = 0; i < lines.length; i++) {
+  if (<B>lines[i].equals("hello")</B>) {
+    println("hello found on line: " + i); // happiness
+  }
+}</PRE>
       </td>
     <td width="50">&nbsp;</td>
   </tr>
