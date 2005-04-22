@@ -8,6 +8,17 @@ _   1 pixel stroke weight in opengl (temporary)
 _   make clear that P2D is not working if not clear enough
 _   save/yes/no needs cancel
 X   wontstart wasn't properly linked
+_   watch out for upper/lowercase changes
+_     methods and functions always start lowercase, and have inner caps
+
+_ faq - changes
+_   videoEvent and serialEvent pass in a 
+
+_ info about getting started with building processing
+_   also re: what about eclipse? what about antlr?
+
+_ esc doesn't kill fullscreen mode
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
 
 _ make a note in the faq about sun.dc.pr.PRException
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
@@ -47,6 +58,7 @@ _ not slice() but subset()... get word from casey on how to resolve
 
 _ port buffering not working properly
 _   may just be a problem with thread starvation
+_   bufferUntil() fires an event but continues to fill up the buffer
 // the serial port:
 Serial myPort;
 
