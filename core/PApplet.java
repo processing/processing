@@ -1188,12 +1188,12 @@ public class PApplet extends Applet
     mouseY = event.getY();
     mouseEvent = event;
 
-    int button = event.getButton();
-    if (button == 1) {
+    int modifiers = event.getModifiers();
+    if ((modifiers & MouseEvent.BUTTON1_MASK) != 0) {
       mouseButton = LEFT;
-    } else if (button == 2) {
+    } else if ((modifiers & MouseEvent.BUTTON2_MASK) != 0) {
       mouseButton = CENTER;
-    } else if (button == 3) {
+    } else if ((modifiers & MouseEvent.BUTTON3_MASK) != 0) {
       mouseButton = RIGHT;
     }
     // if running on macos, allow ctrl-click as right mouse
