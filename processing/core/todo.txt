@@ -1,4 +1,30 @@
 0086 core
+X java 1.4 getButton() was inside the mouse handler
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114147314;start=3
+
+_ the draw() method must exist, otherwise the sketch won't run
+
+_ point appears to be broken
+_   could be a problem with java 1.5? (was using win2k)
+noStroke();
+colorMode(RGB, 100);  
+for(int i=0; i<100; i++) {  
+  for(int j=0; j<100; j++) {  
+    stroke(i, j, 0);  
+    point(i, j);  
+  }  
+}  
+As an aside, set() is at least 10x faster, and 
+perhaps should be used in these examples anyway. 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
+
+_ textMode(RIGHT) etc causing trouble.. tell ppl to use textAlign()
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114219121;start=4
+
+_ polygon rendering bug?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=1
+
+_ video wrong device name crashes things
 
 X typed version of expand() and contract()
 _   need to complete for the others:
