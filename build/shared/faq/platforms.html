@@ -120,10 +120,6 @@ behind. We think OS X will be a great bet for the future, and Apple is
 putting all their feeble weight behind it, hopefully it will evolve
 somewhere.
 <br> <br>
-Developing the version for Mac OS 9 was a big headache, and we badly 
-wanted to support it (since many people still use it), but it had to
-be discontinued for lack of time to work on it.
-<br> <br>
 Windows 95/98/ME is a piece of crap, but since lots of people (are
 often forced to) use it, we'll do our best to support it. Early alpha
 versions seem to be having trouble with 95/98/ME, so if possible, we
@@ -197,7 +193,8 @@ mileage will vary no matter what, because who knows what this software
 is gonna do. You're playing with free, beta-quality software. 
 Get psyched!
 <br> <br>
-Mac OS X 10.3.9 was released just as we were preparing beta. On many
+<UL>
+<LI>Mac OS X 10.3.9 was released just as we were preparing beta. On many
       machines (including mine), the update causes Safari to crash
       when running Java applets. Apple has fixed the issue with <a
       href="http://docs.info.apple.com/article.html?artnum=301382">this
@@ -206,17 +203,16 @@ Mac OS X 10.3.9 was released just as we were preparing beta. On many
       href="http://www.apple.com/support/downloads/securityupdate2005002macosx1034orlater.html">Security
       Update 2005-002</a>, however it's not clear how these two
       solutions relate. More info is on the Apple update page.
-<br> <br>
-Minimum Requirements... To run Processing requires at least Mac OS X
-      10.2 (Jaguar). Running applets exported from Processing should
-      work on earlier versions of Mac OS X, so long as Java is as
-      up-to-date as possible (via Software Update). If you want to run
-      Processing itself on Mac OS X 10.2, you need to install Java
-      1.4 via Software Update. For what it's worth, we don't test
-      Processing under Mac OS X 10.2, and don't recommend it if you
-      can avoid it. And if you're running 10.4, Processing is the 
-      least of your worries. More information can be found at Apple's
-      <a href="http://developer.apple.com/java/faq/">Java FAQ</a>.
+
+<LI>Mac OS X 10.2 (Jaguar) is the minimum version that will run the Processing environment. If you want to run Processing itself on Mac OS X 10.2, you need to install Java 1.4 via Software Update. Also, we just discovered that the version of the Jikes compiler that's included with Processing 85 will not run on Mac OS X 10.2 (unless you have an updated version of Fink or the Developer Tools installed). If you get an error that read something like: <TT>dyld: /Applications/processing-0085/jikes can't open library: /sw/lib/libiconv.2.dylib  (No such file or directory, errno = 2)</TT> then the solution is to copy the version of Jikes that's included with version 69 and use that until we can get a proper fix. For what it's worth, we don't test Processing under Mac OS X 10.2, and don't recommend it if you can avoid it. 
+
+<LI>Mac OS X 10.1 and 10.0 won't run the Processing environment, but should run applets that have been created with it. Make sure that Java is as up-to-date as possible (via Software Update). 
+
+<LI>Mac OS 9 was a big headache, and we badly wanted to support it (since many people still use it), but it had to be discontinued for lack of time to work on it. As of revision 85, applets exported from Processing won't work on Mac OS 9 either, but that should return with a coming release of Processing.
+<LI>...and if you're running 10.4, Processing is the least of your worries. 
+</UL>
+More information can be found at Apple's
+<a href="http://developer.apple.com/java/faq/">Java FAQ</a>.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
