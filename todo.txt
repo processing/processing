@@ -1,27 +1,61 @@
 0086 pde
-
+X new versions of java for windows and linux: 1.4.2_07
 X update faq on site? what's difference between versions?
 X   no difference between versions... should it be cvs based?
 
+X linux is missing all libraries except for javascript
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Tools;action=display;num=1114325419;start=1
+
+_ macosx 10.2 needs libiconv to run jikes
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
+_   either compile jikes not to use it: 
+_     http://jikes.sourceforge.net/faq/dev-win32.shtml
+_   or maybe include an installer: 
+_     http://www.bluem.net/downloads/libiconv_en/
+_   gnu page for libiconv
+_     http://www.gnu.org/software/libiconv/
+_   on 10.2, the version of jikes from 69 (the cvs build) works fine
+
 _ faq - known bugs
+_   put the jikes fix for 10.2 on the faq
 _   1 pixel stroke weight in opengl (temporary)
 _   make clear that P2D is not working if not clear enough
 _   save/yes/no needs cancel
 X   wontstart wasn't properly linked
+
+_ faq - not our problem
 _   watch out for upper/lowercase changes
 _     methods and functions always start lowercase, and have inner caps
+_   sun.dc.pr.PRException
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
 
 _ faq - changes
-_   videoEvent and serialEvent pass in a 
+X   videoEvent and serialEvent pass in the object
+_   updatePixels() may be slower.. hopefully JAVA2D mostly temporary
+
+_ faq - java 1.5
+_   seems to run things more slowly.. 
+_   if using p5 standard, will be running 1.4
+_   but if 1.5 installed, browser will probably use that
+
+_ faq - how things work
+_   additional tabs are added to the main code
+_   as a result, static variables can't be used
+_     though they can go above the class itself or be placed in the parent
+_   if you want it separate, use a .java file instead (not parsed)
+
+_ sun.applet.Main is appletviewer
+
+_ settings.path.fallback not being used
+_ can't find build dir on operatign systems w/ non-ascii chars
 
 _ info about getting started with building processing
 _   also re: what about eclipse? what about antlr?
 
+_ update things for java 1.5 since it's inevitable
+
 _ esc doesn't kill fullscreen mode
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
-
-_ make a note in the faq about sun.dc.pr.PRException
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
 
 _ preferences - second line of prefs (the file path) is smashing things
 _   righthand max isn't being updated for that second line
