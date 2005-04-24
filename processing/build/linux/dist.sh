@@ -14,9 +14,9 @@ rm -rf processing-*
 cp -r ../shared processing
 
 # add the libraries folder with source
-cp -r ../../net work/libraries/
-cp -r ../../opengl work/libraries/
-cp -r ../../serial work/libraries/
+cp -r ../../net processing/libraries/
+cp -r ../../opengl processing/libraries/
+cp -r ../../serial processing/libraries/
 
 # new style examples thing ala reas
 cd processing

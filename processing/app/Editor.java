@@ -1233,8 +1233,8 @@ public class Editor extends JFrame
       // recover (outside of creating another new setkch, which might
       // just cause more trouble), then they've gotta quit.
       Base.showError("Problem creating a new sketch",
-                        "An error occurred while creating\n" +
-                        "a new sketch. Processing must now quit.", e);
+                     "An error occurred while creating\n" +
+                     "a new sketch. Processing must now quit.", e);
     }
   }
 
