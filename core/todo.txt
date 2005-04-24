@@ -2,7 +2,17 @@
 X java 1.4 getButton() was inside the mouse handler
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114147314;start=3
 
+_ seem to be problems with updatePixels() on the mac
+_   appears to run asynchronously
+
+_ createGraphics(200, 200) to create same as source
+_   createGraphics(200, 200, P2D) to create 2D from 3D
+_   also, drawing a PGraphics2 doesn't seem to work
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
+
 _ the draw() method must exist, otherwise the sketch won't run
+
+_ web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
 
 _ point appears to be broken
 _   could be a problem with java 1.5? (was using win2k)
@@ -44,8 +54,6 @@ http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;n
 _ set upper bound on framerate so as not to completely hose things?
 
 _ is camera backwards, or staying fixed and moving the scene?
-_ createGraphics(200, 200) to create same as source
-_   createGraphics(200, 200, P2D) to create 2D from 3D
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
