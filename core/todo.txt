@@ -39,6 +39,7 @@ _ video wrong device name crashes things
 X typed version of expand() and contract()
 _   need to complete for the others:
 _   append(), shorten(), splice, slice, subset, concat, reverse
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
 
 _ saveFrame with a filename still causing trouble:
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114097641;start=0
