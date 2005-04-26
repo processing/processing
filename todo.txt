@@ -6,6 +6,14 @@ X   no difference between versions... should it be cvs based?
 X linux is missing all libraries except for javascript
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Tools;action=display;num=1114325419;start=1
 
+_ additional requests for this:
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
+   1 _ maintain tab scroll and caret positions
+   1 _ save caret position when switching tabs
+
+_ faq - not supporting windows 95
+_   http://www.java.com/en/download/help/win95.xml
+
 _ macosx 10.2 needs libiconv to run jikes
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
 _   either compile jikes not to use it: 
@@ -23,6 +31,15 @@ _   make clear that P2D is not working if not clear enough
 _   save/yes/no needs cancel
 X   wontstart wasn't properly linked
 
+_ faq - graphics engines
+_   default graphics may be slow
+_   opengl only runs with 1.4
+_     need to write an error if people try to use it in 1.3 (i.e. on export)
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+_   grabbing sun.cpu.endian throws a security exception with gl applets
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+_   opengl not tested for applets
+
 _ faq - not our problem
 _   watch out for upper/lowercase changes
 _     methods and functions always start lowercase, and have inner caps
@@ -32,6 +49,10 @@ _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;acti
 _ faq - changes
 X   videoEvent and serialEvent pass in the object
 _   updatePixels() may be slower.. hopefully JAVA2D mostly temporary
+
+_ is there a way to do xxx?
+_   advanced users who are outgrowing the basic reference: 
+_   be sure to check the "complete" reference
 
 _ faq - java 1.5
 _   seems to run things more slowly.. 
@@ -43,6 +64,8 @@ _   additional tabs are added to the main code
 _   as a result, static variables can't be used
 _     though they can go above the class itself or be placed in the parent
 _   if you want it separate, use a .java file instead (not parsed)
+_   classes in tabs are inner classes, or use .java files
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
 
 _ sun.applet.Main is appletviewer
 
@@ -505,9 +528,7 @@ PDE / Editor Header
 
    1 _ make some fancy extendo things because the tabs get too big
    1 _   either condense or popdown menu thingy
-   1 _ save caret position when switching tabs
    1 _ ctrl-tab to switch between tabs
-   1 _ maintain tab scroll and caret positions
 
 
 PDE / Sketch & Sketchbook
