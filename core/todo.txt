@@ -1,14 +1,28 @@
 0086 core
 X java 1.4 getButton() was inside the mouse handler
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114147314;start=3
+X color() doesn't work properly because g might be null?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114518309;start=0
+
+_ for present mode, need to set a default display 
+_   currently crashes if only --present is specified w/o --display
+
+_ fov should be in radians
+
+_ polygons perpendicular to axis not drawing
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
+
+_ createGraphics(200, 200) to create same as source **include for 86**
+_   createGraphics(200, 200, P2D) to create 2D from 3D
+_   also, drawing a PGraphics2 doesn't seem to work
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
 
 _ seem to be problems with updatePixels() on the mac
 _   appears to run asynchronously
 
-_ createGraphics(200, 200) to create same as source
-_   createGraphics(200, 200, P2D) to create 2D from 3D
-_   also, drawing a PGraphics2 doesn't seem to work
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
+_ don't do a loadPixels unless an updatePixels has completed
+_   tho this won't affect anything, since either it's an image buffer
+_   or it's the PGraphics object, which does an updatePixels() immediately
 
 _ the draw() method must exist, otherwise the sketch won't run
 

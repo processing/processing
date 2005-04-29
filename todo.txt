@@ -6,7 +6,25 @@ X   no difference between versions... should it be cvs based?
 X linux is missing all libraries except for javascript
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Tools;action=display;num=1114325419;start=1
 
-_ additional requests for this:
+_ set applet.frame on runner, so ppl can mess with the frame itself
+
+_ osx is swallowing exceptions on external apps
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
+
+_ documentation on tabs: .java files, inner classes, etc
+
+_ "are you trying to f-- with me" on quitting the app is super problem
+
+_ built in functions.. may not always be fastest, we're going for correct
+_   most things have other ways of making things much faster
+_   we've attempted for less confusion over speed in some cases
+_   get(), set() and red() et al are one such example
+
+_ serial will only list ports that are currently not in use
+_   i.e. if you're monitoring the port in one app, it won't be listed
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114561057;start=0
+
+_ additional requests for this (and it's an easy fix)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
    1 _ maintain tab scroll and caret positions
    1 _ save caret position when switching tabs
@@ -39,6 +57,10 @@ _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOp
 _   grabbing sun.cpu.endian throws a security exception with gl applets
 _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 _   opengl not tested for applets
+_   to get to opengl functions, put this after size:
+_     GL gl = ((PGraphicsGL)g).gl;
+_     and then can make opengl calls. this is not supported, 
+_     and if things don't work, sorry. 
 
 _ faq - not our problem
 _   watch out for upper/lowercase changes
@@ -270,6 +292,8 @@ _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 
 camera
+_ tearing and incomplete updates on camera?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
 _ pause and framerate aren't working
 _ when passing in 'null' as the camera, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
@@ -575,7 +599,7 @@ BUGS / Preprocessor
    1 _   (for casting, etc) particularly for Math.cos() et al
 
 
-PDE / Create Font
+TOOLS / Create Font
 
    1 _ close/hide window on 'ESC'
    1 _ loading is very slow on the first time (getting all font names)
@@ -722,3 +746,5 @@ DISTRIBUTION / Mac OS X
    1 _   although.. this only works on panther.. how many are using it?
    1 _ mac standard key combinations for moving around in the editor
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
+   1 _ tabs and spaces, command keys don't work w/ shift
+   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
