@@ -4,6 +4,10 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X color() doesn't work properly because g might be null?
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114518309;start=0
 
+_ is mousePressed broken because of event queue? or at least w/ framerate?
+
+_ seem to be problems with updatePixels() on the mac
+_   appears to run asynchronously
 _ for present mode, need to set a default display 
 _   currently crashes if only --present is specified w/o --display
 
@@ -49,6 +53,10 @@ _ polygon rendering bug?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=1
 
 _ video wrong device name crashes things
+
+_ is it the run() exception handler that's leaving off the CRLFs?
+
+o draw happening before setup() ?
 
 X typed version of expand() and contract()
 _   need to complete for the others:

@@ -602,6 +602,7 @@ public class PApplet extends Applet
         // wake from sleep (necessary otherwise it'll be
         // up to 10 seconds before update)
         thread.interrupt();
+        //thread.notifyAll();
       }
     }
   }
@@ -614,6 +615,7 @@ public class PApplet extends Applet
         // wake from sleep (necessary otherwise it'll be
         // up to 10 seconds before update)
         thread.interrupt();
+        //thread.notifyAll();
       }
     }
   }
@@ -629,6 +631,7 @@ public class PApplet extends Applet
 
       if (thread != null) {
         thread.interrupt();  // wake from sleep
+        //thread.notifyAll();
       }
     }
   }
@@ -4802,7 +4805,7 @@ public class PApplet extends Applet
    * The length depends on the size of the number itself.
    * An int can be up to 32 binary digits, but that seems like
    * overkill for almost any situation, so this function just
-   * auto-sizes. If you want a specific number of digits (like all 32)
+   * auto-size. If you want a specific number of digits (like all 32)
    * use binary(int what, int digits) to specify how many digits.
    */
   static final public String binary(int what) {
