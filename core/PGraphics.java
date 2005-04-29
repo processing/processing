@@ -2178,7 +2178,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void colorMode(int mode) {
-    colorMode = mode;
+    colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
 
 

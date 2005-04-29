@@ -134,7 +134,7 @@ incomplete, but allows for much larger screen sizes and accelerated
 graphics that make use of a decent graphics card. 
 <LI>When using the pixels[] array of the main window, or on an image,
 you should first call loadPixels(), and once you're done editing, call
-updatePixels().
+updatePixels(). This is because the new JAVA2D and OPENGL renderers both need to post-process the image data before displaying it, which is a time-consuming operation. 
 <LI>Library events are handled differently because more than one
 serial port or video input device can be used with Processing
 beta. See the documentation for 
