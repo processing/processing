@@ -42,13 +42,17 @@ import processing.core.*;
 
 
 /**
- * Threaded class to check for updates.
+ * Threaded class to check for updates in the background.
  * <P>
- * This generates a random id number for this user,
- * and hits the server to check for updates.
- * The id number is used so that we can keep track of
- * how many people are using Processing, which helps us
- * when writing grant proposals and that kind of thing.
+ * This is the class that handles the mind control and stuff for
+ * spying on our users and stealing their personal information.
+ * A random ID number is generated for each user, and hits the server
+ * to check for updates. Also included is the operating system and
+ * its version and the version of Java being used to run Processing.
+ * <P>
+ * The ID number also helps provide us a general idea of how many
+ * people are using Processing, which helps us when writing grant
+ * proposals and that kind of thing so that we can keep Processing free.
  */
 public class UpdateCheck implements Runnable {
   Editor editor;
@@ -76,10 +80,17 @@ public class UpdateCheck implements Runnable {
       Preferences.set("update.id", String.valueOf(id));
     }
 
+    String info =
+      URLEncoder.encode(id + "\t" +
+                        PApplet.nf(Base.VERSION, 4) + "\t" +
+                        System.getProperty("java.version") + "\t" +
+                        System.getProperty("java.vendor") + "\t" +
+                        System.getProperty("os.name") + "\t" +
+                        System.getProperty("os.version") + "\t" +
+                        System.getProperty("os.arch"));
+
     try {
-      //int id = PApplet.parseInt(idString);
-      //int latest = PApplet.toInt(PApplet.loadStrings());
-      int latest = readInt(downloadURL + "?" + id);
+      int latest = readInt(downloadURL + "?" + info);
 
       String prompt =
         "A new version of Processing is available,\n" +
