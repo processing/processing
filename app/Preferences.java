@@ -340,41 +340,29 @@ public class Preferences extends JComponent {
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
     label.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
     top += d.height; // + GUI_SMALL;
 
     label = new JLabel(preferencesFile.getAbsolutePath());
-    /*
-    label.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          // close the frame and ignore any changes.
-          // otherwise, any changes made to preferences.txt
-          // will be lost when the prefs window is closed,
-          // since things will be re-applied.
-          disposeFrame();
-
-          // now safe to open the text file
-          Base.openURL(preferencesFile.getAbsolutePath());
-        }
-      });
-    */
-    //label.setForeground(new Color(51, 25, 153));
     pain.add(label);
     d = label.getPreferredSize();
     label.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height;
 
     label = new JLabel("(edit only when Processing is not running)");
-
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
     label.setBounds(left, top, d.width, d.height);
+    right = Math.max(right, left + d.width);
     top += d.height; // + GUI_SMALL;
 
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
 
-    right = Math.max(right, left + d.width + GUI_BETWEEN +
-                     BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
+    //right = Math.max(right, left + d.width + GUI_BETWEEN +
+    //               BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
 
     button = new JButton(PROMPT_OK);
     button.addActionListener(new ActionListener() {
@@ -388,7 +376,7 @@ public class Preferences extends JComponent {
     BUTTON_HEIGHT = d2.height;
 
     // smoosh up to the line before
-    top -= BUTTON_HEIGHT;
+    //top -= BUTTON_HEIGHT;
 
     h = right - (BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
     button.setBounds(h, top, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -409,7 +397,7 @@ public class Preferences extends JComponent {
     // finish up
 
     wide = right + GUI_BIG;
-    high = top + GUI_BIG;
+    high = top + GUI_SMALL; //GUI_BIG;
     setSize(wide, high);
 
 

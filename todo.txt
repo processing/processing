@@ -5,17 +5,27 @@ X   no difference between versions... should it be cvs based?
 X linux is missing all libraries except for javascript
 _   added again, but check the distribution to make sure they're working
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Tools;action=display;num=1114325419;start=1
+X preferences - second line of prefs (the file path) is smashing things
+X   righthand max isn't being updated for that second line
+X   or it's getting written over by the line below it
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113932608
+X include platform information when checking for updates
+X   send over the int as long hex number? 
+X   64 bits hex is gonna be 16 digits.. much cleaner
+o when people are running 1.5, warn them?
+o   if p5 is running 1.5, let them know to use the standard install
+o   check to see if when running externally, will be using a 1.5 vm
+X   nah, this seems like overkill.. problems haven't been *that* bad (yet)
+X make sure that when running ext, using the local java
+
+_ get these two todo lists into their bugzilla categories
 
 _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
-_ include platform information when checking for updates
-_   send over the int as long hex number? 
-_   64 bits hex is gonna be 16 digits.. much cleaner
-_ get platform checker into the latest exhibition piece
-
 _ macosx 10.2 needs libiconv to run jikes
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
 _   either compile jikes not to use it: 
 _     http://jikes.sourceforge.net/faq/dev-win32.shtml
 _   or maybe include an installer: 
@@ -23,13 +33,6 @@ _     http://www.bluem.net/downloads/libiconv_en/
 _   gnu page for libiconv
 _     http://www.gnu.org/software/libiconv/
 _   on 10.2, the version of jikes from 69 (the cvs build) works fine
-
-_ esc doesn't kill fullscreen mode
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
-
-_ preferences - second line of prefs (the file path) is smashing things
-_   righthand max isn't being updated for that second line
-_   or it's getting written over by the line below it
 
 _ "are you trying to f-- with me" on quitting the app is super problem
 
@@ -52,10 +55,15 @@ I get it.  But i wonder if this will catch others off guard.
 Not suggesting a change to the way it works... but thoughts on if this 
 might screw people in the long run?
 
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 DOCUMENTATION
 
+_ quicktime 7 has not been tested, use at your own risk
+_   if you have trouble on mac, this is a qt 652 reinstaller
+_   http://www.apple.com/support/downloads/quicktime652reinstallerformac.html
 _ documentation on tabs: .java files, inner classes, etc
 _ serial will only list ports that are currently not in use
 _   i.e. if you're monitoring the port in one app, it won't be listed
@@ -107,6 +115,7 @@ _   if you want it separate, use a .java file instead (not parsed)
 _   classes in tabs are inner classes, or use .java files
 _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
 _ not slice() but subset()... get word from casey on how to resolve
+_ get platform checker into the latest exhibition piece
 
 _ auto-run the javadoc in dist.sh
 _   doctor a copy of the css file to use p5 defaults
@@ -115,18 +124,6 @@ _   and re-copy the css in after generating the doc each time
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 HIGH PRIORITY BUT NOT NECESSITY
-
-_ ability to select monitor via preferences panel
-_   this applies to any applet that's run externally currently (verify)
-_   make it also work with anything that's run inside of p5 itself
-_ check current present code with multiple monitors
-_ first pass on full screen
-_   exceptions in full screen mode will quit the app completely
-_   (can't keep window open because things are hosed)
-_   default is that full screen app doesn't cover multiple displays
-_     this is fine since opengl can't usually go across both
-_     but include an example for how to use full in gl 
-_     (use toolkit.getscreensize)
 
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
@@ -480,11 +477,14 @@ PDE - Processing Development Environment
 
 PDE / Details
 
-   1 _ preferences
+   1 _ preferences window has been hit with the ugly stick
    1 _   redo panel to use proper swing layout etc
+   1 _   also needs to look good across all platforms
 
    1 _ setting sketchbook to a folder on the network
    1 _   does this work? test on both on mac and pc.. 
+   1 _   or if not, should recommend people against it 
+   1 _   (i.e. folders disappearing if net has trouble)
 
    1 _ exception in setup() on external app doesn't kill run button 
    1 _   also doesn't kill external vm
