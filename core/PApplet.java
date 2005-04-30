@@ -588,7 +588,7 @@ public class PApplet extends Applet
   }
 
 
-  public void draw() {
+  synchronized public void draw() {
     // if no draw method, then shut things down
     //System.out.println("no draw method, goodbye");
     finished = true;
@@ -980,7 +980,7 @@ public class PApplet extends Applet
   }
 
 
-  public void display() {
+  synchronized public void display() {
     if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " formerly nextFrame()");
     if (looping || redraw) {
@@ -1794,8 +1794,8 @@ public class PApplet extends Applet
   /**
    * This version of save() is an override of PImage.save(),
    * rather than calling g.save(). This version properly saves
-   * the image to the applet folder (whereas save doesn't know
-   * where to put things)
+   * the image to the applet folder (whereas PImage.save() and
+   * the inherited PGraphics.save() don't know where to put things).
    */
   public void save(String filename) {
     g.save(savePath(filename));
@@ -1831,7 +1831,7 @@ public class PApplet extends Applet
    * <PRE>
    * i.e. saveFrame("blah-####.tif");
    *      // saves a numbered tiff image, replacing the
-   *      // # signs with zeros and the frame number </PRE>
+   *      // #### signs with zeros and the frame number </PRE>
    */
   public void saveFrame(String what) {
     if (online) {
@@ -1849,12 +1849,7 @@ public class PApplet extends Applet
       String prefix = what.substring(0, first);
       int count = last - first + 1;
       String suffix = what.substring(last + 1);
-
-      //File file = new File(folder, prefix + nf(frame, count) + suffix);
-      // in case the user tries to make subdirs with the filename
-      //new File(file.getParent()).mkdirs();
-      //save(file.getAbsolutePath());
-      save(savePath(prefix + nf(frameCount, count) + suffix));
+      save(prefix + nf(frameCount, count) + suffix);
     }
   }
 
@@ -1864,7 +1859,7 @@ public class PApplet extends Applet
 
   // CURSOR
 
-  // based on code contributed by amit pitaru and jonathan feinberg
+  //
 
 
   int cursor_type = ARROW; // cursor type
@@ -1876,9 +1871,7 @@ public class PApplet extends Applet
    * Set the cursor type
    */
   public void cursor(int _cursor_type) {
-    //if (cursor_visible && _cursor_type != cursor_type) {
     setCursor(Cursor.getPredefinedCursor(_cursor_type));
-    //}
     cursor_visible = true;
     cursor_type = _cursor_type;
   }
@@ -1888,9 +1881,11 @@ public class PApplet extends Applet
    * Set a custom cursor to an image with a specific hotspot.
    * Only works with JDK 1.2 and later.
    * Currently seems to be broken on Java 1.4 for Mac OS X
+   * <P>
+   * Based on code contributed by Amit Pitaru, plus additional
+   * code to handle Java versions via reflection by Jonathan Feinberg.
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
-    //if (!isOneTwoOrBetter()) {
     if (javaVersion < 1.2f) {
       System.err.println("Java 1.2 or higher is required to use cursor()");
       System.err.println("(You're using version " + javaVersionName + ")");
@@ -1904,7 +1899,6 @@ public class PApplet extends Applet
       createImage(new MemoryImageSource(image.width, image.height,
                                         image.pixels, 0, image.width));
 
-    //Toolkit tk = Toolkit.getDefaultToolkit();
     Point hotspot = new Point(hotspotX, hotspotY);
     try {
       Method mCustomCursor =
@@ -1921,8 +1915,8 @@ public class PApplet extends Applet
       cursor_visible = true;
 
     } catch (NoSuchMethodError e) {
-      System.err.println("cursor() is not available on " +
-                         nf(javaVersion, 1, 1));
+      System.err.println("cursor() is not available " +
+                         "when using Java " + javaVersionName);
     } catch (IndexOutOfBoundsException e) {
       System.err.println("cursor() error: the hotspot " + hotspot +
                          " is out of bounds for the given image.");
@@ -1956,7 +1950,6 @@ public class PApplet extends Applet
     if (!cursor_visible) return;  // don't hide if already hidden.
 
     if (invisible_cursor == null) {
-      //invisible_cursor = new PImage(new int[32*32], 32, 32, RGBA);
       invisible_cursor = new PImage(new int[16*16], 16, 16, ARGB);
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix
