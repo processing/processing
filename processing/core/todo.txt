@@ -9,6 +9,9 @@ X saveFrame with a filename still causing trouble:
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114097641;start=0
 X fov should be in radians
 
+_ ex on endshape if no calls to vertex
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
+
 _ createGraphics(200, 200) to create same as source
 _   createGraphics(200, 200, P2D) to create 2D from 3D
 _   also, drawing a PGraphics2 doesn't seem to work
@@ -17,9 +20,8 @@ _ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _   they're drawn as transparent and don't have their high bits set
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
 
-_ is mousePressed broken because of event queue? or at least w/ framerate?
-
 _ polygons perpendicular to axis not drawing
+_   is this a clipping error?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
 
 _ is camera backwards, or staying fixed and moving the scene?
@@ -31,13 +33,39 @@ _   or endCamera might be swapping camera and cameraInv
 
 high priority but not *required* for 86
 
+_ is mousePressed broken because of event queue? 
+_   or at least w/ framerate? or redraw and noLoop?
+
 X typed version of expand() and contract()
 _   need to complete for the others:
 _   append(), shorten(), splice, slice, subset, concat, reverse
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
 
+present mode fixes
 _ for present mode, need to set a default display 
 _   currently crashes if only --present is specified w/o --display
+_ present mode is flakey.. applet doesn't always come up
+_   seems like hitting stop helps shut it down?
+_   is full screen window not being taken down properly?
+_ esc should kill fullscreen mode
+_   can a key handler be added to the window?
+_   how can this be shut off for presentations?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
+_ implement full screen mode.. this takes over the screen as best it can
+_   size(screen.width, screen.height, OPENGL);
+_   if size is screen.width and screen.height, does its best
+_   needs to get the size of the main screen
+_ ability to select monitor via preferences panel
+_   this applies to any applet that's run externally currently (verify)
+_   make it also work with anything that's run inside of p5 itself
+_ check current present code with multiple monitors
+_ first pass on full screen
+_   exceptions in full screen mode will quit the app completely
+_   (can't keep window open because things are hosed)
+_   default is that full screen app doesn't cover multiple displays
+_     this is fine since opengl can't usually go across both
+_     but include an example for how to use full in gl 
+_     (use toolkit.getscreensize)
 
 _ seem to be problems with updatePixels() on the mac
 _   appears to run asynchronously
@@ -128,11 +156,6 @@ _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
 
 _ gl points not working again
-
-_ implement full screen mode.. this takes over the screen as best it can
-_   size(screen.width, screen.height, OPENGL);
-_   if size is screen.width and screen.height, does its best
-_   needs to get the size of the main screen
 
 _ make illustrator lib
 
@@ -264,7 +287,6 @@ _   if so, just switch the image code to expect alpha in the high bits
 _   fonts probably need to be RGBA, not ALPHA style images
 _   there's nothing really ALPHA about them?
 
-
 //
 
 _ should image i/o and sound i/o be moved into PImage and PSound?
@@ -276,7 +298,6 @@ _ make the file i/o stuff work more cleanly
 _   if people want to use their own file i/o they can do that too
 _ how to make a long setup() sleep so that things don't lock way up
 _   this could also be contributing to the hanging bug
-_ make properly exit after things are finished
 _ static applets need to be able to resize themselves on 'play'
 _ figure out what to do with static apps exported as application
 _   needs to just hang there
@@ -287,9 +308,12 @@ _   to take care of exception handling
 _ or maybe scripts are just handled with a different method? (yech)
 _   or maybe setup() can actually throw and Exception?
 _   but that's inserted by the parser, and hidden from the user?
-_ implement size(0, 0) -> just doesn't bother doing a frame.show();
-_   too abstract, just have draw() call exit by default
-_   so if nothing inside draw, just quits
+o implement size(0, 0) -> just doesn't bother doing a frame.show();
+o   too abstract, just have draw() call exit by default
+o   so if nothing inside draw, just quits
+o   make properly exit after things are finished
+_   add exit() function to actually explicitly quit
+_   scripts will just require that people include exit at the end
 
 _ need to make sure that components can be resized properly via size()
 _   or that it properly responds to a setBounds() call
@@ -494,7 +518,7 @@ CORE / PGraphics
 
 CORE / PFont
 
-   1 _ optimize textMode(OBJECT) with textMode(SCREEN)
+   1 _ optimize textMode(MODEL) with textMode(SCREEN)
    1 _   in PGraphics and PGraphics3, check to see if matrix is within epsilon
    1 _   of one of the rotation matrices (many fewer steps) 
    1 _   if identity, or just translate, or a rotate, make OBJECT into SCREEN
@@ -504,9 +528,11 @@ CORE / PFont
    1 _   this way, can isolate it for gl too, which will use glBitmap
    1 _   danger of this setup is that it may run much nicer for the author
    1 _     i.e. with the font installed, and then super slow for their users
-   ? _ not having kerning really blows
-   ? _   could this be pulled from the OpenType font stuff? 
-   ? _   it could be placed at the end of the file
+     _ not having kerning really blows
+     _   could this be pulled from the OpenType font stuff? 
+     _   it could be placed at the end of the file
+     _ not having fractional widths on small fonts really blows
+     _   screen space text looks crappy
 
 
 CORE / PSound
