@@ -1543,9 +1543,21 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void textMode(int space) {
+  /**
+   * Sets the text rendering/placement to be either SCREEN (direct
+   * to the screen, exact coordinates) or MODEL (the default, where
+   * text is manipulated by translate() etc). The text size cannot
+   * be set when using textMode(SCREEN), because it uses the pixels
+   * directly from the font.
+   */
+  public void textMode(int mode) {
+    if ((mode != SCREEN) && (mode != MODEL)) {
+      throw new RuntimeException("Only textMode(SCREEN) or textMode(MODEL) " +
+                                 "can be used. Maybe you meant textAlign()?");
+    }
+
     if (textFont != null) {
-      textMode = space;
+      textMode = mode;
 
       // reset the font to its natural size
       // (helps with width calculations and all that)
@@ -1605,16 +1617,6 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(char c, float x, float y) {
     text(c, x, y, 0);
-    /*
-    if (textFont != null) {
-      if (textMode == SCREEN) loadPixels();
-      textFont.text(c, x, y, this);
-      if (textMode == SCREEN) updatePixels();
-
-    } else {
-      throw new RuntimeException("use textFont() before text()");
-    }
-    */
   }
 
 
