@@ -5310,6 +5310,15 @@ v              PApplet.this.stop();
               }
             });
           frame.add(label);
+
+          /*
+          frame.addKeyListener(new KeyAdapter() {
+              public void keyPressed(KeyEvent e) {
+                System.out.println(e);
+              }
+            });
+          */
+
           Dimension labelSize = label.getPreferredSize();
           // sometimes shows up truncated on mac
           labelSize = new Dimension(labelSize.width * 2, labelSize.height);
@@ -5914,9 +5923,9 @@ v              PApplet.this.stop();
   }
 
 
-  public void textMode(int space) {
-    if (recorder != null) recorder.textMode(space);
-    g.textMode(space);
+  public void textMode(int mode) {
+    if (recorder != null) recorder.textMode(mode);
+    g.textMode(mode);
   }
 
 
