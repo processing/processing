@@ -83,15 +83,19 @@ public class PGraphics3 extends PGraphics {
 
   static final int LIGHT_COLOR_COUNT = 9;
 
-  // Used to shuttle lighting calcs around (no need to re-allocate all the time)
+  // Used to shuttle lighting calcs around
+  // (no need to re-allocate all the time)
   public float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
   public float[] worldNormal = new float[4];
 
   // ........................................................
 
-  // perspective setup
+  /** Camera field of view (in radians, as of rev 86) */
   public float cameraFOV;
+
+  /** Position of the camera */
   public float cameraX, cameraY, cameraZ;
+
   public float cameraNear, cameraFar;
   public float cameraAspect;
 
@@ -306,10 +310,11 @@ public class PGraphics3 extends PGraphics {
     //background(backgroundColor);
 
     // init perspective projection based on new dimensions
-    cameraFOV = 60; // at least for now
+    cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
     cameraY = height / 2.0f;
-    cameraZ = cameraY / ((float) tan(PI * cameraFOV / 360f));
+    //cameraZ = cameraY / ((float) tan(PI * cameraFOV / 360f));
+    cameraZ = cameraY / ((float) tan(cameraFOV / 2.0f));
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
 
@@ -2901,10 +2906,9 @@ public class PGraphics3 extends PGraphics {
   /**
    * Same as gluPerspective(). Implementation based on Mesa's glu.c
    */
-  public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    //System.out.println("perspective: " + fovy + " " + aspect + " " +
-    //               zNear + " " + zFar);
-    float ymax = zNear * tan(fovy * PI / 360.0f);
+  public void perspective(float fov, float aspect, float zNear, float zFar) {
+    //float ymax = zNear * tan(fovy * PI / 360.0f);
+    float ymax = zNear * tan(fov / 2.0f);
     float ymin = -ymax;
 
     float xmin = ymin * aspect;

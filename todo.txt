@@ -2,35 +2,17 @@
 X new versions of java for windows and linux: 1.4.2_07
 X update faq on site? what's difference between versions?
 X   no difference between versions... should it be cvs based?
-
 X linux is missing all libraries except for javascript
+_   added again, but check the distribution to make sure they're working
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Tools;action=display;num=1114325419;start=1
 
-_ set applet.frame on runner, so ppl can mess with the frame itself
+_ make simple tool for casey to rebuild all the examples at once
+_   need to rebuild with this release because of 1.3/1.4 issues
 
-_ osx is swallowing exceptions on external apps
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
-
-_ documentation on tabs: .java files, inner classes, etc
-
-_ "are you trying to f-- with me" on quitting the app is super problem
-
-_ built in functions.. may not always be fastest, we're going for correct
-_   most things have other ways of making things much faster
-_   we've attempted for less confusion over speed in some cases
-_   get(), set() and red() et al are one such example
-
-_ serial will only list ports that are currently not in use
-_   i.e. if you're monitoring the port in one app, it won't be listed
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114561057;start=0
-
-_ additional requests for this (and it's an easy fix)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
-   1 _ maintain tab scroll and caret positions
-   1 _ save caret position when switching tabs
-
-_ faq - not supporting windows 95
-_   http://www.java.com/en/download/help/win95.xml
+_ include platform information when checking for updates
+_   send over the int as long hex number? 
+_   64 bits hex is gonna be 16 digits.. much cleaner
+_ get platform checker into the latest exhibition piece
 
 _ macosx 10.2 needs libiconv to run jikes
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
@@ -42,69 +24,14 @@ _   gnu page for libiconv
 _     http://www.gnu.org/software/libiconv/
 _   on 10.2, the version of jikes from 69 (the cvs build) works fine
 
-_ faq - known bugs
-_   put the jikes fix for 10.2 on the faq
-_   1 pixel stroke weight in opengl (temporary)
-_   make clear that P2D is not working if not clear enough
-_   save/yes/no needs cancel
-X   wontstart wasn't properly linked
-
-_ faq - graphics engines
-_   default graphics may be slow
-_   opengl only runs with 1.4
-_     need to write an error if people try to use it in 1.3 (i.e. on export)
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
-_   grabbing sun.cpu.endian throws a security exception with gl applets
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
-_   opengl not tested for applets
-_   to get to opengl functions, put this after size:
-_     GL gl = ((PGraphicsGL)g).gl;
-_     and then can make opengl calls. this is not supported, 
-_     and if things don't work, sorry. 
-
-_ faq - not our problem
-_   watch out for upper/lowercase changes
-_     methods and functions always start lowercase, and have inner caps
-_   sun.dc.pr.PRException
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
-
-_ faq - changes
-X   videoEvent and serialEvent pass in the object
-_   updatePixels() may be slower.. hopefully JAVA2D mostly temporary
-
-_ is there a way to do xxx?
-_   advanced users who are outgrowing the basic reference: 
-_   be sure to check the "complete" reference
-
-_ faq - java 1.5
-_   seems to run things more slowly.. 
-_   if using p5 standard, will be running 1.4
-_   but if 1.5 installed, browser will probably use that
-
-_ faq - how things work
-_   additional tabs are added to the main code
-_   as a result, static variables can't be used
-_     though they can go above the class itself or be placed in the parent
-_   if you want it separate, use a .java file instead (not parsed)
-_   classes in tabs are inner classes, or use .java files
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
-
-_ sun.applet.Main is appletviewer
-
-_ settings.path.fallback not being used
-_ can't find build dir on operatign systems w/ non-ascii chars
-
-_ info about getting started with building processing
-_   also re: what about eclipse? what about antlr?
-
-_ update things for java 1.5 since it's inevitable
-
 _ esc doesn't kill fullscreen mode
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
 
 _ preferences - second line of prefs (the file path) is smashing things
 _   righthand max isn't being updated for that second line
 _   or it's getting written over by the line below it
+
+_ "are you trying to f-- with me" on quitting the app is super problem
 
 _ "save as" not quite working
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
@@ -125,15 +52,109 @@ I get it.  But i wonder if this will catch others off guard.
 Not suggesting a change to the way it works... but thoughts on if this 
 might screw people in the long run?
 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+DOCUMENTATION
+
+_ documentation on tabs: .java files, inner classes, etc
+_ serial will only list ports that are currently not in use
+_   i.e. if you're monitoring the port in one app, it won't be listed
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114561057;start=0
+_ built in functions.. may not always be fastest, we're going for correct
+_   most things have other ways of making things much faster
+_   we've attempted for less confusion over speed in some cases
+_   get(), set() and red() et al are one such example
+_ faq - not supporting windows 95
+_   http://www.java.com/en/download/help/win95.xml
+_ faq - known bugs
+_   put the jikes fix for 10.2 on the faq
+_   1 pixel stroke weight in opengl (temporary)
+_   make clear that P2D is not working if not clear enough
+_   save/yes/no needs cancel
+X   wontstart wasn't properly linked
+_ faq - graphics engines
+_   default graphics may be slow
+_   opengl only runs with 1.4
+_     need to write an error if people try to use it in 1.3 (i.e. on export)
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+_   grabbing sun.cpu.endian throws a security exception with gl applets
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+_   opengl not tested for applets
+_   to get to opengl functions, put this after size:
+_     GL gl = ((PGraphicsGL)g).gl;
+_     and then can make opengl calls. this is not supported, 
+_     and if things don't work, sorry. 
+_ faq - not our problem
+_   watch out for upper/lowercase changes
+_     methods and functions always start lowercase, and have inner caps
+_   sun.dc.pr.PRException
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
+_ faq - changes
+X   videoEvent and serialEvent pass in the object
+_   updatePixels() may be slower.. hopefully JAVA2D mostly temporary
+_ is there a way to do xxx?
+_   advanced users who are outgrowing the basic reference: 
+_   be sure to check the "complete" reference
+_ faq - java 1.5
+_   seems to run things more slowly.. 
+_   if using p5 standard, will be running 1.4
+_   but if 1.5 installed, browser will probably use that
+_ faq - how things work
+_   additional tabs are added to the main code
+_   as a result, static variables can't be used
+_     though they can go above the class itself or be placed in the parent
+_   if you want it separate, use a .java file instead (not parsed)
+_   classes in tabs are inner classes, or use .java files
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
+_ not slice() but subset()... get word from casey on how to resolve
+
 _ auto-run the javadoc in dist.sh
 _   doctor a copy of the css file to use p5 defaults
 _   and re-copy the css in after generating the doc each time
 
-_ include platform information when checking for updates
-_   send over the int as long hex number? 
-_   64 bits hex is gonna be 16 digits.. much cleaner
-_ get platform checker into the latest exhibition piece
-_ not slice() but subset()... get word from casey on how to resolve
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+HIGH PRIORITY BUT NOT NECESSITY
+
+_ ability to select monitor via preferences panel
+_   this applies to any applet that's run externally currently (verify)
+_   make it also work with anything that's run inside of p5 itself
+_ check current present code with multiple monitors
+_ first pass on full screen
+_   exceptions in full screen mode will quit the app completely
+_   (can't keep window open because things are hosed)
+_   default is that full screen app doesn't cover multiple displays
+_     this is fine since opengl can't usually go across both
+_     but include an example for how to use full in gl 
+_     (use toolkit.getscreensize)
+
+_ println() can hose the app for the first 20-30 frames
+_   need to figure out threading etc
+_   problem with it launching a new thread for every single update!
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+_ set applet.frame on runner, so ppl can mess with the frame itself
+
+_ osx is swallowing exceptions on external apps
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
+
+_ additional requests for this (and it's an easy fix)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
+   1 _ maintain tab scroll and caret positions
+   1 _ save caret position when switching tabs
+
+_ sun.applet.Main is appletviewer
+
+_ settings.path.fallback not being used
+_ can't find build dir on operating systems w/ non-ascii chars
+_   or rather, when user accounts have non-ascii chars in the name
+_   try setting up an account where this is the case
+
+_ info about getting started with building processing
+_   also re: what about eclipse? what about antlr?
+
+_ update things for java 1.5 since it's inevitable
 
 _ port buffering not working properly
 _   may just be a problem with thread starvation
@@ -182,9 +203,6 @@ _   if extends PApplet.. or rather, put PApplet cast into a
 _   try/catch block.. if it doesn't work, try applet. if that
 _   doesn't work, try using the class' main() to run it
 
-_ println() can hose the app for the first 20-30 frames
-_   need to figure out threading etc
-
 _ not confirmed to be a bug
 Is it possible that saving with the 'save' button doesn't pay
 attention to where you point at the project folder from prefs?  Jeez,
@@ -230,26 +248,14 @@ _   this seems too complicated.. just make people restart
 
 _ more javadoc for the stuff inside processing.app
 
-_ ability to select monitor via preferences panel
-_   this applies to any applet that's run externally currently (verify)
-_   make it also work with anything that's run inside of p5 itself
-_ check current present code with multiple monitors
-
-_ first pass on full screen
-_   exceptions in full screen mode will quit the app completely
-_   (can't keep window open because things are hosed)
-_   default is that full screen app doesn't cover multiple displays
-_     this is fine since opengl can't usually go across both
-_     but include an example for how to use full in gl 
-_     (use toolkit.getscreensize)
-
 _ runtime exceptions have stopped coming through (on pc only?)
+_   that they don't show up in the error bar
 
 _ npe is a runtimeex, so any npe in setup comes up weird
 _   maybe the renderer exception is something different? newrendex?
 
 _ why is gl being added on export, no matter what? or is it?
-_   sketch folder not really being emptied on export
+_   applet folder not really being emptied on export
 _   so old libs will just perpetuate themselves
 
 _ external apps don't stop at all when 'stop' is hit
@@ -295,6 +301,7 @@ camera
 _ tearing and incomplete updates on camera?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
 _ pause and framerate aren't working
+_ video wrong device name crashes things
 _ when passing in 'null' as the camera, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
 _ couldn't get req'd component also happens when the camera isn't ready
