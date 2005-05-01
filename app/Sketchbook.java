@@ -512,7 +512,7 @@ public class Sketchbook {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.addLibrary(e.getActionCommand());
+          editor.sketch.importLibrary(e.getActionCommand());
         }
       };
 

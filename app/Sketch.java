@@ -55,12 +55,12 @@ public class Sketch {
    */
   String mainFilename;
 
-  /// true if any of the files have been modified
+  /**
+   * true if any of the files have been modified.
+   */
   boolean modified;
 
-  //boolean library;  // true if it's a library
-
-  public File folder; //sketchFolder;
+  public File folder;
   public File dataFolder;
   public File codeFolder;
 
@@ -270,8 +270,8 @@ public class Sketch {
     }
   }
 
-  boolean renamingCode;
 
+  boolean renamingCode;
 
   public void newCode() {
     // make sure the user didn't hide the sketch folder
@@ -442,17 +442,6 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    // don't allow delete of the main code
-    // TODO maybe gray out the menu on setCurrent(0)
-    /*
-    if (current == code[0]) {
-      Base.showMessage("Can't do that",
-                          "You cannot delete the main " +
-                          ".pde file from a sketch\n");
-      return;
-    }
-    */
-
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
     String prompt = (current == code[0]) ?
@@ -552,8 +541,6 @@ public class Sketch {
 
 
   public void unhideCode(String what) {
-    //System.out.println("unhide " + e);
-    //int unhideIndex = -1;
     SketchCode unhideCode = null;
 
     for (int i = 0; i < hiddenCount; i++) {
@@ -599,14 +586,6 @@ public class Sketch {
 
 
   /**
-   * Return true if this sketch is a library.
-   */
-  //public boolean isLibrary() {
-  //return library;
-  //}
-
-
-  /**
    * Sets the modified value for the code in the frontmost tab.
    */
   public void setModified() {
@@ -634,9 +613,9 @@ public class Sketch {
   protected void ensureExistence() {
     if (folder.exists()) return;
 
-    Base.showWarning("Sketch disappeared",
-                     "The sketch folder has disappeared (did you " +
-                     "delete it? Are you trying to f-- with me?)\n" +
+    Base.showWarning("Sketch Disappeared",
+                     "The sketch folder has disappeared " +
+                     "(did you delete it?)\n" +
                      "Will attempt to re-save in the same location," +
                      "but anything besides the code will be lost.", null);
     try {
@@ -908,7 +887,7 @@ public class Sketch {
   }
 
 
-  public void addLibrary(String jarPath) {
+  public void importLibrary(String jarPath) {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -945,7 +924,6 @@ public class Sketch {
    */
   public void setCurrent(int which) {
     // get the text currently being edited
-    //program[current] = editor.getText();
     if (current != null) {
       current.program = editor.getText();
     }
@@ -984,26 +962,21 @@ public class Sketch {
   protected void cleanup() {
     // if the java runtime is holding onto any files in the build dir, we
     // won't be able to delete them, so we need to force a gc here
-    //
     System.gc();
 
     // note that we can't remove the builddir itself, otherwise
     // the next time we start up, internal runs using Runner won't
     // work because the build dir won't exist at startup, so the classloader
     // will ignore the fact that that dir is in the CLASSPATH in run.sh
-    //
-    //File dirObject = new File(TEMP_BUILD_PATH);
-    //Base.removeDescendants(dirObject);
     Base.removeDescendants(tempBuildFolder);
   }
 
 
   /**
    * Preprocess, Compile, and Run the current code.
-   * This is not Runnable.run(), but a handler for the run() command.
-   *
+   * <P>
    * There are three main parts to this process:
-   *
+   * <PRE>
    *   (0. if not java, then use another 'engine'.. i.e. python)
    *
    *    1. do the p5 language preprocessing
@@ -1023,8 +996,8 @@ public class Sketch {
    *       or if more than one file is in the project
    *
    *    X. afterwards, some of these steps need a cleanup function
+   * </PRE>
    */
-  //public void run() throws RunnerException {
   public boolean handleRun() throws RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -1078,70 +1051,8 @@ public class Sketch {
         }
       }
     }
-
-    // if the compilation worked, run the applet
-//    if (mainClassName != null) {
-
-      /*
-      if (externalPaths == null) {
-        externalPaths =
-          Compiler.calcClassPath(null) + File.pathSeparator +
-          tempBuildPath;
-      } else {
-        externalPaths =
-          tempBuildPath + File.pathSeparator +
-          Compiler.calcClassPath(null) + File.pathSeparator +
-          externalPaths;
-      }
-      */
-
-      // get a useful folder name for the 'code' folder
-      // so that it can be included in the java.library.path
-      /*
-      String libraryPath = "";
-      if (externalCode != null) {
-        libraryPath = externalCode.getCanonicalPath();
-      }
-      */
-
-      // create a runtime object
-//      runtime = new Runner(this, editor);
-
-      // if programType is ADVANCED
-      //   or the code/ folder is not empty -> or just exists (simpler)
-      // then set boolean for external to true
-      // include path to build in front, then path for code folder
-      //   when passing the classpath through
-      //   actually, build will already be in there, just prepend code
-
-      // use the runtime object to consume the errors now
-      // no need to bother recycling the old guy
-      //MessageStream messageStream = new MessageStream(runtime);
-
-      // start the applet
-//      runtime.start(presenting ? presentLocation : appletLocation); //,
-      //new PrintStream(messageStream));
-
-      // spawn a thread to update PDE GUI state
-//      watcher = new RunButtonWatcher();
-
-//    } else {
-      // [dmose] throw an exception here?
-      // [fry] iirc the exception will have already been thrown
-//      cleanup();
-//    }
     return (mainClassName != null);
   }
-
-
-  /**
-   * Have the contents of the currently visible tab been modified?
-   */
-  /*
-  public boolean isCurrentModified() {
-    return modified[current];
-  }
-  */
 
 
   /**
@@ -1427,10 +1338,8 @@ public class Sketch {
 
 
   /**
-   * Called by Editor to handle someone having selected 'export'.
-   * Pops up a dialog box for export options, and then calls the
-   * necessary function with the parameters from the window.
-   *
+   * Initiate export to applet.
+   * <PRE>
    * +-------------------------------------------------------+
    * +                                                       +
    * + Export to:  [ Applet (for the web)   + ]    [  OK  ]  +
@@ -1455,71 +1364,15 @@ public class Sketch {
    * +   identical message as 1.3 above...                   +
    * +                                                       +
    * +-------------------------------------------------------+
-   *
-   * +-------------------------------------------------------+
-   * +                                                       +
-   * + Export to:  [ Application            + ]    [  OK  ]  +
-   * +                                                       +
-   * + > Advanced                                            +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.1   + ]                           +
-   * +                                                       +
-   * +   Not much point to using Java 1.1 for applications.  +
-   * +   To run applications, all users will have to         +
-   * +   install Java, in which case they'll most likely     +
-   * +   have version 1.3 or later.                          +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.3   + ]                           +
-   * +                                                       +
-   * +   Java 1.3 is the recommended setting for exporting   +
-   * +   applications. Applications will run on any Windows  +
-   * +   or Unix machine with Java installed. Mac OS X has   +
-   * +   Java installed with the operation system, so there  +
-   * +   is no additional installation will be required.     +
-   * +                                                       +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +                                                       +
-   * +   Platform: [ Mac OS X   + ]    <-- defaults to current platform
-   * +                                                       +
-   * +   Exports the application as a double-clickable       +
-   * +   .app package, compatible with Mac OS X.             +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Platform: [ Windows    + ]                          +
-   * +                                                       +
-   * +   Exports the application as a double-clickable       +
-   * +   .exe and a handful of supporting files.             +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Platform: [ jar file   + ]                          +
-   * +                                                       +
-   * +   A jar file can be used on any platform that has     +
-   * +   Java installed. Simply doube-click the jar (or type +
-   * +   "java -jar sketch.jar" at a command prompt) to run  +
-   * +   the application. It is the least fancy method for   +
-   * +   exporting.                                          +
-   * +                                                       +
-   * +-------------------------------------------------------+
-   *
-
-   * +-------------------------------------------------------+
-   * +                                                       +
-   * + Export to:  [ Library                + ]    [  OK  ]  +
-   * +                                                       +
-   * +-------------------------------------------------------+
+   * </PRE>
    */
-  //public boolean export() throws Exception {
-  //return exportApplet(true);
-  //}
-
-
-  public boolean exportApplet(/*boolean replaceHtml*/) throws Exception {
+  public boolean exportApplet() throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
     zipFileContents = new Hashtable();
 
     boolean replaceHtml = true;
-    //File appletDir, String exportSketchName, File dataDir) {
-    //String program = textarea.getText();
 
     // create the project directory
     // pass null for datapath because the files shouldn't be
@@ -1546,8 +1399,8 @@ public class Sketch {
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!name.equals(foundName)) {
       Base.showWarning("Error during export",
-                          "Sketch name is " + name + " but the sketch\n" +
-                          "name in the code was " + foundName, null);
+                       "Sketch name is " + name + " but the sketch\n" +
+                       "name in the code was " + foundName, null);
       return false;
     }
 
@@ -1563,10 +1416,10 @@ public class Sketch {
       // this way, no warning is shown if size() isn't actually
       // used in the applet, which is the case especially for
       // beginners that are cutting/pasting from the reference.
-      // modified for 83 to match size(XXX, ddd
+      // modified for 83 to match size(XXX, ddd so that it'll
+      // properly handle size(200, 200) and size(200, 200, P3D)
       String sizing =
         "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
-        //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
       Pattern pattern = compiler.compile(sizing);
 
       // adds a space at the beginning, in case size() is the very
@@ -1694,7 +1547,7 @@ public class Sketch {
         Base.copyFile(code[i].file,
                          new File(appletDir, code[i].file.getName()));
       } catch (IOException e) {
-
+        e.printStackTrace();
       }
     }
 
@@ -1703,6 +1556,9 @@ public class Sketch {
       new FileOutputStream(new File(appletDir, name + ".jar"));
     ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
     ZipEntry entry;
+
+    // add the manifest file
+    addManifest(zos);
 
     // add the contents of the code folder to the jar
     // unpacks all jar files
@@ -1721,7 +1577,6 @@ public class Sketch {
       // in the list is a File object that points the
       // library sketch's "library" folder
       File libraryFolder = (File)en.nextElement();
-      //System.out.println("exporting files from " + libFolder);
       File exportSettings = new File(libraryFolder, "export.txt");
       String exportList[] = null;
       if (exportSettings.exists()) {
@@ -1752,8 +1607,6 @@ public class Sketch {
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
-          //System.out.println("adding zip file " +
-          //                 exportFile.getAbsolutePath());
           packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
 
         } else {  // just copy the file over.. prolly a .dll or something
@@ -1763,43 +1616,11 @@ public class Sketch {
       }
     }
 
-    // add the appropriate bagel to the classpath
-    /*
-    String jdkVersion = Preferences.get("compiler.jdk_version");
-    String bagelJar = "lib/export11.jar";  // default
-    if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
-      bagelJar = "lib/export13.jar";
-    }
-    */
     String bagelJar = "lib/core.jar";
-
-    //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
-    //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
     packClassPathIntoZipFile(bagelJar, zos);
 
-    /*
-      // add the contents of lib/export to the jar file
-      // these are the jdk11-only bagel classes
-      String exportDir = ("lib" + File.separator +
-                          "export" + File.separator);
-      String bagelClasses[] = new File(exportDir).list();
-
-      for (int i = 0; i < bagelClasses.length; i++) {
-        if (!bagelClasses[i].endsWith(".class")) continue;
-        entry = new ZipEntry(bagelClasses[i]);
-        zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(exportDir + bagelClasses[i])));
-        zos.closeEntry();
-      }
-    */
-
-    // TODO these two loops are insufficient.
-    // should instead recursively add entire contents of build folder
-    // the data folder will already be a subdirectory
-    // and the classes may be buried in subfolders if a package name was used
-
     // files to include from data directory
-    //if ((dataDir != null) && (dataDir.exists())) {
+    // TODO this needs to be recursive
     if (dataFolder.exists()) {
       String dataFiles[] = dataFolder.list();
       for (int i = 0; i < dataFiles.length; i++) {
@@ -1818,6 +1639,7 @@ public class Sketch {
     // just grabs everything from the build directory
     // since there may be some inner classes
     // (add any .class files from the applet dir, then delete them)
+    // TODO this needs to be recursive (for packages)
     String classfiles[] = appletDir.list();
     for (int i = 0; i < classfiles.length; i++) {
       if (classfiles[i].endsWith(".class")) {
@@ -1836,9 +1658,9 @@ public class Sketch {
         File deadguy = new File(appletDir, classfiles[i]);
         if (!deadguy.delete()) {
           Base.showWarning("Could not delete",
-                              classfiles[i] + " could not \n" +
-                              "be deleted from the applet folder.  \n" +
-                              "You'll need to remove it by hand.", null);
+                           classfiles[i] + " could not \n" +
+                           "be deleted from the applet folder.  \n" +
+                           "You'll need to remove it by hand.", null);
         }
       }
     }
@@ -1848,21 +1670,82 @@ public class Sketch {
     zos.close();
 
     Base.openFolder(appletDir);
-
-    //} catch (Exception e) {
-    //e.printStackTrace();
-    //}
     return true;
   }
 
 
+  /**
+   * Export to application.
+   * <PRE>
+   * +-------------------------------------------------------+
+   * +                                                       +
+   * + Export to:  [ Application            + ]    [  OK  ]  +
+   * +                                                       +
+   * + > Advanced                                            +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.1   + ]                           +
+   * +                                                       +
+   * +   Not much point to using Java 1.1 for applications.  +
+   * +   To run applications, all users will have to         +
+   * +   install Java, in which case they'll most likely     +
+   * +   have version 1.3 or later.                          +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Version: [ Java 1.3   + ]                           +
+   * +                                                       +
+   * +   Java 1.3 is the recommended setting for exporting   +
+   * +   applications. Applications will run on any Windows  +
+   * +   or Unix machine with Java installed. Mac OS X has   +
+   * +   Java installed with the operation system, so there  +
+   * +   is no additional installation will be required.     +
+   * +                                                       +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +                                                       +
+   * +   Platform: [ Mac OS X   + ]    <-- defaults to current platform
+   * +                                                       +
+   * +   Exports the application as a double-clickable       +
+   * +   .app package, compatible with Mac OS X.             +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Platform: [ Windows    + ]                          +
+   * +                                                       +
+   * +   Exports the application as a double-clickable       +
+   * +   .exe and a handful of supporting files.             +
+   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+   * +   Platform: [ jar file   + ]                          +
+   * +                                                       +
+   * +   A jar file can be used on any platform that has     +
+   * +   Java installed. Simply doube-click the jar (or type +
+   * +   "java -jar sketch.jar" at a command prompt) to run  +
+   * +   the application. It is the least fancy method for   +
+   * +   exporting.                                          +
+   * +                                                       +
+   * +-------------------------------------------------------+
+   * </PRE>
+   */
   public boolean exportApplication() {
     return true;
   }
 
 
-  public boolean exportLibrary() {
-    return true;
+  public void addManifest(ZipOutputStream zos) throws IOException {
+    ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
+    zos.putNextEntry(entry);
+
+    String contents =
+      "Manifest-Version: 1.0\n" +
+      "Created-By: Processing " + Base.VERSION_NAME + "\n" +
+      "Main-Class: " + name + "\n";  // TODO not package friendly
+    zos.write(contents.getBytes());
+    zos.closeEntry();
+
+    /*
+      for (int i = 0; i < bagelClasses.length; i++) {
+        if (!bagelClasses[i].endsWith(".class")) continue;
+        entry = new ZipEntry(bagelClasses[i]);
+        zos.putNextEntry(entry);
+        zos.write(Base.grabFile(new File(exportDir + bagelClasses[i])));
+        zos.closeEntry();
+      }
+    */
   }
 
 
@@ -1945,7 +1828,6 @@ public class Sketch {
     throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
-      //if (files[i].equals(".") || files[i].equals("..")) continue;
       // ignore . .. and .DS_Store
       if (files[i].charAt(0) == '.') continue;
 
@@ -1983,7 +1865,7 @@ public class Sketch {
         apath.startsWith(Sketchbook.librariesPath)) {
       return true;
 
-      // this doesn't work on directories
+      // canWrite() doesn't work on directories
       //} else if (!folder.canWrite()) {
     } else {
       // check to see if each modified code file can be written to
