@@ -1163,7 +1163,8 @@ public class Editor extends JFrame
 
 
   /**
-   * Called by EditorStatus to complete the job.
+   * Called by EditorStatus to complete the job and re-dispatch
+   * to handleNew, handleOpen, handleQuit.
    */
   public void checkModified2() {
     switch (checkModifiedMode) {
@@ -1191,11 +1192,11 @@ public class Editor extends JFrame
 
 
   /**
-   * Extra public method so that Sketch can call
-   * this when a sketch is selected to be deleted,
-   * and it won't prompt for save as.
+   * Extra public method so that Sketch can call this when a sketch
+   * is selected to be deleted, and it won't call checkModified()
+   * to prompt for save as.
    */
-  public void handleNew() {
+  public void handleNewUnchecked() {
     doStop();
     handleNewShift = false;
     handleNewLibrary = false;
@@ -1220,7 +1221,8 @@ public class Editor extends JFrame
    * Does all the plumbing to create a new project
    * then calls handleOpen to load it up.
    *
-   * @param noPrompt true if the app is starting (auto-create a sketch)
+   * @param noPrompt true to disable prompting for the sketch
+   * name, used when the app is starting (auto-create a sketch)
    */
   protected void handleNew2(boolean noPrompt) {
     try {
@@ -1258,9 +1260,20 @@ public class Editor extends JFrame
       path = sketchbook.handleOpen();
       if (path == null) return;
     }
-    doStop();
+    doClose();
+    //doStop();
     handleOpenPath = path;
     checkModified(HANDLE_OPEN);
+  }
+
+
+  /**
+   * Open a sketch from a particular path, but don't check to save changes.
+   * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
+   */
+  public void handleOpenUnchecked(String path) {
+    doClose();
+    handleOpen2(path);
   }
 
 
@@ -1468,14 +1481,11 @@ public class Editor extends JFrame
    * in Editor since it has the callback from EditorStatus.
    */
   public void handleQuit() {
-    // stop isn't sufficient with external vm & quit
+    // doStop() isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
-    //doStop();
     doClose();
 
-    //if (!checkModified()) return;
     checkModified(HANDLE_QUIT);
-    //System.out.println("exiting doquit");
   }
 
 

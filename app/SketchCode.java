@@ -79,4 +79,12 @@ public class SketchCode {
     Base.saveFile(program, file);
     modified = false;
   }
+
+
+  /**
+   * Save this file to another location, used by Sketch.saveAs()
+   */
+  public void saveAs(File newFile) throws IOException {
+    Base.saveFile(program, newFile);
+  }
 }
