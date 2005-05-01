@@ -437,6 +437,9 @@ public class Sketch {
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
       if (current == code[0]) {
+        // need to unset all the modified flags, otherwise tries
+        // to do a save on the handleNew()
+
         // delete the entire sketch
         Base.removeDir(folder);
 
@@ -444,13 +447,13 @@ public class Sketch {
         //sketchbook.rebuildMenus();
 
         // make a new sketch, and i think this will rebuild the sketch menu
-        editor.handleNew();
+        editor.handleNewUnchecked();
 
       } else {
         // delete the file
         if (!current.file.delete()) {
           Base.showMessage("Couldn't do it",
-                              "Could not delete \"" + current.name + "\".");
+                           "Could not delete \"" + current.name + "\".");
           return;
         }
 
@@ -594,17 +597,18 @@ public class Sketch {
     if (folder.exists()) return;
 
     Base.showWarning("Sketch Disappeared",
-                     "The sketch folder has disappeared " +
-                     "(did you delete it?)\n" +
-                     "Will attempt to re-save in the same location," +
+                     "The sketch folder has disappeared.\n " +
+                     "Will attempt to re-save in the same location,\n" +
                      "but anything besides the code will be lost.", null);
     try {
       folder.mkdirs();
       modified = true;
 
       for (int i = 0; i < codeCount; i++) {
-        //code[i].modified = true;  // make sure it gets re-saved
-        code[i].save();
+        code[i].save();  // this will force a save
+      }
+      for (int i = 0; i < hiddenCount; i++) {
+        hidden[i].save();  // this will force a save
       }
       calcModified();
 
@@ -631,7 +635,7 @@ public class Sketch {
     }
 
     // don't do anything if not actually modified
-    if (!modified) return false;
+    //if (!modified) return false;
 
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
@@ -650,32 +654,35 @@ public class Sketch {
   }
 
 
+  /*
   public void saveCurrent() throws IOException {
     current.save();
     calcModified();
   }
+  */
 
 
   /**
-   * Handles 'save as' for a sketch.
+   * Handles 'Save As' for a sketch.
    * <P>
    * This basically just duplicates the current sketch folder to
    * a new location, and then calls 'Save'. (needs to take the current
    * state of the open files and save them to the new folder..
    * but not save over the old versions for the old sketch..)
    * <P>
-   * also removes the previously-generated .class and .jar files,
+   * Also removes the previously-generated .class and .jar files,
    * because they can cause trouble.
    */
   public boolean saveAs() throws IOException {
     // get new name for folder
-    FileDialog fd = new FileDialog(editor, //new Frame(),
+    FileDialog fd = new FileDialog(editor,
                                    "Save sketch folder as...",
                                    FileDialog.SAVE);
     if (isReadOnly()) {
       // default to the sketchbook folder
       fd.setDirectory(Preferences.get("sketchbook.path"));
     } else {
+      // default to the parent folder of where this was
       fd.setDirectory(folder.getParent());
     }
     fd.setFile(folder.getName());
@@ -704,8 +711,6 @@ public class Sketch {
     try {
       String newPath = newFolder.getCanonicalPath() + File.separator;
       String oldPath = folder.getCanonicalPath() + File.separator;
-      //System.out.println(newPath);
-      //System.out.println(oldPath);
 
       if (newPath.indexOf(oldPath) == 0) {
         Base.showWarning("How very Borges of you",
@@ -721,9 +726,43 @@ public class Sketch {
     if (newFolder.exists()) {
       Base.removeDir(newFolder);
     }
-    // in fact, you can't do this on windows because it tries
-    // to go into the same folder, but it happens on osx a lot.
+    // in fact, you can't do this on windows because the file dialog
+    // will instead put you inside the folder, but it happens on osx a lot.
 
+    // now make a fresh copy of the folder
+    newFolder.mkdirs();
+
+    // grab the contents of the current tab before saving
+    // first get the contents of the editor text area
+    if (current.modified) {
+      current.program = editor.getText();
+    }
+
+    // save the other tabs to their new location
+    for (int i = 1; i < codeCount; i++) {
+      File newFile = new File(newFolder, code[i].file.getName());
+      code[i].saveAs(newFile);
+    }
+
+    // save the hidden code to its new location
+    for (int i = 0; i < hiddenCount; i++) {
+      File newFile = new File(newFolder, hidden[i].file.getName());
+      hidden[i].saveAs(newFile);
+    }
+
+    // re-copy the data folder (this may take a while.. add progress bar?)
+    if (dataFolder.exists()) {
+      File newDataFolder = new File(newFolder, "data");
+      Base.copyDir(dataFolder, newDataFolder);
+    }
+
+    // save the main tab with its new name
+    File newFile = new File(newFolder, newName + ".pde");
+    code[0].saveAs(newFile);
+
+    editor.handleOpenUnchecked(newFile.getPath());
+
+    /*
     // copy the entire contents of the sketch folder
     Base.copyDir(folder, newFolder);
 
@@ -771,6 +810,7 @@ public class Sketch {
 
     // update the tabs for the name change
     editor.header.repaint();
+    */
 
     // let Editor know that the save was successful
     return true;
@@ -1358,25 +1398,13 @@ public class Sketch {
 
     zipFileContents = new Hashtable();
 
-    boolean replaceHtml = true;
-
-    // create the project directory
-    // pass null for datapath because the files shouldn't be
-    // copied to the build dir.. that's only for the temp stuff
-    File appletDir = new File(folder, "applet");
-
-    boolean writeHtml = true;
-    if (appletDir.exists()) {
-      File htmlFile = new File(appletDir, "index.html");
-      if (htmlFile.exists() && !replaceHtml) {
-        writeHtml = false;
-      }
-    } else {
-      appletDir.mkdirs();
-    }
+    // nuke the old applet folder because it can cause trouble
+    File appletFolder = new File(folder, "applet");
+    Base.removeDir(appletFolder);
+    appletFolder.mkdirs();
 
     // build the sketch
-    String foundName = build(appletDir.getPath(), name);
+    String foundName = build(appletFolder.getPath(), name);
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
@@ -1390,148 +1418,146 @@ public class Sketch {
       return false;
     }
 
-    if (writeHtml) {
-      int wide = PApplet.DEFAULT_WIDTH;
-      int high = PApplet.DEFAULT_HEIGHT;
+    int wide = PApplet.DEFAULT_WIDTH;
+    int high = PApplet.DEFAULT_HEIGHT;
 
-      PatternMatcher matcher = new Perl5Matcher();
-      PatternCompiler compiler = new Perl5Compiler();
+    PatternMatcher matcher = new Perl5Matcher();
+    PatternCompiler compiler = new Perl5Compiler();
 
-      // this matches against any uses of the size() function,
-      // whether they contain numbers of variables or whatever.
-      // this way, no warning is shown if size() isn't actually
-      // used in the applet, which is the case especially for
-      // beginners that are cutting/pasting from the reference.
-      // modified for 83 to match size(XXX, ddd so that it'll
-      // properly handle size(200, 200) and size(200, 200, P3D)
-      String sizing =
-        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
-      Pattern pattern = compiler.compile(sizing);
+    // this matches against any uses of the size() function,
+    // whether they contain numbers of variables or whatever.
+    // this way, no warning is shown if size() isn't actually
+    // used in the applet, which is the case especially for
+    // beginners that are cutting/pasting from the reference.
+    // modified for 83 to match size(XXX, ddd so that it'll
+    // properly handle size(200, 200) and size(200, 200, P3D)
+    String sizing =
+      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
+    Pattern pattern = compiler.compile(sizing);
 
-      // adds a space at the beginning, in case size() is the very
-      // first thing in the program (very common), since the regexp
-      // needs to check for things in front of it.
-      PatternMatcherInput input =
-        new PatternMatcherInput(" " + code[0].program);
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
-        try {
-          wide = Integer.parseInt(result.group(1).toString());
-          high = Integer.parseInt(result.group(2).toString());
+    // adds a space at the beginning, in case size() is the very
+    // first thing in the program (very common), since the regexp
+    // needs to check for things in front of it.
+    PatternMatcherInput input =
+      new PatternMatcherInput(" " + code[0].program);
+    if (matcher.contains(input, pattern)) {
+      MatchResult result = matcher.getMatch();
+      try {
+        wide = Integer.parseInt(result.group(1).toString());
+        high = Integer.parseInt(result.group(2).toString());
 
-        } catch (NumberFormatException e) {
-          // found a reference to size, but it didn't
-          // seem to contain numbers
-          final String message =
-            "The size of this applet could not automatically be\n" +
-            "determined from your code. You'll have to edit the\n" +
-            "HTML file to set the size of the applet.";
+      } catch (NumberFormatException e) {
+        // found a reference to size, but it didn't
+        // seem to contain numbers
+        final String message =
+          "The size of this applet could not automatically be\n" +
+          "determined from your code. You'll have to edit the\n" +
+          "HTML file to set the size of the applet.";
 
-          Base.showWarning("Could not find applet size", message, null);
-        }
-      }  // else no size() command found
+        Base.showWarning("Could not find applet size", message, null);
+      }
+    }  // else no size() command found
 
-      // originally tried to grab this with a regexp matcher,
-      // but it wouldn't span over multiple lines for the match.
-      // this could prolly be forced, but since that's the case
-      // better just to parse by hand.
-      StringBuffer dbuffer = new StringBuffer();
-      String lines[] = PApplet.split(code[0].program, '\n');
-      for (int i = 0; i < lines.length; i++) {
-        if (lines[i].trim().startsWith("/**")) {  // this is our comment
-          // some smartass put the whole thing on the same line
-          //if (lines[j].indexOf("*/") != -1) break;
+    // originally tried to grab this with a regexp matcher,
+    // but it wouldn't span over multiple lines for the match.
+    // this could prolly be forced, but since that's the case
+    // better just to parse by hand.
+    StringBuffer dbuffer = new StringBuffer();
+    String lines[] = PApplet.split(code[0].program, '\n');
+    for (int i = 0; i < lines.length; i++) {
+      if (lines[i].trim().startsWith("/**")) {  // this is our comment
+        // some smartass put the whole thing on the same line
+        //if (lines[j].indexOf("*/") != -1) break;
 
-          for (int j = i+1; j < lines.length; j++) {
-            if (lines[j].trim().endsWith("*/")) {
-              // remove the */ from the end, and any extra *s
-              // in case there's also content on this line
-              // nah, don't bother.. make them use the three lines
-              break;
-            }
-
-            int offset = 0;
-            while ((offset < lines[j].length()) &&
-                    ((lines[j].charAt(offset) == '*') ||
-                     (lines[j].charAt(offset) == ' '))) {
-              offset++;
-            }
-            // insert the return into the html to help w/ line breaks
-            dbuffer.append(lines[j].substring(offset) + "\n");
+        for (int j = i+1; j < lines.length; j++) {
+          if (lines[j].trim().endsWith("*/")) {
+            // remove the */ from the end, and any extra *s
+            // in case there's also content on this line
+            // nah, don't bother.. make them use the three lines
+            break;
           }
+
+          int offset = 0;
+          while ((offset < lines[j].length()) &&
+                 ((lines[j].charAt(offset) == '*') ||
+                  (lines[j].charAt(offset) == ' '))) {
+            offset++;
+          }
+          // insert the return into the html to help w/ line breaks
+          dbuffer.append(lines[j].substring(offset) + "\n");
         }
       }
-      String description = dbuffer.toString();
-
-      StringBuffer sources = new StringBuffer();
-      for (int i = 0; i < codeCount; i++) {
-        sources.append("<a href=\"" + code[i].file.getName() + "\">" +
-                       code[i].name + "</a> ");
-      }
-
-      File htmlOutputFile = new File(appletDir, "index.html");
-      FileOutputStream fos = new FileOutputStream(htmlOutputFile);
-      PrintStream ps = new PrintStream(fos);
-
-      // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
-      // and now @@description@@
-
-      InputStream is = null;
-      // if there is an applet.html file in the sketch folder, use that
-      File customHtml = new File(folder, "applet.html");
-      if (customHtml.exists()) {
-        is = new FileInputStream(customHtml);
-      }
-      if (is == null) {
-        is = Base.getStream("applet.html");
-      }
-      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (line.indexOf("@@") != -1) {
-          StringBuffer sb = new StringBuffer(line);
-          int index = 0;
-          while ((index = sb.indexOf("@@sketch@@")) != -1) {
-            sb.replace(index, index + "@@sketch@@".length(),
-                       name);
-          }
-          while ((index = sb.indexOf("@@source@@")) != -1) {
-            sb.replace(index, index + "@@source@@".length(),
-                       sources.toString());
-          }
-          while ((index = sb.indexOf("@@archive@@")) != -1) {
-            sb.replace(index, index + "@@archive@@".length(),
-                       name + ".jar");
-          }
-          while ((index = sb.indexOf("@@width@@")) != -1) {
-            sb.replace(index, index + "@@width@@".length(),
-                       String.valueOf(wide));
-          }
-          while ((index = sb.indexOf("@@height@@")) != -1) {
-            sb.replace(index, index + "@@height@@".length(),
-                       String.valueOf(high));
-          }
-          while ((index = sb.indexOf("@@description@@")) != -1) {
-            sb.replace(index, index + "@@description@@".length(),
-                       description);
-          }
-          line = sb.toString();
-        }
-        ps.println(line);
-      }
-
-      reader.close();
-      ps.flush();
-      ps.close();
     }
+    String description = dbuffer.toString();
+
+    StringBuffer sources = new StringBuffer();
+    for (int i = 0; i < codeCount; i++) {
+      sources.append("<a href=\"" + code[i].file.getName() + "\">" +
+                     code[i].name + "</a> ");
+    }
+
+    File htmlOutputFile = new File(appletFolder, "index.html");
+    FileOutputStream fos = new FileOutputStream(htmlOutputFile);
+    PrintStream ps = new PrintStream(fos);
+
+    // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+    // and now @@description@@
+
+    InputStream is = null;
+    // if there is an applet.html file in the sketch folder, use that
+    File customHtml = new File(folder, "applet.html");
+    if (customHtml.exists()) {
+      is = new FileInputStream(customHtml);
+    }
+    if (is == null) {
+      is = Base.getStream("applet.html");
+    }
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      if (line.indexOf("@@") != -1) {
+        StringBuffer sb = new StringBuffer(line);
+        int index = 0;
+        while ((index = sb.indexOf("@@sketch@@")) != -1) {
+          sb.replace(index, index + "@@sketch@@".length(),
+                     name);
+        }
+        while ((index = sb.indexOf("@@source@@")) != -1) {
+          sb.replace(index, index + "@@source@@".length(),
+                     sources.toString());
+        }
+        while ((index = sb.indexOf("@@archive@@")) != -1) {
+          sb.replace(index, index + "@@archive@@".length(),
+                     name + ".jar");
+        }
+        while ((index = sb.indexOf("@@width@@")) != -1) {
+          sb.replace(index, index + "@@width@@".length(),
+                     String.valueOf(wide));
+        }
+        while ((index = sb.indexOf("@@height@@")) != -1) {
+          sb.replace(index, index + "@@height@@".length(),
+                     String.valueOf(high));
+        }
+        while ((index = sb.indexOf("@@description@@")) != -1) {
+          sb.replace(index, index + "@@description@@".length(),
+                     description);
+        }
+        line = sb.toString();
+      }
+      ps.println(line);
+    }
+
+    reader.close();
+    ps.flush();
+    ps.close();
 
     // copy the source files to the target, since we like
     // to encourage people to share their code
     for (int i = 0; i < codeCount; i++) {
       try {
         Base.copyFile(code[i].file,
-                         new File(appletDir, code[i].file.getName()));
+                         new File(appletFolder, code[i].file.getName()));
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -1539,7 +1565,7 @@ public class Sketch {
 
     // create new .jar file
     FileOutputStream zipOutputFile =
-      new FileOutputStream(new File(appletDir, name + ".jar"));
+      new FileOutputStream(new File(appletFolder, name + ".jar"));
     ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
     ZipEntry entry;
 
@@ -1597,7 +1623,7 @@ public class Sketch {
 
         } else {  // just copy the file over.. prolly a .dll or something
           Base.copyFile(exportFile,
-                           new File(appletDir, exportFile.getName()));
+                           new File(appletFolder, exportFile.getName()));
         }
       }
     }
@@ -1626,12 +1652,12 @@ public class Sketch {
     // since there may be some inner classes
     // (add any .class files from the applet dir, then delete them)
     // TODO this needs to be recursive (for packages)
-    String classfiles[] = appletDir.list();
+    String classfiles[] = appletFolder.list();
     for (int i = 0; i < classfiles.length; i++) {
       if (classfiles[i].endsWith(".class")) {
         entry = new ZipEntry(classfiles[i]);
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(appletDir, classfiles[i])));
+        zos.write(Base.grabFile(new File(appletFolder, classfiles[i])));
         zos.closeEntry();
       }
     }
@@ -1641,7 +1667,7 @@ public class Sketch {
     // since the classes are outside the jar file.
     for (int i = 0; i < classfiles.length; i++) {
       if (classfiles[i].endsWith(".class")) {
-        File deadguy = new File(appletDir, classfiles[i]);
+        File deadguy = new File(appletFolder, classfiles[i]);
         if (!deadguy.delete()) {
           Base.showWarning("Could not delete",
                            classfiles[i] + " could not \n" +
@@ -1655,7 +1681,7 @@ public class Sketch {
     zos.flush();
     zos.close();
 
-    Base.openFolder(appletDir);
+    Base.openFolder(appletFolder);
     return true;
   }
 
