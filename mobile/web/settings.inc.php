@@ -1,5 +1,5 @@
 <?php
 
-define(SITE_ROOT, '/~fli/pmobile/');
+define(SITE_ROOT, '/processing/');
 
 ?>

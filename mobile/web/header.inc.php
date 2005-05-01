@@ -20,10 +20,10 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 </head>
 <body>
 <div id="head"> 
-    <img src="<?php echo SITE_ROOT?>images/wiring.jpg" width="97" height="47">
+    <img src="<?php echo SITE_ROOT?>images/mobile.png">
 </div>
 <div id="navigation"> 
-    <img src="<?php echo SITE_ROOT?>images/nav_bottomarrow.gif" width="33" height="25" align="absmiddle">
+    <img src="<?php echo SITE_ROOT?>images/nav_bottomarrow.png" align="absmiddle">
 
 <?php if ($_SERVER['PHP_SELF'] == SITE_ROOT . 'index.php') { ?>
     Cover
