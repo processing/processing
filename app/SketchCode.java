@@ -53,40 +53,24 @@ public class SketchCode {
   }
 
 
+  /**
+   * Load this piece of code from a file.
+   */
   public void load() throws IOException {
     program = Base.loadFile(file);
-
-    //program = null;
-    /*
-    } catch (IOException e) {
-      Base.showWarning("Error loading file",
-                          "Error while opening the file\n" +
-                          file.getPath(), e);
-      program = null;  // just in case
-    */
-
-    //if (program != null) {
-    //history = new History(file);
-    //}
+    modified = false;
   }
 
 
+  /**
+   * Save this piece of code, regardless of whether the modified
+   * flag is set or not.
+   */
   public void save() throws IOException {
     // TODO re-enable history
     //history.record(s, SketchHistory.SAVE);
 
-    //try {
-      //System.out.println("saving to " + file);
-      //System.out.println("stuff to save: " + program);
-      //System.out.println("-------");
     Base.saveFile(program, file);
     modified = false;
-
-    //} catch (Exception e) {
-    //Base.showWarning("Error saving file",
-    //                    "Could not save '" + file.getName() + "'\n" +
-    //                    "to '" + file.getParent() + "'\n" +
-    //                    "because of an error.", e);
-    //}
   }
 }
