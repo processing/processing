@@ -261,6 +261,7 @@ emissive	KEYWORD2	emissive_
 endCamera	KEYWORD2	endCamera_
 endShape	KEYWORD2	endShape_
 ==		equality
+exp	KEYWORD2	exp_
 expand	KEYWORD2	expand_
 extends	KEYWORD1	extends
 false	KEYWORD1	false
@@ -432,7 +433,6 @@ shininess	KEYWORD2	shininess_
 shorten	KEYWORD2	shorten_
 sin	KEYWORD2	sin_
 size	KEYWORD2	size_
-slice	KEYWORD2	slice_
 smooth	KEYWORD2	smooth_
 sort	KEYWORD2	sort_
 specular	KEYWORD2	specular_
@@ -457,6 +457,7 @@ stroke	KEYWORD2	stroke_
 strokeCap	KEYWORD2	strokeCap_
 strokeJoin	KEYWORD2	strokeJoin_
 strokeWeight	KEYWORD2	strokeWeight_
+subset	KEYWORD2	subset_
 -=		subtractassign
 switch	KEYWORD2	switch_
 tan	KEYWORD2	tan_
