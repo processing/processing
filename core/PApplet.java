@@ -5195,7 +5195,6 @@ v              PApplet.this.stop();
       boolean present = false;
       Color presentColor = Color.BLACK;
       Color stopColor = Color.GRAY;
-      //Object displayDevice = null;
       GraphicsDevice displayDevice = null;
 
       String param = null, value = null;
