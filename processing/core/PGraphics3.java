@@ -107,7 +107,7 @@ public class PGraphics3 extends PGraphics {
   public boolean manipulatingCamera;
 
   // projection matrix
-  public PMatrix projection = new PMatrix();
+  public PMatrix projection; // = new PMatrix();
 
   // These two matrices always point to either the modelview
   // or the modelviewInv, but they are swapped during
@@ -350,6 +350,7 @@ public class PGraphics3 extends PGraphics {
 
     // making this again here because things are weird
     projection = new PMatrix();
+
     modelview = new PMatrix(MATRIX_STACK_DEPTH);
     modelviewInv = new PMatrix(MATRIX_STACK_DEPTH);
 
@@ -2801,11 +2802,9 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("cannot call beginCamera while already "+
                                  "in camera manipulation mode");
     } else {
-      //projection.identity();
       manipulatingCamera = true;
-      forwardTransform = cameraInv; //modelviewInv;
-      reverseTransform = camera; //modelview;
-      //cameraMode = CUSTOM;
+      forwardTransform = cameraInv;
+      reverseTransform = camera;
     }
   }
 
@@ -2825,8 +2824,8 @@ public class PGraphics3 extends PGraphics {
                                  "in camera manipulation mode");
     }
     // reset the modelview to use this new camera matrix
-    modelview.set(camera);
-    modelviewInv.set(cameraInv);
+    modelview.set(forwardTransform);     // cameraInv
+    modelviewInv.set(reverseTransform);  // camera
 
     // set matrix mode back to modelview
     forwardTransform = modelview;

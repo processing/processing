@@ -343,20 +343,22 @@ public class PGraphics2 extends PGraphics {
 
 
   public void endShape() {
-    switch (shape) {
-    case LINE_STRIP:
-      stroke_shape(gpath);
-      break;
+    if (gpath != null) {  // make sure something has been drawn
+      switch (shape) {
+      case LINE_STRIP:
+        stroke_shape(gpath);
+        break;
 
-    case LINE_LOOP:
-      gpath.closePath();
-      stroke_shape(gpath);
-      break;
+      case LINE_LOOP:
+        gpath.closePath();
+        stroke_shape(gpath);
+        break;
 
-    case POLYGON:
-      gpath.closePath();
-      draw_shape(gpath);
-      break;
+      case POLYGON:
+        gpath.closePath();
+        draw_shape(gpath);
+        break;
+      }
     }
     shape = 0;
   }
