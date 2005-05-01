@@ -140,6 +140,23 @@ public class JEditTextArea extends JComponent
       });
   }
 
+
+  /**
+   * Get current position of the vertical scroll bar. [fry]
+   */
+  public int getScrollPosition() {
+    return vertical.getValue();
+  }
+
+
+  /**
+   * Set position of the vertical scroll bar. [fry]
+   */
+  public void setScrollPosition(int what) {
+    vertical.setValue(what);
+  }
+
+
   /**
    * Returns if this component can be traversed by pressing
    * the Tab key. This returns false.
@@ -886,12 +903,12 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Copies the specified substring of the document into a segment.
-         * If the offsets are invalid, the segment will contain a null string.
-         * @param start The start offset
-         * @param len The length of the substring
-         * @param segment The segment
-         */
+   * Copies the specified substring of the document into a segment.
+   * If the offsets are invalid, the segment will contain a null string.
+   * @param start The start offset
+   * @param len The length of the substring
+   * @param segment The segment
+   */
   public final void getText(int start, int len, Segment segment)
   {
     try
@@ -906,10 +923,10 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the text on the specified line.
-         * @param lineIndex The line
-         * @return The text, or null if the line is invalid
-         */
+   * Returns the text on the specified line.
+   * @param lineIndex The line
+   * @return The text, or null if the line is invalid
+   */
   public final String getLineText(int lineIndex)
   {
     int start = getLineStartOffset(lineIndex);
@@ -917,10 +934,10 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Copies the text on the specified line into a segment. If the line
-         * is invalid, the segment will contain a null string.
-         * @param lineIndex The line
-         */
+   * Copies the text on the specified line into a segment. If the line
+   * is invalid, the segment will contain a null string.
+   * @param lineIndex The line
+   */
   public final void getLineText(int lineIndex, Segment segment)
   {
     int start = getLineStartOffset(lineIndex);
@@ -928,17 +945,17 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the selection start offset.
-         */
+   * Returns the selection start offset.
+   */
   public final int getSelectionStart()
   {
     return selectionStart;
   }
 
   /**
-         * Returns the offset where the selection starts on the specified
-         * line.
-         */
+   * Returns the offset where the selection starts on the specified
+   * line.
+   */
   public int getSelectionStart(int line)
   {
     if(line == selectionStartLine)
@@ -959,36 +976,36 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the selection start line.
-         */
+   * Returns the selection start line.
+   */
   public final int getSelectionStartLine()
   {
     return selectionStartLine;
   }
 
   /**
-         * Sets the selection start. The new selection will be the new
-         * selection start and the old selection end.
-         * @param selectionStart The selection start
-         * @see #select(int,int)
-         */
+   * Sets the selection start. The new selection will be the new
+   * selection start and the old selection end.
+   * @param selectionStart The selection start
+   * @see #select(int,int)
+   */
   public final void setSelectionStart(int selectionStart)
   {
     select(selectionStart,selectionEnd);
   }
 
   /**
-         * Returns the selection end offset.
-         */
+   * Returns the selection end offset.
+   */
   public final int getSelectionEnd()
   {
     return selectionEnd;
   }
 
   /**
-         * Returns the offset where the selection ends on the specified
-         * line.
-         */
+   * Returns the offset where the selection ends on the specified
+   * line.
+   */
   public int getSelectionEnd(int line)
   {
     if(line == selectionEndLine)
@@ -1009,19 +1026,19 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the selection end line.
-         */
+   * Returns the selection end line.
+   */
   public final int getSelectionEndLine()
   {
     return selectionEndLine;
   }
 
   /**
-         * Sets the selection end. The new selection will be the old
-         * selection start and the bew selection end.
-         * @param selectionEnd The selection end
-         * @see #select(int,int)
-         */
+   * Sets the selection end. The new selection will be the old
+   * selection start and the bew selection end.
+   * @param selectionEnd The selection end
+   * @see #select(int,int)
+   */
   public final void setSelectionEnd(int selectionEnd)
   {
     select(selectionStart,selectionEnd);
@@ -1033,76 +1050,76 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the caret position. This will either be the selection
-         * start or the selection end, depending on which direction the
-         * selection was made in.
-         */
+   * Returns the caret position. This will either be the selection
+   * start or the selection end, depending on which direction the
+   * selection was made in.
+   */
   public final int getCaretPosition()
   {
     return (biasLeft ? selectionStart : selectionEnd);
   }
 
   /**
-         * Returns the caret line.
-         */
+   * Returns the caret line.
+   */
   public final int getCaretLine()
   {
     return (biasLeft ? selectionStartLine : selectionEndLine);
   }
 
   /**
-         * Returns the mark position. This will be the opposite selection
-         * bound to the caret position.
-         * @see #getCaretPosition()
-         */
+   * Returns the mark position. This will be the opposite selection
+   * bound to the caret position.
+   * @see #getCaretPosition()
+   */
   public final int getMarkPosition()
   {
     return (biasLeft ? selectionEnd : selectionStart);
   }
 
   /**
-         * Returns the mark line.
-         */
+   * Returns the mark line.
+   */
   public final int getMarkLine()
   {
     return (biasLeft ? selectionEndLine : selectionStartLine);
   }
 
   /**
-         * Sets the caret position. The new selection will consist of the
-         * caret position only (hence no text will be selected)
-         * @param caret The caret position
-         * @see #select(int,int)
-         */
+   * Sets the caret position. The new selection will consist of the
+   * caret position only (hence no text will be selected)
+   * @param caret The caret position
+   * @see #select(int,int)
+   */
   public final void setCaretPosition(int caret)
   {
     select(caret,caret);
   }
 
   /**
-         * Selects all text in the document.
-         */
+   * Selects all text in the document.
+   */
   public final void selectAll()
   {
     select(0,getDocumentLength());
   }
 
   /**
-         * Moves the mark to the caret position.
-         */
+   * Moves the mark to the caret position.
+   */
   public final void selectNone()
   {
     select(getCaretPosition(),getCaretPosition());
   }
 
   /**
-         * Selects from the start offset to the end offset. This is the
-         * general selection method used by all other selecting methods.
-         * The caret position will be start if start &lt; end, and end
-         * if end &gt; start.
-         * @param start The start offset
-         * @param end The end offset
-         */
+   * Selects from the start offset to the end offset. This is the
+   * general selection method used by all other selecting methods.
+   * The caret position will be start if start &lt; end, and end
+   * if end &gt; start.
+   * @param start The start offset
+   * @param end The end offset
+   */
   public void select(int start, int end)
   {
     int newStart, newEnd;
