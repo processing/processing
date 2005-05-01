@@ -9,8 +9,25 @@ X saveFrame with a filename still causing trouble:
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114097641;start=0
 X fov should be in radians
 
-_ ex on endshape if no calls to vertex
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
+X ex on endshape if no calls to vertex
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
+
+_ polygons perpendicular to axis not drawing
+_   is this a clipping error?
+_   probably a triangulation error, because triangles work ok
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
+
+_ is camera backwards, or staying fixed and moving the scene?
+_   camera() is broken, should be ok to call it at beinning of loop
+_   end of lookat might be backwards
+_   or endCamera might be swapping camera and cameraInv
+_     beginCamera also grabs it backwards
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+high priority but not *required* for 86
 
 _ createGraphics(200, 200) to create same as source
 _   createGraphics(200, 200, P2D) to create 2D from 3D
@@ -20,18 +37,8 @@ _ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _   they're drawn as transparent and don't have their high bits set
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
 
-_ polygons perpendicular to axis not drawing
-_   is this a clipping error?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
-
-_ is camera backwards, or staying fixed and moving the scene?
-_   end of lookat might be backwards
-_   or endCamera might be swapping camera and cameraInv
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-high priority but not *required* for 86
+_ vars like cameraX etc need to be in PGraphics
+_   otherwise g.xxxx won't work
 
 _ is mousePressed broken because of event queue? 
 _   or at least w/ framerate? or redraw and noLoop?
@@ -42,6 +49,8 @@ _   append(), shorten(), splice, slice, subset, concat, reverse
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
 
 present mode fixes
+_ not working on macosx 10.2?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
 _ for present mode, need to set a default display 
 _   currently crashes if only --present is specified w/o --display
 _ present mode is flakey.. applet doesn't always come up

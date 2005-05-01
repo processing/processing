@@ -1359,8 +1359,9 @@ public class Editor extends JFrame
 
       sketch = new Sketch(this, path);
       // TODO re-enable this once export application works
-      exportAppItem.setEnabled(false && !sketch.isLibrary());
-      buttons.disableRun(sketch.isLibrary());
+      exportAppItem.setEnabled(false);
+      //exportAppItem.setEnabled(false && !sketch.isLibrary());
+      //buttons.disableRun(sketch.isLibrary());
       header.rebuild();
       if (Preferences.getBoolean("console.auto_clear")) {
         console.clear();
@@ -1425,11 +1426,13 @@ public class Editor extends JFrame
    * hitting export twice, quickly, and horking things up.
    */
   synchronized public void handleExport() {
-    String what = sketch.isLibrary() ? "Applet" : "Library";
-    message("Exporting " + what + "...");
+    //String what = sketch.isLibrary() ? "Applet" : "Library";
+    //message("Exporting " + what + "...");
+    message("Exporting applet...");
     try {
-      boolean success = sketch.isLibrary() ?
-        sketch.exportLibrary() : sketch.exportApplet();
+      //boolean success = sketch.isLibrary() ?
+      //sketch.exportLibrary() : sketch.exportApplet();
+      boolean success = sketch.exportApplet();
       if (success) {
         message("Done exporting.");
       } else {
