@@ -66,7 +66,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
     <tr>
       <td align="right" width="50">
         <a href="index.php">
-          <img src="<?php echo SITE_ROOT?>images/back_off.gif" width="38" height="30" border="0" align="middle">
+          <img src="<?php echo SITE_ROOT?>images/back_off.png" border="0" align="middle">
         </a>
       </td>
       <td valign="middle">
