@@ -5261,6 +5261,7 @@ v              PApplet.this.stop();
         //GraphicsConfiguration gc = displayDevice.getDefaultConfiguration();
         //frame = new Frame(gc);
         frame = new Frame(displayDevice.getDefaultConfiguration());
+        println(displayDevice.getDefaultConfiguration());
       } else {
         frame = new Frame();
       }
@@ -5292,13 +5293,16 @@ v              PApplet.this.stop();
       if (present) {
         frame.setUndecorated(true);
         frame.setBackground(presentColor);
+        //println("background color should be " + presentColor);
         displayDevice.setFullScreenWindow(frame);
 
         frame.add(applet);
         Dimension fullscreen = frame.getSize();
+        //System.out.println("frame size is " + fullscreen);
         applet.setBounds((fullscreen.width - applet.width) / 2,
                          (fullscreen.height - applet.height) / 2,
                          applet.width, applet.height);
+        //println("applet bounds now " + applet.getBounds());
 
         if (external) {
           Label label = new Label("stop");
