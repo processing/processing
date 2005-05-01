@@ -28,11 +28,17 @@ import java.io.*;
 
 
 public class SketchCode {
-  String name;  // pretty name (no extension), not the full file name
-  File file;
-  int flavor;
+  public String name;  // pretty name (no extension), not the full file name
+  public File file;
+  public int flavor;
 
-  String program;
+  public String program;
+
+  // saved positions from last time this tab was used
+  public int selectionStart;
+  public int selectionStop;
+  public int scrollPosition;
+
   public boolean modified;
   //SketchHistory history;  // TODO add history information
 

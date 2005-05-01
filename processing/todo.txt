@@ -587,6 +587,8 @@ PDE / Sketch & Sketchbook
    1 _   unless that's the current mode that's being used
    1 _ scanning sketchbook folder may be extremely slow 
    1 _   not sure why this would be the case
+   1 _ handle renaming with case changes (currently ignores case change)
+   1 _   see notes/bitching in Sketch.nameCode()
 
 
 PDE / Compiler
