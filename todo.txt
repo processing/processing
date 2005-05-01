@@ -35,8 +35,8 @@ X   save caret position when switching tabs
 _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
-_ "are you trying to f-- with me" on quitting the app is super problem
-_   look into canceling a quit instead?
+X "are you trying to f-- with me" on quitting the app is super problem
+o   look into canceling a quit instead?
 
 _ "save as" not quite working
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
@@ -137,28 +137,6 @@ _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
 _   problem with it launching a new thread for every single update!
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-_ set applet.frame on runner, so ppl can mess with the frame itself
-
-_ option to suppress warning dialogs
-_   starting with the one about modifying the sketch name for spaces
-
-_ osx is swallowing exceptions on external apps
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
-
-_ sun.applet.Main is appletviewer
-
-_ settings.path.fallback not being used
-_ can't find build dir on operating systems w/ non-ascii chars
-_   or rather, when user accounts have non-ascii chars in the name
-_   try setting up an account where this is the case
-
-_ info about getting started with building processing
-_   also re: what about eclipse? what about antlr?
-
-_ update things for java 1.5 since it's inevitable
-
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer
@@ -184,6 +162,28 @@ void draw() {
 void serialEvent() {
   println(myPort.readString());
 }
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+_ set applet.frame on runner, so ppl can mess with the frame itself
+
+_ option to suppress warning dialogs
+_   starting with the one about modifying the sketch name for spaces
+
+_ osx is swallowing exceptions on external apps
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
+
+_ sun.applet.Main is appletviewer
+
+_ settings.path.fallback not being used
+_ can't find build dir on operating systems w/ non-ascii chars
+_   or rather, when user accounts have non-ascii chars in the name
+_   try setting up an account where this is the case
+
+_ info about getting started with building processing
+_   also re: what about eclipse? what about antlr?
+
+_ update things for java 1.5 since it's inevitable
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

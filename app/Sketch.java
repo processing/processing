@@ -276,7 +276,9 @@ public class Sketch {
     // ask for new name of file (internal to window)
     // TODO maybe just popup a text area?
     renamingCode = true;
-    editor.status.edit("New name for file:", current.name);
+    String prompt = (current == code[0]) ?
+      "New name for sketch:" : "New name for file:";
+    editor.status.edit(prompt, current.name);
   }
 
 
@@ -310,6 +312,7 @@ public class Sketch {
     String newFilename = null;
     int newFlavor = 0;
 
+    // separate into newName (no extension) and newFilename (with ext)
     // add .pde to file if it has no extension
     if (newName.endsWith(".pde")) {
       newFilename = newName;
@@ -334,8 +337,8 @@ public class Sketch {
       newFlavor = PDE;
     }
 
-    // dots are allowed for the .pde and .java, but not in general
-    // so make sure the user didn't name things poo.time.pde
+    // dots are allowed for the .pde and .java, but not in the name
+    // make sure the user didn't name things poo.time.pde
     // or something like that (nothing against poo time)
     if (newName.indexOf('.') != -1) {
       newName = Sketchbook.sanitizedName(newName);
@@ -351,43 +354,114 @@ public class Sketch {
       return;
     }
 
-    if (renamingCode) {
-      if (!current.file.renameTo(newFile)) {
-        Base.showWarning("Error",
-                         "Could not rename \"" + current.file.getName() +
-                         "\" to \"" + newFile.getName() + "\"", null);
-        return;
-      }
+    File newFileHidden = new File(folder, newFilename + ".x");
+    if (newFileHidden.exists()) {
+      // don't let them get away with it if they try to create something
+      // with the same name as something hidden
+      Base.showMessage("No Way",
+                       "A hidden tab with the same name already exists.\n" +
+                       "Use \"Unhide\" to bring it back.");
+      return;
+    }
 
+    if (renamingCode) {
       if (current == code[0]) {
-        // if renaming the main class, now rename the folder and re-open
+        // unfortunately this can't be a "save as" because that
+        // only copies the sketch files and the data folder
+        // however this *will* first save the sketch, then rename
+
+        // first get the contents of the editor text area
+        if (current.modified) {
+          current.program = editor.getText();
+          try {
+            // save this new SketchCode
+            current.save();
+          } catch (Exception e) {
+            Base.showWarning("Error", "Could not rename the sketch. (0)", e);
+            return;
+          }
+        }
+
+        if (!current.file.renameTo(newFile)) {
+          Base.showWarning("Error",
+                           "Could not rename \"" + current.file.getName() +
+                           "\" to \"" + newFile.getName() + "\"", null);
+          return;
+        }
+
+        // save each of the other tabs because this is gonna be re-opened
+        try {
+          for (int i = 1; i < codeCount; i++) {
+            //if (code[i].modified) code[i].save();
+            code[i].save();
+          }
+        } catch (Exception e) {
+          Base.showWarning("Error", "Could not rename the sketch. (1)", e);
+          return;
+        }
+
+        // now rename the sketch folder and re-open
         File newFolder = new File(folder.getParentFile(), newName);
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error",
-                           "Could not rename the sketch.", null);
+          Base.showWarning("Error", "Could not rename the sketch. (2)", null);
           return;
         }
         // if successful, set base properties for the sketch
-        folder = newFolder;
+
         File mainFile = new File(newFolder, newName + ".pde");
         mainFilename = mainFile.getAbsolutePath();
 
+        // having saved everything and renamed the folder and the main .pde,
+        // use the editor to re-open the sketch to re-init state
+        // (unfortunately this will kill positions for carets etc)
+        editor.handleOpenUnchecked(mainFilename);
+
+        /*
+          // backtrack and don't rename the sketch folder
+          success = newFolder.renameTo(folder);
+          if (!success) {
+            String msg =
+              "Started renaming sketch and then ran into\n" +
+              "nasty trouble. Try to salvage with Copy & Paste\n" +
+              "or attempt a \"Save As\" to see if that works.";
+            Base.showWarning("Serious Error", msg, null);
+          }
+          return;
+        }
+        */
+
+        /*
         // set the sketch name... used by the pde and whatnot.
         // the name is only set in the sketch constructor,
         // so it's important here
         name = newName;
+
+        code[0].name = newName;
+        code[0].file = mainFile;
+        code[0].program = editor.getText();
+        code[0].save();
+
+        folder = newFolder;
 
         // get the changes into the sketchbook menu
         editor.sketchbook.rebuildMenus();
 
         // reload the sketch
         load();
+        */
 
       } else {
+        if (!current.file.renameTo(newFile)) {
+          Base.showWarning("Error",
+                           "Could not rename \"" + current.file.getName() +
+                           "\" to \"" + newFile.getName() + "\"", null);
+          return;
+        }
+
         // just reopen the class itself
-        current.file = newFile;
         current.name = newName;
+        current.file = newFile;
         current.flavor = newFlavor;
       }
 
