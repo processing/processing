@@ -70,7 +70,7 @@ while ($filename !== false) {
 }
 
 ?>
-<img src="images/language.jpg" width="150" height="22"><br>
+<img src="images/header.png"><br>
 &nbsp;
 <div class="column">
       <table width="180" border="0" cellspacing="0" cellpadding="0">

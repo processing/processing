@@ -3,8 +3,10 @@ $PAGE_TITLE = "Processing Mobile";
 
 require 'header.inc.php';
 ?>
-<img align="left" src="images/wiring_cover_small.jpg" width="590" height="300">
-<div class="column">
+<div>
+<img align="left" src="images/mobile_cover.jpg" width="590" height="300">
+</div>
+<div class="column" style="clear: left">
 &nbsp;
 </div>
 <div class="column">
