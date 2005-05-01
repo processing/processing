@@ -17,24 +17,22 @@ o   if p5 is running 1.5, let them know to use the standard install
 o   check to see if when running externally, will be using a 1.5 vm
 X   nah, this seems like overkill.. problems haven't been *that* bad (yet)
 X make sure that when running ext, using the local java
-
-_ get these two todo lists into their bugzilla categories
+X macosx 10.2 needs libiconv to run jikes
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
+o   either compile jikes not to use it: 
+o     http://jikes.sourceforge.net/faq/dev-win32.shtml
+o   or maybe include an installer: 
+o     http://www.bluem.net/downloads/libiconv_en/
+o   gnu page for libiconv
+o     http://www.gnu.org/software/libiconv/
+X   on 10.2, the version of jikes from 69 (the cvs build) works fine
+_   update the faq when doing the release
 
 _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
-_ macosx 10.2 needs libiconv to run jikes
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
-_   either compile jikes not to use it: 
-_     http://jikes.sourceforge.net/faq/dev-win32.shtml
-_   or maybe include an installer: 
-_     http://www.bluem.net/downloads/libiconv_en/
-_   gnu page for libiconv
-_     http://www.gnu.org/software/libiconv/
-_   on 10.2, the version of jikes from 69 (the cvs build) works fine
-
 _ "are you trying to f-- with me" on quitting the app is super problem
+_   look into canceling a quit instead?
 
 _ "save as" not quite working
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
@@ -54,6 +52,8 @@ be expected, the deleted tabs are gone from both folders.  Makes sense.
 I get it.  But i wonder if this will catch others off guard.  
 Not suggesting a change to the way it works... but thoughts on if this 
 might screw people in the long run?
+
+_ sketch "delete" not working.. grrr..
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -124,6 +124,8 @@ _   and re-copy the css in after generating the doc each time
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 HIGH PRIORITY BUT NOT NECESSITY
+
+_ get these two todo lists into their bugzilla categories
 
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
@@ -405,6 +407,8 @@ _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 
 editor tools menu
+_ how to handle command keys
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272;start=0
 _ make dynamically loaded plugins and "tools" menu
 _   break out beautify as its own plugin
 _ make beautify plugin "Auto Format"
