@@ -148,11 +148,6 @@ public class Sketch {
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
-    //File libraryFolder = new File(folder, "library");
-    //if (libraryFolder.exists()) {
-    //library = true;
-    //}
-
     // get list of files in the sketch folder
     String list[] = folder.list();
 
@@ -195,16 +190,12 @@ public class Sketch {
                       JAVA);
       }
     }
-    //System.out.println("code count 2 is " + codeCount);
 
     // remove any entries that didn't load properly
     int index = 0;
     while (index < codeCount) {
-      //System.out.println("code is " + code);
-      //System.out.println(index + " " + code[index]);
       if ((code[index] == null) ||
           (code[index].program == null)) {
-        //hide(index);  // although will this file be hidable?
         for (int i = index+1; i < codeCount; i++) {
           code[i-1] = code[i];
         }
@@ -214,14 +205,11 @@ public class Sketch {
         index++;
       }
     }
-    //System.out.println("code count 3 is " + codeCount);
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
-    //System.out.println("looking for " + mainFilename);
     for (int i = 1; i < codeCount; i++) {
       if (code[i].file.getName().equals(mainFilename)) {
-        //System.out.println("found main code at slot " + i);
         SketchCode temp = code[0];
         code[0] = code[i];
         code[i] = temp;
@@ -233,7 +221,6 @@ public class Sketch {
     sortCode();
 
     // set the main file to be the current tab
-    //current = code[0];
     setCurrent(0);
   }
 
@@ -277,9 +264,6 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    //System.out.println("new code");
-    // ask for name of new file
-    // maybe just popup a text area?
     renamingCode = false;
     editor.status.edit("Name for new file:", "");
   }
@@ -288,10 +272,6 @@ public class Sketch {
   public void renameCode() {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
-
-    // don't allow rename of the main code
-    //if (current == code[0]) return;
-    // TODO maybe gray out the menu on setCurrent(0)
 
     // ask for new name of file (internal to window)
     // TODO maybe just popup a text area?
@@ -926,6 +906,9 @@ public class Sketch {
     // get the text currently being edited
     if (current != null) {
       current.program = editor.getText();
+      current.selectionStart = editor.textarea.getSelectionStart();
+      current.selectionStop = editor.textarea.getSelectionEnd();
+      current.scrollPosition = editor.textarea.getScrollPosition();
     }
 
     current = code[which];
@@ -935,8 +918,11 @@ public class Sketch {
     // (so they don't undo back to the other file.. whups!)
     editor.setText(current.program, true);
 
-    // and i'll personally make a note of the change
-    //current = which;
+    // set stored caret and scroll positions
+    editor.textarea.setScrollPosition(current.scrollPosition);
+    editor.textarea.select(current.selectionStart, current.selectionStop);
+    //editor.textarea.setSelectionStart(current.selectionStart);
+    //editor.textarea.setSelectionEnd(current.selectionStop);
 
     editor.header.rebuild();
   }
