@@ -27,6 +27,10 @@ o   gnu page for libiconv
 o     http://www.gnu.org/software/libiconv/
 X   on 10.2, the version of jikes from 69 (the cvs build) works fine
 _   update the faq when doing the release
+X additional requests for this (and it's an easy fix)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
+X   maintain tab scroll and caret positions
+X   save caret position when switching tabs
 
 _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
@@ -137,13 +141,11 @@ _   problem with it launching a new thread for every single update!
 
 _ set applet.frame on runner, so ppl can mess with the frame itself
 
+_ option to suppress warning dialogs
+_   starting with the one about modifying the sketch name for spaces
+
 _ osx is swallowing exceptions on external apps
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
-
-_ additional requests for this (and it's an easy fix)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
-   1 _ maintain tab scroll and caret positions
-   1 _ save caret position when switching tabs
 
 _ sun.applet.Main is appletviewer
 
