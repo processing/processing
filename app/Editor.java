@@ -238,9 +238,11 @@ public class Editor extends JFrame
 
   /**
    * Hack for #@#)$(* Mac OS X.
+   * This appears to only be required on OS X 10.2, and this code
+   * isn't even being hit on OS X 10.3 or Windows.
    */
   public Dimension getMinimumSize() {
-    System.out.println("getting minimum size");
+    //System.out.println("getting minimum size");
     return new Dimension(500, 550);
   }
 
