@@ -55,6 +55,8 @@ might screw people in the long run?
 
 _ sketch "delete" not working.. grrr..
 
+_ creating a new file with the same name as a hidden file will cause trouble
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -441,7 +443,13 @@ _   and gives info about what to do next (how to edit)
 
 
 export stuff
+_ currently some bugs in the main() because it's not sizing applets 
+_   if running in present mode it works ok
+_   but that also needs its display set.. argh
 _ write export-to-application
+_   problem with packages.. currently mainClassName is preproc name
+_     and "name" is the sketch name, w/o package
+_     but if a package were in use, then would be trouble
 _   lock feature for present mode (part of export to application?)
 _   application can still do serial (qt, other stuff?) 
 _   applet runs in browser, though applet on cbagel is everything..
