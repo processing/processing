@@ -40,23 +40,25 @@ import com.oroinc.text.regex.*;
  * Stores information about files in the current sketch
  */
 public class Sketch {
-  //static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
   static File tempBuildFolder;
 
   Editor editor;
 
-  // name of sketch, which is the name of main file
-  // (without .pde or .java extension)
+  /**
+   * Name of sketch, which is the name of main file
+   * (without .pde or .java extension)
+   */
   String name;
 
-  // name of 'main' file, used by load(), such as sketch_04040.pde
+  /**
+   * Name of 'main' file, used by load(), such as sketch_04040.pde
+   */
   String mainFilename;
-  //String path;  // path to 'main' file for this sketch
 
-  // true if any of the files have been modified
+  /// true if any of the files have been modified
   boolean modified;
 
-  boolean library;  // true if it's a library
+  //boolean library;  // true if it's a library
 
   public File folder; //sketchFolder;
   public File dataFolder;
@@ -146,10 +148,10 @@ public class Sketch {
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
-    File libraryFolder = new File(folder, "library");
-    if (libraryFolder.exists()) {
-      library = true;
-    }
+    //File libraryFolder = new File(folder, "library");
+    //if (libraryFolder.exists()) {
+    //library = true;
+    //}
 
     // get list of files in the sketch folder
     String list[] = folder.list();
@@ -599,9 +601,9 @@ public class Sketch {
   /**
    * Return true if this sketch is a library.
    */
-  public boolean isLibrary() {
-    return library;
-  }
+  //public boolean isLibrary() {
+  //return library;
+  //}
 
 
   /**
@@ -798,7 +800,7 @@ public class Sketch {
     // otherwise their .class and .jar files can cause conflicts.
     Base.removeDir(new File(folder, "applet"));
     Base.removeDir(new File(folder, "application"));
-    Base.removeDir(new File(folder, "library"));
+    //Base.removeDir(new File(folder, "library"));
 
     // do a "save"
     // this will take care of the unsaved changes in each of the tabs
