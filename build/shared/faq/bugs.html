@@ -56,8 +56,7 @@ function gogo(dropdown) {
 <option value="index.html">General Information </option>
 <option value="bugs.html" selected>Setup, Troubleshooting, and Bugs</option>
 <option value="platforms.html">Platforms (Mac OS, Windows and Linux)</option>
-<option value="changes.html">Changes from Alpha to
-            Beta</option>
+<option value="changes.html">Changes Between Releases</option>
 <option value="people.html">People, Contact, Affiliations </option>
               </select> </td>
           </tr>
@@ -322,6 +321,10 @@ changed in the future, but for now, they're not actually 'broken'.
   could add some extra code to unhinge the resulting class name from
   the sketch name, but it adds complexity, and complexity == bugs. :)
 
+<LI>Mind the capitalization of built-in functions. If a method or variable 
+name is two words, usually the first word is lowercase and the first letter
+of the second word will be capitalized. For instance: keyPressed, movieEvent, mouseX, etc. If you have a function called mousepressed(), it won't be called when mouse events occur, because it needs the capital P on 'pressed'.
+
 <LI> If you get a "ClassCastException" when trying to run your code 
   in a browser, you're probably trying to run non-Java 1.1 compliant 
   code. This means any classes that didn't exist in java 1.1. Or, 
@@ -406,7 +409,7 @@ for (int i = 0; i < lines.length; i++) {
       <b>
 Problems with Video (Quicktime for Java)
 </b> <br> <br>
-<EM>The QuickTime 7 upgrade released April 29, 2005 has not been tested with the video library. If you're working on a critical project that uses video, you might avoid this update, as some previous QuickTime updates have broken compatability with QuickTime for Java</EM>
+The QuickTime 7 upgrade released April 29, 2005 has not been tested with the video library. If you're working on a critical project that uses video, you might want to avoid this update, as some previous QuickTime updates have broken compatability with QuickTime for Java. On Mac OS X, Apple has provided a QuickTime 6.5.2 <a href="http://www.apple.com/support/downloads/quicktime652reinstallerformac.html">reinstaller</a> that you can use to return to your previous configuration.
 <br> <br>
 Windows
 <UL>
@@ -479,6 +482,11 @@ of that scenario. Blame Apple. Blame Canada.
       <b>
 Using the Serial Port
 </b> <br> <br>
+All Platforms
+<UL>
+<LI>If you're using a program to check to see if the serial port is working, then it won't be available to Processing. That means that if you're using HyperTerminal or whatever to see if your serial device is working, then you need to quit out of that application before using that port with Processing.
+<LI>Serial.list() will only list the ports that are currently available. So if you have a program that's using the serial port that you want to use for your Processing sketch, it's not going to be available, or even listed.
+</UL>
 Mac OS X
 <UL>
 <LI>
@@ -550,7 +558,7 @@ them: beta code that runs as root and handles files? yeah great...)
     <td width="645"> 
       <p> </p>
       <b>
-Problems with OpenGL
+OpenGL Issues
 </b> <br> <br>
 <UL>
 <LI>We don't recommend running other OpenGL programs while running
@@ -558,7 +566,13 @@ Problems with OpenGL
   results will be unexpected (windows from the other app showing
   through to the Processing window, etc.)
 
-<LI>If you're getting this erroron Windows: 
+<LI>OpenGL sketches cannot be exported to run in a browser. The export won't
+give an error, but they won't run properly. It's not clear whether this
+is something that we can fix for the future.
+
+<LI>OpenGL requires Java 1.4 or later. 
+
+<LI>If you're getting this error on Windows: 
 <tt>"net.java.games.jogl.GLException: Unable to enumerate pixel formats 
   of window using wglGetPixelFormatAttribivARB: 0"</tt>
 and your machine has built in "Intel" graphics (this is the case for 
@@ -581,6 +595,20 @@ screens, or other mess, your driver might be bad. For instance, if
 you're using a Dell, use the driver they provide (<a
 href="http://support.dell.com">support.dell.com</a>) instead of what
 might be a more recent driver obtained directly from nvidia.com.
+
+<LI>To get access to the GL object, you can use the following:
+<PRE>GL gl = ((PGraphicsGL)g).gl;</PRE>
+This will give you the <a href="https://jogl.dev.java.net/">jogl</a> 
+object that talks directly to OpenGL and will let you make OpenGL 
+calls directly. Note, however, that <em>this is not supported</em>, 
+in the sense that if you get weird problems with a GL-based sketch
+that uses this method, you're on your own. Processing is not intended
+as a nice wrapper on top of OpenGL. Instead, we're using 
+OpenGL graphics for one implementation of the Processing Core API. 
+
+<LI>OpenGL lines aren't fully implemented, and strokeWeight() doesn't 
+work properly. 
+
       </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -605,6 +633,7 @@ Things that we probably can't fix
 </b> <br> <br> 
 Some things are out of our control, or not actually bugs...
 <UL>
+<LI>If you're seeing a <TT>sun.dc.pr.PRException</TT>, it's because you're trying to draw something that's waaaaay off screen (like an x coordinate of -100,000 or something nutty like that).
 <LI>On Windows, the system clock seems to go weird, especially when
   using framerate() or delay(). this is a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4500388">long-standing bug</a> with the
   window version of the Java VM.
@@ -660,7 +689,9 @@ Some highlights to get started:
 release. We hope to bring it back, but it will take some time and we
 didn't want to hold up beta any longer.
 <LI>The stop button often doesn't stop things (like when using
-libraries), but closing the window to shut things down works fine.
+libraries). Closing the window to shut things down usually works fine, 
+though even that might lock up sometimes. Make sure you save your 
+sketches before you run, in case you have to force-quit.
 <LI>The set() functions are fairly broken when using OpenGL.
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
@@ -670,12 +701,13 @@ when using 2D.
 <LI>Dragging the applet window around will often make Processing lock up
 <LI>2D graphics might be a bit flickery sometimes, try setting the
 framerate() to get things under control
+<LI>strokeWeight() doesn't work with P3D or OPENGL
 <LI>The placement of applets that are 100x100 is sometimes weird
 <LI>Sometimes things lock up when there are errors in code,
 for instance, when using libraries like OpenGL, video, or net.
 <LI>Errors are sometimes cryptic or don't even come through,
 particularly on the Mac. 
-<LI>int() doesn't always work
+<LI>int() and float() don't always work
 <LI>pause() and framerate() aren't working with the video library
 <LI>The beloved(?) "History" function from previous versions is
 missing. In the meantime, "Archive Sketch" might be useful. 
@@ -683,8 +715,12 @@ missing. In the meantime, "Archive Sketch" might be useful.
 to develop their own editor plug-ins.
 <LI>"Export to Application" is not yet complete
 <LI>When you have too many tabs, things get ugly
+<LI>Save changes before quitting needs a "Cancel" button
 <LI>Error messages are often too long or too weird
 <LI>tint() is not affected textures but will in the future
+<LI>updatePixels() seems to stink on the Mac. It can sometimes cause the 
+screen to not update properly, or for video to contain weird bands of
+mixed frames.
 <LI>Lots of little UI things like proper focus or key shortcuts
 </UL>
       </td>
