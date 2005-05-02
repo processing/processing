@@ -952,6 +952,8 @@ public class Editor extends JFrame
       console.clear();
     }
 
+
+
     presenting = present;
     /*
     if (presenting) {
@@ -1671,20 +1673,21 @@ public class Editor extends JFrame
 
 
   public void error(Exception e) {
-    //System.out.println("ERORROOROROR 1");
-    //status.error(e.getMessage());
+    if (e == null) {
+      System.err.println("Editor.error() was passed a null exception.");
+      return;
+    }
 
     // not sure if any RuntimeExceptions will actually arrive
     // through here, but gonna check for em just in case.
     String mess = e.getMessage();
-    //System.out.println("MESSY: " + mess);
-    String rxString = "RuntimeException: ";
-    if (mess.indexOf(rxString) == 0) {
-      mess = mess.substring(rxString.length());
-      //System.out.println("MESS2: " + mess);
+    if (mess != null) {
+      String rxString = "RuntimeException: ";
+      if (mess.indexOf(rxString) == 0) {
+        mess = mess.substring(rxString.length());
+      }
+      status.error(mess);
     }
-    status.error(mess);
-
     e.printStackTrace();
   }
 
