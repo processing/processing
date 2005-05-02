@@ -43,15 +43,15 @@ import processing.core.*;
 
 
 /**
- * The base class for the main processing application
+ * The base class for the main processing application.
  * <P>
  * Primary role of this class is for platform identification and
  * general interaction with the system (launching URLs, loading
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 86;
-  static final String VERSION_NAME = "0086 Beta";
+  static final int VERSION = 87;
+  static final String VERSION_NAME = "0087 Beta";
 
   /**
    * Path of filename opened on the command line,
