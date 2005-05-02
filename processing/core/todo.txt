@@ -89,6 +89,7 @@ _ would be cool if could sort w/o the sort class..
 _   meaning use reflection to sort objects, just by implementing a few methods
 
 _ make a PException that extends RuntimeException but packages an ex?
+_   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
 
 _ catch sun.dc.pr.PRException?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
