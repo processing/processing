@@ -1,3 +1,85 @@
+0086 pde
+X new versions of java for windows and linux: 1.4.2_07
+X update faq on site? what's difference between versions?
+X   no difference between versions... should it be cvs based?
+X linux is missing all libraries except for javascript
+_   added again, but check the distribution to make sure they're working
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Tools;action=display;num=1114325419;start=1
+X preferences - second line of prefs (the file path) is smashing things
+X   righthand max isn't being updated for that second line
+X   or it's getting written over by the line below it
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113932608
+X include platform information when checking for updates
+X   send over the int as long hex number? 
+X   64 bits hex is gonna be 16 digits.. much cleaner
+o when people are running 1.5, warn them?
+o   if p5 is running 1.5, let them know to use the standard install
+o   check to see if when running externally, will be using a 1.5 vm
+X   nah, this seems like overkill.. problems haven't been *that* bad (yet)
+X make sure that when running ext, using the local java
+X macosx 10.2 needs libiconv to run jikes
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
+o   either compile jikes not to use it: 
+o     http://jikes.sourceforge.net/faq/dev-win32.shtml
+o   or maybe include an installer: 
+o     http://www.bluem.net/downloads/libiconv_en/
+o   gnu page for libiconv
+o     http://www.gnu.org/software/libiconv/
+X   on 10.2, the version of jikes from 69 (the cvs build) works fine
+X   update the faq when doing the release
+X additional requests for this (and it's an easy fix)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
+X   maintain tab scroll and caret positions
+X   save caret position when switching tabs
+X check casey's email about bugs
+
+lots of save bugs
+X "are you trying to f-- with me" on quitting the app is super problem
+o   look into canceling a quit instead?
+X "save as" not quite working
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
+X more "save as" trouble with removing files
+X   robert's issues with saveas deleting things
+X sketch "delete" not working.. grrr..
+X creating a new file with the same name as a hidden file will cause trouble
+
+documentation
+X mention revisions.txt in changes.html
+X quicktime 7 has not been tested, use at your own risk
+X   if you have trouble on mac, this is a qt 652 reinstaller
+X   http://www.apple.com/support/downloads/quicktime652reinstallerformac.html
+X not slice() but subset()... get word from casey on how to resolve
+X videoEvent and serialEvent pass in the object
+X serial will only list ports that are currently not in use
+X   i.e. if you're monitoring the port in one app, it won't be listed
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114561057;start=0
+X put the jikes fix for 10.2 on the faq (mention update to 86)
+X not supporting windows 95
+X   http://www.java.com/en/download/help/win95.xml
+X wontstart wasn't properly linked
+X watch out for upper/lowercase changes
+X   methods and functions always start lowercase, and have inner caps
+X faq - java 1.5
+X   seems to run things more slowly.. 
+X   if using p5 standard, will be running 1.4
+X   but if 1.5 installed, browser will probably use that
+X   opengl only runs with 1.4
+X   opengl not tested for applets
+X   to get to opengl functions, put this after size:
+X     GL gl = ((PGraphicsGL)g).gl;
+X     and then can make opengl calls. this is not supported, 
+X     and if things don't work, sorry. 
+X faq - known bugs
+X   1 pixel stroke weight in opengl (temporary)
+X   make clear that P2D is not working if not clear enough
+X   save/yes/no needs cancel
+X faq - not our problem
+X   sun.dc.pr.PRException
+X     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
+X updatePixels() may be slower.. hopefully JAVA2D mostly temporary
+X faq - graphics engines.. default graphics may be slow
+
+
 0085 pde
 X list of changes since rev 69? run through revisions.txt
 X   update and finalize the faq
