@@ -12,6 +12,8 @@ _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
 documentation
+_ small explanation and tiny example(s) for the following?
+_   modelX(), modelY(), modelZ(), screenZ(), openStream(), normal()
 _ auto-run the javadoc in dist.sh
 _   doctor a copy of the css file to use p5 defaults
 _   and re-copy the css in after generating the doc each time
