@@ -3060,6 +3060,21 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Simplified method to open a Java InputStream.
+   * <P>
+   * This method is useful if you want to use the facilities provided
+   * by PApplet to easily open things from the data folder or from a URL,
+   * but want an InputStream object so that you can use other Java
+   * methods to take more control of how the stream is read.
+   * <P>
+   * The filename passed in can be:
+   * <UL>
+   * <LI>A URL, for instance openStream("http://processing.org/");
+   * <LI>A file in the sketch's data folder
+   * <LI>Another file opened locally
+   * </UL>
+   */
   public InputStream openStream(String filename) {
     InputStream stream = null;
 
