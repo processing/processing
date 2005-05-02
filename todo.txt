@@ -32,6 +32,8 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 X   maintain tab scroll and caret positions
 X   save caret position when switching tabs
 
+_ when holding down shift, show the alt behavior for EditorHeader
+
 _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
@@ -67,6 +69,7 @@ _ creating a new file with the same name as a hidden file will cause trouble
 
 DOCUMENTATION
 
+_ mention revisions.txt in changes.html
 _ quicktime 7 has not been tested, use at your own risk
 _   if you have trouble on mac, this is a qt 652 reinstaller
 _   http://www.apple.com/support/downloads/quicktime652reinstallerformac.html
@@ -81,7 +84,7 @@ _   get(), set() and red() et al are one such example
 _ faq - not supporting windows 95
 _   http://www.java.com/en/download/help/win95.xml
 _ faq - known bugs
-_   put the jikes fix for 10.2 on the faq
+_   put the jikes fix for 10.2 on the faq (mention update to 86)
 _   1 pixel stroke weight in opengl (temporary)
 _   make clear that P2D is not working if not clear enough
 _   save/yes/no needs cancel
