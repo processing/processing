@@ -353,6 +353,8 @@ public class PGraphics3 extends PGraphics {
 
     modelview = new PMatrix(MATRIX_STACK_DEPTH);
     modelviewInv = new PMatrix(MATRIX_STACK_DEPTH);
+    forwardTransform = modelview;
+    reverseTransform = modelviewInv;
 
     camera = new PMatrix();
     cameraInv = new PMatrix();
@@ -2824,8 +2826,8 @@ public class PGraphics3 extends PGraphics {
                                  "in camera manipulation mode");
     }
     // reset the modelview to use this new camera matrix
-    modelview.set(forwardTransform);     // cameraInv
-    modelviewInv.set(reverseTransform);  // camera
+    modelview.set(camera);
+    modelviewInv.set(cameraInv);
 
     // set matrix mode back to modelview
     forwardTransform = modelview;
@@ -2871,26 +2873,9 @@ public class PGraphics3 extends PGraphics {
    * Calls camera() with Processing's standard camera setup.
    */
   public void camera() {
-    beginCamera();
-    resetMatrix();
-    lookat(cameraX, cameraY, cameraZ,
+    camera(cameraX, cameraY, cameraZ,
            cameraX, cameraY, 0,
            0, 1, 0);
-    endCamera();
-  }
-
-
-  /**
-   * Similar to gluLookAt(), however it first clears the current
-   * camera settings.
-   */
-  public void camera(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ) {
-    beginCamera();
-    resetMatrix();
-    lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-    endCamera();
   }
 
 
@@ -2942,7 +2927,7 @@ public class PGraphics3 extends PGraphics {
    */
   // TODO: deal with this. Lookat must ALWAYS apply to the modelview
   // regardless of the camera manipulation mode.
-  public void lookat(float eyeX, float eyeY, float eyeZ,
+  public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
     float z0 = eyeX - centerX;
@@ -2984,25 +2969,21 @@ public class PGraphics3 extends PGraphics {
 
     // just does an apply to the main matrix,
     // since that'll be copied out on endCamera
-    applyMatrix(x0, x1, x2, 0,
-                y0, y1, y2, 0,
-                z0, z1, z2, 0,
-                0,  0,  0,  1);
-    translate(eyeX, eyeY, eyeZ);
+    camera.set(x0, x1, x2, 0,
+                  y0, y1, y2, 0,
+                  z0, z1, z2, 0,
+                  0,  0,  0,  1);
+    camera.translate(-eyeX, -eyeY, -eyeZ);
 
-    /*
-    modelview.invApplyMatrix(x0, x1, x2, 0,
-                             y0, y1, y2, 0,
-                             z0, z1, z2, 0,
-                             0,  0,  0,  1);
-    modelview.invTranslate(eyeX, eyeY, eyeZ);
+    cameraInv.reset();
+    cameraInv.invApply(x0, x1, x2, 0,
+                       y0, y1, y2, 0,
+                       z0, z1, z2, 0,
+                       0,  0,  0,  1);
+    cameraInv.invTranslate(-eyeX, -eyeY, -eyeZ);
 
-    modelviewInv.applyMatrix(x0, x1, x2, 0,
-                y0, y1, y2, 0,
-                z0, z1, z2, 0,
-                0,  0,  0,  1);
-    modelviewInv.translate(eyeX, eyeY, eyeZ);
-    */
+    modelview.set(camera);
+    modelviewInv.set(cameraInv);
   }
 
 
