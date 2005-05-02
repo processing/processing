@@ -230,10 +230,11 @@ public class Sketchbook {
 
     if (!newName.equals(origName)) {
       Base.showMessage("Naming issue",
-                          "The sketch name had to be modified.\n" +
-                          "You can only use basic letters and numbers\n" +
-                          "to name a sketch (ascii only and no spaces,\n" +
-                          "and it can't start with a number)");
+                       "The sketch name had to be modified.\n" +
+                       "You can only use basic letters and numbers\n" +
+                       "to name a sketch (ascii only and no spaces,\n" +
+                       "it can't start with a number, and should be\n" +
+                       "less than 64 characters long)");
     }
     return newName;
   }
@@ -263,7 +264,10 @@ public class Sketchbook {
         buffer.append('_');
       }
     }
-    //return buffer.toString();
+    // let's not be ridiculous about the length of filenames
+    if (buffer.length() > 63) {
+      buffer.setLength(63);
+    }
     return buffer.toString();
   }
 
