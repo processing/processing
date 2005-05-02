@@ -2873,16 +2873,6 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Calls camera() with Processing's standard camera setup.
-   */
-  public void camera() {
-    camera(cameraX, cameraY, cameraZ,
-           cameraX, cameraY, 0,
-           0, 1, 0);
-  }
-
-
-  /**
    * Set camera to the default settings.
    * <P>
    * Processing camera behavior:
@@ -2933,6 +2923,63 @@ public class PGraphics3 extends PGraphics {
    * to pre-apply inverse transforms to a matrix that will be applied to model
    * coordinates. OpenGL provides nothing of this sort, but Processing does!
    * This is the camera transform matrix.
+   */
+  public void camera() {
+    camera(cameraX, cameraY, cameraZ,
+           cameraX, cameraY, 0,
+           0, 1, 0);
+  }
+
+
+  /**
+   * More flexible method for dealing with camera().
+   * <P>
+   * The actual call is like gluLookat. Here's the real skinny on
+   * what does what:
+   * <PRE>
+   * camera(); or
+   * camera(ex, ey, ez, cx, cy, cz, ux, uy, uz);
+   * </PRE>
+   * do not need to be called from with beginCamera();/endCamera();
+   * That's because they always apply to the camera transformation,
+   * and they always totally replace it. That means that any coordinate
+   * transforms done before camera(); in draw() will be wiped out.
+   * It also means that camera() always operates in untransformed world
+   * coordinates. Therefore it is always redundant to call resetMatrix();
+   * before camera(); This isn't technically true of gluLookat, but it's
+   * pretty much how it's used.
+   * <P>
+   * Now, beginCamera(); and endCamera(); are useful if you want to move
+   * the camera around using transforms like translate(), etc. They will
+   * wipe out any coordinate system transforms that occur before them in
+   * draw(), but they will not automatically wipe out the camera transform.
+   * This means that they should be at the top of draw(). It also means
+   * that the following:
+   * <PRE>
+   * beginCamera();
+   * rotateY(PI/80);
+   * endCamera();
+   * </PRE>
+   * will result in a camera that spins without stopping. If you want to
+   * just rotate a small constant amount, try this:
+   * <PRE>
+   * beginCamera();
+   * camera(); // sets up the default view
+   * rotateY(PI/80);
+   * endCamera();
+   * </PRE>
+   * That will rotate a little off of the default view. Note that this
+   * is entirely equivalent to
+   * <PRE>
+   * camera(); // sets up the default view
+   * beginCamera();
+   * rotateY(PI/80);
+   * endCamera();
+   * </PRE>
+   * because camera() doesn't care whether or not it's inside a
+   * begin/end clause. Basically it's safe to use camera() or
+   * camera(ex, ey, ez, cx, cy, cz, ux, uy, uz) as naked calls because
+   * they do all the matrix resetting automatically.
    */
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
