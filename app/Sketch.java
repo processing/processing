@@ -736,14 +736,6 @@ public class Sketch {
   }
 
 
-  /*
-  public void saveCurrent() throws IOException {
-    current.save();
-    calcModified();
-  }
-  */
-
-
   /**
    * Handles 'Save As' for a sketch.
    * <P>
@@ -778,11 +770,21 @@ public class Sketch {
     newName = Sketchbook.sanitizeName(newName);
 
     // make sure there doesn't exist a tab with that name already
-    File checkAlready = new File(folder, newName + ".pde");
-    if (checkAlready.exists()) {
+    File codeAlready = new File(folder, newName + ".pde");
+    if (codeAlready.exists()) {
       Base.showMessage("Nope",
                        "You can't save the sketch as \"" + newName + "\"\n" +
                        "because the sketch already has a tab with that name.");
+      return false;
+    }
+
+    // make sure there doesn't exist a tab with that name already
+    File hiddenAlready = new File(folder, newName + ".pde.x");
+    if (hiddenAlready.exists()) {
+      Base.showMessage("Nope",
+                       "You can't save the sketch as \"" + newName + "\"\n" +
+                       "because the sketch already has a " +
+                       "hidden tab with that name.");
       return false;
     }
 
