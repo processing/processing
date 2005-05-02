@@ -1,4 +1,8 @@
 0087 pde
+X bug with creating a new tab that's a .java file
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115059069;start=0
+X small explanation and tiny example(s) for the following?
+X   modelX(), modelY(), modelZ(), screenZ(), openStream(), normal()
 
 already completed in 86
 X remove requirement for osx to install fink
@@ -12,8 +16,6 @@ _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
 documentation
-_ small explanation and tiny example(s) for the following?
-_   modelX(), modelY(), modelZ(), screenZ(), openStream(), normal()
 _ auto-run the javadoc in dist.sh
 _   doctor a copy of the css file to use p5 defaults
 _   and re-copy the css in after generating the doc each time

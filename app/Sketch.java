@@ -320,7 +320,8 @@ public class Sketch {
       newFlavor = PDE;
 
     } else if (newName.endsWith(".java")) {
-      if (code[0] == current) {
+      // don't show this error if creating a new tab
+      if (renamingCode && (code[0] == current)) {
         Base.showWarning("Problem with rename",
                          "The main .pde file cannot be .java file.\n" +
                          "(It may be time for your to graduate to a\n" +
