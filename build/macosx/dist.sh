@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# or maybe should die if /sw not installed?
+# prefers that fink is intalled, but not required
 if test -f /sw/bin/head
 then
   # old 4 char version.. osx only uses the two chars
@@ -9,17 +9,18 @@ then
   # a more useful version of head than what's included with osx
   SHORT_REVISION=`/sw/bin/head -c 4 ../../todo.txt | tail -c 2`
   REVISION=`/sw/bin/head -c 4 ../../todo.txt`
+
+  VERSIONED=`cat ../../app/Base.java | grep $REVISION`
+  if [ -z "$VERSIONED" ]
+  then
+    echo Fix the revision number in Base.java
+    exit
+  fi
+
 else
   # can't get four bytes of head (osx doesn't support -c)
   SHORT_REVISION=00
   REVISION=0000
-fi
-
-VERSIONED=`cat ../../app/Base.java | grep $REVISION`
-if [ -z "$VERSIONED" ]
-then
-  echo Fix the revision number in Base.java
-  exit
 fi
 
 
