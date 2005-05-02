@@ -2798,6 +2798,40 @@ public class PGraphics3 extends PGraphics {
    * Note that the camera matrix is *not* the perspective matrix,
    * it is in front of the modelview matrix (hence the name "model"
    * and "view" for that matrix).
+   * <P>
+   * beginCamera() specifies that all coordinate transforms until endCamera()
+   * should be pre-applied in inverse to the camera transform matrix.
+   * Note that this is only challenging when a user specifies an arbitrary
+   * matrix with applyMatrix(). Then that matrix will need to be inverted,
+   * which may not be possible. But take heart, if a user is applying a
+   * non-invertible matrix to the camera transform, then he is clearly
+   * up to no good, and we can wash our hands of those bad intentions.
+   * <P>
+   * begin/endCamera clauses do not automatically reset the camera transform
+   * matrix. That's because we set up a nice default camera transform int
+   * setup(), and we expect it to hold through draw(). So we don't reset
+   * the camera transform matrix at the top of draw(). That means that an
+   * innocuous-looking clause like
+   * <PRE>
+   * beginCamera();
+   * translate(0, 0, 10);
+   * endCamera();
+   * </PRE>
+   * at the top of draw(), will result in a runaway camera that shoots
+   * infinitely out of the screen over time. In order to prevent this,
+   * it is necessary to call some function that does a hard reset of the
+   * camera transform matrix inside of begin/endCamera. Two options are
+   * <PRE>
+   * camera(); // sets up the nice default camera transform
+   * resetMatrix(); // sets up the identity camera transform
+   * </PRE>
+   * So to rotate a camera a constant amount, you might try
+   * <PRE>
+   * beginCamera();
+   * camera();
+   * rotateY(PI/8);
+   * endCamera();
+   * </PRE>
    */
   public void beginCamera() {
     if (manipulatingCamera) {
@@ -2839,37 +2873,6 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Calls ortho() for Processing's standard orthographic projection.
-   */
-  public void ortho() {
-    ortho(0, width, 0, height, -10, 10);
-  }
-
-
-  /**
-   * Similar to gluOrtho(), but wipes out the current projection matrix.
-   * <P>
-   * Implementation partially based on Mesa's matrix.c.
-   */
-  public void ortho(float left, float right,
-                    float bottom, float top,
-                    float near, float far) {
-    float x =  2.0f / (right - left);
-    float y =  2.0f / (top - bottom);
-    float z = -2.0f / (far - near);
-
-    float tx = -(right + left) / (right - left);
-    float ty = -(top + bottom) / (top - bottom);
-    float tz = -(far + near) / (far - near);
-
-    projection.set(x, 0, 0, tx,
-                   0, y, 0, ty,
-                   0, 0, z, tz,
-                   0, 0, 0, 1);
-  }
-
-
-  /**
    * Calls camera() with Processing's standard camera setup.
    */
   public void camera() {
@@ -2880,53 +2883,57 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Calls perspective() with Processing's standard coordinate setup.
-   */
-  public void perspective() {
-    perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
-  }
-
-
-  /**
-   * Same as gluPerspective(). Implementation based on Mesa's glu.c
-   */
-  public void perspective(float fov, float aspect, float zNear, float zFar) {
-    //float ymax = zNear * tan(fovy * PI / 360.0f);
-    float ymax = zNear * tan(fov / 2.0f);
-    float ymin = -ymax;
-
-    float xmin = ymin * aspect;
-    float xmax = ymax * aspect;
-
-    frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-  }
-
-
-  /**
-   * Same as glFrustum(), except that it wipes out (rather than
-   * multiplies against) the current perspective matrix.
+   * Set camera to the default settings.
    * <P>
-   * Implementation based on the explanation in the OpenGL blue book.
-   */
-  public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar) {
-    //System.out.println(projection);
-    projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
-                   0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
-                   0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
-                   0, 0, -1, 0);
-  }
-
-
-  /**
-   * Same as gluLookat().
+   * Processing camera behavior:
    * <P>
-   * This should only be called inside of a beginCamera/endCamera pair.
+   * Camera behavior can be split into two separate components, camera
+   * transformation, and projection. The transformation corresponds to the
+   * physical location, orientation, and scale of the camera. In a physical
+   * camera metaphor, this is what can manipulated by handling the camera
+   * body (with the exception of scale, which doesn't really have a physcial
+   * analog). The projection corresponds to what can be changed by
+   * manipulating the lens.
    * <P>
-   * Implementation based on Mesa's glu.c
+   * We maintain separate matrices to represent the camera transform and
+   * projection. An important distinction between the two is that the camera
+   * transform should be invertible, where the projection matrix should not,
+   * since it serves to map three dimensions to two. It is possible to bake
+   * the two matrices into a single one just by multiplying them together,
+   * but it isn't a good idea, since lighting, z-ordering, and z-buffering
+   * all demand a true camera z coordinate after modelview and camera
+   * transforms have been applied but before projection. If the camera
+   * transform and projection are combined there is no way to recover a
+   * good camera-space z-coordinate from a model coordinate.
+   * <P>
+   * Fortunately, there are no functions that manipulate both camera
+   * transformation and projection.
+   * <P>
+   * camera() sets the camera position, orientation, and center of the scene.
+   * It replaces the camera transform with a new one. This is different from
+   * gluLookAt(), but I think the only reason that GLU's lookat doesn't fully
+   * replace the camera matrix with the new one, but instead multiplies it,
+   * is that GL doesn't enforce the separation of camera transform and
+   * projection, so it wouldn't be safe (you'd probably stomp your projection).
+   * <P>
+   * The transformation functions are the same ones used to manipulate the
+   * modelview matrix (scale, translate, rotate, etc.). But they are bracketed
+   * with beginCamera(), endCamera() to indicate that they should apply
+   * (in inverse), to the camera transformation matrix.
+   * <P>
+   * This differs considerably from camera transformation in OpenGL.
+   * OpenGL only lets you say, apply everything from here out to the
+   * projection or modelview matrix. This makes it very hard to treat camera
+   * manipulation as if it were a physical camera. Imagine that you want to
+   * move your camera 100 units forward. In OpenGL, you need to apply the
+   * inverse of that transformation or else you'll move your scene 100 units
+   * forward--whether or not you've specified modelview or projection matrix.
+   * Remember they're just multiplied by model coods one after another.
+   * So in order to treat a camera like a physical camera, it is necessary
+   * to pre-apply inverse transforms to a matrix that will be applied to model
+   * coordinates. OpenGL provides nothing of this sort, but Processing does!
+   * This is the camera transform matrix.
    */
-  // TODO: deal with this. Lookat must ALWAYS apply to the modelview
-  // regardless of the camera manipulation mode.
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
@@ -2992,6 +2999,93 @@ public class PGraphics3 extends PGraphics {
    */
   public void printCamera() {
     camera.print();
+  }
+
+
+  /**
+   * Calls ortho() with the proper parameters for Processing's
+   * standard orthographic projection.
+   */
+  public void ortho() {
+    ortho(0, width, 0, height, -10, 10);
+  }
+
+
+  /**
+   * Similar to gluOrtho(), but wipes out the current projection matrix.
+   * <P>
+   * Implementation partially based on Mesa's matrix.c.
+   */
+  public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far) {
+    float x =  2.0f / (right - left);
+    float y =  2.0f / (top - bottom);
+    float z = -2.0f / (far - near);
+
+    float tx = -(right + left) / (right - left);
+    float ty = -(top + bottom) / (top - bottom);
+    float tz = -(far + near) / (far - near);
+
+    projection.set(x, 0, 0, tx,
+                   0, y, 0, ty,
+                   0, 0, z, tz,
+                   0, 0, 0, 1);
+  }
+
+
+  /**
+   * Calls perspective() with Processing's standard coordinate projection.
+   * <P>
+   * Projection functions:
+   * <UL>
+   * <LI>frustrum()
+   * <LI>ortho()
+   * <LI>perspective()
+   * </UL>
+   * Each of these three functions completely replaces the projection
+   * matrix with a new one. They can be called inside setup(), and their
+   * effects will be felt inside draw(). At the top of draw(), the projection
+   * matrix is not reset. Therefore the last projection function to be
+   * called always dominates. On resize, the default projection is always
+   * established, which has perspective.
+   * <P>
+   * This behavior is pretty much familiar from OpenGL.
+   * <P>
+   */
+  public void perspective() {
+    perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
+  }
+
+
+  /**
+   * Similar to gluPerspective(). Implementation based on Mesa's glu.c
+   */
+  public void perspective(float fov, float aspect, float zNear, float zFar) {
+    //float ymax = zNear * tan(fovy * PI / 360.0f);
+    float ymax = zNear * tan(fov / 2.0f);
+    float ymin = -ymax;
+
+    float xmin = ymin * aspect;
+    float xmax = ymax * aspect;
+
+    frustum(xmin, xmax, ymin, ymax, zNear, zFar);
+  }
+
+
+  /**
+   * Same as glFrustum(), except that it wipes out (rather than
+   * multiplies against) the current perspective matrix.
+   * <P>
+   * Implementation based on the explanation in the OpenGL blue book.
+   */
+  public void frustum(float left, float right, float bottom,
+                      float top, float znear, float zfar) {
+    //System.out.println(projection);
+    projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
+                   0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
+                   0, 0, -(zfar+znear)/(zfar-znear),-(2*zfar*znear)/(zfar-znear),
+                   0, 0, -1, 0);
   }
 
 
