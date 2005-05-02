@@ -2111,12 +2111,6 @@ public class PGraphics extends PImage implements PConstants {
     depthError("frustum");
   }
 
-  public void lookat(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ) {
-    depthError("lookat");
-  }
-
   public void printCamera() {
     depthError("printCamera");
   }
