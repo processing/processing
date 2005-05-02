@@ -26,111 +26,93 @@ o     http://www.bluem.net/downloads/libiconv_en/
 o   gnu page for libiconv
 o     http://www.gnu.org/software/libiconv/
 X   on 10.2, the version of jikes from 69 (the cvs build) works fine
-_   update the faq when doing the release
+X   update the faq when doing the release
 X additional requests for this (and it's an easy fix)
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114449442;start=0
 X   maintain tab scroll and caret positions
 X   save caret position when switching tabs
+X check casey's email about bugs
 
-_ make simple tool for casey to rebuild all the examples at once
-_   need to rebuild with this release because of 1.3/1.4 issues
-
+lots of save bugs
 X "are you trying to f-- with me" on quitting the app is super problem
 o   look into canceling a quit instead?
+X "save as" not quite working
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
+X more "save as" trouble with removing files
+X   robert's issues with saveas deleting things
+X sketch "delete" not working.. grrr..
+X creating a new file with the same name as a hidden file will cause trouble
 
-_ "save as" not quite working
-http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113944897;start=0
-Performed a "Save As" that didn't quite take. The save action
-completed and the main tab was renamed, however the "Save Needed"
-notice was displaying. Attempting to do a basic save didn't clear the
-notice so I closed Processing and reopened. When I reopened P5 I was
-presented with an empty sketch and the renamed sketch wasn't in my
-sketch list. I dove into the my sketchbook directory and I found that
-a sketch folder was created and named properly. Inside the folder I
-found PDEs for all of my tabs except the main tab. Thoughts?
-
-_ more "save as" trouble with removing files
-However, this process doesn't work at all with Processing.  I hit delete 
-tabs to ditch the extra stuff and then do a saveAs.  And voila, as should
-be expected, the deleted tabs are gone from both folders.  Makes sense.
-I get it.  But i wonder if this will catch others off guard.  
-Not suggesting a change to the way it works... but thoughts on if this 
-might screw people in the long run?
-
-_ sketch "delete" not working.. grrr..
-
-_ creating a new file with the same name as a hidden file will cause trouble
+documentation
+X mention revisions.txt in changes.html
+X quicktime 7 has not been tested, use at your own risk
+X   if you have trouble on mac, this is a qt 652 reinstaller
+X   http://www.apple.com/support/downloads/quicktime652reinstallerformac.html
+X not slice() but subset()... get word from casey on how to resolve
+X videoEvent and serialEvent pass in the object
+X serial will only list ports that are currently not in use
+X   i.e. if you're monitoring the port in one app, it won't be listed
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114561057;start=0
+X put the jikes fix for 10.2 on the faq (mention update to 86)
+X not supporting windows 95
+X   http://www.java.com/en/download/help/win95.xml
+X wontstart wasn't properly linked
+X watch out for upper/lowercase changes
+X   methods and functions always start lowercase, and have inner caps
+X faq - java 1.5
+X   seems to run things more slowly.. 
+X   if using p5 standard, will be running 1.4
+X   but if 1.5 installed, browser will probably use that
+X   opengl only runs with 1.4
+X   opengl not tested for applets
+X   to get to opengl functions, put this after size:
+X     GL gl = ((PGraphicsGL)g).gl;
+X     and then can make opengl calls. this is not supported, 
+X     and if things don't work, sorry. 
+X faq - known bugs
+X   1 pixel stroke weight in opengl (temporary)
+X   make clear that P2D is not working if not clear enough
+X   save/yes/no needs cancel
+X faq - not our problem
+X   sun.dc.pr.PRException
+X     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
+X updatePixels() may be slower.. hopefully JAVA2D mostly temporary
+X faq - graphics engines.. default graphics may be slow
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-DOCUMENTATION
+_ make simple tool for casey to rebuild all the examples at once
+_   need to rebuild with this release because of 1.3/1.4 issues
 
-_ mention revisions.txt in changes.html
-_ quicktime 7 has not been tested, use at your own risk
-_   if you have trouble on mac, this is a qt 652 reinstaller
-_   http://www.apple.com/support/downloads/quicktime652reinstallerformac.html
+_ auto-run the javadoc in dist.sh
+_   doctor a copy of the css file to use p5 defaults
+_   and re-copy the css in after generating the doc each time
+
 _ documentation on tabs: .java files, inner classes, etc
-_ serial will only list ports that are currently not in use
-_   i.e. if you're monitoring the port in one app, it won't be listed
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114561057;start=0
-_ built in functions.. may not always be fastest, we're going for correct
-_   most things have other ways of making things much faster
-_   we've attempted for less confusion over speed in some cases
-_   get(), set() and red() et al are one such example
-_ faq - not supporting windows 95
-_   http://www.java.com/en/download/help/win95.xml
-_ faq - known bugs
-_   put the jikes fix for 10.2 on the faq (mention update to 86)
-_   1 pixel stroke weight in opengl (temporary)
-_   make clear that P2D is not working if not clear enough
-_   save/yes/no needs cancel
-X   wontstart wasn't properly linked
-_ faq - graphics engines
-_   default graphics may be slow
-_   opengl only runs with 1.4
-_     need to write an error if people try to use it in 1.3 (i.e. on export)
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
-_   grabbing sun.cpu.endian throws a security exception with gl applets
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
-_   opengl not tested for applets
-_   to get to opengl functions, put this after size:
-_     GL gl = ((PGraphicsGL)g).gl;
-_     and then can make opengl calls. this is not supported, 
-_     and if things don't work, sorry. 
-_ faq - not our problem
-_   watch out for upper/lowercase changes
-_     methods and functions always start lowercase, and have inner caps
-_   sun.dc.pr.PRException
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
-_ faq - changes
-X   videoEvent and serialEvent pass in the object
-_   updatePixels() may be slower.. hopefully JAVA2D mostly temporary
-_ is there a way to do xxx?
-_   advanced users who are outgrowing the basic reference: 
-_   be sure to check the "complete" reference
-_ faq - java 1.5
-_   seems to run things more slowly.. 
-_   if using p5 standard, will be running 1.4
-_   but if 1.5 installed, browser will probably use that
-_ faq - how things work
 _   additional tabs are added to the main code
 _   as a result, static variables can't be used
 _     though they can go above the class itself or be placed in the parent
 _   if you want it separate, use a .java file instead (not parsed)
 _   classes in tabs are inner classes, or use .java files
 _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
-_ not slice() but subset()... get word from casey on how to resolve
-_ get platform checker into the latest exhibition piece
 
-_ auto-run the javadoc in dist.sh
-_   doctor a copy of the css file to use p5 defaults
-_   and re-copy the css in after generating the doc each time
+_ built in functions.. may not always be fastest, we're going for correct
+_   most things have other ways of making things much faster
+_   we've attempted for less confusion over speed in some cases
+_   get(), set() and red() et al are one such example
+_ is there a way to do xxx?
+_   advanced users who are outgrowing the basic reference: 
+_   be sure to check the "complete" reference
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
 HIGH PRIORITY BUT NOT NECESSITY
+
+_ get platform checker into the latest exhibition piece
 
 _ get these two todo lists into their bugzilla categories
 
@@ -305,6 +287,10 @@ camera
 _ tearing and incomplete updates on camera?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
 _ pause and framerate aren't working
+_   framerate does set the frequency which movieEvent will be called, 
+_   but it is not setting the "available" field corrrectly. 
+_   sketch .zip file in casey's email message
+
 _ video wrong device name crashes things
 _ when passing in 'null' as the camera, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
@@ -339,6 +325,7 @@ _ mouse wheel broken in the text editor? (windows jdk 1.5?)
 
 
 PROBLEMS FOR NEW USERS
+_ don't all mousepressed(), throw a compile error
 _ making it easier to draw shapes
 _ missing semicolons - better error message
 _ missing brackets, unmatched brackets
