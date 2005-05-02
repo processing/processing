@@ -32,8 +32,6 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 X   maintain tab scroll and caret positions
 X   save caret position when switching tabs
 
-_ when holding down shift, show the alt behavior for EditorHeader
-
 _ make simple tool for casey to rebuild all the examples at once
 _   need to rebuild with this release because of 1.3/1.4 issues
 
@@ -572,11 +570,30 @@ PDE / Find & Replace
    1 _ only enable "find next" in menu after a find has happened
 
 
+PDE / Editor Buttons
+
+   1 _ when holding down shift, show the alt behavior for EditorHeader
+
+
 PDE / Editor Header
 
    1 _ make some fancy extendo things because the tabs get too big
    1 _   either condense or popdown menu thingy
    1 _ ctrl-tab to switch between tabs
+
+
+PDE / Editor Status
+
+   1 _ error messages run off the edge and go invisible
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
+   1 _ multi-line errors a mess in jikes
+   1 _   maybe a dropdown list thing, with the first just shown?
+   1 _ move to modal dialog showError/Message/Warning/Prompt design 
+   1 _   nicely design dialog boxes to go with visual of p5
+   1 _   maybe something that shows stack trace?
+   1 _   with an 'email this' button? (include source code too?)
+   1 _   also need a "prompt" dialog for asking filenames, etc
+   1 _   implement and remove PdeEditorStatus stuff
 
 
 PDE / Sketch & Sketchbook
@@ -651,20 +668,6 @@ TOOLS / Create Font
    1 _   may be that cff fonts won't work?
    1 _   or is it only those with ps names?
    1 _ create font with user-specified charsets
-
-
-PDE / Editor Status
-
-   1 _ error messages run off the edge and go invisible
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
-   1 _ multi-line errors a mess in jikes
-   1 _   maybe a dropdown list thing, with the first just shown?
-   1 _ move to modal dialog showError/Message/Warning/Prompt design 
-   1 _   nicely design dialog boxes to go with visual of p5
-   1 _   maybe something that shows stack trace?
-   1 _   with an 'email this' button? (include source code too?)
-   1 _   also need a "prompt" dialog for asking filenames, etc
-   1 _   implement and remove PdeEditorStatus stuff
 
 
 
