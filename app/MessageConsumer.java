@@ -25,7 +25,7 @@ package processing.app;
 
 
 /**
- * Interface for dealing with parser/compiler output
+ * Interface for dealing with parser/compiler output.
  * <P>
  * Different instances of MessageStream need to do different things with
  * messages.  In particular, a stream instance used for parsing output from
