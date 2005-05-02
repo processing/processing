@@ -499,8 +499,20 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Sets the current normal. Only applies
-   * inside a beginShape/endShape block.
+   * Sets the current normal vector.
+   * <P>
+   * This is for drawing three dimensional shapes and surfaces,
+   * allowing you to specify a vector perpendicular to the surface
+   * of the shape, which determines how lighting affects it.
+   * <P>
+   * For the most part, PGraphics will attempt to automatically
+   * assign normals to shapes, but since that's imperfect,
+   * this is a better option when you want more control.
+   * <P>
+   * For people familiar with OpenGL, this function is basically
+   * identical to glNormal3f().
+   * <P>
+   * Only applies inside a beginShape/endShape block.
    */
   public void normal(float nx, float ny, float nz) {
     normalX = nx;

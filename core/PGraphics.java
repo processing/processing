@@ -2126,41 +2126,96 @@ public class PGraphics extends PImage implements PConstants {
   // SCREEN TRANSFORMS
 
 
+  /**
+   * Given an x and y coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenX(float x, float y) {
     return m00*x + m01*y + m02;
   }
 
 
+  /**
+   * Given an x and y coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenY(float x, float y) {
     return m10*x + m11*y + m12;
   }
 
 
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenX(float x, float y, float z) {
     depthErrorXYZ("screenX");
     return 0;
   }
 
+
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
+   */
   public float screenY(float x, float y, float z) {
     depthErrorXYZ("screenY");
     return 0;
   }
 
+
+  /**
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns its z value.
+   * This value can be used to determine if an (x, y, z) coordinate
+   * is in front or in back of another (x, y, z) coordinate.
+   * The units are based on how the zbuffer is set up, and don't
+   * relate to anything "real". They're only useful for in
+   * comparison to another value obtained from screenZ(),
+   * or directly out of the zbuffer[].
+   */
   public float screenZ(float x, float y, float z) {
     depthErrorXYZ("screenZ");
     return 0;
   }
 
+
+  /**
+   * Returns the model space x value for an x, y, z coordinate.
+   * <P>
+   * This will give you a coordinate after it has been transformed
+   * by translate(), rotate(), and camera(), but not yet transformed
+   * by the projection matrix. For instance, his can be useful for
+   * figuring out how points in 3D space relate to the edge
+   * coordinates of a shape.
+   */
   public float modelX(float x, float y, float z) {
     depthErrorXYZ("modelX");
     return 0;
   }
 
+
+  /**
+   * Returns the model space y value for an x, y, z coordinate.
+   */
   public float modelY(float x, float y, float z) {
     depthErrorXYZ("modelY");
     return 0;
   }
 
+
+  /**
+   * Returns the model space z value for an x, y, z coordinate.
+   */
   public float modelZ(float x, float y, float z) {
     depthErrorXYZ("modelZ");
     return 0;
@@ -2183,13 +2238,18 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // note that this doesn't set the alpha color max..
-  // so colorMode(RGB, 255, 255, 255) would retain the previous max alpha
-  // could be a problem when colorMode(HSB, 360, 100, 100);
-
+  /**
+   * Set the colorMode and the maximum values for (r, g, b)
+   * or (h, s, b).
+   * <P>
+   * Note that this doesn't set the maximum for the alpha value,
+   * which might be confusing if for instance you switched to
+   * <PRE>colorMode(HSB, 360, 100, 100);</PRE>
+   * because the alpha values were still between 0 and 255.
+   */
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ) {
-    colorMode(mode, maxX, maxY, maxZ, colorModeA); //maxX); //ONE);
+    colorMode(mode, maxX, maxY, maxZ, colorModeA);
   }
 
 
@@ -2305,14 +2365,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * unpacks AARRGGBB color for direct use with colorCalc.
-   * handled here with its own function since this is indepenent
+   * Unpacks AARRGGBB color for direct use with colorCalc.
+   * <P>
+   * Handled here with its own function since this is indepenent
    * of the color mode.
-   *
-   * strangely the old version of this code ignored the alpha
+   * <P>
+   * Strangely the old version of this code ignored the alpha
    * value. not sure if that was a bug or what.
-   *
-   * (note: no need for bounds check since it's a 32 bit number)
+   * <P>
+   * Note, no need for a bounds check since it's a 32 bit number.
    */
   protected void colorFrom(int argb) {
     calcColor = argb;
