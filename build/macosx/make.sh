@@ -7,13 +7,13 @@ if test -d work
 then
   BUILD_PREPROC=false
 else
-  if test -f /sw/bin/cp
-  then
-    echo
-  else
-    echo You need to install fink with fileutils, textutils, etc
-    exit
-  fi
+#  if test -f /sw/bin/cp
+#  then
+#    echo
+#  else
+#    echo You need to install fink with fileutils, textutils, etc
+#    exit
+#  fi
 
   echo Setting up directories to build under Mac OS X
   BUILD_PREPROC=true
@@ -48,7 +48,8 @@ else
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
-  /sw/bin/cp -a dist/Processing.app work/
+  #/sw/bin/cp -a dist/Processing.app work/
+  cp -pR dist/Processing.app work/
   # cvs doesn't seem to want to honor the +x bit 
   chmod +x work/Processing.app/Contents/MacOS/JavaApplicationStub
 

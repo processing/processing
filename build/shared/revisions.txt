@@ -50,6 +50,8 @@ fixes for a couple major bugs in the beta release.
 
 - updated the Windows and Linux downloads to include Java 1.4.2_07
 
+- removed requirement that fink be installed before building on the mac
+
 - lots of changes to the faq 
 
 
