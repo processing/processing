@@ -7,6 +7,55 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0086 - 1 may 2005
+
+fixes for a couple major bugs in the beta release. 
+
+
+[ large ] 
+
+- "Save As" bugs fixed, along with some others found in "Rename"
+
+- fixed an error that caused applets to require Java 1.3
+
+- camera should no longer be backwards
+
+
+[ medium ] 
+
+- fixed the smashed text in the preferences window 
+
+- saveFrame() fixed once again
+
+- color() wasn't properly changing with colorMode(HSB)
+
+- Linux: serial and net libraries weren't included in the last release
+
+- fix to make the environment run on Mac OS X 10.2
+
+- caret and scroll position is now saved when switching tabs
+
+
+[ small ] 
+
+- fov on camera() changed to use radians
+
+- lookat() has been removed, because its functionality is 
+  duplicated by camera().
+
+- no longer throws an error with beginShape/endShape calls
+  that have no vertex() calls in-between
+
+- added an error for people who try to use textMode(RIGHT)
+
+- updated the Windows and Linux downloads to include Java 1.4.2_07
+
+- lots of changes to the faq 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0085 - 19 april 2005 - beta
 
 - camera() was missing from PGraphics

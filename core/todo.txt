@@ -13,11 +13,6 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X ex on endshape if no calls to vertex
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
 
-_ polygons perpendicular to axis not drawing
-_   is this a clipping error?
-_   probably a triangulation error, because triangles work ok
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
-
 _ is camera backwards, or staying fixed and moving the scene?
 _   camera() is broken, should be ok to call it at beinning of loop
 _   end of lookat might be backwards
@@ -29,6 +24,11 @@ _     beginCamera also grabs it backwards
 
 
 high priority but not *required* for 86
+
+_ polygons perpendicular to axis not drawing
+_   is this a clipping error?
+_   probably a triangulation error, because triangles work ok
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
 
 _ createGraphics(200, 200) to create same as source
 _   createGraphics(200, 200, P2D) to create 2D from 3D
