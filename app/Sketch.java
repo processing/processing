@@ -304,8 +304,8 @@ public class Sketch {
       return;
     }
 
+    // don't allow blank names
     if (newName.trim().equals("")) {
-      // don't allow blank names
       return;
     }
 
@@ -366,6 +366,15 @@ public class Sketch {
 
     if (renamingCode) {
       if (current == code[0]) {
+        // get the new folder name/location
+        File newFolder = new File(folder.getParentFile(), newName);
+        if (newFolder.exists()) {
+          Base.showWarning("Cannot Rename",
+                           "Sorry, a sketch (or folder) named " +
+                           "\"" + newName + "\" already exists.", null);
+          return;
+        }
+
         // unfortunately this can't be a "save as" because that
         // only copies the sketch files and the data folder
         // however this *will* first save the sketch, then rename
@@ -401,7 +410,6 @@ public class Sketch {
         }
 
         // now rename the sketch folder and re-open
-        File newFolder = new File(folder.getParentFile(), newName);
         boolean success = folder.renameTo(newFolder);
         if (!success) {
           Base.showWarning("Error", "Could not rename the sketch. (2)", null);
@@ -769,6 +777,15 @@ public class Sketch {
     if (newName == null) return false;
     newName = Sketchbook.sanitizeName(newName);
 
+    // make sure there doesn't exist a tab with that name already
+    File checkAlready = new File(folder, newName + ".pde");
+    if (checkAlready.exists()) {
+      Base.showMessage("Nope",
+                       "You can't save the sketch as \"" + newName + "\"\n" +
+                       "because the sketch already has a tab with that name.");
+      return false;
+    }
+
     // new sketch folder
     File newFolder = new File(newParentDir, newName);
 
@@ -828,6 +845,12 @@ public class Sketch {
     if (dataFolder.exists()) {
       File newDataFolder = new File(newFolder, "data");
       Base.copyDir(dataFolder, newDataFolder);
+    }
+
+    // re-copy the code folder
+    if (codeFolder.exists()) {
+      File newCodeFolder = new File(newFolder, "code");
+      Base.copyDir(codeFolder, newCodeFolder);
     }
 
     // save the main tab with its new name
