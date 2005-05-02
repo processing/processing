@@ -6176,14 +6176,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void lookat(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ) {
-    if (recorder != null) recorder.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-    g.lookat(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-  }
-
-
   public void printCamera() {
     if (recorder != null) recorder.printCamera();
     g.printCamera();
