@@ -1,3 +1,24 @@
+0086 core
+X java 1.4 getButton() was inside the mouse handler
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114147314;start=3
+X color() doesn't work properly because g might be null?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114518309;start=0
+X textMode(RIGHT) etc causing trouble.. tell ppl to use textAlign()
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114219121;start=4
+X saveFrame with a filename still causing trouble:
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114097641;start=0
+X fov should be in radians
+X present mode not working on macosx 10.2?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
+X ex on endshape if no calls to vertex
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
+X is camera backwards, or staying fixed and moving the scene?
+X   camera() is broken, should be ok to call it at beinning of loop
+X   end of lookat might be backwards
+X   or endCamera might be swapping camera and cameraInv
+X     beginCamera also grabs it backwards
+
+
 0085 core
 X camera() was missing from PGraphics
 X some tweaks to openStream() for loading images and less errors
