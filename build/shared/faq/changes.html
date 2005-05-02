@@ -59,7 +59,7 @@ function gogo(dropdown) {
 <option value="bugs.html">Setup, Troubleshooting, and Bugs</option>
 <option value="platforms.html">Platforms (Mac OS, Windows and
             Linux)</option>
-<option value="changes.html" selected>Changes from Alpha to Beta</option>
+<option value="changes.html" selected>Changes Between Releases</option>
 <option value="people.html">People, Contact, Affiliations </option>
 
               </select> </td>
@@ -103,9 +103,12 @@ function gogo(dropdown) {
     <td width="645"> 
       <p> </p>
       <b>
-Changes between revision 69 (the last public alpha) and the beta release.
+Changes Between Releases
       </b><br><br>
-Many, many functions have been added, and are detailed in the 
+For each release, read the revisions.txt file (included with the download) to see what's changed since the release before it. This is where you go if your code stops working in the most recent release, or if you want to know if your favorite bug has been fixed. If you don't want to download first, you can read the most recent version <a href="http://processing.org/download/revisions.txt">here</a>.
+<br> <br>
+Between revision 0069 (the last public alpha) and the beta release (0085), 
+many, many functions have been added, and are detailed in the 
 <a href="http://processing.org/reference/index_ext.html">complete
       reference</a>. Aside from that, this page lists functions whose
       names have changed or fundamental API differences between the
@@ -128,6 +131,10 @@ PGraphics pg = new PGraphics2(200, 200, null);</PRE>We didn't realize
 quite how many people were using this, so we'll probably add a
 createGraphics() method because PGraphics2 may be temporary (instead
 of just PGraphics), and the "null" thing is pretty weird.
+<LI>The new renderers might be slower for some things, faster for others.
+If you want faster pixel operations, try using P3D (until P2D is available
+again). For high-quality lines and strokeWeight() and strokeCap(), use
+JAVA2D (the default). 
 <LI>To use OpenGL rendering, change that to size(200, 200, OPENGL),
 and use Sketch &rarr; Import Library &rarr; opengl. OpenGL support is
 incomplete, but allows for much larger screen sizes and accelerated
@@ -180,8 +187,7 @@ for the full details.
 <LI>&hellip;many other things that we've forgotten in our hastiness
 and we'll be adding over the next few days and weeks.
 </UL>
-Things that change between releases will always be documented in
-revisions.txt. The revisions file also contains the release-by-release
+The revisions.txt file also contains the release-by-release
 information for what's incrementally changed from 68 through 85. 
     </td>
     <td width="50">&nbsp;</td>

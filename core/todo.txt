@@ -8,10 +8,8 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 X saveFrame with a filename still causing trouble:
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114097641;start=0
 X fov should be in radians
-
-_ not working on macosx 10.2?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
-
+X present mode not working on macosx 10.2?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
 X ex on endshape if no calls to vertex
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
 
@@ -109,6 +107,9 @@ _   meaning use reflection to sort objects, just by implementing a few methods
 
 _ make a PException that extends RuntimeException but packages an ex?
 
+_ catch sun.dc.pr.PRException?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -133,6 +134,10 @@ _ bit shifting in opengl, get down to 2 ops by using other image modes
 _   i.e. ABGR_EXT might allow for just two shifts instead of 4
 _ allow access to native pixel buffer in opengl and power of 2
 _   so that no need to copy/update everything
+_ need to write an error if people try to use opengl with 1.3 (i.e. on export)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+_ grabbing sun.cpu.endian throws a security exception with gl applets
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 
 _ make the 1.4 code in PApplet load via reflection
 _   doesn't appear necessary with 1.3 applets

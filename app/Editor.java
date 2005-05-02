@@ -952,16 +952,20 @@ public class Editor extends JFrame
       console.clear();
     }
 
-
-
     presenting = present;
-    /*
-    if (presenting) {
-      // wipe everything out with a bulbous screen-covering window
-      presentationWindow.show();
-      presentationWindow.toFront();
+    if (presenting && Base.isMacOS()) {
+      // check to see if osx 10.2, if so, show a warning
+      String osver = System.getProperty("os.version").substring(0, 4);
+      if (osver.equals("10.2")) {
+        Base.showWarning("Time for an OS Upgrade",
+                         "The \"Present\" feature may not be available on\n" +
+                         "Mac OS X 10.2, because of what appears to be\n" +
+                         "a bug in the Java 1.4 implementation on 10.2.\n" +
+                         "In case it works on your machine, present mode\n" +
+                         "will start, but if you get a flickering white\n" +
+                         "window, using Command-Q to quit the sketch", null);
+      }
     }
-    */
 
     try {
       if (!sketch.handleRun()) return;
@@ -1290,13 +1294,17 @@ public class Editor extends JFrame
     if (sketch != null) {
       // if leaving an empty sketch (i.e. the default) do an
       // auto-clean right away
-      if (Base.calcFolderSize(sketch.folder) == 0) {
-        //System.err.println("removing empty poopster");
-        Base.removeDir(sketch.folder);
-        sketchbook.rebuildMenus();
-      }
-    //} else {
-      //System.err.println("sketch was null");
+      try {
+        // don't clean if we're re-opening the same file
+        String oldPath = sketch.code[0].file.getCanonicalPath();
+        String newPath = new File(path).getCanonicalPath();
+        if (!oldPath.equals(newPath)) {
+          if (Base.calcFolderSize(sketch.folder) == 0) {
+            Base.removeDir(sketch.folder);
+            sketchbook.rebuildMenus();
+          }
+        }
+      } catch (Exception e) { }   // oh well
     }
 
     try {

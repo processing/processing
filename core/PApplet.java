@@ -763,8 +763,7 @@ public class PApplet extends Applet
         throw new RuntimeException(openglError);
       } else {
         throw new RuntimeException("You need to use \"Import Library\" " +
-                                   "to add " + renderer +
-                                   " to your sketch.");
+                                   "to add " + renderer + " to your sketch.");
       }
 
     } catch (Exception e) {
@@ -5261,7 +5260,7 @@ v              PApplet.this.stop();
         //GraphicsConfiguration gc = displayDevice.getDefaultConfiguration();
         //frame = new Frame(gc);
         frame = new Frame(displayDevice.getDefaultConfiguration());
-        println(displayDevice.getDefaultConfiguration());
+        //println(displayDevice.getDefaultConfiguration());
       } else {
         frame = new Frame();
       }
