@@ -1,28 +1,10 @@
-0086 core
-X java 1.4 getButton() was inside the mouse handler
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114147314;start=3
-X color() doesn't work properly because g might be null?
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114518309;start=0
-X textMode(RIGHT) etc causing trouble.. tell ppl to use textAlign()
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114219121;start=4
-X saveFrame with a filename still causing trouble:
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114097641;start=0
-X fov should be in radians
-X present mode not working on macosx 10.2?
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
-X ex on endshape if no calls to vertex
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
-X is camera backwards, or staying fixed and moving the scene?
-X   camera() is broken, should be ok to call it at beinning of loop
-X   end of lookat might be backwards
-X   or endCamera might be swapping camera and cameraInv
-X     beginCamera also grabs it backwards
+0087 core
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-high priority but not *required* for 86
+high priority
 
 _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
@@ -110,12 +92,6 @@ _ make a PException that extends RuntimeException but packages an ex?
 
 _ catch sun.dc.pr.PRException?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-NOT COMPLETELY NECESSARY BEFORE BETA
 
 _ bizarre image loading error with c_Rollover.zip
 
@@ -266,7 +242,6 @@ _   guessing it's an implementation issue in sami's renderer
 _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _ Stroking a rect() leaves the upper right pixel off.
 
-
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
@@ -280,7 +255,8 @@ _ also threaded images
 
 _ 404 error because first searches applet directory on zipdecode
 
-//
+_ should image i/o and sound i/o be moved into PImage and PSound?
+_   how to load external encoders/decoders
 
 opengl
 _ fix non-bound textures from mangling everything else
@@ -302,11 +278,6 @@ _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
 _   fonts probably need to be RGBA, not ALPHA style images
 _   there's nothing really ALPHA about them?
-
-//
-
-_ should image i/o and sound i/o be moved into PImage and PSound?
-_   how to load external encoders/decoders
 
 scripting
 _ on exceptions, use die to just kill the applet
