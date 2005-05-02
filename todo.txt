@@ -146,7 +146,12 @@ void serialEvent() {
   println(myPort.readString());
 }
 
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+_ remove requirement for osx to install fink
+_   only used for 'head'
 
 _ set applet.frame on runner, so ppl can mess with the frame itself
 
@@ -166,16 +171,7 @@ _   try setting up an account where this is the case
 _ info about getting started with building processing
 _   also re: what about eclipse? what about antlr?
 
-_ update things for java 1.5 since it's inevitable
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
 _ move the useful serial buffering fxns into net library
-
-_ tab to just indent lines properly, 
-_   rather than having it convert to spaces
 
 _ check for updates should happen only daily or weekly
 
@@ -183,21 +179,6 @@ _ setup bugzilla and enter all the bugs
 
 _ placement of 100x100 items is odd
 _   happens with P3D and maybe also P2D?
-
-_ if in full java mode
-_   if extends PApplet.. or rather, put PApplet cast into a 
-_   try/catch block.. if it doesn't work, try applet. if that
-_   doesn't work, try using the class' main() to run it
-
-_ not confirmed to be a bug
-Is it possible that saving with the 'save' button doesn't pay
-attention to where you point at the project folder from prefs?  Jeez,
-i phrased that horribly.  I opened preferences for Processing and made
-the default sketchbook location processing-0079/projects.  I then put
-all my older projects in that project folder.  When i opened up an old
-file and made changes, i then hit 'save' and quit.  I relaunched v79
-and opened the aforementioned file, and none of the changes were
-there.  but they were in v77 project folder. 
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
@@ -225,7 +206,6 @@ _   record the display that it was on?
 _     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
 _   make sure that the applet is within the bounds of the current display?
 _   (from 0, 0 to width, height)
-
 _ make note that changing screen config requires restart of processing
 _   static { checkScreens(); }
 _   static void PApplet.checkScreens() { } 
@@ -258,9 +238,6 @@ _   this is totally wrong and really horks things
 
 _ split Preferences and PreferencesFrame ?
 
-_ lock the minimum size for the main processing editor frame
-_   if it's made too small, stuff from the bottom disappears
-
 _ properly handle ENTER, Ctrl-W and ESC on all dialogs
 _   there must be a proper "swing" way of doing this that doesn't
 _   involve adding key listeners to every friggin component
@@ -283,18 +260,17 @@ _   too much to maintain the multiple versions, no dependencies, too much code
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 
-camera
-_ tearing and incomplete updates on camera?
+capture
+_ tearing and incomplete updates on capture?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
 _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 
 _   sketch .zip file in casey's email message
-
 _ video wrong device name crashes things
-_ when passing in 'null' as the camera, dialog pops up fine
+_ when passing in 'null' as the capture, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
-_ couldn't get req'd component also happens when the camera isn't ready
+_ couldn't get req'd component also happens when the capture isn't ready
 _   may also mean that no camera is plugged in
 _   also, don't mention winvdig on the mac
 _ if user cancels prompt, throws a '-128,userCanceledErr'
@@ -380,9 +356,6 @@ _ get an xml library and example in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
 
-_ different name for 'lib' folder because of libraries folder?
-_   avoid some confusion for when describing the libraries folder to users
-
 _ implement new version of history
 _   make history folder, and a zip (not gz) file for each entry
 _   history causing trouble - super slow with a huge sketch
@@ -398,77 +371,6 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 
-editor tools menu
-_ how to handle command keys
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272;start=0
-_ make dynamically loaded plugins and "tools" menu
-_   break out beautify as its own plugin
-_ make beautify plugin "Auto Format"
-_   //for (int i = 0; i < 10; i++) {
-_   } catch (IOException e) { }
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
-_   need to ignore comments.. but not those inside quotes.. oog
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
-_   ignores colons for case statements
-_   need to tie this to the parser instead
-_   do a better job of maintaining cursor during beautify 
-_   only beautify a particular section of code
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-_ color picker or other things written by folks
-_   add all .jar files in lib/plugins on startup
-_ make some kind of internal color picker
-_   could be a separate window that's always around if needed
-_ external editor -> add a command to launch
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
-_ add tool to hit 'next' to go through examples
-_   just make it "next file in folder" since examples are all over
-_   also need to copy examples locally
-_ add tool for running in jview
-_   only available after export (or when an applet dir exists)
-_   warn user that applet html will be over-written
-_ add tool to "Add custom html to sketch"
-_   that copies applet.html, 
-_   opens sketch folder, 
-_   and gives info about what to do next (how to edit)
-
-
-export stuff
-_ currently some bugs in the main() because it's not sizing applets 
-_   if running in present mode it works ok
-_   but that also needs its display set.. argh
-_ write export-to-application
-_   problem with packages.. currently mainClassName is preproc name
-_     and "name" is the sketch name, w/o package
-_     but if a package were in use, then would be trouble
-_   lock feature for present mode (part of export to application?)
-_   application can still do serial (qt, other stuff?) 
-_   applet runs in browser, though applet on cbagel is everything..
-_   include main class info for executable jar file with jdk > 1.2
-_   not difficult to do, just some tweaking once applet export works
-_   wrapper that invokes the applet using a copy of the jre
-_   main() method needs to set layout manager if jexegen is to be used
-_     (msft vm defaults to null layout manager)
-_   also make sure pack() is happening
-_   add manifest.mf to exported applets so that applications will work
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
-_   BApplet.main(new String[] { "flashcards3" });
-_     this will need to detect whether the user has their own main()
-_     or even BApplet.main(new String[] { getClass().getName() });
-_     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
-_     main sticking point will be serial/qtjava in exports
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else? (nah, too messy)
-_ make multiple jar files thing work as an option
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
-_   applet default is one file, application default is multiple
-_   user in advanced mode can switch to the other
-_   buttons on side of sketch do default (last) behavior
-_ need to decide how to handle "stop" button in present mode
-_   when running externally, people need to write their own stop function
-_   just get export to application working so this can be supported
-_   for now, they're stuck w/ running in the env and getting the ugliness
-
-
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -478,6 +380,12 @@ PDE - Processing Development Environment
 
 
 PDE / Details
+
+   1 _ lock the minimum size for the main processing editor frame
+   1 _   if it's made too small, stuff from the bottom disappears
+
+   1 _ tab to just indent lines properly, 
+   1 _   rather than having it convert to spaces
 
    1 _ preferences window has been hit with the ugly stick
    1 _   redo panel to use proper swing layout etc
@@ -494,9 +402,6 @@ PDE / Details
    1 _ package processing.app for PdeBase, PdeEditor..
 
    1 _ add mnemonics for menus (alt-f to open 'file')
-
-   1 _ processing.exe: problem if expert version is run, and no java installed
-   1 _   call the person a genius and tell them to install java
 
    1 _ implement page setup and print
    1 _   pretty printing of code in project
@@ -600,6 +505,15 @@ PDE / Sketch & Sketchbook
    1 _   see notes/bitching in Sketch.nameCode()
 
 
+
+PDE / Runner 
+
+   1 _ if in full java mode
+   1 _   if extends PApplet.. or rather, put PApplet cast into a 
+   1 _   try/catch block.. if it doesn't work, try applet. if that
+   1 _   doesn't work, try using the class' main() to run it
+
+
 PDE / Compiler
 
    1 _ if NullPointerEx on a line that includes a "pixels[" 
@@ -610,7 +524,45 @@ PDE / Compiler
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
 
 
-BUGS / Preprocessor
+PDE / Export
+
+_ currently some bugs in the main() because it's not sizing applets 
+_   if running in present mode it works ok
+_   but that also needs its display set.. argh
+_ write export-to-application
+_   problem with packages.. currently mainClassName is preproc name
+_     and "name" is the sketch name, w/o package
+_     but if a package were in use, then would be trouble
+_   lock feature for present mode (part of export to application?)
+_   application can still do serial (qt, other stuff?) 
+_   applet runs in browser, though applet on cbagel is everything..
+_   include main class info for executable jar file with jdk > 1.2
+_   not difficult to do, just some tweaking once applet export works
+_   wrapper that invokes the applet using a copy of the jre
+_   main() method needs to set layout manager if jexegen is to be used
+_     (msft vm defaults to null layout manager)
+_   also make sure pack() is happening
+_   add manifest.mf to exported applets so that applications will work
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
+_   BApplet.main(new String[] { "flashcards3" });
+_     this will need to detect whether the user has their own main()
+_     or even BApplet.main(new String[] { getClass().getName() });
+_     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+_     main sticking point will be serial/qtjava in exports
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else? (nah, too messy)
+_ make multiple jar files thing work as an option
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+_   applet default is one file, application default is multiple
+_   user in advanced mode can switch to the other
+_   buttons on side of sketch do default (last) behavior
+_ need to decide how to handle "stop" button in present mode
+_   when running externally, people need to write their own stop function
+_   just get export to application working so this can be supported
+_   for now, they're stuck w/ running in the env and getting the ugliness
+
+
+PDE / Preprocessor
 
    1 _ casting problems in the parser
    1 _   float u = float(x)/width; works.
@@ -629,6 +581,43 @@ BUGS / Preprocessor
    1 _   (for casting, etc) particularly for Math.cos() et al
 
 
+TOOLS / General
+_ how to handle command keys
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272;start=0
+_ make dynamically loaded plugins and "tools" menu
+_   break out beautify as its own plugin
+_ color picker or other things written by folks
+_   add all .jar files in lib/plugins on startup
+_ make some kind of internal color picker
+_   could be a separate window that's always around if needed
+_ external editor -> add a command to launch
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+_ add tool to hit 'next' to go through examples
+_   just make it "next file in folder" since examples are all over
+_   also need to copy examples locally
+_ add tool for running in jview
+_   only available after export (or when an applet dir exists)
+_   warn user that applet html will be over-written
+_ add tool to "Add custom html to sketch"
+_   that copies applet.html, 
+_   opens sketch folder, 
+_   and gives info about what to do next (how to edit)
+
+
+TOOLS / Auto Format
+_ make beautify plugin "Auto Format"
+_   //for (int i = 0; i < 10; i++) {
+_   } catch (IOException e) { }
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1086555381
+_   need to ignore comments.. but not those inside quotes.. oog
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067309918;start=0
+_   ignores colons for case statements
+_   need to tie this to the parser instead
+_   do a better job of maintaining cursor during beautify 
+_   only beautify a particular section of code
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+
+
 TOOLS / Create Font
 
    1 _ close/hide window on 'ESC'
@@ -643,7 +632,7 @@ TOOLS / Create Font
    1 _   opentype/cff fonts don't work with live loading from the app
    1 _   many (all?) opentype fonts won't show up or aren't supported
    1 _     this may be only cff fonts that have trouble
-   1 _   when encoding with something besides the standard encoding, problematic
+   1 _   when encoding is not the standard encoding, problematic
    1 _     so sonata otf and sonata don't seem to have any chars at all
    1 _ available font issues
    1 _   is getFontList returning a different set of fonts from device2d?
@@ -698,6 +687,8 @@ DISTRIBUTION / General
    1 _   bring up information about gpl, lgpl, and ibmpl
    1 _   jedit syntax is under mit license
    1 _     http://www.opensource.org/licenses/mit-license.php
+   1 _ different name for 'lib' folder because of libraries folder?
+   1 _   avoid some confusion for when describing the libraries folder to users
 
 
 BUGS / Windows
@@ -713,7 +704,12 @@ BUGS / Windows
    1 _   CLASSPATH figured out what to do with quotes, but not PATH
 
 
-DISTRIBUTION / Windows
+PLATFORMS / General
+
+   1 _ update things for java 1.5 since it's inevitable
+
+
+PLATFORMS / Windows
 
    1 _ tie .pde files as documents of the application
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
@@ -729,9 +725,11 @@ DISTRIBUTION / Windows
    1 _ winamp/audio getting starved or crackly while applets running
    1 _   thread priority too high? or something weird
    1 _ need splash screen, startup takes a long time
+   1 _ processing.exe: problem if expert version is run, and no java installed
+   1 _   call the person a genius and tell them to install java
 
 
-DISTRIBUTION / Linux
+PLATFORMS / Linux
 
    1 _ doesn't seem interested in quitting properly (?)
    1 _ splash screen
@@ -739,7 +737,7 @@ DISTRIBUTION / Linux
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074810469
 
 
-DISTRIBUTION / Mac OS X
+PLATFORMS / Mac OS X
 
    1 _ fix find/replace focus issue on osx
    1 _   give that field focus explicitly, rather than just for typing

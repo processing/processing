@@ -49,6 +49,8 @@ _   need to complete for the others:
 _   append(), shorten(), splice, slice, subset, concat, reverse
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
 
+_ simon reports borders on P3D and OPENGL if background() not called
+
 present mode fixes
 _ for present mode, need to set a default display 
 _   currently crashes if only --present is specified w/o --display
