@@ -2970,9 +2970,9 @@ public class PGraphics3 extends PGraphics {
     // just does an apply to the main matrix,
     // since that'll be copied out on endCamera
     camera.set(x0, x1, x2, 0,
-                  y0, y1, y2, 0,
-                  z0, z1, z2, 0,
-                  0,  0,  0,  1);
+               y0, y1, y2, 0,
+               z0, z1, z2, 0,
+               0,  0,  0,  1);
     camera.translate(-eyeX, -eyeY, -eyeZ);
 
     cameraInv.reset();

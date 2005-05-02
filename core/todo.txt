@@ -12,12 +12,11 @@ X present mode not working on macosx 10.2?
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114381302;start=0
 X ex on endshape if no calls to vertex
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113940972
-
-_ is camera backwards, or staying fixed and moving the scene?
-_   camera() is broken, should be ok to call it at beinning of loop
-_   end of lookat might be backwards
-_   or endCamera might be swapping camera and cameraInv
-_     beginCamera also grabs it backwards
+X is camera backwards, or staying fixed and moving the scene?
+X   camera() is broken, should be ok to call it at beinning of loop
+X   end of lookat might be backwards
+X   or endCamera might be swapping camera and cameraInv
+X     beginCamera also grabs it backwards
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
