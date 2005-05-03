@@ -7,6 +7,32 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0087 - 2 may 2005
+
+not tested as thoroughly as rev 86, gonna wait 24-48 hours before 
+setting this as the default download. 
+
++ the reason for this release: dragging the sketch window should no 
+  longer make things lock up. also found several bugs that were 
+  probably contributing to the problem.
+
++ more file creating and saving fixes:
+
+  - new tab with a .java file was giving an error
+    http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115059069;start=0
+  
+  - "save as" with a read-only sketch wasn't letting you use the 
+    same name as the old one.
+
+  - other small tweaks to new tab/save as/rename error messages
+
++ check for updates happens only once daily, rather than nagging 
+  you on each startup
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0086 - 1 may 2005
 
 fixes for a couple major bugs in the beta release. 
