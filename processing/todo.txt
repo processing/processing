@@ -1,15 +1,10 @@
-0087 pde
-X bug with creating a new tab that's a .java file
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115059069;start=0
-X shouldn't be able to add new tabs or files to a read-only sketch
-X can't save a sketch with its own name because already has that name
-X small explanation and tiny example(s) for the following?
-X   modelX(), modelY(), modelZ(), screenZ(), openStream(), normal()
-X check for updates should happen only daily or weekly
+0088 pde
+X rev 87 on linux included a version of jikes built on redhat 7.3
+_   check to make sure this still works on the fc3 box
 
-already completed in 86
-X remove requirement for osx to install fink
-X   only used for 'head'
+_ renaming a .java file only shows the name w/o .java
+_   which makes you rename the file to a .pde instead
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration;action=display;num=1115122925;start=3
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

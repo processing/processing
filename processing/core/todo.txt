@@ -1,18 +1,4 @@
-0087 core
-
-fixed in previous releases
-X The PushPop example in Transformations is not working
-X   with lights() callled
-X The transparency of the Rotate3D example in Translformations
-X   is not as expected
-X lighting totally sucks (both PGraphics3 and PGraphicsGL)
-X bring in materials for opengl as well?
-X   don't include a class, just make it similar to the light functions
-X sphere() and box() should set normals and take textures
-X background color seems to be wrong?
-X   check this once lighting actually works
-X printarr() of null array crashes without an error
-X   actually, errors from many crashes not coming through on the mac?
+0088 core
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
