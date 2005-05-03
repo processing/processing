@@ -353,12 +353,6 @@ is not something from processing, it is a bug in Roxio Toast 5.2's Video
   multiple source code files (more than one tab), or extra code files
   in the 'code' folder are employed.
 
-<LI>A long sketch menu that goes off the edge of the screen? Doesn't
-  scroll properly? There's not much we can do. This is a java issue which
-  happens on most platforms. To get around it, you can organize your
-  sketches into subfolders which will appear as submenus (be sure to
-  quit before reorganizing, and then restart when finished). 
-
 <LI>mouseX and mouseY always even (or always odd) numbers? By default,
 Windows 2000 (and XP?) seems to skip every other pixel on the screen,
 causing weirdness for some drawing applications done with Processing.
@@ -633,6 +627,13 @@ Things that we probably can't fix
 </b> <br> <br> 
 Some things are out of our control, or not actually bugs...
 <UL>
+
+<LI>A long sketch menu that goes off the edge of the screen? Doesn't
+  scroll properly? There's not much we can do. This is a java issue which
+  happens on most platforms. To get around it, you can organize your
+  sketches into subfolders which will appear as submenus (be sure to
+  quit before reorganizing, and then restart when finished). 
+
 <LI>If you're seeing a <TT>sun.dc.pr.PRException</TT>, it's because you're trying to draw something that's waaaaay off screen (like an x coordinate of -100,000 or something nutty like that).
 <LI>On Windows, the system clock seems to go weird, especially when
   using framerate() or delay(). this is a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4500388">long-standing bug</a> with the

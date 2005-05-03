@@ -2199,7 +2199,7 @@ public class PGraphics extends PImage implements PConstants {
    * coordinates of a shape.
    */
   public float modelX(float x, float y, float z) {
-    depthErrorXYZ("modelX");
+    depthError("modelX");
     return 0;
   }
 
@@ -2208,7 +2208,7 @@ public class PGraphics extends PImage implements PConstants {
    * Returns the model space y value for an x, y, z coordinate.
    */
   public float modelY(float x, float y, float z) {
-    depthErrorXYZ("modelY");
+    depthError("modelY");
     return 0;
   }
 
@@ -2217,7 +2217,7 @@ public class PGraphics extends PImage implements PConstants {
    * Returns the model space z value for an x, y, z coordinate.
    */
   public float modelZ(float x, float y, float z) {
-    depthErrorXYZ("modelZ");
+    depthError("modelZ");
     return 0;
   }
 

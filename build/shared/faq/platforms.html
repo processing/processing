@@ -242,6 +242,13 @@ on a Fedora Core 3, and Sun's Java Runtime Environment 1.4.2 is
 included with the download. Replacing (or making a symlink to) the
 contents of the &lsquo;java&rsquo; folder will let you tie in a
 preferred Java VM for your machine.
+<br> <br>
+If you get an error reading <TT>jikes: error while loading shared libraries: 
+libstdc++.so.5: cannot open shared object file: No such file or directory</TT>,
+It's because Processing requires libstdc++-libc6.2-2.so.3 for jikes. 
+You should either install it or, since it's old, install the rpm/package 
+for compat-libstdc++ before Processing will run. Or rebuild a different 
+version of jikes that's compatible with your distro.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
