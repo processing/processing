@@ -1,3 +1,17 @@
+0087 pde
+X bug with creating a new tab that's a .java file
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115059069;start=0
+X shouldn't be able to add new tabs or files to a read-only sketch
+X can't save a sketch with its own name because already has that name
+X small explanation and tiny example(s) for the following?
+X   modelX(), modelY(), modelZ(), screenZ(), openStream(), normal()
+X check for updates should happen only daily or weekly
+
+already completed in 86
+X remove requirement for osx to install fink
+X   only used for 'head'
+
+
 0086 pde
 X new versions of java for windows and linux: 1.4.2_07
 X update faq on site? what's difference between versions?
