@@ -1,8 +1,11 @@
 0087 pde
 X bug with creating a new tab that's a .java file
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115059069;start=0
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115059069;start=0
+X shouldn't be able to add new tabs or files to a read-only sketch
+X can't save a sketch with its own name because already has that name
 X small explanation and tiny example(s) for the following?
 X   modelX(), modelY(), modelZ(), screenZ(), openStream(), normal()
+X check for updates should happen only daily or weekly
 
 already completed in 86
 X remove requirement for osx to install fink
@@ -33,6 +36,8 @@ _   get(), set() and red() et al are one such example
 _ is there a way to do xxx?
 _   advanced users who are outgrowing the basic reference: 
 _   be sure to check the "complete" reference
+_ web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
+_ the draw() method must exist, otherwise the sketch won't run
 
 _ get platform checker into the latest exhibition piece
 
@@ -69,6 +74,8 @@ void serialEvent() {
 }
 
 _ set applet.frame on runner, so ppl can mess with the frame itself
+_ is it the run() exception handler that's leaving off the CRLFs?
+_   or is it that it needs to be \r\n not just \n?
 
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
@@ -87,8 +94,6 @@ _ info about getting started with building processing
 _   also re: what about eclipse? what about antlr?
 
 _ move the useful serial buffering fxns into net library
-
-_ check for updates should happen only daily or weekly
 
 _ setup bugzilla and enter all the bugs
 
@@ -174,25 +179,6 @@ _   too much to maintain the multiple versions, no dependencies, too much code
 
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
-
-capture
-_ tearing and incomplete updates on capture?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
-_ pause and framerate aren't working
-_   framerate does set the frequency which movieEvent will be called, 
-_   but it is not setting the "available" field corrrectly. 
-_   sketch .zip file in casey's email message
-_ video wrong device name crashes things
-_ when passing in 'null' as the capture, dialog pops up fine
-_   but the applet craps out after a few seconds (pinwheel spin)
-_ couldn't get req'd component also happens when the capture isn't ready
-_   may also mean that no camera is plugged in
-_   also, don't mention winvdig on the mac
-_ if user cancels prompt, throws a '-128,userCanceledErr'
-_   in which case, need to return null (or ""?) for the prompt
-_   which will also just give you the last camera
-_   should it be new Camera(PROMPT);
-_ error messages from quicktime not coming through very well
 
 check these errors to see if they still exist
 _ odd error in System.err stream coming from running external
@@ -331,13 +317,6 @@ PDE / Details
    1 _ size() has memory limitations (pitaru)
    1 _   catch OutOfMemoryError inside size() and let the user know
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
-   1 _ verify editor buttons working properly
-   1 _   they're not.. mostly unresponsive, and often get stuck
-   1 _   is play button properly unhighlighting? 
-   1 _     does it unhighlight after compile or runtime errors?
-   1 _     also when using draw() instead of loop()
-   1 _       applet needs to notify runner that it has terminated
-   1 _   if export fails (compile error) need deselect
    1 _ exceptions in draw() apps aren't caught
    1 _   the program resize(200, 200); just does nothing (doesn't complain)
    1 _ if 'void' left out before loop or setup, cryptic message about
@@ -360,17 +339,18 @@ PDE / Details
    1 _ figure out how to cancel 'save changes' on macosx and windows
    1 _   macosx handleQuit seems to force termination (at least on 1.3)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
-   1 _ don't cache stuff from loadStrings and others
-   1 _   mac java vm won't give up old version of file
-   1 _   or use setUseCaches(false)
-   1 _ too many frames drawn before window visible - especially on mac
    1 _ dim edit menus as appropriate during selection/no selection/etc
-   1 _ switch to newer revision of jedit?
-   1 _   is enormous horizontal scroller issue fixed properly
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
    1 _ make export put a timestamp in the html code (hidden or visible)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
 
+
+PDE / Editor
+
+   1 _ tabs and spaces, command keys don't work w/ shift
+   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
+   1 _ switch to newer revision of jedit?
+   1 _   is enormous horizontal scroller issue fixed properly
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
 
 PDE / Find & Replace
 
@@ -380,6 +360,13 @@ PDE / Find & Replace
 PDE / Editor Buttons
 
    1 _ when holding down shift, show the alt behavior for EditorHeader
+   1 _ verify editor buttons working properly
+   1 _   they're not.. mostly unresponsive, and often get stuck
+   1 _   is play button properly unhighlighting? 
+   1 _     does it unhighlight after compile or runtime errors?
+   1 _     also when using draw() instead of loop()
+   1 _       applet needs to notify runner that it has terminated
+   1 _   if export fails (compile error) need deselect
 
 
 PDE / Editor Header
@@ -431,6 +418,7 @@ PDE / Runner
 
 PDE / Compiler
 
+   1 _ an empty .java tab will throw an error
    1 _ if NullPointerEx on a line that includes a "pixels[" 
    1 _   give an error message saying "you may need to call loadPixels"
    1 _ warn about writing non-1.1 code. 
@@ -494,6 +482,12 @@ PDE / Preprocessor
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1099371066;start=0
    1 _ allow doubles in preproc
    1 _   (for casting, etc) particularly for Math.cos() et al
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 
 TOOLS / General
@@ -566,13 +560,41 @@ TOOLS / Create Font
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
+
+LIBRARIES / Video
+
+_ tearing and incomplete updates on capture?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
+_ pause and framerate aren't working
+_   framerate does set the frequency which movieEvent will be called, 
+_   but it is not setting the "available" field corrrectly. 
+_   sketch .zip file in casey's email message
+_ video wrong device name crashes things
+_ when passing in 'null' as the capture, dialog pops up fine
+_   but the applet craps out after a few seconds (pinwheel spin)
+_ couldn't get req'd component also happens when the capture isn't ready
+_   may also mean that no camera is plugged in
+_   also, don't mention winvdig on the mac
+_ if user cancels prompt, throws a '-128,userCanceledErr'
+_   in which case, need to return null (or ""?) for the prompt
+_   which will also just give you the last camera
+_   should it be new Camera(PROMPT);
+_ error messages from quicktime not coming through very well
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
 DISTRIBUTION
 
 How the environment gets packed up, downloaded, and installed.
 
 
-DISTRIBUTION / General 
+PLATFORMS / General 
 
+   1 _ update things for java 1.5 since it's inevitable
    1 _ need .pde document icons
    1 _ need .psk file icon
    1 _ need exported application icons
@@ -606,23 +628,6 @@ DISTRIBUTION / General
    1 _   avoid some confusion for when describing the libraries folder to users
 
 
-BUGS / Windows
-
-   1 _ NullPointerException when alt is pressed
-   1 _   might be something to do with the applet frame being an awt not swing
-   1 _   event first goes to the applet listener, needs to consume the event
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
-   1 _ p5's exe prolly has trouble when PATH has quotes (or spaces?)
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
-   1 _   CLASSPATH figured out what to do with quotes, but not PATH
-
-
-PLATFORMS / General
-
-   1 _ update things for java 1.5 since it's inevitable
-
 
 PLATFORMS / Windows
 
@@ -642,14 +647,16 @@ PLATFORMS / Windows
    1 _ need splash screen, startup takes a long time
    1 _ processing.exe: problem if expert version is run, and no java installed
    1 _   call the person a genius and tell them to install java
-
-
-PLATFORMS / Linux
-
-   1 _ doesn't seem interested in quitting properly (?)
-   1 _ splash screen
-   1 _ ctrl-t is not stopping a sketch
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074810469
+   1 _ p5's exe has trouble when PATH has quotes (or spaces?)
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
+   1 _   CLASSPATH figured out what to do with quotes, but not PATH
+   1 _ NullPointerException when alt is pressed
+   1 _   (not our bug, but log it in the bug db anyways)
+   1 _   might be something to do with the applet frame being an awt not swing
+   1 _   event first goes to the applet listener, needs to consume the event
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
 
 
 PLATFORMS / Mac OS X
@@ -675,5 +682,9 @@ PLATFORMS / Mac OS X
    1 _   although.. this only works on panther.. how many are using it?
    1 _ mac standard key combinations for moving around in the editor
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
-   1 _ tabs and spaces, command keys don't work w/ shift
-   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
+
+
+PLATFORMS / Linux
+
+   1 _ some reports of it not quitting properly, but not confirmed
+   1 _ splash screen

@@ -77,6 +77,8 @@ class MessageSiphon implements Runnable {
         //if (e.getMessage().indexOf("Bad file descriptor") == -1) {
         //System.err.println("MessageSiphon err " + e);
         //e.printStackTrace();
+      } else {
+        e.printStackTrace();
       }
       thread = null;
     }
