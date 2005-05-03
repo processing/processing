@@ -264,6 +264,16 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     renamingCode = false;
     editor.status.edit("Name for new file:", "");
   }
@@ -272,6 +282,16 @@ public class Sketch {
   public void renameCode() {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
+
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
 
     // ask for new name of file (internal to window)
     // TODO maybe just popup a text area?
@@ -505,6 +525,16 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
     String prompt = (current == code[0]) ?
@@ -570,6 +600,19 @@ public class Sketch {
 
 
   public void hideCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     // don't allow hide of the main code
     // TODO maybe gray out the menu on setCurrent(0)
     if (current == code[0]) {
@@ -673,39 +716,6 @@ public class Sketch {
 
 
   /**
-   * Make sure the sketch hasn't been moved or deleted by some
-   * nefarious user. If they did, try to re-create it and save.
-   */
-  protected void ensureExistence() {
-    if (folder.exists()) return;
-
-    Base.showWarning("Sketch Disappeared",
-                     "The sketch folder has disappeared.\n " +
-                     "Will attempt to re-save in the same location,\n" +
-                     "but anything besides the code will be lost.", null);
-    try {
-      folder.mkdirs();
-      modified = true;
-
-      for (int i = 0; i < codeCount; i++) {
-        code[i].save();  // this will force a save
-      }
-      for (int i = 0; i < hiddenCount; i++) {
-        hidden[i].save();  // this will force a save
-      }
-      calcModified();
-
-    } catch (Exception e) {
-      Base.showWarning("Could not re-save sketch",
-                       "Could not properly re-save the sketch. " +
-                       "You may be in trouble at this point,\n" +
-                       "and it might be time to copy and paste " +
-                       "your code to another text editor.", e);
-    }
-  }
-
-
-  /**
    * Save all code in the current sketch.
    */
   public boolean save() throws IOException {
@@ -771,8 +781,9 @@ public class Sketch {
     newName = Sketchbook.sanitizeName(newName);
 
     // make sure there doesn't exist a tab with that name already
+    // (but allow it if it's just the main tab resaving itself.. oops)
     File codeAlready = new File(folder, newName + ".pde");
-    if (codeAlready.exists()) {
+    if (codeAlready.exists() && (!newName.equals(name))) {
       Base.showMessage("Nope",
                        "You can't save the sketch as \"" + newName + "\"\n" +
                        "because the sketch already has a tab with that name.");
@@ -924,6 +935,19 @@ public class Sketch {
    * or .dll, .jnilib, or .so files for the code folder
    */
   public void addFile() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     // get a dialog, select a file to add to the sketch
     String prompt =
       "Select an image or other data file to copy to your sketch";
@@ -1962,6 +1986,41 @@ public class Sketch {
           zos.closeEntry();
         }
       }
+    }
+  }
+
+
+  /**
+   * Make sure the sketch hasn't been moved or deleted by some
+   * nefarious user. If they did, try to re-create it and save.
+   * Only checks to see if the main folder is still around,
+   * but not its contents.
+   */
+  protected void ensureExistence() {
+    if (folder.exists()) return;
+
+    Base.showWarning("Sketch Disappeared",
+                     "The sketch folder has disappeared.\n " +
+                     "Will attempt to re-save in the same location,\n" +
+                     "but anything besides the code will be lost.", null);
+    try {
+      folder.mkdirs();
+      modified = true;
+
+      for (int i = 0; i < codeCount; i++) {
+        code[i].save();  // this will force a save
+      }
+      for (int i = 0; i < hiddenCount; i++) {
+        hidden[i].save();  // this will force a save
+      }
+      calcModified();
+
+    } catch (Exception e) {
+      Base.showWarning("Could not re-save sketch",
+                       "Could not properly re-save the sketch. " +
+                       "You may be in trouble at this point,\n" +
+                       "and it might be time to copy and paste " +
+                       "your code to another text editor.", e);
     }
   }
 

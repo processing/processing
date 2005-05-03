@@ -58,6 +58,8 @@ public class UpdateCheck implements Runnable {
   Editor editor;
   String downloadURL = "http://processing.org/download/latest.txt";
 
+  static final long ONE_DAY = 24 * 60 * 60 * 1000;
+
 
   public UpdateCheck(Editor editor) {
     this.editor = editor;
@@ -91,6 +93,17 @@ public class UpdateCheck implements Runnable {
 
     try {
       int latest = readInt(downloadURL + "?" + info);
+
+      String lastString = Preferences.get("update.last");
+      long now = System.currentTimeMillis();
+      if (lastString != null) {
+        long when = Long.parseLong(lastString);
+        if (now - when < ONE_DAY) {
+          // don't annoy the shit outta people
+          return;
+        }
+      }
+      Preferences.set("update.last", String.valueOf(now));
 
       String prompt =
         "A new version of Processing is available,\n" +
