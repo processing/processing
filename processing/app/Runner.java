@@ -345,7 +345,8 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public void message(String s) {
+  // made synchronized for rev 87
+  synchronized public void message(String s) {
     if (s.trim().length() == 0) return;
     //System.out.println("M" + s.length() + ":" + s);
 
@@ -360,7 +361,7 @@ public class Runner implements MessageConsumer {
     // this is the PApplet sending us a message that the applet
     // is being moved to a new window location
     if (s.indexOf(PApplet.EXTERNAL_MOVE) == 0) {
-      String nums = s.substring(s.indexOf(' ') + 1);
+      String nums = s.substring(s.indexOf(' ') + 1).trim();
       int space = nums.indexOf(' ');
       int left = Integer.parseInt(nums.substring(0, space));
       int top = Integer.parseInt(nums.substring(space + 1));
@@ -465,10 +466,19 @@ java.lang.NullPointerException
               }
             }
             if (codeIndex != -1) {
+              // this may have a paren on the end, if so need to strip
+              // down to just the digits
+              int lastNumberIndex = colonIndex + 1;
+              while (Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
+                lastNumberIndex++;
+              }
               // lineIndex is 1-indexed, but editor wants zero-indexed
-              lineIndex = Integer.parseInt(fileAndLine.substring(colonIndex + 1));
-              exception = new RunnerException(exception.getMessage(),
-                                           codeIndex, lineIndex - 1, -1);
+              lineIndex =
+                Integer.parseInt(fileAndLine.substring(colonIndex + 1,
+                                                       lastNumberIndex));
+              exception =
+                new RunnerException(exception.getMessage(),
+                                    codeIndex, lineIndex - 1, -1);
               exception.hideStackTrace = true;
               foundMessageSource = true;
             }
