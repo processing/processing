@@ -469,7 +469,8 @@ java.lang.NullPointerException
               // this may have a paren on the end, if so need to strip
               // down to just the digits
               int lastNumberIndex = colonIndex + 1;
-              while (Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
+              while ((lastNumberIndex < fileAndLine.length()) &&
+                     Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
                 lastNumberIndex++;
               }
               // lineIndex is 1-indexed, but editor wants zero-indexed

@@ -1,4 +1,6 @@
 0088 pde
+X fix a problem with Runner.message() getting exceptions
+X   if digits to end of text, was crashing (new digit check code)
 X rev 87 on linux included a version of jikes built on redhat 7.3
 _   check to make sure this still works on the fc3 box
 
@@ -6,6 +8,15 @@ _ renaming a .java file only shows the name w/o .java
 _   which makes you rename the file to a .pde instead
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration;action=display;num=1115122925;start=3
 
+_ archive sketch not saving the entire sketch?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115187666;start=0
+
+_ export css problem
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115061823;start=0
+
+_ customizing ugly coffee cup startup crap
+_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/special_attributes.html
+_   http://java.sun.com/j2se/1.5.0/docs/guide/plugin/developer_guide/special_attributes.html
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -33,6 +44,8 @@ _   advanced users who are outgrowing the basic reference:
 _   be sure to check the "complete" reference
 _ web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
 _ the draw() method must exist, otherwise the sketch won't run
+_ need timer in as part of the api
+_   or at least include an example that uses it
 
 _ get platform checker into the latest exhibition piece
 
@@ -328,9 +341,7 @@ PDE / Details
    1 _   under windows, immediately typing after rename doesn't select
    1 _   the whole thing is selected, but not directly editable
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
-   1 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
-   1 _   so user thinks nothing is happening and overundo. 
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+
    1 _ figure out how to cancel 'save changes' on macosx and windows
    1 _   macosx handleQuit seems to force termination (at least on 1.3)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
@@ -346,6 +357,16 @@ PDE / Editor
    1 _ switch to newer revision of jedit?
    1 _   is enormous horizontal scroller issue fixed properly
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
+
+undo problems
+   1 _ when an exception occurs, undo gets killed
+   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115153290;start=1
+   1 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
+   1 _   so user thinks nothing is happening and overundo. 
+   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
+   1 _ undo has become sluggish, gets cleared on save?
+   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114103943;start=0
+
 
 PDE / Find & Replace
 
