@@ -1,4 +1,22 @@
 0088 core
+o move really general things out of PConstants (X, Y, Z..) ?
+X add something to PApplet to have constants for the platform
+o   needed for error messages (don't talk about winvdig on mac)
+X   and also useful for programs
+X bring screen space and font size settings back in to PGraphics
+X   causing too much trouble to be stuck down in PFont
+X createFont crashes on verdana (win2k)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115258282;start=0
+
+
+cleared out / completed in previous releases
+o fishwick bug with text() and shapes
+o   ellipses no longer completed when g.dimensions = 2 or 3,
+o   or not even drawn.. what a mess.
+X go through and figure out what stuff to make public
+o depth testing of lines vs text is problematic
+o   probably need to patch in an older version of the line code
+o   use depth()/noDepth() to handle depth test
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -20,6 +38,10 @@ _   they're drawn as transparent and don't have their high bits set
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
 
+_ y2 position of rectangles not same as y2 position of lines
+_   happens when the rectangle is flipped on the x or y axis
+_   probably a hack that draws the "last" point differently
+
 _ vars like cameraX etc need to be in PGraphics
 _   otherwise g.xxxx won't work
 _   how far should this go? vertices etc?
@@ -35,163 +57,14 @@ _   meaning use reflection to sort objects, just by implementing a few methods
 _ make a PException that extends RuntimeException but packages an ex?
 _   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
 
-_ bizarre image loading error with c_Rollover.zip
-
 _ don't do a loadPixels unless an updatePixels has completed
 _   tho this won't affect anything, since either it's an image buffer
 _   or it's the PGraphics object, which does an updatePixels() immediately
-_ don't grab pixels of java2d images unless asked
-_   this is the difference between a lot of loadPixels() and not
-_   so important to have it in before beta if that's the change
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
 
-_ make get/getImpl for PGraphics/PGraphics2
-_   make sure there's a loadPixels/updatePixels in PGraphics2
-
-_ set(x, y, image)
-_   x, y not setting with processing
-_   y reversed in openGL 
-
-_ gl alpha on images when flipped around backwards
-_   will sorting based on depth help this? also ask simon for ideas
-
 _ cellular automata examples broken
-
-_ ComponentListener is probably what's needed for resize() to work
-
-_ gl smoothing.. how to disable polygon but keep line enabled
-_   or at least make a note of this?
-_   leave smooth off, get the gl object, then enable line smooth
-
-_ gl points not working again
-
-_ make illustrator lib
-
-_ move really general things out of PConstants (X, Y, Z..)
-
-
-_ add something to PApplet to have constants for the platform
-_   needed for error messages (don't talk about winvdig on mac)
-_   and also useful for programs
-
-PApplet
-_ is mousePressed broken with noLoop() or redraw()?
-_ check for what else inside PApplet should be static
-_   maybe catch RuntimeExceptions in the called sub-functions
-_   that way more stuff can be static w/o losing useful error handling
-_   (emitting errors when closest to source.. i.e. w/ the filename)
-
-
-_ don't let users on < 1.3 load JAVA2D, or < 1.4 load OPENGL
-
-
-_ image loading bug is huge
-_ figure out how to handle cached images, multiple images
-_   MediaTracker blocking is prolly making jar download really slow
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
-_ also threaded images
-
-_ 404 error because first searches applet directory on zipdecode
-
-_ should image i/o and sound i/o be moved into PImage and PSound?
-_   how to load external encoders/decoders
-
-opengl
-_ fix non-bound textures from mangling everything else
-_ fix enable/disable textures for some objects
-_ fix endian ordering issues so that things work properly
-_ figure out min/max texture sizes when binding to avoid problems
-_   minimum texture size may be 64x64
-_   might need to enforce it as a minimum
-_ what should the update image function be called?
-_ box and sphere are broken in gl
-_ metaballs example dies when using box()
-_   long string of exceptions, which are also missing their newlines
-_ get loop, noLoop, redraw, and framerate all working in opengl
-_   needs custom animator thread..
-_ depth() shouldn't be needed for opengl unless actually 3D
-_   right now the camera doesn't get set up unless you call depth()
-_ resolve ARGB versus RGBA versus just A issues for fonts
-_   make sure that current scenario works identically on mac
-_   if so, just switch the image code to expect alpha in the high bits
-_   fonts probably need to be RGBA, not ALPHA style images
-_   there's nothing really ALPHA about them?
-
-scripting
-_ on exceptions, use die to just kill the applet
-_ make the file i/o stuff work more cleanly
-_   if people want to use their own file i/o they can do that too
-_ how to make a long setup() sleep so that things don't lock way up
-_   this could also be contributing to the hanging bug
-_ static applets need to be able to resize themselves on 'play'
-_ figure out what to do with static apps exported as application
-_   needs to just hang there
-_ scripts (w/ no graphics) will need to call exit() explicitly
-_   actually.. just override the default draw() to say exit()
-_ may need a fileOutput() and fileInput() function
-_   to take care of exception handling
-_ or maybe scripts are just handled with a different method? (yech)
-_   or maybe setup() can actually throw and Exception?
-_   but that's inserted by the parser, and hidden from the user?
-o implement size(0, 0) -> just doesn't bother doing a frame.show();
-o   too abstract, just have draw() call exit by default
-o   so if nothing inside draw, just quits
-o   make properly exit after things are finished
-_   add exit() function to actually explicitly quit
-_   scripts will just require that people include exit at the end
-
-_ need to make sure that components can be resized properly via size()
-_   or that it properly responds to a setBounds() call
-
-_ also when drawing an image, sense whether drawn rotated
-_   specifically, if drawn rotated 90 in either direction, or 180
-_   if just rotate/translate, then can use SCREEN_SPACE for fonts
-_ bring screen space and font size settings back in to PGraphics
-_   causing too much trouble to be stuck down in PFont
-
-random tasks
-_ someone to figure out a good model for adaptive sizing of circles
-_   also goes for arcs, though will be weighted based on arc size
-_ figure out why tiff images won't open with after effects
-_   open with photoshop, resave, see which tags change
-_   particularly of those that are included in the original image
-_   perhaps something gets corrected? 
-
-_ need timer in as part of the api
-_   or at least include an example that uses it
-
-_ depth testing of lines vs text is problematic
-_   probably need to patch in an older version of the line code
-_   use depth()/noDepth() to handle depth test
-
-_ y2 position of rectangles not same as y2 position of lines
-_   happens when the rectangle is flipped on the x or y axis
-_   probably a hack that draws the "last" point differently
-
-_ fishwick bug with text() and shapes
-_   ellipses no longer completed when g.dimensions = 2 or 3,
-_   or not even drawn.. what a mess.
-
-_ break apart functions into local (placement) and override (blitting)
-_   just have a "thin_flat_line" option in opengl code
-
-_ go through and figure out what stuff to make public
-
-_ how does ftgl handle tesselation? will our tesselator just work?
-_   main code is in FTVectoriser
-_   uses gluTessBeginContour and gluTessEndContour
-_   and then does 5 step sizes for each curveto
-
-_ illustrator export / rendering mode
-_   also postscript or pdf export?
-_   update illustrator code to use core api
-_     even if not actually working properly.. just in naming of things
-_   sorting of polygons/lines on simple painters algorithm
-_   better lighting model to show darkness at various depths
-_     maybe just ultra-high res bitmaps from gl
-o   version of BApplet that replaces g. with ai. or pdf.
 
 
 ////////////////////////////////////////////////////////////////////
@@ -206,6 +79,14 @@ The graphics library was formerly called Bagel.
 
 CORE / PApplet
 
+   1 _ is mousePressed broken with noLoop() or redraw()?
+   1 _ check for what else inside PApplet should be static
+   1 _   maybe catch RuntimeExceptions in the called sub-functions
+   1 _   that way more stuff can be static w/o losing useful error handling
+   1 _   (emitting errors when closest to source.. i.e. w/ the filename)
+   1 _ ComponentListener is probably what's needed for resize() 
+   1 _   need to make sure that components can be resized properly via size()
+   1 _   or that it properly responds to a setBounds() call
    1 _ allow save(), saveFrame() et al to properly pass in absolute paths
    1 _   (so that it doesn't always save to the applet folder)
    1 _   could require that save() takes an absolute path?
@@ -243,6 +124,34 @@ CORE / PApplet
    1 _ don't cache stuff from loadStrings and others
    1 _   mac java vm won't give up old version of file
    1 _   or use setUseCaches(false)
+   1 _ 404 error because first searches applet directory on zipdecode
+   1 _ should image i/o and sound i/o be moved into PImage and PSound?
+   1 _   how to load external encoders/decoders
+
+
+CORE - PApplet scripting
+
+_ on exceptions, use die to just kill the applet
+_ make the file i/o stuff work more cleanly
+_   if people want to use their own file i/o they can do that too
+_ how to make a long setup() sleep so that things don't lock way up
+_   this could also be contributing to the hanging bug
+_ static applets need to be able to resize themselves on 'play'
+_ figure out what to do with static apps exported as application
+_   needs to just hang there
+_ scripts (w/ no graphics) will need to call exit() explicitly
+_   actually.. just override the default draw() to say exit()
+_ may need a fileOutput() and fileInput() function
+_   to take care of exception handling
+_ or maybe scripts are just handled with a different method? (yech)
+_   or maybe setup() can actually throw and Exception?
+_   but that's inserted by the parser, and hidden from the user?
+o implement size(0, 0) -> just doesn't bother doing a frame.show();
+o   too abstract, just have draw() call exit by default
+o   so if nothing inside draw, just quits
+o   make properly exit after things are finished
+_   add exit() function to actually explicitly quit
+_   scripts will just require that people include exit at the end
 
 
 CORE / PApplet - main()
@@ -297,6 +206,11 @@ CORE / PFont and text()
      _   it could be placed at the end of the file
      _ not having fractional widths on small fonts really blows
      _   screen space text looks crappy
+     _ working with vector fonts? 
+     _   need to be able to handle shapes within shapes (reverse winding)
+     _   ftgl: main code is in FTVectoriser
+     _   uses gluTessBeginContour and gluTessEndContour
+     _   and then does 5 step sizes for each curveto
 
 
 CORE / PGraphics
@@ -305,7 +219,8 @@ _ beginShape()
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
-
+_ figure out a good model for adaptive sizing of circles
+_   also goes for arcs, though will be weighted based on arc size
 _ point appears to be broken
 _   could be a problem with java 1.5? (was using win2k)
 noStroke();
@@ -319,7 +234,6 @@ for(int i=0; i<100; i++) {
 As an aside, set() is at least 10x faster, and 
 perhaps should be used in these examples anyway. 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
-
    b _ lines
    b _   z value hack for lines is causing trouble for 2D
    b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
@@ -356,6 +270,8 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
    1 _ alpha of zero still draws boogers on screen
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
+   1 _ break apart functions into local (placement) and override (blitting)
+   1 _   just have a "thin_flat_line" option in opengl code
 
    1 _ color
    1 _   rounding errors on color conversion
@@ -385,6 +301,9 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
    b _ texture mapping
    b _   very odd, "doom era" stuff
    b _   would it be possible to have a 'slow but accurate' mode?
+   1 _ bad texture warping
+   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115241346;start=0
+
 
    b _ clipping planes
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
@@ -409,6 +328,13 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 CORE / PGraphics2
 
+_ make get/getImpl for PGraphics/PGraphics2
+_   make sure there's a loadPixels/updatePixels in PGraphics2
+_ slow on java2d, fast on p3d
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115276250;start=3
+_ set(x, y, image)
+_   x, y not setting with processing
+_ don't let users on < 1.3 load JAVA2D
 _ set upper bound on framerate so as not to completely hose things?
 _ fix the flicker in java2d mode
 _   not clear what's happening here
@@ -455,6 +381,18 @@ CORE / PGraphics3
 
 CORE / PImage
 
+     _ bizarre image loading error with c_Rollover.zip
+     _ image loading bug is huge
+     _ figure out how to handle cached images, multiple images
+     _   MediaTracker blocking is prolly making jar download really slow
+     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
+     _ also threaded images
+     _ don't grab pixels of java2d images unless asked
+     _   this is the difference between a lot of loadPixels() and not
+     _   so important to have it in before beta if that's the change
+     _ also when drawing an image, sense whether drawn rotated
+     _   specifically, if drawn rotated 90 in either direction, or 180
+     _   if just rotate/translate, then can use SCREEN_SPACE for fonts
    b _ dynamically load code for png and others on loadImage/saveFrame?
    b _ updated png encoder
    b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
@@ -498,6 +436,10 @@ CORE / PImage
    b _   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
    b _   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
    b _   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
+   1 _ figure out why tiff images won't open with after effects
+   1 _   open with photoshop, resave, see which tags change
+   1 _   particularly of those that are included in the original image
+   1 _   perhaps something gets corrected? 
 
 
 CORE / PSound
@@ -547,6 +489,40 @@ CORE / Mac OS X
 
 PGraphicsGL
 
+_ gl smoothing.. how to disable polygon but keep line enabled
+_   or at least make a note of this?
+_   leave smooth off, get the gl object, then enable line smooth
+_ gl points not working again
+_ polygon z-order with alpha in opengl
+_   at least add it to the faq, or this would be a test case w/ the sorting
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115222332;start=0
+_ invocationtargetexception in gl with aioobe:
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737;start=0
+_ set(x, y, image) y reversed in openGL 
+_ don't let users no java < 1.4 load OPENGL
+_ noLoop() broken on opengl
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
+_ fix non-bound textures from mangling everything else
+_ fix enable/disable textures for some objects
+_ fix endian ordering issues so that things work properly
+_ figure out min/max texture sizes when binding to avoid problems
+_   minimum texture size may be 64x64
+_   might need to enforce it as a minimum
+_ what should the update image function be called?
+_ box and sphere are broken in gl
+_ metaballs example dies when using box()
+_   long string of exceptions, which are also missing their newlines
+_ get loop, noLoop, redraw, and framerate all working in opengl
+_   needs custom animator thread..
+_ depth() shouldn't be needed for opengl unless actually 3D
+_   right now the camera doesn't get set up unless you call depth()
+_ resolve ARGB versus RGBA versus just A issues for fonts
+_   make sure that current scenario works identically on mac
+_   if so, just switch the image code to expect alpha in the high bits
+_   fonts probably need to be RGBA, not ALPHA style images
+_   there's nothing really ALPHA about them?
+_ gl alpha on images when flipped around backwards
+_   will sorting based on depth help this? also ask simon for ideas
 _ rewrite getImpl/setImpl inside opengl
 _ bit shifting in opengl, get down to 2 ops by using other image modes
 _   i.e. ABGR_EXT might allow for just two shifts instead of 4
@@ -556,3 +532,15 @@ _ need to write an error if people try to use opengl with 1.3 (i.e. on export)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 _ grabbing sun.cpu.endian throws a security exception with gl applets
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+
+
+PGraphicsAI
+
+_ illustrator export / rendering mode
+_   also postscript or pdf export?
+_   update illustrator code to use core api
+_     even if not actually working properly.. just in naming of things
+_   sorting of polygons/lines on simple painters algorithm
+_   better lighting model to show darkness at various depths
+_     maybe just ultra-high res bitmaps from gl
+o   version of BApplet that replaces g. with ai. or pdf.
