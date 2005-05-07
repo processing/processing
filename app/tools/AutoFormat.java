@@ -727,16 +727,14 @@ public class AutoFormat {
       // save current (rough) selection point
       int selectionEnd = editor.textarea.getSelectionEnd();
 
-      // replace with new bootiful text
-      editor.setText(strOut.toString(), false);
-
       // make sure the caret would be past the end of the text
       if (strOut.length() < selectionEnd - 1) {
         selectionEnd = strOut.length() - 1;
       }
 
-      // at least in the neighborhood
-      editor.textarea.select(selectionEnd, selectionEnd);
+      // replace with new bootiful text
+      // selectionEnd hopefully at least in the neighborhood
+      editor.setText(strOut.toString(), selectionEnd, selectionEnd);
 
       editor.sketch.setModified();
 

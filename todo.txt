@@ -119,7 +119,7 @@ X   registerDispose() does the trick
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ write an example that uses Hashtable
-_ and another that uses Vector
+_   and another that uses Vector
 _ beginShape() defaults to beginShape(POLYGON)
 _   needs to be noted for the reference
 _ make a note that u/v coordinates clamp at 0 and 1

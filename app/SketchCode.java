@@ -25,14 +25,24 @@
 package processing.app;
 
 import java.io.*;
+import javax.swing.undo.*;
 
 
 public class SketchCode {
-  public String name;  // pretty name (no extension), not the full file name
+  /** Pretty name (no extension), not the full file name */
+  public String name;
+
+  /** File object for where this code is located */
   public File file;
+
+  /** Type of code in this tab, Sketch.PDE or Sketch.JAVA */
   public int flavor;
 
+  /** Text of the program text for this tab */
   public String program;
+
+  /** Undo Manager for this tab, each tab keeps track of their own */
+  public UndoManager undo = new UndoManager();
 
   // saved positions from last time this tab was used
   public int selectionStart;
