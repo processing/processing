@@ -8,19 +8,17 @@ X   check to make sure this still works on the fc3 box
 _   stick with the rh73/fc3 build, include instructions on the site
 _   maybe have the script test for jikes first?
 _   try test run, if it closes w/ an error, then show error
-
 X exceptions in other tabs not comunig through
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115415184;start=0
-
-_ renaming a .java file only shows the name w/o .java
-_   which makes you rename the file to a .pde instead
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration;action=display;num=1115122925;start=3
-
-_ archive sketch not saving the entire sketch?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115187666;start=0
+X renaming a .java file only shows the name w/o .java
+X   which makes you rename the file to a .pde instead
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration;action=display;num=1115122925;start=3
+X archive sketch not saving the entire sketch?
+X   make the sketch save first
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115187666;start=0
 
 _ error messages from external not coming through very well
-_   especially on macosx.. is it writing to stdout/stderr tho?
+_   especially on macosx.. is it writing to stdout.txt tho?
 _   figure out why it's killing things early? the process maybe?
 
 
