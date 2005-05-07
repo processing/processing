@@ -252,6 +252,7 @@ delay	KEYWORD2	delay_
 directionalLight	KEYWORD2	directionalLight_
 dist	KEYWORD2	dist_
 /		divide
+/**		doccomment
 .		dot
 draw	KEYWORD3	draw_
 ellipse	KEYWORD2	ellipse_
@@ -320,6 +321,7 @@ log	KEYWORD2	log_
 ||		logicalOR
 lookat	KEYWORD2	lookat_
 loop	KEYWORD2	loop_
+mag	KEYWORD2	mag_
 max	KEYWORD2	max_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
@@ -351,6 +353,7 @@ noise	KEYWORD2	noise_
 noiseDetail	KEYWORD2	noiseDetail_
 noiseSeed	KEYWORD2	noiseSeed_
 noLoop	KEYWORD2	noLoop_
+normal	KEYWORD2	normal_
 noSmooth	KEYWORD2	noSmooth_
 noStroke	KEYWORD2	noStroke_
 noTint	KEYWORD2	noTint_
@@ -415,6 +418,7 @@ rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
 rotateY	KEYWORD2	rotateY_
 rotateZ	KEYWORD2	rotateZ_
+round	KEYWORD2	round_
 saturation	KEYWORD2	saturation_
 save	KEYWORD2	save_
 saveBytes	KEYWORD2	saveBytes_
