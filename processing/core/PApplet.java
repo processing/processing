@@ -315,6 +315,7 @@ public class PApplet extends Applet
    * report back to the user.
    */
   public Exception exception;
+  //public Throwable exception;
 
   protected RegisteredMethods sizeMethods;
   protected RegisteredMethods preMethods, drawMethods, postMethods;
@@ -755,7 +756,9 @@ public class PApplet extends Applet
           (msg.indexOf("no jogl in java.library.path") != -1)) {
         throw new RuntimeException(openglError);
       } else {
+        //System.err.println("target ex");
         ite.getTargetException().printStackTrace();
+        //throw ite.getTargetException();
       }
 
     } catch (ClassNotFoundException cnfe) {
@@ -958,6 +961,10 @@ public class PApplet extends Applet
       //System.out.println("exception occurred (if you don't see a stack " +
       //                 "trace below this message, we've got a bug)");
       finished = true;
+      if (e instanceof InvocationTargetException) {
+        //System.out.println("target problem");
+        e = (Exception) (((InvocationTargetException) e).getTargetException());
+      }
       exception = e;
       //e.printStackTrace(System.out);
 
@@ -1071,7 +1078,17 @@ public class PApplet extends Applet
           pmouseY = dmouseY;
 
           //synchronized (glock) {
+          //try {
           draw();
+            /*
+              // seems to catch, but then blanks out
+          } catch (Exception e) {
+            if (e instanceof InvocationTargetException) {
+              System.out.println("found poo");
+              ((InvocationTargetException)e).getTargetException().printStackTrace(System.out);
+            }
+          }
+            */
           //}
 
           // dmouseX/Y is updated only once per frame
