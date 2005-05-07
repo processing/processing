@@ -549,6 +549,7 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;ac
 
 TOOLS / Create Font
 
+   1 _ create the tool object on startup, then use thread to getAllFonts()
    1 _ close/hide window on 'ESC'
    1 _ loading is very slow on the first time (getting all font names)
    1 _   show a progress/status bar while it's happening?
