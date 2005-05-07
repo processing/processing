@@ -5,8 +5,7 @@ X if codeCount > 1 externalRuntime = true, Sketch.java line 272
 X   nah, just sticking with that, runs better
 X rev 87 on linux included a version of jikes built on redhat 7.3
 X   check to make sure this still works on the fc3 box
-_   stick with the rh73/fc3 build, include instructions on the site
-_   maybe have the script test for jikes first?
+X   stick with the rh73/fc3 build, include instructions on the site
 _   try test run, if it closes w/ an error, then show error
 X exceptions in other tabs not comunig through
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115415184;start=0
@@ -30,6 +29,8 @@ X   ignores colons for case statements
 X   need to tie this to the parser instead
 X info about getting started with building processing
 X   also re: what about eclipse? what about antlr?
+X run-expert.bat wasn't working properly
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115469263;start=0
 
 _ runtime exceptions have stopped coming through (on pc only?)
 _   test with florian example for the exception stuff
@@ -666,5 +667,7 @@ PLATFORMS / Mac OS X
 
 PLATFORMS / Linux
 
+   1 _ have the shell script test for jikes first
+   1 _   have it run jikes quickly, if it exits with an error, warn user
    1 _ some reports of it not quitting properly, but not confirmed
    1 _ splash screen
