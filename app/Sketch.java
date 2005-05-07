@@ -298,7 +298,9 @@ public class Sketch {
     renamingCode = true;
     String prompt = (current == code[0]) ?
       "New name for sketch:" : "New name for file:";
-    editor.status.edit(prompt, current.name);
+    String oldName =
+      (current.flavor == PDE) ? current.name : current.name + ".java";
+    editor.status.edit(prompt, oldName);
   }
 
 
