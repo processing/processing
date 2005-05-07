@@ -260,14 +260,14 @@ public class Compiler implements MessageConsumer {
       if (fileIndex == 0) {  // main class, figure out which tab
         for (int i = 1; i < sketch.codeCount; i++) {
           if (sketch.code[i].flavor == Sketch.PDE) {
-            if (sketch.code[i].lineOffset < lineNumber) {
+            if (sketch.code[i].preprocOffset < lineNumber) {
               fileIndex = i;
               //System.out.println("i'm thinkin file " + i);
             }
           }
         }
         if (fileIndex != 0) {  // if found another culprit
-          lineNumber -= sketch.code[fileIndex].lineOffset;
+          lineNumber -= sketch.code[fileIndex].preprocOffset;
           //System.out.println("i'm sayin line " + lineNumber);
         }
       }

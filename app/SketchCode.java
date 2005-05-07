@@ -43,7 +43,7 @@ public class SketchCode {
   //SketchHistory history;  // TODO add history information
 
   String preprocName;  // name of .java file after preproc
-  int lineOffset;  // where this code starts relative to the concat'd code
+  int preprocOffset;  // where this code starts relative to the concat'd code
 
 
   public SketchCode(String name, File file, int flavor) {
