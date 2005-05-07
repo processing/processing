@@ -115,10 +115,11 @@ many, many functions have been added, and are detailed in the
       two versions.
 <UL>
 <LI>loop() has been removed, and is instead called draw(). If you want
-applications to only run draw() once, use the function noLoop() inside
-of setup().
+applications to only run draw() once (the way draw() used to work), 
+use the function noLoop() inside of setup().
 <LI>size() should now be the very first thing in your setup(),
-otherwise commands that come before it may be ignored.
+otherwise commands that come before it may be ignored. your settings for 
+fill() and stroke(), for instance, will disappear after you call size(). 
 <LI>2D and 3D graphics are no longer completely mixed. To specify
 3D graphics, instead of size(200, 200), the new way is to use
 size(200, 200, P3D). 

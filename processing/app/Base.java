@@ -51,7 +51,7 @@ import processing.core.*;
  */
 public class Base {
   static final int VERSION = 87;
-  static final String VERSION_NAME = "0087 Beta";
+  static final String VERSION_NAME = "0088 Beta";
 
   /**
    * Path of filename opened on the command line,
