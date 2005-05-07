@@ -347,8 +347,10 @@ public class Runner implements MessageConsumer {
 
   // made synchronized for rev 87
   synchronized public void message(String s) {
-    if (s.trim().length() == 0) return;
-    //System.out.println("M" + s.length() + ":" + s);
+    //System.out.println("M" + s.length() + ":" + s.trim()); // + "MMM" + s.length());
+
+    // this eats the CRLFs on the lines.. oops.. do it later
+    //if (s.trim().length() == 0) return;
 
     // this is PApplet sending a message (via System.out.println)
     // that signals that the applet has been quit.
@@ -394,9 +396,9 @@ public class Runner implements MessageConsumer {
     //System.err.println("[" + s.length() + "] " + s);
     System.err.flush();
 
-    // if s.length <=2, ignore it because that probably means
-    // that it's just the platform line-terminators.
-    //if (s.length() < 2) return;
+    // exit here because otherwise the exception name
+    // may be titled with a blank string
+    if (s.trim().length() == 0) return;
 
     // annoying, because it seems as though the terminators
     // aren't being sent properly
@@ -441,7 +443,7 @@ java.lang.NullPointerException
         String pkgClassFxn = null;
         //String fileLine = null;
         int codeIndex = -1;
-        int lineIndex = -1;
+        int lineNumber = -1;
 
         if (startParen == -1) {
           pkgClassFxn = s;
@@ -450,7 +452,11 @@ java.lang.NullPointerException
           pkgClassFxn = s.substring(0, startParen);
           // "(javatest.java:5)"
           String fileAndLine = s.substring(startParen + 1);
-          fileAndLine = fileAndLine.substring(0, fileAndLine.length() - 1);
+          int stopParen = fileAndLine.indexOf(')');
+          //fileAndLine = fileAndLine.substring(0, fileAndLine.length() - 1);
+          fileAndLine = fileAndLine.substring(0, stopParen);
+          //System.out.println("file 'n line " + fileAndLine);
+
           //if (!fileAndLine.equals("Unknown Source")) {
           // "javatest.java:5"
           int colonIndex = fileAndLine.indexOf(':');
@@ -459,27 +465,46 @@ java.lang.NullPointerException
             // "javatest.java" and "5"
             //System.out.println("filename = " + filename);
             //System.out.println("pre0 = " + sketch.code[0].preprocName);
+            //for (int i = 0; i < sketch.codeCount; i++) {
+            //System.out.println(i + " " + sketch.code[i].lineOffset + " " +
+            //                   sketch.code[i].preprocName);
+            //}
+            lineNumber =
+              Integer.parseInt(fileAndLine.substring(colonIndex + 1)) - 1;
+
             for (int i = 0; i < sketch.codeCount; i++) {
-              if (sketch.code[i].preprocName.equals(filename)) {
+              SketchCode code = sketch.code[i];
+              //System.out.println(code.preprocName + " " + lineNumber + " " +
+              //                 code.preprocOffset);
+              if (((code.preprocName == null) &&
+                   (lineNumber >= code.preprocOffset)) ||
+                  ((code.preprocName != null) &&
+                   code.preprocName.equals(filename))) {
                 codeIndex = i;
-                break;
+                //System.out.println("got codeindex " + codeIndex);
+                //break;
+                //} else if (
               }
             }
+            // in case this was a tab that got embedded into the main .java
+            lineNumber -= sketch.code[codeIndex].preprocOffset;
+
             if (codeIndex != -1) {
               // this may have a paren on the end, if so need to strip
               // down to just the digits
+              /*
               int lastNumberIndex = colonIndex + 1;
               while ((lastNumberIndex < fileAndLine.length()) &&
                      Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
                 lastNumberIndex++;
               }
-              // lineIndex is 1-indexed, but editor wants zero-indexed
-              lineIndex =
-                Integer.parseInt(fileAndLine.substring(colonIndex + 1,
-                                                       lastNumberIndex));
+              */
+
+              // lineNumber is 1-indexed, but editor wants zero-indexed
+              // getMessage() will be what's shown in the editor
               exception =
                 new RunnerException(exception.getMessage(),
-                                    codeIndex, lineIndex - 1, -1);
+                                    codeIndex, lineNumber, -1);
               exception.hideStackTrace = true;
               foundMessageSource = true;
             }
@@ -529,7 +554,7 @@ java.lang.NullPointerException
         // because of the line that comes after
         */
 
-      } else if (messageLineCount > 5) {
+      } else if (messageLineCount > 10) {  // 5 -> 10 for 0088
         // this means the class name may not be mentioned
         // in the stack trace.. this is just a general purpose
         // error, but needs to make it through anyway.

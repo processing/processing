@@ -127,8 +127,8 @@ public class EditorConsole extends JScrollPane {
         }
       } catch (IOException e) {
         Base.showWarning("Console Error",
-                            "A problem occurred while trying to open the\n" +
-                            "files used to store the console output.", e);
+                         "A problem occurred while trying to open the\n" +
+                         "files used to store the console output.", e);
       }
 
       consoleOut =
@@ -171,6 +171,7 @@ public class EditorConsole extends JScrollPane {
 
 
   public void message(String what, boolean err, boolean advance) {
+  //public void message(String what, boolean err, boolean advance) {
     // under osx, suppress the spew about the serial port
     // to avoid an error every time someone loads their app
     // (the error is dealt with in Base with a message dialog)
@@ -184,8 +185,10 @@ public class EditorConsole extends JScrollPane {
 
     if (err) {
       systemErr.print(what);
+      //systemErr.print("CE" + what);
     } else {
       systemOut.print(what);
+      //systemOut.print("CO" + what);
     }
 
     if (advance) {
@@ -205,13 +208,13 @@ public class EditorConsole extends JScrollPane {
 
   /**
    * append a piece of text to the console.
-   *
+   * <P>
    * Swing components are NOT thread-safe, and since the MessageSiphon
    * instantiates new threads, and in those callbacks, they often print
    * output to stdout and stderr, which are wrapped by EditorConsoleStream
    * and eventually leads to EditorConsole.appendText(), which directly
    * updates the Swing text components, causing deadlock.
-   *
+   * <P>
    * A quick hack from Francis Li (who found this to be a problem)
    * wraps the contents of appendText() into a Runnable and uses
    * SwingUtilities.invokeLater() to ensure that the updates only
@@ -275,7 +278,7 @@ class EditorConsoleStream extends OutputStream {
   OutputStream echo;
 
   public EditorConsoleStream(EditorConsole parent,
-                                boolean err, OutputStream echo) {
+                             boolean err, OutputStream echo) {
     this.parent = parent;
     this.err = err;
     this.echo = echo;
