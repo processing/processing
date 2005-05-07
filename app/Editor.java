@@ -584,8 +584,8 @@ public class Editor extends JFrame
     item = new JMenuItem("Auto Format");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //new AutoFormat(Editor.this).show();
-          handleBeautify();
+          new AutoFormat(Editor.this).show();
+          //handleBeautify();
         }
       });
     menu.add(item);
@@ -1512,117 +1512,6 @@ public class Editor extends JFrame
 
     //System.out.println("exiting here");
     System.exit(0);
-  }
-
-
-  // an improved algorithm that would still avoid a full state machine
-  // 1. build an array of strings for the lines
-  // 2. first remove everything between /* and */ (relentless)
-  // 3. next remove anything inside two sets of " "
-  //    but not if escaped with a \
-  //    these can't extend beyond a line, so that works well
-  //    (this will save from "http://blahblah" showing up as a comment)
-  // 4. remove from // to the end of a line everywhere
-  // 5. run through remaining text to do indents
-  //    using hokey brace-counting algorithm
-  // 6. also add indents for switch statements
-  //    case blah: { }  (colons at end of line isn't a good way)
-  //    maybe /case \w+\:/
-  public void handleBeautify() {
-    String prog = textarea.getText();
-
-    // TODO re-enable history
-    //history.record(prog, SketchHistory.BEAUTIFY);
-
-    int tabSize = Preferences.getInteger("editor.tabs.size");
-
-    char program[] = prog.toCharArray();
-    StringBuffer buffer = new StringBuffer();
-    boolean gotBlankLine = false;
-    int index = 0;
-    int level = 0;
-
-    while (index != program.length) {
-      int begin = index;
-      while ((program[index] != '\n') &&
-             (program[index] != '\r')) {
-        index++;
-        if (program.length == index)
-          break;
-      }
-      int end = index;
-      if (index != program.length) {
-        if ((index+1 != program.length) &&
-            // treat \r\n from windows as one line
-            (program[index] == '\r') &&
-            (program[index+1] == '\n')) {
-          index += 2;
-        } else {
-          index++;
-        }
-      } // otherwise don't increment
-
-      String line = new String(program, begin, end-begin);
-      line = line.trim();
-
-      if (line.length() == 0) {
-        if (!gotBlankLine) {
-          // let first blank line through
-          buffer.append('\n');
-          gotBlankLine = true;
-        }
-      } else {
-        //System.out.println(level);
-        int idx = -1;
-        String myline = line.substring(0);
-        while (myline.lastIndexOf('}') != idx) {
-          idx = myline.indexOf('}');
-          myline = myline.substring(idx+1);
-          level--;
-        }
-        //for (int i = 0; i < level*2; i++) {
-        // TODO i've since forgotten how i made this work (maybe it's even
-        //      a bug) but for now, level is incrementing/decrementing in
-        //      steps of two. in the interest of getting a release out,
-        //      i'm just gonna roll with that since this function will prolly
-        //      be replaced entirely and there are other things to worry about.
-        for (int i = 0; i < tabSize * level / 2; i++) {
-          buffer.append(' ');
-        }
-        buffer.append(line);
-        buffer.append('\n');
-        //if (line.charAt(0) == '{') {
-        //level++;
-        //}
-        idx = -1;
-        myline = line.substring(0);
-        while (myline.lastIndexOf('{') != idx) {
-          idx = myline.indexOf('{');
-          myline = myline.substring(idx+1);
-          level++;
-        }
-        gotBlankLine = false;
-      }
-    }
-
-    // save current (rough) selection point
-    int selectionEnd = textarea.getSelectionEnd();
-
-    // replace with new bootiful text
-    setText(buffer.toString(), false);
-
-    // make sure the caret would be past the end of the text
-    if (buffer.length() < selectionEnd - 1) {
-      selectionEnd = buffer.length() - 1;
-    }
-
-    // at least in the neighborhood
-    textarea.select(selectionEnd, selectionEnd);
-
-    //setSketchModified(true);
-    //sketch.setCurrentModified(true);
-    sketch.setModified();
-    buttons.clear();
   }
 
 
