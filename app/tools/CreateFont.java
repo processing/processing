@@ -1,7 +1,6 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  CreateFont - gui interface to font creation heaven/hell
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-05 Ben Fry and Casey Reas
@@ -37,6 +36,9 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 
+/**
+ * gui interface to font creation heaven/hell.
+ */
 public class CreateFont extends JFrame {
   File targetFolder;
 
