@@ -1026,6 +1026,7 @@ public class PApplet extends Applet
 
             } else {
               //e.printStackTrace(System.out);
+              //System.out.println("re-throwing");
               throw e;
             }
           }
@@ -2381,16 +2382,16 @@ public class PApplet extends Applet
   }
 
 
-  static public final float ceil(float what) {
-    return (float) Math.ceil(what);
+  static public final int ceil(float what) {
+    return (int) Math.ceil(what);
   }
 
-  static public final float floor(float what) {
-    return (float) Math.floor(what);
+  static public final int floor(float what) {
+    return (int) Math.floor(what);
   }
 
-  static public final float round(float what) {
-    return Math.round(what);
+  static public final int round(float what) {
+    return (int) Math.round(what);
   }
 
 

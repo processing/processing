@@ -1260,16 +1260,20 @@ public class Sketch {
       //PApplet.printarr(codeFolderPackages);
 
     } else {
-      /*
+      // since using the special classloader,
+      // run externally whenever there are extra classes defined
+      //externalRuntime = (codeCount > 1);
+      // this no longer appears to be true.. so scrapping for 0088
+
       // check to see if multiple files that include a .java file
       externalRuntime = false;
       for (int i = 0; i < codeCount; i++) {
-        if (code[i].flavor == JAVA) externalRuntime = true;
+        if (code[i].flavor == JAVA) {
+          externalRuntime = true;
+          break;
+        }
       }
-      */
-      // since using the special classloader,
-      // run externally whenever there are extra classes defined
-      externalRuntime = (codeCount > 1);
+
       //codeFolderPackages = null;
       libraryPath = "";
     }
@@ -1289,7 +1293,7 @@ public class Sketch {
 
     for (int i = 1; i < codeCount; i++) {
       if (code[i].flavor == PDE) {
-        code[i].lineOffset = ++bigCount;
+        code[i].preprocOffset = ++bigCount;
         bigCode.append('\n');
         bigCode.append(code[i].program);
         bigCount += countLines(code[i].program);
@@ -1349,11 +1353,11 @@ public class Sketch {
       int errorLine = re.getLine() - 1;
       for (int i = 1; i < codeCount; i++) {
         if ((code[i].flavor == PDE) &&
-            (code[i].lineOffset < errorLine)) {
+            (code[i].preprocOffset < errorLine)) {
           errorFile = i;
         }
       }
-      errorLine -= code[errorFile].lineOffset;
+      errorLine -= code[errorFile].preprocOffset;
 
       throw new RunnerException(re.getMessage(), errorFile,
                              errorLine, re.getColumn());
@@ -1372,9 +1376,9 @@ public class Sketch {
         pattern = compiler.compile(mess);
       } catch (MalformedPatternException e) {
         Base.showWarning("Internal Problem",
-                            "An internal error occurred while trying\n" +
-                            "to compile the sketch. Please report\n" +
-                            "this online at http://processing.org/bugs", e);
+                         "An internal error occurred while trying\n" +
+                         "to compile the sketch. Please report\n" +
+                         "this online at http://processing.org/bugs", e);
       }
 
       PatternMatcherInput input =
@@ -1387,11 +1391,11 @@ public class Sketch {
         int errorFile = 0;
         for (int i = 1; i < codeCount; i++) {
           if ((code[i].flavor == PDE) &&
-              (code[i].lineOffset < errorLine)) {
+              (code[i].preprocOffset < errorLine)) {
             errorFile = i;
           }
         }
-        errorLine -= code[errorFile].lineOffset;
+        errorLine -= code[errorFile].preprocOffset;
 
         throw new RunnerException(tsre.getMessage(),
                                errorFile, errorLine, errorColumn);
