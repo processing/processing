@@ -132,15 +132,15 @@ public class Sketch {
 
   /**
    * Build the list of files.
-   *
+   * <P>
    * Generally this is only done once, rather than
    * each time a change is made, because otherwise it gets to be
    * a nightmare to keep track of what files went where, because
    * not all the data will be saved to disk.
-   *
+   * <P>
    * This also gets called when the main sketch file is renamed,
    * because the sketch has to be reloaded from a different folder.
-   *
+   * <P>
    * Another exception is when an external editor is in use,
    * in which case the load happens each time "run" is hit.
    */
@@ -1055,7 +1055,7 @@ public class Sketch {
     }
     buffer.append('\n');
     buffer.append(editor.getText());
-    editor.setText(buffer.toString(), false);
+    editor.setText(buffer.toString(), 0, 0);  // scroll to start
     setModified();
   }
 
@@ -1082,11 +1082,13 @@ public class Sketch {
     // set to the text for this file
     // 'true' means to wipe out the undo buffer
     // (so they don't undo back to the other file.. whups!)
-    editor.setText(current.program, true);
+    editor.setText(current.program,
+                   current.selectionStart, current.selectionStop,
+                   current.undo);
 
     // set stored caret and scroll positions
     editor.textarea.setScrollPosition(current.scrollPosition);
-    editor.textarea.select(current.selectionStart, current.selectionStop);
+    //editor.textarea.select(current.selectionStart, current.selectionStop);
     //editor.textarea.setSelectionStart(current.selectionStart);
     //editor.textarea.setSelectionEnd(current.selectionStop);
 
@@ -1682,12 +1684,20 @@ public class Sketch {
     ps.flush();
     ps.close();
 
+    // copy the loading gif to the applet
+    String LOADING_IMAGE = "loading.gif";
+    File loadingImage = new File(folder, LOADING_IMAGE);
+    if (!loadingImage.exists()) {
+      loadingImage = new File("lib", LOADING_IMAGE);
+    }
+    Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
+
     // copy the source files to the target, since we like
     // to encourage people to share their code
     for (int i = 0; i < codeCount; i++) {
       try {
         Base.copyFile(code[i].file,
-                         new File(appletFolder, code[i].file.getName()));
+                      new File(appletFolder, code[i].file.getName()));
       } catch (IOException e) {
         e.printStackTrace();
       }
