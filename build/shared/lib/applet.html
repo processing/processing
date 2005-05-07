@@ -9,24 +9,25 @@
 <!--
 
 body {
- background: #666666;  
- color: #FFFFFF;
- font-family: "Bitstream Vera Sans", 'Lucida Grande', Arial, Helvetica,
-Lucida, sans-serif;
- font-size: 80%;  
+  margin: 0px 0px 0px 0px;
+  font-family: verdana, geneva, arial, helvetica, san-serif; 
+  font-size: 11px; 
+  background-color: #DDDDCC; 
+  text-decoration: none; 
+  font-weight: normal; 
+  line-height: normal; 
 }
  
-a:link {
- color: #CCCC00;
-}
- 
-a:visited {
- color: #CCCC00;
-}
+A 	       { color: #3399CC; }
+A:link	   { color: #3399CC; text-decoration: underline; }
+A:visited  { color: #3399CC; text-decoration: underline; }
+A:active   { color: #3399CC; text-decoration: underline; }
+A:hover	   { color: #3399CC; text-decoration: underline; }
 
 #content {
- width: 400px;
- margin: auto;
+  position: absolute;
+  left: 55px;
+  top: 60px;
 }
 
 -->
@@ -38,9 +39,12 @@ a:visited {
 
 <div id="content">
  
-<div id="applet">
+<div>
 <applet code="@@sketch@@" archive="@@archive@@"
 width="@@width@@" height="@@height@@">
+<param name="image" value="loading.gif">
+<param name="boxmessage" value="Loading Processing software...">
+<param name="boxbgcolor" value="#FFFFFF">
 
 <!-- This is the message that shows up when people don't have
      Java installed in their browser. Any HTML can go here
@@ -60,7 +64,7 @@ Source code: @@source@@
 </p>
 
 <p>
-Built with <a href="http://processing.org" title="The Processing Homepage">Processing</a>
+Built with <a href="http://processing.org" title="Processing.org">Processing</a>
 </p>
  
 </div>
