@@ -128,6 +128,8 @@ CORE / PApplet
    1 _ 404 error because first searches applet directory on zipdecode
    1 _ should image i/o and sound i/o be moved into PImage and PSound?
    1 _   how to load external encoders/decoders
+   1 _ placement of 100x100 items is odd
+   1 _   happens with P3D and maybe also P2D?
 
 
 CORE - PApplet scripting

@@ -217,8 +217,16 @@ public class Runner implements MessageConsumer {
     Class c = loader.loadClass(sketch.mainClassName);
     applet = (PApplet) c.newInstance();
 
+    window = new Frame(sketch.name); // use ugly window
+    ((Frame)window).setResizable(false);
+    if (editor.icon != null) {
+      ((Frame)window).setIconImage(editor.icon);
+    }
+    window.pack(); // to get a peer, size set later, need for insets
+
     applet.leechErr = leechErr;
     applet.folder = sketch.folder.getAbsolutePath();
+    applet.frame = (Frame) window;
 
     applet.init();
     //applet.start();
@@ -231,13 +239,6 @@ public class Runner implements MessageConsumer {
         Thread.sleep(5);
       } catch (InterruptedException e) { }
     }
-
-    window = new Frame(sketch.name); // use ugly window
-    ((Frame)window).setResizable(false);
-    if (editor.icon != null) {
-      ((Frame)window).setIconImage(editor.icon);
-    }
-    window.pack(); // to get a peer, size set later, need for insets
 
     window.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {

@@ -16,10 +16,41 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration;actio
 X archive sketch not saving the entire sketch?
 X   make the sketch save first
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115187666;start=0
+X is it the run() exception handler that's leaving off the CRLFs?
+o   or is it that it needs to be \r\n not just \n?
+X   nope, it was Runner.message();
+X set applet.frame on runner, so ppl can mess with the frame itself
+
+_ runtime exceptions have stopped coming through (on pc only?)
+_   test with florian example for the exception stuff
+_   that they don't show up in the error bar
+_   make sure this is no longer the case
 
 _ error messages from external not coming through very well
 _   especially on macosx.. is it writing to stdout.txt tho?
 _   figure out why it's killing things early? the process maybe?
+
+casey working on...
+_ export css problem
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115061823;start=0
+_ customizing ugly coffee cup startup crap
+_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/special_attributes.html
+_   http://java.sun.com/j2se/1.5.0/docs/guide/plugin/developer_guide/special_attributes.html
+
+fixed in previous releases
+X why is gl being added on export, no matter what? or is it?
+X   applet folder not really being emptied on export
+X   so old libs will just perpetuate themselves
+X moving an external window around a lot will halt the parent
+X   does move even need to be called? could just wait till stop?
+X   PdeMessageSiphon has problems with message()
+X external apps also seem to not do newlines properly on exceptions
+o odd error in System.err stream coming from running external
+o   dies after a while or goes weird
+o   make sure exceptions with .class work
+o openStream returning 'null' really horked up the letters applet
+o   no System.out was coming through
+o   System.err was getting cut off before finishing
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -50,13 +81,6 @@ _ web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
 _ the draw() method must exist, otherwise the sketch won't run
 _ need timer in as part of the api
 _   or at least include an example that uses it
-
-casey working on...
-_ export css problem
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115061823;start=0
-_ customizing ugly coffee cup startup crap
-_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/special_attributes.html
-_   http://java.sun.com/j2se/1.5.0/docs/guide/plugin/developer_guide/special_attributes.html
 
 _ get platform checker into the latest exhibition piece
 
@@ -92,10 +116,6 @@ void serialEvent() {
   println(myPort.readString());
 }
 
-_ set applet.frame on runner, so ppl can mess with the frame itself
-_ is it the run() exception handler that's leaving off the CRLFs?
-_   or is it that it needs to be \r\n not just \n?
-
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 
@@ -104,23 +124,12 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 _ sun.applet.Main is appletviewer
 
-_ settings.path.fallback not being used
-_   really important for intl versions that are having trouble
-_   or ask for the sketch folder name.. why isn't it?
-
-_ can't find build dir on operating systems w/ non-ascii chars
-_   or rather, when user accounts have non-ascii chars in the name
-_   try setting up an account where this is the case
-
 _ info about getting started with building processing
 _   also re: what about eclipse? what about antlr?
 
 _ move the useful serial buffering fxns into net library
 
 _ setup bugzilla and enter all the bugs
-
-_ placement of 100x100 items is odd
-_   happens with P3D and maybe also P2D?
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
@@ -132,13 +141,6 @@ _     which then causes a full lock
 _ something really bad happened with println() in this release
 _   perhaps only without a code folder and/or running in java2d mode?
 _   this may also be what's hosing 
-
-Not sure what triggers it, possibly scrolling with mousewheel?, but
-sometimes Processing output window gets stuck thinking it should
-scroll to the top, so if you have an output larger than the allowable
-space, it will show you the last line, but then pops the scrollbar
-back to the top.  I think the only way to stop it is to quit out of
-processing and relaunch. 
 
 _ saveFrame() directly to quicktime via port of DbnRecorder
 _   do this after beta, not likely to work with java 1.4 on macosx
@@ -154,38 +156,8 @@ _   static void PApplet.checkScreens() { }
 _   to run explicitly later
 _   this seems too complicated.. just make people restart
 
-_ more javadoc for the stuff inside processing.app
-
-_ runtime exceptions have stopped coming through (on pc only?)
-_   that they don't show up in the error bar
-
-_ npe is a runtimeex, so any npe in setup comes up weird
-_   maybe the renderer exception is something different? newrendex?
-
-_ why is gl being added on export, no matter what? or is it?
-_   applet folder not really being emptied on export
-_   so old libs will just perpetuate themselves
-
-_ external apps don't stop at all when 'stop' is hit
-_   worker thread is halting the app ala code folder bug
-_   could this be dealt with by using nio? 
-_     host environment will be running 1.4 so...
-
-_ moving an external window around a lot will halt the parent
-_   does move even need to be called? could just wait till stop?
-_   PdeMessageSiphon has problems with message()
-_ external apps also seem to not do newlines properly on exceptions
 _ appendText launches a new thread for every blip of text
 _   this is totally wrong and really horks things
-
-_ split Preferences and PreferencesFrame ?
-
-_ properly handle ENTER, Ctrl-W and ESC on all dialogs
-_   there must be a proper "swing" way of doing this that doesn't
-_   involve adding key listeners to every friggin component
-_   ESC should fake a cancel button press
-_   ENTER should do the default option
-_   (might be a matter of setting the default action for the window?)
 
 _ when running as external applet, hide the editor text area
 _ drag & drop implementation to add files to sketch
@@ -201,14 +173,6 @@ _   too much to maintain the multiple versions, no dependencies, too much code
 
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
-
-check these errors to see if they still exist
-_ odd error in System.err stream coming from running external
-_   dies after a while or goes weird
-_   make sure exceptions with .class work
-_ openStream returning 'null' really horked up the letters applet
-_   no System.out was coming through
-_   System.err was getting cut off before finishing
 
 _ add prompt() method to Serial (simple dialog box that pops up)
 
@@ -302,6 +266,16 @@ _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 PDE - Processing Development Environment
 
 
+PDE / Base
+
+_ settings.path.fallback not being used
+_   really important for intl versions that are having trouble
+_   or ask for the sketch folder name.. why isn't it?
+_ can't seem to find build dir on operating systems w/ non-ascii chars
+_   or rather, when user accounts have non-ascii chars in the name
+_   try setting up an account where this is the case
+
+
 PDE / Details
 
    1 _ lock the minimum size for the main processing editor frame
@@ -309,10 +283,6 @@ PDE / Details
 
    1 _ tab to just indent lines properly, 
    1 _   rather than having it convert to spaces
-
-   1 _ preferences window has been hit with the ugly stick
-   1 _   redo panel to use proper swing layout etc
-   1 _   also needs to look good across all platforms
 
    1 _ setting sketchbook to a folder on the network
    1 _   does this work? test on both on mac and pc.. 
@@ -362,6 +332,13 @@ PDE / Details
    1 _ dim edit menus as appropriate during selection/no selection/etc
    1 _ make export put a timestamp in the html code (hidden or visible)
    1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
+
+   1 _ properly handle ENTER, Ctrl-W and ESC on all dialogs
+   1 _   there must be a proper "swing" way of doing this that doesn't
+   1 _   involve adding key listeners to every friggin component
+   1 _   ESC should fake a cancel button press
+   1 _   ENTER should do the default option
+   1 _   (might be a matter of setting the default action for the window?)
 
 
 PDE / Editor
@@ -437,9 +414,14 @@ PDE / Sketch & Sketchbook
    1 _   see notes/bitching in Sketch.nameCode()
 
 
-
 PDE / Runner 
 
+   1 _ external apps don't stop at all when 'stop' is hit
+   1 _   worker thread is halting the app ala code folder bug
+   1 _   could this be dealt with by using nio? 
+   1 _     host environment will be running 1.4 so...
+   1 _ npe is a runtimeex, so any npe in setup comes up weird
+   1 _   maybe the renderer exception is something different? newrendex?
    1 _ if in full java mode
    1 _   if extends PApplet.. or rather, put PApplet cast into a 
    1 _   try/catch block.. if it doesn't work, try applet. if that
@@ -493,6 +475,14 @@ _ need to decide how to handle "stop" button in present mode
 _   when running externally, people need to write their own stop function
 _   just get export to application working so this can be supported
 _   for now, they're stuck w/ running in the env and getting the ugliness
+
+
+PDE / Preferences
+
+   1 _ split Preferences and PreferencesFrame ?
+   1 _ preferences window has been hit with the ugly stick
+   1 _   redo panel to use proper swing layout etc
+   1 _   also needs to look good across all platforms
 
 
 PDE / Preprocessor
