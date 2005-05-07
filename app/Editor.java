@@ -112,7 +112,8 @@ public class Editor extends JFrame
   JMenuItem undoItem, redoItem;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
-  static public UndoManager undo = new UndoManager(); // editor needs this guy
+  UndoManager undo;
+  //static public UndoManager undo = new UndoManager(); // editor needs this guy
 
   //
 
@@ -232,7 +233,16 @@ public class Editor extends JFrame
 
     // set the undo stuff for this feller
     Document document = textarea.getDocument();
-    document.addUndoableEditListener(new PdeUndoableEditListener());
+    //document.addUndoableEditListener(new PdeUndoableEditListener());
+    document.addUndoableEditListener(new UndoableEditListener() {
+        public void undoableEditHappened(UndoableEditEvent e) {
+          if (undo != null) {
+            undo.addEdit(e.getEdit());
+            undoAction.updateUndoState();
+            redoAction.updateRedoState();
+          }
+        }
+      });
   }
 
 
@@ -783,17 +793,6 @@ public class Editor extends JFrame
   // ...................................................................
 
 
-  // This one listens for edits that can be undone.
-  protected class PdeUndoableEditListener implements UndoableEditListener {
-    public void undoableEditHappened(UndoableEditEvent e) {
-      // Remember the edit and update the menus.
-      undo.addEdit(e.getEdit());
-      undoAction.updateUndoState();
-      redoAction.updateRedoState();
-    }
-  }
-
-
   class UndoAction extends AbstractAction {
     public UndoAction() {
       super("Undo");
@@ -815,10 +814,12 @@ public class Editor extends JFrame
       if (undo.canUndo()) {
         this.setEnabled(true);
         undoItem.setEnabled(true);
+        undoItem.setText(undo.getUndoPresentationName());
         putValue(Action.NAME, undo.getUndoPresentationName());
       } else {
         this.setEnabled(false);
         undoItem.setEnabled(false);
+        undoItem.setText("Undo");
         putValue(Action.NAME, "Undo");
       }
     }
@@ -846,10 +847,12 @@ public class Editor extends JFrame
       if (undo.canRedo()) {
         this.setEnabled(true);
         redoItem.setEnabled(true);
+        redoItem.setText(undo.getRedoPresentationName());
         putValue(Action.NAME, undo.getRedoPresentationName());
       } else {
         this.setEnabled(false);
         redoItem.setEnabled(false);
+        redoItem.setText("Redo");
         putValue(Action.NAME, "Redo");
       }
     }
@@ -923,17 +926,43 @@ public class Editor extends JFrame
 
 
   /**
-   * Called by EditorHeader when the tab is changed
-   * (or a new set of files are opened).
-   * @param discardUndo true if undo info to this point should be ignored
+   * Called to update the text but not switch to a different
+   * set of code (which would affect the undo manager).
    */
-  public void setText(String what, boolean discardUndo) {
+  //public void setText(String what) { //, boolean discardUndo) {
+  //setText(what, 0, 0);
+  //}
+
+
+  /**
+   * Called to update the text but not switch to a different
+   * set of code (which would affect the undo manager).
+   */
+  public void setText(String what, int selectionStart, int selectionEnd) {
     textarea.setText(what);
-
-    if (discardUndo) undo.discardAllEdits();
-
-    textarea.select(0, 0);    // move to the beginning of the document
+    textarea.select(selectionStart, selectionEnd);
     textarea.requestFocus();  // get the caret blinking
+  }
+
+
+  /**
+   * Called by Sketch when the tab is changed or a new set of files are opened.
+   */
+  public void setText(String currentProgram,
+                      int selectionStart, int selectionEnd,
+                      UndoManager currentUndo) {
+    this.undo = null;
+
+    //if (discardUndo) undo.discardAllEdits();
+
+    // don't set the undo object yet otherwise gets hokey
+    textarea.setText(currentProgram);
+    textarea.select(selectionStart, selectionEnd);
+    textarea.requestFocus();  // get the caret blinking
+
+    this.undo = currentUndo;
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
   }
 
 
