@@ -43,9 +43,6 @@ o still some weirdness with thread flickering on the mac
 o   and frenetic display updates on the pc
 
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -361,6 +358,8 @@ _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
 _ simon reports borders on P3D and OPENGL if background() not called
+_ clipping not yet completely implemented
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
 _ fix tint() for PGraphics3 (what could be wrong?)
 _   tint() honoring alpha but not colored tint
 _   maybe not setting fill color when drawing textures
