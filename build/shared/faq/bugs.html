@@ -164,7 +164,6 @@ out what's going on. Useful things when reporting:
   </tr>
 </table>
 
-
 <table width="750" border="0" 
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
   <tr> 
@@ -181,9 +180,14 @@ out what's going on. Useful things when reporting:
       <b>
       Processing won't start! Nothing happens when I click &ldquo;Run&rdquo;!
 </b> <br> <br>
-Common problems on Windows
+Windows
 <UL>
-<LI> Processing probably won't work if you install it inside
+<LI> Processing seems to have trouble starting when run from a user 
+account that contains non-ascii characters. For instance, if your name 
+contains Japanese characters or umlauts, it's likely to have trouble. 
+Sometimes using run.bat instead will fix this, but in the meantime, 
+we're looking for a fix.
+<LI> In general, Processing probably won't work if you install it inside
   a folder with non-ascii characters in its name. For instance, if the
   name of your user folder includes Japanese characters, 
 or it has an umlaut or cedilla or anything else fancy, you're gonna
@@ -204,7 +208,7 @@ desktop, or somewhere inside that folder. The fix
 <LI>You might also try using run.bat to start processing. Lots
   of people seem to have a better time with this method.
 </UL>
-Common problems on Mac OS X
+Mac OS X
 <UL>
 <LI>If you're running on Mac OS X 10.2, read the <a href="platforms.html#mac">platforms</a> section regarding things that may be broken.
 <LI>Sometimes you might see the following error: <br>
@@ -214,7 +218,20 @@ It seems that this happens when an older version of <a
   href="http://fink.sourceforge.net">Fink</A> is installed. In this
   case, you should either update or uninstall Fink. (thanks to ryan govostes for tracking this down)
 </UL>
-
+Linux
+<UL>
+<LI>If you get an error reading <TT>jikes: error while loading 
+shared libraries: libstdc++.so.5: cannot open shared object file: 
+No such file or directory</TT>,
+It's because Processing requires libstdc++-libc6.2-2.so.3 for jikes. 
+You should either install it or, since it's old, install the rpm/package 
+for compat-libstdc++ before Processing will run. Or find/rebuild a different 
+version of jikes that's compatible with your distro. Jikes is available 
+<a href="http://sourceforge.net/project/showfiles.php?group_id=128803">here</a>, and it's an easy ./configure, make, and then copy src/jikes to the 
+processing-XXXX folder and you should be all set.
+<br> <br>
+<LI>Or if you encounter a problem like this one: <TT>jikes: relocation error: /opt/processing-0087/./jikes: undefined symbol: __dynamic_cast_2</A>, then that also means that jikes is incompatible with your distro. 
+</UL>
 Any Platform...
 <UL>
 <LI> 
