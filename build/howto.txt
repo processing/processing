@@ -1,5 +1,7 @@
 HOW TO BUILD PROCESSING ON YOUR FAVORITE PLATFORM
 
+With frequently asked questions, scroll to the end of the file.
+
 
 ////////////////////////////////////////////////////////////////////
 
@@ -39,8 +41,8 @@ installer every few months to keep things fresh.
 
 
 1b. On Mac OS X, install Apple's Developer Tools. Should work with 
-    everything from the December 2002 Tools for Jaguar, up through 
-    the more recent Xcode stuff. 
+    everything from the December 2002 Tools for Jaguar on OS X 10.2, 
+    up through the more recent Xcode stuff. 
 
 
 1c. On Linux, you're pretty much on your own.. You need a pretty 
@@ -144,3 +146,23 @@ fresh build. This includes any changes to the reference,
 the examples, the libraries, jikes, or just about any time you
 have to use -d -P with the update.
 
+
+////////////////////////////////////////////////////////////////////
+
+//// Frequently Asked Questions
+
+- What about eclipse? What about ant? The command line is frightening
+  and gives me nightmares!
+
+In a basic sense, the command line stuff isn't as scary as it might 
+seem. Hopefully it's just a matter of following the instructions 
+above (and being patient). If not, let us know where you have trouble
+so we can fix things.
+
+Conceivably, it wouldn't take much to make Processing build under
+Eclipse or any other IDE, but we don't do it by default. Same goes for 
+ANT. We don't use it, but if someone were to make build scripts that 
+emulated everything that the current build scripts do (not just build
+the code, but all the other annoying crap that the build scripts do) 
+then maybe we could switch to it. It's all about reaching some kind 
+of critical mass. 
