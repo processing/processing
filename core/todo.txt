@@ -13,6 +13,7 @@ X   just shuts off the volume control
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
 
 cleared out / completed in previous releases
+X typed version of expand() and contract()
 o fishwick bug with text() and shapes
 o   ellipses no longer completed when g.dimensions = 2 or 3,
 o   or not even drawn.. what a mess.
@@ -45,47 +46,6 @@ o   and frenetic display updates on the pc
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-HIGH PRIORITY
-
-_ polygons perpendicular to axis not drawing
-_   is this a clipping error?
-_   probably a triangulation error, because triangles work ok
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
-
-_ createGraphics(200, 200) to create same as source
-_   createGraphics(200, 200, P2D) to create 2D from 3D
-_   also, drawing a PGraphics2 doesn't seem to work
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
-_ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
-_   they're drawn as transparent and don't have their high bits set
-http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
-
-_ y2 position of rectangles not same as y2 position of lines
-_   happens when the rectangle is flipped on the x or y axis
-_   probably a hack that draws the "last" point differently
-
-_ vars like cameraX etc need to be in PGraphics
-_   otherwise g.xxxx won't work
-_   how far should this go? vertices etc?
-
-X typed version of expand() and contract()
-_   need to complete for the others:
-_   append(), shorten(), splice, slice, subset, concat, reverse
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
-
-_ would be cool if could sort w/o the sort class..
-_   meaning use reflection to sort objects, just by implementing a few methods
-
-_ don't do a loadPixels unless an updatePixels has completed
-_   tho this won't affect anything, since either it's an image buffer
-_   or it's the PGraphics object, which does an updatePixels() immediately
-_ if (modified) don't loadPixels again, just ignore it
-_   make a note that updatePixels() only sets a flag in PImage
-_     (but not PGraphics, which does it immediately)
-
-_ cellular automata examples broken
-
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -99,71 +59,82 @@ The graphics library was formerly called Bagel.
 
 CORE / PApplet
 
-  
-   1 _ make a PException that extends RuntimeException but packages an ex?
-   1 _   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
-   1 _ is mousePressed broken with noLoop() or redraw()?
-   1 _ check for what else inside PApplet should be static
-   1 _   maybe catch RuntimeExceptions in the called sub-functions
-   1 _   that way more stuff can be static w/o losing useful error handling
-   1 _   (emitting errors when closest to source.. i.e. w/ the filename)
-   1 _ ComponentListener is probably what's needed for resize() 
-   1 _   need to make sure that components can be resized properly via size()
-   1 _   or that it properly responds to a setBounds() call
-   1 _ allow save(), saveFrame() et al to properly pass in absolute paths
-   1 _   (so that it doesn't always save to the applet folder)
-   1 _   could require that save() takes an absolute path?
-   1 _ size() inside draw is missing a new call to cameraMode, etc
-   1 _ framerate(30) is still flickery and jumpy..
-   1 _ fix param() to use a sketch.properties file when run as an app
-   1 _   make this also be used in generating the html file
-   1 _ fix link() to handle relative URLs
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
-   1 _ put SecurityException things around file i/o for applets
-   1 _   rather than checking online(), since applets might be signed
-   1 _ saveFrame() at the end of a draw mode program is problematic
-   1 _   app might exit before the file has finished writing to disk
-   1 _   need to block other activity inside screenGrab until finished
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
-   1 _ problems with defining fill(255) vs fill(0xff808080)
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891;start=2
-   1 _ too many push() will silently stop the applet inside a loop
-   1 _ test winding polygons in different directions
-   1 _ test lighting to see how it compares with gl
-   1 _ better lockout inside beginShape() to keep other things from happening
-   1 _ is quad strip broken or not behaving as expected?
-   1 _   may be correct, it worked for nik
-   1 _ inside draw() mode, delay() does nothing
-   1 _   delay might be a good way to signal drawing to the screen/updating
-   1 _ catch security exceptions around applet i/o calls
-   1 _   not just for saving files, but provide better error msgs when
-   1 _     attempting to download from another server
-   1 _ array utilities on Object[] are worthless.. fix it with reflection?
-   1 _   see if reflection will allow expand for all class types
-   1 _ ed's thread re: fullscreen strategies
-   1 _   could add a new BApplet that uses BufferStrategy?
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
-   1 _ don't cache stuff from loadStrings and others
-   1 _   mac java vm won't give up old version of file
-   1 _   or use setUseCaches(false)
-   1 _ 404 error because first searches applet directory on zipdecode
-   1 _ should image i/o and sound i/o be moved into PImage and PSound?
-   1 _   how to load external encoders/decoders
-   1 _ placement of 100x100 items is odd
-   1 _   happens with P3D and maybe also P2D?
-   1 _ scripting issues
-   1 _   how to make a long setup() sleep so that things don't lock way up
-   1 _   add exit() function to actually explicitly quit
-   1 _     scripts will just require that people include exit at the end
-   1 _ fileInput() and fileOutput() may not agree with draw()
-   1 _   can only be used inside of setup()?
+_ typed version of array functions:
+_   append(), shorten(), splice, slice, subset, concat, reverse
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
+_ would be cool if could sort w/o the sort class..
+_   meaning use reflection to sort objects, just by implementing a few methods
+_ make a PException that extends RuntimeException but packages an ex?
+_   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
+_ is mousePressed broken with noLoop() or redraw()?
+_ check for what else inside PApplet should be static
+_   maybe catch RuntimeExceptions in the called sub-functions
+_   that way more stuff can be static w/o losing useful error handling
+_   (emitting errors when closest to source.. i.e. w/ the filename)
+_ ComponentListener is probably what's needed for resize() 
+_   need to make sure that components can be resized properly via size()
+_   or that it properly responds to a setBounds() call
+_ allow save(), saveFrame() et al to properly pass in absolute paths
+_   (so that it doesn't always save to the applet folder)
+_   could require that save() takes an absolute path?
+_ size() inside draw is missing a new call to cameraMode, etc
+_ framerate(30) is still flickery and jumpy..
+_ fix param() to use a sketch.properties file when run as an app
+_   make this also be used in generating the html file
+_ fix link() to handle relative URLs
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081710684;start=0
+_ put SecurityException things around file i/o for applets
+_   rather than checking online(), since applets might be signed
+_ saveFrame() at the end of a draw mode program is problematic
+_   app might exit before the file has finished writing to disk
+_   need to block other activity inside screenGrab until finished
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
+_ problems with defining fill(255) vs fill(0xff808080)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891;start=2
+_ too many push() will silently stop the applet inside a loop
+_ test winding polygons in different directions
+_ test lighting to see how it compares with gl
+_ better lockout inside beginShape() to keep other things from happening
+_ is quad strip broken or not behaving as expected?
+_   may be correct, it worked for nik
+_ inside draw() mode, delay() does nothing
+_   delay might be a good way to signal drawing to the screen/updating
+_ catch security exceptions around applet i/o calls
+_   not just for saving files, but provide better error msgs when
+_     attempting to download from another server
+_ array utilities on Object[] are worthless.. fix it with reflection?
+_   see if reflection will allow expand for all class types
+_ ed's thread re: fullscreen strategies
+_   could add a new BApplet that uses BufferStrategy?
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
+_ don't cache stuff from loadStrings and others
+_   mac java vm won't give up old version of file
+_   or use setUseCaches(false)
+_ 404 error because first searches applet directory on zipdecode
+_ should image i/o and sound i/o be moved into PImage and PSound?
+_   how to load external encoders/decoders
+_ placement of 100x100 items is odd
+_   happens with P3D and maybe also P2D?
+_ scripting issues
+_   how to make a long setup() sleep so that things don't lock way up
+_   add exit() function to actually explicitly quit
+_     scripts will just require that people include exit at the end
+_ fileInput() and fileOutput() may not agree with draw()
+_   not yet verified
+_   can only be used inside of setup()?
+_ cellular automata examples broken
 
 
 CORE / PApplet - main()
 
+_ currently some bugs in the main() because it's not sizing applets 
+_   if running in present mode it works ok
+_   but that also needs its display set.. argh
 _ make the 1.4 code in PApplet load via reflection
 _   doesn't appear necessary with 1.3 applets
+_   or is some of the stuff usable in 1.3 but not all?
+_     ie. the device config classes exist but not the set full screen method
 _ for present mode, need to set a default display 
 _   currently crashes if only --present is specified w/o --display
 _ present mode is flakey.. applet doesn't always come up
@@ -192,35 +163,55 @@ _     (use toolkit.getscreensize)
 
 CORE / PFont and text()
 
-     _ text() with a z coordinate is now using translate, very slow
-     _   also puts up a weird error message about translate() in 2D mode
-     _ make screen space fonts use get/set as well?
-     _   too much to debug on their own
-     _   unfortunately tint not set with setImpl, but...
-   1 _ optimize textMode(MODEL) with textMode(SCREEN)
-   1 _   in PGraphics and PGraphics3, check to see if matrix is within epsilon
-   1 _   of one of the rotation matrices (many fewer steps) 
-   1 _   if identity, or just translate, or a rotate, make OBJECT into SCREEN
-   1 _ optimize fonts by using native fonts in PGraphics2
-   1 _   especially textMode(SCREEN) which is disastrously slow
-   1 _   in java2d, can quickly blit the image itself
-   1 _   this way, can isolate it for gl too, which will use glBitmap
-   1 _   danger of this setup is that it may run much nicer for the author
-   1 _     i.e. with the font installed, and then super slow for their users
-     _ not having kerning really blows
-     _   could this be pulled from the OpenType font stuff? 
-     _   it could be placed at the end of the file
-     _ not having fractional widths on small fonts really blows
-     _   screen space text looks crappy
-     _ working with vector fonts? 
-     _   need to be able to handle shapes within shapes (reverse winding)
-     _   ftgl: main code is in FTVectoriser
-     _   uses gluTessBeginContour and gluTessEndContour
-     _   and then does 5 step sizes for each curveto
+_ text() with a z coordinate is now using translate, very slow
+_   also puts up a weird error message about translate() in 2D mode
+_ make screen space fonts use get/set as well?
+_   too much to debug on their own
+_   unfortunately tint not set with setImpl, but...
+_ optimize textMode(MODEL) with textMode(SCREEN)
+_   in PGraphics and PGraphics3, check to see if matrix is within epsilon
+_   of one of the rotation matrices (many fewer steps) 
+_   if identity, or just translate, or a rotate, make OBJECT into SCREEN
+_ optimize fonts by using native fonts in PGraphics2
+_   especially textMode(SCREEN) which is disastrously slow
+_   in java2d, can quickly blit the image itself
+_   this way, can isolate it for gl too, which will use glBitmap
+_   danger of this setup is that it may run much nicer for the author
+_     i.e. with the font installed, and then super slow for their users
+_ not having kerning really blows
+_   could this be pulled from the OpenType font stuff? 
+_   it could be placed at the end of the file
+_ not having fractional widths on small fonts really blows
+_   screen space text looks crappy
+_ working with vector fonts? 
+_   need to be able to handle shapes within shapes (reverse winding)
+_   ftgl: main code is in FTVectoriser
+_   uses gluTessBeginContour and gluTessEndContour
+_   and then does 5 step sizes for each curveto
 
 
 CORE / PGraphics
 
+_ createGraphics(200, 200) to create same as source
+_   createGraphics(200, 200, P2D) to create 2D from 3D
+_   also, drawing a PGraphics2 doesn't seem to work
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
+_ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
+_   they're drawn as transparent and don't have their high bits set
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
+_ y2 position of rectangles not same as y2 position of lines
+_   happens when the rectangle is flipped on the x or y axis
+_   probably a hack that draws the "last" point differently
+_ vars like cameraX etc need to be in PGraphics
+_   otherwise g.xxxx won't work
+_   how far should this go? vertices etc?
+_ don't do a loadPixels unless an updatePixels has completed
+_   tho this won't affect anything, since either it's an image buffer
+_   or it's the PGraphics object, which does an updatePixels() immediately
+_ if (modified) don't loadPixels again, just ignore it
+_   make a note that updatePixels() only sets a flag in PImage
+_     (but not PGraphics, which does it immediately)
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
@@ -240,96 +231,93 @@ for(int i=0; i<100; i++) {
 As an aside, set() is at least 10x faster, and 
 perhaps should be used in these examples anyway. 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
-   b _ lines
-   b _   z value hack for lines is causing trouble for 2D
-   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
-   b _   rewrite line and stroke code, it's a buggy mess
-   b _     lines become 2 pixels thick after a 3D transform 
-   b _     better handling of single-pixel special case
-   b _       flat_line_retribution is a hack, can go away
-   b _ lines are conflicting with type in 2D
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094174791;start=0
-   b _ mgorbet stroke transparency problem
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
-   b _   make sure line() commands don't try to have a fill
-   b _   box is not opaque
-   b _     problem is that lines are drawn second
-   b _     one pixel lines have no z value.. argh
-   b _     bug re: 3d depth sorting on lines
-   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
-   b _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
-   b _     translate(58, 48, 0); 
-   b _     rotateY(0.5);
-   b _     box(40);
-   b _   line endcaps and line joins. strokeMode()
-   b _     lower priority, but at least leave room
-   b _ strokeWeight is still broken
-   b _   setting stroke width on circle makes odd patterns
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077013848;start=0
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080347160
-   b _ more weirdness with stroke on rect, prolly not alpha
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085799526
-   b _ rect is not getting it's stroke color set
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
-   b _ weird problem with drawing/filling squares
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
-   1 _ alpha of zero still draws boogers on screen
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
-   1 _ break apart functions into local (placement) and override (blitting)
-   1 _   just have a "thin_flat_line" option in opengl code
+_ lines
+_   z value hack for lines is causing trouble for 2D
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
+_   rewrite line and stroke code, it's a buggy mess
+_     lines become 2 pixels thick after a 3D transform 
+_     better handling of single-pixel special case
+_       flat_line_retribution is a hack, can go away
+_ lines are conflicting with type in 2D
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094174791;start=0
+_ mgorbet stroke transparency problem
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
+_   make sure line() commands don't try to have a fill
+_   box is not opaque
+_     problem is that lines are drawn second
+_     one pixel lines have no z value.. argh
+_     bug re: 3d depth sorting on lines
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043894019;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042004618
+_     translate(58, 48, 0); 
+_     rotateY(0.5);
+_     box(40);
+_   line endcaps and line joins. strokeMode()
+_     lower priority, but at least leave room
+_ strokeWeight is still broken
+_   setting stroke width on circle makes odd patterns
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077013848;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080347160
+_ more weirdness with stroke on rect, prolly not alpha
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1085799526
+_ rect is not getting it's stroke color set
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073582391;start=0
+_ weird problem with drawing/filling squares
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077226984
+_ alpha of zero still draws boogers on screen
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073329613;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
+_ break apart functions into local (placement) and override (blitting)
+_   just have a "thin_flat_line" option in opengl code
 
-   1 _ color
-   1 _   rounding errors on color conversion
-   1 _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
-   1 _   will return 127, instead of 128.
+_ color
+_   rounding errors on color conversion
+_   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
+_   will return 127, instead of 128.
 
-   1 _ curves
-   1 _   non-homogenous coloring for curve vertices
-   1 _   implement curveTangent
-   1 _   fix-up the curve_init() and the rest to use matrices
-   1 _     and not have ugly names (i.e. just g.curveDetail is good)
+_ curves
+_   non-homogenous coloring for curve vertices
+_   implement curveTangent
+_   fix-up the curve_init() and the rest to use matrices
+_     and not have ugly names (i.e. just g.curveDetail is good)
 
-   1 _ ellipse problems
-   1 _   weird ellipse bug with an alpha line in same image
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
-   1 _   scaled ellipse showing up as a hexagon
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
-   1 _   problem with the fill
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
-   1 _   z values not set properly on ellipses?
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
-   1 _   ellipses are just plain ugly
-   1 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
-   1 _   toxi ellipses don't adapt properly with transformations
+_ ellipse problems
+_   weird ellipse bug with an alpha line in same image
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
+_   scaled ellipse showing up as a hexagon
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
+_   problem with the fill
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
+_   z values not set properly on ellipses?
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
+_   ellipses are just plain ugly
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
+_   toxi ellipses don't adapt properly with transformations
 
-   b _ texture mapping
-   b _   very odd, "doom era" stuff
-   b _   would it be possible to have a 'slow but accurate' mode?
-   1 _ bad texture warping
-   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115241346;start=0
+_ texture mapping
+_   very odd, "doom era" stuff
+_   would it be possible to have a 'slow but accurate' mode?
+_ bad texture warping
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115241346;start=0
 
 
-   b _ clipping planes
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1095170607;start=0
-   b _   things are flying into the camera and halting apps
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
-   b _   NullPointerException apparently when things way offscreen
-   b _     i.e. glyphrot with scale set to 4
-   b _     or at least that things get ridiculously slow
-   b _     clipping issues here.. but also something in scan converter
-   b _     not clipping areas from offscreen
-   b _       huge geometry slows things way down
+_ clipping planes
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1095170607;start=0
+_   things are flying into the camera and halting apps
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+_   NullPointerException apparently when things way offscreen
+_     i.e. glyphrot with scale set to 4
+_     or at least that things get ridiculously slow
+_     clipping issues here.. but also something in scan converter
+_     not clipping areas from offscreen
+_       huge geometry slows things way down
 
-   1 _ points
-   1 _   point() being funneled through beginShape is terribly slow
-   1 _     go the other way 'round
-
-   1 _ add option to sort triangles back to front so alpha works
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
+_ points
+_   point() being funneled through beginShape is terribly slow
+_     go the other way 'round
 
 
 CORE / PGraphics2
@@ -368,125 +356,131 @@ g2.draw(gp);
 
 CORE / PGraphics3
 
-     _ simon reports borders on P3D and OPENGL if background() not called
-     _ fix tint() for PGraphics3 (what could be wrong?)
-     _   tint() honoring alpha but not colored tint
-     _   maybe not setting fill color when drawing textures
-     _   guessing it's an implementation issue in sami's renderer
-     _   check with the a_Displaying example and tint(255, 0, 0, 100);
-     _ apply tint() to textures as well
-     _   otherwise no good way to color textures
-     _ Stroking a rect() leaves off the upper right pixel
-     _ make vertexCount etc properly accessible in PGraphics3
-     _   so that people can do things like the dxf renderer
-     _ error message saying that strokeCap and strokeJoin don't work
-     _ PPolygon no longer in use and PLine is a mess
-     _ also have a simple way to hook in triangle leeches to PGraphics3
-     _   this exists, but needs to be documented, or have accessors
+_ polygons perpendicular to axis not drawing
+_   is this a clipping error?
+_   probably a triangulation error, because triangles work ok
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
+_ simon reports borders on P3D and OPENGL if background() not called
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_ apply tint() to textures as well
+_   otherwise no good way to color textures
+_ Stroking a rect() leaves off the upper right pixel
+_ make vertexCount etc properly accessible in PGraphics3
+_   so that people can do things like the dxf renderer
+_ error message saying that strokeCap and strokeJoin don't work
+_ PPolygon no longer in use and PLine is a mess
+_ also have a simple way to hook in triangle leeches to PGraphics3
+_   this exists, but needs to be documented, or have accessors
+_ add option to sort triangles back to front so alpha works
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
 
 
 CORE / PImage
 
-     _ bizarre image loading error with c_Rollover.zip
-     _ image loading bug is huge
-     _ figure out how to handle cached images, multiple images
-     _   MediaTracker blocking is prolly making jar download really slow
-     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
-     _ also threaded images
-     _ don't grab pixels of java2d images unless asked
-     _   this is the difference between a lot of loadPixels() and not
-     _   so important to have it in before beta if that's the change
-     _ also when drawing an image, sense whether drawn rotated
-     _   specifically, if drawn rotated 90 in either direction, or 180
-     _   if just rotate/translate, then can use SCREEN_SPACE for fonts
-   b _ dynamically load code for png and others on loadImage/saveFrame?
-   b _ updated png encoder
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
-   b _ more image file i/o.. more advanced in newer java
-   b _   read uncompressed tiff, read uncompressed tga files.
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994;start=15
-   b _ loadImage() seems to be caching everything from the jar
-   b _   make a note of how to disable this
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681#8
-   b _ get loadImage() to work properly with data folder
-   b _   should probably use the code from loadStream
-   b _   and the url stuff should be an alternate method altogether
-   b _ alpha not set on saveFrame, so can't be used in photoshop as a layer
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
-   b _ expose function to write tiff header in PImage (advanced)
-   b _   helps with writing enormous images
-   1 _ loadImage must be used inside or after setup
-   1 _   either document this and/or provide a better error message
-   1 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
-   b _ more blend() modes (the five listed on the thread below?)
-   b _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
-   b _   figure out what the modes should actually be: 
-   b _     photoshop: normal, dissolve; darken, multiply, color burn, 
-   b _                linear burn; lighten, screen, color dodge, linear
-   b _                dodge; overlay, soft light, hard light, vivid light, 
-   b _                linear light, pin light, hard mix; difference, 
-   b _                exclusion; hue, saturation, color, luminosity
-   b _     illustrator: normal; darken, multiply, color burn; lighten,
-   b _                  screen, color dodge; overlay, soft light, hard light; 
-   b _                  difference, exclusion; hue, sat, color, luminosity
-   b _     director: Copy, Transparent, Reverse, Ghost, Not copy, 
-   b _               Not transparent, Not reverse, Not ghost, Matte, Mask;
-   b _               (below seems more useful:
-   b _               Blend, Add pin, Add, Subtract pin, Background transparent,
-   b _               Lightest, Subtract, Darkest, Lighten, Darken
-   b _     flash: 
-   b _   DIFFERENCE: C = abs(A-B);
-   b _   MULTIPLY: C = (A * B ) / 255
-   b _   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
-   b _   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-   b _   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-   b _   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
-   1 _ figure out why tiff images won't open with after effects
-   1 _   open with photoshop, resave, see which tags change
-   1 _   particularly of those that are included in the original image
-   1 _   perhaps something gets corrected? 
+_ bizarre image loading error with c_Rollover.zip
+_ image loading bug is huge
+_ figure out how to handle cached images, multiple images
+_   MediaTracker blocking is prolly making jar download really slow
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
+_ also threaded images
+_ don't grab pixels of java2d images unless asked
+_   this is the difference between a lot of loadPixels() and not
+_   so important to have it in before beta if that's the change
+_ also when drawing an image, sense whether drawn rotated
+_   specifically, if drawn rotated 90 in either direction, or 180
+_   if just rotate/translate, then can use SCREEN_SPACE for fonts
+_ dynamically load code for png and others on loadImage/saveFrame?
+_ updated png encoder
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
+_ more image file i/o.. more advanced in newer java
+_   read uncompressed tiff, read uncompressed tga files.
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994;start=15
+_ loadImage() seems to be caching everything from the jar
+_   make a note of how to disable this
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681#8
+_ get loadImage() to work properly with data folder
+_   should probably use the code from loadStream
+_   and the url stuff should be an alternate method altogether
+_ alpha not set on saveFrame, so can't be used in photoshop as a layer
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
+_ expose function to write tiff header in PImage (advanced)
+_   helps with writing enormous images
+_ loadImage must be used inside or after setup
+_   either document this and/or provide a better error message
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+_ more blend() modes (the five listed on the thread below?)
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
+_   figure out what the modes should actually be: 
+_     photoshop: normal, dissolve; darken, multiply, color burn, 
+_                linear burn; lighten, screen, color dodge, linear
+_                dodge; overlay, soft light, hard light, vivid light, 
+_                linear light, pin light, hard mix; difference, 
+_                exclusion; hue, saturation, color, luminosity
+_     illustrator: normal; darken, multiply, color burn; lighten,
+_                  screen, color dodge; overlay, soft light, hard light; 
+_                  difference, exclusion; hue, sat, color, luminosity
+_     director: Copy, Transparent, Reverse, Ghost, Not copy, 
+_               Not transparent, Not reverse, Not ghost, Matte, Mask;
+_               (below seems more useful:
+_               Blend, Add pin, Add, Subtract pin, Background transparent,
+_               Lightest, Subtract, Darkest, Lighten, Darken
+_     flash: 
+_   DIFFERENCE: C = abs(A-B);
+_   MULTIPLY: C = (A * B ) / 255
+_   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
+_   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+_   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+_   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
+_ figure out why tiff images won't open with after effects
+_   open with photoshop, resave, see which tags change
+_   particularly of those that are included in the original image
+_   perhaps something gets corrected? 
 
 
 CORE / PSound
 
-   1 _ Unsupported control type: Master Gain 
-   1_    what's actually causing this error?
-   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
-   1 _ duration as an internal param, not a function
-   1 _ When a sound is finished playing, 
-   1 _   it should return to 0 so it can play again
-   1 _ Putting sound.loop() in draw() seemed to spawn multiple sounds threads?
-   1 _ After a sound is paused, it will only play from where it was paused
-   1 _   to its end and will not loop again
-   1 _ The ref in PSound2 says volume accepts vals from 0...1
-   1 _   but values larger than one increase the volume.
-   1 _ SoundEvent // is sound finished?? Can't access now. 
-   1 _ make java 1.1 version of PSound work properly
-   1 _ merge PSound and PSound2 via reflection?
-   1 _   once debugged, merge these back together and use reflection
-   1 _     (unless it's a messy disaster)
+_ duration as an internal param, not a function
+_ When a sound is finished playing, 
+_   it should return to 0 so it can play again
+_ Putting sound.loop() in draw() seemed to spawn multiple sounds threads?
+_ After a sound is paused, it will only play from where it was paused
+_   to its end and will not loop again
+_ The ref in PSound2 says volume accepts vals from 0...1
+_   but values larger than one increase the volume.
+_ SoundEvent // is sound finished?? Can't access now. 
+_ make java 1.1 version of PSound work properly
+_ merge PSound and PSound2 via reflection?
+_   once debugged, merge these back together and use reflection
+_     (unless it's a messy disaster)
+_ Unsupported control type: Master Gain 
+_   what's actually causing this error?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
 
 
 CORE / Documentation
 
-   1 _ write documentation on general use of processing.core
-   1 _   along with how to download from sourceforge (anonpass is blank)
-   1 _   note that applet is itself a Component
+_ write documentation on general use of processing.core
+_   along with how to download from sourceforge (anonpass is blank)
+_   note that applet is itself a Component
 
 
 CORE / Mac OS X
 
-     _ textMode(SCREEN) having issues on Mac OS X
-     _   seem to be problems with updatePixels() on the mac
-     _   appears to run asynchronously
-     _ little window showing up on macosx when running
-     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
-     _ flicker happening on osx java 1.4, but not 1.3:
-     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297;start=0
-     _ cursor() broken in applets on macosx?
-     _   or is it a java 1.4 versus java 1.3 problem?
-     _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
+_ textMode(SCREEN) having issues on Mac OS X
+_   seem to be problems with updatePixels() on the mac
+_   appears to run asynchronously
+_ little window showing up on macosx when running
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
+_ flicker happening on osx java 1.4, but not 1.3:
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297;start=0
+_ cursor() broken in applets on macosx?
+_   or is it a java 1.4 versus java 1.3 problem?
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
 
 
 ////////////////////////////////////////////////////////////////////
