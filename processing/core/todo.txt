@@ -8,7 +8,9 @@ X   causing too much trouble to be stuck down in PFont
 X createFont crashes on verdana (win2k)
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115258282;start=0
 X made ceil(), floor(), and round() return ints instead of floats
-
+X fix for PSound: Unsupported control type: Master Gain 
+X   just shuts off the volume control
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
 
 cleared out / completed in previous releases
 o fishwick bug with text() and shapes
@@ -18,6 +20,26 @@ X go through and figure out what stuff to make public
 o depth testing of lines vs text is problematic
 o   probably need to patch in an older version of the line code
 o   use depth()/noDepth() to handle depth test
+X on exceptions, use die to just kill the applet
+X make the file i/o stuff work more cleanly
+X   if people want to use their own file i/o they can do that too
+o this could also be contributing to the hanging bug
+X static applets need to be able to resize themselves on 'play'
+X figure out what to do with static apps exported as application
+X   needs to just hang there
+o scripts (w/ no graphics) will need to call exit() explicitly
+o   actually.. just override the default draw() to say exit()
+X may need a fileOutput() and fileInput() function
+X   to take care of exception handling
+o or maybe scripts are just handled with a different method? (yech)
+o   or maybe setup() can actually throw and Exception?
+o   but that's inserted by the parser, and hidden from the user?
+o implement size(0, 0) -> just doesn't bother doing a frame.show();
+o   too abstract, just have draw() call exit by default
+o   so if nothing inside draw, just quits
+o   make properly exit after things are finished
+o still some weirdness with thread flickering on the mac
+o   and frenetic display updates on the pc
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -55,9 +77,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 _ would be cool if could sort w/o the sort class..
 _   meaning use reflection to sort objects, just by implementing a few methods
 
-_ make a PException that extends RuntimeException but packages an ex?
-_   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
-
 _ don't do a loadPixels unless an updatePixels has completed
 _   tho this won't affect anything, since either it's an image buffer
 _   or it's the PGraphics object, which does an updatePixels() immediately
@@ -80,6 +99,9 @@ The graphics library was formerly called Bagel.
 
 CORE / PApplet
 
+  
+   1 _ make a PException that extends RuntimeException but packages an ex?
+   1 _   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
    1 _ is mousePressed broken with noLoop() or redraw()?
    1 _ check for what else inside PApplet should be static
    1 _   maybe catch RuntimeExceptions in the called sub-functions
@@ -130,31 +152,12 @@ CORE / PApplet
    1 _   how to load external encoders/decoders
    1 _ placement of 100x100 items is odd
    1 _   happens with P3D and maybe also P2D?
-
-
-CORE - PApplet scripting
-
-_ on exceptions, use die to just kill the applet
-_ make the file i/o stuff work more cleanly
-_   if people want to use their own file i/o they can do that too
-_ how to make a long setup() sleep so that things don't lock way up
-_   this could also be contributing to the hanging bug
-_ static applets need to be able to resize themselves on 'play'
-_ figure out what to do with static apps exported as application
-_   needs to just hang there
-_ scripts (w/ no graphics) will need to call exit() explicitly
-_   actually.. just override the default draw() to say exit()
-_ may need a fileOutput() and fileInput() function
-_   to take care of exception handling
-_ or maybe scripts are just handled with a different method? (yech)
-_   or maybe setup() can actually throw and Exception?
-_   but that's inserted by the parser, and hidden from the user?
-o implement size(0, 0) -> just doesn't bother doing a frame.show();
-o   too abstract, just have draw() call exit by default
-o   so if nothing inside draw, just quits
-o   make properly exit after things are finished
-_   add exit() function to actually explicitly quit
-_   scripts will just require that people include exit at the end
+   1 _ scripting issues
+   1 _   how to make a long setup() sleep so that things don't lock way up
+   1 _   add exit() function to actually explicitly quit
+   1 _     scripts will just require that people include exit at the end
+   1 _ fileInput() and fileOutput() may not agree with draw()
+   1 _   can only be used inside of setup()?
 
 
 CORE / PApplet - main()
@@ -447,6 +450,9 @@ CORE / PImage
 
 CORE / PSound
 
+   1 _ Unsupported control type: Master Gain 
+   1_    what's actually causing this error?
+   1 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
    1 _ duration as an internal param, not a function
    1 _ When a sound is finished playing, 
    1 _   it should return to 0 so it can play again
@@ -471,11 +477,9 @@ CORE / Documentation
 
 CORE / Mac OS X
 
-     _ textMode(SCREEN) having issues
+     _ textMode(SCREEN) having issues on Mac OS X
      _   seem to be problems with updatePixels() on the mac
      _   appears to run asynchronously
-     _ still some weirdness with thread flickering on the mac
-     _   and frenetic display updates on the pc
      _ little window showing up on macosx when running
      _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
      _ flicker happening on osx java 1.4, but not 1.3:

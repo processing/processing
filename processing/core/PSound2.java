@@ -77,8 +77,13 @@ public class PSound2 extends PSound {
       clip = (Clip) AudioSystem.getLine(info);
 
       // seems that you can't make more than one of these
-      gainControl =
-        (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+      try {
+        gainControl =
+          (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+      } catch (Exception e) {
+        System.err.println("Couldn't get gain control for this .wav file");
+        e.printStackTrace();
+      }
 
       // This method does not return until completely loaded
       clip.open(ais);
@@ -204,8 +209,12 @@ public class PSound2 extends PSound {
    * Set the volume with a value from 0 (off) to 1 (loudest).
    */
   public void volume(float v) {  // ranges 0..1
-    float dB = (float)(Math.log(v)/Math.log(10.0)*20.0);
-    gainControl.setValue(dB);
+    if (gainControl != null) {
+      float dB = (float)(Math.log(v)/Math.log(10.0)*20.0);
+      gainControl.setValue(dB);
+    } else {
+      System.err.println("Cannot set the volume for this sound.");
+    }
   }
 
 
