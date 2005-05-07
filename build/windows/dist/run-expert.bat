@@ -10,6 +10,7 @@ set CLASSPATH=java\lib\rt.jar;lib;lib\build;lib\pde.jar;lib\core.jar;lib\antlr.j
 set PATH=java\bin;%PATH%
 
 REM start javaw -ms128m -mx128m processing.app.Base
+start java -ms128m -mx128m processing.app.Base
 
 set CLASSPATH=%SAVEDCP%
 set PATH=%SAVEDPATH%
