@@ -33,6 +33,7 @@ X run-expert.bat wasn't working properly
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115469263;start=0
 X when an exception occurs, undo gets killed
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115153290;start=1
+o add a note about floating point numbers to the faq
 
 casey fixes
 X export css problem
@@ -70,6 +71,9 @@ X   or how they should relate to the 'faq'.. readme -> faq?
 X loadImage() mixed case problems
 
 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 _ runtime exceptions have stopped coming through (on pc only?)
 _   test with florian example for the exception stuff
 _   that they don't show up in the error bar
@@ -81,6 +85,7 @@ _   figure out why it's killing things early? the process maybe?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
 
 _ make simple tool for casey to rebuild all the examples at once
+_   just make it easier to go to the next sketch
 _   need to rebuild with this release because of 1.3/1.4 issues
 
 bugzilla
@@ -134,7 +139,7 @@ _   what's a NullPointerException
 _   what's an ArrayIndexOutOfBoundsException
 _   use of strings
 _   println() for debugging
-
+_ add notes to float ref about problems with incrementing by +0.0001
 
 
 ////////////////////////////////////////////////////////////////////
@@ -190,6 +195,8 @@ PDE / Console
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
 _   problem with it launching a new thread for every single update!
+_ printing 32k chars to console w/o a line break will cause massive error
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115470426;start=0
 
 
 PDE / Details
@@ -241,7 +248,8 @@ _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
-
+_ save changes doesn't properly set focus
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115487608;start=0
 _ figure out how to cancel 'save changes' on macosx and windows
 _   macosx handleQuit seems to force termination (at least on 1.3)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
@@ -351,6 +359,8 @@ _ scanning sketchbook folder may be extremely slow
 _   not sure why this would be the case
 _ handle renaming with case changes (currently ignores case change)
 _   see notes/bitching in Sketch.nameCode()
+_ "save as" loses cursor/scroll positions (because reloading)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115486342;start=0
 
 
 PDE / Runner 
