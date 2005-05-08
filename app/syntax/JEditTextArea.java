@@ -1165,8 +1165,7 @@ public class JEditTextArea extends JComponent
         painter.invalidateLineRange(selectionStartLine,selectionEndLine);
         painter.invalidateLineRange(newStartLine,newEndLine);
 
-        document.addUndoableEdit(new CaretUndo(
-                                               selectionStart,selectionEnd));
+        document.addUndoableEdit(new CaretUndo(selectionStart,selectionEnd));
 
         selectionStart = newStart;
         selectionEnd = newEnd;

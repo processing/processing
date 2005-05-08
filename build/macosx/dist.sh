@@ -91,6 +91,7 @@ find processing -name "*~" -exec rm -f {} ';'
 # need to leave ds store stuff cuz one of those is important
 #find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
+find processing -name "Thumbs.db" -exec rm -f {} ';'
 
 # clean out the cvs entries
 find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null

@@ -1069,6 +1069,11 @@ public class Sketch {
    * </OL>
    */
   public void setCurrent(int which) {
+    if (current == code[which]) {
+      //System.out.println("already current, ignoring");
+      return;
+    }
+
     // get the text currently being edited
     if (current != null) {
       current.program = editor.getText();

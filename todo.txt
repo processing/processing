@@ -1,5 +1,8 @@
 0089 pde
 X properly rolled the version number in Base
+X fix nasty late-breaking undo bug
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115560243;start=0
+X remove Thumbs.db from examples/reference stuff
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
