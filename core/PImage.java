@@ -815,6 +815,14 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Blend a two colors based on a particular mode.
+   * <PRE>
+   * BLEND - linear interpolation of colours: C = A*factor + B
+   * ADD - additive blending with white clip: C = min(A*factor + B, 255)
+   * SUBSTRACT - substractive blending with black clip: C = max(B - A*factor, 0)
+   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
+   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
+   * REPLACE - destination colour equals colour of source pixel: C = A
+   * </PRE>
    */
   static public int blend(int c1, int c2, int mode) {
     switch (mode) {
