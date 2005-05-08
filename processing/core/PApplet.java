@@ -3523,17 +3523,13 @@ public class PApplet extends Applet
     switch (sort_mode) {
     case BYTES:
       return sort_bytes[a] - sort_bytes[b];
-      //if (sort_bytes[a] < sort_bytes[b]) return -1;
-      //return (sort_bytes[a] == sort_bytes[b]) ? 0 : 1;
     case CHARS:
       return sort_chars[a] - sort_chars[b];
-      //if (sort_chars[a] < sort_chars[b]) return -1;
-      //return (sort_chars[a] == sort_chars[b]) ? 0 : 1;
     case INTS:
       return sort_ints[a] - sort_ints[b];
-      //if (sort_ints[a] < sort_ints[b]) return -1;
-      //return (sort_ints[a] == sort_ints[b]) ? 0 : 1;
     case FLOATS:
+      // can't just cast to an int because 0.2 and 0.4 would
+      // just appear to be the same thing. no good.
       if (sort_floats[a] < sort_floats[b]) return -1;
       return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
     case STRINGS:
@@ -3547,6 +3543,28 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // ARRAY UTILITIES
+
+
+  /**
+   * Calls System.arraycopy(), included here so that we can
+   * avoid people needing to learn about the System object
+   * before they can just copy an array.
+   */
+  static public void arraycopy(Object src, int srcPosition,
+                               Object dst, int dstPosition,
+                               int length) {
+    System.arraycopy(src, srcPosition, dst, dstPosition, length);
+  }
+
+
+  /**
+   * Shortcut to copy the entire contents of
+   * the source into the destination array.
+   * Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
+   */
+  static public void arraycopy(Object src, Object dst) {
+    System.arraycopy(src, 0, dst, 0, Array.getLength(src));
+  }
 
 
   static public boolean[] expand(boolean list[]) {

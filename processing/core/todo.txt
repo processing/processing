@@ -1,4 +1,6 @@
 0090 core
+X added arraycopy() function that calls System.arraycopy()
+X   also the useful shortcut fxn
 
 
 
@@ -224,18 +226,15 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080342288;start=0
 _ break apart functions into local (placement) and override (blitting)
 _   just have a "thin_flat_line" option in opengl code
-
 _ color
 _   rounding errors on color conversion
 _   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
 _   will return 127, instead of 128.
-
 _ curves
 _   non-homogenous coloring for curve vertices
-_   implement curveTangent
+_ implement curveTangent
 _   fix-up the curve_init() and the rest to use matrices
 _     and not have ugly names (i.e. just g.curveDetail is good)
-
 _ ellipse problems
 _   weird ellipse bug with an alpha line in same image
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
@@ -249,12 +248,6 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 _   ellipses are just plain ugly
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
 _   toxi ellipses don't adapt properly with transformations
-
-_ texture mapping
-_   very odd, "doom era" stuff
-_   would it be possible to have a 'slow but accurate' mode?
-_ bad texture warping
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115241346;start=0
 
 
 _ clipping planes
@@ -311,6 +304,8 @@ g2.draw(gp);
 
 CORE / PGraphics3
 
+_ tesselator/triangulator gets confused when points doubled up
+_   might need to avoid previous vertex hitting itself
 _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
@@ -336,6 +331,10 @@ _ also have a simple way to hook in triangle leeches to PGraphics3
 _   this exists, but needs to be documented, or have accessors
 _ add option to sort triangles back to front so alpha works
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
+_ texture mapping
+_   very odd, "doom era" stuff
+_   would it be possible to have a 'slow but accurate' mode?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115241346;start=0
 
 
 CORE / PImage
