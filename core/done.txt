@@ -1,3 +1,7 @@
+0089 core
+X no changes since 88
+
+
 0088 core
 X createFont crashes on verdana (win2k)
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115258282;start=0
