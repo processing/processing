@@ -54,6 +54,7 @@ dos2unix processing/lib/preferences.txt 2> /dev/null
 find processing -name "*~" -exec rm -f {} ';'
 find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
+find processing -name "Thumbs.db" -exec rm -f {} ';'
 
 # clean out the cvs entries
 find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
