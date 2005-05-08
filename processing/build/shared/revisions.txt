@@ -7,6 +7,75 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0088 - 7 may 2005
+
+lots of bug fixes in this release based on feedback on the discourse 
+board, thanks to everyone who's been reporting things. 
+
+
+[ tab madness ] 
+
+- better at handling errors across multiple tabs 
+
+- undo now works properly between tabs (undo used to be cleared 
+  when changing a tab, or on each error)
+
+- when using multiple tabs (but no .java files or code folder or libs)
+  things will still run inside p5, meaning they'll start up more quickly
+
+- renaming a .java file now includes the .java in the name, so that 
+  you don't accidentally make the file a .pde file
+
+
+[ tools ] 
+
+- auto format has been replaced by code long since contributed by 
+  martin gomez. thanks to martin, things should improve significantly. 
+  better yet, if there are problems, we can yell at him about em!
+
+- archive sketch saves before archiving, hopefully reducing confusion
+
+
+[ export ] 
+
+- new default html for exported applets
+
+- shows a processing loading image instead of sun's awful starburst 
+  java coffee cup. like applet.html, this can be customized by placing 
+  a file inside your sketch folder called 'loading.gif'
+
+
+[ core/api ] 
+
+- ceil(), floor(), and round() now return ints instead of floats
+
+- master gain error in PSound won't make the sound unusable, it'll just
+  shut off the ability to control volume. (a java 1.5 problem?)
+
+- fixed createFont() for built-in fonts
+
+
+[ minor fixes ] 
+
+- errors (exception stack traces, for the technical)  properly show up
+  across multiple lines.. sometimes they used to get spammed onto a single 
+  line, making them difficult to read.
+
+- run-expert.bat was unintentionally a little too expert, and required
+  editing before use.
+
+
+[ platforms ] 
+
+- windows and linux java have been updated for java 1.4.2_08
+
+- windows java download includes the proper files for handling 
+  non-european systems
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0087 - 2 may 2005
 
 not tested as thoroughly as rev 86, gonna wait 24-48 hours before 
