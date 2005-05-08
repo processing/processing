@@ -1544,8 +1544,6 @@ public class Editor extends JFrame
   }
 
 
-  // TODO iron out bugs with this code under
-  //      different platforms, especially macintosh
   public void highlightLine(int lnum) {
     if (lnum < 0) {
       textarea.select(0, 0);
