@@ -1,3 +1,48 @@
+0088 core
+X createFont crashes on verdana (win2k)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115258282;start=0
+X made ceil(), floor(), and round() return ints instead of floats
+X fix for PSound: Unsupported control type: Master Gain 
+X   just shuts off the volume control
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
+
+cleared out / completed in previous releases
+X typed version of expand() and contract()
+o fishwick bug with text() and shapes
+o   ellipses no longer completed when g.dimensions = 2 or 3,
+o   or not even drawn.. what a mess.
+X go through and figure out what stuff to make public
+o depth testing of lines vs text is problematic
+o   probably need to patch in an older version of the line code
+o   use depth()/noDepth() to handle depth test
+X on exceptions, use die to just kill the applet
+X make the file i/o stuff work more cleanly
+X   if people want to use their own file i/o they can do that too
+o this could also be contributing to the hanging bug
+X static applets need to be able to resize themselves on 'play'
+X figure out what to do with static apps exported as application
+X   needs to just hang there
+o scripts (w/ no graphics) will need to call exit() explicitly
+o   actually.. just override the default draw() to say exit()
+X may need a fileOutput() and fileInput() function
+X   to take care of exception handling
+o or maybe scripts are just handled with a different method? (yech)
+o   or maybe setup() can actually throw and Exception?
+o   but that's inserted by the parser, and hidden from the user?
+o implement size(0, 0) -> just doesn't bother doing a frame.show();
+o   too abstract, just have draw() call exit by default
+o   so if nothing inside draw, just quits
+o   make properly exit after things are finished
+o still some weirdness with thread flickering on the mac
+o   and frenetic display updates on the pc
+o move really general things out of PConstants (X, Y, Z..) ?
+X add something to PApplet to have constants for the platform
+o   needed for error messages (don't talk about winvdig on mac)
+X   and also useful for programs
+X bring screen space and font size settings back in to PGraphics
+X   causing too much trouble to be stuck down in PFont
+
+
 0087 core
 
 fixed in previous releases
