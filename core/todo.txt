@@ -1,10 +1,4 @@
 0088 core
-o move really general things out of PConstants (X, Y, Z..) ?
-X add something to PApplet to have constants for the platform
-o   needed for error messages (don't talk about winvdig on mac)
-X   and also useful for programs
-X bring screen space and font size settings back in to PGraphics
-X   causing too much trouble to be stuck down in PFont
 X createFont crashes on verdana (win2k)
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115258282;start=0
 X made ceil(), floor(), and round() return ints instead of floats
@@ -41,6 +35,12 @@ o   so if nothing inside draw, just quits
 o   make properly exit after things are finished
 o still some weirdness with thread flickering on the mac
 o   and frenetic display updates on the pc
+o move really general things out of PConstants (X, Y, Z..) ?
+X add something to PApplet to have constants for the platform
+o   needed for error messages (don't talk about winvdig on mac)
+X   and also useful for programs
+X bring screen space and font size settings back in to PGraphics
+X   causing too much trouble to be stuck down in PFont
 
 
 
