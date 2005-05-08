@@ -237,6 +237,7 @@ public class Editor extends JFrame
     document.addUndoableEditListener(new UndoableEditListener() {
         public void undoableEditHappened(UndoableEditEvent e) {
           if (undo != null) {
+            //System.out.println(e.getEdit());
             undo.addEdit(e.getEdit());
             undoAction.updateUndoState();
             redoAction.updateRedoState();
@@ -951,6 +952,7 @@ public class Editor extends JFrame
   public void setText(String currentProgram,
                       int selectionStart, int selectionEnd,
                       UndoManager currentUndo) {
+    //System.out.println("setting text, changing undo");
     this.undo = null;
 
     //if (discardUndo) undo.discardAllEdits();
