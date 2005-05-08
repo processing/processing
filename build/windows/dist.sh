@@ -83,6 +83,7 @@ rm -f processing/lib/*.bak
 find processing -name "*~" -exec rm -f {} ';'
 find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
+find processing -name "Thumbs.db" -exec rm -f {} ';'
 
 # chmod +x the crew
 find processing -name "*.dll" -exec chmod +x {} ';'
