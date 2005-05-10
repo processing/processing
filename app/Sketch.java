@@ -521,7 +521,9 @@ public class Sketch {
     setCurrent(newName);
 
     // update the tabs
-    editor.header.repaint();
+    //editor.header.repaint();
+    editor.header.rebuild();
+
     // force the update on the mac?
     Toolkit.getDefaultToolkit().sync();
     //editor.header.getToolkit().sync();
@@ -656,6 +658,7 @@ public class Sketch {
     // update the tabs
     setCurrent(0);
     editor.header.repaint();
+    //editor.header.rebuild();
   }
 
 
