@@ -528,12 +528,12 @@ public class PGraphics2 extends PGraphics {
     if (who.modified) {
       cash.update();
       who.modified = false;
+      //System.out.println("image modified");
     }
 
     g2.drawImage(((ImageCache) who.cache).image,
-                       //(int) x, (int) y, x2, y2,
-                       (int) x1, (int) y1, (int) x2, (int) y2,
-                       u1, v1, u2, v2, null);
+                 (int) x1, (int) y1, (int) x2, (int) y2,
+                 u1, v1, u2, v2, null);
   }
 
 
