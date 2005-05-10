@@ -26,7 +26,7 @@ package processing.app;
 import processing.app.preproc.*;
 import processing.core.*;
 
-import java.awt.FileDialog;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -331,6 +331,11 @@ public class Sketch {
       return;
     }
 
+    if (newName.trim().equals(".java") ||
+        newName.trim().equals(".pde")) {
+      return;
+    }
+
     String newFilename = null;
     int newFlavor = 0;
 
@@ -517,6 +522,9 @@ public class Sketch {
 
     // update the tabs
     editor.header.repaint();
+    // force the update on the mac?
+    Toolkit.getDefaultToolkit().sync();
+    //editor.header.getToolkit().sync();
   }
 
 

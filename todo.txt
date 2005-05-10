@@ -1,8 +1,14 @@
 0090 pde
-X working on strange undo problems, allowing a new Document for each tab
+X working on strange undo problems, use a new Document for each tab
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115665414;start=2
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115644611
+X don't allow a file to be named .pde or .java
+X patch from stendahl for the highlight inset ugliness
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115597365;start=0
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 _ runtime exceptions have stopped coming through (on pc only?)
 _   test with florian example for the exception stuff
@@ -257,6 +263,7 @@ PDE / Editor Header
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
 _ ctrl-tab to switch between tabs
+_ not always updating on rename (maybe a mac problem?)
 
 
 PDE / Editor Status
