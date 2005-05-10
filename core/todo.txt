@@ -1,7 +1,4 @@
-0090 core
-X added arraycopy() function that calls System.arraycopy()
-X   also the useful shortcut fxn
-
+0091 core
 
 
 ////////////////////////////////////////////////////////////////////
