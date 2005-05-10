@@ -1,7 +1,7 @@
 0090 pde
 X working on strange undo problems, use a new Document for each tab
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115665414;start=2
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115644611
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115665414;start=2
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115644611
 X don't allow a file to be named .pde or .java
 X patch from stendahl for the highlight inset ugliness
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115597365;start=0
