@@ -589,40 +589,48 @@ public class PApplet extends Applet
   }
 
 
-  synchronized public void draw() {
+  public void draw() {
     // if no draw method, then shut things down
     //System.out.println("no draw method, goodbye");
     finished = true;
   }
 
 
-  public void redraw() {
+  synchronized public void redraw() {
     if (!looping) {
       redraw = true;
       if (thread != null) {
         // wake from sleep (necessary otherwise it'll be
         // up to 10 seconds before update)
+        //System.out.println("redraw interrupt");
         thread.interrupt();
+        //System.out.println("redraw interrupt done");
         //thread.notifyAll();
+        //thread.notifyAll();
+        //notifyAll();
       }
     }
   }
 
 
-  public void loop() {
+  synchronized public void loop() {
     if (!looping) {
       looping = true;
       if (thread != null) {
         // wake from sleep (necessary otherwise it'll be
         // up to 10 seconds before update)
+        //System.out.println("loop interrupt");
         thread.interrupt();
+        //System.out.println("loop interrupt done");
         //thread.notifyAll();
+        //thread.notifyAll();
+        //notifyAll();
       }
     }
   }
 
 
-  public void noLoop() {
+  synchronized public void noLoop() {
     if (looping) {
       looping = false;
 
@@ -631,8 +639,12 @@ public class PApplet extends Applet
       framerateLastMillis = 0;
 
       if (thread != null) {
+        //System.out.println("noloop interrupt");
         thread.interrupt();  // wake from sleep
         //thread.notifyAll();
+        //System.out.println("noloop interrupt done");
+        //thread.notifyAll();
+        //notifyAll();
       }
     }
   }
@@ -827,7 +839,8 @@ public class PApplet extends Applet
     paint(screen);
   }
 
-  public void paint(Graphics screen) {
+
+  synchronized public void paint(Graphics screen) {
     if (javaVersion < 1.3f) {
       screen.setColor(new Color(64, 64, 64));
       Dimension size = getSize();
@@ -875,7 +888,7 @@ public class PApplet extends Applet
                               "     5b enter paint sync");
 
     //synchronized (g) {
-    synchronized (glock) {
+    //synchronized (glock) {
       if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                 "     5c inside paint sync");
       //System.out.println("5b paint has sync");
@@ -893,7 +906,7 @@ public class PApplet extends Applet
       //notifyAll();
       //thread.notify();
       //System.out.println("      6 exit paint");
-    }
+    //}
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "      6 exit paint");
     //updated = true;
@@ -919,6 +932,7 @@ public class PApplet extends Applet
 
         // render a single frame
         g.requestDisplay(this);
+        //requestDisplay(this);
 
         // moving this to update() (for 0069+) for linux sync problems
         //if (firstFrame) firstFrame = false;
@@ -946,6 +960,8 @@ public class PApplet extends Applet
           // will make the first draw wait 10 seconds before showing up
           if (frameCount == 1) nap = 1;
           Thread.sleep(nap);
+          //thread.wait(nap);
+          //wait(nap);
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
@@ -1002,7 +1018,7 @@ public class PApplet extends Applet
       // g may be rebuilt inside here, so turning of the sync
       //synchronized (g) {
       // use a different sync object
-      synchronized (glock) {
+      //synchronized (glock) {
         if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                   " 1a beginFrame");
         g.beginFrame();
@@ -1078,6 +1094,7 @@ public class PApplet extends Applet
           pmouseY = dmouseY;
 
           //synchronized (glock) {
+          //synchronized (this) {
           //try {
           draw();
             /*
@@ -1089,6 +1106,7 @@ public class PApplet extends Applet
             }
           }
             */
+          //}
           //}
 
           // dmouseX/Y is updated only once per frame
@@ -1144,7 +1162,7 @@ public class PApplet extends Applet
         //for (int i = 0; i < libraryCount; i++) {
         //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
         //}
-      }  // end of synchronize
+        //}  // end of synchronize
     }
   }
 
@@ -5649,12 +5667,6 @@ v              PApplet.this.stop();
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height) {
     return PGraphics.saveTGA(output, pixels, width, height);
-  }
-
-
-  public void requestDisplay(PApplet parent) {
-    if (recorder != null) recorder.requestDisplay(parent);
-    g.requestDisplay(parent);
   }
 
 
