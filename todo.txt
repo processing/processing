@@ -1,8 +1,8 @@
 0090 pde
+X working on strange undo problems, allowing a new Document for each tab
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
 
 _ runtime exceptions have stopped coming through (on pc only?)
 _   test with florian example for the exception stuff
@@ -18,14 +18,17 @@ _ make simple tool for casey to rebuild all the examples at once
 _   just make it easier to go to the next sketch
 _   need to rebuild with this release because of 1.3/1.4 issues
 
+_ auto-run the javadoc in dist.sh
+_   doctor a copy of the css file to use p5 defaults
+_   and re-copy the css in after generating the doc each time
+
 bugzilla
 _ get these two todo lists into their bugzilla categories
 _ setup bugzilla and enter all the bugs
 
 discuss with casey
-_ auto-run the javadoc in dist.sh
-_   doctor a copy of the css file to use p5 defaults
-_   and re-copy the css in after generating the doc each time
+_ redraw() should be related for loop and noLoop
+_ redraw() can't be called inside draw(), but loop/noLoop can
 _ documentation on tabs: .java files, inner classes, etc
 _   additional tabs are added to the main code
 _   as a result, static variables can't be used
@@ -210,6 +213,8 @@ _ switch to newer revision of jedit?
 _   is enormous horizontal scroller issue fixed properly
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
+_ don't draw the nasty couple of pixels in the margin
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115597365;start=0
 
 undo problems
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
@@ -222,6 +227,17 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 PDE / Find & Replace
 
 _ only enable "find next" in menu after a find has happened
+_ several tweaks
+_   allowing to find & replace over multiple tabs 
+-   placing "replace" next to "find" ... (hitting "replace all" by accident) 
+-   have a button "replace & find next"
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115645270;start=0
+_ fix find/replace focus issue on osx
+_   give that field focus explicitly, rather than just for typing
+_   right now, typing works, but no caret, no blue highlight
+_   and on second find run, should instead select all the find string
+_     so that typing will replace it directly
+_ all around very ugly, fix it up
 
 
 PDE / Editor Buttons
@@ -580,11 +596,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PLATFORMS / Mac OS X
 
-_ fix find/replace focus issue on osx
-_   give that field focus explicitly, rather than just for typing
-_   right now, typing works, but no caret, no blue highlight
-_   and on second find run, should instead select all the find string
-_     so that typing will replace it directly
 _ set nice background for disk image on macosx
 _ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing

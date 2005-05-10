@@ -23,8 +23,10 @@
 */
 
 package processing.app;
+import processing.app.syntax.*;
 
 import java.io.*;
+import javax.swing.text.*;
 import javax.swing.undo.*;
 
 
@@ -41,8 +43,11 @@ public class SketchCode {
   /** Text of the program text for this tab */
   public String program;
 
+  /** Document object for this tab */
+  public SyntaxDocument document;
+
   /** Undo Manager for this tab, each tab keeps track of their own */
-  public UndoManager undo = new UndoManager();
+  public UndoManager undo; // = new UndoManager();
 
   // saved positions from last time this tab was used
   public int selectionStart;
