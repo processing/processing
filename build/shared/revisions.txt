@@ -7,6 +7,22 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0090 - 9 may 2005
+
+- fix for yet another undo bug fix that can cause code to be destroyed
+
+- fix for the selection ugliness that was causing an ugly yellow gap, 
+  contributed by david mellis - thanks david!
+
+- some additional fixes for sketch renaming and updating the ui properly
+
+- addition of an "arraycopy" function that mirrors System.arraycopy, 
+  details will be in a version of the reference arriving soon.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0089 - 8 may 2005
 
 fix for a late breaking undo bug that made things really nasty.
