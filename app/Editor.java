@@ -1642,11 +1642,12 @@ public class Editor extends JFrame
       }
       if (newline) {
         if (lc == lnum)
-          //st = i+1;
           st = ii;
         else if (lc == lnum+1) {
-          //end = i;
-          end = ii;
+          //end = ii;
+          // to avoid selecting entire, because doing so puts the
+          // cursor on the next line [0090]
+          end = ii - 1;
           break;
         }
       }
