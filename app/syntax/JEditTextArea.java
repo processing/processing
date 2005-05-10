@@ -607,10 +607,10 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Converts an x co-ordinate to an offset within a line.
-         * @param line The line
-         * @param x The x co-ordinate
-         */
+   * Converts an x co-ordinate to an offset within a line.
+   * @param line The line
+   * @param x The x co-ordinate
+   */
   public int xToOffset(int line, int x)
   {
     TokenMarker tokenMarker = getTokenMarker();
@@ -716,10 +716,10 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Converts a point to an offset, from the start of the text.
-         * @param x The x co-ordinate of the point
-         * @param y The y co-ordinate of the point
-         */
+   * Converts a point to an offset, from the start of the text.
+   * @param x The x co-ordinate of the point
+   * @param y The y co-ordinate of the point
+   */
   public int xyToOffset(int x, int y)
   {
     int line = yToLine(y);
@@ -728,83 +728,104 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the document this text area is editing.
-         */
+   * Returns the document this text area is editing.
+   */
   public final SyntaxDocument getDocument()
   {
     return document;
   }
 
   /**
-         * Sets the document this text area is editing.
-         * @param document The document
-         */
-  public void setDocument(SyntaxDocument document)
-  {
-    if(this.document == document)
+   * Sets the document this text area is editing.
+   * @param document The document
+   */
+  public void setDocument(SyntaxDocument document) {
+    if (this.document == document)
       return;
-    if(this.document != null)
+    if (this.document != null)
       this.document.removeDocumentListener(documentHandler);
     this.document = document;
 
     document.addDocumentListener(documentHandler);
 
-    select(0,0);
+    select(0, 0);
     updateScrollBars();
     painter.repaint();
   }
 
+
   /**
-         * Returns the document's token marker. Equivalent to calling
-         * <code>getDocument().getTokenMarker()</code>.
-         */
+   * Set document with a twist, includes the old caret
+   * and scroll positions, added for p5. [fry]
+   */
+  public void setDocument(SyntaxDocument document,
+                          int start, int stop, int scroll) {
+    if (this.document == document)
+      return;
+    if (this.document != null)
+      this.document.removeDocumentListener(documentHandler);
+    this.document = document;
+
+    document.addDocumentListener(documentHandler);
+
+    select(start, stop);
+    updateScrollBars();
+    setScrollPosition(scroll);
+    painter.repaint();
+  }
+
+
+  /**
+   * Returns the document's token marker. Equivalent to calling
+   * <code>getDocument().getTokenMarker()</code>.
+   */
   public final TokenMarker getTokenMarker()
   {
     return document.getTokenMarker();
   }
 
   /**
-         * Sets the document's token marker. Equivalent to caling
-         * <code>getDocument().setTokenMarker()</code>.
-         * @param tokenMarker The token marker
-         */
+   * Sets the document's token marker. Equivalent to caling
+   * <code>getDocument().setTokenMarker()</code>.
+   * @param tokenMarker The token marker
+   */
   public final void setTokenMarker(TokenMarker tokenMarker)
   {
     document.setTokenMarker(tokenMarker);
   }
 
   /**
-         * Returns the length of the document. Equivalent to calling
-         * <code>getDocument().getLength()</code>.
-         */
+   * Returns the length of the document. Equivalent to calling
+   * <code>getDocument().getLength()</code>.
+   */
   public final int getDocumentLength()
   {
     return document.getLength();
   }
 
   /**
-         * Returns the number of lines in the document.
-         */
+   * Returns the number of lines in the document.
+   */
   public final int getLineCount()
   {
     return document.getDefaultRootElement().getElementCount();
   }
 
   /**
-         * Returns the line containing the specified offset.
-         * @param offset The offset
-         */
+   * Returns the line containing the specified offset.
+   * @param offset The offset
+   */
   public final int getLineOfOffset(int offset)
   {
     return document.getDefaultRootElement().getElementIndex(offset);
   }
 
   /**
-         * Returns the start offset of the specified line.
-         * @param line The line
-         * @return The start offset of the specified line, or -1 if the line is
-         * invalid
-         */
+   * Returns the start offset of the specified line.
+   * @param line The line
+   * @return The start offset of the specified line, or -1 if the line is
+   * invalid
+   */
   public int getLineStartOffset(int line)
   {
     Element lineElement = document.getDefaultRootElement()
@@ -816,11 +837,11 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the end offset of the specified line.
-         * @param line The line
-         * @return The end offset of the specified line, or -1 if the line is
-         * invalid.
-         */
+   * Returns the end offset of the specified line.
+   * @param line The line
+   * @return The end offset of the specified line, or -1 if the line is
+   * invalid.
+   */
   public int getLineEndOffset(int line)
   {
     Element lineElement = document.getDefaultRootElement()
@@ -832,9 +853,9 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the length of the specified line.
-         * @param line The line
-         */
+   * Returns the length of the specified line.
+   * @param line The line
+   */
   public int getLineLength(int line)
   {
     Element lineElement = document.getDefaultRootElement()
@@ -847,8 +868,8 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the entire text of this text area.
-         */
+   * Returns the entire text of this text area.
+   */
   public String getText()
   {
     try
@@ -884,11 +905,11 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the specified substring of the document.
-         * @param start The start offset
-         * @param len The length of the substring
-         * @return The substring, or null if the offsets are invalid
-         */
+   * Returns the specified substring of the document.
+   * @param start The start offset
+   * @param len The length of the substring
+   * @return The substring, or null if the offsets are invalid
+   */
   public final String getText(int start, int len)
   {
     try
@@ -1201,8 +1222,8 @@ public class JEditTextArea extends JComponent
 
 
   /**
-         * Returns the selected text, or null if no selection is active.
-         */
+   * Returns the selected text, or null if no selection is active.
+   */
   public final String getSelectedText()
   {
     if(selectionStart == selectionEnd)
@@ -1354,35 +1375,35 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns true if this text area is editable, false otherwise.
-         */
+   * Returns true if this text area is editable, false otherwise.
+   */
   public final boolean isEditable()
   {
     return editable;
   }
 
   /**
-         * Sets if this component is editable.
-         * @param editable True if this text area should be editable,
-         * false otherwise
-         */
+   * Sets if this component is editable.
+   * @param editable True if this text area should be editable,
+   * false otherwise
+   */
   public final void setEditable(boolean editable)
   {
     this.editable = editable;
   }
 
   /**
-         * Returns the right click popup menu.
-         */
+   * Returns the right click popup menu.
+   */
   public final JPopupMenu getRightClickPopup()
   {
     return popup;
   }
 
   /**
-         * Sets the right click popup menu.
-         * @param popup The popup
-         */
+   * Sets the right click popup menu.
+   * @param popup The popup
+   */
   //public final void setRightClickPopup(EditPopupMenu popup)
   public final void setRightClickPopup(JPopupMenu popup)
   {
@@ -1400,22 +1421,22 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Sets the `magic' caret position. This can be used to preserve
-         * the column position when moving up and down lines.
-         * @param magicCaret The magic caret position
-         */
+   * Sets the `magic' caret position. This can be used to preserve
+   * the column position when moving up and down lines.
+   * @param magicCaret The magic caret position
+   */
   public final void setMagicCaretPosition(int magicCaret)
   {
     this.magicCaret = magicCaret;
   }
 
   /**
-         * Similar to <code>setSelectedText()</code>, but overstrikes the
-         * appropriate number of characters if overwrite mode is enabled.
-         * @param str The string
-         * @see #setSelectedText(String)
-         * @see #isOverwriteEnabled()
-         */
+   * Similar to <code>setSelectedText()</code>, but overstrikes the
+   * appropriate number of characters if overwrite mode is enabled.
+   * @param str The string
+   * @see #setSelectedText(String)
+   * @see #isOverwriteEnabled()
+   */
   public void overwriteSetSelectedText(String str)
   {
     // Don't overstrike if there is a selection
@@ -1453,18 +1474,18 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns true if overwrite mode is enabled, false otherwise.
-         */
+   * Returns true if overwrite mode is enabled, false otherwise.
+   */
   public final boolean isOverwriteEnabled()
   {
     return overwrite;
   }
 
   /**
-         * Sets if overwrite mode should be enabled.
-         * @param overwrite True if overwrite mode should be enabled,
-         * false otherwise.
-         */
+   * Sets if overwrite mode should be enabled.
+   * @param overwrite True if overwrite mode should be enabled,
+   * false otherwise.
+   */
   public final void setOverwriteEnabled(boolean overwrite)
   {
     this.overwrite = overwrite;
@@ -1472,18 +1493,18 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns true if the selection is rectangular, false otherwise.
-         */
+   * Returns true if the selection is rectangular, false otherwise.
+   */
   public final boolean isSelectionRectangular()
   {
     return rectSelect;
   }
 
   /**
-         * Sets if the selection should be rectangular.
-         * @param overwrite True if the selection should be rectangular,
-         * false otherwise.
-         */
+   * Sets if the selection should be rectangular.
+   * @param overwrite True if the selection should be rectangular,
+   * false otherwise.
+   */
   public final void setSelectionRectangular(boolean rectSelect)
   {
     this.rectSelect = rectSelect;
@@ -1491,45 +1512,45 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Returns the position of the highlighted bracket (the bracket
-         * matching the one before the caret)
-         */
+   * Returns the position of the highlighted bracket (the bracket
+   * matching the one before the caret)
+   */
   public final int getBracketPosition()
   {
     return bracketPosition;
   }
 
   /**
-         * Returns the line of the highlighted bracket (the bracket
-         * matching the one before the caret)
-         */
+   * Returns the line of the highlighted bracket (the bracket
+   * matching the one before the caret)
+   */
   public final int getBracketLine()
   {
     return bracketLine;
   }
 
   /**
-         * Adds a caret change listener to this text area.
-         * @param listener The listener
-         */
+   * Adds a caret change listener to this text area.
+   * @param listener The listener
+   */
   public final void addCaretListener(CaretListener listener)
   {
     eventListenerList.add(CaretListener.class,listener);
   }
 
   /**
-         * Removes a caret change listener from this text area.
-         * @param listener The listener
-         */
+   * Removes a caret change listener from this text area.
+   * @param listener The listener
+   */
   public final void removeCaretListener(CaretListener listener)
   {
     eventListenerList.remove(CaretListener.class,listener);
   }
 
   /**
-         * Deletes the selected text from the text area and places it
-         * into the clipboard.
-         */
+   * Deletes the selected text from the text area and places it
+   * into the clipboard.
+   */
   public void cut()
   {
     if(editable)
@@ -1540,8 +1561,8 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Places the selected text into the clipboard.
-         */
+   * Places the selected text into the clipboard.
+   */
   public void copy()
   {
     if(selectionStart != selectionEnd)
@@ -1589,9 +1610,9 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-         * Called by the AWT when this component is removed from it's parent.
-         * This stops clears the currently focused component.
-         */
+   * Called by the AWT when this component is removed from it's parent.
+   * This stops clears the currently focused component.
+   */
   public void removeNotify()
   {
     super.removeNotify();

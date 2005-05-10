@@ -183,7 +183,7 @@ public class Editor extends JFrame
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
-    textarea.setTokenMarker(new PdeKeywords());
+    //textarea.setTokenMarker(new PdeKeywords());
     textarea.setHorizontalOffset(6);
 
     // assemble console panel, consisting of status area and the console itself
@@ -231,6 +231,7 @@ public class Editor extends JFrame
     listener = new EditorListener(this, textarea);
     pain.add(box);
 
+    /*
     // set the undo stuff for this feller
     Document document = textarea.getDocument();
     //document.addUndoableEditListener(new PdeUndoableEditListener());
@@ -244,6 +245,7 @@ public class Editor extends JFrame
           }
         }
       });
+    */
   }
 
 
@@ -949,6 +951,7 @@ public class Editor extends JFrame
   /**
    * Called by Sketch when the tab is changed or a new set of files are opened.
    */
+  /*
   public void setText(String currentProgram,
                       int selectionStart, int selectionEnd,
                       UndoManager currentUndo) {
@@ -966,6 +969,70 @@ public class Editor extends JFrame
     undoAction.updateUndoState();
     redoAction.updateRedoState();
   }
+  */
+
+  /*
+  public void setDocument(SyntaxDocument document,
+                          int selectionStart, int selectionStop,
+                          int scrollPosition, UndoManager undo) {
+
+    textarea.setDocument(document, selectionStart, selectionStop,
+                         scrollPosition);
+
+    textarea.requestFocus();  // get the caret blinking
+
+    this.undo = undo;
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+  }
+  */
+
+
+  /**
+   * Switch between tabs, this swaps out the Document object
+   * that's currently being manipulated.
+   */
+  public void setCode(SketchCode code) {
+    if (code.document == null) {  // this document not yet inited
+      code.document = new SyntaxDocument();
+
+      // turn on syntax highlighting
+      code.document.setTokenMarker(new PdeKeywords());
+
+      // insert the program text into the document object
+      try {
+        code.document.insertString(0, code.program, null);
+      } catch (BadLocationException bl) {
+        bl.printStackTrace();
+      }
+
+      // set up this guy's own undo manager
+      code.undo = new UndoManager();
+
+      // connect the undo listener to the editor
+      code.document.addUndoableEditListener(new UndoableEditListener() {
+          public void undoableEditHappened(UndoableEditEvent e) {
+            if (undo != null) {
+              undo.addEdit(e.getEdit());
+              undoAction.updateUndoState();
+              redoAction.updateRedoState();
+            }
+          }
+        });
+    }
+
+    // update the document object that's in use
+    textarea.setDocument(code.document,
+                         code.selectionStart, code.selectionStop,
+                         code.scrollPosition);
+
+    textarea.requestFocus();  // get the caret blinking
+
+    this.undo = code.undo;
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+  }
+
 
 
   public void handleRun(boolean present) {

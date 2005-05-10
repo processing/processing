@@ -448,6 +448,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PGraphicsGL
 
+_ updatePixels() seems to be having trouble
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1115630361;start=0
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
