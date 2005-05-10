@@ -310,6 +310,8 @@ _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
+_ odd error with some pixels from images not drawing properly
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453;start=0
 _ when turning smoothing on, internal lines of shapes are visible
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115487475;start=1
 _ simon reports borders on P3D and OPENGL if background() not called

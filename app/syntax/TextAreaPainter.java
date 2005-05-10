@@ -612,10 +612,18 @@ public class TextAreaPainter extends JComponent implements TabExpander
         x1 = textArea._offsetToX(line, selectionStart - lineStart);
         x2 = getWidth();
       } else if(line == selectionEndLine) {
-        x1 = 0;
+        //x1 = 0;
+        // hack from stendahl to avoid doing weird side selection thing
+        x1 = textArea._offsetToX(line, 0);
+        // attempt at getting the gutter too, but doesn't seem to work
+        //x1 = textArea._offsetToX(line, -textArea.getHorizontalOffset());
         x2 = textArea._offsetToX(line, selectionEnd - lineStart);
       } else {
-        x1 = 0;
+        //x1 = 0;
+        // hack from stendahl to avoid doing weird side selection thing
+        x1 = textArea._offsetToX(line, 0);
+        // attempt at getting the gutter too, but doesn't seem to work
+        //x1 = textArea._offsetToX(line, -textArea.getHorizontalOffset());
         x2 = getWidth();
       }
 
