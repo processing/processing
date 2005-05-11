@@ -1,18 +1,30 @@
 0091 pde
+X error messages from external not coming through very well
+X   especially on macosx.. is it writing to stdout.txt tho?
+X   figure out why it's killing things early? the process maybe?
+X   gl exceptions really not coming through
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
+X command keys don't work w/ shift
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
+X printing 32k chars to console w/o a line break will cause massive error
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115470426;start=0
+
+fixed previously
+o runtime exceptions have stopped coming through (on pc only?)
+o   test with florian example for the exception stuff
+o   that they don't show up in the error bar
+o   make sure this is no longer the case
+o don't draw the nasty couple of pixels in the margin
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115597365;start=0
+
+_ have the shell script test for jikes first
+_   have it run jikes quickly, if it exits with an error, warn user
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115302894
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115787397;start=0
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-
-_ runtime exceptions have stopped coming through (on pc only?)
-_   test with florian example for the exception stuff
-_   that they don't show up in the error bar
-_   make sure this is no longer the case
-
-_ error messages from external not coming through very well
-_   especially on macosx.. is it writing to stdout.txt tho?
-_   figure out why it's killing things early? the process maybe?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
 
 _ make simple tool for casey to rebuild all the examples at once
 _   just make it easier to go to the next sketch
@@ -108,7 +120,6 @@ X     notes inside PdeCompiler
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
 _ don't all mousepressed(), throw a compile error
 _ colorMode(RGB) -> caps being off
-_ making it easier to draw shapes
 _ missing semicolons - better error message
 _ missing brackets, unmatched brackets
 _ "unexpected token void" -> "You're mixing dynamic and static mode"
@@ -128,17 +139,12 @@ PDE / Console
 _ println() can hose the app for the first 20-30 frames
 _   need to figure out threading etc
 _   problem with it launching a new thread for every single update!
-_ printing 32k chars to console w/o a line break will cause massive error
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115470426;start=0
 
 
 PDE / Details
 
 _ lock the minimum size for the main processing editor frame
 _   if it's made too small, stuff from the bottom disappears
-
-_ tab to just indent lines properly, 
-_   rather than having it convert to spaces
 
 _ setting sketchbook to a folder on the network
 _   does this work? test on both on mac and pc.. 
@@ -207,14 +213,15 @@ PDE / Editor
 
 _ when running with external editor, hide the editor text area
 _ drag & drop implementation to add files to sketch
-_ tabs and spaces, command keys don't work w/ shift
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
+_ tab to just indent lines properly, 
+_   rather than having it convert to spaces
+_   need a smarter handler (rather than the editor listener) 
+_   could look at previous line for its indent
+_   and when hitting } do a proper outdent (if only spaces before it)
 _ switch to newer revision of jedit?
 _   is enormous horizontal scroller issue fixed properly
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
-_ don't draw the nasty couple of pixels in the margin
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115597365;start=0
 
 undo problems
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
@@ -264,7 +271,8 @@ PDE / Editor Status
 
 _ error messages run off the edge and go invisible
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
-_ multi-line errors a mess in jikes
+_ multiple errors a mess in jikes
+_   actual error may be 4th of 5
 _   maybe a dropdown list thing, with the first just shown?
 _ move to modal dialog showError/Message/Warning/Prompt design 
 _   nicely design dialog boxes to go with visual of p5
@@ -538,7 +546,6 @@ _ need exported application icons
 _ also out of cvs
 _   check for necessary tools to be installed
 _   zip, unzip, jikes, etc
-_ need to change all the copyrights over to mit "except where noted"
 _ need more comprehensive list of 'known bugs'
 _ need more comprehensive list of 'known suggestions'
 _ javadoc "advanced" reference by beta
@@ -620,8 +627,5 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 
 PLATFORMS / Linux
 
-_ have the shell script test for jikes first
-_   have it run jikes quickly, if it exits with an error, warn user
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115302894
 _ some reports of it not quitting properly, but not confirmed
 _ splash screen
