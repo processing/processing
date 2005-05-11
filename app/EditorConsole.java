@@ -170,19 +170,8 @@ public class EditorConsole extends JScrollPane {
   }
 
 
-  public void message(String what, boolean err, boolean advance) {
-  //public void message(String what, boolean err, boolean advance) {
-    // under osx, suppress the spew about the serial port
-    // to avoid an error every time someone loads their app
-    // (the error is dealt with in Base with a message dialog)
-    /*
-    // no longer an issue. using a newer rev of rxtx
-    if (Base.platform == Base.MACOSX) {
-      if (what.equals("Error loading SolarisSerial: java.lang.UnsatisfiedLinkError: no SolarisSerialParallel in java.library.path")) return;
-      if (what.equals("Caught java.lang.UnsatisfiedLinkError: readRegistrySerial while loading driver com.sun.comm.SolarisDriver")) return;
-    }
-    */
-
+  // added sync for 0091.. not sure if it helps or hinders
+  synchronized public void message(String what, boolean err, boolean advance) {
     if (err) {
       systemErr.print(what);
       //systemErr.print("CE" + what);
@@ -220,6 +209,10 @@ public class EditorConsole extends JScrollPane {
    * SwingUtilities.invokeLater() to ensure that the updates only
    * occur on the main event dispatching thread, and that appears
    * to have solved the problem.
+   * <P>
+   * unfortunately this is probably extremely slow and helping cause
+   * some of the general print() and println() mess.. need to fix
+   * up so that it's using a proper queue instead.
    */
   synchronized private void appendText(String txt, boolean e) {
     final String text = txt;
@@ -242,6 +235,17 @@ public class EditorConsole extends JScrollPane {
               int endOffset = lineElement.getEndOffset();
               // remove to the end of the 200th line
               consoleDoc.remove(0, endOffset);
+            }
+
+            // make sure this line doesn't go over 32k chars
+            lineCount = element.getElementCount(); // may have changed
+            Element currentElement = element.getElement(lineCount-1);
+            int currentStart = currentElement.getStartOffset();
+            int currentEnd = currentElement.getEndOffset();
+            //systemOut.println(currentEnd - currentStart);
+            if (currentEnd - currentStart > 10000) {   // force a newline
+              consoleDoc.insertString(consoleDoc.getLength(), "\n",
+                                      err ? errStyle : stdStyle);
             }
 
             // add the text to the end of the console,
