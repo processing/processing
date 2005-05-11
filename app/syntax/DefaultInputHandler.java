@@ -148,11 +148,26 @@ public class DefaultInputHandler extends InputHandler
          */
         public void keyPressed(KeyEvent evt)
         {
-                int keyCode = evt.getKeyCode();
-                int modifiers = evt.getModifiers();
+          int keyCode = evt.getKeyCode();
+          int modifiers = evt.getModifiers();
 
-                // don't get command-s or other menu key equivs on mac
-                if ((modifiers & KeyEvent.META_MASK) != 0) return;
+          // moved this earlier so it doesn't get random meta clicks
+          if (keyCode == KeyEvent.VK_CONTROL ||
+              keyCode == KeyEvent.VK_SHIFT ||
+              keyCode == KeyEvent.VK_ALT ||
+              keyCode == KeyEvent.VK_META) {
+            return;
+          }
+
+          // don't get command-s or other menu key equivs on mac
+          // unless it's something that's specifically bound (cmd-left or right)
+          //if ((modifiers & KeyEvent.META_MASK) != 0) return;
+          if ((modifiers & KeyEvent.META_MASK) != 0) {
+            KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode, modifiers);
+            if (currentBindings.get(keyStroke) == null) {
+              return;
+            }
+          }
 
                 /*
                 char keyChar = evt.getKeyChar();
@@ -161,12 +176,6 @@ public class DefaultInputHandler extends InputHandler
                 System.out.println("other codes " + KeyEvent.VK_ALT + " " +
                                    KeyEvent.VK_META);
                 */
-
-                if(keyCode == KeyEvent.VK_CONTROL ||
-                        keyCode == KeyEvent.VK_SHIFT ||
-                        keyCode == KeyEvent.VK_ALT ||
-                        keyCode == KeyEvent.VK_META)
-                        return;
 
                 if((modifiers & ~KeyEvent.SHIFT_MASK) != 0
                         || evt.isActionKey()
