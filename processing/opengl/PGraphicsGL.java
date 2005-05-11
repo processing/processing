@@ -25,6 +25,7 @@
 package processing.opengl;
 
 import processing.core.*;
+import java.lang.reflect.*;
 import net.java.games.jogl.*;
 
 
@@ -155,9 +156,18 @@ public class PGraphicsGL extends PGraphics3 {
     // in turn call PApplet.display()... hold your breath...
     try {
       canvas.display();
+
+    } catch (GLException e) {
+      Throwable t = e.getCause();
+      // if InvocationTargetException, need to unpack one level first
+      if (t instanceof InvocationTargetException) {
+        Throwable target = ((InvocationTargetException) t).getTargetException();
+        throw new RuntimeException(target);
+      } else {
+        throw new RuntimeException(t);
+      }
     } catch (Exception e) {
-      //} catch (InterruptedException e) {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
 
