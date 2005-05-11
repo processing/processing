@@ -483,6 +483,9 @@ LIBRARIES / Video
 
 _ tearing and incomplete updates on capture?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
+_ on export, need to first import applet's packages before qt et al
+_   video working in applets?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115754972;start=0
 _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 
