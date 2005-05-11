@@ -1,6 +1,10 @@
 0091 core
 X change to synchronization to hopefully fix some update issues
 
+_ need to test/straighten out load/update pixels
+loadPixels() and updatePixels() only need to be used when 
+touching pixels[]. All other functions including get(), set(),
+filter(), etc shouldn't need them. 
 
 
 ////////////////////////////////////////////////////////////////////
