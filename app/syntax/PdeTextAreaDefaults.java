@@ -33,6 +33,62 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     inputHandler = new DefaultInputHandler();
     inputHandler.addDefaultKeyBindings();
+
+    // use option on mac for things that are ctrl on windows/linux
+    String mod = Base.isMacOS() ? "A" : "C";
+
+    inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
+    inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
+
+    inputHandler.addKeyBinding("BACK_SPACE", InputHandler.BACKSPACE);
+    inputHandler.addKeyBinding("C+BACK_SPACE", InputHandler.BACKSPACE_WORD);
+    inputHandler.addKeyBinding("DELETE", InputHandler.DELETE);
+    inputHandler.addKeyBinding("C+DELETE", InputHandler.DELETE_WORD);
+
+    inputHandler.addKeyBinding("ENTER", InputHandler.INSERT_BREAK);
+    inputHandler.addKeyBinding("TAB", InputHandler.INSERT_TAB);
+
+    inputHandler.addKeyBinding("INSERT", InputHandler.OVERWRITE);
+    inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
+
+    // beginning and ending of the current line
+    inputHandler.addKeyBinding("HOME", InputHandler.HOME);
+    inputHandler.addKeyBinding("END", InputHandler.END);
+
+    if (Base.isMacOS()) {
+      inputHandler.addKeyBinding("M+LEFT", InputHandler.HOME);
+      inputHandler.addKeyBinding("M+RIGHT", InputHandler.END);
+    }
+
+    inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_HOME);
+    inputHandler.addKeyBinding("S+END", InputHandler.SELECT_END);
+    inputHandler.addKeyBinding(mod + "+HOME", InputHandler.DOCUMENT_HOME);
+    inputHandler.addKeyBinding(mod + "+END", InputHandler.DOCUMENT_END);
+    inputHandler.addKeyBinding(mod + "S+HOME", InputHandler.SELECT_DOC_HOME);
+    inputHandler.addKeyBinding(mod + "S+END", InputHandler.SELECT_DOC_END);
+
+    inputHandler.addKeyBinding("PAGE_UP", InputHandler.PREV_PAGE);
+    inputHandler.addKeyBinding("PAGE_DOWN", InputHandler.NEXT_PAGE);
+    inputHandler.addKeyBinding("S+PAGE_UP", InputHandler.SELECT_PREV_PAGE);
+    inputHandler.addKeyBinding("S+PAGE_DOWN", InputHandler.SELECT_NEXT_PAGE);
+
+    inputHandler.addKeyBinding("LEFT", InputHandler.PREV_CHAR);
+    inputHandler.addKeyBinding("S+LEFT", InputHandler.SELECT_PREV_CHAR);
+    inputHandler.addKeyBinding(mod + "+LEFT", InputHandler.PREV_WORD);
+    inputHandler.addKeyBinding(mod + "S+LEFT", InputHandler.SELECT_PREV_WORD);
+    inputHandler.addKeyBinding("RIGHT", InputHandler.NEXT_CHAR);
+    inputHandler.addKeyBinding("S+RIGHT", InputHandler.SELECT_NEXT_CHAR);
+    inputHandler.addKeyBinding(mod + "+RIGHT", InputHandler.NEXT_WORD);
+    inputHandler.addKeyBinding(mod + "S+RIGHT", InputHandler.SELECT_NEXT_WORD);
+    inputHandler.addKeyBinding("UP", InputHandler.PREV_LINE);
+    inputHandler.addKeyBinding(mod + "+UP", InputHandler.PREV_LINE);  // p5
+    inputHandler.addKeyBinding("S+UP", InputHandler.SELECT_PREV_LINE);
+    inputHandler.addKeyBinding("DOWN", InputHandler.NEXT_LINE);
+    inputHandler.addKeyBinding(mod + "+DOWN", InputHandler.NEXT_LINE);  // p5
+    inputHandler.addKeyBinding("S+DOWN", InputHandler.SELECT_NEXT_LINE);
+
+    inputHandler.addKeyBinding(mod + "+ENTER", InputHandler.REPEAT);
+
     document = new SyntaxDocument();
     editable = true;
     electricScroll = 3;
