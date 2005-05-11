@@ -432,7 +432,7 @@ java.lang.NullPointerException
         int afterAt = s.indexOf("at") + 3;
         //if (afterAt == -1) {
         if (afterAt == 2) {  // means indexOf was -1
-          System.err.println(s);
+          //System.err.println(s);  // stop double-printing exceptions
           return;
         }
         s = s.substring(afterAt + 1);
@@ -487,10 +487,11 @@ java.lang.NullPointerException
                 //} else if (
               }
             }
-            // in case this was a tab that got embedded into the main .java
-            lineNumber -= sketch.code[codeIndex].preprocOffset;
 
             if (codeIndex != -1) {
+              // in case this was a tab that got embedded into the main .java
+              lineNumber -= sketch.code[codeIndex].preprocOffset;
+
               // this may have a paren on the end, if so need to strip
               // down to just the digits
               /*

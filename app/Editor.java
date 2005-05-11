@@ -1680,6 +1680,10 @@ public class Editor extends JFrame
       if (mess.indexOf(rxString) == 0) {
         mess = mess.substring(rxString.length());
       }
+      String javaLang = "java.lang.";
+      if (mess.indexOf(javaLang) == 0) {
+        mess = mess.substring(javaLang.length());
+      }
       status.error(mess);
     }
     e.printStackTrace();
@@ -1698,7 +1702,10 @@ public class Editor extends JFrame
     String rxString = "RuntimeException: ";
     if (mess.indexOf(rxString) == 0) {
       mess = mess.substring(rxString.length());
-      //System.out.println("MESS3: " + mess);
+    }
+    String javaLang = "java.lang.";
+    if (mess.indexOf(javaLang) == 0) {
+      mess = mess.substring(javaLang.length());
     }
     status.error(mess);
 
