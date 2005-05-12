@@ -1,10 +1,20 @@
 0091 core
 X change to synchronization to hopefully fix some update issues
+X curveVertex() problem in P2D when > 128 points fixed
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115856359;start=0
+
+_ currently some bugs in the main() because it's not sizing applets 
+_   if running in present mode it works ok
+_   but that also needs its display set.. argh
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115834600;start=0
 
 _ need to test/straighten out load/update pixels
 loadPixels() and updatePixels() only need to be used when 
 touching pixels[]. All other functions including get(), set(),
 filter(), etc shouldn't need them. 
+_   fjen says blend() doens't work in JAVA2D
+
+_ P3D is not doing bilinear interpolation?
 
 
 ////////////////////////////////////////////////////////////////////
@@ -88,9 +98,6 @@ _ cellular automata examples broken
 
 CORE / PApplet - main()
 
-_ currently some bugs in the main() because it's not sizing applets 
-_   if running in present mode it works ok
-_   but that also needs its display set.. argh
 _ make the 1.4 code in PApplet load via reflection
 _   doesn't appear necessary with 1.3 applets
 _   or is some of the stuff usable in 1.3 but not all?

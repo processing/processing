@@ -17,7 +17,7 @@ o   make sure this is no longer the case
 o don't draw the nasty couple of pixels in the margin
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115597365;start=0
 
-_ have the shell script test for jikes first
+_ on linux, have the shell script test for jikes first
 _   have it run jikes quickly, if it exits with an error, warn user
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115302894
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115787397;start=0
@@ -107,8 +107,11 @@ _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 
 
-PDE / Compiler (and preprocessor?)
+PDE / Compiler & Preprocessor?
 
+_ jikes bugs mean some code just won't compile:
+_   include javac? would this be a good solution for linux?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115833916;start=0
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
 _ an empty .java tab will throw an error
