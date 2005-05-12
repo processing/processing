@@ -14,7 +14,9 @@ touching pixels[]. All other functions including get(), set(),
 filter(), etc shouldn't need them. 
 _   fjen says blend() doens't work in JAVA2D
 
-_ P3D is not doing bilinear interpolation?
+_ P3D not doing bilinear interpolation because smooth() has to be set
+_   how should this be handled? a hint? allowing smooth()?
+
 
 
 ////////////////////////////////////////////////////////////////////
