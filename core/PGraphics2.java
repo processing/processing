@@ -290,6 +290,8 @@ public class PGraphics2 extends PGraphics {
                        splineVertices[0], 0, VERTEX_FIELD_COUNT);
       System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 2], 0,
                        splineVertices[1], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 1], 0,
+                       splineVertices[2], 0, VERTEX_FIELD_COUNT);
       splineVertexCount = 3;
     }
 
