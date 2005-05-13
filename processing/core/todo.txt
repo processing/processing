@@ -96,6 +96,10 @@ _ fileInput() and fileOutput() may not agree with draw()
 _   not yet verified
 _   can only be used inside of setup()?
 _ cellular automata examples broken
+_ size() has memory limitations (pitaru)
+_   catch OutOfMemoryError inside size() and let the user know
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
+_ files not in the data folder (works in env, not in sketch)
 
 
 CORE / PApplet - main()
@@ -132,6 +136,9 @@ _     (use toolkit.getscreensize)
 
 CORE / PFont and text()
 
+_ createFont() with a .ttf doesn't work in applets?
+_   throws a security exception because of the reflection stuff
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
 _ text() with a z coordinate is now using translate, very slow
 _   also puts up a weird error message about translate() in 2D mode
 _ make screen space fonts use get/set as well?
@@ -316,6 +323,8 @@ g2.draw(gp);
 
 CORE / PGraphics3
 
+_ ortho() is doing things strangely
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 _ tesselator/triangulator gets confused when points doubled up
 _   might need to avoid previous vertex hitting itself
 _ polygons perpendicular to axis not drawing
@@ -412,6 +421,8 @@ _ figure out why tiff images won't open with after effects
 _   open with photoshop, resave, see which tags change
 _   particularly of those that are included in the original image
 _   perhaps something gets corrected? 
+_ loadImage() using spaces in the name
+_   if loadImage() with spaces when online(), throw an error
 
 
 CORE / PSound
