@@ -5,14 +5,13 @@ X   figure out why it's killing things early? the process maybe?
 X   gl exceptions really not coming through
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
 X command keys don't work w/ shift
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
 X printing 32k chars to console w/o a line break will cause massive error
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115470426;start=0
-
-_ on linux, have the shell script test for jikes first
-_   have it run jikes quickly, if it exits with an error, warn user
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115302894
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115787397;start=0
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115470426;start=0
+X on linux, have the shell script test for jikes first
+X   have it run jikes quickly, if it exits with an error, warn user
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115302894
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115787397;start=0
 
 
 fixed previously
