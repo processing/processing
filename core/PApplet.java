@@ -350,7 +350,7 @@ public class PApplet extends Applet
 
   static public final String ARGS_PRESENT = "--present";
 
-  static public final String ARGS_PRESENT_BGCOLOR = "--present-color";
+  static public final String ARGS_BGCOLOR = "--bgcolor";
 
   static public final String ARGS_PRESENT_STOP_COLOR = "--present-stop-color";
 
@@ -5224,7 +5224,7 @@ v              PApplet.this.stop();
    * --present             put the applet into full screen presentation
    *                       mode. requires java 1.4.
    *
-   * --present-color       background color of the presentation window
+   * --bgcolor=#xxxxxx     background color of the window
    *
    * --sketch-folder       location of where to save files from functions
    *                       like saveStrings() or saveFrame(). defaults to
@@ -5263,7 +5263,7 @@ v              PApplet.this.stop();
       String folder = System.getProperty("user.dir");
       String name = null;
       boolean present = false;
-      Color presentColor = Color.BLACK;
+      Color backgroundColor = Color.BLACK;
       Color stopColor = Color.GRAY;
       GraphicsDevice displayDevice = null;
 
@@ -5296,9 +5296,9 @@ v              PApplet.this.stop();
                                  "using the default display instead.");
             }
 
-          } else if (param.equals(ARGS_PRESENT_BGCOLOR)) {
+          } else if (param.equals(ARGS_BGCOLOR)) {
             if (value.charAt(0) == '#') value = value.substring(1);
-            presentColor = new Color(Integer.parseInt(value, 16));
+            backgroundColor = new Color(Integer.parseInt(value, 16));
 
           } else if (param.equals(ARGS_PRESENT_STOP_COLOR)) {
             if (value.charAt(0) == '#') value = value.substring(1);
@@ -5326,18 +5326,23 @@ v              PApplet.this.stop();
         argIndex++;
       }
 
-      Frame frame = null; //new Frame();
+      if (displayDevice == null) {
+        GraphicsEnvironment environment =
+          GraphicsEnvironment.getLocalGraphicsEnvironment();
+        displayDevice = environment.getDefaultScreenDevice();
+      }
+
+      Frame frame = new Frame(displayDevice.getDefaultConfiguration());
+      /*
+      Frame frame = null;
       if (displayDevice != null) {
-        //GraphicsConfiguration gc = displayDevice.getDefaultConfiguration();
-        //frame = new Frame(gc);
         frame = new Frame(displayDevice.getDefaultConfiguration());
-        //println(displayDevice.getDefaultConfiguration());
       } else {
         frame = new Frame();
       }
+      */
 
-      Dimension screen =
-        Toolkit.getDefaultToolkit().getScreenSize();
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       frame.setResizable(false);  // remove the grow box
       //frame.pack();  // get insets. get more.
@@ -5362,17 +5367,14 @@ v              PApplet.this.stop();
 
       if (present) {
         frame.setUndecorated(true);
-        frame.setBackground(presentColor);
-        //println("background color should be " + presentColor);
+        frame.setBackground(backgroundColor);
         displayDevice.setFullScreenWindow(frame);
 
         frame.add(applet);
         Dimension fullscreen = frame.getSize();
-        //System.out.println("frame size is " + fullscreen);
         applet.setBounds((fullscreen.width - applet.width) / 2,
                          (fullscreen.height - applet.height) / 2,
                          applet.width, applet.height);
-        //println("applet bounds now " + applet.getBounds());
 
         if (external) {
           Label label = new Label("stop");
@@ -5401,65 +5403,68 @@ v              PApplet.this.stop();
         }
 
       } else {  // if not presenting
-        // can't do this earlier cuz present mode don't like it
+        // can't do pack earlier cuz present mode don't like it
         frame.pack();
+        Insets insets = frame.getInsets();
+
+        int windowW =
+          Math.max(applet.width, 120) + insets.left + insets.right;
+        int windowH =
+          Math.max(applet.height, 120) + insets.top + insets.bottom;
+
+        frame.setSize(windowW, windowH);
+
+        if (location != null) {
+          // a specific location was received from PdeRuntime
+          // (applet has been run more than once, user placed window)
+          frame.setLocation(location[0], location[1]);
+
+        } else if (external) {
+          int locationX = editorLocation[0] - 20;
+          int locationY = editorLocation[1];
+
+          if (locationX - windowW > 10) {
+            // if it fits to the left of the window
+            frame.setLocation(locationX - windowW, locationY);
+
+          } else {  // doesn't fit
+            // if it fits inside the editor window,
+            // offset slightly from upper lefthand corner
+            // so that it's plunked inside the text area
+            locationX = editorLocation[0] + 66;
+            locationY = editorLocation[1] + 66;
+
+            if ((locationX + windowW > screen.width - 33) ||
+                (locationY + windowH > screen.height - 33)) {
+              // otherwise center on screen
+              locationX = (screen.width - windowW) / 2;
+              locationY = (screen.height - windowH) / 2;
+            }
+            frame.setLocation(locationX, locationY);
+          }
+        } else {  // just center on screen
+          frame.setLocation((screen.width - applet.width) / 2,
+                            (screen.height - applet.height) / 2);
+        }
+
+        frame.setLayout(null);
+        frame.add(applet);
+
+        if (backgroundColor == Color.BLACK) {
+          // this means no bg color unless specified
+          backgroundColor = SystemColor.control;
+        }
+        frame.setBackground(backgroundColor);
+
+        int usableWindowH = windowH - insets.top - insets.bottom;
+        applet.setBounds((windowW - applet.width)/2,
+                         insets.top + (usableWindowH - applet.height)/2,
+                         windowW, windowH);
 
         if (external) {
-          Insets insets = frame.getInsets();  // does pack() first above
-
-          int windowW =
-            Math.max(applet.width, 120) + insets.left + insets.right;
-          int windowH =
-            Math.max(applet.height, 120) + insets.top + insets.bottom;
-          frame.setSize(windowW, windowH);
-
-          if (location != null) {
-            // a specific location was received from PdeRuntime
-            // (applet has been run more than once, user placed window)
-            frame.setLocation(location[0], location[1]);
-
-          } else {
-            int locationX = editorLocation[0] - 20;
-            int locationY = editorLocation[1];
-
-            if (locationX - windowW > 10) {
-              // if it fits to the left of the window
-              frame.setLocation(locationX - windowW, locationY);
-
-            } else {
-              // if it fits inside the editor window,
-              // offset slightly from upper lefthand corner
-              // so that it's plunked inside the text area
-              locationX = editorLocation[0] + 66;
-              locationY = editorLocation[1] + 66;
-
-              if ((locationX + windowW > screen.width - 33) ||
-                  (locationY + windowH > screen.height - 33)) {
-                // otherwise center on screen
-                locationX = (screen.width - windowW) / 2;
-                locationY = (screen.height - windowH) / 2;
-              }
-              frame.setLocation(locationX, locationY);
-            }
-          }
-
-          frame.setLayout(null);
-          frame.add(applet);
-          frame.setBackground(SystemColor.control);
-          int usableWindowH = windowH - insets.top - insets.bottom;
-          applet.setBounds((windowW - applet.width)/2,
-                           insets.top + (usableWindowH - applet.height)/2,
-                           windowW, windowH);
           applet.setupExternal(frame);
 
         } else {  // !external
-          frame.setLayout(new BorderLayout());
-          frame.add(applet, BorderLayout.CENTER);
-          //frame.pack();  // is this necessary?
-
-          frame.setLocation((screen.width - applet.width) / 2,
-                            (screen.height - applet.height) / 2);
-
           frame.addWindowListener(new WindowAdapter() {
               public void windowClosing(WindowEvent e) {
                 System.exit(0);
@@ -5467,6 +5472,7 @@ v              PApplet.this.stop();
             });
         }
 
+        // all set for rockin
         frame.show();
       }
 
