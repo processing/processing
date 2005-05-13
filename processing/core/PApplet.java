@@ -1424,6 +1424,12 @@ public class PApplet extends Applet
       keyTyped();
       break;
     }
+
+    // if someone else wants to intercept the key, they should
+    // set key to zero (or something besides the ESC).
+    if (key == KeyEvent.VK_ESCAPE) {
+      exit();
+    }
   }
 
 
@@ -1817,7 +1823,11 @@ public class PApplet extends Applet
    */
   public void exit() {
     stop();
-    // TODO if not running as an applet, do a System.exit() here
+    finished = true;
+
+    if ((leechErr == null) && !online) {
+      System.exit(0);
+    }
   }
 
 
@@ -5376,29 +5386,37 @@ v              PApplet.this.stop();
                          (fullscreen.height - applet.height) / 2,
                          applet.width, applet.height);
 
-        if (external) {
-          Label label = new Label("stop");
-          label.setForeground(stopColor);
-          label.addMouseListener(new MouseAdapter() {
-              public void mousePressed(MouseEvent e) {
+        // doesn't help for gl, since it has its own canvas
+        /*
+        applet.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+              System.out.println(e);
+              if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                //System.out.println("escape!");
                 System.exit(0);
               }
-            });
-          frame.add(label);
+            }
+          });
+        */
 
-          /*
-          frame.addKeyListener(new KeyAdapter() {
-              public void keyPressed(KeyEvent e) {
-                System.out.println(e);
-              }
-            });
-          */
+        Label label = new Label("stop");
+        label.setForeground(stopColor);
+        label.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+              System.exit(0);
+            }
+          });
+        frame.add(label);
 
-          Dimension labelSize = label.getPreferredSize();
-          // sometimes shows up truncated on mac
-          labelSize = new Dimension(labelSize.width * 2, labelSize.height);
-          label.setSize(labelSize);
-          label.setLocation(20, fullscreen.height - labelSize.height - 20);
+        Dimension labelSize = label.getPreferredSize();
+        // sometimes shows up truncated on mac
+        //System.out.println("label width is " + labelSize.width);
+        labelSize = new Dimension(100, labelSize.height);
+        label.setSize(labelSize);
+        label.setLocation(20, fullscreen.height - labelSize.height - 20);
+
+        // not always running externally when in present mode
+        if (external) {
           applet.setupExternal(frame);
         }
 

@@ -93,7 +93,6 @@ public class PGraphicsGL extends PGraphics3 {
     canvas.setBounds(0, 0, width, height);
 
     //System.out.println("creating PGraphicsGL 5");
-
     //System.out.println("adding canvas listeners");
     canvas.addMouseListener(applet);
     canvas.addMouseMotionListener(applet);
