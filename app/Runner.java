@@ -122,7 +122,7 @@ public class Runner implements MessageConsumer {
 
     params.add(PApplet.ARGS_EXTERNAL);
     params.add(PApplet.ARGS_PRESENT);
-    params.add(PApplet.ARGS_PRESENT_BGCOLOR + "=" +
+    params.add(PApplet.ARGS_BGCOLOR + "=" +
                Preferences.get("run.present.bgcolor"));
     params.add(PApplet.ARGS_DISPLAY + "=" +
                Preferences.get("run.display"));

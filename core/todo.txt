@@ -2,6 +2,12 @@
 X change to synchronization to hopefully fix some update issues
 X curveVertex() problem in P2D when > 128 points fixed
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115856359;start=0
+X for present mode, need to set a default display 
+X   currently crashes if only --present is specified w/o --display
+o make the 1.4 code in PApplet load via reflection
+X   doesn't appear necessary with 1.3 applets
+o   or is some of the stuff usable in 1.3 but not all?
+o     ie. the device config classes exist but not the set full screen method
 
 _ currently some bugs in the main() because it's not sizing applets 
 _   if running in present mode it works ok
@@ -104,12 +110,6 @@ _ files not in the data folder (works in env, not in sketch)
 
 CORE / PApplet - main()
 
-_ make the 1.4 code in PApplet load via reflection
-_   doesn't appear necessary with 1.3 applets
-_   or is some of the stuff usable in 1.3 but not all?
-_     ie. the device config classes exist but not the set full screen method
-_ for present mode, need to set a default display 
-_   currently crashes if only --present is specified w/o --display
 _ present mode is flakey.. applet doesn't always come up
 _   seems like hitting stop helps shut it down?
 _   is full screen window not being taken down properly?
@@ -124,6 +124,7 @@ _   needs to get the size of the main screen
 _ ability to select monitor via preferences panel
 _   this applies to any applet that's run externally currently (verify)
 _   make it also work with anything that's run inside of p5 itself
+_     this means changing the frame creation code inside Runner
 _ check current present code with multiple monitors
 _ first pass on full screen
 _   exceptions in full screen mode will quit the app completely
@@ -132,6 +133,9 @@ _   default is that full screen app doesn't cover multiple displays
 _     this is fine since opengl can't usually go across both
 _     but include an example for how to use full in gl 
 _     (use toolkit.getscreensize)
+_ cmd-q when running externally causes trouble because it quits
+_   but when running internally it quits p5
+_   how to shut off the cmd-q when running externally on osx?
 
 
 CORE / PFont and text()

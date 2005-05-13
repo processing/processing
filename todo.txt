@@ -3,7 +3,7 @@ X error messages from external not coming through very well
 X   especially on macosx.. is it writing to stdout.txt tho?
 X   figure out why it's killing things early? the process maybe?
 X   gl exceptions really not coming through
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114520230;start=5
 X command keys don't work w/ shift
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114661169;start=0
 X printing 32k chars to console w/o a line break will cause massive error
