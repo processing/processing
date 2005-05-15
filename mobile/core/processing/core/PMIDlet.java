@@ -56,10 +56,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
         }
     }
     
-    public static final int CORNER          = 0;
-    public static final int CORNERS         = 1;
-    public static final int CENTER          = 2;
-    public static final int CENTER_RADIUS   = 3;
+    public static final int CENTER          = 0;
+    public static final int CENTER_RADIUS   = 1;
+    public static final int CORNER          = 2;
+    public static final int CORNERS         = 3;
     
     public static final int POINTS          = 0;
     public static final int LINES           = 1;
@@ -76,10 +76,6 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     public static final int LEFT            = 2;
     public static final int RIGHT           = 3;
     public static final int FIRE            = 4;
-    
-    public static final int ALIGN_LEFT      = 0;
-    public static final int ALIGN_RIGHT     = 1;
-    public static final int ALIGN_CENTER    = 2;    
     
     public static final int RGB             = 0;
     public static final int HSB             = 1;
