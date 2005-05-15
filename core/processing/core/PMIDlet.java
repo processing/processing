@@ -9,7 +9,7 @@ import javax.microedition.midlet.*;
  *
  * @author  Francis Li
  */
-public abstract class PMIDlet extends MIDlet implements Runnable {    
+public abstract class PMIDlet extends MIDlet implements Runnable, CommandListener {    
     public static final int CENTER          = 0;
     public static final int CENTER_RADIUS   = 1;
     public static final int CORNER          = 2;
@@ -46,6 +46,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     
     private Display     display;
     private PCanvas     canvas;
+    private Command     cmdExit;
     
     private boolean     running;
     private long        startTime;
@@ -60,6 +61,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
         display = Display.getDisplay(this);
     }
     
+    public final void commandAction(Command c, Displayable d) {
+        if (c == cmdExit) {
+            try {
+                destroyApp(true);
+                notifyDestroyed();
+            } catch (MIDletStateChangeException msce) {                
+            }
+        }
+    }
+    
     protected final void destroyApp(boolean unconditional) throws MIDletStateChangeException {
         running = false;
     }
@@ -71,7 +82,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     protected final void startApp() throws MIDletStateChangeException {
         running = true;
         if (canvas == null) {
-            canvas = new PCanvas(this);
+            cmdExit = new Command("Exit", Command.EXIT, 1);
+            
+            canvas = new PCanvas(this);            
+            canvas.addCommand(cmdExit);
+            canvas.setCommandListener(this);
+            
             width = canvas.getWidth();
             height = canvas.getHeight();
             
@@ -367,13 +383,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     }
     
     public final String[] loadStrings(String filename) {
-        String[] strings = null;
+        Vector v = new Vector();
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(filename);
             Reader r = new InputStreamReader(is);
             
-            strings = new String[8];
             int numStrings = 0;
             
             StringBuffer buffer = new StringBuffer();
@@ -383,14 +398,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
                     String s = buffer.toString().trim();
                     if (s.length() > 0) {
                         numStrings++;
-
-                        int length = strings.length;
-                        if (numStrings > length) {
-                            String[] old = strings;
-                            strings = new String[length * 2];
-                            System.arraycopy(old, 0, strings, 0, length);
-                        }
-                        strings[numStrings - 1] = s;
+                        v.addElement(s);
                     }
                     buffer.delete(0, Integer.MAX_VALUE);
                     
@@ -403,14 +411,6 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
                 
                 input = r.read();
             }
-            //// shrink array
-            if (numStrings < strings.length) {
-                String[] old = strings;
-                strings = new String[numStrings];
-                if (numStrings > 0) {
-                    System.arraycopy(old, 0, strings, 0, numStrings);
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -421,10 +421,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
                     
                 }
             }
-            if (strings == null) {
-                strings = new String[0];
-            }
         }
+        String[] strings = new String[v.size()];
+        v.copyInto(strings);
         
         return strings;
     }
@@ -435,6 +434,92 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     
     public final void println(String data) {
         System.out.println(data);
+    }
+    
+    public final String join(String[] anyArray, String separator) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0, length = anyArray.length; i < length; i++) {
+            buffer.append(anyArray[i]);
+            if (i < (length - 1)) {
+                buffer.append(separator);
+            }
+        }
+        return buffer.toString();
+    }
+    
+    public final String join(int[] anyArray, String separator) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0, length = anyArray.length; i < length; i++) {
+            buffer.append(anyArray[i]);
+            if (i < (length - 1)) {
+                buffer.append(separator);
+            }
+        }
+        return buffer.toString();
+    }
+    
+    public final String join(int[] intArray, String separator, int digits) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0, length = intArray.length; i < length; i++) {
+            buffer.append(nf(intArray[i], digits));
+            if (i < (length - 1)) {
+                buffer.append(separator);
+            }
+        }
+        return buffer.toString();        
+    }
+    
+    public final String nf(int intValue, int digits) {
+        StringBuffer buffer = new StringBuffer();
+        for (int j = Integer.toString(intValue).length(); j < digits; j++) {
+            buffer.append("0");
+        }        
+        buffer.append(intValue);
+        return buffer.toString();
+    }
+    
+    public final String nfp(int intValue, int digits) {
+        StringBuffer buffer = new StringBuffer();
+        if (intValue < 0) {
+            buffer.append("-");
+        } else {
+            buffer.append("+");
+        }
+        buffer.append(nf(intValue, digits));        
+        return buffer.toString();
+    }
+    
+    public final String nfs(int intValue, int digits) {
+        StringBuffer buffer = new StringBuffer();
+        if (intValue < 0) {
+            buffer.append("-");
+        } else {
+            buffer.append(" ");
+        }
+        buffer.append(nf(intValue, digits));        
+        return buffer.toString();
+    }
+    
+    public final String[] split(String str, String delim) {
+        Vector v = new Vector();
+        int prevIndex = 0;
+        int nextIndex = str.indexOf(delim, prevIndex);
+        while (nextIndex >= 0) {
+            v.addElement(str.substring(prevIndex, nextIndex));
+            prevIndex = nextIndex + 1;
+            nextIndex = str.indexOf(delim, prevIndex);
+        }
+        v.addElement(str.substring(prevIndex));
+        
+        String[] tokens = new String[v.size()];
+        v.copyInto(tokens);
+        
+        return tokens;
+    }
+    
+    public final String trim(String str) {
+        //// deal with unicode nbsp later
+        return str.trim();
     }
     
     //// Experimental fixed point math routines here
