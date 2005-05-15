@@ -23,7 +23,7 @@
         <!-- the boot classpath to use when compiling core files -->
         <property name="wtk.bootClassPath" value="${wtk.dir}/lib/cldcapi10.jar;${wtk.dir}/lib/midpapi10.jar"/>
         <!-- the tag to use when checking out processing -->
-        <property name="cvs.tag.processing" value="processing-0085"/>
+        <property name="cvs.tag.processing" value="processing-0090"/>
     </target>
        
     <!-- checks out a tagged copy of processing if it hasn't been done so already. -->

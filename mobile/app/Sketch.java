@@ -26,7 +26,7 @@ package processing.app;
 import processing.app.preproc.*;
 import processing.core.*;
 
-import java.awt.FileDialog;
+import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
@@ -41,25 +41,27 @@ import com.oroinc.text.regex.*;
  * Stores information about files in the current sketch
  */
 public class Sketch {
-  //static String TEMP_BUILD_PATH = "lib" + File.separator + "build";
   static File tempBuildFolder;
 
   Editor editor;
 
-  // name of sketch, which is the name of main file
-  // (without .pde or .java extension)
+  /**
+   * Name of sketch, which is the name of main file
+   * (without .pde or .java extension)
+   */
   String name;
 
-  // name of 'main' file, used by load(), such as sketch_04040.pde
+  /**
+   * Name of 'main' file, used by load(), such as sketch_04040.pde
+   */
   String mainFilename;
-  //String path;  // path to 'main' file for this sketch
 
-  // true if any of the files have been modified
+  /**
+   * true if any of the files have been modified.
+   */
   boolean modified;
 
-  boolean library;  // true if it's a library
-
-  public File folder; //sketchFolder;
+  public File folder;
   public File dataFolder;
   public File codeFolder;
 
@@ -131,26 +133,21 @@ public class Sketch {
 
   /**
    * Build the list of files.
-   *
+   * <P>
    * Generally this is only done once, rather than
    * each time a change is made, because otherwise it gets to be
    * a nightmare to keep track of what files went where, because
    * not all the data will be saved to disk.
-   *
+   * <P>
    * This also gets called when the main sketch file is renamed,
    * because the sketch has to be reloaded from a different folder.
-   *
+   * <P>
    * Another exception is when an external editor is in use,
    * in which case the load happens each time "run" is hit.
    */
   public void load() {
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
-
-    File libraryFolder = new File(folder, "library");
-    if (libraryFolder.exists()) {
-      library = true;
-    }
 
     // get list of files in the sketch folder
     String list[] = folder.list();
@@ -194,16 +191,12 @@ public class Sketch {
                       JAVA);
       }
     }
-    //System.out.println("code count 2 is " + codeCount);
 
     // remove any entries that didn't load properly
     int index = 0;
     while (index < codeCount) {
-      //System.out.println("code is " + code);
-      //System.out.println(index + " " + code[index]);
       if ((code[index] == null) ||
           (code[index].program == null)) {
-        //hide(index);  // although will this file be hidable?
         for (int i = index+1; i < codeCount; i++) {
           code[i-1] = code[i];
         }
@@ -213,14 +206,11 @@ public class Sketch {
         index++;
       }
     }
-    //System.out.println("code count 3 is " + codeCount);
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
-    //System.out.println("looking for " + mainFilename);
     for (int i = 1; i < codeCount; i++) {
       if (code[i].file.getName().equals(mainFilename)) {
-        //System.out.println("found main code at slot " + i);
         SketchCode temp = code[0];
         code[0] = code[i];
         code[i] = temp;
@@ -232,7 +222,6 @@ public class Sketch {
     sortCode();
 
     // set the main file to be the current tab
-    //current = code[0];
     setCurrent(0);
   }
 
@@ -269,16 +258,23 @@ public class Sketch {
     }
   }
 
-  boolean renamingCode;
 
+  boolean renamingCode;
 
   public void newCode() {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    //System.out.println("new code");
-    // ask for name of new file
-    // maybe just popup a text area?
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     renamingCode = false;
     editor.status.edit("Name for new file:", "");
   }
@@ -288,14 +284,24 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    // don't allow rename of the main code
-    //if (current == code[0]) return;
-    // TODO maybe gray out the menu on setCurrent(0)
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
 
     // ask for new name of file (internal to window)
     // TODO maybe just popup a text area?
     renamingCode = true;
-    editor.status.edit("New name for file:", current.name);
+    String prompt = (current == code[0]) ?
+      "New name for sketch:" : "New name for file:";
+    String oldName =
+      (current.flavor == PDE) ? current.name : current.name + ".java";
+    editor.status.edit(prompt, oldName);
   }
 
 
@@ -321,14 +327,20 @@ public class Sketch {
       return;
     }
 
+    // don't allow blank names
     if (newName.trim().equals("")) {
-      // don't allow blank names
+      return;
+    }
+
+    if (newName.trim().equals(".java") ||
+        newName.trim().equals(".pde")) {
       return;
     }
 
     String newFilename = null;
     int newFlavor = 0;
 
+    // separate into newName (no extension) and newFilename (with ext)
     // add .pde to file if it has no extension
     if (newName.endsWith(".pde")) {
       newFilename = newName;
@@ -336,7 +348,8 @@ public class Sketch {
       newFlavor = PDE;
 
     } else if (newName.endsWith(".java")) {
-      if (code[0] == current) {
+      // don't show this error if creating a new tab
+      if (renamingCode && (code[0] == current)) {
         Base.showWarning("Problem with rename",
                          "The main .pde file cannot be .java file.\n" +
                          "(It may be time for your to graduate to a\n" +
@@ -353,8 +366,8 @@ public class Sketch {
       newFlavor = PDE;
     }
 
-    // dots are allowed for the .pde and .java, but not in general
-    // so make sure the user didn't name things poo.time.pde
+    // dots are allowed for the .pde and .java, but not in the name
+    // make sure the user didn't name things poo.time.pde
     // or something like that (nothing against poo time)
     if (newName.indexOf('.') != -1) {
       newName = Sketchbook.sanitizedName(newName);
@@ -370,43 +383,122 @@ public class Sketch {
       return;
     }
 
-    if (renamingCode) {
-      if (!current.file.renameTo(newFile)) {
-        Base.showWarning("Error",
-                         "Could not rename \"" + current.file.getName() +
-                         "\" to \"" + newFile.getName() + "\"", null);
-        return;
-      }
+    File newFileHidden = new File(folder, newFilename + ".x");
+    if (newFileHidden.exists()) {
+      // don't let them get away with it if they try to create something
+      // with the same name as something hidden
+      Base.showMessage("No Way",
+                       "A hidden tab with the same name already exists.\n" +
+                       "Use \"Unhide\" to bring it back.");
+      return;
+    }
 
+    if (renamingCode) {
       if (current == code[0]) {
-        // if renaming the main class, now rename the folder and re-open
+        // get the new folder name/location
         File newFolder = new File(folder.getParentFile(), newName);
+        if (newFolder.exists()) {
+          Base.showWarning("Cannot Rename",
+                           "Sorry, a sketch (or folder) named " +
+                           "\"" + newName + "\" already exists.", null);
+          return;
+        }
+
+        // unfortunately this can't be a "save as" because that
+        // only copies the sketch files and the data folder
+        // however this *will* first save the sketch, then rename
+
+        // first get the contents of the editor text area
+        if (current.modified) {
+          current.program = editor.getText();
+          try {
+            // save this new SketchCode
+            current.save();
+          } catch (Exception e) {
+            Base.showWarning("Error", "Could not rename the sketch. (0)", e);
+            return;
+          }
+        }
+
+        if (!current.file.renameTo(newFile)) {
+          Base.showWarning("Error",
+                           "Could not rename \"" + current.file.getName() +
+                           "\" to \"" + newFile.getName() + "\"", null);
+          return;
+        }
+
+        // save each of the other tabs because this is gonna be re-opened
+        try {
+          for (int i = 1; i < codeCount; i++) {
+            //if (code[i].modified) code[i].save();
+            code[i].save();
+          }
+        } catch (Exception e) {
+          Base.showWarning("Error", "Could not rename the sketch. (1)", e);
+          return;
+        }
+
+        // now rename the sketch folder and re-open
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error",
-                           "Could not rename the sketch.", null);
+          Base.showWarning("Error", "Could not rename the sketch. (2)", null);
           return;
         }
         // if successful, set base properties for the sketch
-        folder = newFolder;
+
         File mainFile = new File(newFolder, newName + ".pde");
         mainFilename = mainFile.getAbsolutePath();
 
+        // having saved everything and renamed the folder and the main .pde,
+        // use the editor to re-open the sketch to re-init state
+        // (unfortunately this will kill positions for carets etc)
+        editor.handleOpenUnchecked(mainFilename);
+
+        /*
+          // backtrack and don't rename the sketch folder
+          success = newFolder.renameTo(folder);
+          if (!success) {
+            String msg =
+              "Started renaming sketch and then ran into\n" +
+              "nasty trouble. Try to salvage with Copy & Paste\n" +
+              "or attempt a \"Save As\" to see if that works.";
+            Base.showWarning("Serious Error", msg, null);
+          }
+          return;
+        }
+        */
+
+        /*
         // set the sketch name... used by the pde and whatnot.
         // the name is only set in the sketch constructor,
         // so it's important here
         name = newName;
+
+        code[0].name = newName;
+        code[0].file = mainFile;
+        code[0].program = editor.getText();
+        code[0].save();
+
+        folder = newFolder;
 
         // get the changes into the sketchbook menu
         editor.sketchbook.rebuildMenus();
 
         // reload the sketch
         load();
+        */
 
       } else {
+        if (!current.file.renameTo(newFile)) {
+          Base.showWarning("Error",
+                           "Could not rename \"" + current.file.getName() +
+                           "\" to \"" + newFile.getName() + "\"", null);
+          return;
+        }
+
         // just reopen the class itself
-        current.file = newFile;
         current.name = newName;
+        current.file = newFile;
         current.flavor = newFlavor;
       }
 
@@ -430,7 +522,12 @@ public class Sketch {
     setCurrent(newName);
 
     // update the tabs
-    editor.header.repaint();
+    //editor.header.repaint();
+    editor.header.rebuild();
+
+    // force the update on the mac?
+    Toolkit.getDefaultToolkit().sync();
+    //editor.header.getToolkit().sync();
   }
 
 
@@ -441,16 +538,15 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    // don't allow delete of the main code
-    // TODO maybe gray out the menu on setCurrent(0)
-    /*
-    if (current == code[0]) {
-      Base.showMessage("Can't do that",
-                          "You cannot delete the main " +
-                          ".pde file from a sketch\n");
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
       return;
     }
-    */
 
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
@@ -467,6 +563,9 @@ public class Sketch {
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
       if (current == code[0]) {
+        // need to unset all the modified flags, otherwise tries
+        // to do a save on the handleNew()
+
         // delete the entire sketch
         Base.removeDir(folder);
 
@@ -474,13 +573,13 @@ public class Sketch {
         //sketchbook.rebuildMenus();
 
         // make a new sketch, and i think this will rebuild the sketch menu
-        editor.handleNew();
+        editor.handleNewUnchecked();
 
       } else {
         // delete the file
         if (!current.file.delete()) {
           Base.showMessage("Couldn't do it",
-                              "Could not delete \"" + current.name + "\".");
+                           "Could not delete \"" + current.name + "\".");
           return;
         }
 
@@ -514,6 +613,19 @@ public class Sketch {
 
 
   public void hideCode() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     // don't allow hide of the main code
     // TODO maybe gray out the menu on setCurrent(0)
     if (current == code[0]) {
@@ -547,12 +659,11 @@ public class Sketch {
     // update the tabs
     setCurrent(0);
     editor.header.repaint();
+    //editor.header.rebuild();
   }
 
 
   public void unhideCode(String what) {
-    //System.out.println("unhide " + e);
-    //int unhideIndex = -1;
     SketchCode unhideCode = null;
 
     for (int i = 0; i < hiddenCount; i++) {
@@ -598,14 +709,6 @@ public class Sketch {
 
 
   /**
-   * Return true if this sketch is a library.
-   */
-  public boolean isLibrary() {
-    return library;
-  }
-
-
-  /**
    * Sets the modified value for the code in the frontmost tab.
    */
   public void setModified() {
@@ -627,38 +730,6 @@ public class Sketch {
 
 
   /**
-   * Make sure the sketch hasn't been moved or deleted by some
-   * nefarious user. If they did, try to re-create it and save.
-   */
-  protected void ensureExistence() {
-    if (folder.exists()) return;
-
-    Base.showWarning("Sketch disappeared",
-                     "The sketch folder has disappeared (did you " +
-                     "delete it? Are you trying to f-- with me?)\n" +
-                     "Will attempt to re-save in the same location," +
-                     "but anything besides the code will be lost.", null);
-    try {
-      folder.mkdirs();
-      modified = true;
-
-      for (int i = 0; i < codeCount; i++) {
-        //code[i].modified = true;  // make sure it gets re-saved
-        code[i].save();
-      }
-      calcModified();
-
-    } catch (Exception e) {
-      Base.showWarning("Could not re-save sketch",
-                       "Could not properly re-save the sketch. " +
-                       "You may be in trouble at this point,\n" +
-                       "and it might be time to copy and paste " +
-                       "your code to another text editor.", e);
-    }
-  }
-
-
-  /**
    * Save all code in the current sketch.
    */
   public boolean save() throws IOException {
@@ -671,7 +742,7 @@ public class Sketch {
     }
 
     // don't do anything if not actually modified
-    if (!modified) return false;
+    //if (!modified) return false;
 
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
@@ -690,32 +761,27 @@ public class Sketch {
   }
 
 
-  public void saveCurrent() throws IOException {
-    current.save();
-    calcModified();
-  }
-
-
   /**
-   * Handles 'save as' for a sketch.
+   * Handles 'Save As' for a sketch.
    * <P>
    * This basically just duplicates the current sketch folder to
    * a new location, and then calls 'Save'. (needs to take the current
    * state of the open files and save them to the new folder..
    * but not save over the old versions for the old sketch..)
    * <P>
-   * also removes the previously-generated .class and .jar files,
+   * Also removes the previously-generated .class and .jar files,
    * because they can cause trouble.
    */
   public boolean saveAs() throws IOException {
     // get new name for folder
-    FileDialog fd = new FileDialog(editor, //new Frame(),
+    FileDialog fd = new FileDialog(editor,
                                    "Save sketch folder as...",
                                    FileDialog.SAVE);
     if (isReadOnly()) {
       // default to the sketchbook folder
       fd.setDirectory(Preferences.get("sketchbook.path"));
     } else {
+      // default to the parent folder of where this was
       fd.setDirectory(folder.getParent());
     }
     fd.setFile(folder.getName());
@@ -727,6 +793,26 @@ public class Sketch {
     // user cancelled selection
     if (newName == null) return false;
     newName = Sketchbook.sanitizeName(newName);
+
+    // make sure there doesn't exist a tab with that name already
+    // (but allow it if it's just the main tab resaving itself.. oops)
+    File codeAlready = new File(folder, newName + ".pde");
+    if (codeAlready.exists() && (!newName.equals(name))) {
+      Base.showMessage("Nope",
+                       "You can't save the sketch as \"" + newName + "\"\n" +
+                       "because the sketch already has a tab with that name.");
+      return false;
+    }
+
+    // make sure there doesn't exist a tab with that name already
+    File hiddenAlready = new File(folder, newName + ".pde.x");
+    if (hiddenAlready.exists()) {
+      Base.showMessage("Nope",
+                       "You can't save the sketch as \"" + newName + "\"\n" +
+                       "because the sketch already has a " +
+                       "hidden tab with that name.");
+      return false;
+    }
 
     // new sketch folder
     File newFolder = new File(newParentDir, newName);
@@ -744,8 +830,6 @@ public class Sketch {
     try {
       String newPath = newFolder.getCanonicalPath() + File.separator;
       String oldPath = folder.getCanonicalPath() + File.separator;
-      //System.out.println(newPath);
-      //System.out.println(oldPath);
 
       if (newPath.indexOf(oldPath) == 0) {
         Base.showWarning("How very Borges of you",
@@ -761,9 +845,49 @@ public class Sketch {
     if (newFolder.exists()) {
       Base.removeDir(newFolder);
     }
-    // in fact, you can't do this on windows because it tries
-    // to go into the same folder, but it happens on osx a lot.
+    // in fact, you can't do this on windows because the file dialog
+    // will instead put you inside the folder, but it happens on osx a lot.
 
+    // now make a fresh copy of the folder
+    newFolder.mkdirs();
+
+    // grab the contents of the current tab before saving
+    // first get the contents of the editor text area
+    if (current.modified) {
+      current.program = editor.getText();
+    }
+
+    // save the other tabs to their new location
+    for (int i = 1; i < codeCount; i++) {
+      File newFile = new File(newFolder, code[i].file.getName());
+      code[i].saveAs(newFile);
+    }
+
+    // save the hidden code to its new location
+    for (int i = 0; i < hiddenCount; i++) {
+      File newFile = new File(newFolder, hidden[i].file.getName());
+      hidden[i].saveAs(newFile);
+    }
+
+    // re-copy the data folder (this may take a while.. add progress bar?)
+    if (dataFolder.exists()) {
+      File newDataFolder = new File(newFolder, "data");
+      Base.copyDir(dataFolder, newDataFolder);
+    }
+
+    // re-copy the code folder
+    if (codeFolder.exists()) {
+      File newCodeFolder = new File(newFolder, "code");
+      Base.copyDir(codeFolder, newCodeFolder);
+    }
+
+    // save the main tab with its new name
+    File newFile = new File(newFolder, newName + ".pde");
+    code[0].saveAs(newFile);
+
+    editor.handleOpenUnchecked(newFile.getPath());
+
+    /*
     // copy the entire contents of the sketch folder
     Base.copyDir(folder, newFolder);
 
@@ -799,7 +923,7 @@ public class Sketch {
     // otherwise their .class and .jar files can cause conflicts.
     Base.removeDir(new File(folder, "applet"));
     Base.removeDir(new File(folder, "application"));
-    Base.removeDir(new File(folder, "library"));
+    //Base.removeDir(new File(folder, "library"));
 
     // do a "save"
     // this will take care of the unsaved changes in each of the tabs
@@ -811,6 +935,7 @@ public class Sketch {
 
     // update the tabs for the name change
     editor.header.repaint();
+    */
 
     // let Editor know that the save was successful
     return true;
@@ -824,6 +949,19 @@ public class Sketch {
    * or .dll, .jnilib, or .so files for the code folder
    */
   public void addFile() {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    // if read-only, give an error
+    if (isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage("Sketch is Read-Only",
+                       "Some files are marked \"read-only\", so you'll\n" +
+                       "need to re-save the sketch in another location,\n" +
+                       "and try again.");
+      return;
+    }
+
     // get a dialog, select a file to add to the sketch
     String prompt =
       "Select an image or other data file to copy to your sketch";
@@ -907,7 +1045,7 @@ public class Sketch {
   }
 
 
-  public void addLibrary(String jarPath) {
+  public void importLibrary(String jarPath) {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -929,7 +1067,7 @@ public class Sketch {
     }
     buffer.append('\n');
     buffer.append(editor.getText());
-    editor.setText(buffer.toString(), false);
+    editor.setText(buffer.toString(), 0, 0);  // scroll to start
     setModified();
   }
 
@@ -943,21 +1081,39 @@ public class Sketch {
    * </OL>
    */
   public void setCurrent(int which) {
+    if (current == code[which]) {
+      //System.out.println("already current, ignoring");
+      return;
+    }
+
     // get the text currently being edited
-    //program[current] = editor.getText();
     if (current != null) {
       current.program = editor.getText();
+      current.selectionStart = editor.textarea.getSelectionStart();
+      current.selectionStop = editor.textarea.getSelectionEnd();
+      current.scrollPosition = editor.textarea.getScrollPosition();
     }
 
     current = code[which];
+    editor.setCode(current);
+    //editor.setDocument(current.document,
+    //                 current.selectionStart, current.selectionStop,
+    //                 current.scrollPosition, current.undo);
 
     // set to the text for this file
     // 'true' means to wipe out the undo buffer
     // (so they don't undo back to the other file.. whups!)
-    editor.setText(current.program, true);
+    /*
+    editor.setText(current.program,
+                   current.selectionStart, current.selectionStop,
+                   current.undo);
+    */
 
-    // and i'll personally make a note of the change
-    //current = which;
+    // set stored caret and scroll positions
+    //editor.textarea.setScrollPosition(current.scrollPosition);
+    //editor.textarea.select(current.selectionStart, current.selectionStop);
+    //editor.textarea.setSelectionStart(current.selectionStart);
+    //editor.textarea.setSelectionEnd(current.selectionStop);
 
     editor.header.rebuild();
   }
@@ -983,26 +1139,21 @@ public class Sketch {
   protected void cleanup() {
     // if the java runtime is holding onto any files in the build dir, we
     // won't be able to delete them, so we need to force a gc here
-    //
     System.gc();
 
     // note that we can't remove the builddir itself, otherwise
     // the next time we start up, internal runs using Runner won't
     // work because the build dir won't exist at startup, so the classloader
     // will ignore the fact that that dir is in the CLASSPATH in run.sh
-    //
-    //File dirObject = new File(TEMP_BUILD_PATH);
-    //Base.removeDescendants(dirObject);
     Base.removeDescendants(tempBuildFolder);
   }
 
 
   /**
    * Preprocess, Compile, and Run the current code.
-   * This is not Runnable.run(), but a handler for the run() command.
-   *
+   * <P>
    * There are three main parts to this process:
-   *
+   * <PRE>
    *   (0. if not java, then use another 'engine'.. i.e. python)
    *
    *    1. do the p5 language preprocessing
@@ -1022,8 +1173,8 @@ public class Sketch {
    *       or if more than one file is in the project
    *
    *    X. afterwards, some of these steps need a cleanup function
+   * </PRE>
    */
-  //public void run() throws RunnerException {
   public boolean handleRun() throws RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -1077,70 +1228,8 @@ public class Sketch {
         }
       }
     }
-
-    // if the compilation worked, run the applet
-//    if (mainClassName != null) {
-
-      /*
-      if (externalPaths == null) {
-        externalPaths =
-          Compiler.calcClassPath(null) + File.pathSeparator +
-          tempBuildPath;
-      } else {
-        externalPaths =
-          tempBuildPath + File.pathSeparator +
-          Compiler.calcClassPath(null) + File.pathSeparator +
-          externalPaths;
-      }
-      */
-
-      // get a useful folder name for the 'code' folder
-      // so that it can be included in the java.library.path
-      /*
-      String libraryPath = "";
-      if (externalCode != null) {
-        libraryPath = externalCode.getCanonicalPath();
-      }
-      */
-
-      // create a runtime object
-//      runtime = new Runner(this, editor);
-
-      // if programType is ADVANCED
-      //   or the code/ folder is not empty -> or just exists (simpler)
-      // then set boolean for external to true
-      // include path to build in front, then path for code folder
-      //   when passing the classpath through
-      //   actually, build will already be in there, just prepend code
-
-      // use the runtime object to consume the errors now
-      // no need to bother recycling the old guy
-      //MessageStream messageStream = new MessageStream(runtime);
-
-      // start the applet
-//      runtime.start(presenting ? presentLocation : appletLocation); //,
-      //new PrintStream(messageStream));
-
-      // spawn a thread to update PDE GUI state
-//      watcher = new RunButtonWatcher();
-
-//    } else {
-      // [dmose] throw an exception here?
-      // [fry] iirc the exception will have already been thrown
-//      cleanup();
-//    }
     return (mainClassName != null);
   }
-
-
-  /**
-   * Have the contents of the currently visible tab been modified?
-   */
-  /*
-  public boolean isCurrentModified() {
-    return modified[current];
-  }
-  */
 
 
   /**
@@ -1165,7 +1254,7 @@ public class Sketch {
     if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
-
+    
     javaClassPath = Sketchbook.librariesClassPath + File.pathSeparator +
       javaClassPath;
     
@@ -1187,12 +1276,17 @@ public class Sketch {
       classPath += File.pathSeparator + additionalClassPath;
     }
 /*
+    String javaClassPath = System.getProperty("java.class.path");
+    // remove quotes if any.. this is an annoying thing on windows
+    if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
+      javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
+    }
+
     classPath = buildPath +
       File.pathSeparator + Sketchbook.librariesClassPath +
       File.pathSeparator + javaClassPath;
- */
     //System.out.println("cp = " + classPath);
-
+*/
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
     //File codeFolder = new File(folder, "code");
@@ -1221,16 +1315,20 @@ public class Sketch {
       //PApplet.printarr(codeFolderPackages);
 
     } else {
-      /*
+      // since using the special classloader,
+      // run externally whenever there are extra classes defined
+      //externalRuntime = (codeCount > 1);
+      // this no longer appears to be true.. so scrapping for 0088
+
       // check to see if multiple files that include a .java file
       externalRuntime = false;
       for (int i = 0; i < codeCount; i++) {
-        if (code[i].flavor == JAVA) externalRuntime = true;
+        if (code[i].flavor == JAVA) {
+          externalRuntime = true;
+          break;
+        }
       }
-      */
-      // since using the special classloader,
-      // run externally whenever there are extra classes defined
-      externalRuntime = (codeCount > 1);
+
       //codeFolderPackages = null;
       libraryPath = "";
     }
@@ -1250,7 +1348,7 @@ public class Sketch {
 
     for (int i = 1; i < codeCount; i++) {
       if (code[i].flavor == PDE) {
-        code[i].lineOffset = ++bigCount;
+        code[i].preprocOffset = ++bigCount;
         bigCode.append('\n');
         bigCode.append(code[i].program);
         bigCount += countLines(code[i].program);
@@ -1277,9 +1375,9 @@ public class Sketch {
 
     PdePreprocessor preprocessor = new PdePreprocessor();
     try {
+//// mobile: set base class and imports        
       preprocessor.setBaseClass(baseClass);
       preprocessor.setBaseImports(baseImports);
-      
       // if (i != 0) preproc will fail if a pde file is not
       // java mode, since that's required
       String className =
@@ -1313,11 +1411,11 @@ public class Sketch {
       int errorLine = re.getLine() - 1;
       for (int i = 1; i < codeCount; i++) {
         if ((code[i].flavor == PDE) &&
-            (code[i].lineOffset < errorLine)) {
+            (code[i].preprocOffset < errorLine)) {
           errorFile = i;
         }
       }
-      errorLine -= code[errorFile].lineOffset;
+      errorLine -= code[errorFile].preprocOffset;
 
       throw new RunnerException(re.getMessage(), errorFile,
                              errorLine, re.getColumn());
@@ -1336,9 +1434,9 @@ public class Sketch {
         pattern = compiler.compile(mess);
       } catch (MalformedPatternException e) {
         Base.showWarning("Internal Problem",
-                            "An internal error occurred while trying\n" +
-                            "to compile the sketch. Please report\n" +
-                            "this online at http://processing.org/bugs", e);
+                         "An internal error occurred while trying\n" +
+                         "to compile the sketch. Please report\n" +
+                         "this online at http://processing.org/bugs", e);
       }
 
       PatternMatcherInput input =
@@ -1351,11 +1449,11 @@ public class Sketch {
         int errorFile = 0;
         for (int i = 1; i < codeCount; i++) {
           if ((code[i].flavor == PDE) &&
-              (code[i].lineOffset < errorLine)) {
+              (code[i].preprocOffset < errorLine)) {
             errorFile = i;
           }
         }
-        errorLine -= code[errorFile].lineOffset;
+        errorLine -= code[errorFile].preprocOffset;
 
         throw new RunnerException(tsre.getMessage(),
                                errorFile, errorLine, errorColumn);
@@ -1452,10 +1550,8 @@ public class Sketch {
 
 
   /**
-   * Called by Editor to handle someone having selected 'export'.
-   * Pops up a dialog box for export options, and then calls the
-   * necessary function with the parameters from the window.
-   *
+   * Initiate export to applet.
+   * <PRE>
    * +-------------------------------------------------------+
    * +                                                       +
    * + Export to:  [ Applet (for the web)   + ]    [  OK  ]  +
@@ -1480,7 +1576,313 @@ public class Sketch {
    * +   identical message as 1.3 above...                   +
    * +                                                       +
    * +-------------------------------------------------------+
-   *
+   * </PRE>
+   */
+  public boolean exportApplet() throws Exception {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    zipFileContents = new Hashtable();
+
+    // nuke the old applet folder because it can cause trouble
+    File appletFolder = new File(folder, "applet");
+    Base.removeDir(appletFolder);
+    appletFolder.mkdirs();
+
+    // build the sketch
+    String foundName = build(appletFolder.getPath(), name);
+
+    // (already reported) error during export, exit this function
+    if (foundName == null) return false;
+
+    // if name != exportSketchName, then that's weirdness
+    // BUG unfortunately, that can also be a bug in the preproc :(
+    if (!name.equals(foundName)) {
+      Base.showWarning("Error during export",
+                       "Sketch name is " + name + " but the sketch\n" +
+                       "name in the code was " + foundName, null);
+      return false;
+    }
+
+    int wide = PApplet.DEFAULT_WIDTH;
+    int high = PApplet.DEFAULT_HEIGHT;
+
+    PatternMatcher matcher = new Perl5Matcher();
+    PatternCompiler compiler = new Perl5Compiler();
+
+    // this matches against any uses of the size() function,
+    // whether they contain numbers of variables or whatever.
+    // this way, no warning is shown if size() isn't actually
+    // used in the applet, which is the case especially for
+    // beginners that are cutting/pasting from the reference.
+    // modified for 83 to match size(XXX, ddd so that it'll
+    // properly handle size(200, 200) and size(200, 200, P3D)
+    String sizing =
+      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
+    Pattern pattern = compiler.compile(sizing);
+
+    // adds a space at the beginning, in case size() is the very
+    // first thing in the program (very common), since the regexp
+    // needs to check for things in front of it.
+    PatternMatcherInput input =
+      new PatternMatcherInput(" " + code[0].program);
+    if (matcher.contains(input, pattern)) {
+      MatchResult result = matcher.getMatch();
+      try {
+        wide = Integer.parseInt(result.group(1).toString());
+        high = Integer.parseInt(result.group(2).toString());
+
+      } catch (NumberFormatException e) {
+        // found a reference to size, but it didn't
+        // seem to contain numbers
+        final String message =
+          "The size of this applet could not automatically be\n" +
+          "determined from your code. You'll have to edit the\n" +
+          "HTML file to set the size of the applet.";
+
+        Base.showWarning("Could not find applet size", message, null);
+      }
+    }  // else no size() command found
+
+    // originally tried to grab this with a regexp matcher,
+    // but it wouldn't span over multiple lines for the match.
+    // this could prolly be forced, but since that's the case
+    // better just to parse by hand.
+    StringBuffer dbuffer = new StringBuffer();
+    String lines[] = PApplet.split(code[0].program, '\n');
+    for (int i = 0; i < lines.length; i++) {
+      if (lines[i].trim().startsWith("/**")) {  // this is our comment
+        // some smartass put the whole thing on the same line
+        //if (lines[j].indexOf("*/") != -1) break;
+
+        for (int j = i+1; j < lines.length; j++) {
+          if (lines[j].trim().endsWith("*/")) {
+            // remove the */ from the end, and any extra *s
+            // in case there's also content on this line
+            // nah, don't bother.. make them use the three lines
+            break;
+          }
+
+          int offset = 0;
+          while ((offset < lines[j].length()) &&
+                 ((lines[j].charAt(offset) == '*') ||
+                  (lines[j].charAt(offset) == ' '))) {
+            offset++;
+          }
+          // insert the return into the html to help w/ line breaks
+          dbuffer.append(lines[j].substring(offset) + "\n");
+        }
+      }
+    }
+    String description = dbuffer.toString();
+
+    StringBuffer sources = new StringBuffer();
+    for (int i = 0; i < codeCount; i++) {
+      sources.append("<a href=\"" + code[i].file.getName() + "\">" +
+                     code[i].name + "</a> ");
+    }
+
+    File htmlOutputFile = new File(appletFolder, "index.html");
+    FileOutputStream fos = new FileOutputStream(htmlOutputFile);
+    PrintStream ps = new PrintStream(fos);
+
+    // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+    // and now @@description@@
+
+    InputStream is = null;
+    // if there is an applet.html file in the sketch folder, use that
+    File customHtml = new File(folder, "applet.html");
+    if (customHtml.exists()) {
+      is = new FileInputStream(customHtml);
+    }
+    if (is == null) {
+      is = Base.getStream("applet.html");
+    }
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      if (line.indexOf("@@") != -1) {
+        StringBuffer sb = new StringBuffer(line);
+        int index = 0;
+        while ((index = sb.indexOf("@@sketch@@")) != -1) {
+          sb.replace(index, index + "@@sketch@@".length(),
+                     name);
+        }
+        while ((index = sb.indexOf("@@source@@")) != -1) {
+          sb.replace(index, index + "@@source@@".length(),
+                     sources.toString());
+        }
+        while ((index = sb.indexOf("@@archive@@")) != -1) {
+          sb.replace(index, index + "@@archive@@".length(),
+                     name + ".jar");
+        }
+        while ((index = sb.indexOf("@@width@@")) != -1) {
+          sb.replace(index, index + "@@width@@".length(),
+                     String.valueOf(wide));
+        }
+        while ((index = sb.indexOf("@@height@@")) != -1) {
+          sb.replace(index, index + "@@height@@".length(),
+                     String.valueOf(high));
+        }
+        while ((index = sb.indexOf("@@description@@")) != -1) {
+          sb.replace(index, index + "@@description@@".length(),
+                     description);
+        }
+        line = sb.toString();
+      }
+      ps.println(line);
+    }
+
+    reader.close();
+    ps.flush();
+    ps.close();
+
+    // copy the loading gif to the applet
+    String LOADING_IMAGE = "loading.gif";
+    File loadingImage = new File(folder, LOADING_IMAGE);
+    if (!loadingImage.exists()) {
+      loadingImage = new File("lib", LOADING_IMAGE);
+    }
+    Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
+
+    // copy the source files to the target, since we like
+    // to encourage people to share their code
+    for (int i = 0; i < codeCount; i++) {
+      try {
+        Base.copyFile(code[i].file,
+                      new File(appletFolder, code[i].file.getName()));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+    // create new .jar file
+    FileOutputStream zipOutputFile =
+      new FileOutputStream(new File(appletFolder, name + ".jar"));
+    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+    ZipEntry entry;
+
+    // add the manifest file
+    addManifest(zos);
+
+    // add the contents of the code folder to the jar
+    // unpacks all jar files
+    //File codeFolder = new File(folder, "code");
+    if (codeFolder.exists()) {
+      String includes = Compiler.contentsToClassPath(codeFolder);
+      packClassPathIntoZipFile(includes, zos);
+    }
+
+    // add contents of 'library' folders to the jar file
+    // if a file called 'export.txt' is in there, it contains
+    // a list of the files that should be exported.
+    // otherwise, all files are exported.
+    Enumeration en = importedLibraries.elements();
+    while (en.hasMoreElements()) {
+      // in the list is a File object that points the
+      // library sketch's "library" folder
+      File libraryFolder = (File)en.nextElement();
+      File exportSettings = new File(libraryFolder, "export.txt");
+      String exportList[] = null;
+      if (exportSettings.exists()) {
+        String info[] = Base.loadStrings(exportSettings);
+        for (int i = 0; i < info.length; i++) {
+          if (info[i].startsWith("applet")) {
+            int idx = info[i].indexOf('=');  // get applet= or applet =
+            String commas = info[i].substring(idx+1).trim();
+            exportList = PApplet.split(commas, ", ");
+          }
+        }
+      } else {
+        exportList = libraryFolder.list();
+      }
+      for (int i = 0; i < exportList.length; i++) {
+        if (exportList[i].equals(".") ||
+            exportList[i].equals("..")) continue;
+
+        exportList[i] = PApplet.trim(exportList[i]);
+        if (exportList[i].equals("")) continue;
+
+        File exportFile = new File(libraryFolder, exportList[i]);
+        if (!exportFile.exists()) {
+          System.err.println("File " + exportList[i] + " does not exist");
+
+        } else if (exportFile.isDirectory()) {
+          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+
+        } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
+                   exportFile.getName().toLowerCase().endsWith(".jar")) {
+          packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
+
+        } else {  // just copy the file over.. prolly a .dll or something
+          Base.copyFile(exportFile,
+                           new File(appletFolder, exportFile.getName()));
+        }
+      }
+    }
+
+    String bagelJar = "lib/core.jar";
+    packClassPathIntoZipFile(bagelJar, zos);
+
+    // files to include from data directory
+    // TODO this needs to be recursive
+    if (dataFolder.exists()) {
+      String dataFiles[] = dataFolder.list();
+      for (int i = 0; i < dataFiles.length; i++) {
+        // don't export hidden files
+        // skipping dot prefix removes all: . .. .DS_Store
+        if (dataFiles[i].charAt(0) == '.') continue;
+
+        entry = new ZipEntry(dataFiles[i]);
+        zos.putNextEntry(entry);
+        zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
+        zos.closeEntry();
+      }
+    }
+
+    // add the project's .class files to the jar
+    // just grabs everything from the build directory
+    // since there may be some inner classes
+    // (add any .class files from the applet dir, then delete them)
+    // TODO this needs to be recursive (for packages)
+    String classfiles[] = appletFolder.list();
+    for (int i = 0; i < classfiles.length; i++) {
+      if (classfiles[i].endsWith(".class")) {
+        entry = new ZipEntry(classfiles[i]);
+        zos.putNextEntry(entry);
+        zos.write(Base.grabFile(new File(appletFolder, classfiles[i])));
+        zos.closeEntry();
+      }
+    }
+
+    // remove the .class files from the applet folder. if they're not
+    // removed, the msjvm will complain about an illegal access error,
+    // since the classes are outside the jar file.
+    for (int i = 0; i < classfiles.length; i++) {
+      if (classfiles[i].endsWith(".class")) {
+        File deadguy = new File(appletFolder, classfiles[i]);
+        if (!deadguy.delete()) {
+          Base.showWarning("Could not delete",
+                           classfiles[i] + " could not \n" +
+                           "be deleted from the applet folder.  \n" +
+                           "You'll need to remove it by hand.", null);
+        }
+      }
+    }
+
+    // close up the jar file
+    zos.flush();
+    zos.close();
+
+    Base.openFolder(appletFolder);
+    return true;
+  }
+
+
+  /**
+   * Export to application.
+   * <PRE>
    * +-------------------------------------------------------+
    * +                                                       +
    * + Export to:  [ Application            + ]    [  OK  ]  +
@@ -1523,292 +1925,25 @@ public class Sketch {
    * +   exporting.                                          +
    * +                                                       +
    * +-------------------------------------------------------+
-   *
-
-   * +-------------------------------------------------------+
-   * +                                                       +
-   * + Export to:  [ Library                + ]    [  OK  ]  +
-   * +                                                       +
-   * +-------------------------------------------------------+
+   * </PRE>
    */
-  //public boolean export() throws Exception {
-  //return exportApplet(true);
-  //}
+  public boolean exportApplication() {
+    return true;
+  }
 
 
-  public boolean exportApplet(/*boolean replaceHtml*/) throws Exception {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
+  public void addManifest(ZipOutputStream zos) throws IOException {
+    ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
+    zos.putNextEntry(entry);
 
-    zipFileContents = new Hashtable();
-
-    boolean replaceHtml = true;
-    //File appletDir, String exportSketchName, File dataDir) {
-    //String program = textarea.getText();
-
-    // create the project directory
-    // pass null for datapath because the files shouldn't be
-    // copied to the build dir.. that's only for the temp stuff
-    File appletDir = new File(folder, "applet");
-
-    boolean writeHtml = true;
-    if (appletDir.exists()) {
-      File htmlFile = new File(appletDir, "index.html");
-      if (htmlFile.exists() && !replaceHtml) {
-        writeHtml = false;
-      }
-    } else {
-      appletDir.mkdirs();
-    }
-
-    // build the sketch
-    String foundName = build(appletDir.getPath(), name);
-
-    // (already reported) error during export, exit this function
-    if (foundName == null) return false;
-
-    // if name != exportSketchName, then that's weirdness
-    // BUG unfortunately, that can also be a bug in the preproc :(
-    if (!name.equals(foundName)) {
-      Base.showWarning("Error during export",
-                          "Sketch name is " + name + " but the sketch\n" +
-                          "name in the code was " + foundName, null);
-      return false;
-    }
-
-    if (writeHtml) {
-      int wide = PApplet.DEFAULT_WIDTH;
-      int high = PApplet.DEFAULT_HEIGHT;
-
-      PatternMatcher matcher = new Perl5Matcher();
-      PatternCompiler compiler = new Perl5Compiler();
-
-      // this matches against any uses of the size() function,
-      // whether they contain numbers of variables or whatever.
-      // this way, no warning is shown if size() isn't actually
-      // used in the applet, which is the case especially for
-      // beginners that are cutting/pasting from the reference.
-      // modified for 83 to match size(XXX, ddd
-      String sizing =
-        "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
-        //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\S+)\\s*\\);";
-      Pattern pattern = compiler.compile(sizing);
-
-      // adds a space at the beginning, in case size() is the very
-      // first thing in the program (very common), since the regexp
-      // needs to check for things in front of it.
-      PatternMatcherInput input =
-        new PatternMatcherInput(" " + code[0].program);
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
-        try {
-          wide = Integer.parseInt(result.group(1).toString());
-          high = Integer.parseInt(result.group(2).toString());
-
-        } catch (NumberFormatException e) {
-          // found a reference to size, but it didn't
-          // seem to contain numbers
-          final String message =
-            "The size of this applet could not automatically be\n" +
-            "determined from your code. You'll have to edit the\n" +
-            "HTML file to set the size of the applet.";
-
-          Base.showWarning("Could not find applet size", message, null);
-        }
-      }  // else no size() command found
-
-      // originally tried to grab this with a regexp matcher,
-      // but it wouldn't span over multiple lines for the match.
-      // this could prolly be forced, but since that's the case
-      // better just to parse by hand.
-      StringBuffer dbuffer = new StringBuffer();
-      String lines[] = PApplet.split(code[0].program, '\n');
-      for (int i = 0; i < lines.length; i++) {
-        if (lines[i].trim().startsWith("/**")) {  // this is our comment
-          // some smartass put the whole thing on the same line
-          //if (lines[j].indexOf("*/") != -1) break;
-
-          for (int j = i+1; j < lines.length; j++) {
-            if (lines[j].trim().endsWith("*/")) {
-              // remove the */ from the end, and any extra *s
-              // in case there's also content on this line
-              // nah, don't bother.. make them use the three lines
-              break;
-            }
-
-            int offset = 0;
-            while ((offset < lines[j].length()) &&
-                    ((lines[j].charAt(offset) == '*') ||
-                     (lines[j].charAt(offset) == ' '))) {
-              offset++;
-            }
-            // insert the return into the html to help w/ line breaks
-            dbuffer.append(lines[j].substring(offset) + "\n");
-          }
-        }
-      }
-      String description = dbuffer.toString();
-
-      StringBuffer sources = new StringBuffer();
-      for (int i = 0; i < codeCount; i++) {
-        sources.append("<a href=\"" + code[i].file.getName() + "\">" +
-                       code[i].name + "</a> ");
-      }
-
-      File htmlOutputFile = new File(appletDir, "index.html");
-      FileOutputStream fos = new FileOutputStream(htmlOutputFile);
-      PrintStream ps = new PrintStream(fos);
-
-      // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
-      // and now @@description@@
-
-      InputStream is = null;
-      // if there is an applet.html file in the sketch folder, use that
-      File customHtml = new File(folder, "applet.html");
-      if (customHtml.exists()) {
-        is = new FileInputStream(customHtml);
-      }
-      if (is == null) {
-        is = Base.getStream("applet.html");
-      }
-      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (line.indexOf("@@") != -1) {
-          StringBuffer sb = new StringBuffer(line);
-          int index = 0;
-          while ((index = sb.indexOf("@@sketch@@")) != -1) {
-            sb.replace(index, index + "@@sketch@@".length(),
-                       name);
-          }
-          while ((index = sb.indexOf("@@source@@")) != -1) {
-            sb.replace(index, index + "@@source@@".length(),
-                       sources.toString());
-          }
-          while ((index = sb.indexOf("@@archive@@")) != -1) {
-            sb.replace(index, index + "@@archive@@".length(),
-                       name + ".jar");
-          }
-          while ((index = sb.indexOf("@@width@@")) != -1) {
-            sb.replace(index, index + "@@width@@".length(),
-                       String.valueOf(wide));
-          }
-          while ((index = sb.indexOf("@@height@@")) != -1) {
-            sb.replace(index, index + "@@height@@".length(),
-                       String.valueOf(high));
-          }
-          while ((index = sb.indexOf("@@description@@")) != -1) {
-            sb.replace(index, index + "@@description@@".length(),
-                       description);
-          }
-          line = sb.toString();
-        }
-        ps.println(line);
-      }
-
-      reader.close();
-      ps.flush();
-      ps.close();
-    }
-
-    // copy the source files to the target, since we like
-    // to encourage people to share their code
-    for (int i = 0; i < codeCount; i++) {
-      try {
-        Base.copyFile(code[i].file,
-                         new File(appletDir, code[i].file.getName()));
-      } catch (IOException e) {
-
-      }
-    }
-
-    // create new .jar file
-    FileOutputStream zipOutputFile =
-      new FileOutputStream(new File(appletDir, name + ".jar"));
-    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
-    ZipEntry entry;
-
-    // add the contents of the code folder to the jar
-    // unpacks all jar files
-    //File codeFolder = new File(folder, "code");
-    if (codeFolder.exists()) {
-      String includes = Compiler.contentsToClassPath(codeFolder);
-      packClassPathIntoZipFile(includes, zos);
-    }
-
-    // add contents of 'library' folders to the jar file
-    // if a file called 'export.txt' is in there, it contains
-    // a list of the files that should be exported.
-    // otherwise, all files are exported.
-    Enumeration en = importedLibraries.elements();
-    while (en.hasMoreElements()) {
-      // in the list is a File object that points the
-      // library sketch's "library" folder
-      File libraryFolder = (File)en.nextElement();
-      //System.out.println("exporting files from " + libFolder);
-      File exportSettings = new File(libraryFolder, "export.txt");
-      String exportList[] = null;
-      if (exportSettings.exists()) {
-        String info[] = Base.loadStrings(exportSettings);
-        for (int i = 0; i < info.length; i++) {
-          if (info[i].startsWith("applet")) {
-            int idx = info[i].indexOf('=');  // get applet= or applet =
-            String commas = info[i].substring(idx+1).trim();
-            exportList = PApplet.split(commas, ", ");
-          }
-        }
-      } else {
-        exportList = libraryFolder.list();
-      }
-      for (int i = 0; i < exportList.length; i++) {
-        if (exportList[i].equals(".") ||
-            exportList[i].equals("..")) continue;
-
-        exportList[i] = PApplet.trim(exportList[i]);
-        if (exportList[i].equals("")) continue;
-
-        File exportFile = new File(libraryFolder, exportList[i]);
-        if (!exportFile.exists()) {
-          System.err.println("File " + exportList[i] + " does not exist");
-
-        } else if (exportFile.isDirectory()) {
-          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
-
-        } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
-                   exportFile.getName().toLowerCase().endsWith(".jar")) {
-          //System.out.println("adding zip file " +
-          //                 exportFile.getAbsolutePath());
-          packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
-
-        } else {  // just copy the file over.. prolly a .dll or something
-          Base.copyFile(exportFile,
-                           new File(appletDir, exportFile.getName()));
-        }
-      }
-    }
-
-    // add the appropriate bagel to the classpath
-    /*
-    String jdkVersion = Preferences.get("compiler.jdk_version");
-    String bagelJar = "lib/export11.jar";  // default
-    if (jdkVersion.equals("1.3") || jdkVersion.equals("1.4")) {
-      bagelJar = "lib/export13.jar";
-    }
-    */
-    String bagelJar = "lib/core.jar";
-
-    //if (jdkVersionStr.equals("1.3")) { bagelJar = "export13.jar" };
-    //if (jdkVersionStr.equals("1.4")) { bagelJar = "export14.jar" };
-    packClassPathIntoZipFile(bagelJar, zos);
+    String contents =
+      "Manifest-Version: 1.0\n" +
+      "Created-By: Processing " + Base.VERSION_NAME + "\n" +
+      "Main-Class: " + name + "\n";  // TODO not package friendly
+    zos.write(contents.getBytes());
+    zos.closeEntry();
 
     /*
-      // add the contents of lib/export to the jar file
-      // these are the jdk11-only bagel classes
-      String exportDir = ("lib" + File.separator +
-                          "export" + File.separator);
-      String bagelClasses[] = new File(exportDir).list();
-
       for (int i = 0; i < bagelClasses.length; i++) {
         if (!bagelClasses[i].endsWith(".class")) continue;
         entry = new ZipEntry(bagelClasses[i]);
@@ -1817,77 +1952,6 @@ public class Sketch {
         zos.closeEntry();
       }
     */
-
-    // TODO these two loops are insufficient.
-    // should instead recursively add entire contents of build folder
-    // the data folder will already be a subdirectory
-    // and the classes may be buried in subfolders if a package name was used
-
-    // files to include from data directory
-    //if ((dataDir != null) && (dataDir.exists())) {
-    if (dataFolder.exists()) {
-      String dataFiles[] = dataFolder.list();
-      for (int i = 0; i < dataFiles.length; i++) {
-        // don't export hidden files
-        // skipping dot prefix removes all: . .. .DS_Store
-        if (dataFiles[i].charAt(0) == '.') continue;
-
-        entry = new ZipEntry(dataFiles[i]);
-        zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
-        zos.closeEntry();
-      }
-    }
-
-    // add the project's .class files to the jar
-    // just grabs everything from the build directory
-    // since there may be some inner classes
-    // (add any .class files from the applet dir, then delete them)
-    String classfiles[] = appletDir.list();
-    for (int i = 0; i < classfiles.length; i++) {
-      if (classfiles[i].endsWith(".class")) {
-        entry = new ZipEntry(classfiles[i]);
-        zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(appletDir, classfiles[i])));
-        zos.closeEntry();
-      }
-    }
-
-    // remove the .class files from the applet folder. if they're not
-    // removed, the msjvm will complain about an illegal access error,
-    // since the classes are outside the jar file.
-    for (int i = 0; i < classfiles.length; i++) {
-      if (classfiles[i].endsWith(".class")) {
-        File deadguy = new File(appletDir, classfiles[i]);
-        if (!deadguy.delete()) {
-          Base.showWarning("Could not delete",
-                              classfiles[i] + " could not \n" +
-                              "be deleted from the applet folder.  \n" +
-                              "You'll need to remove it by hand.", null);
-        }
-      }
-    }
-
-    // close up the jar file
-    zos.flush();
-    zos.close();
-
-    Base.openFolder(appletDir);
-
-    //} catch (Exception e) {
-    //e.printStackTrace();
-    //}
-    return true;
-  }
-
-
-  public boolean exportApplication() {
-    return true;
-  }
-
-
-  public boolean exportLibrary() {
-    return true;
   }
 
 
@@ -1970,7 +2034,6 @@ public class Sketch {
     throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
-      //if (files[i].equals(".") || files[i].equals("..")) continue;
       // ignore . .. and .DS_Store
       if (files[i].charAt(0) == '.') continue;
 
@@ -1998,6 +2061,41 @@ public class Sketch {
 
 
   /**
+   * Make sure the sketch hasn't been moved or deleted by some
+   * nefarious user. If they did, try to re-create it and save.
+   * Only checks to see if the main folder is still around,
+   * but not its contents.
+   */
+  protected void ensureExistence() {
+    if (folder.exists()) return;
+
+    Base.showWarning("Sketch Disappeared",
+                     "The sketch folder has disappeared.\n " +
+                     "Will attempt to re-save in the same location,\n" +
+                     "but anything besides the code will be lost.", null);
+    try {
+      folder.mkdirs();
+      modified = true;
+
+      for (int i = 0; i < codeCount; i++) {
+        code[i].save();  // this will force a save
+      }
+      for (int i = 0; i < hiddenCount; i++) {
+        hidden[i].save();  // this will force a save
+      }
+      calcModified();
+
+    } catch (Exception e) {
+      Base.showWarning("Could not re-save sketch",
+                       "Could not properly re-save the sketch. " +
+                       "You may be in trouble at this point,\n" +
+                       "and it might be time to copy and paste " +
+                       "your code to another text editor.", e);
+    }
+  }
+
+
+  /**
    * Returns true if this is a read-only sketch. Used for the
    * examples directory, or when sketches are loaded from read-only
    * volumes or folders without appropriate permissions.
@@ -2008,7 +2106,7 @@ public class Sketch {
         apath.startsWith(Sketchbook.librariesPath)) {
       return true;
 
-      // this doesn't work on directories
+      // canWrite() doesn't work on directories
       //} else if (!folder.canWrite()) {
     } else {
       // check to see if each modified code file can be written to
