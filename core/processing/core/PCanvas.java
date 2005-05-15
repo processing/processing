@@ -773,13 +773,13 @@ public class PCanvas extends Canvas {
     
     public void textMode(int MODE) {
         switch (MODE) {
-            case PMIDlet.ALIGN_LEFT:
+            case PMIDlet.LEFT:
                 textMode = Graphics.TOP | Graphics.LEFT;
                 break;
-            case PMIDlet.ALIGN_RIGHT:
+            case PMIDlet.RIGHT:
                 textMode = Graphics.TOP | Graphics.RIGHT;
                 break;
-            case PMIDlet.ALIGN_CENTER:
+            case PMIDlet.CENTER:
                 textMode = Graphics.TOP | Graphics.HCENTER;
                 break;
         }
