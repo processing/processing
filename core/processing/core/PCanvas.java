@@ -64,7 +64,7 @@ public class PCanvas extends Canvas {
         fillColor = 0xFFFFFF;
         
         rectMode = PMIDlet.CORNER;
-        ellipseMode = PMIDlet.CORNER;
+        ellipseMode = PMIDlet.CENTER;
         
         shapeMode = -1;
         vertex = new int[16];
