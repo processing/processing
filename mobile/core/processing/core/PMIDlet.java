@@ -500,6 +500,41 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return buffer.toString();
     }
     
+    public final String[] split(String str) {
+        Vector v = new Vector();
+        StringBuffer buffer = new StringBuffer();
+        char c;
+        boolean whitespace = false;
+        for (int i = 0, length = str.length(); i < length; i++ ) {
+            c = str.charAt(i);
+            switch (c) {
+                case '\n':
+                case '\r':
+                case '\f':
+                case '\t':
+                case ' ':
+                    whitespace = true;
+                    break;
+                default:
+                    if (whitespace) {
+                        v.addElement(buffer.toString());
+                        buffer.delete(0, buffer.length());
+                        
+                        whitespace = false;
+                    }
+                    buffer.append(c);
+            }
+        }        
+        if (buffer.length() > 0) {
+            v.addElement(buffer.toString());
+        }
+        
+        String[] tokens = new String[v.size()];
+        v.copyInto(tokens);
+        
+        return tokens;
+    }
+    
     public final String[] split(String str, String delim) {
         Vector v = new Vector();
         int prevIndex = 0;
@@ -509,7 +544,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             prevIndex = nextIndex + 1;
             nextIndex = str.indexOf(delim, prevIndex);
         }
-        v.addElement(str.substring(prevIndex));
+        if (prevIndex < str.length()) {
+            v.addElement(str.substring(prevIndex));
+        }
         
         String[] tokens = new String[v.size()];
         v.copyInto(tokens);
@@ -520,6 +557,166 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final String trim(String str) {
         //// deal with unicode nbsp later
         return str.trim();
+    }
+    
+    public final String[] append(String[] array, String element) {
+        String[] old = array;
+        int length = old.length;
+        array = new String[length + 1];
+        System.arraycopy(old, 0, array, 0, length);
+        array[length] = element;
+        return array;        
+    }
+    
+    public final boolean[] append(boolean[] array, boolean element) {
+        boolean[] old = array;
+        int length = old.length;
+        array = new boolean[length + 1];
+        System.arraycopy(old, 0, array, 0, length);
+        array[length] = element;
+        return array;        
+    }
+    
+    public final byte[] append(byte[] array, byte element) {
+        byte[] old = array;
+        int length = old.length;
+        array = new byte[length + 1];
+        System.arraycopy(old, 0, array, 0, length);
+        array[length] = element;
+        return array;        
+    }
+    
+    public final char[] append(char[] array, char element) {
+        char[] old = array;
+        int length = old.length;
+        array = new char[length + 1];
+        System.arraycopy(old, 0, array, 0, length);
+        array[length] = element;
+        return array;        
+    }
+    
+    public final int[] append(int[] array, int element) {
+        int[] old = array;
+        int length = old.length;
+        array = new int[length + 1];
+        System.arraycopy(old, 0, array, 0, length);
+        array[length] = element;
+        return array;        
+    }
+    
+    public final String[] concat(String[] array1, String[] array2) {
+        int length1 = array1.length;
+        int length2 = array2.length;
+        String[] array = new String[length1 + length2];
+        System.arraycopy(array1, 0, array, 0, length1);
+        System.arraycopy(array2, 0, array, length1, length2);
+        return array;
+    }
+    
+    public final boolean[] concat(boolean[] array1, boolean[] array2) {
+        int length1 = array1.length;
+        int length2 = array2.length;
+        boolean[] array = new boolean[length1 + length2];
+        System.arraycopy(array1, 0, array, 0, length1);
+        System.arraycopy(array2, 0, array, length1, length2);
+        return array;
+    }
+    
+    public final byte[] concat(byte[] array1, byte[] array2) {
+        int length1 = array1.length;
+        int length2 = array2.length;
+        byte[] array = new byte[length1 + length2];
+        System.arraycopy(array1, 0, array, 0, length1);
+        System.arraycopy(array2, 0, array, length1, length2);
+        return array;
+    }
+    
+    public final char[] concat(char[] array1, char[] array2) {
+        int length1 = array1.length;
+        int length2 = array2.length;
+        char[] array = new char[length1 + length2];
+        System.arraycopy(array1, 0, array, 0, length1);
+        System.arraycopy(array2, 0, array, length1, length2);
+        return array;
+    }
+    
+    public final int[] concat(int[] array1, int[] array2) {
+        int length1 = array1.length;
+        int length2 = array2.length;
+        int[] array = new int[length1 + length2];
+        System.arraycopy(array1, 0, array, 0, length1);
+        System.arraycopy(array2, 0, array, length1, length2);
+        return array;
+    }
+    
+    public final String[] contract(String[] array, int newSize) {
+        int length = array.length;
+        if (length > newSize) {
+            String[] old = array;
+            array = new String[newSize];
+            System.arraycopy(old, 0, array, 0, newSize);
+        }
+        return array;
+    }
+    
+    public final String[] expand(String[] array) {
+        return expand(array, array.length * 2);
+    }
+    
+    public final String[] expand(String[] array, int newSize) {
+        int length = array.length;
+        if (length < newSize) {
+            String[] old = array;
+            array = new String[newSize];
+            System.arraycopy(old, 0, array, 0, length);
+        }
+        return array;
+    }
+    
+    public final String[] reverse(String[] array) {
+        int length = array.length;
+        String[] reversed = new String[length];
+        for (int i = length - 1; i >= 0; i--) {
+            reversed[i] = array[length - i - 1];
+        }
+        return reversed;
+    }
+    
+    public final String[] shorten(String[] array) {
+        String[] old = array;
+        int length = old.length - 1;
+        array = new String[length];
+        System.arraycopy(old, 0, array, 0, length);
+        return array;
+    }
+    
+    public final String[] slice(String[] array, int offset) {
+        return slice(array, offset, array.length - offset);
+    }
+    
+    public final String[] slice(String[] array, int offset, int length) {
+        String[] slice = new String[length];
+        System.arraycopy(array, offset, slice, 0, length);
+        return slice;
+    }
+    
+    public final String[] splice(String[] array, String value, int index) {
+        int length = array.length;
+        String[] splice = new String[length + 1];
+        System.arraycopy(array, 0, splice, 0, index);
+        splice[index] = value;
+        System.arraycopy(array, index, splice, index + 1, length - index);
+        return splice;
+    }
+    
+    public final String[] splice(String[] array, String[] array2, int index) {
+        int length = array.length;
+        int length2 = array2.length;
+        String[] splice = new String[length + length2];
+        System.arraycopy(array, 0, splice, 0, index);
+        System.arraycopy(array2, 0, splice, index, length2);
+        System.arraycopy(array, index, splice, index + length2, length - index);
+        return splice;
     }
     
     //// Experimental fixed point math routines here
