@@ -9,53 +9,7 @@ import javax.microedition.midlet.*;
  *
  * @author  Francis Li
  */
-public abstract class PMIDlet extends MIDlet implements Runnable {
-    private Display     display;
-    private PCanvas     canvas;
-    
-    private boolean     running;
-    private long        startTime;
-    
-    private Calendar    calendar;
-    private Random      random;
-    
-    /** Creates a new instance of PMIDlet */
-    public PMIDlet() {
-        display = Display.getDisplay(this);
-    }
-    
-    protected final void destroyApp(boolean unconditional) throws MIDletStateChangeException {
-        running = false;
-    }
-    
-    protected final void pauseApp() {
-        running = false;
-    }
-    
-    protected final void startApp() throws MIDletStateChangeException {
-        running = true;
-        if (canvas == null) {
-            canvas = new PCanvas(this);
-            width = canvas.getWidth();
-            height = canvas.getHeight();
-            
-            startTime = System.currentTimeMillis();
-            
-            setup();
-        }
-        display.setCurrent(canvas);        
-        display.callSerially(this);
-    }
-    
-    public final void run() {
-        draw();
-        canvas.repaint();
-        
-        if (running) {
-            display.callSerially(this);
-        }
-    }
-    
+public abstract class PMIDlet extends MIDlet implements Runnable {    
     public static final int CENTER          = 0;
     public static final int CENTER_RADIUS   = 1;
     public static final int CORNER          = 2;
@@ -87,6 +41,68 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     protected int       keyCode;
     protected boolean   keyPressed;
     
+    protected int       framerate;
+    protected int       frameCount;
+    
+    private Display     display;
+    private PCanvas     canvas;
+    
+    private boolean     running;
+    private long        startTime;
+    private long        lastFrameTime;
+    private int         msPerFrame;
+    
+    private Calendar    calendar;
+    private Random      random;
+    
+    /** Creates a new instance of PMIDlet */
+    public PMIDlet() {
+        display = Display.getDisplay(this);
+    }
+    
+    protected final void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+        running = false;
+    }
+    
+    protected final void pauseApp() {
+        running = false;
+    }
+    
+    protected final void startApp() throws MIDletStateChangeException {
+        running = true;
+        if (canvas == null) {
+            canvas = new PCanvas(this);
+            width = canvas.getWidth();
+            height = canvas.getHeight();
+            
+            startTime = System.currentTimeMillis();
+            msPerFrame = 1;
+            
+            setup();
+            
+            lastFrameTime = startTime - msPerFrame;
+        }
+        display.setCurrent(canvas);        
+        display.callSerially(this);
+    }
+    
+    public final void run() {
+        long currentTime = System.currentTimeMillis();
+        int elapsed = (int) (currentTime - lastFrameTime);
+        if (elapsed >= msPerFrame) {
+            draw();
+            canvas.repaint();
+            
+            lastFrameTime = currentTime;
+            framerate = 1000 / elapsed;
+            frameCount++;
+        }
+        
+        if (running) {
+            display.callSerially(this);
+        }
+    }
+    
     public void setup() {
     }
     
@@ -103,6 +119,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     
     public final void redraw() {
         draw();
+        frameCount++;
         canvas.repaint();
     }
     
@@ -119,6 +136,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable {
     }
     
     public final void framerate(int fps) {        
+        msPerFrame = 1000 / fps;
+        if (msPerFrame <= 0) {
+            msPerFrame = 1;
+        }
     }
     
     public final void point(int x1, int y1) {
