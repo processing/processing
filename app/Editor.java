@@ -51,7 +51,7 @@ public class Editor extends JFrame
              MRJOpenDocumentHandler //, MRJOpenApplicationHandler
 {
   // yeah
-  static final String WINDOW_TITLE = "Processing Mobile" + " - " + Base.VERSION_NAME;
+  static final String WINDOW_TITLE = "Processing Mobile ALPHA" + " - " + Base.VERSION_NAME;
 
   // p5 icon for the window
   Image icon;
@@ -112,7 +112,8 @@ public class Editor extends JFrame
   JMenuItem undoItem, redoItem;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
-  static public UndoManager undo = new UndoManager(); // editor needs this guy
+  UndoManager undo;
+  //static public UndoManager undo = new UndoManager(); // editor needs this guy
 
   //
 
@@ -182,7 +183,7 @@ public class Editor extends JFrame
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
-    textarea.setTokenMarker(new PdeKeywords());
+    //textarea.setTokenMarker(new PdeKeywords());
     textarea.setHorizontalOffset(6);
 
     // assemble console panel, consisting of status area and the console itself
@@ -230,17 +231,31 @@ public class Editor extends JFrame
     listener = new EditorListener(this, textarea);
     pain.add(box);
 
+    /*
     // set the undo stuff for this feller
     Document document = textarea.getDocument();
-    document.addUndoableEditListener(new PdeUndoableEditListener());
+    //document.addUndoableEditListener(new PdeUndoableEditListener());
+    document.addUndoableEditListener(new UndoableEditListener() {
+        public void undoableEditHappened(UndoableEditEvent e) {
+          if (undo != null) {
+            //System.out.println(e.getEdit());
+            undo.addEdit(e.getEdit());
+            undoAction.updateUndoState();
+            redoAction.updateRedoState();
+          }
+        }
+      });
+    */
   }
 
 
   /**
    * Hack for #@#)$(* Mac OS X.
+   * This appears to only be required on OS X 10.2, and this code
+   * isn't even being hit on OS X 10.3 or Windows.
    */
   public Dimension getMinimumSize() {
-    System.out.println("getting minimum size");
+    //System.out.println("getting minimum size");
     return new Dimension(500, 550);
   }
 
@@ -531,7 +546,7 @@ public class Editor extends JFrame
   protected JMenu buildSketchMenu() {
     JMenuItem item;
     JMenu menu = new JMenu("Sketch");
-    
+
 //// mobile: removing standard run/present menus
 /*    
     item = newJMenuItem("Run", 'R');
@@ -549,7 +564,7 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
-*/    
+ */
 //// mobile: run MIDlet in emulator    
     item = newJMenuItem("Run in Emulator", 'R');
     item.addActionListener(new ActionListener() {
@@ -602,11 +617,11 @@ public class Editor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("Tools");
 
-    item = new JMenuItem("Auto Format");
+    item = newJMenuItem("Auto Format", 'F', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //new AutoFormat(Editor.this).show();
-          handleBeautify();
+          new AutoFormat(Editor.this).show();
+          //handleBeautify();
         }
       });
     menu.add(item);
@@ -804,17 +819,6 @@ public class Editor extends JFrame
   // ...................................................................
 
 
-  // This one listens for edits that can be undone.
-  protected class PdeUndoableEditListener implements UndoableEditListener {
-    public void undoableEditHappened(UndoableEditEvent e) {
-      // Remember the edit and update the menus.
-      undo.addEdit(e.getEdit());
-      undoAction.updateUndoState();
-      redoAction.updateRedoState();
-    }
-  }
-
-
   class UndoAction extends AbstractAction {
     public UndoAction() {
       super("Undo");
@@ -836,10 +840,12 @@ public class Editor extends JFrame
       if (undo.canUndo()) {
         this.setEnabled(true);
         undoItem.setEnabled(true);
+        undoItem.setText(undo.getUndoPresentationName());
         putValue(Action.NAME, undo.getUndoPresentationName());
       } else {
         this.setEnabled(false);
         undoItem.setEnabled(false);
+        undoItem.setText("Undo");
         putValue(Action.NAME, "Undo");
       }
     }
@@ -867,10 +873,12 @@ public class Editor extends JFrame
       if (undo.canRedo()) {
         this.setEnabled(true);
         redoItem.setEnabled(true);
+        redoItem.setText(undo.getRedoPresentationName());
         putValue(Action.NAME, undo.getRedoPresentationName());
       } else {
         this.setEnabled(false);
         redoItem.setEnabled(false);
+        redoItem.setText("Redo");
         putValue(Action.NAME, "Redo");
       }
     }
@@ -944,18 +952,110 @@ public class Editor extends JFrame
 
 
   /**
-   * Called by EditorHeader when the tab is changed
-   * (or a new set of files are opened).
-   * @param discardUndo true if undo info to this point should be ignored
+   * Called to update the text but not switch to a different
+   * set of code (which would affect the undo manager).
    */
-  public void setText(String what, boolean discardUndo) {
+  //public void setText(String what) { //, boolean discardUndo) {
+  //setText(what, 0, 0);
+  //}
+
+
+  /**
+   * Called to update the text but not switch to a different
+   * set of code (which would affect the undo manager).
+   */
+  public void setText(String what, int selectionStart, int selectionEnd) {
     textarea.setText(what);
-
-    if (discardUndo) undo.discardAllEdits();
-
-    textarea.select(0, 0);    // move to the beginning of the document
+    textarea.select(selectionStart, selectionEnd);
     textarea.requestFocus();  // get the caret blinking
   }
+
+
+  /**
+   * Called by Sketch when the tab is changed or a new set of files are opened.
+   */
+  /*
+  public void setText(String currentProgram,
+                      int selectionStart, int selectionEnd,
+                      UndoManager currentUndo) {
+    //System.out.println("setting text, changing undo");
+    this.undo = null;
+
+    //if (discardUndo) undo.discardAllEdits();
+
+    // don't set the undo object yet otherwise gets hokey
+    textarea.setText(currentProgram);
+    textarea.select(selectionStart, selectionEnd);
+    textarea.requestFocus();  // get the caret blinking
+
+    this.undo = currentUndo;
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+  }
+  */
+
+  /*
+  public void setDocument(SyntaxDocument document,
+                          int selectionStart, int selectionStop,
+                          int scrollPosition, UndoManager undo) {
+
+    textarea.setDocument(document, selectionStart, selectionStop,
+                         scrollPosition);
+
+    textarea.requestFocus();  // get the caret blinking
+
+    this.undo = undo;
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+  }
+  */
+
+
+  /**
+   * Switch between tabs, this swaps out the Document object
+   * that's currently being manipulated.
+   */
+  public void setCode(SketchCode code) {
+    if (code.document == null) {  // this document not yet inited
+      code.document = new SyntaxDocument();
+
+      // turn on syntax highlighting
+      code.document.setTokenMarker(new PdeKeywords());
+
+      // insert the program text into the document object
+      try {
+        code.document.insertString(0, code.program, null);
+      } catch (BadLocationException bl) {
+        bl.printStackTrace();
+      }
+
+      // set up this guy's own undo manager
+      code.undo = new UndoManager();
+
+      // connect the undo listener to the editor
+      code.document.addUndoableEditListener(new UndoableEditListener() {
+          public void undoableEditHappened(UndoableEditEvent e) {
+            if (undo != null) {
+              undo.addEdit(e.getEdit());
+              undoAction.updateUndoState();
+              redoAction.updateRedoState();
+            }
+          }
+        });
+    }
+
+    // update the document object that's in use
+    textarea.setDocument(code.document,
+                         code.selectionStart, code.selectionStop,
+                         code.scrollPosition);
+
+    textarea.requestFocus();  // get the caret blinking
+
+    this.undo = code.undo;
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+  }
+
 
 
   public void handleRun(boolean present) {
@@ -974,13 +1074,19 @@ public class Editor extends JFrame
     }
 
     presenting = present;
-    /*
-    if (presenting) {
-      // wipe everything out with a bulbous screen-covering window
-      presentationWindow.show();
-      presentationWindow.toFront();
+    if (presenting && Base.isMacOS()) {
+      // check to see if osx 10.2, if so, show a warning
+      String osver = System.getProperty("os.version").substring(0, 4);
+      if (osver.equals("10.2")) {
+        Base.showWarning("Time for an OS Upgrade",
+                         "The \"Present\" feature may not be available on\n" +
+                         "Mac OS X 10.2, because of what appears to be\n" +
+                         "a bug in the Java 1.4 implementation on 10.2.\n" +
+                         "In case it works on your machine, present mode\n" +
+                         "will start, but if you get a flickering white\n" +
+                         "window, using Command-Q to quit the sketch", null);
+      }
     }
-    */
 
     try {
       if (!sketch.handleRun()) return;
@@ -1051,6 +1157,7 @@ public class Editor extends JFrame
             } catch (InterruptedException ie) {
 
             }
+
 
           } else {
             stop();
@@ -1192,7 +1299,8 @@ public class Editor extends JFrame
 
 
   /**
-   * Called by EditorStatus to complete the job.
+   * Called by EditorStatus to complete the job and re-dispatch
+   * to handleNew, handleOpen, handleQuit.
    */
   public void checkModified2() {
     switch (checkModifiedMode) {
@@ -1220,11 +1328,11 @@ public class Editor extends JFrame
 
 
   /**
-   * Extra public method so that Sketch can call
-   * this when a sketch is selected to be deleted,
-   * and it won't prompt for save as.
+   * Extra public method so that Sketch can call this when a sketch
+   * is selected to be deleted, and it won't call checkModified()
+   * to prompt for save as.
    */
-  public void handleNew() {
+  public void handleNewUnchecked() {
     doStop();
     handleNewShift = false;
     handleNewLibrary = false;
@@ -1249,7 +1357,8 @@ public class Editor extends JFrame
    * Does all the plumbing to create a new project
    * then calls handleOpen to load it up.
    *
-   * @param noPrompt true if the app is starting (auto-create a sketch)
+   * @param noPrompt true to disable prompting for the sketch
+   * name, used when the app is starting (auto-create a sketch)
    */
   protected void handleNew2(boolean noPrompt) {
     try {
@@ -1262,8 +1371,8 @@ public class Editor extends JFrame
       // recover (outside of creating another new setkch, which might
       // just cause more trouble), then they've gotta quit.
       Base.showError("Problem creating a new sketch",
-                        "An error occurred while creating\n" +
-                        "a new sketch. Processing must now quit.", e);
+                     "An error occurred while creating\n" +
+                     "a new sketch. Processing must now quit.", e);
     }
   }
 
@@ -1287,9 +1396,20 @@ public class Editor extends JFrame
       path = sketchbook.handleOpen();
       if (path == null) return;
     }
-    doStop();
+    doClose();
+    //doStop();
     handleOpenPath = path;
     checkModified(HANDLE_OPEN);
+  }
+
+
+  /**
+   * Open a sketch from a particular path, but don't check to save changes.
+   * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
+   */
+  public void handleOpenUnchecked(String path) {
+    doClose();
+    handleOpen2(path);
   }
 
 
@@ -1302,13 +1422,17 @@ public class Editor extends JFrame
     if (sketch != null) {
       // if leaving an empty sketch (i.e. the default) do an
       // auto-clean right away
-      if (Base.calcFolderSize(sketch.folder) == 0) {
-        //System.err.println("removing empty poopster");
-        Base.removeDir(sketch.folder);
-        sketchbook.rebuildMenus();
-      }
-    //} else {
-      //System.err.println("sketch was null");
+      try {
+        // don't clean if we're re-opening the same file
+        String oldPath = sketch.code[0].file.getCanonicalPath();
+        String newPath = new File(path).getCanonicalPath();
+        if (!oldPath.equals(newPath)) {
+          if (Base.calcFolderSize(sketch.folder) == 0) {
+            Base.removeDir(sketch.folder);
+            sketchbook.rebuildMenus();
+          }
+        }
+      } catch (Exception e) { }   // oh well
     }
 
     try {
@@ -1387,10 +1511,12 @@ public class Editor extends JFrame
       }
 
       sketch = new Sketch(this, path);
+      //exportAppItem.setEnabled(false && !sketch.isLibrary());
       // TODO re-enable this once export application works
 //// mobile: exportAppItem removed from mobile      
+      //exportAppItem.setEnabled(false);
       //exportAppItem.setEnabled(false && !sketch.isLibrary());
-      buttons.disableRun(sketch.isLibrary());
+      //buttons.disableRun(sketch.isLibrary());
       header.rebuild();
       if (Preferences.getBoolean("console.auto_clear")) {
         console.clear();
@@ -1455,11 +1581,13 @@ public class Editor extends JFrame
    * hitting export twice, quickly, and horking things up.
    */
   synchronized public void handleExport() {
-    String what = sketch.isLibrary() ? "Applet" : "Library";
-    message("Exporting " + what + "...");
+    //String what = sketch.isLibrary() ? "Applet" : "Library";
+    //message("Exporting " + what + "...");
+    message("Exporting applet...");
     try {
-      boolean success = sketch.isLibrary() ?
-        sketch.exportLibrary() : sketch.exportApplet();
+      //boolean success = sketch.isLibrary() ?
+      //sketch.exportLibrary() : sketch.exportApplet();
+      boolean success = sketch.exportApplet();
       if (success) {
         message("Done exporting.");
       } else {
@@ -1495,14 +1623,11 @@ public class Editor extends JFrame
    * in Editor since it has the callback from EditorStatus.
    */
   public void handleQuit() {
-    // stop isn't sufficient with external vm & quit
+    // doStop() isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
-    //doStop();
     doClose();
 
-    //if (!checkModified()) return;
     checkModified(HANDLE_QUIT);
-    //System.out.println("exiting doquit");
   }
 
 
@@ -1520,119 +1645,6 @@ public class Editor extends JFrame
   }
 
 
-  // an improved algorithm that would still avoid a full state machine
-  // 1. build an array of strings for the lines
-  // 2. first remove everything between /* and */ (relentless)
-  // 3. next remove anything inside two sets of " "
-  //    but not if escaped with a \
-  //    these can't extend beyond a line, so that works well
-  //    (this will save from "http://blahblah" showing up as a comment)
-  // 4. remove from // to the end of a line everywhere
-  // 5. run through remaining text to do indents
-  //    using hokey brace-counting algorithm
-  // 6. also add indents for switch statements
-  //    case blah: { }  (colons at end of line isn't a good way)
-  //    maybe /case \w+\:/
-  public void handleBeautify() {
-    String prog = textarea.getText();
-
-    // TODO re-enable history
-    //history.record(prog, SketchHistory.BEAUTIFY);
-
-    int tabSize = Preferences.getInteger("editor.tabs.size");
-
-    char program[] = prog.toCharArray();
-    StringBuffer buffer = new StringBuffer();
-    boolean gotBlankLine = false;
-    int index = 0;
-    int level = 0;
-
-    while (index != program.length) {
-      int begin = index;
-      while ((program[index] != '\n') &&
-             (program[index] != '\r')) {
-        index++;
-        if (program.length == index)
-          break;
-      }
-      int end = index;
-      if (index != program.length) {
-        if ((index+1 != program.length) &&
-            // treat \r\n from windows as one line
-            (program[index] == '\r') &&
-            (program[index+1] == '\n')) {
-          index += 2;
-        } else {
-          index++;
-        }
-      } // otherwise don't increment
-
-      String line = new String(program, begin, end-begin);
-      line = line.trim();
-
-      if (line.length() == 0) {
-        if (!gotBlankLine) {
-          // let first blank line through
-          buffer.append('\n');
-          gotBlankLine = true;
-        }
-      } else {
-        //System.out.println(level);
-        int idx = -1;
-        String myline = line.substring(0);
-        while (myline.lastIndexOf('}') != idx) {
-          idx = myline.indexOf('}');
-          myline = myline.substring(idx+1);
-          level--;
-        }
-        //for (int i = 0; i < level*2; i++) {
-        // TODO i've since forgotten how i made this work (maybe it's even
-        //      a bug) but for now, level is incrementing/decrementing in
-        //      steps of two. in the interest of getting a release out,
-        //      i'm just gonna roll with that since this function will prolly
-        //      be replaced entirely and there are other things to worry about.
-        for (int i = 0; i < tabSize * level / 2; i++) {
-          buffer.append(' ');
-        }
-        buffer.append(line);
-        buffer.append('\n');
-        //if (line.charAt(0) == '{') {
-        //level++;
-        //}
-        idx = -1;
-        myline = line.substring(0);
-        while (myline.lastIndexOf('{') != idx) {
-          idx = myline.indexOf('{');
-          myline = myline.substring(idx+1);
-          level++;
-        }
-        gotBlankLine = false;
-      }
-    }
-
-    // save current (rough) selection point
-    int selectionEnd = textarea.getSelectionEnd();
-
-    // replace with new bootiful text
-    setText(buffer.toString(), false);
-
-    // make sure the caret would be past the end of the text
-    if (buffer.length() < selectionEnd - 1) {
-      selectionEnd = buffer.length() - 1;
-    }
-
-    // at least in the neighborhood
-    textarea.select(selectionEnd, selectionEnd);
-
-    //setSketchModified(true);
-    //sketch.setCurrentModified(true);
-    sketch.setModified();
-    buttons.clear();
-  }
-
-
-  // TODO iron out bugs with this code under
-  //      different platforms, especially macintosh
   public void highlightLine(int lnum) {
     if (lnum < 0) {
       textarea.select(0, 0);
@@ -1662,11 +1674,12 @@ public class Editor extends JFrame
       }
       if (newline) {
         if (lc == lnum)
-          //st = i+1;
           st = ii;
         else if (lc == lnum+1) {
-          //end = i;
-          end = ii;
+          //end = ii;
+          // to avoid selecting entire, because doing so puts the
+          // cursor on the next line [0090]
+          end = ii - 1;
           break;
         }
       }
@@ -1686,20 +1699,21 @@ public class Editor extends JFrame
 
 
   public void error(Exception e) {
-    //System.out.println("ERORROOROROR 1");
-    //status.error(e.getMessage());
+    if (e == null) {
+      System.err.println("Editor.error() was passed a null exception.");
+      return;
+    }
 
     // not sure if any RuntimeExceptions will actually arrive
     // through here, but gonna check for em just in case.
     String mess = e.getMessage();
-    //System.out.println("MESSY: " + mess);
-    String rxString = "RuntimeException: ";
-    if (mess.indexOf(rxString) == 0) {
-      mess = mess.substring(rxString.length());
-      //System.out.println("MESS2: " + mess);
+    if (mess != null) {
+      String rxString = "RuntimeException: ";
+      if (mess.indexOf(rxString) == 0) {
+        mess = mess.substring(rxString.length());
+      }
+      status.error(mess);
     }
-    status.error(mess);
-
     e.printStackTrace();
   }
 
