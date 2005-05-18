@@ -496,7 +496,25 @@ Using the Serial Port
 All Platforms
 <UL>
 <LI>If you're using a program to check to see if the serial port is working, then it won't be available to Processing. That means that if you're using HyperTerminal or whatever to see if your serial device is working, then you need to quit out of that application before using that port with Processing.
-<LI>Serial.list() will only list the ports that are currently available. So if you have a program that's using the serial port that you want to use for your Processing sketch, it's not going to be available, or even listed.
+<LI>Serial.list() will only list the ports that are currently
+available. So if you have a program that's using the serial port that
+you want to use for your Processing sketch, it's not going to be
+available, or even listed.
+<LI>If you get an error reading something like this:
+<PRE>WARNING:  RXTX Version mismatch
+Jar version = RXTX-2.0-4
+native lib Version = RXTX-2.1-7pre17
+ 
+java.lang.ClassCastException thrown while loading gnu.io.RXTXCommDriver
+
+java.lang.UnsatisfiedLinkError: Native Library /Applications/processing-0090/libraries/serial/library/librxtxSerial.jni
+lib already loaded in another classloader</PRE>
+then you probably have another copy of RXTX installed somewhere. This
+is a messy thing to straighten out, because it could be anywhere in
+your PATH or CLASSPATH. Search your drive for RXTXcomm.jar or simply
+comm.jar. Files that might cause trouble are libSerial.jnilib 
+(on Mac OS X), libSerial.dll (Windows), jcl.jar, and
+javax.comm.properties. (contributed by stendahl)
 </UL>
 Mac OS X
 <UL>
