@@ -12,7 +12,17 @@ X on linux, have the shell script test for jikes first
 X   have it run jikes quickly, if it exits with an error, warn user
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115302894
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115787397;start=0
+X wasn't using runner stop button color
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
 
+_ package macosx with a dmg
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054;start=0
+_ reference: createFont() when not providing the .ttf is strongly discouraged
+_   from use in sketches, because users will rarely have the same font
+_ if sketchbook folder doesn't exist, default to the old folder
+_   people remove their old p5 folder which contained their sketchbook
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116080833;start=0
+_ why would garbage in an app's "data" folder cause it to be read as a library?
 
 fixed previously
 o runtime exceptions have stopped coming through (on pc only?)
@@ -28,6 +38,40 @@ o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 o package processing.app for PdeBase, PdeEditor..
 o if NullPointerEx on a line that includes a "pixels[" 
 o   give an error message saying "you may need to call loadPixels"
+
+discuss with casey
+X redraw() should be listed under "related" for loop and noLoop
+X redraw() can't be called inside draw(), but loop/noLoop can
+X   not as weird as it sounds, but the redraw flag is gonna get cleared
+X documentation on tabs: .java files, inner classes, etc
+X   additional tabs are added to the main code
+X   as a result, static variables can't be used
+X     though they can go above the class itself or be placed in the parent
+X   if you want it separate, use a .java file instead (not parsed)
+X   classes in tabs are inner classes, or use .java files
+X     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
+X built in functions.. may not always be fastest, we're going for correct
+X   most things have other ways of making things much faster
+X   we've attempted for less confusion over speed in some cases
+X   get(), set() and red() et al are one such example
+X web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
+X the draw() method must exist, otherwise the sketch won't run
+X   i.e. can't just have mousePressed() 
+o make a sketch that shows loading from the web
+o make another sketch that shows loading from a file
+X make notes about preproc
+X   move the readme stuff for each file into the files themselves
+X   also put a general rundown of the preproc into Preprocessor.java
+X   subclasses need to use "public void keyPressed" not "void keyPressed"
+X beginShape() defaults to beginShape(POLYGON)
+X   needs to be noted for the reference
+X make a note that u/v coordinates on vertex() clamp at 0 and 1
+X document for new users:
+X   what's a NullPointerException
+X   what's an ArrayIndexOutOfBoundsException
+X   use of strings
+X   println() for debugging
+X add notes to float ref about problems with incrementing by +0.0001
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -45,53 +89,26 @@ bugzilla
 _ get these two todo lists into their bugzilla categories
 _ setup bugzilla and enter all the bugs
 
-discuss with casey
-_ redraw() should be related for loop and noLoop
-_ redraw() can't be called inside draw(), but loop/noLoop can
-_ documentation on tabs: .java files, inner classes, etc
-_   additional tabs are added to the main code
-_   as a result, static variables can't be used
-_     though they can go above the class itself or be placed in the parent
-_   if you want it separate, use a .java file instead (not parsed)
-_   classes in tabs are inner classes, or use .java files
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1114393478;start=0
-_ built in functions.. may not always be fastest, we're going for correct
-_   most things have other ways of making things much faster
-_   we've attempted for less confusion over speed in some cases
-_   get(), set() and red() et al are one such example
-_ is there a way to do xxx?
+_ faq - is there a way to do xxx?
 _   advanced users who are outgrowing the basic reference: 
 _   be sure to check the "complete" reference
-_ web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
-_ the draw() method must exist, otherwise the sketch won't run
-_ need timer in as part of the api
-_   or at least include an example that uses it
-_ make a sketch that shows loading from the web
-_ make another sketch that shows loading from a file
-_ make notes about preproc
+_ javadoc - make notes about preproc
 _   move the readme stuff for each file into the files themselves
 _   also put a general rundown of the preproc into Preprocessor.java
 _   subclasses need to use "public void keyPressed" not "void keyPressed"
+
+_ write simple platform checker for the home page
+_ write a timer class/example library
 _ write a threading example
 X   or handle this some more intelligent way, super.stop() is needed.
 X   registerDispose() does the trick
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ write an example that uses Hashtable
-_   and another that uses Vector
-_ beginShape() defaults to beginShape(POLYGON)
-_   needs to be noted for the reference
-_ make a note that u/v coordinates clamp at 0 and 1
+_ write an example that uses Vector
 _ get an xml library and example in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
-_ get platform checker into the latest exhibition piece
-_ document for new users:
-_   what's a NullPointerException
-_   what's an ArrayIndexOutOfBoundsException
-_   use of strings
-_   println() for debugging
-_ add notes to float ref about problems with incrementing by +0.0001
 
 
 
@@ -101,9 +118,6 @@ _ add notes to float ref about problems with incrementing by +0.0001
 
 PDE - Processing Development Environment
 
-closing thread because this is now added to the new bugs database, and all followup should happen there. 
-http://processing.org/bugs/show_bug.cgi?id=2
-the link will work once we've moved to the new site.
 
 PDE / Base
 
@@ -116,6 +130,7 @@ _   or rather, when user accounts have non-ascii chars in the name
 _   try setting up an account where this is the case
 _   http://processing.org/bugs/show_bug.cgi?id=2
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114207259
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116025299;start=0
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://processing.org/bugs/show_bug.cgi?id=3
@@ -258,7 +273,7 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 PDE / Editor Buttons
 
-_ when holding down shift, show the alt behavior for EditorHeader
+_ when holding down shift, show the alternate behavior for EditorHeader
 _   http://as.processing.org/bugs/show_bug.cgi?id=37
 _ run button not properly unhighlighting
 _   does it unhighlight after compile or runtime errors?
@@ -382,6 +397,7 @@ _ split Preferences and PreferencesFrame ?
 _ preferences window has been hit with the ugly stick
 _   redo panel to use proper swing layout etc
 _   also needs to look good across all platforms
+_ make available the background colors for present mode, stop button color
 
 
 PDE / Runner 
@@ -412,6 +428,7 @@ _ quitting from present mode doesn't kill run button
 _ exceptions in draw() apps aren't caught
 _   the program resize(200, 200); just does nothing (doesn't complain)
 _ weird exception in the run button watcher
+_   http://processing.org/bugs/show_bug.cgi?id=42
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115936913;start=0
 
 
@@ -430,6 +447,7 @@ _ scanning sketchbook folder may be extremely slow
 _   not sure why this would be the case
 _ handle renaming with case changes (currently ignores case change)
 _   see notes/bitching in Sketch.nameCode()
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116171607;start=0
 _ "save as" loses cursor/scroll positions (because reloading)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115486342;start=0
 _ setting sketchbook to a folder on the network
@@ -472,13 +490,17 @@ _ run in appletviewer? sun.applet.Main is appletviewer
 
 TOOLS / Auto Format
 
+_ if an error occurs during format, report it and don't change text
 _ do a better job of maintaining cursor during beautify 
 _ only auto format a particular section of code
+_   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
 
 
 TOOLS / Create Font
 
+_ createFont not working from applets
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
 _ create the tool object on startup, then use thread to getAllFonts()
 _ close/hide window on 'ESC'
 _ loading is very slow on the first time (getting all font names)
@@ -543,6 +565,8 @@ _   do this after beta, not likely to work with java 1.4 on macosx
 LIBRARIES / Net
 
 _ move the useful serial buffering fxns into net library
+_ make the Client list public
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805;start=0
 
 
 LIBRARIES / Serial

@@ -19,6 +19,8 @@ X   can a key handler be added to the window? not really
 X   add an escape listener to the applet tho.. but will it work with gl?
 X   how can this be shut off for presentations?
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
+X present mode wasn't reading the stop button color
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
 
 _ need to test/straighten out load/update pixels
 loadPixels() and updatePixels() only need to be used when 
@@ -113,6 +115,8 @@ _ files not in the data folder (works in env, not in sketch)
 
 CORE / PApplet - main()
 
+_ noLoop() is behaving strangely
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
 _ present mode is flakey.. applet doesn't always come up
 _   seems like hitting stop helps shut it down?
 _   is full screen window not being taken down properly?
@@ -327,6 +331,7 @@ g2.draw(gp);
 CORE / PGraphics3
 
 _ ortho() is doing things strangely
+_   seems to be mapping to 0, 0 - width/2, height/2
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 _ tesselator/triangulator gets confused when points doubled up
 _   might need to avoid previous vertex hitting itself
