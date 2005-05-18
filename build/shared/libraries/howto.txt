@@ -337,10 +337,14 @@ public class FancyLibrary {
 
 NAMING
 
-Libraries should not be prefixed with "P" the way that the core 
-Processing classes are, i.e. it's tempting to prefix everything
-that way to identify it with processing, but we'd like to reserve
-that naming for "official" things that are inside processing.core.
+Libraries, or classes inside them, should not be prefixed with "P" 
+the way that the core Processing classes are (PImage, PGraphics, etc).
+It's tempting to prefix everything that way to identify it with 
+Processing, but we'd like to reserve that naming for "official" 
+things that are inside processing.core and other associated classes.
+
+Same goes for using "Processing" or "P5" just like "P", or whether
+it's a prefix or a suffix. 
 
 Similarly, please don't using processing.* as the prefix for your
 library. We'd like to keep that name space clear for official 
