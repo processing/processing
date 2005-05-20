@@ -40,6 +40,10 @@ sketchbook.path.fallback=sketchbook
 #settings.path=data
 settings.path.fallback=data
 
+# temporary build path, normally this goes into the default
+# "temp" folder for that platform (as defined by java)
+# but this can be used to set a specific file in case of problems
+#build.path=build
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
