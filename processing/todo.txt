@@ -22,7 +22,9 @@ _   from use in sketches, because users will rarely have the same font
 _ if sketchbook folder doesn't exist, default to the old folder
 _   people remove their old p5 folder which contained their sketchbook
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116080833;start=0
-_ why would garbage in an app's "data" folder cause it to be read as a library?
+_ don't allow subfolders inside the sketchbook folder
+_   once a sketch is found, don't recurse deeper
+_   same for libraries, cuz this makes a mess
 
 fixed previously
 o runtime exceptions have stopped coming through (on pc only?)
@@ -122,6 +124,7 @@ PDE - Processing Development Environment
 PDE / Base
 
 _ settings.path.fallback not being used
+_   need to check the mkdirs() to make sure it's not going too deep
 _   really important for intl versions that are having trouble
 _   or ask for the sketch folder name.. why isn't it?
 _   http://processing.org/bugs/show_bug.cgi?id=1

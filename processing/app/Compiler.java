@@ -124,7 +124,7 @@ public class Compiler implements MessageConsumer {
       command[baseCommand.length + i] =
         buildPath + File.separator + preprocNames[i];
     }
-    //PApplet.printarr(command);
+    //PApplet.println(command);
 
     /*
     String command[] = new String[baseCommand.length + sketch.codeCount];
