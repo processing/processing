@@ -250,7 +250,7 @@ public class Base {
           "Software\\Microsoft\\Windows\\CurrentVersion" +
           "\\Explorer\\Shell Folders";
         RegistryKey localKey = topKey.openSubKey(localKeyPath);
-        String appDataPath = localKey.getStringValue("AppData");
+        String appDataPath = cleanKey(localKey.getStringValue("AppData"));
         //System.out.println("app data path is " + appDataPath);
         //System.exit(0);
         //topKey.closeKey();  // necessary?
@@ -278,6 +278,7 @@ public class Base {
 
     if (!result) {
       // try the fallback location
+      System.out.println("Using fallback path for settings.");
       String fallback = Preferences.get("settings.path.fallback");
       dataFolder = new File(fallback);
       if (!dataFolder.exists()) {
@@ -378,10 +379,9 @@ public class Base {
           "Software\\Microsoft\\Windows\\CurrentVersion" +
           "\\Explorer\\Shell Folders";
         RegistryKey localKey = topKey.openSubKey(localKeyPath);
-        String personalPath = localKey.getStringValue("Personal");
+        String personalPath = cleanKey(localKey.getStringValue("Personal"));
         //topKey.closeKey();  // necessary?
         //localKey.closeKey();
-
         sketchbookFolder = new File(personalPath, "Processing");
 
       } catch (Exception e) {
@@ -416,6 +416,7 @@ public class Base {
 
     if (!result) {
       // try the fallback location
+      System.out.println("Using fallback path for sketchbook.");
       String fallback = Preferences.get("sketchbook.path.fallback");
       sketchbookFolder = new File(fallback);
       if (!sketchbookFolder.exists()) {
@@ -430,6 +431,34 @@ public class Base {
     }
 
     return sketchbookFolder;
+  }
+
+
+  static public String cleanKey(String what) {
+    // jnireg seems to be reading the chars as bytes
+    // so maybe be as simple as & 0xff and then running through decoder
+
+    char c[] = what.toCharArray();
+
+    // if chars are in the tooHigh range, it's prolly because
+    // a byte from the jni registry was turned into a char
+    // and there was a sign extension.
+    // e.g. 0xFC (252, umlaut u) became 0xFFFC (65532).
+    // but on a japanese system, maybe this is two-byte and ok?
+    int tooHigh = 65536 - 128;
+    for (int i = 0; i < c.length; i++) {
+      if (c[i] >= tooHigh) c[i] &= 0xff;
+
+      /*
+      if ((c[i] >= 32) && (c[i] < 128)) {
+        System.out.print(c[i]);
+      } else {
+        System.out.print("[" + PApplet.hex(c[i]) + "]");
+      }
+      */
+    }
+    //System.out.println();
+    return new String(c);
   }
 
 

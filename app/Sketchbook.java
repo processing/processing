@@ -89,9 +89,23 @@ public class Sketchbook {
     librariesFolder = new File(System.getProperty("user.dir"), "libraries");
     librariesPath = librariesFolder.getAbsolutePath();
 
-    //String sketchbookPath = Preferences.get("sketchbook.path");
-    //if (sketchbookPath == null) {
-    if (Preferences.get("sketchbook.path") == null) {
+    String sketchbookPath = Preferences.get("sketchbook.path");
+
+    // if a value is at least set, first check to see if the
+    // folder exists. if it doesn't, warn the user that the
+    // sketchbook folder is being reset.
+    if (sketchbookPath != null) {
+      File skechbookFolder = new File(sketchbookPath);
+      if (!skechbookFolder.exists()) {
+        Base.showWarning("Sketchbook folder disappeared",
+                         "The sketchbook folder no longer exists,\n" +
+                         "so a new sketchbook will be created in the\n" +
+                         "default location.", null);
+        sketchbookPath = null;
+      }
+    }
+
+    if (sketchbookPath == null) {
       // by default, set default sketchbook path to the user's
       // home folder with 'sketchbook' as a subdirectory of that
 
@@ -113,9 +127,10 @@ public class Sketchbook {
       //String folderName = Preferences.get("sketchbook.name.default");
       //File sketchbookFolder = new File(home, folderName);
 
+      //System.out.println("resetting sketchbook path");
       File sketchbookFolder = Base.getDefaultSketchbookFolder();
       Preferences.set("sketchbook.path",
-                         sketchbookFolder.getAbsolutePath());
+                      sketchbookFolder.getAbsolutePath());
 
       if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
     }
