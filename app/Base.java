@@ -178,7 +178,7 @@ public class Base {
   static final short kUserDomain = -32763;
 
 
-  static public File getProcessingDataFolder() {
+  static public File getSettingsFolder() {
     File dataFolder = null;
 
     String pref = Preferences.get("settings.path");
@@ -296,15 +296,36 @@ public class Base {
   }
 
 
-  static public File getProcessingDataFile(String filename) {
-    return new File(getProcessingDataFolder(), filename);
+  static public File getSettingsFile(String filename) {
+    return new File(getSettingsFolder(), filename);
   }
 
 
   static public File getBuildFolder() {
-    File folder = new File(getProcessingDataFolder(), "build");
+    String buildPath = Preferences.get("build.path");
+    if (buildPath != null) return new File(buildPath);
+
+    File folder = new File(getTempFolder(), "build");
     if (!folder.exists()) folder.mkdirs();
     return folder;
+  }
+
+
+  /**
+   * Get the path to the platform's temporary folder, by creating
+   * a temporary temporary file and getting its parent folder.
+   */
+  static public File getTempFolder() {
+    try {
+      File ignored = File.createTempFile("ignored", null);
+      String tempPath = ignored.getParent();
+      ignored.delete();
+      return new File(tempPath);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;  // TODO could we *really* ever reach this?
   }
 
 
