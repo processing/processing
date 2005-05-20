@@ -501,15 +501,14 @@ All Platforms
 available. So if you have a program that's using the serial port that
 you want to use for your Processing sketch, it's not going to be
 available, or even listed.
-<LI>If you get an error reading something like this:
-<PRE>WARNING:  RXTX Version mismatch
-Jar version = RXTX-2.0-4
-native lib Version = RXTX-2.1-7pre17
- 
-java.lang.ClassCastException thrown while loading gnu.io.RXTXCommDriver
-
-java.lang.UnsatisfiedLinkError: Native Library /Applications/processing-0090/libraries/serial/library/librxtxSerial.jni
-lib already loaded in another classloader</PRE>
+<LI>If you get an error reading something like this:<BR> <BR>
+<TT>WARNING:  RXTX Version mismatch<BR>
+Jar version = RXTX-2.0-4<BR>
+native lib Version = RXTX-2.1-7pre17<BR>
+ <BR>
+java.lang.ClassCastException thrown while loading gnu.io.RXTXCommDriver<BR>
+<BR>
+java.lang.UnsatisfiedLinkError: Native Library /Applications/processing-0090/libraries/serial/library/librxtxSerial.jnilib already loaded in another classloader</TT><BR><BR>
 then you probably have another copy of RXTX installed somewhere. This
 is a messy thing to straighten out, because it could be anywhere in
 your PATH or CLASSPATH. Search your drive for RXTXcomm.jar or simply
@@ -541,6 +540,18 @@ running&mdash;it'll prolly freeze the machine and require a forced
 reboot. This scenario may seem unlikely,(while this may seem nutty, you might run into it if
 your adapter is plugged into your usb keyboard, and you have the
 keyboard plugged into a monitor/keyboard switcher).
+<LI>The OS X 10.4 (Tiger) installer wipes out your permissions and groups
+on /var/spool/uucp, so you'll have to run the setup command
+again. However, running it returns:
+<BR> <BR>
+<TT>check_group_uucp(): error testing lock file    creation Error
+details: Permission deniedcheck_lock_status: No permission to create
+lock file. </TT> <BR> <BR>
+Tom Igoe's extremely technical solution: &ldquo;After you have run the
+macosx_setup.command, Shut down the machine and restart. <BR> <BR>
+&ldquo;Don't logout then log back in.  Don't just restart.  Shut down and restart.  I don't care that you've got a record uptime you're trying to preserve. SHUT DOWN AND RESTART! Don't be an idiot like I was.  This will free up the old lock files, which apparently carry over from the previous systems, and your serial devices will be happy.
+<BR> <BR> 
+&ldquo;And on that note, Tiger and Processing are playing happily together with a serial port, like kittens with a ball of string.&rdquo;
 </UL>
 Linux
 <UL>
@@ -608,7 +619,7 @@ is something that we can fix for the future.
 <tt>"net.java.games.jogl.GLException: Unable to enumerate pixel formats 
   of window using wglGetPixelFormatAttribivARB: 0"</tt>
 and your machine has built in "Intel" graphics (this is the case for 
-  many dell machines, for instance) you may just need an updated version 
+  many Dell machines, for instance) you may just need an updated version 
   of your driver, which can be found 
 <a href="http://downloadfinder.intel.com/scripts-df/Detail_Desc.asp?sType=prev&agr=N&ProductID=865&DwnldID=7919">here</a>. 
 Of course, read the page closely and make sure that you in fact have
