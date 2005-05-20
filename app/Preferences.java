@@ -154,7 +154,7 @@ public class Preferences extends JComponent {
     //File home = new File(System.getProperty("user.home"));
     //File processingHome = new File(home, "Processing");
     //preferencesFile = new File(home, PREFS_FILE);
-    preferencesFile = Base.getProcessingDataFile(PREFS_FILE);
+    preferencesFile = Base.getSettingsFile(PREFS_FILE);
 
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
