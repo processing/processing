@@ -304,7 +304,7 @@ public class Editor extends JFrame
                 windowW, windowH);
       // this will be invalid as well, so grab the new value
       Preferences.setInteger("last.divider.location",
-                                splitPane.getDividerLocation());
+                             splitPane.getDividerLocation());
     } else {
       setBounds(Preferences.getInteger("last.window.x"),
                 Preferences.getInteger("last.window.y"),
