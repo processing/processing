@@ -747,9 +747,14 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return value1 << FP_PRECISION;
     }
     
-    /** Returns the closest integer value less than or equal to the specified fixed point value. */
-    public final int floor(int value1) {
+    /** Returns the integer less than or equal to the fixed point value. */
+    public final int fptoi(int value1) {
         return value1 >> FP_PRECISION;
+    }
+    
+    /** Returns the closest integer fixed-point value less than or equal to the specified fixed point value. */
+    public final int floor(int value1) {
+        return (value1 >> FP_PRECISION) << FP_PRECISION;
     }
     
     /** Returns the fixed point radian equivalent to the specified fixed point degree value. */
