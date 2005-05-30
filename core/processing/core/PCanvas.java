@@ -40,6 +40,11 @@ public class PCanvas extends Canvas {
     private int[]       curveVertex;
     private int         curveVertexIndex;
     
+    private int[]       stack;
+    private int         stackIndex;
+    private int         translateX;
+    private int         translateY;
+    
     private int         textMode;
     
     /** Creates a new instance of PCanvas */
@@ -72,6 +77,8 @@ public class PCanvas extends Canvas {
         
         curveVertex = new int[8];
         curveVertexIndex = 0;
+        
+        stack = new int[4];
         
         textMode = Graphics.TOP | Graphics.LEFT;
         
@@ -577,7 +584,36 @@ public class PCanvas extends Canvas {
     }
     
     public void translate(int x, int y) {
+        translateX += x;
+        translateY += y;
         bufferg.translate(x, y);
+    }
+    
+    public void pushMatrix() {
+        if (stackIndex == stack.length) {
+            int[] old = stack;
+            stack = new int[stackIndex * 2];
+            System.arraycopy(old, 0, stack, 0, stackIndex);
+        }
+        stack[stackIndex] = translateX;
+        stack[stackIndex + 1] = translateY;
+        stackIndex += 2;
+    }
+    
+    public void popMatrix() {
+        if (stackIndex > 0) {
+            stackIndex -= 2;
+            translateX = stack[stackIndex];
+            translateY = stack[stackIndex + 1];            
+            bufferg.translate(translateX - bufferg.getTranslateX(), translateY - bufferg.getTranslateY());
+        }
+    }
+    
+    public void resetMatrix() {
+        stackIndex = 0;
+        translateX = 0;
+        translateY = 0;
+        bufferg.translate(-bufferg.getTranslateX(), -bufferg.getTranslateY());
     }
     
     public void background(int gray) {

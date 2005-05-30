@@ -106,6 +106,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         long currentTime = System.currentTimeMillis();
         int elapsed = (int) (currentTime - lastFrameTime);
         if (elapsed >= msPerFrame) {
+            canvas.resetMatrix();
             draw();
             canvas.repaint();
             
@@ -224,6 +225,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final void translate(int x, int y) {
         canvas.translate(x, y);
+    }
+    
+    public final void pushMatrix() {
+        canvas.pushMatrix();
+    }
+    
+    public final void popMatrix() {
+        canvas.popMatrix();
+    }
+    
+    public final void resetMatrix() {
+        canvas.resetMatrix();
     }
     
     public final void background(int gray) {
