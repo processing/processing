@@ -66,7 +66,7 @@ public class HTTPClient {
                 file = "/" + file;
             }
             //// open connection to server
-            con = (HttpConnection) Connector.open("http://" + server + ":" + port + file);
+            con = (HttpConnection) Connector.open("http://" + server + ((port != 80) ? ":" + port : "") + file);
             //// if successful, open inputstream
             is = con.openInputStream();
             //// read contents
