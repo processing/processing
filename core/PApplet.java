@@ -2804,17 +2804,12 @@ public class PApplet extends Applet
 
 
   public PFont createFont(String name, float size) {
-    return createFont(name, size, PFont.DEFAULT_CHARSET, true);
-  }
-
-
-  public PFont createFont(String name, float size, char charset[]) {
-    return createFont(name, size, charset, true);
+    return createFont(name, size, true, PFont.DEFAULT_CHARSET);
   }
 
 
   public PFont createFont(String name, float size, boolean smooth) {
-    return createFont(name, size, PFont.DEFAULT_CHARSET, smooth);
+    return createFont(name, size, smooth, PFont.DEFAULT_CHARSET);
   }
 
 
@@ -2824,9 +2819,13 @@ public class PApplet extends Applet
    * the data folder of this sketch.
    * <P>
    * Only works with Java 1.3 or later.
+   * <P>
+   * Use 'null' for the charset if you want to use any of the 65,536
+   * unicode characters that exist in the font. Note that this can
+   * produce an enormous file or may cause an OutOfMemoryError.
    */
   public PFont createFont(String name, float size,
-                          char charset[], boolean smooth) {
+                          boolean smooth, char charset[]) {
     if (PApplet.javaVersion < 1.3f) {
       throw new RuntimeException("Can only create fonts with " +
                                  "Java 1.3 or higher");
@@ -2866,7 +2865,7 @@ public class PApplet extends Applet
       throw new RuntimeException("Problem using createFont() " +
                                  "with the file " + name);
     }
-    return new PFont(font, charset, smooth);
+    return new PFont(font, smooth, charset);
   }
 
 
