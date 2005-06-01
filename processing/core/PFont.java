@@ -96,7 +96,7 @@ public class PFont implements PConstants {
   public int ascent;
   public int descent;
 
-  int ascii[];  // quick lookup for the ascii chars
+  protected int ascii[];  // quick lookup for the ascii chars
 
   // shared by the text() functions to avoid incessant allocation of memory
   protected char textBuffer[] = new char[8 * 1024];
@@ -674,7 +674,7 @@ public class PFont implements PConstants {
    * @param charset array of all unicode chars that should be included
    * @param smooth true to enable smoothing/anti-aliasing
    */
-  public PFont(Font font, char charset[], boolean smooth) {
+  public PFont(Font font, boolean smooth, char charset[]) {
     if (PApplet.javaVersion < 1.3f) {
       throw new RuntimeException("Can only create fonts with " +
                                  "Java 1.3 or higher");
@@ -861,7 +861,8 @@ public class PFont implements PConstants {
       }
 
       if (!pixelFound) {
-        //System.out.println("no pixels found in char " + ((char)i));
+        //System.out.println("no pixels found in unicode char " + c +
+        //                 "(" + PApplet.hex(c) + ")");
         // this was dumb that it was set to 20 & 30, because for small
         // fonts, those guys don't exist
         minX = minY = 0; //20;
@@ -869,6 +870,12 @@ public class PFont implements PConstants {
 
         // this will create a 1 pixel white (clear) character..
         // maybe better to set one to -1 so nothing is added?
+        /*
+      } else {
+        System.out.println(PApplet.hex(c) + " has bounds " +
+                           minX + ", " + minY + " to " +
+                           maxX + ", " + maxY);
+        */
       }
 
       value[index] = c;
