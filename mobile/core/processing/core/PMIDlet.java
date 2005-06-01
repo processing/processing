@@ -48,7 +48,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     private PCanvas     canvas;
     private Command     cmdExit;
     
+    private Thread      thread;
     private boolean     running;
+    private boolean     redraw;
     private long        startTime;
     private long        lastFrameTime;
     private int         msPerFrame;
@@ -99,25 +101,27 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             lastFrameTime = startTime - msPerFrame;
         }
         display.setCurrent(canvas);        
-        display.callSerially(this);
+        thread = new Thread(this);
+        thread.start();
     }
     
     public final void run() {
-        long currentTime = System.currentTimeMillis();
-        int elapsed = (int) (currentTime - lastFrameTime);
-        if (elapsed >= msPerFrame) {
-            canvas.resetMatrix();
-            draw();
-            canvas.repaint();
-            
-            lastFrameTime = currentTime;
-            framerate = 1000 / elapsed;
-            frameCount++;
-        }
-        
-        if (running) {
-            display.callSerially(this);
-        }
+        do {
+            long currentTime = System.currentTimeMillis();
+            int elapsed = (int) (currentTime - lastFrameTime);
+            if (redraw || (elapsed >= msPerFrame)) {
+                canvas.resetMatrix();
+                draw();
+                canvas.repaint();
+                canvas.serviceRepaints();
+                lastFrameTime = currentTime;
+                framerate = 1000 / elapsed;
+                frameCount++;
+                
+                redraw = false;
+            }
+        } while (running);
+        thread = null;
     }
     
     public void setup() {
@@ -135,14 +139,19 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final void redraw() {
-        draw();
-        frameCount++;
-        canvas.repaint();
+        redraw = true;
+        if (thread == null) {
+            thread = new Thread(this);
+            thread.start();
+        }
     }
     
     public final void loop() {
         running = true;
-        display.callSerially(this);
+        if (thread == null) {
+            thread = new Thread(this);
+            thread.start();
+        }
     }
     
     public final void noLoop() {
