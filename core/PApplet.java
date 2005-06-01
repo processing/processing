@@ -5217,6 +5217,9 @@ v              PApplet.this.stop();
   /**
    * main() method for running this class from the command line.
    * <P>
+   * <B>The options shown here are not yet finalized and will be
+   * changing over the next several releases.</B>
+   * <P>
    * The simplest way to turn and applet into an application is to
    * add the following code to your program:
    * <PRE>static public void main(String args[]) {

@@ -442,8 +442,9 @@ cameras on Windows don't support QuickTime right off the bat, but
 we've had reasonable luck with <a
 href="http://www.vdig.com/WinVDIG/">WinVDIG</A>.
 
-        <LI>If you're still having trouble, sometimes a full uninstall/reinstall 
-          of Quicktime will do the trick. 
+<LI>If you're still having trouble, sometimes a full uninstall/reinstall 
+of Quicktime will do the trick. 
+
         <LI>If you're having trouble with video examples crashing
   processing or locking up your system, you should try placing the
   processing folder into the root level of your C:\ drive, or at least
@@ -472,6 +473,15 @@ then it means you need to update and/or reinstall QuickTime. There
   was some monkey business about QuickTime for Java updates being out
 of sync with the Apple's Java updates, and this is one of the leftovers
 of that scenario. Blame Apple. Blame Canada.
+</UL>
+
+All Platforms 
+<UL>
+<LI>Projects that use video cannot be exported to the web. More
+details can be found in <A
+HREF="http://processing.org/bugs/show_bug.cgi?id=44">this entry</A> in
+the bug db.
+</UL>
       </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -608,6 +618,8 @@ OpenGL Issues
   through to the Processing window, etc.)
 
 <LI>Objects with alpha (lines or shapes with an alpha fill or stroke, images with alpha, all fonts) are displayed in OpenGL based on their drawing order. This creates some annoying effects like making things opaque if they're drawn out of order with objects above or beneath them. This is simply how OpenGL works, but is something that we'd like to develop a workaround for in the future. Currently, you should just try to draw things back-to-front as best as possible.
+
+<LI>OpenGL is really memory hungry because of how tetxures work. In OpenGL mode, your images as the next power of two larger in either direction. This means an image that's 40x190 pixels will be stored as a 64x256 pixel x 4 bytes per pixel array (along with the original image storage being width x height x 4).
 
 <LI>OpenGL sketches cannot be exported to run in a browser. The export won't
 give an error, but they won't run properly. It's not clear whether this

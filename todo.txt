@@ -15,6 +15,14 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X wasn't using runner stop button color
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
 
+_ fix up the video crap because nobody reads the faq 
+_   and no cameras means that the list comes back null
+_ ctrl-shift-f is both autoformat and find in reference
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117490025
+_ make sure gl examples are working properly before release
+_   actually probably a bug with building opengl stuff with run.sh on linux
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1117632460
+
 _ package macosx with a dmg
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054;start=0
 _ reference: createFont() when not providing the .ttf is strongly discouraged
@@ -25,6 +33,8 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 _ don't allow subfolders inside the sketchbook folder
 _   once a sketch is found, don't recurse deeper
 _   same for libraries, cuz this makes a mess
+_ some sort of path/classpath tester/fixer app for windows
+_   that " norton" thing in the path makes things a mess
 
 fixed previously
 o runtime exceptions have stopped coming through (on pc only?)
@@ -57,7 +67,7 @@ X   most things have other ways of making things much faster
 X   we've attempted for less confusion over speed in some cases
 X   get(), set() and red() et al are one such example
 X web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
-X the draw() method must exist, otherwise the sketch won't run
+`X the draw() method must exist, otherwise the sketch won't run
 X   i.e. can't just have mousePressed() 
 o make a sketch that shows loading from the web
 o make another sketch that shows loading from a file
@@ -82,10 +92,15 @@ X add notes to float ref about problems with incrementing by +0.0001
 _ make simple tool for casey to rebuild all the examples at once
 _   just make it easier to go to the next sketch
 _   need to rebuild with this release because of 1.3/1.4 issues
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117258456
 
 _ auto-run the javadoc in dist.sh
 _   doctor a copy of the css file to use p5 defaults
 _   and re-copy the css in after generating the doc each time
+
+forum bugs
+_ when replying, all the replies so far are listed twice
+_ fonts are wrong all over the place (use windows to debug)
 
 bugzilla
 _ get these two todo lists into their bugzilla categories
@@ -272,6 +287,8 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 _ undo after "import library" makes a blank screen
 _   http://processing.org/bugs/show_bug.cgi?id=41
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115920233;start=0
+_ fonts smaller than 10 cause problems in the editor on osx
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116167072
 
 
 PDE / Editor Buttons
@@ -498,6 +515,8 @@ _ do a better job of maintaining cursor during beautify
 _ only auto format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+_ bugs in auto-format
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117081646
 
 
 TOOLS / Create Font
@@ -525,6 +544,8 @@ _   is getFamilyNames() any different/better?
 _   when did this break? 1.4.1? 1.4.x vs 1.3?
 _   may be that cff fonts won't work?
 _   or is it only those with ps names?
+_   
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
 _ create font with user-specified charsets
 
 
@@ -532,6 +553,12 @@ _ create font with user-specified charsets
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
+
+
+LIBRARIES / General
+
+_ InvocationTargetException in xxxxxxEvent calls
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328;start=0#3
 
 
 LIBRARIES / Video
@@ -545,8 +572,10 @@ _ tearing and incomplete updates on capture?
 _   putting read() inside draw() seems to eliminate this?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
 _ on export, need to first import applet's packages before qt et al
-_   video working in applets?
+_   video working in applets? (no, never did in alpha so untested)
+_     Movie should perhaps work?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115754972;start=0
+_   http://processing.org/bugs/show_bug.cgi?id=44
 _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 
@@ -577,6 +606,7 @@ LIBRARIES / Serial
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116797335;start=0#0
 _ add prompt() method to Serial (simple dialog box that pops up)
 
 
@@ -679,5 +709,7 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 
 DIST / Linux
 
+_ computationally intensive stuff runs really slow inside p5
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745;start=0#3
 _ some reports of it not quitting properly, but not confirmed
 _ splash screen
