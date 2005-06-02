@@ -228,8 +228,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.curveVertex(x, y);
     }
     
-    public final void bezierVertex(int x, int y) {
-        canvas.bezierVertex(x, y);
+    public final void bezierVertex(int x1, int y1, int x2, int y2, int x3, int y3) {
+        canvas.bezierVertex(x1, y1, x2, y2, x3, y3);
     }
     
     public final void translate(int x, int y) {
