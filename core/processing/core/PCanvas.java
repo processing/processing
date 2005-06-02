@@ -259,10 +259,8 @@ public class PCanvas extends Canvas {
     
     public void bezier(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         beginShape(PMIDlet.LINE_STRIP);
-        bezierVertex(x1, y1);
-        bezierVertex(x2, y2);
-        bezierVertex(x3, y3);
-        bezierVertex(x4, y4);
+        vertex(x1, y1);
+        bezierVertex(x2, y2, x3, y3, x4, y4);
         endShape();
     }
     
@@ -540,28 +538,30 @@ public class PCanvas extends Canvas {
         }
     }
     
-    public void bezierVertex(int x, int y) {
+    public void bezierVertex(int x1, int y1, int x2, int y2, int x3, int y3) {
+        //// plotCurveVertices will add x0, y0 back
+        vertexIndex -= 2;
         //// use fixed point, 8-bit precision
-        curveVertex[curveVertexIndex] = x << 8;
-        curveVertexIndex++;
-        curveVertex[curveVertexIndex] = y << 8;
-        curveVertexIndex++;
-        
-        if (curveVertexIndex == 8) {
-            //// use fixed point, 8-bit precision
-            int tension = 768 /* 3.0f */;
-            
-            int dx0 = ((curveVertex[2] - curveVertex[0]) * tension) >> 8;
-            int dx1 = ((curveVertex[6] - curveVertex[4]) * tension) >> 8;
-            int dy0 = ((curveVertex[3] - curveVertex[1]) * tension) >> 8;
-            int dy1 = ((curveVertex[7] - curveVertex[5]) * tension) >> 8;
-            
-            plotCurveVertices(curveVertex[0], curveVertex[1],
-                              curveVertex[6], curveVertex[7],
-                              dx0, dx1, dy0, dy1);
-            
-            curveVertexIndex = 0;
-        }
+        int x0 = vertex[vertexIndex] << 8;
+        int y0 = vertex[vertexIndex + 1] << 8;    
+        //// convert parameters to fixed point
+        x1 = x1 << 8;
+        y1 = y1 << 8;
+        x2 = x2 << 8;
+        y2 = y2 << 8;
+        x3 = x3 << 8;
+        y3 = y3 << 8;
+        //// use fixed point, 8-bit precision
+        int tension = 768 /* 3.0f */;
+
+        int dx0 = ((x1 - x0) * tension) >> 8;
+        int dx1 = ((x3 - x2) * tension) >> 8;
+        int dy0 = ((y1 - y0) * tension) >> 8;
+        int dy1 = ((y3 - y2) * tension) >> 8;
+
+        plotCurveVertices(x0, y0,
+                          x3, y3,
+                          dx0, dx1, dy0, dy1);        
     }
     
     private void plotCurveVertices(int x0, int y0, int x1, int y1, int dx0, int dx1, int dy0, int dy1) {
