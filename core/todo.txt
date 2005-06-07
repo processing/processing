@@ -1,31 +1,3 @@
-0091 core
-X change to synchronization to hopefully fix some update issues
-X curveVertex() problem in P2D when > 128 points fixed
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115856359;start=0
-X for present mode, need to set a default display 
-X   currently crashes if only --present is specified w/o --display
-o make the 1.4 code in PApplet load via reflection
-X   doesn't appear necessary with 1.3 applets
-o   or is some of the stuff usable in 1.3 but not all?
-o     ie. the device config classes exist but not the set full screen method
-X currently some bugs in the main() because it's not sizing applets 
-X   if running in present mode it works ok
-X   but that also needs its display set.. argh
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115834600;start=0
-X add exit() function to actually explicitly quit
-X   scripts will just require that people include exit at the end
-X esc should kill fullscreen mode (actually now it just quits anything)
-X   can a key handler be added to the window? not really
-X   add an escape listener to the applet tho.. but will it work with gl?
-X   how can this be shut off for presentations?
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
-X present mode wasn't reading the stop button color
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
-X cleaned up the createFont() functions a little
-X java 1.3 required message isn't clickable
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117552076
-
-
 0092 core
 
 _ proper api for access to Graphics2D in PGraphics2
