@@ -16,33 +16,23 @@ X wasn't using runner stop button color
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
 X fix up the video crap because nobody reads the faq 
 X   and no cameras means that the list comes back null
+X can't seem to find build dir on operating systems w/ non-ascii chars
+X   or rather, when user accounts have non-ascii chars in the name
+X   try setting up an account where this is the case
+X   http://processing.org/bugs/show_bug.cgi?id=2
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114207259
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116025299
+X ctrl-shift-f is both autoformat and find in reference
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118117417
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117490025
+X if sketchbook folder doesn't exist, default to the old folder
+X   people remove their old p5 folder which contained their sketchbook
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116080833;start=0
+X add a tiny java tester app to the home page
 
-_ ctrl-shift-f is both autoformat and find in reference
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117490025
 _ make sure gl examples are working properly before release
 _   actually probably a bug with building opengl stuff with run.sh on linux
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1117632460
-
-_ package macosx with a dmg
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054;start=0
-_ reference: createFont() when not providing the .ttf is strongly discouraged
-_   from use in sketches, because users will rarely have the same font
-_ if sketchbook folder doesn't exist, default to the old folder
-_   people remove their old p5 folder which contained their sketchbook
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116080833;start=0
-_ don't allow subfolders inside the sketchbook folder
-_   once a sketch is found, don't recurse deeper
-_   same for libraries, cuz this makes a mess
-
-_ make simple tool for casey to rebuild all the examples at once
-_   just make it easier to go to the next sketch
-_   need to rebuild with this release because of 1.3/1.4 issues
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117258456
-
-_ some sort of path/classpath tester/fixer app for windows
-_   that " norton" thing in the path makes things a mess
-
-_ add a tiny java tester app to the home page
 
 fixed previously
 o runtime exceptions have stopped coming through (on pc only?)
@@ -97,6 +87,21 @@ X add notes to float ref about problems with incrementing by +0.0001
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+_ package macosx with a dmg
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054;start=0
+_ reference: createFont() when not providing the .ttf is strongly discouraged
+_   from use in sketches, because users will rarely have the same font
+_ don't allow subfolders inside the sketchbook folder
+_   once a sketch is found, don't recurse deeper
+_   same for libraries, cuz this makes a mess
+_   (do this right after rev 91 release... could break things)
+_ make simple tool for casey to rebuild all the examples at once
+_   just make it easier to go to the next sketch
+_   need to rebuild with this release because of 1.3/1.4 issues
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117258456
+_ some sort of path/classpath tester/fixer app for windows
+_   that " norton" thing in the path makes things a mess
+
 _ emacs keybindings
 _   ctrl-space to set selection start
 _     selection end is just wherever the cursor is after selection set
@@ -135,7 +140,6 @@ _   move the readme stuff for each file into the files themselves
 _   also put a general rundown of the preproc into Preprocessor.java
 _   subclasses need to use "public void keyPressed" not "void keyPressed"
 
-_ write simple platform checker for the home page
 _ write a timer class/example library
 _ write a threading example
 X   or handle this some more intelligent way, super.stop() is needed.
@@ -164,12 +168,6 @@ _   need to check the mkdirs() to make sure it's not going too deep
 _   really important for intl versions that are having trouble
 _   or ask for the sketch folder name.. why isn't it?
 _   http://processing.org/bugs/show_bug.cgi?id=1
-_ can't seem to find build dir on operating systems w/ non-ascii chars
-_   or rather, when user accounts have non-ascii chars in the name
-_   try setting up an account where this is the case
-_   http://processing.org/bugs/show_bug.cgi?id=2
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114207259
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116025299;start=0
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://processing.org/bugs/show_bug.cgi?id=3
