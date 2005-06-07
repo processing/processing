@@ -412,7 +412,7 @@ public class CreateFont extends JFrame {
     try {
       Font instance = (Font) table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
-      PFont f = new PFont(font, all ? null : PFont.DEFAULT_CHARSET, smooth);
+      PFont f = new PFont(font, smooth, all ? null : PFont.DEFAULT_CHARSET);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();
