@@ -941,6 +941,31 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return (value1 >> FP_PRECISION) << FP_PRECISION;
     }
     
+    /** Returns the closest integer fixed-point value greater than or equal to the specified fixed point value. */
+    public final int ceil(int value1) {
+        //// first get just the floor of the value
+        int result = floor(value1);
+        //// see if there is a fractional part
+        if ((value1 - result) > 0) {
+            //// if so, increment up to the next integer value
+            result += ONE;
+        }
+        //// return result
+        return result;
+    }
+    
+    public final int round(int value1) {
+        //// first get just the floor of the value
+        int result = floor(value1);
+        //// see if there is a fractional part greater than or equal to one half
+        if ((value1 - result) >= (ONE / 2)) {
+            //// if so, increment up to the next integer value
+            result += ONE;
+        }
+        //// return result
+        return result;
+    }
+    
     /** Returns the fixed point radian equivalent to the specified fixed point degree value. */
     public final int radians(int angle) {
         return angle * PI / (180 << FP_PRECISION);
