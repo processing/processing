@@ -82,15 +82,19 @@
             <param name="target" value="${cvs.tag.processing}"/>
         </antcall>
         <!-- zip up standard release -->
+<!--        
         <zip destfile="processing/build/windows/${cvs.tag.processing}.zip" 
              basedir="processing/build/windows/${cvs.tag.processing}"/>
+-->             
         <!-- copy into expert release -->
         <antcall target="copycore">
             <param name="target" value="${cvs.tag.processing}-expert"/>
         </antcall>        
         <!-- zip up expert release -->
+<!--        
         <zip destfile="processing/build/windows/${cvs.tag.processing}-expert.zip" 
              basedir="processing/build/windows/${cvs.tag.processing}-expert"/>
+-->             
     </target>
     
     <target name="run" depends="init">

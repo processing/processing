@@ -2169,8 +2169,8 @@ public class Sketch {
     String   wtkLibPath  = wtkPath + File.separator + "lib" + File.separator;
     String   baseClass   = "PMIDlet";
     String[] baseImports = {};
-    String   bootClassPath = wtkLibPath + "cldcapi10.jar" + File.pathSeparator +
-                             wtkLibPath + "midpapi10.jar";
+    String   bootClassPath = wtkLibPath + "cldcapi11.jar" + File.pathSeparator +
+                             wtkLibPath + "midpapi20.jar";
     //// this is just to satisfy Jikes which wants java.io.Serializable and java.lang.Cloneable to be reachable...
     //System.out.println(System.getProperty ("java.home"));
     //bootClassPath += File.pathSeparator + System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
