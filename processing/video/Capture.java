@@ -89,6 +89,8 @@ public class Capture extends PImage implements Runnable {
     } catch (QTException e) {
       e.printStackTrace();
     }
+    /*
+      // this doesn't appear to do jack
     QTRuntimeException.registerHandler(new QTRuntimeHandler() {
         public void exceptionOccurred(QTRuntimeException e,
                                       Object obj, String s, boolean flag) {
@@ -96,6 +98,7 @@ public class Capture extends PImage implements Runnable {
           e.printStackTrace();
         }
       });
+    */
   }
 
 
@@ -123,7 +126,7 @@ public class Capture extends PImage implements Runnable {
    * time a new frame is available from the capture device.
    */
   public Capture(PApplet parent, String name,
-                int requestWidth, int requestHeight, int framerate) {
+                 int requestWidth, int requestHeight, int framerate) {
     this.parent = parent;
     this.name = name;
     this.framerate = framerate;
@@ -182,7 +185,8 @@ public class Capture extends PImage implements Runnable {
         // no such method, or an error.. which is fine, just ignore
       }
 
-    } catch (StdQTException qte) {
+    } catch (QTException qte) {
+      //} catch (StdQTException qte) {
       //qte.printStackTrace();
 
       int errorCode = qte.errorCode();
@@ -467,9 +471,17 @@ public class Capture extends PImage implements Runnable {
       grabber.disposeChannel(channel);
       return listing;
 
-    } catch (QTException e) {
-      e.printStackTrace();
+    } catch (QTException qte) {
+      int errorCode = qte.errorCode();
+      if (errorCode == Errors.couldntGetRequiredComponent) {
+        throw new RuntimeException("Couldn't find any capture devices, " +
+                                   "check the FAQ for more info.");
+      } else {
+        qte.printStackTrace();
+        throw new RuntimeException("Problem listing capture devices, " +
+                                   "check the FAQ for more info.");
+      }
     }
-    return null;
+    //return null;
   }
 }

@@ -21,9 +21,9 @@ X   how can this be shut off for presentations?
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114027594;start=0
 X present mode wasn't reading the stop button color
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
-
-_ java 1.3 required message isn't clickable
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117552076
+X cleaned up the createFont() functions a little
+X java 1.3 required message isn't clickable
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117552076
 
 _ proper api for access to Graphics2D in PGraphics2
 _ proper/consistent api to access matrices in PGraphics, PGraphics3 et al
