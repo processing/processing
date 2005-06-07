@@ -25,12 +25,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final int QUAD_STRIP      = 7;
     public static final int POLYGON         = 8;
     
-    public static final int UP              = 0;
-    public static final int DOWN            = 1;
-    public static final int LEFT            = 2;
-    public static final int RIGHT           = 3;
-    public static final int FIRE            = 4;
-    
+    public static final int UP              = Canvas.UP;
+    public static final int DOWN            = Canvas.DOWN;
+    public static final int LEFT            = Canvas.LEFT;
+    public static final int RIGHT           = Canvas.RIGHT;
+    public static final int FIRE            = Canvas.FIRE;    
+    public static final int GAME_A          = Canvas.GAME_A;
+    public static final int GAME_B          = Canvas.GAME_B;
+    public static final int GAME_C          = Canvas.GAME_C;
+    public static final int GAME_D          = Canvas.GAME_D;
+
     public static final int RGB             = 0;
     public static final int HSB             = 1;
     
@@ -65,11 +69,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final void commandAction(Command c, Displayable d) {
         if (c == cmdExit) {
-            try {
-                destroyApp(true);
-                notifyDestroyed();
-            } catch (MIDletStateChangeException msce) {                
-            }
+            exit();
+        }
+    }
+    
+    public final void exit() {
+        try {
+            destroyApp(true);
+            notifyDestroyed();
+        } catch (MIDletStateChangeException msce) {                
         }
     }
     
@@ -739,6 +747,160 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         System.arraycopy(array2, 0, splice, index, length2);
         System.arraycopy(array, index, splice, index + length2, length - index);
         return splice;
+    }
+    
+    //// casting 
+    
+    public static final char toChar(boolean val) {
+        return (val ? 't' : 'f');
+    }
+    
+    public static final char toChar(byte val) {
+        return (char) (val & 0xff);
+    }
+    
+    public static final char toChar(int val) {
+        return (char) val;
+    }
+    
+    public static final char[] toChar(String val) {
+        return val.toCharArray();
+    }
+    
+    public static final char[] toChar(boolean[] val) {
+        char[] result = new char[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = val[i] ? 't' : 'f';
+        }
+        return result;
+    }
+    
+    public static final char[] toChar(byte[] val) {
+        char[] result = new char[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = (char) (val[i] & 0xff);
+        }
+        return result;
+    }
+    
+    public static final char[] toChar(int[] val) {
+        char[] result = new char[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = (char) val[i];
+        }
+        return result;
+    }
+    
+    public static final char[][] toChar(String[] val) {
+        char[][] result = new char[val.length][];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = val[i].toCharArray();
+        }
+        return result;
+    }
+    
+    public static final int toInt(boolean val) {
+        return (val ? 1 : 0);
+    }
+    
+    public static final int toInt(byte val) {
+        return (val & 0xff);
+    }
+    
+    public static final int toInt(char val) {
+        return val;
+    }
+    
+    public static final int toInt(String val) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(val);
+        } catch (NumberFormatException nfe) {
+        }
+        return result;
+    }
+    
+    public static final int[] toInt(boolean[] val) {
+        int[] result = new int[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = val[i] ? 't' : 'f';
+        }
+        return result;
+    }
+    
+    public static final int[] toInt(byte[] val) {
+        int[] result = new int[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = (int) (val[i] & 0xff);
+        }
+        return result;
+    }
+    
+    public static final int[] toInt(char[] val) {
+        int[] result = new int[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = (int) val[i];
+        }
+        return result;
+    }
+    
+    public static final int[] toInt(String[] val) {
+        int[] result = new int[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            try {
+                result[i] = Integer.parseInt(val[i]);
+            } catch (NumberFormatException nfe) {
+            }
+        }
+        return result;
+    }
+    
+    public static final String str(boolean val) {
+        return String.valueOf(val);
+    }
+    
+    public static final String str(byte val) {
+        return String.valueOf(val);
+    }
+    
+    public static final String str(char val) {
+        return String.valueOf(val);
+    }
+    
+    public static final String str(int val) {
+        return String.valueOf(val);
+    }
+    
+    public static final String[] str(boolean[] val) {
+        String[] result = new String[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = String.valueOf(val[i]);
+        }
+        return result;
+    }
+    
+    public static final String[] str(byte[] val) {
+        String[] result = new String[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = String.valueOf(val[i]);
+        }
+        return result;
+    }
+    
+    public static final String[] str(char[] val) {
+        String[] result = new String[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = String.valueOf(val[i]);
+        }
+        return result;
+    }
+    
+    public static final String[] str(int[] val) {
+        String[] result = new String[val.length];
+        for (int i = val.length - 1; i >= 0; i--) {
+            result[i] = String.valueOf(val[i]);
+        }
+        return result;
     }
     
     //// Experimental fixed point math routines here

@@ -96,33 +96,20 @@ public class PCanvas extends Canvas {
         //// different on some foreign (i.e. Korean) handsets
         if ((keyCode >= Canvas.KEY_NUM0) && (keyCode <= Canvas.KEY_NUM9)) {
             midlet.key = (char) ('0' + (keyCode - Canvas.KEY_NUM0));
+            midlet.keyCode = (int) midlet.key;
         } else {
             switch (keyCode) {
                 case Canvas.KEY_POUND:
                     midlet.key = '#';
+                    midlet.keyCode = (int) midlet.key;
                     break;
                 case Canvas.KEY_STAR:
                     midlet.key = '*';
+                    midlet.keyCode = (int) midlet.key;
                     break;
                 default:
-                    int action = getGameAction(keyCode);
-                    switch (action) {
-                        case Canvas.UP:
-                            midlet.keyCode = PMIDlet.UP;
-                            break;
-                        case Canvas.DOWN:
-                            midlet.keyCode = PMIDlet.DOWN;
-                            break;
-                        case Canvas.LEFT:
-                            midlet.keyCode = PMIDlet.LEFT;
-                            break;
-                        case Canvas.RIGHT:
-                            midlet.keyCode = PMIDlet.RIGHT;
-                            break;
-                        case Canvas.FIRE:
-                            midlet.keyCode = PMIDlet.FIRE;
-                            break;
-                    }                    
+                    midlet.key = 0xffff;
+                    midlet.keyCode = getGameAction(keyCode);
             }
         }
         midlet.keyPressed();
