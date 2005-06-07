@@ -738,7 +738,7 @@ public class PApplet extends Applet
     }
 
     String openglError =
-      "Before using OpenGL, you must first select " +
+      "Before using OpenGL, first select " +
       "Import Library > opengl from the Sketch menu.";
 
     try {
