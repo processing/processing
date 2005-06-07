@@ -935,6 +935,42 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final int fptoi(int value1) {
         return value1 >> FP_PRECISION;
     }
+        
+    /** Returns the fixed-point square root of a fixed-point value, approximated using Newton's method. */
+    public final int sqrt(int value_fp) {
+        int prev_fp, next_fp, error_fp, prev;        
+        //// initialize previous result
+        prev_fp = value_fp;        
+        next_fp = 0;
+        do {
+            prev = prev_fp >> FP_PRECISION;
+            if (prev == 0) {                
+                break;
+            }
+            //// calculate a new approximation
+            next_fp = (prev_fp + value_fp / prev) / 2;
+            if (prev_fp > next_fp) {
+                error_fp = prev_fp - next_fp;
+            } else {
+                error_fp = next_fp - prev_fp;
+            }
+            prev_fp = next_fp;
+        } while (error_fp > ONE);      
+        
+        return next_fp;
+    }
+    
+    public final int dist(int x1, int y1, int x2, int y2) {
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+        return sqrt((dx * dx + dy * dy) << FP_PRECISION);
+    }
+    
+    public final int dist_fp(int x1, int y1, int x2, int y2) {
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+        return sqrt(((dx * dx) >> FP_PRECISION) + ((dy * dy) >> FP_PRECISION));
+    }
     
     /** Returns the closest integer fixed-point value less than or equal to the specified fixed point value. */
     public final int floor(int value1) {
