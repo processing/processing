@@ -7,6 +7,64 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0091 - 6 june 2005
+
+
+[ major bug fixes ] 
+
+- european users rejoice: using processing from a user account with
+  non-ascii characters in the user name no longer causes a problem on
+  windows
+
+- error messages should be improved a bit when libraries or a code
+  folder are in use
+
+
+[ minor bug fixes ] 
+
+- keys in the editor now properly work while shift is down
+
+- printing too many chars to the console (32,000 of them) no longer
+  makes things choke
+
+- linux first checks to see if jikes is properly installed and built
+  for the current distro
+
+- better error message when Capture.list() fails
+
+- if sketchbook goes missing, default to a new location rather than
+  dying completely
+
+- improvements to running applets from the command line.. shouldn't
+  require --present option anymore
+
+- fixed a weird bug where curveVertex() had trouble with > 128 points
+
+- hitting escape now quits present mode
+
+- the runner stop button color wasn't being read from the preferences
+  file properly
+
+- "java 1.3 required" message when running in a 1.1 browser was broken
+
+
+[ minor api change ] 
+
+- createFont() functions cleared up a bit, they've changed from:
+  createFont(name, size)
+  createFont(name, size, charset)
+  createFont(name, size, smooth)
+  createFont(name, size, charset, smooth)
+  in previous releases to now look like: 
+  createFont(name, size)
+  createFont(name, size, smooth)
+  createFont(name, size, smooth, charset) 
+  (docs may not yet be updated)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0090 - 9 may 2005
 
 - fix for yet another undo bug fix that can cause code to be destroyed
