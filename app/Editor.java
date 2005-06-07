@@ -594,7 +594,7 @@ public class Editor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("Tools");
 
-    item = newJMenuItem("Auto Format", 'F', true);
+    item = newJMenuItem("Auto Format", 'T', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           new AutoFormat(Editor.this).show();
