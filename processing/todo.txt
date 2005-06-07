@@ -29,10 +29,9 @@ X if sketchbook folder doesn't exist, default to the old folder
 X   people remove their old p5 folder which contained their sketchbook
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116080833;start=0
 X add a tiny java tester app to the home page
-
-_ make sure gl examples are working properly before release
-_   actually probably a bug with building opengl stuff with run.sh on linux
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1117632460
+X make sure gl examples are working properly before release
+X   actually probably a bug with building opengl stuff with run.sh on linux
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1117632460
 
 fixed previously
 o runtime exceptions have stopped coming through (on pc only?)
