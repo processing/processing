@@ -768,7 +768,8 @@ didn't want to hold up beta any longer.
 libraries). Closing the window to shut things down usually works fine, 
 though even that might lock up sometimes. Make sure you save your 
 sketches before you run, in case you have to force-quit.
-<LI>The set() functions are fairly broken when using OpenGL.
+<LI>The get(), set(), loadPixels() and updatePixels() functions are
+fairly broken when using OpenGL.
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
 2D and 3D libraries, eventually we won't have to include the 3D code
@@ -777,13 +778,14 @@ when using 2D.
 <LI>Dragging the applet window around will often make Processing lock up
 <LI>2D graphics might be a bit flickery sometimes, try setting the
 framerate() to get things under control
-<LI>strokeWeight() doesn't work with P3D or OPENGL
+<LI>strokeWeight() doesn't work (properly) with P3D or OPENGL
 <LI>The placement of applets that are 100x100 is sometimes weird
 <LI>Sometimes things lock up when there are errors in code,
 for instance, when using libraries like OpenGL, video, or net.
 <LI>Errors are sometimes cryptic or don't even come through,
 particularly on the Mac. 
-<LI>int() and float() don't always work
+<LI>int() and float() don't always work, use ((int) blah) or ((float)
+blah) instead for the time being. or toInt(blah) and toFloat(blah).
 <LI>pause() and framerate() aren't working with the video library
 <LI>The beloved(?) "History" function from previous versions is
 missing. In the meantime, "Archive Sketch" might be useful. 

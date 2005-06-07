@@ -57,7 +57,7 @@ public class PApplet extends Applet
    * not be <EM>exactly</EM> 1.3 or 1.4. Instead, make sure you're
    * comparing against 1.3f or 1.4f, which will have the same amount
    * of error (i.e. 1.40000001). This could just be a double, but
-   * since Processing only uses floats, it's safer to do this,
+   * since Processing only uses floats, it's safer for this to be a float
    * because there's no good way to specify a double with the preproc.
    */
   public static final float javaVersion =
@@ -413,12 +413,6 @@ public class PApplet extends Applet
     keyEventMethods = new RegisteredMethods();
     disposeMethods = new RegisteredMethods();
 
-    // create a dummy graphics context
-    size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    //size(INITIAL_WIDTH, INITIAL_HEIGHT);
-    width = 0;  // use this to flag whether the width/height are valid
-    height = 0;
-
     try {
       getAppletContext();
       online = true;
@@ -426,6 +420,28 @@ public class PApplet extends Applet
       online = false;
     }
 
+    if (javaVersion < 1.3f) {
+      addMouseListener(new MouseAdapter() {
+          public void mousePressed(MouseEvent e) {
+            link("http://java.com/");
+          }
+        });
+      // no init to do, so don't cause no trouble, boy
+      return;
+      // call this after making the methods to minimize the
+      // number of places needing the javaVersion crap
+      // (also needs to check online first and create empty
+      // stop method register list)
+    }
+
+    // create a dummy graphics context
+    size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    //size(INITIAL_WIDTH, INITIAL_HEIGHT);
+    width = 0;  // use this to flag whether the width/height are valid
+    height = 0;
+
+    // this is automatically called in applets
+    // though it's here for applications anyway
     start();
   }
 
@@ -436,8 +452,9 @@ public class PApplet extends Applet
    * before getting things rolling.
    */
   public void start() {
-    if (thread != null) return;
+    if (javaVersion < 1.3f) return;
 
+    if (thread != null) return;
     thread = new Thread(this);
     thread.start();
   }
@@ -847,11 +864,11 @@ public class PApplet extends Applet
       screen.fillRect(0, 0, size.width, size.height);
       screen.setColor(Color.white);
       screen.setFont(new Font("Dialog", Font.PLAIN, 9));
-      screen.drawString("You need to install", 5, 15);
-      screen.drawString("Java 1.3 or later", 5, 25);
-      screen.drawString("to view this content.", 5, 35);
-      screen.drawString("Click here to visit", 5, 50);
-      screen.drawString("java.com and install.", 5, 60);
+      screen.drawString("You need to install", 3, 15);
+      screen.drawString("Java 1.3 or later", 3, 28);
+      screen.drawString("to view this content.", 3, 41);
+      screen.drawString("Click here to visit", 3, 59);
+      screen.drawString("java.com and install.", 3, 72);
       return;
     }
 
@@ -1304,9 +1321,6 @@ public class PApplet extends Applet
    * mousePressed, and mouseEvent will no longer be set.
    */
   public void mousePressed(MouseEvent e) {
-    if (javaVersion < 1.3f) {
-      link("http://java.com/");
-    }
     checkMouseEvent(e);
   }
 
@@ -1675,13 +1689,13 @@ public class PApplet extends Applet
    * or whatever you want as your browser, since Linux doesn't
    * yet have a standard method for launching URLs.
    */
-  public void link(String url, String frame) {
+  public void link(String url, String frameTitle) {
     if (online) {
       try {
-        if (frame == null) {
+        if (frameTitle == null) {
           getAppletContext().showDocument(new URL(url));
         } else {
-          getAppletContext().showDocument(new URL(url), frame);
+          getAppletContext().showDocument(new URL(url), frameTitle);
         }
       } catch (Exception e) {
         e.printStackTrace();
