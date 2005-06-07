@@ -25,6 +25,9 @@ X cleaned up the createFont() functions a little
 X java 1.3 required message isn't clickable
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117552076
 
+
+0092 core
+
 _ proper api for access to Graphics2D in PGraphics2
 _ proper/consistent api to access matrices in PGraphics, PGraphics3 et al
 
@@ -491,11 +494,11 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PGraphicsGL
 
-_ get() and set() are broken in opengl
+_ get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116782962;start=1#1
-_ updatePixels() seems to be having trouble
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1115630361;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116782962
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1115630361
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115557986
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
