@@ -302,20 +302,9 @@ public class PGraphics extends PImage implements PConstants {
   // Material properties
 
   public float ambientR, ambientG, ambientB;
-  public int ambientRi, ambientGi, ambientBi;
-
   public float specularR, specularG, specularB, specularA;
-  public int specularRi, specularGi, specularBi, specularAi;
-
   public float emissiveR, emissiveG, emissiveB;
-  public int emissiveRi, emissiveGi, emissiveBi;
-
   public float shininess;
-
-  // Used to shuttle lighting calcs around
-  // (no need to re-allocate all the time)
-  public float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
-  public float[] worldNormal = new float[4];
 
   // ........................................................
 
@@ -343,7 +332,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /** Maximum lights by default is 8, which is arbitrary,
       but is the minimum defined by OpenGL */
-  protected static final int MAX_LIGHTS = 8;
+  public static final int MAX_LIGHTS = 8;
 
   public int lightCount = 0;
 
@@ -379,57 +368,15 @@ public class PGraphics extends PImage implements PConstants {
       Internally these are stored as numbers between 0 and 1. */
   public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
 
+  /** Current specular color for lighting */
   public float lightSpecularR;
   public float lightSpecularG;
   public float lightSpecularB;
+
+  /** Current light falloff */
   public float lightFalloffConstant;
   public float lightFalloffLinear;
   public float lightFalloffQuadratic;
-
-  // ........................................................
-
-  // pos of first vertex of current shape in vertices array
-  protected int vertex_start;
-
-  // i think vertex_end is actually the last vertex in the current shape
-  // and is separate from vertexCount for occasions where drawing happens
-  // on endFrame with all the triangles being depth sorted
-  protected int vertex_end;
-
-  // vertices may be added during clipping against the near plane.
-  protected int vertex_end_including_clip_verts;
-
-  // used for sorting points when triangulating a polygon
-  // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
-  int vertex_order[] = new int[DEFAULT_VERTICES];
-
-  // ........................................................
-
-  public int pathCount;
-  public int pathOffset[] = new int[64];
-  public int pathLength[] = new int[64];
-
-  // ........................................................
-
-  // lines
-  static final int DEFAULT_LINES = 512;
-  PLine line;  // used for drawing
-  public int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
-  public int lineCount;
-
-  // ........................................................
-
-  // triangles
-  static final int DEFAULT_TRIANGLES = 256;
-  PTriangle triangle;
-  public int triangles[][] =
-    new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
-  public float triangleColors[][][] =
-    new float[DEFAULT_TRIANGLES][3][TRIANGLE_COLOR_COUNT];
-  public int triangleCount;   // total number of triangles
-
-  // cheap picking someday
-  int shape_index;
 
   // ........................................................
 
@@ -449,11 +396,8 @@ public class PGraphics extends PImage implements PConstants {
   /** Current vertical coordinate for texture, see above. */
   public float textureV;
 
+  /** Current image being used as a texture */
   public PImage textureImage;
-
-  static final int DEFAULT_TEXTURES = 3;
-  protected PImage textures[] = new PImage[DEFAULT_TEXTURES];
-  int texture_index;
 
   // ........................................................
 
@@ -469,7 +413,6 @@ public class PGraphics extends PImage implements PConstants {
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
   public int sphereDetail = 0;
-  float sphereX[], sphereY[], sphereZ[];
 
 
 
