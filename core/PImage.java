@@ -174,7 +174,8 @@ public class PImage implements PConstants, Cloneable {
     if ((mode == CORNER) || (mode == CORNERS)) {
       imageMode = mode;
     } else {
-      throw new RuntimeException("imageMode() only works with CORNER or CORNERS");
+      String msg = "imageMode() only works with CORNER or CORNERS";
+      throw new RuntimeException(msg);
     }
   }
 
@@ -1412,16 +1413,9 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  /**
-   * [toxi 030902]
-   * Creates a Targa32 formatted byte sequence of specified pixel buffer
-   *
-   * [fry 030917]
-   * Modified to write directly to OutputStream, because of
-   * memory issues with first making an array of the data.
-   *
-   * tga spec: http://organicbit.com/closecombat/formats/tga.html
-   */
+  // original TGA export method
+  // now replaced with version using RLE compression (see below)
+    /*
   static public boolean saveHeaderTGA(OutputStream output,
                                       int width, int height) {
     try {
@@ -1444,7 +1438,6 @@ public class PImage implements PConstants, Cloneable {
     }
     return false;
   }
-
 
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height) {
@@ -1471,7 +1464,97 @@ public class PImage implements PConstants, Cloneable {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return false;
+        return false;
+    } */
+
+
+  /**
+   * Creates a Targa32 formatted byte sequence of specified
+   * pixel buffer now using RLE compression
+   * spec used: http://www.wotsit.org/download.asp?f=tga
+   * </p>
+   * Also figured out how to avoid parsing the image upside-down
+   * (there's a header flag to set the image origin to top-left)
+   * </p>
+   * Contributed by toxi 8 May 2005
+   */
+  static public boolean saveTGA(OutputStream output, int pixels[],
+                                int width, int height) {
+    try {
+      byte header[] = new byte[18];
+
+      // set header info
+      header[2]  = 0x02+0x08;  // RGBA + RLE Compression
+      header[12] = (byte) (width & 0xff);
+      header[13] = (byte) (width >> 8);
+      header[14] = (byte) (height & 0xff);
+      header[15] = (byte) (height >> 8);
+      // bits per pixel
+      header[16] = 32;
+      // bits per colour component + origin at top-left
+      header[17] = 0x08+0x20;
+
+      output.write(header);
+
+      int maxLen = height * width;
+      int index = 0;
+      int col, prevCol;
+      int[] currPack = new int[128];
+
+      while (index<maxLen) {
+        boolean isRLE = false;
+        currPack[0] = col = pixels[index];
+        int rle = 1;
+        // try to find repeating bytes (min. len = 2 pixels)
+        while (index + rle < maxLen) {
+          if (col != pixels[index+rle] || rle==128) {
+            isRLE = (rle>1); // set flag for RLE parcel
+            break;
+          }
+          rle++;
+        }
+        // write compressed chunk (bit 7 = 1, bit 6-0 = runlength-1)
+        if (isRLE) {
+          output.write(0x80 | (rle-1));
+
+          output.write(col        & 0xff);
+          output.write(col >> 8   & 0xff);
+          output.write(col >> 16  & 0xff);
+          output.write(col >>> 24 & 0xff);
+
+        } else {
+          rle = 1;
+          while(index + rle<maxLen) {
+            int scanCol=pixels[index+rle];
+            if ((col != scanCol && rle<128) || rle<3) {
+              currPack[rle] = col = scanCol;
+            } else {
+              // if start of repeating colour patch was exit condition
+              // move run length back 2 pixels
+              if (col == scanCol) rle-=2;
+              break;
+            }
+            rle++;
+          }
+          // write uncompressed chunk (bit 7 = 0, bit 6-0 = runlength-1)
+          output.write(rle - 1);
+          for(int i = 0; i < rle; i++) {
+            col = currPack[i];
+            output.write(col        & 0xff);
+            output.write(col >> 8   & 0xff);
+            output.write(col >> 16  & 0xff);
+            output.write(col >>> 24 & 0xff);
+          }
+        }
+        index += rle;
+      }
+      output.flush();
+      return true;
+
+    } catch (IOException e) {
+      e.printStackTrace();  // exception will be thrown below
+      return false;
+    }
   }
 
 
@@ -1479,9 +1562,10 @@ public class PImage implements PConstants, Cloneable {
     try {
       OutputStream os = null;
 
+      boolean success = false;
       if (filename.toLowerCase().endsWith(".tga")) {
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        saveTGA(os, pixels, width, height);
+        success = saveTGA(os, pixels, width, height);
 
       } else {
         if (!filename.toLowerCase().endsWith(".tif") &&
@@ -1490,13 +1574,18 @@ public class PImage implements PConstants, Cloneable {
           filename += ".tif";
         }
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        saveTIFF(os, pixels, width, height);
+        success = saveTIFF(os, pixels, width, height);
       }
       os.flush();
       os.close();
 
     } catch (IOException e) {
+      //System.err.println("Error while saving image.");
       e.printStackTrace();
+      success = false;
+    }
+    if (!success) {
+      throw new RuntimeException("Error while saving image.");
     }
   }
 }
