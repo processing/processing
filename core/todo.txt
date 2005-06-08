@@ -1,15 +1,48 @@
 0092 core
+X proper/consistent api to access matrices in PGraphics/PGraphics3
+X   first use loadMatrix(), then m00, m01 etc
+_   find the post on the board and make a note of this
+X proper api for access to Graphics2D object in PGraphics2
+_   just add the current "g2" thing to the faq
+_   and make a note of it on the suggestions board
 
-_ proper api for access to Graphics2D in PGraphics2
-_ proper/consistent api to access matrices in PGraphics, PGraphics3 et al
+_ change PGraphics to PGraphics2
+_   change PGraphics2 to PGraphicsJava or PGraphicsJava2D
+_   maybe wait until the new shape stuff is done?
+
+_ vars like cameraX etc need to be in PGraphics
+_   otherwise g.xxxx won't work
+_   how far should this go? vertices etc?
+
+_ how to deal with triangles/lines and triangleCount and lineCount
+_   maybe just need a triangleImpl and lineImpl
+_   because it's too messy to retain the triangle objects and info
 
 _ need to test/straighten out load/update pixels
 loadPixels() and updatePixels() only need to be used when 
 touching pixels[]. All other functions including get(), set(),
 filter(), etc shouldn't need them. 
 _   fjen says blend() doens't work in JAVA2D
+_   the functions are fairly well separated now in PMethods
+_   just go through all the stuff to make sure it's setting properly
+_ don't do a loadPixels unless an updatePixels has completed
+_   tho this won't affect anything, since either it's an image buffer
+_   or it's the PGraphics object, which does an updatePixels() immediately
+_ if (modified) don't loadPixels again, just ignore it
+_   make a note that updatePixels() only sets a flag in PImage
+_     (but not PGraphics, which does it immediately)
+
+_ createGraphics(200, 200) to create same as source
+_   createGraphics(200, 200, P2D) to create 2D from 3D
+_   also, drawing a PGraphics2 doesn't seem to work
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
+_ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
+_   they're drawn as transparent and don't have their high bits set
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
 
 _ P3D not doing bilinear interpolation because smooth() has to be set
+_   (and smooth throws an error in P3D)
 _   how should this be handled? a hint? allowing smooth()?
 
 
@@ -156,26 +189,12 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
-_ createGraphics(200, 200) to create same as source
-_   createGraphics(200, 200, P2D) to create 2D from 3D
-_   also, drawing a PGraphics2 doesn't seem to work
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
-_ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
-_   they're drawn as transparent and don't have their high bits set
-http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
+_ alter bezier and curve matrices to use PMatrix
+_   float array stuff is redundant with code that's in PMatrix
+_   and PMatrix has to be included even w/o P3D so...
 _ y2 position of rectangles not same as y2 position of lines
 _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
-_ vars like cameraX etc need to be in PGraphics
-_   otherwise g.xxxx won't work
-_   how far should this go? vertices etc?
-_ don't do a loadPixels unless an updatePixels has completed
-_   tho this won't affect anything, since either it's an image buffer
-_   or it's the PGraphics object, which does an updatePixels() immediately
-_ if (modified) don't loadPixels again, just ignore it
-_   make a note that updatePixels() only sets a flag in PImage
-_     (but not PGraphics, which does it immediately)
 _ beginShape() 
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set

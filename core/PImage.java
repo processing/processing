@@ -1365,7 +1365,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   static public boolean saveHeaderTIFF(OutputStream output,
-                                      int width, int height) {
+                                       int width, int height) {
     try {
       byte tiff[] = new byte[768];
       System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
