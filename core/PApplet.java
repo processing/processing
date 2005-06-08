@@ -5687,7 +5687,7 @@ v              PApplet.this.stop();
 
 
   static public boolean saveHeaderTIFF(OutputStream output,
-                                      int width, int height) {
+                                       int width, int height) {
     return PGraphics.saveHeaderTIFF(output, width, height);
   }
 
@@ -5695,12 +5695,6 @@ v              PApplet.this.stop();
   static public boolean saveTIFF(OutputStream output, int pixels[],
                                  int width, int height) {
     return PGraphics.saveTIFF(output, pixels, width, height);
-  }
-
-
-  static public boolean saveHeaderTGA(OutputStream output,
-                                      int width, int height) {
-    return PGraphics.saveHeaderTGA(output, width, height);
   }
 
 
@@ -5914,6 +5908,12 @@ v              PApplet.this.stop();
   }
 
 
+  public void bezierDetail(int detail) {
+    if (recorder != null) recorder.bezierDetail(detail);
+    g.bezierDetail(detail);
+  }
+
+
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
@@ -5932,9 +5932,14 @@ v              PApplet.this.stop();
   }
 
 
-  public void bezierDetail(int detail) {
-    if (recorder != null) recorder.bezierDetail(detail);
-    g.bezierDetail(detail);
+  public float curvePoint(float a, float b, float c, float d, float t) {
+    return g.curvePoint(a, b, c, d, t);
+  }
+
+
+  public float curveTangent(float a, float b, float c, float d,
+                            float t) {
+    return g.curveTangent(a, b, c, d, t);
   }
 
 
@@ -5947,17 +5952,6 @@ v              PApplet.this.stop();
   public void curveTightness(float tightness) {
     if (recorder != null) recorder.curveTightness(tightness);
     g.curveTightness(tightness);
-  }
-
-
-  public float curvePoint(float a, float b, float c, float d, float t) {
-    return g.curvePoint(a, b, c, d, t);
-  }
-
-
-  public float curveTangent(float a, float b, float c, float d,
-                            float t) {
-    return g.curveTangent(a, b, c, d, t);
   }
 
 
@@ -6000,39 +5994,9 @@ v              PApplet.this.stop();
   }
 
 
-  public void textFont(PFont which, float size) {
-    if (recorder != null) recorder.textFont(which, size);
-    g.textFont(which, size);
-  }
-
-
-  public void textFont(PFont which) {
-    if (recorder != null) recorder.textFont(which);
-    g.textFont(which);
-  }
-
-
-  public void textSize(float size) {
-    if (recorder != null) recorder.textSize(size);
-    g.textSize(size);
-  }
-
-
-  public void textLeading(float leading) {
-    if (recorder != null) recorder.textLeading(leading);
-    g.textLeading(leading);
-  }
-
-
   public void textAlign(int align) {
     if (recorder != null) recorder.textAlign(align);
     g.textAlign(align);
-  }
-
-
-  public void textMode(int mode) {
-    if (recorder != null) recorder.textMode(mode);
-    g.textMode(mode);
   }
 
 
@@ -6043,6 +6007,36 @@ v              PApplet.this.stop();
 
   public float textDescent() {
     return g.textDescent();
+  }
+
+
+  public void textFont(PFont which) {
+    if (recorder != null) recorder.textFont(which);
+    g.textFont(which);
+  }
+
+
+  public void textFont(PFont which, float size) {
+    if (recorder != null) recorder.textFont(which, size);
+    g.textFont(which, size);
+  }
+
+
+  public void textLeading(float leading) {
+    if (recorder != null) recorder.textLeading(leading);
+    g.textLeading(leading);
+  }
+
+
+  public void textMode(int mode) {
+    if (recorder != null) recorder.textMode(mode);
+    g.textMode(mode);
+  }
+
+
+  public void textSize(float size) {
+    if (recorder != null) recorder.textSize(size);
+    g.textSize(size);
   }
 
 
@@ -6210,15 +6204,15 @@ v              PApplet.this.stop();
   }
 
 
-  public void printMatrix() {
-    if (recorder != null) recorder.printMatrix();
-    g.printMatrix();
+  public void loadMatrix() {
+    if (recorder != null) recorder.loadMatrix();
+    g.loadMatrix();
   }
 
 
-  public void cameraMode(int mode) {
-    if (recorder != null) recorder.cameraMode(mode);
-    g.cameraMode(mode);
+  public void printMatrix() {
+    if (recorder != null) recorder.printMatrix();
+    g.printMatrix();
   }
 
 
@@ -6245,6 +6239,12 @@ v              PApplet.this.stop();
                      float upX, float upY, float upZ) {
     if (recorder != null) recorder.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     g.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+  }
+
+
+  public void printCamera() {
+    if (recorder != null) recorder.printCamera();
+    g.printCamera();
   }
 
 
@@ -6278,12 +6278,6 @@ v              PApplet.this.stop();
                       float top, float znear, float zfar) {
     if (recorder != null) recorder.frustum(left, right, bottom, top, znear, zfar);
     g.frustum(left, right, bottom, top, znear, zfar);
-  }
-
-
-  public void printCamera() {
-    if (recorder != null) recorder.printCamera();
-    g.printCamera();
   }
 
 
@@ -6356,6 +6350,60 @@ v              PApplet.this.stop();
                         float maxX, float maxY, float maxZ, float maxA) {
     if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
     g.colorMode(mode, maxX, maxY, maxZ, maxA);
+  }
+
+
+  public void strokeWeight(float weight) {
+    if (recorder != null) recorder.strokeWeight(weight);
+    g.strokeWeight(weight);
+  }
+
+
+  public void strokeJoin(int join) {
+    if (recorder != null) recorder.strokeJoin(join);
+    g.strokeJoin(join);
+  }
+
+
+  public void strokeCap(int cap) {
+    if (recorder != null) recorder.strokeCap(cap);
+    g.strokeCap(cap);
+  }
+
+
+  public void noStroke() {
+    if (recorder != null) recorder.noStroke();
+    g.noStroke();
+  }
+
+
+  public void stroke(int rgb) {
+    if (recorder != null) recorder.stroke(rgb);
+    g.stroke(rgb);
+  }
+
+
+  public void stroke(float gray) {
+    if (recorder != null) recorder.stroke(gray);
+    g.stroke(gray);
+  }
+
+
+  public void stroke(float gray, float alpha) {
+    if (recorder != null) recorder.stroke(gray, alpha);
+    g.stroke(gray, alpha);
+  }
+
+
+  public void stroke(float x, float y, float z) {
+    if (recorder != null) recorder.stroke(x, y, z);
+    g.stroke(x, y, z);
+  }
+
+
+  public void stroke(float x, float y, float z, float a) {
+    if (recorder != null) recorder.stroke(x, y, z, a);
+    g.stroke(x, y, z, a);
   }
 
 
@@ -6515,7 +6563,8 @@ v              PApplet.this.stop();
   }
 
 
-  public void ambientLight(float red, float green, float blue, float x, float y, float z) {
+  public void ambientLight(float red, float green, float blue,
+                           float x, float y, float z) {
     if (recorder != null) recorder.ambientLight(red, green, blue, x, y, z);
     g.ambientLight(red, green, blue, x, y, z);
   }
@@ -6553,60 +6602,6 @@ v              PApplet.this.stop();
   public void lightSpecular(float x, float y, float z) {
     if (recorder != null) recorder.lightSpecular(x, y, z);
     g.lightSpecular(x, y, z);
-  }
-
-
-  public void strokeWeight(float weight) {
-    if (recorder != null) recorder.strokeWeight(weight);
-    g.strokeWeight(weight);
-  }
-
-
-  public void strokeJoin(int join) {
-    if (recorder != null) recorder.strokeJoin(join);
-    g.strokeJoin(join);
-  }
-
-
-  public void strokeCap(int cap) {
-    if (recorder != null) recorder.strokeCap(cap);
-    g.strokeCap(cap);
-  }
-
-
-  public void noStroke() {
-    if (recorder != null) recorder.noStroke();
-    g.noStroke();
-  }
-
-
-  public void stroke(int rgb) {
-    if (recorder != null) recorder.stroke(rgb);
-    g.stroke(rgb);
-  }
-
-
-  public void stroke(float gray) {
-    if (recorder != null) recorder.stroke(gray);
-    g.stroke(gray);
-  }
-
-
-  public void stroke(float gray, float alpha) {
-    if (recorder != null) recorder.stroke(gray, alpha);
-    g.stroke(gray, alpha);
-  }
-
-
-  public void stroke(float x, float y, float z) {
-    if (recorder != null) recorder.stroke(x, y, z);
-    g.stroke(x, y, z);
-  }
-
-
-  public void stroke(float x, float y, float z, float a) {
-    if (recorder != null) recorder.stroke(x, y, z, a);
-    g.stroke(x, y, z, a);
   }
 
 
