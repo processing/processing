@@ -23,32 +23,32 @@ public interface PMethods {
 
   public void beginShape(int kind);
 
-  public void normal(float nx, float ny, float nz);
+  public void normal(float nx, float ny, float nz);  // 3D
 
-  public void textureMode(int mode);
+  public void textureMode(int mode);  // 3D
 
-  public void texture(PImage image);
+  public void texture(PImage image);  // 3D
 
   public void vertex(float x, float y);
 
-  public void vertex(float x, float y, float u, float v);
+  public void vertex(float x, float y, float u, float v);  // 3D
 
-  public void vertex(float x, float y, float z);
+  public void vertex(float x, float y, float z);  // 3D
 
-  public void vertex(float x, float y, float z,
+  public void vertex(float x, float y, float z,  // 3D
                      float u, float v);
 
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3);
 
-  public void bezierVertex(float x1, float y1, float z1,
+  public void bezierVertex(float x1, float y1, float z1,  // 3D
                            float x2, float y2, float z2,
                            float x3, float y3, float z3);
 
   public void curveVertex(float x, float y);
 
-  public void curveVertex(float x, float y, float z);
+  public void curveVertex(float x, float y, float z);  // 3D
 
   public void endShape();
 
@@ -56,12 +56,12 @@ public interface PMethods {
 
   public void point(float x, float y);
 
-  public void point(float x, float y, float z);
+  public void point(float x, float y, float z);  // 3D
 
   public void line(float x1, float y1, float x2, float y2);
 
   public void line(float x1, float y1, float z1,
-                   float x2, float y2, float z2);
+                   float x2, float y2, float z2);  // 3D
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3);
@@ -77,7 +77,7 @@ public interface PMethods {
 
   //protected void rectImpl(float x1, float y1, float x2, float y2);
 
-  // REMOVED public void circle(float x, float y, float radius);
+  //
 
   public void ellipseMode(int mode);
 
@@ -85,10 +85,7 @@ public interface PMethods {
 
   //protected void ellipseImpl(float x, float y, float hradius, float vradius);
 
-  // REMOVED public void arcMode(int mode);
-
-  // REMOVED public void arc(float start, float stop,
-  //               float x, float y, float radius);
+  //
 
   public void arc(float x, float y, float hr, float vr,
                   float start, float stop);
@@ -98,8 +95,9 @@ public interface PMethods {
 
   //
 
-  // also discussed using the modes..
-  // but when rotating it's gonna make things totally bizarre.
+  // also considered using the modes for box() and sphere(),
+  // but then decided against because when rotating/scaling/etc
+  // it's gonna make things totally bizarre.
 
   // rectMode(CORNER, CORNERS, CENTER, CENTER_DIAMETER
   // box(x, y, z, w, h, d) CORNER
@@ -110,15 +108,13 @@ public interface PMethods {
   // sphere(x, y, z, r) CENTER
   // sphere(x, y, z, r) CORNER draws the ellipse starting int the corner
 
-  public void box(float size);
+  public void box(float size);  // 3D
 
-  public void box(float w, float h, float d);
+  public void box(float w, float h, float d);  // 3D
 
-  public void sphereDetail(int res);
+  public void sphereDetail(int res);  // 3D
 
-  public void sphere(float r);
-
-  //public void sphere(float x, float y, float z, float r);
+  public void sphere(float r);  // 3D
 
   //
 
@@ -128,6 +124,8 @@ public interface PMethods {
   public float bezierTangent(float a, float b, float c, float d,
                              float t);
 
+  public void bezierDetail(int detail);
+
   public void bezier(float x1, float y1,
                      float x2, float y2,
                      float x3, float y3,
@@ -136,19 +134,19 @@ public interface PMethods {
   public void bezier(float x1, float y1, float z1,
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
-                     float x4, float y4, float z4);
+                     float x4, float y4, float z4);  // 3D
 
-  public void bezierDetail(int detail);
-
-  public void curveDetail(int detail);
-
-  public void curveTightness(float tightness);
+  //
 
   public float curvePoint(float a, float b, float c, float d,
                           float t);
 
   public float curveTangent(float a, float b, float c, float d,
                             float t);
+
+  public void curveDetail(int detail);
+
+  public void curveTightness(float tightness);
 
   public void curve(float x1, float y1,
                     float x2, float y2,
@@ -158,7 +156,7 @@ public interface PMethods {
   public void curve(float x1, float y1, float z1,
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
-                    float x4, float y4, float z4);
+                    float x4, float y4, float z4);  // 3D
   //
 
   public void image(PImage image, float x1, float y1);
@@ -171,8 +169,8 @@ public interface PMethods {
                     int u1, int v1, int u2, int v2);
 
   //protected void imageImpl(PImage image,
-  //               float x1, float y1, float x2, float y2,
-  //               int u1, int v1, int u2, int v2);
+  //                         float x1, float y1, float x2, float y2,
+  //                         int u1, int v1, int u2, int v2);
 
   //
 
@@ -186,65 +184,77 @@ public interface PMethods {
 
   public void textFont(PFont which, float size);
 
-  public void textSize(float size);
-
   public void textLeading(float leading);
 
   public void textMode(int mode);
+
+  public void textSize(float size);
 
   public float textWidth(char c);
 
   public float textWidth(String s);
 
+  //
+
   public void text(char c, float x, float y);
 
-  public void text(char c, float x, float y, float z);
+  public void text(char c, float x, float y, float z);  // 3D
 
   public void text(String s, float x, float y);
 
-  public void text(String s, float x, float y, float z);
+  public void text(String s, float x, float y, float z);  // 3D
 
   public void text(String s, float x, float y, float w, float h);
 
-  public void text(String s, float x1, float y1, float x2, float y2, float z);
+  public void text(String s, float x, float y, float w, float h,  // 3D
+                   float z);
 
   public void text(int num, float x, float y);
 
-  public void text(int num, float x, float y, float z);
+  public void text(int num, float x, float y, float z);  // 3D
 
   public void text(float num, float x, float y);
 
-  public void text(float num, float x, float y, float z);
+  public void text(float num, float x, float y, float z);  // 3D
+
+  //protected void textImpl(char ch, float x, float y, float z);
+
+  //protected void textImplObject(PImage glyph,
+  //                              float x1, float y1, float z1,
+  //                              float x2, float y2, float z2,
+  //                              int u2, int v2);
+
+  //protected void textImplScreen(PImage glyph,
+  //                              int xx, int yy, //int x2, int y2,
+  //                              int w0, int h0);
 
   //
 
   public void translate(float tx, float ty);
 
-  public void translate(float tx, float ty, float tz);
-
-  public void angleMode(int mode);
+  public void translate(float tx, float ty, float tz);  // 3D
 
   public void rotate(float angle);
 
-  public void rotateX(float angle);
+  public void rotateX(float angle);  // 3D
 
-  public void rotateY(float angle);
+  public void rotateY(float angle);  // 3D
 
-  public void rotateZ(float angle);
+  public void rotateZ(float angle);  // 3D
 
-  public void rotate(float angle, float v0, float v1, float v2);
+  public void rotate(float angle, float v0, float v1, float v2);  // 3D
 
   public void scale(float s);
 
   public void scale(float sx, float sy);
 
-  public void scale(float sx, float sy, float sz);
+  public void scale(float sx, float sy, float sz);  // 3D
 
   //
 
-  public void push();
+  public void pushMatrix();
 
-  public void pop();
+  public void popMatrix();
 
   public void resetMatrix();
 
@@ -254,34 +264,43 @@ public interface PMethods {
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33);
+                          float n30, float n31, float n32, float n33);  // 3D
+
+  public void loadMatrix();
 
   public void printMatrix();
 
   //
 
-  public void cameraMode(int mode);
+  public void beginCamera();  // 3D
 
-  public void beginCamera();
+  public void endCamera();  // 3D
 
-  public void endCamera();
+  public void camera();  // 3D
 
-  public void ortho(float left, float right,
+  public void camera(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ);  // 3D
+
+  public void printCamera();  // 3D
+
+  //
+
+  public void ortho();  // 3D
+
+  public void ortho(float left, float right,  // 3D
                     float bottom, float top,
                     float near, float far);
 
-  public void perspective(float fovy, float aspect, float zNear, float zFar);
+  public void perspective();  // 3D
+
+  public void perspective(float fovy, float aspect,
+                          float zNear, float zFar);  // 3D
 
   public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar);
+                      float top, float znear, float zfar);  // 3D
 
-  public void lookat(float eyeX, float eyeY, float eyeZ,
-                     float centerX, float centerY, float centerZ,
-                     float upX, float upY, float upZ);
-
-  public void printCamera();
-
-  public void printProjection();
+  public void printProjection();  // 3D
 
   //
 
@@ -289,57 +308,17 @@ public interface PMethods {
 
   public float screenY(float x, float y);
 
-  public float screenX(float x, float y, float z);
+  public float screenX(float x, float y, float z);  // 3D
 
-  public float screenY(float x, float y, float z);
+  public float screenY(float x, float y, float z);  // 3D
 
-  public float screenZ(float x, float y, float z);
+  public float screenZ(float x, float y, float z);  // 3D
 
-  public float objectX(float x, float y, float z);
+  public float modelX(float x, float y, float z);  // 3D
 
-  public float objectY(float x, float y, float z);
+  public float modelY(float x, float y, float z);  // 3D
 
-  public float objectZ(float x, float y, float z);
-
-  //
-
-  public void lights();
-
-  public PLight createAmbient();
-
-  public PLight createDiffuse();
-
-  public PLight createSpecular();
-
-  public PLight createSpotlight();
-
-  public void light(myLight);
-
-
-  public void noLights();
-
-  public void light(int num, float x, float y, float z,
-                    float red, float green, float blue);
-
-  public void lightEnable(int num);
-
-  public void lightDisable(int num);
-
-  public void lightPosition(int num, float x, float y, float z);
-
-  public void lightAmbient(int num, float x, float y, float z);
-
-  public void lightDiffuse(int num, float x, float y, float z);
-
-  public void lightSpecular(int num, float x, float y, float z);
-
-  public void lightDirection(int num, float x, float y, float z);
-
-  public void lightFalloff(int num, float constant, float linear, float quadratic);
-
-  public void lightSpotAngle(int num, float spotAngle);
-
-  public void lightSpotConcentration(int num, float concentration);
+  public float modelZ(float x, float y, float z);  // 3D
 
   //
 
@@ -353,29 +332,19 @@ public interface PMethods {
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA);
 
-  public void noTint();
+  //
 
-  public void tint(int rgb);
+  //protected void colorCalc(float gray);
 
-  public void tint(float gray);
+  //protected void colorCalc(float gray, float alpha);
 
-  public void tint(float gray, float alpha);
+  //protected void colorCalc(float x, float y, float z);
 
-  public void tint(float x, float y, float z);
+  //protected void colorCalc(float x, float y, float z, float a);
 
-  public void tint(float x, float y, float z, float a);
+  //protected void colorCalcARGB(int argb);
 
-  public void noFill();
-
-  public void fill(int rgb);
-
-  public void fill(float gray);
-
-  public void fill(float gray, float alpha);
-
-  public void fill(float x, float y, float z);
-
-  public void fill(float x, float y, float z, float a);
+  //
 
   public void strokeWeight(float weight);
 
@@ -395,6 +364,103 @@ public interface PMethods {
 
   public void stroke(float x, float y, float z, float a);
 
+  protected void colorStroke();
+
+  //
+
+  public void noTint();
+
+  public void tint(int rgb);
+
+  public void tint(float gray);
+
+  public void tint(float gray, float alpha);
+
+  public void tint(float x, float y, float z);
+
+  public void tint(float x, float y, float z, float a);
+
+  //protected void tintFromCalc();
+
+  //
+
+  public void noFill();
+
+  public void fill(int rgb);
+
+  public void fill(float gray);
+
+  public void fill(float gray, float alpha);
+
+  public void fill(float x, float y, float z);
+
+  public void fill(float x, float y, float z, float a);
+
+  //protected void fillFromCalc();
+
+  //
+
+  public void ambient(int rgb);  // 3D
+
+  public void ambient(float gray);  // 3D
+
+  public void ambient(float x, float y, float z);  // 3D
+
+  //protected void ambientFromCalc();  // 3D
+
+  //
+
+  public void specular(int rgb);  // 3D
+
+  public void specular(float gray);  // 3D
+
+  public void specular(float gray, float alpha);  // 3D
+
+  public void specular(float x, float y, float z);  // 3D
+
+  public void specular(float x, float y, float z, float a);  // 3D
+
+  //protected void specularFromCalc();  // 3D
+
+  public void shininess(float shine);  // 3D
+
+  //
+
+  public void emissive(int rgb);  // 3D
+
+  public void emissive(float gray);  // 3D
+
+  public void emissive(float x, float y, float z);  // 3D
+
+  //protected void emissiveFromCalc();
+
+  //
+
+  public void lights();  // 3D
+
+  public void ambientLight(float red, float green, float blue);  // 3D
+
+  public void ambientLight(float red, float green, float blue,  // 3D
+                           float x, float y, float z);
+
+  public void directionalLight(float red, float green, float blue,  // 3D
+                               float nx, float ny, float nz);
+
+  public void pointLight(float red, float green, float blue,  // 3D
+                         float x, float y, float z);
+
+  public void spotLight(float red, float green, float blue,  // 3D
+                        float x, float y, float z,
+                        float nx, float ny, float nz,
+                        float angle, float concentration);
+
+  public void lightFalloff(float constant,
+                           float linear, float quadratic);  // 3D
+
+  public void lightSpecular(float x, float y, float z);  // 3D
+
+  //
+
   public void background(int rgb);
 
   public void background(float gray);
@@ -402,6 +468,8 @@ public interface PMethods {
   public void background(float x, float y, float z);
 
   public void background(PImage image);
+
+  //protected void backgroundFromCalc();
 
   public void clear();
 
@@ -439,19 +507,25 @@ public interface PMethods {
 
   //
 
-
   public void imageMode(int mode);
 
   public void smooth();
 
   public void noSmooth();
 
-  //
 
-  // now handled by PApplet
-  //public void loadPixels();
-  //public void updatePixels();
-  //public void updatePixels(int x, int y, int c, int d);
+  ///////////////////////////////////////////////////////////
+
+  // all functions below this point require pixel buffer manipulation
+  // and generally are wrapped or handled internally with a call to
+  // loadPixels or updatePixels.. not supported for vector subclasses.
+
+
+  public void loadPixels();
+
+  public void updatePixels();
+
+  public void updatePixels(int x, int y, int c, int d);
 
   //
 
@@ -465,19 +539,22 @@ public interface PMethods {
 
   public void set(int x, int y, PImage image);
 
+  //protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+  //                       PImage src) {
+
   //
 
   public void mask(int alpha[]);
 
   public void mask(PImage alpha);
 
+  //
+
   public void filter(int kind);
 
   public void filter(int kind, float param);
 
   //
-
-  //public void copy(PImage src, int dx, int dy);  // set instead
 
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2);
@@ -502,76 +579,18 @@ public interface PMethods {
 
   //
 
+  //static public boolean saveHeaderTIFF(OutputStream output,
+  //                                     int width, int height);
+
+  //static public boolean saveTIFF(OutputStream output, int pixels[],
+  //                               int width, int height);
+
+  //static public boolean saveHeaderTGA(OutputStream output,
+  //                                    int width, int height) {
+
+  //static public boolean saveTGA(OutputStream output, int pixels[],
+  //                              int width, int height) {
+
   public void save(String filename);
-
-  public void postSetup();
-
-  public void diffuse(int rgb);
-
-  public void diffuse(float gray);
-
-
-  public void diffuse(float gray, float alpha);
-
-
-  public void diffuse(float x, float y, float z);
-
-
-  public void diffuse(float x, float y, float z, float a);
-
-//////////////////////////////////////////////////////////////
-
-  public void ambient(int rgb);
-
-  public void ambient(float gray);
-
-  public void ambient(float x, float y, float z);
-
-//////////////////////////////////////////////////////////////
-
-  public void specular(int rgb);
-
-  public void specular(float gray);
-
-  public void specular(float gray, float alpha);
-
-  public void specular(float x, float y, float z);
-
-  public void specular(float x, float y, float z, float a);
-
-  public void shininess(float shine);
-
-  public void emissive(int rgb);
-
-  public void emissive(float gray);
-
-  public void emissive(float x, float y, float z);
-
-//////////////////////////////////////////////////////////////
-
-  public int createAmbientLight(int rgb);
-
-  public int createAmbientLight(float gray);
-
-  public int createAmbientLight(float lr, float lg, float lb);
-
-  public int createDirectionalLight(int rgb, float nx, float ny, float nz);
-
-  public int createDirectionalLight(float gray, float nx, float ny, float nz);
-
-  public int createDirectionalLight(float r, float g, float b, float nx, float ny, float nz);
-
-  public int createPointLight(int rgb, float x, float y, float z);
-
-  public int createPointLight(float gray, float x, float y, float z);
-
-  public int createPointLight(float lr, float lg, float lb, float x, float y, float z);
-
-  public int createSpotLight(int rgb, float x, float y, float z, float nx, float ny, float nz, float angle);
-
-  public int createSpotLight(float gray, float x, float y, float z, float nx, float ny, float nz, float angle);
-
-  public int createSpotLight(float lr, float lg, float lb, float x, float y, float z, float nx, float ny, float nz, float angle);
-}
 
 */
