@@ -710,7 +710,7 @@ public class PGraphics2 extends PGraphics {
   }
 
 
-  public void printMatrix() {
+  public void loadMatrix() {
     g2.getTransform().getMatrix(transform);
 
     m00 = (float) transform[0];
@@ -720,8 +720,6 @@ public class PGraphics2 extends PGraphics {
     m10 = (float) transform[1];
     m11 = (float) transform[3];
     m12 = (float) transform[5];
-
-    super.printMatrix();
   }
 
 
