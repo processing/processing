@@ -53,18 +53,18 @@ public class PGraphics3 extends PGraphics {
   // Lighting-related variables
 
   // store the facing direction to speed rendering
-  boolean useBackfaceCulling = false;
+  protected boolean useBackfaceCulling = false;  // is this in use?
 
   // Material properties
 
   public float ambientR, ambientG, ambientB;
-  public int ambientRi, ambientGi, ambientBi;
+  //public int ambientRi, ambientGi, ambientBi;
 
   public float specularR, specularG, specularB, specularA;
-  public int specularRi, specularGi, specularBi, specularAi;
+  //public int specularRi, specularGi, specularBi, specularAi;
 
   public float emissiveR, emissiveG, emissiveB;
-  public int emissiveRi, emissiveGi, emissiveBi;
+  //public int emissiveRi, emissiveGi, emissiveBi;
 
   public float shininess;
 
@@ -85,8 +85,8 @@ public class PGraphics3 extends PGraphics {
 
   // Used to shuttle lighting calcs around
   // (no need to re-allocate all the time)
-  public float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
-  public float[] worldNormal = new float[4];
+  protected float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
+  protected float[] worldNormal = new float[4];
 
   // ........................................................
 
@@ -2765,6 +2765,12 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+    throw new RuntimeException("Use applyMatrix() with a 4x4 matrix " +
+                               "when using OPENGL or P3D");
+  }
+
   /**
    * Apply a 4x4 transformation matrix. Same as glMultMatrix().
    * This call will be slow because it will try to calculate the
@@ -3268,68 +3274,13 @@ public class PGraphics3 extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // BACKGROUND
 
-
-  /**
-   * Takes an RGB or RGBA image and sets it as the background.
-   * <P>
-   * Note that even if the image is set as RGB, the high 8 bits of
-   * each pixel must be set (0xFF000000), because the image data will
-   * be copied directly to the screen.
-   * <P>
-   * Also clears out the zbuffer and stencil buffer if they exist.
-   */
-  public void background(PImage image) {
-    super.background(image);
-
-    for (int i = 0; i < pixelCount; i++) {
-      zbuffer[i] = MAX_FLOAT;
-      stencil[i] = 0;
-    }
+  protected void fillFromCalc() {
+    super.fillFromCalc();
+    ambientFromCalc();
   }
 
-
-  /**
-   * Clears pixel buffer.
-   * <P>
-   * With P3D and OPENGL, this also clears the stencil and zbuffer.
-   */
-  public void clear() {
-    //System.out.println("PGraphics3.clear(" +
-    //                 PApplet.hex(backgroundColor) + ")");
-    for (int i = 0; i < pixelCount; i++) {
-      pixels[i] = backgroundColor;
-      zbuffer[i] = MAX_FLOAT;
-      stencil[i] = 0;
-    }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // SMOOTH (not available, throws error)
-
-  // although should this bother throwing an error?
-  // could be a pain in the ass when trying to debug with opengl
-
-
-  public void smooth() {
-    String msg = "smooth() not available with P3D";
-    throw new RuntimeException(msg);
-  }
-
-
-  public void noSmooth() {
-    String msg = "noSmooth() not available with P3D";
-    throw new RuntimeException(msg);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
+  /*
   public void fill(int rgb) {
     super.fill(rgb);
     colorAmbient();
@@ -3357,6 +3308,7 @@ public class PGraphics3 extends PGraphics {
     super.fill(x, y, z, a);
     colorAmbient();
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -3367,25 +3319,25 @@ public class PGraphics3 extends PGraphics {
       ambient((float) rgb);
 
     } else {
-      colorFrom(rgb);
-      colorAmbient();
+      colorCalcARGB(rgb);
+      ambientFromCalc();
     }
   }
 
 
   public void ambient(float gray) {
     colorCalc(gray);
-    colorAmbient();
+    ambientFromCalc();
   }
 
 
   public void ambient(float x, float y, float z) {
     colorCalc(x, y, z);
-    colorAmbient();
+    ambientFromCalc();
   }
 
 
-  private void colorAmbient() {
+  protected void ambientFromCalc() {
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
@@ -3403,37 +3355,37 @@ public class PGraphics3 extends PGraphics {
       specular((float) rgb);
 
     } else {
-      colorFrom(rgb);
-      colorSpecular();
+      colorCalcARGB(rgb);
+      specularFromCalc();
     }
   }
 
 
   public void specular(float gray) {
     colorCalc(gray);
-    colorSpecular();
+    specularFromCalc();
   }
 
 
   public void specular(float gray, float alpha) {
     colorCalc(gray, alpha);
-    colorSpecular();
+    specularFromCalc();
   }
 
 
   public void specular(float x, float y, float z) {
     colorCalc(x, y, z);
-    colorSpecular();
+    specularFromCalc();
   }
 
 
   public void specular(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
-    colorSpecular();
+    specularFromCalc();
   }
 
 
-  protected void colorSpecular() {
+  protected void specularFromCalc() {
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
@@ -3445,6 +3397,11 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  public void shininess(float shine) {
+    shininess = shine;
+  }
+
+
   //////////////////////////////////////////////////////////////
 
 
@@ -3453,39 +3410,31 @@ public class PGraphics3 extends PGraphics {
       emissive((float) rgb);
 
     } else {
-      colorFrom(rgb);
-      colorEmissive();
+      colorCalcARGB(rgb);
+      emissiveFromCalc();
     }
   }
 
 
   public void emissive(float gray) {
     colorCalc(gray);
-    colorEmissive();
+    emissiveFromCalc();
   }
 
 
   public void emissive(float x, float y, float z) {
     colorCalc(x, y, z);
-    colorEmissive();
+    emissiveFromCalc();
   }
 
 
-  protected void colorEmissive() {
+  protected void emissiveFromCalc() {
     emissiveR = calcR;
     emissiveG = calcG;
     emissiveB = calcB;
     emissiveRi = calcRi;
     emissiveGi = calcGi;
     emissiveBi = calcBi;
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void shininess(float shine) {
-    shininess = shine;
   }
 
 
@@ -3615,6 +3564,7 @@ public class PGraphics3 extends PGraphics {
    * We should capitalize.
    *
    * Simon Greenwold, April 2005
+   * </PRE>
    */
   public void lights() {
     // need to make sure colorMode is RGB 255 here
@@ -3641,7 +3591,18 @@ public class PGraphics3 extends PGraphics {
   /**
    * Add an ambient light based on the current color mode.
    */
-  public void ambientLight(float r, float g, float b, float x, float y, float z) {
+  public void ambientLight(float r, float g, float b) {
+    ambientLight(r, g, b, 0, 0, 0);
+  }
+
+
+  /**
+   * Add an ambient light based on the current color mode.
+   * This version includes an (x, y, z) position for situations
+   * where the falloff distance is used.
+   */
+  public void ambientLight(float r, float g, float b,
+                           float x, float y, float z) {
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -3657,10 +3618,6 @@ public class PGraphics3 extends PGraphics {
     lightPosition(lightCount, x, y, z);
     lightCount++;
     //return lightCount-1;
-  }
-
-  public void ambientLight(float r, float g, float b) {
-    ambientLight(r, g, b, 0, 0, 0);
   }
 
 
@@ -3806,6 +3763,68 @@ public class PGraphics3 extends PGraphics {
     lightsNX[num] /= norm;
     lightsNY[num] /= norm;
     lightsNZ[num] /= norm;
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BACKGROUND
+
+
+  /**
+   * Takes an RGB or RGBA image and sets it as the background.
+   * <P>
+   * Note that even if the image is set as RGB, the high 8 bits of
+   * each pixel must be set (0xFF000000), because the image data will
+   * be copied directly to the screen.
+   * <P>
+   * Also clears out the zbuffer and stencil buffer if they exist.
+   */
+  public void background(PImage image) {
+    super.background(image);
+
+    for (int i = 0; i < pixelCount; i++) {
+      zbuffer[i] = MAX_FLOAT;
+      stencil[i] = 0;
+    }
+  }
+
+
+  /**
+   * Clears pixel buffer.
+   * <P>
+   * With P3D and OPENGL, this also clears the stencil and zbuffer.
+   */
+  public void clear() {
+    //System.out.println("PGraphics3.clear(" +
+    //                 PApplet.hex(backgroundColor) + ")");
+    for (int i = 0; i < pixelCount; i++) {
+      pixels[i] = backgroundColor;
+      zbuffer[i] = MAX_FLOAT;
+      stencil[i] = 0;
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SMOOTH (not available, throws error)
+
+  // although should this bother throwing an error?
+  // could be a pain in the ass when trying to debug with opengl
+
+
+  public void smooth() {
+    String msg = "smooth() not available with P3D";
+    throw new RuntimeException(msg);
+  }
+
+
+  public void noSmooth() {
+    String msg = "noSmooth() not available with P3D";
+    throw new RuntimeException(msg);
   }
 
 

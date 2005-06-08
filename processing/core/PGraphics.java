@@ -277,6 +277,201 @@ public class PGraphics extends PImage implements PConstants {
   public float textLeading;
 
 
+  //////////////////////////////////////////////////////////////
+
+  // VARIABLES FOR 3D (used to prevent the need for a subclass)
+
+
+  /** The modelview matrix. */
+  public PMatrix modelview;
+
+  /** Inverse modelview matrix, used for lighting. */
+  public PMatrix modelviewInv;
+
+  /**
+   * The camera matrix, the modelview
+   * will be set to this on beginFrame.
+   */
+  public PMatrix camera;
+
+  /** Inverse camera matrix */
+  public PMatrix cameraInv;
+
+  // ........................................................
+
+  // Material properties
+
+  public float ambientR, ambientG, ambientB;
+  public int ambientRi, ambientGi, ambientBi;
+
+  public float specularR, specularG, specularB, specularA;
+  public int specularRi, specularGi, specularBi, specularAi;
+
+  public float emissiveR, emissiveG, emissiveB;
+  public int emissiveRi, emissiveGi, emissiveBi;
+
+  public float shininess;
+
+  // Used to shuttle lighting calcs around
+  // (no need to re-allocate all the time)
+  public float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
+  public float[] worldNormal = new float[4];
+
+  // ........................................................
+
+  /** Camera field of view (in radians, as of rev 86) */
+  public float cameraFOV;
+
+  /** Position of the camera */
+  public float cameraX, cameraY, cameraZ;
+
+  public float cameraNear, cameraFar;
+  public float cameraAspect;
+
+  // projection matrix
+  public PMatrix projection; // = new PMatrix();
+
+  // ........................................................
+
+  /// the stencil buffer
+  public int stencil[];
+
+  /// depth buffer
+  public float zbuffer[];
+
+  // ........................................................
+
+  /** Maximum lights by default is 8, which is arbitrary,
+      but is the minimum defined by OpenGL */
+  protected static final int MAX_LIGHTS = 8;
+
+  public int lightCount = 0;
+
+  /** Light types */
+  public int lights[];
+
+  /** Light positions */
+  public float lightsX[], lightsY[], lightsZ[];
+
+  /** Light direction (normalized vector) */
+  public float lightsNX[], lightsNY[], lightsNZ[];
+
+  /** Light falloff */
+  public float lightsFalloffConstant[];
+  public float lightsFalloffLinear[];
+  public float lightsFalloffQuadratic[];
+
+  /** Light spot angle */
+  public float lightsSpotAngle[];
+
+  /** Cosine of light spot angle */
+  public float lightsSpotAngleCos[];
+
+  /** Light spot concentration */
+  public float lightsSpotConcentration[];
+
+  /** Diffuse colors for lights.
+   *  For an ambient light, this will hold the ambient color.
+   *  Internally these are stored as numbers between 0 and 1. */
+  public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
+
+  /** Specular colors for lights.
+      Internally these are stored as numbers between 0 and 1. */
+  public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
+
+  public float lightSpecularR;
+  public float lightSpecularG;
+  public float lightSpecularB;
+  public float lightFalloffConstant;
+  public float lightFalloffLinear;
+  public float lightFalloffQuadratic;
+
+  // ........................................................
+
+  // pos of first vertex of current shape in vertices array
+  protected int vertex_start;
+
+  // i think vertex_end is actually the last vertex in the current shape
+  // and is separate from vertexCount for occasions where drawing happens
+  // on endFrame with all the triangles being depth sorted
+  protected int vertex_end;
+
+  // vertices may be added during clipping against the near plane.
+  protected int vertex_end_including_clip_verts;
+
+  // used for sorting points when triangulating a polygon
+  // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
+  int vertex_order[] = new int[DEFAULT_VERTICES];
+
+  // ........................................................
+
+  public int pathCount;
+  public int pathOffset[] = new int[64];
+  public int pathLength[] = new int[64];
+
+  // ........................................................
+
+  // lines
+  static final int DEFAULT_LINES = 512;
+  PLine line;  // used for drawing
+  public int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
+  public int lineCount;
+
+  // ........................................................
+
+  // triangles
+  static final int DEFAULT_TRIANGLES = 256;
+  PTriangle triangle;
+  public int triangles[][] =
+    new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
+  public float triangleColors[][][] =
+    new float[DEFAULT_TRIANGLES][3][TRIANGLE_COLOR_COUNT];
+  public int triangleCount;   // total number of triangles
+
+  // cheap picking someday
+  int shape_index;
+
+  // ........................................................
+
+  /**
+   * Sets whether texture coordinates passed to
+   * vertex() calls will be based on coordinates that are
+   * based on the IMAGE or NORMALIZED.
+   */
+  public int textureMode;
+
+  /**
+   * Current horizontal coordinate for texture, will always
+   * be between 0 and 1, even if using textureMode(IMAGE).
+   */
+  public float textureU;
+
+  /** Current vertical coordinate for texture, see above. */
+  public float textureV;
+
+  public PImage textureImage;
+
+  static final int DEFAULT_TEXTURES = 3;
+  protected PImage textures[] = new PImage[DEFAULT_TEXTURES];
+  int texture_index;
+
+  // ........................................................
+
+  /**
+   * Normals
+   */
+  public float normalX, normalY, normalZ;
+  public int normalMode;
+  public int normalCount;
+
+  // ........................................................
+
+  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
+  // will be set by sphereDetail() or 1st call to sphere()
+  public int sphereDetail = 0;
+  float sphereX[], sphereY[], sphereZ[];
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -958,9 +1153,11 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Identical parameters and placement to ellipse,
    * but draws only an arc of that ellipse.
-   *
-   * angleMode() sets DEGREES or RADIANS for the start & stop
+   * <p/>
+   * start and stop are always radians because angleMode() was goofy.
    * ellipseMode() sets the placement.
+   * <p/>
+   * also tries to be smart about start < stop.
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -1078,6 +1275,28 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  protected void bezier_init() {
+    bezierDetail(bezier_detail);
+  }
+
+
+  public void bezierDetail(int detail) {
+    if (bezier_forward == null) {
+      bezier_forward = new float[4][4];
+      bezier_draw = new float[4][4];
+    }
+    bezier_detail = detail;
+    bezier_inited = true;
+
+    // setup matrix for forward differencing to speed up drawing
+    setup_spline_forward(detail, bezier_forward);
+
+    // multiply the basis and forward diff matrices together
+    // saves much time since this needn't be done for each curve
+    mult_spline_matrix(bezier_forward, bezier_basis, bezier_draw, 4);
+  }
+
+
   /**
    * Draw a quadratic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
@@ -1120,30 +1339,33 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void bezier_init() {
-    bezierDetail(bezier_detail);
+  //////////////////////////////////////////////////////////////
+
+
+  /**
+   * Get a location along a catmull-rom curve segment.
+   *
+   * @param t Value between zero and one for how far along the segment
+   */
+  public float curvePoint(float a, float b, float c, float d, float t) {
+    if (!curve_inited) curve_init();
+
+    float tt = t * t;
+    float ttt = t * tt;
+    float m[][] = curve_basis;
+
+    // not optimized (and probably need not be)
+    return (a * (ttt*m[0][0] + tt*m[1][0] + t*m[2][0] + m[3][0]) +
+            b * (ttt*m[0][1] + tt*m[1][1] + t*m[2][1] + m[3][1]) +
+            c * (ttt*m[0][2] + tt*m[1][2] + t*m[2][2] + m[3][2]) +
+            d * (ttt*m[0][3] + tt*m[1][3] + t*m[2][3] + m[3][3]));
   }
 
 
-  public void bezierDetail(int detail) {
-    if (bezier_forward == null) {
-      bezier_forward = new float[4][4];
-      bezier_draw = new float[4][4];
-    }
-    bezier_detail = detail;
-    bezier_inited = true;
-
-    // setup matrix for forward differencing to speed up drawing
-    setup_spline_forward(detail, bezier_forward);
-
-    // multiply the basis and forward diff matrices together
-    // saves much time since this needn't be done for each curve
-    mult_spline_matrix(bezier_forward, bezier_basis, bezier_draw, 4);
-  }
-
-
-  protected void curve_init() {
-    curve_mode(curve_detail, curve_tightness);
+  public float curveTangent(float a, float b, float c, float d,
+                            float t) {
+    System.err.println("curveTangent not yet implemented");
+    return 0;
   }
 
 
@@ -1154,6 +1376,11 @@ public class PGraphics extends PImage implements PConstants {
 
   public void curveTightness(float tightness) {
     curve_mode(curve_detail, tightness);
+  }
+
+
+  protected void curve_init() {
+    curve_mode(curve_detail, curve_tightness);
   }
 
 
@@ -1213,33 +1440,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Get a location along a catmull-rom curve segment.
-   *
-   * @param t Value between zero and one for how far along the segment
-   */
-  public float curvePoint(float a, float b, float c, float d, float t) {
-    if (!curve_inited) curve_init();
-
-    float tt = t * t;
-    float ttt = t * tt;
-    float m[][] = curve_basis;
-
-    // not optimized (and probably need not be)
-    return (a * (ttt*m[0][0] + tt*m[1][0] + t*m[2][0] + m[3][0]) +
-            b * (ttt*m[0][1] + tt*m[1][1] + t*m[2][1] + m[3][1]) +
-            c * (ttt*m[0][2] + tt*m[1][2] + t*m[2][2] + m[3][2]) +
-            d * (ttt*m[0][3] + tt*m[1][3] + t*m[2][3] + m[3][3]));
-  }
-
-
-  public float curveTangent(float a, float b, float c, float d,
-                            float t) {
-    System.err.println("curveTangent not yet implemented");
-    return 0;
-  }
-
-
-  /**
    * Draws a segment of Catmull-Rom curve.
    * <P>
    * As of 0070, this function no longer doubles the first and
@@ -1274,6 +1474,9 @@ public class PGraphics extends PImage implements PConstants {
                     float x4, float y4, float z4) {
     depthErrorXYZ("curve");
   }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   /**
@@ -1483,11 +1686,30 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Useful function to set the font and size at the same time.
+   * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
    */
-  public void textFont(PFont which, float size) {
-    textFont(which);
-    textSize(size);
+  public void textAlign(int align) {
+    textAlign = align;
+  }
+
+
+  public float textAscent() {
+    if (textFont != null) {
+      return textFont.ascent() * textSize;
+
+    } else {
+      throw new RuntimeException("use textFont() before textAscent()");
+    }
+  }
+
+
+  public float textDescent() {
+    if (textFont != null) {
+      return textFont.descent() * textSize;
+
+    } else {
+      throw new RuntimeException("use textFont() before textDescent()");
+    }
   }
 
 
@@ -1508,22 +1730,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the text size, also resets the value for the leading.
+   * Useful function to set the font and size at the same time.
    */
-  public void textSize(float size) {
-    if (textFont != null) {
-      if ((textMode == SCREEN) &&
-          (size != textFont.size)) {
-          throw new RuntimeException("can't use textSize() with " +
-                                     "textMode(SCREEN)");
-      }
-      textSize = size;
-      textLeading = textSize *
-        ((textFont.ascent() + textFont.descent()) * 1.275f);
-
-    } else {
-      throw new RuntimeException("use textFont() before textSize()");
-    }
+  public void textFont(PFont which, float size) {
+    textFont(which);
+    textSize(size);
   }
 
 
@@ -1532,14 +1743,6 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void textLeading(float leading) {
     textLeading = leading;
-  }
-
-
-  /**
-   * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
-   */
-  public void textAlign(int align) {
-    textAlign = align;
   }
 
 
@@ -1571,22 +1774,22 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public float textAscent() {
+  /**
+   * Sets the text size, also resets the value for the leading.
+   */
+  public void textSize(float size) {
     if (textFont != null) {
-      return textFont.ascent() * textSize;
+      if ((textMode == SCREEN) &&
+          (size != textFont.size)) {
+          throw new RuntimeException("can't use textSize() with " +
+                                     "textMode(SCREEN)");
+      }
+      textSize = size;
+      textLeading = textSize *
+        ((textFont.ascent() + textFont.descent()) * 1.275f);
 
     } else {
-      throw new RuntimeException("use textFont() before textAscent()");
-    }
-  }
-
-
-  public float textDescent() {
-    if (textFont != null) {
-      return textFont.descent() * textSize;
-
-    } else {
-      throw new RuntimeException("use textFont() before textDescent()");
+      throw new RuntimeException("use textFont() before textSize()");
     }
   }
 
@@ -2029,9 +2232,23 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Loads the current matrix into m00, m01 etc (or modelview and
+   * projection when using 3D) so that the values can be read.
+   * <P/>
+   * Note that there is no "updateMatrix" because that gets too
+   * complicated (unnecessary) when considering the 3D matrices.
+   */
+  public void loadMatrix() {
+    // no-op on base PGraphics because they're used directly
+  }
+
+
+  /**
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
+    loadMatrix();  // just to make sure
+
     float big = Math.abs(m00);
     if (Math.abs(m01) > big) big = Math.abs(m01);
     if (Math.abs(m02) > big) big = Math.abs(m02);
@@ -2066,10 +2283,6 @@ public class PGraphics extends PImage implements PConstants {
   // CAMERA (none are supported in 2D)
 
 
-  public void cameraMode(int mode) {
-    depthError("cameraMode");
-  }
-
   public void beginCamera() {
     depthError("beginCamera");
   }
@@ -2087,6 +2300,17 @@ public class PGraphics extends PImage implements PConstants {
                      float upX, float upY, float upZ) {
     depthError("camera");
   }
+
+  public void printCamera() {
+    depthError("printCamera");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // PROJECTION (none are supported in 2D)
+
 
   public void ortho() {
     depthError("ortho");
@@ -2109,10 +2333,6 @@ public class PGraphics extends PImage implements PConstants {
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
     depthError("frustum");
-  }
-
-  public void printCamera() {
-    depthError("printCamera");
   }
 
   public void printProjection() {
@@ -2375,7 +2595,7 @@ public class PGraphics extends PImage implements PConstants {
    * <P>
    * Note, no need for a bounds check since it's a 32 bit number.
    */
-  protected void colorFrom(int argb) {
+  protected void colorCalcARGB(int argb) {
     calcColor = argb;
     calcAi = (argb >> 24) & 0xff;
     calcRi = (argb >> 16) & 0xff;
@@ -2389,38 +2609,69 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void colorTint() {
-    tint = true;
-    tintR = calcR;
-    tintG = calcG;
-    tintB = calcB;
-    tintA = calcA;
-    tintRi = calcRi;
-    tintGi = calcGi;
-    tintBi = calcBi;
-    tintAi = calcAi;
-    tintColor = calcColor;
-    tintAlpha = calcAlpha;
+  //////////////////////////////////////////////////////////////
+
+
+  public void strokeWeight(float weight) {
+    strokeWeight = weight;
   }
 
 
-  protected void colorFill() {
-    fill = true;
-    //fillChanged = true;
-    fillR = calcR;
-    fillG = calcG;
-    fillB = calcB;
-    fillA = calcA;
-    fillRi = calcRi;
-    fillGi = calcGi;
-    fillBi = calcBi;
-    fillAi = calcAi;
-    fillColor = calcColor;
-    fillAlpha = calcAlpha;
+  public void strokeJoin(int join) {
+    strokeJoin = join;
   }
 
 
-  protected void colorStroke() {
+  public void strokeCap(int cap) {
+    strokeCap = cap;
+  }
+
+
+  public void noStroke() {
+    stroke = false;
+  }
+
+
+  /**
+   * Set the tint to either a grayscale or ARGB value. See notes
+   * attached to the fill() function.
+   */
+  public void stroke(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      stroke((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb);
+      strokeFromCalc();
+    }
+  }
+
+
+  public void stroke(float gray) {
+    colorCalc(gray);
+    strokeFromCalc();
+  }
+
+
+  public void stroke(float gray, float alpha) {
+    colorCalc(gray, alpha);
+    strokeFromCalc();
+  }
+
+
+  public void stroke(float x, float y, float z) {
+    colorCalc(x, y, z);
+    strokeFromCalc();
+  }
+
+
+  public void stroke(float x, float y, float z, float a) {
+    colorCalc(x, y, z, a);
+    strokeFromCalc();
+  }
+
+
+  protected void strokeFromCalc() {
     stroke = true;
     //strokeChanged = true;
     strokeR = calcR;
@@ -2433,17 +2684,6 @@ public class PGraphics extends PImage implements PConstants {
     strokeAi = calcAi;
     strokeColor = calcColor;
     strokeAlpha = calcAlpha;
-  }
-
-
-  protected void colorBackground() {
-    backgroundR = calcR;
-    backgroundG = calcG;
-    backgroundB = calcB;
-    backgroundRi = calcRi;
-    backgroundGi = calcGi;
-    backgroundBi = calcBi;
-    backgroundColor = calcColor;
   }
 
 
@@ -2464,32 +2704,47 @@ public class PGraphics extends PImage implements PConstants {
       tint((float) rgb);
 
     } else {
-      colorFrom(rgb);
-      colorTint();
+      colorCalcARGB(rgb);
+      tintFromCalc();
     }
   }
 
   public void tint(float gray) {
     colorCalc(gray);
-    colorTint();
+    tintFromCalc();
   }
 
 
   public void tint(float gray, float alpha) {
     colorCalc(gray, alpha);
-    colorTint();
+    tintFromCalc();
   }
 
 
   public void tint(float x, float y, float z) {
     colorCalc(x, y, z);
-    colorTint();
+    tintFromCalc();
   }
 
 
   public void tint(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
-    colorTint();
+    tintFromCalc();
+  }
+
+
+  protected void tintFromCalc() {
+    tint = true;
+    tintR = calcR;
+    tintG = calcG;
+    tintB = calcB;
+    tintA = calcA;
+    tintRi = calcRi;
+    tintGi = calcGi;
+    tintBi = calcBi;
+    tintAi = calcAi;
+    tintColor = calcColor;
+    tintAlpha = calcAlpha;
   }
 
 
@@ -2526,32 +2781,47 @@ public class PGraphics extends PImage implements PConstants {
       fill((float) rgb);
 
     } else {
-      colorFrom(rgb);
-      colorFill();
+      colorCalcARGB(rgb);
+      fillFromCalc();
     }
   }
 
   public void fill(float gray) {
     colorCalc(gray);
-    colorFill();
+    fillFromCalc();
   }
 
 
   public void fill(float gray, float alpha) {
     colorCalc(gray, alpha);
-    colorFill();
+    fillFromCalc();
   }
 
 
   public void fill(float x, float y, float z) {
     colorCalc(x, y, z);
-    colorFill();
+    fillFromCalc();
   }
 
 
   public void fill(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
-    colorFill();
+    fillFromCalc();
+  }
+
+
+  protected void fillFromCalc() {
+    fill = true;
+    fillR = calcR;
+    fillG = calcG;
+    fillB = calcB;
+    fillA = calcA;
+    fillRi = calcRi;
+    fillGi = calcGi;
+    fillBi = calcBi;
+    fillAi = calcAi;
+    fillColor = calcColor;
+    fillAlpha = calcAlpha;
   }
 
 
@@ -2629,7 +2899,8 @@ public class PGraphics extends PImage implements PConstants {
     depthError("ambientLight");
   }
 
-  public void ambientLight(float red, float green, float blue, float x, float y, float z) {
+  public void ambientLight(float red, float green, float blue,
+                           float x, float y, float z) {
     depthError("ambientLight");
   }
 
@@ -2663,68 +2934,6 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  public void strokeWeight(float weight) {
-    strokeWeight = weight;
-  }
-
-
-  public void strokeJoin(int join) {
-    strokeJoin = join;
-  }
-
-
-  public void strokeCap(int cap) {
-    strokeCap = cap;
-  }
-
-
-  public void noStroke() {
-    stroke = false;
-  }
-
-
-  /**
-   * Set the tint to either a grayscale or ARGB value. See notes
-   * attached to the fill() function.
-   */
-  public void stroke(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      stroke((float) rgb);
-
-    } else {
-      colorFrom(rgb);
-      colorStroke();
-    }
-  }
-
-
-  public void stroke(float gray) {
-    colorCalc(gray);
-    colorStroke();
-  }
-
-
-  public void stroke(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    colorStroke();
-  }
-
-
-  public void stroke(float x, float y, float z) {
-    colorCalc(x, y, z);
-    colorStroke();
-  }
-
-
-  public void stroke(float x, float y, float z, float a) {
-    colorCalc(x, y, z, a);
-    colorStroke();
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
   /**
    * Set the background to a gray or ARGB color.
    * <P>
@@ -2738,8 +2947,8 @@ public class PGraphics extends PImage implements PConstants {
       background((float) rgb);
 
     } else {
-      colorFrom(rgb);
-      colorBackground();
+      colorCalcARGB(rgb);
+      backgroundFromCalc();
     }
     clear();
   }
@@ -2751,7 +2960,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void background(float gray) {
     colorCalc(gray);
-    colorBackground();
+    backgroundFromCalc();
     clear();
   }
 
@@ -2762,8 +2971,19 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void background(float x, float y, float z) {
     colorCalc(x, y, z);
-    colorBackground();
+    backgroundFromCalc();
     clear();
+  }
+
+
+  protected void backgroundFromCalc() {
+    backgroundR = calcR;
+    backgroundG = calcG;
+    backgroundB = calcB;
+    backgroundRi = calcRi;
+    backgroundGi = calcGi;
+    backgroundBi = calcBi;
+    backgroundColor = calcColor;
   }
 
 
