@@ -34,39 +34,39 @@ import java.awt.image.*;
 public class PGraphics3 extends PGraphics {
 
   /** The modelview matrix. */
-  public PMatrix modelview;
+  //public PMatrix modelview;
 
   /** Inverse modelview matrix, used for lighting. */
-  public PMatrix modelviewInv;
+  //public PMatrix modelviewInv;
 
   /**
    * The camera matrix, the modelview
    * will be set to this on beginFrame.
    */
-  public PMatrix camera;
+  //public PMatrix camera;
 
   /** Inverse camera matrix */
-  public PMatrix cameraInv;
+  //public PMatrix cameraInv;
 
   // ........................................................
 
   // Lighting-related variables
 
   // store the facing direction to speed rendering
-  protected boolean useBackfaceCulling = false;  // is this in use?
+  //protected boolean useBackfaceCulling = false;  // is this in use?
 
   // Material properties
 
-  public float ambientR, ambientG, ambientB;
+  //public float ambientR, ambientG, ambientB;
   //public int ambientRi, ambientGi, ambientBi;
 
-  public float specularR, specularG, specularB, specularA;
+  //public float specularR, specularG, specularB, specularA;
   //public int specularRi, specularGi, specularBi, specularAi;
 
-  public float emissiveR, emissiveG, emissiveB;
+  //public float emissiveR, emissiveG, emissiveB;
   //public int emissiveRi, emissiveGi, emissiveBi;
 
-  public float shininess;
+  //public float shininess;
 
   // Whether or not we have to worry about vertex position for lighting calcs
   private boolean lightingDependsOnVertexPosition;
@@ -91,85 +91,85 @@ public class PGraphics3 extends PGraphics {
   // ........................................................
 
   /** Camera field of view (in radians, as of rev 86) */
-  public float cameraFOV;
+  //public float cameraFOV;
 
   /** Position of the camera */
-  public float cameraX, cameraY, cameraZ;
+  //public float cameraX, cameraY, cameraZ;
 
-  public float cameraNear, cameraFar;
-  public float cameraAspect;
+  //public float cameraNear, cameraFar;
+  //public float cameraAspect;
 
   /**
    * This is turned on at beginCamera, and off at endCamera
    * Currently we don't support nested begin/end cameras.
    * If we wanted to, this variable would have to become a stack.
    */
-  public boolean manipulatingCamera;
+  protected boolean manipulatingCamera;
 
   // projection matrix
-  public PMatrix projection; // = new PMatrix();
+  //public PMatrix projection; // = new PMatrix();
 
   // These two matrices always point to either the modelview
   // or the modelviewInv, but they are swapped during
   // when in camera maniuplation mode. That way camera transforms
   // are automatically accumulated in inverse on the modelview matrix.
-  public PMatrix forwardTransform;
-  public PMatrix reverseTransform;
+  protected PMatrix forwardTransform;
+  protected PMatrix reverseTransform;
 
   // ........................................................
 
   /// the stencil buffer
-  public int stencil[];
+  //public int stencil[];
 
   /// depth buffer
-  public float zbuffer[];
+  //public float zbuffer[];
 
   // ........................................................
 
   /** Maximum lights by default is 8, which is arbitrary,
       but is the minimum defined by OpenGL */
-  protected static final int MAX_LIGHTS = 8;
+  //public static final int MAX_LIGHTS = 8;
 
-  public int lightCount = 0;
+  //public int lightCount = 0;
 
   /** Light types */
-  public int lights[];
+  //public int lights[];
 
   /** Light positions */
-  public float lightsX[], lightsY[], lightsZ[];
+  //public float lightsX[], lightsY[], lightsZ[];
 
   /** Light direction (normalized vector) */
-  public float lightsNX[], lightsNY[], lightsNZ[];
+  //public float lightsNX[], lightsNY[], lightsNZ[];
 
   /** Light falloff */
-  public float lightsFalloffConstant[];
-  public float lightsFalloffLinear[];
-  public float lightsFalloffQuadratic[];
+  //public float lightsFalloffConstant[];
+  //public float lightsFalloffLinear[];
+  //public float lightsFalloffQuadratic[];
 
   /** Light spot angle */
-  public float lightsSpotAngle[];
+  //public float lightsSpotAngle[];
 
   /** Cosine of light spot angle */
-  public float lightsSpotAngleCos[];
+  //public float lightsSpotAngleCos[];
 
   /** Light spot concentration */
-  public float lightsSpotConcentration[];
+  //public float lightsSpotConcentration[];
 
   /** Diffuse colors for lights.
    *  For an ambient light, this will hold the ambient color.
    *  Internally these are stored as numbers between 0 and 1. */
-  public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
+  //public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
 
   /** Specular colors for lights.
       Internally these are stored as numbers between 0 and 1. */
-  public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
+  //public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
 
-  public float lightSpecularR;
-  public float lightSpecularG;
-  public float lightSpecularB;
-  public float lightFalloffConstant;
-  public float lightFalloffLinear;
-  public float lightFalloffQuadratic;
+  //public float lightSpecularR;
+  //public float lightSpecularG;
+  //public float lightSpecularB;
+  //public float lightFalloffConstant;
+  //public float lightFalloffLinear;
+  //public float lightFalloffQuadratic;
 
   // ........................................................
 
@@ -186,35 +186,35 @@ public class PGraphics3 extends PGraphics {
 
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
-  int vertex_order[] = new int[DEFAULT_VERTICES];
+  protected int vertex_order[] = new int[DEFAULT_VERTICES];
 
   // ........................................................
 
-  public int pathCount;
-  public int pathOffset[] = new int[64];
-  public int pathLength[] = new int[64];
+  protected int pathCount;
+  protected int pathOffset[] = new int[64];
+  protected int pathLength[] = new int[64];
 
   // ........................................................
 
   // lines
   static final int DEFAULT_LINES = 512;
-  PLine line;  // used for drawing
-  public int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
-  public int lineCount;
+  public PLine line;  // used for drawing
+  protected int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
+  protected int lineCount;
 
   // ........................................................
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
-  PTriangle triangle;
-  public int triangles[][] =
+  public PTriangle triangle;
+  protected int triangles[][] =
     new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
-  public float triangleColors[][][] =
+  protected float triangleColors[][][] =
     new float[DEFAULT_TRIANGLES][3][TRIANGLE_COLOR_COUNT];
-  public int triangleCount;   // total number of triangles
+  protected int triangleCount;   // total number of triangles
 
   // cheap picking someday
-  int shape_index;
+  public int shape_index;
 
   // ........................................................
 
@@ -223,18 +223,18 @@ public class PGraphics3 extends PGraphics {
    * vertex() calls will be based on coordinates that are
    * based on the IMAGE or NORMALIZED.
    */
-  public int textureMode;
+  //public int textureMode;
 
   /**
    * Current horizontal coordinate for texture, will always
    * be between 0 and 1, even if using textureMode(IMAGE).
    */
-  public float textureU;
+  //public float textureU;
 
   /** Current vertical coordinate for texture, see above. */
-  public float textureV;
+  //public float textureV;
 
-  public PImage textureImage;
+  //public PImage textureImage;
 
   static final int DEFAULT_TEXTURES = 3;
   protected PImage textures[] = new PImage[DEFAULT_TEXTURES];
@@ -245,16 +245,16 @@ public class PGraphics3 extends PGraphics {
   /**
    * Normals
    */
-  public float normalX, normalY, normalZ;
-  public int normalMode;
-  public int normalCount;
+  //public float normalX, normalY, normalZ;
+  //public int normalMode;
+  //public int normalCount;
 
   // ........................................................
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  public int sphereDetail = 0;
   float sphereX[], sphereY[], sphereZ[];
+  //public int sphereDetail = 0;
 
   // ........................................................
 
@@ -3341,9 +3341,9 @@ public class PGraphics3 extends PGraphics {
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
-    ambientRi = calcRi;
-    ambientGi = calcGi;
-    ambientBi = calcBi;
+    //ambientRi = calcRi;
+    //ambientGi = calcGi;
+    //ambientBi = calcBi;
   }
 
 
@@ -3390,10 +3390,10 @@ public class PGraphics3 extends PGraphics {
     specularG = calcG;
     specularB = calcB;
     specularA = calcA;
-    specularRi = calcRi;
-    specularGi = calcGi;
-    specularBi = calcBi;
-    specularAi = calcAi;
+    //specularRi = calcRi;
+    //specularGi = calcGi;
+    //specularBi = calcBi;
+    //specularAi = calcAi;
   }
 
 
@@ -3432,9 +3432,9 @@ public class PGraphics3 extends PGraphics {
     emissiveR = calcR;
     emissiveG = calcG;
     emissiveB = calcB;
-    emissiveRi = calcRi;
-    emissiveGi = calcGi;
-    emissiveBi = calcBi;
+    //emissiveRi = calcRi;
+    //emissiveGi = calcGi;
+    //emissiveBi = calcBi;
   }
 
 

@@ -1559,10 +1559,11 @@ public class PImage implements PConstants, Cloneable {
 
 
   public void save(String filename) {  // ignore
+    boolean success = false;
+
     try {
       OutputStream os = null;
 
-      boolean success = false;
       if (filename.toLowerCase().endsWith(".tga")) {
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
         success = saveTGA(os, pixels, width, height);
