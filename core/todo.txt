@@ -6,14 +6,15 @@ _   find the post on the board and make a note of this
 X proper api for access to Graphics2D object in PGraphics2
 _   just add the current "g2" thing to the faq
 _   and make a note of it on the suggestions board
+X vars like cameraX etc need to be in PGraphics
+X   otherwise g.xxxx won't work
+X   how far should this go? vertices etc?
+X   vertices not included because switching to triangleImpl and lineImpl
 
-_ change PGraphics to PGraphics2
+_ change PGraphics to PGraphics2 
+_   or not, because PGraphics has all the base stuff for 3D
 _   change PGraphics2 to PGraphicsJava or PGraphicsJava2D
 _   maybe wait until the new shape stuff is done?
-
-_ vars like cameraX etc need to be in PGraphics
-_   otherwise g.xxxx won't work
-_   how far should this go? vertices etc?
 
 _ how to deal with triangles/lines and triangleCount and lineCount
 _   maybe just need a triangleImpl and lineImpl
