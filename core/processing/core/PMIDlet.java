@@ -51,6 +51,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     private Display     display;
     private PCanvas     canvas;
     private Command     cmdExit;
+    private Command     cmdCustom;
     
     private Thread      thread;
     private boolean     running;
@@ -70,6 +71,21 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void commandAction(Command c, Displayable d) {
         if (c == cmdExit) {
             exit();
+        } else if (c == cmdCustom) {
+            softkeyPressed(c.getLabel());
+        }
+    }
+    
+    public void softkeyPressed(String softkey) {
+    }
+    
+    public final void softkey(String softkey) {
+        if (cmdCustom != null) {
+            canvas.removeCommand(cmdCustom);
+        }
+        if (softkey != null) {
+            cmdCustom = new Command(softkey, Command.SCREEN, 2);
+            canvas.addCommand(cmdCustom);
         }
     }
     
