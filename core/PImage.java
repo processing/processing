@@ -819,7 +819,7 @@ public class PImage implements PConstants, Cloneable {
    * <PRE>
    * BLEND - linear interpolation of colours: C = A*factor + B
    * ADD - additive blending with white clip: C = min(A*factor + B, 255)
-   * SUBSTRACT - substractive blending with black clip: C = max(B - A*factor, 0)
+   * SUBSTRACT - substractive blend with black clip: C = max(B - A*factor, 0)
    * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
    * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
    * REPLACE - destination colour equals colour of source pixel: C = A
@@ -1558,6 +1558,11 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  // TODO write reflection code here to use java 1.4 imageio methods
+  //      for writing out images that might be much better
+  //      won't want to use them in all cases.. how to determine?
+  // maybe for the 1.4 kids, would be nice to have:
+  //boolean ImageIO.write(RenderedImage im, String formatName, File output)
   public void save(String filename) {  // ignore
     boolean success = false;
 
