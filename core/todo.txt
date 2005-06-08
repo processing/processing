@@ -10,6 +10,7 @@ X vars like cameraX etc need to be in PGraphics
 X   otherwise g.xxxx won't work
 X   how far should this go? vertices etc?
 X   vertices not included because switching to triangleImpl and lineImpl
+X fix for copy() in java2d to make things a little speedier
 
 _ change PGraphics to PGraphics2 
 _   or not, because PGraphics has all the base stuff for 3D

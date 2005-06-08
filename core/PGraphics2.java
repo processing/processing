@@ -724,15 +724,18 @@ public class PGraphics2 extends PGraphics {
 
 
   public float screenX(float x, float y) {
-    g2.getTransform().getMatrix(transform);
-    //return m00*x + m01*y + m02;
-    return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
+    loadMatrix();
+    return super.screenX(x, y);
+    //g2.getTransform().getMatrix(transform);
+    //return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
   }
 
 
   public float screenY(float x, float y) {
-    g2.getTransform().getMatrix(transform);
-    return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
+    loadMatrix();
+    return super.screenY(x, y);
+    //g2.getTransform().getMatrix(transform);
+    //return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
   }
 
 
@@ -967,6 +970,19 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
+  public void mask(int alpha[]) {
+    throw new RuntimeException("mask() cannot be used with JAVA2D");
+  }
+
+
+  public void mask(PImage alpha) {
+    throw new RuntimeException("mask() cannot be used with JAVA2D");
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
   public void filter(int kind) {
     loadPixels();
     super.filter(kind);
@@ -984,12 +1000,32 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  public void copy(PImage src, int sx1, int sy1, int sx2, int sy2,
+  public void copy(int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    if ((sw != dw) || (sh != dh)) {
+      // use slow version if changing size
+      copy(this, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+    if (imageMode == CORNERS) {
+      sw -= sx;
+      sh -= sy;
+    }
+    dx = dx - sx;  // java2d's "dx" is the delta, not dest
+    dy = dy - sy;
+    g2.copyArea(sx, sy, sw, sh, dx, dy);
+  }
+
+
+  public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     loadPixels();
     super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
     updatePixels();
   }
+
+
+  //////////////////////////////////////////////////////////////
 
 
   public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
@@ -1022,10 +1058,11 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+
   public void save(String filename) {
     loadPixels();
     super.save(filename);
-
-    //boolean ImageIO.write(RenderedImage im, String formatName, File output)
   }
 }
