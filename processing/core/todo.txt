@@ -1,4 +1,5 @@
 0092 core
+X rle-compressed tga save() method added by toxi
 X proper/consistent api to access matrices in PGraphics/PGraphics3
 X   first use loadMatrix(), then m00, m01 etc
 _   find the post on the board and make a note of this
