@@ -933,6 +933,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     /** Returns the integer less than or equal to the fixed point value. */
     public final int fptoi(int value1) {
+        if (value1 < 0) {
+            value1 += ONE - 1;
+        }
         return value1 >> FP_PRECISION;
     }
         
@@ -979,27 +982,13 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     /** Returns the closest integer fixed-point value greater than or equal to the specified fixed point value. */
     public final int ceil(int value1) {
-        //// first get just the floor of the value
-        int result = floor(value1);
-        //// see if there is a fractional part
-        if ((value1 - result) > 0) {
-            //// if so, increment up to the next integer value
-            result += ONE;
-        }
-        //// return result
-        return result;
+        return ((value1 + ONE - 1) >> FP_PRECISION) << FP_PRECISION;
     }
     
+    /** Returns the nearest integer fixed-point value to the specified fixed point value. */
     public final int round(int value1) {
-        //// first get just the floor of the value
-        int result = floor(value1);
-        //// see if there is a fractional part greater than or equal to one half
-        if ((value1 - result) >= (ONE / 2)) {
-            //// if so, increment up to the next integer value
-            result += ONE;
-        }
         //// return result
-        return result;
+        return ((value1 + (ONE >> 1)) >> FP_PRECISION) << FP_PRECISION;
     }
     
     /** Returns the fixed point radian equivalent to the specified fixed point degree value. */
@@ -1019,6 +1008,38 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         //// convert to degrees
         int index = (rad * 180 / PI + 90) % 360;
         return sin[index];
+    }
+    
+    public final int atan(int value1) {
+        int result;
+        if (value1 <= ONE) {
+            result = div(value1, ONE + mul(((int) (0.28f * ONE)), mul(value1, value1)));
+        } else {
+            result = HALF_PI - div(value1, (mul(value1, value1) + ((int) (0.28f * ONE))));
+        }
+        return result;
+    }
+    
+    public final int atan2(int y, int x) {
+        int result;
+        if ((y == 0) && (x == 0)) {
+            result = 0;
+        } else if (x > 0) {
+            result = atan(div(y, x));
+        } else if (x < 0) {
+            if (y < 0) {
+                result = -(PI - atan(div(-y, -x)));
+            } else {
+                result = PI - atan(div(y, -x));
+            }
+        } else {
+            if (y < 0) {
+                result = -HALF_PI;
+            } else {
+                result = HALF_PI;
+            }
+        }
+        return result;
     }
     
     /** Lookup table for sin function, indexed by degrees. */
