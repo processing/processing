@@ -5289,8 +5289,8 @@ v              PApplet.this.stop();
       String folder = System.getProperty("user.dir");
       String name = null;
       boolean present = false;
-      Color backgroundColor = Color.BLACK;
-      Color stopColor = Color.GRAY;
+      Color backgroundColor = Color.black; //BLACK;
+      Color stopColor = Color.gray; //GRAY;
       GraphicsDevice displayDevice = null;
 
       String param = null, value = null;
@@ -5484,7 +5484,7 @@ v              PApplet.this.stop();
         frame.setLayout(null);
         frame.add(applet);
 
-        if (backgroundColor == Color.BLACK) {
+        if (backgroundColor == Color.black) {  //BLACK) {
           // this means no bg color unless specified
           backgroundColor = SystemColor.control;
         }
