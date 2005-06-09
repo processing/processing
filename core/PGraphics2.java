@@ -99,7 +99,7 @@ public class PGraphics2 extends PGraphics {
     allocate();
 
     // clear the screen with the old background color
-    background(backgroundColor);
+    //background(backgroundColor);
   }
 
 
