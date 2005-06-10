@@ -1057,8 +1057,8 @@ public class PGraphicsGL extends PGraphics3 {
   }
   */
 
-  protected void colorFill() {
-    super.colorFill();
+  protected void fillFromCalc() {
+    super.fillFromCalc();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
                     new float[] { calcR, calcG, calcB, calcA });
   }
