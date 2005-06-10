@@ -1,4 +1,5 @@
 0092 pde
+X more info in the todo about event handling
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -457,31 +458,11 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 TOOLS / Create Font
 
-_ createFont not working from applets
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
 _ create the tool object on startup, then use thread to getAllFonts()
 _ close/hide window on 'ESC'
 _ loading is very slow on the first time (getting all font names)
 _   show a progress/status bar while it's happening?
 _   (would be useful to at least tell user that system not locked up)
-_ font encoding issues 
-_   java seems to force straight windows encoding.. (problem for pi fonts)
-_   opentype/cff fonts don't work with live loading from the app
-_   many (all?) opentype fonts won't show up or aren't supported
-_     this may be only cff fonts that have trouble
-_   when encoding is not the standard encoding, problematic
-_     so sonata otf and sonata don't seem to have any chars at all
-_ available font issues
-_   is getFontList returning a different set of fonts from device2d?
-_     try it out on java 1.3 versus 1.4
-_   getAllFonts() not quite working for many fonts
-_   i.e. Orator Std on windows.. macosx seems to be ok
-_   is getFamilyNames() any different/better?
-_   when did this break? 1.4.1? 1.4.x vs 1.3?
-_   may be that cff fonts won't work?
-_   or is it only those with ps names?
-_   
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
 _ create font with user-specified charsets
 
 
