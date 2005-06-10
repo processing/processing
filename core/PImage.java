@@ -36,8 +36,6 @@ import java.io.*;
  * Code for copying, resizing, scaling, and blending contributed
  * by <A HREF="http://www.toxi.co.uk">toxi</A>
  * <P>
- * Gaussian blur code contributed by
- * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
  */
 public class PImage implements PConstants, Cloneable {
 
@@ -532,9 +530,11 @@ public class PImage implements PConstants, Cloneable {
    * <LI>filter(OPAQUE) set all the high bits in the image to opaque
    * <LI>filter(THRESHOLD) converts the image to black and white.
    * </UL>
-   *
-   * Gaussian blur code contributed by Mario Klingemann
-   * http://incubator.quasimondo.com
+   * Luminance conversion code contributed by
+   * <A HREF="http://www.toxi.co.uk">toxi</A>
+   * <P/>
+   * Gaussian blur code contributed by
+   * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    */
   public void filter(int kind) {
     switch (kind) {
@@ -599,9 +599,8 @@ public class PImage implements PConstants, Cloneable {
    * <LI>filter(THRESHOLD, float center) allows you to set the
    * center point for the threshold. It takes a value from 0 to 1.0.
    * </UL>
-   *
-   * Gaussian blur code contributed by Mario Klingemann
-   * http://incubator.quasimondo.com
+   * Gaussian blur code contributed by
+   * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    */
   public void filter(int kind, float param) {
     switch (kind) {
@@ -1258,6 +1257,9 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  /**
+   * returns the fractional portion of a number: frac(2.3) = .3;
+   */
   private static float frac(float x) {
     return (x - (int) x);
   }
@@ -1470,107 +1472,155 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Creates a Targa32 formatted byte sequence of specified
-   * pixel buffer now using RLE compression
-   * spec used: http://www.wotsit.org/download.asp?f=tga
+   * pixel buffer now using RLE compression.
    * </p>
    * Also figured out how to avoid parsing the image upside-down
    * (there's a header flag to set the image origin to top-left)
    * </p>
-   * Contributed by toxi 8 May 2005
+   * New version starting with rev 92 takes format setting into account:
+   * <TT>ALPHA</TT> images written as 8bit grayscale (uses lowest byte)
+   * <TT>RGB</TT> &rarr; 24 bits
+   * <TT>ARGB</TT> &rarr; 32 bits
+   * all versions are RLE compressed
+   * </p>
+   * Contributed by toxi 8-10 May 2005, based on this RLE
+   * <A HREF="http://www.wotsit.org/download.asp?f=tga">specification</A>
    */
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height, int format) {
-    if ((format != ARGB) && (format != RGB)) {
-      throw new RuntimeException("Only ARGB and RGB images can be saved " +
-                                 "as .tga files");
-    }
+     byte header[] = new byte[18];
 
-    try {
-      byte header[] = new byte[18];
+     // save ALPHA images as 8bit grayscale
+     if (format == ALPHA) {
+       header[2] = 0x0B;
+       header[16] = 0x08;
+       header[17] = 0x28;
 
-      // set header info
-      header[2]  = 0x02+0x08;  // RGBA + RLE Compression
-      header[12] = (byte) (width & 0xff);
-      header[13] = (byte) (width >> 8);
-      header[14] = (byte) (height & 0xff);
-      header[15] = (byte) (height >> 8);
+     }  else if (format == RGB) {
+       header[2] = 0x0A;
+       header[16] = 24;
+       header[17] = 0x20;
 
-      if (format == RGB) {
-        header[16] = 24; // bits per pixel
-        header[17] = 0x00 + 0x20; // no alpha channel bits
+     } else if (format == ARGB) {
+       header[2] = 0x0A;
+       header[16] = 32;
+       header[17] = 0x28;
 
-      } else {  // ARGB
-        // bits per pixel
-        header[16] = 32;
-        // bits per colour component + origin at top-left
-        header[17] = 0x08+0x20;
-      }
+     } else {
+       throw new RuntimeException("Image format not recognized inside save()");
+     }
+     // set image dimensions lo-hi byte order
+     header[12] = (byte) (width & 0xff);
+     header[13] = (byte) (width >> 8);
+     header[14] = (byte) (height & 0xff);
+     header[15] = (byte) (height >> 8);
 
-      output.write(header);
+     try {
+       output.write(header);
 
-      int maxLen = height * width;
-      int index = 0;
-      int col, prevCol;
-      int[] currPack = new int[128];
+       int maxLen = height * width;
+       int index = 0;
+       int col, prevCol;
+       int[] currChunk = new int[128];
 
-      while (index<maxLen) {
-        boolean isRLE = false;
-        currPack[0] = col = pixels[index];
-        int rle = 1;
-        // try to find repeating bytes (min. len = 2 pixels)
-        while (index + rle < maxLen) {
-          if (col != pixels[index+rle] || rle==128) {
-            isRLE = (rle>1); // set flag for RLE parcel
-            break;
-          }
-          rle++;
-        }
-        // write compressed chunk (bit 7 = 1, bit 6-0 = runlength-1)
-        if (isRLE) {
-          output.write(0x80 | (rle-1));
+       // 8bit image exporter is in separate loop
+       // to avoid excessive conditionals...
+       if (format == ALPHA) {
+         while (index < maxLen) {
+           boolean isRLE = false;
+           int rle = 1;
+           currChunk[0] = col = pixels[index] & 0xff;
+           while (index + rle < maxLen) {
+             if (col != (pixels[index + rle]&0xff) || rle == 128) {
+               isRLE = (rle > 1);
+               break;
+             }
+             rle++;
+           }
+           if (isRLE) {
+             output.write(0x80 | (rle - 1));
+             output.write(col);
 
-          output.write(col        & 0xff);
-          output.write(col >> 8   & 0xff);
-          output.write(col >> 16  & 0xff);
-          if (format == ARGB) {
-            output.write(col >>> 24 & 0xff);
-          }
+           } else {
+             rle = 1;
+             while (index + rle < maxLen) {
+               int cscan = pixels[index + rle] & 0xff;
+               if ((col != cscan && rle < 128) || rle < 3) {
+                 currChunk[rle] = col = cscan;
+               } else {
+                 if (col == cscan) rle -= 2;
+                 break;
+               }
+               rle++;
+             }
+             output.write(rle - 1);
+             for (int i = 0; i < rle; i++) output.write(currChunk[i]);
+           }
+           index += rle;
+         }
+       } else {  // export 24/32 bit TARGA
+         while (index < maxLen) {
+           boolean isRLE = false;
+           currChunk[0] = col = pixels[index];
+           int rle = 1;
+           // try to find repeating bytes (min. len = 2 pixels)
+           // maximum chunk size is 128 pixels
+           while (index + rle < maxLen) {
+             if (col != pixels[index + rle] || rle == 128) {
+               isRLE = (rle > 1); // set flag for RLE chunk
+               break;
+             }
+             rle++;
+           }
+           if (isRLE) {
+             output.write(128 | (rle - 1));
+             output.write(col & 0xff);
+             output.write(col >> 8 & 0xff);
+             output.write(col >> 16 & 0xff);
+             if (format == ARGB) output.write(col >>> 24 & 0xff);
 
-        } else {
-          rle = 1;
-          while(index + rle<maxLen) {
-            int scanCol=pixels[index+rle];
-            if ((col != scanCol && rle<128) || rle<3) {
-              currPack[rle] = col = scanCol;
-            } else {
-              // if start of repeating colour patch was exit condition
-              // move run length back 2 pixels
-              if (col == scanCol) rle-=2;
-              break;
-            }
-            rle++;
-          }
-          // write uncompressed chunk (bit 7 = 0, bit 6-0 = runlength-1)
-          output.write(rle - 1);
-          for(int i = 0; i < rle; i++) {
-            col = currPack[i];
-            output.write(col        & 0xff);
-            output.write(col >> 8   & 0xff);
-            output.write(col >> 16  & 0xff);
-            if (format == ARGB) {
-              output.write(col >>> 24 & 0xff);
-            }
-          }
-        }
-        index += rle;
-      }
-      output.flush();
-      return true;
+           } else {  // not RLE
+             rle = 1;
+             while (index + rle < maxLen) {
+               if ((col != pixels[index + rle] && rle < 128) || rle < 3) {
+                 currChunk[rle] = col = pixels[index + rle];
+               } else {
+                 // check if the exit condition was the start of
+                 // a repeating colour
+                 if (col == pixels[index + rle]) rle -= 2;
+                 break;
+               }
+               rle++;
+             }
+             // write uncompressed chunk
+             output.write(rle - 1);
+             if (format == ARGB) {
+               for (int i = 0; i < rle; i++) {
+                 col = currChunk[i];
+                 output.write(col & 0xff);
+                 output.write(col >> 8 & 0xff);
+                 output.write(col >> 16 & 0xff);
+                 output.write(col >>> 24 & 0xff);
+               }
+             } else {
+               for (int i = 0; i < rle; i++) {
+                 col = currChunk[i];
+                 output.write(col & 0xff);
+                 output.write(col >> 8 & 0xff);
+                 output.write(col >> 16 & 0xff);
+               }
+             }
+           }
+           index += rle;
+         }
+       }
+       output.flush();
+       return true;
 
-    } catch (IOException e) {
-      e.printStackTrace();  // exception will be thrown below
-      return false;
-    }
+     } catch (IOException e) {
+       e.printStackTrace();
+       return false;
+     }
   }
 
 

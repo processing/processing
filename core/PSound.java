@@ -29,9 +29,10 @@ import sun.audio.*;
 
 
 /**
- * This is the crappy 8 khz mono ulaw version that's compatible
- * with Java 1.1 and 1.2. For Java 1.3 and higher, PSound2 is used.
- * <P>
+ * Crappy 8 khz mono ulaw audio support that's compatible
+ * with Java 1.1 and 1.2. For Java 1.3 and higher, PSound2 is used,
+ * but will eventually be integrated into this class.
+ * <P/>
  * This code currently does not work, but PSound2 sort of does.
  */
 public class PSound {

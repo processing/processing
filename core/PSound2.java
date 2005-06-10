@@ -30,14 +30,15 @@ import javax.sound.sampled.*;
 
 /**
  * Java 1.3 audio loader and player.
- * <P>
+ * <P/>
  * This will eventually be merged back into PSound, so you shouldn't
  * create new PSound2 objects from scratch, only open them directly
  * from a PApplet using loadSound().
- * <PRE>
- * useful info about how to do all this stuff, munged together
- * for this class: http://javaalmanac.com/egs/javax.sound.sampled/pkg.html
- * </PRE>
+ * <P/>
+ * Most of the useful info about how to do all the things
+ * in this class was munged together from the
+ * <A HREF="http://javaalmanac.com/egs/javax.sound.sampled/pkg.html">
+ * Java Alamanac</A>
  */
 public class PSound2 extends PSound {
   Clip clip;
