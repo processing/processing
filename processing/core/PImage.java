@@ -1479,7 +1479,12 @@ public class PImage implements PConstants, Cloneable {
    * Contributed by toxi 8 May 2005
    */
   static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height) {
+                                int width, int height, int format) {
+    if ((format != ARGB) && (format != RGB)) {
+      throw new RuntimeException("Only ARGB and RGB images can be saved " +
+                                 "as .tga files");
+    }
+
     try {
       byte header[] = new byte[18];
 
@@ -1489,10 +1494,17 @@ public class PImage implements PConstants, Cloneable {
       header[13] = (byte) (width >> 8);
       header[14] = (byte) (height & 0xff);
       header[15] = (byte) (height >> 8);
-      // bits per pixel
-      header[16] = 32;
-      // bits per colour component + origin at top-left
-      header[17] = 0x08+0x20;
+
+      if (format == RGB) {
+        header[16] = 24; // bits per pixel
+        header[17] = 0x00 + 0x20; // no alpha channel bits
+
+      } else {  // ARGB
+        // bits per pixel
+        header[16] = 32;
+        // bits per colour component + origin at top-left
+        header[17] = 0x08+0x20;
+      }
 
       output.write(header);
 
@@ -1520,7 +1532,9 @@ public class PImage implements PConstants, Cloneable {
           output.write(col        & 0xff);
           output.write(col >> 8   & 0xff);
           output.write(col >> 16  & 0xff);
-          output.write(col >>> 24 & 0xff);
+          if (format == ARGB) {
+            output.write(col >>> 24 & 0xff);
+          }
 
         } else {
           rle = 1;
@@ -1543,7 +1557,9 @@ public class PImage implements PConstants, Cloneable {
             output.write(col        & 0xff);
             output.write(col >> 8   & 0xff);
             output.write(col >> 16  & 0xff);
-            output.write(col >>> 24 & 0xff);
+            if (format == ARGB) {
+              output.write(col >>> 24 & 0xff);
+            }
           }
         }
         index += rle;
@@ -1571,7 +1587,7 @@ public class PImage implements PConstants, Cloneable {
 
       if (filename.toLowerCase().endsWith(".tga")) {
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        success = saveTGA(os, pixels, width, height);
+        success = saveTGA(os, pixels, width, height, format);
 
       } else {
         if (!filename.toLowerCase().endsWith(".tif") &&

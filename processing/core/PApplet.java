@@ -5699,8 +5699,8 @@ v              PApplet.this.stop();
 
 
   static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height) {
-    return PGraphics.saveTGA(output, pixels, width, height);
+                                int width, int height, int format) {
+    return PGraphics.saveTGA(output, pixels, width, height, format);
   }
 
 
