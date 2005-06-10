@@ -15,6 +15,10 @@ X fix for copy() in java2d to make things a little speedier
 X make PApplet.main() for java 1.3 friendly (Color class constants)
 X remove call to background() in PGraphics2
 
+_ move font placement stuff back into PGraphics?
+_   figure out how to get regular + java fonts working
+_   use that do drive how the api is set up
+
 _ change PGraphics to PGraphics2 
 _   or not, because PGraphics has all the base stuff for 3D
 _   change PGraphics2 to PGraphicsJava or PGraphicsJava2D
@@ -163,6 +167,25 @@ _   how to shut off the cmd-q when running externally on osx?
 
 CORE / PFont and text()
 
+_ font encoding issues 
+_   java seems to force straight windows encoding.. (problem for pi fonts)
+_   opentype/cff fonts don't work with live loading from the app
+_   many (all?) opentype fonts won't show up or aren't supported
+_     this may be only cff fonts that have trouble
+_   when encoding is not the standard encoding, problematic
+_     so sonata otf and sonata don't seem to have any chars at all
+_ available font issues
+_   is getFontList returning a different set of fonts from device2d?
+_     try it out on java 1.3 versus 1.4
+_   getAllFonts() not quite working for many fonts
+_   i.e. Orator Std on windows.. macosx seems to be ok
+_   is getFamilyNames() any different/better?
+_   when did this break? 1.4.1? 1.4.x vs 1.3?
+_   may be that cff fonts won't work?
+_   or is it only those with ps names?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
+_ createFont not working from applets
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
 _ createFont() with a .ttf doesn't work in applets?
 _   throws a security exception because of the reflection stuff
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0

@@ -1043,7 +1043,6 @@ public class PApplet extends Applet
                                   " 1b draw");
 
         if (frameCount == 0) {
-
           try {
             //System.out.println("attempting setup");
             //System.out.println("into try");
@@ -1078,7 +1077,7 @@ public class PApplet extends Applet
           this.width = g.width;
           this.height = g.height;
 
-        } else {
+        } else {  // frameCount > 0, meaning an actual draw()
           // update the current framerate
           if (framerateLastMillis != 0) {
             float elapsed = (float)
@@ -2831,9 +2830,17 @@ public class PApplet extends Applet
    * Create a .vlw font on the fly from either a font name that's
    * installed on the system, or from a .ttf or .otf that's inside
    * the data folder of this sketch.
-   * <P>
-   * Only works with Java 1.3 or later.
-   * <P>
+   * <P/>
+   * Only works with Java 1.3 or later. Many .otf fonts don't seem
+   * to be supported by Java, perhaps because they're CFF based?
+   * <P/>
+   * Font names are inconsistent across platforms and Java versions.
+   * On Mac OS X, Java 1.3 uses the font menu name of the font,
+   * whereas Java 1.4 uses the PostScript name of the font. Java 1.4
+   * on OS X will also accept the font menu name as well. On Windows,
+   * it appears that only the menu names are used, no matter what
+   * Java version is in use. Naming system unknown/untested for 1.5.
+   * <P/>
    * Use 'null' for the charset if you want to use any of the 65,536
    * unicode characters that exist in the font. Note that this can
    * produce an enormous file or may cause an OutOfMemoryError.
