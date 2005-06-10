@@ -124,14 +124,48 @@ To register any of these methods with the parent, call
 parent.registerPre(this) or whatever the name of the function
 is that you'd like to use. 
 
-Note that making things "public" is extremely important.
+Note that making things "public" is extremely important. When running
+inside Processing, anything left blank has public added by the
+preprocessor, meaning "void loop()" becomes "public void loop()". 
+But in straight Java, the public becomes important.
 
-Also note that you can only draw inside of pre(), draw(),
-mouseEvent(), or keyEvent() otherwise you may run into trouble. 
-pre() and draw() happen while legitimate drawing is taking 
-place, and the mouse/key events happen just before draw()
-events are called, they're queued up by the host applet
-until it's safe to draw.
+You can only draw inside of pre(), draw(), mouseEvent(), or keyEvent()
+otherwise you may run into trouble. pre() and draw() happen while
+legitimate drawing is taking place, and the mouse/key events happen
+just before draw() events are called, they're queued up by the host
+applet until it's safe to draw.
+
+For this reason, you should use registerMouse() and mouseEvent() (and
+same for the keys) to handle your events, rather than your class
+implementing MouseListener. For instance, to figure out what the mouse
+event is throwing back at you, this would be an example handler:
+
+public void mouseEvent(MouseEvent event) {
+  int x = event.getX();
+  int y = event.getY();
+
+  switch (event.getID()) {
+    case MouseEvent.MOUSE_PRESSED:
+      // do something for the mouse being pressed
+      break;
+    case MouseEvent.MOUSE_RELEASED:
+      // do something for mouse released
+      break;
+    case MouseEvent.MOUSE_CLICKED:
+      // do something for mouse clicked
+      break;
+    case MouseEvent.MOUSE_DRAGGED:
+      // do something for mouse dragged
+      break;
+    case MouseEvent.MOUSE_MOVED:
+      // umm
+      break;
+  }
+}
+
+More on mouse handling can be found in Sun's Java documentation:
+http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/MouseEvent.html
+which also covers things like modifiers (shift-click) and whatnot.
 
 
 //////////////////////////////////////////////////////////////
@@ -354,4 +388,4 @@ things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 16 April 2005
+Ben Fry, Last updated 9 June 2005
