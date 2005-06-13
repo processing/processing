@@ -664,6 +664,7 @@ public class PFont implements PConstants {
 
     // save this so that we can use the native version
     this.font = font;
+    this.smooth = smooth;
 
     name = font.getName();
     psname = font.getPSName();
