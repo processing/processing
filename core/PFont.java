@@ -99,8 +99,8 @@ public class PFont implements PConstants {
   protected int ascii[];  // quick lookup for the ascii chars
 
   // shared by the text() functions to avoid incessant allocation of memory
-  protected char textBuffer[] = new char[8 * 1024];
-  protected char widthBuffer[] = new char[8 * 1024];
+  //protected char textBuffer[] = new char[8 * 1024];
+  //protected char widthBuffer[] = new char[8 * 1024];
 
 
   public PFont() { }  // for subclasses
@@ -345,54 +345,18 @@ public class PFont implements PConstants {
 
 
   /**
-   * Return the width of a line of text of size 1. If the text has
-   * multiple lines, this returns the length of the longest line.
-   */
-  public float width(String str) {
-    int length = str.length();
-    if (length > widthBuffer.length) {
-      widthBuffer = new char[length + 10];
-    }
-    str.getChars(0, length, widthBuffer, 0);
-
-    float wide = 0;
-    int index = 0;
-    int start = 0;
-
-    while (index < length) {
-      if (widthBuffer[index] == '\n') {
-        wide = Math.max(wide, calcWidth(widthBuffer, start, index));
-        start = index+1;
-      }
-      index++;
-    }
-    if (start < length) {
-      wide = Math.max(wide, calcWidth(widthBuffer, start, index));
-    }
-    return wide;
-  }
-
-
-  private float calcWidth(char buffer[], int start, int stop) {
-    float wide = 0;
-    for (int i = start; i < stop; i++) {
-      wide += width(buffer[i]);
-    }
-    return wide;
-  }
-
-
-  /**
    * Draw a character at an x, y position.
    */
+  /*
   public void text(char c, float x, float y, PGraphics parent) {
     text(c, x, y, 0, parent);
   }
-
+  */
 
   /**
    * Draw a character at an x, y, z position.
    */
+  /*
   public void text(char c, float x, float y, float z, PGraphics parent) {
     if (parent.textAlign == CENTER) {
       x -= parent.textSize * width(c) / 2f;
@@ -406,8 +370,10 @@ public class PFont implements PConstants {
     parent.textImpl(c, x, y, z);
     if (z != 0) parent.translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
   }
+  */
 
 
+  /*
   public void text(String str, float x, float y, PGraphics parent) {
     text(str, x, y, 0, parent);
   }
@@ -457,16 +423,18 @@ public class PFont implements PConstants {
       x += parent.textSize *width(textBuffer[index]);
     }
   }
+  */
 
 
   /**
    * Same as below, just without a z coordinate.
    */
+  /*
   public void text(String str, float x, float y,
                    float c, float d, PGraphics parent) {
     text(str, x, y, c, d, 0, parent);
   }
-
+  */
 
   /**
    * Draw text in a box that is constrained to a particular size.
@@ -478,6 +446,7 @@ public class PFont implements PConstants {
    * will align with the *ascent* of the text, not the baseline,
    * as is the case for the other text() functions.
    */
+  /*
   public void text(String str, float boxX1, float boxY1,
                    float boxX2, float boxY2, float boxZ, PGraphics parent) {
     if (boxZ != 0) parent.translate(0, 0, boxZ);  // TEMPORARY HACK! SLOW!
@@ -579,6 +548,7 @@ public class PFont implements PConstants {
 
     if (boxZ != 0) parent.translate(0, 0, -boxZ);  // TEMPORARY HACK! SLOW!
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
