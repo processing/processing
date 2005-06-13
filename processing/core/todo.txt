@@ -21,13 +21,16 @@ o   maybe wait until the new shape stuff is done?
 X move font placement stuff back into PGraphics?
 X   figure out how to get regular + java fonts working
 X   use that do drive how the api is set up
+X optimize fonts by using native fonts in PGraphics2
+X   especially textMode(SCREEN) which is disastrously slow
+X   in java2d, can quickly blit the image itself
+X   this way, can isolate it for gl too, which will use glBitmap
+X   danger of this setup is that it may run much nicer for the author
+X     i.e. with the font installed, and then super slow for their users
 
-_ optimize fonts by using native fonts in PGraphics2
-_   especially textMode(SCREEN) which is disastrously slow
-_   in java2d, can quickly blit the image itself
-_   this way, can isolate it for gl too, which will use glBitmap
-_   danger of this setup is that it may run much nicer for the author
-_     i.e. with the font installed, and then super slow for their users
+_ add "smooth" as a field inside the font file
+_   and when smooth field is set, make sure JAVA2D enables smoothing
+_   since otherwise smooth() has to be called for the whole g2
 
 _ how to deal with triangles/lines and triangleCount and lineCount
 _   maybe just need a triangleImpl and lineImpl
