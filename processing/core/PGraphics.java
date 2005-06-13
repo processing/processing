@@ -1792,16 +1792,6 @@ public class PGraphics extends PImage implements PConstants {
 
   public void text(String s, float x, float y) {
     text(s, x, y, 0);
-    /*
-    text(s, x, y, 0);
-    if (textFont != null) {
-      if (textMode == SCREEN) loadPixels();
-      textFont.text(s, x, y, this);
-      if (textMode == SCREEN) updatePixels();
-    } else {
-      throw new RuntimeException("use textFont() before text()");
-    }
-    */
   }
 
 

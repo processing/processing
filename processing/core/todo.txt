@@ -71,6 +71,7 @@ CORE / PApplet
 
 _ typed version of array functions:
 _   append(), shorten(), splice, slice, subset, concat, reverse
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1118520656;start=0
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
 _ would be cool if could sort w/o the sort class..
 _   meaning use reflection to sort objects, just by implementing a few methods
