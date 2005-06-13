@@ -27,10 +27,9 @@ X   in java2d, can quickly blit the image itself
 X   this way, can isolate it for gl too, which will use glBitmap
 X   danger of this setup is that it may run much nicer for the author
 X     i.e. with the font installed, and then super slow for their users
-
-_ add "smooth" as a field inside the font file
-_   and when smooth field is set, make sure JAVA2D enables smoothing
-_   since otherwise smooth() has to be called for the whole g2
+X add "smooth" as a field inside the font file
+X   and when smooth field is set, make sure JAVA2D enables smoothing
+X   since otherwise smooth() has to be called for the whole g2
 
 _ how to deal with triangles/lines and triangleCount and lineCount
 _   maybe just need a triangleImpl and lineImpl
@@ -62,6 +61,7 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ P3D not doing bilinear interpolation in text and images 
 _   because smooth() has to be set (and smooth throws an error in P3D)
 _   how should this be handled? a hint? allowing smooth()?
+_   probably just allow smooth() but don't smooth anything
 
 
 
