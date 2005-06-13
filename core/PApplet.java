@@ -6052,8 +6052,8 @@ v              PApplet.this.stop();
   }
 
 
-  public float textWidth(String s) {
-    return g.textWidth(s);
+  public float textWidth(String str) {
+    return g.textWidth(str);
   }
 
 
@@ -6069,21 +6069,21 @@ v              PApplet.this.stop();
   }
 
 
-  public void text(String s, float x, float y) {
-    if (recorder != null) recorder.text(s, x, y);
-    g.text(s, x, y);
+  public void text(String str, float x, float y) {
+    if (recorder != null) recorder.text(str, x, y);
+    g.text(str, x, y);
   }
 
 
-  public void text(String s, float x, float y, float z) {
-    if (recorder != null) recorder.text(s, x, y, z);
-    g.text(s, x, y, z);
+  public void text(String str, float x, float y, float z) {
+    if (recorder != null) recorder.text(str, x, y, z);
+    g.text(str, x, y, z);
   }
 
 
-  public void text(String s, float x1, float y1, float x2, float y2) {
-    if (recorder != null) recorder.text(s, x1, y1, x2, y2);
-    g.text(s, x1, y1, x2, y2);
+  public void text(String str, float x1, float y1, float x2, float y2) {
+    if (recorder != null) recorder.text(str, x1, y1, x2, y2);
+    g.text(str, x1, y1, x2, y2);
   }
 
 

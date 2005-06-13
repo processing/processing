@@ -14,25 +14,30 @@ X   vertices not included because switching to triangleImpl and lineImpl
 X fix for copy() in java2d to make things a little speedier
 X make PApplet.main() for java 1.3 friendly (Color class constants)
 X remove call to background() in PGraphics2
+o change PGraphics to PGraphics2 
+o   or not, because PGraphics has all the base stuff for 3D
+o   change PGraphics2 to PGraphicsJava or PGraphicsJava2D
+o   maybe wait until the new shape stuff is done?
+X move font placement stuff back into PGraphics?
+X   figure out how to get regular + java fonts working
+X   use that do drive how the api is set up
 
-_ move font placement stuff back into PGraphics?
-_   figure out how to get regular + java fonts working
-_   use that do drive how the api is set up
-
-_ change PGraphics to PGraphics2 
-_   or not, because PGraphics has all the base stuff for 3D
-_   change PGraphics2 to PGraphicsJava or PGraphicsJava2D
-_   maybe wait until the new shape stuff is done?
+_ optimize fonts by using native fonts in PGraphics2
+_   especially textMode(SCREEN) which is disastrously slow
+_   in java2d, can quickly blit the image itself
+_   this way, can isolate it for gl too, which will use glBitmap
+_   danger of this setup is that it may run much nicer for the author
+_     i.e. with the font installed, and then super slow for their users
 
 _ how to deal with triangles/lines and triangleCount and lineCount
 _   maybe just need a triangleImpl and lineImpl
 _   because it's too messy to retain the triangle objects and info
 
 _ need to test/straighten out load/update pixels
-loadPixels() and updatePixels() only need to be used when 
-touching pixels[]. All other functions including get(), set(),
-filter(), etc shouldn't need them. 
-_   fjen says blend() doens't work in JAVA2D
+_   loadPixels() and updatePixels() only need to be used when 
+_   touching pixels[]. All other functions including get(), set(),
+_   filter(), etc shouldn't need them. 
+_ fjen says blend() doens't work in JAVA2D
 _   the functions are fairly well separated now in PMethods
 _   just go through all the stuff to make sure it's setting properly
 _ don't do a loadPixels unless an updatePixels has completed
@@ -51,8 +56,8 @@ _   they're drawn as transparent and don't have their high bits set
 http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
 
-_ P3D not doing bilinear interpolation because smooth() has to be set
-_   (and smooth throws an error in P3D)
+_ P3D not doing bilinear interpolation in text and images 
+_   because smooth() has to be set (and smooth throws an error in P3D)
 _   how should this be handled? a hint? allowing smooth()?
 
 
@@ -191,7 +196,7 @@ _ createFont() with a .ttf doesn't work in applets?
 _   throws a security exception because of the reflection stuff
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
 _ text() with a z coordinate is now using translate, very slow
-_   also puts up a weird error message about translate() in 2D mode
+X   also puts up a weird error message about translate() in 2D mode
 _ make screen space fonts use get/set as well?
 _   too much to debug on their own
 _   unfortunately tint not set with setImpl, but...
@@ -199,12 +204,6 @@ _ optimize textMode(MODEL) with textMode(SCREEN)
 _   in PGraphics and PGraphics3, check to see if matrix is within epsilon
 _   of one of the rotation matrices (many fewer steps) 
 _   if identity, or just translate, or a rotate, make OBJECT into SCREEN
-_ optimize fonts by using native fonts in PGraphics2
-_   especially textMode(SCREEN) which is disastrously slow
-_   in java2d, can quickly blit the image itself
-_   this way, can isolate it for gl too, which will use glBitmap
-_   danger of this setup is that it may run much nicer for the author
-_     i.e. with the font installed, and then super slow for their users
 _ not having kerning really blows
 _   could this be pulled from the OpenType font stuff? 
 _   it could be placed at the end of the file
