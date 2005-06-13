@@ -223,7 +223,7 @@ public class PFont implements PConstants {
       //System.out.println();
     }
 
-    if (version == 10) {  // includes the font name at the end of the file
+    if (version >= 10) {  // includes the font name at the end of the file
       name = is.readUTF();
       psname = is.readUTF();
 
