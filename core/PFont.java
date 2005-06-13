@@ -58,6 +58,13 @@ public class PFont implements PConstants {
   public PImage images[];
 
   /**
+   * Native Java version of the font. If possible, this allows the
+   * PGraphics subclass to just use Java's font rendering stuff
+   * in situations where that's faster.
+   */
+  public Font font;
+
+  /**
    * Name of the font as seen by Java when it was created.
    * If the font is available, the native version will be used.
    */
@@ -216,6 +223,21 @@ public class PFont implements PConstants {
     if (version == 10) {  // includes the font name at the end of the file
       name = is.readUTF();
       psname = is.readUTF();
+
+      // this font may or may not be installed
+      font = new Font(name, Font.PLAIN, size);
+      // if the ps name matches, then we're in fine shape
+      if (!font.getPSName().equals(psname)) {
+        // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
+        // of the font, so try that in case this .vlw font was created on pc
+        // and the name is different, but the ps name is found on the
+        // java 1.4 mac that's currently running this sketch.
+        font = new Font(psname, Font.PLAIN, size);
+      }
+      // check again, and if still bad, screw em
+      if (!font.getPSName().equals(psname)) {
+        font = null;
+      }
     }
   }
 
@@ -628,6 +650,9 @@ public class PFont implements PConstants {
                                  "Java 1.3 or higher");
     }
 
+    // save this so that we can use the native version
+    this.font = font;
+
     name = font.getName();
     psname = font.getPSName();
 
@@ -910,7 +935,12 @@ public class PFont implements PConstants {
 
 
   /**
-   * Get a list of the fonts installed on the system.
+   * Get a list of the fonts installed on the system that can be used
+   * by Java. Not all fonts can be used in Java, in fact it's mostly
+   * only TrueType fonts. OpenType fonts with CFF data such as Adobe's
+   * OpenType fonts seem to have trouble (even though they're sort of
+   * TrueType fonts as well, or may have a .ttf extension). Regular
+   * PostScript fonts seem to work O.K. though.
    * <P>
    * Not recommended for use in applets, but this is implemented
    * in PFont because the Java methods to access this information

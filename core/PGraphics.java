@@ -264,6 +264,12 @@ public class PGraphics extends PImage implements PConstants {
   /** The current text font (read-only) */
   public PFont textFont;
 
+  /** The current font if a Java version of it is installed */
+  protected Font textFontNative;
+
+  /** Metrics for the current native Java font */
+  protected FontMetrics textFontNativeMetrics;
+
   /** The current text align (read-only) */
   public int textAlign;
 
@@ -276,7 +282,10 @@ public class PGraphics extends PImage implements PConstants {
   /** The current text leading (read-only) */
   public float textLeading;
 
-  // shared by the text() functions to avoid incessant allocation of memory
+  /**
+   * Internal buffer used by the text() functions
+   * because the String object is slow
+   */
   protected char textBuffer[] = new char[8 * 1024];
   protected char textWidthBuffer[] = new char[8 * 1024];
 
@@ -1641,12 +1650,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public float textAscent() {
-    if (textFont != null) {
-      return textFont.ascent() * textSize;
-
-    } else {
+    if (textFont == null) {
       throw new RuntimeException("use textFont() before textAscent()");
     }
+
+    return textFont.ascent() * textSize;
   }
 
 
@@ -1668,6 +1676,7 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
+      textFontNative = which.font;
       textSize(textFont.size);
 
     } else {
@@ -1686,7 +1695,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the text leading to a specific value.
+   * Set the text leading to a specific value. If using a custom
+   * value for the text leading, you'll have to call textLeading()
+   * again after any calls to textSize().
    */
   public void textLeading(float leading) {
     textLeading = leading;
@@ -1727,15 +1738,16 @@ public class PGraphics extends PImage implements PConstants {
   public void textSize(float size) {
     if (textFont != null) {
       if ((textMode == SCREEN) && (size != textFont.size)) {
-        throw new RuntimeException("can't use textSize() with " +
+        throw new RuntimeException("textSize() cannot be used with " +
                                    "textMode(SCREEN)");
       }
       textSize = size;
-      textLeading = textSize *
-        ((textFont.ascent() + textFont.descent()) * 1.275f);
+      //textLeading = textSize *
+      //  ((textFont.ascent() + textFont.descent()) * 1.275f);
+      textLeading = (textAscent() + textDescent()) * 1.275f;
 
     } else {
-      throw new RuntimeException("use textFont() before textSize()");
+      throw new RuntimeException("Use textFont() before textSize()");
     }
   }
 
@@ -1887,7 +1899,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Handles drawing to the screen
+   * Handles placement of a text line, then calls textLinePlaced
+   * to actually render at the specific point.
    */
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
@@ -1897,7 +1910,12 @@ public class PGraphics extends PImage implements PConstants {
     } else if (textAlign == RIGHT) {
       x -= textWidthImpl(buffer, start, stop);
     }
+    textLinePlacedImpl(buffer, start, stop, x, y);
+  }
 
+
+  protected void textLinePlacedImpl(char buffer[], int start, int stop,
+                                    float x, float y) {
     for (int index = start; index < stop; index++) {
       textCharImpl(buffer[index], x, y); //, 0); //z);
 
