@@ -656,6 +656,63 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
+  public float textAscent() {
+    if (textFontNative == null) {
+      return super.textAscent();
+    }
+    return textFontNativeMetrics.getAscent();
+  }
+
+
+  public float textDescent() {
+    if (textFontNative == null) {
+      return super.textDescent();
+    }
+    return textFontNativeMetrics.getDescent();
+  }
+
+
+  /**
+   * Same as parent, but override for native version of the font.
+   * <p/>
+   * Also gets called by textFont, so the metrics
+   * will get recorded properly.
+   */
+  public void textSize(float size) {
+    if (textFontNative == null) {
+      super.textSize(size);
+      return;
+    }
+    textFontNative = textFontNative.deriveFont(size);
+    g2.setFont(textFontNative);
+    textFontNativeMetrics = g2.getFontMetrics(textFontNative);
+  }
+
+
+  protected float textWidthImpl(char buffer[], int start, int stop) {
+    if (textFontNative == null) {
+      return super.textWidthImpl(buffer, start, stop);
+    }
+    // maybe should use one of the newer/fancier functions for this?
+    return textFontNativeMetrics.charsWidth(buffer, start, stop);
+  }
+
+
+  protected void textLinePlacedImpl(char buffer[], int start, int stop,
+                                    float x, float y) {
+    if (textFontNative == null) {
+      super.textLinePlacedImpl(buffer, start, stop, x, y);
+      return;
+    }
+    g2.setColor(fillColorObject);
+    // better to use drawString(float, float)?
+    g2.drawChars(buffer, start, stop, (int) (x + 0.5f), (int) (y + 0.5f));
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
   public void translate(float tx, float ty) {
     g2.translate(tx, ty);
   }
