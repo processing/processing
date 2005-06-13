@@ -276,6 +276,10 @@ public class PGraphics extends PImage implements PConstants {
   /** The current text leading (read-only) */
   public float textLeading;
 
+  // shared by the text() functions to avoid incessant allocation of memory
+  protected char textBuffer[] = new char[8 * 1024];
+  protected char textWidthBuffer[] = new char[8 * 1024];
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1564,9 +1568,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void image(PImage image, float x, float y) {
-      imageImpl(image,
-                x, y, x+image.width, y+image.height,
-                0, 0, image.width, image.height);
+    imageImpl(image,
+              x, y, x+image.width, y+image.height,
+              0, 0, image.width, image.height);
   }
 
 
@@ -1691,10 +1695,10 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Sets the text rendering/placement to be either SCREEN (direct
-   * to the screen, exact coordinates) or MODEL (the default, where
-   * text is manipulated by translate() etc). The text size cannot
-   * be set when using textMode(SCREEN), because it uses the pixels
-   * directly from the font.
+   * to the screen, exact coordinates, only use the font's original size)
+   * or MODEL (the default, where text is manipulated by translate() and
+   * can have a textSize). The text size cannot be set when using
+   * textMode(SCREEN), because it uses the pixels directly from the font.
    */
   public void textMode(int mode) {
     if ((mode != SCREEN) && (mode != MODEL)) {
@@ -1722,10 +1726,9 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void textSize(float size) {
     if (textFont != null) {
-      if ((textMode == SCREEN) &&
-          (size != textFont.size)) {
-          throw new RuntimeException("can't use textSize() with " +
-                                     "textMode(SCREEN)");
+      if ((textMode == SCREEN) && (size != textFont.size)) {
+        throw new RuntimeException("can't use textSize() with " +
+                                   "textMode(SCREEN)");
       }
       textSize = size;
       textLeading = textSize *
@@ -1737,13 +1740,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public float textWidth(char c) {
-    if (textFont != null) {
-      return textFont.width(c) * textSize;
+  // ........................................................
 
-    } else {
-      throw new RuntimeException("use textFont() before textWidth()");
-    }
+
+  public float textWidth(char c) {
+    textBuffer[0] = c;
+    return textWidthImpl(textBuffer, 0, 1);
   }
 
 
@@ -1751,25 +1753,75 @@ public class PGraphics extends PImage implements PConstants {
    * Return the width of a line of text. If the text has multiple
    * lines, this returns the length of the longest line.
    */
-  public float textWidth(String s) {
-    if (textFont != null) {
-      return textFont.width(s) * textSize;
-
-    } else {
+  public float textWidth(String str) {
+    if (textFont == null) {
       throw new RuntimeException("use textFont() before textWidth()");
     }
-  }
 
+    int length = str.length();
+    if (length > textWidthBuffer.length) {
+      textWidthBuffer = new char[length + 10];
+    }
+    str.getChars(0, length, textWidthBuffer, 0);
 
-  public void text(char c, float x, float y) {
-    text(c, x, y, 0);
+    float wide = 0;
+    int index = 0;
+    int start = 0;
+
+    while (index < length) {
+      if (textWidthBuffer[index] == '\n') {
+        wide = Math.max(wide, textWidthImpl(textWidthBuffer, start, index));
+        start = index+1;
+      }
+      index++;
+    }
+    if (start < length) {
+      wide = Math.max(wide, textWidthImpl(textWidthBuffer, start, index));
+    }
+    return wide;
   }
 
 
   /**
-   * Newlines that are \n (unix newline or linefeed char, ascii 10)
-   * are honored, and \r (carriage return, windows and mac) are
-   * ignored.
+   * Implementation of returning the text width of
+   * the chars [start, stop) in the buffer.
+   * Unlike the previous version that was inside PFont, this will
+   * return the size not of a 1 pixel font, but the actual current size.
+   */
+  protected float textWidthImpl(char buffer[], int start, int stop) {
+    float wide = 0;
+    for (int i = start; i < stop; i++) {
+      // could add kerning here, but it just ain't implemented
+      wide += textFont.width(buffer[i]) * textSize;
+    }
+    return wide;
+  }
+
+
+  // ........................................................
+
+
+  /**
+   * Draw a single character on screen.
+   * Extremely slow when used with textMode(SCREEN) and Java 2D,
+   * because loadPixels has to be called first and updatePixels last.
+   */
+  public void text(char c, float x, float y) {
+    if (textFont == null) {
+      throw new RuntimeException("use textFont() before text()");
+    }
+
+    if (textMode == SCREEN) loadPixels();
+
+    textBuffer[0] = c;
+    textLineImpl(textBuffer, 0, 1, x, y);
+
+    if (textMode == SCREEN) updatePixels();
+  }
+
+
+  /**
+   * Draw a single character on screen (with a z coordinate)
    */
   public void text(char c, float x, float y, float z) {
     if ((z != 0) && (textMode == SCREEN)) {
@@ -1777,39 +1829,80 @@ public class PGraphics extends PImage implements PConstants {
       throw new RuntimeException(msg);
     }
 
-    // this just has to pass through.. if z is not zero when
-    // drawing to non-depth(), the PFont will have to throw an error.
-    if (textFont != null) {
-      if (textMode == SCREEN) loadPixels();
-      textFont.text(c, x, y, z, this);
-      if (textMode == SCREEN) updatePixels();
+    if (z != 0) translate(0, 0, z);  // slowness, badness
 
-    } else {
-      throw new RuntimeException("use textFont() before text()");
+    text(c, x, y);
+
+    if (z != 0) translate(0, 0, -z);
+  }
+
+
+  /**
+   * Draw a chunk of text.
+   * Newlines that are \n (Unix newline or linefeed char, ascii 10)
+   * are honored, but \r (carriage return, Windows and Mac OS) are
+   * ignored.
+   */
+  public void text(String str, float x, float y) {
+    if (textMode == SCREEN) loadPixels();
+
+    int length = str.length();
+    if (length > textBuffer.length) {
+      textBuffer = new char[length + 10];
     }
+    str.getChars(0, length, textBuffer, 0);
+
+    int start = 0;
+    int index = 0;
+    while (index < length) {
+      if (textBuffer[index] == '\n') {
+        textLineImpl(textBuffer, start, index, x, y);
+        start = index + 1;
+        y += textLeading;
+      }
+      index++;
+    }
+    if (start < length) {
+      textLineImpl(textBuffer, start, index, x, y);
+    }
+    if (textMode == SCREEN) updatePixels();
   }
 
 
-  public void text(String s, float x, float y) {
-    text(s, x, y, 0);
-  }
-
-
-  public void text(String s, float x, float y, float z) {
+  /**
+   * Same as above but with a z coordinate.
+   */
+  public void text(String str, float x, float y, float z) {
     if ((z != 0) && (textMode == SCREEN)) {
       String msg = "textMode(SCREEN) cannot have a z coordinate";
       throw new RuntimeException(msg);
     }
 
-    // this just has to pass through.. if z is not zero when
-    // drawing to non-depth(), the PFont will have to throw an error.
-    if (textFont != null) {
-      if (textMode == SCREEN) loadPixels();
-      textFont.text(s, x, y, z, this);
-      if (textMode == SCREEN) updatePixels();
+    if (z != 0) translate(0, 0, z);  // slow!
 
-    } else {
-      throw new RuntimeException("use textFont() before text()");
+    text(str, x, y);
+
+    if (z != 0) translate(0, 0, -z);
+  }
+
+
+  /**
+   * Handles drawing to the screen
+   */
+  protected void textLineImpl(char buffer[], int start, int stop,
+                              float x, float y) {
+    if (textAlign == CENTER) {
+      x -= textWidthImpl(buffer, start, stop) / 2f;
+
+    } else if (textAlign == RIGHT) {
+      x -= textWidthImpl(buffer, start, stop);
+    }
+
+    for (int index = start; index < stop; index++) {
+      textCharImpl(buffer[index], x, y); //, 0); //z);
+
+      // this doesn't account for kerning
+      x += textWidth(buffer[index]);
     }
   }
 
@@ -1818,56 +1911,162 @@ public class PGraphics extends PImage implements PConstants {
    * Draw text in a box that is constrained to a particular size.
    * The current rectMode() determines what the coordinates mean
    * (whether x1/y1/x2/y2 or x/y/w/h).
-   * <P>
+   * <P/>
    * Note that the x,y coords of the start of the box
    * will align with the *ascent* of the text, not the baseline,
    * as is the case for the other text() functions.
-   * <P>
-   * Newlines that are \n (unix newline or linefeed char, ascii 10)
-   * are honored, and \r (carriage return, windows and mac) are
+   * <P/>
+   * Newlines that are \n (Unix newline or linefeed char, ascii 10)
+   * are honored, and \r (carriage return, Windows and Mac OS) are
    * ignored.
    */
-  public void text(String s, float x1, float y1, float x2, float y2) {
-    text(s, x1, y1, x2, y2, 0);
+  public void text(String str, float x1, float y1, float x2, float y2) {
+    if (textFont == null) {
+      throw new RuntimeException("use textFont() before text()");
+    }
+
+    if (textMode == SCREEN) loadPixels();
+
+    float hradius, vradius;
+    switch (rectMode) {
+    case CORNER:
+      x2 += x1; y2 += y1;
+      break;
+    case CENTER_RADIUS:
+      hradius = x2;
+      vradius = y2;
+      x2 = x1 + hradius;
+      y2 = y1 + vradius;
+      x1 -= hradius;
+      y1 -= vradius;
+      break;
+    case CENTER:
+      hradius = x2 / 2.0f;
+      vradius = y2 / 2.0f;
+      x2 = x1 + hradius;
+      y2 = y1 + vradius;
+      x1 -= hradius;
+      y1 -= vradius;
+    }
+    if (x2 < x1) {
+      float temp = x1; x1 = x2; x2 = temp;
+    }
+    if (y2 < y1) {
+      float temp = y1; y1 = y2; y2 = temp;
+    }
+
+    float spaceWidth = textWidth(' ');
+    float runningX = x1; //boxX1;
+    float currentY = y1; //boxY1;
+    float boxWidth = x2 - x2; //boxX2 - boxX1;
+
+    // lineX is the position where the text starts, which is adjusted
+    // to left/center/right based on the current textAlign
+    float lineX = x1; //boxX1;
+    if (textAlign == CENTER) {
+      lineX = lineX + boxWidth/2f;
+    } else if (textAlign == RIGHT) {
+      lineX = x2; //boxX2;
+    }
+
+    // ala illustrator, the text itself must fit inside the box
+    currentY += textAscent(); //ascent() * textSize;
+    // if the box is already too small, tell em to f off
+    if (currentY > y2) return; //boxY2) return;
+
+    int length = str.length();
+    if (length > textBuffer.length) {
+      textBuffer = new char[length + 10];
+    }
+    str.getChars(0, length, textBuffer, 0);
+
+    int wordStart = 0;
+    int wordStop = 0;
+    int lineStart = 0;
+    int index = 0;
+    while (index < length) {
+      if ((textBuffer[index] == ' ') || (index == length-1)) {
+        // boundary of a word
+        float wordWidth = textWidthImpl(textBuffer, wordStart, index);
+
+        if (runningX + wordWidth > x2) { //boxX2) {
+          if (runningX == x1) { //boxX1) {
+            // if this is the first word, and its width is
+            // greater than the width of the text box,
+            // then break the word where at the max width,
+            // and send the rest of the word to the next line.
+            do {
+              index--;
+              if (index == wordStart) {
+                // not a single char will fit on this line. screw 'em.
+                //System.out.println("screw you");
+                return;
+              }
+              wordWidth = textWidthImpl(textBuffer, wordStart, index);
+            } while (wordWidth > boxWidth);
+            textLineImpl(textBuffer, lineStart, index, lineX, currentY);
+
+          } else {
+            // next word is too big, output current line
+            // and advance to the next line
+            textLineImpl(textBuffer, lineStart, wordStop, lineX, currentY);
+            // only increment index if a word wasn't broken inside the
+            // do/while loop above.. also, this is a while() loop too,
+            // because multiple spaces don't count for shit when they're
+            // at the end of a line like this.
+
+            index = wordStop;  // back that ass up
+            while ((index < length) &&
+                   (textBuffer[index] == ' ')) {
+              index++;
+            }
+          }
+          lineStart = index;
+          wordStart = index;
+          wordStop = index;
+          runningX = x1; //boxX1;
+          currentY += textLeading;
+          //if (currentY > boxY2) return;  // box is now full
+          if (currentY > y2) return;  // box is now full
+
+        } else {
+          runningX += wordWidth + spaceWidth;
+          // on to the next word
+          wordStop = index;
+          wordStart = index + 1;
+        }
+
+      } else if (textBuffer[index] == '\n') {
+        if (lineStart != index) {  // if line is not empty
+          textLineImpl(textBuffer, lineStart, index, lineX, currentY);
+        }
+        lineStart = index + 1;
+        wordStart = lineStart;
+        currentY += textLeading;
+        //if (currentY > boxY2) return;  // box is now full
+        if (currentY > y2) return;  // box is now full
+      }
+      index++;
+    }
+    if ((lineStart < length) && (lineStart != index)) {
+      textLineImpl(textBuffer, lineStart, index, lineX, currentY);
+    }
+
+    if (textMode == SCREEN) updatePixels();
   }
 
 
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    if (textFont != null) {
-      float hradius, vradius;
-      switch (rectMode) {
-      case CORNER:
-        x2 += x1; y2 += y1;
-        break;
-      case CENTER_RADIUS:
-        hradius = x2;
-        vradius = y2;
-        x2 = x1 + hradius;
-        y2 = y1 + vradius;
-        x1 -= hradius;
-        y1 -= vradius;
-        break;
-      case CENTER:
-        hradius = x2 / 2.0f;
-        vradius = y2 / 2.0f;
-        x2 = x1 + hradius;
-        y2 = y1 + vradius;
-        x1 -= hradius;
-        y1 -= vradius;
-      }
-      if (x2 < x1) {
-        float temp = x1; x1 = x2; x2 = temp;
-      }
-      if (y2 < y1) {
-        float temp = y1; y1 = y2; y2 = temp;
-      }
-      if (textMode == SCREEN) loadPixels();
-      textFont.text(s, x1, y1, x2, y2, z, this);
-      if (textMode == SCREEN) updatePixels();
-
-    } else {
-      throw new RuntimeException("use textFont() before text()");
+    if ((z != 0) && (textMode == SCREEN)) {
+      String msg = "textMode(SCREEN) cannot have a z coordinate";
+      throw new RuntimeException(msg);
     }
+
+    if (z != 0) translate(0, 0, z);  // slowness, badness
+
+    text(s, x1, y1, x2, y2);
+
+    if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
   }
 
 
@@ -1884,7 +2083,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * This does a basic number formatting, to avoid the
    * generally ugly appearance of printing floats.
-   * Users who want more control should use their own nfs() cmmand,
+   * Users who want more control should use their own nf() cmmand,
    * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
    */
@@ -1894,13 +2093,16 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(float num, float x, float y, float z) {
-    // not supported in 2D
+    text(PApplet.nfs(num, 0, 3), x, y, z);
   }
+
+
+  // ........................................................
 
 
   //font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
 
-  protected void textImpl(char ch, float x, float y, float z) {
+  protected void textCharImpl(char ch, float x, float y) { //, float z) {
     int index = textFont.index(ch);
     if (index == -1) return;
 
@@ -1917,9 +2119,10 @@ public class PGraphics extends PImage implements PConstants {
       float x2 = x1 + bwidth * textSize;
       float y2 = y1 + high * textSize;
 
-      textImplObject(glyph,
-                     x1, y1, z, x2, y2, z,
-                     textFont.width[index], textFont.height[index]);
+      textCharModelImpl(glyph,
+                        x1, y1, x2, y2,
+                        //x1, y1, z, x2, y2, z,
+                        textFont.width[index], textFont.height[index]);
 
     } else if (textMode == SCREEN) {
       int xx = (int) x + textFont.leftExtent[index];;
@@ -1928,15 +2131,15 @@ public class PGraphics extends PImage implements PConstants {
       int w0 = textFont.width[index];
       int h0 = textFont.height[index];
 
-      textImplScreen(glyph, xx, yy, w0, h0);
+      textCharScreenImpl(glyph, xx, yy, w0, h0);
     }
   }
 
 
-  protected void textImplObject(PImage glyph,
-                                float x1, float y1, float z1,
-                                float x2, float y2, float z2,
-                                int u2, int v2) {
+  protected void textCharModelImpl(PImage glyph,
+                                   float x1, float y1, //float z1,
+                                   float x2, float y2, //float z2,
+                                   int u2, int v2) {
     boolean savedTint = tint;
     int savedTintColor = tintColor;
     float savedTintR = tintR;
@@ -1967,9 +2170,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // should take image, int x1, int y1, and x2, y2
 
-  protected void textImplScreen(PImage glyph,
-                                int xx, int yy, //int x2, int y2,
-                                int w0, int h0) {
+  protected void textCharScreenImpl(PImage glyph,
+                                    int xx, int yy, //int x2, int y2,
+                                    int w0, int h0) {
     /*
     System.out.println("textimplscreen");
     rectMode(CORNER);
