@@ -78,6 +78,9 @@ public class PFont implements PConstants {
   /** "natural" size of the font (most often 48) */
   public int size;
 
+  /** true if smoothing was enabled for this font, used for native impl */
+  public boolean smooth;
+
   /** next power of 2 over the max image size (usually 64) */
   public int mbox2;
 
@@ -239,6 +242,9 @@ public class PFont implements PConstants {
         font = null;
       }
     }
+    if (version == 11) {
+      smooth = is.readBoolean();
+    }
   }
 
 
@@ -256,8 +262,13 @@ public class PFont implements PConstants {
 
     os.writeInt(charCount);
 
+    if ((name == null) || (psname == null)) {
+      name = "";
+      psname = "";
+    }
     // formerly numBits, now used for version number
-    os.writeInt((name != null) ? 10 : 8);
+    //os.writeInt((name != null) ? 11 : 8);
+    os.writeInt(11);
 
     os.writeInt(size);    // formerly mboxX (was 64, now 48)
     os.writeInt(mbox2);   // formerly mboxY (was 64, still 64)
@@ -282,10 +293,11 @@ public class PFont implements PConstants {
       }
     }
 
-    if (name != null) {  // version 10
-      os.writeUTF(name);
-      os.writeUTF(psname);
-    }
+    //if (name != null) {  // version 11
+    os.writeUTF(name);
+    os.writeUTF(psname);
+    os.writeBoolean(smooth);
+    //}
 
     os.flush();
   }
