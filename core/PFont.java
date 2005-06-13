@@ -645,28 +645,6 @@ public class PFont implements PConstants {
 
 
   /**
-   * Create a new .vlw font on the fly. See documentation with
-   * the later version of this constructor.
-   */
-  /*
-  public PFont(String name, int fontsize) {
-    this(new Font(name, Font.PLAIN, fontsize), false, true);
-  }
-  */
-
-
-  /**
-   * Create a new .vlw font on the fly. See documentation with
-   * the later version of this constructor.
-   */
-  /*
-  public PFont(String name, int fontsize, boolean smooth) {
-    this(new Font(name, Font.PLAIN, fontsize), false, smooth);
-  }
-  */
-
-
-  /**
    * Use reflection to create a new .vlw font on the fly.
    * This only works with Java 1.3 and higher.
    *

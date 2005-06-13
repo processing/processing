@@ -21,22 +21,35 @@ _ some sort of path/classpath tester/fixer app for windows
 _   that " norton" thing in the path makes things a mess
 
 _ emacs keybindings
-_   ctrl-space to set selection start
-_     selection end is just wherever the cursor is after selection set
-_   esc-w to copy (clears the mark)
-_   ctrl-w to cut (clears the mark)
-_   ctrl-y to paste
-_   ctrl-s to search inline
-_   ctrl-r to search inline backwards
-_   esc-% for query replace 
-_     then y for replace, n for no, ! for all
-_   ctrl-up arrow for next empty line up
-_   ctrl-down arrow for next empty line down
-_   ctrl-left arrow for prev word
-_   ctrl-right arrow for next work
-_   ctrl-a start of line
-_   ctrl-e end of line
-_   home/end are beginning/end of document (not line)
+_   general (easier to support)
+_     ctrl-space to set selection start
+_       selection end is just wherever the cursor is after selection set
+_     esc-w to copy (clears the mark)
+_     ctrl-w to cut (clears the mark)
+_     ctrl-y to paste
+_     ctrl-up arrow for next empty line up
+_     ctrl-down arrow for next empty line down
+_     ctrl-left arrow for prev word
+_     ctrl-right arrow for next work
+_     ctrl-a start of line
+_     ctrl-e end of line
+_     home/end are beginning/end of document (not line)
+_   inline search (ouch)
+_     ctrl-s to search inline
+_     ctrl-r to search inline backwards
+_     esc-% for query replace 
+_       then y for replace, n for no, ! for all
+_   file i/o (ouch ouch)
+_     save ctrl-x-s
+_     open ctrl-x-f
+_     save as ctrl-x-w
+_   buffer (tab) movement
+_     ctrl-x-b (switch to another tab)
+_     ctrl-x-k (close.. not in p5? maybe make this hide tab?)
+_   window stuff (probably not)
+_     ctrl-x-2 split window
+_     ctrl-x-o switch windows
+_     ctrl-x-1 single window
 
 _ auto-run the javadoc in dist.sh
 _   doctor a copy of the css file to use p5 defaults
