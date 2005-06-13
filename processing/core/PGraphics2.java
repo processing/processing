@@ -685,6 +685,8 @@ public class PGraphics2 extends PGraphics {
     }
     textFontNative = textFontNative.deriveFont(size);
     g2.setFont(textFontNative);
+
+    // get the metrics info
     textFontNativeMetrics = g2.getFontMetrics(textFontNative);
   }
 
@@ -704,9 +706,29 @@ public class PGraphics2 extends PGraphics {
       super.textLinePlacedImpl(buffer, start, stop, x, y);
       return;
     }
+
+    // check to see if this font wants to be smoothed but smoothing
+    // is currently shut off for the graphics context overall
+    boolean savedSmooth = smooth;
+    if (textFont.smooth != savedSmooth) {
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                         textFont.smooth ?
+                         RenderingHints.VALUE_ANTIALIAS_ON :
+                         RenderingHints.VALUE_ANTIALIAS_OFF);
+    }
+
     g2.setColor(fillColorObject);
     // better to use drawString(float, float)?
     g2.drawChars(buffer, start, stop, (int) (x + 0.5f), (int) (y + 0.5f));
+
+    // return to previous smoothing state if it was changed
+    if (textFont.smooth != savedSmooth) {
+      if (savedSmooth) {
+        smooth();
+      } else {
+        noSmooth();
+      }
+    }
   }
 
 
