@@ -31,6 +31,9 @@ X add "smooth" as a field inside the font file
 X   and when smooth field is set, make sure JAVA2D enables smoothing
 X   since otherwise smooth() has to be called for the whole g2
 
+_ when using things like PGraphicsPDF, need to not resize window
+_   if it doesn't display to the screen, needs to never show a window
+
 _ how to deal with triangles/lines and triangleCount and lineCount
 _   maybe just need a triangleImpl and lineImpl
 _   because it's too messy to retain the triangle objects and info
