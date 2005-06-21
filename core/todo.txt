@@ -30,6 +30,8 @@ X     i.e. with the font installed, and then super slow for their users
 X add "smooth" as a field inside the font file
 X   and when smooth field is set, make sure JAVA2D enables smoothing
 X   since otherwise smooth() has to be called for the whole g2
+X rob saunders contributed a fix for a bug in PImage.copy()
+X   the wrong boundaries were being copied in the code
 
 _ when using things like PGraphicsPDF, need to not resize window
 _   if it doesn't display to the screen, needs to never show a window
@@ -52,14 +54,18 @@ _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
 
+_ why aren't background() / defaults() being called for opengl?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
+
 _ createGraphics(200, 200) to create same as source
 _   createGraphics(200, 200, P2D) to create 2D from 3D
 _   also, drawing a PGraphics2 doesn't seem to work
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619;start=5
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1118318573
 _ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _   they're drawn as transparent and don't have their high bits set
-http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055;start=0
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536
 
 _ P3D not doing bilinear interpolation in text and images 
 _   because smooth() has to be set (and smooth throws an error in P3D)
