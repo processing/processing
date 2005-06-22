@@ -265,10 +265,10 @@ public class PGraphics extends PImage implements PConstants {
   public PFont textFont;
 
   /** The current font if a Java version of it is installed */
-  protected Font textFontNative;
+  public Font textFontNative;
 
   /** Metrics for the current native Java font */
-  protected FontMetrics textFontNativeMetrics;
+  public FontMetrics textFontNativeMetrics;
 
   /** The current text align (read-only) */
   public int textAlign;
@@ -281,6 +281,9 @@ public class PGraphics extends PImage implements PConstants {
 
   /** The current text leading (read-only) */
   public float textLeading;
+
+  /** Last text position, because text often mixed on lines together */
+  public float textX, textY, textZ;
 
   /**
    * Internal buffer used by the text() functions
@@ -567,10 +570,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   *  set engine's default values
+   * Set engine's default values. This has to be called by PApplet,
+   * somewhere inside setup() or draw() because it talks to the
+   * graphics buffer, meaning that for subclasses like OpenGL, there
+   * needs to be a valid graphics context to mess with otherwise
+   * you'll get some good crashing action.
    */
   public void defaults() {  // ignore
-    //System.out.println("PGraphics.defaults()");
+    //System.out.println("PGraphics.defaults() " + width + " " + height);
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
@@ -1814,6 +1821,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Write text where we just left off.
+   */
+  public void text(char c) {
+    text(c, textX, textY, textZ);
+  }
+
+
+  /**
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
    * because loadPixels has to be called first and updatePixels last.
@@ -1844,8 +1859,17 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
     text(c, x, y);
+    textZ = z;
 
     if (z != 0) translate(0, 0, -z);
+  }
+
+
+  /**
+   * Write text where we just left off.
+   */
+  public void text(String str) {
+    text(str, textX, textY, textZ);
   }
 
 
@@ -1893,6 +1917,7 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slow!
 
     text(str, x, y);
+    textZ = z;
 
     if (z != 0) translate(0, 0, -z);
   }
@@ -1922,6 +1947,9 @@ public class PGraphics extends PImage implements PConstants {
       // this doesn't account for kerning
       x += textWidth(buffer[index]);
     }
+    textX = x;
+    textY = y;
+    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 
@@ -2083,6 +2111,7 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
     text(s, x1, y1, x2, y2);
+    textZ = z;
 
     if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
   }

@@ -696,7 +696,8 @@ public class PGraphics2 extends PGraphics {
       return super.textWidthImpl(buffer, start, stop);
     }
     // maybe should use one of the newer/fancier functions for this?
-    return textFontNativeMetrics.charsWidth(buffer, start, stop);
+    int length = stop - start;
+    return textFontNativeMetrics.charsWidth(buffer, start, length);
   }
 
 
@@ -719,7 +720,8 @@ public class PGraphics2 extends PGraphics {
 
     g2.setColor(fillColorObject);
     // better to use drawString(float, float)?
-    g2.drawChars(buffer, start, stop, (int) (x + 0.5f), (int) (y + 0.5f));
+    int length = stop - start;
+    g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
 
     // return to previous smoothing state if it was changed
     if (textFont.smooth != savedSmooth) {
@@ -729,6 +731,9 @@ public class PGraphics2 extends PGraphics {
         noSmooth();
       }
     }
+    textX = x + textWidthImpl(buffer, start, stop);
+    textY = y;
+    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 
