@@ -36,6 +36,8 @@ X fix bug where noLoop() was waiting 10 secs to call exit()
 X add ability to draw text from the current text position
 _   need to add this to the documentation
 
+_ testing cvs here
+
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?
 
