@@ -32,9 +32,17 @@ X   and when smooth field is set, make sure JAVA2D enables smoothing
 X   since otherwise smooth() has to be called for the whole g2
 X rob saunders contributed a fix for a bug in PImage.copy()
 X   the wrong boundaries were being copied in the code
+X fix bug where noLoop() was waiting 10 secs to call exit()
+X add ability to draw text from the current text position
+_   need to add this to the documentation
+
+_ leading looks too big, at least in PGraphics2 with news gothic
+_   though it may be the converted version of the .ttf?
 
 _ when using things like PGraphicsPDF, need to not resize window
 _   if it doesn't display to the screen, needs to never show a window
+_   basically if the main gfx context isn't viewable, close the window
+_   since it may have already been opened at 100x100
 
 _ how to deal with triangles/lines and triangleCount and lineCount
 _   maybe just need a triangleImpl and lineImpl

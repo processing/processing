@@ -671,10 +671,10 @@ public class PApplet extends Applet
 
 
   /**
-   * Starts up and creates a two-dimensional drawing surface.
+   * Starts up and creates a two-dimensional drawing surface,
+   * or resizes the current drawing surface.
    * <P>
-   * To ensure no strangeness, this should be the first thing
-   * called inside of setup().
+   * This should be the first thing called inside of setup().
    * <P>
    * If using Java 1.3 or later, this will default to using
    * PGraphics2, the Java2D-based renderer. If using Java 1.1,
@@ -708,8 +708,9 @@ public class PApplet extends Applet
    * Creates a new PGraphics object and sets it to the specified size.
    * <P>
    * Note that you cannot change the renderer once outside of setup().
-   * You can call size() to give it a new size, but you need to always
-   * ask for the same renderer, otherwise you're gonna run into trouble.
+   * In most cases, you can call size() to give it a new size,
+   * but you need to always ask for the same renderer, otherwise
+   * you're gonna run into trouble.
    * <P>
    * Also note that this calls defaults(), which will reset any
    * settings for colorMode or lights or whatever.
@@ -720,13 +721,18 @@ public class PApplet extends Applet
     if (currentRenderer != null) {
       if (currentRenderer.equals(renderer)) {
         if ((iwidth == g.width) && (iheight == g.height)) {
-          // all set, the renderer was queued up last time
-          // before throwing the exception
-          //System.out.println("ignoring additional size()");
-          // but this time set the defaults
-          //g.defaults();
-          //System.out.println("defaults set");
+          // in this case, size() is being called a second time because
+          // setup() is being called a second time, since the first time
+          // that setup was called, the renderer was changed so an
+          // exception was thrown and setup() didn't complete. but this
+          // time around, g is the proper size and the proper class, so
+          // all that needs to be done is to set the defaults (clear the
+          // background, set default strokeWeight, etc).
           g.defaults();
+          // this will happen when P3D or OPENGL are used with size()
+          // inside of setup. it's also safe to call defaults() now,
+          // because it's happening inside setup, which is just frame 0,
+          // meaning that the graphics context is proper and visible.
           return;
         }
       } else {
@@ -742,10 +748,6 @@ public class PApplet extends Applet
       "Import Library > opengl from the Sketch menu.";
 
     try {
-      //if (renderer.equals(OPENGL)) {
-      //g = new processing.opengl.PGraphicsGL(iwidth, iheight, this);
-      //} else {
-
       Class rendererClass = Class.forName(renderer);
       Class constructorParams[] =
         new Class[] { Integer.TYPE,
@@ -759,19 +761,13 @@ public class PApplet extends Applet
                        this };
       // create the actual PGraphics object for rendering
       //System.out.println("creating new PGraphics " + constructor);
-      g = (PGraphics)
-        constructor.newInstance(constructorValues);
+      g = (PGraphics) constructor.newInstance(constructorValues);
 
       this.width = iwidth;
       this.height = iheight;
-      // can't do this here because of gl
-      //g.defaults();
 
-      //width = g.width;
-      //height = g.height;
-      //pixels = g.pixels;  // this may be null
-
-      // make the applet itself larger
+      // make the applet itself larger.. it's a subclass of Component,
+      // so this is important for when it's embedded inside another app.
       setSize(width, height);
 
       // probably needs to mess with the parent frame here?
@@ -816,36 +812,65 @@ public class PApplet extends Applet
     // restore it to its default values
     g.defaults();
 
-    /*
-    if (g == null) return;
-    g.resize(iwidth, iheight);
-
-    this.pixels = g.pixels;
-    this.width = g.width;
-    this.height = g.height;
-
-    if (frame != null) {
-      Insets insets = frame.getInsets();
-
-      // msft windows has a limited minimum size for frames
-      int minW = 120;
-      int minH = 120;
-      int winW = Math.max(width, minW) + insets.left + insets.right;
-      int winH = Math.max(height, minH) + insets.top + insets.bottom;
-      frame.setSize(winW, winH);
-
-      setBounds((winW - width)/2,
-                insets.top + ((winH - insets.top - insets.bottom) - height)/2,
-                winW, winH);
-    //} else {
-      //System.out.println("frame was null");
-      //setBounds(0, 0, width, height);
-    }
-    */
-
     Object methodArgs[] =
       new Object[] { new Integer(width), new Integer(height) };
     sizeMethods.handle(methodArgs);
+  }
+
+
+  public PGraphics createGraphics(String renderer) {
+    return createGraphics(width, height, renderer);
+  }
+
+
+  public PGraphics createGraphics(int iwidth, int iheight) {
+    return createGraphics(iwidth, iheight, g.getClass().getName());
+  }
+
+
+  public PGraphics createGraphics(int iwidth, int iheight, String renderer) {
+    if (renderer.equals(OPENGL)) {
+      throw new RuntimeException("createGraphics() with OPENGL is not " +
+                                 "supported. Use P3D instead.");
+  }
+
+    PGraphics outgoing;
+    try {
+      Class rendererClass = Class.forName(renderer);
+      Class constructorParams[] =
+        new Class[] { Integer.TYPE,
+                      Integer.TYPE,
+                      PApplet.class };
+      Constructor constructor =
+        rendererClass.getConstructor(constructorParams);
+      Object constructorValues[] =
+        new Object[] { new Integer(iwidth),
+                       new Integer(iheight),
+                       this };
+      // create the actual PGraphics object for rendering
+      //System.out.println("creating new PGraphics " + constructor);
+      outgoing = (PGraphics) constructor.newInstance(constructorValues);
+
+    } catch (InvocationTargetException ite) {
+      //Throwable target = ((InvocationTargetException) t).getTargetException();
+      throw new RuntimeException(ite.getTargetException());
+      //ite.getTargetException().printStackTrace();
+
+    } catch (ClassNotFoundException cnfe) {
+      throw new RuntimeException("You need to use \"Import Library\" " +
+                                 "to add " + renderer + " to your sketch.");
+
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+      //e.printStackTrace();
+      //die("Could not start because of a problem with size()", e);
+    }
+
+    // clear things out to get started
+    outgoing.defaults();
+
+    // and send 'em off
+    return outgoing;
   }
 
 
@@ -972,7 +997,7 @@ public class PApplet extends Applet
           // have a feeling that some platforms aren't gonna like that
           // if !looping, sleeps for a nice long time,
           // or until interrupted
-          int nap = looping ? 1 : 10000;
+          int nap = (looping || finished) ? 1 : 10000;
           // don't nap after setup, because if noLoop() is called this
           // will make the first draw wait 10 seconds before showing up
           if (frameCount == 1) nap = 1;
@@ -1014,6 +1039,13 @@ public class PApplet extends Applet
     }
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               " thread finished");
+
+    // this may not be safe? this will get triggered with exit()
+    // but need to see if this is it
+    if ((leechErr == null) && !online) {
+      System.exit(0);
+    }
+
     //System.out.println("exiting run " + finished);
     stop();  // call to shutdown libs?
   }
@@ -1837,10 +1869,6 @@ public class PApplet extends Applet
   public void exit() {
     stop();
     finished = true;
-
-    if ((leechErr == null) && !online) {
-      System.exit(0);
-    }
   }
 
 
@@ -5533,8 +5561,28 @@ v              PApplet.this.stop();
 
 
   public void recordFrame(PGraphics recorder) {
+    recordFrame(recorder, "frame-" + nf(frameCount, 4));
+  }
+
+
+  public void recordFrame(PGraphics recorder, String filename) {
+    int first = filename.indexOf('#');
+    int last = filename.lastIndexOf('#');
+
+    if (first != -1) {
+      String prefix = filename.substring(0, first);
+      int count = last - first + 1;
+      String suffix = filename.substring(last + 1);
+      filename = prefix + nf(frameCount, count) + suffix;
+    }
+    recordFrame(recorder, savePath(filename));
+  }
+
+
+  public void recordFrame(PGraphics recorder, File file) {
     this.recorder = recorder;
-    recorder.beginFrame();
+    //recorder.record(frameCount, file);
+    recorder.beginFrame(); //frameCount, file);
   }
 
 
@@ -6057,6 +6105,12 @@ v              PApplet.this.stop();
   }
 
 
+  public void text(char c) {
+    if (recorder != null) recorder.text(c);
+    g.text(c);
+  }
+
+
   public void text(char c, float x, float y) {
     if (recorder != null) recorder.text(c, x, y);
     g.text(c, x, y);
@@ -6066,6 +6120,12 @@ v              PApplet.this.stop();
   public void text(char c, float x, float y, float z) {
     if (recorder != null) recorder.text(c, x, y, z);
     g.text(c, x, y, z);
+  }
+
+
+  public void text(String str) {
+    if (recorder != null) recorder.text(str);
+    g.text(str);
   }
 
 
