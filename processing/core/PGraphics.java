@@ -2004,7 +2004,7 @@ public class PGraphics extends PImage implements PConstants {
     float spaceWidth = textWidth(' ');
     float runningX = x1; //boxX1;
     float currentY = y1; //boxY1;
-    float boxWidth = x2 - x2; //boxX2 - boxX1;
+    float boxWidth = x2 - x1; //boxX2 - boxX1;
 
     // lineX is the position where the text starts, which is adjusted
     // to left/center/right based on the current textAlign

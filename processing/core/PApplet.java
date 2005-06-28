@@ -832,7 +832,7 @@ public class PApplet extends Applet
     if (renderer.equals(OPENGL)) {
       throw new RuntimeException("createGraphics() with OPENGL is not " +
                                  "supported. Use P3D instead.");
-  }
+    }
 
     PGraphics outgoing;
     try {
