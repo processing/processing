@@ -1,40 +1,4 @@
-0092 core
-X rle-compressed tga save() method added by toxi
-X   also version that only saves RGB instead of ARGB
-X proper/consistent api to access matrices in PGraphics/PGraphics3
-X   first use loadMatrix(), then m00, m01 etc
-X   find the post on the board and make a note of this
-X proper api for access to Graphics2D object in PGraphics2
-X   just add the current "g2" thing to the faq
-X   and make a note of it on the suggestions board
-X vars like cameraX etc need to be in PGraphics
-X   otherwise g.xxxx won't work
-X   how far should this go? vertices etc?
-X   vertices not included because switching to triangleImpl and lineImpl
-X fix for copy() in java2d to make things a little speedier
-X make PApplet.main() for java 1.3 friendly (Color class constants)
-X remove call to background() in PGraphics2
-o change PGraphics to PGraphics2 
-o   or not, because PGraphics has all the base stuff for 3D
-o   change PGraphics2 to PGraphicsJava or PGraphicsJava2D
-o   maybe wait until the new shape stuff is done?
-X move font placement stuff back into PGraphics?
-X   figure out how to get regular + java fonts working
-X   use that do drive how the api is set up
-X optimize fonts by using native fonts in PGraphics2
-X   especially textMode(SCREEN) which is disastrously slow
-X   in java2d, can quickly blit the image itself
-X   this way, can isolate it for gl too, which will use glBitmap
-X   danger of this setup is that it may run much nicer for the author
-X     i.e. with the font installed, and then super slow for their users
-X add "smooth" as a field inside the font file
-X   and when smooth field is set, make sure JAVA2D enables smoothing
-X   since otherwise smooth() has to be called for the whole g2
-X rob saunders contributed a fix for a bug in PImage.copy()
-X   the wrong boundaries were being copied in the code
-X fix bug where noLoop() was waiting 10 secs to call exit()
-X add ability to draw text from the current text position
-
+0093 core
 
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?

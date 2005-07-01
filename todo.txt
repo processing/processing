@@ -1,6 +1,4 @@
-0092 pde
-X more info in the todo about event handling
-
+0093 pde
 _ name Le'o is a problem on osx 
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues

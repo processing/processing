@@ -1,3 +1,7 @@
+0092 pde
+X more info in the todo about event handling
+
+
 0091 pde
 X error messages from external not coming through very well
 X   especially on macosx.. is it writing to stdout.txt tho?
