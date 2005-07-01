@@ -1,6 +1,11 @@
 0092 pde
 X more info in the todo about event handling
 
+_ name Le'o is a problem on osx 
+_ sonia is locking up on load in rev 91
+_   prolly something w/ the threading issues
+_ make a note in the library howto about using something besides p5
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -82,6 +87,7 @@ _ write an example that uses Vector
 _ get an xml library and example in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
+_ explanation of can't mix awt components with p5
 
 
 
@@ -415,6 +421,8 @@ _ "save as" shouldn't show save as dialog for sketches
 _   unless that's the current mode that's being used
 _ scanning sketchbook folder may be extremely slow 
 _   not sure why this would be the case
+_   when lots of frames saved out, takes forever to scan the folder
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1119096890
 _ handle renaming with case changes (currently ignores case change)
 _   see notes/bitching in Sketch.nameCode()
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116171607;start=0
