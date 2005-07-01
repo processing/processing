@@ -3,10 +3,10 @@ X rle-compressed tga save() method added by toxi
 X   also version that only saves RGB instead of ARGB
 X proper/consistent api to access matrices in PGraphics/PGraphics3
 X   first use loadMatrix(), then m00, m01 etc
-_   find the post on the board and make a note of this
+X   find the post on the board and make a note of this
 X proper api for access to Graphics2D object in PGraphics2
-_   just add the current "g2" thing to the faq
-_   and make a note of it on the suggestions board
+X   just add the current "g2" thing to the faq
+X   and make a note of it on the suggestions board
 X vars like cameraX etc need to be in PGraphics
 X   otherwise g.xxxx won't work
 X   how far should this go? vertices etc?
@@ -34,7 +34,7 @@ X rob saunders contributed a fix for a bug in PImage.copy()
 X   the wrong boundaries were being copied in the code
 X fix bug where noLoop() was waiting 10 secs to call exit()
 X add ability to draw text from the current text position
-_   need to add this to the documentation
+
 
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?
@@ -534,11 +534,12 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PGraphicsGL
 
-_ get(), set(), loadPixels, updatePixels() are broken in opengl
+_ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116782962
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1115630361
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115557986
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118357601;start=0#1
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth

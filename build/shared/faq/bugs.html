@@ -79,6 +79,7 @@ function gogo(dropdown) {
 <a href="#issues">Common Issues (not bugs)</a> <br>
 <a href="#video">Problems with Video (Quicktime for Java)</a> <br>
 <a href="#serial">Using the Serial Port</a> <br>
+<a href="#java2d">When Drawing in 2D</a> <br>
 <a href="#opengl">Problems with OpenGL</a> <br>
 <a href="#cantfix">Things that we probably can't fix</a> <br>
 <a href="#known">Known Bugs</a> <br>
@@ -599,6 +600,41 @@ them: beta code that runs as root and handles files? yeah great...)
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
   <tr> 
     <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="java2d"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+When Drawing in 2D
+</b> <br> <br>
+<UL>
+<LI>The default renderer as of beta uses Java 2D. It's more accurate
+than the renderer used in alpha, but is super slow for handling
+pixels. At least until we get a chance to get the old 2D renderer
+working in a similar fashion, you can use size(w, h, P3D)
+instead of size(w, h) which will be faster for general pixel flipping
+madness.
+<LI>To get access to the Java 2D "Graphics2D" object for the default
+renderer, use:
+<PRE>Graphics2D g2 = ((PGraphics2)g).g2;</PRE>
+This will let you do Java 2D stuff directly, but is not supported in
+any way shape or form. Which just means "have fun, but don't complain
+if it breaks."
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
     <a name="opengl"></a> 
     <td width="645"><br>
     </td>
@@ -768,8 +804,8 @@ didn't want to hold up beta any longer.
 libraries). Closing the window to shut things down usually works fine, 
 though even that might lock up sometimes. Make sure you save your 
 sketches before you run, in case you have to force-quit.
-<LI>The get(), set(), loadPixels() and updatePixels() functions are
-fairly broken when using OpenGL.
+<LI>The get(), set(), blend(), loadPixels() and updatePixels() 
+functions are fairly broken when using OpenGL.
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
 2D and 3D libraries, eventually we won't have to include the 3D code

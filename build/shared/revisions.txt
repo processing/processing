@@ -7,6 +7,45 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0092 - 30 june 2005
+
+release to support casey's workshop, but not announced publicly.
+
+- thanks to toxi, RLE-compressed .tga images are now the default
+
+- fix to make copy() a little faster in 2D
+
+- native fonts are now used with JAVA2D if they're installed on the
+  host machine. this means faster, higher quality rendering for fonts.
+  will require running "Create Font" again, however.
+
+
+[ api changes ]
+
+- loadMatrix() now handles getting good matrix values into 
+  g.m00, g.m01 etc across all renderers
+
+- accessible variables from PGraphics3 can now be found in the main
+  graphics object, so it's possible to use g.cameraX, etc.
+
+- text now has an inherent position, so after drawing some text, a
+  call to text("blah"); will draw the text "blah" right after the last
+  text that was just drawn.
+
+
+[ internal stuff ] 
+
+- PApplet.main() is now Java 1.3 compliant
+
+- move font placement back into PGraphics
+
+- lots of changes to font control and font format updated once again
+
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0091 - 6 june 2005
 
 
