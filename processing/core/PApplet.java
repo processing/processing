@@ -109,7 +109,7 @@ public class PApplet extends Applet
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
-  protected Object glock = new Object(); // for sync
+  //protected Object glock = new Object(); // for sync
 
   /** The frame containing this applet (if any) */
   public Frame frame;
@@ -713,7 +713,7 @@ public class PApplet extends Applet
    * you're gonna run into trouble.
    * <P>
    * Also note that this calls defaults(), which will reset any
-   * settings for colorMode or lights or whatever.
+   * settings for the font, stroke, fill, colorMode, lights, etc.
    */
   public void size(int iwidth, int iheight, String renderer) {
     String currentRenderer = (g == null) ? null : g.getClass().getName();
@@ -3952,6 +3952,39 @@ public class PApplet extends Applet
   }
 
   //
+
+  static public boolean[] subset(boolean list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public boolean[] subset(boolean list[], int start, int count) {
+    boolean output[] = new boolean[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public byte[] subset(byte list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public byte[] subset(byte list[], int start, int count) {
+    byte output[] = new byte[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public char[] subset(char list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public char[] subset(char list[], int start, int count) {
+    char output[] = new char[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
 
   static public int[] subset(int list[], int start) {
     return subset(list, start, list.length - start);

@@ -459,7 +459,6 @@ public class PGraphics3 extends PGraphics {
     emissive(0.0f);
     specular(0.5f);
     shininess(1.0f);
-
   }
 
 
