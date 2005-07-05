@@ -723,6 +723,11 @@ public class PGraphics2 extends PGraphics {
     int length = stop - start;
     g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
 
+    // this didn't seem to help the scaling issue
+    // and creates garbage because of the new temporary object
+    //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
+    //g2.drawGlyphVector(gv, x, y);
+
     // return to previous smoothing state if it was changed
     if (textFont.smooth != savedSmooth) {
       if (savedSmooth) {
