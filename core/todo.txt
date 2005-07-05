@@ -1,5 +1,8 @@
 0093 core
 
+_ PApplet.main(new String[] { "classname }) won't pass in args.. grr
+_   PApplet.main(append(new String[] { "classname }, args));
+
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?
 
