@@ -4,6 +4,9 @@ _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
 _ make a note in the library howto about using something besides p5
 
+_ rebuild jikes with --enable-static --disable-shared
+_   http://as.processing.org/bugs/show_bug.cgi?id=47
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
