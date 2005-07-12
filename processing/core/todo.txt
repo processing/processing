@@ -1,5 +1,12 @@
 0093 core
 
+_ change how java version is determined on mac
+_   http://developer.apple.com/technotes/tn2002/tn2110.html
+_   (this tn provides no guidance for macos8/9.. gah)
+
+_ upgrade jogl to a newer rev to fix osx "cannot lock" issues
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714;start=0#3
+
 _ PApplet.main(new String[] { "classname }) won't pass in args.. grr
 _   PApplet.main(append(new String[] { "classname }, args));
 
