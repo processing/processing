@@ -761,6 +761,14 @@ An error that reads something like
 <TT>2005-05-19 14:20:44.209 java[875] _initWithWindowNumber: error
 creating graphics ctxt object for ctxt:72059, window:26969</TT> is a
 known bug in Apple's Java implementation.
+<LI>
+Sometimes something like the following will come up: <TT> ***
+malloc[438]: Deallocation of a pointer not malloced: 0xffffffff; This
+could be a double free(), or free() called with the middle of an
+allocated block; Try setting environment variable MallocHelp to see
+tools to help debug </TT> it seems to be a bug in Apple's OS X
+Java. It doesn't appear to hurt anything but there's nothing we can do
+to fix it.
 </UL>
 Linux
 <UL>
