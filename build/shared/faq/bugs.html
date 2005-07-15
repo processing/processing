@@ -355,7 +355,8 @@ of the second word will be capitalized. For instance: keyPressed, movieEvent, mo
   Microsoft's VM (and that's the one most widely installed).
 
 <LI> &ldquo;Export to Application&rdquo; remains unimplemented, 
-though we're hoping to have it complete soon.
+though we're hoping to have it complete soon. (<A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=60">Bug 60</A>)
 
 <LI>On Mac OS X, the error message: 
 <tt>## Component Manager: attempting to find symbols in a component
@@ -760,15 +761,16 @@ Mac OS X
 An error that reads something like 
 <TT>2005-05-19 14:20:44.209 java[875] _initWithWindowNumber: error
 creating graphics ctxt object for ctxt:72059, window:26969</TT> is a
-known bug in Apple's Java implementation.
+known bug in Apple's Java implementation. (<A
+HREF="http://processing.org/bugs/show_bug.cgi?id=53">Bug 53</A>)
 <LI>
 Sometimes something like the following will come up: <TT> ***
 malloc[438]: Deallocation of a pointer not malloced: 0xffffffff; This
 could be a double free(), or free() called with the middle of an
 allocated block; Try setting environment variable MallocHelp to see
 tools to help debug </TT> it seems to be a bug in Apple's OS X
-Java. It doesn't appear to hurt anything but there's nothing we can do
-to fix it.
+Java. It doesn't appear to hurt anything but there doesn't appear to
+be anything we can do to fix it. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=52">bug 52</A>)
 </UL>
 Linux
 <UL>
@@ -776,7 +778,7 @@ Linux
 <tt>Warning: Cannot convert string
 "-b&h-lucida-medium-r-normal-sans-*-140-*-*-p-*-iso8859-1" to type
 FontStruct</tt>. This is just a Java issue, but doesn't seem to 
-really affect things.
+affect things.
 </UL>
       </td>
     <td width="50">&nbsp;</td>
@@ -836,7 +838,8 @@ missing. In the meantime, "Archive Sketch" might be useful.
 <LI>Need to complete the "Tools" menu, which will be a way for people
 to develop their own editor plug-ins.
 <LI>"Export to Application" is not yet complete
-<LI>When you have too many tabs, things get ugly
+<LI>When you have too many tabs, things get ugly (<A
+HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
 <LI>Save changes before quitting needs a "Cancel" button
 <LI>Error messages are often too long or too weird
 <LI>tint() is not affected textures but will in the future
