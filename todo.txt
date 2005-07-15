@@ -1,20 +1,27 @@
 0093 pde
+X println() can hose the app for the first 20-30 frames
+X   incorporate fix posted by mellis
+X   need to figure out threading etc
+X   problem with it launching a new thread for every single update!
+X   http://processing.org/bugs/show_bug.cgi?id=19
+
 _ name Le'o is a problem on osx 
+_   http://processing.org/bugs/show_bug.cgi?id=49
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
-_ make a note in the library howto about using something besides p5
-
+_   http://as.processing.org/bugs/show_bug.cgi?id=46
 _ rebuild jikes with --enable-static --disable-shared
 _   http://as.processing.org/bugs/show_bug.cgi?id=47
+
+_ make a note in the library howto about using something besides p5
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+cat blah.patch | patch -p1
 
 _ package macosx with a dmg
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054;start=0
-_ reference: createFont() when not providing the .ttf is strongly discouraged
-_   from use in sketches, because users will rarely have the same font
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054
 _ don't allow subfolders inside the sketchbook folder
 _   once a sketch is found, don't recurse deeper
 _   same for libraries, cuz this makes a mess
@@ -119,9 +126,7 @@ _   float u = float(x)/width; works.
 _   float u = (float(x)/width); doesn't work: "unexpected token: float".
 _   float u = (x/float(width)); works! 
 _   http://as.processing.org/bugs/show_bug.cgi?id=4
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1084011098;start=0
 _   return (int(5.5)) causes an error
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083624993;start=0
 _ preprocessor error if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError wants to happen, 
 _   but right now there's a hack to add a CR in PdePreprocessor
@@ -129,14 +134,12 @@ _   http://as.processing.org/bugs/show_bug.cgi?id=5
 _ random, single slash in the code doesn't throw an error
 _   (just gets removed by the preprocessor)
 _   http://processing.org/bugs/show_bug.cgi?id=6
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1099371066;start=0
 _ allow doubles in preproc
 _   (for casting, etc) particularly for Math.cos() et al
 _   http://processing.org/bugs/show_bug.cgi?id=7
 _ jikes bugs mean some code just won't compile:
 _   include javac? would this be a good solution for linux?
 _   http://as.processing.org/bugs/show_bug.cgi?id=8
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115833916;start=0
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
 _   http://as.processing.org/bugs/show_bug.cgi?id=9
@@ -144,7 +147,6 @@ _ an empty .java tab will throw an error
 _   http://as.processing.org/bugs/show_bug.cgi?id=10
 _ warn about writing non-1.1 code. 
 _   http://as.processing.org/bugs/show_bug.cgi?id=11
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1079867179;start=0
 _ missing semicolons - better error message
 _   http://as.processing.org/bugs/show_bug.cgi?id=12
 _ missing brackets, unmatched brackets
@@ -165,14 +167,6 @@ _   add a better handler for this specific thing?
 _   http://as.processing.org/bugs/show_bug.cgi?id=18
 
 
-PDE / Console
-
-_ println() can hose the app for the first 20-30 frames
-_   need to figure out threading etc
-_   problem with it launching a new thread for every single update!
-_   http://as.processing.org/bugs/show_bug.cgi?id=19
-
-
 PDE / Editor
 
 _ when running with external editor, hide the editor text area
@@ -187,9 +181,6 @@ _   and when hitting } do a proper outdent (if only spaces before it)
 _   http://as.processing.org/bugs/show_bug.cgi?id=22
 _ horizontal scroller gets weird sometimes
 _   http://as.processing.org/bugs/show_bug.cgi?id=23
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042351684
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083787569
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
 _   http://as.processing.org/bugs/show_bug.cgi?id=24
 _ lock the minimum size for the main processing editor frame
@@ -208,7 +199,7 @@ _   not confirmed for a long time
 _   even without sketches open, perhaps not gc'ing properly
 _   objects probably not getting finalized
 _   http://as.processing.org/bugs/show_bug.cgi?id=29
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854
 _ menu weirdness (benelek)
 _   when you've got a menu open, move a cursor over the text area
 _   and back over the menu, the text-area cursor type remains. 
@@ -218,13 +209,9 @@ _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable
 _   http://as.processing.org/bugs/show_bug.cgi?id=31
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075149929
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115487608;start=0
 _ figure out how to cancel 'save changes' on macosx and windows
 _   macosx handleQuit seems to force termination (at least on 1.3)
 _   http://as.processing.org/bugs/show_bug.cgi?id=32
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064732330;start=0
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114019456
 _ dim edit menus as appropriate during selection/no selection/etc
 _   http://as.processing.org/bugs/show_bug.cgi?id=33
 _ properly handle ENTER, Ctrl-W and ESC on all dialogs
@@ -237,15 +224,12 @@ _   http://as.processing.org/bugs/show_bug.cgi?id=34
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
 _   so user thinks nothing is happening and overundo. 
 _   http://as.processing.org/bugs/show_bug.cgi?id=35
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
 _ undo has become sluggish
-_   http://as.processing.org/bugs/show_bug.cgi?id=36
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114103943;start=0
+_   http://processing.org/bugs/show_bug.cgi?id=36
 _ undo after "import library" makes a blank screen
 _   http://processing.org/bugs/show_bug.cgi?id=41
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115920233;start=0
 _ fonts smaller than 10 cause problems in the editor on osx
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116167072
+_   http://processing.org/bugs/show_bug.cgi?id=51
 
 
 PDE / Editor Buttons
@@ -265,28 +249,34 @@ PDE / Editor Header
 
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
+_   http://as.processing.org/bugs/show_bug.cgi?id=54
 _ ctrl-tab to switch between tabs
+_   http://as.processing.org/bugs/show_bug.cgi?id=55
 _ not always updating on rename (maybe a mac problem?)
+_   http://as.processing.org/bugs/show_bug.cgi?id=56
 
 
 PDE / Editor Status
 
 _ error messages run off the edge and go invisible
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1074894329
+_   http://as.processing.org/bugs/show_bug.cgi?id=57
 _ multiple errors a mess in jikes
 _   actual error may be 4th of 5
 _   maybe a dropdown list thing, with the first just shown?
-_ move to modal dialog showError/Message/Warning/Prompt design 
+_   http://as.processing.org/bugs/show_bug.cgi?id=58
+_ move all prompts to modal dialog showError/Message/Warning/Prompt
 _   nicely design dialog boxes to go with visual of p5
 _   maybe something that shows stack trace?
 _   with an 'email this' button? (include source code too?)
 _   also need a "prompt" dialog for asking filenames, etc
 _   implement and remove PdeEditorStatus stuff
+_   http://as.processing.org/bugs/show_bug.cgi?id=59
 
 
 PDE / Export
 
 _ write export-to-application
+_   http://as.processing.org/bugs/show_bug.cgi?id=60
 _   problem with packages.. currently mainClassName is preproc name
 _     and "name" is the sketch name, w/o package
 _     but if a package were in use, then would be trouble
@@ -300,29 +290,31 @@ _   main() method needs to set layout manager if jexegen is to be used
 _     (msft vm defaults to null layout manager)
 _   also make sure pack() is happening
 _   add manifest.mf to exported applets so that applications will work
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1045983103;start=0
-_   BApplet.main(new String[] { "flashcards3" });
+_   PApplet.main(new String[] { "TheClass" });
 _     this will need to detect whether the user has their own main()
-_     or even BApplet.main(new String[] { getClass().getName() });
+_     or even PApplet.main(new String[] { getClass().getName() });
 _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
 _     main sticking point will be serial/qtjava in exports
 _ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else? (nah, too messy)
+_   or rename the old applet folder to something else? (too messy)
+_   http://as.processing.org/bugs/show_bug.cgi?id=61
 _ make multiple jar files thing work as an option
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1067360903;start=0
+_   http://as.processing.org/bugs/show_bug.cgi?id=62
 _   applet default is one file, application default is multiple
-_   user in advanced mode can switch to the other
 _   buttons on side of sketch do default (last) behavior
 _ need to decide how to handle "stop" button in present mode
+_   http://as.processing.org/bugs/show_bug.cgi?id=63
 _   when running externally, people need to write their own stop function
 _   just get export to application working so this can be supported
 _   for now, they're stuck w/ running in the env and getting the ugliness
 _ if size() not found in export/compile, ask the user
-_   size(myWidth, myHeight) -> set static var in BGraphics
-_     for the last size that was used, use as default for fill-in field
+_   have size(myWidth, myHeight) set a static var in PGraphics
+_   for the last size that was used, use as default for fill-in field
+_   http://as.processing.org/bugs/show_bug.cgi?id=64
 _ subfolders in the 'data' directory don't work
+_   http://as.processing.org/bugs/show_bug.cgi?id=65
 _ make export put a timestamp in the html code (hidden or visible)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1075659029
+_   http://as.processing.org/bugs/show_bug.cgi?id=66
 
 
 PDE / Find & Replace
@@ -332,7 +324,7 @@ _ several tweaks
 _   allowing to find & replace over multiple tabs 
 -   placing "replace" next to "find" ... (hitting "replace all" by accident) 
 -   have a button "replace & find next"
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115645270;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115645270
 _ fix find/replace focus issue on osx
 _   give that field focus explicitly, rather than just for typing
 _   right now, typing works, but no caret, no blue highlight
@@ -353,8 +345,8 @@ _     checkbox on menu for 'record history' ?
 _     history converter option?
 _   only first 20 entries visible?
 _   zlib file becoming corrupt (not flushed after close?)
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981;start=0
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655;start=0
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1080346981
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1088333655
 _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 
 
@@ -406,7 +398,7 @@ _ exceptions in draw() apps aren't caught
 _   the program resize(200, 200); just does nothing (doesn't complain)
 _ weird exception in the run button watcher
 _   http://processing.org/bugs/show_bug.cgi?id=42
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115936913;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115936913
 
 
 PDE / Sketch & Sketchbook
@@ -426,9 +418,9 @@ _   when lots of frames saved out, takes forever to scan the folder
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1119096890
 _ handle renaming with case changes (currently ignores case change)
 _   see notes/bitching in Sketch.nameCode()
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116171607;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116171607
 _ "save as" loses cursor/scroll positions (because reloading)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115486342;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1115486342
 _ setting sketchbook to a folder on the network
 _   does this work? test on both on mac and pc.. 
 _   or if not, should recommend people against it 
@@ -445,7 +437,7 @@ _   would be nice to open a sketch directly from a zip file
 
 TOOLS / General
 _ how to handle command keys
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272
 _ make dynamically loaded plugins and "tools" menu
 _   break out beautify as its own plugin
 _ color picker or other things written by folks
@@ -453,7 +445,7 @@ _   add all .jar files in lib/plugins on startup
 _ make some kind of internal color picker
 _   could be a separate window that's always around if needed
 _ external editor -> add a command to launch
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580
 _ add tool to hit 'next' to go through examples
 _   just make it "next file in folder" since examples are all over
 _   also need to copy examples locally
@@ -497,7 +489,7 @@ _ create font with user-specified charsets
 LIBRARIES / General
 
 _ InvocationTargetException in xxxxxxEvent calls
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328;start=0#3
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
 
 
 LIBRARIES / Video
@@ -509,11 +501,11 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 _ Movie needs the crop() functions ala Capture
 _ tearing and incomplete updates on capture?
 _   putting read() inside draw() seems to eliminate this?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335
 _ on export, need to first import applet's packages before qt et al
 _   video working in applets? (no, never did in alpha so untested)
 _     Movie should perhaps work?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115754972;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115754972
 _   http://processing.org/bugs/show_bug.cgi?id=44
 _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
@@ -537,7 +529,7 @@ LIBRARIES / Net
 
 _ move the useful serial buffering fxns into net library
 _ make the Client list public
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
 
 
 LIBRARIES / Serial
@@ -545,7 +537,7 @@ LIBRARIES / Serial
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116797335;start=0#0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116797335
 _ add prompt() method to Serial (simple dialog box that pops up)
 
 
@@ -621,9 +613,9 @@ _ NullPointerException when alt is pressed
 _   (not our bug, but log it in the bug db anyways)
 _   might be something to do with the applet frame being an awt not swing
 _   event first goes to the applet listener, needs to consume the event
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451
 
 
 DIST / Mac OS X
@@ -649,6 +641,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 DIST / Linux
 
 _ computationally intensive stuff runs really slow inside p5
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745;start=0#3
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745
 _ some reports of it not quitting properly, but not confirmed
 _ splash screen
