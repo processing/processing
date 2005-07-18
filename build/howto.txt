@@ -1,6 +1,8 @@
 HOW TO BUILD PROCESSING ON YOUR FAVORITE PLATFORM
 
-With frequently asked questions, scroll to the end of the file.
+If you have questions about the contents of this document, 
+ask questions at the discourse section of the site:
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde
 
 
 ////////////////////////////////////////////////////////////////////
@@ -21,7 +23,7 @@ With frequently asked questions, scroll to the end of the file.
   (this will also pull in gcc-core)
 
 + perl - use this version, activestate or other distros have trouble
-  
+
 + unzip, zip - for dealing with archives
 
 + included in the defaults, but make sure:
@@ -49,30 +51,31 @@ installer every few months to keep things fresh.
     standard development setup.
 
 
-2. GRAB THE CODE FROM SOURCEFORGE
+2. GRAB THE CODE FROM DEV.PROCESSING.ORG
 
-* this grabs the code as an anonymous user. if you have a sourceforge
-  account, you should know how to grab the code as yourself.
+We use CVS for version control because it's what we know. There's a
+CVS repository at dev.processing.org that you can use to get the code.
 
-# first do this
-cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing login
-# just hit enter when it asks for a password
+To get the code, first type this from a prompt:
 
-# then do this (may take a while)
-cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/processing co processing
-# (maybe even a long while for you dialup and international folks)
+cvs -d:pserver:anonymous@dev.processing.org:/var/cvs login
 
-# gonna do a few things in the p5 folder
+The password, just like the user name, is just "anonymous" (no
+quotes). After that, type the following to actually get the code:
+
+cvs -z3 -d:pserver:anonymous@dev.processing.org:/var/cvs co processing
+
+That part may take a while, especially for people outside the US or
+who have a slow internet connection.
+
+After that's complete, clean out the empty folders or old detritus:
+
 cd processing
-
-# a quick cleanup, removes empty (dead/old) folders
 cvs update -P
-
-# get back to the processing/ folder
 cd ..
 
 
-3. INSTALL QUICKTIME FOR JAVA (windows users only)
+3. INSTALL QUICKTIME FOR JAVA (Windows users only)
 
 * you'll also need to install quicktime for java. grab a quicktime
   installer from: http://www.apple.com/quicktime/download/
@@ -151,13 +154,12 @@ have to use -d -P with the update.
 
 //// Frequently Asked Questions
 
-- What about eclipse? What about ant? The command line is frightening
-  and gives me nightmares!
+- What about eclipse? What about ant? Command line sucks.
 
-In a basic sense, the command line stuff isn't as scary as it might 
-seem. Hopefully it's just a matter of following the instructions 
-above (and being patient). If not, let us know where you have trouble
-so we can fix things.
+The command line stuff isn't as scary as it might initially
+seem. Hopefully it's just a matter of following the instructions above
+(and being patient). If not, let us know (via the discourse board)
+where you have trouble so we can fix things.
 
 Conceivably, it wouldn't take much to make Processing build under
 Eclipse or any other IDE, but we don't do it by default. Same goes for 
@@ -166,3 +168,9 @@ emulated everything that the current build scripts do (not just build
 the code, but all the other annoying crap that the build scripts do) 
 then maybe we could switch to it. It's all about reaching some kind 
 of critical mass. 
+
+
+////////////////////////////////////////////////////////////////////
+
+
+Ben Fry - 16 July 2005
