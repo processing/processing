@@ -73,6 +73,7 @@ collapse OS into: Mac OS, Windows, Linux, Other
   while other categories might exist, it's too confusing for minimal benefit
 buglist.cgi: sorting based on any of the headings gives an error
 buglist.cgi: "102 bugs found. 102 bugs found."
+link to list all bugs
 
 
 _ package macosx with a dmg
