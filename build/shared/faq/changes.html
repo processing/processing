@@ -128,10 +128,15 @@ size(200, 200, P3D).
 the previous release:
 <PRE>BGraphics bg = new BGraphics(200, 200);
 // has now become
-PGraphics pg = new PGraphics2(200, 200, null);</PRE>We didn't realize
+PGraphics pg = new PGraphics2(200, 200, null);
+pg.defaults(); // clear the buffer, get it ready</PRE>We didn't realize
 quite how many people were using this, so we'll probably add a
 createGraphics() method because PGraphics2 may be temporary (instead
-of just PGraphics), and the "null" thing is pretty weird.
+of just PGraphics), and the "null" thing is pretty weird. Even still,
+this isn't quite working as expected, but it's a high priority to fix
+for the future, see <A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=92">Bug 92</A>
+for the status.
 <LI>The new renderers might be slower for some things, faster for others.
 If you want faster pixel operations, try using P3D (until P2D is available
 again). For high-quality lines and strokeWeight() and strokeCap(), use

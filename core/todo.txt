@@ -3,6 +3,14 @@ X upgrade jogl to a newer rev to fix osx "cannot lock" issues
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714
 X   http://192.18.37.44/forums/index.php?topic=1596.msg79680#msg79680
 
+_ get creating new PGraphics/2/3 working again
+_   http://dev.processing.org/bugs/show_bug.cgi?id=92
+_   maybe createGraphics(200, 200) to create same as source
+_   createGraphics(200, 200, P2D) to create 2D from 3D
+_   also, drawing a PGraphics2 doesn't seem to work
+_   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
+_     they're drawn as transparent and don't have their high bits set
+
 _ change how java version is determined on mac
 _   http://developer.apple.com/technotes/tn2002/tn2110.html
 _   (this tn provides no guidance for macos8/9.. gah)
@@ -38,16 +46,6 @@ _     (but not PGraphics, which does it immediately)
 
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
-
-_ createGraphics(200, 200) to create same as source
-_   createGraphics(200, 200, P2D) to create 2D from 3D
-_   also, drawing a PGraphics2 doesn't seem to work
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113919619
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1118318573
-_ new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
-_   they're drawn as transparent and don't have their high bits set
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1113933055
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115087536
 
 _ P3D not doing bilinear interpolation in text and images 
 _   because smooth() has to be set (and smooth throws an error in P3D)
@@ -336,7 +334,7 @@ _   need flat image implementation that takes no transforms
 _   along with 90, 180 and 270 versions of it as well
 _   tie to glDrawPixels.. how to clear matrix properly for that?
 _ catch sun.dc.pr.PRException?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113990788;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=104
 _ gradient-painted lines
 Color c = new Color(0x00FFFF00, true);
 GradientPaint gradient = 
@@ -356,7 +354,7 @@ CORE / PGraphics3
 _ move zbuffer et al into PGraphics so that people don't have to cast to P3
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1116978834;start=0#1
 _ concave polygons having trouble if points come back to meet 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116755265;start=0#1
+_   http://dev.processing.org/bugs/show_bug.cgi?id=97
 _ ortho() is doing things strangely
 _   seems to be mapping to 0, 0 - width/2, height/2
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
@@ -365,11 +363,11 @@ _   might need to avoid previous vertex hitting itself
 _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993
 _ odd error with some pixels from images not drawing properly
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
 _ when turning smoothing on, internal lines of shapes are visible
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115487475;start=1
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115487475
 _ simon reports borders on P3D and OPENGL if background() not called
 _ clipping not yet completely implemented
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
@@ -389,11 +387,11 @@ _ PPolygon no longer in use and PLine is a mess
 _ also have a simple way to hook in triangle leeches to PGraphics3
 _   this exists, but needs to be documented, or have accessors
 _ add option to sort triangles back to front so alpha works
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
 _ texture mapping
 _   very odd, "doom era" stuff
 _   would it be possible to have a 'slow but accurate' mode?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115241346;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 
 CORE / PImage
@@ -402,7 +400,7 @@ _ bizarre image loading error with c_Rollover.zip
 _ image loading bug is huge
 _ figure out how to handle cached images, multiple images
 _   MediaTracker blocking is prolly making jar download really slow
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 _ also threaded images
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
@@ -416,7 +414,7 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 _ more image file i/o.. more advanced in newer java
 _   read uncompressed tiff, read uncompressed tga files.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994;start=15
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994
 _ loadImage() seems to be caching everything from the jar
 _   make a note of how to disable this
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681#8
@@ -424,12 +422,12 @@ _ get loadImage() to work properly with data folder
 _   should probably use the code from loadStream
 _   and the url stuff should be an alternate method altogether
 _ alpha not set on saveFrame, so can't be used in photoshop as a layer
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
 _ expose function to write tiff header in PImage (advanced)
 _   helps with writing enormous images
 _ loadImage must be used inside or after setup
 _   either document this and/or provide a better error message
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468
 _ more blend() modes (the five listed on the thread below?)
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1082056702
 _   figure out what the modes should actually be: 
@@ -478,7 +476,7 @@ _   once debugged, merge these back together and use reflection
 _     (unless it's a messy disaster)
 _ Unsupported control type: Master Gain 
 _   what's actually causing this error?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831
 
 
 CORE / Documentation
@@ -496,7 +494,7 @@ _   appears to run asynchronously
 _ little window showing up on macosx when running
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
 _ flicker happening on osx java 1.4, but not 1.3:
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297;start=0
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297
 _ cursor() broken in applets on macosx?
 _   or is it a java 1.4 versus java 1.3 problem?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
@@ -511,19 +509,18 @@ PGraphicsGL
 
 _ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116782962
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1115630361
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115557986
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118357601
+_   http://dev.processing.org/bugs/show_bug.cgi?id=91
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
+_ ortho() behaving differently in P3D vs OPENGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ gl points not working again
 _ polygon z-order with alpha in opengl
 _   at least add it to the faq, or this would be a test case w/ the sorting
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115222332;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115222332
 _ invocationtargetexception in gl with aioobe:
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
 _ don't let users no java < 1.4 load OPENGL
 _ noLoop() broken on opengl
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
