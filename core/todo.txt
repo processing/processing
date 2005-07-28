@@ -2,6 +2,8 @@
 X upgrade jogl to a newer rev to fix osx "cannot lock" issues
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714
 X   http://192.18.37.44/forums/index.php?topic=1596.msg79680#msg79680
+X faster blur code contributed by toxi
+X filter(ERODE) and filter(DILATE) contributed by toxi
 
 _ get creating new PGraphics/2/3 working again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=92

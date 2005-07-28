@@ -113,6 +113,9 @@ public interface PConstants {
   static final int POSTERIZE = 15;
   static final int THRESHOLD = 16;
 
+  // [toxi20050728] added 2 new filter types for CV tasks
+  static final int ERODE     = 17;
+  static final int DILATE    = 18;
 
   // blend mode keyword definitions
 
