@@ -582,6 +582,15 @@ public class PImage implements PConstants, Cloneable {
       case THRESHOLD:
         filter(THRESHOLD, 0.5f);
         break;
+
+      // [toxi20050728] added new filters
+      case ERODE:
+        dilate(true);
+        break;
+
+      case DILATE:
+        dilate(false);
+        break;
     }
     updatePixels();  // mark as modified
   }
@@ -601,12 +610,18 @@ public class PImage implements PConstants, Cloneable {
    * </UL>
    * Gaussian blur code contributed by
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
+   * and later updated by toxi for better speed.
    */
   public void filter(int kind, float param) {
     switch (kind) {
 
       case BLUR:
-        blur(param);
+        if (format == ALPHA)
+          blurAlpha(param);
+        else if (format == ARGB)
+          blurARGB(param);
+        else
+          blurRGB(param);
         break;
 
       case GRAY:
@@ -656,12 +671,20 @@ public class PImage implements PConstants, Cloneable {
             ((max < thresh) ? 0x000000 : 0xffffff);
         }
         break;
+
+            // [toxi20050728] added new filters
+        case ERODE:
+            throw new RuntimeException("Use filter(ERODE) instead of " +
+                                       "filter(ERODE, param)");
+        case DILATE:
+            throw new RuntimeException("Use filter(DILATE) instead of " +
+                                       "filter(DILATE, param)");
     }
     updatePixels();  // mark as modified
   }
 
 
-  protected void blur(float r) {
+    /* protected void blur(float r) {
     // adjustment to make this algorithm
     // similar to photoshop's gaussian blur settings
     int radius = (int) (r * 3.5f);
@@ -767,7 +790,396 @@ public class PImage implements PConstants, Cloneable {
       yi += width;
     }
   }
+    // end of original blur code.......
+    */
 
+
+  /**
+   * further optimized blur code (approx. 15% for radius=20)
+   * bigger speed gains for larger radii (~30%)
+   * added support for various image types (ALPHA, RGB, ARGB)
+   * [toxi 050728]
+   */
+  protected void buildBlurKernel(float r) {
+    int radius = (int) (r * 3.5f);
+    radius = (radius < 1) ? 1 : ((radius < 248) ? radius : 248);
+    if (blurRadius != radius) {
+      blurRadius = radius;
+      blurKernelSize = 1 + blurRadius<<1;
+      blurKernel = new int[blurKernelSize];
+      blurMult = new int[blurKernelSize][256];
+
+      int bk,bki;
+      int[] bm,bmi;
+
+      for (int i = 1, radiusi = radius - 1; i < radius; i++) {
+        blurKernel[radius+i] = blurKernel[radiusi] = bki = radiusi * radiusi;
+        bm=blurMult[radius+i];
+        bmi=blurMult[radiusi--];
+        for (int j = 0; j < 256; j++)
+          bm[j] = bmi[j] = bki*j;
+      }
+      bk = blurKernel[radius] = radius * radius;
+      bm = blurMult[radius];
+      for (int j = 0; j < 256; j++)
+        bm[j] = bk*j;
+    }
+  }
+
+  protected void blurAlpha(float r) {
+    int sum, cr, cg, cb, k;
+    int pixel, read, ri, roff, ym, ymi, riw,bk0;
+    int b2[] = new int[pixels.length];
+    int yi = 0;
+
+    buildBlurKernel(r);
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cb = cg = cr = sum = 0;
+        read = x - blurRadius;
+        if (read<0) {
+          bk0=-read;
+          read=0;
+        } else {
+          if (read >= width)
+            break;
+          bk0=0;
+        }
+        for (int i = bk0; i < blurKernelSize; i++) {
+          if (read >= width)
+            break;
+          int c = pixels[read + yi];
+          int[] bm=blurMult[i];
+          cb += bm[c & BLUE_MASK];
+          sum += blurKernel[i];
+          read++;
+        }
+        ri = yi + x;
+        b2[ri] = cb / sum;
+      }
+      yi += width;
+    }
+
+    yi = 0;
+    ym=-blurRadius;
+    ymi=ym*width;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cb = cg = cr = sum = 0;
+        if (ym<0) {
+          bk0 = ri = -ym;
+          read = x;
+        } else {
+          if (ym >= height)
+            break;
+          bk0 = 0;
+          ri = ym;
+          read = x + ymi;
+        }
+        for (int i = bk0; i < blurKernelSize; i++) {
+          if (ri >= height)
+            break;
+          int[] bm=blurMult[i];
+          cb += bm[b2[read]];
+          sum += blurKernel[i];
+          ri++;
+          read += width;
+        }
+        pixels[x+yi] = (cb/sum);
+      }
+      yi += width;
+      ymi += width;
+      ym++;
+    }
+  }
+
+  protected void blurRGB(float r) {
+    int sum, cr, cg, cb, k;
+    int pixel, read, ri, roff, ym, ymi, riw,bk0;
+    int r2[] = new int[pixels.length];
+    int g2[] = new int[pixels.length];
+    int b2[] = new int[pixels.length];
+    int yi = 0;
+
+    buildBlurKernel(r);
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cb = cg = cr = sum = 0;
+        read = x - blurRadius;
+        if (read<0) {
+          bk0=-read;
+          read=0;
+        } else {
+          if (read >= width)
+            break;
+          bk0=0;
+        }
+        for (int i = bk0; i < blurKernelSize; i++) {
+          if (read >= width)
+            break;
+          int c = pixels[read + yi];
+          int[] bm=blurMult[i];
+          cr += bm[(c & RED_MASK) >> 16];
+          cg += bm[(c & GREEN_MASK) >> 8];
+          cb += bm[c & BLUE_MASK];
+          sum += blurKernel[i];
+          read++;
+        }
+        ri = yi + x;
+        r2[ri] = cr / sum;
+        g2[ri] = cg / sum;
+        b2[ri] = cb / sum;
+      }
+      yi += width;
+    }
+
+    yi = 0;
+    ym=-blurRadius;
+    ymi=ym*width;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cb = cg = cr = sum = 0;
+        if (ym<0) {
+          bk0 = ri = -ym;
+          read = x;
+        } else {
+          if (ym >= height)
+            break;
+          bk0 = 0;
+          ri = ym;
+          read = x + ymi;
+        }
+        for (int i = bk0; i < blurKernelSize; i++) {
+          if (ri >= height)
+            break;
+          int[] bm=blurMult[i];
+          cr += bm[r2[read]];
+          cg += bm[g2[read]];
+          cb += bm[b2[read]];
+          sum += blurKernel[i];
+          ri++;
+          read += width;
+        }
+        pixels[x+yi] = 0xff000000 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
+      }
+      yi += width;
+      ymi += width;
+      ym++;
+    }
+  }
+
+  protected void blurARGB(float r) {
+    int sum, cr, cg, cb, ca;
+    int pixel, read, ri, roff, ym, ymi, riw, bk0;
+    int wh = pixels.length;
+    int r2[] = new int[wh];
+    int g2[] = new int[wh];
+    int b2[] = new int[wh];
+    int a2[] = new int[wh];
+    int yi = 0;
+
+    buildBlurKernel(r);
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cb = cg = cr = ca = sum = 0;
+        read = x - blurRadius;
+        if (read<0) {
+          bk0=-read;
+          read=0;
+        } else {
+          if (read >= width)
+            break;
+          bk0=0;
+        }
+        for (int i = bk0; i < blurKernelSize; i++) {
+          if (read >= width)
+            break;
+          int c = pixels[read + yi];
+          int[] bm=blurMult[i];
+          ca += bm[(c & ALPHA_MASK) >>> 24];
+          cr += bm[(c & RED_MASK) >> 16];
+          cg += bm[(c & GREEN_MASK) >> 8];
+          cb += bm[c & BLUE_MASK];
+          sum += blurKernel[i];
+          read++;
+        }
+        ri = yi + x;
+        a2[ri] = ca / sum;
+        r2[ri] = cr / sum;
+        g2[ri] = cg / sum;
+        b2[ri] = cb / sum;
+      }
+      yi += width;
+    }
+
+    yi = 0;
+    ym=-blurRadius;
+    ymi=ym*width;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        cb = cg = cr = ca = sum = 0;
+        if (ym<0) {
+          bk0 = ri = -ym;
+          read = x;
+        } else {
+          if (ym >= height)
+            break;
+          bk0 = 0;
+          ri = ym;
+          read = x + ymi;
+        }
+        for (int i = bk0; i < blurKernelSize; i++) {
+          if (ri >= height)
+            break;
+          int[] bm=blurMult[i];
+          ca += bm[a2[read]];
+          cr += bm[r2[read]];
+          cg += bm[g2[read]];
+          cb += bm[b2[read]];
+          sum += blurKernel[i];
+          ri++;
+          read += width;
+        }
+        pixels[x+yi] = (ca/sum)<<24 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
+      }
+      yi += width;
+      ymi += width;
+      ym++;
+    }
+  }
+
+  /**
+   * Generic dilate/erode filter using luminance values
+   * as decision factor. [toxi 050728]
+   */
+  protected void dilate(boolean isInverted) {
+    int currIdx=0;
+    int maxIdx=pixels.length;
+    int[] out=new int[maxIdx];
+
+    if (isInverted) {
+      // erosion (grow light areas)
+      while (currIdx<maxIdx) {
+        int currRowIdx=currIdx;
+        int maxRowIdx=currIdx+width;
+        while (currIdx<maxRowIdx) {
+          int colOrig,colOut;
+          colOrig=colOut=pixels[currIdx];
+          int idxLeft=currIdx-1;
+          int idxRight=currIdx+1;
+          int idxUp=currIdx-width;
+          int idxDown=currIdx+width;
+          if (idxLeft<currRowIdx)
+            idxLeft=currIdx;
+          if (idxRight>=maxRowIdx)
+            idxRight=currIdx;
+          if (idxUp<0)
+            idxUp=0;
+          if (idxDown>=maxIdx)
+            idxDown=currIdx;
+
+          int colUp=pixels[idxUp];
+          int colLeft=pixels[idxLeft];
+          int colDown=pixels[idxDown];
+          int colRight=pixels[idxRight];
+
+          // compute luminance
+          int currLum =
+            77*(colOrig>>16&0xff) + 151*(colOrig>>8&0xff) + 28*(colOrig&0xff);
+          int lumLeft =
+            77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
+          int lumRight =
+            77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
+          int lumUp =
+            77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
+          int lumDown =
+            77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
+
+          if (lumLeft>currLum) {
+            colOut=colLeft;
+            currLum=lumLeft;
+          }
+          if (lumRight>currLum) {
+            colOut=colRight;
+            currLum=lumRight;
+          }
+          if (lumUp>currLum) {
+            colOut=colUp;
+            currLum=lumUp;
+          }
+          if (lumDown>currLum) {
+            colOut=colDown;
+            currLum=lumDown;
+          }
+          out[currIdx++]=colOut;
+        }
+      }
+    } else {
+      // dilate (grow dark areas)
+      while (currIdx<maxIdx) {
+        int currRowIdx=currIdx;
+        int maxRowIdx=currIdx+width;
+        while (currIdx<maxRowIdx) {
+          int colOrig,colOut;
+          colOrig=colOut=pixels[currIdx];
+          int idxLeft=currIdx-1;
+          int idxRight=currIdx+1;
+          int idxUp=currIdx-width;
+          int idxDown=currIdx+width;
+          if (idxLeft<currRowIdx)
+            idxLeft=currIdx;
+          if (idxRight>=maxRowIdx)
+            idxRight=currIdx;
+          if (idxUp<0)
+            idxUp=0;
+          if (idxDown>=maxIdx)
+            idxDown=currIdx;
+
+          int colUp=pixels[idxUp];
+          int colLeft=pixels[idxLeft];
+          int colDown=pixels[idxDown];
+          int colRight=pixels[idxRight];
+
+          // compute luminance
+          int currLum =
+            77*(colOrig>>16&0xff) + 151*(colOrig>>8&0xff) + 28*(colOrig&0xff);
+          int lumLeft =
+            77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
+          int lumRight =
+            77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
+          int lumUp =
+            77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
+          int lumDown =
+            77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
+
+          if (lumLeft<currLum) {
+            colOut=colLeft;
+            currLum=lumLeft;
+          }
+          if (lumRight<currLum) {
+            colOut=colRight;
+            currLum=lumRight;
+          }
+          if (lumUp<currLum) {
+            colOut=colUp;
+            currLum=lumUp;
+          }
+          if (lumDown<currLum) {
+            colOut=colDown;
+            currLum=lumDown;
+          }
+          out[currIdx++]=colOut;
+        }
+      }
+    }
+    System.arraycopy(out,0,pixels,0,maxIdx);
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -792,8 +1204,10 @@ public class PImage implements PConstants, Cloneable {
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     if (imageMode == CORNER) {  // if CORNERS, do nothing
-      sx2 += sx1; sy2 += sy1;
-      dx2 += dx1; dy2 += dy1;
+            sx2 += sx1;
+            sy2 += sy1;
+            dx2 += dx1;
+            dy2 += dy1;
 
     //} else if (imageMode == CENTER) {
       //sx2 /= 2f; sy2 /= 2f;
