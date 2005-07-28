@@ -22,6 +22,11 @@ X   not gonna do this, p5 is not a java editor
 o if a .pde isn't contained in a properly named folder
 o   offer to rename the parent folder, rather than placing in a new folder
 X make a note that video doesn't currently work in applets in the faq
+X scanning sketchbook folder may be extremely slow 
+X   when lots of frames saved out, takes forever to scan the folder
+X   some dumb sorting code was responsible
+X   and each file was being treated as a directory. oops.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=84
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -38,20 +43,15 @@ X   could this be dealt with by using nio?
 X     host environment will be running 1.4 so...
 
 
+_ properly handle non-ascii chars in p5 folder name
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
+_   or at least warn the user to install somehwere else
 
 _ faq: "my applet doesn't work on export"... where to check for errors
 _   very common: cached version is being used
 _     go through methods to properly flush the cache
 _     can also just change the name
-_ prevent PGraphics.save() from inserting a file prefix
-_   so that people can use absolute paths
-_   or add a version that takes a file object
 
-_ name Le'o is a problem on osx 
-_   http://processing.org/bugs/show_bug.cgi?id=49
-_ sonia is locking up on load in rev 91
-_   prolly something w/ the threading issues
-_   http://dev.processing.org/bugs/show_bug.cgi?id=46
 _ rebuild jikes with --enable-static --disable-shared
 _   http://dev.processing.org/bugs/show_bug.cgi?id=47
 
@@ -60,32 +60,37 @@ _ make a note in the library howto about using something besides p5
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-cat blah.patch | patch -p1
-
 
 bugzilla problems
-"back to bug #110" should be on one line
-text fields on "post bug" won't let me click
-  (i.e. "Reassign but to" and "duplicate of bug #"
-  continually de-select themselves so i can't paste or type text
-remove "platform" and "severity".. set them to "all" and "normal"
-collapse OS into: Mac OS, Windows, Linux, Other 
-  while other categories might exist, it's too confusing for minimal benefit
-buglist.cgi: sorting based on any of the headings gives an error
-buglist.cgi: "102 bugs found. 102 bugs found."
-link to list all bugs
+X localconfig has been modified, need to update for everything
+_ "back to bug #110" should be on one line
+_ text fields on "post bug" won't let me click
+_   (i.e. "Reassign but to" and "duplicate of bug #")
+_   continually de-select themselves so i can't paste or type text
+_ remove "platform" and "severity".. set them to "all" and "normal"
+_ buglist.cgi
+_   replace the platform column with the os column (uses icons for os)
+_   sorting based on any of the headings gives an error
+_   "102 bugs found. 102 bugs found."
+_   remove the severity column 
+_     it's normal or enhanced, and enhanced is already gray
+X make os into: Mac OS, Windows, Linux, Other 
+X   while other categories might exist, it's too confusing for minimal benefit
+o   make things that are P5 into "enhancement" 
+o   unless a P6 can be added? or something called "enhancement"?
+_ link to list all bugs (especially sorted by priority)
 
 
-_ package macosx with a dmg
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054
-_ don't allow subfolders inside the sketchbook folder
+_ don't allow subfolders forever inside the sketchbook folder
 _   once a sketch is found, don't recurse deeper
 _   same for libraries, cuz this makes a mess
 _   (do this right after rev 91 release... could break things)
 _ make simple tool for casey to rebuild all the examples at once
+_   first select a folder, then will open each sketch in turn, and export
 _   just make it easier to go to the next sketch
 _   need to rebuild with this release because of 1.3/1.4 issues
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117258456
+
 
 _ emacs keybindings
 _   general (easier to support)
@@ -458,10 +463,6 @@ _   http://processing.org/bugs/show_bug.cgi?id=82
 _ "save as" shouldn't show always show save as dialog
 _   unless that's the current mode that's being used
 _   http://processing.org/bugs/show_bug.cgi?id=83
-_ scanning sketchbook folder may be extremely slow 
-_   not sure why this would be the case
-_   when lots of frames saved out, takes forever to scan the folder
-_   http://processing.org/bugs/show_bug.cgi?id=84
 _ handle renaming with case changes (currently ignores case change)
 _   see notes/bitching in Sketch.nameCode()
 _   http://processing.org/bugs/show_bug.cgi?id=85
@@ -647,9 +648,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 _   figure out proper registry key for windows
 _     can be handled when the app first run (jni?)
 _   write handler for main() to take document names
-_ properly handle non-ascii chars in p5 folder name
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   or at least warn the user to install somehwere else
 _ track down the cause of the processing.exe not starting bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
@@ -673,6 +671,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 DIST / Mac OS X
 
+_ package macosx with a dmg
+_   http://dev.processing.org/bugs/show_bug.cgi?id=116
 _ set nice background for disk image on macosx
 _ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing

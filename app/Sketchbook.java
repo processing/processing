@@ -23,6 +23,8 @@
 
 package processing.app;
 
+//import processing.core.PApplet;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -433,25 +435,8 @@ public class Sketchbook {
     if (list == null) return false;
 
     // alphabetize list, since it's not always alpha order
-    // use cheapie bubble-style sort which should be fine
-    // since not a tone of files, and things will mostly be sorted
-    // or may be completely sorted already by the os
-    for (int i = 0; i < list.length; i++) {
-      int who = i;
-      for (int j = i+1; j < list.length; j++) {
-        if (list[j].compareToIgnoreCase(list[who]) < 0) {
-          who = j;  // this guy is earlier in the alphabet
-        }
-      }
-      if (who != i) {  // swap with someone if changes made
-        String temp = list[who];
-        list[who] = list[i];
-        list[i] = temp;
-      }
-    }
-
-    //SketchbookMenuListener listener =
-    //new SketchbookMenuListener(folder.getAbsolutePath());
+    // replaced hella slow bubble sort with this feller for 0093
+    Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -466,7 +451,7 @@ public class Sketchbook {
           list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
-      File lib = new File(subfolder, "library");
+      //File lib = new File(subfolder, "library");
       File entry = new File(subfolder, list[i] + ".pde");
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
@@ -488,7 +473,8 @@ public class Sketchbook {
         menu.add(item);
         ifound = true;
 
-      } else {  // might contain other dirs, get recursive
+      } else if (subfolder.isDirectory()) {  // only follow if a dir
+        // get recursive
         JMenu submenu = new JMenu(list[i]);
         // needs to be separate var
         // otherwise would set ifound to false
@@ -512,22 +498,8 @@ public class Sketchbook {
     if (list == null) return false;
 
     // alphabetize list, since it's not always alpha order
-    // use cheapie bubble-style sort which should be fine
-    // since not a tone of files, and things will mostly be sorted
-    // or may be completely sorted already by the os
-    for (int i = 0; i < list.length; i++) {
-      int who = i;
-      for (int j = i+1; j < list.length; j++) {
-        if (list[j].compareToIgnoreCase(list[who]) < 0) {
-          who = j;  // this guy is earlier in the alphabet
-        }
-      }
-      if (who != i) {  // swap with someone if changes made
-        String temp = list[who];
-        list[who] = list[i];
-        list[i] = temp;
-      }
-    }
+    // replaced hella slow bubble sort with this feller for 0093
+    Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -577,7 +549,7 @@ public class Sketchbook {
         menu.add(item);
         ifound = true;
 
-      } else {  // might contain other dirs, get recursive
+      } else if (subfolder.isDirectory()) {
         JMenu submenu = new JMenu(list[i]);
         // needs to be separate var
         // otherwise would set ifound to false
