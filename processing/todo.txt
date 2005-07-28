@@ -37,6 +37,17 @@ X   could this be dealt with by using nio?
 X     host environment will be running 1.4 so...
 
 
+_ make a note that video doesn't currently work in applets in the faq
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1122480079;start=0#1
+
+_ faq: "my applet doesn't work on export"... where to check for errors
+_   very common: cached version is being used
+_     go through methods to properly flush the cache
+_     can also just change the name
+_ prevent PGraphics.save() from inserting a file prefix
+_   so that people can use absolute paths
+_   or add a version that takes a file object
+
 _ name Le'o is a problem on osx 
 _   http://processing.org/bugs/show_bug.cgi?id=49
 _ sonia is locking up on load in rev 91
@@ -524,11 +535,11 @@ _ Movie needs the crop() functions ala Capture
 _ tearing and incomplete updates on capture?
 _   putting read() inside draw() seems to eliminate this?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335
-_ on export, need to first import applet's packages before qt et al
+_ video doesn't work in applets
+_   on export, need to first import applet's packages before qt et al
 _   video working in applets? (no, never did in alpha so untested)
 _     Movie should perhaps work?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115754972
-_   http://processing.org/bugs/show_bug.cgi?id=44
+_   http://dev.processing.org/bugs/show_bug.cgi?id=44
 _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 

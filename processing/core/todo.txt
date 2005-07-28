@@ -1,11 +1,11 @@
 0093 core
+X upgrade jogl to a newer rev to fix osx "cannot lock" issues
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714
+X   http://192.18.37.44/forums/index.php?topic=1596.msg79680#msg79680
 
 _ change how java version is determined on mac
 _   http://developer.apple.com/technotes/tn2002/tn2110.html
 _   (this tn provides no guidance for macos8/9.. gah)
-
-_ upgrade jogl to a newer rev to fix osx "cannot lock" issues
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714;start=0#3
 
 _ PApplet.main(new String[] { "classname }) won't pass in args.. grr
 _   PApplet.main(append(new String[] { "classname }, args));
@@ -378,6 +378,7 @@ _   tint() honoring alpha but not colored tint
 _   maybe not setting fill color when drawing textures
 _   guessing it's an implementation issue in sami's renderer
 _   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
 _ apply tint() to textures as well
 _   otherwise no good way to color textures
 _ Stroking a rect() leaves off the upper right pixel
@@ -513,7 +514,7 @@ _   set(x, y, image) y reversed in openGL
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116782962
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1115630361
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115557986
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118357601;start=0#1
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118357601
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
