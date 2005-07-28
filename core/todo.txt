@@ -5,6 +5,29 @@ X   http://192.18.37.44/forums/index.php?topic=1596.msg79680#msg79680
 X faster blur code contributed by toxi
 X filter(ERODE) and filter(DILATE) contributed by toxi
 
+nixed or fixed in previous releases
+X textMode(SCREEN) having issues on Mac OS X
+X   seem to be problems with updatePixels() on the mac
+X   appears to run asynchronously
+X move zbuffer et al into PGraphics so that people don't have to cast to P3
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1116978834
+o noLoop() is behaving strangely
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
+
+_ prevent PGraphics.save() from inserting a file prefix
+_   so that people can use absolute paths
+_   or add a version that takes a file object
+
+_ recordFrame() and beginFile()/endFile()
+_   finalize api with more work on multi-page pdf
+_   how to deal with triangles/lines and triangleCount and lineCount
+_     maybe just need a triangleImpl and lineImpl
+_     because it's too messy to retain the triangle objects and info
+_ when using things like PGraphicsPDF, need to not resize window
+_   if it doesn't display to the screen, needs to never show a window
+_   basically if the main gfx context isn't viewable, close the window
+_   since it may have already been opened at 100x100
+
 _ get creating new PGraphics/2/3 working again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=92
 _   maybe createGraphics(200, 200) to create same as source
@@ -12,25 +35,19 @@ _   createGraphics(200, 200, P2D) to create 2D from 3D
 _   also, drawing a PGraphics2 doesn't seem to work
 _   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _     they're drawn as transparent and don't have their high bits set
+_ why aren't background() / defaults() being called for opengl?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
-_ change how java version is determined on mac
-_   http://developer.apple.com/technotes/tn2002/tn2110.html
-_   (this tn provides no guidance for macos8/9.. gah)
+_ sonia is locking up on load in rev 91
+_   prolly something w/ the threading issues
+_   http://dev.processing.org/bugs/show_bug.cgi?id=46
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 _ PApplet.main(new String[] { "classname }) won't pass in args.. grr
 _   PApplet.main(append(new String[] { "classname }, args));
-
-_ leading looks too big, at least in PGraphics2 with news gothic
-_   though it may be the converted version of the .ttf?
-
-_ when using things like PGraphicsPDF, need to not resize window
-_   if it doesn't display to the screen, needs to never show a window
-_   basically if the main gfx context isn't viewable, close the window
-_   since it may have already been opened at 100x100
-
-_ how to deal with triangles/lines and triangleCount and lineCount
-_   maybe just need a triangleImpl and lineImpl
-_   because it's too messy to retain the triangle objects and info
 
 _ need to test/straighten out load/update pixels
 _   loadPixels() and updatePixels() only need to be used when 
@@ -45,14 +62,6 @@ _   or it's the PGraphics object, which does an updatePixels() immediately
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
-
-_ why aren't background() / defaults() being called for opengl?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
-
-_ P3D not doing bilinear interpolation in text and images 
-_   because smooth() has to be set (and smooth throws an error in P3D)
-_   how should this be handled? a hint? allowing smooth()?
-_   probably just allow smooth() but don't smooth anything
 
 
 
@@ -70,10 +79,11 @@ CORE / PApplet
 
 _ typed version of array functions:
 _   append(), shorten(), splice, slice, subset, concat, reverse
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1118520656;start=0
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114443601;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=115
 _ would be cool if could sort w/o the sort class..
 _   meaning use reflection to sort objects, just by implementing a few methods
+_   would be much simpler and less confusing than new Sort() etc 
+_   or would it be ridiculously slow?
 _ make a PException that extends RuntimeException but packages an ex?
 _   http://java.sun.com/docs/books/tutorial/essential/exceptions/runtime.html
 _ is mousePressed broken with noLoop() or redraw()?
@@ -100,8 +110,8 @@ _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
 _ problems with defining fill(255) vs fill(0xff808080)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891;start=2
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891
 _ too many push() will silently stop the applet inside a loop
 _ test winding polygons in different directions
 _ test lighting to see how it compares with gl
@@ -139,8 +149,6 @@ _ files not in the data folder (works in env, not in sketch)
 
 CORE / PApplet - main()
 
-_ noLoop() is behaving strangely
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
 _ present mode is flakey.. applet doesn't always come up
 _   seems like hitting stop helps shut it down?
 _   is full screen window not being taken down properly?
@@ -167,6 +175,8 @@ _   how to shut off the cmd-q when running externally on osx?
 
 CORE / PFont and text()
 
+_ leading looks too big, at least in PGraphics2 with news gothic
+_   though it may be the converted version of the .ttf?
 _ font encoding issues 
 _   java seems to force straight windows encoding.. (problem for pi fonts)
 _   opentype/cff fonts don't work with live loading from the app
@@ -353,19 +363,21 @@ g2.draw(gp);
 
 CORE / PGraphics3
 
-_ move zbuffer et al into PGraphics so that people don't have to cast to P3
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1116978834;start=0#1
-_ concave polygons having trouble if points come back to meet 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=97
-_ ortho() is doing things strangely
-_   seems to be mapping to 0, 0 - width/2, height/2
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
-_ tesselator/triangulator gets confused when points doubled up
-_   might need to avoid previous vertex hitting itself
 _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114158993
+_   http://dev.processing.org/bugs/show_bug.cgi?id=111
+_ concave polygons having trouble if points come back to meet 
+_   tesselator/triangulator gets confused when points doubled up
+_   might need to avoid previous vertex hitting itself
+_   http://dev.processing.org/bugs/show_bug.cgi?id=97
+_ P3D not doing bilinear interpolation in text and images 
+_   because smooth() has to be set (and smooth throws an error in P3D)
+_   how should this be handled? a hint? allowing smooth()?
+_   probably just allow smooth() but don't smooth anything
+_ ortho() is doing things strangely
+_   seems to be mapping to 0, 0 - width/2, height/2
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 _ odd error with some pixels from images not drawing properly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
 _ when turning smoothing on, internal lines of shapes are visible
@@ -484,15 +496,14 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 CORE / Documentation
 
 _ write documentation on general use of processing.core
-_   along with how to download from sourceforge (anonpass is blank)
 _   note that applet is itself a Component
 
 
 CORE / Mac OS X
 
-_ textMode(SCREEN) having issues on Mac OS X
-_   seem to be problems with updatePixels() on the mac
-_   appears to run asynchronously
+_ change how java version is determined on mac
+_   http://developer.apple.com/technotes/tn2002/tn2110.html
+_   (this tn provides no guidance for macos8/9.. gah)
 _ little window showing up on macosx when running
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
 _ flicker happening on osx java 1.4, but not 1.3:
@@ -500,6 +511,7 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ cursor() broken in applets on macosx?
 _   or is it a java 1.4 versus java 1.3 problem?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
+
 
 
 ////////////////////////////////////////////////////////////////////
