@@ -13,7 +13,7 @@ o convert spaces to underscores and vice versa for sketch/tab names
 o   underscoring everything is kinda nasty
 o   only needs to be underscored when passed off to java
 o   although then if people *want* underscores, there's gonna be trouble
-o   http://as.processing.org/bugs/show_bug.cgi?id=76
+o   http://dev.processing.org/bugs/show_bug.cgi?id=76
 o if in full java mode
 o   if extends PApplet.. or rather, put PApplet cast into a 
 o   try/catch block.. if it doesn't work, try applet. if that
@@ -21,6 +21,7 @@ o   doesn't work, try using the class' main() to run it
 X   not gonna do this, p5 is not a java editor
 o if a .pde isn't contained in a properly named folder
 o   offer to rename the parent folder, rather than placing in a new folder
+X make a note that video doesn't currently work in applets in the faq
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -37,8 +38,6 @@ X   could this be dealt with by using nio?
 X     host environment will be running 1.4 so...
 
 
-_ make a note that video doesn't currently work in applets in the faq
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1122480079;start=0#1
 
 _ faq: "my applet doesn't work on export"... where to check for errors
 _   very common: cached version is being used
@@ -52,9 +51,9 @@ _ name Le'o is a problem on osx
 _   http://processing.org/bugs/show_bug.cgi?id=49
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
-_   http://as.processing.org/bugs/show_bug.cgi?id=46
+_   http://dev.processing.org/bugs/show_bug.cgi?id=46
 _ rebuild jikes with --enable-static --disable-shared
-_   http://as.processing.org/bugs/show_bug.cgi?id=47
+_   http://dev.processing.org/bugs/show_bug.cgi?id=47
 
 _ make a note in the library howto about using something besides p5
 
@@ -62,6 +61,19 @@ _ make a note in the library howto about using something besides p5
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 cat blah.patch | patch -p1
+
+
+bugzilla problems
+"back to bug #110" should be on one line
+text fields on "post bug" won't let me click
+  (i.e. "Reassign but to" and "duplicate of bug #"
+  continually de-select themselves so i can't paste or type text
+remove "platform" and "severity".. set them to "all" and "normal"
+collapse OS into: Mac OS, Windows, Linux, Other 
+  while other categories might exist, it's too confusing for minimal benefit
+buglist.cgi: sorting based on any of the headings gives an error
+buglist.cgi: "102 bugs found. 102 bugs found."
+
 
 _ package macosx with a dmg
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116065054
@@ -73,8 +85,6 @@ _ make simple tool for casey to rebuild all the examples at once
 _   just make it easier to go to the next sketch
 _   need to rebuild with this release because of 1.3/1.4 issues
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117258456
-_ some sort of path/classpath tester/fixer app for windows
-_   that " norton" thing in the path makes things a mess
 
 _ emacs keybindings
 _   general (easier to support)
@@ -168,12 +178,12 @@ _   straighten out int() -> toInt() conversions
 _   float u = float(x)/width; works.
 _   float u = (float(x)/width); doesn't work: "unexpected token: float".
 _   float u = (x/float(width)); works! 
-_   http://as.processing.org/bugs/show_bug.cgi?id=4
+_   http://dev.processing.org/bugs/show_bug.cgi?id=4
 _   return (int(5.5)) causes an error
 _ preprocessor error if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError wants to happen, 
 _   but right now there's a hack to add a CR in PdePreprocessor
-_   http://as.processing.org/bugs/show_bug.cgi?id=5
+_   http://dev.processing.org/bugs/show_bug.cgi?id=5
 _ random, single slash in the code doesn't throw an error
 _   (just gets removed by the preprocessor)
 _   http://processing.org/bugs/show_bug.cgi?id=6
@@ -182,144 +192,147 @@ _   (for casting, etc) particularly for Math.cos() et al
 _   http://processing.org/bugs/show_bug.cgi?id=7
 _ jikes bugs mean some code just won't compile:
 _   include javac? would this be a good solution for linux?
-_   http://as.processing.org/bugs/show_bug.cgi?id=8
+_   http://dev.processing.org/bugs/show_bug.cgi?id=8
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-_   http://as.processing.org/bugs/show_bug.cgi?id=9
+_   http://dev.processing.org/bugs/show_bug.cgi?id=9
 _ an empty .java tab will throw an error
-_   http://as.processing.org/bugs/show_bug.cgi?id=10
+_   http://dev.processing.org/bugs/show_bug.cgi?id=10
 _ warn about writing non-1.1 code. 
-_   http://as.processing.org/bugs/show_bug.cgi?id=11
+_   http://dev.processing.org/bugs/show_bug.cgi?id=11
 _ missing semicolons - better error message
-_   http://as.processing.org/bugs/show_bug.cgi?id=12
+_   http://dev.processing.org/bugs/show_bug.cgi?id=12
 _ missing brackets, unmatched brackets
-_   http://as.processing.org/bugs/show_bug.cgi?id=13
+_   http://dev.processing.org/bugs/show_bug.cgi?id=13
 _ "unexpected token void" -> "You're mixing dynamic and static mode"
-_   http://as.processing.org/bugs/show_bug.cgi?id=14
+_   http://dev.processing.org/bugs/show_bug.cgi?id=14
 _ expecting RPAREN messages are ugly
-_   http://as.processing.org/bugs/show_bug.cgi?id=15
+_   http://dev.processing.org/bugs/show_bug.cgi?id=15
 _ NullPointerException on unterminated comment at end of code
 _   and OutOfMemoryError and weird lockup
-_   http://as.processing.org/bugs/show_bug.cgi?id=16
+_   http://dev.processing.org/bugs/show_bug.cgi?id=16
 _ not enough args for triangle (or args in general) 
 _   throws out bizarre message 
-_   http://as.processing.org/bugs/show_bug.cgi?id=17
+_   http://dev.processing.org/bugs/show_bug.cgi?id=17
 _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
-_   http://as.processing.org/bugs/show_bug.cgi?id=18
+_   http://dev.processing.org/bugs/show_bug.cgi?id=18
 
 
 PDE / Editor
 
 _ when running with external editor, hide the editor text area
-_   http://as.processing.org/bugs/show_bug.cgi?id=20
+_   http://dev.processing.org/bugs/show_bug.cgi?id=20
 _ drag & drop implementation to add files to sketch
-_   http://as.processing.org/bugs/show_bug.cgi?id=21
+_   http://dev.processing.org/bugs/show_bug.cgi?id=21
 _ tab to just indent lines properly, 
 _   rather than having it convert to spaces
 _   need a smarter handler (rather than the editor listener) 
 _   could look at previous line for its indent
 _   and when hitting } do a proper outdent (if only spaces before it)
-_   http://as.processing.org/bugs/show_bug.cgi?id=22
+_   http://dev.processing.org/bugs/show_bug.cgi?id=22
 _ horizontal scroller gets weird sometimes
-_   http://as.processing.org/bugs/show_bug.cgi?id=23
+_   http://dev.processing.org/bugs/show_bug.cgi?id=23
 _ mouse wheel broken in the text editor? (windows jdk 1.5?) 
-_   http://as.processing.org/bugs/show_bug.cgi?id=24
+_   http://dev.processing.org/bugs/show_bug.cgi?id=24
 _ lock the minimum size for the main processing editor frame
 _   if it's made too small, stuff from the bottom disappears
-_   http://as.processing.org/bugs/process_bug.cgi
+_   http://dev.processing.org/bugs/process_bug.cgi
 _ add mnemonics for menus (alt-f to open 'file')
-_   http://as.processing.org/bugs/show_bug.cgi?id=26
+_   http://dev.processing.org/bugs/show_bug.cgi?id=26
 _ implement page setup and print
 _   pretty printing of code in project
-_   http://as.processing.org/bugs/show_bug.cgi?id=27
+_   http://dev.processing.org/bugs/show_bug.cgi?id=27
 _ option to just print all code in project
 _   option to export all the code as colored html
-_   http://as.processing.org/bugs/show_bug.cgi?id=28
+_   http://dev.processing.org/bugs/show_bug.cgi?id=28
 _ p5 becomes a memory hog (benelek and glen murphy)
 _   not confirmed for a long time
 _   even without sketches open, perhaps not gc'ing properly
 _   objects probably not getting finalized
-_   http://as.processing.org/bugs/show_bug.cgi?id=29
+_   http://dev.processing.org/bugs/show_bug.cgi?id=29
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854
 _ menu weirdness (benelek)
 _   when you've got a menu open, move a cursor over the text area
 _   and back over the menu, the text-area cursor type remains. 
-_   http://as.processing.org/bugs/show_bug.cgi?id=30
+_   http://dev.processing.org/bugs/show_bug.cgi?id=30
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
 _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable
-_   http://as.processing.org/bugs/show_bug.cgi?id=31
+_   http://dev.processing.org/bugs/show_bug.cgi?id=31
 _ figure out how to cancel 'save changes' on macosx and windows
 _   macosx handleQuit seems to force termination (at least on 1.3)
-_   http://as.processing.org/bugs/show_bug.cgi?id=32
+_   http://dev.processing.org/bugs/show_bug.cgi?id=32
 _ dim edit menus as appropriate during selection/no selection/etc
-_   http://as.processing.org/bugs/show_bug.cgi?id=33
+_   http://dev.processing.org/bugs/show_bug.cgi?id=33
 _ properly handle ENTER, Ctrl-W and ESC on all dialogs
 _   there must be a proper "swing" way of doing this that doesn't
 _   involve adding key listeners to every friggin component
 _   ESC should fake a cancel button press
 _   ENTER should do the default option
 _   (might be a matter of setting the default action for the window?)
-_   http://as.processing.org/bugs/show_bug.cgi?id=34
+_   http://dev.processing.org/bugs/show_bug.cgi?id=34
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
 _   so user thinks nothing is happening and overundo. 
-_   http://as.processing.org/bugs/show_bug.cgi?id=35
+_   http://dev.processing.org/bugs/show_bug.cgi?id=35
 _ undo has become sluggish
 _   http://processing.org/bugs/show_bug.cgi?id=36
 _ undo after "import library" makes a blank screen
 _   http://processing.org/bugs/show_bug.cgi?id=41
 _ fonts smaller than 10 cause problems in the editor on osx
 _   http://processing.org/bugs/show_bug.cgi?id=51
+_ code coloring is imperfect because it's not based on a parser
+_   i.e. mousePressed() is red but mouseMoved() is brown
+_   http://dev.processing.org/bugs/show_bug.cgi?id=113
 
 
 PDE / Editor Buttons
 
 _ when holding down shift, show the alternate behavior for EditorHeader
-_   http://as.processing.org/bugs/show_bug.cgi?id=37
+_   http://dev.processing.org/bugs/show_bug.cgi?id=37
 _ run button not properly unhighlighting
 _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
-_   http://as.processing.org/bugs/show_bug.cgi?id=38
+_   http://dev.processing.org/bugs/show_bug.cgi?id=38
 _ if export fails (compile error) need to un-highlight the export button
-_   http://as.processing.org/bugs/show_bug.cgi?id=39
+_   http://dev.processing.org/bugs/show_bug.cgi?id=39
 
 
 PDE / Editor Header
 
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
-_   http://as.processing.org/bugs/show_bug.cgi?id=54
+_   http://dev.processing.org/bugs/show_bug.cgi?id=54
 _ ctrl-tab to switch between tabs
-_   http://as.processing.org/bugs/show_bug.cgi?id=55
+_   http://dev.processing.org/bugs/show_bug.cgi?id=55
 _ not always updating on rename (maybe a mac problem?)
-_   http://as.processing.org/bugs/show_bug.cgi?id=56
+_   http://dev.processing.org/bugs/show_bug.cgi?id=56
 
 
 PDE / Editor Status
 
 _ error messages run off the edge and go invisible
-_   http://as.processing.org/bugs/show_bug.cgi?id=57
+_   http://dev.processing.org/bugs/show_bug.cgi?id=57
 _ multiple errors a mess in jikes
 _   actual error may be 4th of 5
 _   maybe a dropdown list thing, with the first just shown?
-_   http://as.processing.org/bugs/show_bug.cgi?id=58
+_   http://dev.processing.org/bugs/show_bug.cgi?id=58
 _ move all prompts to modal dialog showError/Message/Warning/Prompt
 _   nicely design dialog boxes to go with visual of p5
 _   maybe something that shows stack trace?
 _   with an 'email this' button? (include source code too?)
 _   also need a "prompt" dialog for asking filenames, etc
 _   implement and remove PdeEditorStatus stuff
-_   http://as.processing.org/bugs/show_bug.cgi?id=59
+_   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 
 PDE / Export
 
 _ write export-to-application
-_   http://as.processing.org/bugs/show_bug.cgi?id=60
+_   http://dev.processing.org/bugs/show_bug.cgi?id=60
 _   problem with packages.. currently mainClassName is preproc name
 _     and "name" is the sketch name, w/o package
 _     but if a package were in use, then would be trouble
@@ -340,39 +353,39 @@ _     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
 _     main sticking point will be serial/qtjava in exports
 _ include a note that 'applet' folder will get emptied/rewritten
 _   or rename the old applet folder to something else? (too messy)
-_   http://as.processing.org/bugs/show_bug.cgi?id=61
+_   http://dev.processing.org/bugs/show_bug.cgi?id=61
 _ make multiple jar files thing work as an option
-_   http://as.processing.org/bugs/show_bug.cgi?id=62
+_   http://dev.processing.org/bugs/show_bug.cgi?id=62
 _   applet default is one file, application default is multiple
 _   buttons on side of sketch do default (last) behavior
 _ need to decide how to handle "stop" button in present mode
-_   http://as.processing.org/bugs/show_bug.cgi?id=63
+_   http://dev.processing.org/bugs/show_bug.cgi?id=63
 _   when running externally, people need to write their own stop function
 _   just get export to application working so this can be supported
 _   for now, they're stuck w/ running in the env and getting the ugliness
 _ if size() not found in export/compile, ask the user
 _   have size(myWidth, myHeight) set a static var in PGraphics
 _   for the last size that was used, use as default for fill-in field
-_   http://as.processing.org/bugs/show_bug.cgi?id=64
+_   http://dev.processing.org/bugs/show_bug.cgi?id=64
 _ subfolders in the 'data' directory don't work
-_   http://as.processing.org/bugs/show_bug.cgi?id=65
+_   http://dev.processing.org/bugs/show_bug.cgi?id=65
 _ make export put a timestamp in the html code (hidden or visible)
-_   http://as.processing.org/bugs/show_bug.cgi?id=66
+_   http://dev.processing.org/bugs/show_bug.cgi?id=66
 
 
 PDE / Find & Replace
 
 _ all around very ugly, fix it up
-_   http://as.processing.org/bugs/show_bug.cgi?id=67
+_   http://dev.processing.org/bugs/show_bug.cgi?id=67
 _ several tweaks
-_   http://as.processing.org/bugs/show_bug.cgi?id=68
+_   http://dev.processing.org/bugs/show_bug.cgi?id=68
 _   only enable "find next" in menu after a find has happened
 _   placing "replace" next to "find" ... (hitting "replace all" by accident) 
 _   have a button "replace & find next"
 _ allowing to find & replace over multiple tabs 
-_   http://as.processing.org/bugs/show_bug.cgi?id=69
+_   http://dev.processing.org/bugs/show_bug.cgi?id=69
 _ fix find/replace focus issue on osx
-_   http://as.processing.org/bugs/show_bug.cgi?id=70
+_   http://dev.processing.org/bugs/show_bug.cgi?id=70
 _   give that field focus explicitly, rather than just for typing
 _   right now, typing works, but no caret, no blue highlight
 _   and on second find run, should instead select all the find string
@@ -382,7 +395,7 @@ _     so that typing will replace it directly
 PDE / History
 
 _ implement new version of history
-_   http://as.processing.org/bugs/show_bug.cgi?id=71
+_   http://dev.processing.org/bugs/show_bug.cgi?id=71
 _   make history folder, and a zip (not gz) file for each entry
 _   history causing trouble - super slow with a huge sketch
 _     could instead be gzipped and appended to history.dat
@@ -403,34 +416,34 @@ _     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
 _   make sure that the application is within the bounds of the current display?
 _   (from 0, 0 to width, height)
 _   messy since some displays have negative coords
-_   http://as.processing.org/bugs/show_bug.cgi?id=72
+_   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _ split Preferences and PreferencesFrame?
-_   http://as.processing.org/bugs/show_bug.cgi?id=74
+_   http://dev.processing.org/bugs/show_bug.cgi?id=74
 _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
-_   http://as.processing.org/bugs/show_bug.cgi?id=73
+_   http://dev.processing.org/bugs/show_bug.cgi?id=73
 _ make available the background colors for present mode, stop button color
-_   http://as.processing.org/bugs/show_bug.cgi?id=75
+_   http://dev.processing.org/bugs/show_bug.cgi?id=75
 
 
 PDE / Runner 
 
 _ stop() not working very well
 _   doesn't seem to actually be stopping things
-_   http://as.processing.org/bugs/show_bug.cgi?id=77
+_   http://dev.processing.org/bugs/show_bug.cgi?id=77
 _ NullPointerException inside setup() comes up weird
 _   because NullPointerException is a RuntimeException
 _   maybe the renderer exception is something different? newrendex?
-_   http://as.processing.org/bugs/show_bug.cgi?id=78
+_   http://dev.processing.org/bugs/show_bug.cgi?id=78
 _ exception in setup() on external app doesn't kill run button 
 _   also doesn't kill external vm
-_   http://as.processing.org/bugs/show_bug.cgi?id=79
+_   http://dev.processing.org/bugs/show_bug.cgi?id=79
 _ quitting from present mode doesn't kill run button
-_   http://as.processing.org/bugs/show_bug.cgi?id=80
+_   http://dev.processing.org/bugs/show_bug.cgi?id=80
 _ exceptions in draw() apps aren't caught
 _   the program resize(200, 200); just does nothing (doesn't complain)
-_   http://as.processing.org/bugs/show_bug.cgi?id=81
+_   http://dev.processing.org/bugs/show_bug.cgi?id=81
 _ weird exception in the run button watcher
 _   http://processing.org/bugs/show_bug.cgi?id=42
 
@@ -511,6 +524,7 @@ _ loading is very slow on the first time (getting all font names)
 _   show a progress/status bar while it's happening?
 _   (would be useful to at least tell user that system not locked up)
 _ create font with user-specified charsets
+_   may help solve: http://dev.processing.org/bugs/show_bug.cgi?id=98
 
 
 
@@ -529,12 +543,11 @@ LIBRARIES / Video
 
 _ reading movie is really really slow (2-3 fps)
 _   new methods exist, but may be flickery
-_   http://as.processing.org/bugs/show_bug.cgi?id=40
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1115909991;start=1
+_   http://dev.processing.org/bugs/show_bug.cgi?id=40
 _ Movie needs the crop() functions ala Capture
 _ tearing and incomplete updates on capture?
 _   putting read() inside draw() seems to eliminate this?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1114628335
+_   http://dev.processing.org/bugs/show_bug.cgi?id=114
 _ video doesn't work in applets
 _   on export, need to first import applet's packages before qt et al
 _   video working in applets? (no, never did in alpha so untested)
@@ -570,7 +583,8 @@ LIBRARIES / Serial
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116797335
+_   bug report includes patch from mellis
+_   http://dev.processing.org/bugs/show_bug.cgi?id=96
 _ add prompt() method to Serial (simple dialog box that pops up)
 
 
@@ -623,12 +637,17 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
+_ detect bad classpath or path settings
+_   some sort of path/classpath tester/fixer app for windows
+_   that " norton" thing in the path makes things a mess
+_   http://dev.processing.org/bugs/show_bug.cgi?id=112
 _ tie .pde files as documents of the application
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
 _   figure out proper registry key for windows
 _     can be handled when the app first run (jni?)
 _   write handler for main() to take document names
 _ properly handle non-ascii chars in p5 folder name
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
 _ track down the cause of the processing.exe not starting bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781
