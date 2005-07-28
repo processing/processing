@@ -105,25 +105,39 @@ function gogo(dropdown) {
       <b>
 I've found a bug! 
       </b><br><br>
-Haven't we all?
+<em>I know you're excited, but please avoid the urge to just email
+      us!</em> especially sending mail to Ben or Casey directly. This
+      includes sending us "Instant Messages" on the discourse section
+      of the site. While you may prefer the privacy of a personal
+      message, it's much quicker for
+      you to write to the board, where you'll find all sorts of
+      helpful people who are also often at all hours of the night. If you
+      email us directly, we'll either not respond or just ask you to
+      use the discourse board anyway.
 <br> <br>
-<em>Please avoid the urge to just email us!</em> especially sending mail 
-to Ben or Casey directly. While you may prefer the privacy of an
-email, it's much quicker for you to ask the whole gang, who are super 
-helpful. Visit the <A HREF="http://processing.org/discourse/">discussion 
-board</A> to report problems, ask questions, or post suggestions.
-If you email us, we'll probably just ask you to use the bboard anyway.
+<em>We spend a lot of
+      our time helping people with Processing, so reading and
+      following these instructions means that you respect our time and
+      don't want to waste it.</em>
 <br> <br>
-First, search the <a href="http://processing.org/bugs/">bug
+First, read the FAQ. Start with digging through this page and maybe
+      the <A HREF="platforms.html">platforms</A> page too in case it's
+      something specific to your operating system. 
+<br> <br>
+Second, search the <a href="http://dev.processing.org/bugs/">bug
 database</a> to see if your problem has already been reported. 
 Most often, this will contain background on the bug, a workaround, 
-or an estimated target for a fix.
+or an estimated target for a fix. The bug database is unfortunately
+      incomplete so it doesn't cover everything, but it will get
+      better with time.
 <br> <br>
-If you don't find your bug, you can either enter it as a new bug in
-the database, or you can post to the bugs section of the <a
-href="http://processing.org/discourse/">discussion board</a>.
+If you don't find your bug, enter it as a new bug in
+the database, which we use to keep track of things. If you're having
+      trouble or find it confusing (or the word "database" gives you
+      the willies), please post on the
+      discourse board so that we can get you straightened out.
 <br> <br>
-When reporting this "bug" please include information about
+When reporting please include information about
 <OL>
 <LI> the revision number (i.e. 0085)
 <LI> what operating system you're using, and on what kind of hardware
@@ -148,9 +162,10 @@ The more details you can post, the better, because it helps us figure
 out what's going on. Useful things when reporting:
 <UL>
 <LI> We want the minimum amount of code that will still replicate the
-  bug. The worst that can happen is we get a report that says
-  "problem!" along with a three page program. Sure, everyone likes a
-  puzzle, but simpler code will receive a faster response. 
+  bug. The worst that can happen is we get a report with a subject
+  saying "problem!" along with a three page program. 
+  Sure, everyone likes a puzzle, but simpler code will receive a 
+  faster response. 
 <LI> Occasionally we may need you to pack up a copy of your sketch folder 
   or something similar so that we can try and replicate the weirdness 
   on our own machine. Rest assured, we have no interest in messing with
@@ -188,8 +203,9 @@ account that contains non-ascii characters. For instance, if your name
 contains Japanese characters or umlauts, it's likely to have trouble. 
 Sometimes using run.bat instead will fix this. Another fix is to
 create a user account that uses only ascii characters. In the meantime, 
-we're looking for a fix.
-<LI> In general, Processing probably won't work if you install it inside
+we're looking for a fix. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
+<!-- <LI> In general, Processing probably won't work if you install it inside
   a folder with non-ascii characters in its name. For instance, if the
   name of your user folder includes Japanese characters, 
 or it has an umlaut or cedilla or anything else fancy, you're gonna
@@ -198,17 +214,19 @@ desktop, or somewhere inside that folder. The fix
   to place processing inside the root level of your C:\ drive (or
   whatever drive you use) and it'll be ok again. This will be fixed in
   the future.
+-->
 <LI>If you have lots of garbage in your CLASSPATH environment
   variable, that might cause trouble starting up a sketch. You might
-  get "Couldn't find package xxx.xxx" errors. Clean things up (avoid
-  spaces and quotes)
+  get "Couldn't find package xxx.xxx" errors. Clean things up by avoiding
+  spaces and quotes. (<A
+  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>)
 <LI>In general, perhaps avoid having spaces in the folder name
   that contains Processing. This is because of Windows' awesome
   hokiness and its not-as-distant-as-it-should-be ancestor DOS.
-<LI>If you're still having trouble, try disabling any overly
-  protective virus scanning software. It might be holding things up.
 <LI>You might also try using run.bat to start processing. Lots
   of people seem to have a better time with this method.
+<LI>If you're still having trouble, try disabling any overly
+  protective virus scanning software. It might be holding things up.
 </UL>
 Mac OS X
 <UL>
@@ -230,9 +248,14 @@ You should either install it or, since it's old, install the rpm/package
 for compat-libstdc++ before Processing will run. Or find/rebuild a different 
 version of jikes that's compatible with your distro. Jikes is available 
 <a href="http://sourceforge.net/project/showfiles.php?group_id=128803">here</a>, and it's an easy ./configure, make, and then copy src/jikes to the 
-processing-XXXX folder and you should be all set.
+processing-XXXX folder and you should be all set. (<A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
 <br> <br>
-<LI>Or if you encounter a problem like this one: <TT>jikes: relocation error: /opt/processing-0087/./jikes: undefined symbol: __dynamic_cast_2</TT>, then that also means that jikes is incompatible with your distro.
+<LI>Or if you encounter a problem like this one: <TT>jikes: relocation
+error: /opt/processing-0087/./jikes: undefined symbol:
+__dynamic_cast_2</TT>, then that also means that jikes is incompatible
+with your distro. (Also <A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
 </UL>
 Any Platform
 <UL>
@@ -479,10 +502,8 @@ of that scenario. Blame Apple. Blame Canada.
 
 All Platforms 
 <UL>
-<LI>Projects that use video cannot be exported to the web. More
-details can be found in <A
-HREF="http://processing.org/bugs/show_bug.cgi?id=44">this entry</A> in
-the bug db.
+<LI>Projects that use video cannot (currently?) be exported to the
+web. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=44">Bug 44</A>)
 </UL>
       </td>
     <td width="50">&nbsp;</td>
@@ -675,12 +696,13 @@ Of course, read the page closely and make sure that you in fact have
 this graphics chipset on your machine before installing. <em>Thanks to
 Daniel Shiffman for finding this fix!</em>
 
-<LI>On Mac OS X, I don't think there's much we can do about the
+<LI><STRIKE>On Mac OS X, I don't think there's much we can do about the
   following error: <tt>Error: view not ready, cannot lock focus at 
   "/Users/kbr/JavaNet/jogl/src/native/jogl/
    MacOSXWindowSystemInterface.m:createContext:51"</tt>
   that shows up sometimes on Run. Just hit Run again and things oughta
-  work. This may be our bug, but who knows.
+  work. This may be our bug, but who knows.</STRIKE> "Cannot lock
+  focus" bug on OS X is fixed for Processing release 93.
 
 <LI> On Windows, if you're getting a lot of OpenGL crashing, blue
 screens, or other mess, your driver might be bad. For instance, if
@@ -733,7 +755,10 @@ All Platforms
   happens on most platforms. To get around it, you can organize your
   sketches into subfolders which will appear as submenus (be sure to
   quit before reorganizing, and then restart when finished). 
-<LI>If you're seeing a <TT>sun.dc.pr.PRException</TT>, it's because you're trying to draw something that's waaaaay off screen (like an x coordinate of -100,000 or something nutty like that).
+<LI>If you're seeing a <TT>sun.dc.pr.PRException</TT>, it's because
+  you're trying to draw something that's waaaaay off screen (like an x
+  coordinate of -100,000 or something nutty like that). (<A
+  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=104">Bug 104</A>)
 </UL>
 
 Windows
@@ -749,7 +774,8 @@ Windows
   Parameters' just enter: -XX:+ForceTimeHighResolution
 <LI>Create Font sometimes crashes on Windows, bringing down the whole
   environment. This seems to be a Java bug, because it's not a Java
-  exception, but a full crash.
+  exception, but a full crash. (<A
+  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=99">Bug 99</A>).
 <LI>An error starting with <tt>"hs_err_pid10XX.txt"</tt> 
 sometimes shows up. This is something within the Sun's Java VM that
 we can't fix. It's not clear what the problem is, but it seems to have
@@ -770,7 +796,7 @@ could be a double free(), or free() called with the middle of an
 allocated block; Try setting environment variable MallocHelp to see
 tools to help debug </TT> it seems to be a bug in Apple's OS X
 Java. It doesn't appear to hurt anything but there doesn't appear to
-be anything we can do to fix it. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=52">bug 52</A>)
+be anything we can do to fix it. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=52">Bug 52</A>)
 </UL>
 Linux
 <UL>
@@ -802,7 +828,7 @@ affect things.
       <b>
 Known Bugs
       </b><br><br>
-<em>This section is incomplete, but will contain links to the bug
+<em>This section is incomplete, but contains some links to the bug
       database's Greatest Hits collection.</em>
 <br> <br>
 Some highlights to get started:
@@ -815,13 +841,16 @@ libraries). Closing the window to shut things down usually works fine,
 though even that might lock up sometimes. Make sure you save your 
 sketches before you run, in case you have to force-quit.
 <LI>The get(), set(), blend(), loadPixels() and updatePixels() 
-functions are fairly broken when using OpenGL.
+functions are fairly broken when using OpenGL. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=91">Bug 91</A>)
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
 2D and 3D libraries, eventually we won't have to include the 3D code
 when using 2D. 
-<LI>println() can be super slow and often locks things up
-<LI>Dragging the applet window around will often make Processing lock up
+<LI><STRIKE>println() can be super slow and often locks things
+up</STRIKE> println() issues fixed for Processing release 93.
+<LI><STRIKE>Dragging the applet window around will often make
+Processing lock up</STRIKE> Fixed in a recent release.
 <LI>2D graphics might be a bit flickery sometimes, try setting the
 framerate() to get things under control
 <LI>strokeWeight() doesn't work (properly) with P3D or OPENGL
@@ -831,21 +860,24 @@ for instance, when using libraries like OpenGL, video, or net.
 <LI>Errors are sometimes cryptic or don't even come through,
 particularly on the Mac. 
 <LI>int() and float() don't always work, use ((int) blah) or ((float)
-blah) instead for the time being. or toInt(blah) and toFloat(blah).
+blah) instead for the time being. or toInt(blah) and toFloat(blah). (<A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
 <LI>pause() and framerate() aren't working with the video library
 <LI>The beloved(?) "History" function from previous versions is
-missing. In the meantime, "Archive Sketch" might be useful. 
+missing. In the meantime, "Archive Sketch" might be useful. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=71">Bug 71</A>)
 <LI>Need to complete the "Tools" menu, which will be a way for people
 to develop their own editor plug-ins.
 <LI>"Export to Application" is not yet complete
 <LI>When you have too many tabs, things get ugly (<A
 HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
-<LI>Save changes before quitting needs a "Cancel" button
+<LI>Save changes before quitting needs a "Cancel" button. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=32">Bug 32</A>)
 <LI>Error messages are often too long or too weird
-<LI>tint() is not affected textures but will in the future
-<LI>updatePixels() seems to stink on the Mac. It can sometimes cause the 
+<LI>tint() is not affecting textures but will in the future
+<LI><STRIKE>updatePixels() seems to stink on the Mac. It can sometimes cause the 
 screen to not update properly, or for video to contain weird bands of
-mixed frames.
+mixed frames.</STRIKE> Fixed in release 91.
 <LI>Lots of little UI things like proper focus or key shortcuts
 </UL>
       </td>
