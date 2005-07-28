@@ -4,6 +4,8 @@ X   incorporate fix posted by mellis
 X   need to figure out threading etc
 X   problem with it launching a new thread for every single update!
 X   http://processing.org/bugs/show_bug.cgi?id=19
+_   introduces regression on linux where extra (NUL?) chars are added
+_     i.e. on first run, the ten blank lines each have a li'l box 
 o make note that changing screen config requires restart of processing
 o   static { checkScreens(); }
 o   static void PApplet.checkScreens() { } 
@@ -52,7 +54,7 @@ _   very common: cached version is being used
 _     go through methods to properly flush the cache
 _     can also just change the name
 
-_ rebuild jikes with --enable-static --disable-shared
+o rebuild jikes with --enable-static --disable-shared
 _   http://dev.processing.org/bugs/show_bug.cgi?id=47
 
 _ make a note in the library howto about using something besides p5
