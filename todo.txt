@@ -4,8 +4,6 @@ X   incorporate fix posted by mellis
 X   need to figure out threading etc
 X   problem with it launching a new thread for every single update!
 X   http://processing.org/bugs/show_bug.cgi?id=19
-_   introduces regression on linux where extra (NUL?) chars are added
-_     i.e. on first run, the ten blank lines each have a li'l box 
 o make note that changing screen config requires restart of processing
 o   static { checkScreens(); }
 o   static void PApplet.checkScreens() { } 
@@ -29,6 +27,9 @@ X   when lots of frames saved out, takes forever to scan the folder
 X   some dumb sorting code was responsible
 X   and each file was being treated as a directory. oops.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=84
+o rebuild jikes with --enable-static --disable-shared
+X   http://dev.processing.org/bugs/show_bug.cgi?id=47
+X   switched to use the version from the rpm on the sf.net site
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -44,7 +45,6 @@ X   worker thread is halting the app ala code folder bug
 X   could this be dealt with by using nio? 
 X     host environment will be running 1.4 so...
 
-
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
@@ -53,9 +53,6 @@ _ faq: "my applet doesn't work on export"... where to check for errors
 _   very common: cached version is being used
 _     go through methods to properly flush the cache
 _     can also just change the name
-
-o rebuild jikes with --enable-static --disable-shared
-_   http://dev.processing.org/bugs/show_bug.cgi?id=47
 
 _ make a note in the library howto about using something besides p5
 
@@ -177,6 +174,14 @@ _   http://processing.org/bugs/show_bug.cgi?id=1
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://processing.org/bugs/show_bug.cgi?id=3
+
+
+PDE / Console
+
+_ timing fix introduce regression on linux 
+_   extra (NUL?) chars are added
+_   i.e. on first run, the ten blank lines each have a li'l box 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=118
 
 
 PDE / Compiler & Preprocessor?
