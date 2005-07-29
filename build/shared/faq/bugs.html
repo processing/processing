@@ -75,7 +75,10 @@ function gogo(dropdown) {
 <a href="#found">I've found a bug!</a> <br>
 <a href="#wontstart">Processing won't start! 
     Nothing happens when I click &ldquo;Run&rdquo;!</a> <br>
+<a href="#applet">Export and Browser Troubles</a> <br>
 <a href="#memory">Out Of Memory Errors</a> <br>
+<a href="#strings">Why don't these Strings equal?</a> <br>
+<a href="#integers">Why is 2 / 5 = 0 instead of 0.4?</a> <br>
 <a href="#issues">Common Issues (not bugs)</a> <br>
 <a href="#video">Problems with Video (Quicktime for Java)</a> <br>
 <a href="#serial">Using the Serial Port</a> <br>
@@ -280,6 +283,88 @@ loadImage and the rest) inside of a function like setup().
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
   <tr> 
     <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="applet"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Export and Browser Troubles
+</b> <br> <br>
+Sketches (applets) often have trouble once exported that will cause
+errors in a browser. <br> <br>
+To figure out what your problem is, you should first check the Java
+(not JavaScript!) console. On Windows, right-click the coffee cup at
+the right of the task bar, and select "Open Console". On Mac OS X, go
+to Applications &rarr; Utilities &rarr; Console and see what the last
+few error messages were.
+<BR> <BR>
+The most common cause is a security issue. Java applets aren't allowed
+to do things like the following:
+<UL>
+<LI>Applets cannot open or write to files on the local machine. So
+things like saveFrame() will cause an error when run from an
+applet. To read files, make sure that you use "Add File..." to add the
+file to your sketch (or place it in the data folder yourself) so that
+it will be included when exported. Then, only use functions like
+loadStrings(), loadImage(), openStream(), etc. to read data from your file.
+<LI>Applets may only connect to servers other than the one from which
+they came. If you need to redirect things from another server, you can
+write a short script that will do it, understanding the possible
+security consequences for your own machine.
+<LI>They're also not allowed to do things like capture video or
+audio. You don't want a malicious applet that turns on your webcam and
+starts sending things back to their server.
+</UL>
+Other common problems:
+<UL>
+<LI>Another common problem is placing images or files into the sketch
+folder by hand, rather than placing them in the data folder (or using
+"Add File..." to do so automatically). This will work from the
+PDE, but on export, the files won't be in included with your sketch
+because they're not in the data folder.
+<LI>Watch out for issues with capitalization! Windows and Mac OS don't
+care about capitalization, so "blah.JPG" looks just the same as
+"blah.jpg". However, since most servers run on Unix, capitalization
+becomes a huge problem, because it must be exact. We've added some
+checks to try and catch this (at least for images) but they're not
+perfect. This can especially be a problem when the .JPG extension is
+not even visible (the default on Windows), so you don't know whether
+it's upper or lower case.
+<LI>Your browser may be using an old version of an
+applet. Unfortunately it's often difficult to get your browser to
+flush its cache. You
+may need to quit all instances of the browser, use alt-reload (or ctrl
+or shift or option, who knows) to get the new version to show
+up. On Windows, clicking the Java coffee cup at the right of the task
+bar can bring up a control panel that will let you flush the Java
+cache too. This is different across all platforms, but if someone
+wants to write a good explanation for any platform they're familiar
+with, please post on the <A
+HREF="http://processing.org/discourse/">discourse</A> area of the site
+and we'll add it to the FAQ.
+</UL>
+Some libraries simply don't work with the web (at least not for now):
+<UL>
+<LI>You cannot use the OpenGL library from the web.
+<LI>The video library (both Capture and Movie) cannot be used on the
+web
+</UL>
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
     <a name="memory"></a> 
     <td width="645"><br>
     </td>
@@ -331,6 +416,94 @@ of ram) as you need to (and at your own risk).
 <br> <br>
 <LI>On Linux, adjust the Processing shell script as needed.
 </UL>
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="strings"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Why don't these Strings equal? 
+</b> <br> <br>
+Comparing a string (quoted text) is different in Processing (Java) than it is in
+ActionScript, which often confuses people. For instance, while this
+might make sense:
+<PRE>String[] lines = loadStrings("sometext.txt");
+for (int i = 0; i < lines.length; i++) {
+  if (lines[i] == "hello") { 
+    println("hello found on line: " + i); // you'll never see this
+  }
+}</PRE>
+You'll never see the message, even if "hello" is in the list. 
+This is because a String is an <em>object</em>
+in Java, comparing them with == will only compare whether the two
+things are pointing at the same memory, not their actual
+contents. Instead, use equals() or one of the other String methods:
+<PRE>String[] lines = loadStrings("sometext.txt");
+for (int i = 0; i < lines.length; i++) {
+  if (<B>lines[i].equals("hello")</B>) {
+    println("hello found on line: " + i); // happiness
+  }
+}</PRE>
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="integers"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Why is 2 / 5 = 0 instead of 0.4?
+</b> <br> <br>
+The result of dividing two integers will always be another integer:
+<PRE>int a = 2;
+int b = 5;
+int result = a / b;
+// result is zero</PRE>
+While somewhat confusing at first, this is later useful for more
+advanced programming. <BR> <BR>
+To get fractions, use a 'float' instead: 
+<PRE>float a = 2.0;
+float b = 5.0;
+float result = a / b;
+// result is 0.4</PRE>
+It is not enough to just divide two integers and set them to a float:
+<PRE>float y = 2 / 5;</PRE>
+In this case, integer 2 is divided by 5, which is zero, and then zero
+is assigned to a float. The number doesn't become a float until the
+lefthand side of the = sign. On the other hand, this:
+<PRE>float y = 2.0 / 5;</PRE>
+will work just fine. In this case, Java sees that 2.0 is a float, so
+it also converts the 5 to a float so that they can be divided, which
+makes it identical to:
+<PRE>float y = 2.0 / 5.0;</PRE>
+and because floats are being used on the righthand side, the result
+will be a float, even before it gets to the lefthand side.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -405,25 +578,6 @@ If you're seeing this, you can fix it by visiting Control Panels
 whose name I have misplaced. if it was you, please drop me a line so
 you can be properly cited. This kind of help is huge for us, since
 we're such a small group!)
-
-<LI>Comparing a string is different in Processing (Java) than it is in
-ActionScript. For instance, while this might make sense:
-<PRE>String[] lines = loadStrings("sometext.txt");
-for (int i = 0; i < lines.length; i++) {
-  if (lines[i] == "hello") { 
-    println("hello found on line: " + i); // you'll never see this
-  }
-}</PRE>
-You'll never see the message. Because a String is an <em>object</em>
-in Java, comparing them with == will only compare whether the two
-things are pointing at the same memory, not their actual
-contents. Instead, use "equals" or one of the other String methods:
-<PRE>String[] lines = loadStrings("sometext.txt");
-for (int i = 0; i < lines.length; i++) {
-  if (<B>lines[i].equals("hello")</B>) {
-    println("hello found on line: " + i); // happiness
-  }
-}</PRE>
       </td>
     <td width="50">&nbsp;</td>
   </tr>
