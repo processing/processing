@@ -3184,43 +3184,51 @@ public class PApplet extends Applet
       throw new RuntimeException("Error downloading from URL " + filename);
     }
 
-    //if (!online) {
-    try {
-      String location = folder + File.separator + "data";
-      File file = new File(location, filename);
-
+    // if not online, check to see if the user is asking for a file
+    // whose name isn't properly capitalized. this helps prevent issues
+    // when a sketch is exported to the web, where case sensitivity
+    // matters, as opposed to windows and the mac os default where
+    // case sensitivity does not.
+    if (!online) {
       try {
-        String path = file.getCanonicalPath();
-        String filenameActual = new File(path).getName();
-        //System.out.println(filename + " " + filenameActual);
-        if (!filenameActual.equals(filename)) {
-          throw new RuntimeException("This file is named " +
-                                     filenameActual + " not " +
-                                     filename + ".");
-          //System.err.println("This image file is named " +
-          //                 filenameActual + " not " + filename + ".");
-          //System.err.println("Use loadImage(\"" +
-          //                 filenameActual + "\") instead.");
-          //return null;
-          //System.out.println("found the wrong case");
-          //throw new RuntimeException("wrong case");
+        // first see if it's in a data folder
+        File file = new File(folder + File.separator + "data", filename);
+        if (!file.exists()) {
+          // next see if it's just in this folder
+          file = new File(folder, filename);
         }
+        if (file.exists()) {
+          try {
+            String path = file.getCanonicalPath();
+            String filenameActual = new File(path).getName();
+            if (!filenameActual.equals(filename)) {
+              throw new RuntimeException("This file is named " +
+                                         filenameActual + " not " +
+                                         filename + ".");
+            }
+          }
+        } catch (IOException e) { }
+
+        // if this file is ok, may as well just load it
+        stream = new FileInputStream(file);
+        if (stream != null) return stream;
+
       } catch (Exception e) { }  // ioex or security
-
-      stream = new FileInputStream(file);
-      if (stream != null) return stream;
-
-    } catch (Exception e) { }  // ioex or security
-      //}
+    }
 
     try {
+      // by default, data files are exported to the root path of the jar.
+      // (not the data folder) so check there first.
       stream = getClass().getResourceAsStream(filename);
       if (stream != null) return stream;
 
+      // hm, check the data subfolder
       stream = getClass().getResourceAsStream("data/" + filename);
       if (stream != null) return stream;
 
-      try {
+      // attempt to load from a local file, used when running as
+      // an application, or as a signed applet
+      try {  // first try to catch any security exceptions
         try {
           File file = new File(folder, filename);
           stream = new FileInputStream(file);
