@@ -529,6 +529,8 @@ public class PImage implements PConstants, Cloneable {
    * <LI>filter(INVERT) will invert the color components in the image.
    * <LI>filter(OPAQUE) set all the high bits in the image to opaque
    * <LI>filter(THRESHOLD) converts the image to black and white.
+   * <LI>filter(DILATE) grow white/light areas
+   * <LI>filter(ERODE) shrink white/light areas
    * </UL>
    * Luminance conversion code contributed by
    * <A HREF="http://www.toxi.co.uk">toxi</A>
@@ -1063,7 +1065,7 @@ public class PImage implements PConstants, Cloneable {
     int maxIdx=pixels.length;
     int[] out=new int[maxIdx];
 
-    if (isInverted) {
+    if (!isInverted) {
       // erosion (grow light areas)
       while (currIdx<maxIdx) {
         int currRowIdx=currIdx;
