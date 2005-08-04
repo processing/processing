@@ -3184,34 +3184,34 @@ public class PApplet extends Applet
       throw new RuntimeException("Error downloading from URL " + filename);
     }
 
-    if (!online) {
+    //if (!online) {
+    try {
+      String location = folder + File.separator + "data";
+      File file = new File(location, filename);
+
       try {
-        String location = folder + File.separator + "data";
-        File file = new File(location, filename);
-
-        try {
-          String path = file.getCanonicalPath();
-          String filenameActual = new File(path).getName();
-          //System.out.println(filename + " " + filenameActual);
-          if (!filenameActual.equals(filename)) {
-            throw new RuntimeException("This file is named " +
-                                       filenameActual + " not " +
-                                       filename + ".");
-            //System.err.println("This image file is named " +
-            //                 filenameActual + " not " + filename + ".");
-            //System.err.println("Use loadImage(\"" +
-            //                 filenameActual + "\") instead.");
-            //return null;
-            //System.out.println("found the wrong case");
-            //throw new RuntimeException("wrong case");
-          }
-        } catch (Exception e) { }  // ioex or security
-
-        stream = new FileInputStream(file);
-        if (stream != null) return stream;
-
+        String path = file.getCanonicalPath();
+        String filenameActual = new File(path).getName();
+        //System.out.println(filename + " " + filenameActual);
+        if (!filenameActual.equals(filename)) {
+          throw new RuntimeException("This file is named " +
+                                     filenameActual + " not " +
+                                     filename + ".");
+          //System.err.println("This image file is named " +
+          //                 filenameActual + " not " + filename + ".");
+          //System.err.println("Use loadImage(\"" +
+          //                 filenameActual + "\") instead.");
+          //return null;
+          //System.out.println("found the wrong case");
+          //throw new RuntimeException("wrong case");
+        }
       } catch (Exception e) { }  // ioex or security
-    }
+
+      stream = new FileInputStream(file);
+      if (stream != null) return stream;
+
+    } catch (Exception e) { }  // ioex or security
+      //}
 
     try {
       stream = getClass().getResourceAsStream(filename);
