@@ -3206,14 +3206,17 @@ public class PApplet extends Applet
                                          filenameActual + " not " +
                                          filename + ".");
             }
-          }
-        } catch (IOException e) { }
+          } catch (IOException e) { }
+        }
 
         // if this file is ok, may as well just load it
         stream = new FileInputStream(file);
         if (stream != null) return stream;
 
-      } catch (Exception e) { }  // ioex or security
+        // have to break these out because a general Exception might
+        // catch the RuntimeException being thrown above
+      } catch (IOException ioe) {
+      } catch (SecurityException se) { }
     }
 
     try {
