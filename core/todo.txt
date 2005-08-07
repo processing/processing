@@ -6,8 +6,9 @@ X faster blur code contributed by toxi
 X filter(ERODE) and filter(DILATE) contributed by toxi
 o textAscent() should probably be g.textAscent instead
 o   more like textLeading() etc
-X   nope, because it requires grabbing a font metrics object and other calculations
+X   nope, because it requires grabbing the font metrics and other calculations
 X bezierDetail, curveDetail made public
+X added textMode(SHAPE) for OPENGL
 
 nixed or fixed in previous releases
 X textMode(SCREEN) having issues on Mac OS X
