@@ -4,6 +4,10 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X   http://192.18.37.44/forums/index.php?topic=1596.msg79680#msg79680
 X faster blur code contributed by toxi
 X filter(ERODE) and filter(DILATE) contributed by toxi
+o textAscent() should probably be g.textAscent instead
+o   more like textLeading() etc
+X   nope, because it requires grabbing a font metrics object and other calculations
+X bezierDetail, curveDetail made public
 
 nixed or fixed in previous releases
 X textMode(SCREEN) having issues on Mac OS X
