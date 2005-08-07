@@ -121,8 +121,15 @@ public class PGraphicsGL extends PGraphics3 {
 
     tobj = glu.gluNewTess();
     // unfortunately glu.gluDeleteTess(tobj); is never called
-    tessCallback = new TessCallback(gl, glu);
+    //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
+    //                  GLU.GLU_TESS_WINDING_NONZERO);
+    //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
+    //                  GLU.GLU_TESS_WINDING_POSITIVE);
+    //GLU.GLU_TESS_WINDING_ODD);
+    //glu.gluTessProperty(tobj, GLU.GLU_TESS_BOUNDARY_ONLY,
+    //                  GL.GL_TRUE);
 
+    tessCallback = new TessCallback(); //gl, glu);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
@@ -373,7 +380,7 @@ public class PGraphicsGL extends PGraphics3 {
     //System.out.println("rendering " + triangleCount + " triangles");
 
     for (int i = 0; i < triangleCount; i ++) {
-      //System.out.println("  rendering triangle " + i);
+      //System.out.println("rendering triangle " + i);
 
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
@@ -535,6 +542,10 @@ public class PGraphicsGL extends PGraphics3 {
 
       } else {
         gl.glBegin(GL.GL_TRIANGLES);
+
+        //System.out.println("tri " + a[VX] + " " + a[VY] + " " + a[VZ]);
+        //System.out.println("    " + b[VX] + " " + b[VY] + " " + b[VZ]);
+        //System.out.println("    " + c[VX] + " " + c[VY] + " " + c[VZ]);
 
         gl.glColor4f(ar, ag, ab, a[A]);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
@@ -838,99 +849,170 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  // six element array received from the Java2D path iterator
-  float textPoints[] = new float[6];
-  // three element array passed to gluTessVertex
-  double textVertex[] = new double[3];
-  // array passed to createGylphVector, later should just be the whole string
-  char textArray[] = new char[1];
-
-
-  // should instead override textPlacedImpl() because createGlyphVector
-  // takes a char array. or better yet, cache the font on a per-char basis,
-  // so that it's not being re-tessellated each time, could make it into
-  // a display list which would be nice and speedy.
+  /**
+   * Override to handle rendering characters with textMode(SHAPE).
+   * This uses the tesselation functions from GLU to handle triangulation
+   * to convert the character into a series of shapes.
+   * <p/>
+   * <EM>No attempt has been made to optimize this code</EM>
+   * <p/>
+   * TODO: Should instead override textPlacedImpl() because createGlyphVector
+   * takes a char array. Or better yet, cache the font on a per-char basis,
+   * so that it's not being re-tessellated each time, could make it into
+   * a display list which would be nice and speedy.
+   * <p/>
+   * Also a problem where some fonts seem to be a bit slight, as if the
+   * control points aren't being mapped quite correctly. Probably doing
+   * something dumb that the control points don't map to P5's control
+   * points. Perhaps it's returning b-spline data from the TrueType font?
+   * Though it seems like that would make a lot of garbage rather than
+   * just a little flattening.
+   * <p/>
+   * There also seems to be a bug that is causing a line (but not a filled
+   * triangle) back to the origin on some letters (i.e. a capital L when
+   * tested with Akzidenz Grotesk Light). But this won't be visible
+   * with the stroke shut off, so tabling that bug for now.
+   */
   protected void textCharImpl(char ch, float x, float y) {
     if (textMode != SHAPE) {
       super.textCharImpl(ch, x, y);
       return;
     }
 
-    textArray[0] = ch;
+    // save the current stroke because it needs to be disabled
+    // while the text is being drawn
+    boolean strokeSaved = stroke;
+    stroke = false;
+
+    // six element array received from the Java2D path iterator
+    float textPoints[] = new float[6];
+
+    // array passed to createGylphVector
+    char textArray[] = new char[] { ch };
 
     Graphics2D graphics = (Graphics2D) canvas.getGraphics();
     //Graphics graphics = canvas.getGraphics();
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
     Shape shp = gv.getOutline();
-    PathIterator iter = shp.getPathIterator(null);
+    PathIterator iter = shp.getPathIterator(null); //, 0.05f);
 
-    glu.gluTessBeginPolygon(tobj, null);
+    boolean TESS = true; //false;
+    if (TESS) glu.gluTessBeginPolygon(tobj, null);
+    // second param to gluTessVertex is for a user defined object that contains
+    // additional info about this point, but that's not needed for anything
 
     float lastX = 0;
     float lastY = 0;
-    // second param to gluTessVertex is for a user defined object that contains
-    // additional info about this point, but that's not needed for anything
+
+    // unfortunately the tesselator won't work properly unless a
+    // new array of doubles is allocated for each point. that bites ass,
+    // but also just reaffirms that in order to make things fast,
+    // display lists will be the way to go.
+    double vertex[];
 
     while (!iter.isDone()) {
       int type = iter.currentSegment(textPoints);
       switch (type) {
       case PathIterator.SEG_MOVETO:   // 1 point
-        //println("moveto\t" + vals[0] + "\t" + vals[1]);
-        glu.gluTessBeginContour(tobj);
-        textVertex[0] = textPoints[0];
-        textVertex[1] = textPoints[1];
-        glu.gluTessVertex(tobj, textVertex, textVertex);
-        lastX = textPoints[0];
-        lastY = textPoints[1];
-        break;
-
       case PathIterator.SEG_LINETO:   // 1 point
-        //println("lineto\t" + vals[0] + "\t" + vals[1]);
-        textVertex[0] = textPoints[0];
-        textVertex[1] = textPoints[1];
-        glu.gluTessVertex(tobj, textVertex, textVertex);
-        lastX = textPoints[0];
-        lastY = textPoints[1];
+        if (type == PathIterator.SEG_MOVETO) {
+          //System.out.println("moveto\t" +
+          //                   textPoints[0] + "\t" + textPoints[1]);
+          if (TESS) {
+            glu.gluTessBeginContour(tobj);
+          } else {
+            beginShape();
+          }
+        } else {
+          //System.out.println("lineto\t" +
+          //                   textPoints[0] + "\t" + textPoints[1]);
+        }
+        vertex = new double[] {
+          x + textPoints[0], y + textPoints[1], 0
+        };
+        //textVertex[0] = x + textPoints[0];
+        //textVertex[1] = y + textPoints[1];
+        if (TESS) {
+          //glu.gluTessVertex(tobj, textVertex, textVertex);
+          //double a[] = new double[3];
+          //a[0] = textVertex[0];
+          //a[1] = textVertex[1];
+          glu.gluTessVertex(tobj, vertex, vertex);
+        } else {
+          vertex((float) vertex[0], (float) vertex[1]);
+        }
+        lastX = textPoints[0]; //vertex[0];
+        lastY = textPoints[1]; //vertex[1];
         break;
 
       case PathIterator.SEG_QUADTO:   // 2 points
-        //println("quadto\t" + vals[0] + "\t" + vals[1] + "\t" +
-        //                     vals[2] + "\t" + vals[3]);
+        //System.out.println("quadto\t" +
+        //                 textPoints[0] + "\t" + textPoints[1] + "\t" +
+        //                 textPoints[2] + "\t" + textPoints[3]);
+
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
-          textVertex[0] =
-            bezierPoint(lastX, textPoints[0], textPoints[0], textPoints[2], t);
-          textVertex[1] =
-            bezierPoint(lastY, textPoints[1], textPoints[1], textPoints[3], t);
-          glu.gluTessVertex(tobj, textVertex, textVertex);
-          lastX = textPoints[2];
-          lastY = textPoints[3];
+          vertex = new double[] {
+            x + bezierPoint(lastX, textPoints[0],
+                            textPoints[0], textPoints[2], t),
+            y + bezierPoint(lastY, textPoints[1],
+                            textPoints[1], textPoints[3], t),
+            0
+          };
+          if (TESS) {
+            glu.gluTessVertex(tobj, vertex, vertex);
+          } else {
+            vertex((float) vertex[0], (float) vertex[1]);
+          }
         }
+        //textVertex[0] = textPoints[2];
+        //textVertex[1] = textPoints[3];
+        lastX = textPoints[2];
+        lastY = textPoints[3];
         break;
 
       case PathIterator.SEG_CUBICTO:  // 3 points
-        //println("cubicto\t" + join(nf(vals, 0, 4), "\t"));
+        //System.out.println("cubicto\t" +
+        //                 textPoints[0] + "\t" + textPoints[1] + "\t" +
+        //                 textPoints[2] + "\t" + textPoints[3] + "\t" +
+        //                 textPoints[4] + "\t" + textPoints[5]);
+
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
-          textVertex[0] =
-            bezierPoint(lastX, textPoints[0], textPoints[2], textPoints[4], t);
-          textVertex[1] =
-            bezierPoint(lastY, textPoints[1], textPoints[3], textPoints[5], t);
-          glu.gluTessVertex(tobj, textVertex, textVertex);
-          lastX = textPoints[4];
-          lastY = textPoints[5];
+          vertex = new double[] {
+            x + bezierPoint(lastX, textPoints[0],
+                            textPoints[2], textPoints[4], t),
+            y + bezierPoint(lastY, textPoints[1],
+                            textPoints[3], textPoints[5], t),
+            0
+          };
+          if (TESS) {
+            glu.gluTessVertex(tobj, vertex, vertex);
+          } else {
+            vertex((float) vertex[0], (float) vertex[1]);
+          }
         }
+        lastX = textPoints[4];
+        lastY = textPoints[5];
         break;
 
       case PathIterator.SEG_CLOSE:
-        //println("close"); println();
-        glu.gluTessEndContour(tobj);
+        //System.out.println("close");
+        //System.out.println();
+        if (TESS) {
+          glu.gluTessEndContour(tobj);
+        } else {
+          endShape();
+        }
         break;
       }
       iter.next();
     }
-    glu.gluTessEndPolygon(tobj);
+    if (TESS) glu.gluTessEndPolygon(tobj);
+    //System.out.println("done with char " + ch);
+
+    stroke = strokeSaved;
   }
 
 
@@ -962,14 +1044,16 @@ public class PGraphicsGL extends PGraphics3 {
 
   //public static class TessCallback extends GLUtesselatorCallbackAdapter {
   public class TessCallback extends GLUtesselatorCallbackAdapter {
-    GL gl;
-    GLU glu;
+    //GL gl;
+    //GLU glu;
 
     // grabs the gl and glu variables because it's a static class
-    public TessCallback(GL gl, GLU glu) {
-      this.gl = gl;
-      this.glu = glu;
-    }
+    //public TessCallback(GL gl, GLU glu) {
+    //this.gl = gl;
+    //this.glu = glu;
+    //}
+
+    // *** need to shut off the stroke here
 
     public void begin(int type) {
       // one of GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP,
@@ -996,6 +1080,8 @@ public class PGraphicsGL extends PGraphics3 {
           throw new RuntimeException("TessCallback vertex() data " +
                                      "isn't length 3");
         }
+        //System.out.println("tess callback vertex " +
+        //                 d[0] + " " + d[1] + " " + d[2]);
         vertexRedirect((float) d[0], (float) d[1], (float) d[2]);
         /*
         if (d.length == 6) {
@@ -1037,10 +1123,19 @@ public class PGraphicsGL extends PGraphics3 {
       //System.out.println("coords.length = " + coords.length);
       //System.out.println("data.length = " + data.length);
       //System.out.println("weight.length = " + weight.length);
+      //for (int i = 0; i < data.length; i++) {
+      //System.out.println(i + " " + data[i].getClass().getName() + " " + weight[i]);
+      //}
+
       double[] vertex = new double[coords.length];
       vertex[0] = coords[0];
       vertex[1] = coords[1];
       vertex[2] = coords[2];
+      //System.out.println("combine " +
+      //                 vertex[0] + " " + vertex[1] + " " + vertex[2]);
+
+      // this is just 3, so nothing interesting to bother combining
+      //System.out.println("data length " + ((double[]) data[0]).length);
 
       // not gonna bother doing any combining,
       // since no user data is being passed in.
