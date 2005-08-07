@@ -1482,9 +1482,12 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * triangulate the current polygon.
-   * simple ear clipping polygon triangulation adapted
-   * from code by john w. ratcliff (jratcliff at verant.com)
+   * Triangulate the current polygon.
+   * <BR> <BR>
+   * Simple ear clipping polygon triangulation adapted from code by
+   * John W. Ratcliff (jratcliff at verant.com). Presumably
+   * <A HREF="http://www.flipcode.org/cgi-bin/fcarticles.cgi?show=63943">this</A>
+   * bit of code from the web.
    */
   private void triangulate_polygon() {
     // first we check if the polygon goes clockwise or counterclockwise
