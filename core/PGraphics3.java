@@ -745,18 +745,18 @@ public class PGraphics3 extends PGraphics {
     if (splineVertexCount > 3) {
       if (bezier) {
         if ((splineVertexCount % 4) == 0) {
-          if (!bezier_inited) bezier_init();
+          if (!bezierInited) bezier_init();
           spline3_segment(splineVertexCount-4,
                           splineVertexCount-4,
                           bezier_draw,
-                          bezier_detail);
+                          bezierDetail);
         }
       } else {  // catmull-rom curve (!bezier)
         if (!curve_inited) curve_init();
         spline3_segment(splineVertexCount-4,
                         splineVertexCount-3,
                         curve_draw,
-                        curve_detail);
+                        curveDetail);
       }
     }
   }
@@ -3114,7 +3114,9 @@ public class PGraphics3 extends PGraphics {
    * called always dominates. On resize, the default projection is always
    * established, which has perspective.
    * <P>
-   * This behavior is pretty much familiar from OpenGL.
+   * This behavior is pretty much familiar from OpenGL, except where
+   * functions replace matrices, rather than multiplying against the
+   * previous.
    * <P>
    */
   public void perspective() {
