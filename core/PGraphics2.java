@@ -713,9 +713,9 @@ public class PGraphics2 extends PGraphics {
     boolean savedSmooth = smooth;
     if (textFont.smooth != savedSmooth) {
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                         textFont.smooth ?
-                         RenderingHints.VALUE_ANTIALIAS_ON :
-                         RenderingHints.VALUE_ANTIALIAS_OFF);
+                          textFont.smooth ?
+                          RenderingHints.VALUE_ANTIALIAS_ON :
+                          RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
     g2.setColor(fillColorObject);
