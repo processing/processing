@@ -180,7 +180,6 @@ public class PGraphics extends PImage implements PConstants {
    * zero if no shape is currently being drawn.
    */
   protected int shape;
-  //int shape_index;
 
   // vertices
   static final int DEFAULT_VERTICES = 512;
@@ -190,8 +189,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  protected boolean bezier_inited = false;
-  protected int bezier_detail = 20; //BEZIER_DETAIL;
+  protected boolean bezierInited = false;
+  public int bezierDetail = 20;
   // msjvm complained when bezier_basis was final
   protected float bezier_basis[][] = {
     { -1,  3, -3,  1},
@@ -212,9 +211,9 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   protected boolean curve_inited = false;
-  protected int curve_detail = 20;
+  protected int curveDetail = 20;
   // catmull-rom basis matrix, perhaps with optional s parameter
-  protected float curve_tightness = 0;
+  public float curveTightness = 0;
   protected float curve_basis[][]; // = new float[4][4];
   protected float curve_forward[][]; // = new float[4][4];
   protected float curve_draw[][];
@@ -1239,7 +1238,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void bezier_init() {
-    bezierDetail(bezier_detail);
+    bezierDetail(bezierDetail);
   }
 
 
@@ -1248,8 +1247,8 @@ public class PGraphics extends PImage implements PConstants {
       bezier_forward = new float[4][4];
       bezier_draw = new float[4][4];
     }
-    bezier_detail = detail;
-    bezier_inited = true;
+    bezierDetail = detail;
+    bezierInited = true;
 
     // setup matrix for forward differencing to speed up drawing
     setup_spline_forward(detail, bezier_forward);
@@ -1333,17 +1332,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void curveDetail(int detail) {
-    curve_mode(detail, curve_tightness);
+    curve_mode(detail, curveTightness);
   }
 
 
   public void curveTightness(float tightness) {
-    curve_mode(curve_detail, tightness);
+    curve_mode(curveDetail, tightness);
   }
 
 
   protected void curve_init() {
-    curve_mode(curve_detail, curve_tightness);
+    curve_mode(curveDetail, curveTightness);
   }
 
 
@@ -1359,9 +1358,7 @@ public class PGraphics extends PImage implements PConstants {
    * code more readable)
    */
   protected void curve_mode(int segments, float s) {
-    curve_detail = segments;
-    //curve_mode = ((curve_tightness != 0) ||
-    //            (curve_segments != CURVE_DETAIL));
+    curveDetail = segments;
 
     if (curve_basis == null) {
       // allocate these when used, to save startup time
@@ -1656,6 +1653,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Returns the ascent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
+   */
   public float textAscent() {
     if (textFont == null) {
       throw new RuntimeException("use textFont() before textAscent()");
@@ -1665,6 +1667,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Returns the descent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
+   */
   public float textDescent() {
     if (textFont != null) {
       return textFont.descent() * textSize;
