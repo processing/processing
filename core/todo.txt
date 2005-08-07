@@ -430,6 +430,7 @@ _ dynamically load code for png and others on loadImage/saveFrame?
 _ updated png encoder
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
 _ more image file i/o.. more advanced in newer java
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1120174647
 _   read uncompressed tiff, read uncompressed tga files.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994

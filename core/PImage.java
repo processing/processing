@@ -1831,61 +1831,6 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  // original TGA export method
-  // now replaced with version using RLE compression (see below)
-    /*
-  static public boolean saveHeaderTGA(OutputStream output,
-                                      int width, int height) {
-    try {
-      byte header[] = new byte[18];
-
-      // set header info
-      header[2]  = 0x02;
-      header[12] = (byte) (width & 0xff);
-      header[13] = (byte) (width >> 8);
-      header[14] = (byte) (height & 0xff);
-      header[15] = (byte) (height >> 8);
-      header[16] = 32; // bits per pixel
-      header[17] = 8;  // bits per colour component
-
-      output.write(header);
-      return true;
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return false;
-  }
-
-  static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height) {
-    try {
-      if (!saveHeaderTGA(output, width, height)) {
-        return false;
-      }
-
-      int index = (height-1) * width;
-
-      for (int y = height-1; y >= 0; y--) {
-        for (int x = 0; x < width; x++) {
-          int col = pixels[index + x];
-          output.write(col       & 0xff);
-          output.write(col >> 8  & 0xff);
-          output.write(col >> 16 & 0xff);
-          output.write(col >>> 24 & 0xff);
-        }
-        index -= width;
-      }
-      output.flush();
-      return true;
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-        return false;
-    } */
-
-
   /**
    * Creates a Targa32 formatted byte sequence of specified
    * pixel buffer now using RLE compression.
@@ -1906,13 +1851,12 @@ public class PImage implements PConstants, Cloneable {
                                 int width, int height, int format) {
      byte header[] = new byte[18];
 
-     // save ALPHA images as 8bit grayscale
-     if (format == ALPHA) {
+     if (format == ALPHA) {  // save ALPHA images as 8bit grayscale
        header[2] = 0x0B;
        header[16] = 0x08;
        header[17] = 0x28;
 
-     }  else if (format == RGB) {
+     } else if (format == RGB) {
        header[2] = 0x0A;
        header[16] = 24;
        header[17] = 0x20;
@@ -2040,12 +1984,19 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  // TODO write reflection code here to use java 1.4 imageio methods
-  //      for writing out images that might be much better
-  //      won't want to use them in all cases.. how to determine?
-  // maybe for the 1.4 kids, would be nice to have:
-  //boolean ImageIO.write(RenderedImage im, String formatName, File output)
-  public void save(String filename) {  // ignore
+  /**
+   * Save this image to disk. This method will save to the "current"
+   * folder, which when running inside the PDE will be the location
+   * of the Processing application, not the sketch folder. To save
+   * inside the sketch folder, use the variable savePath from PApplet,
+   * or use saveFrame() instead.
+   */
+  public void save(String filename) {
+    // TODO write reflection code here to use java 1.4 imageio methods
+    //      for writing out images that might be much better
+    //      won't want to use them in all cases.. how to determine?
+    // maybe for the 1.4 kids, would be nice to have:
+    //boolean ImageIO.write(RenderedImage im, String formatName, File output)
     boolean success = false;
 
     try {
