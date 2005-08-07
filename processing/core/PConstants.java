@@ -135,7 +135,6 @@ public interface PConstants {
   public final static int SOFT_LIGHT = 1 << 10;
 
 
-
   // colour component bitmasks
 
   public static final int ALPHA_MASK = 0xff000000;
@@ -202,8 +201,24 @@ public interface PConstants {
 
   // text placement modes
 
-  //static final int SCREEN  = 4;  // var SCREEN exists elsewhere
-  static final int MODEL  = 3;
+  //static final int SCREEN  = 1 << 7;  // exists elsewhere
+  /**
+   * textMode(MODEL) is the default, meaning that characters
+   * will be drawn in model space.
+   */
+  static final int MODEL = 3;
+
+  /**
+   * textMode(SHAPE) draws text using the the glyph outlines of
+   * individual characters rather than as textures. If the outlines are
+   * not available, then textMode(SHAPE) will be ignored and textMode(MODEL)
+   * will be used instead. For this reason, be sure to call textMode()
+   * <EM>after</EM> calling textFont().
+   * <p/>
+   * Currently, textMode(SHAPE) is only supported by OPENGL mode.
+   * It also requires Java 1.3 or higher.
+   */
+  static final int SHAPE = 4;
 
 
   // text alignment modes

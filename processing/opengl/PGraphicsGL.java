@@ -25,14 +25,19 @@
 package processing.opengl;
 
 import processing.core.*;
+import java.awt.*;
+import java.awt.font.*;
+import java.awt.geom.*;
 import java.lang.reflect.*;
 import net.java.games.jogl.*;
 
 
 /**
- * Implementation of the PGraphics API that
- * employs OpenGL rendering via JOGL.
- * <P>
+ * Implementation of the PGraphics API that employs OpenGL rendering via JOGL.
+ * <p/>
+ * JOGL requires Java 1.4 or higher, so there are no restrictions on this
+ * code to be compatible with Java 1.1 or Java 1.3.
+ * <p/>
  * Lighting and camera implementation by Simon Greenwold.
  */
 public class PGraphicsGL extends PGraphics3 {
@@ -42,9 +47,12 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected float[] projectionFloats;
 
+  GLUtesselator tobj;
+  TessCallback tessCallback;
+
   /**
-   * true if the host system is big endian (mac, irix, sun),
-   * false if little endian (intel).
+   * true if the host system is big endian (PowerPC, MIPS, SPARC),
+   * false if little endian (x86 Intel).
    */
   static public boolean BIG_ENDIAN =
     System.getProperty("sun.cpu.endian").equals("big");
@@ -110,6 +118,15 @@ public class PGraphicsGL extends PGraphics3 {
     // this sets width/height and calls allocate() in PGraphics
     resize(width, height);
     //defaults();  // call this just before setup instead
+
+    tobj = glu.gluNewTess();
+    // unfortunately glu.gluDeleteTess(tobj); is never called
+    tessCallback = new TessCallback(gl, glu);
+
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
 
     //System.out.println("done creating gl");
   }
@@ -767,24 +784,219 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  public void textMode(int mode) {
-    // TODO get this guy straightened out
-    if (mode != OBJECT) {
-      throw new RuntimeException("only textMode(OBJECT) is " +
-                                 "currently supported for OpenGL");
+  public float textAscent() {
+    if ((textMode != SHAPE) || (textFontNative == null)) {
+      return super.textAscent();
     }
-    super.textMode(mode);
+    return textFontNativeMetrics.getAscent();
   }
-  */
+
+
+  public float textDescent() {
+    if ((textMode != SHAPE) || (textFontNative == null)) {
+      return super.textDescent();
+    }
+    return textFontNativeMetrics.getDescent();
+  }
+
+
+  /**
+   * Same as parent, but override for native version of the font.
+   * <p/>
+   * Also gets called by textFont, so the metrics
+   * will get recorded properly.
+   */
+  public void textSize(float size) {
+    if ((textMode != SHAPE) || (textFontNative == null)) {
+      super.textSize(size);
+      return;
+    }
+    textFontNative = textFontNative.deriveFont(size);
+    Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+    //g2.setFont(textFontNative);
+    graphics.setFont(textFontNative);
+
+    // get the metrics info
+    //textFontNativeMetrics = g2.getFontMetrics(textFontNative);
+    textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
+  }
+
+
+  protected float textWidthImpl(char buffer[], int start, int stop) {
+    if ((textMode != SHAPE) || (textFontNative == null)) {
+      return super.textWidthImpl(buffer, start, stop);
+    }
+    // maybe should use one of the newer/fancier functions for this?
+    int length = stop - start;
+    return textFontNativeMetrics.charsWidth(buffer, start, length);
+  }
+
+
+  // six element array received from the Java2D path iterator
+  float textPoints[] = new float[6];
+  // three element array passed to gluTessVertex
+  double textVertex[] = new double[3];
+  // array passed to createGylphVector, later should just be the whole string
+  char textArray[] = new char[1];
+
+
+  // should instead override textPlacedImpl() because createGlyphVector can handle
+  // whole strings. or better yet, cache the font on a per-char basis
+  protected void textCharImpl(char ch, float x, float y) {
+    if (textMode != SHAPE) {
+      super.textCharImpl(ch, x, y);
+      return;
+    }
+
+    textArray[0] = ch;
+
+    Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+    //Graphics graphics = canvas.getGraphics();
+    FontRenderContext frc = graphics.getFontRenderContext();
+    GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
+    Shape shp = gv.getOutline();
+    PathIterator iter = shp.getPathIterator(null);
+
+    glu.gluTessBeginPolygon(tobj, null);
+
+    float lastX, lastY;
+    // second param to gluTessVertex is for a user defined object that contains
+    // additional info about this point, but that's not needed for anything
+
+    while (!iter.isDone()) {
+      int type = iter.currentSegment(textPoints);
+      switch (type) {
+      case PathIterator.SEG_MOVETO:   // 1 point
+        //println("moveto\t" + vals[0] + "\t" + vals[1]);
+        glu.gluTessBeginContour(tobj);
+        textVertex[0] = textPoints[0];
+        textVertex[1] = textPoints[1];
+        glu.gluTessVertex(tobj, textVertex, textVertex);
+        lastX = textPoints[0];
+        lastY = textPoints[1];
+        break;
+
+      case PathIterator.SEG_LINETO:   // 1 point
+        //println("lineto\t" + vals[0] + "\t" + vals[1]);
+        textVertex[0] = textPoints[0];
+        textVertex[1] = textPoints[1];
+        glu.gluTessVertex(tobj, textVertex, textVertex);
+        lastX = textPoints[0];
+        lastY = textPoints[1];
+        break;
+
+      case PathIterator.SEG_QUADTO:   // 2 points
+        //println("quadto\t" + vals[0] + "\t" + vals[1] + "\t" + vals[2] + "\t" + vals[3]);
+        for (int i = 1; i < bezierDetail; i++) {
+          float t = (float)i / (float)bezierDetail;
+          textVertex[0] =
+            bezierPoint(lastX, textPoints[0], textPoints[0], textPoints[2], t);
+          textVertex[1] =
+            bezierPoint(lastY, textPoints[1], textPoints[1], textPoints[3], t);
+          glu.gluTessVertex(tobj, textVertex, textVertex);
+          lastX = textPoints[2];
+          lastY = textPoints[3];
+        }
+        break;
+
+      case PathIterator.SEG_CUBICTO:  // 3 points
+        //println("cubicto\t" + join(nf(vals, 0, 4), "\t"));
+        for (int i = 1; i < bezierDetail; i++) {
+          float t = (float)i / (float)bezierDetail;
+          textVertex[0] =
+            bezierPoint(lastX, textPoints[0], textPoints[2], textPoints[4], t);
+          textVertex[1] =
+            bezierPoint(lastY, textPoints[1], textPoints[3], textPoints[5], t);
+          glu.gluTessVertex(tobj, textVertex, textVertex);
+          lastX = textPoints[4];
+          lastY = textPoints[5];
+        }
+        break;
+
+      case PathIterator.SEG_CLOSE:
+        //println("close"); println();
+        glu.gluTessEndContour(tobj);
+        break;
+      }
+      iter.next();
+    }
+    glu.gluTessEndPolygon(tobj);
+  }
+
+
+  public void textMode(int mode) {
+    if (mode == SHAPE) {
+      textMode = SHAPE;
+
+    } else {
+      // if not SHAPE mode, then pass off to the PGraphics.textMode()
+      // which is built for error handling (but objects to SHAPE).
+      super.textMode(mode);
+    }
+  }
+
+
+  public static class TessCallback extends GLUtesselatorCallbackAdapter {
+    GL gl;
+    GLU glu;
+
+    public TessCallback(GL gl, GLU glu) {
+      this.gl = gl;
+      this.glu = glu;
+    }
+
+    public void begin(int type) {
+      gl.glBegin(type);
+    }
+
+    public void end() {
+      gl.glEnd();
+    }
+
+    public void vertex(Object data) {
+      if (data instanceof double[]) {
+        double[] d = (double[]) data;
+        if (d.length == 6) {
+          double[] d2 = {d[0], d[1], d[2]};
+          gl.glVertex3dv(d2);
+          d2 = new double[]{d[3], d[4], d[5]};
+          gl.glColor3dv(d2);
+        } else if (d.length == 3) {
+          gl.glVertex3dv(d);
+        }
+      }
+    }
+
+    public void error(int errnum) {
+      String estring;
+      estring = glu.gluErrorString(errnum);
+      System.out.println("Tessellation Error: " + estring);
+      throw new RuntimeException();
+    }
+
+    public void combine(double[] coords, Object[] data,
+                        float[] weight, Object[] outData) {
+      double[] vertex = new double[6];
+      vertex[0] = coords[0];
+      vertex[1] = coords[1];
+      vertex[2] = coords[2];
+      for (int i = 3; i < 6; i++)
+        vertex[i] = weight[0] * ((double[]) data[0])[i] +
+          weight[1] * ((double[]) data[1])[i] +
+          weight[2] * ((double[]) data[2])[i] +
+          weight[3] * ((double[]) data[3])[i];
+      outData[0] = vertex;
+    }
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
 
   //public void cameraMode(int mode) {
   //super.cameraMode(mode);
   //syncMatrices();
   //}
-
-
-  //////////////////////////////////////////////////////////////
 
 /*
   public void endCamera() {
@@ -1834,7 +2046,7 @@ public class PGraphicsGL extends PGraphics3 {
       return;
       //System.out.println("no error");
     } else {
-      System.out.print(where + ": ");
+      System.out.print("GL_ERROR at " + where + ": ");
       System.out.print(PApplet.hex(err, 4) + "  ");
       switch (err) {
       case 0x0500: System.out.print("GL_INVALID_ENUM"); break;
