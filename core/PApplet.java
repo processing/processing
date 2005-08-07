@@ -1883,9 +1883,9 @@ public class PApplet extends Applet
    * the image to the applet folder (whereas PImage.save() and
    * the inherited PGraphics.save() don't know where to put things).
    */
-  public void save(String filename) {
-    g.save(savePath(filename));
-  }
+  //public void save(String filename) {
+  //g.save(savePath(filename));
+  //}
 
 
   /**
@@ -1905,7 +1905,7 @@ public class PApplet extends Applet
     //File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
     //save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
     //save("screen-" + nf(frame, 4) + ".tif");
-    save("screen-" + nf(frameCount, 4) + ".tif");
+    g.save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
   }
 
 
@@ -1929,13 +1929,13 @@ public class PApplet extends Applet
     int last = what.lastIndexOf('#');
 
     if (first == -1) {
-      save(what);
+      g.save(savePath(what));
 
     } else {
       String prefix = what.substring(0, first);
       int count = last - first + 1;
       String suffix = what.substring(last + 1);
-      save(prefix + nf(frameCount, count) + suffix);
+      g.save(savePath(prefix + nf(frameCount, count) + suffix));
     }
   }
 
@@ -2278,50 +2278,8 @@ public class PApplet extends Applet
   //
 
   /*
-  static public void printarr(byte what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(boolean what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(char what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(int what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(float what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(double what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(String what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-
-  static public void printarr(Object what[]) {
-    for (int i = 0; i < what.length; i++) System.out.println(what[i]);
-    System.out.flush();
-  }
-  */
-
-  //
-
-  /*
+  // not very useful, because it only works for public (and protected?)
+  // fields of a class, not local variables to methods
   public void printvar(String name) {
     try {
       Field field = getClass().getDeclaredField(name);
@@ -5800,6 +5758,12 @@ v              PApplet.this.stop();
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height, int format) {
     return PGraphics.saveTGA(output, pixels, width, height, format);
+  }
+
+
+  public void save(String filename) {
+    if (recorder != null) recorder.save(filename);
+    g.save(filename);
   }
 
 

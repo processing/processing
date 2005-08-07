@@ -123,9 +123,10 @@ public class PGraphicsGL extends PGraphics3 {
     // unfortunately glu.gluDeleteTess(tobj); is never called
     tessCallback = new TessCallback(gl, glu);
 
-    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
 
     //System.out.println("done creating gl");
@@ -807,10 +808,15 @@ public class PGraphicsGL extends PGraphics3 {
    * will get recorded properly.
    */
   public void textSize(float size) {
-    if ((textMode != SHAPE) || (textFontNative == null)) {
+    // can't cancel on textMode(SHAPE) because textMode() must happen
+    // after textFont() and textFont() calls textSize()
+    //if ((textMode != SHAPE) || (textFontNative == null)) {
+    if (textFontNative == null) {
       super.textSize(size);
       return;
     }
+    //System.out.println("PGraphicsGL.textSize()");
+
     textFontNative = textFontNative.deriveFont(size);
     Graphics2D graphics = (Graphics2D) canvas.getGraphics();
     //g2.setFont(textFontNative);
@@ -840,8 +846,10 @@ public class PGraphicsGL extends PGraphics3 {
   char textArray[] = new char[1];
 
 
-  // should instead override textPlacedImpl() because createGlyphVector can handle
-  // whole strings. or better yet, cache the font on a per-char basis
+  // should instead override textPlacedImpl() because createGlyphVector
+  // takes a char array. or better yet, cache the font on a per-char basis,
+  // so that it's not being re-tessellated each time, could make it into
+  // a display list which would be nice and speedy.
   protected void textCharImpl(char ch, float x, float y) {
     if (textMode != SHAPE) {
       super.textCharImpl(ch, x, y);
@@ -859,7 +867,8 @@ public class PGraphicsGL extends PGraphics3 {
 
     glu.gluTessBeginPolygon(tobj, null);
 
-    float lastX, lastY;
+    float lastX = 0;
+    float lastY = 0;
     // second param to gluTessVertex is for a user defined object that contains
     // additional info about this point, but that's not needed for anything
 
@@ -886,7 +895,8 @@ public class PGraphicsGL extends PGraphics3 {
         break;
 
       case PathIterator.SEG_QUADTO:   // 2 points
-        //println("quadto\t" + vals[0] + "\t" + vals[1] + "\t" + vals[2] + "\t" + vals[3]);
+        //println("quadto\t" + vals[0] + "\t" + vals[1] + "\t" +
+        //                     vals[2] + "\t" + vals[3]);
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
           textVertex[0] =
@@ -936,26 +946,58 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  public static class TessCallback extends GLUtesselatorCallbackAdapter {
+  /**
+   * There must be a better way to do this, but I'm having a brain fart
+   * with all the inner class crap. Fix it later once this stuff is debugged.
+   * <p/>
+   * The method "void vertex(float $1, float $2, float $3);" contained in
+   * the enclosing type "processing.core.PGraphics3" is a perfect match for
+   * this method call. However, it is not visible in this nested class because
+   * a method with the same name in an intervening class is hiding it.
+   */
+  public void vertexRedirect(float x, float y, float z) {
+    vertex(x, y, z);
+  }
+
+
+  //public static class TessCallback extends GLUtesselatorCallbackAdapter {
+  public class TessCallback extends GLUtesselatorCallbackAdapter {
     GL gl;
     GLU glu;
 
+    // grabs the gl and glu variables because it's a static class
     public TessCallback(GL gl, GLU glu) {
       this.gl = gl;
       this.glu = glu;
     }
 
     public void begin(int type) {
-      gl.glBegin(type);
+      // one of GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP,
+      // GL_TRIANGLES, or GL_LINE_LOOP
+      //gl.glBegin(type);
+      switch (type) {
+      case GL.GL_TRIANGLE_FAN: beginShape(TRIANGLE_FAN); break;
+      case GL.GL_TRIANGLE_STRIP: beginShape(TRIANGLE_STRIP); break;
+      case GL.GL_TRIANGLES: beginShape(TRIANGLES); break;
+      case GL.GL_LINE_LOOP: beginShape(LINE_LOOP); break;
+      }
+      //System.out.println("shape type is " + shape);
     }
 
     public void end() {
-      gl.glEnd();
+      //gl.glEnd();
+      endShape();
     }
 
     public void vertex(Object data) {
       if (data instanceof double[]) {
         double[] d = (double[]) data;
+        if (d.length != 3) {
+          throw new RuntimeException("TessCallback vertex() data " +
+                                     "isn't length 3");
+        }
+        vertexRedirect((float) d[0], (float) d[1], (float) d[2]);
+        /*
         if (d.length == 6) {
           double[] d2 = {d[0], d[1], d[2]};
           gl.glVertex3dv(d2);
@@ -964,27 +1006,53 @@ public class PGraphicsGL extends PGraphics3 {
         } else if (d.length == 3) {
           gl.glVertex3dv(d);
         }
+        */
+      } else {
+        throw new RuntimeException("TessCallback vertex() data not understood");
       }
     }
 
     public void error(int errnum) {
-      String estring;
-      estring = glu.gluErrorString(errnum);
-      System.out.println("Tessellation Error: " + estring);
-      throw new RuntimeException();
+      String estring = glu.gluErrorString(errnum);
+      //System.out.println("Tessellation Error: " + estring);
+      //throw new RuntimeException();
+      throw new RuntimeException("Tessellation Error: " + estring);
     }
 
+    /**
+     * Implementation of the GLU_TESS_COMBINE callback.
+     * @param coords is the 3-vector of the new vertex
+     * @data is the vertex data to be combined, up to four elements.
+     * This is useful when mixing colors together or any other
+     * user data that was passed in to gluTessVertex.
+     * @weight is an array of weights, one for each element of "data"
+     * that should be linearly combined for new values.
+     * @outData is the set of new values of "data" after being
+     * put back together based on the weights. it's passed back as a
+     * single element Object[] array because that's the closest
+     * that Java gets to a pointer.
+     */
     public void combine(double[] coords, Object[] data,
                         float[] weight, Object[] outData) {
-      double[] vertex = new double[6];
+      //System.out.println("coords.length = " + coords.length);
+      //System.out.println("data.length = " + data.length);
+      //System.out.println("weight.length = " + weight.length);
+      double[] vertex = new double[coords.length];
       vertex[0] = coords[0];
       vertex[1] = coords[1];
       vertex[2] = coords[2];
-      for (int i = 3; i < 6; i++)
-        vertex[i] = weight[0] * ((double[]) data[0])[i] +
+
+      // not gonna bother doing any combining,
+      // since no user data is being passed in.
+      /*
+      for (int i = 3; i < 6; i++) {
+        vertex[i] =
+          weight[0] * ((double[]) data[0])[i] +
           weight[1] * ((double[]) data[1])[i] +
           weight[2] * ((double[]) data[2])[i] +
           weight[3] * ((double[]) data[3])[i];
+      }
+      */
       outData[0] = vertex;
     }
   }
@@ -2070,5 +2138,4 @@ public class PGraphicsGL extends PGraphics3 {
   protected void add_triangle(int a, int b, int c) {
     add_triangle_no_clip(a, b, c);
   }
-
 }
