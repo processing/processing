@@ -305,45 +305,41 @@ class BufferedStyledDocument extends DefaultStyledDocument {
   ArrayList elements = new ArrayList();
   int maxLineLength, maxLineCount;
   int currentLineLength = 0;
+  boolean needLineBreak = false;
 
   public BufferedStyledDocument(int maxLineLength, int maxLineCount) {
     this.maxLineLength = maxLineLength;
     this.maxLineCount = maxLineCount;
   }
 
+  /** buffer a string for insertion at the end of the DefaultStyledDocument */
   public synchronized void appendString(String str, AttributeSet a) {
-    // newlines within an element have (almost) no effect, so we need to
-    // replace them with proper paragraph breaks (start and end tags)
-    while (str.indexOf('\n') != -1) {
-      elements.add(new ElementSpec(a, ElementSpec.ContentType,
-        str.toCharArray(), 0, str.indexOf('\n')));
-      elements.add(new ElementSpec(a, ElementSpec.EndTagType));
-      elements.add(new ElementSpec(a, ElementSpec.StartTagType));
-      currentLineLength = 0;
-
-      // add a dummy character to the new paragraph; otherwise, a newline at
-      // the end of a batch will be lost (because batches get appended to the
-      // paragraph containing the last character of the preceeding batch)
-      elements.add(new ElementSpec(a, ElementSpec.ContentType,
-        new char[] { '\0' }, 0, 1));
-
-      str = str.substring(str.indexOf('\n') + 1);
-    }
-
-    if (str.length() > 0) {
-      // make sure this line doesn't go over 32k chars
-      if (currentLineLength > maxLineLength) {
+    // process each line of the string
+    while (str.length() > 0) {
+      // newlines within an element have (almost) no effect, so we need to
+      // replace them with proper paragraph breaks (start and end tags)
+      if (needLineBreak || currentLineLength > maxLineLength) {
         elements.add(new ElementSpec(a, ElementSpec.EndTagType));
         elements.add(new ElementSpec(a, ElementSpec.StartTagType));
         currentLineLength = 0;
       }
-
-      elements.add(new ElementSpec(a, ElementSpec.ContentType,
-        str.toCharArray(), 0, str.length()));
-      currentLineLength += str.length();
+      
+      if (str.indexOf('\n') == -1) {
+        elements.add(new ElementSpec(a, ElementSpec.ContentType,
+          str.toCharArray(), 0, str.length()));
+        currentLineLength += str.length();
+        needLineBreak = false;
+        str = str.substring(str.length()); // eat the string
+      } else {
+        elements.add(new ElementSpec(a, ElementSpec.ContentType,
+          str.toCharArray(), 0, str.indexOf('\n') + 1));
+        needLineBreak = true;
+        str = str.substring(str.indexOf('\n') + 1); // eat the line
+      }
     }
   }
 
+  /** insert the buffered strings */
   public synchronized void insertAll() {
     ElementSpec[] elementArray = new ElementSpec[elements.size()];
     elements.toArray(elementArray);
