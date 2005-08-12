@@ -30,43 +30,14 @@ import java.awt.image.*;
 
 /**
  * Subclass of PGraphics that handles 3D rendering.
+ * <p/>
+ * Lighting and camera implementation by Simon Greenwold.
  */
 public class PGraphics3 extends PGraphics {
-
-  /** The modelview matrix. */
-  //public PMatrix modelview;
-
-  /** Inverse modelview matrix, used for lighting. */
-  //public PMatrix modelviewInv;
-
-  /**
-   * The camera matrix, the modelview
-   * will be set to this on beginFrame.
-   */
-  //public PMatrix camera;
-
-  /** Inverse camera matrix */
-  //public PMatrix cameraInv;
 
   // ........................................................
 
   // Lighting-related variables
-
-  // store the facing direction to speed rendering
-  //protected boolean useBackfaceCulling = false;  // is this in use?
-
-  // Material properties
-
-  //public float ambientR, ambientG, ambientB;
-  //public int ambientRi, ambientGi, ambientBi;
-
-  //public float specularR, specularG, specularB, specularA;
-  //public int specularRi, specularGi, specularBi, specularAi;
-
-  //public float emissiveR, emissiveG, emissiveB;
-  //public int emissiveRi, emissiveGi, emissiveBi;
-
-  //public float shininess;
 
   // Whether or not we have to worry about vertex position for lighting calcs
   private boolean lightingDependsOnVertexPosition;
@@ -90,15 +61,6 @@ public class PGraphics3 extends PGraphics {
 
   // ........................................................
 
-  /** Camera field of view (in radians, as of rev 86) */
-  //public float cameraFOV;
-
-  /** Position of the camera */
-  //public float cameraX, cameraY, cameraZ;
-
-  //public float cameraNear, cameraFar;
-  //public float cameraAspect;
-
   /**
    * This is turned on at beginCamera, and off at endCamera
    * Currently we don't support nested begin/end cameras.
@@ -106,70 +68,12 @@ public class PGraphics3 extends PGraphics {
    */
   protected boolean manipulatingCamera;
 
-  // projection matrix
-  //public PMatrix projection; // = new PMatrix();
-
   // These two matrices always point to either the modelview
   // or the modelviewInv, but they are swapped during
   // when in camera maniuplation mode. That way camera transforms
   // are automatically accumulated in inverse on the modelview matrix.
   protected PMatrix forwardTransform;
   protected PMatrix reverseTransform;
-
-  // ........................................................
-
-  /// the stencil buffer
-  //public int stencil[];
-
-  /// depth buffer
-  //public float zbuffer[];
-
-  // ........................................................
-
-  /** Maximum lights by default is 8, which is arbitrary,
-      but is the minimum defined by OpenGL */
-  //public static final int MAX_LIGHTS = 8;
-
-  //public int lightCount = 0;
-
-  /** Light types */
-  //public int lights[];
-
-  /** Light positions */
-  //public float lightsX[], lightsY[], lightsZ[];
-
-  /** Light direction (normalized vector) */
-  //public float lightsNX[], lightsNY[], lightsNZ[];
-
-  /** Light falloff */
-  //public float lightsFalloffConstant[];
-  //public float lightsFalloffLinear[];
-  //public float lightsFalloffQuadratic[];
-
-  /** Light spot angle */
-  //public float lightsSpotAngle[];
-
-  /** Cosine of light spot angle */
-  //public float lightsSpotAngleCos[];
-
-  /** Light spot concentration */
-  //public float lightsSpotConcentration[];
-
-  /** Diffuse colors for lights.
-   *  For an ambient light, this will hold the ambient color.
-   *  Internally these are stored as numbers between 0 and 1. */
-  //public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
-
-  /** Specular colors for lights.
-      Internally these are stored as numbers between 0 and 1. */
-  //public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
-
-  //public float lightSpecularR;
-  //public float lightSpecularG;
-  //public float lightSpecularB;
-  //public float lightFalloffConstant;
-  //public float lightFalloffLinear;
-  //public float lightFalloffQuadratic;
 
   // ........................................................
 
@@ -499,18 +403,18 @@ public class PGraphics3 extends PGraphics {
 
   /**
    * Sets the current normal vector.
-   * <P>
+   * <P/>
    * This is for drawing three dimensional shapes and surfaces,
    * allowing you to specify a vector perpendicular to the surface
    * of the shape, which determines how lighting affects it.
-   * <P>
+   * <P/>
    * For the most part, PGraphics will attempt to automatically
    * assign normals to shapes, but since that's imperfect,
    * this is a better option when you want more control.
-   * <P>
+   * <P/>
    * For people familiar with OpenGL, this function is basically
    * identical to glNormal3f().
-   * <P>
+   * <P/>
    * Only applies inside a beginShape/endShape block.
    */
   public void normal(float nx, float ny, float nz) {
@@ -1147,6 +1051,7 @@ public class PGraphics3 extends PGraphics {
     pathCount++;
   }
 
+
   protected void add_line(int a, int b) {
     add_line_with_clip(a, b);
   }
@@ -1191,6 +1096,7 @@ public class PGraphics3 extends PGraphics {
     // mark this piece as being part of the current path
     pathLength[pathCount-1]++;
   }
+
 
   protected void add_triangle(int a, int b, int c) {
     add_triangle_with_clip(a, b, c);
@@ -1317,10 +1223,9 @@ public class PGraphics3 extends PGraphics {
     float pa = (cameraNear - bz) / dz;
     float pb = 1 - pa;
 
-    //System.out.println("az, bz, cameraNear, dz: " + az + ", " + bz + ", " + cameraNear + ", " + dz);
-    //System.out.println("PA, PB: " + pa + ", " + pb);
-
-    vertex(pa * va[MX] + pb * vb[MX], pa * va[MY] + pb * vb[MY], pa * va[MZ] + pb * vb[MZ]);
+    vertex(pa * va[MX] + pb * vb[MX],
+           pa * va[MY] + pb * vb[MY],
+           pa * va[MZ] + pb * vb[MZ]);
     int irv = vertexCount - 1;
     vertex_end_including_clip_verts++;
     float[] rv = vertices[irv];
@@ -1373,6 +1278,7 @@ public class PGraphics3 extends PGraphics {
     return irv;
   }
 
+
   protected final void add_triangle_no_clip(int a, int b, int c) {
     //System.out.println("adding triangle " + triangleCount);
     if (triangleCount == triangles.length) {
@@ -1404,8 +1310,6 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void render_triangles() {
-  //public void render_triangles() {
-    //System.out.println("PGraphics3 render triangles");
     //System.out.println("rendering " + triangleCount + " triangles");
 
     for (int i = 0; i < triangleCount; i ++) {
@@ -1457,6 +1361,27 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  public void triangleCallback(float x1, float y1, float z1,
+                               float r1, float g1, float b1, float a1,
+                               float u1, float v1, boolean e1,
+                               float x2, float y2, float z2,
+                               float r2, float g2, float b2, float a2,
+                               float u2, float v2, boolean e2,
+                               float x3, float y3, float z3,
+                               float r3, float g3, float b3, float a3,
+                               float u3, float v3, boolean e3,
+                               PImage texture) {
+  }
+
+
+  public void lineCallback(float x1, float y1, float z1,
+                           float r1, float g1, float b1, float a1,
+                           float x2, float y2, float z2,
+                           float r2, float g2, float b2, float a2,
+                           float weight, int cap, int join) {
+  }
+
+
   protected void depth_sort_lines() {
   }
 
@@ -1474,6 +1399,10 @@ public class PGraphics3 extends PGraphics {
 
       line.setVertices(a[X], a[Y], a[Z],
                        b[X], b[Y], b[Z]);
+
+      //if (renderCallbackObject != null) {
+      //lineCallbackMethod.
+      //}
 
       line.setIndex(index);
       line.draw();
@@ -1910,8 +1839,8 @@ public class PGraphics3 extends PGraphics {
     int vIndex;
 
     // Handle lighting on, but no lights (in this case, just use emissive)
-    // This wont be used currently because lightCount == 0 is don't use lighting
-    // at all... So. OK. If that ever changes, use the below:
+    // This wont be used currently because lightCount == 0 is don't use
+    // lighting at all... So. OK. If that ever changes, use the below:
     /*
     if (lightCount == 0) {
       vIndex = triangles[triIndex][VERTEX1];
@@ -1943,10 +1872,11 @@ public class PGraphics3 extends PGraphics {
 
     }
 
-    // If the lighting doesn't depend on the vertex position, do the following:
-    // We've already dealt with MANUAL_SHAPE_NORMAL mode before we got into this
-    // function, so here we only have to deal with AUTO_NORMAL mode. So we calculate
-    // the normal for this triangle, and use that for the lighting
+    // If the lighting doesn't depend on the vertex position, do the
+    // following: We've already dealt with MANUAL_SHAPE_NORMAL mode before
+    // we got into this function, so here we only have to deal with
+    // AUTO_NORMAL mode. So we calculate the normal for this triangle,
+    // and use that for the lighting.
     else if (!lightingDependsOnVertexPosition) {
       vIndex = triangles[triIndex][VERTEX1];
       int vIndex2 = triangles[triIndex][VERTEX2];
@@ -1969,9 +1899,12 @@ public class PGraphics3 extends PGraphics {
 
       // The true at the end says the normal is already in world coordinates
       calc_lighting_contribution(vIndex, tempLightingContribution, true);
-      copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
-      copy_vertex_color_to_triangle(triIndex, vIndex2, 1, tempLightingContribution);
-      copy_vertex_color_to_triangle(triIndex, vIndex3, 2, tempLightingContribution);
+      copy_vertex_color_to_triangle(triIndex, vIndex, 0,
+                                    tempLightingContribution);
+      copy_vertex_color_to_triangle(triIndex, vIndex2, 1,
+                                    tempLightingContribution);
+      copy_vertex_color_to_triangle(triIndex, vIndex3, 2,
+                                    tempLightingContribution);
     }
 
     // If lighting is position-dependent
@@ -1982,23 +1915,26 @@ public class PGraphics3 extends PGraphics {
         vertices[vIndex][NY] = vertices[vertex_start][NY];
         vertices[vIndex][NZ] = vertices[vertex_start][NZ];
         calc_lighting_contribution(vIndex, tempLightingContribution);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 0,
+                                      tempLightingContribution);
 
         vIndex = triangles[triIndex][VERTEX2];
         vertices[vIndex][NX] = vertices[vertex_start][NX];
         vertices[vIndex][NY] = vertices[vertex_start][NY];
         vertices[vIndex][NZ] = vertices[vertex_start][NZ];
         calc_lighting_contribution(vIndex, tempLightingContribution);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 1, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 1,
+                                      tempLightingContribution);
 
         vIndex = triangles[triIndex][VERTEX3];
         vertices[vIndex][NX] = vertices[vertex_start][NX];
         vertices[vIndex][NY] = vertices[vertex_start][NY];
         vertices[vIndex][NZ] = vertices[vertex_start][NZ];
         calc_lighting_contribution(vIndex, tempLightingContribution);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 2, tempLightingContribution);
-
+        copy_vertex_color_to_triangle(triIndex, vIndex, 2,
+                                      tempLightingContribution);
       }
+
       // lighting mode is AUTO_NORMAL
       else {
         vIndex = triangles[triIndex][VERTEX1];
@@ -2021,24 +1957,28 @@ public class PGraphics3 extends PGraphics {
         vertices[vIndex][NZ] = norm[Z];
         // The true at the end says the normal is already in world coordinates
         calc_lighting_contribution(vIndex, tempLightingContribution, true);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 0, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex, 0,
+                                      tempLightingContribution);
 
         vertices[vIndex2][NX] = norm[X];
         vertices[vIndex2][NY] = norm[Y];
         vertices[vIndex2][NZ] = norm[Z];
         // The true at the end says the normal is already in world coordinates
         calc_lighting_contribution(vIndex2, tempLightingContribution, true);
-        copy_vertex_color_to_triangle(triIndex, vIndex2, 1, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex2, 1,
+                                      tempLightingContribution);
 
         vertices[vIndex3][NX] = norm[X];
         vertices[vIndex3][NY] = norm[Y];
         vertices[vIndex3][NZ] = norm[Z];
         // The true at the end says the normal is already in world coordinates
         calc_lighting_contribution(vIndex3, tempLightingContribution, true);
-        copy_vertex_color_to_triangle(triIndex, vIndex3, 2, tempLightingContribution);
+        copy_vertex_color_to_triangle(triIndex, vIndex3, 2,
+                                      tempLightingContribution);
       }
     }
   }
+
 
   protected void handle_lighting() {
 
@@ -2059,6 +1999,7 @@ public class PGraphics3 extends PGraphics {
     }
   }
 
+
   protected void handle_no_lighting() {
     int vIndex;
     for (int tri = 0; tri < triangleCount; tri++) {
@@ -2070,6 +2011,8 @@ public class PGraphics3 extends PGraphics {
       copy_prelit_vertex_color_to_triangle(tri, vIndex, 2);
     }
   }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2637,6 +2580,7 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // MATRIX TRANSFORMATIONS
@@ -2811,9 +2755,9 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Set matrix mode to the camera matrix (instead of
-   * the current transformation matrix). This means applyMatrix,
-   * resetMatrix, etc. will affect the camera.
+   * Set matrix mode to the camera matrix (instead of the current
+   * transformation matrix). This means applyMatrix, resetMatrix, etc.
+   * will affect the camera.
    * <P>
    * Note that the camera matrix is *not* the perspective matrix,
    * it is in front of the modelview matrix (hence the name "model"
@@ -2866,13 +2810,12 @@ public class PGraphics3 extends PGraphics {
 
 
   /**
-   * Record the current settings into the camera matrix.
-   * And set the matrix mode back to the current
-   * transformation matrix.
+   * Record the current settings into the camera matrix, and set
+   * the matrix mode back to the current transformation matrix.
    * <P>
-   * Note that this will destroy any settings to scale(),
-   * translate() to your scene, because the final camera
-   * matrix will be copied (not multiplied) into the modelview.
+   * Note that this will destroy any settings to scale(), translate(),
+   * or whatever, because the final camera matrix will be copied
+   * (not multiplied) into the modelview.
    */
   public void endCamera() {
     if (!manipulatingCamera) {
@@ -3284,36 +3227,6 @@ public class PGraphics3 extends PGraphics {
     ambientFromCalc();
   }
 
-  /*
-  public void fill(int rgb) {
-    super.fill(rgb);
-    colorAmbient();
-  }
-
-  public void fill(float gray) {
-    super.fill(gray);
-    colorAmbient();
-  }
-
-
-  public void fill(float gray, float alpha) {
-    super.fill(gray, alpha);
-    colorAmbient();
-  }
-
-
-  public void fill(float x, float y, float z) {
-    super.fill(x, y, z);
-    colorAmbient();
-  }
-
-
-  public void fill(float x, float y, float z, float a) {
-    super.fill(x, y, z, a);
-    colorAmbient();
-  }
-  */
-
 
   //////////////////////////////////////////////////////////////
 
@@ -3345,9 +3258,6 @@ public class PGraphics3 extends PGraphics {
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
-    //ambientRi = calcRi;
-    //ambientGi = calcGi;
-    //ambientBi = calcBi;
   }
 
 

@@ -230,11 +230,8 @@ public interface PConstants {
   static final int SQUARE   = 1 << 0;
   static final int ROUND    = 1 << 1;
   static final int PROJECT  = 1 << 2;
-  //static final int CAP_MASK = SQUARE | ROUND | PROJECT;
   static final int MITER    = 1 << 3;
-  //static final int ROUND       = 1 << 4;
   static final int BEVEL    = 1 << 5;
-  //static final int JOIN_MASK = MITERED | ROUND | BEVELED;
 
 
   // lighting
@@ -243,12 +240,6 @@ public interface PConstants {
   static final int DIRECTIONAL  = 1;
   static final int POINT  = 2;
   static final int SPOT = 3;
-
-
-  // net
-
-  //static final int CLIENT = 0;
-  //static final int SERVER = 1;
 
 
   // key constants
@@ -294,7 +285,6 @@ public interface PConstants {
 
   static final int SCALE_STROKE_WIDTH      = 0;
   static final int LIGHTING_AFFECTS_STROKE = 1;
-  //static final int NEW_GRAPHICS            = 2;
   static final int DISABLE_TEXT_SMOOTH     = 3;
   static final int DISABLE_SMOOTH_HACK     = 4;
   static final int NO_DEPTH_TEST           = 5;
