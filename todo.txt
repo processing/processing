@@ -38,8 +38,6 @@ X   extra (NUL?) chars are added
 X   i.e. on first run, the ten blank lines each have a li'l box 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=118
 
-test for subversion
-
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
 X   opengl gives an OutOfMemoryError
