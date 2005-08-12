@@ -30,6 +30,13 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=84
 o rebuild jikes with --enable-static --disable-shared
 X   http://dev.processing.org/bugs/show_bug.cgi?id=47
 X   switched to use the version from the rpm on the sf.net site
+o auto-run the javadoc in dist.sh
+o   doctor a copy of the css file to use p5 defaults
+o   and re-copy the css in after generating the doc each time
+X timing fix introduce regression on linux 
+X   extra (NUL?) chars are added
+X   i.e. on first run, the ten blank lines each have a li'l box 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=118
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -56,6 +63,16 @@ _     can also just change the name
 
 _ make a note in the library howto about using something besides p5
 
+_ don't allow subfolders forever inside the sketchbook folder
+_   once a sketch is found, don't recurse deeper
+_   same for libraries, cuz this makes a mess
+_   (do this right after rev 91 release... could break things)
+_ make simple tool for casey to rebuild all the examples at once
+_   first select a folder, then will open each sketch in turn, and export
+_   just make it easier to go to the next sketch
+_   need to rebuild with this release because of 1.3/1.4 issues
+_   http://dev.processing.org/bugs/show_bug.cgi?id=117
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -77,19 +94,12 @@ X make os into: Mac OS, Windows, Linux, Other
 X   while other categories might exist, it's too confusing for minimal benefit
 o   make things that are P5 into "enhancement" 
 o   unless a P6 can be added? or something called "enhancement"?
-_ link to list all bugs (especially sorted by priority)
+_ is there a way to list "all" bugs (especially sorted by priority?)
+_   or at least the first 20 listed by priority?
 
-
-_ don't allow subfolders forever inside the sketchbook folder
-_   once a sketch is found, don't recurse deeper
-_   same for libraries, cuz this makes a mess
-_   (do this right after rev 91 release... could break things)
-_ make simple tool for casey to rebuild all the examples at once
-_   first select a folder, then will open each sketch in turn, and export
-_   just make it easier to go to the next sketch
-_   need to rebuild with this release because of 1.3/1.4 issues
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1117258456
-
+forum bugs
+_ when replying, all the replies so far are listed twice
+_ fonts are wrong all over the place (use windows to debug)
 
 _ emacs keybindings
 _   general (easier to support)
@@ -122,17 +132,6 @@ _     ctrl-x-2 split window
 _     ctrl-x-o switch windows
 _     ctrl-x-1 single window
 
-_ auto-run the javadoc in dist.sh
-_   doctor a copy of the css file to use p5 defaults
-_   and re-copy the css in after generating the doc each time
-
-forum bugs
-_ when replying, all the replies so far are listed twice
-_ fonts are wrong all over the place (use windows to debug)
-
-bugzilla
-_ get these two todo lists into their bugzilla categories
-_ setup bugzilla and enter all the bugs
 
 _ faq - is there a way to do xxx?
 _   advanced users who are outgrowing the basic reference: 
@@ -154,6 +153,8 @@ _ get an xml library and example in there
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
 _ explanation of can't mix awt components with p5
+_ post to web example 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
 
 
 
@@ -176,15 +177,7 @@ _   starting with the one about modifying the sketch name for spaces
 _   http://processing.org/bugs/show_bug.cgi?id=3
 
 
-PDE / Console
-
-_ timing fix introduce regression on linux 
-_   extra (NUL?) chars are added
-_   i.e. on first run, the ten blank lines each have a li'l box 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=118
-
-
-PDE / Compiler & Preprocessor?
+PDE / Compiler & Preprocessor
 
 _ casting problems in the parser
 _   straighten out int() -> toInt() conversions

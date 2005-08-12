@@ -38,7 +38,27 @@ import net.java.games.jogl.*;
  * JOGL requires Java 1.4 or higher, so there are no restrictions on this
  * code to be compatible with Java 1.1 or Java 1.3.
  * <p/>
- * Lighting and camera implementation by Simon Greenwold.
+ * This code relies on PGraphics3 for all lighting and transformations.
+ * Meaning that translate(), rotate(), and any lighting will be done in
+ * PGraphics3, and OpenGL is only used to blit lines and triangles as fast
+ * as it possibly can.
+ * <p/>
+ * For this reason, OpenGL may not be accelerated as far as it could be,
+ * but I don't have the time to maintain two separate versions of the
+ * renderer. My development time must always be focused on implementation
+ * and covering features first, and optimizing later.
+ * <p/>
+ * Further, the difference may be negligible, as the primary slowdown
+ * in Java is moving pixels (i.e. a large frame buffer is nearly impossible
+ * because Java just can't do a MemoryImageSource at screen resolution)
+ * and the overhead from JNI tends to be significant. In the latter case,
+ * we may even save time in some cases where a large number of calls to
+ * OpenGL would otherwise be used, but that's probably a stretch.
+ * <p/>
+ * The code is also very messy, while features are being added and
+ * removed rapidly as we head towards 1.0. Things got particularly ugly
+ * as we approached beta while both Simon and I were working on it.
+ * Relax, we'll get it fixed up later.
  */
 public class PGraphicsGL extends PGraphics3 {
   public GL gl;
@@ -370,11 +390,6 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  private final float min(float a, float b) {
-    return (a < b) ? a : b;
-  }
-
-
   protected void render_triangles() {
     report("into triangles");
     //System.out.println("rendering " + triangleCount + " triangles");
@@ -601,8 +616,8 @@ public class PGraphicsGL extends PGraphics3 {
   /**
    * Handled entirely by OpenGL, so use this to override the superclass.
    */
-  protected void light_and_transform() {
-  }
+  //protected void light_and_transform() {
+  //}
 
 
   //////////////////////////////////////////////////////////////
@@ -611,7 +626,7 @@ public class PGraphicsGL extends PGraphics3 {
   /**
    * Cache an image using a specified glTexName
    * (name is just an integer index).
-   *
+   * <p/>
    * If a cacheIndex is already assigned in the image,
    * this request will be ignored.
    */
@@ -931,19 +946,13 @@ public class PGraphicsGL extends PGraphics3 {
         vertex = new double[] {
           x + textPoints[0], y + textPoints[1], 0
         };
-        //textVertex[0] = x + textPoints[0];
-        //textVertex[1] = y + textPoints[1];
         if (TESS) {
-          //glu.gluTessVertex(tobj, textVertex, textVertex);
-          //double a[] = new double[3];
-          //a[0] = textVertex[0];
-          //a[1] = textVertex[1];
           glu.gluTessVertex(tobj, vertex, vertex);
         } else {
           vertex((float) vertex[0], (float) vertex[1]);
         }
-        lastX = textPoints[0]; //vertex[0];
-        lastY = textPoints[1]; //vertex[1];
+        lastX = textPoints[0];
+        lastY = textPoints[1];
         break;
 
       case PathIterator.SEG_QUADTO:   // 2 points
@@ -957,8 +966,7 @@ public class PGraphicsGL extends PGraphics3 {
             x + bezierPoint(lastX, textPoints[0],
                             textPoints[0], textPoints[2], t),
             y + bezierPoint(lastY, textPoints[1],
-                            textPoints[1], textPoints[3], t),
-            0
+                            textPoints[1], textPoints[3], t), 0
           };
           if (TESS) {
             glu.gluTessVertex(tobj, vertex, vertex);
@@ -966,8 +974,6 @@ public class PGraphicsGL extends PGraphics3 {
             vertex((float) vertex[0], (float) vertex[1]);
           }
         }
-        //textVertex[0] = textPoints[2];
-        //textVertex[1] = textPoints[3];
         lastX = textPoints[2];
         lastY = textPoints[3];
         break;
@@ -984,8 +990,7 @@ public class PGraphicsGL extends PGraphics3 {
             x + bezierPoint(lastX, textPoints[0],
                             textPoints[2], textPoints[4], t),
             y + bezierPoint(lastY, textPoints[1],
-                            textPoints[3], textPoints[5], t),
-            0
+                            textPoints[3], textPoints[5], t), 0
           };
           if (TESS) {
             glu.gluTessVertex(tobj, vertex, vertex);
@@ -1223,7 +1228,8 @@ public class PGraphicsGL extends PGraphics3 {
     //return num;
   }
 
-  public void ambientLight(float r, float g, float b, float x, float y, float z) {
+  public void ambientLight(float r, float g, float b,
+                           float x, float y, float z) {
     super.ambientLight(r, g, b, x, y, z);
     glLightEnable(lightCount - 1);
     glLightAmbient(lightCount - 1);
@@ -1404,67 +1410,11 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  public void fill(int rgb) {
-    super.fill(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-  public void fill(float gray) {
-    super.fill(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-  public void fill(float gray, float alpha) {
-    super.fill(gray, alpha);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-
-  public void fill(float x, float y, float z) {
-    super.fill(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-  public void fill(float x, float y, float z, float a) {
-    super.fill(x, y, z, a);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-  */
-
   protected void fillFromCalc() {
     super.fillFromCalc();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
                     new float[] { calcR, calcG, calcB, calcA });
   }
-
-  /*
-  public void diffuse(int rgb) {
-    super.diffuse(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-  public void diffuse(float gray) {
-    super.diffuse(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-  public void diffuse(float gray, float alpha) {
-    super.diffuse(gray, alpha);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-  public void diffuse(float x, float y, float z) {
-    super.diffuse(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-
-
-  public void diffuse(float x, float y, float z, float a) {
-    super.diffuse(x, y, z, a);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, new float[] {calcR, calcG, calcB, calcA});
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -1472,19 +1422,22 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void ambient(int rgb) {
     super.ambient(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void ambient(float gray) {
     super.ambient(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void ambient(float x, float y, float z) {
     super.ambient(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
@@ -1493,30 +1446,35 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void specular(int rgb) {
     super.specular(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
   public void specular(float gray) {
     super.specular(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void specular(float gray, float alpha) {
     super.specular(gray, alpha);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void specular(float x, float y, float z) {
     super.specular(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void specular(float x, float y, float z, float a) {
     super.specular(x, y, z, a);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
@@ -1525,19 +1483,22 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void emissive(int rgb) {
     super.emissive(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void emissive(float gray) {
     super.emissive(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
   public void emissive(float x, float y, float z) {
     super.emissive(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, new float[] {calcR, calcG, calcB, calcA});
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
+                    new float[] { calcR, calcG, calcB, calcA });
   }
 
 
@@ -1967,8 +1928,6 @@ public class PGraphicsGL extends PGraphics3 {
             (getset[0] & 0xff00) |
             ((getset[0] >> 16) & 0xff);
     }
-    //throw new RuntimeException("get() not yet implemented for OpenGL");
-    //return 0; // TODO
   }
 
 
@@ -1996,21 +1955,7 @@ public class PGraphicsGL extends PGraphics3 {
                     newbie.pixels);
 
     nativeToJavaARGB(newbie);
-    //newbie.updatePixels();
-
-    /*
-    int index = y*width + x;
-    int index2 = 0;
-    for (int row = y; row < y+h; row++) {
-      System.arraycopy(pixels, index,
-                       newbie.pixels, index2, w);
-      index+=width;
-      index2+=w;
-    }
-    */
     return newbie;
-    //throw new RuntimeException("get() not yet implemented for OpenGL");
-    //return null; // TODO
   }
 
 
@@ -2018,8 +1963,6 @@ public class PGraphicsGL extends PGraphics3 {
     return get(0, 0, width, height);
   }
 
-
-  //PImage setter = new PImage(1, 1);
 
   public void set(int x, int y, int argb) {
     if (BIG_ENDIAN) {
@@ -2031,13 +1974,11 @@ public class PGraphicsGL extends PGraphics3 {
       getset[0] =
         (argb & 0xff00ff00) |
         ((argb << 16) & 0xff0000) |
-        //(argb & 0xff00) |
         ((argb >> 16) & 0xff);
     }
 
     gl.glRasterPos2f(x + EPSILON, y + EPSILON);
     gl.glDrawPixels(1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getset);
-    //throw new RuntimeException("set() not available with OpenGL");
   }
 
 
@@ -2076,11 +2017,11 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   /**
-   * This is really inefficient and not a good idea.
-   * Use get() and set() with a smaller image area.
+   * This is really inefficient and not a good idea in OpenGL.
+   * Use get() and set() with a smaller image area, or call the
+   * filter on an image instead, and then draw that.
    */
   public void filter(int kind) {
-    //throw new RuntimeException("filter() not available with OpenGL");
     PImage temp = get();
     temp.filter(kind);
     set(0, 0, temp);
@@ -2088,11 +2029,11 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   /**
-   * This is really inefficient and not a good idea.
-   * Use get() and set() with a smaller image area.
+   * This is really inefficient and not a good idea in OpenGL.
+   * Use get() and set() with a smaller image area, or call the
+   * filter on an image instead, and then draw that.
    */
   public void filter(int kind, float param) {
-    //throw new RuntimeException("filter() not available with OpenGL");
     PImage temp = get();
     temp.filter(kind, param);
     set(0, 0, temp);
@@ -2102,17 +2043,10 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
-  // TODO implement these with glCopyPixels
-
-  //public void copy(PImage src, int dx, int dy) {
-  //throw new RuntimeException("copy() not available with OpenGL");
-  //}
-
-
   /**
-   * TODO - extremely slow and not optimized.
-   * Currently calls a loadPixels() on the whole canvas,
-   * then does the copy, then it calls updatePixels().
+   * Extremely slow and not optimized, should use glCopyPixels instead.
+   * Currently calls a loadPixels() on the whole canvas, then does the copy,
+   * then it calls updatePixels().
    */
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
@@ -2142,18 +2076,12 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void blend(int sx, int sy, int dx, int dy, int mode) {
     set(dx, dy, PImage.blend(get(sx, sy), get(dx, dy), mode));
-    //loadPixels();
-    //super.blend(sx, sy, dx, dy, mode);
-    //updatePixels();
   }
 
 
   public void blend(PImage src,
                     int sx, int sy, int dx, int dy, int mode) {
     set(dx, dy, PImage.blend(src.get(sx, sy), get(dx, dy), mode));
-    //loadPixels();
-    //super.blend(src, sx, sy, dx, dy, mode);
-    //updatePixels();
   }
 
 
@@ -2190,6 +2118,14 @@ public class PGraphicsGL extends PGraphics3 {
   public void save(String filename) {
     loadPixels();
     super.save(filename);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  private final float min(float a, float b) {
+    return (a < b) ? a : b;
   }
 
 
