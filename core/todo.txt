@@ -239,8 +239,10 @@ _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
 _ figure out a good model for adaptive sizing of circles
 _   also goes for arcs, though will be weighted based on arc size
-_ point appears to be broken
-_   could be a problem with java 1.5? (was using win2k)
+_ point() issues
+_   point() being funneled through beginShape is terribly slow
+_     go the other way 'round
+_   sometimes broken, could be a problem with java 1.5? (was using win2k)
 noStroke();
 colorMode(RGB, 100);  
 for(int i=0; i<100; i++) {  
@@ -326,10 +328,6 @@ _     or at least that things get ridiculously slow
 _     clipping issues here.. but also something in scan converter
 _     not clipping areas from offscreen
 _       huge geometry slows things way down
-
-_ points
-_   point() being funneled through beginShape is terribly slow
-_     go the other way 'round
 
 
 CORE / PGraphics2
@@ -527,6 +525,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 PGraphicsGL
 
+_ point() doesn't work with some graphics card setups
+_   http://dev.processing.org/bugs/show_bug.cgi?id=121
 _ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
