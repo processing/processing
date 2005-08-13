@@ -487,6 +487,7 @@ TOOLS / General
 _ how to handle command keys
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272
 _ make dynamically loaded plugins and "tools" menu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=124
 _   break out beautify as its own plugin
 _ color picker or other things written by folks
 _   add all .jar files in lib/plugins on startup
