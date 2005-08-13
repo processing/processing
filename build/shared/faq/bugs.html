@@ -4,6 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="processing_beta.css">
 
+<!-- some css to add a little line spacing after LI items and to 
+     color strikethrough to be less garish. important for the bugs
+     page but probably the faq in general. haven't modified the main
+     css file though because it's shared by all of processing_beta -->
+<style type="text/css">
+<!--
+li { border: 3px solid white; }
+strike { color: #C0C0C0; }
+-->
+</style> 
+
 <script language="JavaScript">
 <!--
 
@@ -78,7 +89,7 @@ function gogo(dropdown) {
 <a href="#applet">Export and Browser Troubles</a> <br>
 <a href="#memory">Out Of Memory Errors</a> <br>
 <a href="#strings">Why don't these Strings equal?</a> <br>
-<a href="#integers">Why is 2 / 5 = 0 instead of 0.4?</a> <br>
+<a href="#integers">Why does 2 / 5 = 0 instead of 0.4?</a> <br>
 <a href="#issues">Common Issues (not bugs)</a> <br>
 <a href="#video">Problems with Video (Quicktime for Java)</a> <br>
 <a href="#serial">Using the Serial Port</a> <br>
@@ -130,7 +141,7 @@ First, read the FAQ. Start with digging through this page and maybe
 Second, search the <a href="http://dev.processing.org/bugs/">bug
 database</a> to see if your problem has already been reported. 
 Most often, this will contain background on the bug, a workaround, 
-or an estimated target for a fix. The bug database is unfortunately
+or hopefully a bit about its status. The bug database is unfortunately
       incomplete so it doesn't cover everything, but it will get
       better with time.
 <br> <br>
@@ -221,15 +232,16 @@ desktop, or somewhere inside that folder. The fix
 <LI>If you have lots of garbage in your CLASSPATH environment
   variable, that might cause trouble starting up a sketch. You might
   get "Couldn't find package xxx.xxx" errors. Clean things up by avoiding
-  spaces and quotes. (<A
-  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>)
-<LI>In general, perhaps avoid having spaces in the folder name
-  that contains Processing. This is because of Windows' awesome
-  hokiness and its not-as-distant-as-it-should-be ancestor DOS.
+  spaces and quotes. This is because of Windows' awesome
+  hokiness and its not-as-distant-as-it-should-be ancestor DOS. In the
+  future, we'd like to detect errors like this before they cause
+  trouble. That issue is being tracked at <A
+  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>.
 <LI>You might also try using run.bat to start processing. Lots
   of people seem to have a better time with this method.
 <LI>If you're still having trouble, try disabling any overly
-  protective virus scanning software. It might be holding things up.
+  protective virus scanning software. It might be holding things up,
+  especially when libraries have been imported.
 </UL>
 Mac OS X
 <UL>
@@ -478,7 +490,7 @@ for (int i = 0; i < lines.length; i++) {
     <td width="645"> 
       <p> </p>
       <b>
-Why is 2 / 5 = 0 instead of 0.4?
+Why does 2 / 5 = 0 instead of 0.4?
 </b> <br> <br>
 The result of dividing two integers will always be another integer:
 <PRE>int a = 2;
@@ -549,10 +561,6 @@ of the second word will be capitalized. For instance: keyPressed, movieEvent, mo
   Java on Windows). You should also avoid using "final" variables 
   <em>inside</em> of methods, since those aren't supported by 
   Microsoft's VM (and that's the one most widely installed).
-
-<LI> &ldquo;Export to Application&rdquo; remains unimplemented, 
-though we're hoping to have it complete soon. (<A
-HREF="http://as.processing.org/bugs/show_bug.cgi?id=60">Bug 60</A>)
 
 <LI>On Mac OS X, the error message: 
 <tt>## Component Manager: attempting to find symbols in a component
@@ -831,11 +839,17 @@ OpenGL Issues
 
 <LI>Objects with alpha (lines or shapes with an alpha fill or stroke, images with alpha, all fonts) are displayed in OpenGL based on their drawing order. This creates some annoying effects like making things opaque if they're drawn out of order with objects above or beneath them. This is simply how OpenGL works, but is something that we'd like to develop a workaround for in the future. Currently, you should just try to draw things back-to-front as best as possible.
 
-<LI>OpenGL is really memory hungry because of how tetxures work. In OpenGL mode, your images as the next power of two larger in either direction. This means an image that's 40x190 pixels will be stored as a 64x256 pixel x 4 bytes per pixel array (along with the original image storage being width x height x 4).
+<LI>OpenGL is really memory hungry because of how tetxures work. In
+OpenGL mode, your images as the next power of two larger in either
+direction. This means an image that's 40x190 pixels will be stored as
+a 64x256 pixel x 4 bytes per pixel array (along with the original
+image storage being width x height x 4). This is probably something we
+can optimize in the future, however no attempt will be made until the
+surrounding code is debugged.
 
-<LI>OpenGL sketches cannot be exported to run in a browser. The export won't
-give an error, but they won't run properly. It's not clear whether this
-is something that we can fix for the future.
+<LI>OpenGL sketches cannot be exported to run in a browser. The export
+probably won't give an error, but they won't run properly. It's not
+clear whether this is something that we can fix for the future.
 
 <LI>OpenGL requires Java 1.4 or later. 
 
@@ -847,8 +861,8 @@ and your machine has built in "Intel" graphics (this is the case for
   of your driver, which can be found 
 <a href="http://downloadfinder.intel.com/scripts-df/Detail_Desc.asp?sType=prev&agr=N&ProductID=865&DwnldID=7919">here</a>. 
 Of course, read the page closely and make sure that you in fact have
-this graphics chipset on your machine before installing. <em>Thanks to
-Daniel Shiffman for finding this fix!</em>
+this graphics chipset on your machine before installing. Thanks to
+Daniel Shiffman for finding this fix.
 
 <LI><STRIKE>On Mac OS X, I don't think there's much we can do about the
   following error: <tt>Error: view not ready, cannot lock focus at 
@@ -856,7 +870,8 @@ Daniel Shiffman for finding this fix!</em>
    MacOSXWindowSystemInterface.m:createContext:51"</tt>
   that shows up sometimes on Run. Just hit Run again and things oughta
   work. This may be our bug, but who knows.</STRIKE> "Cannot lock
-  focus" bug on OS X is fixed for Processing release 93.
+  focus" bug on OS X is fixed for Processing release 93, thanks to
+  toxi for tracking it down as fixed with a new JOGL release.
 
 <LI> On Windows, if you're getting a lot of OpenGL crashing, blue
 screens, or other mess, your driver might be bad. For instance, if
@@ -872,10 +887,12 @@ calls directly. Note, however, that <em>this is not supported</em>,
 in the sense that if you get weird problems with a GL-based sketch
 that uses this method, you're on your own. Processing is not intended
 as a nice wrapper on top of OpenGL. Instead, we're using 
-OpenGL graphics for one implementation of the Processing Core API. 
-
-<LI>OpenGL lines aren't fully implemented, and strokeWeight() doesn't 
-work properly. 
+OpenGL graphics for one implementation of the Processing Core
+API. <BR> 
+Because most of the work in drawing is handled by Processing, most
+OpenGL calls will not work, because the model and perspective matrices
+won't be set up properly. Therefore, using the GL object will mostly
+only be useful for tweaking obscure OpenGL parameters.
 
       </td>
     <td width="50">&nbsp;</td>
@@ -949,8 +966,9 @@ malloc[438]: Deallocation of a pointer not malloced: 0xffffffff; This
 could be a double free(), or free() called with the middle of an
 allocated block; Try setting environment variable MallocHelp to see
 tools to help debug </TT> it seems to be a bug in Apple's OS X
-Java. It doesn't appear to hurt anything but there doesn't appear to
-be anything we can do to fix it. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=52">Bug 52</A>)
+Java. It doesn't appear to hurt anything but there also doesn't appear
+to be anything we can do to fix it. (<A
+HREF="http://processing.org/bugs/show_bug.cgi?id=52">Bug 52</A>)
 </UL>
 Linux
 <UL>
@@ -985,34 +1003,50 @@ Known Bugs
 <em>This section is incomplete, but contains some links to the bug
       database's Greatest Hits collection.</em>
 <br> <br>
-Some highlights to get started:
+And of course, if these and others give you a burr in the
+saddle, <A HREF="http://dev.processing.org">join us</A> and help!
 <UL>
 <LI>Java 1.1 support has been (temporarily) removed from this
 release. We hope to bring it back, but it will take some time and we
-didn't want to hold up beta any longer.
-<LI>The stop button often doesn't stop things (like when using
-libraries). Closing the window to shut things down usually works fine, 
-though even that might lock up sometimes. Make sure you save your 
-sketches before you run, in case you have to force-quit.
+didn't want to hold up beta any longer. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=125">Bug 125</A>)
+<LI>The stop button sometimes doesn't stop things properly (especially
+when using libraries). Closing the window to shut things down usually
+works fine, though even that might lock up sometimes. Make sure you
+save your sketches before you run, in case you have to force-quit. If
+this happens to you, please post information about it at <A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=126">Bug 126</A>.
+<LI> &ldquo;Export to Application&rdquo; remains unimplemented, 
+though we're hoping to have it complete soon. (<A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=60">Bug 60</A>)
 <LI>The get(), set(), blend(), loadPixels() and updatePixels() 
 functions are fairly broken when using OpenGL. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=91">Bug 91</A>)
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
 2D and 3D libraries, eventually we won't have to include the 3D code
-when using 2D. 
+when using 2D. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=127">Bug 127</A>).
 <LI><STRIKE>println() can be super slow and often locks things
 up</STRIKE> println() issues fixed for Processing release 93.
 <LI><STRIKE>Dragging the applet window around will often make
 Processing lock up</STRIKE> Fixed in a recent release.
 <LI>2D graphics might be a bit flickery sometimes, try setting the
-framerate() to get things under control
-<LI>strokeWeight() doesn't work (properly) with P3D or OPENGL
-<LI>The placement of applets that are 100x100 is sometimes weird
-<LI>Sometimes things lock up when there are errors in code,
-for instance, when using libraries like OpenGL, video, or net.
-<LI>Errors are sometimes cryptic or don't even come through,
-particularly on the Mac. 
+framerate() to get things under control (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=122">Bug 122</A>)
+<LI>strokeWeight() is disabled in P3D and OPENGL. Not really a bug
+per se (how do you define a stroke in 3D?), but something we'd like to
+fix someday. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=123">Bug 123</A>)
+<LI>The placement of applets that are 100x100 is sometimes weird. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=128">Bug 128</A>)
+<LI><STRIKE>Sometimes things lock up when there are errors in code,
+for instance, when using libraries like OpenGL, video, or
+net.</STRIKE> (fixed in the early 90s releases, please re-file a bug
+if you run into it)
+<LI><STRIKE>Errors sometimes don't come through, or are
+InvocationTargetExceptions, particularly on the Mac.</STRIKE> (if this
+hasn't been fixed please re-file a new bug)
 <LI>int() and float() don't always work, use ((int) blah) or ((float)
 blah) instead for the time being. or toInt(blah) and toFloat(blah). (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
@@ -1021,14 +1055,15 @@ HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
 missing. In the meantime, "Archive Sketch" might be useful. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=71">Bug 71</A>)
 <LI>Need to complete the "Tools" menu, which will be a way for people
-to develop their own editor plug-ins.
-<LI>"Export to Application" is not yet complete
+to develop their own editor plug-ins. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=124">Bug 124</A>)
 <LI>When you have too many tabs, things get ugly (<A
 HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
 <LI>Save changes before quitting needs a "Cancel" button. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=32">Bug 32</A>)
-<LI>Error messages are often too long or too weird
-<LI>tint() is not affecting textures but will in the future
+<LI>Error messages after you hit Run are often too long to read or too
+weird to understand
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=57">Bug 57</A>)
 <LI><STRIKE>updatePixels() seems to stink on the Mac. It can sometimes cause the 
 screen to not update properly, or for video to contain weird bands of
 mixed frames.</STRIKE> Fixed in release 91.

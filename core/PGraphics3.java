@@ -3222,6 +3222,26 @@ public class PGraphics3 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
+  // strokeWeight() doesn't really work properly either,
+  // but that will be dealt with in some other way.
+
+
+  public void strokeJoin(int join) {
+    String msg = "strokeJoin() not available with P3D";
+    throw new RuntimeException(msg);
+  }
+
+
+  public void strokeCap(int cap) {
+    String msg = "strokeCap() not available with P3D";
+    throw new RuntimeException(msg);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+
   protected void fillFromCalc() {
     super.fillFromCalc();
     ambientFromCalc();
