@@ -9,6 +9,7 @@ o   more like textLeading() etc
 X   nope, because it requires grabbing the font metrics and other calculations
 X bezierDetail, curveDetail made public
 X added textMode(SHAPE) for OPENGL
+X error message saying that strokeCap and strokeJoin don't work in P3D
 
 nixed or fixed in previous releases
 X textMode(SCREEN) having issues on Mac OS X
@@ -22,6 +23,11 @@ o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ prevent PGraphics.save() from inserting a file prefix
 _   so that people can use absolute paths
 _   or add a version that takes a file object
+
+_ make vertexCount etc properly accessible in PGraphics3
+_   so that people can do things like the dxf renderer
+_ also have a simple way to hook in triangle leeches to PGraphics3
+_   this exists, but needs to be documented, or have accessors
 
 _ recordFrame() and beginFile()/endFile()
 _   finalize api with more work on multi-page pdf
@@ -103,7 +109,6 @@ _ allow save(), saveFrame() et al to properly pass in absolute paths
 _   (so that it doesn't always save to the applet folder)
 _   could require that save() takes an absolute path?
 _ size() inside draw is missing a new call to cameraMode, etc
-_ framerate(30) is still flickery and jumpy..
 _ fix param() to use a sketch.properties file when run as an app
 _   make this also be used in generating the html file
 _ fix link() to handle relative URLs
@@ -141,6 +146,7 @@ _ should image i/o and sound i/o be moved into PImage and PSound?
 _   how to load external encoders/decoders
 _ placement of 100x100 items is odd
 _   happens with P3D and maybe also P2D?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=128
 _ scripts: how to make a long setup() sleep so that things don't lock way up
 _ fileInput() and fileOutput() may not agree with draw()
 _   not yet verified
@@ -227,6 +233,8 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
+_ finish implementation so 1.1 support can return
+_   http://dev.processing.org/bugs/show_bug.cgi?id=125
 _ alter bezier and curve matrices to use PMatrix
 _   float array stuff is redundant with code that's in PMatrix
 _   and PMatrix has to be included even w/o P3D so...
@@ -341,6 +349,8 @@ _   x, y not setting with processing
 _ don't let users on < 1.3 load JAVA2D
 _ set upper bound on framerate so as not to completely hose things?
 _ fix the flicker in java2d mode
+_   http://dev.processing.org/bugs/show_bug.cgi?id=122
+_   framerate(30) is still flickery and jumpy..
 _   not clear what's happening here
 _   appears to be much worse (unfinished drawing) on macosx
 _     try turning off hw accel on the mac to see if that's the problem
@@ -394,15 +404,11 @@ _   maybe not setting fill color when drawing textures
 _   guessing it's an implementation issue in sami's renderer
 _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_ apply tint() to textures as well
-_   otherwise no good way to color textures
+_ is fill() not coloring textures properly?
+_   don't need to apply tint() to textures, supposed to use fill color
 _ Stroking a rect() leaves off the upper right pixel
-_ make vertexCount etc properly accessible in PGraphics3
-_   so that people can do things like the dxf renderer
-_ error message saying that strokeCap and strokeJoin don't work
 _ PPolygon no longer in use and PLine is a mess
-_ also have a simple way to hook in triangle leeches to PGraphics3
-_   this exists, but needs to be documented, or have accessors
+_   make a version of PGraphics3 that uses it for more accurate rendering?
 _ add option to sort triangles back to front so alpha works
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
 _ texture mapping
@@ -517,6 +523,13 @@ _   or is it a java 1.4 versus java 1.3 problem?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
 
 
+CORE / General 
+
+_ remove some of the bloat, how can we make things more compact?
+_   i.e. if not using 3D, can leave out PGraphics3, PTriangle, PLine
+_   PPolygon isn't currently used for anything, should remove it
+_   http://dev.processing.org/bugs/show_bug.cgi?id=127
+
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -574,6 +587,7 @@ _ need to write an error if people try to use opengl with 1.3 (i.e. on export)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 _ grabbing sun.cpu.endian throws a security exception with gl applets
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
+_ strokeWeight() doesn't work in opengl or p3d
 
 
 PGraphicsAI
