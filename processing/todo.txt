@@ -37,6 +37,10 @@ X timing fix introduce regression on linux
 X   extra (NUL?) chars are added
 X   i.e. on first run, the ten blank lines each have a li'l box 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=118
+X faq: "my applet doesn't work on export"... where to check for errors
+X   very common: cached version is being used
+X     go through methods to properly flush the cache
+X     can also just change the name
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -55,11 +59,6 @@ X     host environment will be running 1.4 so...
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
-
-_ faq: "my applet doesn't work on export"... where to check for errors
-_   very common: cached version is being used
-_     go through methods to properly flush the cache
-_     can also just change the name
 
 _ make a note in the library howto about using something besides p5
 
@@ -81,7 +80,7 @@ bugzilla problems
 X localconfig has been modified, need to update for everything
 _ "back to bug #110" should be on one line
 _ text fields on "post bug" won't let me click
-_   (i.e. "Reassign but to" and "duplicate of bug #")
+_   (i.e. "Reassign bug to" and "duplicate of bug #")
 _   continually de-select themselves so i can't paste or type text
 _ remove "platform" and "severity".. set them to "all" and "normal"
 _ buglist.cgi
