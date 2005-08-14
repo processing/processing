@@ -119,9 +119,16 @@ public class Capture extends PImage implements Runnable {
    * If 'name' is null or the empty string, it won't set a specific
    * device, which means that QuickTime will use that last device
    * used by a QuickTime application.
-   * <P>
+   * <P/>
+   * Unfortunately, Apple's QuickTime API uses the name to select devices,
+   * and in some cases there might be cameras with the same name on a machine.
+   * If you ask for a camera of the same name in sequence, you might see if it
+   * just does the right thing and grabs each separate camera in succession.
+   * If that doesn't work, you might try calling settings() which will
+   * bring up the prompt where you can select a capture device.
+   * <P/>
    * If the following function:
-   * public void captureEvent(Capture c)
+   * <PRE>public void captureEvent(Capture c)</PRE>
    * is defined int the host PApplet, then it will be called every
    * time a new frame is available from the capture device.
    */
