@@ -22,8 +22,22 @@ may want to implement the dispose() call, which is called as the
 applet is closed. Many libraries, especially those with native code, 
 need this to properly shut down. 
 
+It is not recommended that you try to build libraries from within 
+Processing itself. The PDE is built with the sole purpose of creating
+short sketches that are part of PApplet that have a few files at most.
+We don't plan to extend the PDE to also support developing libraries 
+(or tools, once those are enabled) because then it simply becomes like
+any other IDE that is quickly too general for our target audience. 
+Users who are advanced enough in their programming skills to build 
+libraries should almost always be skilled enough to use another IDE
+like Eclipse or something else (if they aren't already) to build 
+their library.
 
-// Notes on Library distribution (added 19 April 2005 by REAS)
+
+//////////////////////////////////////////////////////////////
+
+
+Notes on Library distribution
 
 There are two categories of libraries -- "core" libraries, which are 
 a part of the Processing distribution, and "contributed libraries"
@@ -55,15 +69,13 @@ Processing plan to enable simple extensions of the core API in new,
 innovative, and unexpected directions. The libraries are the future 
 of the project. We don't plan to grow the core library extensively.
 
-
-
+(added 19 April 2005 by REAS)
 
 
 //////////////////////////////////////////////////////////////
 
 
-A very basic library example:
-
+A Very Basic Example
 
 package libraryexample;
 
@@ -86,7 +98,7 @@ public class BoringLibrary {
 //////////////////////////////////////////////////////////////
 
 
-LIBRARY METHODS
+Library Methods
 
 public void pre() 
 method that's called just after beginFrame(), meaning that it 
@@ -171,7 +183,7 @@ which also covers things like modifiers (shift-click) and whatnot.
 //////////////////////////////////////////////////////////////
 
 
-STRUCTURE
+Structure of a Library Folder
 
 The Sonia library by Amit Pitaru is a good example here. To make a
 library called sonia, you create a folder called "sonia" and within
@@ -327,7 +339,7 @@ javac -source 1.3 -target 1.1 -d .
 //////////////////////////////////////////////////////////////
 
 
-ADDING YOUR OWN LIBRARY EVENTS
+Adding Your Own Library Events
 
 So that your library can notify the host applet that something 
 interesting has happened, this is how you implement an event 
@@ -369,7 +381,7 @@ public class FancyLibrary {
 //////////////////////////////////////////////////////////////
 
 
-NAMING
+Library Naming Rules
 
 Libraries, or classes inside them, should not be prefixed with "P" 
 the way that the core Processing classes are (PImage, PGraphics, etc).
@@ -388,4 +400,4 @@ things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 9 June 2005
+Ben Fry, Last updated 14 August 2005
