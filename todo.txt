@@ -41,6 +41,8 @@ X faq: "my applet doesn't work on export"... where to check for errors
 X   very common: cached version is being used
 X     go through methods to properly flush the cache
 X     can also just change the name
+X make a note in the library howto about using something besides p5
+X add the faq to the help menu
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -56,11 +58,34 @@ X   worker thread is halting the app ala code folder bug
 X   could this be dealt with by using nio? 
 X     host environment will be running 1.4 so...
 
+bugzilla problems (fixed by fjen)
+X localconfig has been modified, need to update for everything
+X "back to bug #110" should be on one line
+X text fields on "post bug" won't let me click
+X   (i.e. "Reassign bug to" and "duplicate of bug #")
+X   continually de-select themselves so i can't paste or type text
+X remove "platform" and "severity".. set them to "all" and "normal"
+X buglist.cgi
+X   replace the platform column with the os column (uses icons for os)
+X   sorting based on any of the headings gives an error
+X   "102 bugs found. 102 bugs found."
+X   remove the severity column 
+X     it's normal or enhanced, and enhanced is already gray
+X make os into: Mac OS, Windows, Linux, Other 
+X   while other categories might exist, it's too confusing for minimal benefit
+o   make things that are P5 into "enhancement" 
+o   unless a P6 can be added? or something called "enhancement"?
+X is there a way to list "all" bugs (especially sorted by priority?)
+X   or at least the first 20 listed by priority?
+
+forum bugs
+X when replying, all the replies so far are listed twice
+o fonts are wrong all over the place (use windows to debug)
+
+
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
-
-_ make a note in the library howto about using something besides p5
 
 _ don't allow subfolders forever inside the sketchbook folder
 _   once a sketch is found, don't recurse deeper
@@ -75,30 +100,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=117
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-
-bugzilla problems
-X localconfig has been modified, need to update for everything
-_ "back to bug #110" should be on one line
-_ text fields on "post bug" won't let me click
-_   (i.e. "Reassign bug to" and "duplicate of bug #")
-_   continually de-select themselves so i can't paste or type text
-_ remove "platform" and "severity".. set them to "all" and "normal"
-_ buglist.cgi
-_   replace the platform column with the os column (uses icons for os)
-_   sorting based on any of the headings gives an error
-_   "102 bugs found. 102 bugs found."
-_   remove the severity column 
-_     it's normal or enhanced, and enhanced is already gray
-X make os into: Mac OS, Windows, Linux, Other 
-X   while other categories might exist, it's too confusing for minimal benefit
-o   make things that are P5 into "enhancement" 
-o   unless a P6 can be added? or something called "enhancement"?
-_ is there a way to list "all" bugs (especially sorted by priority?)
-_   or at least the first 20 listed by priority?
-
-forum bugs
-_ when replying, all the replies so far are listed twice
-_ fonts are wrong all over the place (use windows to debug)
 
 _ emacs keybindings
 _   general (easier to support)

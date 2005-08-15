@@ -650,6 +650,14 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
+    item = new JMenuItem("Frequently Asked Questions");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.showFAQ();
+        }
+      });
+    menu.add(item);
+
     item = newJMenuItem("Find in Reference", 'F', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {

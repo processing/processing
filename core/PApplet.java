@@ -447,9 +447,12 @@ public class PApplet extends Applet
 
 
   /**
-   * Called via the first call to PApplet.paint(),
-   * because PAppletGL needs to have a usable screen
-   * before getting things rolling.
+   * Called by the browser or applet viewer to inform this applet that it
+   * should start its execution. It is called after the init method and
+   * each time the applet is revisited in a Web page.
+   * <p/>
+   * Called explicitly via the first call to PApplet.paint(), because
+   * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
     if (javaVersion < 1.3f) return;
@@ -460,9 +463,17 @@ public class PApplet extends Applet
   }
 
 
-  // maybe start should also be used as the method for kicking
-  // the thread on, instead of doing it inside paint()
-  public void stop() {
+  /**
+   * Called by the browser or applet viewer to inform
+   * this applet that it should stop its execution.
+   * <p/>
+   * Unfortunately, there are no guarantees from the Java spec
+   * when or if stop() will be called (i.e. on browser quit,
+   * or when moving between web pages), and it's not always called.
+   */
+   public void stop() {
+   // maybe start should also be used as the method for kicking
+   // the thread on, instead of doing it inside paint()
     //finished = true;  // why did i comment this out?
 
     //System.out.println("stopping applet");
@@ -476,9 +487,13 @@ public class PApplet extends Applet
 
 
   /**
-   * This also calls stop(), in case there was an inadvertent
-   * override of the stop() function by a user.
-   *
+   * Called by the browser or applet viewer to inform this applet
+   * that it is being reclaimed and that it should destroy
+   * any resources that it has allocated.
+   * <p/>
+   * This also attempts to call PApplet.stop(), in case there
+   * was an inadvertent override of the stop() function by a user.
+   * <p/>
    * destroy() supposedly gets called as the applet viewer
    * is shutting down the applet. stop() is called
    * first, and then destroy() to really get rid of things.
@@ -486,7 +501,7 @@ public class PApplet extends Applet
    * when moving between pages), though.
    */
   public void destroy() {
-    stop();
+    ((Papplet)this).stop();
   }
 
 
