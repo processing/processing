@@ -499,6 +499,18 @@ public class Base {
 
 
   /**
+   * Opens the local copy of the FAQ that's included
+   * with the Processing download.
+   */
+  static public void showFAQ() {
+    //Base.openURL("http://processing.org/faq/");
+    String currentDir = System.getProperty("user.dir");
+    openURL(currentDir + File.separator + "faq" +
+            File.separator + "index.html");
+  }
+
+
+  /**
    * Implements the cross-platform headache of opening URLs
    */
   static public void openURL(String url) {
