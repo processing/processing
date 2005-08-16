@@ -201,12 +201,13 @@ public interface PConstants {
 
   // text placement modes
 
-  //static final int SCREEN  = 1 << 7;  // exists elsewhere
   /**
    * textMode(MODEL) is the default, meaning that characters
-   * will be drawn in model space.
+   * will be affected by transformations like any other shapes.
+   * <p/>
+   * Changed value in 0093 to not interfere with LEFT, CENTER, and RIGHT.
    */
-  static final int MODEL = 3;
+  static final int MODEL = 4;
 
   /**
    * textMode(SHAPE) draws text using the the glyph outlines of
@@ -216,9 +217,9 @@ public interface PConstants {
    * <EM>after</EM> calling textFont().
    * <p/>
    * Currently, textMode(SHAPE) is only supported by OPENGL mode.
-   * It also requires Java 1.3 or higher.
+   * It also requires Java 1.2 or higher.
    */
-  static final int SHAPE = 4;
+  static final int SHAPE = 5;
 
 
   // text alignment modes
