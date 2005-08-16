@@ -618,16 +618,20 @@ public class PGraphicsGL extends PGraphics3 {
 
     int i = 0;
     for (int j = 0; j < pathCount; j++) {
+      float sw = vertices[lines[i][VERTEX1]][SW];
       //report("render_lines 1");
       // stroke weight zero will cause a gl error
-      if (lines[i][STROKE_WEIGHT] == 0) continue;
+      //if (lines[i][STROKE_WEIGHT] == 0) continue;
+      if (sw == 0) continue;
       // glLineWidth has to occur outside glBegin/glEnd
-      gl.glLineWidth(lines[i][STROKE_WEIGHT]);
+      //gl.glLineWidth(lines[i][STROKE_WEIGHT]);
+      gl.glLineWidth(sw);
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
 
       if (ai != null) {
-        ai.strokeWeight(lines[i][STROKE_WEIGHT]);
+        //ai.strokeWeight(lines[i][STROKE_WEIGHT]);
+        ai.strokeWeight(sw);
       }
 
       // always draw a first point
