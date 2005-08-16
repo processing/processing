@@ -583,8 +583,10 @@ public class PGraphics extends PImage implements PConstants {
 
     strokeWeight(ONE);
     //strokeCap(SQUARE);
-    strokeCap(ROUND);
-    strokeJoin(MITER);
+    try {
+      strokeCap(ROUND);
+      strokeJoin(MITER);
+    } catch (RuntimeException e) { }  // P3D will complain
 
     background(204);
 
@@ -1726,8 +1728,10 @@ public class PGraphics extends PImage implements PConstants {
    * textMode(SCREEN), because it uses the pixels directly from the font.
    */
   public void textMode(int mode) {
-    if ((mode == LEFT) || (mode == CENTER) || (mode == RIGHT)) {
-      throw new RuntimeException("textMode() is now textAlign() in Processing beta");
+    // CENTER and MODEL overlap (they're both 3)
+    if ((mode == LEFT) || (mode == RIGHT)) {
+      throw new RuntimeException("textMode() is now textAlign() " +
+                                 "in Processing beta");
     }
     if ((mode != SCREEN) && (mode != MODEL)) {
       throw new RuntimeException("Only textMode(SCREEN) or textMode(MODEL) " +
