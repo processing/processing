@@ -65,6 +65,8 @@ public class PGraphicsGL extends PGraphics3 {
   public GLU glu;
   public GLCanvas canvas;
 
+  public Illustrator ai;
+
   protected float[] projectionFloats;
 
   GLUtesselator tobj;
@@ -80,7 +82,12 @@ public class PGraphicsGL extends PGraphics3 {
 
   /**
    * Create a new PGraphicsGL at the specified size.
-   * @param applet the host applet, cannot be null
+   * <P/>
+   * Unlike unlike other PGraphics objects, the PApplet object passed in
+   * cannot be null for this renderer because OpenGL uses a special canvas
+   * object that must be added to a component (the host PApplet, in this case)
+   * that is visible on screen in order to work properly.
+   * @param applet the host applet
    */
   public PGraphicsGL(int width, int height, PApplet applet) {
     //System.out.println("creating PGraphicsGL");
@@ -574,6 +581,31 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
+        if (ai != null) {
+          ai.fillColorRGBA((ar + br + cr) / 3.0f,
+                           (ag + bg + cg) / 3.0f,
+                           (ab + bb + cb) / 3.0f,
+                           (a[A] + b[A] + c[A]) / 3.0f);
+          ai.moveto(a[VX], a[VY]);
+          ai.lineto(b[VX], b[VY]);
+          ai.lineto(c[VX], c[VY]);
+          ai.lineto(a[VX], a[VY]);
+          /*
+          ai.fillColorRGB((ar + br + cr) / 3.0f,
+                          (ag + bg + cg) / 3.0f,
+                          (ab + bb + cb) / 3.0f);
+          ai.moveto(screenX(a[VX], a[VY], a[VZ]),
+                    screenY(a[VX], a[VY], a[VZ]));
+          ai.lineto(screenX(b[VX], b[VY], b[VZ]),
+                    screenY(b[VX], b[VY], b[VZ]));
+          ai.lineto(screenX(c[VX], c[VY], c[VZ]),
+                    screenY(c[VX], c[VY], c[VZ]));
+          ai.lineto(screenX(a[VX], a[VY], a[VZ]),  // closing things off
+                    screenY(a[VX], a[VY], a[VZ]));
+          */
+          ai.fillPath();
+        }
+
         gl.glEnd();
       }
     }
@@ -582,15 +614,21 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   public void render_lines() {
-    //System.out.println("into lines error " + PApplet.hex(gl.glGetError()));
+    report("render_lines in");
 
     int i = 0;
     for (int j = 0; j < pathCount; j++) {
       //report("render_lines 1");
+      // stroke weight zero will cause a gl error
+      if (lines[i][STROKE_WEIGHT] == 0) continue;
       // glLineWidth has to occur outside glBegin/glEnd
       gl.glLineWidth(lines[i][STROKE_WEIGHT]);
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
+
+      if (ai != null) {
+        ai.strokeWeight(lines[i][STROKE_WEIGHT]);
+      }
 
       // always draw a first point
       float a[] = vertices[lines[i][VERTEX1]];
@@ -598,18 +636,38 @@ public class PGraphicsGL extends PGraphics3 {
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
+      if (ai != null) {
+        ai.strokeColorRGBA(a[SR], a[SG], a[SB], a[SA]);
+        //ai.strokeColorRGB(a[SR], a[SG], a[SB]); //, a[SA]);
+        ai.moveto(a[VX], a[VY]);
+        //ai.moveto(screenX(a[VX], a[VY], a[VZ]),
+        //        screenY(a[VX], a[VY], a[VZ]));
+      }
+
       // on this and subsequent lines, only draw the second point
+      //System.out.println(pathLength[j]);
       for (int k = 0; k < pathLength[j]; k++) {
         float b[] = vertices[lines[i][VERTEX2]];
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
-        i++;
-      }
 
+        if (ai != null) {
+          ai.lineto(b[VX], b[VY]);
+          //ai.lineto(screenX(b[VX], b[VY], b[VZ]),
+          //        screenY(b[VX], b[VY], b[VZ]));
+        }
+
+        //System.out.println("  point: " + b[VX] +", "+ b[VY] +", "+ b[VZ]);
+        //System.out.println();
+        i++;
+        //report("render_lines path out " + pathLength[j]);
+      }
+      if (ai != null) {
+        ai.endPath();
+      }
       gl.glEnd();
-      //report("render_lines 3 " + pathLength[j]);
     }
-    //System.out.println("outta lines error " + PApplet.hex(gl.glGetError()));
+    report("render_lines out");
   }
 
 
@@ -906,14 +964,12 @@ public class PGraphicsGL extends PGraphics3 {
     char textArray[] = new char[] { ch };
 
     Graphics2D graphics = (Graphics2D) canvas.getGraphics();
-    //Graphics graphics = canvas.getGraphics();
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
     Shape shp = gv.getOutline();
-    PathIterator iter = shp.getPathIterator(null); //, 0.05f);
+    PathIterator iter = shp.getPathIterator(null);
 
-    boolean TESS = true; //false;
-    if (TESS) glu.gluTessBeginPolygon(tobj, null);
+    glu.gluTessBeginPolygon(tobj, null);
     // second param to gluTessVertex is for a user defined object that contains
     // additional info about this point, but that's not needed for anything
 
@@ -929,16 +985,12 @@ public class PGraphicsGL extends PGraphics3 {
     while (!iter.isDone()) {
       int type = iter.currentSegment(textPoints);
       switch (type) {
-      case PathIterator.SEG_MOVETO:   // 1 point
+      case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in textPoints
       case PathIterator.SEG_LINETO:   // 1 point
         if (type == PathIterator.SEG_MOVETO) {
           //System.out.println("moveto\t" +
           //                   textPoints[0] + "\t" + textPoints[1]);
-          if (TESS) {
-            glu.gluTessBeginContour(tobj);
-          } else {
-            beginShape();
-          }
+          glu.gluTessBeginContour(tobj);
         } else {
           //System.out.println("lineto\t" +
           //                   textPoints[0] + "\t" + textPoints[1]);
@@ -946,11 +998,7 @@ public class PGraphicsGL extends PGraphics3 {
         vertex = new double[] {
           x + textPoints[0], y + textPoints[1], 0
         };
-        if (TESS) {
-          glu.gluTessVertex(tobj, vertex, vertex);
-        } else {
-          vertex((float) vertex[0], (float) vertex[1]);
-        }
+        glu.gluTessVertex(tobj, vertex, vertex);
         lastX = textPoints[0];
         lastY = textPoints[1];
         break;
@@ -968,11 +1016,7 @@ public class PGraphicsGL extends PGraphics3 {
             y + bezierPoint(lastY, textPoints[1],
                             textPoints[1], textPoints[3], t), 0
           };
-          if (TESS) {
-            glu.gluTessVertex(tobj, vertex, vertex);
-          } else {
-            vertex((float) vertex[0], (float) vertex[1]);
-          }
+          glu.gluTessVertex(tobj, vertex, vertex);
         }
         lastX = textPoints[2];
         lastY = textPoints[3];
@@ -992,11 +1036,7 @@ public class PGraphicsGL extends PGraphics3 {
             y + bezierPoint(lastY, textPoints[1],
                             textPoints[3], textPoints[5], t), 0
           };
-          if (TESS) {
-            glu.gluTessVertex(tobj, vertex, vertex);
-          } else {
-            vertex((float) vertex[0], (float) vertex[1]);
-          }
+          glu.gluTessVertex(tobj, vertex, vertex);
         }
         lastX = textPoints[4];
         lastY = textPoints[5];
@@ -1005,18 +1045,14 @@ public class PGraphicsGL extends PGraphics3 {
       case PathIterator.SEG_CLOSE:
         //System.out.println("close");
         //System.out.println();
-        if (TESS) {
-          glu.gluTessEndContour(tobj);
-        } else {
-          endShape();
-        }
+        glu.gluTessEndContour(tobj);
         break;
       }
       iter.next();
     }
-    if (TESS) glu.gluTessEndPolygon(tobj);
-    //System.out.println("done with char " + ch);
+    glu.gluTessEndPolygon(tobj);
 
+    // re-enable stroke if it was in use before
     stroke = strokeSaved;
   }
 
