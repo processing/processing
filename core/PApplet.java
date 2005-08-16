@@ -501,7 +501,7 @@ public class PApplet extends Applet
    * when moving between pages), though.
    */
   public void destroy() {
-    ((Papplet)this).stop();
+    ((PApplet)this).stop();
   }
 
 
