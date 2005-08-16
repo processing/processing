@@ -1012,12 +1012,20 @@ public class PGraphicsGL extends PGraphics3 {
           float t = (float)i / (float)bezierDetail;
           vertex = new double[] {
             x + bezierPoint(lastX, textPoints[0],
-                            textPoints[0], textPoints[2], t),
+                            textPoints[2], textPoints[2], t),
             y + bezierPoint(lastY, textPoints[1],
-                            textPoints[1], textPoints[3], t), 0
+                            textPoints[3], textPoints[3], t), 0
           };
           glu.gluTessVertex(tobj, vertex, vertex);
         }
+
+        /*
+        vertex = new double[] {
+          x + textPoints[2], y + textPoints[3], 0
+        };
+        glu.gluTessVertex(tobj, vertex, vertex);
+        */
+
         lastX = textPoints[2];
         lastY = textPoints[3];
         break;
@@ -1038,6 +1046,13 @@ public class PGraphicsGL extends PGraphics3 {
           };
           glu.gluTessVertex(tobj, vertex, vertex);
         }
+        /*
+        vertex = new double[] {
+          x + textPoints[4], y + textPoints[5], 0
+        };
+        glu.gluTessVertex(tobj, vertex, vertex);
+        */
+
         lastX = textPoints[4];
         lastY = textPoints[5];
         break;
