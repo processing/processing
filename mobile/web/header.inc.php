@@ -32,17 +32,17 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <?php } ?>
 
     <span class="backslash">\</span>
+<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'learning/') === false) { ?>
+    <a href="<?php echo SITE_ROOT ?>learning/index.php">Learning</a>
+<?php } else { ?>
+    Learning
+<?php } ?>
+
+    <span class="backslash">\</span>
 <?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'reference/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>reference/index.php">Reference</a> 
 <?php } else { ?>
     Reference
-<?php } ?>
-
-    <span class="backslash">\</span>
-<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'examples/') === false) { ?>
-    <a href="<?php echo SITE_ROOT ?>examples/index.php">Examples</a>
-<?php } else { ?>
-    Examples
 <?php } ?>
 
     <span class="backslash">\</span>
@@ -58,8 +58,12 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <?php } else { ?>
     Discourse
 <?php } ?>
-
 </div>
+<?php 
+if (!(include 'subnavigation.inc.php')) {
+    include '../subnavigation.inc.php';
+}
+?>
 <?php if ($PAGE_SHOWBACKINDEX) { ?>
 <div id="backnavigation">
   <table border="0" cellspacing="0" cellpadding="0">

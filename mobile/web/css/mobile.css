@@ -1,6 +1,6 @@
 body  { 
 	background: #fff; 
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif; 
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 11px; 
 	font-weight: normal; 
 	color: #553; 
@@ -12,7 +12,6 @@ body  {
 }
 
 h3 {
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 19px;
 	font-weight: normal;
 	font-decoration: none;
@@ -22,7 +21,6 @@ h3 {
 }
 
 h4 {
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	text-decoration: none;
 	color: #998;
@@ -31,13 +29,11 @@ h4 {
 }
 
 td {
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	color: #663
 }
 
 select {
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	background-color : #fff; 
 	height: 15px; 
@@ -53,7 +49,6 @@ pre {
 a:link {
 	color: #d60;
 	font-size: 11px;
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	text-decoration: underlined;
 	background-color : transparent; 
 }
@@ -61,7 +56,6 @@ a:link {
 a:visited {
 	color: #d60;
 	font-size: 11px;
-	font-family:  Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	text-decoration: underlined;
 	background-color : transparent; 
 }
@@ -69,7 +63,6 @@ a:visited {
 a:hover {
 	color: #bb3;
 	font-size: 11px;
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	text-decoration: underlined;
 	background-color : #000; 
 }
@@ -77,13 +70,11 @@ a:hover {
 a:active {
 	color: #d60;
 	font-size: 11px;
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	text-decoration: none;
 	background-color : transparent; 
 }
 
 .inputnav {
-	font-family: Geneva, Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	font-weight: normal;
 	color: #333333;
@@ -96,7 +87,6 @@ a:active {
 .unlinked {
 	font-size: 11px;
 	color: #999966;
-	font-family: Geneva, Arial, Helvetica, sans-serif;
 }
 
 .subtitle {
@@ -140,11 +130,19 @@ a:active {
 	position: relative;
 	left: 0px;
 	width: 750px;
-	margin: 10px 50px 0px 50px;
+	margin: 30px 50px 0px 50px;
 	padding: 0px 0px 0px 0px;
 }
 
 #navigation {
+	position: relative;
+	left: 0px;
+	width: 750px;
+	margin: 0px 50px 0px 50px;
+	padding: 0px 0px 0px 0px;
+}
+
+#subnavigation {
 	position: relative;
 	left: 0px;
 	width: 750px;
