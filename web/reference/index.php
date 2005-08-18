@@ -50,8 +50,9 @@ $filename = readdir($dir);
 while ($filename !== false) {
     $filename = readdir($dir);
     if (strstr($filename, '.xml') !== false) {
-        $file = file_get_contents('API/'. $filename);
-        $dom = domxml_open_mem($file);
+        //$file = file_get_contents('API/'. $filename);
+        //$dom = domxml_open_mem($file);
+        $dom = domxml_open_file('API/'. $filename);
 
         $shortname = substr($filename, 0, strlen($filename) - 4);
 
