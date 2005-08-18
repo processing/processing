@@ -2329,21 +2329,28 @@ public class PGraphics extends PImage implements PConstants {
     depthError("rotateY");
   }
 
+
+  /**
+   * Rotate around the z axis. rotate() and rotateZ() are the same,
+   * it's just that it make sense to have rotate() and then rotateX()
+   * and rotateY() when running in 3D; nor does it make sense to use
+   * a function called rotateZ() if you're only doing things in 2D.
+   * so we just decided to have them both be the same.
+   */
   public void rotateZ(float angle) {
     depthError("rotateZ");
   }
 
 
+  /**
+   * Rotate about a vector in space. Same as the glRotatef() function.
+   */
   public void rotate(float angle, float vx, float vy, float vz) {
     throw new RuntimeException("rotate(angle, x, y, z) " +
                                "can only be used with P3D or OPENGL");
   }
 
 
-  /**
-   * This will scale in all three dimensions, but not set the
-   * dimensions higher than two, in case this is still 2D mode.
-   */
   public void scale(float s) {
     applyMatrix(s, 0, 0,
                 0, s, 0);
