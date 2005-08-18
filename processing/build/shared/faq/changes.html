@@ -4,6 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="processing_beta.css">
 
+<!-- some css to add a little line spacing after LI items and to 
+     color strikethrough to be less garish. important for the bugs
+     page but probably the faq in general. haven't modified the main
+     css file though because it's shared by all of processing_beta -->
+<style type="text/css">
+<!--
+li { border: 3px solid white; }
+strike { color: #C0C0C0; }
+-->
+</style> 
+
 <script language="JavaScript">
 <!--
 
@@ -134,8 +145,8 @@ quite how many people were using this, so we'll probably add a
 createGraphics() method because PGraphics2 may be temporary (instead
 of just PGraphics), and the "null" thing is pretty weird. Even still,
 this isn't quite working as expected, but it's a high priority to fix
-for the future, see <A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=92">Bug 92</A>
+for the future, see <NOBR><A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=92">Bug 92</A></NOBR>
 for the status.
 <LI>The new renderers might be slower for some things, faster for others.
 If you want faster pixel operations, try using P3D (until P2D is available
@@ -173,7 +184,8 @@ href="http://processing.org/reference/libraries/net/index.html">this page</a>.
 <LI>font.width(String s) &rarr; textWidth(String s)
 <LI>font.ascent() &rarr; textAscent()
 <LI>font.descent() &rarr; textDescent()
-<LI>fonts should now be more accurately sized, if your font sizing looks weird, try using "Create Font" to create a new font
+<LI>fonts should now be more accurately sized, if your font sizing looks weird, try using "Create Font" to create a new font using the most recent release of Processing. It's strongly suggested that you do this when updated projects from alpha to beta. 
+<LI>the function alpha(), when used to create an alpha mask of an image, is now <A HREF="../reference/PImage_mask_.html">mask()</A>, to remove a conflict with the alpha() function that extracts the alpha value of a color.
 <LI>previous default was ellipseMode(CORNER) &rarr; now it's ellipseMode(CENTER)
 <LI>RGBA for images &rarr; ARGB (more technically accurate)
 <LI>CENTER_DIAMETER &rarr; CENTER
@@ -183,16 +195,14 @@ href="http://processing.org/reference/libraries/net/index.html">this page</a>.
 <LI>splitStrings() &rarr; split() (changed in rev 0069)
 <LI>splitInts() &rarr; toInt(split()) (changed in rev 0069)
 <LI>splitFloats() &rarr; toFloat(split()) (changed in rev 0069)
-<LI>angleMode() has been removed. Just use radians for everything. To
-convert from degrees to radians, use something like sin(radians(90))
+<LI>angleMode() has been removed. Radians are used for all functions. 
+If you don't like radians, you can convert to radians to degrees via the radians() function, i.e.: sin(radians(90)).
 <LI>four calls to bezierVertex(x, y) should instead be a single call
 to vertex(x, y), followed by bezierVertex(cx1, cy1, cx2, cy2, x2, y2)
 (two control points followed by the destination point). 
 <LI>The libraries for serial, video, and network have changed
-completely. Check out the examples or visit the libraries reference
-for the full details.
-<LI>&hellip;many other things that we've forgotten in our hastiness
-and we'll be adding over the next few days and weeks.
+completely. Check out the examples or visit the <A HREF="../reference/libraries/index.html">libraries reference</A> for the full details.
+<LI>&hellip;anything else that we've forgotten in our hastiness and we'll be adding over the next few days and weeks. If you find something that we've missed, please <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs">let us know</A>.
 </UL>
 The revisions.txt file also contains the release-by-release
 information for what's incrementally changed from 68 through 85. 
