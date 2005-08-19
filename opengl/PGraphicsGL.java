@@ -65,7 +65,7 @@ public class PGraphicsGL extends PGraphics3 {
   public GLU glu;
   public GLCanvas canvas;
 
-  public Illustrator ai;
+  //public Illustrator ai;
 
   protected float[] projectionFloats;
 
@@ -581,6 +581,7 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
+        /*
         if (ai != null) {
           ai.fillColorRGBA((ar + br + cr) / 3.0f,
                            (ag + bg + cg) / 3.0f,
@@ -590,21 +591,9 @@ public class PGraphicsGL extends PGraphics3 {
           ai.lineto(b[VX], b[VY]);
           ai.lineto(c[VX], c[VY]);
           ai.lineto(a[VX], a[VY]);
-          /*
-          ai.fillColorRGB((ar + br + cr) / 3.0f,
-                          (ag + bg + cg) / 3.0f,
-                          (ab + bb + cb) / 3.0f);
-          ai.moveto(screenX(a[VX], a[VY], a[VZ]),
-                    screenY(a[VX], a[VY], a[VZ]));
-          ai.lineto(screenX(b[VX], b[VY], b[VZ]),
-                    screenY(b[VX], b[VY], b[VZ]));
-          ai.lineto(screenX(c[VX], c[VY], c[VZ]),
-                    screenY(c[VX], c[VY], c[VZ]));
-          ai.lineto(screenX(a[VX], a[VY], a[VZ]),  // closing things off
-                    screenY(a[VX], a[VY], a[VZ]));
-          */
           ai.fillPath();
         }
+        */
 
         gl.glEnd();
       }
@@ -629,10 +618,12 @@ public class PGraphicsGL extends PGraphics3 {
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
 
+      /*
       if (ai != null) {
         //ai.strokeWeight(lines[i][STROKE_WEIGHT]);
         ai.strokeWeight(sw);
       }
+      */
 
       // always draw a first point
       float a[] = vertices[lines[i][VERTEX1]];
@@ -640,6 +631,7 @@ public class PGraphicsGL extends PGraphics3 {
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
+      /*
       if (ai != null) {
         ai.strokeColorRGBA(a[SR], a[SG], a[SB], a[SA]);
         //ai.strokeColorRGB(a[SR], a[SG], a[SB]); //, a[SA]);
@@ -647,6 +639,7 @@ public class PGraphicsGL extends PGraphics3 {
         //ai.moveto(screenX(a[VX], a[VY], a[VZ]),
         //        screenY(a[VX], a[VY], a[VZ]));
       }
+      */
 
       // on this and subsequent lines, only draw the second point
       //System.out.println(pathLength[j]);
@@ -655,20 +648,24 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
+        /*
         if (ai != null) {
           ai.lineto(b[VX], b[VY]);
           //ai.lineto(screenX(b[VX], b[VY], b[VZ]),
           //        screenY(b[VX], b[VY], b[VZ]));
         }
+        */
 
         //System.out.println("  point: " + b[VX] +", "+ b[VY] +", "+ b[VZ]);
         //System.out.println();
         i++;
         //report("render_lines path out " + pathLength[j]);
       }
+      /*
       if (ai != null) {
         ai.endPath();
       }
+      */
       gl.glEnd();
     }
     report("render_lines out");
