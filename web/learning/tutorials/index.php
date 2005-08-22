@@ -5,5 +5,5 @@ require '../../header.inc.php';
 ?>
 Tutorials
 <?php
-require '../footer.inc.php';
+require '../../footer.inc.php';
 ?>

@@ -5,5 +5,5 @@ require '../../header.inc.php';
 ?>
 Environment
 <?php
-require '../footer.inc.php';
+require '../../footer.inc.php';
 ?>
