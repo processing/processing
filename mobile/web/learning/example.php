@@ -22,6 +22,7 @@ require '../header.inc.php';
 <?php echo $title ?><br>
 <br>
 <applet code="com.barteo.emulator.applet.Main"
+        width="170" height="445"
         archive="../me-applet.jar,../large.jar,examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar">
     <param name="midlet" value="shapeprimitives">
 <!--
