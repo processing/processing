@@ -40,7 +40,7 @@ $categories = array(
                     'Random' => array()),
 );
 
-$PAGE_TITLE = "Processing Mobile Language";
+$PAGE_TITLE = "Processing Mobile &raquo; Language (API)";
 require '../header.inc.php';
 
 $total = 0;
