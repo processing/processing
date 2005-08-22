@@ -60,8 +60,8 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <?php } ?>
 </div>
 <?php 
-if (!(include 'subnavigation.inc.php')) {
-    include '../subnavigation.inc.php';
+if (!(@include 'subnavigation.inc.php')) {
+    @include '../subnavigation.inc.php';
 }
 ?>
 <?php if ($PAGE_SHOWBACKINDEX) { ?>
