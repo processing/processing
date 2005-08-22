@@ -24,6 +24,9 @@ require '../header.inc.php';
 <applet code="com.barteo.emulator.applet.Main"
         archive="../me-applet.jar,../large.jar,examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar">
     <param name="midlet" value="shapeprimitives">
+<!--
+    <param name="device" value="net.barteo.me.device.large.LargeDevice">
+-->
 </applet>
 <pre>
 <?php
