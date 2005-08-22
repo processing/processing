@@ -5,5 +5,5 @@ require '../../header.inc.php';
 ?>
 Libraries
 <?php
- require '../footer.inc.php';
+ require '../../footer.inc.php';
 ?>
