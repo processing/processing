@@ -1,0 +1,5 @@
+<font color=#6394BD>Welcome to our Forum!</font>
+We've Upgraded to <font color=#C4A100>YaBB 1 Gold - Service Pack 1.3.2</font> !!!
+Visit <a href=http://www.yabbforum.com><font color=orange>YaBB</font></a> today ;)
+YaBB is sponsored by <a href="http://www.ximinc.com">XIMinc</a>!
+Signup for free on our forum and benefit from new features!
