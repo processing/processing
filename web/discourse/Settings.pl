@@ -27,8 +27,8 @@ $maintenance = 0;                                                     # Set to 1
 $guestaccess = 1;                                                     # Set to 0 to disallow guests from doing anything but login or register
 
 $language = "english.lng";                                            # Change to language pack you wish to use
-$mbname = q^My YaBB 1 Gold - SP 1.4^;                                 # The name of your YaBB forum
-$boardurl = "http://www.your_url.com/cgi-bin/yabb";                   # URL of your board's folder (without trailing '/')
+$mbname = "Processing Mobile >> Discourse";                                 # The name of your YaBB forum
+$boardurl = "http://mobile.proce55ing.net/discourse";                   # URL of your board's folder (without trailing '/')
 
 $Cookie_Length = 360;                                                 # Default minutes to set login cookies to stay for
 $cookieusername = "YaBBusername";                                     # Name of the username cookie
@@ -56,10 +56,10 @@ $sourcedir = "./Sources";                                             # Director
 $vardir = "./Variables";                                              # Directory with variable files
 $facesdir = "/path/to/yabb/images/avatars";                           # The server path to your avatars (userpics) folder
 $facesurl = "http://your_url.com/yabb/images/avatars";                # URL to your avatars folder
-$imagesdir = "http://your_url.com/yabb/images";                       # URL to your images folder
-$ubbcjspath = "http://your_url.com/yabb/ubbc.js";                     # URL to your 'ubbc.js' (REQUIRED for post/modify to work properly)
-$faderpath = "http://your_url.com/yabb/fader.js";                     # URL to your 'fader.js'
-$helpfile = "http://your_url.com/yabb/help/index.html";               # URL to your help file
+$imagesdir = "http://mobile.proce55ing.net/discourse/images";                       # URL to your images folder
+$ubbcjspath = "http://mobile.proce55ing.net/discourse/ubbc.js";                     # URL to your 'ubbc.js' (REQUIRED for post/modify to work properly)
+$faderpath = "http://mobile.proce55ing.net/discourse/fader.js";                     # URL to your 'fader.js'
+$helpfile = "http://mobile.proce55ing.net/discourse/help/index.html";               # URL to your help file
 
 
 ########## Colors ##########
