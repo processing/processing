@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>YaBB:: Member Functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<link href="yabbhelp.css" rel="stylesheet" />
+<meta content="Microsoft FrontPage 4.0" name="GENERATOR" />
+</head>
+<body class="search" text="#000000" vlink="#800080" alink="#ff0000"
+		link="#0000cc"
+		bgcolor="#ffffff">
+<table cellspacing="0" cellpadding="5" width="95%" border="0">
+  <tbody>
+    <tr valign="top"> 
+      <td width="18%"> <a href="http://www.yabbforum.com"> <img alt="Visit YaBB!"
+							src="images/YaBB_logo.gif" width="148" border="0" height="80" /> 
+        </a> </td>
+      <td bgcolor="#eeeeee" width="82%"> <table width="100%" bgcolor="#003399">
+          <tbody>
+            <tr> 
+              <td bgcolor="#003399"> &nbsp; <b> Administration::&nbsp;Forum Functions</b></td>
+            </tr>
+          </tbody>
+        </table></td>
+    </tr>
+    <tr valign="top"> 
+      <td width="18%"> <p> <a href="index.html"> Home </a> </p>
+        <p> <a href="introduction.html"> Introduction </a><br />
+          <br />
+          &nbsp;&nbsp; <b> Users </b> &nbsp;&nbsp;&nbsp;&nbsp; <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<a 
+      href="registering.html">Registering</a><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<a 
+      href="login.html">Logging In/Out</a><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<a href="profile.html">Profile</a><br />
+          &nbsp;&nbsp;&nbsp; <a href="posting.html">Posting</a><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<a href="ims.html">IM (Instant Message)</a><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<a href="faq.html">FAQ</a><br />
+          <br />
+          &nbsp;&nbsp; <b> Moderation </b> <br />
+          &nbsp;&nbsp;&nbsp;&nbsp; <a href="modact.html"> Moderator Actions </a> 
+          <br />
+          <br />
+          &nbsp;&nbsp; <b> Administration </b> <br />
+          &nbsp; &nbsp;&nbsp; <a href="admintro.html">Introduction</a><b> </b><br />
+          &nbsp;&nbsp;&nbsp;&nbsp; <a href="memfunc.html">Member Functions</a><a href="page.html"><br />
+          </a><b><font color="#003399">&nbsp;<img 
+      height="8" src="images/bluearrow.gif" 
+      width="4" alt="" />&nbsp;&nbsp; Forum Functions</font></b><br />
+          &nbsp;&nbsp;&nbsp;&nbsp; <a href="forumset.html"> Forum Setup<br />
+          </a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="adminfaq.html"> FAQ </a> <br />
+          <br />
+          <a href="http://validator.w3.org/check/referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" border="0" /></a> 
+          <br />
+          <a class="right" href="http://jigsaw.w3.org/css-validator/"><img src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" height="31" width="88" border="0" /></a> 
+        </p></td>
+      <td width="82%"> <div class="content"> 
+          <h4> Forum Functions</h4>
+          <table cellpadding="5" border="0" width="337">
+            <tbody>
+              <tr> 
+                <td valign="top" width="231"><font size="-1">• <a href="#editcat">Edit 
+                  Categories </a><br />
+                  • <a href="#editboards">Edit Boards</a><br />
+                  • <a href="#template">Modifying The Template</a><br />
+                  • <a href="#settings">Modify Your YaBB Settings And Colors<br />
+                  </a> </font></td>
+                <td valign="top" width="4"></td>
+              </tr>
+            </tbody>
+          </table>
+          <p><a name="editcat" id="editcat"><b>Edit Categories</b></a> </p>
+          <p>From this menu you are able to edit "Categories". Categories are 
+            the upper-level topics for a forum. For example, if you had a wide-ranging 
+            site that offered information on "Sports", Cars" and "Music", these 
+            would be the top-level Categories you'd create. Under each of these 
+            categories you'd likely want to create hierarchal "sub-categories," 
+            or "Boards" for topics within each. Here's a small example: <br />
+          </p>
+          <ul>
+            <li><font face="Arial, Helvetica, sans-serif" size="2"><b>Sports </b>-<b> 
+              </b>A &quot;category&quot;</font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2"><b>Baseball</b> 
+                  - A board under the category of &quot;Sports&quot;</font></li>
+                <li><font face="Arial, Helvetica, sans-serif" size="2"><b>Football</b> 
+                  &nbsp;- A board under the category of &quot;Sports&quot; </font></li>
+              </ul>
+            </li>
+          </ul>
+          <p>Categories allow you to break down the board into broad topics ("Cars, 
+            Sports"), and the "Boards" under them are the actual topics under 
+            which members can post. In the above example, a user interested in 
+            Pinto's would post a message under "Cars->Pinto". Categories allow 
+            people to quickly find what their interests are: Instead of a "Store" 
+            you have "Hardware" and "Clothing" stores you can go to. This simplifies 
+            your search for "joint compound" because you can go to the Hardware 
+            Store "category" instead of the Clothing Store (where you're unlikely 
+            to find pipe joint compound). </p>
+          <p><a name="editboards" id="editboards"><b>Edit Boards</b></a> </p>
+          <p>In this menu you can create, reorder, or remove the boards under 
+            the categories discussed above. It's a simple hierarchy, with this 
+            structure: <br />
+          </p>
+          <ul>
+            <li><font face="Arial, Helvetica, sans-serif" size="2">Category</font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2">Board1</font></li>
+                <li><font face="Arial, Helvetica, sans-serif" size="2">Board2</font></li>
+                <li><font face="Arial, Helvetica, sans-serif" size="2">... etc 
+                  ...</font></li>
+              </ul>
+            </li>
+          </ul>
+          <p>As noted above, a Board is a key topic underneath a broad category. 
+            If you want to discuss "Pintos" you'd go to the "Auto" category and 
+            jump into the "Pinto" board to post your thoughts in that board. <br />
+            Administrative functions for this menu item are to create new boards 
+            under each category, to reorder them (put "Pinto" under "Chevy"), 
+            or to delete the board entirely. </p>
+          <p><a name="template" id="template"><b>Modifying The Template</b></a></p>
+          <p>This brings up a simple editor for the HTML of your template code. 
+            The "template" (in your "cgi-bin/yabb" directory, as you set it up), 
+            defines the look-and-feel for your pages. It is an HTML-only file. 
+            You can modify the template here, or use some other HTML editing software 
+            to edit template.html to put the look and feel of your site on your 
+            forum! </p>
+          <p><a name="settings" id="settings"><b>Modify Your YaBB Settings and 
+            Colors </b></a></p>
+          <p>This is one of the more "exciting" menu options. In here you are 
+            able to set the following parameters: <br />
+          </p>
+          <ul>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Maintenance 
+              Mode?</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Check 
+                  the box to disable the boards while you change/update your BB. 
+                  Users will be rejected while in maintenance mode.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Your 
+              Language pack name</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">English 
+                  is default, select the other available languages you want to 
+                  support</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u>Message 
+              Board Name</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this box to whatever you want to name your board.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u>Board 
+              URL</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this to the URL for the BB. Ex: http://www.myboard.com/cgi-bin/yabb/YaBB.pl</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Default 
+              Length for login cookies to last (in minutes &amp; &gt; 5)</u> </i> 
+              </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this for a default time for cookies to last, in minutes (e.g., 
+                  360=6 hrs)</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><u><font face="Arial, Helvetica, sans-serif" size="2">Cookie 
+              Name - Username</font></u> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default: 
+                  &quot;YaBBusername&quot; This is simply the name of the cookie 
+                  that will be stored on user's pc when they log in (and contains 
+                  their username).</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u>Cookie 
+              Name - Password</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default: 
+                  &quot;YaBBpassword&quot; This is simply the name of the cookie 
+                  that will be stored on user's pc when they log in (and contains 
+                  their password).</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u>Location 
+              of Sendmail Program</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Directory 
+                  of host &quot;sendmail&quot; program. Default is: /usr/sbin/sendmail</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>SMTP-Server</u></i> 
+              </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  name of your SMTP server (email send server). Only valid if 
+                  the following is set to use SMTP.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u>Send 
+              Mails using: sendmail | SMTP</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  to &quot;sendmail&quot; if your host uses sendmail, or use SMTP 
+                  if your host uses this protocol.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Webmaster 
+              Email Address</u></i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Email 
+                  address for the webmaster of the BB.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Minimum 
+              time between two postings from the same IP</u></i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  time in seconds to delay repeated postings from one user/IP 
+                  address.</font> </li>
+              </ul>
+            </li>
+            <font face="Arial, Helvetica, sans-serif" size="2" color="#000000">--------------------------------------------------------------------------------</font> 
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>YaBB 
+              Directory</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"> 
+                  Default is &quot;.&quot; This could also be the absolute server 
+                  path to your YaBB folder (such as /usr/home/account/cgi-bin/yabb).</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Data 
+              Directory</u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is &quot;./Messages&quot;. Contains messages sent from members 
+                  in your YaBB board. Relative to YaBB default directory above. 
+                  </font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Members 
+              Directory</u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is &quot;./Members&quot;. Contains the members for your YaBB 
+                  board. Relative to YaBB default directory above.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Boards 
+              Directory</u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is &quot;./Members&quot;. Contains the boards created for YaBB. 
+                  Relative to YaBB default directory above.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Sources 
+              Directory</u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is &quot;./Sources&quot;. Contains the source files for YaBB. 
+                  Relative to YaBB default directory above.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Variables 
+              Directory</u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is &quot;./Members&quot;. Contains all updates to the structure 
+                  of YaBB (new members, new boards). Relative to YaBB default 
+                  directory above.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Avatars 
+              URL</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is: http://www.mysite.com/yabbimages/avatars. Set this to the 
+                  URL you chose to place your avatar images. (I.e., replace &quot;mysite.com&quot; 
+                  with your host name).</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><i><font face="Arial, Helvetica, sans-serif" size="2">Avatars 
+              Directory</font></i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  is an &quot;absolute&quot; or &quot;relative&quot;. It is not 
+                  a URL. Set it relative to your host directory (e.g., home/yabbimages/avatars)</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Images 
+              Directory</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">http://www.mysite.com/yabbimages. 
+                  Again, set this to the directory you chose to set up &quot;yabbimages&quot;, 
+                  relative to your URL.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Help 
+              File</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  URL location of the help file. Default is: http://www.mysite.com/yabbhelp/index.html. 
+                  Set this to the correct URL for your installation.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">----- 
+              Note these colors are also reflected in the CSS tag of template.html 
+              (so change them to the SAME colors) -----</font></li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Title 
+              BG Color</u></i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  background color of the title text. This color is used mostly 
+                  on table header text.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Title 
+              Text Color</i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  color of the title text.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Window 
+              BG Color</i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  background color of one of the two alternating "panels" in yabb. 
+                  A usage example is when yo view messages, they are colored row 
+                  by row. This is the first "row" or message. It is used throughout 
+                  YaBB.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Window 
+              BG Color #2</u></i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  background color of the second "row".</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Category 
+              BG Color</i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  background color of category table rows on the Board Index and 
+                  used in a few other places.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Table 
+              Border Color</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  color is actually used as a table "background" color, but the 
+                  way the tables are rendered, this makes border lines between 
+                  table rows and columns be this color.</font></li>
+              </ul>
+              <font face="Arial, Helvetica, sans-serif" size="2" color="#000000">--------------------------------------------------------------------------------</font> 
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Use 
+              text menu instead of images? </i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  option replaces graphics for certain menu items with text. E.g., 
+                  the &quot;Logoff&quot; graphic is replaced by the more simple 
+                  &quot;Logoff&quot; text string.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u>Please 
+              choose your Timeformat-Settings</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  your preferred time-format settings</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><i><font face="Arial, Helvetica, sans-serif" size="2">Time 
+              Offset</font> </i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  is the number of hours to add/subtract to make the time display 
+                  in your local time. For example, if it is 8:52pm on your server 
+                  (look at the displayed time on your board) and it is 7:52pm 
+                  where you live, then set this number to -1. This will be for 
+                  guests mainly, because users also have the option to set their 
+                  own time offset.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><i><font face="Arial, Helvetica, sans-serif" size="2"><u># 
+              of Top Posters</u></font> </i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this to allow users to display the &quot;Top 'n'&quot; users, 
+                  the number of users who have most posted to this forum.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Members 
+              Per Page in Member List-All</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this to the maximum number of member names to display in each 
+                  page.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><i><font face="Arial, Helvetica, sans-serif" size="2">Maximum 
+              Topics to Display</font></i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this to display the maximum numer of &quot;Topics&quot; for 
+                  each page.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Maximum 
+              Messages to Display</u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  this to display the maximum number of private messages to display</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Remove 
+              entries from user logs after XX days</i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">The 
+                  user logs are files named username.log (where username is the 
+                  name of one of your members). Each member has one of these files; 
+                  it keeps track of what boards and messages they have visited 
+                  and when. This is how *new* is determined for each user. Setting 
+                  this number will clear their log after that many days, so that 
+                  all posts and boards will show new for them (if they haven't 
+                  visited that board/post for however many days you have set).</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Maximum 
+              Allowed Characters in a Posts (required &lt;= 5000)</i></font> </u> 
+              </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Set 
+                  a limit on the size of a users post, in &quot;characters&quot;.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Insert 
+              Original Message in Replies?</i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">When 
+                  a user replies to a thread, provide the option to include the 
+                  original posters text for reference.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Enable 
+              Bulletin Board Code?</i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  is rarely ever turned off.... Setting this option to 0 will 
+                  disable rendering YaBBC tags (such as [b] which creates bold.. 
+                  etc.). It will affect ALL of YaBB, including Recent Posts, Search, 
+                  Messages.. etc. All it does is leave the tags as text and not 
+                  turn them into the code (if you turn this option OFF).</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><i><font face="Arial, Helvetica, sans-serif" size="2">Enable 
+              Normal News?</font></i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">If 
+                  you wish to display news on your board via the "news fader" 
+                  or the &lt;yabb news&gt; tag (in the template), this option 
+                  must be turned on!</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Enable 
+              Guest Posting? </i></font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Allow 
+                  people who have not registered with the board to post comments.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Allow 
+              Email Notification? </u></i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">If 
+                  this option is turned on, it will allow users to choose if they 
+                  wish to be notified by email when a message has been replied 
+                  to.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Show 
+              Latest Member on Board Index? </u></i></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Display 
+                  the newest member to register on the Board Index.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><i><u>Show 
+              Recent Posts Bar on BoardIndex?</u></i> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Show 
+                  the most recentmember posts on the Board Index page</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000"><u><font face="Arial, Helvetica, sans-serif" size="2"><i>Show 
+              Members List Bar on BoardIndex?</i> </font> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Show 
+                  a link to display the Members of the board</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Show 
+              Modification Date on Modified Posts?</i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">When 
+                  users modify their posts, provide the option to display their 
+                  modification time and date.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Show 
+              User Pics in Message View?</i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Option 
+                  to display members' profile pictures in the posts.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Show 
+              User Text in Message View?</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Option 
+                  to display members' personal text in the posts.</font></li>
+              </ul>
+            </li>
+            <li><i><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u>Show 
+              Gender Image in Message View?</u></font></i> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Option 
+                  to display the gender (male/female) image in the posts.</font></li>
+              </ul>
+            </li>
+            <font face="Arial, Helvetica, sans-serif" size="2" color="#000000">--------------------------------------------------------------------------------</font> 
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>Show 
+              News Fader on Board Index?</i> </u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">When 
+                  users first logon, show the sequenced &quot;news&quot; items. 
+                  See the Admin functions for explanations on &quot;news&quot; 
+                  items.</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>News 
+              Fader Title Color</i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  is the News Fader Title color for the News Fader (if you have 
+                  it turned on).</font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>News 
+              Fader News Color</i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  is the News color for the News Fader (if you have it turned 
+                  on).</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Path 
+              to News Fader file (fader.js)</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Default 
+                  is </font></li>
+              </ul>
+            </li>
+            <li><font color="#000000" face="Arial, Helvetica, sans-serif" size="2"><u><i>URL 
+              to UBBC JavaScript file</i></u> </font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Path 
+                  to UBBC file (ubbc.js)</font></li>
+              </ul>
+            </li>
+            <font face="Arial, Helvetica, sans-serif" size="2" color="#000000">--------------------------------------------------------------------------------</font> 
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Userpic 
+              Width (0 = disable limit)</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  sets a limit to the width of a user-supplied image. It is generally 
+                  a good idea to ensure that user pictures are not overly large.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Userpic 
+              Height (0 = disable limit)</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">This 
+                  sets a limit to the height of a user-supplied image. It is generally 
+                  a good idea to ensure that user pictures are not overly large.</font></li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Text 
+              To Describe The Limits</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Describe 
+                  to your users what the limits are to their personal pics.<i> 
+                  e.g. Please use only gif images, your images will be resized.</i></font></li>
+              </ul>
+            </li>
+            <font face="Arial, Helvetica, sans-serif" size="2" color="#000000">--------------------------------------------------------------------------------</font> 
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Use 
+              File-Locking?</i></u></font> 
+              <ul>
+                <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Whether 
+                  to use it and what type of file-locking to use. This locks files 
+                  while they are being written to (for safety). The options are:</font> 
+                  <ul>
+                    <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">No 
+                      File-Locking - Use for systems that don't provide a file-locking 
+                      mechanism.</font></li>
+                    <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Unix/Linux 
+                      File-Locking - Use for this OS.</font></li>
+                    <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">Windows 
+                      File-Locking - Use for this OS.</font></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><u><i>Lock 
+              EX:</i></u></font></li>
+            <ul>
+              <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">For 
+                advanced users. We suggest you leave this alone.</font></li>
+            </ul>
+            <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000"><i><u>Lock 
+              UN:</u></i></font></li>
+            <ul>
+              <li><font face="Arial, Helvetica, sans-serif" size="2" color="#000000">For 
+                advanced users. We suggest you leave this alone.</font></li>
+            </ul>
+          </ul>
+        </div>
+        <div class="footer"> 
+          <hr noshade="noshade" size="1" />
+          Copyright &copy; 2000-2004 <a href="http://www.yabbforum.com">YaBB</a>.<br />
+          Sponsored by <a href="http://www.ximinc.com">XIMinc</a>. All Rights 
+          Reserved.</div></td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

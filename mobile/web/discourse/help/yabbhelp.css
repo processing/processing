@@ -1,0 +1,112 @@
+body , td {
+background-color : white; 
+font-family: verdana, arial, sans-serif, helvetica;
+font-size: 12px;
+color: black;
+} 
+h1 td , h1 , h2 , h3 , h4 , h5 , h6 , div.topnav , div.sidenav , div.sidesearch , div.sidequote , div.bottomnav , div.footer , small , td#sidebartitle {
+font-family : arial, sans-serif; 
+} 
+/* rules for the bottom navigation 
+on the results page */ 
+div.bottomnav {
+margin-top : 1ex; 
+} 
+div.bottomnav a , span.bottomnav {
+font-size : 10pt; 
+} 
+div.bottomnav a , span.big {
+font-size : 12pt; 
+color : #0000cc; 
+} 
+/* standard link colors */ 
+a:link {
+color : #0000cc; 
+font-family: verdana, arial, sans-serif, helvetica;
+font-size: 12px;
+} 
+a:visited {
+color : #0000cc;
+font-family: verdana, arial, sans-serif, helvetica;
+font-size: 12px;
+} 
+a:active {
+color : #ff0000; 
+font-family: verdana, arial, sans-serif, helvetica;
+font-size: 12px;
+} 
+a:hover {
+background-color : #ffffee; 
+font-family: verdana, arial, sans-serif, helvetica;
+font-size: 12px;
+} 
+/* top part of the page */ 
+div.topnav {
+margin-bottom : 0.1ex; 
+} 
+h1 td {
+font-size : 0.95em; 
+font-weight : bolder; 
+} 
+h1 td {
+background-color : #669900; 
+color : white; 
+border : 0 none ; 
+padding : 2pt; 
+} 
+div.side {
+margin-right : 3ex; 
+padding : 2pt; 
+} 
+div.sidesearch {
+margin-top : 1em; 
+font-size : 0.75em; 
+} 
+div.sidequote {
+text-align : center; 
+margin-top : 1.5in; 
+border-color : red; 
+border-style : solid; 
+border-top-width : 1px; 
+border-bottom-width : 1px; 
+border-left-width : 0; 
+border-right-width : 0; 
+} 
+div.footer {
+text-align : center; 
+color : #6f6f6f; 
+padding : 3pt; 
+} 
+/* sidebar on the right */ 
+table.sidebarborder {
+margin : 3pt; 
+margin-top : 1pt; 
+} 
+td#sidebarcontent {
+background-color : #ffffff; 
+} 
+/* color schemes for different sections of the site */
+body.corporate h1 td , body.corporate table.sidebarborder td {
+background-color : #339966; 
+} 
+body.corporate td#sidebartitle {
+background-color : #d8f1e4; 
+} 
+body.siteowners h1 td , body.siteowners table.sidebarborder td {
+background-color : #ddad08; 
+} 
+body.siteowners td#sidebartitle {
+background-color : #f1e4d8; 
+} 
+body.search h1 td , body.search table.sidebarborder td {
+background-color : #336699; 
+} 
+body.search td#sidebartitle {
+background-color : #d8e4f1; 
+} 
+body.zealots h1 td , body.zealots table.sidebarborder td {
+background-color : #aa1002; 
+} 
+body.zealots td#sidebartitle {
+background-color : #f1e4d8; 
+} 
