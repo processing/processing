@@ -712,7 +712,7 @@ $yycopyright = qq~Powered by YaBB $YaBBversion!<br>\nForum software copyright © 
 $txt{'801'} = "<b>ALERT!!</b> Form spoofing detected - coming from IP address:";
 
 if($MenuType == 1) {
-	$menusep = ' | ';
+	$menusep = ' \ ';
 	$img{'admin'} = qq~<font size="1" class="imgmenu">$txt{'2'}</font>~;
 	$img{'admin_func'} = qq~<font size="1" class="imgbg">$txt{'137'}</font>~;
 	$img{'admin_lock'} = qq~<font size="1" class="imgbg">$txt{'104'}</font>~;

@@ -51,7 +51,8 @@ $mailtype = 0;                                                        # Mail pro
 $boarddir = ".";                                                      # The server path to the board's folder (usually can be left as '.')
 $boardsdir = "./Boards";                                              # Directory with board data files
 $datadir = "./Messages";                                              # Directory with messages
-$memberdir = "./Members";                                             # Directory with member files
+$memberdir = "./Members";
+#"/var/www/processing/discourse/yabb_beta/Members";                                             # Directory with member files
 $sourcedir = "./Sources";                                             # Directory with YaBB source files
 $vardir = "./Variables";                                              # Directory with variable files
 $facesdir = "/path/to/yabb/images/avatars";                           # The server path to your avatars (userpics) folder
@@ -79,7 +80,7 @@ $color{'fadertext'}  = "#D4AD00";                                     # Color of
 
 $maintenancetext = "We are currently upgrading our forum. &nbsp;Please check back shortly!";
                                                                       # User-defined text for Maintenance mode (leave blank for default text)
-$MenuType = 0;                                                        # 1 for text menu or anything else for images menu
+$MenuType = 1;                                                        # 1 for text menu or anything else for images menu
 $curposlinks = 0;                                                     # 1 for links in navigation on current page, or 0 for text without link
 $profilebutton = 0;                                                   # 1 to show view profile button under post, or 0 for blank
 $timeselected = 4;                                                    # Select your preferred output Format of Time and Date
