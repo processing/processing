@@ -1,4 +1,0 @@
-admin|08/27/05 at 17:41:43|/discourse/YaBB.cgi|http://mobile.proce55ing.net/discourse/YaBB.cgi?board=;action=admin|Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.8) Gecko/20050511 Firefox/1.0.4
-admin|08/27/05 at 17:34:56|/discourse/YaBB.cgi|http://mobile.proce55ing.net/discourse/YaBB.cgi?board=;action=manageboards|Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.8) Gecko/20050511 Firefox/1.0.4
-admin|08/27/05 at 17:31:05|/discourse/YaBB.cgi|http://mobile.proce55ing.net/discourse/YaBB.cgi?board=;action=managecats|Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.8) Gecko/20050511 Firefox/1.0.4
-admin|08/27/05 at 17:29:31|/discourse/YaBB.cgi|http://mobile.proce55ing.net/|Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.8) Gecko/20050511 Firefox/1.0.4
