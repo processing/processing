@@ -1,6 +1,6 @@
 <?php
 
-$PAGE_TITLE = "Processing Mobile Tutorials";
+$PAGE_TITLE = "Processing Mobile &raquo; Tutorials";
 require '../../header.inc.php';
 ?>
 Tutorials
