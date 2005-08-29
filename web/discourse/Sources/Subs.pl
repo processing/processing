@@ -153,7 +153,7 @@ sub template {
 	}
 	$yyposition = $yytitle; $yytitle = "$mbname - $yytitle";
 
-	$yymenu = qq~<a href="$scripturl">$img{'home'}</a>$menusep<a href="$helpfile" target="_blank" style="cursor:help;">$img{'help'}</a>$menusep<a href="$cgi;action=search">$img{'search'}</a>$menusep<a href="$scripturl?action=mlall">$img{'memberlist'}</a>~;
+	$yymenu = qq~<a href="$scripturl">$img{'home'}</a><!--$menusep<a href="$helpfile" target="_blank" style="cursor:help;">$img{'help'}</a>-->$menusep<a href="$cgi;action=search">$img{'search'}</a>$menusep<a href="$scripturl?action=mlall">$img{'memberlist'}</a>~;
 	if($settings[7] eq 'Administrator') { $yymenu .= qq~$menusep<a href="$cgi;action=admin">$img{'admin'}</a>~; }
 	if($username eq 'Guest') { $yymenu .= qq~$menusep<a href="$scripturl?action=login">$img{'login'}</a>$menusep<a href="$scripturl?action=register">$img{'register'}</a>~;
 	} else {
