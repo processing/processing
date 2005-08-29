@@ -199,7 +199,7 @@ $yymain .= qq~
         <td align="left" class="catbg" bgcolor="$color{'catbg'}" width="100%">
         <table cellpadding="3" cellspacing="0" width="100%">
           <tr>
-            <td><font size=2><b>$txt{'139'}:</b> $pageindex</font></td>
+            <td><font class="text2"><b>$txt{'139'}:</b> $pageindex</font></td>
 	    <td class="catbg" bgcolor="$color{'catbg'}" align=right nowrap><font size=-1>
 ~;
 	if ($username ne 'Guest') {
@@ -344,7 +344,7 @@ if($showmarkread) {
         <td align="left" class="catbg" bgcolor="$color{'catbg'}" width="100%">
         <table cellpadding="3" cellspacing="0" width="100%">
           <tr>
-            <td><font size=2><b>$txt{'139'}:</b> $pageindex</font></td>
+            <td><font class="text2"><b>$txt{'139'}:</b> $pageindex</font></td>
 	    <td class="catbg" bgcolor="$color{'catbg'}" align=right nowrap><font size="2">
 ~;
 	if ($username ne 'Guest') {

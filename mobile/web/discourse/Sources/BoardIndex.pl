@@ -148,7 +148,7 @@ else {
 	foreach $curcat (@categories) {
 		unless( $openmemgr{$curcat} ) { next; }
 		$yymain .= qq~<tr>
-        <td colspan="5" class="catbg" bgcolor="$color{'catbg'}" height="18"><a name="$curcat"> <font size=2><b>$catname{$curcat}</b></font></a></td>
+        <td colspan="5" class="catbg" bgcolor="$color{'catbg'}" height="18"><a name="$curcat"> <font class="text2"><b>$catname{$curcat}</b></font></a></td>
       </tr>~;
 		foreach $curboard (@{$catboards{$curcat}}) {
 			chomp $curboard;
