@@ -1,6 +1,6 @@
 <?php
 
-$PAGE_TITLE = "Processing Mobile Environment";
+$PAGE_TITLE = "Processing Mobile &raquo; Environment";
 require '../../header.inc.php';
 ?>
 Environment

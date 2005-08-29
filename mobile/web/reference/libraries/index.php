@@ -1,6 +1,6 @@
 <?php
 
-$PAGE_TITLE = "Processing Mobile Libraries";
+$PAGE_TITLE = "Processing Mobile &raquo; Libraries";
 require '../../header.inc.php';
 ?>
 Libraries
