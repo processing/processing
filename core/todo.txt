@@ -10,6 +10,7 @@ X   nope, because it requires grabbing the font metrics and other calculations
 X bezierDetail, curveDetail made public
 X added textMode(SHAPE) for OPENGL
 X error message saying that strokeCap and strokeJoin don't work in P3D
+X fix a bug with filename capitalization error throwing
 
 nixed or fixed in previous releases
 X textMode(SCREEN) having issues on Mac OS X
@@ -20,6 +21,8 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpen
 o noLoop() is behaving strangely
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
 
+_ "this file is named" errors don't like subdirectories
+_   need to strip off past the file separator or something
 _ stop() not getting called
 _   and start() is supposedly called by the applet viewer
 _   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
