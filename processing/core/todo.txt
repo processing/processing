@@ -10,6 +10,7 @@ X   nope, because it requires grabbing the font metrics and other calculations
 X bezierDetail, curveDetail made public
 X added textMode(SHAPE) for OPENGL
 X error message saying that strokeCap and strokeJoin don't work in P3D
+X textMode(SHAPE) throws ex when drawing and font not installed
 X fix a bug with filename capitalization error throwing
 
 nixed or fixed in previous releases
@@ -20,6 +21,11 @@ X move zbuffer et al into PGraphics so that people don't have to cast to P3
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1116978834
 o noLoop() is behaving strangely
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
+
+_ how to handle gluTessVertex calls
+_   need to re-map through the regular "vertex" command, 
+_   but that makes things messy because the glu calls make calls to vertex()
+_   and i don't want an additional "pathVertex()" function
 
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
