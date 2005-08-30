@@ -3174,7 +3174,13 @@ public class PApplet extends Applet
           try {
             String path = file.getCanonicalPath();
             String filenameActual = new File(path).getName();
-            if (!filenameActual.equals(filename)) {
+            // if the actual filename is the same, but capitalized
+            // differently, warn the user. unfortunately this won't
+            // work in subdirectories because getName() on a relative
+            // path will return just the name, while 'filename' may
+            // contain part of a relative path.
+            if (filenameActual.equalsIgnoreCase(filename) &&
+                !filenameActual.equals(filename)) {
               throw new RuntimeException("This file is named " +
                                          filenameActual + " not " +
                                          filename + ".");

@@ -63,8 +63,8 @@ public class PPolygon implements PConstants {
   int pixels[];
 
   // the parent's width/height,
-  // or if smoothing is enabled, parent's w/h scaled
-  // up by the smoothing dimension
+  // or if smooth is enabled, parent's w/h scaled
+  // up by the smooth dimension
   int width, height;
   int width1, height1;
 
@@ -84,7 +84,7 @@ public class PPolygon implements PConstants {
   static final int SUBYRES1 = 7;
   static final int MAX_COVERAGE = SUBXRES * SUBYRES;
 
-  boolean smoothing;
+  boolean smooth;
   int firstModY;
   int lastModY;
   int lastY;
@@ -178,16 +178,16 @@ public class PPolygon implements PConstants {
     //zbuffer = parent.zbuffer;
 
     noDepthTest = parent.hints[NO_DEPTH_TEST]; //!parent.depthTest;
-    smoothing = parent.smooth;
+    smooth = parent.smooth;
 
-    // by default, text turns on smoothing for the textures
+    // by default, text turns on smooth for the textures
     // themselves. but this should be shut off if the hint
     // for DISABLE_TEXT_SMOOTH is set.
     texture_smooth = (//parent.drawing_text &&
                       !parent.hints[DISABLE_TEXT_SMOOTH]);
 
-    width = smoothing ? parent.width*SUBXRES : parent.width;
-    height = smoothing ? parent.height*SUBYRES : parent.height;
+    width = smooth ? parent.width*SUBXRES : parent.width;
+    height = smooth ? parent.height*SUBYRES : parent.height;
 
     width1 = width - 1;
     height1 = height - 1;
@@ -221,7 +221,7 @@ public class PPolygon implements PConstants {
       }
     }
 
-    if (smoothing) {
+    if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][X] *= SUBXRES;
         vertices[i][Y] *= SUBYRES;
@@ -306,14 +306,14 @@ public class PPolygon implements PConstants {
         increment(r, dr);
       }
     }
-    //if (smoothing) {
+    //if (smooth) {
     //System.out.println("y/lasty/lastmody = " + y + " " + lastY + " " + lastModY);
     //}
   }
 
 
   public void unexpand() {
-    if (smoothing) {
+    if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][X] /= SUBXRES;
         vertices[i][Y] /= SUBYRES;
@@ -328,7 +328,7 @@ public class PPolygon implements PConstants {
       sp[i] = 0; sdp[i] = 0;
     }
 
-    // this rounding doesn't seem to be relevant with smoothing
+    // this rounding doesn't seem to be relevant with smooth
     int lx = (int) (l[X] + 0.49999f);  // ceil(l[X]-.5);
     if (lx < 0) lx = 0;
     int rx = (int) (r[X] - 0.5f);
@@ -336,7 +336,7 @@ public class PPolygon implements PConstants {
 
     if (lx > rx) return;
 
-    if (smoothing) {
+    if (smooth) {
       int mody = MODYRES(y);
 
       aaleft[mody] = lx;
@@ -373,11 +373,11 @@ public class PPolygon implements PConstants {
 
     // scan in x, generating pixels
     // using parent.width to get actual pixel index
-    // rather than scaled by smoothing factor
-    int offset = smoothing ? parent.width * (y / SUBYRES) : parent.width*y;
+    // rather than scaled by smooth factor
+    int offset = smooth ? parent.width * (y / SUBYRES) : parent.width*y;
 
     int truelx = 0, truerx = 0;
-    if (smoothing) {
+    if (smooth) {
       truelx = lx / SUBXRES;
       truerx = (rx + SUBXRES1) / SUBXRES;
 
@@ -408,7 +408,7 @@ public class PPolygon implements PConstants {
 
           int txy = tv*twidth + tu;
 
-          if (smoothing || texture_smooth) {
+          if (smooth || texture_smooth) {
             //if (FRY) System.out.println("sp u v = " + sp[U] + " " + sp[V]);
             //System.out.println("sp u v = " + sp[U] + " " + sp[V]);
             // tuf1/tvf1 is the amount of coverage for the adjacent
@@ -500,13 +500,13 @@ public class PPolygon implements PConstants {
               }
             }
 
-            // get coverage for pixel if smoothing
-            // checks smoothing again here because of
+            // get coverage for pixel if smooth
+            // checks smooth again here because of
             // hints[SMOOTH_IMAGES] used up above
-            int weight = smoothing ? coverage(x) : 255;
+            int weight = smooth ? coverage(x) : 255;
             if (weight != 255) ta = ta*weight >> 8;
 
-          } else {  // no smoothing, just get the pixels
+          } else {  // no smooth, just get the pixels
             int tpixel = tpixels[txy];
 
             // TODO i doubt splitting these guys really gets us
@@ -567,7 +567,7 @@ public class PPolygon implements PConstants {
           }
 
         } else {  // no image applied
-          int weight = smoothing ? coverage(x) : 255;
+          int weight = smooth ? coverage(x) : 255;
 
           if (interpARGB) {
             r2 = (int) (sp[R] * 255);
@@ -603,10 +603,10 @@ public class PPolygon implements PConstants {
           }
         }
       }
-      // if smoothing enabled, don't increment values
+      // if smooth enabled, don't increment values
       // for the pixel in the stretch out version
       // of the scanline used to get smooth edges.
-      if (!smoothing || ((x >= truelx) && (x <= truerx))) {
+      if (!smooth || ((x >= truelx) && (x <= truerx))) {
         increment(sp, sdp);
       }
     }
@@ -670,7 +670,7 @@ public class PPolygon implements PConstants {
       dp[U] = (p2[U] - p1[U]) / delta;
       dp[V] = (p2[V] - p1[V]) / delta;
 
-      //if (smoothing) {
+      //if (smooth) {
       //p[U] = p1[U]; //+ dp[U] * fraction;
       //p[V] = p1[V]; //+ dp[V] * fraction;
 
@@ -688,7 +688,7 @@ public class PPolygon implements PConstants {
     float delta = p2[X] - p1[X];
     if (delta == 0) delta = ONE;
     float fraction = x + HALF - p1[X];
-    if (smoothing) {
+    if (smooth) {
       delta /= SUBXRES;
       fraction /= SUBXRES;
     }
@@ -718,7 +718,7 @@ public class PPolygon implements PConstants {
       dp[U] = (p2[U] - p1[U]) / delta;
       dp[V] = (p2[V] - p1[V]) / delta;
 
-      //if (smoothing) {
+      //if (smooth) {
       //p[U] = p1[U];
         // offset for the damage that will be done by the
         // 8 consecutive calls to scanline
