@@ -948,7 +948,11 @@ public class PGraphicsGL extends PGraphics3 {
    * with the stroke shut off, so tabling that bug for now.
    */
   protected void textCharImpl(char ch, float x, float y) {
-    if (textMode != SHAPE) {
+    if ((textMode == SHAPE) && (textFontNative == null)) {
+      System.err.println("textMode(SHAPE) is disabled because the font " +
+                         "\"" + textFont.name + "\" is not available.");
+    }
+    if ((textMode != SHAPE) || (textFontNative == null)) {
       super.textCharImpl(ch, x, y);
       return;
     }
