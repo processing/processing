@@ -2682,7 +2682,7 @@ public class PGraphics3 extends PGraphics {
 
   public void pushMatrix() {
     if (!modelview.push()) {
-      throw new RuntimeException("too many calls to pushMatrix()");
+      throw new RuntimeException("Too many calls to pushMatrix()");
     }
     // Do this to the inverse regardless of the lights
     // to keep stack pointers in sync
@@ -2692,7 +2692,7 @@ public class PGraphics3 extends PGraphics {
 
   public void popMatrix() {
     if (!modelview.pop()) {
-      throw new RuntimeException("too many calls to popMatrix() " +
+      throw new RuntimeException("Too many calls to popMatrix() " +
                                  "(and not enough to pushMatrix)");
     }
     // Do this to the inverse regardless of the lights
@@ -2799,8 +2799,8 @@ public class PGraphics3 extends PGraphics {
    */
   public void beginCamera() {
     if (manipulatingCamera) {
-      throw new RuntimeException("cannot call beginCamera while already "+
-                                 "in camera manipulation mode");
+      throw new RuntimeException("beginCamera() cannot be called again " +
+                                 "before endCamera()");
     } else {
       manipulatingCamera = true;
       forwardTransform = cameraInv;
@@ -2819,8 +2819,8 @@ public class PGraphics3 extends PGraphics {
    */
   public void endCamera() {
     if (!manipulatingCamera) {
-      throw new RuntimeException("cannot call endCamera while not "+
-                                 "in camera manipulation mode");
+      throw new RuntimeException("Cannot call endCamera() " +
+                                 "without first calling beginCamera()");
     }
     // reset the modelview to use this new camera matrix
     modelview.set(camera);

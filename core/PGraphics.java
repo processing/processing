@@ -939,6 +939,48 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // COMPOUND PATHS
+
+
+  /**
+   * Begin a new path. This can be used after beginShape() to draw
+   * a compound path (i.e. to draw shape with a hole on the interior)
+   * For instance, to draw a shape that has a hole in its interior,
+   * the format would be:
+   * <PRE>
+   * beginShape();
+   * beginPath();
+   * // multiple calls to vertex() that draw the exterior shape
+   * endPath();
+   * beginPath();
+   * // several calls to vertex() to draw the interior hole
+   * endPath();
+   * // more beginPath/endPath pairs can be used for additional holes
+   * endShape();
+   * </PRE>
+   * <P/>
+   * This will probably be available only with the OpenGL renderer,
+   * because it has a built-in tesselator from GLU.
+   */
+  //public void beginPath() {
+  //throw new RuntimeException("beginPath() is not available");
+  //}
+
+
+  /**
+   * End a path. Use this with beginPath() to close out a compound path.
+   * <P/>
+   * This will probably be available only with the OpenGL renderer,
+   * because it has a built-in tesselator from GLU.
+   */
+  //public void endPath() {
+  //throw new RuntimeException("endPath() is not available");
+  //}
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // STROKE/FILL/DRAW
 
 
