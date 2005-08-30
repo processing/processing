@@ -82,7 +82,6 @@ forum bugs
 X when replying, all the replies so far are listed twice
 o fonts are wrong all over the place (use windows to debug)
 
-
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
@@ -179,6 +178,8 @@ _   http://processing.org/bugs/show_bug.cgi?id=3
 
 PDE / Compiler & Preprocessor
 
+_ synchronized (something) { } is horking up the preproc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=136
 _ casting problems in the parser
 _   straighten out int() -> toInt() conversions
 _   float u = float(x)/width; works.
@@ -640,10 +641,13 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
-_ detect bad classpath or path settings
+_ p5's exe has trouble when PATH has quotes (or spaces?)
+_   detect bad classpath or path settings
 _   some sort of path/classpath tester/fixer app for windows
 _   that " norton" thing in the path makes things a mess
 _   http://dev.processing.org/bugs/show_bug.cgi?id=112
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
+_   CLASSPATH figured out what to do with quotes, but not PATH
 _ tie .pde files as documents of the application
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
 _   figure out proper registry key for windows
@@ -658,9 +662,6 @@ _   thread priority too high? or something weird
 _ need splash screen, startup takes a long time
 _ processing.exe: problem if expert version is run, and no java installed
 _   call the person a genius and tell them to install java
-_ p5's exe has trouble when PATH has quotes (or spaces?)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
-_   CLASSPATH figured out what to do with quotes, but not PATH
 _ NullPointerException when alt is pressed
 _   (not our bug, but log it in the bug db anyways)
 _   might be something to do with the applet frame being an awt not swing
