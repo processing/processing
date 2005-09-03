@@ -538,10 +538,12 @@ will be a float, even before it gets to the lefthand side.
       <b>
 Common Issues (not bugs)
 </b> <br> <br>
-Things that are often perceived as bugs, which means maybe they'll be
-changed in the future, but for now, they're not actually 'broken'.
+Things that are often perceived as bugs, but aren't actually 'broken'.
 
 <UL>
+<LI>If your code has methods (it's not just in static mode) or needs
+to run over time, it must have a draw() method, otherwise nothing will
+happen. 
 <LI> Names of sketches cannot start with a number, or have spaces
   inside. this is mostly because of a restriction on the naming of
   java classes. I suppose if lots of people find this upsetting, we
