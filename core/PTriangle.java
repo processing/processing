@@ -182,6 +182,8 @@ public class PTriangle implements PConstants
   /** */
   private PGraphics3 parent;
 
+  private boolean noDepthTest;
+
   /** */
   private boolean   m_culling;
 
@@ -229,6 +231,8 @@ public class PTriangle implements PConstants
     m_pixels = parent.pixels;
     m_stencil = parent.stencil;
     m_zbuffer = parent.zbuffer;
+
+    noDepthTest = parent.hints[NO_DEPTH_TEST];
 
     // other things to reset
 
@@ -907,7 +911,7 @@ public class PTriangle implements PConstants
       xend+=ytop;
 
       for ( ; xstart < xend; xstart++ ) {
-        if (iz <= m_zbuffer[xstart]) {
+        if (noDepthTest || (iz <= m_zbuffer[xstart])) {
           m_zbuffer[xstart] = iz;
           m_pixels[xstart] = f;
           m_stencil[xstart] = p;
@@ -958,7 +962,7 @@ public class PTriangle implements PConstants
       xend+=ytop;
 
       for ( ; xstart < xend; xstart++ ) {
-        if (iz <= m_zbuffer[xstart]) {
+        if (noDepthTest || (iz <= m_zbuffer[xstart])) {
           //m_zbuffer[xstart] = iz;
 
           int alpha = ia >> 16;
@@ -1022,7 +1026,7 @@ public class PTriangle implements PConstants
       xend+=ytop;
 
       for ( ; xstart < xend; xstart++ ) {
-        if (iz <= m_zbuffer[xstart]) {
+        if (noDepthTest || (iz <= m_zbuffer[xstart])) {
           m_zbuffer[xstart] = iz;
           m_pixels[xstart]=((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
           m_stencil[xstart] = p;
@@ -1084,7 +1088,7 @@ public class PTriangle implements PConstants
       xend+=ytop;
 
       for ( ; xstart < xend; xstart++ ) {
-        if (iz <= m_zbuffer[xstart]) {
+        if (noDepthTest || (iz <= m_zbuffer[xstart])) {
           //m_zbuffer[xstart] = iz;
 
           //
@@ -1168,7 +1172,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset it out of range
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             int al0;
@@ -1257,7 +1261,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset it out of range
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             int al0;
@@ -1342,7 +1346,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset it out of range
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             m_zbuffer[xstart] = iz;
             if (m_bilinear) {
               int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
@@ -1442,7 +1446,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset it out of range
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             // get alpha
@@ -1560,7 +1564,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset it out of range
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             if (m_bilinear) {
@@ -1687,7 +1691,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset it out of range
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             // get alpha
@@ -1820,7 +1824,7 @@ public class PTriangle implements PConstants
       for ( ; xstart < xend; xstart++ ) {
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             int al0;
@@ -1926,7 +1930,7 @@ public class PTriangle implements PConstants
       for ( ; xstart < xend; xstart++ ) {
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             int al0;
@@ -2032,7 +2036,7 @@ public class PTriangle implements PConstants
       for ( ; xstart < xend; xstart++ ) {
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             m_zbuffer[xstart] = iz;
 
             int red;
@@ -2160,7 +2164,7 @@ public class PTriangle implements PConstants
         try
         {
           //if (iz < m_zbuffer[xstart]) {
-          if (iz <= m_zbuffer[xstart]) {  // [fry 041114]
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
             //m_zbuffer[xstart] = iz;
 
             // blend
@@ -2294,7 +2298,7 @@ public class PTriangle implements PConstants
       for ( ; xstart < xend; xstart++ ) {
         try
         {
-          if (iz <= m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
             int red;
@@ -2436,7 +2440,7 @@ public class PTriangle implements PConstants
         try
         {
           //if (iz < m_zbuffer[xstart]) {
-          if (iz <= m_zbuffer[xstart]) {  // [fry 041114]
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
             //m_zbuffer[xstart] = iz;
 
             // blend

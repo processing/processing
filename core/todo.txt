@@ -12,6 +12,7 @@ X added textMode(SHAPE) for OPENGL
 X error message saying that strokeCap and strokeJoin don't work in P3D
 X textMode(SHAPE) throws ex when drawing and font not installed
 X fix a bug with filename capitalization error throwing
+X add NO_DEPTH_TEST to PGraphics3
 
 nixed or fixed in previous releases
 X textMode(SCREEN) having issues on Mac OS X
