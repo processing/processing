@@ -5888,18 +5888,6 @@ v              PApplet.this.stop();
   }
 
 
-  public void beginPath() {
-    if (recorder != null) recorder.beginPath();
-    g.beginPath();
-  }
-
-
-  public void endPath() {
-    if (recorder != null) recorder.endPath();
-    g.endPath();
-  }
-
-
   public void point(float x, float y) {
     if (recorder != null) recorder.point(x, y);
     g.point(x, y);
