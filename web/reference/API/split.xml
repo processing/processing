@@ -11,8 +11,8 @@
 <example>
 <image></image>
 <code>
-String numbers = "Putin Yeltsin Gorbachev";
-String list[] = split(numbers);
+String men = "Putin Yeltsin Gorbachev";
+String list[] = split(men);
 // list[0] is now Putin, list[1] is now Yeltsin, ...
 </code>
 </example>
@@ -20,8 +20,8 @@ String list[] = split(numbers);
 <example>
 <image></image>
 <code>
-String numbers = "Chernenko,Andropov,Brezhnev";
-String list[] = splitInts(numbers, ',');
+String men = "Chernenko,Andropov,Brezhnev";
+String list[] = split(men, ',');
 // list[0] is now Chernenko, list[1] is Andropov, ...
 </code>
 </example>
@@ -30,7 +30,7 @@ String list[] = splitInts(numbers, ',');
 <image></image>
 <code>
 String numbers = "8 67 5 309";
-int list[] = int(splitInts(numbers));
+int list[] = int(split(numbers));
 // list[0] is now 8, list[1] is now 67, ...
 </code>
 </example>

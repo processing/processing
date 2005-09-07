@@ -11,7 +11,7 @@
 <example>
 <image></image>
 <code>
-/* 
+/*
    Draws two lines which divides the window 
    into four quadrants. First draws a horizonal
    line and then the vertical line 
@@ -40,6 +40,7 @@ Explanatory notes embedded within the code. Comments are used to remind yourself
 
 <related>
 // (comment)
+/** */ (doc comment)
 </related>
 
 <availability>1.0</availability>

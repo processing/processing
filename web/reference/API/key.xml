@@ -9,14 +9,14 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>key.jar</image>
+<image></image>
 <code>
 // Click on the window to give it focus
 // and press the 'B' key
 
-void loop() {
+void draw() {
   if(keyPressed) {
-    if (key == 'b' || key == 'B') {
+    if (key == '0') {
       fill(0);
     }
   } else {
@@ -27,29 +27,8 @@ void loop() {
 </code>
 </example>
 
-<example>
-<image>key2.jar</image>
-<code>
-// Click on the window to give it focus
-// and press the up and down arrow keys
-
-void loop() {
-  if(keyPressed) {
-    if (key == UP) {
-      fill(255);
-    } else if (key == DOWN) {
-      fill(0);
-    }
-  } else {
-    fill(126);
-  }
-  rect(25, 25, 50, 50);
-}
-</code>
-</example>
-
 <description>
-The system variable <b>key</b> always contains the value of the most recently pressed key on the keyboard. For detecting the arrow keys, the <b>key</b> variable is set to either UP, DOWN, LEFT, or RIGHT. Other special key constants are ALT, CONTROL, and SHIFT.
+The system variable <b>key</b> always contains the value of the most recently pressed key on the keyboard. For detecting the arrow keys, the <b>keyCode</b> variable is set to either UP, DOWN, LEFT, or RIGHT.
 </description>
 
 <syntax>
@@ -75,12 +54,5 @@ keyReleased()
 <type>System variable</type>
 
 <partof>Core</partof>
-
-
-
-
-
-
-
 
 </root>

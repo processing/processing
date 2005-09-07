@@ -9,25 +9,18 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>day_.jar</image>
+<image></image>
 <code>
 void setup() {
-  PFont metaBold;
-  metaBold = loadFont("fonts/Meta-Bold.vlw.gz"); 
-  setFont(metaBold, 44); 
-  hint(SMOOTH_IMAGES); 
+  noLoop();
 }
 
-void loop() {
+void draw() {
   int d = day();    // Values from 1 - 31
   int m = month();  // Values from 1 - 12
   int y = year();   // 2003, 2004, 2005, etc.
-  String s = String.valueOf(d);
-  text(s, 10, 28);
-  s = String.valueOf(m);
-  text(s, 10, 56); 
-  s = String.valueOf(y);
-  text(s, 10, 84);
+
+  println(d + "/" + m + "/" + y);
 }
 </code>
 </example>

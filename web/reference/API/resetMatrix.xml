@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>resetMatrix()</name>
+
+<category>Transform</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<description>
+Replaces the current matrix with the identity matrix.
+</description>
+
+<syntax>
+resetMatrix()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+pushMatrix()
+popMatrix()
+applyMatrix()
+printMatrix()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>extended</level>
+
+</root>

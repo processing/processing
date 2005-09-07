@@ -9,7 +9,7 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>keyPressed.jar</image>
+<image></image>
 <code>
 // Click on the image to give it focus
 // and press any key
@@ -19,7 +19,7 @@
 // register a long key press as a repetition
 // of key presses
 
-void loop() {
+void draw() {
   if (keyPressed == true) {
     fill(0);
   } else {

@@ -12,8 +12,8 @@
 <image></image>
 <code>
 // Declare and contruct two objects (h1, h2) from the class HLine 
-HLine h1 = new HLine(20, 2.0); 
-HLine h2 = new HLine(50, 2.5); 
+HLine h1 = new HLine(20, 2); 
+HLine h2 = new HLine(50, 2); 
  
 void setup() 
 {
@@ -21,15 +21,15 @@ void setup()
   framerate(30);
 }
 
-void loop() { 
+void draw() { 
   background(204);
   h1.update(); 
   h2.update();  
 } 
  
 class HLine { 
-  float ypos, speed; 
-  HLine (float y, float s) {  
+  int ypos, speed; 
+  HLine (int y, int s) {  
     ypos = y; 
     speed = s; 
   } 

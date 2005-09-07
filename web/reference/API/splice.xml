@@ -56,7 +56,7 @@ splice(<c>array</c>, <c>array2</c>, <c>index</c>)
 
 <related>
 contract()
-slice()
+subset()
 </related>
 
 <availability>1.0</availability>

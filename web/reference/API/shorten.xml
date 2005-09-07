@@ -26,12 +26,12 @@ Decreases an array by one element and returns the shortened array.
 </description>
 
 <syntax>
-append(<c>array</c>)
+shorten(<c>array</c>)
 </syntax>
 
 <parameter>
 <label>array</label>
-<description>boolean[], byte[], char[], int[], float[], or String[]</description>
+<description>boolean[], byte[], char[], int[], or String[]</description>
 </parameter>
 
 <returns>Array (the same datatype as the input)</returns>

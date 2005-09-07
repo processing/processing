@@ -25,12 +25,12 @@ Converts all of the characters in the string to uppercase. For example, "abc" wi
 </description>
 
 <syntax>
-charAt()
+toUpperCase()
 </syntax>
 
 <parameter>
-<label>sx</label>
-<description>int: X coordinate of the pixel in source image</description>
+<label></label>
+<description></description>
 </parameter>
 
 <returns>String</returns>

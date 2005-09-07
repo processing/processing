@@ -9,12 +9,12 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>constrain_.jar</image>
+<image></image>
 <code>
-void loop() 
+void draw() 
 { 
   background(204);
-  float mx = constrain(mouseX, 30, 70);
+  int mx = constrain(mouseX, 30, 70);
   rect(mx-10, 40, 20, 20);
 }
 </code>
@@ -30,20 +30,20 @@ constrain(<c>value</c>, <c>min</c>, <c>max</c>)
 
 <parameter>
 <label>value</label>
-<description>int or float: the value to constrain</description>
+<description>int: the value to constrain</description>
 </parameter>
 
 <parameter>
 <label>min</label>
-<description>int or float: minimum limit</description>
+<description>int: minimum limit</description>
 </parameter>
 
 <parameter>
 <label>max</label>
-<description>int or float: maximum limit</description>
+<description>int: maximum limit</description>
 </parameter>
 
-<returns>float or int (depending on the input values)</returns>
+<returns>int (depending on the input values)</returns>
 
 <related>
 max()

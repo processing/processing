@@ -25,42 +25,42 @@ quad(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>
 
 <parameter>
 <label>x1</label>
-<description>int or float: x-coordinate of the first corner</description>
+<description>int: x-coordinate of the first corner</description>
 </parameter>
 
 <parameter>
 <label>y1</label>
-<description>int or float: y-coordinate of the first corner</description>
+<description>int: y-coordinate of the first corner</description>
 </parameter>
 
 <parameter>
 <label>x2</label>
-<description>int or float: x-coordinate of the second corner</description>
+<description>int: x-coordinate of the second corner</description>
 </parameter>
 
 <parameter>
 <label>y2</label>
-<description>int or float: y-coordinate of the second corner</description>
+<description>int: y-coordinate of the second corner</description>
 </parameter>
 
 <parameter>
 <label>x3</label>
-<description>int or float: x-coordinate of the third corner</description>
+<description>int: x-coordinate of the third corner</description>
 </parameter>
 
 <parameter>
 <label>y3</label>
-<description>int or float: y-coordinate of the third corner</description>
+<description>int: y-coordinate of the third corner</description>
 </parameter>
 
 <parameter>
 <label>x4</label>
-<description>int or float: x-coordinate of the fourth corner</description>
+<description>int: x-coordinate of the fourth corner</description>
 </parameter>
 
 <parameter>
 <label>y4</label>
-<description>int or float: y-coordinate of the fourth corner</description>
+<description>int: y-coordinate of the fourth corner</description>
 </parameter>
 
 <returns>None</returns>

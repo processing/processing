@@ -25,18 +25,30 @@ rect(30, 20, 55, 55);
 </example>
 
 <description>
-Sets the stroke color which is the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b>. The default color space is RGB, with each value in the range from 0 to 255. The version of <b>stroke()</b> with one parameter specifies a gray value, the version with three parameters specifies a color, and the version with four parameters specifies a color with an alpha value. <i>Note: the value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default value is 255.</i>
+Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). <i>Note: the value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.</i>
 </description>
 
 <syntax>
 stroke(<c>gray</c>)
-stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>);
-stroke(<c>color</c>);
+stroke(<c>gray</c>, <c>alpha</c>)
+stroke(<c>color</c>)
+stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
 <label>gray</label>
 <description>int or float: specifies a value between white and black</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>int or float: opacity of the stroke</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>color: any value of the color datatype</description>
 </parameter>
 
 <parameter>
@@ -54,10 +66,6 @@ stroke(<c>color</c>);
 <description>int or float: blue or brightness value (depending on the current color mode)</description>
 </parameter>
 
-<parameter>
-<label>color</label>
-<description>color: any value of the color datatype</description>
-</parameter>
 
 <returns>None</returns>
 

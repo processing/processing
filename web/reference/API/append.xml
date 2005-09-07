@@ -27,7 +27,7 @@ append(<c>array</c>, <c>element</c>)
 
 <parameter>
 <label>array</label>
-<description>boolean[], byte[], char[], int[], float[], or String[]</description>
+<description>boolean[], byte[], char[], int[], or String[]</description>
 </parameter>
 
 <parameter>

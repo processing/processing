@@ -25,32 +25,32 @@ triangle(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>);
 
 <parameter>
 <label>x1</label>
-<description>int or float: x-coordinate of the first point</description>
+<description>int: x-coordinate of the first point</description>
 </parameter>
 
 <parameter>
 <label>y1</label>
-<description>int or float: y-coordinate of the first point</description>
+<description>int: y-coordinate of the first point</description>
 </parameter>
 
 <parameter>
 <label>x2</label>
-<description>int or float: x-coordinate of the second point</description>
+<description>int: x-coordinate of the second point</description>
 </parameter>
 
 <parameter>
 <label>y2</label>
-<description>int or float: y-coordinate of the second point</description>
+<description>int: y-coordinate of the second point</description>
 </parameter>
 
 <parameter>
 <label>x3</label>
-<description>int or float: x-coordinate of the third point</description>
+<description>int: x-coordinate of the third point</description>
 </parameter>
 
 <parameter>
 <label>y3</label>
-<description>int or float: y-coordinate of the third point</description>
+<description>int: y-coordinate of the third point</description>
 </parameter>
 
 <returns>None</returns>

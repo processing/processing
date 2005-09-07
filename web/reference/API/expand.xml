@@ -31,7 +31,7 @@ expand(<c>array</c>, <c>newSize</c>)
 
 <parameter>
 <label>array</label>
-<description>booleans[], bytes[], chars[], ints[], floats[], or Strings[]</description>
+<description>booleans[], bytes[], chars[], ints[], or Strings[]</description>
 </parameter>
 
 <parameter>

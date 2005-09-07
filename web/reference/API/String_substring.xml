@@ -40,7 +40,7 @@ substring(<b>beginIndex</b>, <b>endIndex</b>)
 <description>int: position from which to end (exclusive)</description>
 </parameter>
 
-<returns>None</returns>
+<returns>String</returns>
 
 <related>
 </related>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
 <root>
-<name>floor()</name>
+<name>round()</name>
 
 <category>Math</category>
 
@@ -11,17 +12,24 @@
 <example>
 <image></image>
 <code>
-float x = 2.88;  
-float a = floor(x);  // Set "a" to 2.0
+float x = 9.2;  
+int rx = round(x);  // Sets rx to 9
+
+float y = 9.5;
+int ry = round(y);  // Sets ry to 10
+
+float z = 9.9;
+int rz = round(z);  // Sets rz to 10
+
 </code>
 </example>
 
 <description>
-Calculates the closest value that is less than or equal to the value of the parameter.
+Calculates the integer closest to the <b>value</b> parameter. For example, <b>round(9.2)</b> returns the value 9.
 </description>
 
 <syntax>
-floor(<c>value</c>)
+round(<c>value</c>)
 </syntax>
 
 <parameter>
@@ -29,9 +37,10 @@ floor(<c>value</c>)
 <description>float</description>
 </parameter>
 
-<returns>float</returns>
+<returns>int</returns>
 
 <related>
+floor()
 ceil()
 </related>
 

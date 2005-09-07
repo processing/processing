@@ -25,22 +25,22 @@ ellipse(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
 
 <parameter>
 <label>x</label>
-<description>int or float: x-coordinate of the ellipse</description>
+<description>int: x-coordinate of the ellipse</description>
 </parameter>
 
 <parameter>
 <label>y</label>
-<description>int or float: y-coordinate of the ellipse</description>
+<description>int: y-coordinate of the ellipse</description>
 </parameter>
 
 <parameter>
 <label>width</label>
-<description>int or float: width of the ellipse</description>
+<description>int: width of the ellipse</description>
 </parameter>
 
 <parameter>
 <label>height</label>
-<description>int or float: height of the ellipse</description>
+<description>int: height of the ellipse</description>
 </parameter>
 
 <returns>None</returns>

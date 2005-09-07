@@ -27,7 +27,7 @@ void draw() {
 </example>
 
 <description>
-Function called once when the program begins running. Used to define initial enviroment properties such as screen size, background color, loading images, etc. before the <b>draw()</b> begins executing. Variables declared within <b>setup()</b> are not accessible within <b>draw()</b>.
+Called once when the program is started. Used to define initial enviroment properties such as screen size, background color, loading images, etc. before the <b>draw()</b> begins executing. Variables declared within <b>setup()</b> are not accessible within other functions, including<b>draw()</b>. There can only be one <b>setup()</b> function for each program and it should not be called again after it's initial execution.
 </description>
 
 <syntax>

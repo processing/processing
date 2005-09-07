@@ -12,18 +12,18 @@
 <image></image>
 <code>
 HLine h1 = new HLine();
-float[] speeds = new float[3];
-float ypos;
+int[] speeds = new int[3];
+int ypos;
 
 void setup() { 
   size(200, 200);
-  speeds[0] = 0.1; 
-  speeds[1] = 2.0;
-  speeds[2] = 0.5;
+  speeds[0] = 1; 
+  speeds[1] = 2;
+  speeds[2] = 5;
 } 
  
-void loop() {
-  ypos += speeds[int(random(3))]; 
+void draw() {
+  ypos += speeds[random(3)]; 
   if (ypos &gt; width) { 
     ypos = 0; 
   } 
@@ -31,15 +31,16 @@ void loop() {
 } 
  
 class HLine { 
-  void update(float y) { 
+  void update(int y) { 
     line(0, y, width, y); 
   } 
 } 
+
 </code>
 </example>
 
 <description>
-Dynamically creates an object.
+Creates a "new" object. The keyword <b>new</b> is typically used similarly to the applications in the above example. In this example, a new object "h1" of the datatype "HLine" is created. On the following line, a new array of ints called "speeds" is created.
 </description>
 
 <syntax>
@@ -59,11 +60,6 @@ new
 <type>keyword</type>
 
 <partof>PDE</partof>
-
-<level>Extended</level>
-
-
-
 
 
 

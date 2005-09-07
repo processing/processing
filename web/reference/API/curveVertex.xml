@@ -23,32 +23,27 @@ endShape();
 </example>
 
 <description>
-Specifies vertex coordinates for curves. This function may only be called between <b>beginShape()</b> and <b>endShape()</b>. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines.
+Specifies vertex coordinates for curves. This function may only be called between <b>beginShape()</b> and <b>endShape()</b> and can only be used with the drawing types POLYGON, LINE_LOOP, and LINE_STRIP. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines.
 </description>
 
 <syntax>
 curveVertex(<c>x</c>, <c>y</c>) 
-curveVertex(<c>x</c>, <c>y</c>, <c>z</c>)
 </syntax>
 
 <parameter>
 <label>x</label>
-<description>The x-coordinate of the vertex, either a float or int</description>
+<description>The x-coordinate of the vertex, int</description>
 </parameter>
 
 <parameter>
 <label>y</label>
-<description>The y-coordinate of the vertex, either a float or int</description>
-</parameter>
-
-<parameter>
-<label>z</label>
-<description>The z-coordinate of the vertex, either a float or int</description>
+<description>The y-coordinate of the vertex, int</description>
 </parameter>
 
 <returns>None</returns>
 
 <related>
+curve()
 beginShape()
 endShape()
 vertex()

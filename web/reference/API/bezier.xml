@@ -39,43 +39,23 @@ bezier(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</
 </syntax>
 
 <parameter>
-<label>x1</label>
-<description>int or float: x-coordinate of the first anchor point</description>
+<label>x1, y1</label>
+<description>int: coordinates for the first anchor point</description>
 </parameter>
 
 <parameter>
-<label>y1</label>
-<description>int or float: y-coordinate of the first anchor point</description>
+<label>x2, y2, y3</label>
+<description>int: coordinates for the first control point</description>
 </parameter>
 
 <parameter>
-<label>x2</label>
-<description>int or float: x-coordinate of the first control point</description>
+<label>x3, y3, z3</label>
+<description>int: coordinates for the second control point</description>
 </parameter>
 
 <parameter>
-<label>y2</label>
-<description>int or float: y-coordinate of the first control point</description>
-</parameter>
-
-<parameter>
-<label>x3</label>
-<description>int or float: x-coordinate of the second control point</description>
-</parameter>
-
-<parameter>
-<label>y3</label>
-<description>int or float: y-coordinate of the second control point</description>
-</parameter>
-
-<parameter>
-<label>x4</label>
-<description>int or float: x-coordinate of the second anchor point</description>
-</parameter>
-
-<parameter>
-<label>y4</label>
-<description>int or float: y-coordinate of the second anchor point</description>
+<label>x4, y4, z4</label>
+<description>int: coordinates for the second anchor point</description>
 </parameter>
 
 <returns>None</returns>

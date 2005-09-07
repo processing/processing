@@ -11,7 +11,7 @@
 <example>
 <image></image>
 <code>
-// works identically with float[] and String[]
+// works identically with String[]
 int list[] = new list[3];
 list[0] = 8;
 list[1] = 67;
@@ -24,22 +24,6 @@ String formatted = join(list, ", ");
 String withzeroes = join(list, " ", 3);
 // withzeros now contains "008 067 005"
 
-// for floats, formatting is more complicated because 
-// there are also digits after the decimal point.
-float f[] = new float[3];
-f[0] = 1.3;
-f[1] = 92.8;
-f[2] = 0.7;
-// 3 digits on the left of the decimal point
-// 2 digits to the right of the decimal point
-String zerofloats = join(f, " ", 3, 2);
-// zerofloats now contains "001.30 092.80 007.70"
-
-// or if you don't want to pad the left-hand side
-// a zero will say to ignore and don't pad
-String lesspadding = join(f, " ", 0, 2);
-// lesspadding now contains "1.30 92.80 7.70"
-
 </code>
 </example>
 
@@ -50,22 +34,16 @@ Combines an array of elements into one String.
 <syntax>
 join(<c>anyArray</c>, <c>separator</c>)
 join(<c>intArray</c>, <c>separator</c>, <c>digits</c>)
-join(<c>floatArray</c>, <c>separator</c>, <c>left</c>, <c>right</c>)
 </syntax>
 
 <parameter>
-<label>array</label>
-<description>array of strings, ints, or floats</description>
+<label>anyArray</label>
+<description>array of strings, or ints</description>
 </parameter>
 
 <parameter>
 <label>intArray</label>
 <description>array of ints</description>
-</parameter>
-
-<parameter>
-<label>floatArray</label>
-<description>array of floats</description>
 </parameter>
 
 <parameter>
@@ -76,16 +54,6 @@ join(<c>floatArray</c>, <c>separator</c>, <c>left</c>, <c>right</c>)
 <parameter>
 <label>digits</label>
 <description>int: number of digits to pad with zeroes</description>
-</parameter>
-
-<parameter>
-<label>left</label>
-<description>int: number of digits to the left of the decimal point</description>
-</parameter>
-
-<parameter>
-<label>right</label>
-<description>int: number of digits to the right of the decimal point</description>
 </parameter>
 
 <returns>String</returns>

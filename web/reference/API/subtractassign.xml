@@ -27,12 +27,12 @@ Combines subtraction with assignment. The expression <b>a -= b</b> is equivalent
 
 <parameter>
 <label>value1</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 <returns></returns>
 

@@ -39,26 +39,32 @@ A string is a sequence of characters. The class <b>String</b> includes methods f
 <mname>charAt()</mname>
 <mdescription>Returns the character at the specified index</mdescription>
 </method>
+
 <method>
 <mname>equals()</mname>
 <mdescription>Compares a string to a specified object</mdescription>
 </method>
+
 <method>
 <mname>indexOf()</mname>
 <mdescription>Returns the index value of the first occurance of a character within the input string</mdescription>
 </method>
+
 <method>
 <mname>length()</mname>
 <mdescription>Returns the number of characters in the input string</mdescription>
 </method>
+
 <method>
 <mname>substring()</mname>
 <mdescription>Returns a new string that is part of the input string</mdescription>
 </method>
+
 <method>
 <mname>toLowerCase()</mname>
 <mdescription>Converts all the characters to lower case</mdescription>
 </method>
+
 <method>
 <mname>toUpperCase()</mname>
 <mdescription>Converts all the characters to upper case</mdescription>
