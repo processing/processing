@@ -9,6 +9,18 @@
 <usage>Web &amp; Application</usage>
 
 <example>
+<image>beginShape_0.gif</image>
+<code>
+beginShape();
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
 <image>beginShape_.gif</image>
 <code>
 beginShape(POINTS);
@@ -66,7 +78,6 @@ vertex(50, 75);
 vertex(60, 20);
 vertex(70, 75);
 vertex(80, 20);
-vertex(90, 75);
 endShape();
 </code>
 </example>
@@ -105,15 +116,15 @@ endShape();
 <example>
 <image>beginShape_8.gif</image>
 <code>
-beginShape(QUAD_STRIP);
-vertex(30, 20);
-vertex(30, 75);
-vertex(50, 75);
+beginShape(QUAD_STRIP); 
+vertex(30, 20); 
+vertex(30, 75); 
 vertex(50, 20);
-vertex(65, 20);
-vertex(65, 75);
-vertex(85, 75);
+vertex(50, 75);
+vertex(65, 20); 
+vertex(65, 75); 
 vertex(85, 20);
+vertex(85, 75); 
 endShape();
 </code>
 </example>
@@ -133,7 +144,7 @@ endShape();
 </example>
 
 <description>
-Using the <b>beginShape()</b> and <b>endShape()</b> functions allow creating more complex forms. <b>beginShape()</b> begins recording vertices for a shape and endShape() stops recording. The <b>beginShape()</b> function requires a parameter to tell it which type of shape to create from the provided vertices. The parameters available for beginShape() are LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, TRIANGLE_STRIP, QUADS, QUAD_STRIP, and POLYGON. After calling the <b>beginShape()</b> function, a series of <b>vertex()</b> commands must follow. To stop drawing the shape, call <b>endShape()</b>. The <b>vertex()</b> function with two parameters specifies a position in 2D and the vertex() function with three parameters specifies a position in 3D. Each shape will be outlined with the current stroke color and filled with the fill color. Transformations such as <b>translate()</b>, <b>rotate()</b>, and <b>scale()</b> do not work within <b>beginShape()</b>. 
+Using the <b>beginShape()</b> and <b>endShape()</b> functions allow creating more complex forms. <b>beginShape()</b> begins recording vertices for a shape and <b>endShape()</b> stops recording. The value of the <b>MODE</b> parameter tells it which types of shapes to create from the provided vertices. The parameters available for beginShape() are LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, TRIANGLE_STRIP, QUADS, QUAD_STRIP, and POLYGON. If there is no MODE specified, POLYGON is used. After calling the <b>beginShape()</b> function, a series of <b>vertex()</b> commands must follow. To stop drawing the shape, call <b>endShape()</b>.Each shape will be outlined with the current stroke color and filled with the fill color. Transformations such as <b>translate()</b>, <b>rotate()</b>, and <b>scale()</b> do not work within <b>beginShape()</b>. 
 </description>
 
 <syntax>

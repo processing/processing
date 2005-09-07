@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>framerate()</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  framerate(4);
+}
+int pos = 0;
+void draw() {
+  background(204);
+  pos++;
+  line(pos, 20, pos, 80);
+  if(pos &gt; width) {
+    pos = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+Specifies the number of frames to be displayed every second. This is acheived by calling <b>delay()</b> at the end of the <b>draw()</b> to slow down the display. If the processor is not fast enough to maintain the specified rate, it will not be acheived. For example, the function call <b>framerate(30)</b> will attempt to refresh 30 times a second. It is recommended to set the framerate within t<b>setup()</b>.
+</description>
+
+<syntax>
+framerate(<c>fps</c>)
+</syntax>
+
+<parameter>
+<label>fps</label>
+<description>int: number of frames per second</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+delay()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

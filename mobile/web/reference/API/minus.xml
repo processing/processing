@@ -37,12 +37,12 @@ Subtracts one value from another and may also be used to negate a value. As a su
 
 <parameter>
 <label>value1</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
 <returns></returns>

@@ -26,12 +26,12 @@ Multiplies the values of the two parameters. Multiplication is equivalent to a s
 
 <parameter>
 <label>value1</label>
-<description>int, float, byte, or char</description>
+<description>int, byte, or char</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int, float, byte, or char</description>
+<description>int, byte, or char</description>
 </parameter>
 
 <returns></returns>

@@ -19,41 +19,33 @@ rect(30, 20, 55, 55);
 </example>
 
 <description>
-Creates colors which may be stored in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. The <b>color()</b> function packs the information input through its parameters into a 32 bit number in the following order AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where R is the red/hue value, G is green/saturation, and B is blue/brightness.
+Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. The <b>color()</b> function packs the information input through its parameters into a 32 bit number in the following order AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where R is the red/hue value, G is green/saturation, and B is blue/brightness.<br /><br />Color can also be created using hexadecimal notation. For example, "color(0, 102, 153)" is equivalent to "color(#006699)" and "color(0x006699)".
 </description>
 
 <syntax>
 color(<c>gray</c>)
-color(<c>gray</c>, <c>alpha</c>)
 color(<c>value1</c>, <c>value2</c>, <c>value3</c>)
-color(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
 <label>gray</label>
-<description>int or float: number specifying value between white and black</description>
-</parameter>
-
-<parameter>
-<label>alpha</label>
-<description>int or float: relative to current color range</description>
+<description>int: number specifying value between white and black</description>
 </parameter>
 
 <parameter>
 <label>value1</label>
-<description>int or float: red or hue values relative to the current color range</description>
+<description>int: red or hue values relative to the current color range</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float: green or saturation values relative to the current color range</description>
+<description>int: green or saturation values relative to the current color range</description>
 </parameter>
 
 <parameter>
 <label>value3</label>
-<description>int or float: blue or brightness values relative to the current color range</description>
+<description>int: blue or brightness values relative to the current color range</description>
 </parameter>
-
 
 <returns>color</returns>
 

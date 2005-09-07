@@ -9,10 +9,10 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>random_.jar</image>
+<image></image>
 <code>
 for(int i=0; i&lt;100; i++) {
-  float r = random(50);
+  int r = random(50);
   stroke(r*5);
   line(50, i, 50+r, i);
 }
@@ -23,7 +23,7 @@ for(int i=0; i&lt;100; i++) {
 <image>random_2.jar</image>
 <code>
 for(int i=0; i&lt;100; i++) {
-  float r = random(-50, 50);
+  int r = random(-50, 50);
   stroke(abs(r*5));
   line(50, i, 50+r, i);
 }
@@ -31,7 +31,7 @@ for(int i=0; i&lt;100; i++) {
 </example>
 
 <description>
-Generates random numbers. Each time the <b>random()</b> function is called, it returns an unexpected value within the specified range. If one parameter is passed to the function it will return a <b>float</b> between zero and the value of the parameter. The function call <b>random(5)</b> returns values between 0 and 5. If two parameters are passed, it will return a <b>float</b> with a value between the the parameters. The function call <b>random(-5, 10.2)</b> returns values between -5 and 10.2. To convert a floating-point random number to an integer, use the <b>int()</b> function.
+Generates random numbers. Each time the <b>random()</b> function is called, it returns an unexpected value within the specified range. If one parameter is passed to the function it will return a <b>int</b> between zero and the value of the parameter. The function call <b>random(5)</b> returns values between 0 and 5. If two parameters are passed, it will return a <b>int</b> with a value between the the parameters.
 </description>
 
 <syntax>
@@ -41,15 +41,15 @@ random(<c>value1</c>, <c>value2</c>);
 
 <parameter>
 <label>value1</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
-<returns>float</returns>
+<returns>int</returns>
 
 <related>
 noise()

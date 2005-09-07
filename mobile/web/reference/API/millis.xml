@@ -9,10 +9,10 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>millis_.jar</image>
+<image></image>
 <code>
-void loop() {
-  float m = millis();
+void draw() {
+  int m = millis();
   fill(m % 255);
   rect(25, 25, 50, 50);
 }

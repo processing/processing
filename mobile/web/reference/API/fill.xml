@@ -25,46 +25,43 @@ rect(30, 20, 55, 55);
 </example>
 
 <description>
-Sets the color used to fill shapes. For example, if you call <b>fill(204, 102, 0)</b> and draw a rectangle it will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b>. The default color space is RGB, with each value in the range from 0 to 255. The version of <b>fill()</b> with one parameter specifies a gray value, the version with three parameters specifies a color, and the version with four parameters specifies a color with an alpha value. <i>Note: the value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default value is 255.</i> 
+Sets the color used to fill shapes. For example, if you call <b>fill(204, 102, 0)</b> and draw a rectangle it and all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). <i>Note: the value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.</i>
 </description>
 
 <syntax>
 fill(<c>gray</c>)
-fill(<c>gray</c>, <c>alpha</c>)
-fill(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 fill(<c>color</c>)
-fill(<c>color</c>, <c>alpha</c>)
-fill(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
+fill(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 </syntax>
 
 <parameter>
 <label>gray</label>
-<description>int or float: number specifying value between white and black</description>
-</parameter>
-
-<parameter>
-<label>value1</label>
-<description>int or float: red or hue value</description>
-</parameter>
-
-<parameter>
-<label>value2</label>
-<description>int or float: green or saturation value</description>
-</parameter>
-
-<parameter>
-<label>value3</label>
-<description>int or float: blue or brightness value</description>
+<description>int: number specifying value between white and black</description>
 </parameter>
 
 <parameter>
 <label>alpha</label>
-<description>int or float: opacity of the fill</description>
+<description>int: opacity of the fill</description>
 </parameter>
 
 <parameter>
 <label>color</label>
 <description>color: any value of the color datatype</description>
+</parameter>
+
+<parameter>
+<label>value1</label>
+<description>int: red or hue value</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>int: green or saturation value</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>int: blue or brightness value</description>
 </parameter>
 
 <returns>None</returns>

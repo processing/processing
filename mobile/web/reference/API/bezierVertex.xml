@@ -12,36 +12,59 @@
 <image>bezierVertex_.gif</image>
 <code>
 beginShape(LINE_STRIP);
-bezierVertex(30, 20);
-bezierVertex(80, 0);
-bezierVertex(80, 75);
-bezierVertex(30, 75);
+vertex(30, 20);
+bezierVertex(80, 0, 80, 75, 30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>bezierVertex_2.gif</image>
+<code>
+beginShape(POLYGON);
+vertex(30, 20);
+bezierVertex(80, 0, 80, 75, 30, 75);
+bezierVertex(50, 80, 60, 25, 30, 20);
 endShape();
 </code>
 </example>
 
 <description>
-Specifies vertex coordinates for Bezier curves. This function must be used between <b>beginShape()</b> and <b>endShape()</b>. These curves are defined by a series of anchor and control points. Bezier curves were developed by French engineer Pierre Bezier.
+Specifies vertex coordinates for Bezier curves. Each call to bezierVertex() defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time bezierVertex() is used within a beginShape() call, it must be prefaced with a call to vertex() to set the first anchor point. This function must be used between beginShape() and endShape() can only be used with the drawing types POLYGON, LINE_LOOP, and LINE_STRIP.
 </description>
 
 <syntax>
-bezierVertex(<c>x</c>, <c>y</c>)
-bezierVertex(<c>x</c>, <c>y</c>, <c>z</c>)
+bezierVertex(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>)
 </syntax>
 
 <parameter>
-<label>x</label>
-<description>The x-coordinate of the vertex, either a float or int</description>
+<label>x1</label>
+<description>The x-coordinate of 1st control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>y</label>
-<description>The y-coordinate of the vertex, either a float or int</description>
+<label>y1</label>
+<description>The y-coordinate of 1st control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>z</label>
-<description>The z-coordinate of the vertex, either a float or int</description>
+<label>x2</label>
+<description>The x-coordinate of 2nd control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>The y-coordinate of 2nd control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description>The x-coordinate of anchor point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description>The y-coordinate of anchor point, either a float or int</description>
 </parameter>
 
 <returns></returns>

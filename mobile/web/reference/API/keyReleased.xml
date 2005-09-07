@@ -9,14 +9,14 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>keyReleased_.jar</image>
+<image></image>
 <code>
 // Click on the image to give it focus,
 // and then press any key
 
 int value = 0;
 
-void loop() {
+void draw() {
   fill(value);
   rect(25, 25, 50, 50);
 }

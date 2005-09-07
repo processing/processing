@@ -12,7 +12,7 @@
 <image></image>
 <applet></applet>
 <code>
-float x = 0;
+int x = 0;
 
 void setup() {
   size(200, 200);
@@ -24,7 +24,7 @@ void draw() {
   line(x, 0, x, height); 
 }
 
-void mousePressed() {
+void keyPressed() {
   x += 1;
   redraw();
 }
@@ -32,7 +32,7 @@ void mousePressed() {
 </example>
 
 <description>
-Causes Processing to execute the code within <b>draw()</b> one time. This gives control for updating the display window only when it's necessary.
+Executes the code within <b>draw()</b> one time. This functions allows the program to update the display window only when necessary, for example when an event registered by <b>keyPressed()</b> occurs. In structuring a program, it only makes sense to call redraw() within events such as <b>keyPressed()</b>. Calling it within <b>draw()</b> has no effect because <b>draw()</b> is continuously called anyway.
 </description>
 
 <syntax>

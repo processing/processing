@@ -26,12 +26,12 @@ Divides the value of the second parameter by the value of the first parameter. T
 
 <parameter>
 <label>value1</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float, but not zero (it is not possible  divide by zero)</description>
+<description>int, but not zero (it is not possible  divide by zero)</description>
 </parameter>
 
 <returns></returns>

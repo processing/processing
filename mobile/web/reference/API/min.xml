@@ -13,7 +13,6 @@
 <code>
 int d = min(5, 9);            // Sets "d" to 5
 int e = min(-4, -12);         // Sets "e" to -12
-float f = min(12.3, 230.24);  // Sets "f" to 12.3
 </code>
 </example>
 
@@ -23,25 +22,19 @@ Determines the smallest value in a sequence of numbers.
 
 <syntax>
 min(<c>value1</c>, <c>value2</c>)
-min(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
 </syntax>
 
 <parameter>
 <label>value1</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float</description>
+<description>int</description>
 </parameter>
 
-<parameter>
-<label>value3</label>
-<description>int or float</description>
-</parameter>
-
-<returns>int or float (depending on the inputs)</returns>
+<returns>int (depending on the inputs)</returns>
 
 <related>
 max()

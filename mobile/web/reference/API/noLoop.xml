@@ -17,23 +17,8 @@ void setup() {
   noLoop();
 }
 
-float x = 0;
-
 void draw() {
-  background(204);
-  x = x + .1;
-  if (x > width) {
-    x = 0;
-  }
-  line(x, 0, x, height); 
-}
-
-void mousePressed() {
-  loop();
-}
-
-void mouseReleased() {
-  noLoop();
+  line(10, 10, 190, 190);
 }
 </code>
 </example>
@@ -44,6 +29,8 @@ Stops Processing from continuously executing the code within <b>draw()</b>. If <
 
 <syntax>
 noLoop()
+redraw()
+draw()
 </syntax>
 
 <parameter>

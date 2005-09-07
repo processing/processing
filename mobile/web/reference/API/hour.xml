@@ -9,9 +9,9 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>hour_.jar</image>
+<image></image>
 <code>
-void loop() {
+void draw() {
   background(204);
   int s = second();  // Values from 0 - 59
   int m = minute();  // Values from 0 - 59

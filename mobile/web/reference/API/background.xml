@@ -22,56 +22,28 @@ background(255, 204, 0);
 </code>
 </example>
 
-<example>
-<image>background_4.jar</image>
-<code>
-void loop() {
-  background(255, 204, 0);
-  line(0, 0, mouseX, mouseY);
-  line(100, 0, mouseX, mouseY);
-  line(100, 100, mouseX, mouseY);
-  line(0, 100, mouseX, mouseY);
-}
-</code>
-</example>
-
-<example>
-<image>background_3.jpg</image>
-<code>
-PImage b;
-b = loadImage("laDefense.jpg");
-background(b); 
-</code>
-</example>
-
 <description>
-The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>loop()</b> function, the background color is used to refresh the display window between frames. It is possible to load a JPG or GIF image as the background by loading an image which is the same size as the display window. The image must be in the data directory of the sketch for it to load properly.
+The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to refresh the display window between frames.
 </description>
 
 <syntax>
 background(<c>value1</c>)
 background(<c>value1</c>, <c>value2</c>, <c>value3</c>)
-background(<c>image</c>)
 </syntax>
 
 <parameter>
 <label>value1</label>
-<description>int or float: red or hue value (depending on the current color mode)</description>
+<description>int: red or hue value (depending on the current color mode)</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int or float: green or saturation value (depending on the current color mode)</description>
+<description>int: green or saturation value (depending on the current color mode)</description>
 </parameter>
 
 <parameter>
 <label>value3</label>
-<description>int or float: blue or brightness value (depending on the current color mode)</description>
-</parameter>
-
-<parameter>
-<label>image</label>
-<description>PImage: the name of a PImage the same size as the display window</description>
+<description>int: blue or brightness value (depending on the current color mode)</description>
 </parameter>
 
 <returns>None</returns>

@@ -29,12 +29,12 @@ Determines if two values are equivalent. The equality operator is different from
 
 <parameter>
 <label>value1</label>
-<description>int, float, char, byte, boolean, String</description>
+<description>int, char, byte, boolean, String</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int, float, char, byte, boolean, String</description>
+<description>int, char, byte, boolean, String</description>
 </parameter>
 
 <returns></returns>

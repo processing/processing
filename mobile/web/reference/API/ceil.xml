@@ -12,12 +12,12 @@
 <image></image>
 <code>
 float x = 8.22;  
-float a = ceil(x);  // Set "a" to 9.0
+int a = ceil(x);  // Set "a" to 9
 </code>
 </example>
 
 <description>
-Calculates the closest value that is greater than or equal to the value of the parameter. For example, <b>ceil(9.03)</b> returns the value 10.0.
+Calculates the closest int value that is greater than or equal to the value of the parameter. For example, <b>ceil(9.03)</b> returns the value 10.
 </description>
 
 <syntax>
@@ -29,10 +29,11 @@ ceil(<c>value</c>)
 <description>float</description>
 </parameter>
 
-<returns>float</returns>
+<returns>int</returns>
 
 <related>
 floor()
+round()
 </related>
 
 <availability>1.0</availability>

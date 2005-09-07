@@ -15,14 +15,14 @@ void setup() {
   size(200, 200);
 }
 
-void loop() {
+void draw() {
   line(10, 100, 190, 100);
 }
 </code>
 </example>
 
 <description>
-Keyword used indicate a function returns no value. Each function must either return a value of a specific datatype or use the keyword <b>void </b> to specify the function returns nothing.
+Keyword used indicate a function returns no value. Each function must either return a value of a specific datatype or use the keyword <b>void</b> to specify it returns nothing.
 </description>
 
 <syntax>

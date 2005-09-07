@@ -25,7 +25,7 @@ rect(50, 0, 50, 100);
 </example>
 
 <description>
-Datatype for storing color values. Colors may be assigned with <b>get()</b> and <b>color()</b> or they may be specified directly using hexadecimal notation such as <b>#FFCC00</b>. Colors are 32 bits of information ordered as AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where the A's contain the alpha value, the R's are the red/hue value, G's are green/saturation, and B's are blue/brightness. Color is a datatype unique to Processing.
+Datatype for storing color values. Colors may be assigned with <b>get()</b> and <b>color()</b> or they may be specified directly using hexadecimal notation such as <b>#FFCC00</b>. Colors are 32 bits of information ordered as AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where the A's contain the alpha value, the R's are the red/hue value, G's are green/saturation, and B's are blue/brightness.
 </description>
 
 <syntax>

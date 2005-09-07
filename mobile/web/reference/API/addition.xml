@@ -48,12 +48,12 @@ Adds two values or concatenates string values. As a mathematical operator, it ca
 
 <parameter>
 <label>value1</label>
-<description>String, int, float, char, byte, boolean</description>
+<description>String, int, char, byte, boolean</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>String, int, float, char, byte, boolean</description>
+<description>String, int, char, byte, boolean</description>
 </parameter>
 
 <returns></returns>
