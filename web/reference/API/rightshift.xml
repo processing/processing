@@ -55,7 +55,7 @@ Shifts bits to the right. The number to the left of the operator is shifted the 
 <returns></returns>
 
 <related>
-<< (left shift)
+&lt;&lt; (left shift)
 </related>
 
 <availability>1.0</availability>
