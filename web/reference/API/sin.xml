@@ -31,7 +31,7 @@ sin(<c>rad</c>)
 
 <parameter>
 <label>rad</label>
-<description>float: an angle in radians<description>
+<description>float: an angle in radians</description>
 </parameter>
 
 <returns>float</returns>
