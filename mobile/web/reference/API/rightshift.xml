@@ -26,9 +26,9 @@ println(p);  // Prints "13"
 <image></image>
 <code>
 color rgb = color(204, 204, 51);
-int r = rgb >> 16 & 0xFF;  // Faster way of getting red(rgb)
-int g = rgb >> 8 & 0xFF;   // Faster way of getting green(rgb)
-int b = rgb & 0xFF;        // Faster way of getting blue(rgb)
+int r = rgb >> 16 &amp; 0xFF;  // Faster way of getting red(rgb)
+int g = rgb >> 8 &amp; 0xFF;   // Faster way of getting green(rgb)
+int b = rgb &amp; 0xFF;        // Faster way of getting blue(rgb)
 fill(r, g, b);
 rect(30, 20, 55, 55);
 </code>
