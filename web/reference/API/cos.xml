@@ -30,7 +30,7 @@ cos(<c>angle</c>)
 
 <parameter>
 <label>angle</label>
-<description>float: an angle in radians<description>
+<description>float: an angle in radians</description>
 </parameter>
 
 <returns>float</returns>
