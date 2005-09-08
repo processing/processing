@@ -55,7 +55,7 @@ Compares each corresponding bit in the binary representation of the values. For 
 <returns></returns>
 
 <related>
-& (bitwise AND)
+&amp; (bitwise AND)
 binary()
 </related>
 
