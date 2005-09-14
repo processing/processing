@@ -4,23 +4,6 @@ X   incorporate fix posted by mellis
 X   need to figure out threading etc
 X   problem with it launching a new thread for every single update!
 X   http://processing.org/bugs/show_bug.cgi?id=19
-o make note that changing screen config requires restart of processing
-o   static { checkScreens(); }
-o   static void PApplet.checkScreens() { } 
-o   to run explicitly later
-o   this seems too complicated.. just make people restart
-o convert spaces to underscores and vice versa for sketch/tab names
-o   underscoring everything is kinda nasty
-o   only needs to be underscored when passed off to java
-o   although then if people *want* underscores, there's gonna be trouble
-o   http://dev.processing.org/bugs/show_bug.cgi?id=76
-o if in full java mode
-o   if extends PApplet.. or rather, put PApplet cast into a 
-o   try/catch block.. if it doesn't work, try applet. if that
-o   doesn't work, try using the class' main() to run it
-X   not gonna do this, p5 is not a java editor
-o if a .pde isn't contained in a properly named folder
-o   offer to rename the parent folder, rather than placing in a new folder
 X make a note that video doesn't currently work in applets in the faq
 X scanning sketchbook folder may be extremely slow 
 X   when lots of frames saved out, takes forever to scan the folder
@@ -30,6 +13,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=84
 o rebuild jikes with --enable-static --disable-shared
 X   http://dev.processing.org/bugs/show_bug.cgi?id=47
 X   switched to use the version from the rpm on the sf.net site
+X with fix of bug #47, svn binaries are no longer liabilities on linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=48
 o auto-run the javadoc in dist.sh
 o   doctor a copy of the css file to use p5 defaults
 o   and re-copy the css in after generating the doc each time
@@ -57,6 +42,23 @@ X external apps don't stop at all when 'stop' is hit
 X   worker thread is halting the app ala code folder bug
 X   could this be dealt with by using nio? 
 X     host environment will be running 1.4 so...
+o make note that changing screen config requires restart of processing
+o   static { checkScreens(); }
+o   static void PApplet.checkScreens() { } 
+o   to run explicitly later
+o   this seems too complicated.. just make people restart
+o convert spaces to underscores and vice versa for sketch/tab names
+o   underscoring everything is kinda nasty
+o   only needs to be underscored when passed off to java
+o   although then if people *want* underscores, there's gonna be trouble
+o   http://dev.processing.org/bugs/show_bug.cgi?id=76
+o if in full java mode
+o   if extends PApplet.. or rather, put PApplet cast into a 
+o   try/catch block.. if it doesn't work, try applet. if that
+o   doesn't work, try using the class' main() to run it
+X   not gonna do this, p5 is not a java editor
+o if a .pde isn't contained in a properly named folder
+o   offer to rename the parent folder, rather than placing in a new folder
 
 bugzilla problems (fixed by fjen)
 X localconfig has been modified, need to update for everything
@@ -82,9 +84,12 @@ forum bugs
 X when replying, all the replies so far are listed twice
 o fonts are wrong all over the place (use windows to debug)
 
+
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
+_   perhaps the get around this by building into sketch folder
+_     when non-ascii chars in use, just launch everything externally
 
 _ don't allow subfolders forever inside the sketchbook folder
 _   once a sketch is found, don't recurse deeper
@@ -95,6 +100,9 @@ _   first select a folder, then will open each sketch in turn, and export
 _   just make it easier to go to the next sketch
 _   need to rebuild with this release because of 1.3/1.4 issues
 _   http://dev.processing.org/bugs/show_bug.cgi?id=117
+_   or add tool to hit 'next' to go through examples
+_     just make it "next file in folder" since examples are all over
+_     also need to copy examples locally
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -259,12 +267,10 @@ _   not confirmed for a long time
 _   even without sketches open, perhaps not gc'ing properly
 _   objects probably not getting finalized
 _   http://dev.processing.org/bugs/show_bug.cgi?id=29
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1050134854
 _ menu weirdness (benelek)
 _   when you've got a menu open, move a cursor over the text area
 _   and back over the menu, the text-area cursor type remains. 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=30
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1043667859
 _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable
@@ -413,6 +419,7 @@ _     history converter option?
 _   only first 20 entries visible?
 _   shortcut to walk through history, ala photoshop (ctrl-alt-z)
 _   zlib file becoming corrupt (not flushed after close?)
+_   make hooks to history api so others can write tools around it
 
 
 PDE / Preferences
@@ -476,37 +483,48 @@ _   (i.e. folders disappearing if net has trouble)
 _   http://processing.org/bugs/show_bug.cgi?id=87
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
+_   http://dev.processing.org/bugs/show_bug.cgi?id=88
 
 
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
+
 
 
 TOOLS / General
-_ how to handle command keys
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1114885272
 _ make dynamically loaded plugins and "tools" menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=124
 _   break out beautify as its own plugin
-_ color picker or other things written by folks
-_   add all .jar files in lib/plugins on startup
+_   tools api:
+_     setup() -> run when p5 is first launched
+_     isAvailable() -> true/false whether the option should be dimmed
+_     show() -> open the window or run the tool
+_       is there a better name than show() since not all will be visible?
+_       maybe it's just a run() method launched via invokeLater()?
+_     getDefaultShortcut() -> returns the default shortcut this tools wants
+_     needs to be able to get current sketch code
+o     getMenu() -> return non-null the tool is a submenu
+o       no, bad idea.. don't want a zillion submenus on things
+_ tools need to use a compound edit
+_   http://dev.processing.org/bugs/show_bug.cgi?id=139
+_ need a proper means to handle command keys for tools
+_   http://dev.processing.org/bugs/show_bug.cgi?id=140
 _ make some kind of internal color picker
 _   could be a separate window that's always around if needed
 _ external editor -> add a command to launch
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1043734580
-_ add tool to hit 'next' to go through examples
-_   just make it "next file in folder" since examples are all over
-_   also need to copy examples locally
+_   http://dev.processing.org/bugs/show_bug.cgi?id=141
 _ add tool for running in jview
-_   only available after export (or when an applet dir exists)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=142
+_   calls export, or only available after export (or when an applet dir exists)
 _   warn user that applet html will be over-written
 _ add tool to "Add custom html to sketch"
 _   that copies applet.html, 
 _   opens sketch folder, 
 _   and gives info about what to do next (how to edit)
-_ run in appletviewer? sun.applet.Main is appletviewer
+_   http://dev.processing.org/bugs/show_bug.cgi?id=143
+_ tool to run in appletviewer? sun.applet.Main is appletviewer
 
 
 TOOLS / Auto Format
@@ -539,7 +557,7 @@ _   may help solve: http://dev.processing.org/bugs/show_bug.cgi?id=98
 
 LIBRARIES / General
 
-_ InvocationTargetException in xxxxxxEvent calls
+_ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
 
 
@@ -607,6 +625,8 @@ DIST / General
 
 _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
+_   http://dev.processing.org/bugs/show_bug.cgi?id=151
+_   also update build/howto.txt (of course) because it says no ant
 _ update things for java 1.5 since it's inevitable
 _ need .pde document icons
 _ need .psk file icon

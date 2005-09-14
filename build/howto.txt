@@ -157,8 +157,12 @@ the code, but all the other annoying crap that the build scripts do)
 then maybe we could switch to it. It's all about reaching some kind 
 of critical mass. 
 
+Some progress has been made by John Houck to get the scripts working
+under ANT, progress can be tracked here:
+http://dev.processing.org/bugs/show_bug.cgi?id=151
+
 
 ////////////////////////////////////////////////////////////////////
 
 
-Ben Fry - 13 August 2005
+Ben Fry - Updated 13 September 2005
