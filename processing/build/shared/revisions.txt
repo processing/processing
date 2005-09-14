@@ -7,6 +7,33 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0093 - XX september 2005
+
+[ big fixes ] 
+
+- david mellis contributed some code to help prevent the editor from 
+  locking up when a lot of println() statements were used in a sketch.
+  thank you! http://processing.org/bugs/show_bug.cgi?id=19
+
+- sometimes saving sketches or launching processing was really slow
+  when sketchbook folders grew large, or thousands of frames from 
+  saveFrame() were in a sketch folder. this has been fixed. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=84
+
+- new version of jikes for linux which should prevent the library 
+  issues: http://dev.processing.org/bugs/show_bug.cgi?id=47
+
+[ other bits ] 
+
+- lots of additions to the FAQ and updates to dev.processing.org
+
+- lots of help from fjen on improving the bugs database
+
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0092 - 30 june 2005
 
 release to support casey's workshop, but not announced publicly.
