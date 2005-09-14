@@ -1,0 +1,345 @@
+/*
+By Lenny Burdette
+
+Derived from code by Kevin Cannon, http://www.multiblah.com and
+Florian Jenett, mail@florianjenett.de
+
+Created: 2005.08.29 04:28PM
+Last Modified: 2005.08.30 06:23PM
+
+*/
+
+body {
+	margin				: 0;
+	padding				: 0;
+	
+	background-color	: #FFFFFF; /* #333322 */
+	
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-size			: 100%; 
+	font-weight			: normal;
+	line-height			: normal;
+	color				: #333333;
+}
+
+img { border: 0px solid #000000; }
+
+a {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #3399CC;
+}
+
+a:hover, 
+a:active {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #3399CC;
+}
+
+a:visited,
+a:link:visited {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #3399CC;
+}
+
+/* ================ LAYOUT ================== */
+
+#container {
+	width: 750px;
+	margin-left: 0px;
+	background-color: white;
+}
+
+/* ================ HEADER ================== */
+#header {
+	width: 750px;
+	height: 50px;
+	overflow: hidden;
+	background-color: #000000;
+}
+
+#header h1 {
+		display: none;
+		float: left;
+}
+
+/* ================ NAVBAR ================== */
+
+#navigation {
+	font-size: 0.7em;
+	color: #CCCCBE;
+}
+
+.navBar { font-size: 11px; 
+
+	height: 20px; 
+
+	padding: 5px 0 0 55px; 
+
+}
+
+.navBar a { color: #fff; }
+
+.navBar a:visited {color: #fff; }
+
+#mainnav { background: #333323; }
+
+#mainnav_noSub { background: #5a5a46; margin-bottom: 40px; }
+
+#mainnav, #mainnav_noSub { position: relative; color: #ccccbe !important; }
+
+#subNav { margin-left: 220px; 
+
+	background: #5a5a46 url(../img/nav_bottomarrow.gif) no-repeat; 
+
+	padding-left: 33px;
+
+	margin-bottom: 20px;
+
+	}
+#subNav.learning { margin-left: 157px; }
+
+.active { color: #ccccbe !important; }
+
+.faq { position: absolute; right: 10px; }
+
+/* ================ CONTENT ================== */
+
+.content {
+	margin-left    : 55px;
+	font-size      : 0.7em;
+	position: relative;
+}
+
+/* ================ FOOTER ================== */
+
+#footer {
+    font-size: .7em;
+	clear: both;
+	padding-top: 100px;
+
+	color: #fff;
+}
+
+#footer a {
+	color: white;
+}
+
+#footer #copyright,
+#footer #colophon {
+	padding: 5px 0 5px 50px;
+	}
+
+#footer #copyright {
+	background-color: #5A5A4E;
+}
+
+#footer #colophon {
+	background-color: #000000;
+}
+
+#footer #colophon a {
+	text-decoration: underline;
+	color: white;
+}
+
+#footer #colophon span { color: #fff; }
+
+/* ================ TYPOGRAPHY ================== */
+
+h1, h2, h3, h4, h5, h6
+	{
+	/*margin-bottom 		: 5px;*/
+
+	color				: #5A5A46; 
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-weight			: normal;
+
+	line-height			: normal;
+	}
+
+h1, h2, h3, h4
+	{
+	word-spacing		: 0.2em;
+	}
+
+h4, h5, h6
+{
+	font-weight			: bold; 
+}
+
+/* Font Sizes */
+
+h1 { font-size			: 2em; 		}
+h2 { font-size			: 1.85em; 	}
+h3 { font-size			: 1.7em; 	}
+h4 { font-size			: 1.5em; 	}
+h5 { font-size			: 1.25em; 	}
+h6 { font-size			: 1em; 		}
+
+p { font-size			: 1em; 		}
+
+pre {  
+	font-family			: "Courier New", Courier, monospace; 
+	font-size			: 11px; 
+	line-height			: normal; color: #000000;
+}
+
+code {  
+	font-family			: "Courier New", Courier, monospace; 
+	font-size			: 11px; 
+	line-height			: normal; color: #000000;
+}
+
+.error { color: #f00; margin: 0; }
+
+/* ================== PAGE SPECIFIC CSS =============== */
+
+/******************************************************************* Cover ***/
+
+#Cover .rightcol { 
+    float: right;
+    width: 380px;
+    margin-right: 20px;
+}
+
+#Cover .leftcol { width: 250px; }
+
+
+
+#Cover h3 { margin: 40px 0 0 0; }
+.exhibition-small { padding: 0; margin: 0; }
+
+.exhibition-small h3 { margin-top: 0px !important; }
+
+
+
+dl { margin: 0; }
+
+dt { font-style: italic; }
+
+dd { margin: 0 0 1em 0; }
+
+
+
+.happenings { margin-bottom: 30px; }
+
+
+
+.courses-small dl { margin-top: -1em; }
+
+.courses-small dt { font-style: normal; margin-top: 1em; }
+
+.courses-small dd { margin: 0; }
+
+td img { margin: 0; display: block; }
+
+
+
+/******************************************************************* Exhibition ***/
+
+#Exhibition .colone { width: 460px; float: left; margin-right: 40px; }
+
+#Exhibition .coltwo { width: 170px; float: right; margin-right: 20px; }
+
+#Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
+#Exhibition h2.with-nav { margin-bottom: 0; }
+
+#Exhibition .onecol { clear: both; }
+
+
+#Exhibition td { vertical-align: top; }
+
+
+.curated-item { margin-bottom: 25px; }
+
+.curated-item h5 { margin-top: 1em; color: #666; font-size: 1em; }
+
+.curated-item h5 a { font-weight: bold; }
+.curated-item p {  padding-right: 2em; }
+
+
+#Network h2 { position: relative; }
+#Network h2 a.addalink { position: absolute; left: 455px; }
+
+
+dl.network dt { font-style: normal; }
+
+dl.network dd { margin: 0; }
+
+dl.network dd.date { color: #999966; margin-bottom: 1em; }
+
+p.network { margin: 0 0 1em 0; }
+p.network span.date { color: #999966; }
+
+p.exhibition-nav { margin-top: 0; }
+
+
+
+/******************************************************************* Reference ***/
+
+#reference-nav { position: relative; height: 2em; padding-top: .5em; }
+
+#reference-nav p { position: absolute; right: 10px; top: 0; margin: 0; }
+
+
+
+.ref-notice { margin: 2.5em 0 2.5em 0; color: #006699; clear: both; }
+
+
+.ref-item { margin-bottom: 60px; }
+.ref-item th { width: 100px; font-weight: normal; text-align: left; vertical-align: top; }
+
+.ref-item td { vertical-align: top; padding-bottom: 2em; }
+
+.ref-item td h3 { margin: 0; }
+pre { margin: 0; }
+tr.name-row { height: 80px; }
+
+
+
+.example img { float: left; margin-right: 15px; margin-bottom: 15px;}
+
+.example { clear: both; margin-bottom: 15px;}
+.example pre.margin { margin-left: 115px; }
+
+
+
+/*** ref index ***/
+
+
+.abridged-notice { margin: 0 50px 30px 0; }
+
+
+div.ref-col { width: 30%; 
+    margin-right: 2%; 
+    float: left; 
+}
+
+
+.ref-col h3 { margin: 0; }
+.ref-col h5 { margin: 1.5em 0 0 0; 
+
+	font-size: 1em; 
+
+	font-weight: normal; 
+
+	font-style: italic; 
+
+}
+.ref-col h3+h5 { margin-top: 0; }
+.category { margin-bottom: 30px; }
+
+/******************************************************************* updates, courses, happenings ***/
+#Courses .content, #Updates .content, #Happenings .content {
+    width: 595px; 
+     }
+#Updates h2 { margin-top: 0 0 20px 0; }
+
+
+.course-desc p { margin: 0; }
+.course-desc p.date { margin: 0; }
+.course-desc h3 { margin: 0; font-size: 1.2em; font-weight: bold; }
+.course-desc { margin-bottom: 2em; }

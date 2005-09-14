@@ -1,0 +1,379 @@
+/*	Part of bugzilla.processing.org customs.
+	
+	Original author: Kevin Cannon, http://www.multiblah.com/
+	
+	Last Modified: 07.04.2005 - 10:30 Uhr by Florian Jenett <mail@florianjenett.de>
+*/
+
+/* ================ GENERAL CSS ================== 
+
+Mostly original stuff from existing site */
+
+
+body {
+	margin				: 0;
+	padding				: 0;
+	
+	background-color	: #FFFFFF; /* #333322 */
+	
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-size			: 100%; 
+	font-weight			: normal;
+	line-height			: normal;
+	color				: #333333;
+}
+
+img
+{
+	border: 0px solid #000000;
+}
+
+a {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #3399CC;
+}
+
+a:hover
+a:active {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #3399CC;
+}
+
+a:visited,
+a:link:visited {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #3399CC;
+}
+
+
+#container {
+	width: 750px;
+	border: 1px none red;
+	margin-left: 0px;
+	background-color: white;
+}
+
+/* ================ HEADER ================== */
+#header {
+	width: 750px;
+	height: 50px;
+	overflow: hidden;
+	/*background-image:  url("../img/processing_beta.gif");
+	background-repeat: no-repeat;
+	background-position: left center;*/
+	background-color: #000000;
+}
+
+#header h1 {
+		display: none;
+		float: left;
+	}
+	
+/* Info / FAQ */
+#header-info {
+	text-align: right;
+	float: right;
+	width: 200px;
+	color: white;
+	font-size: 0.7em;
+	padding-right: 20px;
+	padding-top: 5px;
+	padding-bottom: 20px;
+	height: 25px;
+}
+
+#header-info a:link,
+#header-info a
+{
+	color: #CCCCBE;
+}
+
+/* ================ NAVBAR ================== */
+
+#navigation,
+#footer {
+	
+	font-size: 0.7em;
+	color: #CCCCBE;
+	/* margin-bottom: 25px; */
+}
+/*
+#navigation a {
+	color			: white;
+	text-decoration	: underline;
+	}
+
+.navBar
+	{
+	height			: 20px;
+	padding			: 5px 0px 0px 55px;
+	margin			: 0px;
+	}
+
+#mainnav
+	{
+	background-color		: #333323;
+	}
+	
+#mainnav_noSub
+	{
+	background-color		: #5A5A46;
+	}
+
+#subnav
+	{
+	padding					: 5px 0 5px 40px;
+	margin-left				: 160px;
+	
+	background-color		: #5A5A46;
+	background-image		:  url("../img/nav_bottomarrow.gif");
+	background-position		: left center;
+	background-repeat		: no-repeat;
+	}
+*/
+/*
+#subnavAdmin {
+	background-color: #95957F;
+	background-image:  url("../img/nav_bottomarrow.gif");
+	background-position: left center;
+	background-repeat: no-repeat;
+	
+	height: 15px;
+	padding: 5px 0 5px 40px;
+	margin-left: 160px;
+}
+*/
+
+/* ================ CONTENT ================== */
+/*
+.content {
+	float			: right;
+	width			: 695px;
+	/*margin-top      : 40px;
+	font-size		: 0.7em;
+	border			: 1px none red;
+}
+*/
+ 
+.content em {
+	color			: #999966;
+	font-style		: normal;
+}
+
+
+/* ================ FOOTER ================== */
+
+#footer {
+	clear: both;
+	padding-top: 100px;
+}
+
+#footer a {
+	color: white;
+}
+
+#footer #copyright,
+#footer #colophon {
+	padding: 5px 0 5px 50px;
+	}
+
+#footer #copyright {
+	background-color: #5A5A4E;
+}
+
+#footer #colophon {
+	background-color: #000000;
+}
+
+#footer #colophon a {
+	text-decoration: underline;
+	color: white;
+}
+
+
+
+
+/* ================ HEADINGS ================== */
+
+
+
+h1, h2, h3, h4, h5, h6
+	{
+	margin-bottom 		: 5px;
+
+	color				: #5A5A46; 
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-weight			: normal;
+
+	line-height			: normal;
+	}
+
+h1, h2, h3, h4
+	{
+	word-spacing		: 0.2em;
+	}
+
+h4, h5, h6
+{
+	font-weight			: bold; 
+}
+
+/* Font Sizes */
+
+h1 { font-size			: 2em; 		}
+h2 { font-size			: 1.85em; 	}
+h3 { font-size			: 1.7em; 	}
+h4 { font-size			: 1.5em; 	}
+h5 { font-size			: 1.25em; 	}
+h6 { font-size			: 1em; 		}
+
+p { font-size			: 1em; 		}
+
+
+
+/* ================ OTHER ================== */	
+
+
+pre {  
+	font-family			: "Courier New", Courier, monospace; 
+	font-size			: 11px; 
+	line-height			: normal; color: #000000;
+}
+
+code {  
+	font-family			: "Courier New", Courier, monospace; 
+	font-size			: 11px; 
+	line-height			: normal; color: #000000;
+}
+
+
+
+/* ================ CUSTOM IDs ================== */
+
+#front-courses
+	{
+	clear				: both;
+	padding-top			: 10px;
+	}
+
+
+
+/* ================ CUSTOM CLASSES ================== */
+
+
+
+.inputnav { 
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-size			: 11px; 
+	font-weight			: normal; 
+	color				: #333333;
+}
+
+.titles {  
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-size			: 19px; 
+	font-weight			: normal; 
+	color				: #5A5A46;
+}
+
+
+.caption {  
+	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
+	font-size			: 10px; 
+	font-style			: normal; 
+	font-weight			: normal;
+}
+
+
+
+/* ================ EXHIBITION ================== */
+
+.author
+	{
+	font-weight			: bold;
+	color				: #666666;
+	}
+
+
+.curatedImg
+	{
+	margin-bottom		: -2px;
+	}
+
+
+.curatedBlock
+	{
+	width				: 225px;
+	margin				: 0px;
+	}
+	
+.curatedBlock p
+	{
+	padding-top			: 2px;
+	padding-right		: 25px;
+	margin-bottom		: 0px;
+	}
+
+
+/* ================ COLUMNS ================== */
+
+
+
+.doubleColumnWide
+	{
+	width				: 360px;
+	margin-right		: 30px;
+	}
+	
+/* exhibition -> curated */
+.doubleColumnWide
+	{
+	width				: 450px;
+	}
+
+.singleColumn
+	{
+	width				: 220px;
+	}
+
+/* exhibition -> networklinks */
+.singleColumnNarrow
+	{
+	width				: 195px;
+	}
+
+.tripleColumn
+	{
+	width				: 620px;
+	margin				: -20px 0px 0px 0px;
+	}
+
+.messageColumn {
+	width: 400px;
+}
+
+.right { float: right; }
+.left {	float: left; }
+.clear { clear: both; }
+
+
+
+/* thumbnail list in exhibiton 
+reformats a ul */
+
+ul#thumbnail-list, ul#thumbnail-list li, ul#thumbnail-list li a {
+	margin: 0; padding: 0;
+	display:block;
+}
+ul#thumbnail-list li {
+	margin: 0; padding: 0;
+	width: 72px; 
+	height: 72px;
+	display: block;
+	margin-right: 1px;
+	margin-bottom: 1px;
+	float: left;
+}

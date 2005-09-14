@@ -1,0 +1,80 @@
+/*** grid ***/
+.content {
+	margin-left    : 55px;
+	font-size      : 0.7em;
+}
+
+/*** nav ***/
+.navBar { font-size: 11px; 
+	height: 20px; 
+	padding: 5px 0 0 55px; 
+}
+.navBar a { color: #fff; }
+#mainnav { background: #333323; }
+#mainnav_noSub { background: #5a5a46; margin-bottom: 40px; }
+#mainnav, #mainnav_noSub { position: relative; color: #ccccbe !important; }
+#subNav { margin-left: 215px; 
+	background: #5a5a46 url(../img/nav_bottomarrow.gif) no-repeat; 
+	padding-left: 33px;
+	margin-bottom: 20px;
+	}
+#subNav.learning { margin-left: 157px; }
+.active { color: #ccccbe !important; }
+.faq { position: absolute; right: 10px; }
+
+#colophon span { color: #fff; }
+
+/*** Cover ***/
+.rightcol { float: right; width: 380px; margin-right: 20px; }
+.leftcol { float: left; width: 250px; }
+
+#Cover h3 { margin: 40px 0 0 0; }
+.exhibition-small { padding: 0; margin: 0; }
+.exhibition-small h3 { margin-top: 0; }
+
+dl { margin: 0; }
+dt { font-style: italic; }
+dd { margin: 0 0 1em 0; }
+
+.happenings { margin-bottom: 30px; }
+
+.courses-small dl { margin-top: -1em; }
+.courses-small dt { font-style: normal; margin-top: 1em; }
+.courses-small dd { margin: 0; }
+
+td img { margin: 0; display: block; }
+
+/*** Exhibition ***/
+#Exhibition .colone { width: 460px; float: left; margin-right: 40px; }
+#Exhibition .coltwo { width: 170px; float: right; margin-right: 20px; }
+#Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
+#Exhibition .onecol { clear: both; }
+
+.curated-item { margin-bottom: 25px; }
+.curated-item h5 { margin-top: .6em; color: #666; font-size: 1em; }
+.curated-item h5 a { font-weight: bold; }
+.curated-item p {  padding-right: 2em; }
+
+dl.network dt { font-style: normal; }
+dl.network dd { margin: 0; }
+dl.network dd.date { color: #999966; margin-bottom: 1em; }
+
+/*** Reference ***/
+.ref-notice { margin: 2.5em 0 2.5em 0; color: #006699}
+
+#Language th { width: 100px; font-weight: normal; text-align: left; vertical-align: top; }
+#Language td { vertical-align: top; padding-bottom: 2em; }
+#Language td h3 { margin: 0; }
+pre { margin: 0 !important; }
+tr.name-row { height: 80px; }
+
+/*** updates, courses, happenings ***/
+#Courses .content, #Updates .content, #Happenings .content {
+    width: 595px; 
+     }
+h2 { margin-top: 0 0 20px 0; }
+
+.course-desc p { margin: 0; }
+.course-desc p.date { margin: 0; }
+.course-desc h3 { margin: 0; font-size: 1.2em; font-weight: bold; }
+.course-desc { margin-bottom: 2em; }
